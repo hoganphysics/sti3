@@ -1,0 +1,161 @@
+#ifndef STI_UTILS_ORDEREDBUFFERMAP_H
+#define STI_UTILS_ORDEREDBUFFERMAP_H
+
+#include "SynchronizedMap.h"
+
+#include <deque>
+#include <memory>
+
+
+namespace STI
+{
+namespace Utils
+{
+
+template<class Key>
+class OrderedBufferMapPolicy : public SynchronizedMapPolicy<Key>
+{
+public:
+	
+	OrderedBufferMapPolicy(std::deque<Key>* buffer_keys) : buffer_keys(buffer_keys) {}
+
+	bool include(const Key& key) const 
+	{ 
+		std::deque<Key>::iterator it = std::find(buffer_keys->begin(), buffer_keys->end(), key);
+		return (it != buffer_keys->end());		// true if key is in buffer_keys
+	}
+	bool replace(const Key& oldKey, const Key& newKey) const { return (oldKey == newKey); }
+
+private:
+	std::deque<Key>* buffer_keys;	//ordered buffer of keys (newest at front)
+
+};
+
+
+template<class Key, class T>
+class OrderedBufferMap
+{
+public:
+
+	OrderedBufferMap(unsigned size);
+	virtual ~OrderedBufferMap() {}
+
+	void setMaxSize(unsigned size);
+	unsigned size() const;
+
+	bool get(const Key& key, T& item) const;
+	bool add(const Key& key, T item);
+	bool remove(const Key& key);
+
+	void clear();
+
+
+private:
+	
+	void trimToSize();	
+
+	unsigned max_size;
+
+	SynchronizedMap<Key, T> buffer;	//the actual data being buffered
+	//std::shared_ptr<OrderedBufferMapPolicy<Key>> bufferPolicy;
+
+	std::deque<Key> buffer_keys;	//ordered buffer of keys
+	mutable std::mutex dequeMutex;
+
+};
+
+
+} // UTILS
+} // STI
+
+template<class Key, class T>
+STI::Utils::OrderedBufferMap<Key, T>::OrderedBufferMap(unsigned size)
+{
+	//The policy enforces that only Keys in the ordered buffer deque are kept.
+	//When the buffer reaches max size, the oldest entries are dropped first when
+	//new entries arrive (or the buffer is resized).
+	auto bufferPolicy = std::make_shared<OrderedBufferMapPolicy<Key>>(&buffer_keys);
+	buffer.setPolicy(bufferPolicy);
+
+	setMaxSize(size);
+}
+
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::setMaxSize(unsigned size)
+{
+	max_size = size;
+	trimToSize();
+}
+
+template<class Key, class T>
+unsigned STI::Utils::OrderedBufferMap<Key, T>::size() const
+{
+	return buffer.size();
+}
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::get(const Key& key, T& item) const
+{
+	return buffer.get(key, item);
+}
+
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)
+{
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	bool success;
+	buffer_keys.push_front(key);		//add new key to front
+	
+	success = buffer.add(key, item);	//attempt to add item to buffer
+
+	if (success) {	
+		buffer_keys.pop_back();			//remove oldest key from back
+	}
+	else {
+		buffer_keys.pop_front();	//add failed; remove the new key from front
+	}
+	return success;
+}
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::remove(const Key& key)
+{
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	std::deque<Key>::iterator it = std::find(buffer_keys.begin(), buffer_keys.end(), key);
+
+	if ((it != buffer_keys.end()) && buffer.remove(key)) {
+		buffer_keys.erase(it);
+		return true;
+	}
+
+	return false;
+}
+
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::clear()
+{
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+	buffer_keys.clear();
+	
+	buffer.clear();
+}
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::trimToSize()
+{
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	while (buffer_keys.size() > max_size) {
+		buffer_keys.pop_back();
+	}
+
+	buffer.cleanup();	//removes items that are not in buffer_keys
+}
+
+
+#endif
