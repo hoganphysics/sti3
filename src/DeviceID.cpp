@@ -7,10 +7,10 @@
 
 using namespace STI::Device;
 
-//DeviceID::DeviceID()
-//{
-//	deviceIDBase = std::make_shared<DeviceIDBase>("", "", 0);
-//}
+DeviceID::DeviceID()
+{
+	deviceIDBase = std::make_shared<DeviceIDBase>("", "", 0, "");
+}
 
 
 DeviceID::DeviceID(const std::string& name, const std::string& address, unsigned short module, 

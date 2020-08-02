@@ -1,2 +1,7 @@
 vcproject/x64/
 *.db
+network/test2/vcproject/Debug/
+*.opendb
+network/test1/vcproject/x64/
+network/test2/vcproject/x64/
+network/test1/vcproject/Debug/

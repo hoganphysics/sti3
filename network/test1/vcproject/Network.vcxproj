@@ -19,9 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F32B45F1-58B8-4EF8-994D-FC364BF231ED}</ProjectGuid>
-    <RootNamespace>sti3</RootNamespace>
+    <ProjectGuid>{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}</ProjectGuid>
+    <RootNamespace>Network</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>test1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,8 +82,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Jason\Code\dev\sti3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -111,62 +115,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Channel.cpp" />
-    <ClCompile Include="..\src\DeviceEventParser.cpp" />
-    <ClCompile Include="..\src\DeviceID.cpp" />
-    <ClCompile Include="..\src\EngineParsingError.cpp" />
-    <ClCompile Include="..\src\EventEngine.cpp" />
-    <ClCompile Include="..\src\EventEngineParser.cpp" />
-    <ClCompile Include="..\src\EventEngineStateMachine.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\Measurement.cpp" />
-    <ClCompile Include="..\src\MixedValue.cpp" />
-    <ClCompile Include="..\src\RawEvent.cpp" />
-    <ClCompile Include="..\src\SynchronousEvent.cpp" />
-    <ClCompile Include="..\src\test.cpp" />
-    <ClCompile Include="..\src\testcollection.cpp" />
-    <ClCompile Include="..\src\testOrderedBufferMap.cpp" />
-    <ClCompile Include="..\src\utils.cpp" />
+    <ClInclude Include="..\src\Collection.h" />
+    <ClInclude Include="..\src\Collector.h" />
+    <ClInclude Include="..\src\Device.h" />
+    <ClInclude Include="..\src\Distributer.h" />
+    <ClInclude Include="..\src\Hub-work.h" />
+    <ClInclude Include="..\src\Hub.h" />
+    <ClInclude Include="..\src\Hub1.h" />
+    <ClInclude Include="..\src\Node.h" />
+    <ClInclude Include="..\src\NodeDistributer.h" />
+    <ClInclude Include="..\src\SynchronizedMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Channel.h" />
-    <ClInclude Include="..\include\DeviceID.h" />
-    <ClInclude Include="..\include\EngineState.h" />
-    <ClInclude Include="..\include\EventEngine.h" />
-    <ClInclude Include="..\include\EventEngineParser.h" />
-    <ClInclude Include="..\include\Measurement.h" />
-    <ClInclude Include="..\include\MixedValue.h" />
-    <ClInclude Include="..\include\ParserCallback.h" />
-    <ClInclude Include="..\include\RawEvent.h" />
-    <ClInclude Include="..\include\SynchronousEvent.h" />
-    <ClInclude Include="..\include\utils.h" />
-    <ClInclude Include="..\src\DeviceEventParser.h" />
-    <ClInclude Include="..\src\EngineID.h" />
-    <ClInclude Include="..\src\EngineParsingError.h" />
-    <ClInclude Include="..\src\EventConflictException.h" />
-    <ClInclude Include="..\src\EventEngineStateMachine.h" />
-    <ClInclude Include="..\src\EventParsingException.h" />
-    <ClInclude Include="..\src\EventStackTrace.h" />
-    <ClInclude Include="..\src\fwd\Channel_fwd.h" />
-    <ClInclude Include="..\src\fwd\DeviceEventParser_fwd.h" />
-    <ClInclude Include="..\src\fwd\DeviceID_fwd.h" />
-    <ClInclude Include="..\src\fwd\Measurement_fwd.h" />
-    <ClInclude Include="..\src\fwd\MixedValue_fwd.h" />
-    <ClInclude Include="..\src\fwd\RawEvent_fwd.h" />
-    <ClInclude Include="..\src\fwd\SynchronousEvent_fwd.h" />
-    <ClInclude Include="..\src\ParseID.h" />
-    <ClInclude Include="..\src\ResultTicket.h" />
-    <ClInclude Include="..\src\ShotID.h" />
-    <ClInclude Include="..\src\STI_Exception.h" />
-    <ClInclude Include="..\src\TimeStamp.h" />
-    <ClInclude Include="..\src\TriggerCallback.h" />
-    <ClInclude Include="..\src\utils\Collection.h" />
-    <ClInclude Include="..\src\utils\Collector.h" />
-    <ClInclude Include="..\src\utils\GraphPathLabel.h" />
-    <ClInclude Include="..\src\utils\OrderedBufferMap.h" />
-    <ClInclude Include="..\src\utils\DependencyTree.h" />
-    <ClInclude Include="..\src\utils\EventQueue.h" />
-    <ClInclude Include="..\src\utils\SynchronizedMap.h" />
+    <ClCompile Include="..\..\..\src\DeviceID.cpp" />
+    <ClCompile Include="..\..\..\src\utils.cpp" />
+    <ClCompile Include="..\src\main-work.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

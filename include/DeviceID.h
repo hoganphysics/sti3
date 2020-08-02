@@ -51,7 +51,7 @@ private:
 class DeviceID
 {
 public:
-//	DeviceID();
+	DeviceID();
 	DeviceID(const std::string& name, const std::string& address, unsigned short module, 
 		const std::string& targetServer);
 	
@@ -84,7 +84,7 @@ private:
 
 
 
-}
-}
+} //Device
+} //STI
 
 #endif

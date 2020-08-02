@@ -19,3 +19,21 @@ public:
 };
 
 MyQueue aqueue;
+
+template<class Event>
+class BufferedEventQueue : public STI::Utils::EventQueue<Event>
+{
+public:
+	unsigned bufferSize;
+
+	void handleEvent(const Event& evt) 
+	{
+		if (eventBuffer.size() < bufferSize) {
+			eventBuffer.push_back(evt);
+		}
+	}
+
+	std::vector<Event> eventBuffer;
+};
+
+

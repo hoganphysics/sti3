@@ -6,6 +6,12 @@
 #include <deque>
 #include <memory>
 
+/*
+This template class is an insertion-ordered buffer of fixed length, with arbitrary buffer access.
+The class stores a set of items in a buffer by (Key, Value) pairs. Once the buffer 
+is full, the oldest item is removed whenever a new item is added. Arbitary access to the buffer 
+elements (and thread-safety) is implemented using a SynchronizedMap.
+*/
 
 namespace STI
 {
@@ -84,6 +90,8 @@ STI::Utils::OrderedBufferMap<Key, T>::OrderedBufferMap(unsigned size)
 template<class Key, class T>
 void STI::Utils::OrderedBufferMap<Key, T>::setMaxSize(unsigned size)
 {
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
 	max_size = size;
 	trimToSize();
 }
@@ -111,8 +119,8 @@ bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)
 	
 	success = buffer.add(key, item);	//attempt to add item to buffer
 
-	if (success) {	
-		buffer_keys.pop_back();			//remove oldest key from back
+	if (success) {
+		trimToSize();					//remove oldest key(s) from back
 	}
 	else {
 		buffer_keys.pop_front();	//add failed; remove the new key from front
@@ -148,8 +156,6 @@ void STI::Utils::OrderedBufferMap<Key, T>::clear()
 template<class Key, class T>
 void STI::Utils::OrderedBufferMap<Key, T>::trimToSize()
 {
-	std::unique_lock<std::mutex> writeLock(dequeMutex);
-
 	while (buffer_keys.size() > max_size) {
 		buffer_keys.pop_back();
 	}
