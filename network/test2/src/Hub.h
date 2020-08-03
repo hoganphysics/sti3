@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <mutex>
+#include <algorithm>
 
 namespace STI
 {
@@ -76,13 +77,13 @@ public:
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
 	bool removeHub(const HubID& id);
 	
-	//local and remote – trail tracked
+	//local and remote ï¿½ trail tracked
 	bool removeNode(const ID& id, const HubTrace& trace);
 	bool refresh();		//for initiating a refresh
 	bool refresh(const HubTrace& trace);		//local and remote	
 
-	//remote – trail tracked
-	bool distribute(const ID& id, const typename std::shared_ptr<T>& node, const HubTrace& trace, const HubID& first);	//remote add (called by other hubs offering a reference) – trail tracked
+	//remote ï¿½ trail tracked
+	bool distribute(const ID& id, const typename std::shared_ptr<T>& node, const HubTrace& trace, const HubID& first);	//remote add (called by other hubs offering a reference) ï¿½ trail tracked
 	bool distributeNodes(const HubID& targetHub); //, const HubTrace& trace);		//distribute all local nodes to target hub
 
 	//Force redistribution of all Nodes owned by this Hub to all connected Hubs.

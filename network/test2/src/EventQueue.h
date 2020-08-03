@@ -2,6 +2,7 @@
 #define STI_UTILS_EVENTQUEUE_H
 
 #include <memory>
+#include <condition_variable>
 #include <mutex>
 #include <thread>
 #include <deque>

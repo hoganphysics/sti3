@@ -65,14 +65,14 @@ public:
 
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
 	{
-		start();	//start event handler loop (does nothing if already running)
+		STI::Utils::EventQueue<SynchronizedMapEvent<Key>>::start();	//start event handler loop (does nothing if already running)
 		listeners.push_back(listener);
 	}
 
 private:
 	void handleEvent(const SynchronizedMapEvent<Key>& evt)
 	{
-		for (ListenerVector::iterator it = listeners.begin(); it != listeners.end(); ++it) {
+		for (typename ListenerVector::iterator it = listeners.begin(); it != listeners.end(); ++it) {
 			switch (evt.type) {
 			case SynchronizedMapEvent<Key>::Type::Add:
 				(*it)->add(evt.key);
