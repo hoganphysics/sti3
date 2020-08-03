@@ -54,11 +54,16 @@ public:
 							//Otherwise Node destructors will never be called because of shared_ptr loops.
 	}
 
+
+	//Add a Node to this Hub.  The new Node will be added to the list of available Nodes
+	//owned by this Hub and to the list of Node Collectors managed by this Hub.  The Node will
+	//also be distributed to all the existing Collectors managed by this Hub.  Finally,
+	//the Node will be distributed to all the Hubs connected to this Hub.
 	bool add(const ID& id, const T_ptr& node)
 	{
-		//T_ptr should be both a T and a CollectorT_ptr, assuming it's a Node<ID,T>
-		bool success = addNode(id, node);
-		success = addCollector(id, node);
+		//T inherits from Node<ID, T>, so it is both a T and a Collector<ID, T>
+		bool success = addNode(id, node);		//add as T
+		success = addCollector(id, node);		//add as Collector<ID, T>
 
 		auto collNode = std::static_pointer_cast<Node<ID, T>>(node);
 		//success = addCollector(id, collNode);

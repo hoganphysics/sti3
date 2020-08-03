@@ -82,7 +82,8 @@ int main(int argc, char **argv)
 
 	hub2->addNode(dev4->id, dev4);
 	
-	
+	hub1->refresh();
+
 	hub2->removeNode(dev3->id);
 	
 	std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>> testCollection;
@@ -103,7 +104,6 @@ int main(int argc, char **argv)
 
 	hub1->clear();
 	hub2->clear();
-
 
 
 	return 0;

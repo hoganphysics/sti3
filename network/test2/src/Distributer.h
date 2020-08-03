@@ -70,10 +70,10 @@ public:
 		return success;
 	}
 
-	//bool contains(const ID& id) const
-	//{
-	//	return nodes->contains(id);
-	//}
+	bool contains(const ID& id) const
+	{
+		return nodes->contains(id);
+	}
 
 	bool get(const ID& id, T_ptr& node) const
 	{
@@ -85,21 +85,10 @@ public:
 		return nodes->getIDs(ids);
 	}
 
-	void cleanup()
-	{
-		nodes->cleanup();
-
-		//std::set<ID> nodeIDs;
-		//nodes->getIDs(nodeIDs);
-
-		std::set<ID> collectorIDs;
-		collectors.getKeys(collectorIDs);
-
-		cleanup(collectorIDs);
-	}
-
 	void distribute()
 	{
+		cleanup();
+
 		std::set<ID> nodeIDs;
 		nodes->getIDs(nodeIDs);
 
@@ -115,19 +104,33 @@ public:
 		distribute(id, node);		//offer locally owned Nodes to this Node
 	}
 
-	void refresh()
-	{
-		nodes->cleanup();
+	//Check that all stored Nodes are alive, and that all references they have collected are also alive.
+	//Remove dead references.
+	//void refresh()
+	//{
+	//	typename std::set<ID> nodeIDs;
+	//	nodes.getKeys(nodeIDs);
 
-		std::set<ID> nodeIDs;
-		nodes->getIDs(nodeIDs);
+	//	for (auto& id : nodeIDs) {
+	//		
+	//	}
 
-		std::set<ID> collectorIDs;
-		collectors.getKeys(collectorIDs);
+	//	//Collector references
+	//	CollectorT_ptr collector;
+	//	CollectionT_ptr collection;
 
-		cleanup(nodeIDs, collectorIDs);
-		distribute(nodeIDs, collectorIDs);
-	}
+	//	typename std::set<ID> collectorIDs;
+	//	collectors.getKeys(collectorIDs);
+	//	for (auto& collectorID : collectorIDs) {
+	//		if (collectors.get(collectorID, collector) && collector != 0) {
+	//			collector->getCollection(collection);
+	//			if (collection != 0) {
+	//				collection->refresh();
+	//			}
+	//		}
+	//	}
+
+	//}
 
 	void clearAll()
 	{
@@ -150,6 +153,21 @@ public:
 
 
 private:
+
+
+	void cleanup()
+	{
+		nodes->cleanup();		//ensure the owned Nodes match the Collection policy
+
+								//std::set<ID> nodeIDs;
+								//nodes->getIDs(nodeIDs);
+
+		std::set<ID> collectorIDs;
+		collectors.getKeys(collectorIDs);
+
+		//Make all stored Collectiors enforce their collection policies.
+		cleanup(collectorIDs);
+	}
 
 	bool addNode(const ID& id, const T_ptr& node)
 	{
@@ -266,6 +284,7 @@ private:
 			removeNode(*id);
 		}
 	}
+
 
 	void cleanup(const std::set<ID>& collectorIDs)
 	{
