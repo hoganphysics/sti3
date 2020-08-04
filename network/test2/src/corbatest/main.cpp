@@ -1,11 +1,9 @@
 
-//#include "Hub.h"
-#include "Device.h"
-#include "LocalCollection.h"
-//#include "LocalHub.h"
-#include "LocalDeviceHub.h"
+#include "NetworkDeviceHub.h"
 
+#include "LocalCollection.h"
 #include "DeviceCollection.h"
+#include "LocalDeviceHub.h"
 
 #include <iostream>
 #include <memory>
@@ -13,7 +11,6 @@
 
 using std::cout;
 using std::endl;
-
 
 class TempPolicy : public STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>::LocalCollectionPolicy
 {
@@ -35,7 +32,7 @@ public:
 		cout << "Destructor: " << id.getName() << endl;
 	}
 	STI::Device::DeviceID id;
-	
+
 	bool refresh() { return true; }
 
 	void write(unsigned input)
@@ -57,66 +54,36 @@ int main(int argc, char **argv)
 	auto dev3 = std::make_shared<LocalDevice>("dev3", "localhost", 0, "srv1");
 	auto dev4 = std::make_shared<LocalDevice>("dev4", "localhost", 0, "srv1");
 
-//	STI::Utils::Distributer<STI::Device::DeviceID, STI::Device::Device> dist;
-//	dist.add(dev1->id, dev1);
-//	dist.add(dev2->id, dev2);
+	STI::Network::NetworkDeviceHub hub("net hub");
 
-	auto hub1 = std::make_shared<STI::Network::LocalDeviceHub>("Hub1");
+	hub.addNode(dev1->id, dev1);
+	hub.addNode(dev2->id, dev2);
+	
 	auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
-	//LocalHub hub1("Hub1");
-	//LocalHub hub2("Hub2");
-
-	hub1->addNode(dev1->id, dev1);
-	hub1->addNode(dev2->id, dev2);
-
+	
 	hub2->addNode(dev3->id, dev3);
-
-	STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>::connect(hub1, hub2);
-
-
 	hub2->addNode(dev4->id, dev4);
-	
-	hub1->refresh();
 
-	hub2->removeNode(dev3->id);
-	
-	std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>> testCollection;
-	dev1->getCollection(testCollection);
+	hub.connect(hub2);
 
-	std::shared_ptr<STI::Device::Device> p1;
-	std::shared_ptr<STI::Network::Node<STI::Device::DeviceID, STI::Device::Device>> p2;
-	testCollection->get(dev2->id, p1);
-//	testCollection->get(dev2->id, p2);
-
-	p2 = p1;
-
-	p1->write(1);
-	p2->get().write(2);
-
-	(*p2)->write(3);
-	p2.get()->get().write(4);
-
-	hub1->clear();
 	hub2->clear();
 
+	//hub.connect(otherHub);
+	//hub.connect(device);
+	//hub.run();		//blocking
+
+
+//	CORBA::Object_var obj;
+//	obj = orbManager->getObjectReference("STI/Network/TServer.Object");
+//	::STI::Network::TServer_var tServerRef;
+//	tServerRef = STI::Network::TServer::_narrow(obj);
+
+//	orbManager->registerServant(remoteDeviceServant.get(), contextName + deviceBootstrapObjectName);
+
+
+//	auto hub1 = std::make_shared<STI::Network::LocalDeviceHub>("Hub1");
+
+//	STI::Network::NetworkDeviceHubWrapper hub(hub1);
 
 	return 0;
 }
-
-//
-//template<class ID, class T> class Hub;
-//
-//template<class ID, class T>
-//class Hub
-//{
-//	typedef std::shared_ptr<T> T_ptr;
-//
-//	bool addNode(const ID& id, const T_ptr& node);
-//	bool remove(const ID& id);
-//	bool addHub(const ID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
-//
-//	void refresh();
-//	void removeAll();
-//};
-//
-//

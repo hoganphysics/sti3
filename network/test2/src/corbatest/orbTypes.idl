@@ -1,0 +1,37 @@
+#ifndef STI_TNETWORK_ORBTYPES_IDL
+#define STI_TNETWORK_ORBTYPES_IDL
+
+
+module STI
+{
+module TNetwork
+{
+
+	struct TDeviceHubID
+	{
+		string name;
+		string address;
+	};
+	typedef sequence<TDeviceHubID> TDeviceHubIDSeq;
+
+	struct TDeviceHubTrace
+	{
+		TDeviceHubIDSeq ids;
+	};
+
+	struct TDeviceID 
+	{
+		string         deviceName;
+		string         address;
+		unsigned short moduleNum;
+		string         targetServer;
+	};
+	typedef sequence<TDeviceID> TDeviceIDSeq;
+
+
+
+};	//TNetwork
+};	//STI
+
+#endif
+

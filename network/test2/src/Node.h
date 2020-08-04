@@ -1,11 +1,11 @@
-#ifndef STI_UTILS_NODE_H
-#define STI_UTILS_NODE_H
+#ifndef STI_NETWORK_NODE_H
+#define STI_NETWORK_NODE_H
 
 #include "Collector.h"
 
 namespace STI
 {
-namespace Utils
+namespace Network
 {
 
 template<class ID, class T>
@@ -22,7 +22,7 @@ public:
 };
 
 
-} //Utils
+} //Network
 } //STI
 
 #endif

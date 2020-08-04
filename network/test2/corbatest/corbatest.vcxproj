@@ -18,11 +18,57 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\corbatest\Convert_DeviceID.cpp" />
+    <ClCompile Include="..\src\corbatest\Convert_HubID.cpp" />
+    <ClCompile Include="..\src\corbatest\Convert_HubTrace.cpp" />
+    <ClCompile Include="..\src\corbatest\deviceNet.cpp" />
+    <ClCompile Include="..\src\corbatest\main.cpp" />
+    <ClCompile Include="..\src\corbatest\NetworkConvert.cpp" />
+    <ClCompile Include="..\src\corbatest\NetworkDeviceHub.cpp" />
+    <ClCompile Include="..\src\corbatest\NetworkDeviceHubWrapper.cpp" />
+    <ClCompile Include="..\src\corbatest\orbTypes.cpp" />
+    <ClCompile Include="..\src\corbatest\RemoteDevice.cpp" />
+    <ClCompile Include="..\src\corbatest\RemoteDeviceCollection.cpp" />
+    <ClCompile Include="..\src\corbatest\RemoteDeviceHub.cpp" />
+    <ClCompile Include="..\src\corbatest\TDeviceCollection_i.cpp" />
+    <ClCompile Include="..\src\corbatest\TDeviceHub_i.cpp" />
+    <ClCompile Include="..\src\corbatest\TDevice_i.cpp" />
+    <ClCompile Include="..\src\DeviceID.cpp" />
+    <ClCompile Include="..\src\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\src\corbatest\deviceNet.idl">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">deviceNetidl.bat</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">omniidl... Generating CORBA skeletons for devicehub.idl</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\corbatest\deviceNet.h;$(ProjectDir)..\src\corbatest\odeviceNet.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\corbatest\orbTypes.idl</AdditionalInputs>
+    </CustomBuild>
+    <CustomBuild Include="..\src\corbatest\orbTypes.idl">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">orbTypesidl.bat</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">omniidl... Generating CORBA skeletons for orbTypes.idl</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\corbatest\orbTypes.h;$(ProjectDir)..\src\corbatest\orbTypes.cpp</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\corbatest\ConvertList.h" />
+    <ClInclude Include="..\src\corbatest\deviceNet.h" />
+    <ClInclude Include="..\src\corbatest\NetworkConvert.h" />
+    <ClInclude Include="..\src\corbatest\NetworkDeviceHub.h" />
+    <ClInclude Include="..\src\corbatest\NetworkDeviceHubWrapper.h" />
+    <ClInclude Include="..\src\corbatest\NetworkDeviceWrapper.h" />
+    <ClInclude Include="..\src\corbatest\orbTypes.h" />
+    <ClInclude Include="..\src\corbatest\RemoteDevice.h" />
+    <ClInclude Include="..\src\corbatest\RemoteDeviceCollection.h" />
+    <ClInclude Include="..\src\corbatest\RemoteDeviceHub.h" />
+    <ClInclude Include="..\src\corbatest\TDeviceCollection_i.h" />
+    <ClInclude Include="..\src\corbatest\TDeviceHub_i.h" />
+    <ClInclude Include="..\src\corbatest\TDevice_i.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}</ProjectGuid>
-    <RootNamespace>Network</RootNamespace>
+    <ProjectGuid>{7B50422C-833D-44D8-BE0E-E134863CE327}</ProjectGuid>
+    <RootNamespace>corbatest</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>test2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -64,6 +110,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="sti_corba.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -82,7 +129,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Jason\Code\dev\sti3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Jason\Code\dev\sti3\network\test2\src\corbatest;C:\Users\Jason\Code\dev\sti3\network\test2\src;C:\Users\Jason\Code\dev\sti3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,31 +161,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\Collection.h" />
-    <ClInclude Include="..\src\Collector.h" />
-    <ClInclude Include="..\src\Device.h" />
-    <ClInclude Include="..\src\DeviceCollection.h" />
-    <ClInclude Include="..\src\DeviceHub.h" />
-    <ClInclude Include="..\src\Distributer.h" />
-    <ClInclude Include="..\src\Hub-work.h" />
-    <ClInclude Include="..\src\Hub.h" />
-    <ClInclude Include="..\src\Hub1.h" />
-    <ClInclude Include="..\src\HubID.h" />
-    <ClInclude Include="..\src\HubTrace.h" />
-    <ClInclude Include="..\src\LocalCollection.h" />
-    <ClInclude Include="..\src\LocalDevice.h" />
-    <ClInclude Include="..\src\LocalDeviceHub.h" />
-    <ClInclude Include="..\src\LocalHub.h" />
-    <ClInclude Include="..\src\Node.h" />
-    <ClInclude Include="..\src\NodeDistributer.h" />
-    <ClInclude Include="..\src\SynchronizedMap.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\DeviceID.cpp" />
-    <ClCompile Include="..\..\..\src\utils.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

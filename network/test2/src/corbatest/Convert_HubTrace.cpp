@@ -1,0 +1,59 @@
+
+#include "NetworkConvert.h"
+
+#include "HubTrace.h"
+#include "HubID.h"
+
+#include "orbTypes.h"
+
+using STI::Network::convert;
+using STI::Network::HubTrace;
+using STI::TNetwork::TDeviceHubTrace;
+
+
+template<>
+bool convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace, TDeviceHubTrace& tHubTrace)
+{
+	using STI::TNetwork::TDeviceHubID;
+
+	return convert(hubTrace.getIDs(), (_CORBA_Unbounded_Sequence<TDeviceHubID>&) tHubTrace.ids);
+}
+
+template<>
+bool convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tHubTrace, HubTrace& hubTrace)
+{
+	using STI::TNetwork::TDeviceHubID;
+
+	bool success = false;
+	std::vector<STI::Network::HubID> ids;
+
+	if (convert((_CORBA_Unbounded_Sequence<TDeviceHubID>&) tHubTrace, ids)) {
+		for (auto& id : ids) {
+			hubTrace.addHubID(id);
+		}
+		success = hubTrace.size() == tHubTrace.ids.length();
+	}
+
+	return success;
+}
+
+template<>
+TDeviceHubTrace convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace)
+{
+	TDeviceHubTrace tDeviceHubTrace;
+
+	convert<HubTrace, TDeviceHubTrace>(hubTrace, tDeviceHubTrace);
+
+	return tDeviceHubTrace;
+}
+
+template<>
+HubTrace convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tDeviceHubTrace)
+{
+	HubTrace hubTrace;
+
+	convert<TDeviceHubTrace, HubTrace>(tDeviceHubTrace, hubTrace);
+
+	return hubTrace;
+}
+

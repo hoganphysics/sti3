@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="idl">
+      <UniqueIdentifier>{9dd04ac4-f92d-431c-8fdc-0d7fcc3f85f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Hub">
+      <UniqueIdentifier>{a5812630-6986-47b2-820e-5d194118a179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Device">
+      <UniqueIdentifier>{d4fc5232-9407-42cf-86e8-7bf5fb7451ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Hub">
+      <UniqueIdentifier>{162cec57-b80b-475a-a3e0-875033d1b659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Device">
+      <UniqueIdentifier>{05548604-2ad3-464c-af2c-a7b6c3ef0371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DeviceCollection">
+      <UniqueIdentifier>{c6a12f84-745d-4395-8fe7-2c1cdffd6e4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DeviceCollection">
+      <UniqueIdentifier>{d6750fe5-118f-4108-a048-9cf3983c86a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Convert">
+      <UniqueIdentifier>{3034f7b5-5337-4b90-8729-6cc8f26e43e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Convert">
+      <UniqueIdentifier>{b9ff0ddd-ac68-4bfe-9390-26cfacc130f8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\corbatest\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\orbTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\TDevice_i.cpp">
+      <Filter>Source Files\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\TDeviceHub_i.cpp">
+      <Filter>Source Files\Hub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\TDeviceCollection_i.cpp">
+      <Filter>Source Files\DeviceCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\RemoteDeviceCollection.cpp">
+      <Filter>Source Files\DeviceCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\Convert_DeviceID.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\NetworkConvert.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\RemoteDevice.cpp">
+      <Filter>Source Files\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\RemoteDeviceHub.cpp">
+      <Filter>Source Files\Hub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\Convert_HubID.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\Convert_HubTrace.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\NetworkDeviceHubWrapper.cpp">
+      <Filter>Source Files\Hub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\deviceNet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\NetworkDeviceHub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\src\corbatest\orbTypes.idl">
+      <Filter>idl</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\corbatest\deviceNet.idl">
+      <Filter>idl</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\corbatest\orbTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\RemoteDeviceHub.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\TDeviceHub_i.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\TDevice_i.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\TDeviceCollection_i.h">
+      <Filter>Header Files\DeviceCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\RemoteDeviceCollection.h">
+      <Filter>Header Files\DeviceCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\ConvertList.h">
+      <Filter>Header Files\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\NetworkConvert.h">
+      <Filter>Header Files\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\RemoteDevice.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\NetworkDeviceWrapper.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\NetworkDeviceHub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\NetworkDeviceHubWrapper.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\deviceNet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

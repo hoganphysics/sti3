@@ -9,14 +9,29 @@ namespace STI
 namespace Device
 {
 
+template<class T>
+class Convertable
+{
+	T& convert() { return static_cast<T&>(*this); }		//static polymorphism via CRTP
+};
+
+template<class T>
+class Device2 : public STI::Network::Node<DeviceID, Device2<T>>, public Convertable<T>
+{
+	virtual void write(unsigned input) = 0;
+	virtual bool refresh() = 0;
+
+};
+
+
 //CRTP
 //pure interface for node elements
-class Device : public STI::Utils::Node<DeviceID, Device>
+class Device : public STI::Network::Node<DeviceID, Device>
 {
 public:
 	virtual void write(unsigned input) = 0;
 
-	virtual bool refresh() { return true; }	//temp
+	virtual bool refresh() = 0;
 
 };
 

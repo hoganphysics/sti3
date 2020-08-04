@@ -1,0 +1,63 @@
+#ifndef STI_TNETWORK_DEVICENET_IDL
+#define STI_TNETWORK_DEVICENET_IDL
+
+//IDL for the STI::Network::Hub<DeviceID, Device>
+//Includes basic types for Network (Hubs, etc), utilities like DeviceCollector,
+//and the Device interface.
+
+#include "orbTypes.idl"
+
+module STI
+{
+module TNetwork
+{
+	interface TDevice;	
+	interface TDeviceHub;
+
+	interface TDeviceHub
+	{
+		boolean addHub(in TDeviceHubID hubID, in TDeviceHub hub);
+		boolean removeHub(in TDeviceHubID hubID);
+	
+//		boolean refresh();
+		boolean refreshNetwork(in TDeviceHubTrace trace);
+
+		boolean distribute(in TDeviceID devID, in TDevice node, in TDeviceHubTrace trace, in TDeviceHubID first);
+		boolean distributeNodes(in TDeviceHubID targetHub);
+		boolean redistributeNodes(in TDeviceHubTrace trace);
+		boolean removeNode(in TDeviceID devID, in TDeviceHubTrace trace);
+
+		readonly attribute TDeviceHubID deviceHubID;		//getID()
+	};
+
+	interface TDeviceCollection
+	{
+		boolean add(in TDeviceID deviceID, in TDevice device);
+		boolean remove(in TDeviceID deviceID);
+
+		boolean contains(in TDeviceID deviceID);
+
+		boolean get(in TDeviceID deviceID, out TDevice device);
+		void getIDs(out TDeviceIDSeq deviceIDseq);
+
+		void cleanup();
+		void clear();
+	};
+
+	interface TDevice
+	{
+		//Node interface
+		boolean refresh();
+
+		//Collector interface
+		TDeviceCollection getDeviceCollection();
+
+		//Device interface (temp)
+		void write(in unsigned long input);
+	};
+
+};	//TNetwork
+};	//STI
+
+#endif
+

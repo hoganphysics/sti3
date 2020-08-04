@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Network.vcxproj", "{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test2", "Network.vcxproj", "{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "corbatest", "..\corbatest\corbatest.vcxproj", "{7B50422C-833D-44D8-BE0E-E134863CE327}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}.Release|x64.Build.0 = Release|x64
 		{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}.Release|x86.ActiveCfg = Release|Win32
 		{166FA0D2-0081-4C2F-AAB7-73AF52E0D874}.Release|x86.Build.0 = Release|Win32
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Debug|x64.ActiveCfg = Debug|x64
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Debug|x64.Build.0 = Debug|x64
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Debug|x86.Build.0 = Debug|Win32
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Release|x64.ActiveCfg = Release|x64
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Release|x64.Build.0 = Release|x64
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Release|x86.ActiveCfg = Release|Win32
+		{7B50422C-833D-44D8-BE0E-E134863CE327}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -230,7 +230,7 @@ private:
 
 		for (typename std::set<ID>::const_iterator id = collectorIDs.begin(); id != collectorIDs.end(); ++id) {
 			if (collectors.get(*id, collector) && collector != 0) {
-				distribute(nodeIDs, collector, *id);
+				distribute(*id, collector, nodeIDs);
 			}
 		}
 	}
