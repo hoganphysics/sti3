@@ -2,15 +2,15 @@
 #define STI_NETWORK_LOCALHUB_H
 
 #include "Hub.h"
-#include "Collector.h"
+//#include "Collector.h"
 #include "Distributer.h"
-#include "Node.h"
+//#include "Node.h"
 #include "HubTrace.h"
 #include "HubID.h"
 
 #include <memory>
 #include <mutex>
-#include <algorithm>
+//
 
 namespace STI
 {
@@ -32,6 +32,12 @@ public:
 	//the Node will be distributed to all the Hubs connected to this Hub.
 	bool addNode(const ID& id, const typename std::shared_ptr<T>& node);
 	bool removeNode(const ID& id);
+
+	void getNodeIDs(std::set<ID>& ids) const;
+	unsigned numberOfNodes() const { return nodeDistributer.numberOfNodes(); }
+
+//	void getHubIDs(std::set<HubID>& ids) const;
+
 
 	//local and remote, but non propagating (not trail tracked)
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
@@ -103,6 +109,19 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id)
 {
 	return removeNode(id, HubTrace());
 }
+
+template<class ID, class T>
+void STI::Network::LocalHub<ID, T>::getNodeIDs(std::set<ID>& ids) const
+{
+	nodeDistributer.getIDs(ids);
+}
+
+//template<class ID, class T>
+//void STI::Network::LocalHub<ID, T>::getHubIDs(std::set<HubID>& ids) const
+//{
+//	hubs.getKeys(ids);
+//}
+
 
 template<class ID, class T>
 bool STI::Network::LocalHub<ID, T>::addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub)

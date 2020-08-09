@@ -93,6 +93,12 @@
     <ClCompile Include="..\src\corbatest\NetworkDeviceHub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\corbatest\ORBManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\corbatest\COSBindingNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\src\corbatest\orbTypes.idl">
@@ -140,6 +146,12 @@
       <Filter>Header Files\Hub</Filter>
     </ClInclude>
     <ClInclude Include="..\src\corbatest\deviceNet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\ORBManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\corbatest\COSBindingNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

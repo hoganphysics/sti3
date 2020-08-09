@@ -5,6 +5,7 @@
 #include "RemoteDevice.h"
 #include "RemoteDeviceHub.h"
 
+#include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "orbTypes.h"
 
@@ -19,6 +20,11 @@ using STI::Network::convert;
 TDeviceHub_i::TDeviceHub_i(const std::shared_ptr<STI::Network::DeviceHub>& hub)
 	: localHub(hub)
 {
+}
+
+TDeviceHub_i::~TDeviceHub_i()
+{
+	STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ::CORBA::Boolean TDeviceHub_i::addHub(const TDeviceHubID& hubID, ::STI::TNetwork::TDeviceHub_ptr hub)

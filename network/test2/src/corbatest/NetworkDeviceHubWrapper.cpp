@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include <iostream>
+
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::Network::DeviceHub;
 using STI::Network::HubID;
@@ -18,6 +20,12 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<DeviceHub
 {
 }
 
+NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()
+{
+	std::cerr << "Destroying NetworkDeviceHubWrapper" << std::endl;
+	//STI::TNetwork::TDeviceHub_i deviceHubServant;
+//	deviceHubServant._remove_ref();
+}
 
 bool NetworkDeviceHubWrapper::addHub(const HubID& id, const typename std::shared_ptr<DeviceHub>& hub)
 {
@@ -95,5 +103,6 @@ bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_
 
 		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
 	}
-	return (tDeviceHub != 0 && !tDeviceHub->_is_nil());
+
+	return !CORBA::is_nil(tDeviceHub);
 }

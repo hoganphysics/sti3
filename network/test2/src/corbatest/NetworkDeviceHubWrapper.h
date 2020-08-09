@@ -23,6 +23,7 @@ class NetworkDeviceHubWrapper : public STI::Network::Hub<STI::Device::DeviceID, 
 public:
 
 	NetworkDeviceHubWrapper(const std::shared_ptr<DeviceHub>& hub);
+	~NetworkDeviceHubWrapper();
 
 	//bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub)
 
@@ -45,6 +46,9 @@ public:
 private:
 
 	std::shared_ptr<DeviceHub> localHub;
+
+
+public:
 	STI::TNetwork::TDeviceHub_i deviceHubServant;
 };
 

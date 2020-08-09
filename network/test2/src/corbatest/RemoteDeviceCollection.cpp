@@ -82,6 +82,23 @@ bool RemoteDeviceCollection::contains(const STI::Device::DeviceID& id) const
 	return success;
 }
 
+unsigned RemoteDeviceCollection::size() const
+{
+	unsigned result = 0;
+	try {
+		result = tDeviceCollection->size();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return result;
+}
+
 bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_ptr<STI::Device::Device>& node) const
 {
 	bool success = false;

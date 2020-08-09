@@ -11,6 +11,7 @@ module TNetwork
 	{
 		string name;
 		string address;
+		unsigned short moduleNum;
 	};
 	typedef sequence<TDeviceHubID> TDeviceHubIDSeq;
 

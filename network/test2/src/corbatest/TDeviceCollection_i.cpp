@@ -4,6 +4,8 @@
 #include "NetworkConvert.h"
 #include "NetworkDeviceWrapper.h"
 
+#include "ORBManager.h"
+
 using STI::Network::NetworkDeviceWrapper;
 using STI::Network::RemoteDevice;
 using STI::TNetwork::TDeviceCollection_i;
@@ -17,9 +19,14 @@ TDeviceCollection_i::TDeviceCollection_i(const std::shared_ptr<STI::Device::Devi
 	collector->getCollection(deviceCollection);
 }
 
+TDeviceCollection_i::~TDeviceCollection_i()
+{
+	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+}
+
 ::CORBA::Boolean TDeviceCollection_i::add(const TDeviceID& deviceID, ::STI::TNetwork::TDevice_ptr device)
 {
-	if (deviceCollection != 0 && device != 0 && !device->_is_nil()) {
+	if (deviceCollection != 0 && !CORBA::is_nil(device)) {
 		
 		//wrap the received TDevice reference in RemoteDevice
 		std::shared_ptr<RemoteDevice> remoteDevice = std::make_shared<RemoteDevice>(device);
@@ -45,6 +52,14 @@ TDeviceCollection_i::TDeviceCollection_i(const std::shared_ptr<STI::Device::Devi
 		return deviceCollection->contains(convert<TDeviceID, DeviceID>(deviceID));
 	}
 	return false;
+}
+
+::CORBA::ULong TDeviceCollection_i::size()
+{
+	if (deviceCollection != 0) {
+		return deviceCollection->size();
+	}
+	return 0;
 }
 
 ::CORBA::Boolean TDeviceCollection_i::get(const TDeviceID& deviceID, ::STI::TNetwork::TDevice_out device)

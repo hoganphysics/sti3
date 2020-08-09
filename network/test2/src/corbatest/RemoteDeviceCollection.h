@@ -23,6 +23,7 @@ public:
 	bool remove(const STI::Device::DeviceID& id);
 
 	bool contains(const STI::Device::DeviceID& id) const;
+	unsigned size() const;
 	
 	bool get(const STI::Device::DeviceID& id, std::shared_ptr<STI::Device::Device>& node) const;
 	void getIDs(std::set<STI::Device::DeviceID>& ids) const;

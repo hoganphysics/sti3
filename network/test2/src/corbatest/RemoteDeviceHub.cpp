@@ -26,6 +26,37 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 {
 }
 
+//void RemoteDeviceHub::getNodeIDs(std::set<STI::Device::DeviceID>& ids) const
+//{
+//	try {
+//		tDeviceHub->getNodeIDs(
+//			
+//		);	//remote call
+//	}
+//	catch (CORBA::TRANSIENT&) {
+//	}
+//	catch (CORBA::SystemException&) {
+//	}
+//	catch (CORBA::Exception&)
+//	{
+//	}
+//}
+//
+//void RemoteDeviceHub::getHubIDs(std::set<HubID>& ids) const
+//{
+//	try {
+//		tDeviceHub->getHubIDs(
+//
+//		);	//remote call
+//	}
+//	catch (CORBA::TRANSIENT&) {
+//	}
+//	catch (CORBA::SystemException&) {
+//	}
+//	catch (CORBA::Exception&)
+//	{
+//	}
+//}
 
 bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub)
 {

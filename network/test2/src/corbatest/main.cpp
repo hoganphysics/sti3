@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 
+#include "ORBManager.h"
+
 using std::cout;
 using std::endl;
 
@@ -49,24 +51,40 @@ public:
 
 int main(int argc, char **argv)
 {
-	auto dev1 = std::make_shared<LocalDevice>("dev1", "localhost", 0, "srv1");
-	auto dev2 = std::make_shared<LocalDevice>("dev2", "localhost", 0, "srv1");
-	auto dev3 = std::make_shared<LocalDevice>("dev3", "localhost", 0, "srv1");
-	auto dev4 = std::make_shared<LocalDevice>("dev4", "localhost", 0, "srv1");
+	auto dev1 = std::make_shared<LocalDevice>("dev1", "localhost", 0, "192.168.1.1/0/MAGIS");
+	auto dev2 = std::make_shared<LocalDevice>("dev2", "localhost", 0, "192.168.1.1/0/MAGIS");
+//	auto dev3 = std::make_shared<LocalDevice>("dev3", "localhost", 0, "srv1");
+//	auto dev4 = std::make_shared<LocalDevice>("dev4", "localhost", 0, "srv1");
 
-	STI::Network::NetworkDeviceHub hub("net hub");
+	STI::Network::NetworkDeviceHub hub("192.168.1.6:2809");
+	STI::Network::NetworkDeviceHub hub3("192.168.1.6:2809");
+
+
+	//hub.setTargetHubs({"192.168.1.3/0/MAGIS","192.168.1.7/1/TestHub"});
 
 	hub.addNode(dev1->id, dev1);
-	hub.addNode(dev2->id, dev2);
+	//hub.addNode(dev2->id, dev2);
 	
-	auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
-	
-	hub2->addNode(dev3->id, dev3);
-	hub2->addNode(dev4->id, dev4);
+	hub3.addNode(dev2->id, dev2);
 
-	hub.connect(hub2);
+	hub.run();
+	hub3.run();
 
-	hub2->clear();
+
+//	hub.orbmanager->shutdown();
+
+	//auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
+	//
+	//hub2->addNode(dev3->id, dev3);
+	//hub2->addNode(dev4->id, dev4);
+
+	//hub.connect(hub2);
+
+	//hub2->clear();
+
+
+
+
 
 	//hub.connect(otherHub);
 	//hub.connect(device);

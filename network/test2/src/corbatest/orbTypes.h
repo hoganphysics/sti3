@@ -68,6 +68,8 @@ _CORBA_MODULE_BEG
 
       ::CORBA::String_member address;
 
+      ::CORBA::UShort moduleNum;
+
     
 
       void operator>>= (cdrStream &) const;

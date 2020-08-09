@@ -19,6 +19,7 @@ STI::TNetwork::TDeviceHubID::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
   _n.marshalString(address,0);
+  moduleNum >>= _n;
 
 }
 
@@ -27,6 +28,7 @@ STI::TNetwork::TDeviceHubID::operator<<= (cdrStream &_n)
 {
   name = _n.unmarshalString(0);
   address = _n.unmarshalString(0);
+  (::CORBA::UShort&)moduleNum <<= _n;
 
 }
 

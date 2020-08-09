@@ -316,6 +316,7 @@ _CORBA_MODULE_BEG
       ::CORBA::Boolean add(const ::STI::TNetwork::TDeviceID& deviceID, ::STI::TNetwork::TDevice_ptr device);
       ::CORBA::Boolean remove(const ::STI::TNetwork::TDeviceID& deviceID);
       ::CORBA::Boolean contains(const ::STI::TNetwork::TDeviceID& deviceID);
+      ::CORBA::ULong size();
       ::CORBA::Boolean get(const ::STI::TNetwork::TDeviceID& deviceID, ::STI::TNetwork::TDevice_out device);
       void getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq);
       void cleanup();
@@ -357,6 +358,7 @@ _CORBA_MODULE_BEG
       virtual ::CORBA::Boolean add(const ::STI::TNetwork::TDeviceID& deviceID, ::STI::TNetwork::TDevice_ptr device) = 0;
       virtual ::CORBA::Boolean remove(const ::STI::TNetwork::TDeviceID& deviceID) = 0;
       virtual ::CORBA::Boolean contains(const ::STI::TNetwork::TDeviceID& deviceID) = 0;
+      virtual ::CORBA::ULong size() = 0;
       virtual ::CORBA::Boolean get(const ::STI::TNetwork::TDeviceID& deviceID, ::STI::TNetwork::TDevice_out device) = 0;
       virtual void getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq) = 0;
       virtual void cleanup() = 0;

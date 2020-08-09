@@ -19,6 +19,7 @@ class TDevice_i : public POA_STI::TNetwork::TDevice
 public:
 
 	TDevice_i(const std::shared_ptr<STI::Device::Device>& device);
+	~TDevice_i();
 
 	::CORBA::Boolean refresh();
 	TDeviceCollection_ptr getDeviceCollection();

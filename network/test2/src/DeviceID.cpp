@@ -51,9 +51,14 @@ std::string DeviceID::generateContext(const DeviceID& deviceID)
 {
 	// context example: STI/Device/192_54_22_1/module_1/DigitalOut/
 	std::stringstream context;
-	context << "STI/Device/"
-		<< STI::Utils::replaceChars(deviceID.getAddress(), "./", "_") << "/"
-		<< "module_" << deviceID.getModule() << "/"
+//	context << "STI/Device/"
+//		<< STI::Utils::replaceChars(deviceID.getAddress(), "./", "_") << "/"
+//		<< "module_" << deviceID.getModule() << "/"
+//		<< STI::Utils::replaceChars(deviceID.getName(), "./", "_") << "/";
+
+	//Example: 192_168_1_2/3/DigitalOut/
+	context << STI::Utils::replaceChars(deviceID.getAddress(), "./", "_") << "/"
+		<< deviceID.getModule() << "/"
 		<< STI::Utils::replaceChars(deviceID.getName(), "./", "_") << "/";
 
 	return context.str();

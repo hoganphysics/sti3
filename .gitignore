@@ -9,3 +9,5 @@ network/test2/src/test2
 doc/~$etwork.docx
 doc/~WRL3065.tmp
 network/test2/corbatest/x64/Debug/
+network/testORB/x64/
+*.tmp

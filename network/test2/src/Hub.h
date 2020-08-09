@@ -1,15 +1,15 @@
 #ifndef STI_NETWORK_HUB_H
 #define STI_NETWORK_HUB_H
 
-#include "Collector.h"
-#include "Distributer.h"
-#include "Node.h"
+//#include "Collector.h"
+//#include "Distributer.h"
+//#include "Node.h"
 #include "HubTrace.h"
 #include "HubID.h"
 
 #include <memory>
-#include <mutex>
-#include <algorithm>
+//#include <mutex>
+//#include <algorithm>
 
 namespace STI
 {
@@ -29,8 +29,10 @@ public:
 	virtual bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub) = 0;
 	virtual bool removeHub(const HubID& id) = 0;
 	
+//	virtual void getNodeIDs(std::set<ID>& ids) const = 0;
+//	virtual void getHubIDs(std::set<HubID>& ids) const = 0;
+
 	//local and remote; trail tracked
-	virtual bool removeNode(const ID& id, const HubTrace& trace) = 0;
 //	virtual bool refresh() = 0;		//for initiating a refresh
 	virtual bool refresh(const HubTrace& trace) = 0;		//local and remote	
 
@@ -38,9 +40,9 @@ public:
 	virtual bool distribute(const ID& id, const typename std::shared_ptr<T>& node, 
 		const HubTrace& trace, const HubID& first) = 0;	//remote add (called by other hubs offering a reference); trail tracked
 	virtual bool distributeNodes(const HubID& targetHub) = 0; //, const HubTrace& trace);		//distribute all local nodes to target hub
-
 	//Force redistribution of all Nodes owned by this Hub to all connected Hubs.
 	virtual bool redistributeNodes(const HubTrace& trace) = 0;		//distribute all owned Nodes to all connected Hubs
+	virtual bool removeNode(const ID& id, const HubTrace& trace) = 0;
 	
 	virtual const HubID& getID() = 0;
 
@@ -58,7 +60,10 @@ public:
 template<class ID, class T>
 bool STI::Network::Hub<ID, T>::connect(const std::shared_ptr<Hub<ID, T>>& hub1, const std::shared_ptr<Hub<ID, T>>& hub2)
 {
-	if (hub1->addHub(hub2->getID(), hub2) && hub2->addHub(hub1->getID(), hub1)) {
+	if (hub1 != 0 && hub2 != 0 
+		&& hub1->addHub(hub2->getID(), hub2)
+		&& hub2->addHub(hub1->getID(), hub1)) {
+
 		//mutual link established.  Distribute nodes.
 		hub1->distributeNodes(hub2->getID());// , HubTrace());
 		hub2->distributeNodes(hub1->getID());// , HubTrace());

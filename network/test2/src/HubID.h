@@ -1,7 +1,11 @@
 #ifndef STI_NETWORK_HUBID_H
 #define STI_NETWORK_HUBID_H
 
+#include "utils.h"
+
 #include <string>
+#include <sstream>
+#include <functional>
 
 namespace STI
 {
@@ -13,7 +17,7 @@ class HubID
 public:
 	HubID() {}
 
-	HubID(std::string name, std::string address) : name(name), address(address) {}
+	HubID(std::string name, std::string address, unsigned short module) : name(name), address(address), module(module) {}
 
 	bool operator<(const HubID& rhs) const { return id().compare(rhs.id()) < 0; }
 	bool operator==(const HubID& rhs) const { return id().compare(rhs.id()) == 0; }
@@ -22,11 +26,18 @@ public:
 
 	std::string name;
 	std::string address;
+	unsigned short module;
 
-private:
 	std::string id() const
 	{
-		return name + address;
+		std::stringstream hubid;
+
+		auto clean = std::bind(STI::Utils::replaceChars, std::placeholders::_1, "./", "_");// STI::Utils::replaceChars(address, "./", "_")
+
+		hubid << clean(address) << "/" << module << "/" << clean(name);
+		return hubid.str();
+
+//		return name + address;
 	}
 };
 

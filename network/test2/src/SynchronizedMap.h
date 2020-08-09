@@ -319,7 +319,7 @@ template<class Key, class T>
 unsigned STI::Utils::SynchronizedMap<Key, T>::size() const
 {
 	std::unique_lock< std::mutex > readLock(mapMutex);
-	return items.size();
+	return static_cast<unsigned>(items.size());
 }
 
 template<class Key, class T>

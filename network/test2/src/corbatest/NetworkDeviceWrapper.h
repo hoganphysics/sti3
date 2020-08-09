@@ -44,7 +44,8 @@ public:
 			//tDevice = networkDeviceWrapper->getTDeviceReference();
 			tDevice = networkDeviceWrapper->deviceServant._this();
 		}
-		return (tDevice != 0 && !tDevice->_is_nil());
+		
+		return !CORBA::is_nil(tDevice);
 	}
 
 private:

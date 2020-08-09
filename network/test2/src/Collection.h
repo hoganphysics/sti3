@@ -25,6 +25,7 @@ public:
 	virtual bool remove(const ID& id) = 0;
 
 	virtual bool contains(const ID& id) const = 0;
+	virtual unsigned size() const = 0;
 
 	virtual bool get(const ID& id, T_ptr& node) const = 0;
 	virtual void getIDs(std::set<ID>& ids) const = 0;

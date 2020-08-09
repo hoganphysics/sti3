@@ -14,15 +14,15 @@ class DeviceIDBase
 public:
 
 	DeviceIDBase(const std::string& name, const std::string& address, unsigned short module, 
-		const std::string& targetServer)
-		: name_l(name), address_l(address), module_l(module), _targetServerName(targetServer) 
+		const std::string& targetServerID)
+		: name_l(name), address_l(address), module_l(module), _targetServerID(targetServerID) 
 	{ regenerateID(); }
 
 	const std::string& getName() const { return name_l; }
 	const std::string& getAddress() const { return address_l; }
 	unsigned short getModule() const { return module_l; }
 	const std::string& getID() const { return deviceID_l; }
-	const std::string& getTargetServerName() const { return _targetServerName; }
+	const std::string& getTargetServerID() const { return _targetServerID; }
 
 	void setName(const std::string& name) { name_l = name; regenerateID();}
 	void setAddress(const std::string& address) { address_l = address; regenerateID();}
@@ -39,7 +39,7 @@ private:
 	unsigned short module_l;
 	std::string deviceID_l;
 
-	std::string _targetServerName;
+	std::string _targetServerID;
 
 };
 
@@ -53,7 +53,7 @@ class DeviceID
 public:
 	DeviceID();
 	DeviceID(const std::string& name, const std::string& address, unsigned short module, 
-		const std::string& targetServer);
+		const std::string& targetServerID);
 	
 	bool operator<(const DeviceID& rhs) const { return getID().compare(rhs.getID()) < 0; }
 	bool operator==(const DeviceID& rhs) const { return getID().compare(rhs.getID()) == 0; }
@@ -63,7 +63,7 @@ public:
 	const std::string& getAddress() const { return deviceIDBase->getAddress(); }
 	unsigned short getModule() const { return deviceIDBase->getModule(); }
 	const std::string& getID() const { return deviceIDBase->getID(); }
-	const std::string& getTargetServerName() const { return deviceIDBase->getTargetServerName(); }
+	const std::string& getTargetServerID() const { return deviceIDBase->getTargetServerID(); }
 
 	
 	static bool stringToDeviceID(const std::string& deviceIDin, DeviceID& deviceIDout);

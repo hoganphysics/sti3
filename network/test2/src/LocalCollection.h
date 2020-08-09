@@ -49,6 +49,7 @@ public:
 	bool remove(const ID& id) { return nodes.remove(id); }
 
 	bool contains(const ID& id) const { return nodes.contains(id); }
+	unsigned size() const { return nodes.size(); }
 
 	bool get(const ID& id, typename Collection<ID, T>::T_ptr& node) const { return nodes.get(id, node); }
 	void getIDs(std::set<ID>& ids) const { nodes.getKeys(ids); }

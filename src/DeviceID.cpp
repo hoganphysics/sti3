@@ -14,9 +14,9 @@ DeviceID::DeviceID()
 
 
 DeviceID::DeviceID(const std::string& name, const std::string& address, unsigned short module, 
-	const std::string& targetServer)
+	const std::string& targetServerID)
 { 
-	deviceIDBase = std::make_shared<DeviceIDBase>(name, address, module, targetServer);
+	deviceIDBase = std::make_shared<DeviceIDBase>(name, address, module, targetServerID);
 }
 
 bool DeviceID::stringToDeviceID(const std::string& deviceIDin, DeviceID& deviceIDout)

@@ -15,7 +15,8 @@ HubID convert<TDeviceHubID, HubID>(const TDeviceHubID& tHubID)
 {
 	return HubID(
 		convert<CORBA::String_member, std::string>(tHubID.name),
-		convert<CORBA::String_member, std::string>(tHubID.address)
+		convert<CORBA::String_member, std::string>(tHubID.address),
+		static_cast<unsigned short>(tHubID.moduleNum)
 	);
 }
 
@@ -37,6 +38,7 @@ bool convert<HubID, TDeviceHubID>(const HubID& hubID, TDeviceHubID& tHubID)
 
 	tHubID.name = convert<string, String_member>(hubID.name);
 	tHubID.address = convert<string, String_member>(hubID.address);
+	tHubID.moduleNum = static_cast<CORBA::UShort>(hubID.module);
 
 	return true;
 }

@@ -36,6 +36,7 @@ module TNetwork
 		boolean remove(in TDeviceID deviceID);
 
 		boolean contains(in TDeviceID deviceID);
+		unsigned long size();
 
 		boolean get(in TDeviceID deviceID, out TDevice device);
 		void getIDs(out TDeviceIDSeq deviceIDseq);

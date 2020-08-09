@@ -27,6 +27,9 @@ public:
 
 	RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub);
 
+//	void getNodeIDs(std::set<STI::Device::DeviceID>& ids) const;
+//	void getHubIDs(std::set<HubID>& ids) const;
+
 	bool addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub);
 	bool removeHub(const HubID& id);
 
