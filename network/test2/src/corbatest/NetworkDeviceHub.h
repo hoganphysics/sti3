@@ -4,8 +4,10 @@
 #include "DeviceID.h"
 #include "Device.h"
 #include "DeviceHub.h"
+
 #include <memory>
 #include <set>
+
 
 namespace STI
 {
@@ -36,14 +38,16 @@ public:
 	void autoReconnectRemoteHubs(bool enabled);
 	void setNameServiceAddress(const std::string& nameServiceAddress) { _nameServiceAddress = nameServiceAddress; }
 
-	void run();
+	void run(bool block);
+
+//	void block();
 
 private:
 
-	std::string format(const HubID& hubID);
+//	std::string format(const HubID& hubID);
 
-	void getAllLiveRemoteHubs(const std::string& baseContext, std::vector<std::shared_ptr<DeviceHub>>& liveHubs);
-	void getAllLiveRemoteHubNames(const std::string& baseContext, std::vector<std::string>& hubNames);
+//	void getAllLiveRemoteHubs(const std::string& baseContext, std::vector<std::shared_ptr<DeviceHub>>& liveHubs);
+//	void getAllLiveRemoteHubNames(const std::string& baseContext, std::vector<std::string>& hubNames);
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;
@@ -60,8 +64,9 @@ private:
 	static std::string nextHubName();
 	static unsigned hubNumber;
 
+//	mutable std::mutex hubMutex;
 
-public:
+//public:
 	std::shared_ptr<ORBManager> orbmanager;		//ptr here to avoid adding ORBManager header to public API
 };
 

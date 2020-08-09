@@ -10,6 +10,7 @@
 #include "COSBindingNode.h"
 
 #include <iostream>
+#include <signal.h>
 
 using STI::Network::ORBManager;
 using STI::Network::HubID;
@@ -102,6 +103,25 @@ namespace STI
 namespace Network
 {
 
+
+
+void ORBManager::signal_callback_handler(int signum)
+{
+	std::cout << "Caught signal " << signum << std::endl;
+	// Terminate program
+	//exit(signum);
+
+	//Caught control-C:  Stop blocking
+	ORBManager::instance->unblock();
+}
+
+void ORBManager::unblock()
+{
+	std::unique_lock<std::mutex> writeLock(orbMutex);
+	_blocking = false;
+	wakeCondition.notify_all();
+}
+
 class Concrete_ORBManager : public ORBManager
 {
 public:
@@ -175,7 +195,7 @@ ORBManager::ORBManager(const std::string& nameServiceIP, const std::string& args
 	}
 
 	_running = false;
-
+	_blocking = false;
 }
 
 
@@ -215,6 +235,20 @@ void ORBManager::run()
 	}
 	std::cerr << "ORB: perform_work()" << std::endl;
 	orb->perform_work();
+//	orb->run();
+}
+
+void ORBManager::block()
+{
+	std::unique_lock<std::mutex> writeLock(orbMutex);
+	_blocking = true;
+
+	signal(SIGINT, ORBManager::signal_callback_handler);
+
+	while (_blocking) {
+		wakeCondition.wait(writeLock);
+	}
+
 //	orb->run();
 }
 

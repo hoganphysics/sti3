@@ -149,8 +149,13 @@ bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 	return LocalDeviceHub::connect(localHub, hub);
 }
 
+//void NetworkDeviceHub::block()
+//{ 
+//	orbmanager->block();
+//}
 
-void NetworkDeviceHub::run()
+
+void NetworkDeviceHub::run(bool block)
 {
 	if (orbmanager != 0 && orbmanager->running()) {
 		return;
@@ -272,8 +277,13 @@ void NetworkDeviceHub::run()
 	//	STI::Device::DeviceID::generateContext(id);
 	//}
 
-	orbmanager->run();	//blocks
+	orbmanager->run();	//doesn't block
+
+	if (block) {
+		orbmanager->block();
+	}
 }
+
 //
 //void NetworkDeviceHub::getAllLiveRemoteHubs(const std::string& baseContext, std::vector<std::shared_ptr<DeviceHub>>& liveHubs)
 //{

@@ -11,6 +11,8 @@
 
 #include "ORBManager.h"
 
+//#include <signal.h>
+
 using std::cout;
 using std::endl;
 
@@ -48,6 +50,11 @@ public:
 	std::shared_ptr<STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>> localCollection;
 };
 
+//void signal_callback_handler(int signum) {
+//	cout << "Caught signal " << signum << endl;
+//	// Terminate program
+//	exit(signum);
+//}
 
 int main(int argc, char **argv)
 {
@@ -67,9 +74,12 @@ int main(int argc, char **argv)
 	
 	hub3.addNode(dev2->id, dev2);
 
-	hub.run();
-	hub3.run();
+	hub.run(false);
+	hub3.run(true);
 
+	//signal(SIGINT, signal_callback_handler);
+
+	//hub.block();
 
 //	hub.orbmanager->shutdown();
 

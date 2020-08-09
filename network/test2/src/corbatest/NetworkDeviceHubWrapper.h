@@ -46,10 +46,8 @@ public:
 private:
 
 	std::shared_ptr<DeviceHub> localHub;
-
-
-public:
 	STI::TNetwork::TDeviceHub_i deviceHubServant;
+
 };
 
 } //Network

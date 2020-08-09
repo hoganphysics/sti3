@@ -8,8 +8,9 @@
 
 #include <memory>
 #include <string>
-#include <mutex>
 #include <vector>
+#include <mutex>
+#include <condition_variable>
 
 namespace STI
 {
@@ -38,6 +39,8 @@ public:
 	
 	void run();
 	void shutdown();
+	void block();
+	void unblock();
 
 //	bool registerHub(const HubID& hubID, const std::shared_ptr<NetworkDeviceHubWrapper>& deviceHub);
 
@@ -64,10 +67,15 @@ private:
 	PortableServer::POA_var poa;
 
 	bool _running;
+	bool _blocking;
 
 	//std::unique_ptr<COSBindingNode> bindingTree;
 
 	mutable std::mutex orbMutex;
+	mutable std::condition_variable wakeCondition;
+
+	static void signal_callback_handler(int signum);
+
 	
 };
 
