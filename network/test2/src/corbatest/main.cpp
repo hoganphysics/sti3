@@ -74,8 +74,8 @@ int main(int argc, char **argv)
 	
 	hub3.addNode(dev2->id, dev2);
 
-	hub.run(false);
-	hub3.run(true);
+	hub3.run(false);
+	hub.run();
 
 	//signal(SIGINT, signal_callback_handler);
 

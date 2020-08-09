@@ -39,6 +39,22 @@ public:
 
 //		return name + address;
 	}
+
+	static bool stringToHubID(const std::string& id, HubID& hubID)
+	{
+		std::vector<std::string> tokens;
+		STI::Utils::splitString(id, "/", tokens);
+
+		unsigned short module;
+
+		if (tokens.size() == 3 && STI::Utils::stringToValue(tokens.at(2), module)) {
+			hubID.address = tokens.at(0);
+			hubID.name = tokens.at(1);
+			hubID.module = module;
+			return true;
+		}
+		return false;
+	}
 };
 
 } //Network

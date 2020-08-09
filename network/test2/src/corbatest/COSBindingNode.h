@@ -44,6 +44,8 @@ public:
 
 	void prune();
 
+	void getLiveLeafs(const std::string& objectName, std::vector<std::string>& objContexts);
+
 	std::string printTree();
 
 private:

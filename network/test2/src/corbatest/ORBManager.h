@@ -5,7 +5,6 @@
 #include <omniORB4/CORBA.h>
 #endif
 
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -26,11 +25,11 @@ class Concrete_ORBManager;
 class ORBManager
 {
 private:
-//public:
-//	ORBManager() {}
-	//singleton, so only one instance of ORB is created
+
+	//This class is a singleton, so that only one instance of ORB is created.
 	ORBManager(const std::string& nameServiceIP, const std::string& args);
 	friend class Concrete_ORBManager;
+
 public:
 	
 	virtual ~ORBManager();

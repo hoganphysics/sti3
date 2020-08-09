@@ -37,7 +37,7 @@ public:
 	unsigned numberOfNodes() const { return nodeDistributer.numberOfNodes(); }
 
 //	void getHubIDs(std::set<HubID>& ids) const;
-
+	bool containsHub(const HubID& hubID) const { return hubs.contains(hubID); }
 
 	//local and remote, but non propagating (not trail tracked)
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
