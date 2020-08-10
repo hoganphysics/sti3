@@ -11,3 +11,14 @@ doc/~WRL3065.tmp
 network/test2/corbatest/x64/Debug/
 network/testORB/x64/
 *.tmp
+src/device/vcproject/x64/
+src/network/vcproject/x64/
+src/device/vcproject/Debug/
+old/network/test2/vcproject/x64/
+old/network/testORB/x64/
+old/network/test2/vcproject/Debug/
+old/vcproject/x64/Debug/
+old/network/test2/corbatest/x64/
+src/network/test/testcorba/x64/
+old/network/test1/vcproject/x64/
+old/network/test1/vcproject/Debug/

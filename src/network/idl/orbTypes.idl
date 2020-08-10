@@ -1,7 +1,6 @@
 #ifndef STI_TNETWORK_ORBTYPES_IDL
 #define STI_TNETWORK_ORBTYPES_IDL
 
-
 module STI
 {
 module TNetwork
