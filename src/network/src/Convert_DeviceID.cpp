@@ -10,7 +10,7 @@ using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
 
 template<>
-DeviceID convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID)
+DeviceID STI::Network::convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID)
 {
 	using std::string;
 
@@ -23,7 +23,7 @@ DeviceID convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID)
 }
 
 template<>
-TDeviceID convert<DeviceID, TDeviceID>(const DeviceID& deviceID)
+TDeviceID STI::Network::convert<DeviceID, TDeviceID>(const DeviceID& deviceID)
 {
 	TDeviceID tDeviceID;
 
@@ -34,7 +34,7 @@ TDeviceID convert<DeviceID, TDeviceID>(const DeviceID& deviceID)
 }
 
 template<>
-bool convert<DeviceID, TDeviceID>(const DeviceID& deviceID, TDeviceID& tDeviceID)
+bool STI::Network::convert<DeviceID, TDeviceID>(const DeviceID& deviceID, TDeviceID& tDeviceID)
 {
 	using std::string;
 	using ::CORBA::String_member;

@@ -69,7 +69,7 @@ private:
 
 	STI::Utils::Distributer<ID, T> nodeDistributer;
 
-	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub>> hubs;
+	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub<ID, T>>> hubs;
 	//add listerned to hubs SynchMap; remove or add should trigger a refresh() on the network
 
 	mutable std::mutex distributerMutex;
@@ -182,7 +182,7 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id, const HubTrace& tra
 
 	std::set<HubID> hubIDs;
 	hubs.getKeys(hubIDs);
-	std::shared_ptr<Hub> hub;
+	std::shared_ptr<Hub<ID, T>> hub;
 
 	//Remove from all connected Hubs
 	for (auto& hubID : hubIDs) {
@@ -265,7 +265,7 @@ bool STI::Network::LocalHub<ID, T>::refresh(const HubTrace& trace)
 
 	std::set<HubID> hubIDs;
 	hubs.getKeys(hubIDs);
-	std::shared_ptr<Hub> hub;
+	std::shared_ptr<Hub<ID, T>> hub;
 
 	for (auto& hubID : hubIDs) {
 		if (!newTrace.includesHubID(hubID)) {
@@ -306,7 +306,7 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 
 	std::set<HubID> hubIDs;
 	hubs.getKeys(hubIDs);
-	std::shared_ptr<Hub> hub;
+	std::shared_ptr<Hub<ID, T>> hub;
 
 	for (auto& hubID : hubIDs) {
 		if (!newTrace.includesHubID(hubID)) {
@@ -336,7 +336,7 @@ bool STI::Network::LocalHub<ID, T>::distributeNodes(const HubID& targetHub)//, c
 	nodeDistributer.getIDs(nodeIDs);		//Nodes owned by this Hub
 	std::shared_ptr<T> node;
 
-	std::shared_ptr<Hub> hub;				//target Hub reference
+	std::shared_ptr<Hub<ID, T>> hub;				//target Hub reference
 
 	if (hubs.get(targetHub, hub) && hub != 0) {
 
@@ -370,7 +370,7 @@ bool STI::Network::LocalHub<ID, T>::redistributeNodes(const HubTrace& trace)
 
 	std::set<HubID> hubIDs;
 	hubs.getKeys(hubIDs);
-	std::shared_ptr<Hub> hub;
+	std::shared_ptr<Hub<ID, T>> hub;
 
 	//Force redistribution of all Nodes owned by this Hub to all connected Hubs
 	for (auto& hubID : hubIDs) {

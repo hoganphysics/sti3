@@ -7,12 +7,17 @@
             "args": [
                 "-g",
                 "-std=c++11",
+                "-std=c++1y",
                 "-I${workspaceFolder}/../../../include/",
+                "-I${workspaceFolder}",
+                //"-I/usr/include/",
                 //"${file}",
                 "${fileDirname}/**.cpp",
+                "-shared",
+                "-fPIC",
                 "-o",
                 //"${fileDirname}/${fileBasenameNoExtension}"
-                "${fileDirname}/test2"
+                "${fileDirname}/libstinetwork.so"
 
             ],
             "options": {

@@ -11,6 +11,11 @@ namespace STI
 namespace Network
 {
 
+template<typename In, typename Out>
+bool convert(const In& input, Out& output);
+
+template<typename In, typename Out>
+Out convert(const In& input);
 
 template<typename In, typename Out, template<class> typename Seq>
 struct ConvertList
@@ -19,7 +24,7 @@ struct ConvertList
 	{
 		output.length(static_cast<unsigned>(input.size()));
 
-		std::vector<In>::const_iterator in = input.begin();
+		typename std::vector<In>::const_iterator in = input.begin();
 		for (unsigned i = 0; i < output.length() && in != input.end(); ++i, ++in) {
 			convert<In, Out>(*in, output[i]);
 		}
@@ -30,7 +35,7 @@ struct ConvertList
 	{
 		output.length(static_cast<unsigned>(input.size()));
 
-		std::set<In>::const_iterator in = input.begin();
+		typename std::set<In>::const_iterator in = input.begin();
 		for (unsigned i = 0; i < output.length() && in != input.end(); ++i, ++in) {
 			convert<In, Out>(*in, (Out&)output[i]);
 		}
@@ -51,7 +56,7 @@ struct ConvertList
 	{
 		output.length(input.size());
 
-		std::map<Any, In>::const_iterator in = input.begin();
+		typename std::map<Any, In>::const_iterator in = input.begin();
 		for (unsigned i = 0; i < output.length() && in != input.end(); ++i, ++in) {
 			//output[i] = convert<In, Out>(in->second);
 			convert<In, Out>(in->second, (Out&)output[i]);

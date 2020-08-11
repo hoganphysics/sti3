@@ -25,6 +25,7 @@
 #include "utils.h"
 
 #include <sstream>
+#include <iostream>
 
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueVector;
@@ -355,3 +356,9 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 	}
 	return result;
 }
+
+void MixedValue::printError()
+{
+	std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
+}
+

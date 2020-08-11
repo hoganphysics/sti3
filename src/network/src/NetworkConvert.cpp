@@ -6,20 +6,20 @@
 using STI::Network::convert;
 
 template<>
-std::string convert<::CORBA::String_member, std::string>(const ::CORBA::String_member& str)
+std::string STI::Network::convert<::CORBA::String_member, std::string>(const ::CORBA::String_member& str)
 {
 	return std::string(str);
 }
 
 template<>
-::CORBA::String_member convert<std::string, ::CORBA::String_member>(const std::string& str)
+::CORBA::String_member STI::Network::convert<std::string, ::CORBA::String_member>(const std::string& str)
 {
 	return CORBA::string_dup(str.c_str());
 }
 
 
 template<>
-::CORBA::UShort convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort)
+::CORBA::UShort STI::Network::convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort)
 {
 	return static_cast<::CORBA::UShort>(ushort);
 }

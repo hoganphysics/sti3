@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_RAWEVENT_FWD_H
 #define STI_ENGINE_RAWEVENT_FWD_H
 
-#include "fwd/DeviceID_fwd.h"
+#include "DeviceID_fwd.h"
 
 #include <vector>
 #include <map>

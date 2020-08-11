@@ -12,7 +12,7 @@ using STI::TNetwork::TDeviceHubTrace;
 
 
 template<>
-bool convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace, TDeviceHubTrace& tHubTrace)
+bool STI::Network::convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace, TDeviceHubTrace& tHubTrace)
 {
 	using STI::TNetwork::TDeviceHubID;
 
@@ -20,7 +20,7 @@ bool convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace, TDeviceHubTrac
 }
 
 template<>
-bool convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tHubTrace, HubTrace& hubTrace)
+bool STI::Network::convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tHubTrace, HubTrace& hubTrace)
 {
 	using STI::TNetwork::TDeviceHubID;
 
@@ -38,7 +38,7 @@ bool convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tHubTrace, HubTra
 }
 
 template<>
-TDeviceHubTrace convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace)
+TDeviceHubTrace STI::Network::convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace)
 {
 	TDeviceHubTrace tDeviceHubTrace;
 
@@ -48,7 +48,7 @@ TDeviceHubTrace convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace)
 }
 
 template<>
-HubTrace convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tDeviceHubTrace)
+HubTrace STI::Network::convert<TDeviceHubTrace, HubTrace>(const TDeviceHubTrace& tDeviceHubTrace)
 {
 	HubTrace hubTrace;
 

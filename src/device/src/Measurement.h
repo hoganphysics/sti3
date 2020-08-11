@@ -17,7 +17,7 @@ class Measurement
 public:
 	
 	Measurement(const RawEvent& sourceEvent);
-	Measurement::Measurement(const Measurement& measurement);
+	Measurement(const Measurement& measurement);
 
 	void setMeasurementResult(const STI::Utils::MixedValue& result);
 	void extractMeasurementResult(STI::Utils::MixedValue& data);

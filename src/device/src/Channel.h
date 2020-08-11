@@ -34,7 +34,7 @@ public:
 	STI::Utils::MixedValueType outputType;
 
 	void setChannelName(const std::string& name);
-	std::string Channel::getChannelName() const;
+	std::string getChannelName() const;
 
 	//getLastValue (unknown is allowed, i.e., XXXXXXX)  Is Empty the same as Unknown?  I think so!
 	//saveLastValue(const MixedValue&);

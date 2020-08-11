@@ -27,7 +27,7 @@ public:
 
 	bool include(const Key& key) const 
 	{ 
-		std::deque<Key>::iterator it = std::find(buffer_keys->begin(), buffer_keys->end(), key);
+		typename std::deque<Key>::iterator it = std::find(buffer_keys->begin(), buffer_keys->end(), key);
 		return (it != buffer_keys->end());		// true if key is in buffer_keys
 	}
 	bool replace(const Key& oldKey, const Key& newKey) const { return (oldKey == newKey); }
@@ -133,7 +133,7 @@ bool STI::Utils::OrderedBufferMap<Key, T>::remove(const Key& key)
 {
 	std::unique_lock<std::mutex> writeLock(dequeMutex);
 
-	std::deque<Key>::iterator it = std::find(buffer_keys.begin(), buffer_keys.end(), key);
+	typename std::deque<Key>::iterator it = std::find(buffer_keys.begin(), buffer_keys.end(), key);
 
 	if ((it != buffer_keys.end()) && buffer.remove(key)) {
 		buffer_keys.erase(it);

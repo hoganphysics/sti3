@@ -11,7 +11,7 @@ using STI::TNetwork::TDeviceHubID;
 
 
 template<>
-HubID convert<TDeviceHubID, HubID>(const TDeviceHubID& tHubID)
+HubID STI::Network::convert<TDeviceHubID, HubID>(const TDeviceHubID& tHubID)
 {
 	return HubID(
 		convert<CORBA::String_member, std::string>(tHubID.name),
@@ -21,7 +21,7 @@ HubID convert<TDeviceHubID, HubID>(const TDeviceHubID& tHubID)
 }
 
 template<>
-TDeviceHubID convert<HubID, TDeviceHubID>(const HubID& hubID)
+TDeviceHubID STI::Network::convert<HubID, TDeviceHubID>(const HubID& hubID)
 {
 	TDeviceHubID tDeviceHubID;
 
@@ -31,7 +31,7 @@ TDeviceHubID convert<HubID, TDeviceHubID>(const HubID& hubID)
 }
 
 template<>
-bool convert<HubID, TDeviceHubID>(const HubID& hubID, TDeviceHubID& tHubID)
+bool STI::Network::convert<HubID, TDeviceHubID>(const HubID& hubID, TDeviceHubID& tHubID)
 {
 	using std::string;
 	using ::CORBA::String_member;

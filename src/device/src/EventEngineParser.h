@@ -52,7 +52,7 @@ private:
 	std::map<STI::Utils::GraphPathLabel, MeasurementCounter> measurementEventGraph;
 //	std::map<STI::Utils::GraphPathLabel, const RawEvent*> measurementEventGraph;
 
-	bool EventEngineParser::countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);
+	bool countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);
 	bool maxErrorCheck(unsigned errorCount, unsigned maxErrors);
 
 	std::vector<EngineParsingError> errors;

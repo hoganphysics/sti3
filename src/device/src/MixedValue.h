@@ -71,7 +71,8 @@ public:
 		//This version of the function is call for all T values that are unsupported.
 		//This template is called for all types that don't have an explicitly overloaded setValue function.
 
-		std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
+		printError();	//temp; push error message
+		//std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
 	}
 
 	template<typename T> void setValue(const std::vector<T>& value)
@@ -121,6 +122,8 @@ public:
 	static std::string TypeToString(const MixedValueType& type);
 
 private:
+
+	void printError();
 
 	void convertToVector();
 

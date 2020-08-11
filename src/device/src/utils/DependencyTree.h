@@ -3,7 +3,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include "boost/graph/topological_sort.hpp"
+#include <boost/graph/topological_sort.hpp>
 namespace bgl = boost;
 
 #include <mutex>
@@ -19,13 +19,20 @@ namespace Utils
 template<class T>
 class DependencyTree
 {
+private:
+
+	typedef typename bgl::adjacency_list<bgl::vecS, bgl::vecS, bgl::bidirectionalS, T, int> Graph;
+	typedef typename bgl::graph_traits<Graph>::vertex_descriptor vertex_t;
+	typedef typename bgl::graph_traits<Graph>::edge_descriptor edge_t;
+	typedef typename std::map<const T, typename DependencyTree<T>::vertex_t> VertexMap;
+
 public:
 	DependencyTree() {}
 	DependencyTree(const std::set<T>& nodes)
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
-		for (std::set<T>::iterator it = nodes.begin(); it != nodes.end(); ++it) {
+		for (typename std::set<T>::iterator it = nodes.begin(); it != nodes.end(); ++it) {
 			_addVertex(*it);
 		}
 	}
@@ -40,8 +47,8 @@ public:
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
-		VertexMap::iterator it_source = vertices.find(source);
-		VertexMap::iterator it_target = vertices.find(target);
+		typename VertexMap::iterator it_source = vertices.find(source);
+		typename VertexMap::iterator it_target = vertices.find(target);
 
 		if (it_source == vertices.end()) {
 			return false;
@@ -67,7 +74,7 @@ public:
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
-		VertexMap::iterator it = vertices.find(node);
+		typename VertexMap::iterator it = vertices.find(node);
 		if (it != vertices.end()) {
 			bgl::clear_vertex(it->second, g);	//can't use remove_vertex here because the graph is based on a vector, so the indices get messed up
 			return true;
@@ -79,12 +86,12 @@ public:
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 		
-		VertexMap::const_iterator it_source = vertices.find(source);
-		VertexMap::const_iterator it_target = vertices.find(target);
+		typename VertexMap::const_iterator it_source = vertices.find(source);
+		typename VertexMap::const_iterator it_target = vertices.find(target);
 		if (it_source == vertices.end() || it_target == vertices.end())
 			return false;
 		
-		bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
+		typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
 		for (bgl::tie(ei, ei_end) = out_edges(it_source->second, g); ei != ei_end; ++ei) {
 
 			if (g[bgl::target(*ei, g)] == target) {
@@ -99,10 +106,10 @@ public:
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
 		count = 0;
-		VertexMap::const_iterator it = vertices.find(node);
+		typename VertexMap::const_iterator it = vertices.find(node);
 		if (it != vertices.end()) {
 
-			bgl::graph_traits <Graph>::in_edge_iterator ei, ei_end;
+			typename bgl::graph_traits <Graph>::in_edge_iterator ei, ei_end;
 			for (bgl::tie(ei, ei_end) = in_edges(it->second, g); ei != ei_end; ++ei) {
 				count++;
 			}
@@ -128,7 +135,7 @@ public:
 
 		//topological_sort returns a vector with the most dependent vertex at the beginning.
 		//sortTree returns the reverse of this, so the first element is the least dependent
-		for (std::vector<vertex_t>::reverse_iterator it = sortedNodes.rbegin(); it != sortedNodes.rend(); ++it) {
+		for (typename std::vector<vertex_t>::reverse_iterator it = sortedNodes.rbegin(); it != sortedNodes.rend(); ++it) {
 			orderedNodes.push_back(g[*it]);
 		}
 
@@ -148,7 +155,7 @@ public:
 		//returns the first cycle in the graph
 
 		std::unique_lock< std::mutex > writeLock(graphMutex);
-		VertexMap::const_iterator it;
+		typename VertexMap::const_iterator it;
 
 		bool cycleFound = false;
 		for (it = vertices.begin(); it != vertices.end() && !cycleFound; ++it) {
@@ -165,10 +172,8 @@ private:
 		vertices.insert(std::pair<T, vertex_t>(vertex, bgl::add_vertex(vertex, g)));
 	}
 
-	typedef typename bgl::adjacency_list<bgl::vecS, bgl::vecS, bgl::bidirectionalS, T, int> Graph;
-	typedef typename bgl::graph_traits<Graph>::vertex_descriptor vertex_t;
-	typedef typename bgl::graph_traits<typename Graph>::edge_descriptor edge_t;
-	typedef typename std::map<const T, typename vertex_t> VertexMap;
+
+	
 	Graph g;
 	VertexMap vertices;
 
@@ -194,8 +199,8 @@ private:
 		newpath.push_back(index);
 		std::vector<T> children;
 
-		VertexMap::const_iterator it_source = vertices.find(index);
-		bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
+		typename VertexMap::const_iterator it_source = vertices.find(index);
+		typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
 		for (bgl::tie(ei, ei_end) = out_edges(it_source->second, g); ei != ei_end; ++ei) {
 			vertex_t child = bgl::target(*ei, g);
 			children.push_back(g[child]);
@@ -203,7 +208,7 @@ private:
 
 		bool loopFound = false;
 		if (children.size() > 0) {
-			for (std::vector<T>::iterator it = children.begin(); it != children.end() && !loopFound; ++it) {
+			for (typename std::vector<T>::iterator it = children.begin(); it != children.end() && !loopFound; ++it) {
 				loopFound = findCycle_(*it, newpath, cycle);
 			}
 		}

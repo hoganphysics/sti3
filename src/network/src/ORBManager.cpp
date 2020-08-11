@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <signal.h>
+#include <string.h>
 
 using STI::Network::ORBManager;
 using STI::Network::HubID;
@@ -141,7 +142,7 @@ ORBManager::ORBManager(const std::string& nameServiceIP, const std::string& args
 
 	for (unsigned i = 0; i < arguments.size(); i++) {
 		argv[i] = new char[arguments[i].size() + 1];
-		strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
+		//strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
 	}
 
 
