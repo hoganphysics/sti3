@@ -288,7 +288,8 @@ void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const 
 {
 	CosNaming::NamingContext_var base(getNamingContext(baseContext));
 
-	COSBindingNode node("Base", base);
+	//COSBindingNode node("Base", base);
+	COSBindingNode node(baseContext, base);
 	node.prune();
 	
 	std::cout << node.printTree() << std::endl;
@@ -348,21 +349,32 @@ CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& con
 {
 	CosNaming::NamingContext_var contextBase;
 
-	try {
-		CosNaming::Name_var contextName;
-		contextName = omni::omniURI::stringToName(context.c_str());
+	bool success = false;
 
-		getRootContext(contextBase);
-		contextBase = CosNaming::NamingContext::_narrow(contextBase->resolve(contextName));
-	}
-	catch (CORBA::Exception&)
-	{
-		std::cerr << "NamingContext exception." << std::endl;
-	}
-	catch (...) {
-		std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
-	}
+	//auto tmp = context.c_str();
 
+	while (!success) {
+
+
+		try {
+			CosNaming::Name_var contextName;
+			//contextName-> tmp;
+			contextName = omni::omniURI::stringToName(context.c_str());
+
+			getRootContext(contextBase);
+			contextBase = CosNaming::NamingContext::_narrow(contextBase->resolve(contextName));
+
+			success = true;
+		}
+		catch (CORBA::Exception& ex)
+		{
+			std::cerr << "NamingContext exception." << std::endl;
+		}
+		catch (...) {
+			std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
+		}
+
+	}
 	return contextBase._retn();
 }
 
@@ -459,7 +471,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 	return true;
 }
 
-bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref)
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref)
 {
 	bool success = false;
 

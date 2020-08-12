@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "networklib", "networklib.vcxproj", "{0C759979-CF57-42BF-B46C-0E9FDD8E917B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testcorba", "..\test\testcorba\testcorba.vcxproj", "{5CAF83FB-6586-4195-BA9E-2FD5C7D405D2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0C759979-CF57-42BF-B46C-0E9FDD8E917B} = {0C759979-CF57-42BF-B46C-0E9FDD8E917B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

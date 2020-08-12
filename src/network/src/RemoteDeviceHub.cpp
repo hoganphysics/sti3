@@ -75,7 +75,8 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
-	catch (CORBA::SystemException&) {
+	catch (CORBA::SystemException& ex) {
+		std::string temp = ex._name();
 	}
 	catch (CORBA::Exception&)
 	{

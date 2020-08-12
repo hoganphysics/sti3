@@ -30,6 +30,12 @@ public:
 	{
 	}
 
+	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
+	{
+		localDevice->getCollection(collection);
+	}
+
+
 	void write(unsigned input) { localDevice->write(input); }
 	bool refresh() { return localDevice->refresh(); }
 

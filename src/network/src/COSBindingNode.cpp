@@ -256,15 +256,19 @@ std::string COSBindingNode::printTree()
 
 void COSBindingNode::getLiveLeafs(const std::string& objectName, std::vector<std::string>& objContexts)
 {
+	getLiveLeafsFullPath(objectName, "", objContexts);
+}
+
+void COSBindingNode::getLiveLeafsFullPath(const std::string& objectName, const std::string& basePath, std::vector<std::string>& objContexts)
+{
 	if (isLeaf() && !isDead() && getName().compare(objectName) == 0) {
 		//found match
-		objContexts.push_back(getName());
+		objContexts.push_back(basePath + getName());
 	}
 	else {
 		//check branches recursively
 		for (auto& branch : _branches) {
-			branch->getLiveLeafs(objectName, objContexts);
+			branch->getLiveLeafsFullPath(objectName, basePath + getName() + "/", objContexts);
 		}
 	}
 }
-
