@@ -3,19 +3,21 @@
 #include "DeviceID.h"
 #include "HubID.h"
 #include "HubTrace.h"
-
+#include "NetworkDeviceWrapper.h"
 #include "orbTypes.h"
 
 #include <memory>
 
 #include <iostream>
 
+using STI::Network::NetworkDeviceWrapper;
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::Network::DeviceHub;
 using STI::Network::HubID;
 using STI::Network::HubTrace;
+using STI::Network::LocalHub;
 
-NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<DeviceHub>& hub)
+NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>>& hub)
 	: localHub(hub), deviceHubServant(hub)
 {
 }
@@ -26,6 +28,17 @@ NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()
 	//STI::TNetwork::TDeviceHub_i deviceHubServant;
 //	deviceHubServant._remove_ref();
 }
+
+bool NetworkDeviceHubWrapper::addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node)
+{
+	if (localHub != 0) {
+
+		std::shared_ptr<NetworkDeviceWrapper> wrappedNode = std::make_shared<NetworkDeviceWrapper>(node);
+		return localHub->addNode(id, wrappedNode);
+	}
+	return false;
+}
+
 
 bool NetworkDeviceHubWrapper::addHub(const HubID& id, const typename std::shared_ptr<DeviceHub>& hub)
 {

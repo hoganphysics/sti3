@@ -60,7 +60,7 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 
 bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub)
 {
-	return false;
+//	return false;
 
 	STI::TNetwork::TDeviceHub_ptr tDeviceHubRef;
 
@@ -75,7 +75,8 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
-	catch (CORBA::SystemException&) {
+	catch (CORBA::SystemException& ex) {
+		std::string temp = ex._name();
 	}
 	catch (CORBA::Exception&)
 	{

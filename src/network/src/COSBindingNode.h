@@ -50,6 +50,9 @@ public:
 
 private:
 
+	void getLiveLeafsFullPath(const std::string& objectName, const std::string& basePath, std::vector<std::string>& objContexts);
+
+
 	void walkBranches(CosNaming::NamingContext_var& nodeContext);
 
 	std::string printNode(unsigned int offset);

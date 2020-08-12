@@ -47,7 +47,7 @@ public:
 	void getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, std::vector<std::string>& objContexts);
 
 	bool bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref);
-	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref);
+	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
 
 	static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);
 

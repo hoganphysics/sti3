@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_NETWORKDEVICEHUBWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEHUBWRAPPER_H
 
-#include "Hub.h"
+#include "LocalHub.h"
 #include "TDeviceHub_i.h"
 #include "DeviceHub.h"
 #include "orbTypes.h"
@@ -22,15 +22,17 @@ class NetworkDeviceHubWrapper : public STI::Network::Hub<STI::Device::DeviceID, 
 {
 public:
 
-	NetworkDeviceHubWrapper(const std::shared_ptr<DeviceHub>& hub);
+	NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>>& hub);
 	~NetworkDeviceHubWrapper();
+
+	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
+	bool removeNode(const STI::Device::DeviceID& id, const HubTrace& trace);
 
 	//bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub)
 
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<STI::Device::DeviceID, STI::Device::Device>>& hub);
 	bool removeHub(const HubID& id);
 
-	bool removeNode(const STI::Device::DeviceID& id, const HubTrace& trace);
 	bool refresh(const HubTrace& trace);
 
 	bool distribute(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node,
@@ -45,7 +47,9 @@ public:
 
 private:
 
-	std::shared_ptr<DeviceHub> localHub;
+	//std::shared_ptr<DeviceHub> localHub;
+	std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>> localHub;
+	
 	STI::TNetwork::TDeviceHub_i deviceHubServant;
 
 };
