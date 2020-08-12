@@ -3,7 +3,7 @@
 #include "NetworkConvert.h"
 
 #include "NetworkDeviceHubWrapper.h"
-#include "NetworkDeviceWrapper.h"
+#include "TDeviceRefInterface.h"
 
 #include "DeviceHub.h"
 #include "HubID.h"
@@ -17,12 +17,12 @@ using STI::Network::RemoteDeviceHub;
 using STI::Network::HubID;
 using STI::Network::HubTrace;
 using STI::Network::convert;
-using STI::Network::NetworkDeviceWrapper;
+using STI::Network::TDeviceRefInterface;
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::TNetwork::TDeviceHubID;
 
 RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
-	: tDeviceHub(deviceHub)
+	: tDeviceHub(STI::TNetwork::TDeviceHub::_duplicate(deviceHub))
 {
 }
 
@@ -171,7 +171,7 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 
 
 	//if (!getRemoteDevice(node, tDevice)) {
-	if (!NetworkDeviceWrapper::getTDeviceReference(node, tDevice)) {
+	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 			return false;
 	}
 
@@ -262,4 +262,3 @@ const HubID& RemoteDeviceHub::getID()
 
 	return hubID;
 }
-

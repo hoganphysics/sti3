@@ -1,14 +1,14 @@
 
 #include "RemoteDeviceCollection.h"
 #include "NetworkConvert.h"
-#include "NetworkDeviceWrapper.h"
+#include "TDeviceRefInterface.h"
 
 #include "RemoteDevice.h"
 #include "DeviceID.h"
 
 #include "orbTypes.h"
 
-using STI::Network::NetworkDeviceWrapper;
+using STI::Network::TDeviceRefInterface;
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -18,7 +18,7 @@ using STI::Network::convert;
 
 
 RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_ptr deviceCollection)
-	: tDeviceCollection(deviceCollection)
+	: tDeviceCollection(STI::TNetwork::TDeviceCollection::_duplicate(deviceCollection))
 {
 }
 
@@ -26,7 +26,7 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 {
 	STI::TNetwork::TDevice_ptr tDevice;
 
-	if (!NetworkDeviceWrapper::getTDeviceReference(node, tDevice)) {
+	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 		return false;
 	}
 

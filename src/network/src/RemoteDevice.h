@@ -5,6 +5,7 @@
 
 #include "Device.h"
 #include "DeviceCollection.h"
+#include "TDeviceRefInterface.h"
 
 #include <memory>
 
@@ -13,7 +14,8 @@ namespace STI
 namespace Network
 {
 
-class RemoteDevice : public STI::Device::Device
+class RemoteDevice : public STI::Device::Device, 
+					 public STI::Network::TDeviceRefInterface	//mixin
 {
 public:
 
@@ -27,7 +29,10 @@ public:
 
 private:
 
-	::STI::TNetwork::TDevice_var tDevice;		//remote reference
+	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
+
+
+	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
 
 };
 

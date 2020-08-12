@@ -2,11 +2,11 @@
 #include "TDeviceCollection_i.h"
 #include "RemoteDevice.h"
 #include "NetworkConvert.h"
-#include "NetworkDeviceWrapper.h"
+#include "TDeviceRefInterface.h"
 
 #include "ORBManager.h"
 
-using STI::Network::NetworkDeviceWrapper;
+using STI::Network::TDeviceRefInterface;
 using STI::Network::RemoteDevice;
 using STI::TNetwork::TDeviceCollection_i;
 using ::STI::TNetwork::TDeviceID;
@@ -78,7 +78,7 @@ TDeviceCollection_i::~TDeviceCollection_i()
 	}
 
 	STI::TNetwork::TDevice_ptr tDevice;
-	success = NetworkDeviceWrapper::getTDeviceReference(localDevice, tDevice);
+	success = TDeviceRefInterface::getTDeviceReference(localDevice, tDevice);
 
 	if (success) {
 		
