@@ -1,0 +1,7 @@
+Building in Linux
+
+After installing omniORB, I had to run
+
+sudo ldconfig
+
+in order for programs linked against the omniorb libraries to work.  Otherwise it could not find the omniorb shared libs that are stored in /usr/local/lib/, even though they seem to be in the search path.

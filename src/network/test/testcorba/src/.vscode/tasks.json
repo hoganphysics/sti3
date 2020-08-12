@@ -7,24 +7,24 @@
             "args": [
                 "-g",
                 "-std=c++11",
-                "-std=c++1y",
-                "-I${workspaceFolder}/../../../include/",
-                "-I${workspaceFolder}",
+                "-pthread",
+                "-I${workspaceFolder}/../../../../../include/",
+                "-I${workspaceFolder}/../../../src/",
+                "-I${workspaceFolder}/../../../../device/src/",
                 //"-I/usr/include/",
                 //"${file}",
                 "${fileDirname}/**.cpp",
-                "-shared",
-                "-fPIC",
-                "-lomnithread",
-                "-lomniORB4",
-                "-lomniDynamic4",
-                "-lomniCodeSets4",
-                //"-lomnisslTP4",   //if OpenSSL is available
-                "-lCOS4",
-                "-lCOSDynamic4",
+                //"-shared",
+                //"-fPIC",
                 "-o",
                 //"${fileDirname}/${fileBasenameNoExtension}"
-                "${fileDirname}/libstinetwork.so"
+                "${fileDirname}/testcorba",
+                "-L${workspaceFolder}/../../../src",
+                "-L${workspaceFolder}/../../../../device/src",
+                "-Wl,-rpath,.",     //for including a specific directory in the library search path (during run); here "."
+                //"-Wl,-rpath,/usr/local/lib",
+                "-lstidevice",
+                "-lstinetwork"
 
             ],
             "options": {

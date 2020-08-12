@@ -24,3 +24,5 @@ old/network/test1/vcproject/x64/
 old/network/test1/vcproject/Debug/
 *.so
 src/device/test/testdevice/testdevice
+src/network/test/testcorba/src/testcorba
+

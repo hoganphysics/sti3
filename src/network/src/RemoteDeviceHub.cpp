@@ -60,7 +60,7 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 
 bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub)
 {
-	return false;
+//	return false;
 
 	STI::TNetwork::TDeviceHub_ptr tDeviceHubRef;
 
