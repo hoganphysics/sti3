@@ -7,16 +7,32 @@ using STI::Network::RemoteDeviceCollection;
 
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
-	: tDevice(device)
+	: _tDevice(STI::TNetwork::TDevice::_duplicate(device))
 {
 }
+
+
+bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+{
+	STI::TNetwork::TDevice_var newDev;
+	newDev = _tDevice;		//implicit duplicate
+
+	tDevice = newDev.out();
+
+	//tDevice = STI::TNetwork::TDeviceHub::_duplicate();
+	//tDevice = _tDevice;
+	//tDevice = _tDevice->_duplicate(_tDevice);
+	return !CORBA::is_nil(tDevice);
+}
+
+
 
 bool RemoteDevice::refresh()
 {
 	bool success = false;
 
 	try {
-		success = tDevice->refresh();
+		success = _tDevice->refresh();
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -32,7 +48,7 @@ bool RemoteDevice::refresh()
 void RemoteDevice::write(unsigned input)
 {
 	try {
-		tDevice->write(input);
+		_tDevice->write(input);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -51,7 +67,7 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	std::shared_ptr<RemoteDeviceCollection> remoteCollection;	//wrapper
 
 	try {
-		tDeviceCollection = tDevice->getDeviceCollection();
+		tDeviceCollection = _tDevice->getDeviceCollection();
 		success = true;
 	}
 	catch (CORBA::TRANSIENT&) {

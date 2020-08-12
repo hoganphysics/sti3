@@ -117,6 +117,9 @@
     <ClInclude Include="..\..\..\include\NetworkDeviceHub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\TDeviceRefInterface.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Convert_DeviceID.cpp">

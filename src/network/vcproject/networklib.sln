@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testcorba", "..\test\testco
 		{0C759979-CF57-42BF-B46C-0E9FDD8E917B} = {0C759979-CF57-42BF-B46C-0E9FDD8E917B}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testcorbaclient", "..\test\testcorbaclient\testcorbaclient.vcxproj", "{DB7373FE-3DFB-471A-B511-30FA95197CFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0C759979-CF57-42BF-B46C-0E9FDD8E917B} = {0C759979-CF57-42BF-B46C-0E9FDD8E917B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{5CAF83FB-6586-4195-BA9E-2FD5C7D405D2}.Release|x64.Build.0 = Release|x64
 		{5CAF83FB-6586-4195-BA9E-2FD5C7D405D2}.Release|x86.ActiveCfg = Release|Win32
 		{5CAF83FB-6586-4195-BA9E-2FD5C7D405D2}.Release|x86.Build.0 = Release|Win32
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Debug|x64.ActiveCfg = Debug|x64
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Debug|x64.Build.0 = Debug|x64
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Debug|x86.ActiveCfg = Debug|Win32
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Debug|x86.Build.0 = Debug|Win32
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Release|x64.ActiveCfg = Release|x64
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Release|x64.Build.0 = Release|x64
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Release|x86.ActiveCfg = Release|Win32
+		{DB7373FE-3DFB-471A-B511-30FA95197CFD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

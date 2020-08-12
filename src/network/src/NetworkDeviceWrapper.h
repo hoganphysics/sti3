@@ -3,7 +3,7 @@
 
 #include "Device.h"
 #include "TDevice_i.h"
-
+#include "TDeviceRefInterface.h"
 #include "orbTypes.h"
 
 #include <memory>
@@ -21,7 +21,8 @@ namespace Network
 //comes in (with a corba reference), we need to wrap 
 
 //thin wrapper around a LocalDevice that also holds a TDevice_i servant of the same Device
-class NetworkDeviceWrapper : public STI::Device::Device
+class NetworkDeviceWrapper : public STI::Device::Device,
+							 public STI::Network::TDeviceRefInterface	//mixin
 {
 public:
 
@@ -41,20 +42,27 @@ public:
 
 //	STI::TNetwork::TDevice_ptr getTDeviceReference() { return deviceServant._this(); }
 
-	static bool getTDeviceReference(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice)
-	{
-		std::shared_ptr<NetworkDeviceWrapper> networkDeviceWrapper;
-		networkDeviceWrapper = std::dynamic_pointer_cast<NetworkDeviceWrapper>(device);
+	//static bool getTDeviceReference(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice)
+	//{
+	//	std::shared_ptr<NetworkDeviceWrapper> networkDeviceWrapper;
+	//	networkDeviceWrapper = std::dynamic_pointer_cast<NetworkDeviceWrapper>(device);
 
-		if (networkDeviceWrapper) {		//check dynamic_pointer_cast
-			//tDevice = networkDeviceWrapper->getTDeviceReference();
-			tDevice = networkDeviceWrapper->deviceServant._this();
-		}
+	//	if (networkDeviceWrapper) {		//check dynamic_pointer_cast
+	//		//tDevice = networkDeviceWrapper->getTDeviceReference();
+	//		tDevice = networkDeviceWrapper->deviceServant._this();
+	//	}
+	//	
+	//	return !CORBA::is_nil(tDevice);
+	//}
+
+private:
+
+	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+	{
+		tDevice = deviceServant._this();
 		
 		return !CORBA::is_nil(tDevice);
 	}
-
-private:
 
 	std::shared_ptr<STI::Device::Device> localDevice;
 	STI::TNetwork::TDevice_i deviceServant;
