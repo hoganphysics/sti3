@@ -12,11 +12,22 @@
 #include <mutex>
 //
 
+
 namespace STI
 {
 namespace Network
 {
 
+/*!
+Implements the Hub interface for to realize a local Hub.  LocalHub stores references to nodes
+running locally in the same process and can be connected to other Hubs (either local or remote).  When other
+Hubs are connected, the LocalHub distributes its locally stored Node references to these other Hubs by 
+offering their Node IDs. It also accepts references from connected Hubs and offers them to each of its stored 
+Node references.
+
+@tparam ID The Node ID used to uniquely identify Nodes in the network.
+@tparam T The Node type stored and distributed by this Hub.
+*/
 template<class ID, class T>
 class LocalHub : public Hub<ID, T>
 {
@@ -32,16 +43,24 @@ public:
 	//the Node will be distributed to all the Hubs connected to this Hub.
 	bool addNode(const ID& id, const typename std::shared_ptr<T>& node);
 	bool removeNode(const ID& id);
+	bool getNode(const ID& id, typename std::shared_ptr<T>& node);
 
+	///Get node IDs stored by this Hub.
 	void getNodeIDs(std::set<ID>& ids) const;
 	unsigned numberOfNodes() const { return nodeDistributer.numberOfNodes(); }
 
-//	void getHubIDs(std::set<HubID>& ids) const;
+	void getHubIDs(std::set<HubID>& ids) const { hubs.getKeys(ids); }
 	bool containsHub(const HubID& hubID) const { return hubs.contains(hubID); }
 
 	//local and remote, but non propagating (not trail tracked)
+
+	//! Connect another Hub to this Hub.
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
 	bool removeHub(const HubID& id);
+	bool getHub(const HubID& id, typename std::shared_ptr<Hub<ID, T>>& hub)
+	{
+		return hubs.get(id, hub);
+	}
 
 	//local and remote; trail tracked
 	bool removeNode(const ID& id, const HubTrace& trace);
@@ -67,10 +86,11 @@ private:
 
 	bool refreshNodeReferences(const ID& id, const typename std::shared_ptr<T>& node);
 
-	STI::Utils::Distributer<ID, T> nodeDistributer;
+	STI::Utils::Distributer<ID, T> nodeDistributer;		///< The hub is built around a NodeDistributer.
 
 	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub<ID, T>>> hubs;
 	//add listerned to hubs SynchMap; remove or add should trigger a refresh() on the network
+	//-> not neccessary if the devics generate events when their collections update
 
 	mutable std::mutex distributerMutex;
 
@@ -109,6 +129,13 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id)
 {
 	return removeNode(id, HubTrace());
 }
+
+template<class ID, class T>
+bool STI::Network::LocalHub<ID, T>::getNode(const ID& id, typename std::shared_ptr<T>& node)
+{
+	return nodeDistributer.getNode(id, node);
+}
+
 
 template<class ID, class T>
 void STI::Network::LocalHub<ID, T>::getNodeIDs(std::set<ID>& ids) const
@@ -162,7 +189,7 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id, const HubTrace& tra
 		//If so, distrubute a fresh reference to the network.
 		//distribute(id, node, const HubTrace& trace, const HubID& first)
 		std::shared_ptr<T> node;
-		if (nodeDistributer.contains(id) && nodeDistributer.get(id, node)
+		if (nodeDistributer.contains(id) && nodeDistributer.getNode(id, node)
 			&& node != 0 && node->refresh()) {
 
 			//Force the distribute call to originate at the source of the removeNode call to avoid
@@ -207,7 +234,7 @@ bool STI::Network::LocalHub<ID, T>::refresh()
 	std::shared_ptr<T> node;
 
 	for (auto& id : nodeIDs) {
-		if (nodeDistributer.get(id, node) && node != 0) {
+		if (nodeDistributer.getNode(id, node) && node != 0) {
 			if (!node->refresh()) {
 				removeNode(id);
 			}
@@ -342,7 +369,7 @@ bool STI::Network::LocalHub<ID, T>::distributeNodes(const HubID& targetHub)//, c
 
 		//Distribute all nodes owned by this Hub to the target Hub
 		for (auto& id : nodeIDs) {
-			if (nodeDistributer.get(id, node) && node != 0 && newTrace.size() > 0) {
+			if (nodeDistributer.getNode(id, node) && node != 0 && newTrace.size() > 0) {
 				hub->distribute(id, node, newTrace, newTrace.first());
 			}
 		}

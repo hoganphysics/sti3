@@ -18,7 +18,7 @@ class EventQueue
 {
 public:
 	EventQueue();
-	~EventQueue();
+	virtual ~EventQueue();
 
 	//Adds event to the back of the event queue (FIFO behavior)
 	void addEvent(const Event& evt);

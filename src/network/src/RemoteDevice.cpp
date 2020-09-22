@@ -26,7 +26,8 @@ bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
 }
 
 
-
+/// Check if the RemoteDevice reference is still live.  Attempts a call over the network
+/// and returns false if it times out or there is some other error.
 bool RemoteDevice::refresh()
 {
 	bool success = false;

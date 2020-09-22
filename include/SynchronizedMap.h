@@ -17,6 +17,8 @@ To do:  Refactor SynchronizedMap so there is a base class with no Event pusher, 
 EmittingSynchronizedMap
 EESynchronizedMap
 EventEmittingSynchronizedMap
+ActiveSynchronizedMap
+EventDispatcherSynchronizedMap
 
 */
 
@@ -208,6 +210,7 @@ template<class Key, class T>
 void STI::Utils::SynchronizedMap<Key, T>::addListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
 {
 	eventHandler.addListener(listener);
+	eventHandler.start();
 }
 
 template<class Key, class T>

@@ -28,21 +28,24 @@
 #include <sstream>
 
 using STI::Engine::RawEvent;
+using STI::Engine::RawEventType;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
 RawEvent::RawEvent(const STI::Device::DeviceID& targetDeviceID, 
 	double time, unsigned short channel, const MixedValue& value, 
-	const std::string& description, unsigned eventNumber, bool isMeasurementEvent) 
+	const std::string& description, unsigned eventNumber, const RawEventType& eventType)
 	:
 	_time(time), _channel(channel), _description(description), 
-	isMeasurement(isMeasurementEvent), targetDeviceID(targetDeviceID)//, _isScheduled(false)
+	_eventType(eventType), targetDeviceID(targetDeviceID)//, _isScheduled(false)
 {
+	isMeasurement = (eventType == RawEventType::Measurement);
 	eventGraphPath.push_back(eventNumber);
 }
 
 RawEvent::RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber)
-	: _time(newEvent._time), _channel(newEvent._channel), _description(newEvent._description),
+	: _time(newEvent._time), _channel(newEvent._channel), _description(newEvent._description), 
+	_eventType(newEvent._eventType),
 	isMeasurement(newEvent.isMeasurement), targetDeviceID(newEvent.targetDeviceID)//, _isScheduled(false)
 {
 	//Creates a new RawEvent based on the data stored in newEvent and the eventGraphPath

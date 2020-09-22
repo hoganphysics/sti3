@@ -8,21 +8,22 @@ namespace STI
 {
 namespace Device
 {
+//
+//template<class T>
+//class Convertable
+//{
+//	T& convert() { return static_cast<T&>(*this); }		//static polymorphism via CRTP
+//};
+//
+//template<class T>
+//class Device2 : public STI::Network::Node<DeviceID, Device2<T>>, public Convertable<T>
+//{
+//	virtual void write(unsigned input) = 0;
+//	virtual bool refresh() = 0;
+//
+//};
 
-template<class T>
-class Convertable
-{
-	T& convert() { return static_cast<T&>(*this); }		//static polymorphism via CRTP
-};
-
-template<class T>
-class Device2 : public STI::Network::Node<DeviceID, Device2<T>>, public Convertable<T>
-{
-	virtual void write(unsigned input) = 0;
-	virtual bool refresh() = 0;
-
-};
-
+class DeviceEventDispatcher;
 
 //CRTP
 //pure interface for node elements
@@ -32,6 +33,8 @@ public:
 	virtual void write(unsigned input) = 0;
 
 	virtual bool refresh() = 0;
+
+	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
 
 };
 

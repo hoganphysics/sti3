@@ -125,20 +125,20 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\DeviceCollection.h" />
+    <ClInclude Include="..\..\..\include\LocalCollection.h" />
     <ClInclude Include="..\..\..\include\NetworkDeviceHub.h" />
     <ClInclude Include="..\src\ConvertList.h" />
     <ClInclude Include="..\src\COSBindingNode.h" />
-    <ClInclude Include="..\src\DeviceCollection.h" />
     <ClInclude Include="..\src\deviceNet.h" />
     <ClInclude Include="..\src\Distributer.h" />
     <ClInclude Include="..\src\HubTrace.h" />
-    <ClInclude Include="..\src\LocalCollection.h" />
-    <ClInclude Include="..\src\LocalDevice.h" />
     <ClInclude Include="..\src\LocalDeviceHub.h" />
     <ClInclude Include="..\src\LocalHub.h" />
     <ClInclude Include="..\src\NetworkConvert.h" />
     <ClInclude Include="..\src\NetworkDeviceHubWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceWrapper.h" />
+    <ClInclude Include="..\src\NodeWalker.h" />
     <ClInclude Include="..\src\ORBManager.h" />
     <ClInclude Include="..\src\orbTypes.h" />
     <ClInclude Include="..\src\RemoteDevice.h" />

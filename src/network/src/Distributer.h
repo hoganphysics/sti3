@@ -77,7 +77,7 @@ public:
 
 	unsigned numberOfNodes() const { return nodes->size(); }
 
-	bool get(const ID& id, T_ptr& node) const
+	bool getNode(const ID& id, T_ptr& node) const
 	{
 		return nodes->get(id, node);
 	}	

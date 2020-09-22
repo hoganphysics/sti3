@@ -98,7 +98,11 @@ bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 
 	//No -- it should wrap hub in a NetworkDeviceHubWrapper ! 
 
-	return LocalDeviceHub::connect(localHub, hub);
+	//return LocalDeviceHub::connect(localHub, hub);
+
+	auto localHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(hub);
+
+	return LocalDeviceHub::connect(deviceHubWrapper, localHubWrapper);
 }
 
 void NetworkDeviceHub::run(bool block)

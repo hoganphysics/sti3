@@ -20,6 +20,41 @@ using STI::Network::LocalHub;
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>>& hub)
 	: localHub(hub), deviceHubServant(hub)
 {
+	//The LocalHub might have (local) nodes and hubs already attached that must be wrapped.
+	//For all hubs currently stored by localHub, replace with NetworkDeviceHubWrapper (this is recursive)
+
+	std::set<STI::Network::HubID> hubIDs;
+	localHub->getHubIDs(hubIDs);
+	std::shared_ptr<DeviceHub> attachedHub;
+	std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>> attachedLocalHub;
+	std::shared_ptr<DeviceHub> wrappedHub;
+
+	for (auto& hubID : hubIDs) {
+		if (localHub->getHub(hubID, attachedHub) && attachedHub != 0) {
+
+			//Check if the attached hub is local
+			attachedLocalHub = std::dynamic_pointer_cast<LocalHub<STI::Device::DeviceID, STI::Device::Device>>(attachedHub);
+			
+			if (attachedLocalHub != 0) {
+				//this is a LocalHub; wrap it.
+				wrappedHub = std::make_shared<NetworkDeviceHubWrapper>(attachedLocalHub);	//recursive call
+				addHub(hubID, wrappedHub);	//replaces with new wrapped version
+			}
+
+		}
+	}
+
+	//For all stored nodes, re-add (replace) with NetworkDeviceWrapper
+
+	std::set<STI::Device::DeviceID> nodeIDs;
+	localHub->getNodeIDs(nodeIDs);
+	std::shared_ptr<STI::Device::Device> node;
+
+	for (auto& id : nodeIDs) {
+		if (localHub->getNode(id, node) && node != 0) {
+			addNode(id, node);		//replaces with NetworkDeviceWrapper version
+		}
+	}
 }
 
 NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()

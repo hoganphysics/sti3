@@ -34,6 +34,12 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{65bce91e-9285-4330-9e95-19286709d053}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\device\Events">
+      <UniqueIdentifier>{d2f2fc2c-bc0f-4d66-a04a-168509a904dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\device\events">
+      <UniqueIdentifier>{7765f8d1-ad61-4c15-ac84-baf01e0f911d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Channel.cpp">
@@ -71,6 +77,21 @@
     </ClCompile>
     <ClCompile Include="..\src\DeviceID.cpp">
       <Filter>Source Files\device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LocalDevice.cpp">
+      <Filter>Source Files\device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceEvent.cpp">
+      <Filter>Source Files\device\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceEventDispatcher.cpp">
+      <Filter>Source Files\device\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceEventHandler.cpp">
+      <Filter>Source Files\device\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DeviceEventReceiver.cpp">
+      <Filter>Source Files\device\events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +211,27 @@
     </ClInclude>
     <ClInclude Include="..\src\fwd\SynchronousEvent_fwd.h">
       <Filter>Header Files\fwd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LocalDevice.h">
+      <Filter>Header Files\device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventDispatcher-work.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEvent.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventListener.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventDispatcher.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventReceiver.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventHandler.h">
+      <Filter>Header Files\device\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

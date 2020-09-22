@@ -23,6 +23,8 @@
 #ifndef STI_ENGINE_RAWEVENT_H
 #define STI_ENGINE_RAWEVENT_H
 
+#include "fwd/RawEvent_fwd.h"
+
 #include "MixedValue.h"
 #include "EventStackTrace.h"
 #include "fwd/DeviceID_fwd.h"
@@ -42,14 +44,21 @@ namespace Engine
 
 class SynchronousEvent;		//for confirming measurement scheduling
 
+
+
 class RawEvent
 {
 public:
 
-	RawEvent(const STI::Device::DeviceID& targetDeviceID, 
-		double time, unsigned short channel, const STI::Utils::MixedValue& value, 
-		const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
+	//RawEvent(const STI::Device::DeviceID& targetDeviceID,
+	//	double time, unsigned short channel, const STI::Utils::MixedValue& value,
+	//	const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
 	
+	RawEvent(const STI::Device::DeviceID& targetDeviceID,
+		double time, unsigned short channel, const STI::Utils::MixedValue& value,
+		const std::string& description, unsigned eventNumber, const RawEventType& eventType);
+
+
 	//For device generated events
 	RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber);
 	
@@ -61,6 +70,16 @@ public:
 	unsigned short channel() const;
 	const STI::Utils::MixedValue& value() const;
 	std::string description() const { return _description; }
+
+	//struct Command
+	//{
+	//	enum class CommandType { Play, Pause, Waveform, Jump };	//...
+	//	CommandType type;
+	//};
+	//const Command& command() const;
+	
+	//enum class EventType { Output, Measurement, Pause, Waveform, Jump };	//...
+	const RawEventType& type() const { return _eventType; }
 
 	const STI::Device::DeviceID& targetDevice() const;
 
@@ -83,6 +102,7 @@ private:
 	std::string _description;
 	EventStackTrace trace;
 	bool isMeasurement;
+	RawEventType _eventType;
 	const STI::Device::DeviceID& targetDeviceID;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event

@@ -19,6 +19,9 @@ typedef std::map<double, RawEventVector> RawEventMap;
 typedef std::map<STI::Device::DeviceID, RawEventVector> DeviceEventMap;
 typedef std::shared_ptr<DeviceEventMap> DeviceEventMap_ptr;
 
+enum class RawEventType { Play, Measurement, Waveform, Pause, Jump };	//...  Normal?
+
+
 } //Engine
 } //STI
 

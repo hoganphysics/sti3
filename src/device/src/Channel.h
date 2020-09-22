@@ -38,6 +38,8 @@ public:
 
 	//getLastValue (unknown is allowed, i.e., XXXXXXX)  Is Empty the same as Unknown?  I think so!
 	//saveLastValue(const MixedValue&);
+	//lastOutValue
+	//lastInValue
 
 private:
 

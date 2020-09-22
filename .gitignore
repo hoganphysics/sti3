@@ -26,3 +26,5 @@ old/network/test1/vcproject/Debug/
 src/device/test/testdevice/testdevice
 src/network/test/testcorba/src/testcorba
 src/network/test/testcorbaclient/x64/
+doc/doxygen/out/
+src/device/test/testEvents/vcproject/x64/
