@@ -4,6 +4,7 @@
 #include "DeviceEventHandler.h"
 
 #include <set>
+#include <memory>
 
 using STI::Device::DeviceEventDispatcher;
 using STI::Device::DeviceEvent;
@@ -47,7 +48,7 @@ void DeviceEventDispatcher::removeEventHandler(const DeviceID& id)
 }
 
 
-void DeviceEventDispatcher::handleEvent(const DeviceEvent& evt)
+void DeviceEventDispatcher::handleEvent(const std::shared_ptr<DeviceEvent>& evt)
 {
 	std::set<DeviceID> ids;
 	handlers.getKeys(ids);

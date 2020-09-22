@@ -38,7 +38,7 @@ public:
 	}
 
 
-	void handleEvent(const Event& evt)
+	void handleEvent(const std::shared_ptr<Event>& evt)
 	{
 		std::set<std::string> ids;
 		listeners.getKeys(ids);
@@ -61,7 +61,7 @@ private:
 };
 
 //For handling events from a single partner device
-class DeviceEventHandler : public STI::Utils::EventQueue<DeviceEvent>
+class DeviceEventHandler : public STI::Utils::EventQueue<std::shared_ptr<DeviceEvent>>
 {
 public:
 
@@ -115,12 +115,12 @@ public:
 	//	genericListeners.addListener(id, listener);
 	//}
 
-	bool hasListeners(const DeviceEvent& evt);
+	bool hasListeners(const std::shared_ptr<DeviceEvent>& evt);
 
 private:
 
 	//EventQueue implementation
-	void handleEvent(const DeviceEvent& evt);
+	void handleEvent(const std::shared_ptr<DeviceEvent>& evt);
 
 
 	//template<typename T>

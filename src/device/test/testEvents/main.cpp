@@ -28,10 +28,10 @@ class TestListener : public STI::Device::DeviceEventListener<STI::Device::Refres
 public:
 	TestListener(const std::string& label) : label(label) {}
 
-	void handleEvent(const STI::Device::RefreshDeviceEvent& evt)
+	void handleEvent(const std::shared_ptr<STI::Device::RefreshDeviceEvent>& evt)
 	{
 		
-		cout << "Refresh " << label << ". Source: " << evt.sourceID().getID() << endl;
+		cout << "Refresh " << label << ". Source: " << evt->sourceID().getName() << endl;
 	}
 
 	std::string label;
@@ -43,8 +43,8 @@ public:
 	TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer) : LocalDevice(name, address, module, targetServer)
 	{
-
-		listener = std::make_shared<TestListener>("testListener");
+		std::string lname = "listener:" + name;
+		listener = std::make_shared<TestListener>(lname);
 
 		std::shared_ptr<STI::Device::DeviceEventReceiver> receiver;
 		getEventReceiver(receiver);
@@ -52,13 +52,18 @@ public:
 		std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>> listener2 = listener;
 		receiver->addListener(STI::Device::DeviceID("dev1", "localhost", 0, ""), "listener_1", listener2);
 	}
+	~TestDevice()
+	{
+		cout << "Destroying " << id.getName() << endl;
+	}
 
 	void fireRefreshEvent()
 	{
 		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
 		getEventDispatcher(dispatcher);
 
-		dispatcher->addEvent( STI::Device::RefreshDeviceEvent(id) );
+		auto evt = std::make_shared<STI::Device::RefreshDeviceEvent>(id);
+		dispatcher->addEvent(evt);
 	}
 	
 	std::shared_ptr<TestListener> listener;
@@ -88,9 +93,10 @@ int main(int argc, char **argv)
 
 	STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>::connect(hub1, hub2);
 
-	dev1->fireRefreshEvent();
 
 	hub2->addNode(dev4->id, dev4);
+
+	dev1->fireRefreshEvent();
 
 	hub1->refresh();
 
@@ -106,11 +112,11 @@ int main(int argc, char **argv)
 
 	p2 = p1;
 
-	p1->write(1);
-	p2->get().write(2);
+	//p1->write(1);
+	//p2->get().write(2);
 
-	(*p2)->write(3);
-	p2.get()->get().write(4);
+	//(*p2)->write(3);
+	//p2.get()->get().write(4);
 
 
 	hub1->clear();

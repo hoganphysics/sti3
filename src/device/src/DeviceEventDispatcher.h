@@ -17,7 +17,7 @@ class DeviceEventHandler;
 
 /// Devices push all locally generated events to the DeviceEventDispatcher where they are queued.  
 /// The dispatcher holds references to remote event handlers that subscribe to specific event types.
-class DeviceEventDispatcher : public STI::Utils::EventQueue<DeviceEvent>
+class DeviceEventDispatcher : public STI::Utils::EventQueue<std::shared_ptr<DeviceEvent>>
 {
 public:
 
@@ -32,7 +32,7 @@ public:
 private:
 
 	//EventQueue implementation
-	void handleEvent(const DeviceEvent& evt);
+	void handleEvent(const std::shared_ptr<DeviceEvent>& evt);
 
 	STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<DeviceEventHandler>> handlers;
 };
