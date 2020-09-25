@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include;..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\src;..\..\device\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(OutDir)$(TargetFileName)" "$(ProjectDir)..\..\..\lib\"</Command>
@@ -114,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include;..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\src;..\..\device\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -136,6 +136,7 @@
     <ClInclude Include="..\src\LocalDeviceHub.h" />
     <ClInclude Include="..\src\LocalHub.h" />
     <ClInclude Include="..\src\NetworkConvert.h" />
+    <ClInclude Include="..\src\NetworkDeviceEventHandlerWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceHubWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceWrapper.h" />
     <ClInclude Include="..\src\NodeWalker.h" />
@@ -143,48 +144,62 @@
     <ClInclude Include="..\src\orbTypes.h" />
     <ClInclude Include="..\src\RemoteDevice.h" />
     <ClInclude Include="..\src\RemoteDeviceCollection.h" />
+    <ClInclude Include="..\src\RemoteDeviceEventDispatcher.h" />
+    <ClInclude Include="..\src\RemoteDeviceEventHandler.h" />
     <ClInclude Include="..\src\RemoteDeviceHub.h" />
     <ClInclude Include="..\src\TDeviceCollection_i.h" />
+    <ClInclude Include="..\src\TDeviceEventDispatcher_i.h" />
+    <ClInclude Include="..\src\TDeviceEventHandler_i.h" />
     <ClInclude Include="..\src\TDeviceHub_i.h" />
     <ClInclude Include="..\src\TDeviceRefInterface.h" />
     <ClInclude Include="..\src\TDevice_i.h" />
+    <ClInclude Include="..\src\TRefreshIndicator_i.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Convert_DeviceEvent.cpp" />
     <ClCompile Include="..\src\Convert_DeviceID.cpp" />
     <ClCompile Include="..\src\Convert_HubID.cpp" />
     <ClCompile Include="..\src\Convert_HubTrace.cpp" />
     <ClCompile Include="..\src\COSBindingNode.cpp" />
     <ClCompile Include="..\src\deviceNet.cpp" />
+    <ClCompile Include="..\src\deviceNetDynSK.cpp" />
     <ClCompile Include="..\src\NetworkConvert.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHub.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHubWrapper.cpp" />
     <ClCompile Include="..\src\ORBManager.cpp" />
     <ClCompile Include="..\src\orbTypes.cpp" />
+    <ClCompile Include="..\src\orbTypesDynSK.cpp" />
     <ClCompile Include="..\src\RemoteDevice.cpp" />
     <ClCompile Include="..\src\RemoteDeviceCollection.cpp" />
+    <ClCompile Include="..\src\RemoteDeviceEventDispatcher.cpp" />
+    <ClCompile Include="..\src\RemoteDeviceEventHandler.cpp" />
     <ClCompile Include="..\src\RemoteDeviceHub.cpp" />
     <ClCompile Include="..\src\TDeviceCollection_i.cpp" />
+    <ClCompile Include="..\src\TDeviceEventDispatcher_i.cpp" />
+    <ClCompile Include="..\src\TDeviceEventHandler_i.cpp" />
     <ClCompile Include="..\src\TDeviceHub_i.cpp" />
     <ClCompile Include="..\src\TDevice_i.cpp" />
+    <ClCompile Include="NetworkDeviceEventHandlerWrapper.cpp" />
+    <ClCompile Include="TRefreshIndicator_i.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\idl\deviceNet.idl">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">deviceNetidl.bat</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">omniidl... Generating CORBA skeletons for devicehub.idl</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\deviceNet.h;$(ProjectDir)..\src\deviceNet.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\idl\orbTypes.idl;$(ProjectDir)..\src\orbTypes.h</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">omniidl... Generating CORBA skeletons for deviceNet.idl</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\deviceNet.h;$(ProjectDir)..\src\deviceNet.cpp;$(ProjectDir)..\src\deviceNetDynSK.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\idl\orbTypes.idl;$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;$(ProjectDir)..\src\orbTypesDynSK.cpp</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">deviceNetidl.bat</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">omniidl... Generating CORBA skeletons for devicehub.idl</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\src\deviceNet.h;$(ProjectDir)..\src\deviceNet.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\idl\orbTypes.idl;$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">omniidl... Generating CORBA skeletons for deviceNet.idl</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\src\deviceNet.h;$(ProjectDir)..\src\deviceNet.cpp;$(ProjectDir)..\src\deviceNetDynSK.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\idl\orbTypes.idl;$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;$(ProjectDir)..\src\orbTypesDynSK.cpp</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="..\idl\orbTypes.idl">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">orbTypesidl.bat</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">omniidl... Generating CORBA skeletons for orbTypes.idl</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;$(ProjectDir)..\src\orbTypesDynSK.cpp;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">orbTypesidl.bat</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">omniidl... Generating CORBA skeletons for orbTypes.idl</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\src\orbTypes.h;$(ProjectDir)..\src\orbTypes.cpp;$(ProjectDir)..\src\orbTypesDynSK.cpp;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,41 +1,35 @@
 #ifndef STI_DEVICE_DEVICEEVENTDISPATCHER_H
 #define STI_DEVICE_DEVICEEVENTDISPATCHER_H
 
-#include "DeviceEvent.h"
-#include "EventQueue.h"
-#include "SynchronizedMap.h"
 
 #include <memory>
-
 
 namespace STI
 {
 namespace Device
 {
 
+class DeviceID;
+class DeviceEvent;
 class DeviceEventHandler;
 
-/// Devices push all locally generated events to the DeviceEventDispatcher where they are queued.  
-/// The dispatcher holds references to remote event handlers that subscribe to specific event types.
-class DeviceEventDispatcher : public STI::Utils::EventQueue<std::shared_ptr<DeviceEvent>>
+
+class DeviceEventDispatcher
 {
 public:
+	
+	virtual ~DeviceEventDispatcher() {}
 
-	DeviceEventDispatcher();
-	~DeviceEventDispatcher();
+	virtual void addEventHandler(const DeviceID& targetID, const std::shared_ptr<DeviceEventHandler>& handler) = 0;
+	virtual void removeEventHandler(const DeviceID& targetID) = 0;
+	virtual bool makeEventHandler(std::shared_ptr<DeviceEventHandler>& handler) = 0;
 
-	void clearAll();
+	virtual void addEvent(const std::shared_ptr<DeviceEvent>& evt) = 0;
+	virtual void clearEvents() = 0;
 
-	void addEventHandler(const DeviceID& id, const std::shared_ptr<DeviceEventHandler>& handler);
-	void removeEventHandler(const DeviceID& id);
 
-private:
-
-	//EventQueue implementation
-	void handleEvent(const std::shared_ptr<DeviceEvent>& evt);
-
-	STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<DeviceEventHandler>> handlers;
 };
+
 
 } //Device
 } //STI

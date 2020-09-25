@@ -1,6 +1,6 @@
 
 #include "LocalDevice.h"
-#include "DeviceEventDispatcher.h"
+#include "LocalDeviceEventDispatcher.h"
 #include "DeviceEventReceiver.h"
 
 #include <memory>
@@ -12,6 +12,7 @@ using STI::Device::Device;
 using STI::Device::DeviceID;
 using STI::Device::LocalDevice;
 using STI::Device::DeviceEventDispatcher;
+using STI::Device::LocalDeviceEventDispatcher;
 using STI::Device::DeviceEventReceiver;
 
 
@@ -20,8 +21,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 {
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>();;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
+//	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>();
 
-	deviceEventDispatcher = std::make_shared<DeviceEventDispatcher>();
+	deviceEventDispatcher = std::make_shared<LocalDeviceEventDispatcher>();
 
 	deviceEventReceiver = std::make_shared<DeviceEventReceiver>(id, localCollection);
 }

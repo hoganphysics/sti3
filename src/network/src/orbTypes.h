@@ -80,6 +80,10 @@ _CORBA_MODULE_BEG
 
     typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceHubID,TDeviceHubID_var > TDeviceHubID_out;
 
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceHubID;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceHubIDSeq;
+
     class TDeviceHubIDSeq_var;
 
     class TDeviceHubIDSeq : public _CORBA_Unbounded_Sequence< TDeviceHubID >  {
@@ -208,6 +212,8 @@ _CORBA_MODULE_BEG
 
     typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceHubTrace,TDeviceHubTrace_var > TDeviceHubTrace_out;
 
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceHubTrace;
+
     struct TDeviceID {
       typedef _CORBA_ConstrType_Variable_Var<TDeviceID> _var_type;
 
@@ -229,6 +235,10 @@ _CORBA_MODULE_BEG
     typedef TDeviceID::_var_type TDeviceID_var;
 
     typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceID,TDeviceID_var > TDeviceID_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceID;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceIDSeq;
 
     class TDeviceIDSeq_var;
 
@@ -342,6 +352,189 @@ _CORBA_MODULE_BEG
       TDeviceIDSeq_out& operator=(const TDeviceIDSeq_var&);
     };
 
+    enum TDeviceEventType { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, Unknown /*, __max_TDeviceEventType=0xffffffff */ };
+    typedef TDeviceEventType& TDeviceEventType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceEventType;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceEventTypeSeq;
+
+    // Need to declare <<= for elem type, as GCC expands templates early
+#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
+     friend inline void operator >>= (TDeviceEventType, cdrStream&);
+     friend inline void operator <<= (TDeviceEventType&, cdrStream&);
+#endif
+
+    class TDeviceEventTypeSeq_var;
+
+    class TDeviceEventTypeSeq : public _CORBA_Unbounded_Sequence_w_FixSizeElement< TDeviceEventType, 4, 4 >  {
+    public:
+      typedef TDeviceEventTypeSeq_var _var_type;
+      inline TDeviceEventTypeSeq() {}
+      inline TDeviceEventTypeSeq(const TDeviceEventTypeSeq& _s)
+        : _CORBA_Unbounded_Sequence_w_FixSizeElement< TDeviceEventType, 4, 4 > (_s) {}
+
+      inline TDeviceEventTypeSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence_w_FixSizeElement< TDeviceEventType, 4, 4 > (_max) {}
+      inline TDeviceEventTypeSeq(_CORBA_ULong _max, _CORBA_ULong _len, TDeviceEventType* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence_w_FixSizeElement< TDeviceEventType, 4, 4 > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TDeviceEventTypeSeq& operator = (const TDeviceEventTypeSeq& _s) {
+        _CORBA_Unbounded_Sequence_w_FixSizeElement< TDeviceEventType, 4, 4 > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TDeviceEventTypeSeq_out;
+
+    class TDeviceEventTypeSeq_var {
+    public:
+      inline TDeviceEventTypeSeq_var() : _pd_seq(0) {}
+      inline TDeviceEventTypeSeq_var(TDeviceEventTypeSeq* _s) : _pd_seq(_s) {}
+      inline TDeviceEventTypeSeq_var(const TDeviceEventTypeSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TDeviceEventTypeSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TDeviceEventTypeSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TDeviceEventTypeSeq_var& operator = (TDeviceEventTypeSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TDeviceEventTypeSeq_var& operator = (const TDeviceEventTypeSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TDeviceEventTypeSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TDeviceEventType& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TDeviceEventTypeSeq* operator -> () { return _pd_seq; }
+      inline const TDeviceEventTypeSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TDeviceEventTypeSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TDeviceEventTypeSeq& () const { return *_pd_seq; }
+      inline operator TDeviceEventTypeSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TDeviceEventTypeSeq& in() const { return *_pd_seq; }
+      inline TDeviceEventTypeSeq&       inout()    { return *_pd_seq; }
+      inline TDeviceEventTypeSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TDeviceEventTypeSeq* _retn() { TDeviceEventTypeSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TDeviceEventTypeSeq_out;
+      
+    private:
+      TDeviceEventTypeSeq* _pd_seq;
+    };
+
+    class TDeviceEventTypeSeq_out {
+    public:
+      inline TDeviceEventTypeSeq_out(TDeviceEventTypeSeq*& _s) : _data(_s) { _data = 0; }
+      inline TDeviceEventTypeSeq_out(TDeviceEventTypeSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TDeviceEventTypeSeq*) 0; }
+      inline TDeviceEventTypeSeq_out(const TDeviceEventTypeSeq_out& _s) : _data(_s._data) {}
+      inline TDeviceEventTypeSeq_out& operator = (const TDeviceEventTypeSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TDeviceEventTypeSeq_out& operator = (TDeviceEventTypeSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TDeviceEventTypeSeq*&()  { return _data; }
+      inline TDeviceEventTypeSeq*& ptr()       { return _data; }
+      inline TDeviceEventTypeSeq* operator->() { return _data; }
+
+      inline TDeviceEventType& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TDeviceEventTypeSeq*& _data;
+
+    private:
+      TDeviceEventTypeSeq_out();
+      TDeviceEventTypeSeq_out& operator=(const TDeviceEventTypeSeq_var&);
+    };
+
+    struct TAnyEvent {
+      typedef _CORBA_ConstrType_Variable_Var<TAnyEvent> _var_type;
+
+      
+      TDeviceEventType type;
+
+      ::CORBA::Any evt;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TAnyEvent::_var_type TAnyEvent_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TAnyEvent,TAnyEvent_var > TAnyEvent_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TAnyEvent;
+
+    struct TDeviceEvent {
+      typedef _CORBA_ConstrType_Variable_Var<TDeviceEvent> _var_type;
+
+      
+      TDeviceEventType type;
+
+      TDeviceID sourceID;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TDeviceEvent::_var_type TDeviceEvent_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceEvent,TDeviceEvent_var > TDeviceEvent_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceEvent;
+
+    struct TRefreshDeviceEvent {
+      typedef _CORBA_ConstrType_Variable_Var<TRefreshDeviceEvent> _var_type;
+
+      
+      TDeviceEvent base;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TRefreshDeviceEvent::_var_type TRefreshDeviceEvent_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TRefreshDeviceEvent,TRefreshDeviceEvent_var > TRefreshDeviceEvent_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TRefreshDeviceEvent;
+
   _CORBA_MODULE_END
 
 _CORBA_MODULE_END
@@ -376,6 +569,70 @@ _CORBA_MODULE_END
 
 #undef _core_attr
 #undef _dyn_attr
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceHubID& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHubID* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceHubID*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceHubID*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceHubIDSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHubIDSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceHubIDSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceHubIDSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceHubTrace& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHubTrace* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceHubTrace*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceHubTrace*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceID& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceID* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceID*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceID*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceIDSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceIDSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceIDSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceIDSeq*& _sp);
+
+inline void operator >>=(STI::TNetwork::TDeviceEventType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TDeviceEventType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::Unknown) {
+    _e = (STI::TNetwork::TDeviceEventType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceEventType& _s);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceEventTypeSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventTypeSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceEventTypeSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceEventTypeSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TAnyEvent& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAnyEvent* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TAnyEvent*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TAnyEvent*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceEvent& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEvent* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceEvent*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceEvent*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TRefreshDeviceEvent& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TRefreshDeviceEvent* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TRefreshDeviceEvent*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TRefreshDeviceEvent*& _sp);
 
 
 

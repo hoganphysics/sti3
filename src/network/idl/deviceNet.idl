@@ -45,6 +45,30 @@ module TNetwork
 		void clear();
 	};
 
+	interface TRefreshIndicator
+	{
+		void refresh();
+	};
+
+	interface TDeviceEventHandler
+	{
+		void addEvent(in TAnyEvent evt);
+		//boolean hasListeners(in TDeviceEvent evt);
+		void clearEvents();
+
+		readonly attribute TDeviceEventTypeSeq listenersTypes;
+
+		void setRefreshIndicator(in TRefreshIndicator refresher);
+	};
+
+	interface TDeviceEventDispatcher
+	{
+		void addEventHandler(in TDeviceID targetID, in TDeviceEventHandler handler);
+		void removeEventHandler(in TDeviceID targetID);
+
+		//void addEvent(in TDeviceEvent evt);
+	};
+
 	interface TDevice
 	{
 		//Node interface
@@ -52,6 +76,9 @@ module TNetwork
 
 		//Collector interface
 		TDeviceCollection getDeviceCollection();
+
+		//Device event passing
+		TDeviceEventDispatcher getEventDispatcher();
 
 		//Device interface (temp)
 		void write(in unsigned long input);

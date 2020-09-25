@@ -4,6 +4,9 @@
 #include "LocalCollection.h"
 #include "DeviceCollection.h"
 #include "LocalDeviceHub.h"
+#include "LocalDevice.h"
+#include "DeviceEvent.h"
+#include "DeviceEventDispatcher.h"
 
 #include <iostream>
 #include <memory>
@@ -16,39 +19,51 @@
 using std::cout;
 using std::endl;
 
-class TempPolicy : public STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>::LocalCollectionPolicy
-{
-	bool include(const STI::Device::DeviceID& key) const { return true; }
-	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
-};
+//class TempPolicy : public STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>::LocalCollectionPolicy
+//{
+//	bool include(const STI::Device::DeviceID& key) const { return true; }
+//	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
+//};
 
-class LocalDevice : public STI::Device::Device
+class TestDevice : public STI::Device::LocalDevice
 {
 public:
-	LocalDevice(const std::string& name, const std::string& address, unsigned short module,
-		const std::string& targetServer) : id(name, address, module, targetServer)
+	TestDevice(const std::string& name, const std::string& address, unsigned short module,
+		const std::string& targetServer) /*: id(name, address, module, targetServer)*/
+		: STI::Device::LocalDevice(name, address, module, targetServer)
 	{
-		std::shared_ptr<TempPolicy> policy = std::make_shared<TempPolicy>();;
-		localCollection = std::make_shared<STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>>(policy);
+		//std::shared_ptr<TempPolicy> policy = std::make_shared<TempPolicy>();;
+		//localCollection = std::make_shared<STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>>(policy);
 	}
-	~LocalDevice()
+	~TestDevice()
 	{
 		cout << "Destructor: " << id.getName() << endl;
 	}
-	STI::Device::DeviceID id;
+	//STI::Device::DeviceID id;
 
-	bool refresh() { return true; }
+	//bool refresh() { return true; }
+
+	void fireRefreshEvent()
+	{
+		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
+		getEventDispatcher(dispatcher);
+
+		auto evt = std::make_shared<STI::Device::RefreshDeviceEvent>(id);
+		dispatcher->addEvent(evt);
+	}
 
 	void write(unsigned input)
 	{
 		cout << "writting: " << input << endl;
 	}
-	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
-	{
-		collection = localCollection;
-	}
-	std::shared_ptr<STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>> localCollection;
+	//void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
+	//{
+	//	collection = localCollection;
+	//}
+	//std::shared_ptr<STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>> localCollection;
 };
+
+
 
 //void signal_callback_handler(int signum) {
 //	cout << "Caught signal " << signum << endl;
@@ -58,7 +73,7 @@ public:
 
 int main(int argc, char **argv)
 {
-	auto dev0 = std::make_shared<LocalDevice>("dev0", "localhost", 0, "root");
+	auto dev0 = std::make_shared<TestDevice>("dev0", "localhost", 0, "root");
 
 //	auto dev1 = std::make_shared<LocalDevice>("dev1", "localhost", 0, "192.168.1.1/0/MAGIS");
 //	auto dev2 = std::make_shared<LocalDevice>("dev2", "localhost", 0, "192.168.1.1/0/MAGIS");
@@ -79,7 +94,12 @@ int main(int argc, char **argv)
 	//hub3.run(false);
 	hub.run(false);
 
+	int tmp;
+	std::cin >> tmp;
 	
+	dev0->fireRefreshEvent();
+
+
 	std::shared_ptr<STI::Device::DeviceCollection> collection;
 	dev0->getCollection(collection);
 
@@ -94,6 +114,8 @@ int main(int argc, char **argv)
 		devRef->write(x);
 		x += 12;
 	}
+
+	std::cin >> tmp;
 
 
 	//signal(SIGINT, signal_callback_handler);

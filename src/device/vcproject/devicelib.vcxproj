@@ -126,7 +126,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Channel.cpp" />
     <ClCompile Include="..\src\DeviceEvent.cpp" />
-    <ClCompile Include="..\src\DeviceEventDispatcher.cpp" />
+    <ClCompile Include="..\src\LocalDeviceEventDispatcher.cpp" />
     <ClCompile Include="..\src\DeviceEventParser.cpp" />
     <ClCompile Include="..\src\DeviceEventReceiver.cpp" />
     <ClCompile Include="..\src\DeviceID.cpp" />
@@ -137,7 +137,7 @@
     <ClCompile Include="..\src\LocalDevice.cpp" />
     <ClCompile Include="..\src\Measurement.cpp" />
     <ClCompile Include="..\src\MixedValue.cpp" />
-    <ClCompile Include="..\src\DeviceEventHandler.cpp" />
+    <ClCompile Include="..\src\LocalDeviceEventHandler.cpp" />
     <ClCompile Include="..\src\RawEvent.cpp" />
     <ClCompile Include="..\src\SynchronousEvent.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
@@ -155,6 +155,7 @@
     <ClInclude Include="..\src\DeviceEvent.h" />
     <ClInclude Include="..\src\DeviceEventDispatcher-work.h" />
     <ClInclude Include="..\src\DeviceEventDispatcher.h" />
+    <ClInclude Include="..\src\DeviceEventListenerGroup.h" />
     <ClInclude Include="..\src\DeviceEventReceiver.h" />
     <ClInclude Include="..\src\DeviceEventListener.h" />
     <ClInclude Include="..\src\DeviceEventParser.h" />
@@ -174,6 +175,8 @@
     <ClInclude Include="..\src\fwd\MixedValue_fwd.h" />
     <ClInclude Include="..\src\fwd\RawEvent_fwd.h" />
     <ClInclude Include="..\src\fwd\SynchronousEvent_fwd.h" />
+    <ClInclude Include="..\src\LocalDeviceEventDispatcher.h" />
+    <ClInclude Include="..\src\LocalDeviceEventHandler.h" />
     <ClInclude Include="..\src\Measurement.h" />
     <ClInclude Include="..\src\MixedValue.h" />
     <ClInclude Include="..\src\ParseID.h" />

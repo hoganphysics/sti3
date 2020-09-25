@@ -245,6 +245,8 @@ _CORBA_MODULE_BEG
     };
 
 
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceHub;
+
 #ifndef __STI_mTNetwork_mTDeviceCollection__
 #define __STI_mTNetwork_mTDeviceCollection__
     class TDeviceCollection;
@@ -374,6 +376,367 @@ _CORBA_MODULE_BEG
     };
 
 
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceCollection;
+
+#ifndef __STI_mTNetwork_mTRefreshIndicator__
+#define __STI_mTNetwork_mTRefreshIndicator__
+    class TRefreshIndicator;
+    class _objref_TRefreshIndicator;
+    class _impl_TRefreshIndicator;
+    
+    typedef _objref_TRefreshIndicator* TRefreshIndicator_ptr;
+    typedef TRefreshIndicator_ptr TRefreshIndicatorRef;
+
+    class TRefreshIndicator_Helper {
+    public:
+      typedef TRefreshIndicator_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TRefreshIndicator, TRefreshIndicator_Helper> TRefreshIndicator_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TRefreshIndicator,TRefreshIndicator_Helper > TRefreshIndicator_out;
+
+#endif
+
+    // interface TRefreshIndicator
+    class TRefreshIndicator {
+    public:
+      // Declarations for this interface type.
+      typedef TRefreshIndicator_ptr _ptr_type;
+      typedef TRefreshIndicator_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TRefreshIndicator :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void refresh();
+
+      // Constructors
+      inline _objref_TRefreshIndicator()  { _PR_setobj(0); }  // nil
+      _objref_TRefreshIndicator(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TRefreshIndicator();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TRefreshIndicator(const _objref_TRefreshIndicator&);
+      _objref_TRefreshIndicator& operator = (const _objref_TRefreshIndicator&);
+      // not implemented
+
+      friend class TRefreshIndicator;
+    };
+
+    class _pof_TRefreshIndicator : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TRefreshIndicator() : _OMNI_NS(proxyObjectFactory)(TRefreshIndicator::_PD_repoId) {}
+      virtual ~_pof_TRefreshIndicator();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TRefreshIndicator :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TRefreshIndicator();
+
+      virtual void refresh() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TRefreshIndicator;
+
+#ifndef __STI_mTNetwork_mTDeviceEventHandler__
+#define __STI_mTNetwork_mTDeviceEventHandler__
+    class TDeviceEventHandler;
+    class _objref_TDeviceEventHandler;
+    class _impl_TDeviceEventHandler;
+    
+    typedef _objref_TDeviceEventHandler* TDeviceEventHandler_ptr;
+    typedef TDeviceEventHandler_ptr TDeviceEventHandlerRef;
+
+    class TDeviceEventHandler_Helper {
+    public:
+      typedef TDeviceEventHandler_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TDeviceEventHandler, TDeviceEventHandler_Helper> TDeviceEventHandler_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TDeviceEventHandler,TDeviceEventHandler_Helper > TDeviceEventHandler_out;
+
+#endif
+
+    // interface TDeviceEventHandler
+    class TDeviceEventHandler {
+    public:
+      // Declarations for this interface type.
+      typedef TDeviceEventHandler_ptr _ptr_type;
+      typedef TDeviceEventHandler_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TDeviceEventHandler :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void addEvent(const ::STI::TNetwork::TAnyEvent& evt);
+      void clearEvents();
+      TDeviceEventTypeSeq* listenersTypes();
+      void setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher);
+
+      // Constructors
+      inline _objref_TDeviceEventHandler()  { _PR_setobj(0); }  // nil
+      _objref_TDeviceEventHandler(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TDeviceEventHandler();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TDeviceEventHandler(const _objref_TDeviceEventHandler&);
+      _objref_TDeviceEventHandler& operator = (const _objref_TDeviceEventHandler&);
+      // not implemented
+
+      friend class TDeviceEventHandler;
+    };
+
+    class _pof_TDeviceEventHandler : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TDeviceEventHandler() : _OMNI_NS(proxyObjectFactory)(TDeviceEventHandler::_PD_repoId) {}
+      virtual ~_pof_TDeviceEventHandler();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TDeviceEventHandler :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TDeviceEventHandler();
+
+      virtual void addEvent(const ::STI::TNetwork::TAnyEvent& evt) = 0;
+      virtual void clearEvents() = 0;
+      virtual TDeviceEventTypeSeq* listenersTypes() = 0;
+      virtual void setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher) = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceEventHandler;
+
+#ifndef __STI_mTNetwork_mTDeviceEventDispatcher__
+#define __STI_mTNetwork_mTDeviceEventDispatcher__
+    class TDeviceEventDispatcher;
+    class _objref_TDeviceEventDispatcher;
+    class _impl_TDeviceEventDispatcher;
+    
+    typedef _objref_TDeviceEventDispatcher* TDeviceEventDispatcher_ptr;
+    typedef TDeviceEventDispatcher_ptr TDeviceEventDispatcherRef;
+
+    class TDeviceEventDispatcher_Helper {
+    public:
+      typedef TDeviceEventDispatcher_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TDeviceEventDispatcher, TDeviceEventDispatcher_Helper> TDeviceEventDispatcher_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TDeviceEventDispatcher,TDeviceEventDispatcher_Helper > TDeviceEventDispatcher_out;
+
+#endif
+
+    // interface TDeviceEventDispatcher
+    class TDeviceEventDispatcher {
+    public:
+      // Declarations for this interface type.
+      typedef TDeviceEventDispatcher_ptr _ptr_type;
+      typedef TDeviceEventDispatcher_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TDeviceEventDispatcher :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void addEventHandler(const ::STI::TNetwork::TDeviceID& targetID, ::STI::TNetwork::TDeviceEventHandler_ptr handler);
+      void removeEventHandler(const ::STI::TNetwork::TDeviceID& targetID);
+
+      // Constructors
+      inline _objref_TDeviceEventDispatcher()  { _PR_setobj(0); }  // nil
+      _objref_TDeviceEventDispatcher(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TDeviceEventDispatcher();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TDeviceEventDispatcher(const _objref_TDeviceEventDispatcher&);
+      _objref_TDeviceEventDispatcher& operator = (const _objref_TDeviceEventDispatcher&);
+      // not implemented
+
+      friend class TDeviceEventDispatcher;
+    };
+
+    class _pof_TDeviceEventDispatcher : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TDeviceEventDispatcher() : _OMNI_NS(proxyObjectFactory)(TDeviceEventDispatcher::_PD_repoId) {}
+      virtual ~_pof_TDeviceEventDispatcher();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TDeviceEventDispatcher :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TDeviceEventDispatcher();
+
+      virtual void addEventHandler(const ::STI::TNetwork::TDeviceID& targetID, ::STI::TNetwork::TDeviceEventHandler_ptr handler) = 0;
+      virtual void removeEventHandler(const ::STI::TNetwork::TDeviceID& targetID) = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceEventDispatcher;
+
 #ifndef __STI_mTNetwork_mTDevice__
 #define __STI_mTNetwork_mTDevice__
     class TDevice;
@@ -444,6 +807,7 @@ _CORBA_MODULE_BEG
       // IDL operations
       ::CORBA::Boolean refresh();
       TDeviceCollection_ptr getDeviceCollection();
+      TDeviceEventDispatcher_ptr getEventDispatcher();
       void write(::CORBA::ULong input);
 
       // Constructors
@@ -481,6 +845,7 @@ _CORBA_MODULE_BEG
 
       virtual ::CORBA::Boolean refresh() = 0;
       virtual TDeviceCollection_ptr getDeviceCollection() = 0;
+      virtual TDeviceEventDispatcher_ptr getEventDispatcher() = 0;
       virtual void write(::CORBA::ULong input) = 0;
       
     public:  // Really protected, workaround for xlC
@@ -492,6 +857,8 @@ _CORBA_MODULE_BEG
       
     };
 
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDevice;
 
   _CORBA_MODULE_END
 
@@ -526,6 +893,42 @@ _CORBA_MODULE_BEG
 
       inline ::STI::TNetwork::TDeviceCollection_ptr _this() {
         return (::STI::TNetwork::TDeviceCollection_ptr) _do_this(::STI::TNetwork::TDeviceCollection::_PD_repoId);
+      }
+    };
+
+    class TRefreshIndicator :
+      public virtual STI::TNetwork::_impl_TRefreshIndicator,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TRefreshIndicator();
+
+      inline ::STI::TNetwork::TRefreshIndicator_ptr _this() {
+        return (::STI::TNetwork::TRefreshIndicator_ptr) _do_this(::STI::TNetwork::TRefreshIndicator::_PD_repoId);
+      }
+    };
+
+    class TDeviceEventHandler :
+      public virtual STI::TNetwork::_impl_TDeviceEventHandler,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TDeviceEventHandler();
+
+      inline ::STI::TNetwork::TDeviceEventHandler_ptr _this() {
+        return (::STI::TNetwork::TDeviceEventHandler_ptr) _do_this(::STI::TNetwork::TDeviceEventHandler::_PD_repoId);
+      }
+    };
+
+    class TDeviceEventDispatcher :
+      public virtual STI::TNetwork::_impl_TDeviceEventDispatcher,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TDeviceEventDispatcher();
+
+      inline ::STI::TNetwork::TDeviceEventDispatcher_ptr _this() {
+        return (::STI::TNetwork::TDeviceEventDispatcher_ptr) _do_this(::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId);
       }
     };
 
@@ -564,6 +967,30 @@ _CORBA_MODULE_END
 #undef _core_attr
 #undef _dyn_attr
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHub_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHub_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceHub_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceCollection_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceCollection_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceCollection_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TRefreshIndicator_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TRefreshIndicator_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TRefreshIndicator_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventHandler_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventHandler_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceEventHandler_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventDispatcher_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceEventDispatcher_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceEventDispatcher_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDevice_ptr& _s);
+
 
 
 inline void
@@ -573,6 +1000,21 @@ STI::TNetwork::TDeviceHub::_marshalObjRef(::STI::TNetwork::TDeviceHub_ptr obj, c
 
 inline void
 STI::TNetwork::TDeviceCollection::_marshalObjRef(::STI::TNetwork::TDeviceCollection_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TRefreshIndicator::_marshalObjRef(::STI::TNetwork::TRefreshIndicator_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TDeviceEventHandler::_marshalObjRef(::STI::TNetwork::TDeviceEventHandler_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TDeviceEventDispatcher::_marshalObjRef(::STI::TNetwork::TDeviceEventDispatcher_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

@@ -5,6 +5,7 @@
 
 #include "Device.h"
 #include "TDeviceCollection_i.h"
+#include "TDeviceEventDispatcher_i.h"
 
 #include <memory>
 
@@ -23,11 +24,13 @@ public:
 
 	::CORBA::Boolean refresh();
 	TDeviceCollection_ptr getDeviceCollection();
+	TDeviceEventDispatcher_ptr getEventDispatcher();
 	void write(::CORBA::ULong input);
 
 private:
 
 	TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
+	TDeviceEventDispatcher_i eventDispatcherServant;	//Servant for this Device's event dispatcher.
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };
 

@@ -68,10 +68,12 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 		return false;
 	}
 
+	STI::TNetwork::TDeviceHub_var tDeviceHubRefvar = tDeviceHubRef;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->addHub(convert<HubID, TDeviceHubID>(id), tDeviceHubRef);	//remote call
+		success = tDeviceHub->addHub(convert<HubID, TDeviceHubID>(id), tDeviceHubRefvar);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

@@ -49,12 +49,15 @@
     <Filter Include="Source Files\ORB">
       <UniqueIdentifier>{9669a97b-03c1-48ec-9cb2-0cc7b995d548}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DeviceEvent">
+      <UniqueIdentifier>{f6503f00-55ea-47d8-ba49-31ceb7b3fe89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DeviceEvent">
+      <UniqueIdentifier>{8f44e863-2ced-449b-b5d9-d49c377ad210}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\HubTrace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\LocalDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\LocalDeviceHub.h">
@@ -93,9 +96,6 @@
     <ClInclude Include="..\src\RemoteDeviceCollection.h">
       <Filter>Header Files\DeviceCollection</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\LocalCollection.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Distributer.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -111,9 +111,6 @@
     <ClInclude Include="..\src\orbTypes.h">
       <Filter>Header Files\ORB</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\NetworkDeviceHub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\TDeviceRefInterface.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
@@ -122,6 +119,30 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\DeviceCollection.h">
       <Filter>Header Files\DeviceCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LocalCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TDeviceEventDispatcher_i.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteDeviceEventHandler.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteDeviceEventDispatcher.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TDeviceEventHandler_i.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TRefreshIndicator_i.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NetworkDeviceEventHandlerWrapper.h">
+      <Filter>Header Files\DeviceEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NetworkDeviceHub.h">
+      <Filter>Header Files\Hub</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,9 +173,6 @@
     <ClCompile Include="..\src\RemoteDeviceHub.cpp">
       <Filter>Source Files\Hub</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\NetworkDeviceHub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\TDeviceHub_i.cpp">
       <Filter>Source Files\Hub</Filter>
     </ClCompile>
@@ -172,6 +190,36 @@
     </ClCompile>
     <ClCompile Include="..\src\NetworkConvert.cpp">
       <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TDeviceEventDispatcher_i.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteDeviceEventHandler.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Convert_DeviceEvent.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteDeviceEventDispatcher.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TDeviceEventHandler_i.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkDeviceEventHandlerWrapper.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deviceNetDynSK.cpp">
+      <Filter>Source Files\ORB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\orbTypesDynSK.cpp">
+      <Filter>Source Files\ORB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NetworkDeviceHub.cpp">
+      <Filter>Source Files\Hub</Filter>
+    </ClCompile>
+    <ClCompile Include="TRefreshIndicator_i.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

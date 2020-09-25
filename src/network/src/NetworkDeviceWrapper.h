@@ -2,6 +2,7 @@
 #define STI_NETWORK_NETWORKDEVICEWRAPPER_H
 
 #include "Device.h"
+#include "DeviceEventDispatcher.h"
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
 #include "orbTypes.h"
@@ -34,6 +35,11 @@ public:
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
 	{
 		localDevice->getCollection(collection);
+	}
+
+	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
+	{
+		localDevice->getEventDispatcher(dispatcher);
 	}
 
 

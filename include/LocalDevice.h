@@ -15,12 +15,14 @@ namespace Device
 {
 
 class DeviceEventReceiver;
+class LocalDeviceEventDispatcher;
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
 {
 	bool include(const STI::Device::DeviceID& key) const { return true; }
 	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
 };
+
 
 class LocalDevice : public Device
 {
@@ -45,7 +47,7 @@ public:
 private:
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
-	std::shared_ptr<DeviceEventDispatcher> deviceEventDispatcher;
+	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
 };
 

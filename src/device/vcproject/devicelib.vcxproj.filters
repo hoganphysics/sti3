@@ -84,13 +84,13 @@
     <ClCompile Include="..\src\DeviceEvent.cpp">
       <Filter>Source Files\device\events</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DeviceEventDispatcher.cpp">
-      <Filter>Source Files\device\events</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\DeviceEventHandler.cpp">
-      <Filter>Source Files\device\events</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\DeviceEventReceiver.cpp">
+      <Filter>Source Files\device\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LocalDeviceEventHandler.cpp">
+      <Filter>Source Files\device\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LocalDeviceEventDispatcher.cpp">
       <Filter>Source Files\device\events</Filter>
     </ClCompile>
   </ItemGroup>
@@ -231,6 +231,15 @@
       <Filter>Header Files\device\Events</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DeviceEventHandler.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalDeviceEventHandler.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalDeviceEventDispatcher.h">
+      <Filter>Header Files\device\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeviceEventListenerGroup.h">
       <Filter>Header Files\device\Events</Filter>
     </ClInclude>
   </ItemGroup>

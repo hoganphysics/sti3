@@ -66,3 +66,49 @@ STI::TNetwork::TDeviceID::operator<<= (cdrStream &_n)
 
 }
 
+void
+STI::TNetwork::TAnyEvent::operator>>= (cdrStream &_n) const
+{
+  type >>= _n;
+  (const ::CORBA::Any&) evt >>= _n;
+
+}
+
+void
+STI::TNetwork::TAnyEvent::operator<<= (cdrStream &_n)
+{
+  (TDeviceEventType&)type <<= _n;
+  (::CORBA::Any&)evt <<= _n;
+
+}
+
+void
+STI::TNetwork::TDeviceEvent::operator>>= (cdrStream &_n) const
+{
+  type >>= _n;
+  (const TDeviceID&) sourceID >>= _n;
+
+}
+
+void
+STI::TNetwork::TDeviceEvent::operator<<= (cdrStream &_n)
+{
+  (TDeviceEventType&)type <<= _n;
+  (TDeviceID&)sourceID <<= _n;
+
+}
+
+void
+STI::TNetwork::TRefreshDeviceEvent::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceEvent&) base >>= _n;
+
+}
+
+void
+STI::TNetwork::TRefreshDeviceEvent::operator<<= (cdrStream &_n)
+{
+  (TDeviceEvent&)base <<= _n;
+
+}
+

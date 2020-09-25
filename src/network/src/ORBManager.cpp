@@ -297,14 +297,14 @@ void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const 
 	node.getLiveLeafs(objectName, objContexts);
 }
 
-void f(COSBindingNode& node)
-{
-	for (auto& n : node.branches()) {
-		if (n->hasBranches()) {
-			//n->
-		}
-	}
-}
+//void f(COSBindingNode& node)
+//{
+//	for (auto& n : node.branches()) {
+//		if (n->hasBranches()) {
+//			//n->
+//		}
+//	}
+//}
 
 bool ORBManager::getRootContext(CosNaming::NamingContext_var& context)
 {

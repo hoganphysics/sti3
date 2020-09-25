@@ -47,10 +47,10 @@ public:
 
 		unsigned short module;
 
-		if (tokens.size() == 3 && STI::Utils::stringToValue(tokens.at(2), module)) {
+		if (tokens.size() == 3 && STI::Utils::stringToValue(tokens.at(1), module)) {
 			hubID.address = tokens.at(0);
-			hubID.name = tokens.at(1);
 			hubID.module = module;
+			hubID.name = tokens.at(2);
 			return true;
 		}
 		return false;

@@ -1507,6 +1507,929 @@ STI::TNetwork::_impl_TDeviceCollection::_mostDerivedRepoId()
   return ::STI::TNetwork::TDeviceCollection::_PD_repoId;
 }
 
+STI::TNetwork::TRefreshIndicator_ptr STI::TNetwork::TRefreshIndicator_Helper::_nil() {
+  return ::STI::TNetwork::TRefreshIndicator::_nil();
+}
+
+::CORBA::Boolean STI::TNetwork::TRefreshIndicator_Helper::is_nil(::STI::TNetwork::TRefreshIndicator_ptr p) {
+  return ::CORBA::is_nil(p);
+
+}
+
+void STI::TNetwork::TRefreshIndicator_Helper::release(::STI::TNetwork::TRefreshIndicator_ptr p) {
+  ::CORBA::release(p);
+}
+
+void STI::TNetwork::TRefreshIndicator_Helper::marshalObjRef(::STI::TNetwork::TRefreshIndicator_ptr obj, cdrStream& s) {
+  ::STI::TNetwork::TRefreshIndicator::_marshalObjRef(obj, s);
+}
+
+STI::TNetwork::TRefreshIndicator_ptr STI::TNetwork::TRefreshIndicator_Helper::unmarshalObjRef(cdrStream& s) {
+  return ::STI::TNetwork::TRefreshIndicator::_unmarshalObjRef(s);
+}
+
+void STI::TNetwork::TRefreshIndicator_Helper::duplicate(::STI::TNetwork::TRefreshIndicator_ptr obj) {
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+}
+
+STI::TNetwork::TRefreshIndicator_ptr
+STI::TNetwork::TRefreshIndicator::_duplicate(::STI::TNetwork::TRefreshIndicator_ptr obj)
+{
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  return obj;
+}
+
+STI::TNetwork::TRefreshIndicator_ptr
+STI::TNetwork::TRefreshIndicator::_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+
+STI::TNetwork::TRefreshIndicator_ptr
+STI::TNetwork::TRefreshIndicator::_unchecked_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+STI::TNetwork::TRefreshIndicator_ptr
+STI::TNetwork::TRefreshIndicator::_nil()
+{
+#ifdef OMNI_UNLOADABLE_STUBS
+  static _objref_TRefreshIndicator _the_nil_obj;
+  return &_the_nil_obj;
+#else
+  static _objref_TRefreshIndicator* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new _objref_TRefreshIndicator;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+#endif
+}
+
+const char* STI::TNetwork::TRefreshIndicator::_PD_repoId = "IDL:STI/TNetwork/TRefreshIndicator:1.0";
+
+
+STI::TNetwork::_objref_TRefreshIndicator::~_objref_TRefreshIndicator() {
+  
+}
+
+
+STI::TNetwork::_objref_TRefreshIndicator::_objref_TRefreshIndicator(omniIOR* ior, omniIdentity* id) :
+   omniObjRef(::STI::TNetwork::TRefreshIndicator::_PD_repoId, ior, id, 1)
+   
+   
+{
+  _PR_setobj(this);
+}
+
+void*
+STI::TNetwork::_objref_TRefreshIndicator::_ptrToObjRef(const char* id)
+{
+  if (id == ::STI::TNetwork::TRefreshIndicator::_PD_repoId)
+    return (::STI::TNetwork::TRefreshIndicator_ptr) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (::CORBA::Object_ptr) this;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TRefreshIndicator::_PD_repoId))
+    return (::STI::TNetwork::TRefreshIndicator_ptr) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+
+//
+// Code for STI::TNetwork::TRefreshIndicator::refresh
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_c1000000(omniCallDescriptor*, omniServant* svnt)
+{
+  
+  STI::TNetwork::_impl_TRefreshIndicator* impl = (STI::TNetwork::_impl_TRefreshIndicator*) svnt->_ptrToInterface(STI::TNetwork::TRefreshIndicator::_PD_repoId);
+  impl->refresh();
+
+
+}
+
+void STI::TNetwork::_objref_TRefreshIndicator::refresh()
+{
+  _0RL_cd_968894b19fdce141_91000000 _call_desc(_0RL_lcfn_968894b19fdce141_c1000000, "refresh", 8);
+
+
+  _invoke(_call_desc);
+
+
+
+}
+
+STI::TNetwork::_pof_TRefreshIndicator::~_pof_TRefreshIndicator() {}
+
+
+omniObjRef*
+STI::TNetwork::_pof_TRefreshIndicator::newObjRef(omniIOR* ior, omniIdentity* id)
+{
+  return new ::STI::TNetwork::_objref_TRefreshIndicator(ior, id);
+}
+
+
+::CORBA::Boolean
+STI::TNetwork::_pof_TRefreshIndicator::is_a(const char* id) const
+{
+  if (omni::ptrStrMatch(id, ::STI::TNetwork::TRefreshIndicator::_PD_repoId))
+    return 1;
+  
+  return 0;
+}
+
+const STI::TNetwork::_pof_TRefreshIndicator _the_pof_STI_mTNetwork_mTRefreshIndicator;
+
+STI::TNetwork::_impl_TRefreshIndicator::~_impl_TRefreshIndicator() {}
+
+
+::CORBA::Boolean
+STI::TNetwork::_impl_TRefreshIndicator::_dispatch(omniCallHandle& _handle)
+{
+  const char* op = _handle.operation_name();
+
+  if (omni::strMatch(op, "refresh")) {
+
+    _0RL_cd_968894b19fdce141_91000000 _call_desc(_0RL_lcfn_968894b19fdce141_c1000000, "refresh", 8, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+
+  return 0;
+}
+
+void*
+STI::TNetwork::_impl_TRefreshIndicator::_ptrToInterface(const char* id)
+{
+  if (id == ::STI::TNetwork::TRefreshIndicator::_PD_repoId)
+    return (::STI::TNetwork::_impl_TRefreshIndicator*) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (void*) 1;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TRefreshIndicator::_PD_repoId))
+    return (::STI::TNetwork::_impl_TRefreshIndicator*) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (void*) 1;
+  return 0;
+}
+
+const char*
+STI::TNetwork::_impl_TRefreshIndicator::_mostDerivedRepoId()
+{
+  return ::STI::TNetwork::TRefreshIndicator::_PD_repoId;
+}
+
+STI::TNetwork::TDeviceEventHandler_ptr STI::TNetwork::TDeviceEventHandler_Helper::_nil() {
+  return ::STI::TNetwork::TDeviceEventHandler::_nil();
+}
+
+::CORBA::Boolean STI::TNetwork::TDeviceEventHandler_Helper::is_nil(::STI::TNetwork::TDeviceEventHandler_ptr p) {
+  return ::CORBA::is_nil(p);
+
+}
+
+void STI::TNetwork::TDeviceEventHandler_Helper::release(::STI::TNetwork::TDeviceEventHandler_ptr p) {
+  ::CORBA::release(p);
+}
+
+void STI::TNetwork::TDeviceEventHandler_Helper::marshalObjRef(::STI::TNetwork::TDeviceEventHandler_ptr obj, cdrStream& s) {
+  ::STI::TNetwork::TDeviceEventHandler::_marshalObjRef(obj, s);
+}
+
+STI::TNetwork::TDeviceEventHandler_ptr STI::TNetwork::TDeviceEventHandler_Helper::unmarshalObjRef(cdrStream& s) {
+  return ::STI::TNetwork::TDeviceEventHandler::_unmarshalObjRef(s);
+}
+
+void STI::TNetwork::TDeviceEventHandler_Helper::duplicate(::STI::TNetwork::TDeviceEventHandler_ptr obj) {
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+}
+
+STI::TNetwork::TDeviceEventHandler_ptr
+STI::TNetwork::TDeviceEventHandler::_duplicate(::STI::TNetwork::TDeviceEventHandler_ptr obj)
+{
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  return obj;
+}
+
+STI::TNetwork::TDeviceEventHandler_ptr
+STI::TNetwork::TDeviceEventHandler::_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+
+STI::TNetwork::TDeviceEventHandler_ptr
+STI::TNetwork::TDeviceEventHandler::_unchecked_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+STI::TNetwork::TDeviceEventHandler_ptr
+STI::TNetwork::TDeviceEventHandler::_nil()
+{
+#ifdef OMNI_UNLOADABLE_STUBS
+  static _objref_TDeviceEventHandler _the_nil_obj;
+  return &_the_nil_obj;
+#else
+  static _objref_TDeviceEventHandler* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new _objref_TDeviceEventHandler;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+#endif
+}
+
+const char* STI::TNetwork::TDeviceEventHandler::_PD_repoId = "IDL:STI/TNetwork/TDeviceEventHandler:1.0";
+
+
+STI::TNetwork::_objref_TDeviceEventHandler::~_objref_TDeviceEventHandler() {
+  
+}
+
+
+STI::TNetwork::_objref_TDeviceEventHandler::_objref_TDeviceEventHandler(omniIOR* ior, omniIdentity* id) :
+   omniObjRef(::STI::TNetwork::TDeviceEventHandler::_PD_repoId, ior, id, 1)
+   
+   
+{
+  _PR_setobj(this);
+}
+
+void*
+STI::TNetwork::_objref_TDeviceEventHandler::_ptrToObjRef(const char* id)
+{
+  if (id == ::STI::TNetwork::TDeviceEventHandler::_PD_repoId)
+    return (::STI::TNetwork::TDeviceEventHandler_ptr) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (::CORBA::Object_ptr) this;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TDeviceEventHandler::_PD_repoId))
+    return (::STI::TNetwork::TDeviceEventHandler_ptr) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventHandler::addEvent
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTAnyEvent
+class _0RL_cd_968894b19fdce141_d1000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_d1000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TAnyEvent_var arg_0_;
+  const STI::TNetwork::TAnyEvent* arg_0;
+};
+
+void _0RL_cd_968894b19fdce141_d1000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TAnyEvent&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_968894b19fdce141_d1000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TAnyEvent;
+  (STI::TNetwork::TAnyEvent&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_d1000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_e1000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_d1000000* tcd = (_0RL_cd_968894b19fdce141_d1000000*)cd;
+  STI::TNetwork::_impl_TDeviceEventHandler* impl = (STI::TNetwork::_impl_TDeviceEventHandler*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventHandler::_PD_repoId);
+  impl->addEvent(*tcd->arg_0);
+
+
+}
+
+void STI::TNetwork::_objref_TDeviceEventHandler::addEvent(const ::STI::TNetwork::TAnyEvent& evt)
+{
+  _0RL_cd_968894b19fdce141_d1000000 _call_desc(_0RL_lcfn_968894b19fdce141_e1000000, "addEvent", 9);
+  _call_desc.arg_0 = &(::STI::TNetwork::TAnyEvent&) evt;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventHandler::clearEvents
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_f1000000(omniCallDescriptor*, omniServant* svnt)
+{
+  
+  STI::TNetwork::_impl_TDeviceEventHandler* impl = (STI::TNetwork::_impl_TDeviceEventHandler*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventHandler::_PD_repoId);
+  impl->clearEvents();
+
+
+}
+
+void STI::TNetwork::_objref_TDeviceEventHandler::clearEvents()
+{
+  _0RL_cd_968894b19fdce141_91000000 _call_desc(_0RL_lcfn_968894b19fdce141_f1000000, "clearEvents", 12);
+
+
+  _invoke(_call_desc);
+
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventHandler::_get_listenersTypes
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTDeviceEventTypeSeq
+class _0RL_cd_968894b19fdce141_02000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_02000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TDeviceEventTypeSeq_var result;
+};
+
+void _0RL_cd_968894b19fdce141_02000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TDeviceEventTypeSeq&) result >>= _n;
+
+}
+
+void _0RL_cd_968894b19fdce141_02000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = new STI::TNetwork::TDeviceEventTypeSeq;
+  (STI::TNetwork::TDeviceEventTypeSeq&)result <<= _n;
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_02000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_12000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_02000000* tcd = (_0RL_cd_968894b19fdce141_02000000*)cd;
+  STI::TNetwork::_impl_TDeviceEventHandler* impl = (STI::TNetwork::_impl_TDeviceEventHandler*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventHandler::_PD_repoId);
+  tcd->result = impl->listenersTypes();
+
+
+}
+
+STI::TNetwork::TDeviceEventTypeSeq* STI::TNetwork::_objref_TDeviceEventHandler::listenersTypes()
+{
+  _0RL_cd_968894b19fdce141_02000000 _call_desc(_0RL_lcfn_968894b19fdce141_12000000, "_get_listenersTypes", 20);
+
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventHandler::setRefreshIndicator
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTRefreshIndicator
+class _0RL_cd_968894b19fdce141_22000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_22000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TRefreshIndicator_var arg_0_;
+  STI::TNetwork::TRefreshIndicator_ptr arg_0;
+};
+
+void _0RL_cd_968894b19fdce141_22000000::marshalArguments(cdrStream& _n)
+{
+  STI::TNetwork::TRefreshIndicator::_marshalObjRef(arg_0,_n);
+
+}
+
+void _0RL_cd_968894b19fdce141_22000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = STI::TNetwork::TRefreshIndicator::_unmarshalObjRef(_n);
+  arg_0 = arg_0_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_22000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_32000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_22000000* tcd = (_0RL_cd_968894b19fdce141_22000000*)cd;
+  STI::TNetwork::_impl_TDeviceEventHandler* impl = (STI::TNetwork::_impl_TDeviceEventHandler*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventHandler::_PD_repoId);
+  impl->setRefreshIndicator(tcd->arg_0);
+
+
+}
+
+void STI::TNetwork::_objref_TDeviceEventHandler::setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher)
+{
+  _0RL_cd_968894b19fdce141_22000000 _call_desc(_0RL_lcfn_968894b19fdce141_32000000, "setRefreshIndicator", 20);
+  _call_desc.arg_0 = refresher;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+STI::TNetwork::_pof_TDeviceEventHandler::~_pof_TDeviceEventHandler() {}
+
+
+omniObjRef*
+STI::TNetwork::_pof_TDeviceEventHandler::newObjRef(omniIOR* ior, omniIdentity* id)
+{
+  return new ::STI::TNetwork::_objref_TDeviceEventHandler(ior, id);
+}
+
+
+::CORBA::Boolean
+STI::TNetwork::_pof_TDeviceEventHandler::is_a(const char* id) const
+{
+  if (omni::ptrStrMatch(id, ::STI::TNetwork::TDeviceEventHandler::_PD_repoId))
+    return 1;
+  
+  return 0;
+}
+
+const STI::TNetwork::_pof_TDeviceEventHandler _the_pof_STI_mTNetwork_mTDeviceEventHandler;
+
+STI::TNetwork::_impl_TDeviceEventHandler::~_impl_TDeviceEventHandler() {}
+
+
+::CORBA::Boolean
+STI::TNetwork::_impl_TDeviceEventHandler::_dispatch(omniCallHandle& _handle)
+{
+  const char* op = _handle.operation_name();
+
+  if (omni::strMatch(op, "addEvent")) {
+
+    _0RL_cd_968894b19fdce141_d1000000 _call_desc(_0RL_lcfn_968894b19fdce141_e1000000, "addEvent", 9, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "clearEvents")) {
+
+    _0RL_cd_968894b19fdce141_91000000 _call_desc(_0RL_lcfn_968894b19fdce141_f1000000, "clearEvents", 12, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "_get_listenersTypes")) {
+
+    _0RL_cd_968894b19fdce141_02000000 _call_desc(_0RL_lcfn_968894b19fdce141_12000000, "_get_listenersTypes", 20, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "setRefreshIndicator")) {
+
+    _0RL_cd_968894b19fdce141_22000000 _call_desc(_0RL_lcfn_968894b19fdce141_32000000, "setRefreshIndicator", 20, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+
+  return 0;
+}
+
+void*
+STI::TNetwork::_impl_TDeviceEventHandler::_ptrToInterface(const char* id)
+{
+  if (id == ::STI::TNetwork::TDeviceEventHandler::_PD_repoId)
+    return (::STI::TNetwork::_impl_TDeviceEventHandler*) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (void*) 1;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TDeviceEventHandler::_PD_repoId))
+    return (::STI::TNetwork::_impl_TDeviceEventHandler*) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (void*) 1;
+  return 0;
+}
+
+const char*
+STI::TNetwork::_impl_TDeviceEventHandler::_mostDerivedRepoId()
+{
+  return ::STI::TNetwork::TDeviceEventHandler::_PD_repoId;
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr STI::TNetwork::TDeviceEventDispatcher_Helper::_nil() {
+  return ::STI::TNetwork::TDeviceEventDispatcher::_nil();
+}
+
+::CORBA::Boolean STI::TNetwork::TDeviceEventDispatcher_Helper::is_nil(::STI::TNetwork::TDeviceEventDispatcher_ptr p) {
+  return ::CORBA::is_nil(p);
+
+}
+
+void STI::TNetwork::TDeviceEventDispatcher_Helper::release(::STI::TNetwork::TDeviceEventDispatcher_ptr p) {
+  ::CORBA::release(p);
+}
+
+void STI::TNetwork::TDeviceEventDispatcher_Helper::marshalObjRef(::STI::TNetwork::TDeviceEventDispatcher_ptr obj, cdrStream& s) {
+  ::STI::TNetwork::TDeviceEventDispatcher::_marshalObjRef(obj, s);
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr STI::TNetwork::TDeviceEventDispatcher_Helper::unmarshalObjRef(cdrStream& s) {
+  return ::STI::TNetwork::TDeviceEventDispatcher::_unmarshalObjRef(s);
+}
+
+void STI::TNetwork::TDeviceEventDispatcher_Helper::duplicate(::STI::TNetwork::TDeviceEventDispatcher_ptr obj) {
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr
+STI::TNetwork::TDeviceEventDispatcher::_duplicate(::STI::TNetwork::TDeviceEventDispatcher_ptr obj)
+{
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  return obj;
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr
+STI::TNetwork::TDeviceEventDispatcher::_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+
+STI::TNetwork::TDeviceEventDispatcher_ptr
+STI::TNetwork::TDeviceEventDispatcher::_unchecked_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr
+STI::TNetwork::TDeviceEventDispatcher::_nil()
+{
+#ifdef OMNI_UNLOADABLE_STUBS
+  static _objref_TDeviceEventDispatcher _the_nil_obj;
+  return &_the_nil_obj;
+#else
+  static _objref_TDeviceEventDispatcher* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new _objref_TDeviceEventDispatcher;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+#endif
+}
+
+const char* STI::TNetwork::TDeviceEventDispatcher::_PD_repoId = "IDL:STI/TNetwork/TDeviceEventDispatcher:1.0";
+
+
+STI::TNetwork::_objref_TDeviceEventDispatcher::~_objref_TDeviceEventDispatcher() {
+  
+}
+
+
+STI::TNetwork::_objref_TDeviceEventDispatcher::_objref_TDeviceEventDispatcher(omniIOR* ior, omniIdentity* id) :
+   omniObjRef(::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId, ior, id, 1)
+   
+   
+{
+  _PR_setobj(this);
+}
+
+void*
+STI::TNetwork::_objref_TDeviceEventDispatcher::_ptrToObjRef(const char* id)
+{
+  if (id == ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId)
+    return (::STI::TNetwork::TDeviceEventDispatcher_ptr) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (::CORBA::Object_ptr) this;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId))
+    return (::STI::TNetwork::TDeviceEventDispatcher_ptr) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventDispatcher::addEventHandler
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTDeviceID_i_cSTI_mTNetwork_mTDeviceEventHandler
+class _0RL_cd_968894b19fdce141_42000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_42000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TDeviceID_var arg_0_;
+  const STI::TNetwork::TDeviceID* arg_0;
+  STI::TNetwork::TDeviceEventHandler_var arg_1_;
+  STI::TNetwork::TDeviceEventHandler_ptr arg_1;
+};
+
+void _0RL_cd_968894b19fdce141_42000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
+  STI::TNetwork::TDeviceEventHandler::_marshalObjRef(arg_1,_n);
+
+}
+
+void _0RL_cd_968894b19fdce141_42000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TDeviceID;
+  (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+  arg_1_ = STI::TNetwork::TDeviceEventHandler::_unmarshalObjRef(_n);
+  arg_1 = arg_1_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_42000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_52000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_42000000* tcd = (_0RL_cd_968894b19fdce141_42000000*)cd;
+  STI::TNetwork::_impl_TDeviceEventDispatcher* impl = (STI::TNetwork::_impl_TDeviceEventDispatcher*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventDispatcher::_PD_repoId);
+  impl->addEventHandler(*tcd->arg_0, tcd->arg_1);
+
+
+}
+
+void STI::TNetwork::_objref_TDeviceEventDispatcher::addEventHandler(const ::STI::TNetwork::TDeviceID& targetID, ::STI::TNetwork::TDeviceEventHandler_ptr handler)
+{
+  _0RL_cd_968894b19fdce141_42000000 _call_desc(_0RL_lcfn_968894b19fdce141_52000000, "addEventHandler", 16);
+  _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) targetID;
+  _call_desc.arg_1 = handler;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDeviceEventDispatcher::removeEventHandler
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTDeviceID
+class _0RL_cd_968894b19fdce141_62000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_62000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TDeviceID_var arg_0_;
+  const STI::TNetwork::TDeviceID* arg_0;
+};
+
+void _0RL_cd_968894b19fdce141_62000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_968894b19fdce141_62000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TDeviceID;
+  (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_62000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_72000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_62000000* tcd = (_0RL_cd_968894b19fdce141_62000000*)cd;
+  STI::TNetwork::_impl_TDeviceEventDispatcher* impl = (STI::TNetwork::_impl_TDeviceEventDispatcher*) svnt->_ptrToInterface(STI::TNetwork::TDeviceEventDispatcher::_PD_repoId);
+  impl->removeEventHandler(*tcd->arg_0);
+
+
+}
+
+void STI::TNetwork::_objref_TDeviceEventDispatcher::removeEventHandler(const ::STI::TNetwork::TDeviceID& targetID)
+{
+  _0RL_cd_968894b19fdce141_62000000 _call_desc(_0RL_lcfn_968894b19fdce141_72000000, "removeEventHandler", 19);
+  _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) targetID;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+STI::TNetwork::_pof_TDeviceEventDispatcher::~_pof_TDeviceEventDispatcher() {}
+
+
+omniObjRef*
+STI::TNetwork::_pof_TDeviceEventDispatcher::newObjRef(omniIOR* ior, omniIdentity* id)
+{
+  return new ::STI::TNetwork::_objref_TDeviceEventDispatcher(ior, id);
+}
+
+
+::CORBA::Boolean
+STI::TNetwork::_pof_TDeviceEventDispatcher::is_a(const char* id) const
+{
+  if (omni::ptrStrMatch(id, ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId))
+    return 1;
+  
+  return 0;
+}
+
+const STI::TNetwork::_pof_TDeviceEventDispatcher _the_pof_STI_mTNetwork_mTDeviceEventDispatcher;
+
+STI::TNetwork::_impl_TDeviceEventDispatcher::~_impl_TDeviceEventDispatcher() {}
+
+
+::CORBA::Boolean
+STI::TNetwork::_impl_TDeviceEventDispatcher::_dispatch(omniCallHandle& _handle)
+{
+  const char* op = _handle.operation_name();
+
+  if (omni::strMatch(op, "addEventHandler")) {
+
+    _0RL_cd_968894b19fdce141_42000000 _call_desc(_0RL_lcfn_968894b19fdce141_52000000, "addEventHandler", 16, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "removeEventHandler")) {
+
+    _0RL_cd_968894b19fdce141_62000000 _call_desc(_0RL_lcfn_968894b19fdce141_72000000, "removeEventHandler", 19, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+
+  return 0;
+}
+
+void*
+STI::TNetwork::_impl_TDeviceEventDispatcher::_ptrToInterface(const char* id)
+{
+  if (id == ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId)
+    return (::STI::TNetwork::_impl_TDeviceEventDispatcher*) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (void*) 1;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId))
+    return (::STI::TNetwork::_impl_TDeviceEventDispatcher*) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (void*) 1;
+  return 0;
+}
+
+const char*
+STI::TNetwork::_impl_TDeviceEventDispatcher::_mostDerivedRepoId()
+{
+  return ::STI::TNetwork::TDeviceEventDispatcher::_PD_repoId;
+}
+
 STI::TNetwork::TDevice_ptr STI::TNetwork::TDevice_Helper::_nil() {
   return ::STI::TNetwork::TDevice::_nil();
 }
@@ -1616,11 +2539,11 @@ STI::TNetwork::_objref_TDevice::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean
-class _0RL_cd_968894b19fdce141_c1000000
+class _0RL_cd_968894b19fdce141_82000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_968894b19fdce141_c1000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_968894b19fdce141_82000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -1636,27 +2559,27 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_968894b19fdce141_c1000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_82000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
 
 }
 
-void _0RL_cd_968894b19fdce141_c1000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_82000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_968894b19fdce141_c1000000::_user_exns[] = {
+const char* const _0RL_cd_968894b19fdce141_82000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_968894b19fdce141_d1000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_968894b19fdce141_92000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_968894b19fdce141_c1000000* tcd = (_0RL_cd_968894b19fdce141_c1000000*)cd;
+  _0RL_cd_968894b19fdce141_82000000* tcd = (_0RL_cd_968894b19fdce141_82000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
   tcd->result = impl->refresh();
 
@@ -1665,7 +2588,7 @@ _0RL_lcfn_968894b19fdce141_d1000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TDevice::refresh()
 {
-  _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_d1000000, "refresh", 8);
+  _0RL_cd_968894b19fdce141_82000000 _call_desc(_0RL_lcfn_968894b19fdce141_92000000, "refresh", 8);
 
 
   _invoke(_call_desc);
@@ -1680,11 +2603,11 @@ _0RL_lcfn_968894b19fdce141_d1000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTDeviceCollection
-class _0RL_cd_968894b19fdce141_e1000000
+class _0RL_cd_968894b19fdce141_a2000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_968894b19fdce141_e1000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_968894b19fdce141_a2000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -1700,27 +2623,27 @@ public:
   STI::TNetwork::TDeviceCollection_var result;
 };
 
-void _0RL_cd_968894b19fdce141_e1000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_a2000000::marshalReturnedValues(cdrStream& _n)
 {
   STI::TNetwork::TDeviceCollection::_marshalObjRef(result,_n);
 
 }
 
-void _0RL_cd_968894b19fdce141_e1000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_a2000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = STI::TNetwork::TDeviceCollection::_unmarshalObjRef(_n);
 
 }
 
-const char* const _0RL_cd_968894b19fdce141_e1000000::_user_exns[] = {
+const char* const _0RL_cd_968894b19fdce141_a2000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_968894b19fdce141_f1000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_968894b19fdce141_b2000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_968894b19fdce141_e1000000* tcd = (_0RL_cd_968894b19fdce141_e1000000*)cd;
+  _0RL_cd_968894b19fdce141_a2000000* tcd = (_0RL_cd_968894b19fdce141_a2000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
   tcd->result = impl->getDeviceCollection();
 
@@ -1729,7 +2652,71 @@ _0RL_lcfn_968894b19fdce141_f1000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TDeviceCollection_ptr STI::TNetwork::_objref_TDevice::getDeviceCollection()
 {
-  _0RL_cd_968894b19fdce141_e1000000 _call_desc(_0RL_lcfn_968894b19fdce141_f1000000, "getDeviceCollection", 20);
+  _0RL_cd_968894b19fdce141_a2000000 _call_desc(_0RL_lcfn_968894b19fdce141_b2000000, "getDeviceCollection", 20);
+
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDevice::getEventDispatcher
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTDeviceEventDispatcher
+class _0RL_cd_968894b19fdce141_c2000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_c2000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TDeviceEventDispatcher_var result;
+};
+
+void _0RL_cd_968894b19fdce141_c2000000::marshalReturnedValues(cdrStream& _n)
+{
+  STI::TNetwork::TDeviceEventDispatcher::_marshalObjRef(result,_n);
+
+}
+
+void _0RL_cd_968894b19fdce141_c2000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = STI::TNetwork::TDeviceEventDispatcher::_unmarshalObjRef(_n);
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_c2000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_d2000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_c2000000* tcd = (_0RL_cd_968894b19fdce141_c2000000*)cd;
+  STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
+  tcd->result = impl->getEventDispatcher();
+
+
+}
+
+STI::TNetwork::TDeviceEventDispatcher_ptr STI::TNetwork::_objref_TDevice::getEventDispatcher()
+{
+  _0RL_cd_968894b19fdce141_c2000000 _call_desc(_0RL_lcfn_968894b19fdce141_d2000000, "getEventDispatcher", 19);
 
 
   _invoke(_call_desc);
@@ -1744,11 +2731,11 @@ STI::TNetwork::TDeviceCollection_ptr STI::TNetwork::_objref_TDevice::getDeviceCo
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cunsigned_plong
-class _0RL_cd_968894b19fdce141_02000000
+class _0RL_cd_968894b19fdce141_e2000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_968894b19fdce141_02000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_968894b19fdce141_e2000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -1764,27 +2751,27 @@ public:
   ::CORBA::ULong arg_0;
 };
 
-void _0RL_cd_968894b19fdce141_02000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_e2000000::marshalArguments(cdrStream& _n)
 {
   arg_0 >>= _n;
 
 }
 
-void _0RL_cd_968894b19fdce141_02000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_968894b19fdce141_e2000000::unmarshalArguments(cdrStream& _n)
 {
   (::CORBA::ULong&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_968894b19fdce141_02000000::_user_exns[] = {
+const char* const _0RL_cd_968894b19fdce141_e2000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_968894b19fdce141_12000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_968894b19fdce141_f2000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_968894b19fdce141_02000000* tcd = (_0RL_cd_968894b19fdce141_02000000*)cd;
+  _0RL_cd_968894b19fdce141_e2000000* tcd = (_0RL_cd_968894b19fdce141_e2000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
   impl->write(tcd->arg_0);
 
@@ -1793,7 +2780,7 @@ _0RL_lcfn_968894b19fdce141_12000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TDevice::write(::CORBA::ULong input)
 {
-  _0RL_cd_968894b19fdce141_02000000 _call_desc(_0RL_lcfn_968894b19fdce141_12000000, "write", 6);
+  _0RL_cd_968894b19fdce141_e2000000 _call_desc(_0RL_lcfn_968894b19fdce141_f2000000, "write", 6);
   _call_desc.arg_0 = input;
 
   _invoke(_call_desc);
@@ -1833,7 +2820,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "refresh")) {
 
-    _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_d1000000, "refresh", 8, 1);
+    _0RL_cd_968894b19fdce141_82000000 _call_desc(_0RL_lcfn_968894b19fdce141_92000000, "refresh", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -1841,7 +2828,15 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDeviceCollection")) {
 
-    _0RL_cd_968894b19fdce141_e1000000 _call_desc(_0RL_lcfn_968894b19fdce141_f1000000, "getDeviceCollection", 20, 1);
+    _0RL_cd_968894b19fdce141_a2000000 _call_desc(_0RL_lcfn_968894b19fdce141_b2000000, "getDeviceCollection", 20, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "getEventDispatcher")) {
+
+    _0RL_cd_968894b19fdce141_c2000000 _call_desc(_0RL_lcfn_968894b19fdce141_d2000000, "getEventDispatcher", 19, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -1849,7 +2844,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "write")) {
 
-    _0RL_cd_968894b19fdce141_02000000 _call_desc(_0RL_lcfn_968894b19fdce141_12000000, "write", 6, 1);
+    _0RL_cd_968894b19fdce141_e2000000 _call_desc(_0RL_lcfn_968894b19fdce141_f2000000, "write", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -1885,6 +2880,12 @@ STI::TNetwork::_impl_TDevice::_mostDerivedRepoId()
 POA_STI::TNetwork::TDeviceHub::~TDeviceHub() {}
 
 POA_STI::TNetwork::TDeviceCollection::~TDeviceCollection() {}
+
+POA_STI::TNetwork::TRefreshIndicator::~TRefreshIndicator() {}
+
+POA_STI::TNetwork::TDeviceEventHandler::~TDeviceEventHandler() {}
+
+POA_STI::TNetwork::TDeviceEventDispatcher::~TDeviceEventDispatcher() {}
 
 POA_STI::TNetwork::TDevice::~TDevice() {}
 

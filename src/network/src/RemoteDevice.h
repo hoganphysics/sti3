@@ -6,6 +6,7 @@
 #include "Device.h"
 #include "DeviceCollection.h"
 #include "TDeviceRefInterface.h"
+#include "DeviceEventDispatcher.h"
 
 #include <memory>
 
@@ -26,6 +27,8 @@ public:
 	void write(unsigned input);
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
+
+	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);
 
 private:
 

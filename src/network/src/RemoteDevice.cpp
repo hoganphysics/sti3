@@ -1,9 +1,11 @@
 
 #include "RemoteDevice.h"
 #include "RemoteDeviceCollection.h"
+#include "RemoteDeviceEventDispatcher.h"
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
+using STI::Network::RemoteDeviceEventDispatcher;
 
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
@@ -82,6 +84,35 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	if (success) {
 		remoteCollection = std::make_shared<RemoteDeviceCollection>(tDeviceCollection);
 		collection = remoteCollection;
+	}
+}
+
+void RemoteDevice::getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
+{
+	bool success = false;
+
+	::STI::TNetwork::TDeviceEventDispatcher_ptr tEventDispatcher;	//remote reference
+	std::shared_ptr<RemoteDeviceEventDispatcher> remoteDispatcher;		//wrapper
+
+
+//	::STI::TNetwork::TDeviceCollection_ptr tDeviceCollection;	//remote reference
+//	std::shared_ptr<RemoteDeviceCollection> remoteCollection;	//wrapper
+
+	try {
+		tEventDispatcher = _tDevice->getEventDispatcher();
+		success = true;
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (success) {
+		remoteDispatcher = std::make_shared<RemoteDeviceEventDispatcher>(tEventDispatcher);
+		dispatcher = remoteDispatcher;
 	}
 }
 
