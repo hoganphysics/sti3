@@ -17,7 +17,6 @@ NetworkDeviceEventHandlerWrapper::NetworkDeviceEventHandlerWrapper(const std::sh
 
 NetworkDeviceEventHandlerWrapper::~NetworkDeviceEventHandlerWrapper()
 {
-//	eventHandlerServant._remove_ref();
 }
 
 
@@ -26,6 +25,8 @@ void NetworkDeviceEventHandlerWrapper::addListenerGroup(const DeviceEventType& t
 {
 	if (localEventHandler != 0) {
 		localEventHandler->addListenerGroup(type, listenerGroup);
+		eventHandlerServant.refresh();		//Raises flag on RemoteDeviceEventHandler, 
+											//indicating that this Handler has changed and need to be refreshed.
 	}
 }
 
@@ -33,6 +34,7 @@ void NetworkDeviceEventHandlerWrapper::removeListenerGroup(const DeviceEventType
 {
 	if (localEventHandler != 0) {
 		localEventHandler->removeListenerGroup(type);
+		eventHandlerServant.refresh();		//Raises flag on RemoteDeviceEventHandler
 	}
 }
 

@@ -16,8 +16,15 @@ struct DeviceEventListenerID
 	DeviceEventType type;
 	std::string name;
 
-	bool operator<(const DeviceEventListenerID& rhs) const { return type < rhs.type && name.compare(rhs.name) < 0; }
-	bool operator==(const DeviceEventListenerID& rhs) const { return type == rhs.type && (name.compare(rhs.name) == 0); }
+	bool operator<(const DeviceEventListenerID& rhs) const 
+	{
+		return type < rhs.type && name.compare(rhs.name) < 0;
+	}
+
+	bool operator==(const DeviceEventListenerID& rhs) const
+	{ 
+		return type == rhs.type && (name.compare(rhs.name) == 0);
+	}
 
 };
 

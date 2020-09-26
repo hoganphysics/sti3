@@ -10,12 +10,13 @@ namespace Device
 
 
 enum class DeviceEventType { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, Unknown };
+//DeviceEvent, 
+//DeviceEventReceiver::addListener, ::removeListener, ::refreshListenerGroups
 
 class DeviceEvent
 {
 public:
 	DeviceEvent() : _type(DeviceEventType::Unknown) {}
-	//DeviceEvent(const DeviceEventType& type) : _type(type) {}
 	DeviceEvent(const STI::Device::DeviceID& source, DeviceEventType type);
 	virtual ~DeviceEvent();
 
@@ -43,8 +44,6 @@ public:
 
 private:
 
-//	virtual DeviceEventType _getType() const { return DeviceEventType::Unknown; }	//should never happen
-
 	DeviceEventType _type;
 	STI::Device::DeviceID _source;
 
@@ -61,12 +60,8 @@ public:
 
 private:
 
-//	DeviceEventType _getType() const { return DeviceEventType::Refresh; }
-
 };
 
-//template<>
-//bool DeviceEvent::convert<RefreshDeviceEvent>(const std::shared_ptr<DeviceEvent>& evt, std::shared_ptr<RefreshDeviceEvent>& outEvt);
 
 class ChannelUpdateDeviceEvent : public DeviceEvent
 {
@@ -74,31 +69,11 @@ public:
 
 	ChannelUpdateDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source, DeviceEventType::ChannelUpdate) {}
 
+	//MixedValue channelValue();
+
 	static DeviceEventType getEventClassType() { return DeviceEventType::ChannelUpdate; }
 
 };
-
-//template<>
-//bool DeviceEvent::convert<ChannelUpdateDeviceEvent>(const std::shared_ptr<DeviceEvent>& evt, std::shared_ptr<ChannelUpdateDeviceEvent>& outEvt);
-//
-
-//
-//class ChannelUpdateDeviceEvent : public DeviceEvent
-//{
-//public:
-//
-//	ChannelUpdateDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source) {}
-//
-//	short channel();
-//
-//	STI::Utils::MixedValue value();
-//
-//private:
-//
-//	const DeviceEventType& _getType() const { return DeviceEventType::ChannelUpdate; }
-//};
-//
-
 
 
 } //Device

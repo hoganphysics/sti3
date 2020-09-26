@@ -22,12 +22,6 @@ public:
 	///which could cause a missed refresh()
 	bool checkThenReset();
 
-	//bool updateOccurred()
-	//{
-	//	std::unique_lock<std::mutex> writelock(updateMutex);
-	//	return updated;
-	//}
-
 private:
 
 	bool updated;

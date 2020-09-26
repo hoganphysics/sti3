@@ -1,10 +1,13 @@
 
-
 #include "LocalDeviceEventHandler.h"
+#include "DeviceEventListenerGroup.h"
 #include "DeviceEvent.h"
 
+#include <set>
 
 using STI::Device::LocalDeviceEventHandler;
+using STI::Device::AbstractEventListenerGroup;
+using STI::Device::DeviceEventType;
 using STI::Device::DeviceEvent;
 
 
@@ -13,14 +16,37 @@ LocalDeviceEventHandler::LocalDeviceEventHandler() : eventQueue(this)
 	eventQueue.start();
 }
 
+
 LocalDeviceEventHandler::~LocalDeviceEventHandler()
 {
+	eventQueue.stop();
+	eventQueue.clearEvents();
 }
+
+
+void LocalDeviceEventHandler::addListenerGroup(const DeviceEventType& type, 
+	std::shared_ptr<AbstractEventListenerGroup>& listenerGroup)
+{
+	if (eventListenerGroups.add(type, listenerGroup)) {
+		listenersTypes[type] = listenerGroup->size();
+	}
+}
+
+
+void LocalDeviceEventHandler::removeListenerGroup(const DeviceEventType& type)
+{
+	eventListenerGroups.remove(type);
+	listenersTypes[type] = 0;
+}
+
 
 void LocalDeviceEventHandler::addEvent(const std::shared_ptr<DeviceEvent>& evt)
 {
+	if (evt == 0) return;
+
 	eventQueue.addEvent(evt);
 }
+
 
 void LocalDeviceEventHandler::clearEvents()
 {
@@ -30,52 +56,35 @@ void LocalDeviceEventHandler::clearEvents()
 
 bool LocalDeviceEventHandler::hasListeners(const std::shared_ptr<DeviceEvent>& evt)
 {
+	if (evt == 0) return false;
+
 	auto it = listenersTypes.find(evt->getType());
 
 	return (it != listenersTypes.end() && it->second > 0);
-//	return listenersTypes.count(evt->getType()) == 1;
 }
+
+
+///List of event type that this handler responds to (based on which listeners are currently attached)
+void LocalDeviceEventHandler::getListenerTypes(std::set<DeviceEventType>& types)
+{
+	types.clear();
+
+	for (auto& t : listenersTypes) {
+		if (t.second > 0) {			//number of listeners
+			types.insert(t.first);	//listener type
+		}
+	}
+}
+
 
 void LocalDeviceEventHandler::handleEvent(const std::shared_ptr<DeviceEvent>& evt)
 {
-	////hasListeners
-	//if (!hasListeners(evt)) {
-	//	if (genericListeners.size() > 0) {
-	//		genericListeners.handleEvent(evt);
-	//	}
-	//	return;
-	//}
+	if (evt == 0) return;
+
 	std::shared_ptr<AbstractEventListenerGroup> eventListenerGroup;
 	if (eventListenerGroups.get(evt->getType(), eventListenerGroup) && eventListenerGroup != 0) {
 		eventListenerGroup->handleEvent(evt);
 	}
-
-	//switch (evt->getType())
-	//{
-	//case DeviceEventType::Refresh:
-	//	//const RefreshDeviceEvent& rde = dynamic_cast<const RefreshDeviceEvent&>(evt);
-	//	//auto rde = std::dynamic_pointer_cast<RefreshDeviceEvent>(evt);
-	//	//if (rde != 0) {
-	//	//	refreshListeners.handleEvent(rde);
-	//	//}
-
-	//	std::shared_ptr<RefreshDeviceEvent> rde;
-	//	if (DeviceEvent::convert<RefreshDeviceEvent>(evt, rde)) {
-	//		refreshListeners.handleEvent(rde);
-	//	}
-	//	break;
-	//}
-
-
-	//try {
-
-
-	//}
-	//catch (const std::bad_cast& e)
-	//{
-	//	e.what();
-	//	//std::cout << "Caught bad cast\n";
-	//}
 
 }
 

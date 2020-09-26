@@ -1,6 +1,7 @@
 #ifndef STI_DEVICE_DEVICEEVENTLISTENERGROUP_H
 #define STI_DEVICE_DEVICEEVENTLISTENERGROUP_H
 
+#include "DeviceEvent.h"
 #include "DeviceEventListener.h"
 #include "SynchronizedMap.h"
 
@@ -14,19 +15,18 @@ namespace Device
 class AbstractEventListenerGroup
 {
 public:
+
+	virtual ~AbstractEventListenerGroup() {}
+
 	virtual unsigned size() = 0;
 	virtual void handleEvent(const std::shared_ptr<DeviceEvent>& evt) = 0;
+
 };
 
 template<class Event>
 class DeviceEventListenerGroup : public AbstractEventListenerGroup
 {
 public:
-
-	//DeviceEventType getEventType() const
-	//{
-	//	return Event::getEventClassType();
-	//}
 
 	unsigned size() { return static_cast<unsigned>(listeners.size()); }
 
@@ -51,6 +51,7 @@ public:
 	void handleEvent(const std::shared_ptr<DeviceEvent>& evt)
 	{
 		std::shared_ptr<Event> convertedEvent;
+
 		if (evt->getType() == Event::getEventClassType() && 
 			DeviceEvent::convert<Event>(evt, convertedEvent)) 
 		{

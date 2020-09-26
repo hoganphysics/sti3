@@ -1,6 +1,7 @@
 
 #include "RemoteDeviceEventHandler.h"
 #include "NetworkConvert.h"
+#include "DeviceEvent.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"
@@ -12,7 +13,6 @@ using STI::Network::convert;
 
 RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEventHandler_ptr deviceHandler)
 	: tDeviceHandler(STI::TNetwork::TDeviceEventHandler::_duplicate(deviceHandler))
-//	: tDeviceHandler(deviceHandler)
 {
 //	STI::TNetwork::TDeviceEventHandler
 //	CORBA::remove_ref(deviceHandler);
@@ -33,9 +33,9 @@ RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEvent
 	{
 	}
 }
+
 RemoteDeviceEventHandler::~RemoteDeviceEventHandler()
 {
-//	refreshIndicator._remove_ref();
 }
 
 void RemoteDeviceEventHandler::addListenerGroup(const STI::Device::DeviceEventType& type, std::shared_ptr<STI::Device::AbstractEventListenerGroup>& listenerGroup)
@@ -55,8 +55,6 @@ void RemoteDeviceEventHandler::addEvent(const std::shared_ptr<STI::Device::Devic
 	}
 
 	STI::TNetwork::TAnyEvent tAnyEvent;
-
-	//CORBA::Any anyEvent;
 
 	if (!convert<std::shared_ptr<STI::Device::DeviceEvent>, STI::TNetwork::TAnyEvent>(evt, tAnyEvent)) {
 		return;
@@ -111,13 +109,9 @@ bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::D
 		}
 	}
 
-	//should cache this...
-	//std::set<STI::Device::DeviceEventType> listenersTypes;
-	
 	//Event filter based on whether listeners of a given type are present on the remote device
 	return listenersTypes.count(evt->getType()) > 0;
 	
-//	return false;
 }
 
 

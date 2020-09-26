@@ -1,7 +1,7 @@
 
 #include "LocalDeviceEventDispatcher.h"
-#include "DeviceEvent.h"
 #include "LocalDeviceEventHandler.h"
+#include "DeviceEvent.h"
 
 #include <set>
 #include <memory>
@@ -11,6 +11,7 @@ using STI::Device::DeviceEvent;
 using STI::Device::DeviceID;
 using STI::Device::LocalDeviceEventHandler;
 using STI::Device::DeviceEventHandler;
+
 
 LocalDeviceEventDispatcher::LocalDeviceEventDispatcher() : eventQueue(this)
 {
@@ -24,10 +25,12 @@ LocalDeviceEventDispatcher::~LocalDeviceEventDispatcher()
 	handlers.clear();
 }
 
+
 void LocalDeviceEventDispatcher::addEvent(const std::shared_ptr<DeviceEvent>& evt)
 {
 	eventQueue.addEvent(evt);
 }
+
 
 void LocalDeviceEventDispatcher::clearEvents()
 {
@@ -52,10 +55,12 @@ void LocalDeviceEventDispatcher::addEventHandler(const DeviceID& targetID, const
 	handlers.add(targetID, handler);
 }
 
+
 void LocalDeviceEventDispatcher::removeEventHandler(const DeviceID& targetID)
 {
 	handlers.remove(targetID);
 }
+
 
 bool LocalDeviceEventDispatcher::makeEventHandler(std::shared_ptr<DeviceEventHandler>& handler)
 {

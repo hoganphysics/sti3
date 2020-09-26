@@ -27,7 +27,6 @@ public:
 	virtual void addEvent(const std::shared_ptr<DeviceEvent>& evt) = 0;
 	virtual void clearEvents() = 0;
 
-
 };
 
 

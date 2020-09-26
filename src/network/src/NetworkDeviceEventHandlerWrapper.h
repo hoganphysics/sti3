@@ -1,8 +1,10 @@
 #ifndef STI_NETWORK_NETWORKDEVICEEVENTHANDLERWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEEVENTHANDLERWRAPPER_H
 
+#include "DeviceEventHandler.h"
 #include "LocalDeviceEventHandler.h"
 #include "TDeviceEventHandler_i.h"
+#include "DeviceEvent.h"
 
 #include "orbTypes.h"
 
@@ -31,13 +33,13 @@ public:
 
 	bool hasListeners(const std::shared_ptr<STI::Device::DeviceEvent>& evt);
 
-	static bool getTDeviceEventHandlerReference(const typename std::shared_ptr<STI::Device::DeviceEventHandler>& eventHandler,
+	static bool getTDeviceEventHandlerReference(
+		const typename std::shared_ptr<STI::Device::DeviceEventHandler>& eventHandler,
 		STI::TNetwork::TDeviceEventHandler_ptr& tEventHandler)
 	{
 		auto wrapper = std::dynamic_pointer_cast<NetworkDeviceEventHandlerWrapper>(eventHandler);
 		if (wrapper) {
 			tEventHandler = wrapper->eventHandlerServant._this();
-//			wrapper->eventHandlerServant._remove_ref();
 			return !CORBA::is_nil(tEventHandler);
 		}
 		return false;

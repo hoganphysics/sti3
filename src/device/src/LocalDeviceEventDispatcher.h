@@ -33,7 +33,6 @@ public:
 	void addEvent(const std::shared_ptr<DeviceEvent>& evt);
 	void clearEvents();
 
-
 private:
 
 	class DispatcherEventQueue : public STI::Utils::EventQueue<std::shared_ptr<DeviceEvent>>
