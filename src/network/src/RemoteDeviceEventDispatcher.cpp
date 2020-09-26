@@ -41,6 +41,8 @@ void RemoteDeviceEventDispatcher::addEventHandler(const STI::Device::DeviceID& t
 	//tEventHandlervar.inout()
 
 	try {
+//		tEventDispatcher->removeEventHandler(convert<DeviceID, TDeviceID>(targetID));	//remote call
+
 //		tEventDispatcher->addEventHandler(convert<DeviceID, TDeviceID>(targetID), tEventHandlervar);	//remote call
 		tEventDispatcher->addEventHandler(convert<DeviceID, TDeviceID>(targetID), tEventHandler);	//remote call
 	}

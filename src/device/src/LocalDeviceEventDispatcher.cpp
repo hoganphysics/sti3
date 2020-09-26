@@ -19,6 +19,9 @@ LocalDeviceEventDispatcher::LocalDeviceEventDispatcher() : eventQueue(this)
 
 LocalDeviceEventDispatcher::~LocalDeviceEventDispatcher()
 {
+	eventQueue.stop();
+	clearEvents();
+	handlers.clear();
 }
 
 void LocalDeviceEventDispatcher::addEvent(const std::shared_ptr<DeviceEvent>& evt)

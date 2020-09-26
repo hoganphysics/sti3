@@ -115,10 +115,28 @@ int main(int argc, char **argv)
 	
 	//hub3.addNode(dev2->id, dev2);
 
+	std::shared_ptr<STI::Device::DeviceEventReceiver> receiver;
+
+
 	//hub3.run(false);
 	hub.run(true);
 
-	
+/*
+
+	int tmp;
+	std::cin >> tmp;
+
+	dev1->getEventReceiver(receiver);
+	receiver->addDeviceEventHandler(STI::Device::DeviceID("dev0", "localhost", 0, ""));
+
+	std::cin >> tmp;
+
+	dev1->getEventReceiver(receiver);
+	receiver->addDeviceEventHandler(STI::Device::DeviceID("dev0", "localhost", 0, ""));
+
+	std::cin >> tmp;*/
+
+
 	//std::shared_ptr<STI::Device::DeviceCollection> collection;
 	//dev0->getCollection(collection);
 

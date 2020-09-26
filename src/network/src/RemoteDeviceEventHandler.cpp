@@ -14,6 +14,8 @@ RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEvent
 	: tDeviceHandler(STI::TNetwork::TDeviceEventHandler::_duplicate(deviceHandler))
 //	: tDeviceHandler(deviceHandler)
 {
+//	STI::TNetwork::TDeviceEventHandler
+//	CORBA::remove_ref(deviceHandler);
 	//install refresh indicator on the remote resource this object is wrapping
 	try {
 
@@ -33,6 +35,7 @@ RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEvent
 }
 RemoteDeviceEventHandler::~RemoteDeviceEventHandler()
 {
+//	refreshIndicator._remove_ref();
 }
 
 void RemoteDeviceEventHandler::addListenerGroup(const STI::Device::DeviceEventType& type, std::shared_ptr<STI::Device::AbstractEventListenerGroup>& listenerGroup)
