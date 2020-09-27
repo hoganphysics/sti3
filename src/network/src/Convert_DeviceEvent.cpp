@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 
 #include "orbTypes.h"
+
 #include <memory>
 
 using STI::Network::convert;
@@ -16,9 +17,8 @@ using STI::TNetwork::TDeviceEvent;
 using STI::TNetwork::TAnyEvent;
 
 
-
 template<>
-TDeviceEventType convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type)
+TDeviceEventType STI::Network::convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type)
 {
 	TDeviceEventType tType;
 
@@ -54,7 +54,7 @@ TDeviceEventType convert<DeviceEventType, TDeviceEventType>(const DeviceEventTyp
 }
 
 template<>
-DeviceEventType convert<TDeviceEventType, DeviceEventType>(const TDeviceEventType& tType)
+DeviceEventType STI::Network::convert<TDeviceEventType, DeviceEventType>(const TDeviceEventType& tType)
 {
 	DeviceEventType type;
 
@@ -90,14 +90,14 @@ DeviceEventType convert<TDeviceEventType, DeviceEventType>(const TDeviceEventTyp
 }
 
 template<>
-bool convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type, TDeviceEventType& tType)
+bool STI::Network::convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type, TDeviceEventType& tType)
 {
 	tType = convert<DeviceEventType, TDeviceEventType>(type);
 	return true;
 }
 
 template<>
-bool convert<TDeviceEventType, DeviceEventType>(const TDeviceEventType& tType, DeviceEventType& type)
+bool STI::Network::convert<TDeviceEventType, DeviceEventType>(const TDeviceEventType& tType, DeviceEventType& type)
 {
 	type = convert<TDeviceEventType, DeviceEventType>(tType);
 	return true;
@@ -105,7 +105,7 @@ bool convert<TDeviceEventType, DeviceEventType>(const TDeviceEventType& tType, D
 
 
 template<>
-bool convert<std::shared_ptr<STI::Device::DeviceEvent>, TDeviceEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TDeviceEvent& tEvent)
+bool STI::Network::convert<std::shared_ptr<STI::Device::DeviceEvent>, TDeviceEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TDeviceEvent& tEvent)
 {
 	if (deviceEvent == 0) {
 		return false;
@@ -118,7 +118,7 @@ bool convert<std::shared_ptr<STI::Device::DeviceEvent>, TDeviceEvent>(const std:
 }
 
 template<>
-bool convert<TDeviceEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TDeviceEvent& tEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent)
+bool STI::Network::convert<TDeviceEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TDeviceEvent& tEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent)
 {
 	deviceEvent = std::make_shared<DeviceEvent>(
 		convert<TDeviceID, DeviceID>(tEvent.sourceID),
@@ -130,7 +130,7 @@ bool convert<TDeviceEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TDev
 
 
 template<>
-bool convert<std::shared_ptr<DeviceEvent>, TAnyEvent>(const std::shared_ptr<DeviceEvent>& deviceEvent, TAnyEvent& tAnyEvent)
+bool STI::Network::convert<std::shared_ptr<DeviceEvent>, TAnyEvent>(const std::shared_ptr<DeviceEvent>& deviceEvent, TAnyEvent& tAnyEvent)
 {
 	if (deviceEvent == 0) {
 		return false;
@@ -178,7 +178,7 @@ bool extractEvent(const CORBA::Any& anyEvent, std::shared_ptr<STI::Device::Devic
 }
 
 template<>
-bool convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TAnyEvent& tAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent)
+bool STI::Network::convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TAnyEvent& tAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent)
 {
 	bool success = false;
 
@@ -202,7 +202,7 @@ bool convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TAnyEve
 
 
 template<>
-bool convert<STI::TNetwork::TRefreshDeviceEvent, std::shared_ptr<STI::Device::RefreshDeviceEvent>>(const STI::TNetwork::TRefreshDeviceEvent& tEvent, std::shared_ptr<STI::Device::RefreshDeviceEvent>& deviceEvent)
+bool STI::Network::convert<STI::TNetwork::TRefreshDeviceEvent, std::shared_ptr<STI::Device::RefreshDeviceEvent>>(const STI::TNetwork::TRefreshDeviceEvent& tEvent, std::shared_ptr<STI::Device::RefreshDeviceEvent>& deviceEvent)
 {
 	deviceEvent = std::make_shared<STI::Device::RefreshDeviceEvent>(
 		convert<TDeviceID, DeviceID>(tEvent.base.sourceID)

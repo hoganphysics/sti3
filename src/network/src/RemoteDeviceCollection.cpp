@@ -8,8 +8,8 @@
 
 #include "orbTypes.h"
 
-using STI::Network::TDeviceRefInterface;
 
+using STI::Network::TDeviceRefInterface;
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Device::DeviceID;
@@ -30,12 +30,14 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 		return false;
 	}
 
-	STI::TNetwork::TDevice_var tDevicevar = tDevice;
+//	STI::TNetwork::TDevice_var tDevicevar = tDevice;
 
 	bool success = false;
 
+	//std::cout << "RemoteDeviceCollection::add( " << CORBA::is_nil(tDevice) << " )" << std::endl;
+
 	try {
-		success = tDeviceCollection->add(convert<DeviceID, TDeviceID>(id), tDevicevar);	//remote call
+		success = tDeviceCollection->add(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -44,6 +46,8 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 	catch (CORBA::Exception&)
 	{
 	}
+
+	//std::cout << "after tDeviceCollection->add" << std::endl;
 
 	return success;
 }

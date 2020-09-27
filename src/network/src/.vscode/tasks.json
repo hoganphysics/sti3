@@ -9,6 +9,7 @@
                 "-std=c++11",
                 "-std=c++1y",
                 "-I${workspaceFolder}/../../../include/",
+                "-I${workspaceFolder}/../../device/src/",
                 "-I${workspaceFolder}",
                 //"-I/usr/include/",
                 //"${file}",

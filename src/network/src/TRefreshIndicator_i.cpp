@@ -7,7 +7,7 @@ using STI::TNetwork::TRefreshIndicator_i;
 
 
 TRefreshIndicator_i::TRefreshIndicator_i() 
-	: updated(true) 
+	: updated(true)
 {
 }
 

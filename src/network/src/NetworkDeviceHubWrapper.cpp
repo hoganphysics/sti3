@@ -59,7 +59,6 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<
 
 NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()
 {
-	std::cerr << "Destroying NetworkDeviceHubWrapper" << std::endl;
 	//STI::TNetwork::TDeviceHub_i deviceHubServant;
 //	deviceHubServant._remove_ref();
 }

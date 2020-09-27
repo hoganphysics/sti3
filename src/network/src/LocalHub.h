@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <mutex>
-//
 
 
 namespace STI
@@ -339,6 +338,7 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 		if (!newTrace.includesHubID(hubID)) {
 			//found a hub that has not received the call yet
 			if (hubs.get(hubID, hub) && hub != 0) {
+
 				hub->distribute(id, node, newTrace, first);
 			}
 		}

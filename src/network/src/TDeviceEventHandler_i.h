@@ -32,6 +32,7 @@ private:
 	std::shared_ptr<STI::Device::LocalDeviceEventHandler> eventHandler;
 
 	::STI::TNetwork::TRefreshIndicator_var tRefreshIndicator;
+	bool tRefreshIndicatorInstalled;
 };
 
 } //TNetwork

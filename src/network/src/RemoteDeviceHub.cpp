@@ -11,6 +11,7 @@
 
 #include "orbTypes.h"
 
+
 using STI::Network::HubID;
 using STI::Network::DeviceHub;
 using STI::Network::RemoteDeviceHub;
@@ -213,7 +214,7 @@ bool RemoteDeviceHub::distributeNodes(const HubID& targetHub)
 	catch (CORBA::Exception&)
 	{
 	}
-
+	
 	return success;
 }
 
@@ -264,3 +265,4 @@ const HubID& RemoteDeviceHub::getID()
 
 	return hubID;
 }
+
