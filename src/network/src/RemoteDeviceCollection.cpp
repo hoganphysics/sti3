@@ -30,12 +30,12 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 		return false;
 	}
 
-	STI::TNetwork::TDevice_var tDevicevar = tDevice;
+	//STI::TNetwork::TDevice_var tDevicevar = tDevice;
 
 	bool success = false;
 
 	try {
-		success = tDeviceCollection->add(convert<DeviceID, TDeviceID>(id), tDevicevar);	//remote call
+		success = tDeviceCollection->add(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

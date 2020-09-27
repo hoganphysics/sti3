@@ -7,6 +7,7 @@
 #include "LocalDevice.h"
 #include "DeviceEvent.h"
 #include "DeviceEventDispatcher.h"
+#include "DeviceEventReceiver.h"
 
 #include <iostream>
 #include <memory>
@@ -18,6 +19,25 @@
 
 using std::cout;
 using std::endl;
+
+
+
+class TestListener : public STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>
+{
+public:
+	TestListener(const std::string& label) : label(label) {}
+
+	void handleEvent(const std::shared_ptr<STI::Device::RefreshDeviceEvent>& evt)
+	{
+		std::unique_lock < std::mutex > writeLock(TestListener::coutMutex);
+		cout << "Refresh " << label << ". Source: " << evt->sourceID().getName() << endl;
+	}
+
+	std::string label;
+	static std::mutex coutMutex;
+};
+
+std::mutex TestListener::coutMutex{};
 
 //class TempPolicy : public STI::Utils::LocalCollection<STI::Device::DeviceID, STI::Device::Device>::LocalCollectionPolicy
 //{
@@ -114,6 +134,20 @@ int main(int argc, char **argv)
 		devRef->write(x);
 		x += 12;
 	}
+
+
+	std::string lname = "listener: dev0";
+	std::shared_ptr<TestListener> listener = std::make_shared<TestListener>(lname);
+	std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>> listenerX = listener;
+	STI::Device::DeviceEventListenerID listenerID;
+	listenerID.name = "listener_0";
+	listenerID.type = STI::Device::DeviceEventType::Refresh;
+
+	std::shared_ptr<STI::Device::DeviceEventReceiver> receiver;
+	dev0->getEventReceiver(receiver);
+	receiver->addListener(STI::Device::DeviceID("dev1", "localhost", 0, ""), listenerID, listenerX);
+//		addDeviceEventHandler(STI::Device::DeviceID("dev0", "localhost", 0, ""));
+
 
 	std::cin >> tmp;
 
