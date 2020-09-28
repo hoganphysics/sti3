@@ -30,3 +30,7 @@ doc/doxygen/out/
 src/device/test/testEvents/vcproject/x64/
 src/network/test/testcorbaclient/src/testClient
 src/network/test/testNodeWalker/x64/
+src/network/src/deviceNet.*
+src/network/src/deviceNetDynSK.*
+src/network/src/orbTypes.*
+src/network/src/orbTypesDynSK.*
