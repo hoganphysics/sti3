@@ -42,7 +42,16 @@ bool STI::Network::convert<DeviceID, TDeviceID>(const DeviceID& deviceID, TDevic
 	tDeviceID.address = convert<string, String_member>(deviceID.getAddress());
 	tDeviceID.deviceName = convert<string, String_member>(deviceID.getName());
 	tDeviceID.moduleNum = convert<unsigned short, ::CORBA::UShort>(deviceID.getModule());
+	tDeviceID.targetServer = convert<std::string, CORBA::String_member>(deviceID.getTargetServerID());
 
+	return true;
+}
+
+
+template<>
+bool convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID, DeviceID& deviceID)
+{
+	deviceID = convert<TDeviceID, DeviceID>(tDeviceID);
 	return true;
 }
 

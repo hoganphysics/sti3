@@ -7,7 +7,9 @@
 
 #include "ORBManager.h"
 #include "NetworkConvert.h"
+#include "Convert_HubNodeWalker.h"
 #include "orbTypes.h"
+
 
 using STI::Network::RemoteDeviceHub;
 using STI::Network::RemoteDevice;
@@ -140,6 +142,27 @@ TDeviceHubID* TDeviceHub_i::deviceHubID()
 	}
 
 	return tDeviceHub._retn();
+}
+
+void TDeviceHub_i::walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace)
+{
+	if (localHub != 0) {
+
+		//convert in values
+		STI::Network::DeviceHub::HubNodeWalker nodeWalker;
+		convert<STI::TNetwork::TNodeWalker, STI::Network::DeviceHub::HubNodeWalker>(root, nodeWalker);
+
+		localHub->walk(
+			nodeWalker,
+			convert<TDeviceHubTrace, STI::Network::HubTrace>(trace)
+		);
+		
+		//convert out values
+		//STI::TNetwork::TNodeWalker_var tNodeWalker(new STI::TNetwork::TNodeWalker);
+		convert<STI::Network::DeviceHub::HubNodeWalker, STI::TNetwork::TNodeWalker>(nodeWalker, root);
+
+	//	root = tNodeWalker.out();
+	}
 }
 
 

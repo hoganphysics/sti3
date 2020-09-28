@@ -126,6 +126,8 @@ template<>
 TNetwork::TDeviceID Network::convert<Device::DeviceID, TNetwork::TDeviceID>(const Device::DeviceID& deviceID);
 template<>
 bool Network::convert<Device::DeviceID, TNetwork::TDeviceID>(const Device::DeviceID& deviceID, TNetwork::TDeviceID& tDeviceID);
+template<>
+bool Network::convert<TNetwork::TDeviceID, Device::DeviceID>(const TNetwork::TDeviceID& tDeviceID, Device::DeviceID& deviceID);
 
 
 namespace Network
@@ -133,6 +135,7 @@ namespace Network
 
 class HubID;
 class HubTrace;
+
 
 } //Network
 
@@ -143,6 +146,9 @@ template<>
 TNetwork::TDeviceHubID Network::convert<Network::HubID, TNetwork::TDeviceHubID>(const Network::HubID& hubID);
 template<>
 bool Network::convert<Network::HubID, TNetwork::TDeviceHubID>(const Network::HubID& hubID, TNetwork::TDeviceHubID& tHubID);
+template<>
+bool Network::convert<TNetwork::TDeviceHubID, Network::HubID>(const TNetwork::TDeviceHubID& tHubID, Network::HubID& hubID);
+
 
 //HubTrace
 template<>
@@ -154,8 +160,8 @@ TNetwork::TDeviceHubTrace Network::convert<Network::HubTrace, TNetwork::TDeviceH
 template<>
 Network::HubTrace Network::convert<TNetwork::TDeviceHubTrace, Network::HubTrace>(const TNetwork::TDeviceHubTrace& tDeviceHubTrace);
 
-//DeviceEvent
 
+//DeviceEvent
 template<>
 bool Network::convert<std::shared_ptr<STI::Device::DeviceEvent>, TNetwork::TDeviceEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TNetwork::TDeviceEvent& tEvent);
 template<>

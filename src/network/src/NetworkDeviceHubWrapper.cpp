@@ -16,6 +16,8 @@ using STI::Network::DeviceHub;
 using STI::Network::HubID;
 using STI::Network::HubTrace;
 using STI::Network::LocalHub;
+using STI::Network::NodeWalker;
+
 
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<STI::Device::DeviceID, STI::Device::Device>>& hub)
 	: localHub(hub), deviceHubServant(hub)
@@ -59,7 +61,6 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalHub<
 
 NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()
 {
-	std::cerr << "Destroying NetworkDeviceHubWrapper" << std::endl;
 	//STI::TNetwork::TDeviceHub_i deviceHubServant;
 //	deviceHubServant._remove_ref();
 }
@@ -135,9 +136,15 @@ bool NetworkDeviceHubWrapper::redistributeNodes(const HubTrace& trace)
 	return false;
 }
 
-const HubID& NetworkDeviceHubWrapper::getID()
+const HubID& NetworkDeviceHubWrapper::getID() const
 {
 	return localHub->getID();
+}
+
+
+void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
+{
+	localHub->walk(root, trace);
 }
 
 

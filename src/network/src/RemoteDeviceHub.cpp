@@ -1,6 +1,7 @@
 
 #include "RemoteDeviceHub.h"
 #include "NetworkConvert.h"
+#include "Convert_HubNodeWalker.h"
 
 #include "NetworkDeviceHubWrapper.h"
 #include "TDeviceRefInterface.h"
@@ -11,6 +12,7 @@
 
 #include "orbTypes.h"
 
+
 using STI::Network::HubID;
 using STI::Network::DeviceHub;
 using STI::Network::RemoteDeviceHub;
@@ -20,10 +22,13 @@ using STI::Network::convert;
 using STI::Network::TDeviceRefInterface;
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::TNetwork::TDeviceHubID;
+using STI::Network::NodeWalker;
+
 
 RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 	: tDeviceHub(STI::TNetwork::TDeviceHub::_duplicate(deviceHub))
 {
+	_getHubID();	// network call to get HubID once and save locally
 }
 
 //void RemoteDeviceHub::getNodeIDs(std::set<STI::Device::DeviceID>& ids) const
@@ -213,7 +218,7 @@ bool RemoteDeviceHub::distributeNodes(const HubID& targetHub)
 	catch (CORBA::Exception&)
 	{
 	}
-
+	
 	return success;
 }
 
@@ -237,8 +242,12 @@ bool RemoteDeviceHub::redistributeNodes(const HubTrace& trace)
 	return success;
 }
 
+const HubID& RemoteDeviceHub::getID() const
+{
+	return hubID;
+}
 
-const HubID& RemoteDeviceHub::getID()
+void RemoteDeviceHub::_getHubID()
 {
 	using STI::TNetwork::TDeviceHubID_var;
 	
@@ -261,6 +270,40 @@ const HubID& RemoteDeviceHub::getID()
 	catch (CORBA::Exception&)
 	{
 	}
-
-	return hubID;
 }
+
+void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
+{
+	bool success = false;
+
+	//convert in values
+	STI::TNetwork::TNodeWalker_var tRoot(new STI::TNetwork::TNodeWalker);
+
+	tRoot->connections.length(0);
+
+	convert<STI::Network::DeviceHub::HubNodeWalker, STI::TNetwork::TNodeWalker>(root, tRoot);
+
+	try {
+		tDeviceHub->walk(
+			tRoot,
+			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace)
+		);	//remote call
+
+		success = true;
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	//convert out values
+	if (success) {
+		convert<STI::TNetwork::TNodeWalker, STI::Network::DeviceHub::HubNodeWalker>(tRoot, root);
+	}
+}
+
+
+

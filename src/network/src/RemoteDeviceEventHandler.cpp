@@ -89,6 +89,7 @@ void RemoteDeviceEventHandler::clearEvents()
 
 bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::DeviceEvent>& evt)
 {
+	using ::STI::TNetwork::TDeviceEventTypeSeq_var;
 	using ::STI::TNetwork::TDeviceEventType;
 	using STI::Device::DeviceEventType;
 
@@ -97,15 +98,30 @@ bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::D
 	//A remote call is only made to refresh the event filter list if the remote resource refreshed.
 	if (refreshIndicator.checkThenReset()) {
 		//a refresh occurred on the remote resource; we need to refresh
+		
+		bool success = false;
+		TDeviceEventTypeSeq_var tListenersTypes;
 
-		auto tListenersTypes = tDeviceHandler->listenersTypes();
+		try {
+			if (!CORBA::is_nil(tDeviceHandler)) {
+				tListenersTypes = tDeviceHandler->listenersTypes();	//remote call
+				success = true;
+			}
+		}
+		catch (CORBA::TRANSIENT&) {
+		}
+		catch (CORBA::SystemException&) {
+		}
+		catch (CORBA::Exception&)
+		{
+		}
 
-		if (tListenersTypes != 0) {
+		if (success) {
 			
 			listenersTypes.clear();
 
 			convert<TDeviceEventType, DeviceEventType>(
-				(const _CORBA_Unbounded_Sequence<TDeviceEventType>&) *tListenersTypes, listenersTypes);
+				(const _CORBA_Unbounded_Sequence<TDeviceEventType>&) tListenersTypes, listenersTypes);
 		}
 	}
 

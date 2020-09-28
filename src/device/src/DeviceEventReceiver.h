@@ -104,7 +104,7 @@ private:
 	///Refresh the listener group held by the event handler for a particular event type T
 	///associated with events sourced for sourceDeviceID.
 	template<typename T>
-	void refreshListenerGroup(const DeviceID& sourceDeviceID, ListenerGroupMap<T>& listenerGroupMap, 
+	void refreshListenerGroup(const DeviceID& sourceDeviceID, typename DeviceEventReceiver::ListenerGroupMap<T>& listenerGroupMap, 
 		const std::shared_ptr<DeviceEventHandler>& handler)
 	{
 		if (handler == 0) {
@@ -112,15 +112,16 @@ private:
 		}
 
 		bool success = false;
-		std::shared_ptr<DeviceEventListenerGroup<T>> listenerGroup;
+		typename std::shared_ptr<DeviceEventListenerGroup<T>> listenerGroup;
 
 		if (listenerGroupMap.contains(sourceDeviceID) && 
 			getListenerGroup(sourceDeviceID, listenerGroupMap, listenerGroup) &&
 			listenerGroup->size() > 0) {
 			
+			auto abstractListenerGroup = std::static_pointer_cast<AbstractEventListenerGroup>(listenerGroup);
+
 			//add newest version of the group to the handler
-			handler->addListenerGroup(T::getEventClassType(),
-				std::static_pointer_cast<AbstractEventListenerGroup>(listenerGroup));
+			handler->addListenerGroup(T::getEventClassType(), abstractListenerGroup);
 		}
 		else {
 			//remove the group from the handler

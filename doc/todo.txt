@@ -1,0 +1,18 @@
+Priorities
+
+Misc
+* Rename DeviceEvent -> Message (?)
+* Add CORBA::_is_nil() and logic to *_i.cpp classes
+* Options interface.  [Device1] ::name = Test Device.  Make store as JSON?
+* Split NetworkConvert.h into separate headers for each type (faster compile times)
+
+Engine
+* EventEngine scheduler + network interface for submitting events
+* Begin python library to send events 
+* Mathematica wrapper of python lib to allow generation and viewing of event lists
+
+Front end
+* NodeWalker returns graph of network, any node can input from any Hub.  Hub could have a EventReceiver and could register as a HubEventListener of all attached nodes.
+* Begin front end server and client codebases
+* Display network graph in browser
+

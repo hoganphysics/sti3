@@ -28,6 +28,11 @@ module TNetwork
 	};
 	typedef sequence<TDeviceID> TDeviceIDSeq;
 
+
+
+
+
+
 	enum TDeviceEventType { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, Unknown };
 	typedef sequence<TDeviceEventType> TDeviceEventTypeSeq;
 

@@ -255,3 +255,10 @@ void NetworkDeviceHub::reconnectLoop()
 	} while (reconnectCondition.wait_for(lck, std::chrono::seconds(1)) == std::cv_status::timeout);
 }
 
+void NetworkDeviceHub::walk(LocalDeviceHub::HubNodeWalker& root) const
+{
+	if (localHub != 0) {
+		localHub->walk(root);
+	}
+}
+

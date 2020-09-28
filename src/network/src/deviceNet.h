@@ -116,6 +116,308 @@ _CORBA_MODULE_BEG
 
 #endif
 
+    struct TDeviceNode {
+      typedef _CORBA_ConstrType_Variable_Var<TDeviceNode> _var_type;
+
+      
+      TDeviceID deviceID;
+
+      _CORBA_ObjRef_Member< _objref_TDevice, TDevice_Helper>  node;
+
+      TDeviceIDSeq outConnections;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TDeviceNode::_var_type TDeviceNode_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceNode,TDeviceNode_var > TDeviceNode_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceNode;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceNodeSeq;
+
+    class TDeviceNodeSeq_var;
+
+    class TDeviceNodeSeq : public _CORBA_Unbounded_Sequence< TDeviceNode >  {
+    public:
+      typedef TDeviceNodeSeq_var _var_type;
+      inline TDeviceNodeSeq() {}
+      inline TDeviceNodeSeq(const TDeviceNodeSeq& _s)
+        : _CORBA_Unbounded_Sequence< TDeviceNode > (_s) {}
+
+      inline TDeviceNodeSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TDeviceNode > (_max) {}
+      inline TDeviceNodeSeq(_CORBA_ULong _max, _CORBA_ULong _len, TDeviceNode* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TDeviceNode > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TDeviceNodeSeq& operator = (const TDeviceNodeSeq& _s) {
+        _CORBA_Unbounded_Sequence< TDeviceNode > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TDeviceNodeSeq_out;
+
+    class TDeviceNodeSeq_var {
+    public:
+      inline TDeviceNodeSeq_var() : _pd_seq(0) {}
+      inline TDeviceNodeSeq_var(TDeviceNodeSeq* _s) : _pd_seq(_s) {}
+      inline TDeviceNodeSeq_var(const TDeviceNodeSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TDeviceNodeSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TDeviceNodeSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TDeviceNodeSeq_var& operator = (TDeviceNodeSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TDeviceNodeSeq_var& operator = (const TDeviceNodeSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TDeviceNodeSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TDeviceNode& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TDeviceNodeSeq* operator -> () { return _pd_seq; }
+      inline const TDeviceNodeSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TDeviceNodeSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TDeviceNodeSeq& () const { return *_pd_seq; }
+      inline operator TDeviceNodeSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TDeviceNodeSeq& in() const { return *_pd_seq; }
+      inline TDeviceNodeSeq&       inout()    { return *_pd_seq; }
+      inline TDeviceNodeSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TDeviceNodeSeq* _retn() { TDeviceNodeSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TDeviceNodeSeq_out;
+      
+    private:
+      TDeviceNodeSeq* _pd_seq;
+    };
+
+    class TDeviceNodeSeq_out {
+    public:
+      inline TDeviceNodeSeq_out(TDeviceNodeSeq*& _s) : _data(_s) { _data = 0; }
+      inline TDeviceNodeSeq_out(TDeviceNodeSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TDeviceNodeSeq*) 0; }
+      inline TDeviceNodeSeq_out(const TDeviceNodeSeq_out& _s) : _data(_s._data) {}
+      inline TDeviceNodeSeq_out& operator = (const TDeviceNodeSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TDeviceNodeSeq_out& operator = (TDeviceNodeSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TDeviceNodeSeq*&()  { return _data; }
+      inline TDeviceNodeSeq*& ptr()       { return _data; }
+      inline TDeviceNodeSeq* operator->() { return _data; }
+
+      inline TDeviceNode& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TDeviceNodeSeq*& _data;
+
+    private:
+      TDeviceNodeSeq_out();
+      TDeviceNodeSeq_out& operator=(const TDeviceNodeSeq_var&);
+    };
+
+    struct THubNode {
+      typedef _CORBA_ConstrType_Variable_Var<THubNode> _var_type;
+
+      
+      TDeviceHubID hubID;
+
+      TDeviceNodeSeq nodes;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef THubNode::_var_type THubNode_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< THubNode,THubNode_var > THubNode_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_THubNode;
+
+    struct TNodeWalker;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TNodeWalkerSeq;
+
+    class TNodeWalkerSeq_var;
+
+    class TNodeWalkerSeq : public _CORBA_Unbounded_Sequence_Forward< TNodeWalker >  {
+    public:
+      typedef TNodeWalkerSeq_var _var_type;
+
+      inline TNodeWalkerSeq() {}
+      TNodeWalkerSeq(const TNodeWalkerSeq& _s);
+      TNodeWalkerSeq& operator=(const TNodeWalkerSeq& _s);
+
+      inline TNodeWalkerSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence_Forward< TNodeWalker > (_max) {}
+      inline TNodeWalkerSeq(_CORBA_ULong _max, _CORBA_ULong _len, TNodeWalker* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence_Forward< TNodeWalker > (_max, _len, _val, _rel) {}
+
+    
+
+      virtual ~TNodeWalkerSeq();
+
+      TNodeWalker& operator[] (_CORBA_ULong _index);
+      const TNodeWalker& operator[] (_CORBA_ULong _index) const;
+      static TNodeWalker* allocbuf(_CORBA_ULong _nelems);
+      static void freebuf(TNodeWalker* _b);
+
+      void operator>>= (cdrStream &_s) const;
+      void operator<<= (cdrStream &_s);
+
+    protected:
+      void NP_copybuffer(_CORBA_ULong _newmax);
+      void NP_freebuf();
+    };
+
+    class TNodeWalkerSeq_out;
+
+    class TNodeWalkerSeq_var {
+    public:
+      inline TNodeWalkerSeq_var() : _pd_seq(0) {}
+      inline TNodeWalkerSeq_var(TNodeWalkerSeq* _s) : _pd_seq(_s) {}
+      inline TNodeWalkerSeq_var(const TNodeWalkerSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TNodeWalkerSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TNodeWalkerSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TNodeWalkerSeq_var& operator = (TNodeWalkerSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TNodeWalkerSeq_var& operator = (const TNodeWalkerSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TNodeWalkerSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TNodeWalker& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TNodeWalkerSeq* operator -> () { return _pd_seq; }
+      inline const TNodeWalkerSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TNodeWalkerSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TNodeWalkerSeq& () const { return *_pd_seq; }
+      inline operator TNodeWalkerSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TNodeWalkerSeq& in() const { return *_pd_seq; }
+      inline TNodeWalkerSeq&       inout()    { return *_pd_seq; }
+      inline TNodeWalkerSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TNodeWalkerSeq* _retn() { TNodeWalkerSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TNodeWalkerSeq_out;
+      
+    private:
+      TNodeWalkerSeq* _pd_seq;
+    };
+
+    class TNodeWalkerSeq_out {
+    public:
+      inline TNodeWalkerSeq_out(TNodeWalkerSeq*& _s) : _data(_s) { _data = 0; }
+      inline TNodeWalkerSeq_out(TNodeWalkerSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TNodeWalkerSeq*) 0; }
+      inline TNodeWalkerSeq_out(const TNodeWalkerSeq_out& _s) : _data(_s._data) {}
+      inline TNodeWalkerSeq_out& operator = (const TNodeWalkerSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TNodeWalkerSeq_out& operator = (TNodeWalkerSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TNodeWalkerSeq*&()  { return _data; }
+      inline TNodeWalkerSeq*& ptr()       { return _data; }
+      inline TNodeWalkerSeq* operator->() { return _data; }
+
+      inline TNodeWalker& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TNodeWalkerSeq*& _data;
+
+    private:
+      TNodeWalkerSeq_out();
+      TNodeWalkerSeq_out& operator=(const TNodeWalkerSeq_var&);
+    };
+
+    struct TNodeWalker {
+      typedef _CORBA_ConstrType_Variable_Var<TNodeWalker> _var_type;
+
+      
+      THubNode node;
+
+      TNodeWalkerSeq connections;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TNodeWalker::_var_type TNodeWalker_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TNodeWalker,TNodeWalker_var > TNodeWalker_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TNodeWalker;
+
 #ifndef __STI_mTNetwork_mTDeviceHub__
 #define __STI_mTNetwork_mTDeviceHub__
     class TDeviceHub;
@@ -192,6 +494,7 @@ _CORBA_MODULE_BEG
       ::CORBA::Boolean redistributeNodes(const ::STI::TNetwork::TDeviceHubTrace& trace);
       ::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace);
       TDeviceHubID* deviceHubID();
+      void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace);
 
       // Constructors
       inline _objref_TDeviceHub()  { _PR_setobj(0); }  // nil
@@ -234,6 +537,7 @@ _CORBA_MODULE_BEG
       virtual ::CORBA::Boolean redistributeNodes(const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       virtual ::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       virtual TDeviceHubID* deviceHubID() = 0;
+      virtual void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);
@@ -966,6 +1270,31 @@ _CORBA_MODULE_END
 
 #undef _core_attr
 #undef _dyn_attr
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceNode& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceNode* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceNode*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceNode*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceNodeSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceNodeSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceNodeSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceNodeSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::THubNode& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::THubNode* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::THubNode*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::THubNode*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TNodeWalkerSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TNodeWalkerSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TNodeWalkerSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TNodeWalkerSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TNodeWalker& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TNodeWalker* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TNodeWalker*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TNodeWalker*& _sp);
 
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHub_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceHub_ptr* _s);

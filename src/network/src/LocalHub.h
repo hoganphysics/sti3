@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <mutex>
-//
 
 
 namespace STI
@@ -43,7 +42,7 @@ public:
 	//the Node will be distributed to all the Hubs connected to this Hub.
 	bool addNode(const ID& id, const typename std::shared_ptr<T>& node);
 	bool removeNode(const ID& id);
-	bool getNode(const ID& id, typename std::shared_ptr<T>& node);
+	bool getNode(const ID& id, typename std::shared_ptr<T>& node) const;
 
 	///Get node IDs stored by this Hub.
 	void getNodeIDs(std::set<ID>& ids) const;
@@ -57,7 +56,7 @@ public:
 	//! Connect another Hub to this Hub.
 	bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub);
 	bool removeHub(const HubID& id);
-	bool getHub(const HubID& id, typename std::shared_ptr<Hub<ID, T>>& hub)
+	bool getHub(const HubID& id, typename std::shared_ptr<Hub<ID, T>>& hub) const
 	{
 		return hubs.get(id, hub);
 	}
@@ -78,7 +77,11 @@ public:
 
 	void clear();
 
-	virtual const HubID& getID() = 0;
+	virtual const HubID& getID() const = 0;
+
+	void walk(HubNodeWalker& root) const;
+	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
+
 
 //	static bool connect(const std::shared_ptr<LocalHub<ID, T>>& hub1, const std::shared_ptr<LocalHub<ID, T>>& hub2);
 
@@ -108,6 +111,76 @@ STI::Network::LocalHub<ID, T>::LocalHub()
 {
 }
 
+
+
+template<class ID, class T>
+void STI::Network::LocalHub<ID, T>::walk(typename STI::Network::LocalHub<ID, T>::HubNodeWalker& root) const
+{
+	HubTrace trace;
+	walk(root, trace);
+}
+
+
+template<class ID, class T>
+void STI::Network::LocalHub<ID, T>::walk(STI::Network::NodeWalker<ID, T>& root, const HubTrace& trace) const
+{
+	if (trace.includesHubID(getID())) {
+		//this call has already been to this hub; short circuit the call
+		return;
+	}
+
+	std::set<HubID> hubIDs;
+	getHubIDs(hubIDs);
+
+	std::set<ID> nodeIDs;
+	getNodeIDs(nodeIDs);
+
+	std::shared_ptr<T> node;
+
+	root.node.id = getID();
+
+	//Nodes
+	for (auto& id : nodeIDs) {
+		if (getNode(id, node) && node != 0) {
+			root.node.nodes.push_back(
+				STI::Network::DirectedGraphNode<ID, T>::makeNode(id, node)
+			);
+		}
+	}
+
+	//Forward call to network (with appended trace)
+	HubTrace newTrace = trace;
+	newTrace.addHubID(getID());
+
+	HubTrace foundHubs;
+	std::shared_ptr<Hub<ID, T>> hub;
+	
+	//Hubs
+	for (auto& hubID : hubIDs) {
+		
+		auto hubGraph = std::make_unique<STI::Network::NodeWalker<ID, T>>();
+
+		hubGraph->node.id = hubID;
+		
+		//Check if HubID was already walked because of a loop.
+		if (!foundHubs.includesHubID(hubID)) {
+			if (getHub(hubID, hub) && hub != 0) {
+				hub->walk(*hubGraph, newTrace);
+			}
+		}
+
+		//Check for loops; if the next hub was already found, don't walk again.
+		auto& lastHubConnections = hubGraph->connections;
+		
+		if (lastHubConnections.size() > 0) {
+			foundHubs.addHubID(lastHubConnections.back()->node.id);
+		}
+
+		root.connections.push_back(std::move(hubGraph));
+	}
+}
+
+
 template<class ID, class T>
 bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::shared_ptr<T>& node)
 {
@@ -131,7 +204,7 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id)
 }
 
 template<class ID, class T>
-bool STI::Network::LocalHub<ID, T>::getNode(const ID& id, typename std::shared_ptr<T>& node)
+bool STI::Network::LocalHub<ID, T>::getNode(const ID& id, typename std::shared_ptr<T>& node) const
 {
 	return nodeDistributer.getNode(id, node);
 }
@@ -339,6 +412,7 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 		if (!newTrace.includesHubID(hubID)) {
 			//found a hub that has not received the call yet
 			if (hubs.get(hubID, hub) && hub != 0) {
+
 				hub->distribute(id, node, newTrace, first);
 			}
 		}

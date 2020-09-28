@@ -28,3 +28,5 @@ src/network/test/testcorba/src/testcorba
 src/network/test/testcorbaclient/x64/
 doc/doxygen/out/
 src/device/test/testEvents/vcproject/x64/
+src/network/test/testcorbaclient/src/testClient
+src/network/test/testNodeWalker/x64/

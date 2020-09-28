@@ -6,6 +6,7 @@
 //#include "Node.h"
 #include "HubTrace.h"
 #include "HubID.h"
+#include "NodeWalker.h"
 
 #include <memory>
 //#include <mutex>
@@ -44,7 +45,11 @@ public:
 	virtual bool redistributeNodes(const HubTrace& trace) = 0;		//distribute all owned Nodes to all connected Hubs
 	virtual bool removeNode(const ID& id, const HubTrace& trace) = 0;
 	
-	virtual const HubID& getID() = 0;
+	virtual const HubID& getID() const = 0;
+
+	typedef NodeWalker<ID, T> HubNodeWalker;
+
+	virtual void walk(HubNodeWalker& root, const HubTrace& trace) const = 0;
 
 	static bool connect(const std::shared_ptr<Hub<ID, T>>& hub1, const std::shared_ptr<Hub<ID, T>>& hub2);
 
@@ -67,7 +72,7 @@ bool STI::Network::Hub<ID, T>::connect(const std::shared_ptr<Hub<ID, T>>& hub1, 
 		//mutual link established.  Distribute nodes.
 		//Either of these options is equivallent; both are redundant.
 		hub1->distributeNodes(hub2->getID());// , HubTrace());
-		//hub2->distributeNodes(hub1->getID());// , HubTrace());
+		//hub2->distributeNodes(hub1->getID());// , HubTrace());	//including this works, but it's redundant
 		return true;
 	}
 	return false;

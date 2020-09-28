@@ -40,7 +40,10 @@ public:
 	bool distributeNodes(const HubID& targetHub);
 	bool redistributeNodes(const HubTrace& trace);
 
-	const HubID& getID();
+	const HubID& getID() const;
+
+	void walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const;
+
 
 	static bool getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
 		STI::TNetwork::TDeviceHub_ptr& tDeviceHub);

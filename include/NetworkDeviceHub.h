@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 #include "Device.h"
 #include "DeviceHub.h"
+#include "LocalDeviceHub.h"
 
 #include <memory>
 #include <set>
@@ -40,6 +41,8 @@ public:
 	void setNameServiceAddress(const std::string& nameServiceAddress) { _nameServiceAddress = nameServiceAddress; }
 
 	void run(bool block = true);
+
+	void walk(LocalDeviceHub::HubNodeWalker& root) const;
 
 private:
 

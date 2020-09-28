@@ -14,6 +14,31 @@ module TNetwork
 	interface TDevice;	
 	interface TDeviceHub;
 
+	interface TDevice;
+
+	struct TDeviceNode	//for NodeWalker
+	{
+		TDeviceID deviceID;
+		TDevice node;
+		TDeviceIDSeq outConnections;
+	};
+	typedef sequence<TDeviceNode> TDeviceNodeSeq;
+
+	struct THubNode	//for NodeWalker
+	{
+		TDeviceHubID hubID;
+		TDeviceNodeSeq nodes;
+	};
+
+	struct TNodeWalker;
+	typedef sequence<TNodeWalker> TNodeWalkerSeq;
+
+	struct TNodeWalker
+	{
+		THubNode node;
+		TNodeWalkerSeq connections;
+	};
+
 	interface TDeviceHub
 	{
 		boolean addHub(in TDeviceHubID hubID, in TDeviceHub hub);
@@ -28,6 +53,8 @@ module TNetwork
 		boolean removeNode(in TDeviceID devID, in TDeviceHubTrace trace);
 
 		readonly attribute TDeviceHubID deviceHubID;		//getID()
+
+		void walk(inout TNodeWalker root, in TDeviceHubTrace trace);
 	};
 
 	interface TDeviceCollection

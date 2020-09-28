@@ -8,6 +8,152 @@ static const char* _0RL_dyn_library_version = omniORB_4_2_dyn;
 
 static ::CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceID[] = {
+  {"deviceName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"address", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"moduleNum", CORBA::TypeCode::PR_ushort_tc()},
+  {"targetServer", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTDeviceID
+#  undef _0RL_tc_STI_mTNetwork_mTDeviceID
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceID:1.0", "TDeviceID", _0RL_structmember_STI_mTNetwork_mTDeviceID, 4, &_0RL_tcTrack);
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceIDSeq:1.0", "TDeviceIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceID, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceNode[] = {
+  {"deviceID", _0RL_tc_STI_mTNetwork_mTDeviceID},
+  {"node", CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TDevice:1.0", "TDevice", &_0RL_tcTrack)},
+  {"outConnections", _0RL_tc_STI_mTNetwork_mTDeviceIDSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTDeviceNode
+#  undef _0RL_tc_STI_mTNetwork_mTDeviceNode
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceNode = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceNode:1.0", "TDeviceNode", _0RL_structmember_STI_mTNetwork_mTDeviceNode, 3, &_0RL_tcTrack);
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TDeviceNode = _0RL_tc_STI_mTNetwork_mTDeviceNode;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceNode = _0RL_tc_STI_mTNetwork_mTDeviceNode;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceNodeSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceNodeSeq:1.0", "TDeviceNodeSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceNode, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TDeviceNodeSeq = _0RL_tc_STI_mTNetwork_mTDeviceNodeSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceNodeSeq = _0RL_tc_STI_mTNetwork_mTDeviceNodeSeq;
+#endif
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceHubID[] = {
+  {"name", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"address", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"moduleNum", CORBA::TypeCode::PR_ushort_tc()}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTDeviceHubID
+#  undef _0RL_tc_STI_mTNetwork_mTDeviceHubID
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceHubID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceHubID:1.0", "TDeviceHubID", _0RL_structmember_STI_mTNetwork_mTDeviceHubID, 3, &_0RL_tcTrack);
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTHubNode[] = {
+  {"hubID", _0RL_tc_STI_mTNetwork_mTDeviceHubID},
+  {"nodes", _0RL_tc_STI_mTNetwork_mTDeviceNodeSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTHubNode
+#  undef _0RL_tc_STI_mTNetwork_mTHubNode
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTHubNode = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/THubNode:1.0", "THubNode", _0RL_structmember_STI_mTNetwork_mTHubNode, 2, &_0RL_tcTrack);
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_THubNode = _0RL_tc_STI_mTNetwork_mTHubNode;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_THubNode = _0RL_tc_STI_mTNetwork_mTHubNode;
+#endif
+
+
+static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTNodeWalker = CORBA::TypeCode::PR_forward_tc("IDL:STI/TNetwork/TNodeWalker:1.0", &_0RL_tcTrack);
+#define _0RL_tc_STI_mTNetwork_mTNodeWalker _0RL_ft_STI_mTNetwork_mTNodeWalker
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTNodeWalkerSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TNodeWalkerSeq:1.0", "TNodeWalkerSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTNodeWalker, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TNodeWalkerSeq = _0RL_tc_STI_mTNetwork_mTNodeWalkerSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TNodeWalkerSeq = _0RL_tc_STI_mTNetwork_mTNodeWalkerSeq;
+#endif
+
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTNodeWalker[] = {
+  {"node", _0RL_tc_STI_mTNetwork_mTHubNode},
+  {"connections", _0RL_tc_STI_mTNetwork_mTNodeWalkerSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTNodeWalker
+#  undef _0RL_tc_STI_mTNetwork_mTNodeWalker
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTNodeWalker = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TNodeWalker:1.0", "TNodeWalker", _0RL_structmember_STI_mTNetwork_mTNodeWalker, 2, &_0RL_tcTrack);
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TNodeWalker = _0RL_tc_STI_mTNetwork_mTNodeWalker;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TNodeWalker = _0RL_tc_STI_mTNetwork_mTNodeWalker;
+#endif
+
+
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -61,6 +207,261 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDevice = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TDevice:1.0", "TDevice", &_0RL_tcTrack);
 #endif
+
+static void _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TDeviceNode* _p = (STI::TNetwork::TDeviceNode*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTDeviceNode_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TDeviceNode* _p = new STI::TNetwork::TDeviceNode;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTDeviceNode_destructor_fn(void* _v)
+{
+  STI::TNetwork::TDeviceNode* _p = (STI::TNetwork::TDeviceNode*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceNode& _s)
+{
+  STI::TNetwork::TDeviceNode* _p = new STI::TNetwork::TDeviceNode(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTDeviceNode,
+               _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn,
+               _0RL_STI_mTNetwork_mTDeviceNode_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceNode* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTDeviceNode,
+               _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn,
+               _0RL_STI_mTNetwork_mTDeviceNode_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceNode*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TDeviceNode*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceNode*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTDeviceNode,
+                    _0RL_STI_mTNetwork_mTDeviceNode_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn,
+                    _0RL_STI_mTNetwork_mTDeviceNode_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TDeviceNode*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTDeviceNodeSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TDeviceNodeSeq* _p = (STI::TNetwork::TDeviceNodeSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTDeviceNodeSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TDeviceNodeSeq* _p = new STI::TNetwork::TDeviceNodeSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTDeviceNodeSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TDeviceNodeSeq* _p = (STI::TNetwork::TDeviceNodeSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceNodeSeq& _s)
+{
+  STI::TNetwork::TDeviceNodeSeq* _p = new STI::TNetwork::TDeviceNodeSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTDeviceNodeSeq,
+               _0RL_STI_mTNetwork_mTDeviceNodeSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTDeviceNodeSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceNodeSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTDeviceNodeSeq,
+               _0RL_STI_mTNetwork_mTDeviceNodeSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTDeviceNodeSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceNodeSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TDeviceNodeSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceNodeSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTDeviceNodeSeq,
+                    _0RL_STI_mTNetwork_mTDeviceNodeSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTDeviceNodeSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTDeviceNodeSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TDeviceNodeSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTHubNode_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::THubNode* _p = (STI::TNetwork::THubNode*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTHubNode_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::THubNode* _p = new STI::TNetwork::THubNode;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTHubNode_destructor_fn(void* _v)
+{
+  STI::TNetwork::THubNode* _p = (STI::TNetwork::THubNode*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::THubNode& _s)
+{
+  STI::TNetwork::THubNode* _p = new STI::TNetwork::THubNode(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTHubNode,
+               _0RL_STI_mTNetwork_mTHubNode_marshal_fn,
+               _0RL_STI_mTNetwork_mTHubNode_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::THubNode* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTHubNode,
+               _0RL_STI_mTNetwork_mTHubNode_marshal_fn,
+               _0RL_STI_mTNetwork_mTHubNode_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::THubNode*& _sp)
+{
+  return _a >>= (const STI::TNetwork::THubNode*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::THubNode*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTHubNode,
+                    _0RL_STI_mTNetwork_mTHubNode_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTHubNode_marshal_fn,
+                    _0RL_STI_mTNetwork_mTHubNode_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::THubNode*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTNodeWalkerSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TNodeWalkerSeq* _p = (STI::TNetwork::TNodeWalkerSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTNodeWalkerSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TNodeWalkerSeq* _p = new STI::TNetwork::TNodeWalkerSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTNodeWalkerSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TNodeWalkerSeq* _p = (STI::TNetwork::TNodeWalkerSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TNodeWalkerSeq& _s)
+{
+  STI::TNetwork::TNodeWalkerSeq* _p = new STI::TNetwork::TNodeWalkerSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTNodeWalkerSeq,
+               _0RL_STI_mTNetwork_mTNodeWalkerSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTNodeWalkerSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TNodeWalkerSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTNodeWalkerSeq,
+               _0RL_STI_mTNetwork_mTNodeWalkerSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTNodeWalkerSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TNodeWalkerSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TNodeWalkerSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TNodeWalkerSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTNodeWalkerSeq,
+                    _0RL_STI_mTNetwork_mTNodeWalkerSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTNodeWalkerSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTNodeWalkerSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TNodeWalkerSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTNodeWalker_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TNodeWalker* _p = (STI::TNetwork::TNodeWalker*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTNodeWalker_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TNodeWalker* _p = new STI::TNetwork::TNodeWalker;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTNodeWalker_destructor_fn(void* _v)
+{
+  STI::TNetwork::TNodeWalker* _p = (STI::TNetwork::TNodeWalker*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TNodeWalker& _s)
+{
+  STI::TNetwork::TNodeWalker* _p = new STI::TNetwork::TNodeWalker(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTNodeWalker,
+               _0RL_STI_mTNetwork_mTNodeWalker_marshal_fn,
+               _0RL_STI_mTNetwork_mTNodeWalker_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TNodeWalker* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTNodeWalker,
+               _0RL_STI_mTNetwork_mTNodeWalker_marshal_fn,
+               _0RL_STI_mTNetwork_mTNodeWalker_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TNodeWalker*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TNodeWalker*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TNodeWalker*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTNodeWalker,
+                    _0RL_STI_mTNetwork_mTNodeWalker_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTNodeWalker_marshal_fn,
+                    _0RL_STI_mTNetwork_mTNodeWalker_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TNodeWalker*)_v;
+    return 1;
+  }
+  return 0;
+}
 
 static void _0RL_STI_mTNetwork_mTDeviceHub_marshal_fn(cdrStream& _s, void* _v)
 {

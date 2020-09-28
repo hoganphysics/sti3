@@ -43,3 +43,9 @@ bool STI::Network::convert<HubID, TDeviceHubID>(const HubID& hubID, TDeviceHubID
 	return true;
 }
 
+template<>
+bool convert<TDeviceHubID, HubID>(const TDeviceHubID& tHubID, HubID& hubID)
+{
+	hubID = convert<TDeviceHubID, HubID>(tHubID);
+	return true;
+}

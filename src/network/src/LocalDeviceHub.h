@@ -24,7 +24,7 @@ public:
 		id.module = module;
 	}
 
-	const STI::Network::HubID& getID() { return id; }
+	const STI::Network::HubID& getID() const { return id; }
 
 	void setID(const STI::Network::HubID hubID) { id = hubID; }
 

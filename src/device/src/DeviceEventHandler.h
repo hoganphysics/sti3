@@ -1,6 +1,8 @@
 #ifndef STI_DEVICE_DEVICEEVENTHANDLER_H
 #define STI_DEVICE_DEVICEEVENTHANDLER_H
 
+//#include "DeviceEvent.h"
+
 #include <memory>
 
 namespace STI

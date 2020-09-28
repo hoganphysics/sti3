@@ -2,5 +2,7 @@
 
 cd ../idl/
 
-omniidl -bcxx -C./../src -Wbh=.h -Wbs=.cpp ./deviceNet.idl
+omniidl -bcxx -Wba -C./../src -Wbh=.h -Wbs=.cpp ./deviceNet.idl
 
+cd ../src
+mv deviceNetDynSK.cc deviceNetDynSK.cpp

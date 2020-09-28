@@ -140,6 +140,7 @@
     <ClInclude Include="..\src\NetworkDeviceHubWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceWrapper.h" />
     <ClInclude Include="..\src\NodeWalker.h" />
+    <ClInclude Include="..\src\Convert_HubNodeWalker.h" />
     <ClInclude Include="..\src\ORBManager.h" />
     <ClInclude Include="..\src\orbTypes.h" />
     <ClInclude Include="..\src\RemoteDevice.h" />
@@ -159,11 +160,13 @@
     <ClCompile Include="..\src\Convert_DeviceEvent.cpp" />
     <ClCompile Include="..\src\Convert_DeviceID.cpp" />
     <ClCompile Include="..\src\Convert_HubID.cpp" />
+    <ClCompile Include="..\src\Convert_HubNodeWalker.cpp" />
     <ClCompile Include="..\src\Convert_HubTrace.cpp" />
     <ClCompile Include="..\src\COSBindingNode.cpp" />
     <ClCompile Include="..\src\deviceNet.cpp" />
     <ClCompile Include="..\src\deviceNetDynSK.cpp" />
     <ClCompile Include="..\src\NetworkConvert.cpp" />
+    <ClCompile Include="..\src\NetworkDeviceEventHandlerWrapper.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHub.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHubWrapper.cpp" />
     <ClCompile Include="..\src\ORBManager.cpp" />
@@ -179,8 +182,7 @@
     <ClCompile Include="..\src\TDeviceEventHandler_i.cpp" />
     <ClCompile Include="..\src\TDeviceHub_i.cpp" />
     <ClCompile Include="..\src\TDevice_i.cpp" />
-    <ClCompile Include="NetworkDeviceEventHandlerWrapper.cpp" />
-    <ClCompile Include="TRefreshIndicator_i.cpp" />
+    <ClCompile Include="..\src\TRefreshIndicator_i.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\idl\deviceNet.idl">

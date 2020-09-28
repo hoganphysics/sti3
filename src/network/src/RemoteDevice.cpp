@@ -3,6 +3,7 @@
 #include "RemoteDeviceCollection.h"
 #include "RemoteDeviceEventDispatcher.h"
 
+
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Network::RemoteDeviceEventDispatcher;
@@ -12,6 +13,7 @@ RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: _tDevice(STI::TNetwork::TDevice::_duplicate(device))
 {
 }
+
 
 
 bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
@@ -93,10 +95,6 @@ void RemoteDevice::getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDi
 
 	::STI::TNetwork::TDeviceEventDispatcher_ptr tEventDispatcher;	//remote reference
 	std::shared_ptr<RemoteDeviceEventDispatcher> remoteDispatcher;		//wrapper
-
-
-//	::STI::TNetwork::TDeviceCollection_ptr tDeviceCollection;	//remote reference
-//	std::shared_ptr<RemoteDeviceCollection> remoteCollection;	//wrapper
 
 	try {
 		tEventDispatcher = _tDevice->getEventDispatcher();

@@ -13,13 +13,8 @@
 #include <memory>
 #include <string>
 
-//#include "ORBManager.h"
-
-//#include <signal.h>
-
 using std::cout;
 using std::endl;
-
 
 
 class TestListener : public STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>
@@ -95,102 +90,36 @@ int main(int argc, char **argv)
 {
 	auto dev0 = std::make_shared<TestDevice>("dev0", "localhost", 0, "root");
 
-//	auto dev1 = std::make_shared<LocalDevice>("dev1", "localhost", 0, "192.168.1.1/0/MAGIS");
-//	auto dev2 = std::make_shared<LocalDevice>("dev2", "localhost", 0, "192.168.1.1/0/MAGIS");
-//	auto dev3 = std::make_shared<LocalDevice>("dev3", "localhost", 0, "srv1");
-//	auto dev4 = std::make_shared<LocalDevice>("dev4", "localhost", 0, "srv1");
+	auto dev1 = std::make_shared<TestDevice>("dev1", "localhost", 0, "localhost/0/dev0");
+	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev0");
+	auto dev3 = std::make_shared<TestDevice>("dev3", "localhost", 0, "localhost/0/dev0");
+	auto dev4 = std::make_shared<TestDevice>("dev4", "localhost", 0, "localhost/0/dev0");
 
-	STI::Network::NetworkDeviceHub hub("192.168.1.6:2809");
+	auto hub  = std::make_shared<STI::Network::LocalDeviceHub>("hub1", "localhost", 0);
+	auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("hub2", "localhost", 0);
+
 //	STI::Network::NetworkDeviceHub hub3("192.168.1.6:2809");
 
 
 	//hub.setTargetHubs({"192.168.1.3/0/MAGIS","192.168.1.7/1/TestHub"});
 
-	hub.addNode(dev0->id, dev0);
-	//hub.addNode(dev2->id, dev2);
+	hub->addNode(dev0->id, dev0);
+	hub->addNode(dev1->id, dev1);
 	
-	//hub3.addNode(dev2->id, dev2);
+	
+	hub2->addNode(dev2->id, dev2);
+	hub2->addNode(dev3->id, dev3);
+	hub2->addNode(dev4->id, dev4);
 
-	//hub3.run(false);
-	hub.run(false);
+	STI::Network::DeviceHub::connect(hub, hub2);
+
+	STI::Network::LocalDeviceHub::HubNodeWalker deviceGraph;
+	
+	hub->walk(deviceGraph);
 
 	int tmp;
 	std::cin >> tmp;
 	
-	dev0->fireRefreshEvent();
-
-
-	std::shared_ptr<STI::Device::DeviceCollection> collection;
-	dev0->getCollection(collection);
-
-	std::shared_ptr<STI::Device::Device> devRef;
-	
-	std::set<STI::Device::DeviceID> ids;
-	collection->getIDs(ids);
-	
-	int x = 55;
-	for (auto& id : ids) {
-		collection->get(id, devRef);
-		devRef->write(x);
-		x += 12;
-	}
-
-	//dev0->
-
-	std::string lname = "listener: dev0";
-	std::shared_ptr<TestListener> listener = std::make_shared<TestListener>(lname);
-	std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>> listenerX = listener;
-	STI::Device::DeviceEventListenerID listenerID;
-	listenerID.name = "listener_0";
-	listenerID.type = STI::Device::DeviceEventType::Refresh;
-
-	std::shared_ptr<STI::Device::DeviceEventReceiver> receiver;
-	dev0->getEventReceiver(receiver);
-	receiver->addListener(STI::Device::DeviceID("dev1", "localhost", 0, ""), listenerID, listenerX);
-//		addDeviceEventHandler(STI::Device::DeviceID("dev0", "localhost", 0, ""));
-
-
-	std::cin >> tmp;
-
-	STI::Network::LocalDeviceHub::HubNodeWalker deviceGraph;
-	hub.walk(deviceGraph);
-
-
-	//signal(SIGINT, signal_callback_handler);
-
-	//hub.block();
-
-//	hub.orbmanager->shutdown();
-
-	//auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
-	//
-	//hub2->addNode(dev3->id, dev3);
-	//hub2->addNode(dev4->id, dev4);
-
-	//hub.connect(hub2);
-
-	//hub2->clear();
-
-
-
-
-
-	//hub.connect(otherHub);
-	//hub.connect(device);
-	//hub.run();		//blocking
-
-
-//	CORBA::Object_var obj;
-//	obj = orbManager->getObjectReference("STI/Network/TServer.Object");
-//	::STI::Network::TServer_var tServerRef;
-//	tServerRef = STI::Network::TServer::_narrow(obj);
-
-//	orbManager->registerServant(remoteDeviceServant.get(), contextName + deviceBootstrapObjectName);
-
-
-//	auto hub1 = std::make_shared<STI::Network::LocalDeviceHub>("Hub1");
-
-//	STI::Network::NetworkDeviceHubWrapper hub(hub1);
 
 	return 0;
 }

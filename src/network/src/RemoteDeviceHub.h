@@ -44,14 +44,21 @@ public:
 															  //Force redistribution of all Nodes owned by this Hub to all connected Hubs.
 	bool redistributeNodes(const HubTrace& trace);		//distribute all owned Nodes to all connected Hubs
 
-	const HubID& getID();
+	const HubID& getID() const;
+
+	void walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const;
 
 private:
+
+	void _getHubID();
 
 	//bool getRemoteDevice(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice);
 
 	::STI::TNetwork::TDeviceHub_var tDeviceHub;		//remote reference
-	HubID hubID;
+	
+
+	mutable HubID hubID;
+
 
 };
 

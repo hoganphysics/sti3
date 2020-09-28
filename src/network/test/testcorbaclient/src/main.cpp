@@ -7,6 +7,7 @@
 #include "LocalDevice.h"
 #include "DeviceEventListener.h"
 #include "DeviceEventReceiver.h"
+#include "DeviceEventDispatcher.h"
 
 #include <iostream>
 #include <memory>
@@ -15,7 +16,7 @@
 //#include "ORBManager.h"
 
 //#include <signal.h>
-
+ 
 using std::cout;
 using std::endl;
 
@@ -76,6 +77,15 @@ public:
 
 	//bool refresh() { return true; }
 
+	void fireRefreshEvent()
+	{
+		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
+		getEventDispatcher(dispatcher);
+
+		auto evt = std::make_shared<STI::Device::RefreshDeviceEvent>(id);
+		dispatcher->addEvent(evt);
+	}
+
 	std::shared_ptr<TestListener> listener;
 
 	void write(unsigned input)
@@ -119,7 +129,15 @@ int main(int argc, char **argv)
 
 
 	//hub3.run(false);
-	hub.run(true);
+	hub.run(false);
+
+
+	int tmp;
+	std::cin >> tmp;
+
+	dev1->fireRefreshEvent();
+
+	std::cin >> tmp;
 
 /*
 

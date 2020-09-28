@@ -98,8 +98,12 @@ void TDeviceCollection_i::getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq)
 
 		STI::TNetwork::TDeviceIDSeq_var tDeviceIDseq_var(new STI::TNetwork::TDeviceIDSeq);
 
-		convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var);
+		if (convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var)) {
+
+			deviceIDseq = tDeviceIDseq_var.out();
+		}
+
 	}
 }
 

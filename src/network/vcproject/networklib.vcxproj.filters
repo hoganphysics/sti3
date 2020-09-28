@@ -57,15 +57,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\HubTrace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\LocalDeviceHub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\LocalHub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ConvertList.h">
       <Filter>Header Files\Convert</Filter>
     </ClInclude>
@@ -114,14 +105,8 @@
     <ClInclude Include="..\src\TDeviceRefInterface.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\NodeWalker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\DeviceCollection.h">
       <Filter>Header Files\DeviceCollection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\LocalCollection.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TDeviceEventDispatcher_i.h">
       <Filter>Header Files\DeviceEvent</Filter>
@@ -143,6 +128,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\NetworkDeviceHub.h">
       <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalDeviceHub.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NodeWalker.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalHub.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HubTrace.h">
+      <Filter>Header Files\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LocalCollection.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Convert_HubNodeWalker.h">
+      <Filter>Header Files\Convert</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +209,6 @@
     <ClCompile Include="..\src\TDeviceEventHandler_i.cpp">
       <Filter>Source Files\DeviceEvent</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkDeviceEventHandlerWrapper.cpp">
-      <Filter>Source Files\DeviceEvent</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\deviceNetDynSK.cpp">
       <Filter>Source Files\ORB</Filter>
     </ClCompile>
@@ -218,8 +218,14 @@
     <ClCompile Include="..\src\NetworkDeviceHub.cpp">
       <Filter>Source Files\Hub</Filter>
     </ClCompile>
-    <ClCompile Include="TRefreshIndicator_i.cpp">
+    <ClCompile Include="..\src\NetworkDeviceEventHandlerWrapper.cpp">
       <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TRefreshIndicator_i.cpp">
+      <Filter>Source Files\DeviceEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Convert_HubNodeWalker.cpp">
+      <Filter>Source Files\Convert</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
