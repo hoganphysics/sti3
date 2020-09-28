@@ -49,7 +49,7 @@ bool STI::Network::convert<DeviceID, TDeviceID>(const DeviceID& deviceID, TDevic
 
 
 template<>
-bool convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID, DeviceID& deviceID)
+bool STI::Network::convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID, DeviceID& deviceID)
 {
 	deviceID = convert<TDeviceID, DeviceID>(tDeviceID);
 	return true;

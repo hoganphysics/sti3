@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/../../../include/**",
-                "${workspaceFolder}/../../device/src/"
+                "${workspaceFolder}/../../device/src/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

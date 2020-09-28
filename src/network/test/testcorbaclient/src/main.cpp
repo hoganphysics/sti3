@@ -139,6 +139,9 @@ int main(int argc, char **argv)
 
 	std::cin >> tmp;
 
+	STI::Network::LocalDeviceHub::HubNodeWalker deviceGraph;
+	hub.walk(deviceGraph);
+
 /*
 
 	int tmp;

@@ -27,7 +27,7 @@ using STI::Network::RemoteDevice;
 
 
 template<>
-bool convert<DeviceHub::HubNodeWalker, TNodeWalker>(
+bool STI::Network::convert<DeviceHub::HubNodeWalker, TNodeWalker>(
 	const DeviceHub::HubNodeWalker& nodeWalker, TNodeWalker& tNodeWalker)
 {
 	bool success;
@@ -39,7 +39,7 @@ bool convert<DeviceHub::HubNodeWalker, TNodeWalker>(
 
 
 template<>
-bool convert<TNodeWalker, DeviceHub::HubNodeWalker>(
+bool STI::Network::convert<TNodeWalker, DeviceHub::HubNodeWalker>(
 	const TNodeWalker& tNodeWalker, DeviceHub::HubNodeWalker& nodeWalker)
 {
 	bool success;
@@ -51,7 +51,7 @@ bool convert<TNodeWalker, DeviceHub::HubNodeWalker>(
 
 
 template<>
-bool convert<std::unique_ptr<DeviceHub::HubNodeWalker>, TNodeWalker>(
+bool STI::Network::convert<std::unique_ptr<DeviceHub::HubNodeWalker>, TNodeWalker>(
 	const std::unique_ptr<DeviceHub::HubNodeWalker>& nodeWalker, TNodeWalker& tNodeWalker)
 {
 	if (nodeWalker != 0) {
@@ -61,7 +61,7 @@ bool convert<std::unique_ptr<DeviceHub::HubNodeWalker>, TNodeWalker>(
 }
 
 template<>
-bool convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(
+bool STI::Network::convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(
 	const TNodeWalker& tNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>& nodeWalker)
 {
 	if (nodeWalker != 0) {
@@ -71,7 +71,7 @@ bool convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(
 }
 
 template<>
-std::unique_ptr<DeviceHub::HubNodeWalker> convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(const TNodeWalker& tNodeWalker)
+std::unique_ptr<DeviceHub::HubNodeWalker> STI::Network::convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(const TNodeWalker& tNodeWalker)
 {
 	auto nodeWalker = std::make_unique<DeviceHub::HubNodeWalker>();
 	convert<TNodeWalker, std::unique_ptr<DeviceHub::HubNodeWalker>>(tNodeWalker, nodeWalker);
@@ -83,7 +83,7 @@ std::unique_ptr<DeviceHub::HubNodeWalker> convert<TNodeWalker, std::unique_ptr<D
 // THubNode
 
 template<>
-bool convert<DeviceDirectedGraphHub, THubNode>(const DeviceDirectedGraphHub& graphDeviceHub, THubNode& tHubNode)
+bool STI::Network::convert<DeviceDirectedGraphHub, THubNode>(const DeviceDirectedGraphHub& graphDeviceHub, THubNode& tHubNode)
 {
 	bool success;
 	success  = convert<HubID, TDeviceHubID>(graphDeviceHub.id, tHubNode.hubID);
@@ -93,7 +93,7 @@ bool convert<DeviceDirectedGraphHub, THubNode>(const DeviceDirectedGraphHub& gra
 }
 
 template<>
-bool convert<THubNode, DeviceDirectedGraphHub>(const THubNode& tHubNode, DeviceDirectedGraphHub& graphDeviceHub)
+bool STI::Network::convert<THubNode, DeviceDirectedGraphHub>(const THubNode& tHubNode, DeviceDirectedGraphHub& graphDeviceHub)
 {
 	bool success;
 	success  = convert<TDeviceHubID, HubID>(tHubNode.hubID, graphDeviceHub.id);
@@ -106,7 +106,7 @@ bool convert<THubNode, DeviceDirectedGraphHub>(const THubNode& tHubNode, DeviceD
 // TDeviceNode
 
 template<>
-bool convert<DeviceDirectedGraphNode, TDeviceNode>(
+bool STI::Network::convert<DeviceDirectedGraphNode, TDeviceNode>(
 	const DeviceDirectedGraphNode& graphDeviceNode, TDeviceNode& tDeviceNode)
 {
 	bool success;
@@ -134,7 +134,7 @@ bool convert<DeviceDirectedGraphNode, TDeviceNode>(
 
 
 template<>
-bool convert<TDeviceNode, DeviceDirectedGraphNode>(
+bool STI::Network::convert<TDeviceNode, DeviceDirectedGraphNode>(
 	const TDeviceNode& tDeviceNode, DeviceDirectedGraphNode& graphDeviceNode)
 {
 	bool success;
@@ -160,7 +160,7 @@ bool convert<TDeviceNode, DeviceDirectedGraphNode>(
 
 
 template<>
-bool convert<std::unique_ptr<DeviceDirectedGraphNode>, TDeviceNode>(
+bool STI::Network::convert<std::unique_ptr<DeviceDirectedGraphNode>, TDeviceNode>(
 	const std::unique_ptr<DeviceDirectedGraphNode>& graphDeviceNode, TDeviceNode& tDeviceNode)
 {
 	if (graphDeviceNode != 0) {
@@ -171,7 +171,7 @@ bool convert<std::unique_ptr<DeviceDirectedGraphNode>, TDeviceNode>(
 
 
 template<>
-bool convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(
+bool STI::Network::convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(
 	const TDeviceNode& tDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>& graphDeviceNode)
 {
 	if (graphDeviceNode != 0) {
@@ -182,7 +182,7 @@ bool convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(
 
 
 template<>
-std::unique_ptr<DeviceDirectedGraphNode> convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(const TDeviceNode& tDeviceNode)
+std::unique_ptr<DeviceDirectedGraphNode> STI::Network::convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(const TDeviceNode& tDeviceNode)
 {
 	auto graphDeviceNode = std::make_unique<DeviceDirectedGraphNode>();
 	convert<TDeviceNode, std::unique_ptr<DeviceDirectedGraphNode>>(tDeviceNode, graphDeviceNode);

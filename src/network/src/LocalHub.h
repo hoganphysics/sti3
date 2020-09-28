@@ -79,7 +79,7 @@ public:
 
 	virtual const HubID& getID() const = 0;
 
-	void walk(HubNodeWalker& root) const;
+	void walk(typename LocalHub<ID, T>::HubNodeWalker& root) const;
 	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
 
 
