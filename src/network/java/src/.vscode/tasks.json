@@ -1,0 +1,59 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "SWIG: build wrappers using swig",
+            "command": "swig",
+            "args": [
+                "-c++",
+                "-cppext",
+                "cpp",
+                "-java",
+                "-package", "edu.stanford.sti",
+                "-I${workspaceFolder}/../../../device/src/",
+                "-I${workspaceFolder}/../../../../include/",
+                "-outdir",
+                "../sti/src/main/java/edu/stanford/sti/",
+                "sti.i"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+			"type": "shell",
+			"label": "C/C++: g++ build active file",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-g",
+				"-std=c++11",
+				"-std=c++1y",
+				"-I/usr/lib/jvm/java-11-openjdk-amd64/include/",
+				"-I/usr/lib/jvm/java-11-openjdk-amd64/include/linux/",
+                "-I/usr/local/include/",
+                "-I${workspaceFolder}/../../../../include/",
+				"${workspaceFolder}/**.cpp",
+				//"${fileDirname}/**.cxx",
+				"-shared",
+                "-fPIC",
+                "-L${workspaceFolder}/../../../device/src/",
+                "-lstidevice",
+				"-Wl,-rpath,.",
+				"-o",
+				"${workspaceFolder}/../sti/build/libs/libsti.so"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+    ]
+}
