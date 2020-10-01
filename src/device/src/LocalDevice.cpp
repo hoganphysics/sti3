@@ -33,6 +33,11 @@ LocalDevice::~LocalDevice()
 
 }
 
+DeviceID LocalDevice::getID()
+{
+	return id;
+}
+
 void LocalDevice::write(unsigned input)
 {
 	cout << "writting: " << input << endl;

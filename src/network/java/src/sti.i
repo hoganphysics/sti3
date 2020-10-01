@@ -2,4 +2,4 @@
 //%feature("director");
 
 //%include device.i
-%include device2.i
+%include device3.i

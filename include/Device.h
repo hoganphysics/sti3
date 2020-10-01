@@ -42,6 +42,8 @@ class Device : public STI::Network::Node<DeviceID, Device>
 public:
 	virtual ~Device() {}
 
+	virtual DeviceID getID() = 0;
+
 	virtual void write(unsigned input) = 0;
 
 	//virtual bool refresh() = 0;

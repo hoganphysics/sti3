@@ -2,6 +2,7 @@
 #define STI_DEVICE_DEVICECOLLECTION_H
 
 #include "Collection.h"
+#include "Collector.h"
 //#include "Device.h"
 #include "DeviceID.h"
 

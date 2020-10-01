@@ -32,6 +32,7 @@ public:
 		const std::string& targetServer);
 	virtual ~LocalDevice();
 
+	DeviceID getID();
 
 	bool refresh() { return true; }
 
