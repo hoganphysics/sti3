@@ -2,6 +2,7 @@
 #define STI_DEVICE_DEVICE_H
 
 #include "Node.h"
+//#include "DeviceNode.h"
 #include "DeviceID.h"
 
 namespace STI
@@ -25,14 +26,25 @@ namespace Device
 
 class DeviceEventDispatcher;
 
+class Device;
+//typedef STI::Network::Node<DeviceID, Device> DeviceNode;
+
+
+
+
+//typedef STI::Network::Node<DeviceID, Device2> DeviceNode;
+
 //CRTP
 //pure interface for node elements
+//class Device : public DeviceNode
 class Device : public STI::Network::Node<DeviceID, Device>
 {
 public:
+	virtual ~Device() {}
+
 	virtual void write(unsigned input) = 0;
 
-	virtual bool refresh() = 0;
+	//virtual bool refresh() = 0;
 
 	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
 

@@ -12,6 +12,7 @@ template<class ID, class T>
 class Node : public STI::Utils::Collector<ID, T>
 {
 public:
+	virtual ~Node() {}
 	//maybe node crawler hooks too?
 	void ping() { return; }
 	virtual bool refresh() = 0;

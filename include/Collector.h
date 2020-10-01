@@ -14,7 +14,8 @@ template<class ID, class T>
 class Collector
 {
 public:
-
+	virtual ~Collector() {}
+	
 	virtual void getCollection(std::shared_ptr<STI::Utils::Collection<ID, T>>& collection) = 0;
 };
 

@@ -18,6 +18,18 @@ public class StiApplication {
 		DeviceID devID = new DeviceID("Test Dev", "localhost", 0, "root");
 
 		System.out.println(devID.getID());
+
+		LocalDevice dev = new LocalDevice("Test Dev", "localhost", 0, "root");
+		//STI_Collection collection = new STI_Collection();
+		//DeviceCollection collection = new DeviceCollection();
+		STI_Collection collection = null;
+
+		dev.getCollection(collection);
+		collection.add(dev.getId(), dev);
+
+		System.out.println(collection.size());
+		System.out.println(dev.getId().getID());
+		
 	}
 
 }

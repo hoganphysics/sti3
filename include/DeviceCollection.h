@@ -2,13 +2,15 @@
 #define STI_DEVICE_DEVICECOLLECTION_H
 
 #include "Collection.h"
-#include "Device.h"
+//#include "Device.h"
 #include "DeviceID.h"
 
 namespace STI
 {
 namespace Device
 {
+
+class Device;
 
 //A Collector has a Collection
 typedef STI::Utils::Collector<STI::Device::DeviceID, STI::Device::Device> DeviceCollector;

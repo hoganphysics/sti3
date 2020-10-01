@@ -14,10 +14,9 @@ namespace Utils
 template<class ID, class T>
 class Collection
 {
-protected:
-	typedef std::shared_ptr<T> T_ptr;
-
 public:
+	
+	typedef std::shared_ptr<T> T_ptr;
 
 	virtual ~Collection() {}
 
