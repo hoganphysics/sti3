@@ -12,6 +12,18 @@ public class StiApplication {
         System.loadLibrary("sti");
     }
 
+	public static class MyJDevice extends JDevice {
+		MyJDevice(String name, String address, int module, String targetServer)
+		{
+			super(name, address, module, targetServer);
+		}
+
+		public void write(long input)
+		{
+			System.out.println("Overridden write: " + input);
+		}
+	}
+
 	public static void main(String[] args) {
 		//SpringApplication.run(StiApplication.class, args);
 		
@@ -19,8 +31,8 @@ public class StiApplication {
 
 		System.out.println(devID.getID());
 
-		JDevice dev = new JDevice("Test Dev", "localhost", 0, "root");
-		JDevice dev2 = new JDevice("Dev 2", "localhost", 2, "root");
+		JDevice dev = new JDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
+		MyJDevice dev2 = new MyJDevice("Java Dev 2", "localhost", 2, "localhost/0/dev0");
 		//STI_Collection collection = new STI_Collection();
 		//DeviceCollection collection = new DeviceCollection();
 		//STI_Collection collection = null;
@@ -39,6 +51,38 @@ public class StiApplication {
 		
 		hub.addNode(dev.getID(), dev);
 		hub.addNode(dev2.getID(), dev2);
+
+
+
+		hub.run(false);
+
+		printNetwork(hub.walk());
+	}
+
+	public static void printNetwork(JNodeWalker network)
+	{
+		printHub(network.getNode());
+		
+		for (JNodeWalker walker : network.getConnections()) {
+			printNetwork(walker);
+		}
+	}
+
+	public static void printHub(JHubGraphNode hub)
+	{
+		System.out.println("* " + hub.getHubID().id());
+
+		for(JDeviceGraphNode dev : hub.getNodes()) {
+			printDevice(dev);
+		}
+	}
+	public static void printDevice(JDeviceGraphNode dev)
+	{
+		System.out.println("** " + dev.getID().getID());
+
+		for(DeviceID id : dev.getOutConnections()) {
+			System.out.println("*** " + id.getID());
+		}
 	}
 
 }

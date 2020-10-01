@@ -13,6 +13,7 @@ namespace Network
 {
 
 class NetworkDeviceHub;
+class JNodeWalker;
 
 class JNetworkDeviceHub
 {
@@ -35,6 +36,7 @@ public:
     void run();
 	void run(bool block);
 
+    JNodeWalker walk() const;
 	//void walk(LocalDeviceHub::HubNodeWalker& root) const;
 
 private:

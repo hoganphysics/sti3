@@ -46,7 +46,9 @@
 				"-shared",
                 "-fPIC",
                 "-L${workspaceFolder}/../../../device/src/",
+                "-L${workspaceFolder}/../../src/",
                 "-lstidevice",
+                "-lstinetwork",
 				"-Wl,-rpath,.",
 				"-o",
 				"${workspaceFolder}/../sti/build/libs/libsti.so"
