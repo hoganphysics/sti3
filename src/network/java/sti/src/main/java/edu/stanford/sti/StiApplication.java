@@ -31,12 +31,14 @@ public class StiApplication {
 		//System.out.println(collection.size());
 		System.out.println(dev.getID().getID());
 
-		dev.getCollection().add(dev2.getID(), dev2);
+		//dev.getCollection().add(dev2.getID(), dev2);
+		//System.out.println("From collection" + dev.getCollection().get(dev2.getID()).getID().getID());
+		//dev.getCollection().get(dev2.getID()).write(23);
 
-		System.out.println("From collection" + dev.getCollection().get(dev2.getID()).getID().getID());
-
-		dev.getCollection().get(dev2.getID()).write(23);
+		JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.6:2809");
 		
+		hub.addNode(dev.getID(), dev);
+		hub.addNode(dev2.getID(), dev2);
 	}
 
 }

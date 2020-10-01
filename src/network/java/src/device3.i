@@ -5,7 +5,8 @@
     #include "Device.h"
     #include "JDevice.h"
     #include "DeviceCollection.h"
-    #include "JDeviceCollection.h"    
+    #include "JDeviceCollection.h"
+    #include "JNetworkDeviceHub.h"
 %}
 
 %include "std_string.i"
@@ -33,3 +34,6 @@
 //JDevice
 %ignore STI::Device::Device;
 %include "JDevice.h"
+
+//JNetworkDeviceHub
+%include "JNetworkDeviceHub.h"

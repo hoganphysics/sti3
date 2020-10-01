@@ -24,6 +24,8 @@ public:
 
 	bool refresh();
 
+	STI::Device::DeviceID getID();
+
 	void write(unsigned input);
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
@@ -33,7 +35,6 @@ public:
 private:
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
-
 
 	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
 

@@ -40,6 +40,7 @@
                 "-I/usr/local/include/",
                 "-I${workspaceFolder}/../../../../include/",
                 "-I${workspaceFolder}/../../../device/src/",
+                "-I${workspaceFolder}/../../src/",
 				"${workspaceFolder}/**.cpp",
 				//"${fileDirname}/**.cxx",
 				"-shared",

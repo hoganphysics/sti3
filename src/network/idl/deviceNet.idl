@@ -104,11 +104,13 @@ module TNetwork
 		//Collector interface
 		TDeviceCollection getDeviceCollection();
 
+		//Device interface
+		TDeviceID getID();
+		void write(in unsigned long input);		//temp
+
 		//Device event passing
 		TDeviceEventDispatcher getEventDispatcher();
 
-		//Device interface (temp)
-		void write(in unsigned long input);
 	};
 
 };	//TNetwork

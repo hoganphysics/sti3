@@ -25,6 +25,7 @@ public:
 	::CORBA::Boolean refresh();
 	TDeviceCollection_ptr getDeviceCollection();
 	TDeviceEventDispatcher_ptr getEventDispatcher();
+	TDeviceID* getID();
 	void write(::CORBA::ULong input);
 
 private:

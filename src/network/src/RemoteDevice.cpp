@@ -2,12 +2,12 @@
 #include "RemoteDevice.h"
 #include "RemoteDeviceCollection.h"
 #include "RemoteDeviceEventDispatcher.h"
-
+#include "NetworkConvert.h"
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Network::RemoteDeviceEventDispatcher;
-
+using STI::Network::convert;
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: _tDevice(STI::TNetwork::TDevice::_duplicate(device))
@@ -48,6 +48,37 @@ bool RemoteDevice::refresh()
 	}
 
 	return success;
+}
+
+STI::Device::DeviceID RemoteDevice::getID()
+{
+	::STI::TNetwork::TDeviceID_var tDeviceID;
+
+	bool success = false;
+
+	try {
+		tDeviceID = _tDevice->getID();
+		success = true;
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	// if(!success) {
+	// 	tDeviceID = new ::STI::TNetwork::TDeviceID();
+	// }
+
+	STI::Device::DeviceID deviceID;
+
+	if(success) {
+		deviceID = convert<::STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceID);
+	}
+
+	return deviceID;
 }
 
 void RemoteDevice::write(unsigned input)

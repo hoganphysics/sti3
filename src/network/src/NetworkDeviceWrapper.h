@@ -42,7 +42,7 @@ public:
 		localDevice->getEventDispatcher(dispatcher);
 	}
 
-
+	STI::Device::DeviceID getID() { return localDevice->getID(); }
 	void write(unsigned input) { localDevice->write(input); }
 	bool refresh() { return localDevice->refresh(); }
 
