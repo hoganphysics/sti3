@@ -4,11 +4,19 @@
     #include "DeviceID.h"
     #include "Device.h"
     #include "JDevice.h"
+    #include "JLocalDevice.h"    
+    #include "DeviceEvent.h"
     #include "DeviceCollection.h"
     #include "JDeviceCollection.h"
     #include "JNetworkDeviceHub.h"
     #include "JNodeWalker.h"
     #include "HubID.h"
+
+    #include "DeviceEventListener.h"
+    #include "DeviceEventReceiver.h"
+    #include "DeviceEventDispatcher.h"
+    #include "JDeviceEventReceiver.h"
+    #include "JDeviceEventDispatcher.h"
 %}
 
 %include "std_string.i"
@@ -17,8 +25,19 @@
 %include "std_vector.i"
 
 %shared_ptr(STI::Device::JDevice);
+%shared_ptr(STI::Device::JLocalDevice);
 %shared_ptr(STI::Device::DeviceCollection);
 %shared_ptr(STI::Device::JDeviceCollection);
+%shared_ptr(STI::Device::JDeviceEventReceiver);
+%shared_ptr(STI::Device::JDeviceEventDispatcher);
+
+//Events
+%shared_ptr(STI::Device::DeviceEvent);
+%shared_ptr(STI::Device::RefreshDeviceEvent);
+%shared_ptr(STI::Device::ChannelUpdateDeviceEvent);
+
+
+
 
 //DeviceID
 %rename(opEquals) operator==;
@@ -37,6 +56,27 @@
 //JDevice
 %ignore STI::Device::Device;
 %include "JDevice.h"
+
+//JLocalDevice
+%include "JLocalDevice.h"
+
+//DeviceEvent
+%include "DeviceEvent.h"
+%include "DeviceEventListener.h"
+
+//Listeners
+//Note: It's *very* important that the %shared_ptr definition comes before the %template call.
+
+%shared_ptr(STI::Device::DeviceEventListener< STI::Device::RefreshDeviceEvent >);
+%template(RefreshDeviceEventListener) STI::Device::DeviceEventListener< STI::Device::RefreshDeviceEvent >;
+
+%shared_ptr(STI::Device::DeviceEventListener< STI::Device::ChannelUpdateDeviceEvent >);
+%template(ChannelUpdateDeviceEventListener) STI::Device::DeviceEventListener< STI::Device::ChannelUpdateDeviceEvent >;
+
+
+//Event handling system
+%include "JDeviceEventReceiver.h"
+%include "JDeviceEventDispatcher.h"
 
 //JNetworkDeviceHub
 %include "JNetworkDeviceHub.h"

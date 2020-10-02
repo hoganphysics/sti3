@@ -32,6 +32,9 @@ template<class Event>
 class DeviceEventListener
 {
 public:
+
+	virtual ~DeviceEventListener() {}
+	
 	virtual void handleEvent(const std::shared_ptr<Event>& evt) = 0;
 };
 

@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 #include "LocalDevice.h"
 #include "JDeviceCollection.h"
+#include "JDeviceEventDispatcher.h"
 
 #include <memory>
 
@@ -13,7 +14,7 @@ using STI::Device::DeviceID;
 using STI::Device::DeviceCollection;
 using STI::Device::JDeviceCollection;
 using STI::Device::DeviceEventDispatcher;
-//using STI::Device::DeviceEventReceiver;
+using STI::Device::JDeviceEventDispatcher;
 
 
 JDevice::JDevice(const std::shared_ptr<STI::Device::Device>& device)
@@ -52,6 +53,11 @@ std::shared_ptr<STI::Device::JDeviceCollection> JDevice::getCollection()
     return jCollection;
 }
 
+std::shared_ptr<STI::Device::JDeviceEventDispatcher> getEventDispatcher()
+{
+
+}
+
 void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
     if(wrappedDevice != 0) {
@@ -65,13 +71,6 @@ void JDevice::getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatc
         wrappedDevice->getEventDispatcher(dispatcher);
     }
 }
-
-// void JDevice::getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver)
-// {
-//     if(localDevice != 0) {
-//         localDevice->getEventReceiver(receiver);
-//     }
-// }
 
 bool JDevice::refresh()
 {

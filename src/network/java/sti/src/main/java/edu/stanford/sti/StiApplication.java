@@ -12,7 +12,7 @@ public class StiApplication {
         System.loadLibrary("sti");
     }
 
-	public static class MyJDevice extends JDevice {
+	public static class MyJDevice extends JLocalDevice {
 		MyJDevice(String name, String address, int module, String targetServer)
 		{
 			super(name, address, module, targetServer);
@@ -24,6 +24,18 @@ public class StiApplication {
 		}
 	}
 
+	public static class MyRefreshListener extends RefreshDeviceEventListener
+	{
+		MyRefreshListener()
+		{
+			super();
+		}
+		@Override
+		public void handleEvent(RefreshDeviceEvent evt) {
+			System.out.println("Handle it: " + evt.sourceID().getID());
+		}
+	}
+
 	public static void main(String[] args) {
 		//SpringApplication.run(StiApplication.class, args);
 		
@@ -31,7 +43,7 @@ public class StiApplication {
 
 		System.out.println(devID.getID());
 
-		JDevice dev = new JDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
+		JLocalDevice dev = new JLocalDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
 		MyJDevice dev2 = new MyJDevice("Java Dev 2", "localhost", 2, "localhost/0/dev0");
 		//STI_Collection collection = new STI_Collection();
 		//DeviceCollection collection = new DeviceCollection();
@@ -52,11 +64,24 @@ public class StiApplication {
 		hub.addNode(dev.getID(), dev);
 		hub.addNode(dev2.getID(), dev2);
 
+		DeviceID sourceID = new DeviceID("dev0", "localhost", 0, "");
+		MyRefreshListener listener = new MyRefreshListener();
+		DeviceEventListenerID listenerID = new DeviceEventListenerID();
+		listenerID.setName("Test listener");
+		listenerID.setType(DeviceEventType.Refresh);
 
 
-		hub.run(false);
+		JDeviceEventReceiver receiver = dev.getEventReceiver();
+		//receiver.test(sourceID, listenerID, dev);
+		//receiver.addListener(sourceID, listenerID, listener);
+		//RefreshDeviceEventListener listener2 = new RefreshDeviceEventListener();
+		//RefreshDeviceEventListener listener3 = (RefreshDeviceEventListener) listener;
+		receiver.addListener(sourceID, listenerID, listener);
+//		dev.getEventReceiver().addListener(sourceID, listenerID, listener);
 
-		printNetwork(hub.walk());
+		hub.run();
+
+		//printNetwork(hub.walk());
 	}
 
 	public static void printNetwork(JNodeWalker network)

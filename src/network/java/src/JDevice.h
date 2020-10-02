@@ -13,6 +13,8 @@ namespace Device
 {
 
 class JDeviceCollection;
+class JDeviceEventReceiver;
+class JDeviceEventDispatcher;
 
 //Java Device wrapper
 class JDevice : public STI::Device::Device
@@ -31,14 +33,13 @@ public:
 	virtual void write(unsigned input);	//temp
 
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
-//	std::shared_ptr<JDeviceEventDispatcher> getEventDispatcher();
-//	std::shared_ptr<JDeviceEventReceiver> getEventReceiver();
+	std::shared_ptr<STI::Device::JDeviceEventDispatcher> getEventDispatcher();
 
 private:
+	friend class JLocalDevice;
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
-	//void getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver);
 
     std::shared_ptr<Device> wrappedDevice;
 
