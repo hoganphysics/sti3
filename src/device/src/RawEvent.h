@@ -27,7 +27,7 @@
 
 #include "MixedValue.h"
 #include "EventStackTrace.h"
-#include "fwd/DeviceID_fwd.h"
+#include "DeviceID.h"
 //#include "fwd/SynchronousEvent_fwd.h"
 #include "utils/GraphPathLabel.h"
 
@@ -103,7 +103,7 @@ private:
 	EventStackTrace trace;
 	bool isMeasurement;
 	RawEventType _eventType;
-	const STI::Device::DeviceID& targetDeviceID;
+	STI::Device::DeviceID targetDeviceID;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
 

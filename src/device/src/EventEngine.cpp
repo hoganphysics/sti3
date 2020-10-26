@@ -5,6 +5,14 @@
 #include "RawEvent.h"
 #include "SynchronousEvent.h"
 #include "Channel.h"
+#include "DeviceID.h"
+#include "DeviceCollection.h"
+#include "EngineState.h"
+#include "DeviceEventParser.h"
+#include "EventEngineJob.h"
+#include "EventEngineScheduler.h"
+
+#include "EventEngineDependencyTree.h"
 
 #include <memory>
 #include <thread>
@@ -12,20 +20,25 @@
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
 using STI::Engine::EventEngine;
-using STI::Engine::ParserCallback;
-using STI::Engine::ParserCallbackMessage;
+//using STI::Engine::ParserCallback;
+//using STI::Engine::ParserCallbackMessage;
 using STI::Engine::ParseID;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
+using STI::Device::DeviceID;
+using STI::Device::EngineSchedulerMessage;
 
 
-EventEngine::EventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser) :
+EventEngine::EventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
+const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, std::shared_ptr<STI::Device::DeviceCollection>& collection) :
+	MessageGenerator(dispatcher),
 	parser(this, deviceParser), 
 	rawEvents(parser.rawEvents), 
 	partnerEvents(parser.partnerEvents), 
 	measurementBuffer(3),
 	localDeviceID(localID),
-	localChannels(channels)
+	localChannels(channels),
+	deviceCollection(collection)
 {
 }
 
@@ -44,24 +57,232 @@ void EventEngine::clear()
 	setState(EngineState::Idle);
 }
 
-void EventEngine::parse(const ParseID& parseID, const RawEventVector& events, const STI::Engine::ParserCallback& cb)
+
+// void EventEngine::divideEvents(const RawEventVector& events)
+// {
+// 	std::map<STI::Device::DeviceID, RawEventVector> ownedEvents;
+// 	std::map<STI::Device::DeviceID, STI::Device::DeviceID> delegates;
+// 	RawEventVector unownedEvents;
+
+
+// 	std::set<STI::Device::DeviceID> ownedIDs;
+// 	deviceCollection->getIDs(ownedIDs);
+
+// 	bool localDeviceIsServer;
+// 	bool delegateFound;
+// 	std::map<STI::Device::DeviceID, STI::Device::DeviceID>::iterator delegateIt;
+
+// 	for(auto& evt : events) {
+// 		//auto it = ownedIDs.find(evt.targetDevice());
+// 		// found = (it != ownedIDs.end())
+// 		// 		|| (localDeviceID.getID() == evt.targetDevice().getTargetServerID());
+// 		localDeviceIsServer = (localDeviceID.getID() == evt.targetDevice().getTargetServerID());
+
+// 		if(!localDeviceIsServer) {
+// 			delegateIt = delegates.find(evt.targetDevice());
+// 			delegateFound = (delegateIt != delegates.end());			
+// 		}
+
+// 		if(localDeviceIsServer) {
+// 			ownedEvents[evt.targetDevice()].push_back(evt);
+// 		}
+// 		else if (delegateFound) {
+// 			ownedEvents[delegateIt->second].push_back(evt);
+// 		}
+// 		else {
+
+
+// 			unownedEvents.push_back(evt);
+// 		}
+// 	}
+// }
+
+/// Get the list of DeviceIDs that name this device as their server
+void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
 {
-	std::string errors;
-	
-	if (parser.parse(events, synchedEvents, errors)) {
-		//successfully parsed
-		lastParseID = parseID;
+//	deviceCollection->getIDs(ownedIDs);
+	std::vector<DeviceID> ids;
+	dependencyTree->getDependedentNodes(localDeviceID, ids);
+
+	//Remove any devices that do not list this device as server
+	for(auto& id : ids) {
+		if (id.getTargetServerID() == localDeviceID.getID()) {
+			ownedIDs.insert(id);
+		}
 	}
+
+    // for (auto it = ownedIDs.begin(); it != ownedIDs.end(); ) {
+    //     if (it->getTargetServerID() != localDeviceID.getID()) {
+    //         it = ownedIDs.erase(it);
+    //     }
+    //     else {
+    //         ++it;
+    //     }
+    // }
+}
+
+void EventEngine::divideEvents(const RawEventVector& events, RawEventVector& upstreamEvents)
+{
+	std::set<STI::Device::DeviceID> ownedIDs;
+	getOwnedDeviceIDs(ownedIDs);
+
+	STI::Device::DeviceID branchID;
+
+	for(auto& evt : events) {
+		auto it = ownedIDs.find(evt.targetDevice());
+
+		if (localDeviceID == evt.targetDevice()) {
+			//Event target is this device
+			eventsByTarget[localDeviceID].push_back(evt);
+		}
+		else if (it != ownedIDs.end()) {
+			//Event target is directly owned by this device
+			eventsByTarget[evt.targetDevice()].push_back(evt);
+		}
+		else if (dependencyTree->getBranchToTarget(localDeviceID, evt.targetDevice(), branchID)) {
+			//Event target is in the subgraph under branchID
+			eventsByTarget[branchID].push_back(evt);
+		}
+		else {
+			//Event target not in this subgraph; these events will be pushed upstream
+			upstreamEvents.push_back(evt);
+		}
+	}
+}
+
+//void EventEngine::parse(const ParseID& parseID, const RawEventVector& events, const STI::Device::DeviceID& server)
+void EventEngine::parse(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
+{
+	//preliminary event list division
+	//Make device tree (if not received?); check for cirular dependencies
+	//Devide event list using tree (events sent to direct targets, or to correct branch at least). Event list should only be grouped by owned partners of this device.
+	//Recruit direct partners for parse (remote schedulers)
+	//wait for direct partners, collecting results
+	//Parse dependent devices (including self) as they are ready (all their event dependencies complete)
+	//Send (partial parse) messages as dependencies return
+	//Send parse complete message upstream
+
+	//sendMessage(...);
+
+	std::unique_lock<std::mutex> parseLock(parseMutex);		//function is not reentrant
+
+	if (!setState(EngineState::Parsing)) {
+		return;
+	}
+
+	lastParseID = job->getJobID().pid;
+	dependencyTree = job->dependencies;
+
+	auto parsedShot = job->parsedShot;
+	RawEventVector& events = parsedShot->events;
+	RawEventVector upstreamEvents;
+
+	//Divide event list
+	eventsByTarget.clear();
+	divideEvents(events, upstreamEvents);
+
+	//Get the subtree with the localDeviceID as root (Note, the graph is already known to be a DAG)
+	localSubtree = std::make_shared<EventEngineDependencyTree>();
+	dependencyTree->getSubtree(localDeviceID, *localSubtree);
+
+    std::vector<DeviceID> orderedDependents;
+    localSubtree->sortTree(orderedDependents);
+
+	// //Make a copy of the subtree to track parse dependency status
+	// EventEngineDependencyTree depTree;
+	// depTree.addTree(*localSubtree);
+
+	//Parse all devices in order, based on dependency tree.
+	int dependencyCount;
+	auto nextID = orderedDependents.begin();
+
+	while (isState(EngineState::Parsing) && nextID != orderedDependents.end()) {
+
+		if (!localSubtree->getDependentNodeCount(*nextID, dependencyCount)) {
+			//Error; Could not get dependency count (?)
+		}
+
+		if (dependencyCount == 0) {
+			parseDevice(*nextID, job);
+		}
+		else {
+			parseCondition.wait(parseLock);
+		}
+	}
+
+
+	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
+	//newMessage->engine;
+
+	
+	// if (parser.parse(events, synchedEvents, errors)) {
+	// 	//successfully parsed
+	// 	//lastParseID = job->getJobID().pid;
+	// }
 
 //	ParserCallbackMessage message;
 //	message.errors = errors;
 //	cb.returnResults(message);
 }
 
-void EventEngine::handleParsingResults(const ParserCallbackMessage& message)	//ParserCallbackTarget interface
+void EventEngine::parseDevice(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 {
+	if (id == localDeviceID) {
+		//Parse local
+		if (parser.parse(eventsByTarget[localDeviceID], synchedEvents)) {
+			//successfully parsed
+		}
+	}
+	else {
+		//Start parse job on remote device
+	    std::shared_ptr<STI::Device::Device> device;
+    	std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 
+		auto shot = std::make_shared<ParsedShot>();
+		shot->events = std::move(eventsByTarget[id]);		//expensive deep copy?
+
+		auto newJob = std::make_shared<EventEngineJob>(job->getJobID().pid, shot,
+                   dependencyTree, job->jobOwner, job->missingTargetIDs);
+
+		if (deviceCollection->get(id, device) && device != 0 
+			&& device->getEngineScheduler(scheduler)) {
+				
+				scheduler->addJob(newJob);
+		}
+		else {
+			//Warning: Could not contact device. Parsing is abstract only; cannot be played.
+		}
+	}
 }
+
+void EventEngine::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+{
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+	//divide events
+	RawEventVector upstreamEvents;
+	//divideEvents(evt->events, upstreamEvents);		//problem: evt->evts and upstreamEvents are duplicated...
+	
+	//try to handle 
+	divideEvents(evt->upstreamEvents, upstreamEvents);
+	evt->upstreamEvents.swap(upstreamEvents);	//whatever is left is sent upstream
+
+	//reduce dependency count in localSubtree
+	localSubtree->removeNode(evt->originalSource);
+
+	parseCondition.notify_all();	//wake up event transfer loop
+
+	//send new message upstream?
+	// auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, evt->originalSource, 
+	// 						EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
+	
+	sendMessage(evt);
+}
+
+// void EventEngine::handleParsingResults(const ParserCallbackMessage& message)	//ParserCallbackTarget interface
+// {
+
+// }
 
 
 bool EventEngine::play(const ParseID& parseID, TriggerCallback& triggerCB, STI::Engine::ResultTicket& resultsOut, bool debug)
@@ -144,7 +365,7 @@ bool EventEngine::armTrigger(TriggerCallback& triggerCB)
 		return setState(EngineState::Error);;
 	}
 
-	triggerCB.ready(localDeviceID);
+	triggerCB.ready(localDeviceID);		//need to include jobID; or may server's callback job dependent (better!)
 
 	return true;
 }
@@ -168,6 +389,11 @@ void EventEngine::trigger(STI::Device::DeviceID& target)
 
 void EventEngine::trigger()
 {
+	//added 10/12/20
+	if (!setState(EngineState::Playing)) {
+		setState(EngineState::Error);
+	}
+
 	std::unique_lock<std::mutex> triggerLock(triggerMutex);
 	triggerCondition.notify_all();			//releases waitForTrigger
 }

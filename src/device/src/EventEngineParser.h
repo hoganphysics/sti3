@@ -4,6 +4,7 @@
 #include "fwd/RawEvent_fwd.h"
 #include "fwd/Measurement_fwd.h"
 #include "fwd/SynchronousEvent_fwd.h"
+#include "fwd/DeviceID_fwd.h"
 
 #include "DeviceEventParser.h"
 #include "utils/GraphPathLabel.h"
@@ -27,7 +28,8 @@ public:
 
 	EventEngineParser(EventEngine* engine, DeviceEventParser* deviceParser);
 
-	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents, std::string& errors);
+	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
+	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);
 
 	RawEventMap rawEvents;
 	DeviceEventMap partnerEvents;

@@ -2,6 +2,9 @@
 #define STI_DEVICE_DEVICEEVENT_H
 
 #include "DeviceID.h"
+#include "fwd/EventEngine_fwd.h"
+#include "RawEvent.h"
+#include "EngineJobID.h"
 
 namespace STI
 {
@@ -9,7 +12,16 @@ namespace Device
 {
 
 
-enum class DeviceEventType { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, Unknown };
+enum class DeviceEventType { 
+	Refresh, CollectionUpdate, 
+	ChannelUpdate, ChannelsRefresh, 
+	AttributeUpdate, AttributesRefresh, 
+	MonitorUpdate, 
+//	EngineJobUpdate,
+	EngineScheduler, 
+	EngineParser,
+	EngineStatus,
+	Unknown };
 //DeviceEvent, 
 //DeviceEventReceiver::addListener, ::removeListener, ::refreshListenerGroups
 
@@ -75,6 +87,63 @@ public:
 
 };
 
+
+// class EngineJobUpdateDeviceEvent : public DeviceEvent
+// {
+// public:
+
+// 	EngineJobUpdateDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source, DeviceEventType::EngineJobUpdate) {}
+
+// 	static DeviceEventType getEventClassType() { return DeviceEventType::EngineJobUpdate; }
+
+
+
+// private:
+
+// };
+
+/*
+
+ParseReserve:  Ready, Not ready
+
+*/
+
+class EngineSchedulerMessage : public DeviceEvent
+{
+public:
+
+	//enum class ReserveStatus { Success, Yield };
+	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
+
+	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
+	: DeviceEvent(source, DeviceEventType::EngineScheduler), originalSource(originalSource), type(type) 
+	{
+	}
+
+	SchedulerMessageType type;
+
+	STI::Device::DeviceID originalSource;	//device that generated the original message
+	STI::Engine::EngineJobID jobID;
+	std::shared_ptr<STI::Engine::EventEngine> engine;
+	std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
+	std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
+};
+
+class EngineParserMessage : public DeviceEvent
+{
+public:
+
+	//errors, warnings
+	//status
+
+};
+
+class EventEngineMessage : public DeviceEvent
+{
+public:
+	//engine status
+
+};
 
 } //Device
 } //STI

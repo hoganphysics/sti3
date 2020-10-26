@@ -5,6 +5,7 @@
 
 #include <deque>
 #include <memory>
+#include <set>
 
 /*
 This template class is an insertion-ordered buffer of fixed length, with arbitrary buffer access.
@@ -50,6 +51,7 @@ public:
 	unsigned size() const;
 
 	bool get(const Key& key, T& item) const;
+	void getKeys(std::set<Key>& keys) const;
 	bool add(const Key& key, T item);
 	bool remove(const Key& key);
 
@@ -108,6 +110,11 @@ bool STI::Utils::OrderedBufferMap<Key, T>::get(const Key& key, T& item) const
 	return buffer.get(key, item);
 }
 
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::getKeys(std::set<Key>& keys) const
+{
+	buffer.getKeys(keys);
+}
 
 template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)

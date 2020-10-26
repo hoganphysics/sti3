@@ -12,6 +12,9 @@
 #include "MixedValue.h"
 
 #include "EngineParsingError.h"
+#include "DeviceID.h"
+
+#include <set>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;
@@ -31,7 +34,7 @@ EventEngineParser::EventEngineParser(EventEngine* engine, DeviceEventParser* dev
 }
 
 
-bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents, std::string& errors)
+bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents)
 {
 	bool success = true;
 
@@ -54,10 +57,13 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 	if (success) {
 		success = checkMeasurements(synchedEvents);		//make sure all meas() events have been registered
 	}
-	
-
 
 	return success;
+}
+
+void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetIDs)
+{
+	deviceParser->getEventTargets(targetIDs);
 }
 
 bool EventEngineParser::groupEventsByTime(const STI::Engine::RawEventVector& events)

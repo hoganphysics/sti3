@@ -16,6 +16,10 @@ namespace STI
 namespace Utils
 {
 
+template<class T> class DependencyTree;
+
+
+/// Really should be DependencyGraph.
 template<class T>
 class DependencyTree
 {
@@ -27,14 +31,64 @@ private:
 	typedef typename std::map<const T, typename DependencyTree<T>::vertex_t> VertexMap;
 
 public:
-	DependencyTree() {}
-	DependencyTree(const std::set<T>& nodes)
+
+	DependencyTree() : sortedDAG(false) {}
+	DependencyTree(const std::set<T>& nodes) : sortedDAG(false)
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
 		for (typename std::set<T>::iterator it = nodes.begin(); it != nodes.end(); ++it) {
 			_addVertex(*it);
 		}
+	}
+	virtual ~DependencyTree() {}
+
+	void addTree(const DependencyTree<T>& tree)
+	{
+		std::vector<T> nodes;
+		std::vector<T> depNodes;
+
+		tree.getNodes(nodes);
+
+		for(auto& node : nodes) {
+			if(!hasVertex(node)) {
+				addVertex(node);
+			}
+
+			tree.getDependedentNodes(node, depNodes);
+
+			for(auto& dep : depNodes) {
+				addEdge(node, dep);
+			}
+		}
+	}
+
+	bool getSubtree(const T& vertex, DependencyTree<T>& tree)
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+
+		//Check if it's a DAG (sort if not sorted)
+		if(!sortedDAG) {
+			std::vector<T> orderedNodes;
+			if(!_sortTree(orderedNodes)) {
+				return false;
+			}
+		}
+
+		tree.clear();
+
+		return _getSubtree(vertex, tree);
+	}
+
+
+
+	bool hasVertex(const T& vertex) const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+
+		auto it = vertices.find(vertex);
+
+		return (it != vertices.end());
 	}
 
 	void addVertex(const T& vertex)
@@ -66,6 +120,7 @@ public:
 		}
 
 		std::pair<edge_t, bool> result = bgl::add_edge(it_source->second, it_target->second, g);
+		sortedDAG = false;
 
 		return result.second;
 	}
@@ -73,13 +128,39 @@ public:
 	bool removeNode(const T& node)
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
+		return _removeNode(node);
+	}
 
-		typename VertexMap::iterator it = vertices.find(node);
+	void getNodes(std::vector<T>& nodes) const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		_getNodes(nodes);
+	}
+
+	void getNodes(std::set<T>& nodes) const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		_getNodes(nodes);
+	}
+	
+	void getDependedentNodes(const T& node, std::vector<T>& depNodes) const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		_getDependedentNodes(node, depNodes);
+	}
+	
+	void getParentNodes(const T& node, std::vector<T>& parentNodes) const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+
+		typename VertexMap::const_iterator it = vertices.find(node);
 		if (it != vertices.end()) {
-			bgl::clear_vertex(it->second, g);	//can't use remove_vertex here because the graph is based on a vector, so the indices get messed up
-			return true;
+
+			typename bgl::graph_traits <Graph>::in_edge_iterator ei, ei_end;
+			for (bgl::tie(ei, ei_end) = in_edges(it->second, g); ei != ei_end; ++ei) {
+				parentNodes.push_back( g[bgl::target(*ei, g)] );
+			}
 		}
-		return false;
 	}
 
 	bool isDependedentNode(const T& source, const T& target) const
@@ -122,11 +203,46 @@ public:
 	bool sortTree(std::vector<T>& orderedNodes)
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
+		return _sortTree(orderedNodes);
+	}
 
+	//This should only be called if sortTree failed (because there is a cycle.
+	bool getCycle(std::vector<T>& cycle) const
+	{
+		//returns the first cycle in the graph
+
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		typename VertexMap::const_iterator it;
+
+		bool cycleFound = false;
+		for (it = vertices.begin(); it != vertices.end() && !cycleFound; ++it) {
+			cycleFound = findCycle(it->first, cycle);
+		}
+
+		return cycleFound;
+	}
+
+	void clear()
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+
+		std::vector<T> nodes;
+		_getNodes(nodes);
+
+		for(auto& node : nodes) {
+			_removeNode(node);
+		}
+	}
+
+private:
+
+	bool _sortTree(std::vector<T>& orderedNodes)
+	{
 		orderedNodes.clear();
 		std::vector<vertex_t> sortedNodes;		//vector of vertex_descriptors
 		try {
 			bgl::topological_sort(g, std::back_inserter(sortedNodes));
+			sortedDAG = true;
 		}
 		catch (bgl::not_a_dag&) {
 			//Cycle detected: the graph is not a DAG.
@@ -149,43 +265,81 @@ public:
 		return true;
 	}
 
-	//This should only be called if sortTree failed (because there is a cycle.
-	bool getCycle(std::vector<T>& cycle) const
+	void _getNodes(std::vector<T>& nodes) const
 	{
-		//returns the first cycle in the graph
+		nodes.clear();
 
-		std::unique_lock< std::mutex > writeLock(graphMutex);
-		typename VertexMap::const_iterator it;
-
-		bool cycleFound = false;
-		for (it = vertices.begin(); it != vertices.end() && !cycleFound; ++it) {
-			cycleFound = findCycle(it->first, cycle);
+		for(auto& vertex : vertices) {
+			nodes.push_back(vertex.first);
 		}
-
-		return cycleFound;
 	}
+	void _getNodes(std::set<T>& nodes) const
+	{
+		nodes.clear();
 
-private:
+		for(auto& vertex : vertices) {
+			nodes.insert(vertex.first);
+		}
+	}
+	
+	void _getDependedentNodes(const T& node, std::vector<T>& depNodes) const
+	{
+		depNodes.clear();
+
+		typename VertexMap::const_iterator it_node = vertices.find(node);
+		if( it_node == vertices.end() ) {
+			return;
+		}
+		
+		typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
+		for (bgl::tie(ei, ei_end) = out_edges(it_node->second, g); ei != ei_end; ++ei) {
+			
+			depNodes.push_back( g[bgl::target(*ei, g)] );
+		}
+	}
 
 	void _addVertex(const T& vertex)
 	{
 		vertices.insert(std::pair<T, vertex_t>(vertex, bgl::add_vertex(vertex, g)));
+		sortedDAG = false;
 	}
 
+	bool _removeNode(const T& node)
+	{
+		typename VertexMap::iterator it = vertices.find(node);
+		if (it != vertices.end()) {
+			bgl::clear_vertex(it->second, g);	//can't use remove_vertex here because the graph is based on a vector, so the indices get messed up
+			sortedDAG = false;
+			return true;
+		}
+		return false;
+	}
+		
+	bool _getSubtree(const T& vertex, DependencyTree<T>& tree)
+	{
+		tree.addVertex(vertex);
 
-	
-	Graph g;
-	VertexMap vertices;
+		std::vector<T> depNodes;
+		_getDependedentNodes(vertex, depNodes);
 
-	mutable std::mutex graphMutex;
+		DependencyTree<T> subtree;
+		for(auto& node : depNodes) {
+			tree.addEdge(vertex, node);
+			
+			subtree.clear();
+			_getSubtree(node, subtree);
+			tree.addTree(subtree);
+		}
+		return true;
+	}
 
 	bool findCycle(const T& index, std::vector<T>& cycle) const
 	{
 		std::vector<T> path;
-		return findCycle_(index, path, cycle);
+		return _findCycle(index, path, cycle);
 	}
 
-	bool findCycle_(const T& index, std::vector<T> path, std::vector<T>& cycle) const
+	bool _findCycle(const T& index, std::vector<T> path, std::vector<T>& cycle) const
 	{
 		//recursive DFS of graph, starting from index.
 		if (std::find(path.begin(), path.end(), index) != path.end()) {
@@ -209,12 +363,21 @@ private:
 		bool loopFound = false;
 		if (children.size() > 0) {
 			for (typename std::vector<T>::iterator it = children.begin(); it != children.end() && !loopFound; ++it) {
-				loopFound = findCycle_(*it, newpath, cycle);
+				loopFound = _findCycle(*it, newpath, cycle);
 			}
 		}
 
 		return loopFound;
 	}
+
+
+	Graph g;
+	VertexMap vertices;
+
+	mutable std::mutex graphMutex;
+
+	bool sortedDAG;
+
 };
 
 

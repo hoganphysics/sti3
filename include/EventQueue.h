@@ -116,7 +116,10 @@ void STI::Utils::EventQueue<Event>::stop()
 		running = false;
 		condition.notify_all();
 	}
-	eventThread.join();
+
+    if(eventThread.joinable()) {
+        eventThread.join();
+    }
 }
 
 template<class Event>

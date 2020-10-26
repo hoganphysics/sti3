@@ -4,6 +4,7 @@
 #include "Node.h"
 //#include "DeviceNode.h"
 #include "DeviceID.h"
+#include "fwd/EventEngineScheduler_fwd.h"
 
 namespace STI
 {
@@ -49,6 +50,7 @@ public:
 	//virtual bool refresh() = 0;
 
 	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
+	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 
 };
 

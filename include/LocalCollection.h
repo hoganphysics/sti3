@@ -24,6 +24,34 @@ public:
 //	virtual void refresh() = 0;
 };
 
+template<class ID>
+class LocalCollectionListenerAdapter : public LocalCollectionListener<ID>
+{
+public:
+	virtual void add(const ID& id) {}
+	virtual void remove(const ID& id) {}
+	virtual void refresh() {}
+};
+
+//The Delegate class forwards events to the listener target.  This allows the listener to be a local
+//delegate object instead of a base class.
+template<class ID>
+class LocalCollectionListenerDelegate : public LocalCollectionListener<ID>
+{
+public:
+
+	LocalCollectionListenerDelegate(LocalCollectionListener<ID>* target) : target(target) {}
+
+	void add(const ID& id) { if( target != 0) target->add(id); }
+	void remove(const ID& id) { if( target != 0) target->remove(id); }
+	void refresh() { if( target != 0) target->refresh(); }
+
+private:
+	LocalCollectionListener<ID>* target;
+};
+
+
+
 template<class ID, class T>
 class LocalCollection : public Collection<ID, T>
 {
