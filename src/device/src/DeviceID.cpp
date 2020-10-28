@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <memory>
-
+#include <functional>
 
 using namespace STI::Device;
 
@@ -26,12 +26,21 @@ bool DeviceID::stringToDeviceID(const std::string& deviceIDin, DeviceID& deviceI
 	unsigned short module;
 	bool success = false;
 
-	STI::Utils::splitString(deviceIDin, "_", idComponents);
+	//STI::Utils::splitString(deviceIDin, "_", idComponents);
+	STI::Utils::splitString(deviceIDin, "/", idComponents);
 
+	// if(idComponents.size() == 3) {
+	// 	deviceIDout.setName(idComponents.at(0));
+	// 	deviceIDout.setAddress(idComponents.at(1));
+	// 	if(STI::Utils::stringToValue(idComponents.at(2), module)) {
+	// 		deviceIDout.setModule(module);
+	// 		success = true;
+	// 	}
+	// }
 	if(idComponents.size() == 3) {
-		deviceIDout.setName(idComponents.at(0));
-		deviceIDout.setAddress(idComponents.at(1));
-		if(STI::Utils::stringToValue(idComponents.at(2), module)) {
+		deviceIDout.setName(idComponents.at(2));
+		deviceIDout.setAddress(idComponents.at(0));
+		if(STI::Utils::stringToValue(idComponents.at(1), module)) {
 			deviceIDout.setModule(module);
 			success = true;
 		}
@@ -42,8 +51,12 @@ bool DeviceID::stringToDeviceID(const std::string& deviceIDin, DeviceID& deviceI
 std::string DeviceID::generateID(const std::string& name, const std::string& address, unsigned short module)
 //	static std::string generateID(const DeviceID& deviceID)
 {
+	auto clean = std::bind(STI::Utils::replaceChars, std::placeholders::_1, "./", "_");
+
 	std::stringstream id;
-	id << name << "_" << address << "_" << module;
+	//id << name << "_" << address << "_" << module;
+	id << clean(address) << "/" << module << "/" << clean(name);
+
 	return id.str();
 }
 

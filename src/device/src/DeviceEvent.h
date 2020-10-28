@@ -23,7 +23,7 @@ enum class DeviceEventType {
 	EngineStatus,
 	Unknown };
 //DeviceEvent, 
-//DeviceEventReceiver::addListener, ::removeListener, ::refreshListenerGroups
+//DeviceEventReceiver::addListener, ::removeListener, ::refreshListenerGroups,  and add a dedicated ListenerGroupMap instance
 
 class DeviceEvent
 {
@@ -119,6 +119,8 @@ public:
 	: DeviceEvent(source, DeviceEventType::EngineScheduler), originalSource(originalSource), type(type) 
 	{
 	}
+	
+	static DeviceEventType getEventClassType() { return DeviceEventType::EngineScheduler; }
 
 	SchedulerMessageType type;
 
@@ -127,6 +129,25 @@ public:
 	std::shared_ptr<STI::Engine::EventEngine> engine;
 	std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
 	std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
+
+	//handledEvents		:device generated events that are being sent upstream for documentation, but they have already been parsed
+	//unhandledEvents	:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+};
+
+class STIParsingMessage
+{
+public:
+
+	//errors, warnings
+	//status
+
+	enum class ParserMessageType { Error, Warning, Information };
+
+	unsigned id_code;
+	std::string name;
+	std::string message;
+	std::vector<STI::Engine::RawEvent> events;
 };
 
 class EngineParserMessage : public DeviceEvent
@@ -135,6 +156,8 @@ public:
 
 	//errors, warnings
 	//status
+	STI::Engine::ParseID pid;
+	std::vector<STIParsingMessage> messages;
 
 };
 

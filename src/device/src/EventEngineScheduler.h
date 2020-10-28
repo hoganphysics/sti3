@@ -18,6 +18,7 @@
 #include "LocalDevice.h"
 #include "EngineID.h"
 #include "EventEngineDependencyTree.h"
+#include "DeviceTrace.h"
 
 //#include <queue>
 
@@ -82,7 +83,10 @@ public:
     void play(const ParseID& parseID);
 
 
-    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree);
+    void addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine);
+
+//    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree);
+    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -109,6 +113,8 @@ public:
     void jobComplete(const EngineJobID& jobID);
 
 private:
+
+    void findMissingTarget(std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     
     void assignJobs();
     bool assignJob(const EngineJobID& jobID, const EngineID& engineID);

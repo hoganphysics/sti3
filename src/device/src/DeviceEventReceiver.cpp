@@ -94,8 +94,9 @@ bool DeviceEventReceiver::getSourceDeviceEventDispatcher(const DeviceID& sourceD
 void DeviceEventReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID, 
 	const std::shared_ptr<DeviceEventHandler>& handler)
 {
-	refreshListenerGroup(sourceDeviceID, refreshListners, handler);
-	refreshListenerGroup(sourceDeviceID, channelUpdateListners, handler);
+	refreshListenerGroup(sourceDeviceID, refreshListeners, handler);
+	refreshListenerGroup(sourceDeviceID, channelUpdateListeners, handler);
+	refreshListenerGroup(sourceDeviceID, engineSchedulerListeners, handler);
 }
 
 
@@ -105,10 +106,13 @@ void DeviceEventReceiver::removeListener(const DeviceID& sourceDeviceID, const D
 
 	switch (listenerID.type) {
 	case DeviceEventType::Refresh:
-		success = removeListener(sourceDeviceID, listenerID, refreshListners);
+		success = removeListener(sourceDeviceID, listenerID, refreshListeners);
 		break;
 	case DeviceEventType::ChannelUpdate:
-		success = removeListener(sourceDeviceID, listenerID, channelUpdateListners);
+		success = removeListener(sourceDeviceID, listenerID, channelUpdateListeners);
+		break;
+	case DeviceEventType::EngineScheduler:
+		success = removeListener(sourceDeviceID, listenerID, engineSchedulerListeners);
 		break;
 	}
 	

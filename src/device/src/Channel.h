@@ -19,7 +19,7 @@ enum TChannelType { Output, Input };
 class Channel	//: public EventEmitter<ChannelEvent>
 {
 public:
-
+	Channel() {}
 	Channel(unsigned short channelNumber, STI::Device::TChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 	~Channel();

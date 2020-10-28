@@ -54,11 +54,13 @@ public:
 
 	DeviceID id;
 
-	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) const {}
+	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) const {}
 	void getEventTargets(std::set<DeviceID>& targetIDs)
 	{
 		targetIDs = eventTargets;
 	}
+
+	std::set<DeviceID> eventTargets;
 
 private:
 
@@ -79,7 +81,7 @@ private:
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
 	std::shared_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
 
-	std::set<DeviceID> eventTargets;
+
 };
 
 } //Device

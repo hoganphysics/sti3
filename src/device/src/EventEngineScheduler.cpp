@@ -19,7 +19,7 @@ using STI::Engine::EventEngineDependencyTree;
 using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 using STI::Engine::EngineID;
-
+using STI::Engine::EventEngine;
 
 EventEngineScheduler::EventEngineScheduler(STI::Device::LocalDevice* localDevice)
 : localDevice(localDevice), completedJobs(3)
@@ -44,6 +44,13 @@ void EventEngineScheduler::stop()
     jobCondition.notify_all();
 }
 
+void EventEngineScheduler::addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine)
+{
+    auto manager = std::make_shared<EventEngineManager>(engine, this);
+
+    engineManagers.add(engineID, manager);
+}
+
 void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
 {
     if(shot == 0) return;
@@ -57,9 +64,11 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
         eventTargets.insert(evt.targetDevice());
     }
     
+    STI::Device::DeviceTrace trace;     //Trace needed to avoid infinite recursion while mapping the network
+
     //Create dependency tree
     auto tree = std::make_shared<EventEngineDependencyTree>();
-    getDependants(eventTargets, *tree);
+    getDependants(eventTargets, *tree, trace);
 
     //Check for missing targets
     std::set<DeviceID> resolvedTargets;
@@ -98,40 +107,88 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
 
 }
 
-void EventEngineScheduler::getDependants(std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree)
+/// Generates a graph of the network that contains all devices needed to parse the events.
+/// Does this in three steps:  (1) Local device, (2) Direct device decendents, (3) Full depth recursive search of graph.
+void EventEngineScheduler::getDependants(std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
 {
-    tree.addVertex(localDevice->getID());
+    //getDependants() is recursive; avoid infinite loop by using DeviceTrace
+    if (trace.includesID(localDevice->getID())) {
+        //getDependants has already been to this device; short circuit the call (the network graph has a loop)
+        return;
+    }
 
+
+    //*** (1) Events targeting the local device ***//
+
+    //If there are local events, add local ID *and* this device's event targets
+    bool localVertexAdded = false;
+    auto local_it = evtTargets.find(localDevice->getID());
+
+    if (local_it != evtTargets.end()) {
+        
+        //Add local device to the tree
+        tree.addVertex(localDevice->getID());
+        localVertexAdded = tree.hasVertex(localDevice->getID());
+        
+        //Get all event targets that were explicitly declared by this device
+        std::set<STI::Device::DeviceID> targetIDs;
+        localDevice->getEventTargets(targetIDs);
+        
+        //Add local event targets (the local device can generate events for these)
+        for (auto& targetID : targetIDs) {
+            tree.addEdge(localDevice->getID(), targetID);
+        }
+    }
+
+
+    //*** (2) Events targeting devices that directly list the local device is their server ***//
+
+   	bool isServerOfEventTarget;
     std::set<DeviceID> missingTargets;  //for event targets that are not directly connected to this device
 
-    //All the event targets that were explicitly declared by this device
-	std::set<STI::Device::DeviceID> targetIDs;
-    localDevice->getEventTargets(targetIDs);
-
-   	bool isTarget;
-
-    //First add all targets that are connected locally
     for(auto& id : evtTargets) {
+        
+        if (id != localDevice->getID()) {
 
-        auto it = targetIDs.find(id);
+        //    auto it = targetIDs.find(id);
 
-        //Explicitly declared targets, or devices that have this device as target server
-		isTarget = localDevice->getID().getID() == id.getTargetServerID() 
-					|| (it != targetIDs.end());
+            //Devices that have this device as target server
+            isServerOfEventTarget = localDevice->getID().getID() == id.getTargetServerID();
+        //                || (it != targetIDs.end());
 
-		if (isTarget) {
-			tree.addEdge(localDevice->getID(), id);
-		}
-		else {
-			//call to other devices
-            missingTargets.insert(id);
-		}
+            if (isServerOfEventTarget) {
+                
+                if (!localVertexAdded) {
+                    tree.addVertex(localDevice->getID());
+                    localVertexAdded = tree.hasVertex(localDevice->getID());
+                }
+                tree.addEdge(localDevice->getID(), id);
+            }
+            else {
+                missingTargets.insert(id);      //Event targets not found at this graph location
+            }
+        }
 	}
-    
-    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
-    localDevice->getCollection(localCollection);
 
-    
+    //*** (3) Search recursively down the network graph for any missing target devices  ***//
+
+    findMissingTarget(missingTargets, tree, trace);     //Note: modifies 'tree' by reference when targets are found
+
+    // if (!localEventsFound) {     //First time only
+    //     for (auto& targetID : targetIDs) {
+    //         tree.addEdge(localDevice->getID(), targetID);
+    //     }
+    // }
+
+
+}
+
+void EventEngineScheduler::findMissingTarget(std::set<DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
+{
+    if (missingTargets.size() == 0) {
+        return;
+    }
+
     EventEngineDependencyTree subtree;
     std::set<STI::Device::DeviceID> ownedIDs;
     std::shared_ptr<STI::Device::Device> device;
@@ -139,7 +196,13 @@ void EventEngineScheduler::getDependants(std::set<DeviceID>& evtTargets, EventEn
 
     //Need to search all currently connected devices (full graph search) because the events targets
     //could be several layers deep.
+    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    localDevice->getCollection(localCollection);
     localCollection->getIDs(ownedIDs);
+
+	//Append this ID to the trace before passing down the graph to avoid infinite loop
+	STI::Device::DeviceTrace newTrace = trace;
+    newTrace.addID(localDevice->getID());
 
     //Resolve missing targets by passing them down the network.
     for(auto& id : ownedIDs) {
@@ -148,9 +211,12 @@ void EventEngineScheduler::getDependants(std::set<DeviceID>& evtTargets, EventEn
         if(localCollection->get(id, device) && device != 0 && 
                 device->getEngineScheduler(scheduler) ) {
             
-            scheduler->getDependants(missingTargets, subtree);
+            scheduler->getDependants(missingTargets, subtree, newTrace);
 
-            tree.addTree(subtree);
+            if(subtree.hasVertex(id)) {     //The subtree will only have id if _some_ device in the subtree is a missing target 
+                tree.addTree(subtree);
+                tree.addEdge(localDevice->getID(), id);     //temp!!  Need to conditionally add the local vertex too, based on whether event targets are found below it in the graph
+            }
 
             //Remove any missing targets found in subtree
             // missingTargets.erase(
@@ -168,12 +234,12 @@ void EventEngineScheduler::getDependants(std::set<DeviceID>& evtTargets, EventEn
                 }
             }
         }
-
-        //Stop the search once all targets have been found
-        if(missingTargets.size() == 0) {
-            break;
-        }
     }
+
+        // //Stop the search once all targets have been found
+        // if(missingTargets.size() == 0) {
+        //     break;
+        // }
 }
 
 void EventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)

@@ -30,7 +30,7 @@ using STI::Device::EngineSchedulerMessage;
 
 
 EventEngine::EventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
-const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, std::shared_ptr<STI::Device::DeviceCollection>& collection) :
+const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std::shared_ptr<STI::Device::DeviceCollection>& collection) :
 	MessageGenerator(dispatcher),
 	parser(this, deviceParser), 
 	rawEvents(parser.rawEvents), 
@@ -106,7 +106,8 @@ void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
 
 	//Remove any devices that do not list this device as server
 	for(auto& id : ids) {
-		if (id.getTargetServerID() == localDeviceID.getID()) {
+		if(isTargetServerForDevice(id)) {
+//		if (id.getTargetServerID() == localDeviceID.getID()) {
 			ownedIDs.insert(id);
 		}
 	}
@@ -119,6 +120,11 @@ void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
     //         ++it;
     //     }
     // }
+}
+
+bool EventEngine::isTargetServerForDevice(const STI::Device::DeviceID& id)
+{
+	return id.getTargetServerID() == localDeviceID.getID();
 }
 
 void EventEngine::divideEvents(const RawEventVector& events, RawEventVector& upstreamEvents)
@@ -198,21 +204,33 @@ void EventEngine::parse(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 
 	while (isState(EngineState::Parsing) && nextID != orderedDependents.end()) {
 
-		if (!localSubtree->getDependentNodeCount(*nextID, dependencyCount)) {
-			//Error; Could not get dependency count (?)
-		}
+		if (isTargetServerForDevice(*nextID) || (*nextID) == localDeviceID) {
+			
+			if (!localSubtree->getDependentNodeCount(*nextID, dependencyCount)) {
+				//Error; Could not get dependency count (?)
+			}
 
-		if (dependencyCount == 0) {
-			parseDevice(*nextID, job);
+			if (dependencyCount == 0) {
+				parseDevice(*nextID, job);
+				++nextID;
+			}
+			else {
+				parseCondition.wait(parseLock);
+			}
 		}
 		else {
-			parseCondition.wait(parseLock);
+			++nextID;
 		}
+
 	}
 
 
 	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
 							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
+	newMessage->jobID.pid = job->getJobID().pid;
+
+	sendMessage(newMessage);
+
 	//newMessage->engine;
 
 	
@@ -233,6 +251,10 @@ void EventEngine::parseDevice(const STI::Device::DeviceID& id, const std::shared
 		if (parser.parse(eventsByTarget[localDeviceID], synchedEvents)) {
 			//successfully parsed
 		}
+
+		//temp!  Send event?  Must send event (with errors) upstream to client
+		localSubtree->removeNode(localDeviceID);
+		parseCondition.notify_all();
 	}
 	else {
 		//Start parse job on remote device

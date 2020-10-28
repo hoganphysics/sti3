@@ -68,7 +68,7 @@ public:
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
 		//Check if it's a DAG (sort if not sorted)
-		if(!sortedDAG) {
+		if (!sortedDAG) {
 			std::vector<T> orderedNodes;
 			if(!_sortTree(orderedNodes)) {
 				return false;
@@ -80,15 +80,11 @@ public:
 		return _getSubtree(vertex, tree);
 	}
 
-
-
 	bool hasVertex(const T& vertex) const
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);
 
-		auto it = vertices.find(vertex);
-
-		return (it != vertices.end());
+		return _hasVertex(vertex);
 	}
 
 	void addVertex(const T& vertex)
@@ -158,7 +154,7 @@ public:
 
 			typename bgl::graph_traits <Graph>::in_edge_iterator ei, ei_end;
 			for (bgl::tie(ei, ei_end) = in_edges(it->second, g); ei != ei_end; ++ei) {
-				parentNodes.push_back( g[bgl::target(*ei, g)] );
+				parentNodes.push_back( g[bgl::source(*ei, g)] );
 			}
 		}
 	}
@@ -235,6 +231,13 @@ public:
 	}
 
 private:
+
+	bool _hasVertex(const T& vertex) const
+	{
+		auto it = vertices.find(vertex);
+
+		return (it != vertices.end());
+	}
 
 	bool _sortTree(std::vector<T>& orderedNodes)
 	{
@@ -317,6 +320,10 @@ private:
 		
 	bool _getSubtree(const T& vertex, DependencyTree<T>& tree)
 	{
+		if (!_hasVertex(vertex)) {
+			return false;
+		}
+		
 		tree.addVertex(vertex);
 
 		std::vector<T> depNodes;

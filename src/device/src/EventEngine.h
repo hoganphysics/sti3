@@ -63,7 +63,7 @@ public:
 		STI::Device::ChannelMap& channels, 
 		DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher,
-		std::shared_ptr<STI::Device::DeviceCollection>& collection);
+		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	~EventEngine();
 
 	void clear();
@@ -99,7 +99,7 @@ public:
 	STI::Engine::EngineState getState() const;
 
 	//Local device details
-	const STI::Device::DeviceID& localDeviceID;	//The DeviceID of the host of this engine
+	STI::Device::DeviceID localDeviceID;	//The DeviceID of the host of this engine
 	STI::Device::ChannelMap& localChannels;
 
 	const STI::Engine::ParseID& getLastParseID() { return lastParseID; }
@@ -108,6 +108,7 @@ private:
 
 	void parseDevice(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Engine::EventEngineJob>& job);
 
+	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
 	void divideEvents(const RawEventVector& events, RawEventVector& upstreamEvents);
 
