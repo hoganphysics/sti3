@@ -93,6 +93,7 @@ void EventEngineManager::runJob()
     switch(currentJob->getJobID().type) {
         case EventEngineJobType::Parse:
             //engine->parse(currentJob->getJobID().pid, currentJob->parsedShot.events, currentJob->jobOwner);
+            //could do parseReserve(job) here, allowing each server to get devices reserved. Would respond to yield. Same for play.
             engine->parse(currentJob);
         break;
         case EventEngineJobType::Play:

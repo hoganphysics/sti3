@@ -17,6 +17,8 @@ public:
 
     //Find the node connected to root that leads to target, via each node's target server.
     bool getBranchToTarget(const STI::Device::DeviceID& root, const STI::Device::DeviceID& target, STI::Device::DeviceID& branch) const;
+    bool hasBranchToTarget(const STI::Device::DeviceID& root, const STI::Device::DeviceID& target) const;
+
 
 };
 

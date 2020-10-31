@@ -23,6 +23,11 @@ int main(int argc, char **argv)
 
     tree.addVertex(1);
     tree.addEdge(1, 2);
+    tree.addEdge(1, 2);
+    tree.addEdge(1, 2);
+
+    tree.addVertex(1);
+    tree.addEdge(1, 2);
     tree.addEdge(1, 9);
     tree.addEdge(1, 3);
 
@@ -38,6 +43,14 @@ int main(int argc, char **argv)
     tree.addEdge(6, 7);
     tree.addEdge(7, 9);
 
+    //tree.removeNode(7);
+    tree.clear();
+    tree.addVertex(1);
+    tree.addEdge(1, 2);
+    tree.addEdge(1, 2);
+    tree.addEdge(1, 2);
+
+
     //tree.addEdge(8, 1);       //causes cycle
 
     std::vector<int> orderedNodes;
@@ -45,6 +58,14 @@ int main(int argc, char **argv)
 
     std::cout << (success ? "DAG:" : "Not DAG:") << " ";
     printNodes(orderedNodes);
+
+    int c;
+    std::cout << "Dep: (";
+    for(auto& x : orderedNodes) {
+        tree.getDependentNodeCount(x, c);
+        std::cout << c << ", ";
+    }
+    std::cout << ")" << std::endl;
     
     if(!success) {
         std::vector<int> cycle;
@@ -55,7 +76,7 @@ int main(int argc, char **argv)
     }
 
     int tmp2;
-    tree.getDependentNodeCount(7, tmp2);
+    tree.getDependentNodeCount(9, tmp2);
     std::cout << "Count: " << tmp2 << std::endl;
 
     tree.getDependedentNodes(3, orderedNodes);

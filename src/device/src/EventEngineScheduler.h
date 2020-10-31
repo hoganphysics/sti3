@@ -26,6 +26,7 @@
 #include <map>
 #include <mutex>
 #include <thread>
+#include <string>
 
 /*
 Implements prioritized parallel distributed scheduling:
@@ -86,7 +87,7 @@ public:
     void addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine);
 
 //    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree);
-    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -114,7 +115,12 @@ public:
 
 private:
 
-    void findMissingTarget(std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+    void getServerIDs(std::set<STI::Device::DeviceID>& serverIDs);
+    void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
+
+    void addDevice(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+
+    //void findMissingTarget(const std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     
     void assignJobs();
     bool assignJob(const EngineJobID& jobID, const EngineID& engineID);

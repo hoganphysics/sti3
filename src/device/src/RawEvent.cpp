@@ -36,7 +36,7 @@ RawEvent::RawEvent(const STI::Device::DeviceID& targetDeviceID,
 	double time, unsigned short channel, const MixedValue& value, 
 	const std::string& description, unsigned eventNumber, const RawEventType& eventType)
 	:
-	_time(time), _channel(channel), _description(description), 
+	_time(time), _channel(channel), _value(value), _description(description), 
 	_eventType(eventType), targetDeviceID(targetDeviceID)//, _isScheduled(false)
 {
 	isMeasurement = (eventType == RawEventType::Measurement);

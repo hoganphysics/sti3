@@ -10,6 +10,13 @@ EventEngineDependencyTree::EventEngineDependencyTree() : STI::Utils::DependencyT
 {
 }
 
+bool EventEngineDependencyTree::hasBranchToTarget(const DeviceID& root, const DeviceID& target) const
+{
+    DeviceID branch;
+    return getBranchToTarget(root, target, branch);
+}
+
+
 /// Find the node connected to root that leads to target, via each node's target server.
 bool EventEngineDependencyTree::getBranchToTarget(const DeviceID& root, const DeviceID& target, DeviceID& branch) const
 {

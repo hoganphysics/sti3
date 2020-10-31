@@ -10,6 +10,7 @@ namespace bgl = boost;
 #include <utility>
 #include <set>
 #include <map>
+#include <list>
 
 namespace STI
 {
@@ -25,6 +26,7 @@ class DependencyTree
 {
 private:
 
+//	typedef typename bgl::adjacency_list<bgl::vecS, bgl::vecS, bgl::bidirectionalS, T, int> Graph;
 	typedef typename bgl::adjacency_list<bgl::vecS, bgl::vecS, bgl::bidirectionalS, T, int> Graph;
 	typedef typename bgl::graph_traits<Graph>::vertex_descriptor vertex_t;
 	typedef typename bgl::graph_traits<Graph>::edge_descriptor edge_t;
@@ -112,6 +114,10 @@ public:
 		}
 
 		if (it_target == vertices.end()) {
+			return false;
+		}
+
+		if(_hasEdge(it_source, target)) {
 			return false;
 		}
 
@@ -228,6 +234,13 @@ public:
 		for(auto& node : nodes) {
 			_removeNode(node);
 		}
+
+		//removeNode doesn't actually completely remove unfortunately, it just clears edges for the vertex.
+		//This is because removing a node would invalidate all the other vertex numbers and edges...
+		//So to completely clear we have to swap in a new Graph instance.
+		Graph newG;
+		g.swap(newG);
+		vertices.clear();
 	}
 
 private:
@@ -243,8 +256,10 @@ private:
 	{
 		orderedNodes.clear();
 		std::vector<vertex_t> sortedNodes;		//vector of vertex_descriptors
+//		std::set<vertex_t> sortedNodes;		//vector of vertex_descriptors
 		try {
 			bgl::topological_sort(g, std::back_inserter(sortedNodes));
+//			bgl::topological_sort(g, std::back_inserter< std::list<T> >(sortedNodes));
 			sortedDAG = true;
 		}
 		catch (bgl::not_a_dag&) {
@@ -254,6 +269,7 @@ private:
 
 		//topological_sort returns a vector with the most dependent vertex at the beginning.
 		//sortTree returns the reverse of this, so the first element is the least dependent
+//		for (typename std::list<vertex_t>::reverse_iterator it = sortedNodes.rbegin(); it != sortedNodes.rend(); ++it) {
 		for (typename std::vector<vertex_t>::reverse_iterator it = sortedNodes.rbegin(); it != sortedNodes.rend(); ++it) {
 			orderedNodes.push_back(g[*it]);
 		}
@@ -301,18 +317,48 @@ private:
 		}
 	}
 
+	
+	bool _hasEdge(const typename VertexMap::const_iterator& it_node, const T& target) const
+	{
+		typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
+		for (bgl::tie(ei, ei_end) = out_edges(it_node->second, g); ei != ei_end; ++ei) {
+			
+			if(target == g[bgl::target(*ei, g)]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	void _addVertex(const T& vertex)
 	{
+		if (_hasVertex(vertex)) {
+			return;
+		}
+
 		vertices.insert(std::pair<T, vertex_t>(vertex, bgl::add_vertex(vertex, g)));
 		sortedDAG = false;
 	}
 
 	bool _removeNode(const T& node)
 	{
+		//There's a pretty serious issue with _removeNode that is hard to work around.  For topological sort to work
+		//the Graph (seems!) to need to use the vecS template parameter (std::vector) to store the vertices.  But 
+		//vector-based graphs do not let you remove a vertex cleanly, because removing one vertex invalidates all the 
+		//other vertices and edge connections.  I think this is because everthing is just index based, and the vector 
+		//indices change when an element is erased.  So instead of calling remove_vertex here, we just call clear_vertex,
+		//which has the effect of removing all edge connections but leaves the vertex itself in the Graph.  We also
+		//remove the vertex from the VertexMap, so at least hasVertex() will return false, even though the vertex is
+		//still stored internally inside the Graph.
+		//This issue could probably be avoided by using listS instead of vecS in the Graph, but this choice didn't seem to
+		//work with topological_sort.  So this is a compromise.
 		typename VertexMap::iterator it = vertices.find(node);
 		if (it != vertices.end()) {
 			bgl::clear_vertex(it->second, g);	//can't use remove_vertex here because the graph is based on a vector, so the indices get messed up
+			//bgl::remove_vertex(it->second, g);
 			sortedDAG = false;
+			vertices.erase(it);
 			return true;
 		}
 		return false;
