@@ -20,6 +20,7 @@ using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 using STI::Engine::EngineID;
 using STI::Engine::EventEngine;
+using STI::Device::DeviceTrace;
 
 EventEngineScheduler::EventEngineScheduler(STI::Device::LocalDevice* localDevice)
 : localDevice(localDevice), completedJobs(3)
@@ -110,72 +111,27 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
 
 }
 
-// bool addTarget(const DeviceID& targetID, EventEngineDependencyTree& tree, const std::set<DeviceID>& remainingTargets, const STI::Device::DeviceTrace& trace)
-// {
-//     tree.clear();
-
-//     EventEngineDependencyTree subtree;
-//     std::set<STI::Device::DeviceID> ownedIDs;
-//     std::shared_ptr<STI::Device::Device> device;
-//     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-
-// //    remainingTargets.insert(targetID);
-
-//     //attempt to get this device reference
-//     std::shared_ptr<STI::Device::DeviceCollection> localCollection;
-//     localDevice->getCollection(localCollection);
-//     localCollection->getIDs(ownedIDs);
-
-//     for(auto& id : ownedIDs) {
-//         subtree.clear();
-
-//         if(localCollection->get(id, device) && device != 0 && 
-//                 device->getEngineScheduler(scheduler) ) {
-            
-//             scheduler->getDependants(missingTargets, subtree, newTrace);
-
-//             if(subtree.hasVertex(id)) {     //The subtree will only have id if _some_ device in the subtree is a missing target 
-//                 tree.addTree(subtree);
-//                 tree.addEdge(localDevice->getID(), id);     //temp!!  Need to conditionally add the local vertex too, based on whether event targets are found below it in the graph
-//             }
-
-//             //Remove any missing targets found in subtree
-//             // missingTargets.erase(
-//             //     std::remove_if(missingTargets.begin(), missingTargets.end(), 
-//             //     [&subtree](const DeviceID& id){ return subtree.hasVertex(id); }),
-//             //     missingTargets.end());
-            
-//             //Remove any missing targets found in subtree to speedup subsequent searching
-//             for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
-//                 if (subtree.hasVertex(id)) {
-//                     it = missingTargets.erase(it);
-//                 }
-//                 else {
-//                     ++it;
-//                 }
-//             }
-//         }
-//     }
-
-//     //getDependants(remainingTargets, tree, trace)
-//     //remove targetID from remainingTargets, if present
-//     //get all ids in tree, and remove them (if present) from the remainingTargets
-//     //go through all local connected devices and check recursively if they are the server of any id in the tree without a server
-// }
-
-void EventEngineScheduler::addDevice(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
+bool EventEngineScheduler::loopDetected(const DeviceTrace& trace, DeviceTrace& newTrace)
 {
-    //addTargetDevice() is recursive; avoid infinite loop by using DeviceTrace
+    //Avoid infinite loop by using DeviceTrace
     if (trace.includesID(localDevice->getID())) {
-        //addTargetDevice has already been to this device; short circuit the call (the network graph has a loop)
-        return;
+        //This node has already been visited; short circuit the call (the network graph has a loop)
+        return true;
     }
 
     //Append this ID to the trace before passing down the graph to avoid infinite loop
-	STI::Device::DeviceTrace newTrace = trace;
+    newTrace = trace;
     newTrace.addID(localDevice->getID());
 
-//    bool success = false;
+    return false;
+}
+
+void EventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
+{
+	STI::Device::DeviceTrace newTrace;
+    if (loopDetected(trace, newTrace)) {
+        return;     //avoid infinite recursion if the network graph has a loop
+    }
 
     EventEngineDependencyTree subtree;
     std::shared_ptr<STI::Device::Device> device;
@@ -203,15 +159,13 @@ void EventEngineScheduler::addDevice(EventEngineDependencyTree& tree, const STI:
         if(localCollection->get(targetID, device) && device != 0 && 
                 device->getEngineScheduler(scheduler)) 
         {
-            scheduler->addDevice(subtree, newTrace);
+            scheduler->addDeviceEventTargets(subtree, newTrace);
             tree.addTree(subtree);
         }
         else {
             //Warning, event target device not connected
         }
     }
-
-//    return success;
 }
 
 void EventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
@@ -220,13 +174,12 @@ void EventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& target
     for (auto& id : targets) {
         if (id !=localDevice->getID() && !tree.hasBranchToTarget(id, localDevice->getID())) {
             //this id has no server path to the local device.
-//            idsWithMissingServers.insert(id);
             targetsByServer[id.getTargetServerID()].insert(id);
         }        
     }
 }
 
-void EventEngineScheduler::getServerIDs(std::set<STI::Device::DeviceID>& serverIDs)
+void EventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs)
 {
     serverIDs.clear();
 
@@ -241,128 +194,157 @@ void EventEngineScheduler::getServerIDs(std::set<STI::Device::DeviceID>& serverI
             serverIDs.insert(id);
         }
     }
-
 }
+
+
+void EventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID, const std::set<DeviceID>& targets, 
+                                                    EventEngineDependencyTree& tree, std::set<DeviceID>& missingIDs, 
+                                                    const DeviceTrace& trace)
+{
+    if (targets.size() == 0) {
+        return;
+    }
+
+    std::shared_ptr<STI::Device::Device> device;
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    EventEngineDependencyTree subtree;
+    //std::set<STI::Device::DeviceID> foundIDs;
+
+    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    localDevice->getCollection(localCollection);
+
+    if(localCollection->get(partnerID, device) && device != 0 && device->getEngineScheduler(scheduler)) {
+                    
+        subtree.clear();
+        scheduler->getDependants(targets, subtree, missingIDs, trace);
+        //tree.addTree(subtree);
+        //tree.addEdge(localDevice->getID(), partnerID);
+
+           
+        //Add found subtree to the tree.
+        //Uses greater than 1 because the subtree always contains the server id, but we only add if there are also others.
+        //(Unless the partnerID is in the target list)
+        if (subtree.vertexCount() > 1 || targets.find(partnerID) != targets.end()) {
+            tree.addTree(subtree);
+            tree.addEdge(localDevice->getID(), partnerID);                
+        }
+    }
+    else {
+        //Could not contact the device; these targets cannot be reached
+        missingIDs.insert(targets.begin(), targets.end());
+    }
+}
+
+void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions)
+{
+    unsigned passes = 0;
+    bool repeat = false;
+
+    std::set<DeviceID> targets = evtTargets;
+
+    do {
+        ++passes;
+        repeat = false;
+
+        getDependants(targets, tree, missingTargets, STI::Device::DeviceTrace());
+
+        // If there are still missingTargets, they may be found on another pass.
+        // Make sure the new missingTarget list is not the same as the last targets list, 
+        // since those IDs have already been tried and were missing.
+        if (missingTargets.size() > 0 && targets != missingTargets) {
+            targets = missingTargets;
+            repeat = true;
+        }
+
+    } while (repeat && passes < maxRecursions);
+}
+
 
 /// Generates a graph of the network that contains all devices needed to parse the events.
 /// Does this in three steps:  (1) Local device, (2) Direct device decendents, (3) Full depth recursive search of graph.
 void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace)
 {
-    //getDependants() is recursive; avoid infinite loop by using DeviceTrace
-    if (trace.includesID(localDevice->getID())) {
-        //getDependants has already been to this device; short circuit the call (the network graph has a loop)
-        return;
+	STI::Device::DeviceTrace newTrace;
+    if (loopDetected(trace, newTrace)) {
+        return;     //avoid infinite recursion if the network graph has a loop
     }
-
-    //Append this ID to the trace before passing down the graph to avoid infinite loop
-	STI::Device::DeviceTrace newTrace = trace;
-    newTrace.addID(localDevice->getID());
 
     EventEngineDependencyTree subtree;
 
-//    std::set<DeviceID> remainingTargets = evtTargets;
 
-    //*** (1) Events targeting the local device ***//
+    //*** (1) Check for events targeting the local device ***//
 
-    //If there are local events, add local ID *and* this device's event targets
+    //If there are local events, add local ID *and* this device's event targets, since the local
+    //device can generate events on its event targets.
     bool localVertexAdded = false;
     auto local_it = evtTargets.find(localDevice->getID());
 
     if (local_it != evtTargets.end()) {
-        addDevice(subtree, STI::Device::DeviceTrace());
+        addDeviceEventTargets(subtree, STI::Device::DeviceTrace());
         tree.addTree(subtree);
     }
 
-
-    //Now all partners for local device are added; but there are two problems:
+    //Now all partners for local device are added; but there are two issues:
     // 1) There are event targets in evtTargets that have not been found via a server chain
-    // 2) There are targets in the current tree that don't have their server chain added
+    // 2) There are targets in the current tree that don't have their server chain added 
+    //    (partners can generally have some other server)
 
-// construnct targetsWeNeedToAddServerChainFor = evtTargets + tree.nodes - localDeviceID
-// desend via connected devices that have localdevice as server, sending targetsWeNeedToAddServerChainFor
-// first add any connected device like this and remove from targetsWeNeedToAddServerChainFor
-// Then send remaining list down each server recursively
 
-//complication:  for evtTargets, we need to addTargetDevice (partner events), for server chains, we just need to addEdge.
+    //*** (2) Divide event targets by server ***//
 
     std::map<std::string, std::set<DeviceID>> targetsByServer;   // ["server", {devices}]
+    
     std::set<DeviceID> localTargets;
     tree.getNodes(localTargets);
 
-//     std::set<DeviceID> idsWithMissingServers;
-
-//     //Note: if the id is not in the tree, it will be trivially added to set
-//     for (auto& id : localTargets) {
-//         if (id !=localDevice->getID() && !tree.hasBranchToTarget(id, localDevice->getID())) {
-//             //this id has no server path to the local device.
-// //            idsWithMissingServers.insert(id);
-//             targetsByServer[id.getTargetServerID()].insert(id);
-//         }        
-//     }
-   
-//     for (auto& id : evtTargets) {
-//         if (id !=localDevice->getID() && !tree.hasBranchToTarget(id, localDevice->getID())) {
-//             //this id has no server path to the local device.
-// //            idsWithMissingServers.insert(id);
-//             targetsByServer[id.getTargetServerID()].insert(id);
-
-
-//         }        
-//     }
-    
     addToTargetsByServer(localTargets, tree, targetsByServer);
     addToTargetsByServer(evtTargets, tree, targetsByServer);
-
-
-    //std::set<STI::Device::DeviceID> ownedIDs;
-    std::shared_ptr<STI::Device::Device> device;
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-	
-    //Need to search all currently connected devices (full graph search) because the events targets
-    //could be several layers deep.
-    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
-    localDevice->getCollection(localCollection);
-    //localCollection->getIDs(ownedIDs);
-   
    
     std::set<STI::Device::DeviceID> missingIDs;
     missingIDs.clear();
 
 
-    std::set<STI::Device::DeviceID> serverIDs;  //all the local ids that are connected to this device as their server (server path)
-    getServerIDs(serverIDs);
-    
-    // for (auto& id : ownedIDs) {
-    //     if (localDevice->getID().getID() == id.getTargetServerID()) {
-    //         serverIDs.insert(id);
-    //     }
-    // }
+    //*** (3) Pass targets down the server chain ***//
 
-    //Check if the target servers are owned by this device; if so, pass along these references
+    //searchServerChain(serverChainIDs, targetsByServer, tree, missingTargets);
+
+    //Construct server chain: get all connected devices that declare the local device as server.
+    std::set<STI::Device::DeviceID> serverChainIDs;  //all the local ids that are connected to this device as their server (server path)
+    getServerChainIDs(serverChainIDs);
+    
+    //std::shared_ptr<STI::Device::Device> device;
+    //std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    //Pass all targetsByServer['ID'] target lists to any 'ID' found in serverChainIDs.
     for (auto it = targetsByServer.begin(); it != targetsByServer.end(); ) {
 
-        auto found_it = std::find_if(serverIDs.begin(), serverIDs.end(),
+        // Check if it=targetsByServer['ID'] is in serverChainIDs:
+        auto found_it = std::find_if(serverChainIDs.begin(), serverChainIDs.end(),
                         [&](const DeviceID& id) { return (it->first == id.getID()); });
         
-        if (found_it != serverIDs.end()) {
+        if (found_it != serverChainIDs.end()) {
 
-            //Local device is the server of some targets; send these targets to the device
-            if(localCollection->get(*found_it, device) && device != 0 && device->getEngineScheduler(scheduler)) {
+            //Pass targetsByServer['ID'] target list to the locally connected server
+            getPartnerDeviceDependants(*found_it, it->second, tree, missingIDs, newTrace);
+            missingTargets.insert(missingIDs.begin(), missingIDs.end());
 
-                subtree.clear();
-                //bool tmp = subtree.hasVertex(localDevice->getID());
-                scheduler->getDependants(it->second, subtree, missingIDs, newTrace);
-                tree.addTree(subtree);
-                tree.addEdge(localDevice->getID(), *found_it);
-            }
-            else {
-                //Warning, event target device not connected
+            // if(localCollection->get(*found_it, device) && device != 0 && device->getEngineScheduler(scheduler)) {
 
-                //Could not contact server; these targets cannot be reached
-                missingTargets.insert(it->second.begin(), it->second.end());
-            }
+            //     subtree.clear();
+            //     scheduler->getDependants(it->second, subtree, missingIDs, newTrace);
+            //     tree.addTree(subtree);
+            //     tree.addEdge(localDevice->getID(), *found_it);
+            // }
+            // else {
+            //     //Warning, couldn't connect to server for some reason; this shouldn't happen since the 
+            //     //same serverChainIDs id was just found in the localCollection.
+
+            //     //Could not contact server; these targets cannot be reached
+            //     missingTargets.insert(it->second.begin(), it->second.end());
+            // }
             
-            //After attempt to transfer these targets, remove from map.
+            //After attempt to transfer these targets, remove from targetsByServer.
             it = targetsByServer.erase(it);
         }
         else {
@@ -370,10 +352,13 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
         }
     }
 
+    //Add missing ids generated by last call to getDependants to targetsByServer
     addToTargetsByServer(missingIDs, tree, targetsByServer);
 
 
-    std::set<DeviceID> targetsForServer;    
+    //*** (4) Add targets that declare the local device as server ***//
+
+    std::set<DeviceID> targetsForLocal;    
     missingIDs.clear();
 
     //Add any targets that declare this as their server
@@ -384,23 +369,26 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
         tree.addVertex(localDevice->getID());   //add if not already added
 
         for (auto& id : it->second) {
-            targetsForServer.clear();
+            targetsForLocal.clear();
+            targetsForLocal.insert(id);
 
-            if (!tree.hasBranchToTarget(localDevice->getID(), id)) {    //not currently connected in tree
-                if(localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
+            getPartnerDeviceDependants(id, targetsForLocal, tree, missingIDs, newTrace);
+            
+            // if (!tree.hasBranchToTarget(localDevice->getID(), id)) {    //not currently connected in tree
+                
+            //     if(localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
                     
-                    subtree.clear();
-                    targetsForServer.insert(id);
-                    scheduler->getDependants(targetsForServer, subtree, missingIDs, newTrace);
-                    tree.addTree(subtree);
-                    tree.addEdge(localDevice->getID(), id);
+            //         subtree.clear();
+            //         scheduler->getDependants(targetsForLocal, subtree, missingIDs, newTrace);
+            //         tree.addTree(subtree);
+            //         tree.addEdge(localDevice->getID(), id);
                     
-                }
-                else {
-                    //couldn't connect
-                    missingIDs.insert(id);
-                }
-            }
+            //     }
+            //     else {
+            //         //couldn't connect
+            //         missingIDs.insert(id);
+            //     }
+            // }
         }
         
         targetsByServer.erase(it);
@@ -408,253 +396,108 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
 
     addToTargetsByServer(missingIDs, tree, targetsByServer);
 
-    //Any targets in targetsByServer could not be found at this layer.  Pass them downstream to the network, following server path.
 
+    //*** (5) Search the full graph for any missing targets, following server chain ***//
+
+    //Any targets in targetsByServer could not be found by the local device.  Pass them downstream to the 
+    //network, following the server chain.
+    //Need to search all currently connected devices (full graph search) because the events targets and
+    //their servers could be multiple layers deep.
+
+    //First construct downstreamIDs
     std::set<STI::Device::DeviceID> downstreamIDs;
-    std::set<STI::Device::DeviceID> foundIDs;
-    std::set<DeviceID> diff;
+    getDownstreamIDs(targetsByServer, tree, downstreamIDs);
 
+    // //Put any remaining target in downstreamIDs
+    // for (auto& it : targetsByServer) {
+    //     downstreamIDs.insert(it.second.begin(), it.second.end());
+    // }
+    // targetsByServer.clear(); 
+
+    // //Check for any target in the tree that is still not connected via a server chain
+    // std::set<STI::Device::DeviceID> allTreeIDs;
+    // tree.getNodes(allTreeIDs);
+
+    // for(auto& id : allTreeIDs) {
+    //     if (id != localDevice->getID() && !tree.hasBranchToTarget(localDevice->getID(), id)) {
+    //         downstreamIDs.insert(id);
+    //     }
+    // }
+
+    if (downstreamIDs.size() == 0) {
+        //No missing targets; short circuit.
+        return;
+    }
+
+    //std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    //localDevice->getCollection(localCollection);
+
+    //std::set<STI::Device::DeviceID> foundIDs;
+    //std::set<DeviceID> diff;
+
+    for (auto& id : serverChainIDs) {    // Follow server chain through the graph
+        missingIDs.clear();
+        getPartnerDeviceDependants(id, downstreamIDs, tree, missingIDs, newTrace);
+        downstreamIDs.swap(missingIDs);
+
+
+        // if (downstreamIDs.size() > 0 && 
+        //    localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
+
+        //     subtree.clear();
+        //     foundIDs.clear();
+        //     //diff.clear();
+
+        //     scheduler->getDependants(downstreamIDs, subtree, missingIDs, newTrace);
+        //     //missingTargets.insert(missingIDs.begin(), missingIDs.end());    //anything not found now is declared missing (on this pass)
+
+        //     subtree.getNodes(foundIDs);
+           
+        //     //Add found subtree to the tree.
+        //     //Uses greater than 1 because the subtree always contains the server id, but we only add if there are also others.
+        //     if (foundIDs.size() > 1) {
+        //         tree.addTree(subtree);
+        //         tree.addEdge(localDevice->getID(), id);                
+        //     }
+
+        //     // //Remove any found ids from downstreamIDs
+        //     // std::set_difference(downstreamIDs.begin(), downstreamIDs.end(), 
+        //     //                     foundIDs.begin(), foundIDs.end(),
+        //     //                     std::inserter(diff, diff.end()));
+        //     // downstreamIDs.swap(diff);
+
+        //     downstreamIDs.swap(missingIDs);
+        // }
+    }
+
+    //Anything left is missing; may be reachable with another pass.
+    missingTargets.insert(downstreamIDs.begin(), downstreamIDs.end());
+
+}
+
+void EventEngineScheduler::getDownstreamIDs(const std::map<std::string, std::set<DeviceID>> targetsByServer, 
+                                            const EventEngineDependencyTree& tree, std::set<DeviceID>& downstreamIDs)
+{
+    downstreamIDs.clear();
+
+    //Put any remaining targets in downstreamIDs
     for (auto& it : targetsByServer) {
         downstreamIDs.insert(it.second.begin(), it.second.end());
     }
-    targetsByServer.clear(); 
+    //targetsByServer.clear(); 
 
-    //Add any with missing server path
-    std::set<STI::Device::DeviceID> allIDs;
-    tree.getNodes(allIDs);
+    //Check for any target in the tree that is still not connected via a server chain
+    std::set<STI::Device::DeviceID> allTreeIDs;
+    tree.getNodes(allTreeIDs);
 
-    for(auto& id : allIDs) {
+    //Add any targets in the tree that are not connected via the server chain
+    for(auto& id : allTreeIDs) {
         if (id != localDevice->getID() && !tree.hasBranchToTarget(localDevice->getID(), id)) {
             downstreamIDs.insert(id);
         }
     }
 
-   
-
-    for (auto& id : serverIDs) {    // Follow server path through graph
-        if(localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
-
-            subtree.clear();
-            missingIDs.clear();
-            foundIDs.clear();
-            diff.clear();
-
-            scheduler->getDependants(downstreamIDs, subtree, missingIDs, newTrace);
-            missingTargets.insert(missingIDs.begin(), missingIDs.end());    //anything not found now is declared missing (on this pass)
-
-            //remove any found ids from downstreamIDs
-            subtree.getNodes(foundIDs);
-           
-            if (foundIDs.size() > 1) {
-                tree.addTree(subtree);
-                tree.addEdge(localDevice->getID(), id);                
-            }
-            
-            std::set_difference(downstreamIDs.begin(), downstreamIDs.end(), 
-                                foundIDs.begin(), foundIDs.end(),
-                                std::inserter(diff, diff.end()));
-            downstreamIDs.swap(diff);
-            
-
-
-        }
-    }
-
-    //Anything left is missing; may be reachable with another pass
-    missingTargets.insert(downstreamIDs.begin(), downstreamIDs.end());
-
-
-// ////////////////old////////////////////
-
-//     for (auto& id : ownedIDs) {
-        
-//         if (localDevice->getID().getID() == id.getTargetServerID()) {   // Follow server path through graph
-
-//             if(localCollection->get(id, device) && device != 0 && 
-//                 device->getEngineScheduler(scheduler)) {
-
-//                     subtree.clear();
-//                     scheduler->getDependants(evtTargets, subtree, newTrace);
-//                     tree.addTree(subtree);
-//             }
-//             else {
-//                 //Warning, event target device not connected
-//             }
-
-
-
-
-//             auto it = evtTargets.find(id);
-//             if (it != evtTargets.end()) {
-                
-
-//             }
-
-//             // // ****** this part may even be redundant -- it happens at the start of getDependants, call right after this...
-//             // auto it = evtTargets.find(id);
-//             // if (it != evtTargets.end()) {    //id is an event target
-                
-//             //     tree.addEdge(localDevice->getID(), id);
-
-//             //     // if(addTargetDevice(id, subtree, STI::Device::DeviceTrace())) {
-//             //     //     tree.addTree(subtree);
-//             //     // }
-                
-//             //     subtree.clear();
-
-//             //     //Attempt to get this device reference and then get it's subtree
-//             //     if(localCollection->get(id, device) && device != 0 && 
-//             //             device->getEngineScheduler(scheduler) &&
-//             //             scheduler->addTargetDevice(id, subtree, STI::Device::DeviceTrace())) 
-//             //     {
-//             //         tree.addTree(subtree);
-//             //     }
-//             //     else {
-//             //         //Warning, event target device not connected
-//             //     }
-//             // }
-
-//             //look for targetsWeNeedToAddServerChainFor down the graph
-
-//             //construct devicesMissingServers == all evt targets plus any id in tree not connected to localDevice via servers
-//             scheduler->getDependants(devicesMissingServers, subtree, newTrace);
-//             if (devices found) { //subtree has nodes
-//                 //add subtree and this id
-//                 tree.addEdge(localDevice->getID(), id);
-//                 tree.addTree(subtree);
-//             }
-//         }
-//     }
-
-
-    // if (local_it != evtTargets.end()) {
-
-    //     remainingTargets.erase(local_it);
-        
-    //     //Add local device to the tree
-    //     tree.addVertex(localDevice->getID());
-    //     localVertexAdded = tree.hasVertex(localDevice->getID());
-        
-    //     //Get all event targets that were explicitly declared by this device
-    //     std::set<STI::Device::DeviceID> targetIDs;
-    //     localDevice->getEventTargets(targetIDs);
-        
-    //     //Add local event targets (the local device can generate events for these)
-    //     for (auto& targetID : targetIDs) {
-
-    //         if (addTarget(targetID, subtree, remainingTargets, newTrace)) {     //modifies remainingTargets by reference
-    //             tree.addTree(subtree);
-    //             tree.addEdge(localDevice->getID(), targetID);
-    //         }
-    //         else {
-    //             //Warning, event target device not connected
-    //         }
-
-    //         //tree.addEdge(localDevice->getID(), targetID);
-    //     }
-    // }
-
-
-    // //*** (2) Events targeting devices that directly list the local device is their server ***//
-
-   	// bool isServerOfEventTarget;
-    // std::set<DeviceID> missingTargets;  //for event targets that are not directly connected to this device
-
-    // for(auto& id : evtTargets) {
-        
-    //     if (id != localDevice->getID()) {
-
-    //     //    auto it = targetIDs.find(id);
-
-    //         //Devices that have this device as target server
-    //         isServerOfEventTarget = localDevice->getID().getID() == id.getTargetServerID();
-    //     //                || (it != targetIDs.end());
-
-    //         if (isServerOfEventTarget) {
-                
-    //             if (!localVertexAdded) {
-    //                 tree.addVertex(localDevice->getID());
-    //                 localVertexAdded = tree.hasVertex(localDevice->getID());
-    //             }
-    //             tree.addEdge(localDevice->getID(), id);
-    //         }
-    //         else {
-    //             missingTargets.insert(id);      //Event targets not found at this graph location
-    //         }
-    //     }
-	// }
-
-    // //*** (3) Search recursively down the network graph for any missing target devices  ***//
-
-    // findMissingTarget(missingTargets, tree, trace);     //Note: modifies 'tree' by reference as targets are found
-
-    // // if (!localEventsFound) {     //First time only
-    // //     for (auto& targetID : targetIDs) {
-    // //         tree.addEdge(localDevice->getID(), targetID);
-    // //     }
-    // // }
-
-
 }
-
-// void EventEngineScheduler::findMissingTarget(const std::set<DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
-// {
-//     if (missingTargets.size() == 0) {
-//         return;
-//     }
-
-//     EventEngineDependencyTree subtree;
-//     std::set<STI::Device::DeviceID> ownedIDs;
-//     std::shared_ptr<STI::Device::Device> device;
-//     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-	
-//     //Append this ID to the trace before passing down the graph to avoid infinite loop
-// 	STI::Device::DeviceTrace newTrace = trace;
-//     newTrace.addID(localDevice->getID());
-
-//     //Need to search all currently connected devices (full graph search) because the events targets
-//     //could be several layers deep.
-//     std::shared_ptr<STI::Device::DeviceCollection> localCollection;
-//     localDevice->getCollection(localCollection);
-//     localCollection->getIDs(ownedIDs);
-
-//     //Resolve missing targets by passing them down the network.
-//     for(auto& id : ownedIDs) {
-//         subtree.clear();
-
-//         if(localCollection->get(id, device) && device != 0 && 
-//                 device->getEngineScheduler(scheduler) ) {
-            
-//             scheduler->getDependants(missingTargets, subtree, newTrace);
-
-//             if(subtree.hasVertex(id)) {     //The subtree will only have id if _some_ device in the subtree is a missing target 
-//                 tree.addTree(subtree);
-//                 tree.addEdge(localDevice->getID(), id);     //temp!!  Need to conditionally add the local vertex too, based on whether event targets are found below it in the graph
-//             }
-
-//             //Remove any missing targets found in subtree
-//             // missingTargets.erase(
-//             //     std::remove_if(missingTargets.begin(), missingTargets.end(), 
-//             //     [&subtree](const DeviceID& id){ return subtree.hasVertex(id); }),
-//             //     missingTargets.end());
-            
-//             //Remove any missing targets found in subtree to speedup subsequent searching
-//             for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
-//                 if (subtree.hasVertex(id)) {
-//                     it = missingTargets.erase(it);
-//                 }
-//                 else {
-//                     ++it;
-//                 }
-//             }
-//         }
-//     }
-
-//         // //Stop the search once all targets have been found
-//         // if(missingTargets.size() == 0) {
-//         //     break;
-//         // }
-// }
 
 void EventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {

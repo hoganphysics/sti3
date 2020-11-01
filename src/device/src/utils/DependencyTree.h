@@ -224,6 +224,12 @@ public:
 		return cycleFound;
 	}
 
+	unsigned vertexCount()
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		return static_cast<unsigned>(vertices.size());
+	}
+
 	void clear()
 	{
 		std::unique_lock< std::mutex > writeLock(graphMutex);

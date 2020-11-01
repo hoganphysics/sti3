@@ -88,6 +88,7 @@ public:
 
 //    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree);
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions);
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -115,10 +116,21 @@ public:
 
 private:
 
-    void getServerIDs(std::set<STI::Device::DeviceID>& serverIDs);
-    void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
+    bool loopDetected(const STI::Device::DeviceTrace& trace, STI::Device::DeviceTrace& newTrace);
 
-    void addDevice(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+    void getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs);
+    
+    void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
+                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
+    
+    void getDownstreamIDs(const std::map<std::string, std::set<STI::Device::DeviceID>> targetsByServer, const EventEngineDependencyTree& tree, 
+                            std::set<STI::Device::DeviceID>& downstreamIDs);
+
+
+    void addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+
+    void getPartnerDeviceDependants(const STI::Device::DeviceID& partnerID, const std::set<STI::Device::DeviceID>& targets, EventEngineDependencyTree& tree, 
+                                std::set<STI::Device::DeviceID>& missingIDs, const STI::Device::DeviceTrace& trace);
 
     //void findMissingTarget(const std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     

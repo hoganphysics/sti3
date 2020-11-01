@@ -34,3 +34,5 @@ src/network/src/deviceNet.*
 src/network/src/deviceNetDynSK.*
 src/network/src/orbTypes.*
 src/network/src/orbTypesDynSK.*
+/src/device/test/testDependencyTree/main
+
