@@ -6,6 +6,8 @@
 #include "DeviceID.h"
 #include "fwd/EventEngineScheduler_fwd.h"
 
+#include <memory>
+
 namespace STI
 {
 namespace Device

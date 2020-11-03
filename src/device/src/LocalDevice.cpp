@@ -2,7 +2,7 @@
 #include "LocalDevice.h"
 #include "LocalDeviceEventDispatcher.h"
 #include "DeviceEventReceiver.h"
-#include "EventEngineScheduler.h"
+#include "LocalEventEngineScheduler.h"
 #include "DeviceEventListener.h"
 #include "DeviceEvent.h"
 
@@ -18,7 +18,7 @@ using STI::Device::LocalDevice;
 using STI::Device::DeviceEventDispatcher;
 using STI::Device::LocalDeviceEventDispatcher;
 using STI::Device::DeviceEventReceiver;
-using STI::Engine::EventEngineScheduler;
+using STI::Engine::LocalEventEngineScheduler;
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
@@ -34,7 +34,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
 
-	eventEngineScheduler = std::make_shared<EventEngineScheduler>(this);
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
 
 }
 
@@ -104,3 +104,10 @@ bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSch
 	scheduler = eventEngineScheduler;
 	return scheduler != 0;
 }
+
+bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler)
+{
+	scheduler = eventEngineScheduler;
+	return scheduler != 0;
+}
+

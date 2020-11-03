@@ -7,8 +7,8 @@
 
 #include "DeviceEventDispatcher.h"
 #include "DeviceCollection.h"
-#include "EventEngineScheduler.h"
-#include "EventEngine.h"
+#include "LocalEventEngineScheduler.h"
+#include "LocalEventEngine.h"
 #include "EngineID.h"
 #include "Channel.h"
 #include "ParseID.h"
@@ -43,14 +43,14 @@ public:
 		std::shared_ptr<STI::Device::DeviceCollection> collection;
 		getCollection(collection);
 		
-		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+		std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
 		getEngineScheduler(scheduler);
 		
 		STI::Device::Channel ch(1, STI::Device::TChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
 		channels[1] = ch;
 
 		STI::Engine::EngineID id(0);
-		auto engine = std::make_shared<STI::Engine::EventEngine>(getID(), channels, this, dispatcher, collection);
+		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
 		scheduler->addEngine(id, engine);
 
 		
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 	shot->events.push_back(evt3);
 	shot->events.push_back(evt4);
 
-	std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
 	dev1->getEngineScheduler(scheduler);
 	scheduler->parse(pid, shot);
 

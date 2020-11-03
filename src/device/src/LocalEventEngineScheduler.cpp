@@ -1,6 +1,6 @@
 
 
-#include "EventEngineScheduler.h"
+#include "LocalEventEngineScheduler.h"
 #include "DeviceID.h"
 #include "SynchronizedMap.h"
 #include "EventEngineJob.h"
@@ -14,31 +14,33 @@
 
 
 using STI::Engine::EventEngineJob;
-using STI::Engine::EventEngineScheduler;
+using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 using STI::Engine::EngineID;
 using STI::Engine::EventEngine;
 using STI::Device::DeviceTrace;
+using STI::Engine::LocalEventEngine;
 
-EventEngineScheduler::EventEngineScheduler(STI::Device::LocalDevice* localDevice)
+
+LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice)
 : localDevice(localDevice), completedJobs(3)
 {
     completedJobs.setMaxSize(3);
 
     running = true;
-    schedulerThread = std::thread(&EventEngineScheduler::assignJobs, this);
+    schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
 }
 
-EventEngineScheduler::~EventEngineScheduler()
+LocalEventEngineScheduler::~LocalEventEngineScheduler()
 {
     stop();
     schedulerThread.join();
 }
 
 
-void EventEngineScheduler::stop()
+void LocalEventEngineScheduler::stop()
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
     running = false;
@@ -46,14 +48,14 @@ void EventEngineScheduler::stop()
     jobCondition.notify_all();
 }
 
-void EventEngineScheduler::addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine)
+void LocalEventEngineScheduler::addEngine(const EngineID& engineID, const std::shared_ptr<LocalEventEngine>& engine)
 {
     auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
     engineManagers.add(engineID, manager);
 }
 
-void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
+void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
 {
     if(shot == 0) return;
 
@@ -112,7 +114,7 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
     addJob(job);
 }
 
-void EventEngineScheduler::play(const ShotID& shotID)
+void LocalEventEngineScheduler::play(const ShotID& shotID)
 {
     //Make play job
     EngineJobID jobID;
@@ -124,7 +126,7 @@ void EventEngineScheduler::play(const ShotID& shotID)
     addJob(job);
 }
 
-bool EventEngineScheduler::loopDetected(const DeviceTrace& trace, DeviceTrace& newTrace)
+bool LocalEventEngineScheduler::loopDetected(const DeviceTrace& trace, DeviceTrace& newTrace)
 {
     //Avoid infinite loop by using DeviceTrace
     if (trace.includesID(localDevice->getID())) {
@@ -139,7 +141,7 @@ bool EventEngineScheduler::loopDetected(const DeviceTrace& trace, DeviceTrace& n
     return false;
 }
 
-void EventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
+void LocalEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
 {
 	STI::Device::DeviceTrace newTrace;
     if (loopDetected(trace, newTrace)) {
@@ -181,7 +183,7 @@ void EventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree
     }
 }
 
-void EventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
+void LocalEventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
 {
     //Note: if the id is not in the tree, it will be trivially added to set
     for (auto& id : targets) {
@@ -192,7 +194,7 @@ void EventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& target
     }
 }
 
-void EventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs)
+void LocalEventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs)
 {
     serverIDs.clear();
 
@@ -209,7 +211,7 @@ void EventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& se
     }
 }
 
-void EventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID, const std::set<DeviceID>& targets, 
+void LocalEventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID, const std::set<DeviceID>& targets, 
                                                     EventEngineDependencyTree& tree, std::set<DeviceID>& missingIDs, 
                                                     const DeviceTrace& trace)
 {
@@ -245,7 +247,7 @@ void EventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID,
     }
 }
 
-void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions)
+void LocalEventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions)
 {
     unsigned passes = 0;
     bool repeat = false;
@@ -272,7 +274,7 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
 
 /// Generates a graph of the network that contains all devices needed to parse the events.
 /// Does this in three steps:  (1) Local device, (2) Direct device decendents, (3) Full depth recursive search of graph.
-void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace)
+void LocalEventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace)
 {
 	STI::Device::DeviceTrace newTrace;
     if (loopDetected(trace, newTrace)) {
@@ -391,7 +393,7 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
     missingTargets.insert(downstreamIDs.begin(), downstreamIDs.end());
 }
 
-void EventEngineScheduler::getDownstreamIDs(const std::map<std::string, std::set<DeviceID>> targetsByServer, 
+void LocalEventEngineScheduler::getDownstreamIDs(const std::map<std::string, std::set<DeviceID>> targetsByServer, 
                                             const EventEngineDependencyTree& tree, std::set<DeviceID>& downstreamIDs)
 {
     downstreamIDs.clear();
@@ -415,7 +417,7 @@ void EventEngineScheduler::getDownstreamIDs(const std::map<std::string, std::set
 
 }
 
-void EventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
+void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
         
@@ -426,7 +428,7 @@ void EventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
     jobCondition.notify_all();
 }
 
-void EventEngineScheduler::jobComplete(const EngineJobID& jobID)
+void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
 {
     std::shared_ptr<EventEngineJob> job;
     
@@ -438,7 +440,7 @@ void EventEngineScheduler::jobComplete(const EngineJobID& jobID)
     jobCondition.notify_all();
 }
 
-void EventEngineScheduler::assignJobs()
+void LocalEventEngineScheduler::assignJobs()
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
 
@@ -494,7 +496,7 @@ void EventEngineScheduler::assignJobs()
 
 }
 
-bool EventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& engineID)
+bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
     std::shared_ptr<EventEngineJob> job;
@@ -514,7 +516,7 @@ bool EventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& e
     return false;
 }
 
-bool EventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID, 
+bool LocalEventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID, 
                                                  std::set<EngineID>& freeEngines, EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
@@ -531,7 +533,7 @@ bool EventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID
     return found;
 }
 
-bool EventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID)
+bool LocalEventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
     STI::Engine::TimeStamp oldest;
@@ -553,7 +555,7 @@ bool EventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeEngine
     return found;
 }
 
-void EventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMessage>& evt)
 {
     typedef EngineSchedulerMessage::SchedulerMessageType MessageType;
 
@@ -579,7 +581,7 @@ void EventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMess
     }
 }
 
-bool EventEngineScheduler::getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager)
+bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager)
 {
     std::shared_ptr<EventEngineJob> job;
 

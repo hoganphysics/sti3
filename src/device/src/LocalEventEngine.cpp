@@ -1,5 +1,6 @@
 
-#include "EventEngine.h"
+
+#include "LocalEventEngine.h"
 
 //#include "Channel.h"
 #include "DeviceCollection.h"
@@ -14,6 +15,7 @@
 //#include "RawEvent.h"
 #include "SynchronousEvent.h"
 #include "TriggerCallback.h"
+#include "Device.h"
 
 #include <memory>
 #include <thread>
@@ -24,7 +26,7 @@
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
-using STI::Engine::EventEngine;
+using STI::Engine::LocalEventEngine;
 using STI::Engine::ParseID;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
@@ -38,7 +40,7 @@ using STI::Engine::TimeStamp;
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
 
 
-EventEngine::EventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
+LocalEventEngine::LocalEventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
 const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std::shared_ptr<STI::Device::DeviceCollection>& collection) :
 	MessageGenerator(dispatcher),
 	parser(this, deviceParser), 
@@ -51,22 +53,27 @@ const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std
 {
 }
 
-EventEngine::~EventEngine()
+LocalEventEngine::~LocalEventEngine()
 {
 }
 
-void EventEngine::clear()
+void LocalEventEngine::clear()
 {
 	rawEvents.clear();
 	synchedEvents.clear();
 	partnerEvents.clear();
+
+	eventsByTarget.clear();
+	upstreamEvents.clear();
+	handledPartnerEvents.clear();
+	ownedTargets.clear();
 
 	//If this fails for some reason, getState() will reflect this.
 	setState(EngineState::Idle);
 }
 
 /// Get the list of DeviceIDs that name this device as their server
-void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
+void LocalEventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
 {
 	std::vector<DeviceID> ids;
 	dependencyTree->getDependedentNodes(localDeviceID, ids);
@@ -79,12 +86,12 @@ void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
 	}
 }
 
-bool EventEngine::isTargetServerForDevice(const STI::Device::DeviceID& id)
+bool LocalEventEngine::isTargetServerForDevice(const STI::Device::DeviceID& id)
 {
 	return id.getTargetServerID() == localDeviceID.getID();
 }
 
-void EventEngine::divideEvents(const RawEventVector& events)
+void LocalEventEngine::divideEvents(const RawEventVector& events)
 {
 	std::set<STI::Device::DeviceID> ownedIDs;
 	getOwnedDeviceIDs(ownedIDs);
@@ -109,7 +116,7 @@ void EventEngine::divideEvents(const RawEventVector& events)
 	}
 }
 
-void EventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
+void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 {
 	std::set<STI::Device::DeviceID> ownedIDs;
 	getOwnedDeviceIDs(ownedIDs);
@@ -147,10 +154,11 @@ void EventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 	}
 }
 
-//void EventEngine::parse(const ParseID& parseID, const RawEventVector& events, const STI::Device::DeviceID& server)
-void EventEngine::parse(const STI::Engine::EventEngineJob& job)
+void LocalEventEngine::parse(const STI::Engine::EventEngineJob& job)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);		//parse function is not reentrant
+
+	clear();
 
 	if (!setState(EngineState::Parsing)) {
 		return;
@@ -161,12 +169,6 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 
 	auto parsedShot = job.parsedShot;
 	RawEventVector& events = parsedShot->events;
-	
-	//Divide event list
-	eventsByTarget.clear();
-	upstreamEvents.clear();
-	handledPartnerEvents.clear();
-	ownedTargets.clear();
 
 	divideEvents(events);
 
@@ -206,7 +208,6 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
 							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
 	newMessage->jobID.pid = job.getJobID().pid;
-	//newMessage->engine = job.getEngine();	//pass local engine reference upstream to server
 	newMessage->unhandledEvents.swap(upstreamEvents);
 	newMessage->handledEvents.swap(handledPartnerEvents);
 
@@ -220,7 +221,7 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 	}
 }
 
-void EventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job)
+void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job)
 {
 	if (id == localDeviceID) {
 		//Parse local
@@ -256,7 +257,7 @@ void EventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine
 	}
 }
 
-void EventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
 	
@@ -275,18 +276,18 @@ void EventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessag
 	parseCondition.notify_all();	//wake up event transfer loop
 }
 
-void EventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
 
 //	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->sourceID());
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->engine->localDeviceID);
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->engine->getDeviceID());
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
 		
 //		engines[evt->sourceID()] = evt->engine;
-		engines[evt->engine->localDeviceID] = evt->engine;
+		engines[evt->engine->getDeviceID()] = evt->engine;
 	}
 
 	if (engines.size() == ownedTargets.size()) {
@@ -298,7 +299,7 @@ void EventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage
 	playCondition.notify_all();
 }
 
-void EventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOwner)
+void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOwner)
 {
 	if (ownedTargets.size() == 0) {
 		return;
@@ -321,14 +322,14 @@ void EventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOw
 	}
 }
 
-TimeStamp EventEngine::getCurrentTimeStamp()
+TimeStamp LocalEventEngine::getCurrentTimeStamp()
 {
 	TimeStamp ts;
 	ts.timestamp = 0;
 	return ts;
 }
 
-void EventEngine::play(const EventEngineJob& job)
+void LocalEventEngine::play(const EventEngineJob& job)
 {
 	if (!isState(EngineState::Parsed) && lastParseID != job.getJobID().pid) {
 		//Error: this device is not parsed for this job. Should not happen because EngineScheduler should check.
@@ -392,7 +393,7 @@ void EventEngine::play(const EventEngineJob& job)
 	// Setup trigger
 
 	STI::Device::DeviceID triggerDeviceID = job.jobOwner;	//temp!
-	masterTrigger = std::make_shared<EventEngine::MasterTrigger>(this, triggerDeviceID);
+	masterTrigger = std::make_shared<LocalEventEngine::MasterTrigger>(this, triggerDeviceID);
 	masterTrigger->arm();
 
 	if (isJobOwner || ownedTargets.size() > 0) {
@@ -405,7 +406,7 @@ void EventEngine::play(const EventEngineJob& job)
 	}
 }
 
-void EventEngine::resetPlayThread()
+void LocalEventEngine::resetPlayThread()
 {
 	if (playThread.joinable()) {
 		stop();
@@ -413,7 +414,7 @@ void EventEngine::resetPlayThread()
 	}
 }
 
-void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
+void LocalEventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
 {
 	if (!isState(EngineState::PlayReady)) {
 		return;
@@ -454,7 +455,7 @@ void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, boo
 	}
 
 	resetPlayThread();
-	playThread = std::thread(&EventEngine::preplay, this, std::ref(triggerCB));	//callback to calling server (not masterTrigger) 
+	playThread = std::thread(&LocalEventEngine::preplay, this, std::ref(triggerCB));	//callback to calling server (not masterTrigger) 
 
 	if (isJobOwner) {
 		masterTrigger->arm(localDeviceID);
@@ -464,14 +465,14 @@ void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, boo
 	}
 }
 
-void EventEngine::playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
+void LocalEventEngine::playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
 {
 	for (auto& engine : engines) {
 		engine.second->play(jobID, triggerCB, debug);
 	}
 }
 
-void EventEngine::preplay(TriggerCallback& triggerCB)
+void LocalEventEngine::preplay(TriggerCallback& triggerCB)
 {
 	if (!armTrigger(triggerCB)) {
 		return;
@@ -486,7 +487,7 @@ void EventEngine::preplay(TriggerCallback& triggerCB)
 	playDeviceEvents();
 }
 
-bool EventEngine::armTrigger(TriggerCallback& triggerCB)
+bool LocalEventEngine::armTrigger(TriggerCallback& triggerCB)
 {
 	if (!setState(EngineState::WaitingForTrigger)) {
 		setState(EngineState::Error);
@@ -498,7 +499,7 @@ bool EventEngine::armTrigger(TriggerCallback& triggerCB)
 	return true;
 }
 
-void EventEngine::waitForTrigger() const
+void LocalEventEngine::waitForTrigger() const
 {
 	std::unique_lock<std::mutex> triggerLock(triggerMutex);
 
@@ -507,7 +508,7 @@ void EventEngine::waitForTrigger() const
 	}
 }
 
-void EventEngine::trigger(STI::Device::DeviceID& target)
+void LocalEventEngine::trigger(STI::Device::DeviceID& target)
 {
 	//Triggers a specific device (allows any device to act as the system trigger)
 	if (target == localDeviceID) {
@@ -521,7 +522,7 @@ void EventEngine::trigger(STI::Device::DeviceID& target)
 	}
 }
 
-void EventEngine::trigger()
+void LocalEventEngine::trigger()
 {
 	if (isState(EngineState::Playing)) {
 		return;
@@ -537,21 +538,21 @@ void EventEngine::trigger()
 	triggerOwnedDevices();
 }
 
-void EventEngine::triggerOwnedDevices()
+void LocalEventEngine::triggerOwnedDevices()
 {
 	for (auto& engine : engines) {
 		engine.second->trigger();
 	}
 }
 
-bool EventEngine::playDeviceEvents()
+bool LocalEventEngine::playDeviceEvents()
 {
 	if (!setState(EngineState::Playing)) {
 		return setState(EngineState::Error);
 	}
 
 	//launch measurements thread
-	auto measurementThread = std::thread(&EventEngine::measureData, this);
+	auto measurementThread = std::thread(&LocalEventEngine::measureData, this);
 	
 	//time.reset();
 
@@ -579,27 +580,45 @@ bool EventEngine::playDeviceEvents()
 	return true;	//play and collect were a success
 }
 
-bool EventEngine::waitUntil(double time)
+bool LocalEventEngine::waitUntil(double time)
 {
 	return isState(EngineState::Playing);
 }
 
 
-void EventEngine::pause()
+void LocalEventEngine::pause()
 {
 	setState(EngineState::Paused);
+
+	pauseOwnedDevices();
 }
 
-void EventEngine::unpause(bool retrigger) 
+void LocalEventEngine::pauseOwnedDevices()
+{
+	for (auto& engine : engines) {
+		engine.second->pause();
+	}
+}
+
+void LocalEventEngine::unpause(bool retrigger) 
 {
 	//if retrigger, require a trigger before resuming (allows hard time resume)
 	if (!setState(EngineState::Playing)) {
 		setState(EngineState::Error);
 		stop();
 	}
+	unpauseOwnedDevices(retrigger);
 }
 
-void EventEngine::measureData()
+void LocalEventEngine::unpauseOwnedDevices(bool retrigger)
+{
+	for (auto& engine : engines) {
+		engine.second->unpause(retrigger);
+	}
+}
+
+
+void LocalEventEngine::measureData()
 {
 	for (auto& evt : synchedEvents) {
 		evt->collectData();
@@ -609,7 +628,7 @@ void EventEngine::measureData()
 	}
 }
 
-void EventEngine::stop()
+void LocalEventEngine::stop()
 {
 	bool success = true;
 
@@ -627,29 +646,38 @@ void EventEngine::stop()
 	stopDeviceEvents();
 	trigger();			//in case WaitingForTrigger
 
+	stopOwnedDevices();
+
 	if (!success) {
 		setState(EngineState::Error);
 	}
 }
 
-void EventEngine::stopDeviceEvents()
+void LocalEventEngine::stopOwnedDevices()
+{
+	for (auto& engine : engines) {
+		engine.second->stop();
+	}
+}
+
+void LocalEventEngine::stopDeviceEvents()
 {
 	for (auto& evt : synchedEvents) {
 		evt->stop();
 	}
 }
 
-bool EventEngine::isState(EngineState target) const
+bool LocalEventEngine::isState(EngineState target) const
 {
 	return stateMachine.isState(target);
 }
 
-STI::Engine::EngineState EventEngine::getState() const
+STI::Engine::EngineState LocalEventEngine::getState() const
 {
 	return stateMachine.getState();
 }
 
-bool EventEngine::setState(EngineState target)
+bool LocalEventEngine::setState(EngineState target)
 {
 	return stateMachine.setState(target);
 }
@@ -657,7 +685,7 @@ bool EventEngine::setState(EngineState target)
 
 // MasterTrigger
 
-void EventEngine::MasterTrigger::arm()
+void LocalEventEngine::MasterTrigger::arm()
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 
@@ -670,14 +698,14 @@ void EventEngine::MasterTrigger::arm()
 	//status[engine->localDeviceID] = MasterTrigger::TriggerStatus::Arming;
 }
 
-void EventEngine::MasterTrigger::arm(const DeviceID& id)
+void LocalEventEngine::MasterTrigger::arm(const DeviceID& id)
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 
 	status[id] = MasterTrigger::TriggerStatus::Arming;
 }
 
-void EventEngine::MasterTrigger::wait()
+void LocalEventEngine::MasterTrigger::wait()
 {
 	//Wait for all devices to be in WaitingForTrigger state; device callback to this when then are ready
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
@@ -688,13 +716,13 @@ void EventEngine::MasterTrigger::wait()
 	}
 }
 
-bool EventEngine::MasterTrigger::allStatusMatch(const EventEngine::MasterTrigger::TriggerStatus& target)
+bool LocalEventEngine::MasterTrigger::allStatusMatch(const LocalEventEngine::MasterTrigger::TriggerStatus& target)
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 	return _allStatusMatch(target);
 }
 
-bool EventEngine::MasterTrigger::_allStatusMatch(const EventEngine::MasterTrigger::TriggerStatus& target)
+bool LocalEventEngine::MasterTrigger::_allStatusMatch(const LocalEventEngine::MasterTrigger::TriggerStatus& target)
 {
 	bool success = true;
 
@@ -707,7 +735,7 @@ bool EventEngine::MasterTrigger::_allStatusMatch(const EventEngine::MasterTrigge
 	return success;
 }
 
-void EventEngine::MasterTrigger::stop()
+void LocalEventEngine::MasterTrigger::stop()
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 	
@@ -716,7 +744,7 @@ void EventEngine::MasterTrigger::stop()
 
 }
 
-void EventEngine::MasterTrigger::ready(const STI::Device::DeviceID& id)
+void LocalEventEngine::MasterTrigger::ready(const STI::Device::DeviceID& id)
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 
@@ -727,7 +755,7 @@ void EventEngine::MasterTrigger::ready(const STI::Device::DeviceID& id)
 	mtriggerCondition.notify_all();
 }
 
-void EventEngine::MasterTrigger::triggerFired(const STI::Device::DeviceID& id)
+void LocalEventEngine::MasterTrigger::triggerFired(const STI::Device::DeviceID& id)
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
 

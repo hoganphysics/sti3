@@ -20,13 +20,13 @@ namespace Engine
 {
 
 class EngineParsingError;
-class EventEngine;
+class LocalEventEngine;
 
 class EventEngineParser
 {
 public:
 
-	EventEngineParser(EventEngine* engine, DeviceEventParser* deviceParser);
+	EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser);
 	~EventEngineParser();
 
 	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
@@ -60,7 +60,7 @@ private:
 
 	std::vector<EngineParsingError> errors;
 
-	EventEngine* engine;
+	LocalEventEngine* engine;
 	DeviceEventParser* deviceParser;
 
 };

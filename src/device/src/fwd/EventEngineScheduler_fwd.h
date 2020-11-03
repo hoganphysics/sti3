@@ -7,6 +7,7 @@ namespace Engine
 {
 
 class EventEngineScheduler;
+class LocalEventEngineScheduler;
 
 } //Engine
 } //STI

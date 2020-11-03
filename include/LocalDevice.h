@@ -46,6 +46,8 @@ public:
 	void getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 
+	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
+
 	DeviceID id;
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
@@ -73,7 +75,7 @@ private:
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
 	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
-	std::shared_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
+	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 
 };
 

@@ -2,7 +2,7 @@
 
 #include "EventEngineManager.h"
 #include "EventEngineJob.h"
-#include "EventEngineScheduler.h"
+#include "LocalEventEngineScheduler.h"
 #include "ParseID.h"
 #include "EngineID.h"
 
@@ -14,7 +14,7 @@ using STI::Engine::ParseID;
 using STI::Engine::EngineID;
 
 
-EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<EventEngine> engine, EventEngineScheduler* scheduler)
+EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler)
 : engineID(engineID), engine(engine), scheduler(scheduler), running(false)
 {
 }

@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_EVENTENGINEMANAGER_H
 #define STI_ENGINE_EVENTENGINEMANAGER_H
 
-#include "EventEngine.h"
+#include "LocalEventEngine.h"
 #include "EngineID.h"
 #include "DeviceEvent.h"
 
@@ -16,7 +16,7 @@ namespace STI
 namespace Engine
 {
 
-class EventEngineScheduler;
+class LocalEventEngineScheduler;
 class EventEngineJob;
 class ParseID;
 
@@ -25,7 +25,7 @@ class EventEngineManager
 {
 public:
 
-    EventEngineManager(const EngineID& engineID, std::shared_ptr<EventEngine> engine, EventEngineScheduler* scheduler);
+    EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler);
     ~EventEngineManager();
 
     bool submitJob(const std::shared_ptr<EventEngineJob>& job);
@@ -36,7 +36,7 @@ public:
     
     void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
     void handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
-    
+
     bool isParsed(const ParseID& parseID);
     const ParseID& getLastParseID();
 
@@ -44,10 +44,10 @@ private:
 
     void runJob();
 
-    EventEngineScheduler* scheduler;
+    LocalEventEngineScheduler* scheduler;
 
     EngineID engineID;
-    std::shared_ptr<EventEngine> engine;
+    std::shared_ptr<LocalEventEngine> engine;
 
 	std::shared_ptr<EventEngineJob> currentJob;
 
