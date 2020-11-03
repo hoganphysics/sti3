@@ -63,15 +63,6 @@ class ParseID;
 class ParsedShot;
 
 
-// class EventEngineScheduler : public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
-// {
-// public:
-    
-//     EventEngineScheduler(STI::Device::LocalDevice* localDevice);
-//     void handleEvent(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt) {}
-// };
-
-
 class EventEngineScheduler : public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
 {
 public:
@@ -83,12 +74,14 @@ public:
     void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot);        //local; add event to queue
     void play(const ShotID& shotID);
 
-
     void addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine);
 
-//    void getDependants(std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree);
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions);
+
+    void addJob(const std::shared_ptr<EventEngineJob>& newJob);
+    void jobComplete(const EngineJobID& jobID);
+
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -110,9 +103,6 @@ public:
 
 //    void reservePlay(ShotID shotID);       //just waits for engine reservations down the chain, then calls engine->play
     //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
-
-    void addJob(const std::shared_ptr<EventEngineJob>& newJob);
-    void jobComplete(const EngineJobID& jobID);
 
 private:
 

@@ -110,7 +110,6 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
     auto job = std::make_shared<EventEngineJob>(parseID, shot, tree, localDevice->getID(), diff);
 
     addJob(job);
-
 }
 
 void EventEngineScheduler::play(const ShotID& shotID)
@@ -210,7 +209,6 @@ void EventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& se
     }
 }
 
-
 void EventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID, const std::set<DeviceID>& targets, 
                                                     EventEngineDependencyTree& tree, std::set<DeviceID>& missingIDs, 
                                                     const DeviceTrace& trace)
@@ -232,9 +230,6 @@ void EventEngineScheduler::getPartnerDeviceDependants(const DeviceID& partnerID,
                     
         subtree.clear();
         scheduler->getDependants(targets, subtree, missingIDs, trace);
-        //tree.addTree(subtree);
-        //tree.addEdge(localDevice->getID(), partnerID);
-
            
         //Add found subtree to the tree.
         //Uses greater than 1 because the subtree always contains the server id, but we only add if there are also others.
@@ -290,7 +285,6 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
 
     //If there are local events, add local ID *and* this device's event targets, since the local
     //device can generate events on its event targets.
-    bool localVertexAdded = false;
     auto local_it = evtTargets.find(localDevice->getID());
 
     if (local_it != evtTargets.end()) {
@@ -395,7 +389,6 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
 
     //Anything left is missing; may be reachable with another pass.
     missingTargets.insert(downstreamIDs.begin(), downstreamIDs.end());
-
 }
 
 void EventEngineScheduler::getDownstreamIDs(const std::map<std::string, std::set<DeviceID>> targetsByServer, 
@@ -538,7 +531,6 @@ bool EventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID
     return found;
 }
 
-                                                 
 bool EventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
@@ -567,24 +559,18 @@ void EventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMess
 
     //ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay
     
-//    std::shared_ptr<EventEngineJob> job;
     std::shared_ptr<EventEngineManager> manager;
 
     switch(evt->type) {
         case MessageType::ParseComplete:
-            
-            // if(runningJobs.get(evt->jobID, job) && job != 0
-            //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
-            //     manager->handleParseMessage(evt);
-            // }
-
             if (getManager(evt->jobID, manager)) {
                 manager->handleParseMessage(evt);
             }
-            
         break;
+
         case MessageType::YieldParse:
         break;
+        
         case MessageType::PlayReady:
             if (getManager(evt->jobID, manager)) {
                 manager->handlePlayMessage(evt);

@@ -38,18 +38,6 @@ public:
     EventEngineJob(const EngineJobID& id, 
                    const STI::Device::DeviceID& owner);
 
-    // ParseID parseID;
-    // ShotID shotID;
-    // EventEngineJobType type;
-
-
-    // //Devide targetIDs into categories based on their target server
-    // std::set<STI::Device::DeviceID> localTargetIDs;     //targets that have THIS device as their server
-    // std::map<STI::Device::DeviceID, std::set<STI::Device::DeviceID>> remoteTargetIDs;   // targets owned by devices this device owns; map: (locally owned ID) -> remoteTargetIDs
-    // std::set<STI::Device::DeviceID> missingTargetIDs;
-
-    //list of Device references (for controlling partners)
-
     EngineJobID getJobID() const;
 
     EngineJobStatus getStatus() const;
@@ -71,7 +59,6 @@ private:
     EngineJobID jobID;
     EngineID engineID;
     std::shared_ptr<EventEngine> engine;
-
 
     EngineJobStatus status;
 

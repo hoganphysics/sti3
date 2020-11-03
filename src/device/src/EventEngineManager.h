@@ -44,7 +44,6 @@ private:
 
     void runJob();
 
-
     EventEngineScheduler* scheduler;
 
     EngineID engineID;

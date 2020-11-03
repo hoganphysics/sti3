@@ -27,6 +27,7 @@ class EventEngineParser
 public:
 
 	EventEngineParser(EventEngine* engine, DeviceEventParser* deviceParser);
+	~EventEngineParser();
 
 	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
 	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);

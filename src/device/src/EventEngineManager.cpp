@@ -7,7 +7,6 @@
 #include "EngineID.h"
 
 #include <mutex>
-#include <iostream>
 
 using STI::Engine::EventEngineManager;
 using STI::Engine::EventEngineJob;
@@ -50,7 +49,6 @@ bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
         return false;
     }
 
-
     if(jobThread.joinable()) {
         jobThread.join();
     }
@@ -74,7 +72,6 @@ bool EventEngineManager::getJob(std::shared_ptr<EventEngineJob>& job)
     return false;
 }
 
-
 bool EventEngineManager::jobRunning()
 {
     std::unique_lock<std::mutex> writeLock(jobMutex);
@@ -95,30 +92,21 @@ void EventEngineManager::runJob()
 
     switch(currentJob->getJobID().type) {
         case EventEngineJobType::Parse:
-            //engine->parse(currentJob->getJobID().pid, currentJob->parsedShot.events, currentJob->jobOwner);
-            //could do parseReserve(job) here, allowing each server to get devices reserved. Would respond to yield. Same for play.
-
             currentJob->setEventEngine(engine);
             engine->parse(*currentJob); 
-
         break;
-        case EventEngineJobType::Play:
-            std::cout << "Event Manager: " << engine->localDeviceID.getName() << std::endl;
 
+        case EventEngineJobType::Play:
             currentJob->setEventEngine(engine);
             engine->play(*currentJob);  //reserve not needed because it's already handled by the queue system.  When play is called, engines should call upstreat with their reference; server then calls play when all have been received.
-
         break;
     }
-
 
     std::unique_lock<std::mutex> writeLock(jobMutex);
     running = false;
 
     scheduler->jobComplete(currentJob->getJobID());
-
 }
-
 
 void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
 {

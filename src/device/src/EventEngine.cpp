@@ -1,19 +1,19 @@
 
 #include "EventEngine.h"
-#include "EventEngineParser.h"
-#include "DeviceEventParser.h"
-#include "RawEvent.h"
-#include "SynchronousEvent.h"
-#include "Channel.h"
-#include "DeviceID.h"
-#include "DeviceCollection.h"
-#include "EngineState.h"
-#include "DeviceEventParser.h"
-#include "EventEngineJob.h"
-#include "EventEngineScheduler.h"
-#include "fwd/RawEvent_fwd.h"
 
+//#include "Channel.h"
+#include "DeviceCollection.h"
+#include "DeviceID.h"
+#include "DeviceEventDispatcher.h"
+#include "DeviceEventParser.h"
+#include "EngineState.h"
 #include "EventEngineDependencyTree.h"
+#include "EventEngineJob.h"
+#include "EventEngineParser.h"
+#include "EventEngineScheduler.h"
+//#include "RawEvent.h"
+#include "SynchronousEvent.h"
+#include "TriggerCallback.h"
 
 #include <memory>
 #include <thread>
@@ -21,13 +21,10 @@
 #include <vector>
 #include <functional>
 
-#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
 using STI::Engine::EventEngine;
-//using STI::Engine::ParserCallback;
-//using STI::Engine::ParserCallbackMessage;
 using STI::Engine::ParseID;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
@@ -35,6 +32,11 @@ using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 using STI::Engine::DeviceEventMap;
 using STI::Engine::TimeStamp;
+
+
+// server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
+// mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
+
 
 EventEngine::EventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
 const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std::shared_ptr<STI::Device::DeviceCollection>& collection) :
@@ -51,7 +53,6 @@ const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std
 
 EventEngine::~EventEngine()
 {
-
 }
 
 void EventEngine::clear()
@@ -64,69 +65,18 @@ void EventEngine::clear()
 	setState(EngineState::Idle);
 }
 
-
-// void EventEngine::divideEvents(const RawEventVector& events)
-// {
-// 	std::map<STI::Device::DeviceID, RawEventVector> ownedEvents;
-// 	std::map<STI::Device::DeviceID, STI::Device::DeviceID> delegates;
-// 	RawEventVector unownedEvents;
-
-
-// 	std::set<STI::Device::DeviceID> ownedIDs;
-// 	deviceCollection->getIDs(ownedIDs);
-
-// 	bool localDeviceIsServer;
-// 	bool delegateFound;
-// 	std::map<STI::Device::DeviceID, STI::Device::DeviceID>::iterator delegateIt;
-
-// 	for(auto& evt : events) {
-// 		//auto it = ownedIDs.find(evt.targetDevice());
-// 		// found = (it != ownedIDs.end())
-// 		// 		|| (localDeviceID.getID() == evt.targetDevice().getTargetServerID());
-// 		localDeviceIsServer = (localDeviceID.getID() == evt.targetDevice().getTargetServerID());
-
-// 		if(!localDeviceIsServer) {
-// 			delegateIt = delegates.find(evt.targetDevice());
-// 			delegateFound = (delegateIt != delegates.end());			
-// 		}
-
-// 		if(localDeviceIsServer) {
-// 			ownedEvents[evt.targetDevice()].push_back(evt);
-// 		}
-// 		else if (delegateFound) {
-// 			ownedEvents[delegateIt->second].push_back(evt);
-// 		}
-// 		else {
-
-
-// 			unownedEvents.push_back(evt);
-// 		}
-// 	}
-// }
-
 /// Get the list of DeviceIDs that name this device as their server
 void EventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs)
 {
-//	deviceCollection->getIDs(ownedIDs);
 	std::vector<DeviceID> ids;
 	dependencyTree->getDependedentNodes(localDeviceID, ids);
 
 	//Remove any devices that do not list this device as server
 	for(auto& id : ids) {
 		if(isTargetServerForDevice(id)) {
-//		if (id.getTargetServerID() == localDeviceID.getID()) {
 			ownedIDs.insert(id);
 		}
 	}
-
-    // for (auto it = ownedIDs.begin(); it != ownedIDs.end(); ) {
-    //     if (it->getTargetServerID() != localDeviceID.getID()) {
-    //         it = ownedIDs.erase(it);
-    //     }
-    //     else {
-    //         ++it;
-    //     }
-    // }
 }
 
 bool EventEngine::isTargetServerForDevice(const STI::Device::DeviceID& id)
@@ -200,7 +150,7 @@ void EventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 //void EventEngine::parse(const ParseID& parseID, const RawEventVector& events, const STI::Device::DeviceID& server)
 void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 {
-	std::unique_lock<std::mutex> parseLock(parseMutex);		//function is not reentrant
+	std::unique_lock<std::mutex> parseLock(parseMutex);		//parse function is not reentrant
 
 	if (!setState(EngineState::Parsing)) {
 		return;
@@ -216,6 +166,8 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 	eventsByTarget.clear();
 	upstreamEvents.clear();
 	handledPartnerEvents.clear();
+	ownedTargets.clear();
+
 	divideEvents(events);
 
 	//Get the subtree with the localDeviceID as root (Note, the graph is already known to be a DAG)
@@ -224,7 +176,6 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 
     std::vector<DeviceID> orderedDependents;
     localSubtree->sortTree(orderedDependents);
-	ownedTargets.clear();
 
 	//Parse all devices in order, based on dependency tree.
 	int dependencyCount;
@@ -267,7 +218,6 @@ void EventEngine::parse(const STI::Engine::EventEngineJob& job)
 	if (!setState(EngineState::Parsed)) {
 		setState(EngineState::Error);
 	}
-
 }
 
 void EventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job)
@@ -309,9 +259,6 @@ void EventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine
 void EventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
-	//divide events
-	//RawEventVector upstreamEvents;
-	//divideEvents(evt->events, upstreamEvents);		//problem: evt->evts and upstreamEvents are duplicated...
 	
 	//Try to handle device generated events locally
 	divideEvents(evt->unhandledEvents);
@@ -319,20 +266,13 @@ void EventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessag
 	//Collect any handled partner events
 	auto& evts = evt->handledEvents;
 	handledPartnerEvents.insert(handledPartnerEvents.end(), 
-								std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()) );
+								std::make_move_iterator(evts.begin()), 
+								std::make_move_iterator(evts.end()) );
 	
-	//evt->upstreamEvents.swap(upstreamEvents);	//whatever is left is sent upstream
-
 	//reduce dependency count in localSubtree
 	localSubtree->removeNode(evt->originalSource);
 
 	parseCondition.notify_all();	//wake up event transfer loop
-
-	//send new message upstream?
-	// auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, evt->originalSource, 
-	// 						EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
-	
-//	sendMessage(evt);
 }
 
 void EventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
@@ -341,8 +281,6 @@ void EventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage
 
 //	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->sourceID());
 	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->engine->localDeviceID);
-
-	std::cout << "handlePlayMessage: " << evt->sourceID().getID() << " : " << evt->engine->localDeviceID.getID() << std::endl;
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
@@ -359,11 +297,6 @@ void EventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage
 
 	playCondition.notify_all();
 }
-
-// void EventEngine::handleParsingResults(const ParserCallbackMessage& message)	//ParserCallbackTarget interface
-// {
-
-// }
 
 void EventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOwner)
 {
@@ -397,8 +330,6 @@ TimeStamp EventEngine::getCurrentTimeStamp()
 
 void EventEngine::play(const EventEngineJob& job)
 {
-	std::cout << "play(job): " << localDeviceID.getID()  << " : " << job.getEngine()->localDeviceID.getID() << std::endl;
-
 	if (!isState(EngineState::Parsed) && lastParseID != job.getJobID().pid) {
 		//Error: this device is not parsed for this job. Should not happen because EngineScheduler should check.
 		//Send message upstream
@@ -429,42 +360,40 @@ void EventEngine::play(const EventEngineJob& job)
 
 	preparePlayAll(jobID, job.jobOwner);
 
+	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {
-		//Wait for all owned devices (devices that this is the server for)
+		// This device is a server
 		while (isState(EngineState::PreparingPlay)) {
 			playCondition.wait(playLock);
 		}
-
 		if (!isState(EngineState::PlayReady)) {
 			return;
 		}		
 	}
 	else {
+		// Non-server device
 		if (!setState(EngineState::PlayReady)) {
 			setState(EngineState::Error);
 		}
 	}
 
-	//Send ready message with engine reference
+	//Send PlayReady message with local engine reference
 	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
-							EngineSchedulerMessage::SchedulerMessageType::PlayReady);
+								EngineSchedulerMessage::SchedulerMessageType::PlayReady);
 	newMessage->jobID.pid = job.getJobID().pid;
 	newMessage->jobID.sid = job.getJobID().sid;
 	newMessage->jobID.type = job.getJobID().type;
-
 	newMessage->engine = job.getEngine();	//pass local engine reference upstream to server
-	std::cout << "newMessage->engine " << localDeviceID.getID()  << " : " << newMessage->engine->localDeviceID.getID() << std::endl;
 
-
-	std::cout << "About to send message: " << localDeviceID.getName() << " ? " << isState(EngineState::PlayReady) << std::endl;
 	if (isState(EngineState::PlayReady)) {
 		sendMessage(newMessage);
 	}
 
+	// Setup trigger
+
 	STI::Device::DeviceID triggerDeviceID = job.jobOwner;	//temp!
 	masterTrigger = std::make_shared<EventEngine::MasterTrigger>(this, triggerDeviceID);
 	masterTrigger->arm();
-
 
 	if (isJobOwner || ownedTargets.size() > 0) {
 		
@@ -474,23 +403,18 @@ void EventEngine::play(const EventEngineJob& job)
 			play(jobID, *masterTriggerCB, false);
 		}
 	}
-
-
 }
 
-void EventEngine::playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
+void EventEngine::resetPlayThread()
 {
-	for (auto& engine : engines) {
-		std::cout << "playAll engineID = " << engine.first.getID() << " : " << engine.second->localDeviceID.getID() << std::endl;
-		engine.second->play(jobID, triggerCB, debug);
+	if (playThread.joinable()) {
+		stop();
+		playThread.join();
 	}
 }
 
 void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
 {
-
-	std::cout << "play " << localDeviceID.getName() << std::endl;
-
 	if (!isState(EngineState::PlayReady)) {
 		return;
 	}
@@ -504,7 +428,6 @@ void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, boo
 
 	//Grab Measurement references generated by parse.
 	//These will be filled with data after the shot is played.
-
 	auto newMeasurements = std::make_shared<MeasurementVector>();
 	for (auto& synchEvent : synchedEvents) {
 		auto& evtMeasurements = synchEvent->getMeasurements();
@@ -525,31 +448,13 @@ void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, boo
 		playAll(jobID, *masterTriggerCB, debug);		//all owned devices
 	}
 
-
-	// auto triggerThread = std::thread(&EventEngine::armTrigger, this, triggerCB);
-
-	// if (!armTrigger(triggerCB)) {
-	// 	return false;
-	// }
-	
-	// if (ownedTargets.size() > 0) {
-
-	// }
-	
 	if (isJobOwner || ownedTargets.size() > 0) {	//this device is a server for some devices
 		
 		masterTrigger->wait();
-		std::cout << "masterTrigger done waiting " << localDeviceID.getName() << std::endl;
 	}
 
 	resetPlayThread();
 	playThread = std::thread(&EventEngine::preplay, this, std::ref(triggerCB));	//callback to calling server (not masterTrigger) 
-
-	// while (!isState(EngineState::WaitingForTrigger)) {
-	// 	playCondition.wait(playLock);
-	// }
-
-
 
 	if (isJobOwner) {
 		masterTrigger->arm(localDeviceID);
@@ -557,20 +462,12 @@ void EventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, boo
 
 		trigger(masterTrigger->triggerID());
 	}
-
-	// waitForTrigger();
-	// triggerCB.triggerFired();		//Callback to the device that called play to confirm that this device is playing.
-	// 								//Also, if this device is a delegated system trigger, this indicated 
-	// 								//that the rest of the system should now be triggered.
-
-	// return playDeviceEvents();
 }
 
-void EventEngine::resetPlayThread()
+void EventEngine::playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
 {
-	if (playThread.joinable()) {
-		stop();
-		playThread.join();
+	for (auto& engine : engines) {
+		engine.second->play(jobID, triggerCB, debug);
 	}
 }
 
@@ -588,47 +485,10 @@ void EventEngine::preplay(TriggerCallback& triggerCB)
 
 	playDeviceEvents();
 }
-// server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
-// mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
-
-//play()
-//{
-//	setState(Arming);
-//	setupTriggers();
-//
-//	//all devices that depend on this device for play
-//	for (auto& dev : dependentDevices) {
-//		dev->play();
-//	}
-//
-//	waitForDependentDevices();
-//
-//	if (setState(WaitingForTrigger)) {
-//		triggerCB->ready();
-//		triggerCB->wait();
-//	}
-//
-//}
-
-void EventEngine::triggerOwnedDevices()
-{
-	std::cout << "triggerOwnedDevices " << localDeviceID.getName() << std::endl;
-	for (auto& engine : engines) {
-		engine.second->trigger();
-	}
-}
 
 bool EventEngine::armTrigger(TriggerCallback& triggerCB)
 {
-	// if (!setState(EngineState::Arming)) {
-	// 	return setState(EngineState::Error);;
-	// }
-
-	//arm triggers on dependent devices ( = those that declare this device as their server)
-	//	waitForArmingDevices();
-
 	if (!setState(EngineState::WaitingForTrigger)) {
-		std::cout << "failed to wait in armTrigger " << localDeviceID.getName() << std::endl;
 		setState(EngineState::Error);
 		return false;
 	}
@@ -642,8 +502,6 @@ void EventEngine::waitForTrigger() const
 {
 	std::unique_lock<std::mutex> triggerLock(triggerMutex);
 
-	std::cout << "waitForTrigger " << localDeviceID.getName() << std::endl;
-
 	while (isState(EngineState::WaitingForTrigger)) {
 		triggerCondition.wait(triggerLock);
 	}
@@ -651,7 +509,6 @@ void EventEngine::waitForTrigger() const
 
 void EventEngine::trigger(STI::Device::DeviceID& target)
 {
-	std::cout << "trigger(" << target.getName() << ") in " << localDeviceID.getName() << std::endl;
 	//Triggers a specific device (allows any device to act as the system trigger)
 	if (target == localDeviceID) {
 		trigger();
@@ -666,8 +523,6 @@ void EventEngine::trigger(STI::Device::DeviceID& target)
 
 void EventEngine::trigger()
 {
-	std::cout << "trigger() " << localDeviceID.getName() << std::endl;
-
 	if (isState(EngineState::Playing)) {
 		return;
 	}
@@ -680,6 +535,13 @@ void EventEngine::trigger()
 	triggerCondition.notify_all();			//releases waitForTrigger
 
 	triggerOwnedDevices();
+}
+
+void EventEngine::triggerOwnedDevices()
+{
+	for (auto& engine : engines) {
+		engine.second->trigger();
+	}
 }
 
 bool EventEngine::playDeviceEvents()
@@ -735,7 +597,6 @@ void EventEngine::unpause(bool retrigger)
 		setState(EngineState::Error);
 		stop();
 	}
-
 }
 
 void EventEngine::measureData()

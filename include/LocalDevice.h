@@ -13,12 +13,6 @@
 namespace STI
 {
 
-// //temp -- make fwd
-// namespace Engine
-// {
-// class EventEngineScheduler;
-// } // Engine
-
 namespace Device
 {
 
@@ -80,7 +74,6 @@ private:
 	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
 	std::shared_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
-
 
 };
 

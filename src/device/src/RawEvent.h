@@ -31,19 +31,16 @@
 //#include "fwd/SynchronousEvent_fwd.h"
 #include "utils/GraphPathLabel.h"
 
-
 #include <string>
 #include <map>
 #include <memory>
 
 namespace STI
 {
-
 namespace Engine
 {
 
 class SynchronousEvent;		//for confirming measurement scheduling
-
 
 
 class RawEvent

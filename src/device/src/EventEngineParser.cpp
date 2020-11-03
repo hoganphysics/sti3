@@ -27,12 +27,14 @@ using STI::Utils::MixedValue;
 using std::endl;
 
 
-
 EventEngineParser::EventEngineParser(EventEngine* engine, DeviceEventParser* deviceParser) 
 	: engine(engine), deviceParser(deviceParser)
 {
 }
 
+EventEngineParser::~EventEngineParser()
+{
+}
 
 bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents)
 {

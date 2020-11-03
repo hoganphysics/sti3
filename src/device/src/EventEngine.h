@@ -1,20 +1,19 @@
 #ifndef STI_ENGINE_EVENTENGINE_H
 #define STI_ENGINE_EVENTENGINE_H
 
-#include "EventEngineParser.h"
+
 #include "MessageGenerator.h"
+
+#include "DeviceEvent.h"
+#include "DeviceCollection.h"
+#include "EventEngineParser.h"
 #include "EventEngineStateMachine.h"
-//#include "ParserCallback.h"
 #include "ParseID.h"
 #include "ResultTicket.h"
 #include "ShotID.h"
 #include "TimeStamp.h"
 #include "TriggerCallback.h"
 #include "utils/OrderedBufferMap.h"
-
-#include "DeviceEventDispatcher.h"
-#include "DeviceEvent.h"
-#include "DeviceCollection.h"
 
 #include "fwd/Channel_fwd.h"
 #include "fwd/DeviceEventParser_fwd.h"
@@ -26,6 +25,7 @@
 #include <memory>
 #include <mutex>
 
+
 namespace STI
 {
 namespace Engine
@@ -34,6 +34,9 @@ namespace Engine
 class EventEngine;
 class EventEngineJob;
 class EventEngineDependencyTree;
+class DeviceEventDispatcher;
+
+class TriggerCallback;
 
 
 class EventTime
@@ -41,22 +44,10 @@ class EventTime
 	EventTime(double time);
 };
 
-// template<typename ID, typename Job>
-// class JobQueue
-// {
 
-
-// };
-
-
-
-class EventEngine :  public STI::Device::MessageGenerator	//public ParserCallbackTarget,
+class EventEngine :  public STI::Device::MessageGenerator
 {
 public:
-
-	//parse queue
-	//play queue
-	//save queue
 
 	EventEngine(
 		const STI::Device::DeviceID& localID, 
@@ -66,26 +57,22 @@ public:
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	~EventEngine();
 
-	void clear();
-
-	void parse(const STI::Engine::EventEngineJob& job);
-
-	//void parse(const ParseID& parseID, const RawEventVector& events, const STI::Device::DeviceID& server);
-
 	//Could pass in a DocumentationTarget that the engine (attempts) to use to save data.  Falls back on its local DocTarget.
 	//DocTarget would be passed from the instigating server, and would save to disk.
 	//For all devices, DocTarget would provide persistent access to any data it stored.
 	//--in the case of devices using their local DocTarget, only events that failed to be pulled would be available
 	//If DocTarget pulls, it is now the owner of the shot's data and is reponsible for providing persistence.
 	
-
+	void clear();
+	void parse(const STI::Engine::EventEngineJob& job);
 
 	void play(const STI::Engine::EventEngineJob& job);
 	void play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
+
 	void trigger();
 	void trigger(STI::Device::DeviceID& target);		//triggers just target
-	void stop();
 
+	void stop();
 	void pause();
 	void unpause(bool retrigger);		//if retrigger, require a trigger before resuming (allows hard time resume)
 
@@ -113,24 +100,31 @@ public:
 
 private:
 
-	void mergePartnerEvents(const DeviceEventMap& events);
-
 	void parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job);
 
 	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
 	void divideEvents(const RawEventVector& events);
+	void mergePartnerEvents(const DeviceEventMap& events);
 
 	bool setState(EngineState target);
 
 	void preparePlayAll(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
-	
 	void playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug);
 	void preplay(TriggerCallback& triggerCB);
+	void resetPlayThread();
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;
 	void triggerOwnedDevices();
+
+	bool playDeviceEvents();
+	void measureData();
+	void stopDeviceEvents();
+
+	bool waitUntil(double time);
+	TimeStamp getCurrentTimeStamp();
+
 
 	class MasterTrigger : public TriggerCallbackTarget
 	{
@@ -155,7 +149,7 @@ private:
 		std::map<STI::Device::DeviceID, TriggerStatus> status;
 
 	private:
-	
+
 		bool _allStatusMatch(const TriggerStatus& target);
 
 		EventEngine* engine;
@@ -167,20 +161,10 @@ private:
 		mutable std::condition_variable mtriggerCondition;
 	};
 
+
 	std::shared_ptr<MasterTrigger> masterTrigger;
 	std::shared_ptr<TriggerCallback> masterTriggerCB;
 
-//	void handleParsingResults(const ParserCallbackMessage& message);	//ParserCallbackTarget interface
-	
-	bool playDeviceEvents();
-	void measureData();
-	void stopDeviceEvents();
-
-	void resetPlayThread();
-
-	bool waitUntil(double time);
-
-	TimeStamp getCurrentTimeStamp();
 	
 	//Clock time;
 
