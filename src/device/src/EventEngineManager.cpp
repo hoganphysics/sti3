@@ -4,18 +4,20 @@
 #include "EventEngineJob.h"
 #include "EventEngineScheduler.h"
 #include "ParseID.h"
+#include "EngineID.h"
 
 #include <mutex>
+#include <iostream>
 
 using STI::Engine::EventEngineManager;
 using STI::Engine::EventEngineJob;
 using STI::Engine::ParseID;
+using STI::Engine::EngineID;
 
 
-EventEngineManager::EventEngineManager(std::shared_ptr<EventEngine> engine, EventEngineScheduler* scheduler)
-: engine(engine), scheduler(scheduler), running(false)
+EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<EventEngine> engine, EventEngineScheduler* scheduler)
+: engineID(engineID), engine(engine), scheduler(scheduler), running(false)
 {
-
 }
 
 EventEngineManager::~EventEngineManager()
@@ -54,6 +56,7 @@ bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
     }
 
     currentJob = job;
+    currentJob->markRunning(engineID);
     running = true;
 
     jobThread = std::thread(&EventEngineManager::runJob, this);
@@ -94,12 +97,20 @@ void EventEngineManager::runJob()
         case EventEngineJobType::Parse:
             //engine->parse(currentJob->getJobID().pid, currentJob->parsedShot.events, currentJob->jobOwner);
             //could do parseReserve(job) here, allowing each server to get devices reserved. Would respond to yield. Same for play.
-            engine->parse(currentJob);
+
+            currentJob->setEventEngine(engine);
+            engine->parse(*currentJob); 
+
         break;
         case EventEngineJobType::Play:
+            std::cout << "Event Manager: " << engine->localDeviceID.getName() << std::endl;
+
+            currentJob->setEventEngine(engine);
+            engine->play(*currentJob);  //reserve not needed because it's already handled by the queue system.  When play is called, engines should call upstreat with their reference; server then calls play when all have been received.
+
         break;
     }
-    
+
 
     std::unique_lock<std::mutex> writeLock(jobMutex);
     running = false;
@@ -113,5 +124,12 @@ void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::E
 {
     if(jobRunning()) {
         engine->handleParseMessage(evt);
+    }
+}
+
+void EventEngineManager::handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+{
+    if(jobRunning()) {
+        engine->handlePlayMessage(evt);
     }
 }

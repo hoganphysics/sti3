@@ -37,6 +37,7 @@ EventEngineScheduler::~EventEngineScheduler()
     schedulerThread.join();
 }
 
+
 void EventEngineScheduler::stop()
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
@@ -47,7 +48,7 @@ void EventEngineScheduler::stop()
 
 void EventEngineScheduler::addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine)
 {
-    auto manager = std::make_shared<EventEngineManager>(engine, this);
+    auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
     engineManagers.add(engineID, manager);
 }
@@ -72,7 +73,8 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
     
     //Could wrap this in a loop for multipass searches.  Keep calling until the tree is static, or missing targets is static.  tree.getNodes() size?
     std::set<DeviceID> missingTargets;
-    getDependants(eventTargets, *tree, missingTargets, trace);
+//    getDependants(eventTargets, *tree, missingTargets, trace);
+    getDependants(eventTargets, *tree, missingTargets, 5);  //max 5 passes
 
     //Check for missing targets
     std::set<DeviceID> resolvedTargets;
@@ -109,6 +111,18 @@ void EventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<P
 
     addJob(job);
 
+}
+
+void EventEngineScheduler::play(const ShotID& shotID)
+{
+    //Make play job
+    EngineJobID jobID;
+    jobID.pid = shotID.parseID;
+    jobID.sid = shotID;
+    jobID.type = EventEngineJobType::Play;
+    auto job = std::make_shared<EventEngineJob>(jobID, localDevice->getID());
+
+    addJob(job);
 }
 
 bool EventEngineScheduler::loopDetected(const DeviceTrace& trace, DeviceTrace& newTrace)
@@ -272,7 +286,6 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
 
     EventEngineDependencyTree subtree;
 
-
     //*** (1) Check for events targeting the local device ***//
 
     //If there are local events, add local ID *and* this device's event targets, since the local
@@ -291,30 +304,25 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
     //    (partners can generally have some other server)
 
 
-    //*** (2) Divide event targets by server ***//
+    //*** (2) Sort event targets by server ***//
 
     std::map<std::string, std::set<DeviceID>> targetsByServer;   // ["server", {devices}]
-    
-    std::set<DeviceID> localTargets;
+    addToTargetsByServer(evtTargets, tree, targetsByServer);   
+
+    std::set<DeviceID> localTargets;    //for targets originating from addDeviceEventTargets above
     tree.getNodes(localTargets);
-
     addToTargetsByServer(localTargets, tree, targetsByServer);
-    addToTargetsByServer(evtTargets, tree, targetsByServer);
+
    
-    std::set<STI::Device::DeviceID> missingIDs;
-    missingIDs.clear();
-
-
     //*** (3) Pass targets down the server chain ***//
 
     //searchServerChain(serverChainIDs, targetsByServer, tree, missingTargets);
 
-    //Construct server chain: get all connected devices that declare the local device as server.
-    std::set<STI::Device::DeviceID> serverChainIDs;  //all the local ids that are connected to this device as their server (server path)
+    //Server chain: get all connected devices that declare the local device as server.
+    std::set<STI::Device::DeviceID> serverChainIDs;
     getServerChainIDs(serverChainIDs);
     
-    //std::shared_ptr<STI::Device::Device> device;
-    //std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    std::set<STI::Device::DeviceID> missingIDs;
 
     //Pass all targetsByServer['ID'] target lists to any 'ID' found in serverChainIDs.
     for (auto it = targetsByServer.begin(); it != targetsByServer.end(); ) {
@@ -326,40 +334,22 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
         if (found_it != serverChainIDs.end()) {
 
             //Pass targetsByServer['ID'] target list to the locally connected server
-            getPartnerDeviceDependants(*found_it, it->second, tree, missingIDs, newTrace);
-            missingTargets.insert(missingIDs.begin(), missingIDs.end());
+            getPartnerDeviceDependants(*found_it, it->second, tree, missingIDs, newTrace);  //it->second = target list
+            //missingTargets.insert(missingIDs.begin(), missingIDs.end());
 
-            // if(localCollection->get(*found_it, device) && device != 0 && device->getEngineScheduler(scheduler)) {
-
-            //     subtree.clear();
-            //     scheduler->getDependants(it->second, subtree, missingIDs, newTrace);
-            //     tree.addTree(subtree);
-            //     tree.addEdge(localDevice->getID(), *found_it);
-            // }
-            // else {
-            //     //Warning, couldn't connect to server for some reason; this shouldn't happen since the 
-            //     //same serverChainIDs id was just found in the localCollection.
-
-            //     //Could not contact server; these targets cannot be reached
-            //     missingTargets.insert(it->second.begin(), it->second.end());
-            // }
-            
-            //After attempt to transfer these targets, remove from targetsByServer.
-            it = targetsByServer.erase(it);
+            it = targetsByServer.erase(it);     //remove after attempt to transfer
         }
         else {
             ++it;
         }
     }
 
-    //Add missing ids generated by last call to getDependants to targetsByServer
-    addToTargetsByServer(missingIDs, tree, targetsByServer);
-
+    addToTargetsByServer(missingIDs, tree, targetsByServer);    //sort any new missing ids by their server
+    missingIDs.clear();
 
     //*** (4) Add targets that declare the local device as server ***//
 
     std::set<DeviceID> targetsForLocal;    
-    missingIDs.clear();
 
     //Add any targets that declare this as their server
     auto it = targetsByServer.find(localDevice->getID().getID());
@@ -373,28 +363,12 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
             targetsForLocal.insert(id);
 
             getPartnerDeviceDependants(id, targetsForLocal, tree, missingIDs, newTrace);
-            
-            // if (!tree.hasBranchToTarget(localDevice->getID(), id)) {    //not currently connected in tree
-                
-            //     if(localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
-                    
-            //         subtree.clear();
-            //         scheduler->getDependants(targetsForLocal, subtree, missingIDs, newTrace);
-            //         tree.addTree(subtree);
-            //         tree.addEdge(localDevice->getID(), id);
-                    
-            //     }
-            //     else {
-            //         //couldn't connect
-            //         missingIDs.insert(id);
-            //     }
-            // }
         }
-        
         targetsByServer.erase(it);
     }
 
     addToTargetsByServer(missingIDs, tree, targetsByServer);
+    missingIDs.clear();
 
 
     //*** (5) Search the full graph for any missing targets, following server chain ***//
@@ -408,66 +382,15 @@ void EventEngineScheduler::getDependants(const std::set<DeviceID>& evtTargets, E
     std::set<STI::Device::DeviceID> downstreamIDs;
     getDownstreamIDs(targetsByServer, tree, downstreamIDs);
 
-    // //Put any remaining target in downstreamIDs
-    // for (auto& it : targetsByServer) {
-    //     downstreamIDs.insert(it.second.begin(), it.second.end());
-    // }
-    // targetsByServer.clear(); 
-
-    // //Check for any target in the tree that is still not connected via a server chain
-    // std::set<STI::Device::DeviceID> allTreeIDs;
-    // tree.getNodes(allTreeIDs);
-
-    // for(auto& id : allTreeIDs) {
-    //     if (id != localDevice->getID() && !tree.hasBranchToTarget(localDevice->getID(), id)) {
-    //         downstreamIDs.insert(id);
-    //     }
-    // }
-
     if (downstreamIDs.size() == 0) {
         //No missing targets; short circuit.
         return;
     }
 
-    //std::shared_ptr<STI::Device::DeviceCollection> localCollection;
-    //localDevice->getCollection(localCollection);
-
-    //std::set<STI::Device::DeviceID> foundIDs;
-    //std::set<DeviceID> diff;
-
     for (auto& id : serverChainIDs) {    // Follow server chain through the graph
         missingIDs.clear();
         getPartnerDeviceDependants(id, downstreamIDs, tree, missingIDs, newTrace);
         downstreamIDs.swap(missingIDs);
-
-
-        // if (downstreamIDs.size() > 0 && 
-        //    localCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
-
-        //     subtree.clear();
-        //     foundIDs.clear();
-        //     //diff.clear();
-
-        //     scheduler->getDependants(downstreamIDs, subtree, missingIDs, newTrace);
-        //     //missingTargets.insert(missingIDs.begin(), missingIDs.end());    //anything not found now is declared missing (on this pass)
-
-        //     subtree.getNodes(foundIDs);
-           
-        //     //Add found subtree to the tree.
-        //     //Uses greater than 1 because the subtree always contains the server id, but we only add if there are also others.
-        //     if (foundIDs.size() > 1) {
-        //         tree.addTree(subtree);
-        //         tree.addEdge(localDevice->getID(), id);                
-        //     }
-
-        //     // //Remove any found ids from downstreamIDs
-        //     // std::set_difference(downstreamIDs.begin(), downstreamIDs.end(), 
-        //     //                     foundIDs.begin(), foundIDs.end(),
-        //     //                     std::inserter(diff, diff.end()));
-        //     // downstreamIDs.swap(diff);
-
-        //     downstreamIDs.swap(missingIDs);
-        // }
     }
 
     //Anything left is missing; may be reachable with another pass.
@@ -644,19 +567,39 @@ void EventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMess
 
     //ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay
     
-    std::shared_ptr<EventEngineJob> job;
+//    std::shared_ptr<EventEngineJob> job;
     std::shared_ptr<EventEngineManager> manager;
 
     switch(evt->type) {
         case MessageType::ParseComplete:
             
-            if(runningJobs.get(evt->jobID, job) && job != 0
-                && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+            // if(runningJobs.get(evt->jobID, job) && job != 0
+            //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+            //     manager->handleParseMessage(evt);
+            // }
+
+            if (getManager(evt->jobID, manager)) {
                 manager->handleParseMessage(evt);
             }
             
         break;
         case MessageType::YieldParse:
         break;
+        case MessageType::PlayReady:
+            if (getManager(evt->jobID, manager)) {
+                manager->handlePlayMessage(evt);
+            }
+        break;
     }
+}
+
+bool EventEngineScheduler::getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager)
+{
+    std::shared_ptr<EventEngineJob> job;
+
+    if(runningJobs.get(jobID, job) && job != 0
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+        return true;
+    }
+    return false;
 }

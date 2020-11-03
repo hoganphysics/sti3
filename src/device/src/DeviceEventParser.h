@@ -23,7 +23,7 @@ public:
 
 	virtual ~DeviceEventParser() {}
 
-	virtual void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents) const = 0;
+	virtual void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents) = 0;
 	virtual void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs) = 0;
 
 	void setPartnerEventTarget(DeviceEventMap* target);

@@ -17,6 +17,7 @@ using STI::Engine::ParseID;
 using STI::Engine::ParsedShot;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
+using STI::Device::DeviceID;
 
 
 EventEngineJob::EventEngineJob(const ParseID& parseID, 
@@ -36,18 +37,31 @@ EventEngineJob::EventEngineJob(const ParseID& parseID,
     jobID.pid = parseID;
 }
 
+EventEngineJob::EventEngineJob(const EngineJobID& id, const DeviceID& owner)
+: jobID(id), jobOwner(owner)
+{
+    jobID.type = EventEngineJobType::Play;
+}
+                   
 
-EngineJobID EventEngineJob::getJobID()
+EngineJobID EventEngineJob::getJobID() const
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
     return jobID;
 }
 
 
-EventEngineJob::EngineJobStatus EventEngineJob::getStatus()
+EventEngineJob::EngineJobStatus EventEngineJob::getStatus() const
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
     return status;
+}
+
+void EventEngineJob::markRunning(const EngineID& id)
+{
+    std::unique_lock< std::mutex > writeLock(jobMutex);
+    status = EventEngineJob::EngineJobStatus::Running;
+    engineID = id;
 }
 
 void EventEngineJob::markComplete()

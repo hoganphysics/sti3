@@ -54,7 +54,7 @@ public:
 
 	DeviceID id;
 
-	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) const {}
+	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 	void getEventTargets(std::set<DeviceID>& targetIDs)
 	{
 		targetIDs = eventTargets;

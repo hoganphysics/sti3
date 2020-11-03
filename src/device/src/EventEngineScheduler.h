@@ -81,7 +81,7 @@ public:
 
     //local interface (called from python, for example)
     void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot);        //local; add event to queue
-    void play(const ParseID& parseID);
+    void play(const ShotID& shotID);
 
 
     void addEngine(const EngineID& engineID, const std::shared_ptr<EventEngine>& engine);
@@ -140,6 +140,7 @@ private:
     bool findParsedEngine(const STI::Engine::ParseID& parsedID, std::set<EngineID>& freeEngines, EngineID& engineID);
     bool findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID);
 
+    bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
     void handleEvent(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
 
     STI::Device::LocalDevice* localDevice;

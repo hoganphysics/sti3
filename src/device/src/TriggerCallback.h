@@ -15,7 +15,7 @@ public:
 	virtual ~TriggerCallbackTarget() {}
 
 	virtual void ready(const STI::Device::DeviceID& id) = 0;
-	virtual void triggerFired() = 0;
+	virtual void triggerFired(const STI::Device::DeviceID& id) = 0;
 
 };
 
@@ -27,7 +27,7 @@ public:
 	~TriggerCallback() {}
 
 	void ready(const STI::Device::DeviceID& id) { cbTarget->ready(id); }
-	void triggerFired() { cbTarget->triggerFired(); }
+	void triggerFired(const STI::Device::DeviceID& id) { cbTarget->triggerFired(id); }
 
 private:
 

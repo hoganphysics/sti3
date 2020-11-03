@@ -60,6 +60,24 @@ private:
 	mutable std::condition_variable condition;
 };
 
+
+class SynchronousEventAdapter : public SynchronousEvent
+{
+public:
+
+	SynchronousEventAdapter(double time) : SynchronousEvent(time) {}
+	virtual ~SynchronousEventAdapter() {}
+
+	virtual void loadEvent() {}
+	virtual void playEvent() {}
+	virtual void collectMeasurementData() {}
+	virtual void stopEvent() {}
+	virtual void pauseEvent() {}
+	virtual void unpauseEvent(bool retrigger) {}
+	
+};
+
+
 } //Engine
 } //STI
 

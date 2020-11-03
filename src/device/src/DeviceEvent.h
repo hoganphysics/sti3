@@ -127,11 +127,11 @@ public:
 	STI::Device::DeviceID originalSource;	//device that generated the original message
 	STI::Engine::EngineJobID jobID;
 	std::shared_ptr<STI::Engine::EventEngine> engine;
-	std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
-	std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
+	// std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
+	// std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
 
-	//handledEvents		:device generated events that are being sent upstream for documentation, but they have already been parsed
-	//unhandledEvents	:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+	std::vector<STI::Engine::RawEvent> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
+	std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 
 };
 

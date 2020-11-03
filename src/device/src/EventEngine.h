@@ -68,8 +68,8 @@ public:
 
 	void clear();
 
-	void parse(const std::shared_ptr<STI::Engine::EventEngineJob>& job);
-	void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+	void parse(const STI::Engine::EventEngineJob& job);
+
 	//void parse(const ParseID& parseID, const RawEventVector& events, const STI::Device::DeviceID& server);
 
 	//Could pass in a DocumentationTarget that the engine (attempts) to use to save data.  Falls back on its local DocTarget.
@@ -77,7 +77,11 @@ public:
 	//For all devices, DocTarget would provide persistent access to any data it stored.
 	//--in the case of devices using their local DocTarget, only events that failed to be pulled would be available
 	//If DocTarget pulls, it is now the owner of the shot's data and is reponsible for providing persistence.
-	bool play(const ParseID& parseID, TriggerCallback& triggerCB, ResultTicket& resultsOut, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
+	
+
+
+	void play(const STI::Engine::EventEngineJob& job);
+	void play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
 	void trigger();
 	void trigger(STI::Device::DeviceID& target);		//triggers just target
 	void stop();
@@ -95,6 +99,9 @@ public:
 
 //	Debug: inspect state:  return current values of all out channels, and what RawEvent was last played, what time it thinks it is...
 
+	void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+	void handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+
 	bool isState(EngineState target) const;
 	STI::Engine::EngineState getState() const;
 
@@ -106,16 +113,62 @@ public:
 
 private:
 
-	void parseDevice(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Engine::EventEngineJob>& job);
+	void mergePartnerEvents(const DeviceEventMap& events);
+
+	void parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job);
 
 	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
-	void divideEvents(const RawEventVector& events, RawEventVector& upstreamEvents);
+	void divideEvents(const RawEventVector& events);
 
 	bool setState(EngineState target);
 
+	void preparePlayAll(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
+	
+	void playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug);
+	void preplay(TriggerCallback& triggerCB);
+
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;
+	void triggerOwnedDevices();
+
+	class MasterTrigger : public TriggerCallbackTarget
+	{
+	public:
+
+		MasterTrigger(EventEngine* engine, const STI::Device::DeviceID& triggerDevice) 
+						: engine(engine), triggerDevice(triggerDevice), running(false) {}
+
+		enum class TriggerStatus { Arming, Waiting, Triggered };
+
+		void arm(const STI::Device::DeviceID& id);
+		void arm();
+		void wait();
+		void stop();
+		bool allStatusMatch(const TriggerStatus& target);
+
+		STI::Device::DeviceID& triggerID() { return triggerDevice; }
+
+		void ready(const STI::Device::DeviceID& id);
+		void triggerFired(const STI::Device::DeviceID& id);
+
+		std::map<STI::Device::DeviceID, TriggerStatus> status;
+
+	private:
+	
+		bool _allStatusMatch(const TriggerStatus& target);
+
+		EventEngine* engine;
+		STI::Device::DeviceID triggerDevice;
+
+		bool running;
+
+		mutable std::mutex mtriggerMutex;
+		mutable std::condition_variable mtriggerCondition;
+	};
+
+	std::shared_ptr<MasterTrigger> masterTrigger;
+	std::shared_ptr<TriggerCallback> masterTriggerCB;
 
 //	void handleParsingResults(const ParserCallbackMessage& message);	//ParserCallbackTarget interface
 	
@@ -123,8 +176,12 @@ private:
 	void measureData();
 	void stopDeviceEvents();
 
+	void resetPlayThread();
+
 	bool waitUntil(double time);
 
+	TimeStamp getCurrentTimeStamp();
+	
 	//Clock time;
 
 	STI::Engine::ParseID lastParseID;		//The ID of the most recently parsed shot
@@ -135,8 +192,16 @@ private:
 
 	//server events
 	std::map<STI::Device::DeviceID, RawEventVector> eventsByTarget;
+	RawEventVector upstreamEvents;
+	std::vector<STI::Engine::RawEvent> handledPartnerEvents;
 	std::shared_ptr<EventEngineDependencyTree> dependencyTree;
 	std::shared_ptr<EventEngineDependencyTree> localSubtree;
+
+	bool isJobOwner;
+	std::vector<STI::Device::DeviceID> ownedTargets;
+	std::map<STI::Device::DeviceID, std::shared_ptr<EventEngine>> engines;
+
+	std::thread playThread;
 
 	//local events
 	RawEventMap& rawEvents;					//Originating from python timing file (STIpy library)
@@ -153,6 +218,10 @@ private:
 	//parser
 	mutable std::mutex parseMutex;
 	mutable std::condition_variable parseCondition;
+
+	//play
+	mutable std::mutex playMutex;
+	mutable std::condition_variable playCondition;
 
 };
 
