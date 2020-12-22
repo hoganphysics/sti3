@@ -19,7 +19,7 @@ class JDeviceEventDispatcher
 {
 public:
 	
-	JDeviceEventDispatcher(const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);
+	JDeviceEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);
 	~JDeviceEventDispatcher();
 
 	void addEvent(const std::shared_ptr<STI::Device::DeviceEvent>& evt);

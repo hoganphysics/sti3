@@ -623,7 +623,7 @@ void LocalEventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedule
     
     std::shared_ptr<EventEngineManager> manager;
 
-    switch(evt->type) {
+    switch(evt->schedulerMessageType) {
         case MessageType::ParseComplete:
             if (getManager(evt->jobID, manager)) {
                 manager->handleParseMessage(evt);

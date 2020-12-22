@@ -12,7 +12,7 @@
 #include "EngineID.h"
 #include "Channel.h"
 #include "ParseID.h"
-#include "ParsedShot.h"
+#include "LocalParsedShot.h"
 #include "RawEvent.h"
 #include "Channel.h"
 
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 
 	STI::Engine::ParseID pid;
 	pid.parseTimestamp.timestamp = 1.1;
-	auto shot = std::make_shared<STI::Engine::ParsedShot>();
+	auto shot = std::make_shared<STI::Engine::LocalParsedShot>();
 
 	STI::Utils::MixedValue value;
 	value.setValue(27.0);
@@ -136,10 +136,13 @@ int main(int argc, char **argv)
 	auto evt3 = STI::Engine::RawEvent(dev3->getID(), 4.01, 1, value, "desc3", 2, STI::Engine::RawEventType::Play);
 	auto evt4 = STI::Engine::RawEvent(dev4->getID(), 5.01, 1, value, "desc4", 3, STI::Engine::RawEventType::Play);
 
-	shot->events.push_back(evt1);
-	shot->events.push_back(evt2);
-	shot->events.push_back(evt3);
-	shot->events.push_back(evt4);
+	std::shared_ptr<STI::Engine::RawEventVector> events;
+	shot->getEvents(events);
+
+	events->push_back(evt1);
+	events->push_back(evt2);
+	events->push_back(evt3);
+	events->push_back(evt4);
 
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
 	dev1->getEngineScheduler(scheduler);

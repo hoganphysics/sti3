@@ -116,13 +116,13 @@ public:
 	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
 
 	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
-	: DeviceEvent(source, DeviceEventType::EngineScheduler), originalSource(originalSource), type(type) 
+	: DeviceEvent(source, DeviceEventType::EngineScheduler), originalSource(originalSource), schedulerMessageType(type) 
 	{
 	}
 	
 	static DeviceEventType getEventClassType() { return DeviceEventType::EngineScheduler; }
 
-	SchedulerMessageType type;
+	SchedulerMessageType schedulerMessageType;
 
 	STI::Device::DeviceID originalSource;	//device that generated the original message
 	STI::Engine::EngineJobID jobID;

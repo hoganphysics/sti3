@@ -8,7 +8,7 @@
 using STI::Device::JDeviceEventDispatcher;
 
 
-JDeviceEventDispatcher::JDeviceEventDispatcher(const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
+JDeviceEventDispatcher::JDeviceEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
 : localDispatcher(dispatcher)
 {
 }

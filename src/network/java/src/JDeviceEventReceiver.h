@@ -31,7 +31,7 @@ class JDeviceEventReceiver
 {
 public:
 	
-	JDeviceEventReceiver(const std::shared_ptr<DeviceEventReceiver>& receiver);
+	JDeviceEventReceiver(std::shared_ptr<STI::Device::DeviceEventReceiver>& receiver);
 	~JDeviceEventReceiver();
 
     // void addListener(const DeviceID& sourceDeviceID, const DeviceEventListenerID& listenerID, 
@@ -41,9 +41,9 @@ public:
 
     //Need to write JRefreshDeviceEventListener which wraps a new shared_ptr that gets made in the constructor. 
     void addListener(const DeviceID& sourceDeviceID, const DeviceEventListenerID& listenerID, 
-		const std::shared_ptr<DeviceEventListener<RefreshDeviceEvent>>& listener);
+		                 const std::shared_ptr<DeviceEventListener<RefreshDeviceEvent>>& listener);
     void addListener(const DeviceID& sourceDeviceID, const DeviceEventListenerID& listenerID, 
-		const std::shared_ptr<DeviceEventListener<ChannelUpdateDeviceEvent>>& listener);
+		                 const std::shared_ptr<DeviceEventListener<ChannelUpdateDeviceEvent>>& listener);
     //...
 
     void removeListener(const DeviceID& sourceDeviceID, const DeviceEventListenerID& listenerID);

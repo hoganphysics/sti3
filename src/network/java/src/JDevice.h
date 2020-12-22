@@ -4,11 +4,21 @@
 #include "Device.h"
 #include "DeviceCollection.h"
 
+#include "JEventEngineScheduler.h"
+
 #include <memory>
 #include <string>
 
 namespace STI
 {
+
+// namespace Engine
+// {
+
+// class JEventEngineScheduler;
+
+// } //Engine
+
 namespace Device
 {
 
@@ -34,12 +44,14 @@ public:
 
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
 	std::shared_ptr<STI::Device::JDeviceEventDispatcher> getEventDispatcher();
+	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
 
 private:
 	friend class JLocalDevice;
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
+	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 
     std::shared_ptr<Device> wrappedDevice;
 

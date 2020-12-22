@@ -13,7 +13,7 @@ using STI::Device::DeviceID;
 using STI::Device::DeviceEventListenerID;
 
 
-JDeviceEventReceiver::JDeviceEventReceiver(const std::shared_ptr<DeviceEventReceiver>& receiver)
+JDeviceEventReceiver::JDeviceEventReceiver(std::shared_ptr<STI::Device::DeviceEventReceiver>& receiver)
 : deviceEventReceiver(receiver)
 {
 }

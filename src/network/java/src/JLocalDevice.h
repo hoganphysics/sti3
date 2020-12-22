@@ -13,7 +13,7 @@ namespace Device
 
 class LocalDevice;
 class JDeviceEventReceiver;
-
+class JEventEngineScheduler;
 
 class JLocalDevice : public STI::Device::JDevice
 {
@@ -24,10 +24,13 @@ public:
 	virtual ~JLocalDevice();
 
 	std::shared_ptr<STI::Device::JDeviceEventReceiver> getEventReceiver();
+	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
 
 private:
 
     std::shared_ptr<JDeviceEventReceiver> jReceiver;
+	std::shared_ptr<JEventEngineScheduler> jScheduler;
+
     std::shared_ptr<LocalDevice> wrappedLocalDevice;
 
 };

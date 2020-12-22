@@ -3,12 +3,15 @@
 #include "LocalDevice.h"
 #include "DeviceEventReceiver.h"
 #include "JDeviceEventReceiver.h"
+#include "JEventEngineScheduler.h"
+#include "EventEngineScheduler.h"
 
 #include <memory>
 
 using STI::Device::JLocalDevice;
 using STI::Device::JDeviceEventReceiver;
-
+using STI::Device::JEventEngineScheduler;
+using STI::Engine::EventEngineScheduler;
 
 JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer)
@@ -27,6 +30,11 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
     wrappedLocalDevice->getEventReceiver(receiver);
 
     jReceiver = std::make_shared<JDeviceEventReceiver>(receiver);
+
+
+    std::shared_ptr<EventEngineScheduler> scheduler;
+    wrappedLocalDevice->getEngineScheduler(scheduler);
+    jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);
 }
 
 JLocalDevice::~JLocalDevice()
@@ -36,4 +44,9 @@ JLocalDevice::~JLocalDevice()
 std::shared_ptr<STI::Device::JDeviceEventReceiver> JLocalDevice::getEventReceiver()
 {
     return jReceiver;
+}
+
+std::shared_ptr<STI::Device::JEventEngineScheduler> JLocalDevice::getEngineScheduler()
+{
+    return jScheduler;
 }
