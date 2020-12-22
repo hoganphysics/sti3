@@ -1,0 +1,41 @@
+
+#include "TParsedShot_i.h"
+
+#include "ORBManager.h"
+#include "RawEvent.h"
+#include "Convert_EventEngine.h"
+
+#include "orbTypes.h"
+
+#include <vector>
+#include <memory>
+
+using STI::TNetwork::TParsedShot_i;
+using STI::Network::convert;
+
+
+TParsedShot_i::TParsedShot_i(const std::shared_ptr<STI::Engine::ParsedShot>& shot)
+: localShot(shot)
+{
+}
+
+TParsedShot_i::~TParsedShot_i()
+{
+    STI::Network::ORBManager::ORBManager::deactivateServant(this);
+}
+
+void TParsedShot_i::getEvents(::STI::TNetwork::TRawEventSeq_out events)
+{
+    if (localShot != 0) {
+        std::shared_ptr<STI::Engine::RawEventVector> evts;
+        localShot->getEvents(evts);
+
+        STI::TNetwork::TRawEventSeq_var tRawEvtseq_var(new STI::TNetwork::TRawEventSeq);
+
+        if (convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*evts, 
+            (_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&)tRawEvtseq_var)) {
+            events = tRawEvtseq_var.out();
+        }
+    }
+}
+

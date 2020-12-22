@@ -1,8 +1,11 @@
 
 #include "JNetworkDeviceHub.h"
 #include "NetworkDeviceHub.h"
+#include "JNodeWalker.h"
+#include "LocalDeviceHub.h"
 
 using STI::Network::JNetworkDeviceHub;
+using STI::Network::JNodeWalker;
 
 
 JNetworkDeviceHub::JNetworkDeviceHub(const std::string& nameServiceAddress)
@@ -39,4 +42,17 @@ void JNetworkDeviceHub::run(bool block)
     if(networkHub != 0) {
         networkHub->run(block);
     }
+}
+
+JNodeWalker JNetworkDeviceHub::walk() const
+{
+    STI::Network::LocalDeviceHub::HubNodeWalker walker;
+
+    if(networkHub != 0) {
+        networkHub->walk(walker);
+    }
+
+//    JNodeWalker jWalker(walker);
+ //   return jWalker;
+    return JNodeWalker(walker);
 }

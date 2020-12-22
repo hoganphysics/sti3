@@ -28,12 +28,109 @@ module TNetwork
 	};
 	typedef sequence<TDeviceID> TDeviceIDSeq;
 
+	struct TDeviceIDVertex
+	{
+		TDeviceID id;
+		sequence<unsigned long> outConnections;
+	};
+	typedef sequence<TDeviceIDVertex> TDeviceIDVertexSeq;
+
+	struct TEventEngineDependencyTree
+	{
+		TDeviceIDVertexSeq vertices;
+	};
+
+	struct TDeviceTrace
+	{
+		TDeviceIDSeq ids;
+	};
+
+	enum TEngineJobStatus { New, Running, Completed, Cancelled };
+	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
+	typedef sequence<unsigned long> TGraphPathLabel;
+
+	struct TMixedValue;
+	typedef sequence<TMixedValue> TMixedValueSeq;
+	enum TMixedValueType { MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueEmpty, MixedValueFile, MixedValueImage, MixedValueAny};
+
+	struct TMixedValue
+	{
+		TMixedValueSeq values;
+
+		TMixedValueType type;
+
+		boolean value_b;
+		long    value_i;
+		double   value_d;
+		string  value_s;
+	};
+
+	struct TRawEvent
+	{
+		double time;
+		unsigned short channel;
+		TMixedValue value;
+		string description;
+		//TEventStackTrace trace;
+		boolean isMeasurement;
+		TRawEventType rawEventType;
+		TDeviceID targetDeviceID;
+
+		TGraphPathLabel eventGraphPath;
+	};
+	typedef sequence<TRawEvent> TRawEventSeq;
+
+	struct TEngineID
+	{
+		short engineNumber;
+	};
+
+	enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError };
+
+	enum TEventEngineJobType { EngineJobParse, EngineJobPlay };
+	
+	struct TTimeStamp
+	{
+		double timestamp;
+	};
+
+	struct TEngineJobSourceID
+	{
+		string user;
+		string machine;
+	};
+
+	struct TParseID
+	{
+		TTimeStamp parseTimestamp;
+		
+		TEngineJobSourceID jobSourceID;
+
+		string file;
+		string comment;
+	};
+
+	struct TShotID
+	{
+		TParseID parseID;
+		
+		TTimeStamp submissionTime;
+		TTimeStamp playTime;
+
+		TEngineJobSourceID jobSourceID;
+	};
+
+	struct TEngineJobID
+	{
+    	TEventEngineJobType type;
+    	TParseID pid;
+    	TShotID sid;
+	};
 
 
-
-
-
-	enum TDeviceEventType { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, Unknown };
+	enum TDeviceEventType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
+							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
+							MessageEngineStatus, MessageEngineParser, MessageUnknown };
 	typedef sequence<TDeviceEventType> TDeviceEventTypeSeq;
 
 	struct TAnyEvent
@@ -52,6 +149,26 @@ module TNetwork
 	{
 		TDeviceEvent base;	//base class data
 	};
+
+
+	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerYieldPlay };
+	
+	interface TEventEngine;
+
+	struct TEngineSchedulerMessage
+	{
+		TDeviceEvent base;	//base class data
+
+		TSchedulerMessageType type;
+
+		TDeviceID originalSource;	//device that generated the original message
+		TEngineJobID jobID;
+		TEventEngine engine;
+
+		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
+		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+	};
+
 
 };	//TNetwork
 };	//STI

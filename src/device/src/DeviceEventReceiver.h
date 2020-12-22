@@ -37,10 +37,13 @@ public:
 
 		switch (listenerID.type) {
 		case DeviceEventType::Refresh:
-			success = getListenerGroup(sourceDeviceID, refreshListners, listenerGroup);
+			success = getListenerGroup(sourceDeviceID, refreshListeners, listenerGroup);
 			break;
 		case DeviceEventType::ChannelUpdate:
-			success = getListenerGroup(sourceDeviceID, channelUpdateListners, listenerGroup);
+			success = getListenerGroup(sourceDeviceID, channelUpdateListeners, listenerGroup);
+			break;
+		case DeviceEventType::EngineScheduler:
+			success = getListenerGroup(sourceDeviceID, engineSchedulerListeners, listenerGroup);
 			break;
 		}
 
@@ -149,8 +152,9 @@ private:
 	//The event type is the template parameter of the ListenerGroupMap type.
 	//These listener groups are stored here in a map, keyed by the DeviceID of the event's source
 	//(that is, the remote device that they are listening to).
-	ListenerGroupMap<RefreshDeviceEvent> refreshListners;
-	ListenerGroupMap<ChannelUpdateDeviceEvent> channelUpdateListners;
+	ListenerGroupMap<RefreshDeviceEvent> refreshListeners;
+	ListenerGroupMap<ChannelUpdateDeviceEvent> channelUpdateListeners;
+	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
 	//...
 
 	/**

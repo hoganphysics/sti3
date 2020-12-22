@@ -30,6 +30,43 @@ namespace STI
 namespace Network
 {
 
+/*
+The STI network graph can be decomposed into two subgraphs: a bidirected graph describing the Hub connections, 
+and a directed graph describing the Device connections.  Since every Device node is hosted by a Hub, these
+graphs are tightly related.
+
+The NodeWalker data structure contains both subgraphs.  The top level of NodeWalker is made up of BidirectedGraphNodes.
+Each BidirectedGraphNode contains node data, as well as a list of connections to other BidirectedGraphNodes.
+The NodeWalker stores the Hub graph in the BidirectedGraphNode layer.  The list of other BidirectedGraphNodes represent
+the connections to other hubs.  The node data payload of each BidirectedGraphNode contains a given hub's information.  
+Specifically, the nodes realized as instances of DirectedGraphHub objects, which contain the hub's HubID as well
+as a list of the hub's attached devices. The attached devices are represented by DirectedGraphNode objects. Each
+DirectedGraphNode contains a DeviceID, a Device reference, and a list of directed edges representing the connections 
+to other Devices ("outConnections"). The Device subgraph is therefore stored by the DirectedGraphHubs.
+
+To be consistent with the generic Hub class, NodeWalker is implement here generically using templates. In practice,
+NodeWalker is instantiated as BidirectedGraphNode<DirectedGraphHub<DeviceID, Device>>.
+
+NodeWalker psuedocode:
+
+BidirectedGraphNode		//Hub subgraph
+{
+	DirectedGraphHub	//T node
+	{
+		HubID;
+		vector<DirectedGraphNode> nodes;	//This Hub's attached devices
+	};
+	vector<BidirectedGraphNode> connections;	//connections to other Hubs
+}
+
+DirectedGraphNode		//Device subgraph
+{
+	DeviceID;
+	Device;
+	vector<DeviceID> outConnections;
+}
+
+*/
 
 template<typename T>
 class BidirectedGraphNode

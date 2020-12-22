@@ -7,13 +7,14 @@
 using STI::TNetwork::TDevice_i;
 using STI::TNetwork::TDeviceCollection_ptr;
 using STI::TNetwork::TDeviceEventDispatcher_ptr;
+using STI::TNetwork::TEventEngineScheduler_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
 
 //Device is a DeviceCollector, so we can simply pass the device pointer to both
 TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
-	: localDevice(device), deviceCollectionServant(device), eventDispatcherServant(device)
+	: localDevice(device), deviceCollectionServant(device), eventDispatcherServant(device), eventSchedulerServant(device)
 {
 }
 
@@ -35,6 +36,11 @@ TDeviceCollection_ptr TDevice_i::getDeviceCollection()
 TDeviceEventDispatcher_ptr TDevice_i::getEventDispatcher()
 {
 	return eventDispatcherServant._this();
+}
+
+TEventEngineScheduler_ptr TDevice_i::getEngineScheduler()
+{
+	return eventSchedulerServant._this();
 }
 
 TDeviceID* TDevice_i::getID()

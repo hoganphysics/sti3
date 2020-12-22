@@ -96,6 +96,80 @@ module TNetwork
 		//void addEvent(in TDeviceEvent evt);
 	};
 
+	interface TParsedShot
+	{
+		void getEvents(out TRawEventSeq events);
+	};
+
+	interface TEventEngine;
+
+	// interface TEventEngineJob
+	// {
+	// 	TEngineJobID getJobID();
+	// 	TDeviceID getJobOwner();
+	// 	TEngineJobStatus getStatus();
+
+	// 	void markRunning(in TEngineID id);
+	// 	void markComplete();
+	// 	void markCancelled();
+
+	// 	TEngineID getEngineID();
+	// 	boolean getEngine(out TEventEngine eventEngine);
+	// 	void setEventEngine(in TEventEngine eventEngine);
+
+	// 	boolean getParsedShot(out TParsedShot shot);
+	// 	boolean getDependencies(out TEventEngineDependencyTree tree);
+
+	// 	TDeviceIDSeq getMissingTargetIDs();
+	// };
+
+	struct TEventEngineJob
+	{
+		TEngineJobID jobID;
+		TDeviceID jobOwner;
+		TEngineJobStatus status;
+
+		TEngineID engineID;
+		//TEventEngine eventEngine;
+
+		TParsedShot shot;
+		TEventEngineDependencyTree dependencies;
+		TDeviceIDSeq missingTargetIDs;
+	};
+	
+	interface TTriggerCallback
+	{
+		void ready(in TDeviceID id);
+		void triggerFired(in TDeviceID id);
+	};
+
+	interface TEventEngine
+	{
+		void play(in TEventEngineJob job);
+		void playCB(in TEngineJobID jobID, in TTriggerCallback triggerCB, in boolean debug);
+
+		void trigger();
+		void triggerTarget(in TDeviceID target);
+
+		void stop();
+		void pause();
+		void unpause(in boolean retrigger);
+
+    	TDeviceID getDeviceID();
+		TEngineState getState();
+	};
+
+	interface TEventEngineScheduler
+	{
+		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
+                                inout TDeviceIDSeq missingTargets, in TDeviceTrace trace);
+    
+    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, in TDeviceTrace trace);
+    
+    	void addJob(in TEventEngineJob newJob);
+		void cancelJob(in TEngineJobID jobID);
+	};
+
 	interface TDevice
 	{
 		//Node interface
@@ -111,6 +185,8 @@ module TNetwork
 		//Device event passing
 		TDeviceEventDispatcher getEventDispatcher();
 
+		//Event engine system
+		TEventEngineScheduler getEngineScheduler();
 	};
 
 };	//TNetwork

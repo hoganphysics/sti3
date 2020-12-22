@@ -27,10 +27,9 @@
 
 #include "MixedValue.h"
 #include "EventStackTrace.h"
-#include "fwd/DeviceID_fwd.h"
+#include "DeviceID.h"
 //#include "fwd/SynchronousEvent_fwd.h"
 #include "utils/GraphPathLabel.h"
-
 
 #include <string>
 #include <map>
@@ -38,12 +37,10 @@
 
 namespace STI
 {
-
 namespace Engine
 {
 
 class SynchronousEvent;		//for confirming measurement scheduling
-
 
 
 class RawEvent
@@ -54,6 +51,8 @@ public:
 	//	double time, unsigned short channel, const STI::Utils::MixedValue& value,
 	//	const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
 	
+	RawEvent() {}
+
 	RawEvent(const STI::Device::DeviceID& targetDeviceID,
 		double time, unsigned short channel, const STI::Utils::MixedValue& value,
 		const std::string& description, unsigned eventNumber, const RawEventType& eventType);
@@ -94,6 +93,14 @@ public:
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }
 
 
+	void setTargetID(const STI::Device::DeviceID& targetID) { targetDeviceID = targetID; }
+	void setTime(double time) { _time = time; }
+	void setChannel(unsigned short channel) { _channel = channel; }
+	void setValue(const STI::Utils::MixedValue& value) { _value = value; }
+	void setDescription(const std::string& description) { _description = description; }
+	void setEventGraphPath(const STI::Utils::GraphPathLabel& pathLabel) { eventGraphPath = pathLabel;}
+	void setEventType(const RawEventType& eventType) { _eventType = eventType; }
+
 private:
 	
 	double _time;
@@ -103,7 +110,7 @@ private:
 	EventStackTrace trace;
 	bool isMeasurement;
 	RawEventType _eventType;
-	const STI::Device::DeviceID& targetDeviceID;
+	STI::Device::DeviceID targetDeviceID;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
 

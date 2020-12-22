@@ -28,6 +28,7 @@ src/network/test/testcorba/src/testcorba
 src/network/test/testcorbaclient/x64/
 doc/doxygen/out/
 src/device/test/testEvents/vcproject/x64/
+src/device/test/testEngine/testEngine
 src/network/test/testcorbaclient/src/testClient
 src/network/test/testNodeWalker/x64/
 src/network/src/deviceNet.*
@@ -36,3 +37,5 @@ src/network/src/orbTypes.*
 src/network/src/orbTypesDynSK.*
 doc/~$heduler.docx
 doc/~$vice tree.docx
+/src/device/test/testDependencyTree/main
+src/device/python/src/__pycache__/

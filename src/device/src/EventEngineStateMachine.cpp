@@ -13,7 +13,9 @@ EventEngineStateMachine::EventEngineStateMachine()
 	stateTree.addVertex(Idle);
 	stateTree.addVertex(Parsing);
 	stateTree.addVertex(Parsed);
-	stateTree.addVertex(Arming);
+//	stateTree.addVertex(Arming);
+	stateTree.addVertex(PreparingPlay);
+	stateTree.addVertex(PlayReady);	
 	stateTree.addVertex(WaitingForTrigger);
 	stateTree.addVertex(Playing);
 
@@ -27,9 +29,12 @@ EventEngineStateMachine::EventEngineStateMachine()
 	stateTree.addEdge(Parsing, Parsed);
 
 	stateTree.addEdge(Parsed, Idle);
-	stateTree.addEdge(Parsed, Arming);
-	stateTree.addEdge(Arming, WaitingForTrigger);
-	stateTree.addEdge(Arming, Parsed);
+	stateTree.addEdge(Parsed, PreparingPlay);
+	stateTree.addEdge(PreparingPlay, Parsed);
+
+	stateTree.addEdge(PreparingPlay, PlayReady);
+	stateTree.addEdge(PlayReady, WaitingForTrigger);
+	stateTree.addEdge(PlayReady, Parsed);
 
 	stateTree.addEdge(WaitingForTrigger, Parsed);
 	stateTree.addEdge(WaitingForTrigger, Playing);
@@ -40,7 +45,7 @@ EventEngineStateMachine::EventEngineStateMachine()
 	stateTree.addEdge(Missing, Idle);
 	stateTree.addEdge(Error, Idle);
 
-	std::vector<EngineState> allStates = { Idle, Parsing, Parsed, Arming, WaitingForTrigger, Playing };
+	std::vector<EngineState> allStates = { Idle, Parsing, Parsed, PreparingPlay, PlayReady, WaitingForTrigger, Playing };
 
 	//All states can transition to these states
 	for (auto s : allStates) {
@@ -69,6 +74,8 @@ void EventEngineStateMachine::stop()
 		success = _setState(Idle);
 		break;
 
+	case PreparingPlay:
+	case PlayReady:
 	case WaitingForTrigger:
 	case Playing:
 		success = _setState(Parsed);

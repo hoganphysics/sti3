@@ -161,6 +161,23 @@ template<>
 Network::HubTrace Network::convert<TNetwork::TDeviceHubTrace, Network::HubTrace>(const TNetwork::TDeviceHubTrace& tDeviceHubTrace);
 
 
+
+namespace Utils
+{
+
+class MixedValue;
+
+} //Utils
+
+
+//MixedValue
+template<>
+TNetwork::TMixedValue Network::convert<Utils::MixedValue, TNetwork::TMixedValue>(const Utils::MixedValue& value);
+template<>
+Utils::MixedValue Network::convert<TNetwork::TMixedValue, Utils::MixedValue>(const TNetwork::TMixedValue& tValue);
+
+
+
 //DeviceEvent
 template<>
 bool Network::convert<std::shared_ptr<STI::Device::DeviceEvent>, TNetwork::TDeviceEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TNetwork::TDeviceEvent& tEvent);

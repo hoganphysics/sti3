@@ -1,0 +1,170 @@
+
+
+
+#include "LocalDeviceHub.h"
+
+#include "LocalDevice.h"
+
+#include "DeviceEventDispatcher.h"
+#include "DeviceCollection.h"
+#include "LocalEventEngineScheduler.h"
+#include "LocalEventEngine.h"
+#include "EngineID.h"
+#include "Channel.h"
+#include "ParseID.h"
+#include "LocalParsedShot.h"
+#include "RawEvent.h"
+#include "Channel.h"
+
+#include "ShotID.h"
+
+#include "SynchronousEvent.h"
+
+
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
+#include <mutex>
+
+using std::cout;
+using std::endl;
+using STI::Device::LocalDevice;
+
+
+class TestDevice : public LocalDevice
+{
+public:
+	TestDevice(const std::string& name, const std::string& address, unsigned short module,
+		const std::string& targetServer) : LocalDevice(name, address, module, targetServer)
+	{
+		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
+		getEventDispatcher(dispatcher);
+		std::shared_ptr<STI::Device::DeviceCollection> collection;
+		getCollection(collection);
+		
+		std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
+		getEngineScheduler(scheduler);
+		
+		STI::Device::Channel ch(1, STI::Device::TChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
+		channels[1] = ch;
+
+		STI::Engine::EngineID id(0);
+		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
+		scheduler->addEngine(id, engine);
+
+		
+	}
+	~TestDevice()
+	{
+		cout << "Destroying " << id.getName() << endl;
+	}
+
+	void addEventTarget(const STI::Device::DeviceID& id)
+	{
+		eventTargets.insert(id);
+	}
+
+	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) 
+	{
+		cout << "Parsing: " << id.getName() << endl;
+		cout << "Event count: " << events.size() << endl;
+		
+		if (events.size() > 0) {
+			cout << events.begin()->second.at(0).print() << endl;
+		}
+
+		auto evt = std::make_unique<TestEvent>(events.begin()->second.at(0), this);
+		synchedEvents.push_back(std::move(evt));
+	}
+
+	class TestEvent : public STI::Engine::SynchronousEventAdapter
+	{
+	public:
+
+		TestEvent(const STI::Engine::RawEvent& evt, TestDevice* dev) 
+		: STI::Engine::SynchronousEventAdapter(evt.time()), evt(evt), localDevice(dev) {}
+		
+		void playEvent()
+		{
+			std::unique_lock < std::mutex > writeLock(TestEvent::coutMutex);
+			cout << "Play: " << localDevice->id.getName() << " " << evt.print() << endl;
+		}
+
+		STI::Engine::RawEvent evt;
+		STI::Device::LocalDevice* localDevice;
+
+		static std::mutex coutMutex;
+	};
+
+	STI::Device::ChannelMap channels;
+
+};
+
+std::mutex TestDevice::TestEvent::coutMutex{};
+
+int main(int argc, char **argv)
+{
+	auto dev1 = std::make_shared<TestDevice>("dev1", "localhost", 0, "srv1");
+	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+	auto dev3 = std::make_shared<TestDevice>("dev3", "localhost", 0, "localhost/0/dev2");
+	auto dev4 = std::make_shared<TestDevice>("dev4", "localhost", 0, "localhost/0/dev1");
+
+	auto hub1 = std::make_shared<STI::Network::LocalDeviceHub>("Hub1");
+//	auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
+//	STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>::connect(hub1, hub2);
+
+	hub1->addNode(dev1->id, dev1);
+	hub1->addNode(dev2->id, dev2);
+	hub1->addNode(dev3->id, dev3);
+	hub1->addNode(dev4->id, dev4);
+
+	int x;
+	std::cin >> x;
+
+
+	//dev3->addEventTarget(dev1->getID());
+
+	STI::Engine::ParseID pid;
+	pid.parseTimestamp.timestamp = 1.1;
+	auto shot = std::make_shared<STI::Engine::LocalParsedShot>();
+
+	STI::Utils::MixedValue value;
+	value.setValue(27.0);
+	auto evt1 = STI::Engine::RawEvent(dev1->getID(), 2.01, 1, value, "desc", 0, STI::Engine::RawEventType::Play);
+	auto evt2 = STI::Engine::RawEvent(dev2->getID(), 3.01, 1, value, "desc2", 1, STI::Engine::RawEventType::Play);
+	auto evt3 = STI::Engine::RawEvent(dev3->getID(), 4.01, 1, value, "desc3", 2, STI::Engine::RawEventType::Play);
+	auto evt4 = STI::Engine::RawEvent(dev4->getID(), 5.01, 1, value, "desc4", 3, STI::Engine::RawEventType::Play);
+
+	std::shared_ptr<STI::Engine::RawEventVector> events;
+	shot->getEvents(events);
+
+	events->push_back(evt1);
+	events->push_back(evt2);
+	events->push_back(evt3);
+	events->push_back(evt4);
+
+	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
+	dev1->getEngineScheduler(scheduler);
+	scheduler->parse(pid, shot);
+
+//	hub2->addNode(dev3->id, dev3);
+//	hub2->addNode(dev4->id, dev4);
+
+
+	std::cin >> x;
+
+	STI::Engine::ShotID shotID;
+	shotID.parseID = pid;
+	shotID.submissionTime.timestamp = 3.1;
+
+	scheduler->play(shotID);
+
+	std::cin >> x;
+
+	hub1->clear();
+
+
+	return 0;
+}
+

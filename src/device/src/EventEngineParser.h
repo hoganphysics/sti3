@@ -4,6 +4,7 @@
 #include "fwd/RawEvent_fwd.h"
 #include "fwd/Measurement_fwd.h"
 #include "fwd/SynchronousEvent_fwd.h"
+#include "fwd/DeviceID_fwd.h"
 
 #include "DeviceEventParser.h"
 #include "utils/GraphPathLabel.h"
@@ -19,15 +20,17 @@ namespace Engine
 {
 
 class EngineParsingError;
-class EventEngine;
+class LocalEventEngine;
 
 class EventEngineParser
 {
 public:
 
-	EventEngineParser(EventEngine* engine, DeviceEventParser* deviceParser);
+	EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser);
+	~EventEngineParser();
 
-	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents, std::string& errors);
+	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
+	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);
 
 	RawEventMap rawEvents;
 	DeviceEventMap partnerEvents;
@@ -57,7 +60,7 @@ private:
 
 	std::vector<EngineParsingError> errors;
 
-	EventEngine* engine;
+	LocalEventEngine* engine;
 	DeviceEventParser* deviceParser;
 
 };

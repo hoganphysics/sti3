@@ -16,7 +16,7 @@
                 "-I${workspaceFolder}/../../../device/src/",
                 "-I${workspaceFolder}/../../../../include/",
                 "-outdir",
-                "../sti/src/main/java/edu/stanford/sti/",
+                "../stilib/src/main/java/edu/stanford/sti/",
                 "sti.i"
             ],
             "options": {
@@ -46,10 +46,12 @@
 				"-shared",
                 "-fPIC",
                 "-L${workspaceFolder}/../../../device/src/",
+                "-L${workspaceFolder}/../../src/",
                 "-lstidevice",
+                "-lstinetwork",
 				"-Wl,-rpath,.",
 				"-o",
-				"${workspaceFolder}/../sti/build/libs/libsti.so"
+				"${workspaceFolder}/../stilib/build/libs/libsti.so"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

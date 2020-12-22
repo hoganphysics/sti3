@@ -10,24 +10,9 @@ class EngineID
 {
 public:
 
-	EngineID() {}
-	EngineID& operator= (const EngineID& rhs)
-	{
-		engineNumber = rhs.engineNumber;
-		parseTime = rhs.parseTime;
-		return (*this);
-	}
+	EngineID() : engineNumber(0) {}
+	EngineID(short number) : engineNumber(number) {}
 
-	bool exactMatch(const EngineID& rhs) const
-	{
-		return (*this) == rhs && parseTime == rhs.parseTime;
-	}
-
-	short engineNumber;
-	long parseTime;
-
-	//The comparison operators ignore parseTime.  This way the collector only keeps one copy of each event engine.
-	//Before reusing an engine, the manager must check the parseTime independently.
 
 	bool operator<(const EngineID& rhs) const
 	{
@@ -38,6 +23,13 @@ public:
 		return(engineNumber == rhs.engineNumber);
 	}
 	bool operator!=(const EngineID& rhs) const { return !((*this) == rhs); }
+
+	short getNumber() const { return engineNumber; }
+	void setNumber(short number) { engineNumber = number; }
+
+private:
+
+	short engineNumber;
 
 };
 
