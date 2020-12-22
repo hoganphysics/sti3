@@ -11,6 +11,7 @@ namespace STI
 namespace Engine
 {
 
+
 class ShotID
 {
 public:
@@ -20,8 +21,10 @@ public:
 	TimeStamp submissionTime;	//when the shot was submitted (not when it was played)
 	TimeStamp playTime;
 
-	std::string user;
-	std::string machine;
+	EngineJobSourceID jobSourceID;
+
+	// std::string user;
+	// std::string machine;
 
 	bool operator<(const ShotID& rhs) const 
 	{

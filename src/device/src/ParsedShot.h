@@ -3,7 +3,7 @@
 
 
 #include <vector>
-
+#include <memory>
 
 namespace STI
 {
@@ -15,8 +15,17 @@ class RawEvent;
 class ParsedShot
 {
 public:
+
+    virtual ~ParsedShot() {}
+
+    virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& ets) = 0;
+    //virtual void getEvents(std::vector<RawEvent>& ets) = 0;
+
+private:
+
+//    std::vector<RawEvent> events;
+
 //    std::vector<AbstractEvent> abstractevents;
-    std::vector<RawEvent> events;
     //files
     //overwritten vars
     //abstract channel resolution (?)

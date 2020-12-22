@@ -10,13 +10,24 @@ namespace STI
 namespace Engine
 {
 
+class EngineJobSourceID
+{
+public:
+	std::string user;
+	std::string machine;
+};
+
+
 class ParseID
 {
 public:
 	TimeStamp parseTimestamp;
 	std::string file;	//primary file
-	std::string user;
-	std::string machine;
+
+	EngineJobSourceID jobSourceID;
+
+	// std::string user;
+	// std::string machine;
 
 	std::string comment;	//optional description of this shot
 

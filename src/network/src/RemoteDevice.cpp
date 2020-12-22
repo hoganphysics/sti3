@@ -3,11 +3,13 @@
 #include "RemoteDeviceCollection.h"
 #include "RemoteDeviceEventDispatcher.h"
 #include "NetworkConvert.h"
+#include "RemoteEventEngineScheduler.h"
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Network::RemoteDeviceEventDispatcher;
 using STI::Network::convert;
+using STI::Network::RemoteEventEngineScheduler;
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: _tDevice(STI::TNetwork::TDevice::_duplicate(device))
@@ -142,6 +144,31 @@ void RemoteDevice::getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDi
 	if (success) {
 		remoteDispatcher = std::make_shared<RemoteDeviceEventDispatcher>(tEventDispatcher);
 		dispatcher = remoteDispatcher;
+	}
+}
+
+bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+{
+	bool success = false;
+
+	::STI::TNetwork::TEventEngineScheduler_ptr tEngineScheduler;	//remote reference
+	std::shared_ptr<RemoteEventEngineScheduler> remoteScheduler;	//wrapper
+
+	try {
+		tEngineScheduler = _tDevice->getEngineScheduler();
+		success = true;
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (success) {
+		remoteScheduler = std::make_shared<RemoteEventEngineScheduler>(tEngineScheduler);
+		scheduler = remoteScheduler;
 	}
 }
 

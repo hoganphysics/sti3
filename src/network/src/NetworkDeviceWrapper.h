@@ -42,6 +42,11 @@ public:
 		localDevice->getEventDispatcher(dispatcher);
 	}
 
+	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+	{
+		return localDevice->getEngineScheduler(scheduler);
+	}
+
 	STI::Device::DeviceID getID() { return localDevice->getID(); }
 	void write(unsigned input) { localDevice->write(input); }
 	bool refresh() { return localDevice->refresh(); }

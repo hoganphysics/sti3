@@ -24,6 +24,9 @@ public:
 	}
 	bool operator!=(const EngineID& rhs) const { return !((*this) == rhs); }
 
+	short getNumber() const { return engineNumber; }
+	void setNumber(short number) { engineNumber = number; }
+
 private:
 
 	short engineNumber;

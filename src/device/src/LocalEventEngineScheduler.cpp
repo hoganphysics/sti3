@@ -3,9 +3,14 @@
 #include "LocalEventEngineScheduler.h"
 #include "DeviceID.h"
 #include "SynchronizedMap.h"
-#include "EventEngineJob.h"
+#include "LocalEventEngineJob.h"
 #include "DeviceEvent.h"
 #include "EventEngineManager.h"
+#include "fwd/RawEvent_fwd.h"
+#include "ParseID.h"
+#include "EventEngineJob.h"
+#include "ParsedShot.h"
+#include "LocalEventEngineJob.h"
 
 #include <set>
 #include <vector>
@@ -13,7 +18,7 @@
 #include <algorithm>
 
 
-using STI::Engine::EventEngineJob;
+using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Device::DeviceID;
@@ -22,6 +27,10 @@ using STI::Engine::EngineID;
 using STI::Engine::EventEngine;
 using STI::Device::DeviceTrace;
 using STI::Engine::LocalEventEngine;
+using STI::Engine::ParseID;
+using STI::Engine::EventEngineJob;
+using STI::Engine::ParsedShot;
+using STI::Engine::LocalEventEngineJob;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice)
@@ -64,7 +73,10 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
 
-    for(auto& evt : shot->events) {
+    std::shared_ptr<STI::Engine::RawEventVector> events;
+    shot->getEvents(events);
+
+    for(auto& evt : *events) {
         eventTargets.insert(evt.targetDevice());
     }
     
@@ -109,7 +121,7 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     }
 
     //Make parse job
-    auto job = std::make_shared<EventEngineJob>(parseID, shot, tree, localDevice->getID(), diff);
+    auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, tree, localDevice->getID(), diff);
 
     addJob(job);
 }
@@ -121,7 +133,7 @@ void LocalEventEngineScheduler::play(const ShotID& shotID)
     jobID.pid = shotID.parseID;
     jobID.sid = shotID;
     jobID.type = EventEngineJobType::Play;
-    auto job = std::make_shared<EventEngineJob>(jobID, localDevice->getID());
+    auto job = std::make_shared<LocalEventEngineJob>(jobID, localDevice->getID());
 
     addJob(job);
 }
@@ -428,12 +440,59 @@ void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& ne
     jobCondition.notify_all();
 }
 
+void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
+{
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+    
+    // std::set<EngineJobID> jobIDs;
+    // runningJobs.getKeys(jobIDs);
+    
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineManager> manager;
+
+    // auto it = jobIDs.find(jobID);   //find in runningJobs
+
+    // if (it != jobIDs.end() && runningJobs.get(*it, job) && job != 0) {
+    //     runningJobs.remove(jobID);
+    //     job->markCancelled();
+    //     completedJobs.add(jobID, job);
+
+    //     if (getManager(jobID, manager) && manager != 0) {
+    //         manager->abortJob();
+    //     }        
+    // }
+
+    if (runningJobs.get(jobID, job) && job != 0) {
+        runningJobs.remove(jobID);
+        //job->markCancelled();
+        
+        if (getManager(jobID, manager) && manager != 0) {
+            manager->abortJob();
+        }
+        
+        completedJobs.add(jobID, job);
+    }
+
+    jobCondition.notify_all();
+}
+
+std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::createJob(const ParseID& parseID, 
+                                          const std::shared_ptr<ParsedShot>& shot,
+                                          const std::shared_ptr<EventEngineDependencyTree>& tree, 
+                                          const STI::Device::DeviceID& owner, 
+                                          const std::set<STI::Device::DeviceID>& missingTargets)
+{
+    auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, tree, owner, missingTargets);
+    return job;
+}
+
 void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
 {
     std::shared_ptr<EventEngineJob> job;
     
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
+        job->markComplete();
         completedJobs.add(jobID, job);
     }
 
@@ -515,6 +574,7 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
 
     return false;
 }
+
 
 bool LocalEventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID, 
                                                  std::set<EngineID>& freeEngines, EngineID& engineID)

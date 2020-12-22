@@ -51,6 +51,8 @@ public:
 	//	double time, unsigned short channel, const STI::Utils::MixedValue& value,
 	//	const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
 	
+	RawEvent() {}
+
 	RawEvent(const STI::Device::DeviceID& targetDeviceID,
 		double time, unsigned short channel, const STI::Utils::MixedValue& value,
 		const std::string& description, unsigned eventNumber, const RawEventType& eventType);
@@ -90,6 +92,14 @@ public:
 	bool operator==(const RawEvent& rhs) const { return eventGraphPath == rhs.eventGraphPath; }
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }
 
+
+	void setTargetID(const STI::Device::DeviceID& targetID) { targetDeviceID = targetID; }
+	void setTime(double time) { _time = time; }
+	void setChannel(unsigned short channel) { _channel = channel; }
+	void setValue(const STI::Utils::MixedValue& value) { _value = value; }
+	void setDescription(const std::string& description) { _description = description; }
+	void setEventGraphPath(const STI::Utils::GraphPathLabel& pathLabel) { eventGraphPath = pathLabel;}
+	void setEventType(const RawEventType& eventType) { _eventType = eventType; }
 
 private:
 	

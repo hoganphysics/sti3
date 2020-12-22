@@ -8,6 +8,7 @@ namespace STI
 namespace Engine
 {
 
+
 class TriggerCallbackTarget		//interface
 {
 public:
@@ -19,19 +20,16 @@ public:
 
 };
 
+
 class TriggerCallback
 {
 public:
 
-	TriggerCallback(TriggerCallbackTarget* target) : cbTarget(target) {}
-	~TriggerCallback() {}
+	virtual ~TriggerCallback() {}
 
-	void ready(const STI::Device::DeviceID& id) { cbTarget->ready(id); }
-	void triggerFired(const STI::Device::DeviceID& id) { cbTarget->triggerFired(id); }
+	virtual void ready(const STI::Device::DeviceID& id) = 0;
+	virtual void triggerFired(const STI::Device::DeviceID& id) = 0;
 
-private:
-
-	TriggerCallbackTarget* cbTarget;
 };
 
 } //Engine

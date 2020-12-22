@@ -9,13 +9,15 @@
 #include "DeviceEventParser.h"
 #include "EngineState.h"
 #include "EventEngineDependencyTree.h"
-#include "EventEngineJob.h"
+#include "LocalEventEngineJob.h"
 #include "EventEngineParser.h"
 #include "EventEngineScheduler.h"
 //#include "RawEvent.h"
 #include "SynchronousEvent.h"
-#include "TriggerCallback.h"
+#include "LocalTriggerCallback.h"
 #include "Device.h"
+#include "ParsedShot.h"
+#include "LocalParsedShot.h"
 
 #include <memory>
 #include <thread>
@@ -34,7 +36,9 @@ using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 using STI::Engine::DeviceEventMap;
 using STI::Engine::TimeStamp;
-
+using STI::Engine::LocalEventEngineJob;
+using STI::Engine::LocalParsedShot;
+using STI::Engine::LocalTriggerCallback;
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
@@ -49,7 +53,8 @@ const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std
 	measurementBuffer(3),
 	localDeviceID(localID),
 	localChannels(channels),
-	deviceCollection(collection)
+	deviceCollection(collection),
+	cancelled(false)
 {
 }
 
@@ -70,6 +75,7 @@ void LocalEventEngine::clear()
 
 	//If this fails for some reason, getState() will reflect this.
 	setState(EngineState::Idle);
+	cancelled = false;
 }
 
 /// Get the list of DeviceIDs that name this device as their server
@@ -154,7 +160,7 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 	}
 }
 
-void LocalEventEngine::parse(const STI::Engine::EventEngineJob& job)
+void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);		//parse function is not reentrant
 
@@ -164,13 +170,25 @@ void LocalEventEngine::parse(const STI::Engine::EventEngineJob& job)
 		return;
 	}
 
+	std::shared_ptr<ParsedShot> parsedShot;
+
+    if (!job.getParsedShot(parsedShot)) {
+		//Error: no parsed shot
+		return;
+	}
+    if (!job.getDependencies(dependencyTree)) {
+		//Error: no tree
+		return;
+	}
+
 	lastParseID = job.getJobID().pid;
-	dependencyTree = job.dependencies;
+//	dependencyTree = job.dependencies;
 
-	auto parsedShot = job.parsedShot;
-	RawEventVector& events = parsedShot->events;
+//	auto parsedShot = job.parsedShot;
+	std::shared_ptr<RawEventVector> events;
+	parsedShot->getEvents(events);
 
-	divideEvents(events);
+	divideEvents(*events);
 
 	//Get the subtree with the localDeviceID as root (Note, the graph is already known to be a DAG)
 	localSubtree = std::make_shared<EventEngineDependencyTree>();
@@ -221,7 +239,7 @@ void LocalEventEngine::parse(const STI::Engine::EventEngineJob& job)
 	}
 }
 
-void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job)
+void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job)
 {
 	if (id == localDeviceID) {
 		//Parse local
@@ -239,15 +257,24 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, const STI::E
 	    std::shared_ptr<STI::Device::Device> device;
     	std::shared_ptr<EventEngineScheduler> scheduler;
 
-		auto shot = std::make_shared<ParsedShot>();
-		shot->events = std::move(eventsByTarget[id]);		//expensive deep copy?
+		auto shot = std::make_shared<LocalParsedShot>();
+		auto evts = std::make_shared<RawEventVector>();
+		(*evts) = std::move(eventsByTarget[id]);
+		//shot->events = std::move(eventsByTarget[id]);		//expensive deep copy?
+		shot->setEvents(evts);
 
-		auto newJob = std::make_shared<EventEngineJob>(job.getJobID().pid, shot,
-                   dependencyTree, job.jobOwner, job.missingTargetIDs);
+		// auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot,
+        //            dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
 
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 				
+				//make the scheduler into a factory so remote schedulers will make remotejobs?
+				auto newJob = scheduler->createJob(job.getJobID().pid, shot,
+                   dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
+				
+				job.attachSubjob(newJob);
+
 				scheduler->addJob(newJob);
 				ownedTargets.push_back(id);
 		}
@@ -313,7 +340,7 @@ void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& 
 		
 		if (deviceCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
 			
-				auto newJob = std::make_shared<EventEngineJob>(jobID, jobOwner);
+				auto newJob = std::make_shared<LocalEventEngineJob>(jobID, jobOwner);
 				scheduler->addJob(newJob);
 		}
 		else {
@@ -329,7 +356,7 @@ TimeStamp LocalEventEngine::getCurrentTimeStamp()
 	return ts;
 }
 
-void LocalEventEngine::play(const EventEngineJob& job)
+void LocalEventEngine::play(EventEngineJob& job)
 {
 	if (!isState(EngineState::Parsed) && lastParseID != job.getJobID().pid) {
 		//Error: this device is not parsed for this job. Should not happen because EngineScheduler should check.
@@ -338,9 +365,11 @@ void LocalEventEngine::play(const EventEngineJob& job)
 	}
 
 	std::unique_lock<std::mutex> playLock(playMutex);
+	cancelled = false;
 
 	if (!setState(EngineState::PreparingPlay)) {
 		//error
+		cancelled = true;
 		return;
 	}
 
@@ -349,7 +378,7 @@ void LocalEventEngine::play(const EventEngineJob& job)
 	TimeStamp playTime;
 	EngineJobID jobID = job.getJobID();
 	
-	isJobOwner = (job.jobOwner == localDeviceID);
+	isJobOwner = (job.getJobOwner() == localDeviceID);
 
 	if (isJobOwner) {
 		playTime = getCurrentTimeStamp();
@@ -359,7 +388,7 @@ void LocalEventEngine::play(const EventEngineJob& job)
 	}
 	jobID.sid.playTime = playTime;
 
-	preparePlayAll(jobID, job.jobOwner);
+	preparePlayAll(jobID, job.getJobOwner());
 
 	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {
@@ -384,7 +413,7 @@ void LocalEventEngine::play(const EventEngineJob& job)
 	newMessage->jobID.pid = job.getJobID().pid;
 	newMessage->jobID.sid = job.getJobID().sid;
 	newMessage->jobID.type = job.getJobID().type;
-	newMessage->engine = job.getEngine();	//pass local engine reference upstream to server
+	job.getEngine( newMessage->engine );	//pass local engine reference upstream to server
 
 	if (isState(EngineState::PlayReady)) {
 		sendMessage(newMessage);
@@ -392,17 +421,32 @@ void LocalEventEngine::play(const EventEngineJob& job)
 
 	// Setup trigger
 
-	STI::Device::DeviceID triggerDeviceID = job.jobOwner;	//temp!
+	STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
 	masterTrigger = std::make_shared<LocalEventEngine::MasterTrigger>(this, triggerDeviceID);
 	masterTrigger->arm();
 
 	if (isJobOwner || ownedTargets.size() > 0) {
 		
-		masterTriggerCB = std::make_shared<TriggerCallback>(masterTrigger.get());
+		masterTriggerCB = std::make_shared<LocalTriggerCallback>(masterTrigger.get());
 
 		if (isJobOwner) {
-			play(jobID, *masterTriggerCB, false);
+			play(jobID, masterTriggerCB, false);
 		}
+	}
+
+	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
+
+	if (!isState(EngineState::Parsed)) {
+		job.markCancelled();
+		cancelled = true;
+	}
+}
+
+void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLock)
+{
+	while (isState(EngineState::PlayReady) || isState(EngineState::PreparingPlay) ||
+		   isState(EngineState::WaitingForTrigger) || isState(EngineState::Playing)) {
+		playCondition.wait(playLock);
 	}
 }
 
@@ -414,9 +458,10 @@ void LocalEventEngine::resetPlayThread()
 	}
 }
 
-void LocalEventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
+void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
 	if (!isState(EngineState::PlayReady)) {
+		cancelled = true;
 		return;
 	}
 
@@ -446,7 +491,7 @@ void LocalEventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB
 
 	if (ownedTargets.size() > 0 && masterTriggerCB != 0) {
 		//masterTrigger is the local server's master trigger (works for all levels of network)
-		playAll(jobID, *masterTriggerCB, debug);		//all owned devices
+		playAll(jobID, masterTriggerCB, debug);		//all owned devices
 	}
 
 	if (isJobOwner || ownedTargets.size() > 0) {	//this device is a server for some devices
@@ -455,7 +500,7 @@ void LocalEventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB
 	}
 
 	resetPlayThread();
-	playThread = std::thread(&LocalEventEngine::preplay, this, std::ref(triggerCB));	//callback to calling server (not masterTrigger) 
+	playThread = std::thread(&LocalEventEngine::preplay, this, std::ref(*triggerCB));	//callback to calling server (not masterTrigger) 
 
 	if (isJobOwner) {
 		masterTrigger->arm(localDeviceID);
@@ -465,7 +510,7 @@ void LocalEventEngine::play(const EngineJobID& jobID, TriggerCallback& triggerCB
 	}
 }
 
-void LocalEventEngine::playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug)
+void LocalEventEngine::playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
 	for (auto& engine : engines) {
 		engine.second->play(jobID, triggerCB, debug);
@@ -508,7 +553,7 @@ void LocalEventEngine::waitForTrigger() const
 	}
 }
 
-void LocalEventEngine::trigger(STI::Device::DeviceID& target)
+void LocalEventEngine::trigger(const STI::Device::DeviceID& target)
 {
 	//Triggers a specific device (allows any device to act as the system trigger)
 	if (target == localDeviceID) {
@@ -547,8 +592,11 @@ void LocalEventEngine::triggerOwnedDevices()
 
 bool LocalEventEngine::playDeviceEvents()
 {
+	std::unique_lock<std::mutex> playLock(playMutex);
+
 	if (!setState(EngineState::Playing)) {
-		return setState(EngineState::Error);
+		setState(EngineState::Error);
+		return false;
 	}
 
 	//launch measurements thread
@@ -571,11 +619,14 @@ bool LocalEventEngine::playDeviceEvents()
 
 	measurementThread.join();	//wait for measurement collection to complete
 
+	bool success = true;
 	if (isState(EngineState::Playing)) {
 		if (!setState(EngineState::Parsed)) {
-			return setState(EngineState::Error);
+			setState(EngineState::Error);
+			success = false;
 		}
 	}
+	playCondition.notify_all();
 
 	return true;	//play and collect were a success
 }
@@ -635,18 +686,23 @@ void LocalEventEngine::stop()
 	switch (getState()) {
 	case EngineState::Parsing:
 		success = setState(EngineState::Idle);
+		cancelled = true;
 		break;	
 	case EngineState::PreparingPlay:
 	case EngineState::WaitingForTrigger:
 	case EngineState::Playing:
 		success = setState(EngineState::Parsed);
+		cancelled = true;
 		break;
 	}
+	
 
 	stopDeviceEvents();
 	trigger();			//in case WaitingForTrigger
 
 	stopOwnedDevices();
+
+	playCondition.notify_all();		//release play(job)
 
 	if (!success) {
 		setState(EngineState::Error);

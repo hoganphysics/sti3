@@ -4,6 +4,8 @@
 #include "EngineState.h"
 #include "DeviceID.h"
 
+#include <memory>
+
 namespace STI
 {
 namespace Engine
@@ -20,11 +22,11 @@ public:
 
 	virtual ~EventEngine() {}
 
-	virtual void play(const EventEngineJob& job) = 0;
-	virtual void play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug = false) = 0;
+	virtual void play(EventEngineJob& job) = 0;
+	virtual void play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug = false) = 0;
 
 	virtual void trigger() = 0;
-	virtual void trigger(STI::Device::DeviceID& target) = 0;		//triggers just target
+	virtual void trigger(const STI::Device::DeviceID& target) = 0;		//triggers just target
 
 	virtual void stop() = 0;
 	virtual void pause() = 0;

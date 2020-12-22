@@ -1,16 +1,9 @@
 #ifndef STI_ENGINE_EVENTENGINEJOB_H
 #define STI_ENGINE_EVENTENGINEJOB_H
 
-
-#include "EngineJobID.h"
 #include "DeviceID.h"
-#include "ParsedShot.h"
-#include "EngineID.h"
 
 #include <set>
-#include <map>
-#include <memory>
-#include <mutex>
 
 namespace STI
 {
@@ -19,7 +12,9 @@ namespace Engine
 
 class EventEngineDependencyTree;
 class EventEngine;
-
+class EngineID;
+class ParsedShot;
+class EngineJobID;
 
 class EventEngineJob
 {
@@ -27,42 +22,27 @@ public:
 
     enum class EngineJobStatus { New, Running, Completed, Cancelled };
 
-    //Parse jobs
-    EventEngineJob(const ParseID& parseID, 
-                   const std::shared_ptr<ParsedShot>& shot,
-                   const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                   const STI::Device::DeviceID& owner, 
-                   const std::set<STI::Device::DeviceID>& missingTargets);
+    virtual ~EventEngineJob() {}
 
-    //Play jobs
-    EventEngineJob(const EngineJobID& id, 
-                   const STI::Device::DeviceID& owner);
+    virtual EngineJobID getJobID() const = 0;
+    virtual STI::Device::DeviceID getJobOwner() const = 0;
+    virtual EngineJobStatus getStatus() const = 0;
 
-    EngineJobID getJobID() const;
+    virtual void markRunning(const EngineID& id) = 0;
+    virtual void markComplete() = 0;
+    virtual void markCancelled() = 0;
 
-    EngineJobStatus getStatus() const;
-    void markRunning(const EngineID& id);
-    void markComplete();
-    void markCancelled();
+    virtual void attachSubjob(const std::shared_ptr<EventEngineJob>& job) = 0;
 
-    const EngineID& getEngineID() const { return engineID; }
-    std::shared_ptr<EventEngine> getEngine() const { return engine; }
-    void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine) { engine = eventEngine; }
-    
-    std::shared_ptr<ParsedShot> parsedShot;
-    std::shared_ptr<EventEngineDependencyTree> dependencies;
-    STI::Device::DeviceID jobOwner;
-    std::set<STI::Device::DeviceID> missingTargetIDs;
-    
-private:
+    virtual const EngineID& getEngineID() const = 0;
+    virtual bool getEngine(std::shared_ptr<EventEngine>& eventEngine) const  = 0;
+    virtual void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine)  = 0;
 
-    EngineJobID jobID;
-    EngineID engineID;
-    std::shared_ptr<EventEngine> engine;
+    virtual bool getParsedShot(std::shared_ptr<ParsedShot>& shot) const = 0;
+    virtual bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
 
-    EngineJobStatus status;
+    virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
 
-	mutable std::mutex jobMutex;
 };
 
 

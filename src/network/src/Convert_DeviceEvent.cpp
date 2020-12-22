@@ -2,6 +2,8 @@
 #include "NetworkConvert.h"
 #include "DeviceEvent.h"
 #include "DeviceID.h"
+#include "RemoteEventEngine.h"
+#include "Convert_EventEngine.h"
 
 #include "orbTypes.h"
 
@@ -24,30 +26,39 @@ TDeviceEventType STI::Network::convert<DeviceEventType, TDeviceEventType>(const 
 
 	switch (type)
 	{
-	case DeviceEventType::AttributesRefresh:
-		tType = TDeviceEventType::AttributesRefresh;
-		break;
-	case DeviceEventType::AttributeUpdate:
-		tType = TDeviceEventType::AttributeUpdate;
-		break;
-	case DeviceEventType::ChannelsRefresh:
-		tType = TDeviceEventType::ChannelsRefresh;
-		break;
-	case DeviceEventType::ChannelUpdate:
-		tType = TDeviceEventType::ChannelUpdate;
-		break;
-	case DeviceEventType::CollectionUpdate:
-		tType = TDeviceEventType::CollectionUpdate;
-		break;		
-	case DeviceEventType::MonitorUpdate:
-		tType = TDeviceEventType::MonitorUpdate;
-		break;
-	case DeviceEventType::Refresh:
-		tType = TDeviceEventType::Refresh;
-		break;
-	default:
-		tType = TDeviceEventType::Unknown;
-		break;
+		case DeviceEventType::Refresh:
+			tType = TDeviceEventType::MessageRefresh;
+			break;
+		case DeviceEventType::CollectionUpdate:
+			tType = TDeviceEventType::MessageCollectionUpdate;
+			break;
+		case DeviceEventType::ChannelUpdate:
+			tType = TDeviceEventType::MessageChannelUpdate;
+			break;
+		case DeviceEventType::ChannelsRefresh:
+			tType = TDeviceEventType::MessageChannelsRefresh;
+			break;
+		case DeviceEventType::AttributeUpdate:
+			tType = TDeviceEventType::MessageAttributeUpdate;
+			break;
+		case DeviceEventType::AttributesRefresh:
+			tType = TDeviceEventType::MessageAttributesRefresh;
+			break;
+		case DeviceEventType::MonitorUpdate:
+			tType = TDeviceEventType::MessageMonitorUpdate;
+			break;
+		case DeviceEventType::EngineScheduler:
+			tType = TDeviceEventType::MessageEngineScheduler;
+			break;
+		case DeviceEventType::EngineParser:
+			tType = TDeviceEventType::MessageEngineParser;
+			break;
+		case DeviceEventType::EngineStatus:
+			tType = TDeviceEventType::MessageEngineStatus;
+			break;
+		default:
+			tType = TDeviceEventType::MessageUnknown;
+			break;
 	}
 
 	return tType;
@@ -60,30 +71,39 @@ DeviceEventType STI::Network::convert<TDeviceEventType, DeviceEventType>(const T
 
 	switch (tType)
 	{
-	case TDeviceEventType::AttributesRefresh:
-		type = DeviceEventType::AttributesRefresh;
-		break;
-	case TDeviceEventType::AttributeUpdate:
-		type = DeviceEventType::AttributeUpdate;
-		break;
-	case TDeviceEventType::ChannelsRefresh:
-		type = DeviceEventType::ChannelsRefresh;
-		break;
-	case TDeviceEventType::ChannelUpdate:
-		type = DeviceEventType::ChannelUpdate;
-		break;
-	case TDeviceEventType::CollectionUpdate:
-		type = DeviceEventType::CollectionUpdate;
-		break;
-	case TDeviceEventType::MonitorUpdate:
-		type = DeviceEventType::MonitorUpdate;
-		break;
-	case TDeviceEventType::Refresh:
-		type = DeviceEventType::Refresh;
-		break;
-	default:
-		type = DeviceEventType::Unknown;
-		break;
+		case TDeviceEventType::MessageRefresh:
+			type = DeviceEventType::Refresh;
+			break;
+		case TDeviceEventType::MessageCollectionUpdate:
+			type = DeviceEventType::CollectionUpdate;
+			break;
+		case TDeviceEventType::MessageChannelUpdate:
+			type = DeviceEventType::ChannelUpdate;
+			break;
+		case TDeviceEventType::MessageChannelsRefresh:
+			type = DeviceEventType::ChannelsRefresh;
+			break;
+		case TDeviceEventType::MessageAttributeUpdate:
+			type = DeviceEventType::AttributeUpdate;
+			break;
+		case TDeviceEventType::MessageAttributesRefresh:
+			type = DeviceEventType::AttributesRefresh;
+			break;
+		case TDeviceEventType::MessageMonitorUpdate:
+			type = DeviceEventType::MonitorUpdate;
+			break;
+		case TDeviceEventType::MessageEngineScheduler:
+			type = DeviceEventType::EngineScheduler;
+			break;
+		case TDeviceEventType::MessageEngineParser:
+			type = DeviceEventType::EngineParser;
+			break;
+		case TDeviceEventType::MessageEngineStatus:
+			type = DeviceEventType::EngineStatus;
+			break;
+		default:
+			type = DeviceEventType::Unknown;
+			break;
 	}
 
 	return type;
@@ -183,7 +203,7 @@ bool STI::Network::convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>
 	bool success = false;
 
 	switch (tAnyEvent.type) {
-	case TDeviceEventType::Refresh:
+	case TDeviceEventType::MessageRefresh:
 
 		success = extractEvent<STI::TNetwork::TRefreshDeviceEvent, STI::Device::RefreshDeviceEvent>(tAnyEvent.evt, deviceEvent);
 
@@ -194,6 +214,11 @@ bool STI::Network::convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>
 		//if (tAnyEvent.evt >>= evt) {	//memory managed by CORBA::Any
 
 		//}
+		break;
+	case TDeviceEventType::MessageEngineScheduler:
+
+		success = extractEvent<STI::TNetwork::TEngineSchedulerMessage, STI::Device::EngineSchedulerMessage>(tAnyEvent.evt, deviceEvent);
+
 		break;
 	}
 
@@ -210,3 +235,28 @@ bool STI::Network::convert<STI::TNetwork::TRefreshDeviceEvent, std::shared_ptr<S
 
 	return deviceEvent != 0;
 }
+
+template<>
+bool STI::Network::convert<STI::TNetwork::TEngineSchedulerMessage, std::shared_ptr<STI::Device::EngineSchedulerMessage>>(
+			const STI::TNetwork::TEngineSchedulerMessage& tMessage, std::shared_ptr<STI::Device::EngineSchedulerMessage>& deviceMessage)
+{
+
+//EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type)
+
+	deviceMessage = std::make_shared<STI::Device::EngineSchedulerMessage>(
+		convert<TDeviceID, DeviceID>(tMessage.base.sourceID),
+		convert<TDeviceID, DeviceID>(tMessage.originalSource),
+		convert<STI::TNetwork::TSchedulerMessageType, STI::Device::EngineSchedulerMessage::SchedulerMessageType>(tMessage.type)
+		);
+
+	if (deviceMessage != 0) {
+
+		convert<STI::TNetwork::TEngineJobID, STI::Engine::EngineJobID>(tMessage.jobID, deviceMessage->jobID);
+		deviceMessage->engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
+		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
+	}
+
+	return deviceMessage != 0;
+}
+

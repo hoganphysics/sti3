@@ -66,7 +66,8 @@ class ParseID;
 class ParsedShot;
 
 
-class LocalEventEngineScheduler : public EventEngineScheduler, public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
+class LocalEventEngineScheduler : public EventEngineScheduler, 
+                                  public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
 {
 public:
     
@@ -85,8 +86,14 @@ public:
     void addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
 
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
+    void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
 
+    std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
+                                              const std::shared_ptr<ParsedShot>& shot,
+                                              const std::shared_ptr<EventEngineDependencyTree>& tree, 
+                                              const STI::Device::DeviceID& owner, 
+                                              const std::set<STI::Device::DeviceID>& missingTargets);
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)

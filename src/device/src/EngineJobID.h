@@ -81,7 +81,7 @@ public:
     
     EventEngineJobType type;
     ParseID pid;
-    ShotID sid;  //for play jobs -- new two Job classes?
+    ShotID sid;
 
 };
 

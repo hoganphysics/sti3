@@ -64,13 +64,13 @@ public:
 	//If DocTarget pulls, it is now the owner of the shot's data and is reponsible for providing persistence.
 	
 	void clear();
-	void parse(const STI::Engine::EventEngineJob& job);
+	void parse(STI::Engine::EventEngineJob& job);
 
-	void play(const STI::Engine::EventEngineJob& job);
-	void play(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
+	void play(STI::Engine::EventEngineJob& job);
+	void play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
 
 	void trigger();
-	void trigger(STI::Device::DeviceID& target);		//triggers just target
+	void trigger(const STI::Device::DeviceID& target);		//triggers just target
 
 	void stop();
 	void pause();
@@ -99,9 +99,11 @@ public:
 
 	const STI::Engine::ParseID& getLastParseID() { return lastParseID; }
 
+	bool jobCancelled() const { return cancelled; }
+
 private:
 
-	void parseDevice(const STI::Device::DeviceID& id, const STI::Engine::EventEngineJob& job);
+	void parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job);
 
 	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
@@ -111,9 +113,10 @@ private:
 	bool setState(EngineState target);
 
 	void preparePlayAll(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
-	void playAll(const EngineJobID& jobID, TriggerCallback& triggerCB, bool debug);
+	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);
 	void preplay(TriggerCallback& triggerCB);
 	void resetPlayThread();
+	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;
@@ -179,6 +182,7 @@ private:
 	EventEngineStateMachine stateMachine;
 	EventEngineParser parser;
 	std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
+	bool cancelled;
 
 	//server events
 	std::map<STI::Device::DeviceID, RawEventVector> eventsByTarget;

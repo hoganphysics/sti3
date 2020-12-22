@@ -80,8 +80,17 @@ bool EventEngineManager::jobRunning()
 
 void EventEngineManager::abortJob()
 {
-   // std::unique_lock<std::mutex> writeLock(jobMutex);
-    engine->stop();
+    std::unique_lock<std::mutex> writeLock(jobMutex);
+    
+    if (currentJob != 0) {
+        currentJob->markCancelled();
+    }
+    
+    if (running) {
+        engine->stop();
+    }
+
+    running = false;
 }
 
 void EventEngineManager::runJob()
@@ -104,8 +113,17 @@ void EventEngineManager::runJob()
 
     std::unique_lock<std::mutex> writeLock(jobMutex);
     running = false;
+    
+    if (engine->jobCancelled()) {
+        scheduler->cancelJob(currentJob->getJobID());
+    }
+    else {
+        scheduler->jobComplete(currentJob->getJobID());
+    }
 
-    scheduler->jobComplete(currentJob->getJobID());
+    // if (currentJob->getStatus() == EventEngineJob::EngineJobStatus::Running) {
+        
+    // }
 }
 
 void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
