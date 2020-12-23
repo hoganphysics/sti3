@@ -27,6 +27,8 @@ public:
 	STI::Device::DeviceID getID();
 
 	void write(unsigned input);
+	
+	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);

@@ -55,7 +55,7 @@ public:
 		DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	~LocalEventEngine();
+	virtual ~LocalEventEngine();
 
 	//Could pass in a DocumentationTarget that the engine (attempts) to use to save data.  Falls back on its local DocTarget.
 	//DocTarget would be passed from the instigating server, and would save to disk.

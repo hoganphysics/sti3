@@ -47,13 +47,15 @@ public:
 		getEngineScheduler(scheduler);
 		
 		STI::Device::Channel ch(1, STI::Device::TChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
-		channels[1] = ch;
+		//channels[1] = ch;
+		localChannels[1] = ch;
 
 		STI::Engine::EngineID id(0);
-		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
-		scheduler->addEngine(id, engine);
+//		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
+//		scheduler->addEngine(id, engine);
 
-		
+		addEventEngine(id);
+
 	}
 	~TestDevice()
 	{
@@ -97,7 +99,7 @@ public:
 		static std::mutex coutMutex;
 	};
 
-	STI::Device::ChannelMap channels;
+	//STI::Device::ChannelMap channels;
 
 };
 

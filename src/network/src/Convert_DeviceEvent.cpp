@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
+#include "NetworkEventEngine.h"
 
 #include "orbTypes.h"
 
@@ -18,6 +19,8 @@ using STI::TNetwork::TDeviceEventType;
 using STI::TNetwork::TDeviceEvent;
 using STI::TNetwork::TAnyEvent;
 
+using STI::TNetwork::TEngineSchedulerMessage;
+using STI::Device::EngineSchedulerMessage;
 
 template<>
 TDeviceEventType STI::Network::convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type)
@@ -149,6 +152,29 @@ bool STI::Network::convert<TDeviceEvent, std::shared_ptr<STI::Device::DeviceEven
 }
 
 
+//T = Ttype (e.g. TRefreshDeviceEvent), D = derived message type (e.g. RefreshDeviceEvent)
+template<typename D, typename T>
+bool convertMessage(const std::shared_ptr<STI::Device::DeviceEvent>& deviceMessage, TAnyEvent& tAnyEvent)
+{
+	bool success = false;
+
+	T tMessage;
+	std::shared_ptr<D> dMessage = std::dynamic_pointer_cast<D>(deviceMessage);	//Derved type
+
+	if (dMessage != 0 
+		&& convert<std::shared_ptr<DeviceEvent>, TDeviceEvent>(deviceMessage, tMessage.base) //convert base
+		&& convert<std::shared_ptr<D>, T>(dMessage, tMessage)) //convert derived
+	{
+		tAnyEvent.evt <<= tMessage;
+		tAnyEvent.type = convert<DeviceEventType, TDeviceEventType>(deviceMessage->getType());
+		success = true;
+	}
+
+	return success;
+}
+
+
+
 template<>
 bool STI::Network::convert<std::shared_ptr<DeviceEvent>, TAnyEvent>(const std::shared_ptr<DeviceEvent>& deviceEvent, TAnyEvent& tAnyEvent)
 {
@@ -161,24 +187,32 @@ bool STI::Network::convert<std::shared_ptr<DeviceEvent>, TAnyEvent>(const std::s
 	switch (deviceEvent->getType())
 	{
 	case DeviceEventType::Refresh:
-		STI::TNetwork::TRefreshDeviceEvent tRefreshEvt;
-		auto rde = std::dynamic_pointer_cast<STI::Device::RefreshDeviceEvent>(deviceEvent);
-		if (rde != 0 &&
-			convert<std::shared_ptr<DeviceEvent>, TDeviceEvent>(deviceEvent, tRefreshEvt.base)) 
 		{
-//			tRefreshEvt.base.type = convert<DeviceEventType, TDeviceEventType>(deviceEvent->getType());
-	//		tRefreshEvt.base.sourceID = convert<DeviceID, TDeviceID>(deviceEvent->sourceID());
-			tAnyEvent.evt <<= tRefreshEvt;
-			tAnyEvent.type = convert<DeviceEventType, TDeviceEventType>(deviceEvent->getType());
-			success = true;
-			//convert<std::shared_ptr<STI::Device::RefreshDeviceEvent>, STI::TNetwork::TRefreshDeviceEvent>(rde, tRefreshEvt);
+			STI::TNetwork::TRefreshDeviceEvent tRefreshEvt;
+			auto rde = std::dynamic_pointer_cast<STI::Device::RefreshDeviceEvent>(deviceEvent);
+			if (rde != 0 &&
+				convert<std::shared_ptr<DeviceEvent>, TDeviceEvent>(deviceEvent, tRefreshEvt.base)) 
+			{
+	//			tRefreshEvt.base.type = convert<DeviceEventType, TDeviceEventType>(deviceEvent->getType());
+		//		tRefreshEvt.base.sourceID = convert<DeviceID, TDeviceID>(deviceEvent->sourceID());
+				tAnyEvent.evt <<= tRefreshEvt;
+				tAnyEvent.type = convert<DeviceEventType, TDeviceEventType>(deviceEvent->getType());
+				success = true;
+				//convert<std::shared_ptr<STI::Device::RefreshDeviceEvent>, STI::TNetwork::TRefreshDeviceEvent>(rde, tRefreshEvt);
+			}
 		}
+		break;
+	case DeviceEventType::EngineScheduler:
+		success = convertMessage<EngineSchedulerMessage, TEngineSchedulerMessage>(deviceEvent, tAnyEvent);
+		break;
 	}
+
 
 	return success;
 }
 
 
+//T = Ttype (e.g. TRefreshDeviceEvent), D = Message type (e.g. RefreshDeviceEvent)
 template<typename T, typename D>
 bool extractEvent(const CORBA::Any& anyEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent)
 {
@@ -217,7 +251,7 @@ bool STI::Network::convert<TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>
 		break;
 	case TDeviceEventType::MessageEngineScheduler:
 
-		success = extractEvent<STI::TNetwork::TEngineSchedulerMessage, STI::Device::EngineSchedulerMessage>(tAnyEvent.evt, deviceEvent);
+		success = extractEvent<TEngineSchedulerMessage, EngineSchedulerMessage>(tAnyEvent.evt, deviceEvent);
 
 		break;
 	}
@@ -237,8 +271,8 @@ bool STI::Network::convert<STI::TNetwork::TRefreshDeviceEvent, std::shared_ptr<S
 }
 
 template<>
-bool STI::Network::convert<STI::TNetwork::TEngineSchedulerMessage, std::shared_ptr<STI::Device::EngineSchedulerMessage>>(
-			const STI::TNetwork::TEngineSchedulerMessage& tMessage, std::shared_ptr<STI::Device::EngineSchedulerMessage>& deviceMessage)
+bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedulerMessage>>(
+			const TEngineSchedulerMessage& tMessage, std::shared_ptr<EngineSchedulerMessage>& deviceMessage)
 {
 
 //EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type)
@@ -258,5 +292,29 @@ bool STI::Network::convert<STI::TNetwork::TEngineSchedulerMessage, std::shared_p
 	}
 
 	return deviceMessage != 0;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSchedulerMessage>(
+			const std::shared_ptr<EngineSchedulerMessage>& deviceMessage, TEngineSchedulerMessage& tMessage)
+{
+	// STI::Device::DeviceID originalSource;
+	// STI::Engine::EngineJobID jobID;
+	// std::shared_ptr<STI::Engine::EventEngine> engine;
+	// std::vector<STI::Engine::RawEvent> handledEvents;
+	// std::vector<STI::Engine::RawEvent> unhandledEvents;	
+	
+	tMessage.originalSource = convert<DeviceID, TDeviceID>(deviceMessage->originalSource);
+	tMessage.jobID = convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(deviceMessage->jobID);
+	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->handledEvents, tMessage.handledEvents);
+	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
+
+	STI::TNetwork::TEventEngine_ptr tEngine;
+	STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine);
+
+//	STI::TNetwork::TEventEngine_var tEngine2(tEngine);
+	tMessage.engine = tEngine;
+
+	return false;
 }
 

@@ -5,6 +5,7 @@
 #include "DeviceEventDispatcher.h"
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
+#include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
 
 #include <memory>
@@ -29,6 +30,12 @@ public:
 
 	NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device)
 		: localDevice(device), deviceServant(device) 
+	{
+		auto networkEngineFactory = std::make_shared<STI::Engine::NetworkEventEngineFactory>();
+		localDevice->setEngineFactory(networkEngineFactory);
+	}
+
+	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory)
 	{
 	}
 
