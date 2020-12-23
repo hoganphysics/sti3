@@ -7,6 +7,9 @@
 #include "LocalCollection.h"
 #include "fwd/EventEngineScheduler_fwd.h"
 #include "DeviceEventParser.h"
+#include "EventEngineFactory.h"
+#include "EngineID.h"
+#include "fwd/Channel_fwd.h"
 
 #include <string>
 
@@ -48,7 +51,13 @@ public:
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
+	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) { eventEngineFactory = engineFactory; }
+	void addEventEngine(const STI::Engine::EngineID& engineID);
+
+
+	STI::Device::ChannelMap localChannels;
 	DeviceID id;
+
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 	void getEventTargets(std::set<DeviceID>& targetIDs)
@@ -71,6 +80,9 @@ private:
 		LocalDevice* localDevice;
 	};
 	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
+
+
+	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
 	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;

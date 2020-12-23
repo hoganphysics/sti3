@@ -5,6 +5,8 @@
 #include "LocalEventEngineScheduler.h"
 #include "DeviceEventListener.h"
 #include "DeviceEvent.h"
+#include "LocalEventEngineFactory.h"
+#include "Channel.h"
 
 #include <memory>
 #include <iostream>
@@ -35,6 +37,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localCollection->addListener(deviceCollectionListener);
 
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
+
+	auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>();
+	setEngineFactory(engineFactory);
 
 }
 
@@ -80,9 +85,14 @@ DeviceID LocalDevice::getID()
 
 void LocalDevice::write(unsigned input)
 {
-	cout << "writting: " << input << endl;
+	cout << "writing: " << input << endl;
 }
 
+void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
+{
+	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceEventDispatcher, localCollection);
+	eventEngineScheduler->addEngine(engineID, engine);
+}
 
 void LocalDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
