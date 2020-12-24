@@ -1,6 +1,7 @@
 
-#include "Convert_EventEngine.h"
 #include "NetworkConvert.h"
+#include "Convert_EventEngine.h"
+
 
 #include "DeviceTrace.h"
 #include "EventEngineDependencyTree.h"
@@ -71,14 +72,14 @@ bool STI::Network::convert<EventEngineDependencyTree, TEventEngineDependencyTree
     
     std::vector<STI::Device::DeviceID> outNodes;
 
-    tTree.vertices.length(nodes.size());
+    tTree.vertices.length(static_cast<CORBA::ULong>(nodes.size()));
 
     for (unsigned i = 0; i < nodes.size(); ++i) {
         convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(nodes.at(i), tTree.vertices[i].id);
         
         tree.getDependedentNodes(nodes.at(i), outNodes);
 
-        tTree.vertices[i].outConnections.length(outNodes.size());
+        tTree.vertices[i].outConnections.length(static_cast<CORBA::ULong>(outNodes.size()));
 
         for (unsigned j = 0; j < outNodes.size(); ++j) {
             tTree.vertices[i].outConnections[j] = vertexMap[nodes.at(i)];
@@ -122,6 +123,8 @@ DeviceTrace STI::Network::convert<TDeviceTrace, DeviceTrace>(const TDeviceTrace&
     for (unsigned i = 0; i < tDeviceTrace.ids.length(); ++i) {
         trace.addID( convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceTrace.ids[i]) );
     }
+
+	return trace;
 }
 
 template<>
@@ -129,6 +132,7 @@ TDeviceTrace STI::Network::convert<DeviceTrace, TDeviceTrace>(const DeviceTrace&
 {
     TDeviceTrace tTrace;
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceTrace.getIDs(), tTrace.ids);
+	return tTrace;
 }
 
 
@@ -249,8 +253,22 @@ bool STI::Network::convert<TEngineJobID, EngineJobID>(const TEngineJobID& tJobID
 template<>
 TEngineJobID STI::Network::convert<EngineJobID, TEngineJobID>(const EngineJobID& jobID)
 {
+	TEngineJobID tJobID;
+
+	convert<EngineJobID, TEngineJobID>(jobID, tJobID);
+
+	return tJobID;
 }
 
+template<>
+EngineJobID STI::Network::convert<TEngineJobID, EngineJobID>(const TNetwork::TEngineJobID& tJobID)
+{
+	EngineJobID jobID;
+
+	convert<TEngineJobID, EngineJobID>(tJobID, jobID);
+
+	return jobID;
+}
 
 
 //EventEngineJobType
@@ -316,6 +334,23 @@ bool STI::Network::convert<TEngineID, EngineID>(const TEngineID& tEngineID, Engi
     return true;
 }
 
+template<>
+TEngineID STI::Network::convert<EngineID, TEngineID>(const EngineID& engineID)
+{
+	TEngineID tEngineID;
+	convert<EngineID, TEngineID>(engineID, tEngineID);
+	return tEngineID;
+}
+
+template<>
+EngineID STI::Network::convert<TEngineID, EngineID>(const TEngineID& tEngineID)
+{
+	EngineID engineID;
+	convert<TEngineID, EngineID>(tEngineID, engineID);
+	return engineID;
+}
+
+
 
 //EngineJobStatus
 template<>
@@ -367,33 +402,65 @@ bool STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(co
     return true;
 }
 
+template<>
+TEngineJobStatus STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(const EventEngineJob::EngineJobStatus& jobStatus)
+{
+	TEngineJobStatus tStatus;
+
+	convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(jobStatus, tStatus);
+
+	return tStatus;
+}
+
+template<>
+EventEngineJob::EngineJobStatus STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(const TEngineJobStatus& tJobStatus)
+{
+	EventEngineJob::EngineJobStatus status;
+
+	convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(tJobStatus, status);
+
+	return status;
+}
+
+
+
 
 //EventEngineJob
 template<>
 bool STI::Network::convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(const std::shared_ptr<EventEngineJob>& engineJob, TEventEngineJob& tEngineJob)
 {
-    tEngineJob.jobID = convert<EngineJobID, TEngineJobID>(engineJob->getJobID());
-    tEngineJob.jobOwner = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob->getJobOwner());
-    tEngineJob.status = convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(engineJob->getStatus());
-    tEngineJob.engineID = convert<EngineID, TEngineID>(engineJob->getEngineID());
+	if (engineJob != 0) {
+		return convert<EventEngineJob, TEventEngineJob>(*engineJob, tEngineJob);
+	}
+
+	return false;
+}
+
+template<>
+bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob& engineJob, TEventEngineJob& tEngineJob)
+{
+    tEngineJob.jobID = convert<EngineJobID, TEngineJobID>(engineJob.getJobID());
+    tEngineJob.jobOwner = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getJobOwner());
+    tEngineJob.status = convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(engineJob.getStatus());
+    tEngineJob.engineID = convert<EngineID, TEngineID>(engineJob.getEngineID());
     
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null
 
     std::shared_ptr<ParsedShot> parsedShot;
     STI::TNetwork::TParsedShot_ptr tShot;
     
-    if (engineJob->getParsedShot(parsedShot) && NetworkParsedShotWrapper::getTParsedShotReference(parsedShot, tShot)) {
+    if (engineJob.getParsedShot(parsedShot) && NetworkParsedShotWrapper::getTParsedShotReference(parsedShot, tShot)) {
 
         tEngineJob.shot = tShot;
     }
 
     std::shared_ptr<EventEngineDependencyTree> tree;
     
-    if (engineJob->getDependencies(tree)) {
+    if (engineJob.getDependencies(tree)) {
         convert<EventEngineDependencyTree, TEventEngineDependencyTree>(*tree, tEngineJob.dependencies);
     }
 
-    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob->getMissingTargetIDs(), tEngineJob.missingTargetIDs);
+    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getMissingTargetIDs(), tEngineJob.missingTargetIDs);
 
     // tEngineJob.eventEngine;
     // std::shared_ptr<EventEngine> engine;
@@ -417,28 +484,18 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
-        
         parsedShot = std::make_shared<STI::Network::RemoteParsedShot>(tEngineJob.shot);
-        
         tree = std::make_shared<EventEngineDependencyTree>();
         convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
-        engineJob = std::make_shared<LocalEventEngineJob>(
-                                    jobID.pid,
-                                    parsedShot,
-                                    tree,
-                                    convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner),
-                                    missingTargets
-                                    );
+		engineJob = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot, tree,
+			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner),
+			missingTargets);
         break;
-    case EventEngineJobType::Play:
-
-        engineJob = std::make_shared<LocalEventEngineJob>(
-                                    jobID,
-                                    convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
-                                    );
-        break;
-    
+	case EventEngineJobType::Play:
+		engineJob = std::make_shared<LocalEventEngineJob>(jobID,
+			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
+		break;
     default:
         break;
     }
@@ -471,7 +528,7 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
     tEvent.targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice());
 
     auto& gpl = evt.getEventGraphPath();
-    tEvent.eventGraphPath.length(gpl.size());
+    tEvent.eventGraphPath.length(static_cast<CORBA::ULong>(gpl.size()));
 
     for (unsigned i = 0; i < gpl.size(); ++i) {
         tEvent.eventGraphPath[i] = static_cast<CORBA::ULong>(gpl.at(i));

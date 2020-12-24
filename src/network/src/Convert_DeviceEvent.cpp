@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
+#include "Convert_DeviceMessage.h"
 #include "NetworkEventEngine.h"
 
 #include "orbTypes.h"
@@ -19,8 +20,15 @@ using STI::TNetwork::TDeviceEventType;
 using STI::TNetwork::TDeviceEvent;
 using STI::TNetwork::TAnyEvent;
 
+using STI::Engine::EventEngineJob;
+using STI::TNetwork::TEventEngineJob;
+
 using STI::TNetwork::TEngineSchedulerMessage;
 using STI::Device::EngineSchedulerMessage;
+
+using STI::Device::EngineSchedulerMessage;
+using STI::TNetwork::TSchedulerMessageType;
+
 
 template<>
 TDeviceEventType STI::Network::convert<DeviceEventType, TDeviceEventType>(const DeviceEventType& type)
@@ -308,13 +316,81 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	tMessage.jobID = convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(deviceMessage->jobID);
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->handledEvents, tMessage.handledEvents);
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
+	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
 	STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine);
+
 
 //	STI::TNetwork::TEventEngine_var tEngine2(tEngine);
 	tMessage.engine = tEngine;
 
 	return false;
 }
+
+
+//SchedulerMessageType
+template<>
+TSchedulerMessageType STI::Network::convert<EngineSchedulerMessage::SchedulerMessageType, TSchedulerMessageType>(const EngineSchedulerMessage::SchedulerMessageType& type)
+{
+	
+	TSchedulerMessageType tType;
+
+	switch (type)
+	{
+	case EngineSchedulerMessage::SchedulerMessageType::ParseComplete:
+		tType = TSchedulerMessageType::SchedulerParseComplete;
+		break;
+	case EngineSchedulerMessage::SchedulerMessageType::YieldParse:
+		tType = TSchedulerMessageType::SchedulerYieldParse;
+		break;
+	case EngineSchedulerMessage::SchedulerMessageType::PartialParse:
+		tType = TSchedulerMessageType::SchedulerPartialParse;
+		break;
+	case EngineSchedulerMessage::SchedulerMessageType::PlayReady:
+		tType = TSchedulerMessageType::SchedulerPlayReady;
+		break;
+	case EngineSchedulerMessage::SchedulerMessageType::YieldPlay:
+		tType = TSchedulerMessageType::SchedulerYieldPlay;
+		break;
+	default:
+		tType = TSchedulerMessageType::SchedulerYieldParse;
+		break;
+	}
+
+	return tType;
+}
+
+template<>
+EngineSchedulerMessage::SchedulerMessageType STI::Network::convert<TSchedulerMessageType, EngineSchedulerMessage::SchedulerMessageType>(const TSchedulerMessageType& tType)
+{
+	EngineSchedulerMessage::SchedulerMessageType type;
+
+	// SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerYieldPlay
+	switch (tType)
+	{
+	case TSchedulerMessageType::SchedulerParseComplete:
+		type = EngineSchedulerMessage::SchedulerMessageType::ParseComplete;
+		break;
+	case TSchedulerMessageType::SchedulerYieldParse:
+		type = EngineSchedulerMessage::SchedulerMessageType::YieldParse;
+		break;
+	case TSchedulerMessageType::SchedulerPartialParse:
+		type = EngineSchedulerMessage::SchedulerMessageType::PartialParse;
+		break;
+	case TSchedulerMessageType::SchedulerPlayReady:
+		type = EngineSchedulerMessage::SchedulerMessageType::PlayReady;
+		break;
+	case TSchedulerMessageType::SchedulerYieldPlay:
+		type = EngineSchedulerMessage::SchedulerMessageType::YieldPlay;
+		break;
+	default:
+		type = EngineSchedulerMessage::SchedulerMessageType::YieldParse;
+		break;
+	}
+
+	return type;
+}
+
+
 

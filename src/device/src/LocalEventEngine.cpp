@@ -18,6 +18,9 @@
 #include "Device.h"
 #include "ParsedShot.h"
 #include "LocalParsedShot.h"
+#include "EventEngineJob.h"
+#include "EngineJobID.h"
+
 
 #include <memory>
 #include <thread>
@@ -39,6 +42,8 @@ using STI::Engine::TimeStamp;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalParsedShot;
 using STI::Engine::LocalTriggerCallback;
+using STI::Engine::EventEngineJob;
+using STI::Engine::EngineJobID;
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system

@@ -63,6 +63,8 @@ bool Network::convert<TNetwork::TEngineJobID, Engine::EngineJobID>(const TNetwor
 
 template<>
 TNetwork::TEngineJobID Network::convert<Engine::EngineJobID, TNetwork::TEngineJobID>(const Engine::EngineJobID& jobID);
+template<>
+Engine::EngineJobID Network::convert<TNetwork::TEngineJobID, Engine::EngineJobID>(const TNetwork::TEngineJobID& tJobID);
 
 
 //EventEngineJobType
@@ -78,12 +80,24 @@ bool Network::convert<Engine::EngineID, TNetwork::TEngineID>(const Engine::Engin
 template<>
 bool Network::convert<TNetwork::TEngineID, Engine::EngineID>(const TNetwork::TEngineID& tEngineID, Engine::EngineID& engineID);
 
+template<>
+TNetwork::TEngineID Network::convert<Engine::EngineID, TNetwork::TEngineID>(const Engine::EngineID& engineID);
+template<>
+Engine::EngineID Network::convert<TNetwork::TEngineID, Engine::EngineID>(const TNetwork::TEngineID& tEngineID);
+
+
 
 //EngineJobStatus
 template<>
 bool Network::convert<Engine::EventEngineJob::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EventEngineJob::EngineJobStatus& jobStatus, TNetwork::TEngineJobStatus& tJobStatus);
 template<>
 bool Network::convert<TNetwork::TEngineJobStatus, Engine::EventEngineJob::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus, Engine::EventEngineJob::EngineJobStatus& jobStatus);
+
+template<>
+TNetwork::TEngineJobStatus Network::convert<Engine::EventEngineJob::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EventEngineJob::EngineJobStatus& jobStatus);
+template<>
+Engine::EventEngineJob::EngineJobStatus Network::convert<TNetwork::TEngineJobStatus, Engine::EventEngineJob::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus);
+
 
 
 //EventEngineJob
@@ -94,6 +108,10 @@ bool Network::convert<TNetwork::TEngineJobStatus, Engine::EventEngineJob::Engine
 // Engine::LocalEventEngineJob Network::convert<TNetwork::TEventEngineJob, Engine::LocalEventEngineJob>(const TNetwork::TEventEngineJob& tEngineJob);
 template<>
 TNetwork::TEventEngineJob Network::convert<Engine::EventEngineJob, TNetwork::TEventEngineJob>(const Engine::EventEngineJob& engineJob);
+
+template<>
+bool Network::convert<Engine::EventEngineJob, TNetwork::TEventEngineJob>(const Engine::EventEngineJob& engineJob, TNetwork::TEventEngineJob& tEngineJob);
+
 template<>
 bool Network::convert<std::shared_ptr<Engine::EventEngineJob>, TNetwork::TEventEngineJob>(const std::shared_ptr<Engine::EventEngineJob>& engineJob, TNetwork::TEventEngineJob& tEngineJob);
 template<>

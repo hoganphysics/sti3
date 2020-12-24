@@ -170,5 +170,7 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 		remoteScheduler = std::make_shared<RemoteEventEngineScheduler>(tEngineScheduler);
 		scheduler = remoteScheduler;
 	}
+
+	return success;
 }
 

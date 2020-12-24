@@ -176,6 +176,10 @@ TNetwork::TMixedValue Network::convert<Utils::MixedValue, TNetwork::TMixedValue>
 template<>
 Utils::MixedValue Network::convert<TNetwork::TMixedValue, Utils::MixedValue>(const TNetwork::TMixedValue& tValue);
 
+template<>
+bool Network::convert<Utils::MixedValue, TNetwork::TMixedValue>(const Utils::MixedValue& value, TNetwork::TMixedValue& tValue);
+template<>
+bool Network::convert<TNetwork::TMixedValue, Utils::MixedValue>(const TNetwork::TMixedValue& tValue, Utils::MixedValue& value);
 
 
 //DeviceEvent
@@ -201,6 +205,8 @@ bool Network::convert<TNetwork::TDeviceEventType, Device::DeviceEventType>(const
 
 template<>
 bool Network::convert<TNetwork::TRefreshDeviceEvent, std::shared_ptr<Device::RefreshDeviceEvent>>(const TNetwork::TRefreshDeviceEvent& tEvent, std::shared_ptr<Device::RefreshDeviceEvent>& deviceEvent);
+
+
 
 
 } //STI

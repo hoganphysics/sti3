@@ -18,11 +18,20 @@ using STI::Network::convert;
 using STI::Engine::EngineState;
 using STI::Network::RemoteTriggerCallback;
 using STI::Engine::EventEngineJob;
+using STI::Engine::EngineJobID;
+using STI::TNetwork::TEventEngineJob;
 
-TEventEngine_i::TEventEngine_i(const std::shared_ptr<EventEngine>& engine)
+//TEventEngine_i::TEventEngine_i(const std::shared_ptr<EventEngine>& engine)
+//: eventEngine(engine)
+//{
+//}
+
+TEventEngine_i::TEventEngine_i(STI::Engine::EventEngine* engine)
 : eventEngine(engine)
 {
 }
+
+
 
 TEventEngine_i::~TEventEngine_i()
 {
@@ -33,7 +42,7 @@ void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)
 //void TEventEngine_i::play(::STI::TNetwork::TEventEngineJob_ptr job)
 {
     std::shared_ptr<EventEngineJob> engineJob;
-    convert<TNetwork::TEventEngineJob, std::shared_ptr<EventEngineJob>>(job, engineJob);
+    convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(job, engineJob);
 
     if (eventEngine != 0 && engineJob != 0) {
 
@@ -50,7 +59,7 @@ void TEventEngine_i::playCB(const TEngineJobID& jobID,
     if (eventEngine != 0) {
 
 		eventEngine->play(
-                convert<TEngineJobID, STI::Engine::EngineJobID>(jobID),
+                convert<TEngineJobID, EngineJobID>(jobID),
                 remoteTriggerCB,
                 static_cast<bool>(debug)
                 );

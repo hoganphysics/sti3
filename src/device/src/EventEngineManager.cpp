@@ -5,6 +5,7 @@
 #include "LocalEventEngineScheduler.h"
 #include "ParseID.h"
 #include "EngineID.h"
+#include "LocalEventEngine.h"
 
 #include <mutex>
 
@@ -12,6 +13,8 @@ using STI::Engine::EventEngineManager;
 using STI::Engine::EventEngineJob;
 using STI::Engine::ParseID;
 using STI::Engine::EngineID;
+using STI::Engine::LocalEventEngine;
+using STI::Engine::LocalEventEngineScheduler;
 
 
 EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler)
@@ -59,6 +62,7 @@ bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
 
     jobThread = std::thread(&EventEngineManager::runJob, this);
     
+	return true;
 }
 
 bool EventEngineManager::getJob(std::shared_ptr<EventEngineJob>& job)

@@ -7,6 +7,8 @@
 #include "DeviceID.h"
 #include "ParseID.h"
 #include "EngineJobID.h"
+#include "EngineID.h"
+
 
 #include <set>
 #include <memory>
@@ -19,7 +21,7 @@ using STI::Engine::ParsedShot;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
 using STI::Device::DeviceID;
-
+using STI::Engine::EngineID;
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<ParsedShot>& shot,

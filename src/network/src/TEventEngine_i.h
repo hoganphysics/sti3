@@ -17,7 +17,8 @@ class TEventEngine_i : public POA_STI::TNetwork::TEventEngine
 {
 public:
 
-	TEventEngine_i(const std::shared_ptr<STI::Engine::EventEngine>& engine);
+	//TEventEngine_i(const std::shared_ptr<STI::Engine::EventEngine>& engine);
+	TEventEngine_i(STI::Engine::EventEngine* engine);
 	~TEventEngine_i();
 
     void play(const ::STI::TNetwork::TEventEngineJob& job);
@@ -34,8 +35,9 @@ public:
 
 private:
 
-    std::shared_ptr<STI::Engine::EventEngine> eventEngine;
-    
+	//std::shared_ptr<STI::Engine::EventEngine> eventEngine;
+	STI::Engine::EventEngine* eventEngine;
+
     std::shared_ptr<STI::Network::RemoteTriggerCallback> remoteTriggerCB;
 
 };

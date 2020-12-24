@@ -12,6 +12,9 @@
 #include "ParsedShot.h"
 #include "LocalEventEngineJob.h"
 
+#include "ShotID.h"
+#include "EngineJobID.h"
+
 #include <set>
 #include <vector>
 #include <memory>
@@ -31,6 +34,9 @@ using STI::Engine::ParseID;
 using STI::Engine::EventEngineJob;
 using STI::Engine::ParsedShot;
 using STI::Engine::LocalEventEngineJob;
+using STI::Engine::ShotID;
+using STI::Engine::EngineJobID;
+using STI::Engine::EventEngineManager;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice)

@@ -129,6 +129,8 @@
     <ClInclude Include="..\..\..\include\LocalCollection.h" />
     <ClInclude Include="..\..\..\include\NetworkDeviceHub.h" />
     <ClInclude Include="..\src\ConvertList.h" />
+    <ClInclude Include="..\src\Convert_DeviceMessage.h" />
+    <ClInclude Include="..\src\Convert_EventEngine.h" />
     <ClInclude Include="..\src\COSBindingNode.h" />
     <ClInclude Include="..\src\deviceNet.h" />
     <ClInclude Include="..\src\Distributer.h" />
@@ -139,6 +141,9 @@
     <ClInclude Include="..\src\NetworkDeviceEventHandlerWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceHubWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceWrapper.h" />
+    <ClInclude Include="..\src\NetworkEventEngine.h" />
+    <ClInclude Include="..\src\NetworkEventEngineFactory.h" />
+    <ClInclude Include="..\src\NetworkParsedShotWrapper.h" />
     <ClInclude Include="..\src\NodeWalker.h" />
     <ClInclude Include="..\src\Convert_HubNodeWalker.h" />
     <ClInclude Include="..\src\ORBManager.h" />
@@ -148,24 +153,43 @@
     <ClInclude Include="..\src\RemoteDeviceEventDispatcher.h" />
     <ClInclude Include="..\src\RemoteDeviceEventHandler.h" />
     <ClInclude Include="..\src\RemoteDeviceHub.h" />
+    <ClInclude Include="..\src\RemoteEventEngine.h" />
+    <ClInclude Include="..\src\RemoteEventEngineScheduler.h" />
+    <ClInclude Include="..\src\RemoteParsedShot.h" />
+    <ClInclude Include="..\src\RemoteTriggerCallback.h" />
     <ClInclude Include="..\src\TDeviceCollection_i.h" />
     <ClInclude Include="..\src\TDeviceEventDispatcher_i.h" />
     <ClInclude Include="..\src\TDeviceEventHandler_i.h" />
     <ClInclude Include="..\src\TDeviceHub_i.h" />
     <ClInclude Include="..\src\TDeviceRefInterface.h" />
     <ClInclude Include="..\src\TDevice_i.h" />
+    <ClInclude Include="..\src\TEventEngineScheduler_i.h" />
+    <ClInclude Include="..\src\TEventEngine_i.h" />
+    <ClInclude Include="..\src\TParsedShotRefInterface.h" />
+    <ClInclude Include="..\src\TParsedShot_i.h" />
     <ClInclude Include="..\src\TRefreshIndicator_i.h" />
+    <ClInclude Include="..\src\TTriggerCallback_i.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Convert_DeviceEvent.cpp" />
+    <ClCompile Include="..\src\Convert_DeviceEvent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\Convert_DeviceID.cpp" />
+    <ClCompile Include="..\src\Convert_EventEngine.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\Convert_HubID.cpp" />
     <ClCompile Include="..\src\Convert_HubNodeWalker.cpp" />
     <ClCompile Include="..\src\Convert_HubTrace.cpp" />
     <ClCompile Include="..\src\COSBindingNode.cpp" />
     <ClCompile Include="..\src\deviceNet.cpp" />
     <ClCompile Include="..\src\deviceNetDynSK.cpp" />
-    <ClCompile Include="..\src\NetworkConvert.cpp" />
+    <ClCompile Include="..\src\NetworkConvert.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\NetworkDeviceEventHandlerWrapper.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHub.cpp" />
     <ClCompile Include="..\src\NetworkDeviceHubWrapper.cpp" />
@@ -177,12 +201,20 @@
     <ClCompile Include="..\src\RemoteDeviceEventDispatcher.cpp" />
     <ClCompile Include="..\src\RemoteDeviceEventHandler.cpp" />
     <ClCompile Include="..\src\RemoteDeviceHub.cpp" />
+    <ClCompile Include="..\src\RemoteEventEngine.cpp" />
+    <ClCompile Include="..\src\RemoteEventEngineScheduler.cpp" />
+    <ClCompile Include="..\src\RemoteParsedShot.cpp" />
+    <ClCompile Include="..\src\RemoteTriggerCallback.cpp" />
     <ClCompile Include="..\src\TDeviceCollection_i.cpp" />
     <ClCompile Include="..\src\TDeviceEventDispatcher_i.cpp" />
     <ClCompile Include="..\src\TDeviceEventHandler_i.cpp" />
     <ClCompile Include="..\src\TDeviceHub_i.cpp" />
     <ClCompile Include="..\src\TDevice_i.cpp" />
+    <ClCompile Include="..\src\TEventEngineScheduler_i.cpp" />
+    <ClCompile Include="..\src\TEventEngine_i.cpp" />
+    <ClCompile Include="..\src\TParsedShot_i.cpp" />
     <ClCompile Include="..\src\TRefreshIndicator_i.cpp" />
+    <ClCompile Include="..\src\TTriggerCallback_i.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\idl\deviceNet.idl">

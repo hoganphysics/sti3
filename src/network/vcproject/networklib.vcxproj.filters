@@ -55,6 +55,12 @@
     <Filter Include="Source Files\DeviceEvent">
       <UniqueIdentifier>{8f44e863-2ced-449b-b5d9-d49c377ad210}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{891f4e1d-f302-479e-9f98-1fd3ee3f68e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{77d6be9e-de55-4043-9590-885253331733}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ConvertList.h">
@@ -147,6 +153,48 @@
     <ClInclude Include="..\src\Convert_HubNodeWalker.h">
       <Filter>Header Files\Convert</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Convert_EventEngine.h">
+      <Filter>Header Files\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NetworkEventEngine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NetworkEventEngineFactory.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NetworkParsedShotWrapper.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteEventEngine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteEventEngineScheduler.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteParsedShot.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteTriggerCallback.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TEventEngine_i.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TEventEngineScheduler_i.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TParsedShot_i.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TParsedShotRefInterface.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TTriggerCallback_i.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Convert_DeviceMessage.h">
+      <Filter>Header Files\Convert</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Convert_DeviceID.cpp">
@@ -226,6 +274,33 @@
     </ClCompile>
     <ClCompile Include="..\src\Convert_HubNodeWalker.cpp">
       <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Convert_EventEngine.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteEventEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteEventEngineScheduler.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteParsedShot.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteTriggerCallback.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TEventEngine_i.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TEventEngineScheduler_i.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TParsedShot_i.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TTriggerCallback_i.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
