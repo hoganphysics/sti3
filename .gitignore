@@ -39,3 +39,4 @@ doc/~$heduler.docx
 doc/~$vice tree.docx
 /src/device/test/testDependencyTree/main
 src/device/python/src/__pycache__/
+src/network/test/testEventEngine/x64/
