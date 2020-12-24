@@ -64,7 +64,7 @@ class LocalEventEngine;
 
 class ParseID;
 class ParsedShot;
-
+class EventEngineFactory;
 
 class LocalEventEngineScheduler : public EventEngineScheduler, 
                                   public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
@@ -77,8 +77,6 @@ public:
     //local interface (called from python, for example)
     void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot);        //local; add event to queue
     void play(const ShotID& shotID);
-
-    void addEngine(const EngineID& engineID, const std::shared_ptr<LocalEventEngine>& engine);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
     
@@ -94,6 +92,10 @@ public:
                                               const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                               const STI::Device::DeviceID& owner, 
                                               const std::set<STI::Device::DeviceID>& missingTargets);
+
+    void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
+ 
+    void addEngine(const EngineID& engineID);
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -146,6 +148,8 @@ private:
     STI::Device::LocalDevice* localDevice;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;
+
+	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
 
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> queuedJobs;
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> runningJobs;

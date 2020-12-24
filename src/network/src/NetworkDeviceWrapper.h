@@ -7,6 +7,7 @@
 #include "TDeviceRefInterface.h"
 #include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
+#include "EventEngineScheduler.h"
 
 #include <memory>
 
@@ -32,11 +33,11 @@ public:
 		: localDevice(device), deviceServant(device) 
 	{
 		auto networkEngineFactory = std::make_shared<STI::Engine::NetworkEventEngineFactory>();
-		localDevice->setEngineFactory(networkEngineFactory);
-	}
+		//localDevice->setEngineFactory(networkEngineFactory);
 
-	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory)
-	{
+		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+		localDevice->getEngineScheduler(scheduler);
+		scheduler->setEngineFactory(networkEngineFactory);
 	}
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)

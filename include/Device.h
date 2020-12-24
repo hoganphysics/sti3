@@ -5,7 +5,7 @@
 //#include "DeviceNode.h"
 #include "DeviceID.h"
 #include "fwd/EventEngineScheduler_fwd.h"
-#include "EventEngineFactory.h"
+
 
 #include <memory>
 
@@ -54,8 +54,6 @@ public:
 
 	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
-
-	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 
 };
 

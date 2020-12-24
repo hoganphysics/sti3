@@ -11,6 +11,8 @@
 #include "EventEngineJob.h"
 #include "ParsedShot.h"
 #include "LocalEventEngineJob.h"
+#include "EventEngineFactory.h"
+#include "LocalEventEngineFactory.h"
 
 #include "ShotID.h"
 #include "EngineJobID.h"
@@ -37,6 +39,7 @@ using STI::Engine::LocalEventEngineJob;
 using STI::Engine::ShotID;
 using STI::Engine::EngineJobID;
 using STI::Engine::EventEngineManager;
+using STI::Engine::LocalEventEngineFactory;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice)
@@ -46,6 +49,9 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
 
     running = true;
     schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
+
+    auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>();
+    setEngineFactory(engineFactory);
 }
 
 LocalEventEngineScheduler::~LocalEventEngineScheduler()
@@ -63,8 +69,35 @@ void LocalEventEngineScheduler::stop()
     jobCondition.notify_all();
 }
 
-void LocalEventEngineScheduler::addEngine(const EngineID& engineID, const std::shared_ptr<LocalEventEngine>& engine)
+void LocalEventEngineScheduler::setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory)
 {
+    if (engineFactory == 0) {
+        return;
+    }
+
+    eventEngineFactory = engineFactory;
+
+    //replace existing engines using new factory
+
+    std::set<EngineID> ids;
+    engineManagers.getKeys(ids);
+
+    for (auto& id : ids) {
+        addEngine(id);  //replaces existing engine with newly created engine (using new factory)
+    }
+
+}
+
+void LocalEventEngineScheduler::addEngine(const EngineID& engineID)
+{
+    std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
+    localDevice->getEventDispatcher(dispatcher);
+    std::shared_ptr<STI::Device::DeviceCollection> collection;
+    localDevice->getCollection(collection);
+
+    std::shared_ptr<LocalEventEngine> engine = 
+        eventEngineFactory->createEngine(localDevice->getID(), localDevice->localChannels, localDevice, dispatcher, collection);
+    
     auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
     engineManagers.add(engineID, manager);

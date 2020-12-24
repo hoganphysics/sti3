@@ -17,6 +17,7 @@ class EventEngineDependencyTree;
 class ParsedShot;
 class ParseID;
 class EngineJobID;
+class EventEngineFactory;
 
 class EventEngineScheduler
 {
@@ -37,6 +38,8 @@ public:
                                                       const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                                       const STI::Device::DeviceID& owner, 
                                                       const std::set<STI::Device::DeviceID>& missingTargets) = 0;
+
+   	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 
 };
 

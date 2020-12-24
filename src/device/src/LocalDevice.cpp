@@ -38,8 +38,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
 
-	auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>();
-	setEngineFactory(engineFactory);
+
+	//setEngineFactory(engineFactory);
 
 }
 
@@ -90,8 +90,8 @@ void LocalDevice::write(unsigned input)
 
 void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 {
-	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceEventDispatcher, localCollection);
-	eventEngineScheduler->addEngine(engineID, engine);
+//	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceEventDispatcher, localCollection);
+	eventEngineScheduler->addEngine(engineID);
 }
 
 void LocalDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
@@ -120,4 +120,3 @@ bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngi
 	scheduler = eventEngineScheduler;
 	return scheduler != 0;
 }
-
