@@ -77,6 +77,7 @@ void LocalEventEngine::clear()
 	upstreamEvents.clear();
 	handledPartnerEvents.clear();
 	ownedTargets.clear();
+	parsedOwnedTargets.clear();
 
 	//If this fails for some reason, getState() will reflect this.
 	setState(EngineState::Idle);
@@ -216,6 +217,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 		if (isTargetServerForDevice(*nextID) || (*nextID) == localDeviceID) {
 			
+			std::string devName = nextID->getName();
+
 			if (!localSubtree->getDependentNodeCount(*nextID, dependencyCount)) {
 				//Error; Could not get dependency count (?)
 			}
@@ -233,6 +236,39 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
+
+	//Note that ownedTargets is only modified during the previous while loop,
+	//so from now on it is a static list of the owned devices of this device.
+
+	//Wait for all owned target devices to reach Parsed state
+	if (ownedTargets.size() > 0) {
+		// This device is a server; wait for owned devices to send Parsed messages
+		while (isState(EngineState::Parsing)) {
+			
+			//When an owned device finishes parsing, it sends this device a message and will be added to parsedOwnedTargets
+			if (parsedOwnedTargets.size() == ownedTargets.size()) {
+				if (!setState(EngineState::Parsed)) {
+					setState(EngineState::Error);
+				}
+			}
+			else {
+				parseCondition.wait(parseLock);
+			}
+		}
+	}
+	else {
+		// Non-server device
+		if (!setState(EngineState::Parsed)) {
+			setState(EngineState::Error);
+			//error
+		}
+	}
+
+
+	//TODO:  Parse errors and warnings
+
+
+
 	// Send message upstream indicating that this device (and all owned devices) has finished
 	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
 							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
@@ -245,10 +281,11 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	//TODO: state needs to be contingent on errors from this device or owned devices.
 
-	if (!setState(EngineState::Parsed)) {
-		setState(EngineState::Error);
-		//error
-	}
+
+	// if (!setState(EngineState::Parsed)) {
+	// 	setState(EngineState::Error);
+	// 	//error
+	// }
 }
 
 void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job)
@@ -315,6 +352,13 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	
 	//reduce dependency count in localSubtree
 	localSubtree->removeNode(evt->originalSource);
+
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->originalSource);
+	
+	//only add engine if it is owned by this device
+	if (it != ownedTargets.end()) {
+		parsedOwnedTargets.push_back(evt->originalSource);
+	}
 
 	parseCondition.notify_all();	//wake up event transfer loop
 }
@@ -412,14 +456,15 @@ void LocalEventEngine::play(EventEngineJob& job)
 	if (ownedTargets.size() > 0) {
 		// This device is a server; wait for owned devices to send ready messages
 		while (isState(EngineState::PreparingPlay)) {
-			
-			playCondition.wait(playLock);
 
 			//When an owned device is in PlayReady, it will send its engine to this device
 			if (engines.size() == ownedTargets.size()) {
 				if (!setState(EngineState::PlayReady)) {
 					setState(EngineState::Error);
 				}
+			}
+			else {
+				playCondition.wait(playLock);
 			}
 		}
 	}

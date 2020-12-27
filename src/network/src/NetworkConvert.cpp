@@ -46,9 +46,11 @@ TMixedValue STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& val
 	return tValue;
 }
 
+
 template<>
 bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
 {
+	tValue.type = convert<MixedValueType, TMixedValueType>(value.getType());
 
 	switch (value.getType())
 	{
@@ -147,3 +149,88 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 }
 
 
+
+template<>
+TMixedValueType STI::Network::convert<MixedValueType, TMixedValueType>(const MixedValueType& type)
+{
+	TMixedValueType tType;
+
+	switch (type)
+	{
+	case MixedValueType::Boolean:
+		tType = TMixedValueType::MixedValueBoolean;
+		break;
+	case MixedValueType::Int:
+		tType = TMixedValueType::MixedValueInt;
+		break;
+	case MixedValueType::Double:
+		tType = TMixedValueType::MixedValueDouble;
+		break;
+	case MixedValueType::String:
+		tType = TMixedValueType::MixedValueString;
+		break;
+	case MixedValueType::Vector:
+		tType = TMixedValueType::MixedValueVector;
+		break;
+	case MixedValueType::Empty:
+		tType = TMixedValueType::MixedValueEmpty;
+		break;
+	case MixedValueType::File:
+		tType = TMixedValueType::MixedValueFile;
+		break;
+	case MixedValueType::Image:
+		tType = TMixedValueType::MixedValueImage;
+		break;
+	case MixedValueType::Any:
+		tType = TMixedValueType::MixedValueAny;
+		break;
+	default:
+		tType = TMixedValueType::MixedValueAny;
+		break;
+	}
+
+	return tType;
+
+}
+
+template<>
+MixedValueType STI::Network::convert<TMixedValueType, MixedValueType>(const TMixedValueType& tType)
+{
+	MixedValueType type;
+
+	switch (tType)
+	{
+	case TMixedValueType::MixedValueBoolean:
+		type = MixedValueType::Boolean;
+		break;
+	case TMixedValueType::MixedValueInt:
+		type = MixedValueType::Int;
+		break;
+	case TMixedValueType::MixedValueDouble:
+		type = MixedValueType::Double;
+		break;
+	case TMixedValueType::MixedValueString:
+		type = MixedValueType::String;
+		break;
+	case TMixedValueType::MixedValueVector:
+		type = MixedValueType::Vector;
+		break;
+	case TMixedValueType::MixedValueEmpty:
+		type = MixedValueType::Empty;
+		break;
+	case TMixedValueType::MixedValueFile:
+		type = MixedValueType::File;
+		break;
+	case TMixedValueType::MixedValueImage:
+		type = MixedValueType::Image;
+		break;
+	case TMixedValueType::MixedValueAny:
+		type = MixedValueType::Any;
+		break;
+	default:	
+		type = MixedValueType::Any;
+		break;
+	}
+
+	return type;
+}
