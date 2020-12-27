@@ -194,8 +194,8 @@ public:
 
 			typename bgl::graph_traits <Graph>::in_edge_iterator ei, ei_end;
 			for (bgl::tie(ei, ei_end) = in_edges(it->second, g); ei != ei_end; ++ei) {
-//			typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
-//			for (bgl::tie(ei, ei_end) = out_edges(it->second, g); ei != ei_end; ++ei) {
+			// typename bgl::graph_traits <Graph>::out_edge_iterator ei, ei_end;
+			// for (bgl::tie(ei, ei_end) = out_edges(it->second, g); ei != ei_end; ++ei) {
 				count++;
 			}
 

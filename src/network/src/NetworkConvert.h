@@ -3,6 +3,7 @@
 
 #include "ConvertList.h"
 #include "orbTypes.h"
+#include "fwd/MixedValue_fwd.h"
 
 #include <memory>
 
@@ -184,6 +185,11 @@ template<>
 bool Network::convert<Utils::MixedValue, TNetwork::TMixedValue>(const Utils::MixedValue& value, TNetwork::TMixedValue& tValue);
 template<>
 bool Network::convert<TNetwork::TMixedValue, Utils::MixedValue>(const TNetwork::TMixedValue& tValue, Utils::MixedValue& value);
+
+template<>
+TNetwork::TMixedValueType Network::convert<Utils::MixedValueType, TNetwork::TMixedValueType>(const Utils::MixedValueType& type);
+template<>
+Utils::MixedValueType Network::convert<TNetwork::TMixedValueType, Utils::MixedValueType>(const TNetwork::TMixedValueType& tType);
 
 
 //DeviceEvent

@@ -193,6 +193,7 @@ private:
 
 	bool isJobOwner;
 	std::vector<STI::Device::DeviceID> ownedTargets;
+	std::vector<STI::Device::DeviceID> parsedOwnedTargets;
 	std::map<STI::Device::DeviceID, std::shared_ptr<EventEngine>> engines;
 
 	std::thread playThread;
