@@ -28,6 +28,7 @@ template<>
 bool STI::Network::convert<std::string, ::CORBA::String_member>(const std::string& str, ::CORBA::String_member& tString)
 {
 	tString = CORBA::string_dup(str.c_str());
+	return true;
 }
 
 template<>
@@ -88,6 +89,7 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 		break;
 	}
 
+	return true;
 }
 
 template<>

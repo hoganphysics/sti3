@@ -74,10 +74,10 @@ public:
 		
 		if (events.size() > 0) {
 			cout << events.begin()->second.at(0).print() << endl;
+			auto evt = std::make_unique<TestEvent>(events.begin()->second.at(0), this);
+			synchedEvents.push_back(std::move(evt));
 		}
 
-		auto evt = std::make_unique<TestEvent>(events.begin()->second.at(0), this);
-		synchedEvents.push_back(std::move(evt));
 	}
 
 	class TestEvent : public STI::Engine::SynchronousEventAdapter
@@ -105,7 +105,30 @@ public:
 
 std::mutex TestDevice::TestEvent::coutMutex{};
 
+void testDevice();
+void testServer();
+
 int main(int argc, char **argv)
+{
+	testDevice();
+//	testServer();
+
+	return 0;
+}
+
+void testDevice()
+{
+	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+
+	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
+
+	hub1->addNode(dev2->id, dev2);
+
+	hub1->run(true);
+
+}
+
+void testServer()
 {
 	auto dev1 = std::make_shared<TestDevice>("dev1", "localhost", 0, "srv1");
 	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
@@ -171,7 +194,5 @@ int main(int argc, char **argv)
 
 //	hub1->clear();
 
-
-	return 0;
 }
 
