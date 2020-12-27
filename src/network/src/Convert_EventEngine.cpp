@@ -82,7 +82,7 @@ bool STI::Network::convert<EventEngineDependencyTree, TEventEngineDependencyTree
         tTree.vertices[i].outConnections.length(static_cast<CORBA::ULong>(outNodes.size()));
 
         for (unsigned j = 0; j < outNodes.size(); ++j) {
-            tTree.vertices[i].outConnections[j] = vertexMap[nodes.at(i)];
+            tTree.vertices[i].outConnections[j] = vertexMap[outNodes.at(j)];
         }
     }
 

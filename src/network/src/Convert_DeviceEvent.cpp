@@ -325,7 +325,7 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 //	STI::TNetwork::TEventEngine_var tEngine2(tEngine);
 	tMessage.engine = tEngine;
 
-	return false;
+	return true;
 }
 
 

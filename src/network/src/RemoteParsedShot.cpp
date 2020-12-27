@@ -22,7 +22,8 @@ RemoteParsedShot::~RemoteParsedShot()
 void RemoteParsedShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
 {
 
-    STI::TNetwork::TRawEventSeq_var tEvents(new STI::TNetwork::TRawEventSeq);
+//	STI::TNetwork::TRawEventSeq_var tEvents(new STI::TNetwork::TRawEventSeq);
+	STI::TNetwork::TRawEventSeq_var tEvents;
 
     events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
 
@@ -30,7 +31,9 @@ void RemoteParsedShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEve
 		
         _tShot->getEvents(tEvents); 	//remote call
 
-        convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *events);
+		if (events != 0) {
+			convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *events);
+		}
 
 	}
 	catch (CORBA::TRANSIENT&) {
