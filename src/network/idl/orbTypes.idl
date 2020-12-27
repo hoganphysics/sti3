@@ -49,9 +49,21 @@ module TNetwork
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
+//	union TMixedValue;
 	struct TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
 	enum TMixedValueType { MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueEmpty, MixedValueFile, MixedValueImage, MixedValueAny};
+	
+	// union TMixedValue switch(TMixedValueType) {
+	// 	case MixedValueBoolean: boolean value_b;
+	// 	case MixedValueInt:		long    value_i;
+	// 	case MixedValueDouble: 	double  value_d;
+	// 	case MixedValueString:	string  value_s;
+	// 	case MixedValueVector: 	TMixedValueSeq value_v;
+	// 	case MixedValueEmpty: 	boolean empty;
+	// 	case MixedValueFile: 	TFile	value_file;
+	// 	case MixedValueImage:	TImage	value_image;
+	// };
 
 	struct TMixedValue
 	{
@@ -61,7 +73,7 @@ module TNetwork
 
 		boolean value_b;
 		long    value_i;
-		double   value_d;
+		double  value_d;
 		string  value_s;
 	};
 
@@ -160,15 +172,39 @@ module TNetwork
 		TDeviceEvent base;	//base class data
 
 		TSchedulerMessageType type;
+		TEngineJobID jobID;
 
 		TDeviceID originalSource;	//device that generated the original message
-		TEngineJobID jobID;
 		TEventEngine engine;
 
 		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
 		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 	};
 
+	// struct TEngineSchedulerParseMessage
+	// {
+	// 	TDeviceEvent base;	//base class data
+
+	// 	TEngineJobID jobID;
+	// 	TSchedulerMessageType type;
+
+	// 	TDeviceID originalSource;	//device that generated the original message
+
+	// 	TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
+	// 	TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+	// };
+
+	// struct TEngineSchedulerPlayMessage
+	// {
+	// 	TDeviceEvent base;	//base class data
+
+	// 	TEngineJobID jobID;
+	// 	TSchedulerMessageType type;
+
+	// 	TDeviceID originalSource;	//device that generated the original message
+
+	// 	TEventEngine engine;
+	// };
 
 };	//TNetwork
 };	//STI

@@ -18,6 +18,12 @@ class DeviceTrace;
 
 } //Device
 
+template<>
+bool Network::convert<TNetwork::TRefreshDeviceEvent, std::shared_ptr<Device::RefreshDeviceEvent>>(const TNetwork::TRefreshDeviceEvent& tEvent, std::shared_ptr<Device::RefreshDeviceEvent>& deviceEvent);
+template<>
+bool Network::convert<std::shared_ptr<Device::RefreshDeviceEvent>, TNetwork::TRefreshDeviceEvent>(
+	const std::shared_ptr<Device::RefreshDeviceEvent>& deviceMessage, TNetwork::TRefreshDeviceEvent& tMessage);
+
 
 
 template<>

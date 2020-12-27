@@ -103,6 +103,10 @@ std::string Network::convert<::CORBA::String_member, std::string>(const ::CORBA:
 template<>
 ::CORBA::String_member Network::convert<std::string, ::CORBA::String_member>(const std::string& str);
 
+
+template<>
+bool Network::convert<std::string, ::CORBA::String_member>(const std::string& str, ::CORBA::String_member& tString);
+
 //can only list one way since the ::CORBA::UShort is just typedefed as unsigned short...
 template<>
 ::CORBA::UShort Network::convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort);
@@ -202,9 +206,6 @@ bool Network::convert<Device::DeviceEventType, TNetwork::TDeviceEventType>(const
 template<>
 bool Network::convert<TNetwork::TDeviceEventType, Device::DeviceEventType>(const TNetwork::TDeviceEventType& tType, Device::DeviceEventType& type);
 
-
-template<>
-bool Network::convert<TNetwork::TRefreshDeviceEvent, std::shared_ptr<Device::RefreshDeviceEvent>>(const TNetwork::TRefreshDeviceEvent& tEvent, std::shared_ptr<Device::RefreshDeviceEvent>& deviceEvent);
 
 
 

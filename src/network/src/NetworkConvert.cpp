@@ -24,6 +24,11 @@ template<>
 	return CORBA::string_dup(str.c_str());
 }
 
+template<>
+bool STI::Network::convert<std::string, ::CORBA::String_member>(const std::string& str, ::CORBA::String_member& tString)
+{
+	tString = CORBA::string_dup(str.c_str());
+}
 
 template<>
 ::CORBA::UShort STI::Network::convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort)
@@ -37,6 +42,13 @@ template<>
 TMixedValue STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value)
 {
 	TMixedValue tValue;
+	convert<MixedValue, TMixedValue>(value, tValue);
+	return tValue;
+}
+
+template<>
+bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
+{
 
 	switch (value.getType())
 	{
@@ -76,7 +88,6 @@ TMixedValue STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& val
 		break;
 	}
 
-	return tValue;
 }
 
 template<>
@@ -120,13 +131,13 @@ MixedValue STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tVa
 	return value;
 }
 
-template<>
-bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
-{
-	tValue = convert<MixedValue, TMixedValue>(value);
+// template<>
+// bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
+// {
+// 	tValue = convert<MixedValue, TMixedValue>(value);
 
-	return true;
-}
+// 	return true;
+// }
 
 template<>
 bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, MixedValue& value)

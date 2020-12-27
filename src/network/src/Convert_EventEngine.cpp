@@ -520,12 +520,18 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
 {
     tEvent.time = static_cast<CORBA::Double>(evt.time());
     tEvent.channel = static_cast<CORBA::UShort>(evt.channel());
-    tEvent.value = convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value());
-    tEvent.description = convert<std::string, ::CORBA::String_member>(evt.description());
+    //tEvent.value = convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value());
+    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.value);
+
+//    tEvent.description(evt.description().c_str());
+
+//    tEvent.description = "test";
+
+    convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
     //trace
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
-    tEvent.targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice());
+    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice(), tEvent.targetDeviceID);
 
     auto& gpl = evt.getEventGraphPath();
     tEvent.eventGraphPath.length(static_cast<CORBA::ULong>(gpl.size()));

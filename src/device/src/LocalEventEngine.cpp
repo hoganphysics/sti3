@@ -193,7 +193,13 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	std::shared_ptr<RawEventVector> events;
 	parsedShot->getEvents(events);
 
-	divideEvents(*events);
+	if (events != 0) {
+		divideEvents(*events);
+	}
+	else {
+		//Error: null event vector
+	}
+	
 
 	//Get the subtree with the localDeviceID as root (Note, the graph is already known to be a DAG)
 	localSubtree = std::make_shared<EventEngineDependencyTree>();
@@ -241,6 +247,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	if (!setState(EngineState::Parsed)) {
 		setState(EngineState::Error);
+		//error
 	}
 }
 
@@ -293,6 +300,10 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
 	
+	if (evt == 0) {
+		return;
+	}
+
 	//Try to handle device generated events locally
 	divideEvents(evt->unhandledEvents);
 	
@@ -312,20 +323,22 @@ void LocalEventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMe
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
 
-//	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->sourceID());
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->engine->getDeviceID());
+	std::shared_ptr<EventEngine> remoteEngine;
+
+	if (evt != 0) {
+		remoteEngine = evt->engine;
+	}
+
+	if (remoteEngine == 0) {
+		//error
+		return;
+	}
+
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), remoteEngine->getDeviceID());
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
-		
-//		engines[evt->sourceID()] = evt->engine;
-		engines[evt->engine->getDeviceID()] = evt->engine;
-	}
-
-	if (engines.size() == ownedTargets.size()) {
-		if (!setState(EngineState::PlayReady)) {
-			setState(EngineState::Error);
-		}
+		engines[remoteEngine->getDeviceID()] = remoteEngine;
 	}
 
 	playCondition.notify_all();
@@ -344,9 +357,9 @@ void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& 
 	for (auto& id : ownedTargets) {
 		
 		if (deviceCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
-			
-				auto newJob = std::make_shared<LocalEventEngineJob>(jobID, jobOwner);
-				scheduler->addJob(newJob);
+
+			auto newJob = std::make_shared<LocalEventEngineJob>(jobID, jobOwner);
+			scheduler->addJob(newJob);
 		}
 		else {
 			//Error: Could not contact device to play
@@ -397,19 +410,29 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {
-		// This device is a server
+		// This device is a server; wait for owned devices to send ready messages
 		while (isState(EngineState::PreparingPlay)) {
+			
 			playCondition.wait(playLock);
+
+			//When an owned device is in PlayReady, it will send its engine to this device
+			if (engines.size() == ownedTargets.size()) {
+				if (!setState(EngineState::PlayReady)) {
+					setState(EngineState::Error);
+				}
+			}
 		}
-		if (!isState(EngineState::PlayReady)) {
-			return;
-		}		
 	}
 	else {
 		// Non-server device
 		if (!setState(EngineState::PlayReady)) {
 			setState(EngineState::Error);
 		}
+	}
+
+	if (!isState(EngineState::PlayReady)) {
+		// an error occurred, or parse was aborted
+		return;
 	}
 
 	//Send PlayReady message with local engine reference
@@ -441,6 +464,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 
+	//After play completes (without error or abort), the engine should be in the Parsed state
 	if (!isState(EngineState::Parsed)) {
 		job.markCancelled();
 		cancelled = true;

@@ -31,6 +31,10 @@ public:
         const typename std::shared_ptr<STI::Engine::EventEngine>& engine, 
         STI::TNetwork::TEventEngine_ptr& tEngine)
     {
+        if (engine == 0) {
+            return false;
+        }
+        
         auto wrapper = std::dynamic_pointer_cast<NetworkEventEngine>(engine);
         if (wrapper) {
             tEngine = wrapper->eventEngineServant._this();

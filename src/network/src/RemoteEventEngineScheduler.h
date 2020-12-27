@@ -36,6 +36,7 @@ public:
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
+	
 private:
 
 	::STI::TNetwork::TEventEngineScheduler_var tEventEngineScheduler;		//remote reference

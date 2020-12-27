@@ -279,6 +279,16 @@ bool STI::Network::convert<STI::TNetwork::TRefreshDeviceEvent, std::shared_ptr<S
 }
 
 template<>
+bool STI::Network::convert<std::shared_ptr<STI::Device::RefreshDeviceEvent>, STI::TNetwork::TRefreshDeviceEvent>(
+	const std::shared_ptr<STI::Device::RefreshDeviceEvent>& deviceMessage, STI::TNetwork::TRefreshDeviceEvent& tMessage)
+{
+	//no other fields
+	return true;
+}
+
+
+
+template<>
 bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedulerMessage>>(
 			const TEngineSchedulerMessage& tMessage, std::shared_ptr<EngineSchedulerMessage>& deviceMessage)
 {
@@ -294,7 +304,11 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 	if (deviceMessage != 0) {
 
 		convert<STI::TNetwork::TEngineJobID, STI::Engine::EngineJobID>(tMessage.jobID, deviceMessage->jobID);
-		deviceMessage->engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+
+		if (!CORBA::is_nil(tMessage.engine)) {
+			deviceMessage->engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+		}
+		
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
 	}
@@ -319,11 +333,9 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
-	STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine);
-
-
-//	STI::TNetwork::TEventEngine_var tEngine2(tEngine);
-	tMessage.engine = tEngine;
+	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine)) {
+		tMessage.engine = tEngine;
+	}
 
 	return true;
 }
