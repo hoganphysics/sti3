@@ -26,16 +26,39 @@ TParsedShot_i::~TParsedShot_i()
 
 void TParsedShot_i::getEvents(::STI::TNetwork::TRawEventSeq_out events)
 {
+    // if (localShot != 0) {
+    //     std::shared_ptr<STI::Engine::RawEventVector> evts;
+    //     localShot->getEvents(evts);
+
+    //     STI::TNetwork::TRawEventSeq_var tRawEvtseq_var(new STI::TNetwork::TRawEventSeq);
+
+    //     if (evts != 0 && convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*evts, 
+    //         (_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&)tRawEvtseq_var)) {
+    //         events = tRawEvtseq_var.out();
+    //     }
+    // }
+
     if (localShot != 0) {
         std::shared_ptr<STI::Engine::RawEventVector> evts;
         localShot->getEvents(evts);
 
         STI::TNetwork::TRawEventSeq_var tRawEvtseq_var(new STI::TNetwork::TRawEventSeq);
 
-        if (convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*evts, 
-            (_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&)tRawEvtseq_var)) {
-            events = tRawEvtseq_var.out();
+        events = new STI::TNetwork::TRawEventSeq();
+        
+        //events = tRawEvtseq_var.out();
+        if (evts != 0 && convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*evts, 
+            (_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&) tRawEvtseq_var)) {
+                //success
+                (*events) = tRawEvtseq_var;
         }
+
+
+        // if (evts != 0 && convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*evts, 
+        //     (_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&) events)) {
+        //         //success
+        // }
     }
+
 }
 

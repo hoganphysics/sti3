@@ -16,10 +16,12 @@
                 "${fileDirname}/**.cpp",
                 "-shared",
                 "-fPIC",
+				"-lpthread",
                 "-lomnithread",
                 "-lomniORB4",
                 "-lomniDynamic4",
                 "-lomniCodeSets4",
+				"-lpthread",
                 //"-lomnisslTP4",   //if OpenSSL is available
                 "-lCOS4",
                 "-lCOSDynamic4",

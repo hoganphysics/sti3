@@ -15,7 +15,7 @@ class MessageGenerator
 public:
 
 	MessageGenerator(const std::shared_ptr<DeviceEventDispatcher>& dispatcher) : dispatcher(dispatcher) {}
-	~MessageGenerator() {}
+	virtual ~MessageGenerator() {}
 
 	template<typename T>
 	void sendMessage(const std::shared_ptr<T>& message)

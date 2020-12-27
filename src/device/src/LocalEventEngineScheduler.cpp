@@ -115,8 +115,10 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     std::shared_ptr<STI::Engine::RawEventVector> events;
     shot->getEvents(events);
 
-    for(auto& evt : *events) {
-        eventTargets.insert(evt.targetDevice());
+    if (events != 0) {
+        for(auto& evt : *events) {
+            eventTargets.insert(evt.targetDevice());
+        }
     }
     
     STI::Device::DeviceTrace trace;     //Trace needed to avoid infinite recursion while mapping the network

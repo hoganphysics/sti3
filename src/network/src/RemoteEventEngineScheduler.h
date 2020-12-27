@@ -34,7 +34,7 @@ public:
                                               const STI::Device::DeviceID& owner, 
                                               const std::set<STI::Device::DeviceID>& missingTargets);
 
-    void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
+    void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
 private:
 
