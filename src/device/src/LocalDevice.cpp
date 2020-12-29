@@ -6,7 +6,10 @@
 #include "DeviceEventListener.h"
 #include "DeviceEvent.h"
 #include "LocalEventEngineFactory.h"
-#include "Channel.h"
+
+#include "MixedValue.h"
+#include "LocalChannelManager.h"
+#include "LocalChannel.h"
 
 #include <memory>
 #include <iostream>
@@ -21,6 +24,9 @@ using STI::Device::DeviceEventDispatcher;
 using STI::Device::LocalDeviceEventDispatcher;
 using STI::Device::DeviceEventReceiver;
 using STI::Engine::LocalEventEngineScheduler;
+using STI::Device::LocalChannelManager;
+using STI::Device::LocalChannel;
+
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
@@ -38,6 +44,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
 
+	localChannelManager = std::make_shared<LocalChannelManager>(this);
 
 	//setEngineFactory(engineFactory);
 
@@ -45,9 +52,12 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 LocalDevice::~LocalDevice()
 {
-
 }
 
+void LocalDevice::addEventTarget(const STI::Device::DeviceID& id)
+{
+	eventTargets.insert(id);
+}
 
 
 //LocalDeviceCollection event handler
@@ -78,21 +88,47 @@ void LocalDevice::DeviceCollectionListener::remove(const DeviceID& id)
 
 }
 
-DeviceID LocalDevice::getID()
+const DeviceID LocalDevice::getID() const
 {
 	return id;
 }
 
-void LocalDevice::write(unsigned input)
+// void LocalDevice::write(unsigned input)
+// {
+// 	cout << "writing: " << input << endl;
+// }
+
+
+bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 {
-	cout << "writing: " << input << endl;
+	return writeChannel(channel, value);
 }
+
+
+bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+{
+	return readChannel(channel, value, data);
+}
+
 
 void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 {
 //	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceEventDispatcher, localCollection);
 	eventEngineScheduler->addEngine(engineID);
 }
+
+
+
+LocalChannel& LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+	auto channel = std::make_shared<LocalChannel>(channelNumber, type, inputType, outputType, defaultName);
+	
+	localChannelManager->addChannel(channel);
+
+	return *channel;
+}
+
 
 void LocalDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
@@ -120,3 +156,9 @@ bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngi
 	scheduler = eventEngineScheduler;
 	return scheduler != 0;
 }
+
+void LocalDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)
+{
+	manager = localChannelManager;
+}
+

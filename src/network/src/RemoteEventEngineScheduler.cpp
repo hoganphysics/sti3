@@ -24,8 +24,9 @@ using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
 using STI::Network::NetworkParsedShotWrapper;
 using STI::TNetwork::TEventEngineJob;
-
-
+using STI::Engine::ParsedShot;
+using STI::TNetwork::TParseID;
+using STI::Engine::ParseID;
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
 	: tEventEngineScheduler(STI::TNetwork::TEventEngineScheduler::_duplicate(scheduler))
@@ -34,6 +35,42 @@ RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEn
 
 RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 {
+}
+
+void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
+{
+	STI::TNetwork::TParsedShot_ptr tShot;
+
+	if (!convert<std::shared_ptr<ParsedShot>, STI::TNetwork::TParsedShot_ptr>(shot, tShot)) {
+		return;
+	}
+  
+	try {
+
+		tEventEngineScheduler->parse(convert<ParseID, TParseID>(parseID), tShot);	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::play(const STI::Engine::ShotID& shotID)
+{
+	try {
+        
+		tEventEngineScheduler->play(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(shotID));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
 }
 
 

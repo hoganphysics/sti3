@@ -161,6 +161,9 @@ module TNetwork
 
 	interface TEventEngineScheduler
 	{
+	    void parse(in TParseID parseID, in TParsedShot shot);
+	    void play(in TShotID shotID);
+
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
                                 inout TDeviceIDSeq missingTargets, in TDeviceTrace trace);
     
@@ -168,6 +171,15 @@ module TNetwork
     
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
+	};
+
+	interface TChannelManager
+	{
+		TChannelSeq getChannels();
+		boolean getChannel(in short channelNumber, out TChannel channel);
+
+		boolean writeChannel(in short channel, in TMixedValue value);
+		boolean readChannel(in short channel, in TMixedValue value, out TMixedValue data);
 	};
 
 	interface TDevice
@@ -180,13 +192,15 @@ module TNetwork
 
 		//Device interface
 		TDeviceID getID();
-		void write(in unsigned long input);		//temp
+	//	void write(in unsigned long input);		//temp
 
 		//Device event passing
 		TDeviceEventDispatcher getEventDispatcher();
 
 		//Event engine system
 		TEventEngineScheduler getEngineScheduler();
+
+		TChannelManager getChannelManager();
 	};
 
 };	//TNetwork

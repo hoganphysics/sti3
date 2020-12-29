@@ -4,12 +4,18 @@
 #include "RemoteDeviceEventDispatcher.h"
 #include "NetworkConvert.h"
 #include "RemoteEventEngineScheduler.h"
+#include "ChannelManager.h"
+#include "RemoteChannelManager.h"
+
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Network::RemoteDeviceEventDispatcher;
 using STI::Network::convert;
 using STI::Network::RemoteEventEngineScheduler;
+using STI::Device::ChannelManager;
+using STI::Network::RemoteChannelManager;
+
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: _tDevice(STI::TNetwork::TDevice::_duplicate(device))
@@ -52,7 +58,7 @@ bool RemoteDevice::refresh()
 	return success;
 }
 
-STI::Device::DeviceID RemoteDevice::getID()
+const STI::Device::DeviceID RemoteDevice::getID() const
 {
 	::STI::TNetwork::TDeviceID_var tDeviceID;
 
@@ -83,19 +89,6 @@ STI::Device::DeviceID RemoteDevice::getID()
 	return deviceID;
 }
 
-void RemoteDevice::write(unsigned input)
-{
-	try {
-		_tDevice->write(input);
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
 
 void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
@@ -116,7 +109,7 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	{
 	}
 
-	if (success) {
+	if (success && !CORBA::is_nil(tDeviceCollection)) {
 		remoteCollection = std::make_shared<RemoteDeviceCollection>(tDeviceCollection);
 		collection = remoteCollection;
 	}
@@ -141,7 +134,7 @@ void RemoteDevice::getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDi
 	{
 	}
 
-	if (success) {
+	if (success && !CORBA::is_nil(tEventDispatcher)) {
 		remoteDispatcher = std::make_shared<RemoteDeviceEventDispatcher>(tEventDispatcher);
 		dispatcher = remoteDispatcher;
 	}
@@ -166,11 +159,36 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 	{
 	}
 
-	if (success) {
+	if (success && !CORBA::is_nil(tEngineScheduler)) {
 		remoteScheduler = std::make_shared<RemoteEventEngineScheduler>(tEngineScheduler);
 		scheduler = remoteScheduler;
 	}
 
 	return success;
+}
+
+void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager)
+{
+	::STI::TNetwork::TChannelManager_ptr tChannelManager;	//remote reference
+	std::shared_ptr<RemoteChannelManager> remoteManager;		//wrapper
+	
+	try {
+		tChannelManager = _tDevice->getChannelManager();
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (!CORBA::is_nil(tChannelManager)) {
+		
+		remoteManager = std::make_shared<RemoteChannelManager>(tChannelManager);
+	}
+
+	manager = remoteManager;
+
 }
 

@@ -55,8 +55,13 @@ public:
 		return localDevice->getEngineScheduler(scheduler);
 	}
 
-	STI::Device::DeviceID getID() { return localDevice->getID(); }
-	void write(unsigned input) { localDevice->write(input); }
+	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager)
+	{
+		localDevice->getChannelManager(manager);
+	}
+
+	const STI::Device::DeviceID getID() const { return localDevice->getID(); }
+
 	bool refresh() { return localDevice->refresh(); }
 
 //	STI::TNetwork::TDevice_ptr getTDeviceReference() { return deviceServant._this(); }

@@ -88,7 +88,7 @@ public:
 	void setValue(bool value);
 	void setValue(int value);
 	void setValue(double value);
-	void setValue(std::string value);
+	void setValue(const std::string& value);
 	void setValue(const MixedValue& value);
 	void setValue();	//Empty
 

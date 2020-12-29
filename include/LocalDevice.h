@@ -9,7 +9,8 @@
 #include "DeviceEventParser.h"
 #include "EngineID.h"
 #include "fwd/Channel_fwd.h"
-
+#include "fwd/ChannelManager_fwd.h"
+#include "MixedValue.h"
 #include <string>
 
 namespace STI
@@ -20,6 +21,8 @@ namespace Device
 
 class DeviceEventReceiver;
 class LocalDeviceEventDispatcher;
+class LocalChannelManager;
+class LocalChannel;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -37,24 +40,25 @@ public:
 		const std::string& targetServer);
 	virtual ~LocalDevice();
 
-	DeviceID getID();
+	const DeviceID getID() const;
 
 	bool refresh() { return true; }
-
-	void write(unsigned input);	//temp
+//	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
 	void getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
 	void addEventEngine(const STI::Engine::EngineID& engineID);
 
+	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 
-	STI::Device::ChannelMap localChannels;
-	DeviceID id;
+//	STI::Device::ChannelMap localChannels;
 
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
@@ -63,9 +67,16 @@ public:
 		targetIDs = eventTargets;
 	}
 
-	std::set<DeviceID> eventTargets;
+	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
 private:
+
+	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) {}
+	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) {}
+
+
+	void addEventTarget(const STI::Device::DeviceID& id);
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>
 	{
@@ -80,10 +91,14 @@ private:
 	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
 
 
+	DeviceID id;
+	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
+
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
 	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
+	std::shared_ptr<LocalChannelManager> localChannelManager;
 
 };
 

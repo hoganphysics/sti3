@@ -143,6 +143,14 @@ template<>
 Engine::ShotID Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid);
 
 
+//ParsedShot
+template<>
+bool Network::convert<TNetwork::TParsedShot_ptr, std::shared_ptr<Engine::ParsedShot>>(const TNetwork::TParsedShot_ptr& tShot, std::shared_ptr<Engine::ParsedShot>& shot);
+template<>
+bool Network::convert<std::shared_ptr<Engine::ParsedShot>, TNetwork::TParsedShot_ptr>(const std::shared_ptr<Engine::ParsedShot>& shot, TNetwork::TParsedShot_ptr& tShot);
+
+
+
 //RawEventType
 template<>
 TNetwork::TRawEventType Network::convert<Engine::RawEventType, TNetwork::TRawEventType>(const Engine::RawEventType& evtType);

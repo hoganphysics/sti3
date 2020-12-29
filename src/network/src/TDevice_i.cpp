@@ -8,13 +8,15 @@ using STI::TNetwork::TDevice_i;
 using STI::TNetwork::TDeviceCollection_ptr;
 using STI::TNetwork::TDeviceEventDispatcher_ptr;
 using STI::TNetwork::TEventEngineScheduler_ptr;
+using STI::TNetwork::TChannelManager_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
 
 //Device is a DeviceCollector, so we can simply pass the device pointer to both
 TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
-	: localDevice(device), deviceCollectionServant(device), eventDispatcherServant(device), eventSchedulerServant(device)
+	: localDevice(device), deviceCollectionServant(device), eventDispatcherServant(device), 
+		eventSchedulerServant(device), channelManagerServant(device)
 {
 }
 
@@ -43,6 +45,11 @@ TEventEngineScheduler_ptr TDevice_i::getEngineScheduler()
 	return eventSchedulerServant._this();
 }
 
+TChannelManager_ptr TDevice_i::getChannelManager()
+{
+	return channelManagerServant._this();
+}
+
 TDeviceID* TDevice_i::getID()
 {
 	STI::TNetwork::TDeviceID_var tDevice(new STI::TNetwork::TDeviceID);
@@ -52,10 +59,5 @@ TDeviceID* TDevice_i::getID()
 	}
 
 	return tDevice._retn();
-}
-
-void TDevice_i::write(::CORBA::ULong input) 
-{ 
-	localDevice->write(input);
 }
 

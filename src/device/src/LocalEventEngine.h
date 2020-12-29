@@ -14,6 +14,7 @@
 #include "TimeStamp.h"
 #include "TriggerCallback.h"
 #include "utils/OrderedBufferMap.h"
+#include "ChannelManager.h"
 
 #include "fwd/Channel_fwd.h"
 #include "fwd/DeviceEventParser_fwd.h"
@@ -51,7 +52,8 @@ public:
 
 	LocalEventEngine(
 		const STI::Device::DeviceID& localID, 
-		STI::Device::ChannelMap& channels, 
+		const std::shared_ptr<STI::Device::ChannelManager>& channels,
+	//	STI::Device::ChannelMap& channels, 
 		DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
@@ -95,7 +97,8 @@ public:
 	//Local device details
 	STI::Device::DeviceID getDeviceID() const { return localDeviceID; }
 	
-	STI::Device::ChannelMap& localChannels;
+	//STI::Device::ChannelMap& localChannels;
+	std::shared_ptr<STI::Device::ChannelManager> getLocalChannels() { return localChannels; }
 
 	const STI::Engine::ParseID& getLastParseID() { return lastParseID; }
 
@@ -183,6 +186,8 @@ private:
 	EventEngineParser parser;
 	std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 	bool cancelled;
+
+	std::shared_ptr<STI::Device::ChannelManager> localChannels;
 
 	//server events
 	std::map<STI::Device::DeviceID, RawEventVector> eventsByTarget;

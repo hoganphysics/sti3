@@ -14,7 +14,8 @@ namespace Engine
 
 class NetworkEventEngineFactory : public EventEngineFactory
 {
-    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, 
+    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const STI::Device::DeviceID& localID, 
+                                const std::shared_ptr<STI::Device::ChannelManager>& channels, 
                                 DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, 
                                 const std::shared_ptr<STI::Device::DeviceCollection>& collection)
     {

@@ -214,8 +214,6 @@ bool Network::convert<TNetwork::TDeviceEventType, Device::DeviceEventType>(const
 
 
 
-
-
 } //STI
 
 #endif

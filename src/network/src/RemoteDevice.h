@@ -7,6 +7,7 @@
 #include "DeviceCollection.h"
 #include "TDeviceRefInterface.h"
 #include "DeviceEventDispatcher.h"
+#include "fwd/ChannelManager_fwd.h"
 
 #include <memory>
 
@@ -24,13 +25,14 @@ public:
 
 	bool refresh();
 
-	STI::Device::DeviceID getID();
+	const STI::Device::DeviceID getID() const;
 
 	void write(unsigned input);
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 
 private:
 

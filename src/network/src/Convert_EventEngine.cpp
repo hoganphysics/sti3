@@ -45,7 +45,6 @@ using STI::Engine::ParseID;
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
-using STI::Engine::ParsedShot;
 using STI::Network::NetworkParsedShotWrapper;
 using STI::Engine::EventEngine;
 using STI::Engine::LocalEventEngineJob;
@@ -55,7 +54,8 @@ using STI::Engine::TimeStamp;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;
-
+using STI::TNetwork::TParsedShot_ptr;
+using STI::Engine::ParsedShot;
 
 //EventEngineDependencyTree
 template<>
@@ -470,7 +470,6 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     return true;
 }
 
-
 template<>
 bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(const TEventEngineJob& tEngineJob, std::shared_ptr<EventEngineJob>& engineJob)
 {
@@ -484,7 +483,11 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
-        parsedShot = std::make_shared<STI::Network::RemoteParsedShot>(tEngineJob.shot);
+        
+        if (!CORBA::is_nil(tEngineJob.shot)) {
+            parsedShot = std::make_shared<STI::Network::RemoteParsedShot>(tEngineJob.shot);
+        }
+
         tree = std::make_shared<EventEngineDependencyTree>();
         convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
@@ -690,6 +693,37 @@ EngineJobSourceID STI::Network::convert<TEngineJobSourceID, EngineJobSourceID>(c
     sourceID.machine = convert<::CORBA::String_member, std::string>(tJobSourceID.machine);
 
     return sourceID;
+}
+
+
+
+
+template<>
+bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<ParsedShot>>(const TParsedShot_ptr& tShot, std::shared_ptr<ParsedShot>& shot)
+{
+    bool success = false;
+
+    std::shared_ptr<ParsedShot> parsedShot;
+
+    if (!CORBA::is_nil(tShot)) {
+        shot = std::make_shared<STI::Network::RemoteParsedShot>(tShot);
+        success = (shot != 0);
+    }
+
+    return success;
+}
+
+
+template<>
+bool STI::Network::convert<std::shared_ptr<ParsedShot>, TParsedShot_ptr>(const std::shared_ptr<ParsedShot>& shot, TParsedShot_ptr& tShot)
+{
+    //std::shared_ptr<ParsedShot> parsedShot;
+//    STI::TNetwork::TParsedShot_ptr tShot;
+    
+    if (shot != 0 && NetworkParsedShotWrapper::getTParsedShotReference(shot, tShot)) {
+        return !CORBA::is_nil(tShot);
+    }
+    return false;
 }
 
 

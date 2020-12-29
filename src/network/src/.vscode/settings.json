@@ -56,7 +56,6 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "queue": "cpp",
-        "*.idl": "cpp"
+        "queue": "cpp"
     }
 }

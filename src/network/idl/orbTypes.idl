@@ -181,6 +181,25 @@ module TNetwork
 		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 	};
 
+
+	enum TChannelType { TChannelOutput, TChannelInput };
+
+
+	struct TChannel
+	{
+		short channelNumber;
+		string channelName;
+
+		TChannelType type;
+		TMixedValueType inputType;
+		TMixedValueType outputType;
+		
+		TMixedValue lastValue;
+
+		TMixedValue metaData;
+	};
+	typedef sequence<TChannel> TChannelSeq;
+
 	// struct TEngineSchedulerParseMessage
 	// {
 	// 	TDeviceEvent base;	//base class data
