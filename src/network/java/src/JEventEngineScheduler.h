@@ -2,6 +2,8 @@
 #define STI_DEVICE_JEVENTENGINESCHEDULER_H
 
 #include "EventEngineScheduler.h"
+#include "ParsedShot.h"
+#include "ParseID.h"
 
 #include <memory>
 #include <set>
@@ -12,7 +14,7 @@ namespace Device
 {
 
 //Java JEventEngineScheduler wrapper
-class JEventEngineScheduler : public STI::Engine::EventEngineScheduler
+class JEventEngineScheduler //: public STI::Engine::EventEngineScheduler
 {
 public:
 	
@@ -23,6 +25,10 @@ public:
 
     STI::Device::DeviceID id;
 
+    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::ParsedShot>& shot);
+    void play(const STI::Engine::ShotID& shotID);
+    void cancelJob(const STI::Engine::EngineJobID& jobID);
+
 private:
 
     //EventEngineScheduler
@@ -32,7 +38,7 @@ private:
     void addDeviceEventTargets(STI::Engine::EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
-    void cancelJob(const STI::Engine::EngineJobID& jobID) ;
+
 
     std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
                                                       const std::shared_ptr<STI::Engine::ParsedShot>& shot,

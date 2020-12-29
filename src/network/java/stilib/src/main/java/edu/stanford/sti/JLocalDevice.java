@@ -73,4 +73,8 @@ public class JLocalDevice extends JDevice {
     return (cPtr == 0) ? null : new JEventEngineScheduler(cPtr, true);
   }
 
+  public void parseEvents(int temp) {
+    stiJNI.JLocalDevice_parseEvents(swigCPtr, this, temp);
+  }
+
 }

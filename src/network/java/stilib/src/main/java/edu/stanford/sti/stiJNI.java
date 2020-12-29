@@ -54,6 +54,65 @@ public class stiJNI {
   public final static native long DeviceIDvector_doSet(long jarg1, DeviceIDvector jarg1_, int jarg2, long jarg3, DeviceID jarg3_);
   public final static native void DeviceIDvector_doRemoveRange(long jarg1, DeviceIDvector jarg1_, int jarg2, int jarg3);
   public final static native void delete_DeviceIDvector(long jarg1);
+  public final static native long new_UIntVector__SWIG_0();
+  public final static native long new_UIntVector__SWIG_1(long jarg1, UIntVector jarg1_);
+  public final static native long UIntVector_capacity(long jarg1, UIntVector jarg1_);
+  public final static native void UIntVector_reserve(long jarg1, UIntVector jarg1_, long jarg2);
+  public final static native boolean UIntVector_isEmpty(long jarg1, UIntVector jarg1_);
+  public final static native void UIntVector_clear(long jarg1, UIntVector jarg1_);
+  public final static native long new_UIntVector__SWIG_2(int jarg1, long jarg2);
+  public final static native int UIntVector_doSize(long jarg1, UIntVector jarg1_);
+  public final static native void UIntVector_doAdd__SWIG_0(long jarg1, UIntVector jarg1_, long jarg2);
+  public final static native void UIntVector_doAdd__SWIG_1(long jarg1, UIntVector jarg1_, int jarg2, long jarg3);
+  public final static native long UIntVector_doRemove(long jarg1, UIntVector jarg1_, int jarg2);
+  public final static native long UIntVector_doGet(long jarg1, UIntVector jarg1_, int jarg2);
+  public final static native long UIntVector_doSet(long jarg1, UIntVector jarg1_, int jarg2, long jarg3);
+  public final static native void UIntVector_doRemoveRange(long jarg1, UIntVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_UIntVector(long jarg1);
+  public final static native String EventStackTrace_file(long jarg1, EventStackTrace jarg1_);
+  public final static native int EventStackTrace_line(long jarg1, EventStackTrace jarg1_);
+  public final static native String EventStackTrace_print__SWIG_0(long jarg1, EventStackTrace jarg1_, String jarg2);
+  public final static native String EventStackTrace_print__SWIG_1(long jarg1, EventStackTrace jarg1_);
+  public final static native long new_EventStackTrace();
+  public final static native void delete_EventStackTrace(long jarg1);
+  public final static native long new_RawEvent__SWIG_0();
+  public final static native long new_RawEvent__SWIG_1(long jarg1, DeviceID jarg1_, double jarg2, int jarg3, long jarg4, MixedValue jarg4_, String jarg5, long jarg6, int jarg7);
+  public final static native long new_RawEvent__SWIG_2(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_, long jarg3);
+  public final static native void delete_RawEvent(long jarg1);
+  public final static native String RawEvent_print(long jarg1, RawEvent jarg1_);
+  public final static native double RawEvent_time(long jarg1, RawEvent jarg1_);
+  public final static native int RawEvent_channel(long jarg1, RawEvent jarg1_);
+  public final static native long RawEvent_value(long jarg1, RawEvent jarg1_);
+  public final static native String RawEvent_description(long jarg1, RawEvent jarg1_);
+  public final static native int RawEvent_type(long jarg1, RawEvent jarg1_);
+  public final static native long RawEvent_targetDevice(long jarg1, RawEvent jarg1_);
+  public final static native long RawEvent_getStackTrace(long jarg1, RawEvent jarg1_);
+  public final static native long RawEvent_getEventGraphPath(long jarg1, RawEvent jarg1_);
+  public final static native boolean RawEvent_isMeasurementEvent(long jarg1, RawEvent jarg1_);
+  public final static native boolean RawEvent_opEquals(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native boolean RawEvent_opNotEquals(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native void RawEvent_setTargetID(long jarg1, RawEvent jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void RawEvent_setTime(long jarg1, RawEvent jarg1_, double jarg2);
+  public final static native void RawEvent_setChannel(long jarg1, RawEvent jarg1_, int jarg2);
+  public final static native void RawEvent_setValue(long jarg1, RawEvent jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void RawEvent_setDescription(long jarg1, RawEvent jarg1_, String jarg2);
+  public final static native void RawEvent_setEventGraphPath(long jarg1, RawEvent jarg1_, long jarg2, UIntVector jarg2_);
+  public final static native void RawEvent_setEventType(long jarg1, RawEvent jarg1_, int jarg2);
+  public final static native long new_RawEventVector__SWIG_0();
+  public final static native long new_RawEventVector__SWIG_1(long jarg1, RawEventVector jarg1_);
+  public final static native long RawEventVector_capacity(long jarg1, RawEventVector jarg1_);
+  public final static native void RawEventVector_reserve(long jarg1, RawEventVector jarg1_, long jarg2);
+  public final static native boolean RawEventVector_isEmpty(long jarg1, RawEventVector jarg1_);
+  public final static native void RawEventVector_clear(long jarg1, RawEventVector jarg1_);
+  public final static native long new_RawEventVector__SWIG_2(int jarg1, long jarg2, RawEvent jarg2_);
+  public final static native int RawEventVector_doSize(long jarg1, RawEventVector jarg1_);
+  public final static native void RawEventVector_doAdd__SWIG_0(long jarg1, RawEventVector jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native void RawEventVector_doAdd__SWIG_1(long jarg1, RawEventVector jarg1_, int jarg2, long jarg3, RawEvent jarg3_);
+  public final static native long RawEventVector_doRemove(long jarg1, RawEventVector jarg1_, int jarg2);
+  public final static native long RawEventVector_doGet(long jarg1, RawEventVector jarg1_, int jarg2);
+  public final static native long RawEventVector_doSet(long jarg1, RawEventVector jarg1_, int jarg2, long jarg3, RawEvent jarg3_);
+  public final static native void RawEventVector_doRemoveRange(long jarg1, RawEventVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_RawEventVector(long jarg1);
   public final static native long new_JDeviceCollection(long jarg1);
   public final static native void delete_JDeviceCollection(long jarg1);
   public final static native boolean JDeviceCollection_add(long jarg1, JDeviceCollection jarg1_, long jarg2, DeviceID jarg2_, long jarg3, JDevice jarg3_);
@@ -80,6 +139,7 @@ public class stiJNI {
   public final static native void delete_JLocalDevice(long jarg1);
   public final static native long JLocalDevice_getEventReceiver(long jarg1, JLocalDevice jarg1_);
   public final static native long JLocalDevice_getEngineScheduler(long jarg1, JLocalDevice jarg1_);
+  public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, int jarg2);
   public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native long new_DeviceEvent__SWIG_0();
@@ -110,9 +170,9 @@ public class stiJNI {
   public final static native long EngineSchedulerMessage_jobID_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void EngineSchedulerMessage_engine_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2);
   public final static native long EngineSchedulerMessage_engine_get(long jarg1, EngineSchedulerMessage jarg1_);
-  public final static native void EngineSchedulerMessage_handledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2);
+  public final static native void EngineSchedulerMessage_handledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, RawEventVector jarg2_);
   public final static native long EngineSchedulerMessage_handledEvents_get(long jarg1, EngineSchedulerMessage jarg1_);
-  public final static native void EngineSchedulerMessage_unhandledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2);
+  public final static native void EngineSchedulerMessage_unhandledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, RawEventVector jarg2_);
   public final static native long EngineSchedulerMessage_unhandledEvents_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void delete_EngineSchedulerMessage(long jarg1);
   public final static native void EngineSchedulerMessage_director_connect(EngineSchedulerMessage obj, long cptr, boolean mem_own, boolean weak_global);
@@ -123,7 +183,7 @@ public class stiJNI {
   public final static native String STIParsingMessage_name_get(long jarg1, STIParsingMessage jarg1_);
   public final static native void STIParsingMessage_message_set(long jarg1, STIParsingMessage jarg1_, String jarg2);
   public final static native String STIParsingMessage_message_get(long jarg1, STIParsingMessage jarg1_);
-  public final static native void STIParsingMessage_events_set(long jarg1, STIParsingMessage jarg1_, long jarg2);
+  public final static native void STIParsingMessage_events_set(long jarg1, STIParsingMessage jarg1_, long jarg2, RawEventVector jarg2_);
   public final static native long STIParsingMessage_events_get(long jarg1, STIParsingMessage jarg1_);
   public final static native long new_STIParsingMessage();
   public final static native void delete_STIParsingMessage(long jarg1);
@@ -231,10 +291,55 @@ public class stiJNI {
   public final static native long EngineJobID_sid_get(long jarg1, EngineJobID jarg1_);
   public final static native long new_EngineJobID();
   public final static native void delete_EngineJobID(long jarg1);
+  public final static native long new_MixedValue__SWIG_0();
+  public final static native long new_MixedValue__SWIG_2(long jarg1, MixedValue jarg1_);
+  public final static native void delete_MixedValue(long jarg1);
+  public final static native boolean MixedValue_opEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native boolean MixedValue_opNotEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_setValue__SWIG_2(long jarg1, MixedValue jarg1_, boolean jarg2);
+  public final static native void MixedValue_setValue__SWIG_3(long jarg1, MixedValue jarg1_, int jarg2);
+  public final static native void MixedValue_setValue__SWIG_4(long jarg1, MixedValue jarg1_, double jarg2);
+  public final static native void MixedValue_setValue__SWIG_5(long jarg1, MixedValue jarg1_, String jarg2);
+  public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_);
+  public final static native void MixedValue_setValue__SWIG_10(long jarg1, MixedValue jarg1_, short jarg2);
+  public final static native void MixedValue_clear(long jarg1, MixedValue jarg1_);
+  public final static native int MixedValue_getType(long jarg1, MixedValue jarg1_);
+  public final static native boolean MixedValue_getBoolean(long jarg1, MixedValue jarg1_);
+  public final static native int MixedValue_getInt(long jarg1, MixedValue jarg1_);
+  public final static native double MixedValue_getDouble(long jarg1, MixedValue jarg1_);
+  public final static native double MixedValue_getNumber(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_getString(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_TypeToString(int jarg1);
+  public final static native long new_MixedValueVec__SWIG_0();
+  public final static native long new_MixedValueVec__SWIG_1(long jarg1, MixedValueVec jarg1_);
+  public final static native long MixedValueVec_capacity(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_reserve(long jarg1, MixedValueVec jarg1_, long jarg2);
+  public final static native boolean MixedValueVec_isEmpty(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_clear(long jarg1, MixedValueVec jarg1_);
+  public final static native long new_MixedValueVec__SWIG_2(int jarg1, long jarg2, MixedValue jarg2_);
+  public final static native int MixedValueVec_doSize(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_doAdd__SWIG_0(long jarg1, MixedValueVec jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValueVec_doAdd__SWIG_1(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long MixedValueVec_doRemove(long jarg1, MixedValueVec jarg1_, int jarg2);
+  public final static native long MixedValueVec_doGet(long jarg1, MixedValueVec jarg1_, int jarg2);
+  public final static native long MixedValueVec_doSet(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void MixedValueVec_doRemoveRange(long jarg1, MixedValueVec jarg1_, int jarg2, int jarg3);
+  public final static native void delete_MixedValueVec(long jarg1);
+  public final static native void delete_ParsedShot(long jarg1);
+  public final static native void ParsedShot_getEvents(long jarg1, ParsedShot jarg1_, long jarg2, RawEventVector jarg2_);
+  public final static native long new_ParsedShot();
+  public final static native void ParsedShot_director_connect(ParsedShot obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ParsedShot_change_ownership(ParsedShot obj, long cptr, boolean take_or_release);
   public final static native long new_JEventEngineScheduler(long jarg1);
   public final static native void delete_JEventEngineScheduler(long jarg1);
   public final static native void JEventEngineScheduler_id_set(long jarg1, JEventEngineScheduler jarg1_, long jarg2, DeviceID jarg2_);
   public final static native long JEventEngineScheduler_id_get(long jarg1, JEventEngineScheduler jarg1_);
+  public final static native void JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, ParsedShot jarg3_);
+  public final static native void JEventEngineScheduler_play(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ShotID jarg2_);
+  public final static native void JEventEngineScheduler_cancelJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
   public final static native long new_JNetworkDeviceHub__SWIG_0(String jarg1);
   public final static native long new_JNetworkDeviceHub__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JNetworkDeviceHub(long jarg1);
@@ -312,6 +417,9 @@ public class stiJNI {
   public static void SwigDirector_JLocalDevice_write(JLocalDevice jself, long input) {
     jself.write(input);
   }
+  public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
+    jself.parseEvents(temp);
+  }
   public static void SwigDirector_RefreshDeviceEventListener_handleEvent(RefreshDeviceEventListener jself, long evt) {
     jself.handleEvent((evt == 0) ? null : new RefreshDeviceEvent(evt, true));
   }
@@ -326,6 +434,9 @@ public class stiJNI {
   }
   public static void SwigDirector_EventEngineMessageListener_handleEvent(EventEngineMessageListener jself, long evt) {
     jself.handleEvent((evt == 0) ? null : new EventEngineMessage(evt, true));
+  }
+  public static void SwigDirector_ParsedShot_getEvents(ParsedShot jself, long ets) {
+    jself.getEvents((ets == 0) ? null : new RawEventVector(ets, true));
   }
 
   private final static native void swig_module_init();

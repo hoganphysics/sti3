@@ -35,6 +35,21 @@
     #include "ShotID.h"
     using STI::Engine::ShotID;
 
+    #include "ParsedShot.h"
+    using STI::Engine::ParsedShot;
+
+    #include "RawEvent.h"
+    using STI::Engine::RawEventType;
+    #include "EventStackTrace.h"
+    using STI::Engine::EventStackTrace;
+    #include "utils/GraphPathLabel.h"
+    using STI::Utils::GraphPathLabel;
+
+    #include "MixedValue.h"
+
+    using STI::Utils::MixedValue;
+    using STI::Utils::MixedValueType;
+    using STI::Utils::MixedValueVector;
 
 %}
 
@@ -50,6 +65,8 @@
 %shared_ptr(STI::Device::JDeviceEventReceiver);
 %shared_ptr(STI::Device::JDeviceEventDispatcher);
 %shared_ptr(STI::Device::JEventEngineScheduler);
+
+%shared_ptr(STI::Engine::ParsedShot);
 
 //%shared_ptr(STI::Device::DeviceEventReceiver);
 
@@ -70,6 +87,18 @@
 %include "DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
 %template(DeviceIDvector) std::vector< STI::Device::DeviceID >;
+
+//RawEvent
+%include "fwd/RawEvent_fwd.h"
+%template(UIntVector) std::vector< unsigned >;
+%include "utils/GraphPathLabel.h"
+%rename(UIntVector) STI::Utils::GraphPathLabel;
+%include "EventStackTrace.h"
+%include "RawEvent.h"
+%template(RawEventVector) std::vector< STI::Engine::RawEvent >;
+%shared_ptr( std::vector< STI::Engine::RawEvent > );
+
+
 
 //JDeviceCollection
 %ignore STI::Device::DeviceCollection;
@@ -123,7 +152,15 @@
 %include "EngineJobID.h"
 
 
+//MixedValue
+%include "fwd/MixedValue_fwd.h"
+%include "MixedValue.h"
+%template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
+%include "MixedValue.h"
+%rename(MixedValueVec) STI::Utils::MixedValueVector;
 
+
+%include "ParsedShot.h"
 
 
 // %nspace STI::Engine::ParseID
