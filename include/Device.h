@@ -5,7 +5,7 @@
 //#include "DeviceNode.h"
 #include "DeviceID.h"
 #include "fwd/EventEngineScheduler_fwd.h"
-
+//#include "fwd/MixedValue_fwd.h"
 
 #include <memory>
 
@@ -29,7 +29,7 @@ namespace Device
 //};
 
 class DeviceEventDispatcher;
-
+class ChannelManager;
 class Device;
 //typedef STI::Network::Node<DeviceID, Device> DeviceNode;
 
@@ -46,14 +46,18 @@ class Device : public STI::Network::Node<DeviceID, Device>
 public:
 	virtual ~Device() {}
 
-	virtual DeviceID getID() = 0;
+	virtual const DeviceID getID() const = 0;
 
-	virtual void write(unsigned input) = 0;
+//	virtual void write(unsigned input) = 0;
+
+	// virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) = 0;
+	// virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) = 0;
 
 	//virtual bool refresh() = 0;
 
 	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
+	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 
 };
 

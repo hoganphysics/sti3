@@ -20,6 +20,7 @@
 
 #include "SynchronousEvent.h"
 
+#include "Convert_EventEngine.h"
 
 #include <iostream>
 #include <memory>
@@ -38,38 +39,38 @@ public:
 	TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer) : LocalDevice(name, address, module, targetServer)
 	{
-		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
-		getEventDispatcher(dispatcher);
-		std::shared_ptr<STI::Device::DeviceCollection> collection;
-		getCollection(collection);
+		// std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
+		// getEventDispatcher(dispatcher);
+		// std::shared_ptr<STI::Device::DeviceCollection> collection;
+		// getCollection(collection);
 		
-		std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
-		getEngineScheduler(scheduler);
+		// std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
+		// getEngineScheduler(scheduler);
 		
-		STI::Device::Channel ch(1, STI::Device::TChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
+		addChannel(1, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
+
+		
+		//STI::Device::Channel ch(1, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
 		//channels[1] = ch;
-		localChannels[1] = ch;
+		//localChannels[1] = ch;
 
 		STI::Engine::EngineID id(0);
+		addEventEngine(id);
+
 //		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
 //		scheduler->addEngine(id, engine);
-
-		addEventEngine(id);
 
 	}
 	~TestDevice()
 	{
-		cout << "Destroying " << id.getName() << endl;
+		cout << "Destroying " << getID().getName() << endl;
 	}
 
-	void addEventTarget(const STI::Device::DeviceID& id)
-	{
-		eventTargets.insert(id);
-	}
+
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) 
 	{
-		cout << "Parsing: " << id.getName() << endl;
+		cout << "Parsing: " << getID().getName() << endl;
 		cout << "Event count: " << events.size() << endl;
 		
 		if (events.size() > 0) {
@@ -90,7 +91,7 @@ public:
 		void playEvent()
 		{
 			std::unique_lock < std::mutex > writeLock(TestEvent::coutMutex);
-			cout << "Play: " << localDevice->id.getName() << " " << evt.print() << endl;
+			cout << "Play: " << localDevice->getID().getName() << " " << evt.print() << endl;
 		}
 
 		STI::Engine::RawEvent evt;
@@ -104,6 +105,7 @@ public:
 };
 
 std::mutex TestDevice::TestEvent::coutMutex{};
+
 
 void testDevice();
 void testServer();
@@ -122,7 +124,7 @@ void testDevice()
 
 	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 
-	hub1->addNode(dev2->id, dev2);
+	hub1->addNode(dev2->getID(), dev2);
 
 	hub1->run(true);
 
@@ -130,27 +132,58 @@ void testDevice()
 
 void testServer()
 {
+
+	STI::Device::DeviceID id2("dev2", "localhost", 0, "localhost/0/dev1");
+
 	auto dev1 = std::make_shared<TestDevice>("dev1", "localhost", 0, "srv1");
-	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+//	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
 	auto dev3 = std::make_shared<TestDevice>("dev3", "localhost", 0, "localhost/0/dev2");
 	auto dev4 = std::make_shared<TestDevice>("dev4", "localhost", 0, "localhost/0/dev1");
+
+
+
+	STI::Engine::ParseID pid0;
+	pid0.parseTimestamp.timestamp = 1.1;
+	auto shot0 = std::make_shared<STI::Engine::LocalParsedShot>();
+	STI::Utils::MixedValue value0;
+	value0.setValue(28.0);
+	auto evt0 = STI::Engine::RawEvent(dev1->getID(), 2.01, 1, value0, "desc", 0, STI::Engine::RawEventType::Play);
+
+	STI::TNetwork::TRawEvent tRawEvent0;
+	STI::Network::convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(evt0, tRawEvent0);
+
+	std::shared_ptr<STI::Engine::RawEventVector> events0;
+	shot0->getEvents(events0);
+	events0->push_back(evt0);
+	events0->push_back(evt0);
+
+	STI::TNetwork::TRawEventSeq_var tRawEvents0 = new STI::TNetwork::TRawEventSeq();
+
+	//STI::TNetwork::TRawEventSeq_var tRawEvtseq_var(new STI::TNetwork::TRawEventSeq);
+
+	STI::Network::convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(*events0, 
+						(_CORBA_Unbounded_Sequence<STI::TNetwork::TRawEvent>&) tRawEvents0);
+
 
 //	auto hub1 = std::make_shared<STI::Network::LocalDeviceHub>("Hub1");
 //	auto hub2 = std::make_shared<STI::Network::LocalDeviceHub>("Hub2");
 //	STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>::connect(hub1, hub2);
 
-	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.6:2809");
+	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 	//STI::Network::NetworkDeviceHub hub1("192.168.1.6:2809");
 	//hub1.addNode(dev2->getID(), dev2);
 
 
-	hub1->addNode(dev1->id, dev1);
-	hub1->addNode(dev2->id, dev2);
-	hub1->addNode(dev3->id, dev3);
-	hub1->addNode(dev4->id, dev4);
+	hub1->addNode(dev1->getID(), dev1);
+//	hub1->addNode(dev2->getID(), dev2);
+	hub1->addNode(dev3->getID(), dev3);
+	hub1->addNode(dev4->getID(), dev4);
+
+
+	hub1->run(false);
 
 	int x;
-	std::cin >> x;
+	//std::cin >> x;
 
 
 	//dev3->addEventTarget(dev1->getID());
@@ -162,7 +195,7 @@ void testServer()
 	STI::Utils::MixedValue value;
 	value.setValue(27.0);
 	auto evt1 = STI::Engine::RawEvent(dev1->getID(), 2.01, 1, value, "desc", 0, STI::Engine::RawEventType::Play);
-	auto evt2 = STI::Engine::RawEvent(dev2->getID(), 3.01, 1, value, "desc2", 1, STI::Engine::RawEventType::Play);
+	auto evt2 = STI::Engine::RawEvent(id2, 3.01, 1, value, "desc2", 1, STI::Engine::RawEventType::Play);
 	auto evt3 = STI::Engine::RawEvent(dev3->getID(), 4.01, 1, value, "desc3", 2, STI::Engine::RawEventType::Play);
 	auto evt4 = STI::Engine::RawEvent(dev4->getID(), 5.01, 1, value, "desc4", 3, STI::Engine::RawEventType::Play);
 
@@ -173,6 +206,8 @@ void testServer()
 	events->push_back(evt2);
 	events->push_back(evt3);
 	events->push_back(evt4);
+
+	std::cout << "Length events: " << events->size() << std::endl;
 
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
 	dev1->getEngineScheduler(scheduler);

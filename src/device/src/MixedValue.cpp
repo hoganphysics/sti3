@@ -127,7 +127,7 @@ void MixedValue::setValue(double value)
 	type = MixedValueType::Double;
 }
 
-void MixedValue::setValue(std::string value)
+void MixedValue::setValue(const std::string& value)
 {
 	clear();
 

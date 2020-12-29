@@ -18,7 +18,7 @@ public:
 
 	NetworkEventEngine(
 		const STI::Device::DeviceID& localID,
-		STI::Device::ChannelMap& channels,
+		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 		STI::Engine::DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection)

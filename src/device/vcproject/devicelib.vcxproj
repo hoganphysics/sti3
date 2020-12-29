@@ -124,7 +124,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Channel.cpp" />
     <ClCompile Include="..\src\DeviceEvent.cpp" />
     <ClCompile Include="..\src\DeviceEventParser.cpp" />
     <ClCompile Include="..\src\EngineParsingError.cpp" />
@@ -132,6 +131,8 @@
     <ClCompile Include="..\src\EventEngineManager.cpp" />
     <ClCompile Include="..\src\EventEngineParser.cpp" />
     <ClCompile Include="..\src\EventEngineStateMachine.cpp" />
+    <ClCompile Include="..\src\LocalChannel.cpp" />
+    <ClCompile Include="..\src\LocalChannelManager.cpp" />
     <ClCompile Include="..\src\LocalDeviceEventDispatcher.cpp" />
     <ClCompile Include="..\src\DeviceEventReceiver.cpp" />
     <ClCompile Include="..\src\DeviceID.cpp" />
@@ -156,8 +157,8 @@
     <ClInclude Include="..\..\..\include\SynchronizedMap.h" />
     <ClInclude Include="..\..\..\include\utils.h" />
     <ClInclude Include="..\src\Channel.h" />
+    <ClInclude Include="..\src\ChannelManager.h" />
     <ClInclude Include="..\src\DeviceEvent.h" />
-    <ClInclude Include="..\src\DeviceEventDispatcher-work.h" />
     <ClInclude Include="..\src\DeviceEventDispatcher.h" />
     <ClInclude Include="..\src\DeviceEventListenerGroup.h" />
     <ClInclude Include="..\src\DeviceEventParser.h" />
@@ -187,6 +188,8 @@
     <ClInclude Include="..\src\fwd\MixedValue_fwd.h" />
     <ClInclude Include="..\src\fwd\RawEvent_fwd.h" />
     <ClInclude Include="..\src\fwd\SynchronousEvent_fwd.h" />
+    <ClInclude Include="..\src\LocalChannel.h" />
+    <ClInclude Include="..\src\LocalChannelManager.h" />
     <ClInclude Include="..\src\LocalDeviceEventDispatcher.h" />
     <ClInclude Include="..\src\LocalDeviceEventHandler.h" />
     <ClInclude Include="..\src\LocalEventEngine.h" />

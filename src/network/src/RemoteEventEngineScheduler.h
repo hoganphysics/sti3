@@ -20,6 +20,9 @@ public:
     RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler);
     ~RemoteEventEngineScheduler();
 
+    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::ParsedShot>& shot);
+    void play(const STI::Engine::ShotID& shotID);
+
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
                                 std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
     

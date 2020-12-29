@@ -746,7 +746,7 @@ namespace Swig {
 namespace Swig {
   namespace {
     jclass jclass_stiJNI = NULL;
-    jmethodID director_method_ids[7];
+    jmethodID director_method_ids[9];
   }
 }
 
@@ -777,6 +777,21 @@ namespace Swig {
     #include "ShotID.h"
     using STI::Engine::ShotID;
 
+    #include "ParsedShot.h"
+    using STI::Engine::ParsedShot;
+
+    #include "RawEvent.h"
+    using STI::Engine::RawEventType;
+    #include "EventStackTrace.h"
+    using STI::Engine::EventStackTrace;
+    #include "utils/GraphPathLabel.h"
+    using STI::Utils::GraphPathLabel;
+
+    #include "MixedValue.h"
+
+    using STI::Utils::MixedValue;
+    using STI::Utils::MixedValueType;
+    using STI::Utils::MixedValueVector;
 
 
 
@@ -897,6 +912,114 @@ SWIGINTERN void std_vector_Sl_STI_Device_DeviceID_Sg__doRemoveRange(std::vector<
           throw std::out_of_range("vector index out of range");
         }
       }
+SWIGINTERN std::vector< unsigned int > *new_std_vector_Sl_unsigned_SS_int_Sg___SWIG_2(jint count,unsigned int const &value){
+        if (count < 0)
+          throw std::out_of_range("vector count must be positive");
+        return new std::vector< unsigned int >(static_cast<std::vector< unsigned int >::size_type>(count), value);
+      }
+SWIGINTERN jint std_vector_Sl_unsigned_SS_int_Sg__doSize(std::vector< unsigned int > const *self){
+        return SWIG_VectorSize(self->size());
+      }
+SWIGINTERN void std_vector_Sl_unsigned_SS_int_Sg__doAdd__SWIG_0(std::vector< unsigned int > *self,std::vector< unsigned int >::value_type const &x){
+        self->push_back(x);
+      }
+SWIGINTERN void std_vector_Sl_unsigned_SS_int_Sg__doAdd__SWIG_1(std::vector< unsigned int > *self,jint index,std::vector< unsigned int >::value_type const &x){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index <= size) {
+          self->insert(self->begin() + index, x);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< unsigned int >::value_type std_vector_Sl_unsigned_SS_int_Sg__doRemove(std::vector< unsigned int > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index < size) {
+          unsigned int const old_value = (*self)[index];
+          self->erase(self->begin() + index);
+          return old_value;
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< unsigned int >::value_type const &std_vector_Sl_unsigned_SS_int_Sg__doGet(std::vector< unsigned int > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size)
+          return (*self)[index];
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN std::vector< unsigned int >::value_type std_vector_Sl_unsigned_SS_int_Sg__doSet(std::vector< unsigned int > *self,jint index,std::vector< unsigned int >::value_type const &val){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size) {
+          unsigned int const old_value = (*self)[index];
+          (*self)[index] = val;
+          return old_value;
+        }
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN void std_vector_Sl_unsigned_SS_int_Sg__doRemoveRange(std::vector< unsigned int > *self,jint fromIndex,jint toIndex){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= fromIndex && fromIndex <= toIndex && toIndex <= size) {
+          self->erase(self->begin() + fromIndex, self->begin() + toIndex);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Engine::RawEvent > *new_std_vector_Sl_STI_Engine_RawEvent_Sg___SWIG_2(jint count,STI::Engine::RawEvent const &value){
+        if (count < 0)
+          throw std::out_of_range("vector count must be positive");
+        return new std::vector< STI::Engine::RawEvent >(static_cast<std::vector< STI::Engine::RawEvent >::size_type>(count), value);
+      }
+SWIGINTERN jint std_vector_Sl_STI_Engine_RawEvent_Sg__doSize(std::vector< STI::Engine::RawEvent > const *self){
+        return SWIG_VectorSize(self->size());
+      }
+SWIGINTERN void std_vector_Sl_STI_Engine_RawEvent_Sg__doAdd__SWIG_0(std::vector< STI::Engine::RawEvent > *self,std::vector< STI::Engine::RawEvent >::value_type const &x){
+        self->push_back(x);
+      }
+SWIGINTERN void std_vector_Sl_STI_Engine_RawEvent_Sg__doAdd__SWIG_1(std::vector< STI::Engine::RawEvent > *self,jint index,std::vector< STI::Engine::RawEvent >::value_type const &x){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index <= size) {
+          self->insert(self->begin() + index, x);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Engine::RawEvent >::value_type std_vector_Sl_STI_Engine_RawEvent_Sg__doRemove(std::vector< STI::Engine::RawEvent > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index < size) {
+          STI::Engine::RawEvent const old_value = (*self)[index];
+          self->erase(self->begin() + index);
+          return old_value;
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Engine::RawEvent >::value_type const &std_vector_Sl_STI_Engine_RawEvent_Sg__doGet(std::vector< STI::Engine::RawEvent > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size)
+          return (*self)[index];
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN std::vector< STI::Engine::RawEvent >::value_type std_vector_Sl_STI_Engine_RawEvent_Sg__doSet(std::vector< STI::Engine::RawEvent > *self,jint index,std::vector< STI::Engine::RawEvent >::value_type const &val){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size) {
+          STI::Engine::RawEvent const old_value = (*self)[index];
+          (*self)[index] = val;
+          return old_value;
+        }
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN void std_vector_Sl_STI_Engine_RawEvent_Sg__doRemoveRange(std::vector< STI::Engine::RawEvent > *self,jint fromIndex,jint toIndex){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= fromIndex && fromIndex <= toIndex && toIndex <= size) {
+          self->erase(self->begin() + fromIndex, self->begin() + toIndex);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
 
 struct SWIG_null_deleter {
   void operator() (void const *) const {
@@ -907,6 +1030,60 @@ struct SWIG_null_deleter {
 #define SWIG_NO_NULL_DELETER_SWIG_POINTER_NEW
 #define SWIG_NO_NULL_DELETER_SWIG_POINTER_OWN
 
+SWIGINTERN std::vector< STI::Utils::MixedValue > *new_std_vector_Sl_STI_Utils_MixedValue_Sg___SWIG_2(jint count,STI::Utils::MixedValue const &value){
+        if (count < 0)
+          throw std::out_of_range("vector count must be positive");
+        return new std::vector< STI::Utils::MixedValue >(static_cast<std::vector< STI::Utils::MixedValue >::size_type>(count), value);
+      }
+SWIGINTERN jint std_vector_Sl_STI_Utils_MixedValue_Sg__doSize(std::vector< STI::Utils::MixedValue > const *self){
+        return SWIG_VectorSize(self->size());
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_MixedValue_Sg__doAdd__SWIG_0(std::vector< STI::Utils::MixedValue > *self,std::vector< STI::Utils::MixedValue >::value_type const &x){
+        self->push_back(x);
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_MixedValue_Sg__doAdd__SWIG_1(std::vector< STI::Utils::MixedValue > *self,jint index,std::vector< STI::Utils::MixedValue >::value_type const &x){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index <= size) {
+          self->insert(self->begin() + index, x);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Utils::MixedValue >::value_type std_vector_Sl_STI_Utils_MixedValue_Sg__doRemove(std::vector< STI::Utils::MixedValue > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index < size) {
+          STI::Utils::MixedValue const old_value = (*self)[index];
+          self->erase(self->begin() + index);
+          return old_value;
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Utils::MixedValue >::value_type const &std_vector_Sl_STI_Utils_MixedValue_Sg__doGet(std::vector< STI::Utils::MixedValue > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size)
+          return (*self)[index];
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN std::vector< STI::Utils::MixedValue >::value_type std_vector_Sl_STI_Utils_MixedValue_Sg__doSet(std::vector< STI::Utils::MixedValue > *self,jint index,std::vector< STI::Utils::MixedValue >::value_type const &val){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size) {
+          STI::Utils::MixedValue const old_value = (*self)[index];
+          (*self)[index] = val;
+          return old_value;
+        }
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_MixedValue_Sg__doRemoveRange(std::vector< STI::Utils::MixedValue > *self,jint fromIndex,jint toIndex){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= fromIndex && fromIndex <= toIndex && toIndex <= size) {
+          self->erase(self->begin() + fromIndex, self->begin() + toIndex);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
 SWIGINTERN std::vector< STI::Network::JNodeWalker > *new_std_vector_Sl_STI_Network_JNodeWalker_Sg___SWIG_2(jint count,STI::Network::JNodeWalker const &value){
         if (count < 0)
           throw std::out_of_range("vector count must be positive");
@@ -1128,6 +1305,31 @@ void SwigDirector_JLocalDevice::write(unsigned int input) {
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
 }
 
+void SwigDirector_JLocalDevice::parseEvents(int temp) {
+  JNIEnvWrapper swigjnienv(this) ;
+  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
+  jobject swigjobj = (jobject) NULL ;
+  jint jtemp  ;
+  
+  if (!swig_override[1]) {
+    SWIG_JavaThrowException(JNIEnvWrapper(this).getJNIEnv(), SWIG_JavaDirectorPureVirtual, "Attempted to invoke pure virtual method STI::Device::JLocalDevice::parseEvents.");
+    return;
+  }
+  swigjobj = swig_get_self(jenv);
+  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    jtemp = (jint) temp;
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[2], swigjobj, jtemp);
+    jthrowable swigerror = jenv->ExceptionOccurred();
+    if (swigerror) {
+      Swig::DirectorException::raise(jenv, swigerror);
+    }
+    
+  } else {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::JLocalDevice::parseEvents ");
+  }
+  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
+}
+
 void SwigDirector_JLocalDevice::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
   static struct {
     const char *mname;
@@ -1136,6 +1338,9 @@ void SwigDirector_JLocalDevice::swig_connect_director(JNIEnv *jenv, jobject jsel
   } methods[] = {
     {
       "write", "(J)V", NULL 
+    },
+    {
+      "parseEvents", "(I)V", NULL 
     }
   };
   
@@ -1148,7 +1353,7 @@ void SwigDirector_JLocalDevice::swig_connect_director(JNIEnv *jenv, jobject jsel
       baseclass = (jclass) jenv->NewGlobalRef(baseclass);
     }
     bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 2; ++i) {
       if (!methods[i].base_methid) {
         methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
         if (!methods[i].base_methid) return;
@@ -1317,7 +1522,7 @@ void SwigDirector_RefreshDeviceEventListener::handleEvent(std::shared_ptr< STI::
     if (evt) {
       *((std::shared_ptr<  STI::Device::RefreshDeviceEvent > **)&jevt) = new std::shared_ptr<  STI::Device::RefreshDeviceEvent >(evt);
     } 
-    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[2], swigjobj, jevt);
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[3], swigjobj, jevt);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       Swig::DirectorException::raise(jenv, swigerror);
@@ -1389,7 +1594,7 @@ void SwigDirector_ChannelUpdateDeviceEventListener::handleEvent(std::shared_ptr<
     if (evt) {
       *((std::shared_ptr<  STI::Device::ChannelUpdateDeviceEvent > **)&jevt) = new std::shared_ptr<  STI::Device::ChannelUpdateDeviceEvent >(evt);
     } 
-    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[3], swigjobj, jevt);
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[4], swigjobj, jevt);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       Swig::DirectorException::raise(jenv, swigerror);
@@ -1461,7 +1666,7 @@ void SwigDirector_EngineSchedulerMessageListener::handleEvent(std::shared_ptr< S
     if (evt) {
       *((std::shared_ptr<  STI::Device::EngineSchedulerMessage > **)&jevt) = new std::shared_ptr<  STI::Device::EngineSchedulerMessage >(evt);
     } 
-    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[4], swigjobj, jevt);
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[5], swigjobj, jevt);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       Swig::DirectorException::raise(jenv, swigerror);
@@ -1533,7 +1738,7 @@ void SwigDirector_EngineParserMessageListener::handleEvent(std::shared_ptr< STI:
     if (evt) {
       *((std::shared_ptr<  STI::Device::EngineParserMessage > **)&jevt) = new std::shared_ptr<  STI::Device::EngineParserMessage >(evt);
     } 
-    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[5], swigjobj, jevt);
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[6], swigjobj, jevt);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       Swig::DirectorException::raise(jenv, swigerror);
@@ -1605,7 +1810,7 @@ void SwigDirector_EventEngineMessageListener::handleEvent(std::shared_ptr< STI::
     if (evt) {
       *((std::shared_ptr<  STI::Device::EventEngineMessage > **)&jevt) = new std::shared_ptr<  STI::Device::EventEngineMessage >(evt);
     } 
-    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[6], swigjobj, jevt);
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[7], swigjobj, jevt);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       Swig::DirectorException::raise(jenv, swigerror);
@@ -1633,6 +1838,78 @@ void SwigDirector_EventEngineMessageListener::swig_connect_director(JNIEnv *jenv
   if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
     if (!baseclass) {
       baseclass = jenv->FindClass("edu/stanford/sti/EventEngineMessageListener");
+      if (!baseclass) return;
+      baseclass = (jclass) jenv->NewGlobalRef(baseclass);
+    }
+    bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
+    for (int i = 0; i < 1; ++i) {
+      if (!methods[i].base_methid) {
+        methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
+        if (!methods[i].base_methid) return;
+      }
+      swig_override[i] = false;
+      if (derived) {
+        jmethodID methid = jenv->GetMethodID(jcls, methods[i].mname, methods[i].mdesc);
+        swig_override[i] = (methid != methods[i].base_methid);
+        jenv->ExceptionClear();
+      }
+    }
+  }
+}
+
+
+SwigDirector_ParsedShot::SwigDirector_ParsedShot(JNIEnv *jenv) : STI::Engine::ParsedShot(), Swig::Director(jenv) {
+}
+
+SwigDirector_ParsedShot::~SwigDirector_ParsedShot() {
+  swig_disconnect_director_self("swigDirectorDisconnect");
+}
+
+
+void SwigDirector_ParsedShot::getEvents(std::shared_ptr< std::vector< STI::Engine::RawEvent > > &ets) {
+  JNIEnvWrapper swigjnienv(this) ;
+  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
+  jobject swigjobj = (jobject) NULL ;
+  jlong jets = 0 ;
+  
+  if (!swig_override[0]) {
+    SWIG_JavaThrowException(JNIEnvWrapper(this).getJNIEnv(), SWIG_JavaDirectorPureVirtual, "Attempted to invoke pure virtual method STI::Engine::ParsedShot::getEvents.");
+    return;
+  }
+  swigjobj = swig_get_self(jenv);
+  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    jets = 0;
+    if (ets) {
+      *((std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jets) = new std::shared_ptr<  std::vector< STI::Engine::RawEvent > >(ets);
+    } 
+    jenv->CallStaticVoidMethod(Swig::jclass_stiJNI, Swig::director_method_ids[8], swigjobj, jets);
+    jthrowable swigerror = jenv->ExceptionOccurred();
+    if (swigerror) {
+      Swig::DirectorException::raise(jenv, swigerror);
+    }
+    
+  } else {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Engine::ParsedShot::getEvents ");
+  }
+  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
+}
+
+void SwigDirector_ParsedShot::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
+  static struct {
+    const char *mname;
+    const char *mdesc;
+    jmethodID base_methid;
+  } methods[] = {
+    {
+      "getEvents", "(Ledu/stanford/sti/RawEventVector;)V", NULL 
+    }
+  };
+  
+  static jclass baseclass = 0 ;
+  
+  if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
+    if (!baseclass) {
+      baseclass = jenv->FindClass("edu/stanford/sti/ParsedShot");
       if (!baseclass) return;
       baseclass = (jclass) jenv->NewGlobalRef(baseclass);
     }
@@ -2494,6 +2771,1055 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1DeviceIDvector(JNIE
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1UIntVector_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (std::vector< unsigned int > *)new std::vector< unsigned int >();
+  *(std::vector< unsigned int > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1UIntVector_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *arg1 = 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< unsigned int > const & reference is null");
+    return 0;
+  } 
+  result = (std::vector< unsigned int > *)new std::vector< unsigned int >((std::vector< unsigned int > const &)*arg1);
+  *(std::vector< unsigned int > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  std::vector< unsigned int >::size_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  result = ((std::vector< unsigned int > const *)arg1)->capacity();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  std::vector< unsigned int >::size_type arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = (std::vector< unsigned int >::size_type)jarg2; 
+  try {
+    (arg1)->reserve(arg2);
+  } catch(std::length_error &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  result = (bool)((std::vector< unsigned int > const *)arg1)->empty();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1UIntVector_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jint jarg1, jlong jarg2) {
+  jlong jresult = 0 ;
+  jint arg1 ;
+  unsigned int *arg2 = 0 ;
+  unsigned int temp2 ;
+  std::vector< unsigned int > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = jarg1; 
+  temp2 = (unsigned int)jarg2; 
+  arg2 = &temp2; 
+  try {
+    result = (std::vector< unsigned int > *)new_std_vector_Sl_unsigned_SS_int_Sg___SWIG_2(arg1,(unsigned int const &)*arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< unsigned int > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  try {
+    result = std_vector_Sl_unsigned_SS_int_Sg__doSize((std::vector< unsigned int > const *)arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doAdd_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  std::vector< unsigned int >::value_type *arg2 = 0 ;
+  std::vector< unsigned int >::value_type temp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  temp2 = (std::vector< unsigned int >::value_type)jarg2; 
+  arg2 = &temp2; 
+  std_vector_Sl_unsigned_SS_int_Sg__doAdd__SWIG_0(arg1,(unsigned int const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doAdd_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint arg2 ;
+  std::vector< unsigned int >::value_type *arg3 = 0 ;
+  std::vector< unsigned int >::value_type temp3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = jarg2; 
+  temp3 = (std::vector< unsigned int >::value_type)jarg3; 
+  arg3 = &temp3; 
+  try {
+    std_vector_Sl_unsigned_SS_int_Sg__doAdd__SWIG_1(arg1,arg2,(unsigned int const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doRemove(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint arg2 ;
+  std::vector< unsigned int >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = (std::vector< unsigned int >::value_type)std_vector_Sl_unsigned_SS_int_Sg__doRemove(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doGet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint arg2 ;
+  std::vector< unsigned int >::value_type *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = (std::vector< unsigned int >::value_type *) &std_vector_Sl_unsigned_SS_int_Sg__doGet(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = (jlong)*result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doSet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3) {
+  jlong jresult = 0 ;
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint arg2 ;
+  std::vector< unsigned int >::value_type *arg3 = 0 ;
+  std::vector< unsigned int >::value_type temp3 ;
+  std::vector< unsigned int >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = jarg2; 
+  temp3 = (std::vector< unsigned int >::value_type)jarg3; 
+  arg3 = &temp3; 
+  try {
+    result = (std::vector< unsigned int >::value_type)std_vector_Sl_unsigned_SS_int_Sg__doSet(arg1,arg2,(unsigned int const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_UIntVector_1doRemoveRange(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  jint arg2 ;
+  jint arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = jarg3; 
+  try {
+    std_vector_Sl_unsigned_SS_int_Sg__doRemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1UIntVector(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(std::vector< unsigned int > **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_EventStackTrace_1file(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Engine::EventStackTrace *arg1 = (STI::Engine::EventStackTrace *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::EventStackTrace **)&jarg1; 
+  result = ((STI::Engine::EventStackTrace const *)arg1)->file();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_EventStackTrace_1line(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  STI::Engine::EventStackTrace *arg1 = (STI::Engine::EventStackTrace *) 0 ;
+  long result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::EventStackTrace **)&jarg1; 
+  result = (long)((STI::Engine::EventStackTrace const *)arg1)->line();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_EventStackTrace_1print_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+  jstring jresult = 0 ;
+  STI::Engine::EventStackTrace *arg1 = (STI::Engine::EventStackTrace *) 0 ;
+  std::string arg2 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::EventStackTrace **)&jarg1; 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  } 
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return 0;
+  (&arg2)->assign(arg2_pstr);
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  result = ((STI::Engine::EventStackTrace const *)arg1)->print(arg2);
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_EventStackTrace_1print_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Engine::EventStackTrace *arg1 = (STI::Engine::EventStackTrace *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::EventStackTrace **)&jarg1; 
+  result = ((STI::Engine::EventStackTrace const *)arg1)->print();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1EventStackTrace(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Engine::EventStackTrace *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Engine::EventStackTrace *)new STI::Engine::EventStackTrace();
+  *(STI::Engine::EventStackTrace **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1EventStackTrace(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Engine::EventStackTrace *arg1 = (STI::Engine::EventStackTrace *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(STI::Engine::EventStackTrace **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEvent_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Engine::RawEvent *)new STI::Engine::RawEvent();
+  *(STI::Engine::RawEvent **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEvent_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2, jint jarg3, jlong jarg4, jobject jarg4_, jstring jarg5, jlong jarg6, jint jarg7) {
+  jlong jresult = 0 ;
+  STI::Device::DeviceID *arg1 = 0 ;
+  double arg2 ;
+  unsigned short arg3 ;
+  STI::Utils::MixedValue *arg4 = 0 ;
+  std::string *arg5 = 0 ;
+  unsigned int arg6 ;
+  STI::Engine::RawEventType *arg7 = 0 ;
+  STI::Engine::RawEventType temp7 ;
+  STI::Engine::RawEvent *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg4_;
+  arg1 = *(STI::Device::DeviceID **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return 0;
+  } 
+  arg2 = (double)jarg2; 
+  arg3 = (unsigned short)jarg3; 
+  arg4 = *(STI::Utils::MixedValue **)&jarg4;
+  if (!arg4) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return 0;
+  } 
+  if(!jarg5) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  }
+  const char *arg5_pstr = (const char *)jenv->GetStringUTFChars(jarg5, 0); 
+  if (!arg5_pstr) return 0;
+  std::string arg5_str(arg5_pstr);
+  arg5 = &arg5_str;
+  jenv->ReleaseStringUTFChars(jarg5, arg5_pstr); 
+  arg6 = (unsigned int)jarg6; 
+  temp7 = (STI::Engine::RawEventType)jarg7; 
+  arg7 = &temp7; 
+  result = (STI::Engine::RawEvent *)new STI::Engine::RawEvent((STI::Device::DeviceID const &)*arg1,arg2,arg3,(STI::Utils::MixedValue const &)*arg4,(std::string const &)*arg5,arg6,(STI::Engine::RawEventType const &)*arg7);
+  *(STI::Engine::RawEvent **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEvent_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = 0 ;
+  STI::Engine::RawEvent *arg2 = 0 ;
+  unsigned int arg3 ;
+  STI::Engine::RawEvent *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEvent const & reference is null");
+    return 0;
+  } 
+  arg2 = *(STI::Engine::RawEvent **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEvent const & reference is null");
+    return 0;
+  } 
+  arg3 = (unsigned int)jarg3; 
+  result = (STI::Engine::RawEvent *)new STI::Engine::RawEvent((STI::Engine::RawEvent const &)*arg1,(STI::Engine::RawEvent const &)*arg2,arg3);
+  *(STI::Engine::RawEvent **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1RawEvent(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1print(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = ((STI::Engine::RawEvent const *)arg1)->print();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1time(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jdouble jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (double)((STI::Engine::RawEvent const *)arg1)->time();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1channel(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  unsigned short result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (unsigned short)((STI::Engine::RawEvent const *)arg1)->channel();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (STI::Utils::MixedValue *) &((STI::Engine::RawEvent const *)arg1)->value();
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1description(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = ((STI::Engine::RawEvent const *)arg1)->description();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1type(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Engine::RawEventType *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (STI::Engine::RawEventType *) &((STI::Engine::RawEvent const *)arg1)->type();
+  jresult = (jint)*result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1targetDevice(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Device::DeviceID *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (STI::Device::DeviceID *) &((STI::Engine::RawEvent const *)arg1)->targetDevice();
+  *(STI::Device::DeviceID **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1getStackTrace(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Engine::EventStackTrace *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (STI::Engine::EventStackTrace *) &((STI::Engine::RawEvent const *)arg1)->getStackTrace();
+  *(STI::Engine::EventStackTrace **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1getEventGraphPath(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (std::vector< unsigned int > *) &((STI::Engine::RawEvent const *)arg1)->getEventGraphPath();
+  *(std::vector< unsigned int > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1isMeasurementEvent(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  result = (bool)((STI::Engine::RawEvent const *)arg1)->isMeasurementEvent();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1opEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Engine::RawEvent *arg2 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = *(STI::Engine::RawEvent **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEvent const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Engine::RawEvent const *)arg1)->operator ==((STI::Engine::RawEvent const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1opNotEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Engine::RawEvent *arg2 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = *(STI::Engine::RawEvent **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEvent const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Engine::RawEvent const *)arg1)->operator !=((STI::Engine::RawEvent const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setTargetID(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Device::DeviceID *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return ;
+  } 
+  (arg1)->setTargetID((STI::Device::DeviceID const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setTime(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  double arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = (double)jarg2; 
+  (arg1)->setTime(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setChannel(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  unsigned short arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = (unsigned short)jarg2; 
+  (arg1)->setChannel(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setValue(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return ;
+  } 
+  (arg1)->setValue((STI::Utils::MixedValue const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setDescription(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  std::string *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return ;
+  }
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return ;
+  std::string arg2_str(arg2_pstr);
+  arg2 = &arg2_str;
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  (arg1)->setDescription((std::string const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setEventGraphPath(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Utils::GraphPathLabel *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  arg2 = *(STI::Utils::GraphPathLabel **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::GraphPathLabel const & reference is null");
+    return ;
+  } 
+  (arg1)->setEventGraphPath((STI::Utils::GraphPathLabel const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEvent_1setEventType(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  STI::Engine::RawEvent *arg1 = (STI::Engine::RawEvent *) 0 ;
+  STI::Engine::RawEventType *arg2 = 0 ;
+  STI::Engine::RawEventType temp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Engine::RawEvent **)&jarg1; 
+  temp2 = (STI::Engine::RawEventType)jarg2; 
+  arg2 = &temp2; 
+  (arg1)->setEventType((STI::Engine::RawEventType const &)*arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEventVector_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (std::vector< STI::Engine::RawEvent > *)new std::vector< STI::Engine::RawEvent >();
+  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEventVector_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = 0 ;
+  std::vector< STI::Engine::RawEvent > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Engine::RawEvent > const & reference is null");
+    return 0;
+  } 
+  result = (std::vector< STI::Engine::RawEvent > *)new std::vector< STI::Engine::RawEvent >((std::vector< STI::Engine::RawEvent > const &)*arg1);
+  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  std::vector< STI::Engine::RawEvent >::size_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  result = ((std::vector< STI::Engine::RawEvent > const *)arg1)->capacity();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  std::vector< STI::Engine::RawEvent >::size_type arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = (std::vector< STI::Engine::RawEvent >::size_type)jarg2; 
+  try {
+    (arg1)->reserve(arg2);
+  } catch(std::length_error &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  result = (bool)((std::vector< STI::Engine::RawEvent > const *)arg1)->empty();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1RawEventVector_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jint jarg1, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  jint arg1 ;
+  STI::Engine::RawEvent *arg2 = 0 ;
+  std::vector< STI::Engine::RawEvent > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg2_;
+  arg1 = jarg1; 
+  arg2 = *(STI::Engine::RawEvent **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEvent const & reference is null");
+    return 0;
+  } 
+  try {
+    result = (std::vector< STI::Engine::RawEvent > *)new_std_vector_Sl_STI_Engine_RawEvent_Sg___SWIG_2(arg1,(STI::Engine::RawEvent const &)*arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  try {
+    result = std_vector_Sl_STI_Engine_RawEvent_Sg__doSize((std::vector< STI::Engine::RawEvent > const *)arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doAdd_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  std::vector< STI::Engine::RawEvent >::value_type *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = *(std::vector< STI::Engine::RawEvent >::value_type **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Engine::RawEvent >::value_type const & reference is null");
+    return ;
+  } 
+  std_vector_Sl_STI_Engine_RawEvent_Sg__doAdd__SWIG_0(arg1,(STI::Engine::RawEvent const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doAdd_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Engine::RawEvent >::value_type *arg3 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Engine::RawEvent >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Engine::RawEvent >::value_type const & reference is null");
+    return ;
+  } 
+  try {
+    std_vector_Sl_STI_Engine_RawEvent_Sg__doAdd__SWIG_1(arg1,arg2,(STI::Engine::RawEvent const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doRemove(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Engine::RawEvent >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = std_vector_Sl_STI_Engine_RawEvent_Sg__doRemove(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Engine::RawEvent >::value_type **)&jresult = new std::vector< STI::Engine::RawEvent >::value_type((const std::vector< STI::Engine::RawEvent >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doGet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Engine::RawEvent >::value_type *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = (std::vector< STI::Engine::RawEvent >::value_type *) &std_vector_Sl_STI_Engine_RawEvent_Sg__doGet(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Engine::RawEvent >::value_type **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doSet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Engine::RawEvent >::value_type *arg3 = 0 ;
+  std::vector< STI::Engine::RawEvent >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Engine::RawEvent >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Engine::RawEvent >::value_type const & reference is null");
+    return 0;
+  } 
+  try {
+    result = std_vector_Sl_STI_Engine_RawEvent_Sg__doSet(arg1,arg2,(STI::Engine::RawEvent const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Engine::RawEvent >::value_type **)&jresult = new std::vector< STI::Engine::RawEvent >::value_type((const std::vector< STI::Engine::RawEvent >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventVector_1doRemoveRange(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  jint arg2 ;
+  jint arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = jarg3; 
+  try {
+    std_vector_Sl_STI_Engine_RawEvent_Sg__doRemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1RawEventVector(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  std::vector< STI::Engine::RawEvent > *arg1 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(std::vector< STI::Engine::RawEvent > **)&jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1JDeviceCollection(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::shared_ptr< STI::Device::DeviceCollection > *arg1 = 0 ;
@@ -3010,6 +4336,22 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JLocalDevice_1getEngineSch
 }
 
 
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JLocalDevice_1parseEvents(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  STI::Device::JLocalDevice *arg1 = (STI::Device::JLocalDevice *) 0 ;
+  int arg2 ;
+  std::shared_ptr< STI::Device::JLocalDevice > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JLocalDevice > **)&jarg1;
+  arg1 = (STI::Device::JLocalDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (int)jarg2; 
+  (arg1)->parseEvents(arg2);
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JLocalDevice_1director_1connect(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jswig_mem_own, jboolean jweak_global) {
   std::shared_ptr< STI::Device::JLocalDevice > *obj = *((std::shared_ptr< STI::Device::JLocalDevice > **)&objarg);
   (void)jcls;
@@ -3472,18 +4814,22 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1en
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1handledEvents_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1handledEvents_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   STI::Device::EngineSchedulerMessage *arg1 = (STI::Device::EngineSchedulerMessage *) 0 ;
   std::vector< STI::Engine::RawEvent > *arg2 = (std::vector< STI::Engine::RawEvent > *) 0 ;
   std::shared_ptr< STI::Device::EngineSchedulerMessage > *smartarg1 = 0 ;
+  std::shared_ptr< std::vector< STI::Engine::RawEvent > > *smartarg2 = 0 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
+  (void)jarg2_;
   
   smartarg1 = *(std::shared_ptr<  STI::Device::EngineSchedulerMessage > **)&jarg1;
   arg1 = (STI::Device::EngineSchedulerMessage *)(smartarg1 ? smartarg1->get() : 0); 
-  arg2 = *(std::vector< STI::Engine::RawEvent > **)&jarg2; 
+  
+  smartarg2 = *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jarg2;
+  arg2 = (std::vector< STI::Engine::RawEvent > *)(smartarg2 ? smartarg2->get() : 0); 
   if (arg1) (arg1)->handledEvents = *arg2;
 }
 
@@ -3501,23 +4847,29 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1ha
   smartarg1 = *(std::shared_ptr<  STI::Device::EngineSchedulerMessage > **)&jarg1;
   arg1 = (STI::Device::EngineSchedulerMessage *)(smartarg1 ? smartarg1->get() : 0); 
   result = (std::vector< STI::Engine::RawEvent > *)& ((arg1)->handledEvents);
-  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  
+  *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jresult = result ? new std::shared_ptr<  std::vector< STI::Engine::RawEvent > >(result SWIG_NO_NULL_DELETER_0) : 0;
+  
   return jresult;
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1unhandledEvents_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1unhandledEvents_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   STI::Device::EngineSchedulerMessage *arg1 = (STI::Device::EngineSchedulerMessage *) 0 ;
   std::vector< STI::Engine::RawEvent > *arg2 = (std::vector< STI::Engine::RawEvent > *) 0 ;
   std::shared_ptr< STI::Device::EngineSchedulerMessage > *smartarg1 = 0 ;
+  std::shared_ptr< std::vector< STI::Engine::RawEvent > > *smartarg2 = 0 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
+  (void)jarg2_;
   
   smartarg1 = *(std::shared_ptr<  STI::Device::EngineSchedulerMessage > **)&jarg1;
   arg1 = (STI::Device::EngineSchedulerMessage *)(smartarg1 ? smartarg1->get() : 0); 
-  arg2 = *(std::vector< STI::Engine::RawEvent > **)&jarg2; 
+  
+  smartarg2 = *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jarg2;
+  arg2 = (std::vector< STI::Engine::RawEvent > *)(smartarg2 ? smartarg2->get() : 0); 
   if (arg1) (arg1)->unhandledEvents = *arg2;
 }
 
@@ -3535,7 +4887,9 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineSchedulerMessage_1un
   smartarg1 = *(std::shared_ptr<  STI::Device::EngineSchedulerMessage > **)&jarg1;
   arg1 = (STI::Device::EngineSchedulerMessage *)(smartarg1 ? smartarg1->get() : 0); 
   result = (std::vector< STI::Engine::RawEvent > *)& ((arg1)->unhandledEvents);
-  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  
+  *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jresult = result ? new std::shared_ptr<  std::vector< STI::Engine::RawEvent > >(result SWIG_NO_NULL_DELETER_0) : 0;
+  
   return jresult;
 }
 
@@ -3675,15 +5029,19 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_STIParsingMessage_1messa
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_STIParsingMessage_1events_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_STIParsingMessage_1events_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   STI::Device::STIParsingMessage *arg1 = (STI::Device::STIParsingMessage *) 0 ;
   std::vector< STI::Engine::RawEvent > *arg2 = (std::vector< STI::Engine::RawEvent > *) 0 ;
+  std::shared_ptr< std::vector< STI::Engine::RawEvent > > *smartarg2 = 0 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
+  (void)jarg2_;
   arg1 = *(STI::Device::STIParsingMessage **)&jarg1; 
-  arg2 = *(std::vector< STI::Engine::RawEvent > **)&jarg2; 
+  
+  smartarg2 = *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jarg2;
+  arg2 = (std::vector< STI::Engine::RawEvent > *)(smartarg2 ? smartarg2->get() : 0); 
   if (arg1) (arg1)->events = *arg2;
 }
 
@@ -3698,7 +5056,9 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_STIParsingMessage_1events_
   (void)jarg1_;
   arg1 = *(STI::Device::STIParsingMessage **)&jarg1; 
   result = (std::vector< STI::Engine::RawEvent > *)& ((arg1)->events);
-  *(std::vector< STI::Engine::RawEvent > **)&jresult = result; 
+  
+  *(std::shared_ptr<  std::vector< STI::Engine::RawEvent > > **)&jresult = result ? new std::shared_ptr<  std::vector< STI::Engine::RawEvent > >(result SWIG_NO_NULL_DELETER_0) : 0;
+  
   return jresult;
 }
 
@@ -5346,6 +6706,689 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1EngineJobID(JNIEnv 
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Utils::MixedValue *)new STI::Utils::MixedValue();
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = 0 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return 0;
+  } 
+  result = (STI::Utils::MixedValue *)new STI::Utils::MixedValue((STI::Utils::MixedValue const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1MixedValue(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1opEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Utils::MixedValue const *)arg1)->operator ==((STI::Utils::MixedValue const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1opNotEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Utils::MixedValue const *)arg1)->operator !=((STI::Utils::MixedValue const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jboolean jarg2) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  bool arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->setValue(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setValue(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  double arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = (double)jarg2; 
+  (arg1)->setValue(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::string *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return ;
+  }
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return ;
+  std::string arg2_str(arg2_pstr);
+  arg2 = &arg2_str;
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  (arg1)->setValue((std::string const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return ;
+  } 
+  (arg1)->setValue((STI::Utils::MixedValue const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  (arg1)->setValue();
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  short arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = (short)jarg2; 
+  (arg1)->setValue(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getType(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValueType result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (STI::Utils::MixedValueType)((STI::Utils::MixedValue const *)arg1)->getType();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getBoolean(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (bool)((STI::Utils::MixedValue const *)arg1)->getBoolean();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getInt(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (int)((STI::Utils::MixedValue const *)arg1)->getInt();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getDouble(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jdouble jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (double)((STI::Utils::MixedValue const *)arg1)->getDouble();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getNumber(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jdouble jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (double)((STI::Utils::MixedValue const *)arg1)->getNumber();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getString(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = ((STI::Utils::MixedValue const *)arg1)->getString();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getVector(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValueVector *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = (STI::Utils::MixedValueVector *) &((STI::Utils::MixedValue const *)arg1)->getVector();
+  *(STI::Utils::MixedValueVector **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1print(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jstring jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = ((STI::Utils::MixedValue const *)arg1)->print();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1TypeToString(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jstring jresult = 0 ;
+  STI::Utils::MixedValueType *arg1 = 0 ;
+  STI::Utils::MixedValueType temp1 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  temp1 = (STI::Utils::MixedValueType)jarg1; 
+  arg1 = &temp1; 
+  result = STI::Utils::MixedValue::TypeToString((enum STI::Utils::MixedValueType const &)*arg1);
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValueVec_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (std::vector< STI::Utils::MixedValue > *)new std::vector< STI::Utils::MixedValue >();
+  *(std::vector< STI::Utils::MixedValue > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValueVec_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = 0 ;
+  std::vector< STI::Utils::MixedValue > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::MixedValue > const & reference is null");
+    return 0;
+  } 
+  result = (std::vector< STI::Utils::MixedValue > *)new std::vector< STI::Utils::MixedValue >((std::vector< STI::Utils::MixedValue > const &)*arg1);
+  *(std::vector< STI::Utils::MixedValue > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  std::vector< STI::Utils::MixedValue >::size_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  result = ((std::vector< STI::Utils::MixedValue > const *)arg1)->capacity();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  std::vector< STI::Utils::MixedValue >::size_type arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = (std::vector< STI::Utils::MixedValue >::size_type)jarg2; 
+  try {
+    (arg1)->reserve(arg2);
+  } catch(std::length_error &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  result = (bool)((std::vector< STI::Utils::MixedValue > const *)arg1)->empty();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValueVec_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jint jarg1, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  jint arg1 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  std::vector< STI::Utils::MixedValue > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg2_;
+  arg1 = jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return 0;
+  } 
+  try {
+    result = (std::vector< STI::Utils::MixedValue > *)new_std_vector_Sl_STI_Utils_MixedValue_Sg___SWIG_2(arg1,(STI::Utils::MixedValue const &)*arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::MixedValue > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  try {
+    result = std_vector_Sl_STI_Utils_MixedValue_Sg__doSize((std::vector< STI::Utils::MixedValue > const *)arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doAdd_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  std::vector< STI::Utils::MixedValue >::value_type *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = *(std::vector< STI::Utils::MixedValue >::value_type **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::MixedValue >::value_type const & reference is null");
+    return ;
+  } 
+  std_vector_Sl_STI_Utils_MixedValue_Sg__doAdd__SWIG_0(arg1,(STI::Utils::MixedValue const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doAdd_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::MixedValue >::value_type *arg3 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Utils::MixedValue >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::MixedValue >::value_type const & reference is null");
+    return ;
+  } 
+  try {
+    std_vector_Sl_STI_Utils_MixedValue_Sg__doAdd__SWIG_1(arg1,arg2,(STI::Utils::MixedValue const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doRemove(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::MixedValue >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = std_vector_Sl_STI_Utils_MixedValue_Sg__doRemove(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::MixedValue >::value_type **)&jresult = new std::vector< STI::Utils::MixedValue >::value_type((const std::vector< STI::Utils::MixedValue >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doGet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::MixedValue >::value_type *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = (std::vector< STI::Utils::MixedValue >::value_type *) &std_vector_Sl_STI_Utils_MixedValue_Sg__doGet(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::MixedValue >::value_type **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doSet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::MixedValue >::value_type *arg3 = 0 ;
+  std::vector< STI::Utils::MixedValue >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Utils::MixedValue >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::MixedValue >::value_type const & reference is null");
+    return 0;
+  } 
+  try {
+    result = std_vector_Sl_STI_Utils_MixedValue_Sg__doSet(arg1,arg2,(STI::Utils::MixedValue const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::MixedValue >::value_type **)&jresult = new std::vector< STI::Utils::MixedValue >::value_type((const std::vector< STI::Utils::MixedValue >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValueVec_1doRemoveRange(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  jint arg2 ;
+  jint arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = jarg3; 
+  try {
+    std_vector_Sl_STI_Utils_MixedValue_Sg__doRemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1MixedValueVec(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  std::vector< STI::Utils::MixedValue > *arg1 = (std::vector< STI::Utils::MixedValue > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(std::vector< STI::Utils::MixedValue > **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1ParsedShot(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Engine::ParsedShot *arg1 = (STI::Engine::ParsedShot *) 0 ;
+  std::shared_ptr< STI::Engine::ParsedShot > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Engine::ParsedShot > **)&jarg1;
+  arg1 = (STI::Engine::ParsedShot *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_ParsedShot_1getEvents(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Engine::ParsedShot *arg1 = (STI::Engine::ParsedShot *) 0 ;
+  std::shared_ptr< std::vector< STI::Engine::RawEvent > > *arg2 = 0 ;
+  std::shared_ptr< STI::Engine::ParsedShot > *smartarg1 = 0 ;
+  std::shared_ptr< std::vector< STI::Engine::RawEvent > > tempnull2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Engine::ParsedShot > **)&jarg1;
+  arg1 = (STI::Engine::ParsedShot *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = jarg2 ? *(std::shared_ptr< std::vector< STI::Engine::RawEvent > > **)&jarg2 : &tempnull2; 
+  (arg1)->getEvents(*arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1ParsedShot(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Engine::ParsedShot *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Engine::ParsedShot *)new SwigDirector_ParsedShot(jenv);
+  
+  *(std::shared_ptr<  STI::Engine::ParsedShot > **)&jresult = result ? new std::shared_ptr<  STI::Engine::ParsedShot >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_ParsedShot_1director_1connect(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jswig_mem_own, jboolean jweak_global) {
+  std::shared_ptr< STI::Engine::ParsedShot > *obj = *((std::shared_ptr< STI::Engine::ParsedShot > **)&objarg);
+  (void)jcls;
+  // Keep a local instance of the smart pointer around while we are using the raw pointer
+  // Avoids using smart pointer specific API.
+  SwigDirector_ParsedShot *director = static_cast<SwigDirector_ParsedShot *>(obj->operator->());
+  director->swig_connect_director(jenv, jself, jenv->GetObjectClass(jself), (jswig_mem_own == JNI_TRUE), (jweak_global == JNI_TRUE));
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_ParsedShot_1change_1ownership(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jtake_or_release) {
+  std::shared_ptr< STI::Engine::ParsedShot > *obj = *((std::shared_ptr< STI::Engine::ParsedShot > **)&objarg);
+  // Keep a local instance of the smart pointer around while we are using the raw pointer
+  // Avoids using smart pointer specific API.
+  SwigDirector_ParsedShot *director = dynamic_cast<SwigDirector_ParsedShot *>(obj->operator->());
+  (void)jcls;
+  if (director) {
+    director->swig_java_change_ownership(jenv, jself, jtake_or_release ? true : false);
+  }
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1JEventEngineScheduler(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::shared_ptr< STI::Engine::EventEngineScheduler > *arg1 = 0 ;
@@ -5411,6 +7454,73 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineScheduler_1id_
   result = (STI::Device::DeviceID *)& ((arg1)->id);
   *(STI::Device::DeviceID **)&jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineScheduler_1parse(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+  STI::Device::JEventEngineScheduler *arg1 = (STI::Device::JEventEngineScheduler *) 0 ;
+  STI::Engine::ParseID *arg2 = 0 ;
+  std::shared_ptr< STI::Engine::ParsedShot > *arg3 = 0 ;
+  std::shared_ptr< STI::Device::JEventEngineScheduler > *smartarg1 = 0 ;
+  std::shared_ptr< STI::Engine::ParsedShot > tempnull3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  (void)jarg3_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JEventEngineScheduler > **)&jarg1;
+  arg1 = (STI::Device::JEventEngineScheduler *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = *(STI::Engine::ParseID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::ParseID const & reference is null");
+    return ;
+  } 
+  arg3 = jarg3 ? *(std::shared_ptr< STI::Engine::ParsedShot > **)&jarg3 : &tempnull3; 
+  (arg1)->parse((STI::Engine::ParseID const &)*arg2,(std::shared_ptr< STI::Engine::ParsedShot > const &)*arg3);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineScheduler_1play(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Device::JEventEngineScheduler *arg1 = (STI::Device::JEventEngineScheduler *) 0 ;
+  STI::Engine::ShotID *arg2 = 0 ;
+  std::shared_ptr< STI::Device::JEventEngineScheduler > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JEventEngineScheduler > **)&jarg1;
+  arg1 = (STI::Device::JEventEngineScheduler *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = *(STI::Engine::ShotID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::ShotID const & reference is null");
+    return ;
+  } 
+  (arg1)->play((STI::Engine::ShotID const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineScheduler_1cancelJob(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Device::JEventEngineScheduler *arg1 = (STI::Device::JEventEngineScheduler *) 0 ;
+  STI::Engine::EngineJobID *arg2 = 0 ;
+  std::shared_ptr< STI::Device::JEventEngineScheduler > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JEventEngineScheduler > **)&jarg1;
+  arg1 = (STI::Device::JEventEngineScheduler *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = *(STI::Engine::EngineJobID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::EngineJobID const & reference is null");
+    return ;
+  } 
+  (arg1)->cancelJob((STI::Engine::EngineJobID const &)*arg2);
 }
 
 
@@ -6638,12 +8748,15 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_swig_1module_1init(JNIEnv *
   static struct {
     const char *method;
     const char *signature;
-  } methods[7] = {
+  } methods[9] = {
     {
       "SwigDirector_JDevice_write", "(Ledu/stanford/sti/JDevice;J)V" 
     },
     {
       "SwigDirector_JLocalDevice_write", "(Ledu/stanford/sti/JLocalDevice;J)V" 
+    },
+    {
+      "SwigDirector_JLocalDevice_parseEvents", "(Ledu/stanford/sti/JLocalDevice;I)V" 
     },
     {
       "SwigDirector_RefreshDeviceEventListener_handleEvent", "(Ledu/stanford/sti/RefreshDeviceEventListener;J)V" 
@@ -6659,6 +8772,9 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_swig_1module_1init(JNIEnv *
     },
     {
       "SwigDirector_EventEngineMessageListener_handleEvent", "(Ledu/stanford/sti/EventEngineMessageListener;J)V" 
+    },
+    {
+      "SwigDirector_ParsedShot_getEvents", "(Ledu/stanford/sti/ParsedShot;J)V" 
     }
   };
   Swig::jclass_stiJNI = (jclass) jenv->NewGlobalRef(jcls);

@@ -18,12 +18,16 @@ class ParsedShot;
 class ParseID;
 class EngineJobID;
 class EventEngineFactory;
+class ShotID;
 
 class EventEngineScheduler
 {
 public:
 
     virtual ~EventEngineScheduler() {}
+
+    virtual void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot) = 0;
+    virtual void play(const ShotID& shotID) = 0;
 
     virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
                                 std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace) = 0;

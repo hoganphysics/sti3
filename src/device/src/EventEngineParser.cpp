@@ -25,6 +25,7 @@ using STI::Engine::SynchronousEventVector;
 using STI::Utils::MixedValueType;
 using STI::Utils::MixedValue;
 using std::endl;
+using STI::Device::Channel;
 
 
 EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
@@ -103,10 +104,15 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 	bool success = true;
 
 	//check that newest event's channel is defined
-	auto channel = engine->localChannels.find(rawEvent.channel());
+	auto channels = engine->getLocalChannels();
+	
+	std::shared_ptr<Channel> channel;
+
+	//auto channel = engine->localChannels.find(rawEvent.channel());
 
 	//check that newest event's channel is defined and that the value type is correct
-	if (channel == engine->localChannels.end()) {
+//	if (channel == engine->localChannels.end()) {
+	if (!channels->getChannel(rawEvent.channel(), channel)) {
 		//Missing channel
 		success = false;
 		errorCount++;
@@ -117,7 +123,7 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 			<< " is not defined on this device. \n";
 		errors.back().addEvent(rawEvent);
 	}
-	else if (rawEvent.value().getType() != channel->second.outputType) {
+	else if (rawEvent.value().getType() != channel->getOutputType()) {
 		//Wrong type
 		success = false;
 		errorCount++;
@@ -127,7 +133,7 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 		errors.back()
 			<< "Error: Incorrect type found for event on channel #" << rawEvent.channel()
 			<< ". Expected type '"
-			<< MixedValue::TypeToString(channel->second.outputType) << "'. " << "\n";
+			<< MixedValue::TypeToString(channel->getOutputType()) << "'. " << "\n";
 		errors.back().addEvent(rawEvent);
 	}
 
@@ -165,7 +171,7 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 			//Error: Multiple events scheduled on channel #24 ('Laser power') at time 2.56:
 			errors.push_back(EngineParsingError(engine->getDeviceID()));
 			errors.back() << "Error: Multiple events scheduled on channel #" << rawEvent.channel()
-				<< " ('" << channel->second.getChannelName() << "') "
+				<< " ('" << channel->getChannelName() << "') "
 				<< " at time " << STI::Utils::printTimeFormated(eventTime) << ":" << "\n";
 			errors.back().addEvent(rawEvent);
 			errors.back().addEvent(rawEvents[eventTime].at(j));

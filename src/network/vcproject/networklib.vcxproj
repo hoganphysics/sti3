@@ -129,6 +129,7 @@
     <ClInclude Include="..\..\..\include\LocalCollection.h" />
     <ClInclude Include="..\..\..\include\NetworkDeviceHub.h" />
     <ClInclude Include="..\src\ConvertList.h" />
+    <ClInclude Include="..\src\Convert_Channel.h" />
     <ClInclude Include="..\src\Convert_DeviceMessage.h" />
     <ClInclude Include="..\src\Convert_EventEngine.h" />
     <ClInclude Include="..\src\COSBindingNode.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="..\src\Convert_HubNodeWalker.h" />
     <ClInclude Include="..\src\ORBManager.h" />
     <ClInclude Include="..\src\orbTypes.h" />
+    <ClInclude Include="..\src\RemoteChannelManager.h" />
     <ClInclude Include="..\src\RemoteDevice.h" />
     <ClInclude Include="..\src\RemoteDeviceCollection.h" />
     <ClInclude Include="..\src\RemoteDeviceEventDispatcher.h" />
@@ -157,6 +159,7 @@
     <ClInclude Include="..\src\RemoteEventEngineScheduler.h" />
     <ClInclude Include="..\src\RemoteParsedShot.h" />
     <ClInclude Include="..\src\RemoteTriggerCallback.h" />
+    <ClInclude Include="..\src\TChannelManager_i.h" />
     <ClInclude Include="..\src\TDeviceCollection_i.h" />
     <ClInclude Include="..\src\TDeviceEventDispatcher_i.h" />
     <ClInclude Include="..\src\TDeviceEventHandler_i.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="..\src\TTriggerCallback_i.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Convert_Channel.cpp" />
     <ClCompile Include="..\src\Convert_DeviceEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -196,6 +200,7 @@
     <ClCompile Include="..\src\ORBManager.cpp" />
     <ClCompile Include="..\src\orbTypes.cpp" />
     <ClCompile Include="..\src\orbTypesDynSK.cpp" />
+    <ClCompile Include="..\src\RemoteChannelManager.cpp" />
     <ClCompile Include="..\src\RemoteDevice.cpp" />
     <ClCompile Include="..\src\RemoteDeviceCollection.cpp" />
     <ClCompile Include="..\src\RemoteDeviceEventDispatcher.cpp" />
@@ -205,6 +210,7 @@
     <ClCompile Include="..\src\RemoteEventEngineScheduler.cpp" />
     <ClCompile Include="..\src\RemoteParsedShot.cpp" />
     <ClCompile Include="..\src\RemoteTriggerCallback.cpp" />
+    <ClCompile Include="..\src\TChannelManager_i.cpp" />
     <ClCompile Include="..\src\TDeviceCollection_i.cpp" />
     <ClCompile Include="..\src\TDeviceEventDispatcher_i.cpp" />
     <ClCompile Include="..\src\TDeviceEventHandler_i.cpp" />

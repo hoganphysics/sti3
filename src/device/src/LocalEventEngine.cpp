@@ -49,9 +49,10 @@ using STI::Engine::EngineJobID;
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
 
 
-LocalEventEngine::LocalEventEngine(const STI::Device::DeviceID& localID, STI::Device::ChannelMap& channels, DeviceEventParser* deviceParser,
-const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, const std::shared_ptr<STI::Device::DeviceCollection>& collection) :
-	MessageGenerator(dispatcher),
+LocalEventEngine::LocalEventEngine(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Device::ChannelManager>& channels,
+ 								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher, 
+ 								   const std::shared_ptr<STI::Device::DeviceCollection>& collection) 
+  : MessageGenerator(dispatcher),
 	parser(this, deviceParser), 
 	rawEvents(parser.rawEvents), 
 	partnerEvents(parser.partnerEvents), 

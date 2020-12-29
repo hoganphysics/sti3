@@ -42,9 +42,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Channel.cpp">
-      <Filter>Source Files\device</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\utils.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
@@ -104,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="..\src\SynchronousEvent.cpp">
       <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LocalChannel.cpp">
+      <Filter>Source Files\device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LocalChannelManager.cpp">
+      <Filter>Source Files\device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\LocalDevice.h">
       <Filter>Header Files\device</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\DeviceEventDispatcher-work.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DeviceEvent.h">
       <Filter>Header Files\device\Events</Filter>
@@ -298,6 +298,15 @@
     </ClInclude>
     <ClInclude Include="..\src\TriggerCallback.h">
       <Filter>Header Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ChannelManager.h">
+      <Filter>Header Files\device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalChannel.h">
+      <Filter>Header Files\device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LocalChannelManager.h">
+      <Filter>Header Files\device</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

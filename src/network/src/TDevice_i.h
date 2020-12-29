@@ -7,6 +7,7 @@
 #include "TDeviceCollection_i.h"
 #include "TDeviceEventDispatcher_i.h"
 #include "TEventEngineScheduler_i.h"
+#include "TChannelManager_i.h"
 
 #include <memory>
 
@@ -27,14 +28,17 @@ public:
 	TDeviceCollection_ptr getDeviceCollection();
 	TDeviceEventDispatcher_ptr getEventDispatcher();
 	TEventEngineScheduler_ptr getEngineScheduler();
+	TChannelManager_ptr getChannelManager();
 	TDeviceID* getID();
-	void write(::CORBA::ULong input);
+
 
 private:
 
 	TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
 	TDeviceEventDispatcher_i eventDispatcherServant;	//Servant for this Device's event dispatcher.
 	TEventEngineScheduler_i eventSchedulerServant;		//Servant for this Device's event scheduler.
+	TChannelManager_i channelManagerServant;
+
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };
 

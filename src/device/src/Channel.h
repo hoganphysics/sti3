@@ -2,9 +2,10 @@
 #define STI_DEVICE_CHANNEL_H
 
 #include "fwd/Channel_fwd.h"
-#include "fwd/MixedValue_fwd.h"
+#include "MixedValue.h"
 
 #include <string>
+#include <mutex>
 
 namespace STI
 {
@@ -14,36 +15,29 @@ namespace Device
 //enum MixedValueType { Boolean, Int, Double, String, Vector, Empty }; File, Image, Any
 //enum TValue { ValueNumber, ValueString, ValueVector, ValueNone };
 //enum TData { DataBoolean, DataOctet, DataLong, DataDouble, DataString, DataPicture, DataVector, DataFile, DataNone };
-enum TChannelType { Output, Input };
 
-class Channel	//: public EventEmitter<ChannelEvent>
+
+
+class Channel
 {
 public:
-	Channel() {}
-	Channel(unsigned short channelNumber, STI::Device::TChannelType type,
-		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
-	~Channel();
 
-	//MixedValue lastValue;
-	short channelNumber;
+	virtual ~Channel() {}
 
-	std::string usageTip;
+	virtual short getChannelNumber() const = 0;
 
-	STI::Device::TChannelType type;
-	STI::Utils::MixedValueType inputType;
-	STI::Utils::MixedValueType outputType;
+	virtual STI::Device::ChannelType getType() const = 0;
+	virtual STI::Utils::MixedValueType getInputType() const = 0;
+	virtual STI::Utils::MixedValueType getOutputType() const = 0;
 
-	void setChannelName(const std::string& name);
-	std::string getChannelName() const;
+	virtual void setChannelName(const std::string& name) = 0;
+	virtual std::string getChannelName() const = 0;
 
-	//getLastValue (unknown is allowed, i.e., XXXXXXX)  Is Empty the same as Unknown?  I think so!
-	//saveLastValue(const MixedValue&);
-	//lastOutValue
-	//lastInValue
+	virtual void saveLastValue(const STI::Utils::MixedValue& value) = 0;
+	virtual const STI::Utils::MixedValue getLastValue() const = 0;
 
-private:
-
-	std::string channelName;
+	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
+	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 
 };
 

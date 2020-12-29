@@ -9,9 +9,13 @@
 #include "EngineJobID.h"
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
+#include "ParsedShot.h"
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
+
+#include <memory>
+
 
 using STI::TNetwork::TEventEngineScheduler_i;
 using ::STI::TNetwork::TDeviceIDSeq;
@@ -28,6 +32,7 @@ using STI::Engine::EngineJobID;
 using ::STI::TNetwork::TEngineJobID;
 using STI::Engine::EventEngineJobType;
 using STI::Engine::EventEngineJob;
+using STI::Engine::ParsedShot;
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -41,6 +46,26 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
 {
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
+
+void TEventEngineScheduler_i::parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParsedShot_ptr shot)
+{
+	std::shared_ptr<ParsedShot> parsedShot;
+	bool success = convert<::STI::TNetwork::TParsedShot_ptr, std::shared_ptr<ParsedShot>>(shot, parsedShot);
+    
+	if (engineScheduler != 0 && success) {
+
+		engineScheduler->parse(convert<TParseID, STI::Engine::ParseID>(parseID), parsedShot);
+	}
+}
+
+void TEventEngineScheduler_i::play(const ::STI::TNetwork::TShotID& shotID)
+{
+    if (engineScheduler != 0) {
+
+		engineScheduler->play(convert<TShotID, STI::Engine::ShotID>(shotID));
+	}
+}
+
 
 void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets, 
                         TEventEngineDependencyTree& tree, 

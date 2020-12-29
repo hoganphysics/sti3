@@ -21,6 +21,9 @@ public:
 	TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TEventEngineScheduler_i();
 
+    void parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParsedShot_ptr shot) ;
+    void play(const ::STI::TNetwork::TShotID& shotID);
+
     void getDependants(const ::STI::TNetwork::TDeviceIDSeq& evtTargets, 
                         ::STI::TNetwork::TEventEngineDependencyTree& tree, 
                         ::STI::TNetwork::TDeviceIDSeq& missingTargets, 

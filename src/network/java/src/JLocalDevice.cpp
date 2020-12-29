@@ -15,7 +15,8 @@ using STI::Engine::EventEngineScheduler;
 
 JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer)
-        : STI::Device::JDevice(name, address, module, targetServer)
+//        : STI::Device::JDevice(name, address, module, targetServer)
+        : STI::Device::JDevice( std::make_shared<LocalDeviceProxy>(this, name, address, module, targetServer) )
 {
     //Slight hack here. We want JLocalDevice to inherit from JDevice AND to delegate to the same
     //wrapped pointer. Using the local constructor, the pointer is created as a LocalDevice but 
@@ -25,16 +26,20 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
 
     wrappedLocalDevice = std::dynamic_pointer_cast<STI::Device::LocalDevice>(wrappedDevice);
 
-    //Get and store DeviceEventReceiver reference
-    std::shared_ptr<DeviceEventReceiver> receiver;
-    wrappedLocalDevice->getEventReceiver(receiver);
+    if (wrappedLocalDevice != 0) {
+        
+        //Get and store DeviceEventReceiver reference
+        std::shared_ptr<DeviceEventReceiver> receiver;
+        wrappedLocalDevice->getEventReceiver(receiver);
 
-    jReceiver = std::make_shared<JDeviceEventReceiver>(receiver);
+        jReceiver = std::make_shared<JDeviceEventReceiver>(receiver);
 
 
-    std::shared_ptr<EventEngineScheduler> scheduler;
-    wrappedLocalDevice->getEngineScheduler(scheduler);
-    jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);
+        std::shared_ptr<EventEngineScheduler> scheduler;
+        wrappedLocalDevice->getEngineScheduler(scheduler);
+        jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);        
+    }
+
 }
 
 JLocalDevice::~JLocalDevice()

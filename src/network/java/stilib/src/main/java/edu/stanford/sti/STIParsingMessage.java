@@ -60,13 +60,13 @@ public class STIParsingMessage {
     return stiJNI.STIParsingMessage_message_get(swigCPtr, this);
   }
 
-  public void setEvents(SWIGTYPE_p_std__vectorT_STI__Engine__RawEvent_t value) {
-    stiJNI.STIParsingMessage_events_set(swigCPtr, this, SWIGTYPE_p_std__vectorT_STI__Engine__RawEvent_t.getCPtr(value));
+  public void setEvents(RawEventVector value) {
+    stiJNI.STIParsingMessage_events_set(swigCPtr, this, RawEventVector.getCPtr(value), value);
   }
 
-  public SWIGTYPE_p_std__vectorT_STI__Engine__RawEvent_t getEvents() {
+  public RawEventVector getEvents() {
     long cPtr = stiJNI.STIParsingMessage_events_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_STI__Engine__RawEvent_t(cPtr, false);
+    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
   }
 
   public STIParsingMessage() {

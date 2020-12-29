@@ -94,9 +94,11 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID)
     localDevice->getEventDispatcher(dispatcher);
     std::shared_ptr<STI::Device::DeviceCollection> collection;
     localDevice->getCollection(collection);
+    std::shared_ptr<STI::Device::ChannelManager> channels;
+    localDevice->getChannelManager(channels);
 
     std::shared_ptr<LocalEventEngine> engine = 
-        eventEngineFactory->createEngine(localDevice->getID(), localDevice->localChannels, localDevice, dispatcher, collection);
+        eventEngineFactory->createEngine(localDevice->getID(), channels, localDevice, dispatcher, collection);
     
     auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 

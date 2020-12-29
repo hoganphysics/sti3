@@ -195,6 +195,15 @@
     <ClInclude Include="..\src\Convert_DeviceMessage.h">
       <Filter>Header Files\Convert</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Convert_Channel.h">
+      <Filter>Header Files\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RemoteChannelManager.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TChannelManager_i.h">
+      <Filter>Header Files\Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Convert_DeviceID.cpp">
@@ -301,6 +310,15 @@
     </ClCompile>
     <ClCompile Include="..\src\TTriggerCallback_i.cpp">
       <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Convert_Channel.cpp">
+      <Filter>Source Files\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RemoteChannelManager.cpp">
+      <Filter>Source Files\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TChannelManager_i.cpp">
+      <Filter>Source Files\Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

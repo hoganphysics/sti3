@@ -34,12 +34,13 @@ public:
     SwigDirector_JLocalDevice(JNIEnv *jenv, std::string const &name, std::string const &address, unsigned short module, std::string const &targetServer);
     virtual ~SwigDirector_JLocalDevice();
     virtual void write(unsigned int input);
+    virtual void parseEvents(int temp);
 public:
     bool swig_overrides(int n) {
-      return (n < 1 ? swig_override[n] : false);
+      return (n < 2 ? swig_override[n] : false);
     }
 protected:
-    Swig::BoolArray<1> swig_override;
+    Swig::BoolArray<2> swig_override;
 };
 
 class SwigDirector_DeviceEvent : public STI::Device::DeviceEvent, public Swig::Director {
@@ -182,6 +183,21 @@ public:
     SwigDirector_EventEngineMessageListener(JNIEnv *jenv);
     virtual ~SwigDirector_EventEngineMessageListener();
     virtual void handleEvent(std::shared_ptr< STI::Device::EventEngineMessage > const &evt);
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_ParsedShot : public STI::Engine::ParsedShot, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_ParsedShot(JNIEnv *jenv);
+    virtual ~SwigDirector_ParsedShot();
+    virtual void getEvents(std::shared_ptr< std::vector< STI::Engine::RawEvent > > &ets);
 public:
     bool swig_overrides(int n) {
       return (n < 1 ? swig_override[n] : false);
