@@ -73,10 +73,6 @@ public class JDevice {
     return stiJNI.JDevice_refresh(swigCPtr, this);
   }
 
-  public void write(long input) {
-    if (getClass() == JDevice.class) stiJNI.JDevice_write(swigCPtr, this, input); else stiJNI.JDevice_writeSwigExplicitJDevice(swigCPtr, this, input);
-  }
-
   public JDeviceCollection getCollection() {
     long cPtr = stiJNI.JDevice_getCollection(swigCPtr, this);
     return (cPtr == 0) ? null : new JDeviceCollection(cPtr, true);
@@ -90,6 +86,11 @@ public class JDevice {
   public JEventEngineScheduler getEngineScheduler() {
     long cPtr = stiJNI.JDevice_getEngineScheduler(swigCPtr, this);
     return (cPtr == 0) ? null : new JEventEngineScheduler(cPtr, true);
+  }
+
+  public ChannelManager getChannelManager() {
+    long cPtr = stiJNI.JDevice_getChannelManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new ChannelManager(cPtr, true);
   }
 
 }

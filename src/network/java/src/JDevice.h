@@ -36,15 +36,16 @@ public:
 		const std::string& targetServer);
 	virtual ~JDevice();
 
-	DeviceID getID();
+	const DeviceID getID() const;
 
 	//Device
 	bool refresh();
-	virtual void write(unsigned input);	//temp
+//	virtual void write(unsigned input);	//temp
 
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
 	std::shared_ptr<STI::Device::JDeviceEventDispatcher> getEventDispatcher();
 	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
+	std::shared_ptr<STI::Device::ChannelManager> getChannelManager();
 
 private:
 	friend class JLocalDevice;
@@ -52,6 +53,7 @@ private:
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 
     std::shared_ptr<Device> wrappedDevice;
 

@@ -51,6 +51,10 @@
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
+    #include "ChannelManager.h"
+    #include "fwd/Channel_fwd.h"
+    #include "Channel.h"
+
 %}
 
 %include "std_string.i"
@@ -65,6 +69,8 @@
 %shared_ptr(STI::Device::JDeviceEventReceiver);
 %shared_ptr(STI::Device::JDeviceEventDispatcher);
 %shared_ptr(STI::Device::JEventEngineScheduler);
+%shared_ptr(STI::Device::ChannelManager);
+%shared_ptr(STI::Device::Channel);
 
 %shared_ptr(STI::Engine::ParsedShot);
 
@@ -143,6 +149,13 @@
 %include "JDeviceEventReceiver.h"
 
 %include "JDeviceEventDispatcher.h"
+
+//ChannelManager
+%include "fwd/Channel_fwd.h"
+%include "Channel.h"
+%template(ChannelVector) std::vector< std::shared_ptr < STI::Device::Channel > >;
+%include "ChannelManager.h"
+
 
 %include "TimeStamp.h"
 %include "ParseID.h"

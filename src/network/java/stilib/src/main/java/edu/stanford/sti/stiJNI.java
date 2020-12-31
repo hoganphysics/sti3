@@ -128,11 +128,10 @@ public class stiJNI {
   public final static native void delete_JDevice(long jarg1);
   public final static native long JDevice_getID(long jarg1, JDevice jarg1_);
   public final static native boolean JDevice_refresh(long jarg1, JDevice jarg1_);
-  public final static native void JDevice_write(long jarg1, JDevice jarg1_, long jarg2);
-  public final static native void JDevice_writeSwigExplicitJDevice(long jarg1, JDevice jarg1_, long jarg2);
   public final static native long JDevice_getCollection(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getEventDispatcher(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getEngineScheduler(long jarg1, JDevice jarg1_);
+  public final static native long JDevice_getChannelManager(long jarg1, JDevice jarg1_);
   public final static native void JDevice_director_connect(JDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JDevice_change_ownership(JDevice obj, long cptr, boolean take_or_release);
   public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
@@ -241,6 +240,43 @@ public class stiJNI {
   public final static native void delete_JDeviceEventDispatcher(long jarg1);
   public final static native void JDeviceEventDispatcher_addEvent(long jarg1, JDeviceEventDispatcher jarg1_, long jarg2, DeviceEvent jarg2_);
   public final static native void JDeviceEventDispatcher_clearEvents(long jarg1, JDeviceEventDispatcher jarg1_);
+  public final static native void delete_Channel(long jarg1);
+  public final static native short Channel_getChannelNumber(long jarg1, Channel jarg1_);
+  public final static native int Channel_getType(long jarg1, Channel jarg1_);
+  public final static native int Channel_getInputType(long jarg1, Channel jarg1_);
+  public final static native int Channel_getOutputType(long jarg1, Channel jarg1_);
+  public final static native void Channel_setChannelName(long jarg1, Channel jarg1_, String jarg2);
+  public final static native String Channel_getChannelName(long jarg1, Channel jarg1_);
+  public final static native void Channel_saveLastValue(long jarg1, Channel jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native long Channel_getLastValue(long jarg1, Channel jarg1_);
+  public final static native long Channel_getMetaData__SWIG_0(long jarg1, Channel jarg1_);
+  public final static native long Channel_getMetaData__SWIG_1(long jarg1, Channel jarg1_, String jarg2);
+  public final static native long new_Channel();
+  public final static native void Channel_director_connect(Channel obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void Channel_change_ownership(Channel obj, long cptr, boolean take_or_release);
+  public final static native long new_ChannelVector__SWIG_0();
+  public final static native long new_ChannelVector__SWIG_1(long jarg1, ChannelVector jarg1_);
+  public final static native long ChannelVector_capacity(long jarg1, ChannelVector jarg1_);
+  public final static native void ChannelVector_reserve(long jarg1, ChannelVector jarg1_, long jarg2);
+  public final static native boolean ChannelVector_isEmpty(long jarg1, ChannelVector jarg1_);
+  public final static native void ChannelVector_clear(long jarg1, ChannelVector jarg1_);
+  public final static native long new_ChannelVector__SWIG_2(int jarg1, long jarg2, Channel jarg2_);
+  public final static native int ChannelVector_doSize(long jarg1, ChannelVector jarg1_);
+  public final static native void ChannelVector_doAdd__SWIG_0(long jarg1, ChannelVector jarg1_, long jarg2, Channel jarg2_);
+  public final static native void ChannelVector_doAdd__SWIG_1(long jarg1, ChannelVector jarg1_, int jarg2, long jarg3, Channel jarg3_);
+  public final static native long ChannelVector_doRemove(long jarg1, ChannelVector jarg1_, int jarg2);
+  public final static native long ChannelVector_doGet(long jarg1, ChannelVector jarg1_, int jarg2);
+  public final static native long ChannelVector_doSet(long jarg1, ChannelVector jarg1_, int jarg2, long jarg3, Channel jarg3_);
+  public final static native void ChannelVector_doRemoveRange(long jarg1, ChannelVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_ChannelVector(long jarg1);
+  public final static native void delete_ChannelManager(long jarg1);
+  public final static native void ChannelManager_getChannels(long jarg1, ChannelManager jarg1_, long jarg2, ChannelVector jarg2_);
+  public final static native boolean ChannelManager_getChannel(long jarg1, ChannelManager jarg1_, short jarg2, long jarg3, Channel jarg3_);
+  public final static native boolean ChannelManager_writeChannel(long jarg1, ChannelManager jarg1_, short jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean ChannelManager_readChannel(long jarg1, ChannelManager jarg1_, short jarg2, long jarg3, MixedValue jarg3_, long jarg4, MixedValue jarg4_);
+  public final static native long new_ChannelManager();
+  public final static native void ChannelManager_director_connect(ChannelManager obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ChannelManager_change_ownership(ChannelManager obj, long cptr, boolean take_or_release);
   public final static native void TimeStamp_timestamp_set(long jarg1, TimeStamp jarg1_, double jarg2);
   public final static native double TimeStamp_timestamp_get(long jarg1, TimeStamp jarg1_);
   public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
@@ -411,12 +447,6 @@ public class stiJNI {
   public final static native long EngineParserMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EventEngineMessage_SWIGSmartPtrUpcast(long jarg1);
 
-  public static void SwigDirector_JDevice_write(JDevice jself, long input) {
-    jself.write(input);
-  }
-  public static void SwigDirector_JLocalDevice_write(JLocalDevice jself, long input) {
-    jself.write(input);
-  }
   public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
     jself.parseEvents(temp);
   }
@@ -434,6 +464,48 @@ public class stiJNI {
   }
   public static void SwigDirector_EventEngineMessageListener_handleEvent(EventEngineMessageListener jself, long evt) {
     jself.handleEvent((evt == 0) ? null : new EventEngineMessage(evt, true));
+  }
+  public static short SwigDirector_Channel_getChannelNumber(Channel jself) {
+    return jself.getChannelNumber();
+  }
+  public static int SwigDirector_Channel_getType(Channel jself) {
+    return (jself.getType()).swigValue();
+  }
+  public static int SwigDirector_Channel_getInputType(Channel jself) {
+    return (jself.getInputType()).swigValue();
+  }
+  public static int SwigDirector_Channel_getOutputType(Channel jself) {
+    return (jself.getOutputType()).swigValue();
+  }
+  public static void SwigDirector_Channel_setChannelName(Channel jself, String name) {
+    jself.setChannelName(name);
+  }
+  public static String SwigDirector_Channel_getChannelName(Channel jself) {
+    return jself.getChannelName();
+  }
+  public static void SwigDirector_Channel_saveLastValue(Channel jself, long value) {
+    jself.saveLastValue(new MixedValue(value, false));
+  }
+  public static long SwigDirector_Channel_getLastValue(Channel jself) {
+    return MixedValue.getCPtr(jself.getLastValue());
+  }
+  public static long SwigDirector_Channel_getMetaData__SWIG_0(Channel jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_Channel_getMetaData__SWIG_1(Channel jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
+  }
+  public static void SwigDirector_ChannelManager_getChannels(ChannelManager jself, long channels) {
+    jself.getChannels(new ChannelVector(channels, false));
+  }
+  public static boolean SwigDirector_ChannelManager_getChannel(ChannelManager jself, short channelNumber, long channel) {
+    return jself.getChannel(channelNumber, (channel == 0) ? null : new Channel(channel, true));
+  }
+  public static boolean SwigDirector_ChannelManager_writeChannel(ChannelManager jself, short channel, long value) {
+    return jself.writeChannel(channel, new MixedValue(value, false));
+  }
+  public static boolean SwigDirector_ChannelManager_readChannel(ChannelManager jself, short channel, long value, long data) {
+    return jself.readChannel(channel, new MixedValue(value, false), new MixedValue(data, false));
   }
   public static void SwigDirector_ParsedShot_getEvents(ParsedShot jself, long ets) {
     jself.getEvents((ets == 0) ? null : new RawEventVector(ets, true));
