@@ -33,7 +33,7 @@ public class TestJDevice extends JLocalDevice {
 
         EngineID id = new EngineID((short) 0);
 
-       addEventEngine(id);
+        addEventEngine(id);
     }
 
     public void parseEvents(int temp)

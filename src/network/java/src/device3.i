@@ -6,6 +6,11 @@
 // %rename(Engine_ShotID) STI::Engine::ShotID;
 // %rename(Engine_TimeStamp) STI::Engine::TimeStamp;
 
+// %warnfilter(401) STI::Device::DeviceCollection;
+// %warnfilter(401) DeviceCollection;
+
+%warnfilter(401);   //Warning 401:  Nothing known about base class 'STI::Device::DeviceCollection' (also STI::Device::Device)
+
 
 %{
     #include "DeviceID.h"
@@ -60,6 +65,8 @@
     using STI::Device::LocalChannel;
 
 %}
+
+
 
 %include "std_string.i"
 %include "std_shared_ptr.i"
@@ -122,6 +129,7 @@
 
 //JDevice
 %ignore STI::Device::Device;
+%warnfilter(401) STI::Device::Device;
 %include "JDevice.h"
 
 
@@ -181,6 +189,7 @@
 
 
 //MixedValue
+%warnfilter(516) STI::Utils::MixedValue::setValue;
 %include "fwd/MixedValue_fwd.h"
 %include "MixedValue.h"
 %template(MixedValueVec) std::vector< STI::Utils::MixedValue >;

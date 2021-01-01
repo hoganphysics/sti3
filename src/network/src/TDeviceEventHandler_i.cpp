@@ -6,13 +6,10 @@
 
 #include <set>
 
-#include <iostream>
-
 using STI::TNetwork::TDeviceEventHandler_i;
 using STI::TNetwork::TDeviceEventTypeSeq;
 using STI::Device::DeviceEvent;
 using STI::Network::convert;
-
 
 
 TDeviceEventHandler_i::TDeviceEventHandler_i(const std::shared_ptr<STI::Device::LocalDeviceEventHandler>& handler)
@@ -61,15 +58,12 @@ TDeviceEventTypeSeq* TDeviceEventHandler_i::listenersTypes()
 void TDeviceEventHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher)
 {
 	tRefreshIndicator = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
-//	tRefreshIndicator = refresher;
 
 	tRefreshIndicatorInstalled = !CORBA::is_nil(tRefreshIndicator);
 }
 
 void TDeviceEventHandler_i::refresh()
 {
-	std::cout << "TDeviceEventHandler_i::refresh() nil? = " << CORBA::is_nil(tRefreshIndicator) << std::endl;
-
 	try {
 		if(tRefreshIndicatorInstalled && !CORBA::is_nil(tRefreshIndicator)) {
 			tRefreshIndicator->refresh();	//remote call

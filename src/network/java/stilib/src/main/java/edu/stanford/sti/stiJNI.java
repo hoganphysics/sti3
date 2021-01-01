@@ -10,7 +10,9 @@ package edu.stanford.sti;
 
 public class stiJNI {
   public final static native long new_DeviceID__SWIG_0();
-  public final static native long new_DeviceID__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
+  public final static native long new_DeviceID__SWIG_1(String jarg1);
+  public final static native long new_DeviceID__SWIG_2(String jarg1, String jarg2, int jarg3);
+  public final static native long new_DeviceID__SWIG_3(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native boolean DeviceID_opLess(long jarg1, DeviceID jarg1_, long jarg2, DeviceID jarg2_);
   public final static native boolean DeviceID_opEquals(long jarg1, DeviceID jarg1_, long jarg2, DeviceID jarg2_);
   public final static native boolean DeviceID_opNotEquals(long jarg1, DeviceID jarg1_, long jarg2, DeviceID jarg2_);
@@ -415,7 +417,7 @@ public class stiJNI {
   public final static native long new_JNetworkDeviceHub__SWIG_0(String jarg1);
   public final static native long new_JNetworkDeviceHub__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JNetworkDeviceHub(long jarg1);
-  public final static native boolean JNetworkDeviceHub_addNode(long jarg1, JNetworkDeviceHub jarg1_, long jarg2, DeviceID jarg2_, long jarg3, JDevice jarg3_);
+  public final static native boolean JNetworkDeviceHub_addNode(long jarg1, JNetworkDeviceHub jarg1_, long jarg2, JDevice jarg2_);
   public final static native void JNetworkDeviceHub_run__SWIG_0(long jarg1, JNetworkDeviceHub jarg1_);
   public final static native void JNetworkDeviceHub_run__SWIG_1(long jarg1, JNetworkDeviceHub jarg1_, boolean jarg2);
   public final static native long JNetworkDeviceHub_walk(long jarg1, JNetworkDeviceHub jarg1_);

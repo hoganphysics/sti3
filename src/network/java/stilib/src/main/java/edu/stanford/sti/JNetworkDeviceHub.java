@@ -44,8 +44,8 @@ public class JNetworkDeviceHub {
     this(stiJNI.new_JNetworkDeviceHub__SWIG_1(name, address, module, nameServiceAddress), true);
   }
 
-  public boolean addNode(DeviceID id, JDevice node) {
-    return stiJNI.JNetworkDeviceHub_addNode(swigCPtr, this, DeviceID.getCPtr(id), id, JDevice.getCPtr(node), node);
+  public boolean addNode(JDevice node) {
+    return stiJNI.JNetworkDeviceHub_addNode(swigCPtr, this, JDevice.getCPtr(node), node);
   }
 
   public void run() {

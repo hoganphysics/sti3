@@ -12,6 +12,16 @@ DeviceID::DeviceID()
 	deviceIDBase = std::make_shared<DeviceIDBase>("", "", 0, "");
 }
 
+DeviceID::DeviceID(const std::string& deviceIDin)
+: DeviceID()
+{
+	stringToDeviceID(deviceIDin, *this);
+}
+
+DeviceID::DeviceID(const std::string& name, const std::string& address, unsigned short module)
+: DeviceID(name, address, module, "")
+{
+}
 
 DeviceID::DeviceID(const std::string& name, const std::string& address, unsigned short module, 
 	const std::string& targetServer)

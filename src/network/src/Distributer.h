@@ -55,7 +55,7 @@ public:
 	{
 		//T_ptr should be both a T and a CollectorT_ptr, assuming it's a Node<ID,T>
 		bool success = addNode(id, node);
-		success = addCollector(id, node);
+		success &= addCollector(id, node);
 
 		return success;
 	}

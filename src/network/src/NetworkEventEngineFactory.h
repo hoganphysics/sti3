@@ -20,6 +20,8 @@ class NetworkEventEngineFactory : public EventEngineFactory
                                 const std::shared_ptr<STI::Device::DeviceCollection>& collection)
     {
         //auto localEngine = std::make_shared<STI::Engine::LocalEventEngine>(localID, channels, deviceParser, dispatcher, collection);
+
+        //auto networkEngine = std::make_shared<STI::Network::NetworkEventEngine>(localID, channels, deviceParser, dispatcher, collection);
         auto networkEngine = std::make_shared<STI::Network::NetworkEventEngine>(localID, channels, deviceParser, dispatcher, collection);
         return networkEngine;
     }

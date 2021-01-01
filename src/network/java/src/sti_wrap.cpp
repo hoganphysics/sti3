@@ -2842,7 +2842,63 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceID_1_1SWIG_10(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceID_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jstring jarg4) {
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceID_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+  jlong jresult = 0 ;
+  std::string *arg1 = 0 ;
+  STI::Device::DeviceID *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  if(!jarg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  }
+  const char *arg1_pstr = (const char *)jenv->GetStringUTFChars(jarg1, 0); 
+  if (!arg1_pstr) return 0;
+  std::string arg1_str(arg1_pstr);
+  arg1 = &arg1_str;
+  jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
+  result = (STI::Device::DeviceID *)new STI::Device::DeviceID((std::string const &)*arg1);
+  *(STI::Device::DeviceID **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceID_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
+  jlong jresult = 0 ;
+  std::string *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  unsigned short arg3 ;
+  STI::Device::DeviceID *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  if(!jarg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  }
+  const char *arg1_pstr = (const char *)jenv->GetStringUTFChars(jarg1, 0); 
+  if (!arg1_pstr) return 0;
+  std::string arg1_str(arg1_pstr);
+  arg1 = &arg1_str;
+  jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  }
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return 0;
+  std::string arg2_str(arg2_pstr);
+  arg2 = &arg2_str;
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  arg3 = (unsigned short)jarg3; 
+  result = (STI::Device::DeviceID *)new STI::Device::DeviceID((std::string const &)*arg1,(std::string const &)*arg2,arg3);
+  *(STI::Device::DeviceID **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceID_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jstring jarg4) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -9855,27 +9911,20 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1JNetworkDeviceHub(J
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_JNetworkDeviceHub_1addNode(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_JNetworkDeviceHub_1addNode(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jboolean jresult = 0 ;
   STI::Network::JNetworkDeviceHub *arg1 = (STI::Network::JNetworkDeviceHub *) 0 ;
-  STI::Device::DeviceID *arg2 = 0 ;
-  std::shared_ptr< STI::Device::JDevice > *arg3 = 0 ;
-  std::shared_ptr< STI::Device::JDevice > tempnull3 ;
+  std::shared_ptr< STI::Device::JDevice > *arg2 = 0 ;
+  std::shared_ptr< STI::Device::JDevice > tempnull2 ;
   bool result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   (void)jarg2_;
-  (void)jarg3_;
   arg1 = *(STI::Network::JNetworkDeviceHub **)&jarg1; 
-  arg2 = *(STI::Device::DeviceID **)&jarg2;
-  if (!arg2) {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
-    return 0;
-  } 
-  arg3 = jarg3 ? *(std::shared_ptr< STI::Device::JDevice > **)&jarg3 : &tempnull3; 
-  result = (bool)(arg1)->addNode((STI::Device::DeviceID const &)*arg2,(std::shared_ptr< STI::Device::JDevice > const &)*arg3);
+  arg2 = jarg2 ? *(std::shared_ptr< STI::Device::JDevice > **)&jarg2 : &tempnull2; 
+  result = (bool)(arg1)->addNode((std::shared_ptr< STI::Device::JDevice > const &)*arg2);
   jresult = (jboolean)result; 
   return jresult;
 }
