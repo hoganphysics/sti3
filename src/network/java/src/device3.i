@@ -34,6 +34,8 @@
     using STI::Engine::ParseID;
     #include "ShotID.h"
     using STI::Engine::ShotID;
+    #include "EngineID.h"
+    using STI::Engine::EngineID;
 
     #include "ParsedShot.h"
     using STI::Engine::ParsedShot;
@@ -54,6 +56,8 @@
     #include "ChannelManager.h"
     #include "fwd/Channel_fwd.h"
     #include "Channel.h"
+    #include "LocalChannel.h"
+    using STI::Device::LocalChannel;
 
 %}
 
@@ -71,6 +75,7 @@
 %shared_ptr(STI::Device::JEventEngineScheduler);
 %shared_ptr(STI::Device::ChannelManager);
 %shared_ptr(STI::Device::Channel);
+%shared_ptr(STI::Device::LocalChannel);
 
 %shared_ptr(STI::Engine::ParsedShot);
 
@@ -85,6 +90,7 @@
 %shared_ptr(STI::Device::EventEngineMessage);
 
 
+
 //DeviceID
 %rename(opEquals) operator==;
 %rename(opLess) operator<;
@@ -93,6 +99,9 @@
 %include "DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
 %template(DeviceIDvector) std::vector< STI::Device::DeviceID >;
+
+//EngineID
+%include "EngineID.h"
 
 //RawEvent
 %include "fwd/RawEvent_fwd.h"
@@ -117,9 +126,6 @@
 
 
 
-
-//JLocalDevice
-%include "JLocalDevice.h"
 
 //DeviceEvent
 %include "DeviceEvent.h"
@@ -156,10 +162,19 @@
 %template(ChannelVector) std::vector< std::shared_ptr < STI::Device::Channel > >;
 %include "ChannelManager.h"
 
+%include "LocalChannel.h"
+
+
 
 %include "TimeStamp.h"
 %include "ParseID.h"
 %include "ShotID.h"
+
+
+
+
+//JLocalDevice
+%include "JLocalDevice.h"
 
 //EngineJobID
 %include "EngineJobID.h"

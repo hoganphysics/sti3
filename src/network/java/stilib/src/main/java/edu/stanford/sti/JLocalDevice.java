@@ -77,4 +77,12 @@ public class JLocalDevice extends JDevice {
     stiJNI.JLocalDevice_parseEvents(swigCPtr, this, temp);
   }
 
+  public LocalChannel addChannel(int channelNumber, ChannelType type, MixedValueType inputType, MixedValueType outputType, String defaultName) {
+    return new LocalChannel(stiJNI.JLocalDevice_addChannel(swigCPtr, this, channelNumber, type.swigValue(), inputType.swigValue(), outputType.swigValue(), defaultName), true);
+  }
+
+  public void addEventEngine(EngineID engineID) {
+    stiJNI.JLocalDevice_addEventEngine(swigCPtr, this, EngineID.getCPtr(engineID), engineID);
+  }
+
 }

@@ -54,6 +54,14 @@ public class stiJNI {
   public final static native long DeviceIDvector_doSet(long jarg1, DeviceIDvector jarg1_, int jarg2, long jarg3, DeviceID jarg3_);
   public final static native void DeviceIDvector_doRemoveRange(long jarg1, DeviceIDvector jarg1_, int jarg2, int jarg3);
   public final static native void delete_DeviceIDvector(long jarg1);
+  public final static native long new_EngineID__SWIG_0();
+  public final static native long new_EngineID__SWIG_1(short jarg1);
+  public final static native boolean EngineID_opLess(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
+  public final static native boolean EngineID_opEquals(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
+  public final static native boolean EngineID_opNotEquals(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
+  public final static native short EngineID_getNumber(long jarg1, EngineID jarg1_);
+  public final static native void EngineID_setNumber(long jarg1, EngineID jarg1_, short jarg2);
+  public final static native void delete_EngineID(long jarg1);
   public final static native long new_UIntVector__SWIG_0();
   public final static native long new_UIntVector__SWIG_1(long jarg1, UIntVector jarg1_);
   public final static native long UIntVector_capacity(long jarg1, UIntVector jarg1_);
@@ -134,13 +142,6 @@ public class stiJNI {
   public final static native long JDevice_getChannelManager(long jarg1, JDevice jarg1_);
   public final static native void JDevice_director_connect(JDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JDevice_change_ownership(JDevice obj, long cptr, boolean take_or_release);
-  public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
-  public final static native void delete_JLocalDevice(long jarg1);
-  public final static native long JLocalDevice_getEventReceiver(long jarg1, JLocalDevice jarg1_);
-  public final static native long JLocalDevice_getEngineScheduler(long jarg1, JLocalDevice jarg1_);
-  public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, int jarg2);
-  public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native long new_DeviceEvent__SWIG_0();
   public final static native long new_DeviceEvent__SWIG_1(long jarg1, DeviceID jarg1_, int jarg2);
   public final static native void delete_DeviceEvent(long jarg1);
@@ -277,6 +278,32 @@ public class stiJNI {
   public final static native long new_ChannelManager();
   public final static native void ChannelManager_director_connect(ChannelManager obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void ChannelManager_change_ownership(ChannelManager obj, long cptr, boolean take_or_release);
+  public final static native long new_LocalChannel__SWIG_0();
+  public final static native long new_LocalChannel__SWIG_1(int jarg1, int jarg2, int jarg3, int jarg4, String jarg5);
+  public final static native void delete_LocalChannel(long jarg1);
+  public final static native short LocalChannel_getChannelNumber(long jarg1, LocalChannel jarg1_);
+  public final static native short LocalChannel_getChannelNumberSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getType(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getTypeSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getInputType(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getInputTypeSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getOutputType(long jarg1, LocalChannel jarg1_);
+  public final static native int LocalChannel_getOutputTypeSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native String LocalChannel_getChannelName(long jarg1, LocalChannel jarg1_);
+  public final static native String LocalChannel_getChannelNameSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native long LocalChannel_getLastValue(long jarg1, LocalChannel jarg1_);
+  public final static native long LocalChannel_getLastValueSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_);
+  public final static native long LocalChannel_getMetaData__SWIG_0(long jarg1, LocalChannel jarg1_);
+  public final static native long LocalChannel_getMetaDataSwigExplicitLocalChannel__SWIG_0(long jarg1, LocalChannel jarg1_);
+  public final static native long LocalChannel_getMetaData__SWIG_1(long jarg1, LocalChannel jarg1_, String jarg2);
+  public final static native long LocalChannel_getMetaDataSwigExplicitLocalChannel__SWIG_1(long jarg1, LocalChannel jarg1_, String jarg2);
+  public final static native void LocalChannel_setChannelName(long jarg1, LocalChannel jarg1_, String jarg2);
+  public final static native void LocalChannel_setChannelNameSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_, String jarg2);
+  public final static native void LocalChannel_saveLastValue(long jarg1, LocalChannel jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void LocalChannel_saveLastValueSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native long LocalChannel_addMetaData(long jarg1, LocalChannel jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void LocalChannel_director_connect(LocalChannel obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void LocalChannel_change_ownership(LocalChannel obj, long cptr, boolean take_or_release);
   public final static native void TimeStamp_timestamp_set(long jarg1, TimeStamp jarg1_, double jarg2);
   public final static native double TimeStamp_timestamp_get(long jarg1, TimeStamp jarg1_);
   public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
@@ -317,6 +344,15 @@ public class stiJNI {
   public final static native boolean ShotID_opNotEquals(long jarg1, ShotID jarg1_, long jarg2, ShotID jarg2_);
   public final static native long new_ShotID();
   public final static native void delete_ShotID(long jarg1);
+  public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
+  public final static native void delete_JLocalDevice(long jarg1);
+  public final static native long JLocalDevice_getEventReceiver(long jarg1, JLocalDevice jarg1_);
+  public final static native long JLocalDevice_getEngineScheduler(long jarg1, JLocalDevice jarg1_);
+  public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, int jarg2);
+  public final static native long JLocalDevice_addChannel(long jarg1, JLocalDevice jarg1_, int jarg2, int jarg3, int jarg4, int jarg5, String jarg6);
+  public final static native void JLocalDevice_addEventEngine(long jarg1, JLocalDevice jarg1_, long jarg2, EngineID jarg2_);
+  public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native boolean EngineJobID_opEquals(long jarg1, EngineJobID jarg1_, long jarg2, EngineJobID jarg2_);
   public final static native boolean EngineJobID_opLess(long jarg1, EngineJobID jarg1_, long jarg2, EngineJobID jarg2_);
   public final static native void EngineJobID_type_set(long jarg1, EngineJobID jarg1_, int jarg2);
@@ -440,16 +476,14 @@ public class stiJNI {
   public final static native long JDeviceGraphNodeVector_doSet(long jarg1, JDeviceGraphNodeVector jarg1_, int jarg2, long jarg3, JDeviceGraphNode jarg3_);
   public final static native void JDeviceGraphNodeVector_doRemoveRange(long jarg1, JDeviceGraphNodeVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_JDeviceGraphNodeVector(long jarg1);
-  public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
   public final static native long RefreshDeviceEvent_SWIGSmartPtrUpcast(long jarg1);
   public final static native long ChannelUpdateDeviceEvent_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EngineSchedulerMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EngineParserMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EventEngineMessage_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long LocalChannel_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
 
-  public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
-    jself.parseEvents(temp);
-  }
   public static void SwigDirector_RefreshDeviceEventListener_handleEvent(RefreshDeviceEventListener jself, long evt) {
     jself.handleEvent((evt == 0) ? null : new RefreshDeviceEvent(evt, true));
   }
@@ -506,6 +540,39 @@ public class stiJNI {
   }
   public static boolean SwigDirector_ChannelManager_readChannel(ChannelManager jself, short channel, long value, long data) {
     return jself.readChannel(channel, new MixedValue(value, false), new MixedValue(data, false));
+  }
+  public static short SwigDirector_LocalChannel_getChannelNumber(LocalChannel jself) {
+    return jself.getChannelNumber();
+  }
+  public static int SwigDirector_LocalChannel_getType(LocalChannel jself) {
+    return (jself.getType()).swigValue();
+  }
+  public static int SwigDirector_LocalChannel_getInputType(LocalChannel jself) {
+    return (jself.getInputType()).swigValue();
+  }
+  public static int SwigDirector_LocalChannel_getOutputType(LocalChannel jself) {
+    return (jself.getOutputType()).swigValue();
+  }
+  public static void SwigDirector_LocalChannel_setChannelName(LocalChannel jself, String name) {
+    jself.setChannelName(name);
+  }
+  public static String SwigDirector_LocalChannel_getChannelName(LocalChannel jself) {
+    return jself.getChannelName();
+  }
+  public static void SwigDirector_LocalChannel_saveLastValue(LocalChannel jself, long value) {
+    jself.saveLastValue(new MixedValue(value, false));
+  }
+  public static long SwigDirector_LocalChannel_getLastValue(LocalChannel jself) {
+    return MixedValue.getCPtr(jself.getLastValue());
+  }
+  public static long SwigDirector_LocalChannel_getMetaData__SWIG_0(LocalChannel jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_LocalChannel_getMetaData__SWIG_1(LocalChannel jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
+  }
+  public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
+    jself.parseEvents(temp);
   }
   public static void SwigDirector_ParsedShot_getEvents(ParsedShot jself, long ets) {
     jself.getEvents((ets == 0) ? null : new RawEventVector(ets, true));

@@ -5,13 +5,22 @@
 #include "JDeviceEventReceiver.h"
 #include "JEventEngineScheduler.h"
 #include "EventEngineScheduler.h"
+#include "LocalChannel.h"
 
 #include <memory>
+
+#include <iostream>
 
 using STI::Device::JLocalDevice;
 using STI::Device::JDeviceEventReceiver;
 using STI::Device::JEventEngineScheduler;
 using STI::Engine::EventEngineScheduler;
+using STI::Device::LocalChannel;
+using STI::Engine::EngineID;
+using STI::Device::ChannelType;
+using STI::Utils::MixedValueType;
+
+
 
 JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer)
@@ -46,12 +55,66 @@ JLocalDevice::~JLocalDevice()
 {
 }
 
+// void JLocalDevice::test()
+// {
+//     std::cout << "JLocalDevice::test()" << std::endl;
+// }
+
+LocalChannel& JLocalDevice::addChannel(int channelNumber, ChannelType type,
+		MixedValueType inputType, MixedValueType outputType, const std::string& defaultName)
+{
+    return wrappedLocalDevice->addChannel(static_cast<unsigned short>(channelNumber), type, inputType, outputType, defaultName);
+}
+
+void JLocalDevice::addEventEngine(const EngineID& engineID)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addEventEngine(engineID);
+    }
+}
+
 std::shared_ptr<STI::Device::JDeviceEventReceiver> JLocalDevice::getEventReceiver()
 {
     return jReceiver;
 }
 
+// std::shared_ptr<STI::Device::JDeviceEventReceiver> JLocalDevice::getEventReceiver2()
+// {
+//     return jReceiver;
+// }
+
 std::shared_ptr<STI::Device::JEventEngineScheduler> JLocalDevice::getEngineScheduler()
 {
     return jScheduler;
+}
+
+
+
+//TEMP
+
+JLocalDevice::LocalDeviceProxy::TestEvent::TestEvent(const STI::Engine::RawEvent& evt) 
+: STI::Engine::SynchronousEventAdapter(evt.time()), evt(evt) 
+{
+}
+
+void JLocalDevice::LocalDeviceProxy::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
+{
+    std::cout << "Parsing: " << getID().getName() << std::endl;
+    std::cout << "Event count: " << events.size() << std::endl;
+    
+    if (events.size() > 0) {
+        std::cout << events.begin()->second.at(0).print() << std::endl;
+        auto evt = std::make_unique<JLocalDevice::LocalDeviceProxy::TestEvent>(events.begin()->second.at(0));
+        synchedEvents.push_back(std::move(evt));
+    }
+
+    if (jLocalDevice != 0) {
+        jLocalDevice->parseEvents(0);	//temp
+    }
+}
+
+
+void JLocalDevice::LocalDeviceProxy::TestEvent::playEvent()
+{
+	std::cout << "Play: " << evt.print() << std::endl;
 }

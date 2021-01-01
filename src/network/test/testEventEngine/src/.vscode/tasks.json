@@ -1,0 +1,43 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "C/C++: g++ build active file",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-g",
+				"-std=c++11",
+				"-std=c++14",
+				"-pthread",
+				"-I${workspaceFolder}/../../../../../include/",
+				"-I${workspaceFolder}/../../../../device/src/",
+				"-I${workspaceFolder}/../../../src/",
+//				"-fPIC",
+//				"${file}",
+				"main.cpp",
+				"-o",
+				"${fileDirname}/testEventEngine",
+//				"-L${workspaceFolder}",
+                "-L${workspaceFolder}/../../../src",
+                "-L${workspaceFolder}/../../../../device/src",
+				"-Wl,-rpath,.",
+//				"-lpthread",
+                "-lstidevice",
+				"-lstinetwork",
+				"-lpthread",
+                "-lomnithread",
+                "-lomniORB4",
+                "-lomniDynamic4",
+                "-lomniCodeSets4"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}

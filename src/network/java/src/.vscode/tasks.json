@@ -51,7 +51,8 @@
                 "-lstinetwork",
 				"-Wl,-rpath,.",
 				"-o",
-				"${workspaceFolder}/../stilib/build/libs/libsti.so"
+                //"${workspaceFolder}/../stilib/lib/libstijava.so"
+                "${workspaceFolder}/../../../../lib/libstijava.so"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
