@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "networklib", "networklib.vcxproj", "{0C759979-CF57-42BF-B46C-0E9FDD8E917B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A557917-12DB-458C-83B2-60E4D416B3B7} = {4A557917-12DB-458C-83B2-60E4D416B3B7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testcorba", "..\test\testcorba\testcorba.vcxproj", "{5CAF83FB-6586-4195-BA9E-2FD5C7D405D2}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -22,6 +25,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testNodeWalker", "..\test\testNodeWalker\testNodeWalker.vcxproj", "{F7A2CFDA-BDFA-4ACB-A0E0-0962CCE5ED01}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testEventEngine", "..\test\testEventEngine\testEventEngine.vcxproj", "{4FB48DDE-DBE8-440E-B3C6-2191300FB095}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A557917-12DB-458C-83B2-60E4D416B3B7} = {4A557917-12DB-458C-83B2-60E4D416B3B7}
+		{0C759979-CF57-42BF-B46C-0E9FDD8E917B} = {0C759979-CF57-42BF-B46C-0E9FDD8E917B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

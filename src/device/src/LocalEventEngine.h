@@ -114,6 +114,7 @@ private:
 	void mergePartnerEvents(const DeviceEventMap& events);
 
 	bool setState(EngineState target);
+	bool setState(EngineState target, EngineState fallback);
 
 	void preparePlayAll(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
 	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);
@@ -210,6 +211,10 @@ private:
 
 	//Each ShotID refers to a single shot's measurement vector.
 	STI::Utils::OrderedBufferMap<ShotID, std::shared_ptr<MeasurementVector>> measurementBuffer;
+
+	void releaseParseLock();
+	void releasePlayLock();
+	void releaseTriggerLock();
 
 	//trigger
 	mutable std::mutex triggerMutex;

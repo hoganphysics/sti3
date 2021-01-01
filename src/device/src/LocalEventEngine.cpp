@@ -528,7 +528,10 @@ void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLoc
 void LocalEventEngine::resetPlayThread()
 {
 	if (playThread.joinable()) {
-		stop();
+		if (isState(EngineState::Playing) || isState(EngineState::WaitingForTrigger)) {
+			//Error; this should not happen
+			stop();
+		}
 		playThread.join();
 	}
 }
@@ -703,7 +706,7 @@ bool LocalEventEngine::playDeviceEvents()
 	}
 	playCondition.notify_all();
 
-	return true;	//play and collect were a success
+	return true;	//play and collect were a success, or where cleanly stopped
 }
 
 bool LocalEventEngine::waitUntil(double time)
@@ -760,28 +763,60 @@ void LocalEventEngine::stop()
 
 	switch (getState()) {
 	case EngineState::Parsing:
-		success = setState(EngineState::Idle);
+		success = setState(EngineState::Idle, EngineState::Error);
 		cancelled = true;
+		releaseParseLock();
 		break;	
 	case EngineState::PreparingPlay:
-	case EngineState::WaitingForTrigger:
-	case EngineState::Playing:
-		success = setState(EngineState::Parsed);
+		success = setState(EngineState::Parsed, EngineState::Error);
 		cancelled = true;
+		releasePlayLock();
+		break;
+	case EngineState::PlayReady:
+		success = setState(EngineState::Parsed, EngineState::Error);
+		cancelled = true;
+		releasePlayLock();
+		break;
+	case EngineState::WaitingForTrigger:
+		success = setState(EngineState::Parsed, EngineState::Error);
+		cancelled = true;
+		//trigger();			//in case WaitingForTrigger
+		releaseTriggerLock();
+		releasePlayLock();
+		break;
+	case EngineState::Playing:
+		success = setState(EngineState::Parsed, EngineState::Error);
+		cancelled = true;
+		releasePlayLock();
+		stopDeviceEvents();
 		break;
 	}
 	
-
-	stopDeviceEvents();
-	trigger();			//in case WaitingForTrigger
-
 	stopOwnedDevices();
 
-	playCondition.notify_all();		//release play(job)
+//	if (!success) {
+//		setState(EngineState::Error);
+//	}
+}
 
-	if (!success) {
-		setState(EngineState::Error);
-	}
+
+
+void LocalEventEngine::releaseParseLock()
+{
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+	parseCondition.notify_all();
+}
+
+void LocalEventEngine::releasePlayLock()
+{
+	std::unique_lock<std::mutex> playLock(playMutex);
+	playCondition.notify_all();		//release play(job)
+}
+
+void LocalEventEngine::releaseTriggerLock()
+{
+	std::unique_lock<std::mutex> triggerLock(triggerMutex);
+	triggerCondition.notify_all();			//releases waitForTrigger
 }
 
 void LocalEventEngine::stopOwnedDevices()
@@ -806,6 +841,16 @@ bool LocalEventEngine::isState(EngineState target) const
 STI::Engine::EngineState LocalEventEngine::getState() const
 {
 	return stateMachine.getState();
+}
+
+bool LocalEventEngine::setState(EngineState target, EngineState fallback)
+{
+	bool success = setState(target);
+	
+	if (!success) {
+		success = setState(fallback);
+	}
+	return success;
 }
 
 bool LocalEventEngine::setState(EngineState target)
