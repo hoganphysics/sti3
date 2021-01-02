@@ -14,9 +14,12 @@ Issues
 Engine
 X Server parsing and playing system
 X EventEngine scheduler + network interface
-* Network interface for submitting events
+X Network interface for submitting events
 * Begin python library to send events 
 * Mathematica wrapper of python lib to allow generation and viewing of event lists
+* Customize EventEngineParse per Engine (pass in different pointers) so FPGA devices can direct events at different address spaces
+* Error and warnings
+
 
 Front end
 X NodeWalker returns graph of network, any node can input from any Hub.  Hub could have a EventReceiver and could register as a HubEventListener of all attached nodes.
@@ -30,6 +33,26 @@ XX Make an Angular component run javascript code using vis.js to draw a simple n
 ** Write DataFetcher on server
 ** Make Angular component to query the server and receive network data
 ** Convert network data query results into vis.js graph
-* Begin official front end server and client codebases
+X Begin official front end server and client codebases
 
+
+Web server
+X Setup project with graphql support (copy testgql)
+* Integrate stijava (copy sti4/examples/java/testdevice)
+* Write STI graph resolver
+** Test from GraphiQL
+
+
+Device
+X Channels
+* Attributes
+* Examples (C++, Java, Python, js)
+XX Java
+** C++
+* Monitors
+* Streaming channel data
+* Initialization parameter file parsing
+* Async tasks
+** Scheduler
+** Logging
 
