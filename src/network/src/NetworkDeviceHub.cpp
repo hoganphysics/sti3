@@ -64,7 +64,7 @@ void NetworkDeviceHub::autoReconnectRemoteHubs(bool enabled)
 	_autoReconnectRemoteHubs = enabled;
 }
 
-bool NetworkDeviceHub::addNode(const typename std::shared_ptr<STI::Device::Device>& node)
+bool NetworkDeviceHub::addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
 {
 	if (node != 0) {
 		return addNode(node->getID(), node);

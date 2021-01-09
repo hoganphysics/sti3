@@ -126,7 +126,7 @@ void testDevice()
 
 	dev2->getID();
 
-	hub1->addNode(dev2);
+	hub1->addDevice(dev2);
 
 	hub1->run(true);
 
@@ -176,10 +176,10 @@ void testServer()
 	//hub1.addNode(dev2->getID(), dev2);
 
 
-	hub1->addNode(dev1);
+	hub1->addDevice(dev1);
 //	hub1->addNode(dev2->getID(), dev2);
-	hub1->addNode(dev3);
-	hub1->addNode(dev4);
+	hub1->addDevice(dev3);
+	hub1->addDevice(dev4);
 
 
 	hub1->run(false);

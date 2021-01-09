@@ -12,6 +12,7 @@
 #include "fwd/ChannelManager_fwd.h"
 #include "MixedValue.h"
 #include <string>
+#include <set>
 
 namespace STI
 {
@@ -23,12 +24,19 @@ class DeviceEventReceiver;
 class LocalDeviceEventDispatcher;
 class LocalChannelManager;
 class LocalChannel;
+class LocalDevice;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
 {
-	bool include(const STI::Device::DeviceID& key) const { return true; }
+public:
+	DeviceCollectionPolicy(LocalDevice* device) : device(device) {}
+	
+	bool include(const STI::Device::DeviceID& key) const;
 	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
+
+private:
+	LocalDevice* device;
 };
 
 
@@ -58,7 +66,7 @@ public:
 	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 
-//	STI::Device::ChannelMap localChannels;
+	void addPartner(const DeviceID& id) { partnerDevices.insert(id); }
 
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
@@ -90,6 +98,8 @@ private:
 	};
 	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
 
+	friend DeviceCollectionPolicy;
+	bool isPartnerDevice(const DeviceID& id);
 
 	DeviceID id;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
@@ -99,6 +109,8 @@ private:
 	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
+
+	std::set<DeviceID> partnerDevices;
 
 };
 

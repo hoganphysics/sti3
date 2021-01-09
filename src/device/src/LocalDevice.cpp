@@ -27,11 +27,12 @@ using STI::Engine::LocalEventEngineScheduler;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalChannel;
 using STI::Device::ChannelManager;
+using STI::Device::DeviceCollectionPolicy;
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
 {
-	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>();;
+	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
 //	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>();
 
@@ -162,3 +163,15 @@ void LocalDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)
 	manager = localChannelManager;
 }
 
+bool LocalDevice::isPartnerDevice(const DeviceID& id)
+{
+	auto it = partnerDevices.find(id);
+
+	return it != partnerDevices.end();
+}
+
+
+bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 
+{
+	return device->isPartnerDevice(key);
+}

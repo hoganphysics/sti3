@@ -29,7 +29,7 @@ public:
 	NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
 	~NetworkDeviceHub();
 	
-	bool addNode(const typename std::shared_ptr<STI::Device::Device>& node);
+	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node);
 	bool connect(const std::shared_ptr<LocalDeviceHub>& hub);
 
 	void setTargetHubs(const std::vector<std::string>& hubIDs);
