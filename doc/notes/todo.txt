@@ -24,23 +24,23 @@ X Network interface for submitting events
 Front end
 X NodeWalker returns graph of network, any node can input from any Hub.  Hub could have a EventReceiver and could register as a HubEventListener of all attached nodes.
 X Write Java wrapper of library using SWIG.
-* Testing GraphQL data transmission
+X Testing GraphQL data transmission
 XX Add STI JAR to test SpringBoot server and connect to the STI network
-* Display network graph in browser
+X Display network graph in browser
 XX Make an Angular component run javascript code using vis.js to draw a simple network
-** Extend test GraphQL schema to allow transfer of network graph data
-** Convert network graph data to a JSON
-** Write DataFetcher on server
-** Make Angular component to query the server and receive network data
-** Convert network data query results into vis.js graph
+XX Extend test GraphQL schema to allow transfer of network graph data
+NA Convert network graph data to a JSON
+XX Write DataFetcher on server
+XX Make Angular component to query the server and receive network data
+XX Convert network data query results into vis.js graph
 X Begin official front end server and client codebases
 
 
 Web server
 X Setup project with graphql support (copy testgql)
-* Integrate stijava (copy sti4/examples/java/testdevice)
-* Write STI graph resolver
-** Test from GraphiQL
+X Integrate stijava (copy sti4/examples/java/testdevice)
+X Write STI graph resolver
+XX Test from GraphiQL
 
 
 Device
