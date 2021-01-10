@@ -9,7 +9,7 @@ namespace py = pybind11;
 void init_DeviceID(py::module& m) 
 {
 
-    m.def("add", [](int a, int b) { return a + b; });
+//    m.def("add", [](int a, int b) { return a + b; });
 
     py::class_<STI::Device::DeviceID>(m, "DeviceID")
     .def(py::init<const std::string&>(), 

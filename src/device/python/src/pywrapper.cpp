@@ -10,6 +10,12 @@ using std::cout;
 using std::endl;
 
 void init_DeviceID(py::module &);
+void init_DeviceMessage(py::module& m);
+void init_DeviceMessageDispatcher(py::module& m);
+void init_Channel(py::module& m);
+void init_MixedValue(py::module& m);
+
+
 
 
 int add(int i, int j) {
@@ -73,6 +79,10 @@ PYBIND11_MODULE(example, m) {
     m.def("call_go", &call_go);
 
     init_DeviceID(m);
+    init_DeviceMessage(m);
+    init_DeviceMessageDispatcher(m);
+    init_Channel(m);
+    init_MixedValue(m);
 }
 
 int main(int argc, char *argv[])

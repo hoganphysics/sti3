@@ -44,7 +44,7 @@ public:
 	}
 	MixedValue(const MixedValue& copy);
 
-	~MixedValue();
+	virtual ~MixedValue();
 
 	template<typename T> MixedValue& operator= (const T& other)
 	{

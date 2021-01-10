@@ -1,10 +1,10 @@
 Priorities
 
 Misc
-* Rename DeviceEvent -> Message (?)
+X Rename DeviceEvent -> Message (?)
 * Add CORBA::_is_nil() and logic to *_i.cpp classes
 * Options interface.  [Device1] ::name = Test Device.  Make store as JSON?
-* Split NetworkConvert.h into separate headers for each type (faster compile times)
+X Split NetworkConvert.h into separate headers for each type (faster compile times)
 * Add folders to src
 * Split SWIG file into Device, Engine, etc.
 
@@ -48,7 +48,7 @@ X Channels
 * Attributes
 * Examples (C++, Java, Python, js)
 XX Java
-** C++
+XX C++
 * Monitors
 * Streaming channel data
 * Initialization parameter file parsing

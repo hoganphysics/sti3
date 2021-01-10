@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**", 
-                "../../../../include",
+                "../../../../include/**",
+                "../src/**",
                 "/home/hogan/code/dev/stiwork/pytest/pybind11/include/**",
                 "/usr/include/python3.6/**"
             ],

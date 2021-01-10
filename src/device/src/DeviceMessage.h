@@ -54,6 +54,8 @@ public:
 	
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::Unknown; }
 
+	static std::string typeToString(const DeviceMessageType& type);
+
 private:
 
 	DeviceMessageType _type;
@@ -116,7 +118,7 @@ public:
 	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
 
 	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
-	: DeviceMessage(source, DeviceMessageType::EngineScheduler), originalSource(originalSource), schedulerMessageType(type) 
+	: DeviceMessage(source, DeviceMessageType::EngineScheduler), schedulerMessageType(type), originalSource(originalSource) 
 	{
 	}
 	

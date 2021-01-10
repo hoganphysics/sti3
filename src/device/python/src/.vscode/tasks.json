@@ -8,9 +8,11 @@
 //			"command": "echo",			
 			"args": [
 				"-std=c++11",
+				"-std=c++14",
 				"-fPIC",
 				"`${PYCONFIG_CFLAGS}`",
 				"-I${STI_BASE}/include",
+				"-I${STI_BASE}/src/device/src",
 				"-I/home/hogan/code/dev/stiwork/pytest/pybind11/include",
 				"-g",
 //				"${file}",
