@@ -4,7 +4,7 @@
 #include "DeviceID.h"
 #include "SynchronizedMap.h"
 #include "LocalEventEngineJob.h"
-#include "DeviceEvent.h"
+#include "DeviceMessage.h"
 #include "EventEngineManager.h"
 #include "fwd/RawEvent_fwd.h"
 #include "ParseID.h"
@@ -90,8 +90,8 @@ void LocalEventEngineScheduler::setEngineFactory(const std::shared_ptr<STI::Engi
 
 void LocalEventEngineScheduler::addEngine(const EngineID& engineID)
 {
-    std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
-    localDevice->getEventDispatcher(dispatcher);
+    std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
+    localDevice->getMessageDispatcher(dispatcher);
     std::shared_ptr<STI::Device::DeviceCollection> collection;
     localDevice->getCollection(collection);
     std::shared_ptr<STI::Device::ChannelManager> channels;
@@ -658,7 +658,7 @@ bool LocalEventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeE
     return found;
 }
 
-void LocalEventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngineScheduler::handleMessage(const std::shared_ptr<EngineSchedulerMessage>& mess)
 {
     typedef EngineSchedulerMessage::SchedulerMessageType MessageType;
 
@@ -666,10 +666,10 @@ void LocalEventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedule
     
     std::shared_ptr<EventEngineManager> manager;
 
-    switch(evt->schedulerMessageType) {
+    switch(mess->schedulerMessageType) {
         case MessageType::ParseComplete:
-            if (getManager(evt->jobID, manager)) {
-                manager->handleParseMessage(evt);
+            if (getManager(mess->jobID, manager)) {
+                manager->handleParseMessage(mess);
             }
         break;
 
@@ -677,8 +677,8 @@ void LocalEventEngineScheduler::handleEvent(const std::shared_ptr<EngineSchedule
         break;
         
         case MessageType::PlayReady:
-            if (getManager(evt->jobID, manager)) {
-                manager->handlePlayMessage(evt);
+            if (getManager(mess->jobID, manager)) {
+                manager->handlePlayMessage(mess);
             }
         break;
     }

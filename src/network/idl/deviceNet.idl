@@ -77,21 +77,21 @@ module TNetwork
 		void refresh();
 	};
 
-	interface TDeviceEventHandler
+	interface TDeviceMessageHandler
 	{
-		void addEvent(in TAnyEvent evt);
+		void addMessage(in TAnyMessage mess);
 		//boolean hasListeners(in TDeviceEvent evt);
-		void clearEvents();
+		void clearMessages();
 
-		readonly attribute TDeviceEventTypeSeq listenersTypes;
+		readonly attribute TDeviceMessageTypeSeq listenersTypes;
 
 		void setRefreshIndicator(in TRefreshIndicator refresher);
 	};
 
-	interface TDeviceEventDispatcher
+	interface TDeviceMessageDispatcher
 	{
-		void addEventHandler(in TDeviceID targetID, in TDeviceEventHandler handler);
-		void removeEventHandler(in TDeviceID targetID);
+		void addMessageHandler(in TDeviceID targetID, in TDeviceMessageHandler handler);
+		void removeMessageHandler(in TDeviceID targetID);
 
 		//void addEvent(in TDeviceEvent evt);
 	};
@@ -195,7 +195,7 @@ module TNetwork
 	//	void write(in unsigned long input);		//temp
 
 		//Device event passing
-		TDeviceEventDispatcher getEventDispatcher();
+		TDeviceMessageDispatcher getMessageDispatcher();
 
 		//Event engine system
 		TEventEngineScheduler getEngineScheduler();

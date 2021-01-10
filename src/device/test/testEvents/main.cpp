@@ -9,10 +9,10 @@
 
 #include "LocalDevice.h"
 
-#include "DeviceEventListener.h"
-#include "DeviceEvent.h"
-#include "DeviceEventReceiver.h"
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageListener.h"
+#include "DeviceMessage.h"
+#include "DeviceMessageReceiver.h"
+#include "DeviceMessageDispatcher.h"
 
 
 #include <iostream>
@@ -24,12 +24,12 @@ using std::cout;
 using std::endl;
 using STI::Device::LocalDevice;
 
-class TestListener : public STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>
+class TestListener : public STI::Device::DeviceMessageListener<STI::Device::RefreshDeviceMessage>
 {
 public:
 	TestListener(const std::string& label) : label(label) {}
 
-	void handleEvent(const std::shared_ptr<STI::Device::RefreshDeviceEvent>& evt)
+	void handleMessage(const std::shared_ptr<STI::Device::RefreshDeviceMessage>& evt)
 	{
 		std::unique_lock < std::mutex > writeLock(TestListener::coutMutex);
 		cout << "Refresh " << label << ". Source: " << evt->sourceID().getName() << endl;
@@ -42,12 +42,12 @@ public:
 std::mutex TestListener::coutMutex{};
 
 
-class TestListener2 : public STI::Device::DeviceEventListener<STI::Device::ChannelUpdateDeviceEvent>
+class TestListener2 : public STI::Device::DeviceMessageListener<STI::Device::ChannelUpdateDeviceMessage>
 {
 public:
 	TestListener2(const std::string& label) : label(label) {}
 
-	void handleEvent(const std::shared_ptr<STI::Device::ChannelUpdateDeviceEvent>& evt)
+	void handleMessage(const std::shared_ptr<STI::Device::ChannelUpdateDeviceMessage>& evt)
 	{
 	}
 	std::string label;
@@ -64,19 +64,19 @@ public:
 		listener = std::make_shared<TestListener>(lname);
 		listener2 = std::make_shared<TestListener2>(lname);
 
-		std::shared_ptr<STI::Device::DeviceEventReceiver> receiver;
-		getEventReceiver(receiver);
+		std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+		getMessageReceiver(receiver);
 
-		std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::RefreshDeviceEvent>> listenerX = listener;
-		std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::ChannelUpdateDeviceEvent>> listener2X = listener2;
+		std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::RefreshDeviceMessage>> listenerX = listener;
+		std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::ChannelUpdateDeviceMessage>> listener2X = listener2;
 
-		STI::Device::DeviceEventListenerID listenerID;
+		STI::Device::DeviceMessageListenerID listenerID;
 		listenerID.name = "listener_1";
-		listenerID.type = STI::Device::DeviceEventType::Refresh;
+		listenerID.type = STI::Device::DeviceMessageType::Refresh;
 
 		receiver->addListener(STI::Device::DeviceID("dev2", "localhost", 0, ""), listenerID, listenerX);
 		
-		listenerID.type = STI::Device::DeviceEventType::ChannelUpdate;
+		listenerID.type = STI::Device::DeviceMessageType::ChannelUpdate;
 		receiver->addListener(STI::Device::DeviceID("dev2", "localhost", 0, ""), listenerID, listener2X);
 		//receiver->removeListener(STI::Device::DeviceID("dev2", "localhost", 0, ""), listenerID);
 
@@ -85,16 +85,16 @@ public:
 	}
 	~TestDevice()
 	{
-		cout << "Destroying " << id.getName() << endl;
+		cout << "Destroying " << getID().getName() << endl;
 	}
 
 	void fireRefreshEvent()
 	{
-		std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
-		getEventDispatcher(dispatcher);
+		std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
+		getMessageDispatcher(dispatcher);
 
-		auto evt = std::make_shared<STI::Device::RefreshDeviceEvent>(id);
-		dispatcher->addEvent(evt);
+		auto mess = std::make_shared<STI::Device::RefreshDeviceMessage>(getID());
+		dispatcher->addMessage(mess);
 	}
 	
 	std::shared_ptr<TestListener> listener;
@@ -119,15 +119,15 @@ int main(int argc, char **argv)
 	//LocalHub hub1("Hub1");
 	//LocalHub hub2("Hub2");
 
-	hub1->addNode(dev1->id, dev1);
-	hub1->addNode(dev2->id, dev2);
+	hub1->addNode(dev1->getID(), dev1);
+	hub1->addNode(dev2->getID(), dev2);
 
-	hub2->addNode(dev3->id, dev3);
+	hub2->addNode(dev3->getID(), dev3);
 
 	STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>::connect(hub1, hub2);
 
 
-	hub2->addNode(dev4->id, dev4);
+	hub2->addNode(dev4->getID(), dev4);
 
 	int x;
 	std::cin >> x;
@@ -137,14 +137,14 @@ int main(int argc, char **argv)
 
 	hub1->refresh();
 
-	hub2->removeNode(dev3->id);
+	hub2->removeNode(dev3->getID());
 
 	std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>> testCollection;
 	dev1->getCollection(testCollection);
 
 	std::shared_ptr<STI::Device::Device> p1;
 	std::shared_ptr<STI::Network::Node<STI::Device::DeviceID, STI::Device::Device>> p2;
-	testCollection->get(dev2->id, p1);
+	testCollection->get(dev2->getID(), p1);
 	//	testCollection->get(dev2->id, p2);
 
 	p2 = p1;

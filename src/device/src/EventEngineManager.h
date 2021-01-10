@@ -3,7 +3,7 @@
 
 #include "LocalEventEngine.h"
 #include "EngineID.h"
-#include "DeviceEvent.h"
+#include "DeviceMessage.h"
 
 #include <memory>
 #include <thread>

@@ -140,26 +140,26 @@ module TNetwork
 	};
 
 
-	enum TDeviceEventType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
+	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
 							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
 							MessageEngineStatus, MessageEngineParser, MessageUnknown };
-	typedef sequence<TDeviceEventType> TDeviceEventTypeSeq;
+	typedef sequence<TDeviceMessageType> TDeviceMessageTypeSeq;
 
-	struct TAnyEvent
+	struct TAnyMessage
 	{
-		TDeviceEventType type;
-		any evt;
+		TDeviceMessageType type;
+		any mess;
 	};
 
-	struct TDeviceEvent
+	struct TDeviceMessage
 	{
-		TDeviceEventType type;
+		TDeviceMessageType type;
 		TDeviceID sourceID;
 	};
 
-	struct TRefreshDeviceEvent
+	struct TRefreshDeviceMessage
 	{
-		TDeviceEvent base;	//base class data
+		TDeviceMessage base;	//base class data
 	};
 
 
@@ -169,7 +169,7 @@ module TNetwork
 
 	struct TEngineSchedulerMessage
 	{
-		TDeviceEvent base;	//base class data
+		TDeviceMessage base;	//base class data
 
 		TSchedulerMessageType type;
 		TEngineJobID jobID;

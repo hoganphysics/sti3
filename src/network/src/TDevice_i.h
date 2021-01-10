@@ -5,7 +5,7 @@
 
 #include "Device.h"
 #include "TDeviceCollection_i.h"
-#include "TDeviceEventDispatcher_i.h"
+#include "TDeviceMessageDispatcher_i.h"
 #include "TEventEngineScheduler_i.h"
 #include "TChannelManager_i.h"
 
@@ -26,7 +26,7 @@ public:
 
 	::CORBA::Boolean refresh();
 	TDeviceCollection_ptr getDeviceCollection();
-	TDeviceEventDispatcher_ptr getEventDispatcher();
+	TDeviceMessageDispatcher_ptr getMessageDispatcher();
 	TEventEngineScheduler_ptr getEngineScheduler();
 	TChannelManager_ptr getChannelManager();
 	TDeviceID* getID();
@@ -35,7 +35,7 @@ public:
 private:
 
 	TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
-	TDeviceEventDispatcher_i eventDispatcherServant;	//Servant for this Device's event dispatcher.
+	TDeviceMessageDispatcher_i messageDispatcherServant;	//Servant for this Device's event dispatcher.
 	TEventEngineScheduler_i eventSchedulerServant;		//Servant for this Device's event scheduler.
 	TChannelManager_i channelManagerServant;
 

@@ -1,10 +1,10 @@
 
 #include "LocalDevice.h"
-#include "LocalDeviceEventDispatcher.h"
-#include "DeviceEventReceiver.h"
+#include "LocalDeviceMessageDispatcher.h"
+#include "DeviceMessageReceiver.h"
 #include "LocalEventEngineScheduler.h"
-#include "DeviceEventListener.h"
-#include "DeviceEvent.h"
+#include "DeviceMessageListener.h"
+#include "DeviceMessage.h"
 #include "LocalEventEngineFactory.h"
 
 #include "MixedValue.h"
@@ -20,9 +20,9 @@ using std::endl;
 using STI::Device::Device;
 using STI::Device::DeviceID;
 using STI::Device::LocalDevice;
-using STI::Device::DeviceEventDispatcher;
-using STI::Device::LocalDeviceEventDispatcher;
-using STI::Device::DeviceEventReceiver;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::LocalDeviceMessageDispatcher;
+using STI::Device::DeviceMessageReceiver;
 using STI::Engine::LocalEventEngineScheduler;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalChannel;
@@ -36,9 +36,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
 //	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>();
 
-	deviceEventDispatcher = std::make_shared<LocalDeviceEventDispatcher>();
+	deviceMessageDispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
 
-	deviceEventReceiver = std::make_shared<DeviceEventReceiver>(id, localCollection);
+	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection);
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
@@ -72,14 +72,14 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 
 	if( isEventTarget || id.getTargetServerID() == localDevice->getID().getID() ) {
 		
-		//std::shared_ptr<STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>> listener = //localDevice->eventEngineScheduler;
-		auto listener = std::static_pointer_cast<STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
-		//localDevice->deviceEventReceiver->addListener(sourceDevice, listenerID, listenerX);
-		STI::Device::DeviceEventListenerID listenerID;
+		//std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> listener = //localDevice->eventEngineScheduler;
+		auto listener = std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
+		//localDevice->deviceMessageReceiver->addListener(sourceDevice, listenerID, listenerX);
+		STI::Device::DeviceMessageListenerID listenerID;
 		listenerID.name = localDevice->getID().getID() + "::EventEngineScheduler";
-		listenerID.type = STI::Device::DeviceEventType::EngineScheduler;
+		listenerID.type = STI::Device::DeviceMessageType::EngineScheduler;
 
-		localDevice->deviceEventReceiver->addListener(id, listenerID, listener);	//listen to events on new device 'id'
+		localDevice->deviceMessageReceiver->addListener(id, listenerID, listener);	//listen to events on new device 'id'
 	}
 }
 
@@ -114,7 +114,7 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 
 void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 {
-//	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceEventDispatcher, localCollection);
+//	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceMessageDispatcher, localCollection);
 	eventEngineScheduler->addEngine(engineID);
 }
 
@@ -136,14 +136,14 @@ void LocalDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& 
 	collection = localCollection;
 }
 
-void LocalDevice::getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher)
+void LocalDevice::getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
 {
-	dispatcher = deviceEventDispatcher;
+	dispatcher = deviceMessageDispatcher;
 }
 
-void LocalDevice::getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver)
+void LocalDevice::getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver)
 {
-	receiver = deviceEventReceiver;
+	receiver = deviceMessageReceiver;
 }
 
 bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)

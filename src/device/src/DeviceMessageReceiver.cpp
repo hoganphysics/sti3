@@ -1,24 +1,24 @@
 
-#include "DeviceEventReceiver.h"
+#include "DeviceMessageReceiver.h"
 #include "DeviceID.h"
 #include "Device.h"
-#include "DeviceEventDispatcher.h"
-#include "DeviceEventHandler.h"
+#include "DeviceMessageDispatcher.h"
+#include "DeviceMessageHandler.h"
 
 #include <string>
 #include <set>
 
-using STI::Device::DeviceEventReceiver;
-using STI::Device::DeviceEventDispatcher;
-using STI::Device::DeviceEventHandler;
+using STI::Device::DeviceMessageReceiver;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::DeviceMessageHandler;
 using STI::Device::DeviceID;
 using STI::Device::Device;
 using STI::Utils::LocalCollection;
-using STI::Device::DeviceEventListenerID;
-using STI::Device::LocalDeviceEventHandler;
+using STI::Device::DeviceMessageListenerID;
+using STI::Device::LocalDeviceMessageHandler;
 
 
-DeviceEventReceiver::DeviceEventReceiver(const DeviceID& localID, 
+DeviceMessageReceiver::DeviceMessageReceiver(const DeviceID& localID, 
 	const std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>>& deviceCollection)
 	: deviceCollection(deviceCollection), localID(localID)
 {
@@ -29,60 +29,60 @@ DeviceEventReceiver::DeviceEventReceiver(const DeviceID& localID,
 }
 
 
-DeviceEventReceiver::~DeviceEventReceiver()
+DeviceMessageReceiver::~DeviceMessageReceiver()
 {
 	removeAllHandlers();	//remove remote handlers
 }
 
 
-void DeviceEventReceiver::addDeviceEventHandler(const DeviceID& sourceDeviceID)
+void DeviceMessageReceiver::addDeviceMessageHandler(const DeviceID& sourceDeviceID)
 {
-	std::shared_ptr<DeviceEventDispatcher> dispatcher;
-	std::shared_ptr<DeviceEventHandler> handler;
+	std::shared_ptr<DeviceMessageDispatcher> dispatcher;
+	std::shared_ptr<DeviceMessageHandler> handler;
 
-	if (getSourceDeviceEventDispatcher(sourceDeviceID, dispatcher) && 
-		dispatcher->makeEventHandler(handler)) 
+	if (getSourceDeviceMessageDispatcher(sourceDeviceID, dispatcher) && 
+		dispatcher->makeMessageHandler(handler)) 
 	{
 		refreshListenerGroups(sourceDeviceID, handler);	//populate handler with existing listeners
-		dispatcher->addEventHandler(localID, handler);	//add this handler to the remote dispatcher under the local ID
+		dispatcher->addMessageHandler(localID, handler);	//add this handler to the remote dispatcher under the local ID
 		handlers.add(sourceDeviceID, handler);			//store handler refernce locally
 	}
 }
 
 
-void DeviceEventReceiver::removeDeviceEventHandler(const DeviceID& sourceDeviceID)
+void DeviceMessageReceiver::removeDeviceMessageHandler(const DeviceID& sourceDeviceID)
 {
-	std::shared_ptr<DeviceEventDispatcher> dispatcher;
+	std::shared_ptr<DeviceMessageDispatcher> dispatcher;
 
 	//Attempt to remove from the remote dispatcher
-	if (getSourceDeviceEventDispatcher(sourceDeviceID, dispatcher)) {
-		dispatcher->removeEventHandler(localID);	//remove this handler to the remote dispatcher
+	if (getSourceDeviceMessageDispatcher(sourceDeviceID, dispatcher)) {
+		dispatcher->removeMessageHandler(localID);	//remove this handler to the remote dispatcher
 	}
 
 	handlers.remove(sourceDeviceID);
 }
 
 
-void DeviceEventReceiver::removeAllHandlers()
+void DeviceMessageReceiver::removeAllHandlers()
 {
 	std::set<DeviceID> ids;
 	handlers.getKeys(ids);
 
 	for (auto& handerID : ids) {
-		removeDeviceEventHandler(handerID);
+		removeDeviceMessageHandler(handerID);
 	}
 }
 
 
-bool DeviceEventReceiver::getSourceDeviceEventDispatcher(const DeviceID& sourceDeviceID, 
-	std::shared_ptr<DeviceEventDispatcher>& dispatcher)
+bool DeviceMessageReceiver::getSourceDeviceMessageDispatcher(const DeviceID& sourceDeviceID, 
+	std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
 {
 	bool success = false;
 	std::shared_ptr<Device> device;
 
 	if (deviceCollection->get(sourceDeviceID, device) && device != 0) {
 
-		device->getEventDispatcher(dispatcher);
+		device->getMessageDispatcher(dispatcher);
 
 		success = (dispatcher != 0);
 	}
@@ -91,8 +91,8 @@ bool DeviceEventReceiver::getSourceDeviceEventDispatcher(const DeviceID& sourceD
 }
 
 
-void DeviceEventReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID, 
-	const std::shared_ptr<DeviceEventHandler>& handler)
+void DeviceMessageReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID, 
+	const std::shared_ptr<DeviceMessageHandler>& handler)
 {
 	refreshListenerGroup(sourceDeviceID, refreshListeners, handler);
 	refreshListenerGroup(sourceDeviceID, channelUpdateListeners, handler);
@@ -100,24 +100,24 @@ void DeviceEventReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID,
 }
 
 
-void DeviceEventReceiver::removeListener(const DeviceID& sourceDeviceID, const DeviceEventListenerID& listenerID)
+void DeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID)
 {
 	bool success = false;
 
 	switch (listenerID.type) {
-	case DeviceEventType::Refresh:
+	case DeviceMessageType::Refresh:
 		success = removeListener(sourceDeviceID, listenerID, refreshListeners);
 		break;
-	case DeviceEventType::ChannelUpdate:
+	case DeviceMessageType::ChannelUpdate:
 		success = removeListener(sourceDeviceID, listenerID, channelUpdateListeners);
 		break;
-	case DeviceEventType::EngineScheduler:
+	case DeviceMessageType::EngineScheduler:
 		success = removeListener(sourceDeviceID, listenerID, engineSchedulerListeners);
 		break;
 	}
 	
 	if (success) {
-		std::shared_ptr<DeviceEventHandler> handler;
+		std::shared_ptr<DeviceMessageHandler> handler;
 
 		//refresh any installed handlers with updated listener group
 		if (handlers.get(sourceDeviceID, handler) && handler != 0) {

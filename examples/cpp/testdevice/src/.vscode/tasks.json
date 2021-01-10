@@ -21,7 +21,7 @@
 				"${workspaceFolder}/testDevice",
 //				"-L${STI_BASE_DIR}/lib",
 				"-L${workspaceFolder}/../../../../lib/",
-//				"-Wl,-rpath,.",
+				"-Wl,-rpath,.",
 				"-lstinetwork",
 				"-lstidevice",
 				"-lpthread",

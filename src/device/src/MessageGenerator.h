@@ -2,7 +2,7 @@
 #ifndef STI_DEVICE_MESSAGEGENERATOR_H
 #define STI_DEVICE_MESSAGEGENERATOR_H
 
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
 
 namespace STI
 {
@@ -14,20 +14,20 @@ class MessageGenerator
 {
 public:
 
-	MessageGenerator(const std::shared_ptr<DeviceEventDispatcher>& dispatcher) : dispatcher(dispatcher) {}
+	MessageGenerator(const std::shared_ptr<DeviceMessageDispatcher>& dispatcher) : dispatcher(dispatcher) {}
 	virtual ~MessageGenerator() {}
 
 	template<typename T>
 	void sendMessage(const std::shared_ptr<T>& message)
     {
         if(dispatcher != 0) {
-            dispatcher->addEvent(message);
+            dispatcher->addMessage(message);
         }
     }
 
 private:
 
-    std::shared_ptr<DeviceEventDispatcher> dispatcher;
+    std::shared_ptr<DeviceMessageDispatcher> dispatcher;
 
 };
 

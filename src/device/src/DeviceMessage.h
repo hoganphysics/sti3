@@ -1,5 +1,5 @@
-#ifndef STI_DEVICE_DEVICEEVENT_H
-#define STI_DEVICE_DEVICEEVENT_H
+#ifndef STI_DEVICE_DEVICEMESSAGE_H
+#define STI_DEVICE_DEVICEMESSAGE_H
 
 #include "DeviceID.h"
 #include "fwd/EventEngine_fwd.h"
@@ -12,7 +12,7 @@ namespace Device
 {
 
 
-enum class DeviceEventType { 
+enum class DeviceMessageType { 
 	Refresh, CollectionUpdate, 
 	ChannelUpdate, ChannelsRefresh, 
 	AttributeUpdate, AttributesRefresh, 
@@ -22,22 +22,22 @@ enum class DeviceEventType {
 	EngineParser,
 	EngineStatus,
 	Unknown };
-//DeviceEvent, 
-//DeviceEventReceiver::addListener, ::removeListener, ::refreshListenerGroups,  and add a dedicated ListenerGroupMap instance
+//DeviceMessage, 
+//DeviceMessageReceiver::addListener, ::removeListener, ::refreshListenerGroups,  and add a dedicated ListenerGroupMap instance
 
-class DeviceEvent
+class DeviceMessage
 {
 public:
-	DeviceEvent() : _type(DeviceEventType::Unknown) {}
-	DeviceEvent(const STI::Device::DeviceID& source, DeviceEventType type);
-	virtual ~DeviceEvent();
+	DeviceMessage() : _type(DeviceMessageType::Unknown) {}
+	DeviceMessage(const STI::Device::DeviceID& source, DeviceMessageType type);
+	virtual ~DeviceMessage();
 
 	const STI::Device::DeviceID& sourceID() const;
 
-	DeviceEventType getType() const;
+	DeviceMessageType getType() const;
 
 	template <typename T>
-	static bool convert(const std::shared_ptr<DeviceEvent>& evt, std::shared_ptr<T>& outEvt)
+	static bool convert(const std::shared_ptr<DeviceMessage>& evt, std::shared_ptr<T>& outEvt)
 	{
 		if (evt == 0) {
 			return false;
@@ -52,49 +52,49 @@ public:
 		return success;
 	}
 	
-	static DeviceEventType getEventClassType() { return DeviceEventType::Unknown; }
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::Unknown; }
 
 private:
 
-	DeviceEventType _type;
+	DeviceMessageType _type;
 	STI::Device::DeviceID _source;
 
 };
 
 
-class RefreshDeviceEvent : public DeviceEvent
+class RefreshDeviceMessage : public DeviceMessage
 {
 public:
 
-	RefreshDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source, DeviceEventType::Refresh) {}
+	RefreshDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::Refresh) {}
 
-	static DeviceEventType getEventClassType() { return DeviceEventType::Refresh; }
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::Refresh; }
 
 private:
 
 };
 
 
-class ChannelUpdateDeviceEvent : public DeviceEvent
+class ChannelUpdateDeviceMessage : public DeviceMessage
 {
 public:
 
-	ChannelUpdateDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source, DeviceEventType::ChannelUpdate) {}
+	ChannelUpdateDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::ChannelUpdate) {}
 
 	//MixedValue channelValue();
 
-	static DeviceEventType getEventClassType() { return DeviceEventType::ChannelUpdate; }
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::ChannelUpdate; }
 
 };
 
 
-// class EngineJobUpdateDeviceEvent : public DeviceEvent
+// class EngineJobUpdateDeviceMessage : public DeviceMessage
 // {
 // public:
 
-// 	EngineJobUpdateDeviceEvent(const STI::Device::DeviceID& source) : DeviceEvent(source, DeviceEventType::EngineJobUpdate) {}
+// 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::EngineJobUpdate) {}
 
-// 	static DeviceEventType getEventClassType() { return DeviceEventType::EngineJobUpdate; }
+// 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineJobUpdate; }
 
 
 
@@ -108,7 +108,7 @@ ParseReserve:  Ready, Not ready
 
 */
 
-class EngineSchedulerMessage : public DeviceEvent
+class EngineSchedulerMessage : public DeviceMessage
 {
 public:
 
@@ -116,11 +116,11 @@ public:
 	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
 
 	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
-	: DeviceEvent(source, DeviceEventType::EngineScheduler), originalSource(originalSource), schedulerMessageType(type) 
+	: DeviceMessage(source, DeviceMessageType::EngineScheduler), originalSource(originalSource), schedulerMessageType(type) 
 	{
 	}
 	
-	static DeviceEventType getEventClassType() { return DeviceEventType::EngineScheduler; }
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineScheduler; }
 
 	SchedulerMessageType schedulerMessageType;
 
@@ -150,7 +150,7 @@ public:
 	std::vector<STI::Engine::RawEvent> events;
 };
 
-class EngineParserMessage : public DeviceEvent
+class EngineParserMessage : public DeviceMessage
 {
 public:
 
@@ -161,7 +161,7 @@ public:
 
 };
 
-class EventEngineMessage : public DeviceEvent
+class EventEngineMessage : public DeviceMessage
 {
 public:
 	//engine status

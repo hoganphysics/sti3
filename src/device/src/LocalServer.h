@@ -11,8 +11,8 @@ namespace STI
 namespace Device
 {
 
-class DeviceEventReceiver;
-class LocalDeviceEventDispatcher;
+class DeviceMessageReceiver;
+class LocalDeviceMessageDispatcher;
 class LocalChannelManager;
 class LocalChannel;
 

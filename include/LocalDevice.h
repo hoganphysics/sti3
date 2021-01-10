@@ -20,8 +20,8 @@ namespace STI
 namespace Device
 {
 
-class DeviceEventReceiver;
-class LocalDeviceEventDispatcher;
+class DeviceMessageReceiver;
+class LocalDeviceMessageDispatcher;
 class LocalChannelManager;
 class LocalChannel;
 class LocalDevice;
@@ -54,8 +54,8 @@ public:
 //	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
-	void getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver);
+	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
+	void getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 
@@ -105,8 +105,8 @@ private:
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
-	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
-	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
+	std::shared_ptr<LocalDeviceMessageDispatcher> deviceMessageDispatcher;
+	std::shared_ptr<DeviceMessageReceiver> deviceMessageReceiver;
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 

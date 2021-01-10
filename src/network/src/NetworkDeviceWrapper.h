@@ -2,7 +2,7 @@
 #define STI_NETWORK_NETWORKDEVICEWRAPPER_H
 
 #include "Device.h"
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
 #include "NetworkEventEngineFactory.h"
@@ -38,9 +38,9 @@ public:
 		localDevice->getCollection(collection);
 	}
 
-	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
+	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
 	{
-		localDevice->getEventDispatcher(dispatcher);
+		localDevice->getMessageDispatcher(dispatcher);
 	}
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)

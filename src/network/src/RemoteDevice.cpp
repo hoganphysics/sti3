@@ -1,7 +1,7 @@
 
 #include "RemoteDevice.h"
 #include "RemoteDeviceCollection.h"
-#include "RemoteDeviceEventDispatcher.h"
+#include "RemoteDeviceMessageDispatcher.h"
 #include "NetworkConvert.h"
 #include "RemoteEventEngineScheduler.h"
 #include "ChannelManager.h"
@@ -10,7 +10,7 @@
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
-using STI::Network::RemoteDeviceEventDispatcher;
+using STI::Network::RemoteDeviceMessageDispatcher;
 using STI::Network::convert;
 using STI::Network::RemoteEventEngineScheduler;
 using STI::Device::ChannelManager;
@@ -115,19 +115,19 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	}
 }
 
-void RemoteDevice::getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher)
+void RemoteDevice::getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
 {
 	bool success = false;
 
-	::STI::TNetwork::TDeviceEventDispatcher_ptr tEventDispatcher;	//remote reference
-	std::shared_ptr<RemoteDeviceEventDispatcher> remoteDispatcher;		//wrapper
+	::STI::TNetwork::TDeviceMessageDispatcher_ptr tMessageDispatcher;	//remote reference
+	std::shared_ptr<RemoteDeviceMessageDispatcher> remoteDispatcher;		//wrapper
 
 	try {
-		tEventDispatcher = _tDevice->getEventDispatcher();
+		tMessageDispatcher = _tDevice->getMessageDispatcher();
 		success = true;
 		
-		if (success && !CORBA::is_nil(tEventDispatcher)) {
-			remoteDispatcher = std::make_shared<RemoteDeviceEventDispatcher>(tEventDispatcher);
+		if (success && !CORBA::is_nil(tMessageDispatcher)) {
+			remoteDispatcher = std::make_shared<RemoteDeviceMessageDispatcher>(tMessageDispatcher);
 			dispatcher = remoteDispatcher;
 		}
 

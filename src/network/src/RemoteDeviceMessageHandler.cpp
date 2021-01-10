@@ -1,18 +1,18 @@
 
-#include "RemoteDeviceEventHandler.h"
+#include "RemoteDeviceMessageHandler.h"
 #include "NetworkConvert.h"
-#include "DeviceEvent.h"
+#include "DeviceMessage.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"
 
 #include <set>
 
-using STI::Network::RemoteDeviceEventHandler;
+using STI::Network::RemoteDeviceMessageHandler;
 using STI::Network::convert;
 
-RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEventHandler_ptr deviceHandler)
-	: tDeviceHandler(STI::TNetwork::TDeviceEventHandler::_duplicate(deviceHandler))
+RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_ptr deviceHandler)
+	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
 {
 //	STI::TNetwork::TDeviceEventHandler
 //	CORBA::remove_ref(deviceHandler);
@@ -34,34 +34,35 @@ RemoteDeviceEventHandler::RemoteDeviceEventHandler(::STI::TNetwork::TDeviceEvent
 	}
 }
 
-RemoteDeviceEventHandler::~RemoteDeviceEventHandler()
+RemoteDeviceMessageHandler::~RemoteDeviceMessageHandler()
 {
 }
 
-void RemoteDeviceEventHandler::addListenerGroup(const STI::Device::DeviceEventType& type, std::shared_ptr<STI::Device::AbstractEventListenerGroup>& listenerGroup)
+void RemoteDeviceMessageHandler::addListenerGroup(const STI::Device::DeviceMessageType& type, 
+								std::shared_ptr<STI::Device::AbstractMessageListenerGroup>& listenerGroup)
 {
 	//not allowed; listeners can only be added locally
 }
 
-void RemoteDeviceEventHandler::removeListenerGroup(const STI::Device::DeviceEventType& type)
+void RemoteDeviceMessageHandler::removeListenerGroup(const STI::Device::DeviceMessageType& type)
 {
 	//not allowed; listeners can only be added locally
 }
 
-void RemoteDeviceEventHandler::addEvent(const std::shared_ptr<STI::Device::DeviceEvent>& evt)
+void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::DeviceMessage>& mess)
 {
-	if (!hasListeners(evt)) {
+	if (!hasListeners(mess)) {
 		return;
 	}
 
-	STI::TNetwork::TAnyEvent tAnyEvent;
+	STI::TNetwork::TAnyMessage tAnyMessage;
 
-	if (!convert<std::shared_ptr<STI::Device::DeviceEvent>, STI::TNetwork::TAnyEvent>(evt, tAnyEvent)) {
+	if (!convert<std::shared_ptr<STI::Device::DeviceMessage>, STI::TNetwork::TAnyMessage>(mess, tAnyMessage)) {
 		return;
 	}
 
 	try {
-		tDeviceHandler->addEvent(tAnyEvent);	//remote call
+		tDeviceHandler->addMessage(tAnyMessage);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -72,11 +73,11 @@ void RemoteDeviceEventHandler::addEvent(const std::shared_ptr<STI::Device::Devic
 	}
 }
 
-void RemoteDeviceEventHandler::clearEvents()
+void RemoteDeviceMessageHandler::clearMessages()
 {
 
 	try {
-		tDeviceHandler->clearEvents();	//remote call
+		tDeviceHandler->clearMessages();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -87,11 +88,11 @@ void RemoteDeviceEventHandler::clearEvents()
 	}
 }
 
-bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::DeviceEvent>& evt)
+bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device::DeviceMessage>& mess)
 {
-	using ::STI::TNetwork::TDeviceEventTypeSeq_var;
-	using ::STI::TNetwork::TDeviceEventType;
-	using STI::Device::DeviceEventType;
+	using ::STI::TNetwork::TDeviceMessageTypeSeq_var;
+	using ::STI::TNetwork::TDeviceMessageType;
+	using STI::Device::DeviceMessageType;
 
 	std::unique_lock<std::mutex> writelock(listenersMutex);		//avoids reentrant calls
 
@@ -100,7 +101,7 @@ bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::D
 		//a refresh occurred on the remote resource; we need to refresh
 		
 		bool success = false;
-		TDeviceEventTypeSeq_var tListenersTypes;
+		TDeviceMessageTypeSeq_var tListenersTypes;
 
 		try {
 			if (!CORBA::is_nil(tDeviceHandler)) {
@@ -120,13 +121,13 @@ bool RemoteDeviceEventHandler::hasListeners(const std::shared_ptr<STI::Device::D
 			
 			listenersTypes.clear();
 
-			convert<TDeviceEventType, DeviceEventType>(
-				(const _CORBA_Unbounded_Sequence<TDeviceEventType>&) tListenersTypes, listenersTypes);
+			convert<TDeviceMessageType, DeviceMessageType>(
+				(const _CORBA_Unbounded_Sequence<TDeviceMessageType>&) tListenersTypes, listenersTypes);
 		}
 	}
 
 	//Event filter based on whether listeners of a given type are present on the remote device
-	return listenersTypes.count(evt->getType()) > 0;
+	return listenersTypes.count(mess->getType()) > 0;
 	
 }
 

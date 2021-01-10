@@ -12,7 +12,7 @@ namespace STI
 namespace Device
 {
 
-class DeviceEventDispatcher;
+class DeviceMessageDispatcher;
 class ChannelManager;
 class Device;
 
@@ -23,7 +23,7 @@ public:
 
 	virtual const DeviceID getID() const = 0;
 
-	virtual void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher) = 0;
+	virtual void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher) = 0;
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 

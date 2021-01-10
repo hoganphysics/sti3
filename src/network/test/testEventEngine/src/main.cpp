@@ -5,7 +5,7 @@
 
 #include "LocalDevice.h"
 
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
 #include "DeviceCollection.h"
 #include "LocalEventEngineScheduler.h"
 #include "LocalEventEngine.h"

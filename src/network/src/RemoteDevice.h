@@ -6,7 +6,7 @@
 #include "Device.h"
 #include "DeviceCollection.h"
 #include "TDeviceRefInterface.h"
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
 #include "fwd/ChannelManager_fwd.h"
 
 #include <memory>
@@ -30,7 +30,7 @@ public:
 	void write(unsigned input);
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	void getEventDispatcher(std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher);
+	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 
