@@ -15,6 +15,11 @@ MixedValuePy::MixedValuePy()
 {
 }
 
+MixedValuePy::MixedValuePy(const MixedValue& value)
+: MixedValue(value)
+{
+}
+
 MixedValuePy::MixedValuePy(const MixedValuePy& value)
 : MixedValue(value)
 {

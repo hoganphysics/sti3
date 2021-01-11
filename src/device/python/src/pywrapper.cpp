@@ -14,8 +14,8 @@ void init_DeviceMessage(py::module& m);
 void init_DeviceMessageDispatcher(py::module& m);
 void init_Channel(py::module& m);
 void init_MixedValue(py::module& m);
-
-
+void init_ChannelManager(py::module& m);
+void init_LocalDevice(py::module& m);
 
 
 int add(int i, int j) {
@@ -26,6 +26,7 @@ class Animal {
 public:
     virtual ~Animal() { }
     virtual std::string go(int n_times) = 0;
+    virtual std::string go2(double n_times) = 0;
 };
 
 class PyAnimal : public Animal {
@@ -42,6 +43,15 @@ public:
             n_times      /* Argument(s) */
         );
     }
+
+    std::string go2(double n_times) override {
+        PYBIND11_OVERLOAD_PURE(
+            std::string, /* Return type */
+            Animal,      /* Parent class */
+            go2,          /* Name of function in C++ (must match Python name) */
+            n_times      /* Argument(s) */
+        );
+    }
 };
 
 class Dog : public Animal {
@@ -52,6 +62,14 @@ public:
             result += "woof! ";
         return result;
     }
+
+    std::string go2(double n_times) override {
+        std::string result;
+        for(int i=0; i<5; ++i)
+            result += "hi! ";
+        return result;
+    }
+
 };
 
 std::string call_go(Animal *animal) {
@@ -71,7 +89,8 @@ PYBIND11_MODULE(example, m) {
 
     py::class_<Animal, PyAnimal /* <--- trampoline*/>(m, "Animal")
         .def(py::init<>())
-        .def("go", &Animal::go);
+        .def("go", &Animal::go)
+        .def("go2", &Animal::go2);
 
     py::class_<Dog, Animal>(m, "Dog")
         .def(py::init<>());
@@ -83,6 +102,8 @@ PYBIND11_MODULE(example, m) {
     init_DeviceMessageDispatcher(m);
     init_Channel(m);
     init_MixedValue(m);
+    init_ChannelManager(m);
+    init_LocalDevice(m);
 }
 
 int main(int argc, char *argv[])

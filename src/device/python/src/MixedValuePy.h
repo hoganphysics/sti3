@@ -1,6 +1,6 @@
 
-#ifndef STI_DEVICE_MIXEDVALUEPY_H
-#define STI_DEVICE_MIXEDVALUEPY_H
+#ifndef STI_PYTHON_MIXEDVALUEPY_H
+#define STI_PYTHON_MIXEDVALUEPY_H
 
 #include "MixedValue.h"
 
@@ -17,6 +17,7 @@ class MixedValuePy : public STI::Utils::MixedValue
 public:
 
     MixedValuePy();
+    MixedValuePy(const MixedValue& value);
     MixedValuePy(const MixedValuePy& value);
     MixedValuePy(const pybind11::object& value);
 

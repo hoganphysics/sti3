@@ -50,6 +50,12 @@
         "map": "cpp",
         "ratio": "cpp",
         "mutex": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "set": "cpp",
+        "list": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     }
 }
