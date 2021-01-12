@@ -6,12 +6,47 @@
 
 #include <iostream>
 
+
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
+
+using STI::Python::LocalDevicePy2;
+
 using STI::Python::LocalDevicePy;
 using STI::Device::LocalDevice;
 using STI::Python::DevicePy;
+using STI::Python::DevicePy2;
 
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
+
+
+
+LocalDevicePy2::LocalDevicePy2(const std::string& name, const std::string& address, unsigned short module,
+    const std::string& targetServer)
+: DevicePy2()
+//: DevicePy2( device = std::make_shared<LocalDevice>(name, address, module, targetServer) )
+{
+    device = std::make_shared<LocalDevicePy2::PyLocalDevice>(this, name, address, module, targetServer);
+    setDevice(device);
+}
+
+LocalDevicePy2::~LocalDevicePy2()
+{
+}
+
+bool LocalDevicePy2::writeChannel(short channel, const pybind11::object& value)
+{
+    return false;
+}
+
+pybind11::object LocalDevicePy2::readChannel(short channel, const pybind11::object& value)
+{
+    return py::none();
+}
+
+
+
 
 
 LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,

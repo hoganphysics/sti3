@@ -16,7 +16,7 @@ void init_Channel(py::module& m);
 void init_MixedValue(py::module& m);
 void init_ChannelManager(py::module& m);
 void init_LocalDevice(py::module& m);
-
+void init_DeviceCollection(py::module& m);
 
 int add(int i, int j) {
     return i + j;
@@ -103,6 +103,7 @@ PYBIND11_MODULE(example, m) {
     init_Channel(m);
     init_MixedValue(m);
     init_ChannelManager(m);
+    init_DeviceCollection(m);
     init_LocalDevice(m);
 }
 

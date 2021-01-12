@@ -6,6 +6,7 @@
 #include "DeviceID.h"
 #include "ChannelManagerPy.h"
 #include "DeviceMessageDispatcher.h"
+#include "DeviceCollectionPy.h"
 
 #include <memory>
 
@@ -59,6 +60,34 @@ public:
 class ChannelManagerPy;
 
 
+
+class DevicePy2
+{
+public:
+    DevicePy2() {}
+    DevicePy2(const std::shared_ptr<STI::Device::Device>& device);
+    virtual ~DevicePy2();
+
+    void setDevice(const std::shared_ptr<STI::Device::Device>& device);
+    std::shared_ptr<STI::Device::Device> getDevice();
+    //virtual const STI::Device::DeviceID getIDpy() const = 0;
+
+    std::shared_ptr<STI::Python::DeviceCollectionPy> getDeviceCollection();
+//    virtual void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection) = 0;
+    std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher();
+//    virtual std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler() = 0;    
+    std::shared_ptr<ChannelManagerPy> getChannelManager();
+
+    const STI::Device::DeviceID getID() const;
+//    int test2(int x);
+
+private:
+
+    std::shared_ptr<STI::Device::Device> device_;
+
+};
+
+
 class DevicePy
 {
 public:
@@ -68,6 +97,7 @@ public:
 
     //virtual const STI::Device::DeviceID getIDpy() const = 0;
 
+//    virtual void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection) = 0;
     virtual std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher() = 0;
 //    virtual std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler() = 0;    
     virtual std::shared_ptr<ChannelManagerPy> getChannelManager() = 0;

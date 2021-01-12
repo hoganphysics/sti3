@@ -16,6 +16,7 @@
 				// "-I/home/hogan/code/dev/stiwork/pytest/pybind11/include",
 				"`${PBIND11_INCLUDES}`",
 				"-g",
+//				"-O3",
 //				"${file}",
 				"${workspaceFolder}/**.cpp",
 				"`${PYCONFIG_LDFLAGS}`",

@@ -3,6 +3,7 @@
 #include "Channel.h"
 #include "LocalChannel.h"
 #include "MixedValuePy.h"
+#include "utils.h"
 
 #include <string>
 #include <memory>
@@ -41,6 +42,14 @@ void init_Channel(py::module& m)
         .def("getMetaData", [](Channel& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));
                 return value.getValue_py();
+            })
+        .def("__repr__",
+            [](const Channel& ch) {
+                return "<ch=" + STI::Utils::valueToString(ch.getChannelNumber())
+                    + "|name=" + ch.getChannelName()
+                    + "|type=" + Channel::typeToString(ch.getType()) 
+                    + "|in=" + MixedValue::TypeToString(ch.getInputType())
+                    + "|out=" + MixedValue::TypeToString(ch.getOutputType()) + ">";
             })
         ;
 

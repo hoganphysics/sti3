@@ -39,7 +39,7 @@ pybind11::object MixedValuePy::getValue_py() const
 
 pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 {
-    py::object obj;
+    py::object obj = py::none();
     
     //Boolean, Int, Double, String, Vector, Empty, File, Image, Any
 

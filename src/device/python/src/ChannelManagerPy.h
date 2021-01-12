@@ -25,8 +25,11 @@ public:
     std::shared_ptr<STI::Device::Channel> getChannelPy(short channelNumber);
     std::vector<std::shared_ptr<STI::Device::Channel>> getChannelsPy();
 
-    bool writeChannelPy(short channel, const STI::Python::MixedValuePy& value);
-    pybind11::object readChannelPy(short channel, const STI::Python::MixedValuePy& value);
+    bool writeChannelPy(short channel, const pybind11::object& value);
+    pybind11::object readChannelPy(short channel, const pybind11::object& value);
+
+    // bool writeChannelPy(short channel, const STI::Python::MixedValuePy& value);
+    // pybind11::object readChannelPy(short channel, const STI::Python::MixedValuePy& value);
 
 private:
     
