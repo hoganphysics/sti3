@@ -14,6 +14,7 @@ namespace Device
 
 class DeviceMessageDispatcher;
 class ChannelManager;
+class AttributeManager;
 class Device;
 
 class Device : public STI::Network::Node<DeviceID, Device>
@@ -26,6 +27,7 @@ public:
 	virtual void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher) = 0;
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
+	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
 

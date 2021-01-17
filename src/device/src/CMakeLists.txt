@@ -24,6 +24,8 @@ add_library(stidevice SHARED
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    LocalAttribute.cpp
+    LocalAttributeManager.cpp
     LocalChannel.cpp
     LocalChannelManager.cpp
     LocalDevice.cpp
@@ -33,6 +35,7 @@ add_library(stidevice SHARED
     LocalEventEngineJob.cpp
     LocalEventEngineScheduler.cpp
     Measurement.cpp
+    MetaData.cpp
     MixedValue.cpp
     RawEvent.cpp
     SynchronousEvent.cpp

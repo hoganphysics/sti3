@@ -96,7 +96,7 @@ public:
 class AttributeUpdateMessage;
 
 class AttributeUpdateMessage : public DeviceMessage,
-									 public STI::Utils::GroupableMessage<AttributeUpdateMessage>
+									 public STI::Device::GroupableMessage<AttributeUpdateMessage>
 {
 public:
 

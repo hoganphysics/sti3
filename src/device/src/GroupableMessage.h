@@ -1,11 +1,11 @@
 
-#ifndef STI_UTILS_GROUPABLEMESSAGE_H
-#define STI_UTILS_GROUPABLEMESSAGE_H
+#ifndef STI_DEVICE_GROUPABLEMESSAGE_H
+#define STI_DEVICE_GROUPABLEMESSAGE_H
 
 
 namespace STI
 {
-namespace Utils
+namespace Device
 {
 
 
@@ -22,7 +22,7 @@ public:
 
 
 
-} // UTILS
+} // Device
 } // STI
 
 

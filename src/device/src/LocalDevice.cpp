@@ -11,6 +11,9 @@
 #include "LocalChannelManager.h"
 #include "LocalChannel.h"
 
+#include "LocalAttribute.h"
+#include "LocalAttributeManager.h"
+
 #include <memory>
 #include <iostream>
 
@@ -27,25 +30,26 @@ using STI::Engine::LocalEventEngineScheduler;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalChannel;
 using STI::Device::ChannelManager;
+using STI::Device::AttributeManager;
 using STI::Device::DeviceCollectionPolicy;
+using STI::Device::LocalAttribute;
+
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
 {
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
-//	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>();
 
 	deviceMessageDispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
-
 	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection);
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
 
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
-
 	localChannelManager = std::make_shared<LocalChannelManager>(this);
+	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 
 	//setEngineFactory(engineFactory);
 
@@ -94,11 +98,6 @@ const DeviceID LocalDevice::getID() const
 	return id;
 }
 
-// void LocalDevice::write(unsigned input)
-// {
-// 	cout << "writing: " << input << endl;
-// }
-
 
 bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 {
@@ -128,6 +127,22 @@ LocalChannel& LocalDevice::addChannel(unsigned short channelNumber, STI::Device:
 	localChannelManager->addChannel(channel);
 
 	return *channel;
+}
+
+LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::string& initialValue)
+{
+    auto attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue);
+	localAttributeManager->addAttribute(attribute);
+
+	return *attribute;
+}
+
+LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues)
+{
+    auto attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue, allowedValues);
+	localAttributeManager->addAttribute(attribute);
+
+	return *attribute;
 }
 
 
@@ -161,6 +176,11 @@ bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngi
 void LocalDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)
 {
 	manager = localChannelManager;
+}
+
+void LocalDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager)
+{
+	manager = localAttributeManager;	
 }
 
 bool LocalDevice::isPartnerDevice(const DeviceID& id)

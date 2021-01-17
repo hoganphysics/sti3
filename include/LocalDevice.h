@@ -25,6 +25,8 @@ class LocalDeviceMessageDispatcher;
 class LocalChannelManager;
 class LocalChannel;
 class LocalDevice;
+class LocalAttribute;
+class LocalAttributeManager;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -58,6 +60,7 @@ public:
 	void getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
+	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -65,6 +68,9 @@ public:
 
 	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
+
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
 
 	void addPartner(const DeviceID& id) { partnerDevices.insert(id); }
 
@@ -109,6 +115,7 @@ private:
 	std::shared_ptr<DeviceMessageReceiver> deviceMessageReceiver;
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
+	std::shared_ptr<LocalAttributeManager> localAttributeManager;
 
 	std::set<DeviceID> partnerDevices;
 
