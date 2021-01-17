@@ -38,6 +38,37 @@
 			],
 			"group": "build"
 			//"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "shell",
+			"label": "CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "CMake configure",
+			"command": "cmake",
+			"args": [
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
 		}
 	]
 }

@@ -12,7 +12,7 @@
                 "-I${workspaceFolder}/",
                 "-I/usr/include/",
                 //"${file}",
-                "${fileDirname}/**.cpp",
+                "${workspaceFolder}/**.cpp",
                 "-shared",
                 "-fPIC",
                 "-o",
@@ -21,16 +21,53 @@
 
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "env": {
+					"STI_BASE_DIR": "../../.."
+				}
             },
             "problemMatcher": [
                 "$gcc"
             ],
             "group": {
-                "kind": "build",
-                "isDefault": true
+                "kind": "build"
             }
-        }
+        },
+        {
+			"type": "shell",
+			"label": "CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+        {
+			"type": "shell",
+			"label": "CMake install",
+			"command": "make",
+			"args": [
+                "DESTDIR=${STI_BASE_DIR}",
+                "install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build",
+                "env": {
+					"STI_BASE_DIR": "../../.."
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
     ],
     "version": "2.0.0"
 }

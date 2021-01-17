@@ -8,11 +8,14 @@
                 "${workspaceFolder}/../../../../src/device/src/**",
                 "${workspaceFolder}/../../../../src/network/src/**"
             ],
-            "defines": ["STI_BASE_DIR=${workspaceFolder}/../../../../"],
+            "defines": [
+                "STI_BASE_DIR=${workspaceFolder}/../../../../"
+            ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
