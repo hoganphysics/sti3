@@ -5,6 +5,9 @@
 #include "fwd/EventEngine_fwd.h"
 #include "RawEvent.h"
 #include "EngineJobID.h"
+#include "GroupableMessage.h"
+
+#include <sstream>
 
 namespace STI
 {
@@ -88,6 +91,54 @@ public:
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::ChannelUpdate; }
 
 };
+
+
+class AttributeUpdateMessage;
+
+class AttributeUpdateMessage : public DeviceMessage,
+									 public STI::Utils::GroupableMessage<AttributeUpdateMessage>
+{
+public:
+
+	AttributeUpdateMessage(const STI::Device::DeviceID& source, const std::string& key, const std::string& value) 
+		: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
+		{
+			attributes[key] = value;
+		}
+
+	//MixedValue channelValue();
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::AttributeUpdate; }
+
+    bool appendMessage(const AttributeUpdateMessage& mess)
+	{
+        for (auto& pair : mess.attributes) {
+            attributes[pair.first] = pair.second;  //overwrites
+        }
+		return true;
+	}
+
+    AttributeUpdateMessage& get()
+	{
+		return *this;
+	}
+
+	std::map<std::string, std::string> attributes;	//just {key, value} pairs
+
+	std::string toString() const
+	{
+		std::stringstream mess;
+		mess << "AttributeUpdate {\n";
+		
+		for (auto& pair : attributes) {
+			mess << "\t" << pair.first << " -> " << pair.second << "\n";
+		}
+		mess << "}";
+		return mess.str();
+	}
+
+};
+
 
 
 // class EngineJobUpdateDeviceMessage : public DeviceMessage

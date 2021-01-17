@@ -23,7 +23,7 @@ DeviceMessageReceiver::DeviceMessageReceiver(const DeviceID& localID,
 	: deviceCollection(deviceCollection), localID(localID)
 {
 	//Add listener for add/remove of device references to LocalCollection.
-	//This way when a new device is added, an event handler is automatically to the device's dispatcher.
+	//This way when a new device is added, an event handler is automatically added to the device's dispatcher.
 	auto collectionListener = std::make_shared<CollectionListener>(this);
 	deviceCollection->addListener(collectionListener);
 }
@@ -45,7 +45,7 @@ void DeviceMessageReceiver::addDeviceMessageHandler(const DeviceID& sourceDevice
 	{
 		refreshListenerGroups(sourceDeviceID, handler);	//populate handler with existing listeners
 		dispatcher->addMessageHandler(localID, handler);	//add this handler to the remote dispatcher under the local ID
-		handlers.add(sourceDeviceID, handler);			//store handler refernce locally
+		handlers.add(sourceDeviceID, handler);			//store handler reference locally
 	}
 }
 
@@ -96,6 +96,7 @@ void DeviceMessageReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID
 {
 	refreshListenerGroup(sourceDeviceID, refreshListeners, handler);
 	refreshListenerGroup(sourceDeviceID, channelUpdateListeners, handler);
+	refreshListenerGroup(sourceDeviceID, attributeUpdateListeners, handler);
 	refreshListenerGroup(sourceDeviceID, engineSchedulerListeners, handler);
 }
 
@@ -110,6 +111,9 @@ void DeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const
 		break;
 	case DeviceMessageType::ChannelUpdate:
 		success = removeListener(sourceDeviceID, listenerID, channelUpdateListeners);
+		break;
+	case DeviceMessageType::AttributeUpdate:
+		success = removeListener(sourceDeviceID, listenerID, attributeUpdateListeners);
 		break;
 	case DeviceMessageType::EngineScheduler:
 		success = removeListener(sourceDeviceID, listenerID, engineSchedulerListeners);

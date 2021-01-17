@@ -56,3 +56,18 @@ XX C++
 ** Scheduler
 ** Logging
 
+
+Basic functionality:
+*Python parse implementation
+*Python server connect
+*Device implementation (port FPGA devices)
+*Custom DeviceEventParser, for FPGA parse (set target memory addresses per engine)
+*Device attributes
+*Device options ini
+*Parse errors/warnings
+*setvars
+*setvar, ch, dev, event
+*Basic client
+**Job queue
+**Event table
+**Parse errors/warnings

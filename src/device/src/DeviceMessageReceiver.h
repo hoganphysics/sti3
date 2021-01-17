@@ -42,6 +42,9 @@ public:
 		case DeviceMessageType::ChannelUpdate:
 			success = getListenerGroup(sourceDeviceID, channelUpdateListeners, listenerGroup);
 			break;
+		case DeviceMessageType::AttributeUpdate:
+			success = getListenerGroup(sourceDeviceID, attributeUpdateListeners, listenerGroup);
+			break;
 		case DeviceMessageType::EngineScheduler:
 			success = getListenerGroup(sourceDeviceID, engineSchedulerListeners, listenerGroup);
 			break;
@@ -154,6 +157,7 @@ private:
 	//(that is, the remote device that they are listening to).
 	ListenerGroupMap<RefreshDeviceMessage> refreshListeners;
 	ListenerGroupMap<ChannelUpdateDeviceMessage> channelUpdateListeners;
+	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
 	//...
 
