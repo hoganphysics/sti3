@@ -58,7 +58,7 @@ public:
 
 
 class ChannelManagerPy;
-
+class EventEngineSchedulerPy;
 
 
 class DevicePy2
@@ -75,7 +75,7 @@ public:
     std::shared_ptr<STI::Python::DeviceCollectionPy> getDeviceCollection();
 //    virtual void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection) = 0;
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher();
-//    virtual std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler() = 0;    
+    std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler();
     std::shared_ptr<ChannelManagerPy> getChannelManager();
 
     const STI::Device::DeviceID getID() const;

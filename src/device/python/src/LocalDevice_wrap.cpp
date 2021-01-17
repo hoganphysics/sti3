@@ -7,6 +7,8 @@
 #include "ChannelManagerPy.h"
 #include "DeviceMessageDispatcher.h"
 
+#include "EventEngineSchedulerPy.h"
+
 #include <memory>
 
 #include <pybind11/pybind11.h>
@@ -47,6 +49,7 @@ void init_LocalDevice(py::module& m)
         .def(py::init<>())
         .def("getID", &DevicePy2::getID)
         .def("getDeviceCollection", &DevicePy2::getDeviceCollection)
+        .def("getEngineScheduler", &DevicePy2::getEngineScheduler)
         .def("getMessageDispatcher", &DevicePy2::getMessageDispatcher)
         .def("getChannelManager", &DevicePy2::getChannelManager)
         ;

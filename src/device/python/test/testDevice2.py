@@ -59,3 +59,12 @@ print(collection.contains(dev2.getID()))
 print(collection.get(dev2.getID()).getID())
 print(collection.size())
 print(collection.getIDs())
+
+
+
+id=example.DeviceID("dev","localhost",0)
+evt=example.RawEvent(id, 3.5, 0, 45, "desc", 2, example.RawEventType.Play)
+
+print(evt.value())
+print(evt.getEventGraphPath())
+print(evt)

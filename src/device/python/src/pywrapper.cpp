@@ -18,6 +18,9 @@ void init_ChannelManager(py::module& m);
 void init_LocalDevice(py::module& m);
 void init_DeviceCollection(py::module& m);
 
+void init_RawEvent(py::module& m);
+
+
 int add(int i, int j) {
     return i + j;
 }
@@ -105,6 +108,8 @@ PYBIND11_MODULE(example, m) {
     init_ChannelManager(m);
     init_DeviceCollection(m);
     init_LocalDevice(m);
+    init_RawEvent(m);
+
 }
 
 int main(int argc, char *argv[])

@@ -5,6 +5,8 @@
 #include "ChannelManagerPy.h"
 #include "ChannelManager.h"
 #include "DeviceCollection.h"
+#include "EventEngineSchedulerPy.h"
+
 
 #include <iostream>
 
@@ -13,7 +15,7 @@ using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
 
 using STI::Python::DeviceCollectionPy;
-
+using STI::Python::EventEngineSchedulerPy;
 
 DevicePy2::DevicePy2(const std::shared_ptr<STI::Device::Device>& device)
 : device_(device)
@@ -56,6 +58,22 @@ std::shared_ptr<STI::Python::DeviceCollectionPy> DevicePy2::getDeviceCollection(
 
     if (collection != 0) {
         wrapper = std::make_shared<DeviceCollectionPy>(collection);
+    }
+
+    return wrapper;
+}
+
+std::shared_ptr<EventEngineSchedulerPy> DevicePy2::getEngineScheduler()
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    std::shared_ptr<STI::Python::EventEngineSchedulerPy> wrapper;
+
+    if (device_ != 0) {
+        device_->getEngineScheduler(scheduler);
+    }
+
+    if (scheduler != 0) {
+        wrapper = std::make_shared<EventEngineSchedulerPy>(scheduler);
     }
 
     return wrapper;
