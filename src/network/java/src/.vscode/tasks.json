@@ -38,24 +38,63 @@
 				"-I/usr/lib/jvm/java-11-openjdk-amd64/include/",
 				"-I/usr/lib/jvm/java-11-openjdk-amd64/include/linux/",
                 "-I/usr/local/include/",
-                "-I${workspaceFolder}/../../../../include/",
-                "-I${workspaceFolder}/../../../device/src/",
-                "-I${workspaceFolder}/../../src/",
+                "-I${STI_BASE_DIR}/include/",
+                "-I${STI_BASE_DIR}/src/device/src/",
+                "-I${STI_BASE_DIR}/src/network/src/",
 				"${workspaceFolder}/**.cpp",
 				//"${fileDirname}/**.cxx",
 				"-shared",
                 "-fPIC",
-                "-L${workspaceFolder}/../../../device/src/",
-                "-L${workspaceFolder}/../../src/",
+                // "-L${workspaceFolder}/../../../device/src/",
+                // "-L${workspaceFolder}/../../src/",
+                "-L${STI_BASE_DIR}/lib",
                 "-lstidevice",
                 "-lstinetwork",
 				"-Wl,-rpath,.",
 				"-o",
                 //"${workspaceFolder}/../stilib/lib/libstijava.so"
-                "${workspaceFolder}/../../../../lib/libstijava.so"
+                "${STI_BASE_DIR}/lib/libstijava.so"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "env": {
+					"STI_BASE_DIR": "../../../.."
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+        {
+			"type": "shell",
+			"label": "CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+        {
+			"type": "shell",
+			"label": "CMake install",
+			"command": "make",
+			"args": [
+                "DESTDIR=${STI_BASE_DIR}",
+                "install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build",
+                "env": {
+					"STI_BASE_DIR": "${workspaceFolder}/../../../.."
+				}
 			},
 			"problemMatcher": [
 				"$gcc"

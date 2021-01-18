@@ -36,12 +36,29 @@ public class MixedValue {
     }
   }
 
+  protected void swigDirectorDisconnect() {
+    swigCMemOwn = false;
+    delete();
+  }
+
+  public void swigReleaseOwnership() {
+    swigCMemOwn = false;
+    stiJNI.MixedValue_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigCMemOwn = true;
+    stiJNI.MixedValue_change_ownership(this, swigCPtr, true);
+  }
+
   public MixedValue() {
     this(stiJNI.new_MixedValue__SWIG_0(), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(MixedValue copy) {
     this(stiJNI.new_MixedValue__SWIG_2(MixedValue.getCPtr(copy), copy), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public boolean opEquals(MixedValue other) {

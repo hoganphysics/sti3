@@ -24,8 +24,8 @@ public:
 	JChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	~JChannelManager();
 
-    void getChannels(std::vector<std::shared_ptr<Channel>>& channels);
-    bool getChannel(short channelNumber, std::shared_ptr<Channel>& channel);
+    std::vector<std::shared_ptr<Channel>> getChannels();
+    std::shared_ptr<Channel> getChannel(short channelNumber);
 
     bool writeChannel(short channel, const STI::Utils::MixedValue& value);
     STI::Utils::MixedValue readChannel(short channel, const STI::Utils::MixedValue& value);

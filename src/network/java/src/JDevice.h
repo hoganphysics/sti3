@@ -23,8 +23,9 @@ namespace Device
 {
 
 class JDeviceCollection;
-class JDeviceEventReceiver;
-class JDeviceEventDispatcher;
+class JDeviceMessageReceiver;
+class JDeviceMessageDispatcher;
+class JChannelManager;
 
 //Java Device wrapper
 class JDevice : public STI::Device::Device
@@ -43,15 +44,15 @@ public:
 //	virtual void write(unsigned input);	//temp
 
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
-	std::shared_ptr<STI::Device::JDeviceEventDispatcher> getEventDispatcher();
+	std::shared_ptr<STI::Device::JDeviceMessageDispatcher> getMessageDispatcher();
 	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
-	std::shared_ptr<STI::Device::ChannelManager> getChannelManager();
+	std::shared_ptr<STI::Device::JChannelManager> getChannelManager();
 
 private:
 	friend class JLocalDevice;
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
+	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 
