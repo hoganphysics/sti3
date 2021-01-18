@@ -20,6 +20,8 @@ namespace Engine
 
 class EventEngineDependencyTree;
 class EventEngine;
+class EngineParsingMessage;
+enum class ParsingMessageType;
 
 
 class LocalEventEngineJob : public EventEngineJob
@@ -29,9 +31,7 @@ public:
     //Parse jobs
     LocalEventEngineJob(const ParseID& parseID, 
                         const std::shared_ptr<ParsedShot>& shot,
-                        const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                        const STI::Device::DeviceID& owner, 
-                        const std::set<STI::Device::DeviceID>& missingTargets);
+                        const STI::Device::DeviceID& owner);
 
     //Play jobs
     LocalEventEngineJob(const EngineJobID& id, 
@@ -56,6 +56,12 @@ public:
 
     std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
     
+    void setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree);
+    void setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets);
+
+    EngineParsingMessage& addMessage(const EngineParsingMessage& message);
+    EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name);
+
 private:
 
     STI::Device::DeviceID jobOwner;    
@@ -70,6 +76,8 @@ private:
     EventEngineJob::EngineJobStatus status;
 
     std::vector<std::shared_ptr<EventEngineJob>> attachedJobs;
+
+    std::vector<EngineParsingMessage> parsingMessages;
 
 	mutable std::mutex jobMutex;
 };

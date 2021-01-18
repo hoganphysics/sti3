@@ -61,7 +61,7 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 		success = checkMeasurements(synchedEvents);		//make sure all meas() events have been registered
 	}
 
-	return success;
+	return success && (errors.size() == 0);
 }
 
 void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetIDs)

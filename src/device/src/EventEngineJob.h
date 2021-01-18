@@ -15,6 +15,8 @@ class EventEngine;
 class EngineID;
 class ParsedShot;
 class EngineJobID;
+class EngineParsingMessage;
+enum class ParsingMessageType;
 
 class EventEngineJob
 {
@@ -42,6 +44,8 @@ public:
     virtual bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
 
     virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
+
+    virtual EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name) = 0;
 
 };
 

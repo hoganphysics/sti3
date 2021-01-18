@@ -8,7 +8,8 @@
 #include "ParseID.h"
 #include "EngineJobID.h"
 #include "EngineID.h"
-
+#include "EngineParsingMessage.h"
+#include "RawEvent.h"
 
 #include <set>
 #include <memory>
@@ -22,27 +23,28 @@ using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
 using STI::Device::DeviceID;
 using STI::Engine::EngineID;
+using STI::Engine::EngineParsingMessage;
+using STI::Engine::ParsingMessageType;
+
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<ParsedShot>& shot,
-                                         const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                                         const STI::Device::DeviceID& owner, 
-                                         const std::set<STI::Device::DeviceID>& missingTargets)
-: parsedShot(shot), dependencies(tree), jobOwner(owner)
+                                         const STI::Device::DeviceID& owner)
+: parsedShot(shot), jobOwner(owner)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 
-    missingTargetIDs = missingTargets;
-
     status = EventEngineJob::EngineJobStatus::New;
-
     jobID.type = EventEngineJobType::Parse;
+
     jobID.pid = parseID;
 }
+
 
 LocalEventEngineJob::LocalEventEngineJob(const EngineJobID& id, const DeviceID& owner)
 : jobID(id), jobOwner(owner)
 {
+    status = EventEngineJob::EngineJobStatus::New;
     jobID.type = EventEngineJobType::Play;
 }
                    
@@ -108,4 +110,25 @@ bool LocalEventEngineJob::getDependencies(std::shared_ptr<EventEngineDependencyT
 std::set<STI::Device::DeviceID> LocalEventEngineJob::getMissingTargetIDs() const
 {
     return missingTargetIDs;
+}
+
+void LocalEventEngineJob::setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree)
+{
+    dependencies = tree;
+}
+void LocalEventEngineJob::setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets)
+{
+    missingTargetIDs = missingTargets;
+}
+
+EngineParsingMessage& LocalEventEngineJob::addMessage(const EngineParsingMessage& message)
+{
+    parsingMessages.push_back(std::move(message));
+    return parsingMessages.back();
+}
+
+EngineParsingMessage& LocalEventEngineJob::addMessage(const ParsingMessageType& type, unsigned id, const std::string& name)
+{
+    parsingMessages.emplace_back(type, id, name);
+    return parsingMessages.back();
 }

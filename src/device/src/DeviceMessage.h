@@ -203,7 +203,7 @@ public:
 	std::vector<STI::Engine::RawEvent> events;
 };
 
-class EngineParserMessage : public DeviceMessage
+class EngineParserDeviceMessage : public DeviceMessage
 {
 public:
 
