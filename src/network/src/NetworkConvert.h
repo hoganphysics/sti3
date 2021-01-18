@@ -118,9 +118,7 @@ namespace Device
 {
 
 class DeviceID;
-class DeviceEvent;
-class RefreshDeviceEvent;
-enum class DeviceEventType;
+
 
 } //Device
 
@@ -190,27 +188,6 @@ template<>
 TNetwork::TMixedValueType Network::convert<Utils::MixedValueType, TNetwork::TMixedValueType>(const Utils::MixedValueType& type);
 template<>
 Utils::MixedValueType Network::convert<TNetwork::TMixedValueType, Utils::MixedValueType>(const TNetwork::TMixedValueType& tType);
-
-
-//DeviceEvent
-template<>
-bool Network::convert<std::shared_ptr<STI::Device::DeviceEvent>, TNetwork::TDeviceEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TNetwork::TDeviceEvent& tEvent);
-template<>
-bool Network::convert<TNetwork::TDeviceEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TNetwork::TDeviceEvent& tEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent);
-
-template<>
-bool Network::convert<std::shared_ptr<STI::Device::DeviceEvent>, TNetwork::TAnyEvent>(const std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent, TNetwork::TAnyEvent& tAnyEvent);
-template<>
-bool Network::convert<TNetwork::TAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>>(const TNetwork::TAnyEvent& tAnyEvent, std::shared_ptr<STI::Device::DeviceEvent>& deviceEvent);
-
-template<>
-TNetwork::TDeviceEventType Network::convert<Device::DeviceEventType, TNetwork::TDeviceEventType>(const Device::DeviceEventType& type);
-template<>
-Device::DeviceEventType Network::convert<TNetwork::TDeviceEventType, Device::DeviceEventType>(const TNetwork::TDeviceEventType& tType);
-template<>
-bool Network::convert<Device::DeviceEventType, TNetwork::TDeviceEventType>(const Device::DeviceEventType& type, TNetwork::TDeviceEventType& tType);
-template<>
-bool Network::convert<TNetwork::TDeviceEventType, Device::DeviceEventType>(const TNetwork::TDeviceEventType& tType, Device::DeviceEventType& type);
 
 
 

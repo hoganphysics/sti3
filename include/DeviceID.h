@@ -52,6 +52,8 @@ class DeviceID
 {
 public:
 	DeviceID();
+	DeviceID(const std::string& deviceIDin);
+	DeviceID(const std::string& name, const std::string& address, unsigned short module);
 	DeviceID(const std::string& name, const std::string& address, unsigned short module, 
 		const std::string& targetServerID);
 	

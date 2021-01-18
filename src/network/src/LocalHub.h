@@ -18,8 +18,8 @@ namespace Network
 {
 
 /*!
-Implements the Hub interface for to realize a local Hub.  LocalHub stores references to nodes
-running locally in the same process and can be connected to other Hubs (either local or remote).  When other
+Implements the Hub interface to realize a local Hub.  LocalHub stores references to nodes
+running locally (in the same process). It can be connected to other Hubs (either local or remote).  When other
 Hubs are connected, the LocalHub distributes its locally stored Node references to these other Hubs by 
 offering their Node IDs. It also accepts references from connected Hubs and offers them to each of its stored 
 Node references.
@@ -82,9 +82,6 @@ public:
 	void walk(typename LocalHub<ID, T>::HubNodeWalker& root) const;
 	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
 
-
-//	static bool connect(const std::shared_ptr<LocalHub<ID, T>>& hub1, const std::shared_ptr<LocalHub<ID, T>>& hub2);
-
 private:
 
 	bool refreshNodeReferences(const ID& id, const typename std::shared_ptr<T>& node);
@@ -92,8 +89,6 @@ private:
 	STI::Utils::Distributer<ID, T> nodeDistributer;		///< The hub is built around a NodeDistributer.
 
 	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub<ID, T>>> hubs;
-	//add listerned to hubs SynchMap; remove or add should trigger a refresh() on the network
-	//-> not neccessary if the devics generate events when their collections update
 
 	mutable std::mutex distributerMutex;
 
@@ -110,8 +105,6 @@ template<class ID, class T>
 STI::Network::LocalHub<ID, T>::LocalHub()
 {
 }
-
-
 
 template<class ID, class T>
 void STI::Network::LocalHub<ID, T>::walk(typename STI::Network::LocalHub<ID, T>::HubNodeWalker& root) const
@@ -184,7 +177,6 @@ void STI::Network::LocalHub<ID, T>::walk(STI::Network::NodeWalker<ID, T>& root, 
 template<class ID, class T>
 bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::shared_ptr<T>& node)
 {
-	//	return distribute(id, node, HubTrace(), getID());
 	bool success;
 	{
 		std::unique_lock<std::mutex> distributerLock(distributerMutex);
@@ -226,13 +218,6 @@ void STI::Network::LocalHub<ID, T>::getNodeIDs(std::set<ID>& ids) const
 template<class ID, class T>
 bool STI::Network::LocalHub<ID, T>::addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub)
 {
-	//hubs.add() takes care of this case with a replacement policy
-	//if (hubs.contains(id)) {
-	//	//not allowed; can't add the same hub twice
-	//	return false;
-	//}
-	//else 
-		
 	if (getID() == id) {
 		//not allowed; hub id can't match this hub's id
 		return false;
@@ -260,7 +245,7 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id, const HubTrace& tra
 		//another Hub had a dead reference and is pushing a removeNode to the network.
 		//Check if the Node in question is owned by this Hub and that the Node is alive.
 		//If so, distrubute a fresh reference to the network.
-		//distribute(id, node, const HubTrace& trace, const HubID& first)
+
 		std::shared_ptr<T> node;
 		if (nodeDistributer.contains(id) && nodeDistributer.getNode(id, node)
 			&& node != 0 && node->refresh()) {
@@ -404,14 +389,18 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 	HubTrace newTrace = trace;
 	newTrace.addHubID(getID());		//ensures this Hub will not respond again
 
+
 	std::set<HubID> hubIDs;
 	hubs.getKeys(hubIDs);
 	std::shared_ptr<Hub<ID, T>> hub;
 
 	for (auto& hubID : hubIDs) {
 		if (!newTrace.includesHubID(hubID)) {
-			//found a hub that has not received the call yet
-			if (hubs.get(hubID, hub) && hub != 0) {
+			//Found a hub that has not received the call yet.
+
+			// Condition call to distribute(..) on addto(...) so nodes can optionally localize 
+			// (optimization to avoid unneeded network calls)
+			if (node->addto(hubID) && hubs.get(hubID, hub) && hub != 0) {
 
 				hub->distribute(id, node, newTrace, first);
 			}

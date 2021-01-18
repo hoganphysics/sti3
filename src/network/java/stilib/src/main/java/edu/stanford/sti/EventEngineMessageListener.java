@@ -55,8 +55,8 @@ public class EventEngineMessageListener {
     stiJNI.EventEngineMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleEvent(EventEngineMessage evt) {
-    stiJNI.EventEngineMessageListener_handleEvent(swigCPtr, this, EventEngineMessage.getCPtr(evt), evt);
+  public void handleMessage(EventEngineMessage mess) {
+    stiJNI.EventEngineMessageListener_handleMessage(swigCPtr, this, EventEngineMessage.getCPtr(mess), mess);
   }
 
   public EventEngineMessageListener() {

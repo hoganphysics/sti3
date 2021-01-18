@@ -12,6 +12,7 @@
 #include "fwd/ChannelManager_fwd.h"
 #include "MixedValue.h"
 #include <string>
+#include <set>
 
 namespace STI
 {
@@ -19,16 +20,25 @@ namespace STI
 namespace Device
 {
 
-class DeviceEventReceiver;
-class LocalDeviceEventDispatcher;
+class DeviceMessageReceiver;
+class LocalDeviceMessageDispatcher;
 class LocalChannelManager;
 class LocalChannel;
+class LocalDevice;
+class LocalAttribute;
+class LocalAttributeManager;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
 {
-	bool include(const STI::Device::DeviceID& key) const { return true; }
+public:
+	DeviceCollectionPolicy(LocalDevice* device) : device(device) {}
+	
+	bool include(const STI::Device::DeviceID& key) const;
 	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
+
+private:
+	LocalDevice* device;
 };
 
 
@@ -46,10 +56,11 @@ public:
 //	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	void getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher);
-	void getEventReceiver(std::shared_ptr<DeviceEventReceiver>& receiver);
+	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
+	void getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
+	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -58,7 +69,10 @@ public:
 	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 
-//	STI::Device::ChannelMap localChannels;
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
+
+	void addPartner(const DeviceID& id) { partnerDevices.insert(id); }
 
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
@@ -90,15 +104,20 @@ private:
 	};
 	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
 
+	friend DeviceCollectionPolicy;
+	bool isPartnerDevice(const DeviceID& id);
 
 	DeviceID id;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
-	std::shared_ptr<LocalDeviceEventDispatcher> deviceEventDispatcher;
-	std::shared_ptr<DeviceEventReceiver> deviceEventReceiver;
+	std::shared_ptr<LocalDeviceMessageDispatcher> deviceMessageDispatcher;
+	std::shared_ptr<DeviceMessageReceiver> deviceMessageReceiver;
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
+	std::shared_ptr<LocalAttributeManager> localAttributeManager;
+
+	std::set<DeviceID> partnerDevices;
 
 };
 

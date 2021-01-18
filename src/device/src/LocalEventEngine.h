@@ -4,7 +4,7 @@
 #include "EventEngine.h"
 #include "MessageGenerator.h"
 
-#include "DeviceEvent.h"
+#include "DeviceMessage.h"
 #include "DeviceCollection.h"
 #include "EventEngineParser.h"
 #include "EventEngineStateMachine.h"
@@ -35,7 +35,7 @@ namespace Engine
 class EventEngine;
 class EventEngineJob;
 class EventEngineDependencyTree;
-class DeviceEventDispatcher;
+class DeviceMessageDispatcher;
 
 class TriggerCallback;
 
@@ -55,7 +55,7 @@ public:
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 	//	STI::Device::ChannelMap& channels, 
 		DeviceEventParser* deviceParser,
-		const std::shared_ptr<STI::Device::DeviceEventDispatcher>& dispatcher,
+		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	virtual ~LocalEventEngine();
 

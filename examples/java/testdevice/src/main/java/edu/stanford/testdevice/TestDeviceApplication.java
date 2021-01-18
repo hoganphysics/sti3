@@ -15,7 +15,7 @@ public class TestDeviceApplication {
     public static void main(String[] args) {
         
         System.out.println("Hello");
-    //    STI sti = new STI();
+//    STI sti = new STI();
 
         STI.LoadLibrary();
         //STI.Reload();
@@ -24,7 +24,7 @@ public class TestDeviceApplication {
         TestJDevice testDevice = new TestJDevice("dev2", "localhost", 0, "localhost/0/dev1");    
         
         JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.4:2809");
-        hub.addNode(testDevice.getID(), testDevice);
+        hub.addNode(testDevice);
 
         hub.run();
     }

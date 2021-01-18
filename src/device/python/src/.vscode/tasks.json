@@ -1,0 +1,68 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "C/C++: g++ build active file",
+			"command": "/usr/bin/g++",
+//			"command": "echo",			
+			"args": [
+				"-std=c++11",
+				"-std=c++14",
+				"-fPIC",
+				"`${PYCONFIG_CFLAGS}`",
+				"-I${STI_BASE}/include",
+				"-I${STI_BASE}/src/device/src",
+				// "-I/home/hogan/code/dev/stiwork/pytest/pybind11/include",
+				"`${PBIND11_INCLUDES}`",
+				"-g",
+//				"-O3",
+//				"${file}",
+				"${workspaceFolder}/**.cpp",
+				"`${PYCONFIG_LDFLAGS}`",
+				"-o",
+				"example`${PYCONFIG_EXTENSION}`",
+				"-L${STI_BASE}/lib",
+				// "-Wl,-rpath,.",
+				"-lstidevice"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"STI_BASE": "../../../..",
+					"PYCONFIG_CFLAGS": "python3-config --cflags",
+					"PYCONFIG_LDFLAGS": "python3-config --ldflags",
+					"PYCONFIG_EXTENSION": "python3-config --extension-suffix",
+					"PBIND11_INCLUDES": "python3 -m pybind11 --includes"
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+			// "group": {
+			// 	"kind": "build",
+			// 	"isDefault": true
+			// }
+		},
+		{
+			"type": "shell",
+			"label": "Test",
+			"command": "echo",
+			"args": [
+//				"$USERNAME"
+				"`$pyconfig`"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"USERNAME": "Hello there",
+					"pyconfig": "python3-config --cflags"
+				}
+			},
+			"problemMatcher": [
+			],
+			"group": "build"
+		}
+	]
+}

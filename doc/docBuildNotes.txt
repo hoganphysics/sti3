@@ -1,0 +1,22 @@
+Following: https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake/
+
+Installing Doxygen:
+    sudo apt install doxygen
+
+Installing Sphinx: 
+
+    apt-get install python3-sphinx
+
+Read the Docs Sphinx Theme: (for python3)
+
+    pip3 install sphinx_rtd_theme
+
+Breathe: (for python3)
+
+    pip3 install breathe
+
+Putting some test code in doc/test/.  Adding CMakeList.txt file to build cpp code and doxygen.
+
+Sphinx setup utility (run in doc)
+sphinx-quickstart
+

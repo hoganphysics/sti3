@@ -64,6 +64,14 @@ void NetworkDeviceHub::autoReconnectRemoteHubs(bool enabled)
 	_autoReconnectRemoteHubs = enabled;
 }
 
+bool NetworkDeviceHub::addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
+{
+	if (node != 0) {
+		return addNode(node->getID(), node);
+	}
+	return false;
+}
+
 bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node)
 {
 	if (_usingDefaultHubID && localHub != 0 && localHub->numberOfNodes() == 0) {
@@ -140,8 +148,6 @@ void NetworkDeviceHub::run(bool block)
 	hubContext.clear();
 	hubContext << "STI" << "/" << localHub->getID().id();// << "/";
 
-	//orbmanager->getAllLiveObjectContexts("STI", "TDeviceHub.Object", liveHubs);
-
 
 	//Auto reconnect to Hubs that have connected before
 	std::vector<std::string> liveHubs;
@@ -181,10 +187,7 @@ void NetworkDeviceHub::run(bool block)
 	}
 
 	//Reconnect to target Hubs if they are live
-	//std::thread(&blub::test, this);
 	reconnectToTargetHubs();		//attempt once; make background thread instead?
-
-	//orbmanager->getAllLiveObjectContexts("STI", "TDeviceHub.Object", liveHubs);
 
 	orbmanager->run();	//doesn't block
 
@@ -239,7 +242,6 @@ bool NetworkDeviceHub::reconnectToTargetHub(const std::string& targetHub)
 
 			success = LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
 		}
-
 	}
 
 	return success;

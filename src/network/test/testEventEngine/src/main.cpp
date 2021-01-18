@@ -5,7 +5,7 @@
 
 #include "LocalDevice.h"
 
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
 #include "DeviceCollection.h"
 #include "LocalEventEngineScheduler.h"
 #include "LocalEventEngine.h"
@@ -112,8 +112,8 @@ void testServer();
 
 int main(int argc, char **argv)
 {
-	testDevice();
-//	testServer();
+//	testDevice();
+	testServer();
 
 	return 0;
 }
@@ -124,7 +124,9 @@ void testDevice()
 
 	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 
-	hub1->addNode(dev2->getID(), dev2);
+	dev2->getID();
+
+	hub1->addDevice(dev2);
 
 	hub1->run(true);
 
@@ -174,10 +176,10 @@ void testServer()
 	//hub1.addNode(dev2->getID(), dev2);
 
 
-	hub1->addNode(dev1->getID(), dev1);
+	hub1->addDevice(dev1);
 //	hub1->addNode(dev2->getID(), dev2);
-	hub1->addNode(dev3->getID(), dev3);
-	hub1->addNode(dev4->getID(), dev4);
+	hub1->addDevice(dev3);
+	hub1->addDevice(dev4);
 
 
 	hub1->run(false);

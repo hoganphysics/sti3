@@ -39,6 +39,21 @@ public:
 	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
 	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 
+	static std::string typeToString(const STI::Device::ChannelType& type)
+	{
+		std::string name = "Unknown";
+
+		switch (type) {
+		case ChannelType::Input:
+			name = "Input";
+			break;
+		case ChannelType::Output:
+			name = "Output";
+			break;
+		}
+		return name;
+	}
+
 };
 
 

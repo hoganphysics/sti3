@@ -22,10 +22,10 @@ JNetworkDeviceHub::~JNetworkDeviceHub()
 {
 }
 
-bool JNetworkDeviceHub::addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::JDevice>& node)
+bool JNetworkDeviceHub::addNode(const typename std::shared_ptr<STI::Device::JDevice>& node)
 {
     if(networkHub != 0) {
-        return networkHub->addNode(id, node);
+        return networkHub->addDevice(node);
     }
     return false;
 }

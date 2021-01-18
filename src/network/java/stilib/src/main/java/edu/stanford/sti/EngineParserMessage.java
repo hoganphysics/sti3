@@ -8,7 +8,7 @@
 
 package edu.stanford.sti;
 
-public class EngineParserMessage extends DeviceEvent {
+public class EngineParserMessage extends DeviceMessage {
   private transient long swigCPtr;
   private transient boolean swigCMemOwnDerived;
 

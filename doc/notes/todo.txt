@@ -1,0 +1,73 @@
+Priorities
+
+Misc
+X Rename DeviceEvent -> Message (?)
+* Add CORBA::_is_nil() and logic to *_i.cpp classes
+* Options interface.  [Device1] ::name = Test Device.  Make store as JSON?
+X Split NetworkConvert.h into separate headers for each type (faster compile times)
+* Add folders to src
+* Split SWIG file into Device, Engine, etc.
+
+Issues
+* so libs must be in the root directory of webserver to load propery
+
+Engine
+X Server parsing and playing system
+X EventEngine scheduler + network interface
+X Network interface for submitting events
+* Begin python library to send events 
+* Mathematica wrapper of python lib to allow generation and viewing of event lists
+* Customize EventEngineParse per Engine (pass in different pointers) so FPGA devices can direct events at different address spaces
+* Error and warnings
+
+
+Front end
+X NodeWalker returns graph of network, any node can input from any Hub.  Hub could have a EventReceiver and could register as a HubEventListener of all attached nodes.
+X Write Java wrapper of library using SWIG.
+X Testing GraphQL data transmission
+XX Add STI JAR to test SpringBoot server and connect to the STI network
+X Display network graph in browser
+XX Make an Angular component run javascript code using vis.js to draw a simple network
+XX Extend test GraphQL schema to allow transfer of network graph data
+NA Convert network graph data to a JSON
+XX Write DataFetcher on server
+XX Make Angular component to query the server and receive network data
+XX Convert network data query results into vis.js graph
+X Begin official front end server and client codebases
+
+
+Web server
+X Setup project with graphql support (copy testgql)
+X Integrate stijava (copy sti4/examples/java/testdevice)
+X Write STI graph resolver
+XX Test from GraphiQL
+
+
+Device
+X Channels
+* Attributes
+* Examples (C++, Java, Python, js)
+XX Java
+XX C++
+* Monitors
+* Streaming channel data
+* Initialization parameter file parsing
+* Async tasks
+** Scheduler
+** Logging
+
+
+Basic functionality:
+*Python parse implementation
+*Python server connect
+*Device implementation (port FPGA devices)
+*Custom DeviceEventParser, for FPGA parse (set target memory addresses per engine)
+*Device attributes
+*Device options ini
+*Parse errors/warnings
+*setvars
+*setvar, ch, dev, event
+*Basic client
+**Job queue
+**Event table
+**Parse errors/warnings

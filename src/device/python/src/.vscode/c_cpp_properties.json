@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**", 
+                "${workspaceFolder}/../../../../include/**",
+                "${workspaceFolder}/../../src/**",
+                "/home/hogan/code/dev/stiwork/pytest/pybind11/include/**",
+                "/usr/include/python3.6/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

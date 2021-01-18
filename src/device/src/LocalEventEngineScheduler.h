@@ -10,8 +10,8 @@
 
 #include "EngineJobID.h"
 
-#include "DeviceEvent.h"
-#include "DeviceEventListener.h"
+#include "DeviceMessage.h"
+#include "DeviceMessageListener.h"
 
 #include "ParsedShot.h"
 #include "SynchronizedMap.h"
@@ -67,7 +67,7 @@ class ParsedShot;
 class EventEngineFactory;
 
 class LocalEventEngineScheduler : public EventEngineScheduler, 
-                                  public STI::Device::DeviceEventListener<STI::Device::EngineSchedulerMessage>
+                                  public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
     
@@ -143,7 +143,7 @@ private:
     bool findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID);
 
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
-    void handleEvent(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+    void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     STI::Device::LocalDevice* localDevice;
 

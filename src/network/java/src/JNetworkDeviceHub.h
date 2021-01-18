@@ -23,7 +23,7 @@ public:
 	JNetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
 	~JNetworkDeviceHub();
 
-	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::JDevice>& node);
+	bool addNode(const typename std::shared_ptr<STI::Device::JDevice>& node);
 
 	//bool connect(const std::shared_ptr<LocalDeviceHub>& hub);
 	//void setTargetHubs(const std::vector<std::string>& hubIDs);

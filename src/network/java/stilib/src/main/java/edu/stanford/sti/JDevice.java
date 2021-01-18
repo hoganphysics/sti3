@@ -78,9 +78,9 @@ public class JDevice {
     return (cPtr == 0) ? null : new JDeviceCollection(cPtr, true);
   }
 
-  public JDeviceEventDispatcher getEventDispatcher() {
-    long cPtr = stiJNI.JDevice_getEventDispatcher(swigCPtr, this);
-    return (cPtr == 0) ? null : new JDeviceEventDispatcher(cPtr, true);
+  public JDeviceMessageDispatcher getMessageDispatcher() {
+    long cPtr = stiJNI.JDevice_getMessageDispatcher(swigCPtr, this);
+    return (cPtr == 0) ? null : new JDeviceMessageDispatcher(cPtr, true);
   }
 
   public JEventEngineScheduler getEngineScheduler() {
@@ -88,9 +88,9 @@ public class JDevice {
     return (cPtr == 0) ? null : new JEventEngineScheduler(cPtr, true);
   }
 
-  public ChannelManager getChannelManager() {
+  public JChannelManager getChannelManager() {
     long cPtr = stiJNI.JDevice_getChannelManager(swigCPtr, this);
-    return (cPtr == 0) ? null : new ChannelManager(cPtr, true);
+    return (cPtr == 0) ? null : new JChannelManager(cPtr, true);
   }
 
 }

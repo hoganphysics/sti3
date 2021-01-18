@@ -40,8 +40,16 @@ public class DeviceID {
     this(stiJNI.new_DeviceID__SWIG_0(), true);
   }
 
+  public DeviceID(String deviceIDin) {
+    this(stiJNI.new_DeviceID__SWIG_1(deviceIDin), true);
+  }
+
+  public DeviceID(String name, String address, int module) {
+    this(stiJNI.new_DeviceID__SWIG_2(name, address, module), true);
+  }
+
   public DeviceID(String name, String address, int module, String targetServerID) {
-    this(stiJNI.new_DeviceID__SWIG_1(name, address, module, targetServerID), true);
+    this(stiJNI.new_DeviceID__SWIG_3(name, address, module, targetServerID), true);
   }
 
   public boolean opLess(DeviceID rhs) {

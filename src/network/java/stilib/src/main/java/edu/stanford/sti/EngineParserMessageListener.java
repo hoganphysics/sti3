@@ -55,8 +55,8 @@ public class EngineParserMessageListener {
     stiJNI.EngineParserMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleEvent(EngineParserMessage evt) {
-    stiJNI.EngineParserMessageListener_handleEvent(swigCPtr, this, EngineParserMessage.getCPtr(evt), evt);
+  public void handleMessage(EngineParserMessage mess) {
+    stiJNI.EngineParserMessageListener_handleMessage(swigCPtr, this, EngineParserMessage.getCPtr(mess), mess);
   }
 
   public EngineParserMessageListener() {
