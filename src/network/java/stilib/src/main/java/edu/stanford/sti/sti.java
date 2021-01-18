@@ -8,5 +8,33 @@
 
 package edu.stanford.sti;
 
-public class sti {
+public class STI {
+    
+    static {
+        Reload();
+    }
+
+    private STI() {
+    }
+
+    public static void LoadLibrary() {
+        STI sti = new STI();    //creating instance runs static block
+    }
+
+    public static void Reload() {
+        try {
+            System.out.println("Loading stijava...");
+            System.loadLibrary("stijava");
+            //Runtime.getRuntime().loadLibrary("stijava");  //seems to be the same as System.loadLibrary
+            //System.out.println("Loaded stijava");
+        } catch (UnsatisfiedLinkError e) {
+            //External library for loading an so the is stored inside the jar (cz.adamh.utils.NativeUtils)
+            // try {
+            //     NativeUtils.loadLibraryFromJar("/natives/libsti.so"); // during runtime. .DLL within .JAR
+            // } catch (java.io.IOException e1) {
+            //     throw new RuntimeException(e1);
+            // }
+            e.printStackTrace();
+        }
+    }
 }
