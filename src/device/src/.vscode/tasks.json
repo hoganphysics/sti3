@@ -60,7 +60,7 @@
 			"options": {
 				"cwd": "${workspaceFolder}/build",
                 "env": {
-					"STI_BASE_DIR": "../../.."
+					"STI_BASE_DIR": "${workspaceFolder}/../../.."
 				}
 			},
 			"problemMatcher": [

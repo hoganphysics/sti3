@@ -8,18 +8,18 @@
 
 package edu.stanford.sti;
 
-public class SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t {
+public class SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t() {
+  protected SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t obj) {
+  protected static long getCPtr(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }

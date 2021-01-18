@@ -1,8 +1,8 @@
 
 #include "JLocalDevice.h"
 #include "LocalDevice.h"
-#include "DeviceEventReceiver.h"
-#include "JDeviceEventReceiver.h"
+#include "DeviceMessageReceiver.h"
+#include "JDeviceMessageReceiver.h"
 #include "JEventEngineScheduler.h"
 #include "EventEngineScheduler.h"
 #include "LocalChannel.h"
@@ -12,7 +12,7 @@
 #include <iostream>
 
 using STI::Device::JLocalDevice;
-using STI::Device::JDeviceEventReceiver;
+using STI::Device::JDeviceMessageReceiver;
 using STI::Device::JEventEngineScheduler;
 using STI::Engine::EventEngineScheduler;
 using STI::Device::LocalChannel;
@@ -37,11 +37,11 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
 
     if (wrappedLocalDevice != 0) {
         
-        //Get and store DeviceEventReceiver reference
-        std::shared_ptr<DeviceEventReceiver> receiver;
-        wrappedLocalDevice->getEventReceiver(receiver);
+        //Get and store DeviceMessageReceiver reference
+        std::shared_ptr<DeviceMessageReceiver> receiver;
+        wrappedLocalDevice->getMessageReceiver(receiver);
 
-        jReceiver = std::make_shared<JDeviceEventReceiver>(receiver);
+        jReceiver = std::make_shared<JDeviceMessageReceiver>(receiver);
 
 
         std::shared_ptr<EventEngineScheduler> scheduler;
@@ -73,12 +73,12 @@ void JLocalDevice::addEventEngine(const EngineID& engineID)
     }
 }
 
-std::shared_ptr<STI::Device::JDeviceEventReceiver> JLocalDevice::getEventReceiver()
+std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getMessageReceiver()
 {
     return jReceiver;
 }
 
-// std::shared_ptr<STI::Device::JDeviceEventReceiver> JLocalDevice::getEventReceiver2()
+// std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getEventReceiver2()
 // {
 //     return jReceiver;
 // }

@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class RefreshDeviceEventListener {
+public class AttributeUpdateMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected RefreshDeviceEventListener(long cPtr, boolean cMemoryOwn) {
+  protected AttributeUpdateMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(RefreshDeviceEventListener obj) {
+  protected static long getCPtr(AttributeUpdateMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class RefreshDeviceEventListener {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_RefreshDeviceEventListener(swigCPtr);
+        stiJNI.delete_AttributeUpdateMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,21 +47,21 @@ public class RefreshDeviceEventListener {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.RefreshDeviceEventListener_change_ownership(this, swigCPtr, false);
+    stiJNI.AttributeUpdateMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.RefreshDeviceEventListener_change_ownership(this, swigCPtr, true);
+    stiJNI.AttributeUpdateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleEvent(RefreshDeviceEvent evt) {
-    stiJNI.RefreshDeviceEventListener_handleEvent(swigCPtr, this, RefreshDeviceEvent.getCPtr(evt), evt);
+  public void handleMessage(AttributeUpdateMessage mess) {
+    stiJNI.AttributeUpdateMessageListener_handleMessage(swigCPtr, this, AttributeUpdateMessage.getCPtr(mess), mess);
   }
 
-  public RefreshDeviceEventListener() {
-    this(stiJNI.new_RefreshDeviceEventListener(), true);
-    stiJNI.RefreshDeviceEventListener_director_connect(this, swigCPtr, true, true);
+  public AttributeUpdateMessageListener() {
+    this(stiJNI.new_AttributeUpdateMessageListener(), true);
+    stiJNI.AttributeUpdateMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

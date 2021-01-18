@@ -17,18 +17,18 @@
     #include "Device.h"
     #include "JDevice.h"
     #include "JLocalDevice.h"    
-    #include "DeviceEvent.h"
+    #include "DeviceMessage.h"
     #include "DeviceCollection.h"
     #include "JDeviceCollection.h"
     #include "JNetworkDeviceHub.h"
     #include "JNodeWalker.h"
     #include "HubID.h"
 
-    #include "DeviceEventListener.h"
-    #include "DeviceEventReceiver.h"
-    #include "DeviceEventDispatcher.h"
-    #include "JDeviceEventReceiver.h"
-    #include "JDeviceEventDispatcher.h"
+    #include "DeviceMessageListener.h"
+    #include "DeviceMessageReceiver.h"
+    #include "DeviceMessageDispatcher.h"
+    #include "JDeviceMessageReceiver.h"
+    #include "JDeviceMessageDispatcher.h"
     #include "JEventEngineScheduler.h"
 
     #include "TimeStamp.h"
@@ -58,7 +58,7 @@
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
-    #include "ChannelManager.h"
+    #include "JChannelManager.h"
     #include "fwd/Channel_fwd.h"
     #include "Channel.h"
     #include "LocalChannel.h"
@@ -72,26 +72,28 @@
 %include "std_shared_ptr.i"
 %include "std_set.i"
 %include "std_vector.i"
+%include "std_map.i"
 
 %shared_ptr(STI::Device::JDevice);
 %shared_ptr(STI::Device::JLocalDevice);
 %shared_ptr(STI::Device::DeviceCollection);
 %shared_ptr(STI::Device::JDeviceCollection);
-%shared_ptr(STI::Device::JDeviceEventReceiver);
-%shared_ptr(STI::Device::JDeviceEventDispatcher);
+%shared_ptr(STI::Device::JDeviceMessageReceiver);
+%shared_ptr(STI::Device::JDeviceMessageDispatcher);
 %shared_ptr(STI::Device::JEventEngineScheduler);
-%shared_ptr(STI::Device::ChannelManager);
+%shared_ptr(STI::Device::JChannelManager);
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
 
 %shared_ptr(STI::Engine::ParsedShot);
 
-//%shared_ptr(STI::Device::DeviceEventReceiver);
+//%shared_ptr(STI::Device::DeviceMessageReceiver);
 
 //Events
-%shared_ptr(STI::Device::DeviceEvent);
-%shared_ptr(STI::Device::RefreshDeviceEvent);
-%shared_ptr(STI::Device::ChannelUpdateDeviceEvent);
+%shared_ptr(STI::Device::DeviceMessage);
+%shared_ptr(STI::Device::RefreshDeviceMessage);
+%shared_ptr(STI::Device::ChannelUpdateDeviceMessage);
+%shared_ptr(STI::Device::AttributeUpdateMessage);
 %shared_ptr(STI::Device::EngineSchedulerMessage);
 %shared_ptr(STI::Device::EngineParserMessage);
 %shared_ptr(STI::Device::EventEngineMessage);
@@ -135,40 +137,43 @@
 
 
 
-//DeviceEvent
-%include "DeviceEvent.h"
-%include "DeviceEventListener.h"
+//DeviceMessage
+%include "DeviceMessage.h"
+%include "DeviceMessageListener.h"
 
 //Listeners
 //Note: It's *very* important that the %shared_ptr definition comes before the %template call.
 
-%shared_ptr(STI::Device::DeviceEventListener< STI::Device::RefreshDeviceEvent >);
-%template(RefreshDeviceEventListener) STI::Device::DeviceEventListener< STI::Device::RefreshDeviceEvent >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::RefreshDeviceMessage >);
+%template(RefreshDeviceMessageListener) STI::Device::DeviceMessageListener< STI::Device::RefreshDeviceMessage >;
 
-%shared_ptr(STI::Device::DeviceEventListener< STI::Device::ChannelUpdateDeviceEvent >);
-%template(ChannelUpdateDeviceEventListener) STI::Device::DeviceEventListener< STI::Device::ChannelUpdateDeviceEvent >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::ChannelUpdateDeviceMessage >);
+%template(ChannelUpdateDeviceMessageListener) STI::Device::DeviceMessageListener< STI::Device::ChannelUpdateDeviceMessage >;
 
-%shared_ptr(STI::Device::DeviceEventListener< STI::Device::EngineSchedulerMessage >);
-%template(EngineSchedulerMessageListener) STI::Device::DeviceEventListener< STI::Device::EngineSchedulerMessage >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::AttributeUpdateMessage >);
+%template(AttributeUpdateMessageListener) STI::Device::DeviceMessageListener< STI::Device::AttributeUpdateMessage >;
 
-%shared_ptr(STI::Device::DeviceEventListener< STI::Device::EngineParserMessage >);
-%template(EngineParserMessageListener) STI::Device::DeviceEventListener< STI::Device::EngineParserMessage >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineSchedulerMessage >);
+%template(EngineSchedulerMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineSchedulerMessage >;
 
-%shared_ptr(STI::Device::DeviceEventListener< STI::Device::EventEngineMessage >);
-%template(EventEngineMessageListener) STI::Device::DeviceEventListener< STI::Device::EventEngineMessage >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineParserMessage >);
+%template(EngineParserMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineParserMessage >;
+
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EventEngineMessage >);
+%template(EventEngineMessageListener) STI::Device::DeviceMessageListener< STI::Device::EventEngineMessage >;
 
 
 //Event handling system
-%ignore STI::Device::DeviceEventReceiver;
-%include "JDeviceEventReceiver.h"
+%ignore STI::Device::DeviceMessageReceiver;
+%include "JDeviceMessageReceiver.h"
 
-%include "JDeviceEventDispatcher.h"
+%include "JDeviceMessageDispatcher.h"
 
 //ChannelManager
 %include "fwd/Channel_fwd.h"
 %include "Channel.h"
 %template(ChannelVector) std::vector< std::shared_ptr < STI::Device::Channel > >;
-%include "ChannelManager.h"
+%include "JChannelManager.h"
 
 %include "LocalChannel.h"
 
@@ -178,7 +183,8 @@
 %include "ParseID.h"
 %include "ShotID.h"
 
-
+//Attributes
+%template(StringMap) std::map< std::string, std::string >;
 
 
 //JLocalDevice

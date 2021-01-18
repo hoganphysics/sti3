@@ -4,11 +4,11 @@
 #include "DeviceID.h"
 #include "LocalDevice.h"
 #include "JDeviceCollection.h"
-#include "JDeviceEventDispatcher.h"
+#include "JDeviceMessageDispatcher.h"
 #include "JEventEngineScheduler.h"
 #include "ChannelManager.h"
-
-#include "DeviceEventDispatcher.h"
+#include "DeviceMessageDispatcher.h"
+#include "JChannelManager.h"
 
 #include <memory>
 
@@ -17,10 +17,11 @@ using STI::Device::LocalDevice;
 using STI::Device::DeviceID;
 using STI::Device::DeviceCollection;
 using STI::Device::JDeviceCollection;
-using STI::Device::DeviceEventDispatcher;
-using STI::Device::JDeviceEventDispatcher;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::JDeviceMessageDispatcher;
 using STI::Device::JEventEngineScheduler;
 using STI::Device::ChannelManager;
+using STI::Device::JChannelManager;
 
 
 JDevice::JDevice(const std::shared_ptr<STI::Device::Device>& device)
@@ -59,15 +60,15 @@ std::shared_ptr<STI::Device::JDeviceCollection> JDevice::getCollection()
     return jCollection;
 }
 
-std::shared_ptr<STI::Device::JDeviceEventDispatcher> JDevice::getEventDispatcher()
+std::shared_ptr<STI::Device::JDeviceMessageDispatcher> JDevice::getMessageDispatcher()
 {
-    std::shared_ptr<STI::Device::JDeviceEventDispatcher> jDispatcher;
+    std::shared_ptr<STI::Device::JDeviceMessageDispatcher> jDispatcher;
 
     if(wrappedDevice != 0) {
-        std::shared_ptr<STI::Device::DeviceEventDispatcher> dispatcher;
-        wrappedDevice->getEventDispatcher(dispatcher);
+        std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
+        wrappedDevice->getMessageDispatcher(dispatcher);
 
-        jDispatcher = std::make_shared<STI::Device::JDeviceEventDispatcher>(dispatcher);
+        jDispatcher = std::make_shared<STI::Device::JDeviceMessageDispatcher>(dispatcher);
     }
 
     return jDispatcher;
@@ -75,27 +76,33 @@ std::shared_ptr<STI::Device::JDeviceEventDispatcher> JDevice::getEventDispatcher
 
 std::shared_ptr<STI::Device::JEventEngineScheduler> JDevice::getEngineScheduler()
 {
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     std::shared_ptr<STI::Device::JEventEngineScheduler> jScheduler;
 
-    if(wrappedDevice != 0) {
-        std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-        wrappedDevice->getEngineScheduler(scheduler);
+    if (wrappedDevice != 0) {
 
+        wrappedDevice->getEngineScheduler(scheduler);
+    }
+    if (scheduler != 0) {
         jScheduler = std::make_shared<STI::Device::JEventEngineScheduler>(scheduler);
     }
 
     return jScheduler;
 }
 
-std::shared_ptr<STI::Device::ChannelManager> JDevice::getChannelManager()
+std::shared_ptr<STI::Device::JChannelManager> JDevice::getChannelManager()
 {
     std::shared_ptr<STI::Device::ChannelManager> manager;
-    
-    if(wrappedDevice != 0) {
+    std::shared_ptr<STI::Device::JChannelManager> jmanager;
+
+    if (wrappedDevice != 0) {
         wrappedDevice->getChannelManager(manager);
     }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JChannelManager>(manager);
+    }
 
-    return manager;
+    return jmanager;
 }
 
 void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
@@ -105,10 +112,10 @@ void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& coll
     }
 }
 
-void JDevice::getEventDispatcher(std::shared_ptr<DeviceEventDispatcher>& dispatcher)
+void JDevice::getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
 {
     if(wrappedDevice != 0) {
-        wrappedDevice->getEventDispatcher(dispatcher);
+        wrappedDevice->getMessageDispatcher(dispatcher);
     }
 }
 

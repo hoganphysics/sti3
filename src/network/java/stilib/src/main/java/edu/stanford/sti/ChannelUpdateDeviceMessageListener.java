@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class ChannelUpdateDeviceEventListener {
+public class ChannelUpdateDeviceMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected ChannelUpdateDeviceEventListener(long cPtr, boolean cMemoryOwn) {
+  protected ChannelUpdateDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(ChannelUpdateDeviceEventListener obj) {
+  protected static long getCPtr(ChannelUpdateDeviceMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class ChannelUpdateDeviceEventListener {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_ChannelUpdateDeviceEventListener(swigCPtr);
+        stiJNI.delete_ChannelUpdateDeviceMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,21 +47,21 @@ public class ChannelUpdateDeviceEventListener {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.ChannelUpdateDeviceEventListener_change_ownership(this, swigCPtr, false);
+    stiJNI.ChannelUpdateDeviceMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.ChannelUpdateDeviceEventListener_change_ownership(this, swigCPtr, true);
+    stiJNI.ChannelUpdateDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleEvent(ChannelUpdateDeviceEvent evt) {
-    stiJNI.ChannelUpdateDeviceEventListener_handleEvent(swigCPtr, this, ChannelUpdateDeviceEvent.getCPtr(evt), evt);
+  public void handleMessage(ChannelUpdateDeviceMessage mess) {
+    stiJNI.ChannelUpdateDeviceMessageListener_handleMessage(swigCPtr, this, ChannelUpdateDeviceMessage.getCPtr(mess), mess);
   }
 
-  public ChannelUpdateDeviceEventListener() {
-    this(stiJNI.new_ChannelUpdateDeviceEventListener(), true);
-    stiJNI.ChannelUpdateDeviceEventListener_director_connect(this, swigCPtr, true, true);
+  public ChannelUpdateDeviceMessageListener() {
+    this(stiJNI.new_ChannelUpdateDeviceMessageListener(), true);
+    stiJNI.ChannelUpdateDeviceMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

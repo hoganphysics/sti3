@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class DeviceEvent {
+public class RefreshDeviceMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected DeviceEvent(long cPtr, boolean cMemoryOwn) {
+  protected RefreshDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(DeviceEvent obj) {
+  protected static long getCPtr(RefreshDeviceMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class DeviceEvent {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_DeviceEvent(swigCPtr);
+        stiJNI.delete_RefreshDeviceMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,34 +47,21 @@ public class DeviceEvent {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.DeviceEvent_change_ownership(this, swigCPtr, false);
+    stiJNI.RefreshDeviceMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.DeviceEvent_change_ownership(this, swigCPtr, true);
+    stiJNI.RefreshDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public DeviceEvent() {
-    this(stiJNI.new_DeviceEvent__SWIG_0(), true);
-    stiJNI.DeviceEvent_director_connect(this, swigCPtr, true, true);
+  public void handleMessage(RefreshDeviceMessage mess) {
+    stiJNI.RefreshDeviceMessageListener_handleMessage(swigCPtr, this, RefreshDeviceMessage.getCPtr(mess), mess);
   }
 
-  public DeviceEvent(DeviceID source, DeviceEventType type) {
-    this(stiJNI.new_DeviceEvent__SWIG_1(DeviceID.getCPtr(source), source, type.swigValue()), true);
-    stiJNI.DeviceEvent_director_connect(this, swigCPtr, true, true);
-  }
-
-  public DeviceID sourceID() {
-    return new DeviceID(stiJNI.DeviceEvent_sourceID(swigCPtr, this), false);
-  }
-
-  public DeviceEventType getType() {
-    return DeviceEventType.swigToEnum(stiJNI.DeviceEvent_getType(swigCPtr, this));
-  }
-
-  public static DeviceEventType getEventClassType() {
-    return DeviceEventType.swigToEnum(stiJNI.DeviceEvent_getEventClassType());
+  public RefreshDeviceMessageListener() {
+    this(stiJNI.new_RefreshDeviceMessageListener(), true);
+    stiJNI.RefreshDeviceMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

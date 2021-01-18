@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class JDeviceEventDispatcher {
+public class JDeviceMessageDispatcher {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected JDeviceEventDispatcher(long cPtr, boolean cMemoryOwn) {
+  protected JDeviceMessageDispatcher(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(JDeviceEventDispatcher obj) {
+  protected static long getCPtr(JDeviceMessageDispatcher obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,22 +34,22 @@ public class JDeviceEventDispatcher {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_JDeviceEventDispatcher(swigCPtr);
+        stiJNI.delete_JDeviceMessageDispatcher(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public JDeviceEventDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t dispatcher) {
-    this(stiJNI.new_JDeviceEventDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceEventDispatcher_t.getCPtr(dispatcher)), true);
+  public JDeviceMessageDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t dispatcher) {
+    this(stiJNI.new_JDeviceMessageDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t.getCPtr(dispatcher)), true);
   }
 
-  public void addEvent(DeviceEvent evt) {
-    stiJNI.JDeviceEventDispatcher_addEvent(swigCPtr, this, DeviceEvent.getCPtr(evt), evt);
+  public void addMessage(DeviceMessage mess) {
+    stiJNI.JDeviceMessageDispatcher_addMessage(swigCPtr, this, DeviceMessage.getCPtr(mess), mess);
   }
 
-  public void clearEvents() {
-    stiJNI.JDeviceEventDispatcher_clearEvents(swigCPtr, this);
+  public void clearMessages() {
+    stiJNI.JDeviceMessageDispatcher_clearMessages(swigCPtr, this);
   }
 
 }
