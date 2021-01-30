@@ -19,7 +19,7 @@
 #import example
 import stidevicepy
 
-class TestDevice(stidevicepy.LocalDevice2) :
+class TestDevice(stidevicepy.LocalDevice) :
     def writeChannel(self, channel, value) :
         print("py write channel = " + str(value))
         return True
@@ -27,7 +27,7 @@ class TestDevice(stidevicepy.LocalDevice2) :
         print("py read channel = " + str(value))
         return 3*value
 
-dev=stidevicepy.LocalDevice2("dev","localhost",0, "srv")
+dev=stidevicepy.LocalDevice("dev","localhost",0, "srv")
 print(dev.writeChannel(0, 8))
 
 
@@ -49,7 +49,7 @@ print(man.writeChannel(0,6))
 print(man.readChannel(0,8))
 
 
-dev2=stidevicepy.LocalDevice2("dev2","localhost",0, "srv")
+dev2=stidevicepy.LocalDevice("dev2","localhost",0, "srv")
 
 dev.addPartner(dev2.getID())
 

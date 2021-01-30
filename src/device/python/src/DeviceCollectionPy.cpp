@@ -18,7 +18,7 @@ DeviceCollectionPy::~DeviceCollectionPy()
 }
 
 
-bool DeviceCollectionPy::add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Python::DevicePy2>& node)
+bool DeviceCollectionPy::add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Python::DevicePy>& node)
 {
     if (deviceCollection != 0 && node != 0) {
  //       std::shared_ptr<STI::Device::Device> dev = node->getDevice();
@@ -58,7 +58,7 @@ unsigned DeviceCollectionPy::size() const
 }
 
 
-std::shared_ptr<STI::Python::DevicePy2> DeviceCollectionPy::get(const STI::Device::DeviceID& id) const
+std::shared_ptr<STI::Python::DevicePy> DeviceCollectionPy::get(const STI::Device::DeviceID& id) const
 {
     std::shared_ptr<STI::Device::Device> device;
 
@@ -66,7 +66,7 @@ std::shared_ptr<STI::Python::DevicePy2> DeviceCollectionPy::get(const STI::Devic
         deviceCollection->get(id, device);
     }
 
-    auto devicePy = std::make_shared<STI::Python::DevicePy2>(device);
+    auto devicePy = std::make_shared<STI::Python::DevicePy>(device);
 
     return devicePy;
 }
