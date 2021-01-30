@@ -28,15 +28,24 @@ void init_RawEvent(py::module& m)
         ;
 
 
+
+
     py::class_<STI::Engine::RawEvent>(m, "RawEvent")
         .def(py::init<>())
-        .def("__init__",
-            [](STI::Engine::RawEvent& instance, const STI::Device::DeviceID& targetDeviceID,
+        .def(py::init(
+            [](const STI::Device::DeviceID& targetDeviceID,
                 double time, unsigned short channel, const pybind11::object& value,
                 const std::string& description, unsigned eventNumber, const RawEventType& eventType) 
-            {
-                new (&instance) STI::Engine::RawEvent(targetDeviceID, time, channel, MixedValuePy(value), description, eventNumber, eventType);
-            })
+                {
+                    return new STI::Engine::RawEvent(targetDeviceID, time, channel, MixedValuePy(value), description, eventNumber, eventType);
+                } ))
+        // .def("__init__",
+        //     [](STI::Engine::RawEvent& instance, const STI::Device::DeviceID& targetDeviceID,
+        //         double time, unsigned short channel, const pybind11::object& value,
+        //         const std::string& description, unsigned eventNumber, const RawEventType& eventType) 
+        //     {
+        //         new (&instance) STI::Engine::RawEvent(targetDeviceID, time, channel, MixedValuePy(value), description, eventNumber, eventType);
+        //     })
         // .def(py::init<const STI::Device::DeviceID&, double, unsigned short, 
         //             const STI::Utils::MixedValue&, const std::string&, unsigned, const RawEventType&>(), 
         //                 py::arg("targetDeviceID"), py::arg("time"), py::arg("channel"), py::arg("value"), 

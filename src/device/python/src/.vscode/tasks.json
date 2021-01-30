@@ -23,7 +23,7 @@
 				"-o",
 				"example`${PYCONFIG_EXTENSION}`",
 				"-L${STI_BASE}/lib",
-				// "-Wl,-rpath,.",
+				 "-Wl,-rpath,.",
 				"-lstidevice"
 			],
 			"options": {
@@ -61,6 +61,62 @@
 				}
 			},
 			"problemMatcher": [
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "CMake config",
+			"command": "cmake",
+			"args": [
+				"-Dpybind11_DIR=`${PBIND11_CMAKE}`",
+				"-DPYBIND11_PYTHON_VERSION=3.6",
+				"-DPYTHON_EXECUTABLE=/usr/bin/python3",
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build", 
+				"env": {
+					"PBIND11_CMAKE": "python3 -m pybind11 --cmakedir"
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+		{
+			"type": "shell",
+			"label": "CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+        {
+			"type": "shell",
+			"label": "CMake install",
+			"command": "make",
+			"args": [
+                "DESTDIR=${STI_BASE_DIR}",
+                "install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build",
+                "env": {
+					"STI_BASE_DIR": "${workspaceFolder}/../../../.."
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
 			],
 			"group": "build"
 		}

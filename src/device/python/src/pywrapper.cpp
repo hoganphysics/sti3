@@ -86,7 +86,8 @@ std::string call_go(Animal *animal) {
 //     m.def("add", &add, "A function which adds two numbers");
 // }
 
-PYBIND11_MODULE(example, m) {
+
+PYBIND11_MODULE(stidevicepy, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
     m.def("add", &add, "A function which adds two numbers");
 

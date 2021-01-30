@@ -44,6 +44,10 @@ const std::vector<std::string>& LocalAttribute::getAllowedValues() const
     return allowedValues_;
 }
 
+const std::string& LocalAttribute::getGroup() const
+{
+    return group_;
+}
 
 void LocalAttribute::refreshValue()
 {
