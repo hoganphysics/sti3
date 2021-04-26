@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_NETWORKPARSEDSHOTWRAPPER_H
 #define STI_ENGINE_NETWORKPARSEDSHOTWRAPPER_H
 
-#include "ParsedShot.h"
+#include "Shot.h"
 //#include "TParsedShotRefInterface.h"
 
 #include "TParsedShot_i.h"
@@ -18,13 +18,13 @@ namespace Network
 
 
 
-class NetworkParsedShotWrapper : public STI::Engine::ParsedShot
+class NetworkParsedShotWrapper : public STI::Engine::Shot
                                  //public STI::Network::TParsedShotRefInterface	//mixin
 {
 public:
 
 
-    NetworkParsedShotWrapper(const std::shared_ptr<STI::Engine::ParsedShot>& shot)
+    NetworkParsedShotWrapper(const std::shared_ptr<STI::Engine::Shot>& shot)
     : localshot(shot), parsedShotServant(shot)
     {
     }
@@ -41,7 +41,7 @@ public:
     }
 
 	static bool getTParsedShotReference(
-		const typename std::shared_ptr<STI::Engine::ParsedShot>& shot, 
+		const typename std::shared_ptr<STI::Engine::Shot>& shot, 
         STI::TNetwork::TParsedShot_ptr& tShot)
 	{
 		auto wrapper = std::dynamic_pointer_cast<NetworkParsedShotWrapper>(shot);
@@ -69,7 +69,7 @@ private:
 
 
 
-    std::shared_ptr<STI::Engine::ParsedShot> localshot;
+    std::shared_ptr<STI::Engine::Shot> localshot;
 //    ::STI::TNetwork::TParsedShot_var _tShot;		//remote reference
     STI::TNetwork::TParsedShot_i parsedShotServant;
 

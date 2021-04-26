@@ -9,7 +9,7 @@ namespace py = pybind11;
 using std::cout;
 using std::endl;
 
-void init_DeviceID(py::module &);
+void init_DeviceID(pybind11::module &);
 void init_DeviceMessage(py::module& m);
 void init_DeviceMessageDispatcher(py::module& m);
 void init_Channel(py::module& m);
@@ -100,6 +100,8 @@ PYBIND11_MODULE(stidevicepy, m) {
         .def(py::init<>());
 
     m.def("call_go", &call_go);
+
+    // py::module_::import("stidevicepybase");
 
     init_DeviceID(m);
     init_DeviceMessage(m);

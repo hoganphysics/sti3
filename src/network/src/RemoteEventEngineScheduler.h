@@ -20,7 +20,7 @@ public:
     RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler);
     ~RemoteEventEngineScheduler();
 
-    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::ParsedShot>& shot);
+    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::Shot>& shot);
     void play(const STI::Engine::ShotID& shotID);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
@@ -32,7 +32,7 @@ public:
     void cancelJob(const STI::Engine::EngineJobID& jobID);
 
     std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
-                                              const std::shared_ptr<STI::Engine::ParsedShot>& shot,
+                                              const std::shared_ptr<STI::Engine::Shot>& shot,
                                               const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 
                                               const STI::Device::DeviceID& owner, 
                                               const std::set<STI::Device::DeviceID>& missingTargets);

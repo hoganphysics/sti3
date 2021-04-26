@@ -5,7 +5,7 @@
 
 #include "EngineJobID.h"
 #include "DeviceID.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "EngineID.h"
 
 #include <set>
@@ -28,7 +28,7 @@ public:
 
     //Parse jobs
     LocalEventEngineJob(const ParseID& parseID, 
-                        const std::shared_ptr<ParsedShot>& shot,
+                        const std::shared_ptr<Shot>& shot,
                         const std::shared_ptr<EventEngineDependencyTree>& tree, 
                         const STI::Device::DeviceID& owner, 
                         const std::set<STI::Device::DeviceID>& missingTargets);
@@ -51,7 +51,7 @@ public:
     bool getEngine(std::shared_ptr<EventEngine>& eventEngine) const { eventEngine = engine; return (eventEngine != 0); }
     void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine) { engine = eventEngine; }
 
-    bool getParsedShot(std::shared_ptr<ParsedShot>& shot) const;
+    bool getParsedShot(std::shared_ptr<Shot>& shot) const;
     bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const;
 
     std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
@@ -59,7 +59,7 @@ public:
 private:
 
     STI::Device::DeviceID jobOwner;    
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
     std::shared_ptr<EventEngineDependencyTree> dependencies;
     std::set<STI::Device::DeviceID> missingTargetIDs;
 

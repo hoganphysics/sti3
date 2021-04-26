@@ -13,7 +13,7 @@
 #include "DeviceMessage.h"
 #include "DeviceMessageListener.h"
 
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "SynchronizedMap.h"
 #include "utils/OrderedBufferMap.h"
 
@@ -63,7 +63,7 @@ class EngineJobID;
 class LocalEventEngine;
 
 class ParseID;
-class ParsedShot;
+class Shot;
 class EventEngineFactory;
 
 class LocalEventEngineScheduler : public EventEngineScheduler, 
@@ -75,7 +75,7 @@ public:
     ~LocalEventEngineScheduler();
 
     //local interface (called from python, for example)
-    void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot);        //local; add event to queue
+    void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot);        //local; add event to queue
     void play(const ShotID& shotID);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
@@ -88,7 +88,7 @@ public:
     void jobComplete(const EngineJobID& jobID);
 
     std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-                                              const std::shared_ptr<ParsedShot>& shot,
+                                              const std::shared_ptr<Shot>& shot,
                                               const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                               const STI::Device::DeviceID& owner, 
                                               const std::set<STI::Device::DeviceID>& missingTargets);

@@ -1,5 +1,5 @@
-#ifndef STI_ENGINE_PARSEDSHOT_H
-#define STI_ENGINE_PARSEDSHOT_H
+#ifndef STI_ENGINE_SHOT_H
+#define STI_ENGINE_SHOT_H
 
 
 #include <vector>
@@ -12,13 +12,13 @@ namespace Engine
 
 class RawEvent;
 
-class ParsedShot
+class Shot
 {
 public:
 
-    virtual ~ParsedShot() {}
+    virtual ~Shot() {}
 
-    virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& ets) = 0;
+    virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts) = 0;
     //virtual void getEvents(std::vector<RawEvent>& ets) = 0;
 
 private:

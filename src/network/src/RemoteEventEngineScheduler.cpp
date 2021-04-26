@@ -24,7 +24,7 @@ using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
 using STI::Network::NetworkParsedShotWrapper;
 using STI::TNetwork::TEventEngineJob;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 using STI::TNetwork::TParseID;
 using STI::Engine::ParseID;
 
@@ -37,11 +37,11 @@ RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 {
 }
 
-void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
+void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<Shot>& shot)
 {
 	STI::TNetwork::TParsedShot_ptr tShot;
 
-	if (!convert<std::shared_ptr<ParsedShot>, STI::TNetwork::TParsedShot_ptr>(shot, tShot)) {
+	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TParsedShot_ptr>(shot, tShot)) {
 		return;
 	}
   
@@ -156,7 +156,7 @@ void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 
 
 std::shared_ptr<STI::Engine::EventEngineJob> RemoteEventEngineScheduler::createJob(const STI::Engine::ParseID& parseID, 
-                                          const std::shared_ptr<STI::Engine::ParsedShot>& shot,
+                                          const std::shared_ptr<STI::Engine::Shot>& shot,
                                           const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 
                                           const STI::Device::DeviceID& owner, 
                                           const std::set<STI::Device::DeviceID>& missingTargets)

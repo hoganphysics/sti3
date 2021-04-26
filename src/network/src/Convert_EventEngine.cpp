@@ -13,7 +13,7 @@
 #include "RawEvent.h"
 #include "ParseID.h"
 #include "ShotID.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "NetworkParsedShotWrapper.h"
 #include "RemoteParsedShot.h"
 #include "utils/GraphPathLabel.h"
@@ -55,7 +55,7 @@ using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;
 using STI::TNetwork::TParsedShot_ptr;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 
 //EventEngineDependencyTree
 template<>
@@ -446,7 +446,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null
 
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
     STI::TNetwork::TParsedShot_ptr tShot;
     
     if (engineJob.getParsedShot(parsedShot) && NetworkParsedShotWrapper::getTParsedShotReference(parsedShot, tShot)) {
@@ -476,7 +476,7 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
 
     EngineJobID jobID = convert<TEngineJobID, EngineJobID>(tEngineJob.jobID);
 
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
     std::shared_ptr<EventEngineDependencyTree> tree;
     std::set<STI::Device::DeviceID> missingTargets;     //empty
 
@@ -699,11 +699,11 @@ EngineJobSourceID STI::Network::convert<TEngineJobSourceID, EngineJobSourceID>(c
 
 
 template<>
-bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<ParsedShot>>(const TParsedShot_ptr& tShot, std::shared_ptr<ParsedShot>& shot)
+bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<Shot>>(const TParsedShot_ptr& tShot, std::shared_ptr<Shot>& shot)
 {
     bool success = false;
 
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
 
     if (!CORBA::is_nil(tShot)) {
         shot = std::make_shared<STI::Network::RemoteParsedShot>(tShot);
@@ -715,9 +715,9 @@ bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<ParsedShot>>(const T
 
 
 template<>
-bool STI::Network::convert<std::shared_ptr<ParsedShot>, TParsedShot_ptr>(const std::shared_ptr<ParsedShot>& shot, TParsedShot_ptr& tShot)
+bool STI::Network::convert<std::shared_ptr<Shot>, TParsedShot_ptr>(const std::shared_ptr<Shot>& shot, TParsedShot_ptr& tShot)
 {
-    //std::shared_ptr<ParsedShot> parsedShot;
+    //std::shared_ptr<Shot> parsedShot;
 //    STI::TNetwork::TParsedShot_ptr tShot;
     
     if (shot != 0 && NetworkParsedShotWrapper::getTParsedShotReference(shot, tShot)) {

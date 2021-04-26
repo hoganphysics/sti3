@@ -33,6 +33,7 @@ public:
 	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
+	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
 
 private:
 

@@ -24,6 +24,9 @@ link_directories(${STI_BASE_DIR}/lib)
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
+find_package(PythonLibs 3.6.2 REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+
 pybind11_add_module(stidevicepy 
     ChannelManagerPy.cpp
     ChannelManager_wrap.cpp
@@ -43,6 +46,21 @@ pybind11_add_module(stidevicepy
     RawEvent_wrap.cpp
 )
 
+
+# pybind11_add_module(stidevicepy 
+#     ChannelManager_wrap.cpp
+#     DeviceCollection_wrap.cpp
+#     DeviceID_wrap.cpp
+#     DeviceMessageDispatcher_wrap.cpp
+#     DeviceMessage_wrap.cpp
+#     LocalDevice_wrap.cpp
+#     MixedValue_wrap.cpp
+#     pywrapper.cpp
+#     RawEvent_wrap.cpp
+# )
+
+add_dependencies(stidevicepy stidevicepybase)
+
 set_target_properties(stidevicepy PROPERTIES VERSION ${PROJECT_VERSION})
 
 set_target_properties(stidevicepy PROPERTIES
@@ -57,10 +75,54 @@ target_include_directories(stidevicepy PRIVATE
     ${STI_BASE_DIR}/src/device/src
 )
 
-install(TARGETS stidevicepy
+
+#****add_library
+#pybind11_add_module  PRIVATE pybind11::headers 
+add_library(stidevicepybase SHARED
+    ChannelManagerPy.cpp
+    DeviceCollectionPy.cpp
+    DevicePy.cpp
+    EventEngineSchedulerPy.cpp
+    LocalDevicePy.cpp
+    MixedValuePy.cpp
+)
+
+set_target_properties(stidevicepybase 
+    PROPERTIES 
+        VERSION ${PROJECT_VERSION}
+        # HEADER pybind11::headers
+        # PREFIX lib
+        # SUFFIX .so
+#        NO_SONAME OFF
+)
+
+set_target_properties(stidevicepybase PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE TRUE
+#    SOVERSION 1
+#    PUBLIC_HEADER api/mylib.h
+)
+
+
+target_include_directories(stidevicepybase PRIVATE 
+    ${WORKING_DIRECTORY}
+    ${STI_BASE_DIR}/include
+    ${STI_BASE_DIR}/src/device/src
+)
+
+#****
+
+install(TARGETS stidevicepy stidevicepybase
     #DESTINATION ${STI_BASE_DIR}/lib
     LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-target_link_libraries(stidevicepy PRIVATE stidevice)
+#  target_link_libraries(stidevicepybase PRIVATE stidevice)
+
+target_link_libraries(stidevicepybase pthread pybind11::module pybind11::headers stidevice ${PYTHON_LIBRARIES})
+
+target_link_libraries(stidevicepy PRIVATE stidevice 
+                                   PRIVATE stidevicepybase)
+
+

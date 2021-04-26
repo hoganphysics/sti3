@@ -16,7 +16,7 @@
 #include "SynchronousEvent.h"
 #include "LocalTriggerCallback.h"
 #include "Device.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "LocalParsedShot.h"
 #include "EventEngineJob.h"
 #include "EngineJobID.h"
@@ -177,7 +177,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		return;
 	}
 
-	std::shared_ptr<ParsedShot> parsedShot;
+	std::shared_ptr<Shot> parsedShot;
 
     if (!job.getParsedShot(parsedShot)) {
 		//Error: no parsed shot

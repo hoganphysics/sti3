@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_LOCALPARSEDSHOT_H
 #define STI_ENGINE_LOCALPARSEDSHOT_H
 
-#include "ParsedShot.h"
+#include "Shot.h"
 
 #include <vector>
 #include <memory>
@@ -13,7 +13,7 @@ namespace Engine
 
 class RawEvent;
 
-class LocalParsedShot : public ParsedShot
+class LocalParsedShot : public Shot
 {
 public:
 

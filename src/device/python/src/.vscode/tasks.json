@@ -17,14 +17,17 @@
 				"`${PBIND11_INCLUDES}`",
 				"-g",
 //				"-O3",
-//				"${file}",
-				"${workspaceFolder}/**.cpp",
+				"${file}",
+//				"${workspaceFolder}/**.cpp",
 				"`${PYCONFIG_LDFLAGS}`",
 				"-o",
 				"example`${PYCONFIG_EXTENSION}`",
 				"-L${STI_BASE}/lib",
 				 "-Wl,-rpath,.",
-				"-lstidevice"
+				 "-lstidevicepybase",
+				"-lstidevice",
+				"-lpthread"
+				
 			],
 			"options": {
 				"cwd": "${workspaceFolder}",

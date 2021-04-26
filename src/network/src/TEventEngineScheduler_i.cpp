@@ -9,7 +9,7 @@
 #include "EngineJobID.h"
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
@@ -32,7 +32,7 @@ using STI::Engine::EngineJobID;
 using ::STI::TNetwork::TEngineJobID;
 using STI::Engine::EventEngineJobType;
 using STI::Engine::EventEngineJob;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -49,8 +49,8 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
 
 void TEventEngineScheduler_i::parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParsedShot_ptr shot)
 {
-	std::shared_ptr<ParsedShot> parsedShot;
-	bool success = convert<::STI::TNetwork::TParsedShot_ptr, std::shared_ptr<ParsedShot>>(shot, parsedShot);
+	std::shared_ptr<Shot> parsedShot;
+	bool success = convert<::STI::TNetwork::TParsedShot_ptr, std::shared_ptr<Shot>>(shot, parsedShot);
     
 	if (engineScheduler != 0 && success) {
 
@@ -168,7 +168,7 @@ void TEventEngineScheduler_i::addJob(const ::STI::TNetwork::TEventEngineJob& new
 
 		// //Parse jobs
 		// LocalEventEngineJob(const ParseID& parseID, 
-		// 					const std::shared_ptr<ParsedShot>& shot,
+		// 					const std::shared_ptr<Shot>& shot,
 		// 					const std::shared_ptr<EventEngineDependencyTree>& tree, 
 		// 					const STI::Device::DeviceID& owner, 
 		// 					const std::set<STI::Device::DeviceID>& missingTargets);

@@ -27,7 +27,7 @@ LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address
 : DevicePy()
 //: DevicePy2( device = std::make_shared<LocalDevice>(name, address, module, targetServer) )
 {
-    device = std::make_shared<LocalDevicePy::PyLocalDevice>(this, name, address, module, targetServer);
+    device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, name, address, module, targetServer);
     setDevice(device);
 }
 

@@ -74,11 +74,11 @@ private:
 
 
 
-    class PyLocalDevice : public STI::Device::LocalDevice
+    class LocalDeviceDelegate : public STI::Device::LocalDevice
     {
     public:
 
-        PyLocalDevice(LocalDevicePy* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
 		    const std::string& targetServer)
             : STI::Device::LocalDevice(name, address, module, targetServer), localDevicePy(localDevicePy) {}
         
