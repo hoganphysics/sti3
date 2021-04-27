@@ -8,7 +8,7 @@
 
 package edu.stanford.sti;
 
-public class EngineSchedulerMessage extends DeviceEvent {
+public class EngineSchedulerMessage extends DeviceMessage {
   private transient long swigCPtr;
   private transient boolean swigCMemOwnDerived;
 
@@ -63,8 +63,8 @@ public class EngineSchedulerMessage extends DeviceEvent {
     stiJNI.EngineSchedulerMessage_director_connect(this, swigCPtr, true, true);
   }
 
-  public static DeviceEventType getEventClassType() {
-    return DeviceEventType.swigToEnum(stiJNI.EngineSchedulerMessage_getEventClassType());
+  public static DeviceMessageType getMessageClassType() {
+    return DeviceMessageType.swigToEnum(stiJNI.EngineSchedulerMessage_getMessageClassType());
   }
 
   public void setSchedulerMessageType(EngineSchedulerMessage.SchedulerMessageType value) {

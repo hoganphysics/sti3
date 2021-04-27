@@ -112,8 +112,22 @@ void testServer();
 
 int main(int argc, char **argv)
 {
-//	testDevice();
-	testServer();
+	int select;
+	std::cout << "(1) Server, (2) Device: ";
+	std::cin >> select;
+	std::cout << endl;
+
+	switch (select)
+	{
+	case 1:
+		testServer();
+		break;
+	case 2:
+		testDevice();
+		break;	
+	default:
+		break;
+	}
 
 	return 0;
 }
@@ -182,7 +196,7 @@ void testServer()
 	hub1->addDevice(dev4);
 
 
-	hub1->run(false);
+	hub1->run(true);
 
 	int x;
 	//std::cin >> x;

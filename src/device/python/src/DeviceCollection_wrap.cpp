@@ -13,7 +13,7 @@
 
 namespace py = pybind11;
 
-using STI::Python::DevicePy;
+//using STI::Python::DevicePy;
 using STI::Python::DeviceCollectionPy;
 
 

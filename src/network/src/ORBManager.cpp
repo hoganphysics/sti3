@@ -197,8 +197,16 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
 	if (orbManager != 0 && orbManager->running()) {
-		orbManager->poa->deactivate_object(
-			*(orbManager->poa->servant_to_id(p_servant)));
+
+		auto objref = (orbManager->poa->servant_to_id(p_servant));
+
+		if (objref != 0) {
+			orbManager->poa->deactivate_object(*objref);
+		}
+		
+		// orbManager->poa->deactivate_object(
+		// 	*(orbManager->poa->servant_to_id(p_servant)));
+		
 	}
 }
 

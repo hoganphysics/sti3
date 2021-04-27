@@ -64,6 +64,17 @@ void LocalDevice::addEventTarget(const STI::Device::DeviceID& id)
 	eventTargets.insert(id);
 }
 
+bool LocalDevice::isEventTarget(const DeviceID& id)
+{
+	auto it = eventTargets.find(id);
+	return (it != eventTargets.end());
+}
+
+//true if the LocalDevice is the target server of ID (i.e., this device is acting as a server)
+bool LocalDevice::isTargetServerOf(const DeviceID& id)
+{
+	return id.getTargetServerID() == getID().getID();
+}
 
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
@@ -71,10 +82,10 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// Listen to EngineScheduler messages from:
 	// 1) Declared event targets and 2) any device that has this device as a target server.
 
-	auto it = localDevice->eventTargets.find(id);
-	bool isEventTarget = (it != localDevice->eventTargets.end());
+	// auto it = localDevice->eventTargets.find(id);
+	// bool isEventTarget = (it != localDevice->eventTargets.end());
 
-	if( isEventTarget || id.getTargetServerID() == localDevice->getID().getID() ) {
+	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id) ) {
 		
 		//std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> listener = //localDevice->eventEngineScheduler;
 		auto listener = std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
@@ -190,8 +201,7 @@ bool LocalDevice::isPartnerDevice(const DeviceID& id)
 	return it != partnerDevices.end();
 }
 
-
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 
 {
-	return device->isPartnerDevice(key);
+	return device->isPartnerDevice(key) || device->isTargetServerOf(key);
 }

@@ -16,9 +16,10 @@
 # )
 
 #from example import *
-import example
+#import example
+import stidevicepy
 
-class TestDevice(example.LocalDevice2) :
+class TestDevice(stidevicepy.LocalDevice) :
     def writeChannel(self, channel, value) :
         print("py write channel = " + str(value))
         return True
@@ -26,7 +27,7 @@ class TestDevice(example.LocalDevice2) :
         print("py read channel = " + str(value))
         return 3*value
 
-dev=example.LocalDevice2("dev","localhost",0, "srv")
+dev=stidevicepy.LocalDevice("dev","localhost",0, "srv")
 print(dev.writeChannel(0, 8))
 
 
@@ -38,7 +39,7 @@ tdev.addChannel(0)
 print(tdev.writeChannel(0,4))
 
 man=tdev.getChannelManager()
-# val=example.MixedValue(44)
+# val=stidevicepy.MixedValue(44)
 # man.writeChannel(0,val)
 
 print(man.getChannels())
@@ -48,7 +49,7 @@ print(man.writeChannel(0,6))
 print(man.readChannel(0,8))
 
 
-dev2=example.LocalDevice2("dev2","localhost",0, "srv")
+dev2=stidevicepy.LocalDevice("dev2","localhost",0, "srv")
 
 dev.addPartner(dev2.getID())
 
@@ -62,8 +63,8 @@ print(collection.getIDs())
 
 
 
-id=example.DeviceID("dev","localhost",0)
-evt=example.RawEvent(id, 3.5, 0, 45, "desc", 2, example.RawEventType.Play)
+id=stidevicepy.DeviceID("dev","localhost",0)
+evt=stidevicepy.RawEvent(id, 3.5, 0, 45, "desc", 2, stidevicepy.RawEventType.Play)
 
 print(evt.value())
 print(evt.getEventGraphPath())

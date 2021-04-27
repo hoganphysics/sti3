@@ -14,7 +14,7 @@ namespace Engine
 
 class EventEngineJob;
 class EventEngineDependencyTree;
-class ParsedShot;
+class Shot;
 class ParseID;
 class EngineJobID;
 class EventEngineFactory;
@@ -27,7 +27,7 @@ public:
 
     virtual ~EventEngineScheduler() {}
 
-    virtual void parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot) = 0;
+    virtual void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot) = 0;
     virtual void play(const ShotID& shotID) = 0;
 
     virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
@@ -40,7 +40,7 @@ public:
     virtual void cancelJob(const EngineJobID& jobID) = 0;
 
     virtual std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-                                                      const std::shared_ptr<ParsedShot>& shot,
+                                                      const std::shared_ptr<Shot>& shot,
                                                       const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                                       const STI::Device::DeviceID& owner, 
                                                       const std::set<STI::Device::DeviceID>& missingTargets) = 0;

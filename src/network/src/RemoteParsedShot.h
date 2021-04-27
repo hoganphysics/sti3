@@ -3,7 +3,7 @@
 
 #include "deviceNet.h"
 
-#include "ParsedShot.h"
+#include "Shot.h"
 
 #include <memory>
 #include <vector>
@@ -13,7 +13,7 @@ namespace STI
 namespace Network
 {
 
-class RemoteParsedShot : public STI::Engine::ParsedShot
+class RemoteParsedShot : public STI::Engine::Shot
 {
 public:
 

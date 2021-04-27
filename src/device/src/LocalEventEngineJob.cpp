@@ -2,7 +2,7 @@
 
 #include "LocalEventEngineJob.h"
 #include "EventEngineJob.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "EventEngineDependencyTree.h"
 #include "DeviceID.h"
 #include "ParseID.h"
@@ -18,7 +18,7 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::EngineJobID;
 using STI::Engine::ParseID;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
 using STI::Device::DeviceID;
@@ -28,9 +28,17 @@ using STI::Engine::ParsingMessageType;
 
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
+<<<<<<< HEAD
                                          const std::shared_ptr<ParsedShot>& shot,
                                          const STI::Device::DeviceID& owner)
 : parsedShot(shot), jobOwner(owner)
+=======
+                                         const std::shared_ptr<Shot>& shot,
+                                         const std::shared_ptr<EventEngineDependencyTree>& tree, 
+                                         const STI::Device::DeviceID& owner, 
+                                         const std::set<STI::Device::DeviceID>& missingTargets)
+: parsedShot(shot), dependencies(tree), jobOwner(owner)
+>>>>>>> python
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 
@@ -93,7 +101,7 @@ void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& jo
     attachedJobs.push_back(job);
 }
 
-bool LocalEventEngineJob::getParsedShot(std::shared_ptr<ParsedShot>& shot) const
+bool LocalEventEngineJob::getParsedShot(std::shared_ptr<Shot>& shot) const
 {
     shot = parsedShot;
 

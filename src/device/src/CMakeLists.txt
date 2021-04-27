@@ -43,7 +43,11 @@ add_library(stidevice SHARED
     utils.cpp
 )
 
-set_target_properties(stidevice PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(stidevice PROPERTIES 
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE ON    
+)
+# set_property(TARGET STIServer PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(stidevice PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -59,8 +63,8 @@ target_include_directories(stidevice PRIVATE
 )
 
 install(TARGETS stidevice
-    DESTINATION ${STI_BASE_DIR}/lib
-    #LIBRARY DESTINATION ${STI_BASE_DIR}/lib
+    #DESTINATION ${STI_BASE_DIR}/lib
+    LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 

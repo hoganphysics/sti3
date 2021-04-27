@@ -95,6 +95,10 @@ public class Channel {
     return new MixedValue(stiJNI.Channel_getMetaData__SWIG_1(swigCPtr, this, key), true);
   }
 
+  public static String typeToString(ChannelType type) {
+    return stiJNI.Channel_typeToString(type.swigValue());
+  }
+
   public Channel() {
     this(stiJNI.new_Channel(), true);
     stiJNI.Channel_director_connect(this, swigCPtr, true, true);

@@ -9,7 +9,7 @@
 #include "fwd/RawEvent_fwd.h"
 #include "ParseID.h"
 #include "EventEngineJob.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "LocalEventEngineJob.h"
 #include "EventEngineFactory.h"
 #include "LocalEventEngineFactory.h"
@@ -35,7 +35,7 @@ using STI::Device::DeviceTrace;
 using STI::Engine::LocalEventEngine;
 using STI::Engine::ParseID;
 using STI::Engine::EventEngineJob;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::ShotID;
 using STI::Engine::EngineJobID;
@@ -107,7 +107,7 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID)
     engineManagers.add(engineID, manager);
 }
 
-void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<ParsedShot>& shot)
+void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot)
 {
     auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, localDevice->getID());
 
@@ -552,7 +552,7 @@ void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 }
 
 std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::createJob(const ParseID& parseID, 
-                                          const std::shared_ptr<ParsedShot>& shot,
+                                          const std::shared_ptr<Shot>& shot,
                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                           const STI::Device::DeviceID& owner, 
                                           const std::set<STI::Device::DeviceID>& missingTargets)

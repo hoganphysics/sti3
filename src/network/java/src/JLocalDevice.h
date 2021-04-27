@@ -15,7 +15,7 @@ namespace Device
 {
 
 class LocalDevice;
-class JDeviceEventReceiver;
+class JDeviceMessageReceiver;
 class JEventEngineScheduler;
 class JLocalDevice;
 
@@ -27,10 +27,10 @@ public:
 		const std::string& targetServer);
 	virtual ~JLocalDevice();
 
-	std::shared_ptr<STI::Device::JDeviceEventReceiver> getEventReceiver();
+	std::shared_ptr<STI::Device::JDeviceMessageReceiver> getMessageReceiver();
 	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
 
-//	std::shared_ptr<STI::Device::JDeviceEventReceiver> getEventReceiver2();
+//	std::shared_ptr<STI::Device::JDeviceMessageReceiver> getEventReceiver2();
 
 //	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) = 0;
 	virtual void parseEvents(int temp) = 0;
@@ -70,7 +70,7 @@ private:
 
 	};
 
-    std::shared_ptr<JDeviceEventReceiver> jReceiver;
+    std::shared_ptr<JDeviceMessageReceiver> jReceiver;
 	std::shared_ptr<JEventEngineScheduler> jScheduler;
 
     std::shared_ptr<LocalDevice> wrappedLocalDevice;

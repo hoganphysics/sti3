@@ -193,3 +193,7 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 }
 
+void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
+{
+	
+}

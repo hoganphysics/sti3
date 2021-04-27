@@ -102,7 +102,7 @@ Engine::EventEngineJob::EngineJobStatus Network::convert<TNetwork::TEngineJobSta
 
 //EventEngineJob
 
-//Note: when converting ParsedShot, this must get the T referene (from the servant) using a dynamic cast; the servant is hosted locally
+//Note: when converting Shot, this must get the T referene (from the servant) using a dynamic cast; the servant is hosted locally
 //Also, engineJob->setEventEngine(...);
 // template<> 
 // Engine::LocalEventEngineJob Network::convert<TNetwork::TEventEngineJob, Engine::LocalEventEngineJob>(const TNetwork::TEventEngineJob& tEngineJob);
@@ -143,11 +143,11 @@ template<>
 Engine::ShotID Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid);
 
 
-//ParsedShot
+//Shot
 template<>
-bool Network::convert<TNetwork::TParsedShot_ptr, std::shared_ptr<Engine::ParsedShot>>(const TNetwork::TParsedShot_ptr& tShot, std::shared_ptr<Engine::ParsedShot>& shot);
+bool Network::convert<TNetwork::TParsedShot_ptr, std::shared_ptr<Engine::Shot>>(const TNetwork::TParsedShot_ptr& tShot, std::shared_ptr<Engine::Shot>& shot);
 template<>
-bool Network::convert<std::shared_ptr<Engine::ParsedShot>, TNetwork::TParsedShot_ptr>(const std::shared_ptr<Engine::ParsedShot>& shot, TNetwork::TParsedShot_ptr& tShot);
+bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TParsedShot_ptr>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TParsedShot_ptr& tShot);
 
 
 

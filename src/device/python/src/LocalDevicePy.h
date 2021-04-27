@@ -21,22 +21,22 @@ namespace Python
 
 
 
-class Dog2 : public Animal2 {
-public:
-    std::string go(int n_times) override {
-        std::string result;
-        for(int i=0; i<n_times; ++i)
-            result += "woof! ";
-        return result;
-    }
+// class Dog2 : public Animal2 {
+// public:
+//     std::string go(int n_times) override {
+//         std::string result;
+//         for(int i=0; i<n_times; ++i)
+//             result += "woof! ";
+//         return result;
+//     }
     
-    std::string getID() override {
-        std::string result;
-        for(int i=0; i<5; ++i)
-            result += "hi! ";
-        return result;
-    }
-};
+//     std::string getID() override {
+//         std::string result;
+//         for(int i=0; i<5; ++i)
+//             result += "hi! ";
+//         return result;
+//     }
+// };
 
 
 
@@ -47,13 +47,13 @@ class MixedValuePy;
 
 
 
-class LocalDevicePy2 : public DevicePy2
+class LocalDevicePy : public DevicePy
 {
 public:
 
-    LocalDevicePy2(const std::string& name, const std::string& address, unsigned short module,
+    LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer);
-    virtual ~LocalDevicePy2();
+    virtual ~LocalDevicePy();
 
     virtual int test2(int x) { return 5; }
 
@@ -74,11 +74,11 @@ private:
 
 
 
-    class PyLocalDevice : public STI::Device::LocalDevice
+    class LocalDeviceDelegate : public STI::Device::LocalDevice
     {
     public:
 
-        PyLocalDevice(LocalDevicePy2* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
 		    const std::string& targetServer)
             : STI::Device::LocalDevice(name, address, module, targetServer), localDevicePy(localDevicePy) {}
         
@@ -121,7 +121,7 @@ private:
     
     private:
 
-        LocalDevicePy2* localDevicePy;
+        LocalDevicePy* localDevicePy;
     };
 
     std::shared_ptr<STI::Device::LocalDevice> device;
@@ -131,16 +131,16 @@ private:
 
 
 
-class LocalDevicePy2Trampoline : public LocalDevicePy2 {
+class LocalDevicePyTrampoline : public LocalDevicePy {
 public:
     /* Inherit the constructors */
-    using LocalDevicePy2::LocalDevicePy2;
+    using LocalDevicePy::LocalDevicePy;
 
     int test2(int x) override
     {
         PYBIND11_OVERRIDE(
             int, /* Return type */
-            LocalDevicePy2,      /* Parent class */
+            LocalDevicePy,      /* Parent class */
             test2,          /* Name of function in C++ (must match Python name) */
             x                  /* Argument(s) */
         );
@@ -150,7 +150,7 @@ public:
     {
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
-            LocalDevicePy2,        /* Parent class */
+            LocalDevicePy,        /* Parent class */
             writeChannel,          /* Name of function in C++ (must match Python name) */
             channel, value         /* Argument(s) */
         );
@@ -160,7 +160,7 @@ public:
     {
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
-            LocalDevicePy2,       /* Parent class */
+            LocalDevicePy,       /* Parent class */
             readChannel,          /* Name of function in C++ (must match Python name) */
             channel, value        /* Argument(s) */
         );
@@ -173,49 +173,49 @@ public:
 
 
 
-class LocalDevicePy : public DevicePy, public STI::Device::LocalDevice 
-                                                        //,      //For python wrapper
-//                                          public std::enable_shared_from_this<LocalDevicePy>    //needed to construct DevicePy
-{
-public:
+// class LocalDevicePy : public DevicePy, public STI::Device::LocalDevice 
+//                                                         //,      //For python wrapper
+// //                                          public std::enable_shared_from_this<LocalDevicePy>    //needed to construct DevicePy
+// {
+// public:
 
-//    LocalDevicePy();
-    LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
-		const std::string& targetServer);
-    virtual ~LocalDevicePy();
+// //    LocalDevicePy();
+//     LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
+// 		const std::string& targetServer);
+//     virtual ~LocalDevicePy();
 
-//    const STI::Device::DeviceID test() const { return LocalDevice::getID(); }
+// //    const STI::Device::DeviceID test() const { return LocalDevice::getID(); }
 
-    //DevicePy
-//    const STI::Device::DeviceID getIDpy() const override;
-//    std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher() override;
-//    std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler();    
-//    std::shared_ptr<ChannelManagerPy> getChannelManager() override;
+//     //DevicePy
+// //    const STI::Device::DeviceID getIDpy() const override;
+// //    std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher() override;
+// //    std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler();    
+// //    std::shared_ptr<ChannelManagerPy> getChannelManager() override;
 
-    std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher() override;
+//     std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher() override;
     
-    std::shared_ptr<ChannelManagerPy> getChannelManager() override;
+//     std::shared_ptr<ChannelManagerPy> getChannelManager() override;
 
-    STI::Device::DeviceID getIDpy() override;
+//     STI::Device::DeviceID getIDpy() override;
 
-    int test2(int x) override
-    {
-        int y = 3*x;
-        return y;
-    }
+//     int test2(int x) override
+//     {
+//         int y = 3*x;
+//         return y;
+//     }
 
-    //Hooks to be implemented in python:
-//    virtual bool writeChannelPy(short channel, const STI::Python::MixedValuePy& value) = 0;
-//    virtual pybind11::object readChannelPy(short channel, const STI::Python::MixedValuePy& value) = 0;
+//     //Hooks to be implemented in python:
+// //    virtual bool writeChannelPy(short channel, const STI::Python::MixedValuePy& value) = 0;
+// //    virtual pybind11::object readChannelPy(short channel, const STI::Python::MixedValuePy& value) = 0;
 
-private:
+// private:
 
-    //Overrides for STI::Device::LocalDevice
-	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
-	bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+//     //Overrides for STI::Device::LocalDevice
+// 	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+// 	bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
 
-};
+// };
 
 
 // class LocalDevicePyTrampoline : public LocalDevicePy {

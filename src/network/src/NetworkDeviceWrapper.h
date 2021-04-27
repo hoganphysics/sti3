@@ -53,6 +53,11 @@ public:
 		localDevice->getChannelManager(manager);
 	}
 
+	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
+	{
+		localDevice->getAttributeManager(manager);
+	}
+
 	const STI::Device::DeviceID getID() const { return localDevice->getID(); }
 
 	bool refresh() { return localDevice->refresh(); }

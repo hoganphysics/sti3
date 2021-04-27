@@ -55,8 +55,8 @@ public class EngineSchedulerMessageListener {
     stiJNI.EngineSchedulerMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleEvent(EngineSchedulerMessage evt) {
-    stiJNI.EngineSchedulerMessageListener_handleEvent(swigCPtr, this, EngineSchedulerMessage.getCPtr(evt), evt);
+  public void handleMessage(EngineSchedulerMessage mess) {
+    stiJNI.EngineSchedulerMessageListener_handleMessage(swigCPtr, this, EngineSchedulerMessage.getCPtr(mess), mess);
   }
 
   public EngineSchedulerMessageListener() {

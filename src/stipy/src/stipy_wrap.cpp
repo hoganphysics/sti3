@@ -1,0 +1,30 @@
+
+#include "stipy.h"
+
+#include "STIPyServer.h"
+
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
+
+using STI::Python::connect4;
+
+
+
+
+void init_stipy(py::module& m) 
+{
+
+    m.def("connect3", &STI::Python::connect2, "Connect to the STI server");
+    
+    m.def("connect", 
+        py::overload_cast<const std::string&, 
+                        const STI::Device::DeviceID&, 
+                        const std::string&>(&STI::Python::connect), "Connect to the STI server");
+    
+    m.def("add", &add, "A function which adds two numbers");
+
+    m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
+
+
+}
+

@@ -14,7 +14,7 @@ using STI::TNetwork::TParsedShot_i;
 using STI::Network::convert;
 
 
-TParsedShot_i::TParsedShot_i(const std::shared_ptr<STI::Engine::ParsedShot>& shot)
+TParsedShot_i::TParsedShot_i(const std::shared_ptr<STI::Engine::Shot>& shot)
 : localShot(shot)
 {
 }

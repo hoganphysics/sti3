@@ -63,9 +63,9 @@ public class JLocalDevice extends JDevice {
     stiJNI.JLocalDevice_director_connect(this, swigCPtr, true, true);
   }
 
-  public JDeviceEventReceiver getEventReceiver() {
-    long cPtr = stiJNI.JLocalDevice_getEventReceiver(swigCPtr, this);
-    return (cPtr == 0) ? null : new JDeviceEventReceiver(cPtr, true);
+  public JDeviceMessageReceiver getMessageReceiver() {
+    long cPtr = stiJNI.JLocalDevice_getMessageReceiver(swigCPtr, this);
+    return (cPtr == 0) ? null : new JDeviceMessageReceiver(cPtr, true);
   }
 
   public JEventEngineScheduler getEngineScheduler() {

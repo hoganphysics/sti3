@@ -13,7 +13,7 @@ namespace Engine
 class EventEngineDependencyTree;
 class EventEngine;
 class EngineID;
-class ParsedShot;
+class Shot;
 class EngineJobID;
 class EngineParsingMessage;
 enum class ParsingMessageType;
@@ -40,7 +40,7 @@ public:
     virtual bool getEngine(std::shared_ptr<EventEngine>& eventEngine) const  = 0;
     virtual void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine)  = 0;
 
-    virtual bool getParsedShot(std::shared_ptr<ParsedShot>& shot) const = 0;
+    virtual bool getParsedShot(std::shared_ptr<Shot>& shot) const = 0;
     virtual bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
 
     virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
