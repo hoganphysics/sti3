@@ -21,6 +21,7 @@
 #include "TimeStamp.h"
 #include "EngineParsingMessage.h"
 
+
 #include <map>
 #include <memory>
 
@@ -57,6 +58,11 @@ using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;
 using STI::TNetwork::TParsedShot_ptr;
 using STI::Engine::Shot;
+using STI::Engine::EngineParsingMessage;
+using STI::TNetwork::TEngineParsingMessage;
+using STI::Engine::ParsingMessageType;
+using STI::TNetwork::TParsingMessageType;
+
 
 //EventEngineDependencyTree
 template<>
@@ -793,5 +799,84 @@ RawEventType STI::Network::convert<TRawEventType, RawEventType>(const TRawEventT
     }
 
     return evtType;
+}
+
+
+//EngineParsingMessage
+template<>
+bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const EngineParsingMessage& parsingMessage, TEngineParsingMessage& tParsingMessage)
+{
+    tParsingMessage.type = convert<ParsingMessageType, TParsingMessageType>(parsingMessage.getType());
+    tParsingMessage.id_code = static_cast<::CORBA::Short>(parsingMessage.getID());
+    convert<std::string, ::CORBA::String_member>(parsingMessage.getName(), tParsingMessage.name);
+    convert<std::string, ::CORBA::String_member>(parsingMessage.getMessage(), tParsingMessage.message);
+    convert<RawEvent, TRawEvent>(parsingMessage.events, tParsingMessage.events);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TEngineParsingMessage, EngineParsingMessage>(const TEngineParsingMessage& tParsingMessage, EngineParsingMessage& parsingMessage)
+{
+    EngineParsingMessage newMessage(
+            convert<TParsingMessageType, ParsingMessageType>(tParsingMessage.type),
+            static_cast<unsigned>(tParsingMessage.id_code),
+            convert<::CORBA::String_member, std::string>(tParsingMessage.name)
+            );
+    parsingMessage = newMessage;
+
+    parsingMessage.appendMessage( convert<::CORBA::String_member, std::string>(tParsingMessage.message) );
+
+    convert<TRawEvent, RawEvent>(tParsingMessage.events, parsingMessage.events);
+
+    return true;
+}
+
+//ParsingMessageType
+template<>
+TParsingMessageType STI::Network::convert<ParsingMessageType, TParsingMessageType>(const Engine::ParsingMessageType& messType)
+{
+    TParsingMessageType tMessType;
+
+    switch (messType)
+    {
+    case ParsingMessageType::Error:
+        tMessType = TParsingMessageType::ParsingError;
+        break;
+    case ParsingMessageType::Warning:
+        tMessType = TParsingMessageType::ParsingWarning;
+        break;
+    case ParsingMessageType::Information:
+        tMessType = TParsingMessageType::ParsingInformation;
+        break;
+    default:
+        tMessType = TParsingMessageType::ParsingError;
+        break;
+    }
+
+    return tMessType;
+}
+
+template<>
+ParsingMessageType STI::Network::convert<TParsingMessageType, ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType)
+{
+    ParsingMessageType messType;
+
+    switch (tMessType)
+    {
+    case TParsingMessageType::ParsingError:
+        messType = ParsingMessageType::Error;
+        break;
+    case TParsingMessageType::ParsingWarning:
+        messType = ParsingMessageType::Warning;
+        break;
+    case TParsingMessageType::ParsingInformation:
+        messType = ParsingMessageType::Information;
+        break;
+    default:
+        messType = ParsingMessageType::Error;
+        break;
+    }
+
+    return messType;
 }
 

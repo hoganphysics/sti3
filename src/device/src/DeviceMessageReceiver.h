@@ -48,6 +48,9 @@ public:
 		case DeviceMessageType::EngineScheduler:
 			success = getListenerGroup(sourceDeviceID, engineSchedulerListeners, listenerGroup);
 			break;
+		case DeviceMessageType::EngineParser:
+			success = getListenerGroup(sourceDeviceID, engineParserListeners, listenerGroup);
+			break;
 		}
 
 		if (success) {
@@ -159,6 +162,7 @@ private:
 	ListenerGroupMap<ChannelUpdateDeviceMessage> channelUpdateListeners;
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
+	ListenerGroupMap<EngineSchedulerMessage> engineParserListeners;
 	//...
 
 	/**

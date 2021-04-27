@@ -13,6 +13,7 @@
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
+#include "EngineParsingMessage.h"
 
 #include <memory>
 
@@ -70,6 +71,7 @@ void TEventEngineScheduler_i::play(const ::STI::TNetwork::TShotID& shotID)
 void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets, 
                         TEventEngineDependencyTree& tree, 
                         TDeviceIDSeq& missingTargets, 
+						::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
                         const TDeviceTrace& trace)
 {
     if (engineScheduler != 0) {
@@ -83,15 +85,28 @@ void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets,
         convert<TDeviceID, DeviceID>(missingTargets, missingIDs);
         convert<TDeviceID, DeviceID>(evtTargets, targetIDs);
 
-		engineScheduler->getDependants(targetIDs, dependencyTree, missingIDs, convert<TDeviceTrace, DeviceTrace>(trace));
+		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
+		//convert<::STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(messages, generatedMessages);
+
+		engineScheduler->getDependants(targetIDs, dependencyTree, missingIDs, generatedMessages, convert<TDeviceTrace, DeviceTrace>(trace));
 
 		//convert out values
 		convert<STI::Engine::EventEngineDependencyTree, TEventEngineDependencyTree>(dependencyTree, tree);
         convert<DeviceID, TDeviceID>(missingIDs, missingTargets);
+		
+		
+		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
+
+		if (convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
+
+			messages = tEngineParsingMessageSeq_var.out();
+		}
 	}
 }
 
 void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& tree, 
+													::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
                                                     const TDeviceTrace& trace)
 {
     if (engineScheduler != 0) {
@@ -100,10 +115,20 @@ void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& 
 		STI::Engine::EventEngineDependencyTree dependencyTree;
 		convert<TEventEngineDependencyTree, STI::Engine::EventEngineDependencyTree>(tree, dependencyTree);
 
-		engineScheduler->addDeviceEventTargets(dependencyTree, convert<TDeviceTrace, DeviceTrace>(trace));
+		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
+
+		engineScheduler->addDeviceEventTargets(dependencyTree, generatedMessages, convert<TDeviceTrace, DeviceTrace>(trace));
 
         //convert out values
 		convert<STI::Engine::EventEngineDependencyTree, TEventEngineDependencyTree>(dependencyTree, tree);
+
+		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
+		
+		if (convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
+
+			messages = tEngineParsingMessageSeq_var.out();
+		}
 	}
 }
 

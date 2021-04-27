@@ -27,9 +27,14 @@ public:
     void getDependants(const ::STI::TNetwork::TDeviceIDSeq& evtTargets, 
                         ::STI::TNetwork::TEventEngineDependencyTree& tree, 
                         ::STI::TNetwork::TDeviceIDSeq& missingTargets, 
+                        ::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
                         const ::STI::TNetwork::TDeviceTrace& trace);
+    
+    void addDeviceEventTargets(::STI::TNetwork::TEventEngineDependencyTree& tree, 
+                                ::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
+                                const ::STI::TNetwork::TDeviceTrace& trace);
 
-    void addDeviceEventTargets(::STI::TNetwork::TEventEngineDependencyTree& tree, const ::STI::TNetwork::TDeviceTrace& trace);
+
 
     //void addJob(::STI::TNetwork::TEventEngineJob_ptr newJob);
     void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);

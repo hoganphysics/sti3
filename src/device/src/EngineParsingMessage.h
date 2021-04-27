@@ -37,13 +37,16 @@ public:
         return appendMessage(STI::Utils::valueToString(message));
 	}
 
+    //Fix this; exposed to help with conversion
+	std::vector<RawEvent> events;
+
 private:
 
     ParsingMessageType type;
 	unsigned id_code;
 	std::string name;
 	std::string message_;
-	std::vector<RawEvent> events;
+
 
 };
 

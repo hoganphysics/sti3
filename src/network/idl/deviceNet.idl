@@ -165,9 +165,9 @@ module TNetwork
 	    void play(in TShotID shotID);
 
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
-                                inout TDeviceIDSeq missingTargets, in TDeviceTrace trace);
+                                inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
-    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, in TDeviceTrace trace);
+    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);

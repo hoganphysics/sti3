@@ -6,6 +6,7 @@
 #include "RawEvent.h"
 #include "EngineJobID.h"
 #include "GroupableMessage.h"
+#include "EngineParsingMessage.h"
 
 #include <sstream>
 
@@ -188,29 +189,41 @@ public:
 
 };
 
-class STIParsingMessage
-{
-public:
+// class STIParsingMessage
+// {
+// public:
 
-	//errors, warnings
-	//status
+// 	//errors, warnings
+// 	//status
 
-	enum class ParserMessageType { Error, Warning, Information };
+// 	enum class ParsingMessageType { Error, Warning, Information };
 
-	unsigned id_code;
-	std::string name;
-	std::string message;
-	std::vector<STI::Engine::RawEvent> events;
-};
+// 	ParsingMessageType type;
+
+// 	unsigned id_code;
+// 	std::string name;
+// 	std::string message;
+// 	std::vector<STI::Engine::RawEvent> events;
+// };
 
 class EngineParserDeviceMessage : public DeviceMessage
 {
 public:
 
+	EngineParserDeviceMessage(const STI::Device::DeviceID& source, const STI::Engine::ParseID& parseID) 
+	: DeviceMessage(source, DeviceMessageType::EngineParser), pid(parseID)
+	{
+	}
+
+	void addParseMessage(const STI::Engine::EngineParsingMessage& message)
+	{
+		messages.push_back(message);
+	}
+
 	//errors, warnings
 	//status
 	STI::Engine::ParseID pid;
-	std::vector<STIParsingMessage> messages;
+	std::vector<STI::Engine::EngineParsingMessage> messages;
 
 };
 

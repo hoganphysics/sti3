@@ -32,6 +32,9 @@ class EngineID;
 class EngineJobID;
 //class EventEngineJobType;
 
+class EngineParsingMessage;
+enum class ParsingMessageType;
+
 } //Engine
 
 //EventEngineDependencyTree
@@ -171,6 +174,18 @@ TNetwork::TEngineJobSourceID Network::convert<Engine::EngineJobSourceID, TNetwor
 template<>
 Engine::EngineJobSourceID Network::convert<TNetwork::TEngineJobSourceID, Engine::EngineJobSourceID>(const TNetwork::TEngineJobSourceID& tJobSourceID);
 
+
+//EngineParsingMessage
+template<>
+bool Network::convert<Engine::EngineParsingMessage, TNetwork::TEngineParsingMessage>(const Engine::EngineParsingMessage& parsingMessage, TNetwork::TEngineParsingMessage& tParsingMessage);
+template<>
+bool Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage, Engine::EngineParsingMessage& parsingMessage);
+
+//ParsingMessageType
+template<>
+TNetwork::TParsingMessageType Network::convert<Engine::ParsingMessageType, TNetwork::TParsingMessageType>(const Engine::ParsingMessageType& messType);
+template<>
+Engine::ParsingMessageType Network::convert<TNetwork::TParsingMessageType, Engine::ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType);
 
 
 } //STI

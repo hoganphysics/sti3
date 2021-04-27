@@ -71,6 +71,17 @@ Device::EngineSchedulerMessage::SchedulerMessageType Network::convert<TNetwork::
 
 
 
+//EngineParserDeviceMessage
+template<>
+bool Network::convert<TNetwork::TEngineParserDeviceMessage, std::shared_ptr<Device::EngineParserDeviceMessage>>(
+	const TNetwork::TEngineParserDeviceMessage& tMessage, std::shared_ptr<Device::EngineParserDeviceMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::EngineParserDeviceMessage>, TNetwork::TEngineParserDeviceMessage>(
+	const std::shared_ptr<Device::EngineParserDeviceMessage>& deviceMessage, TNetwork::TEngineParserDeviceMessage& tMessage);
+
+
+
+
 
 } //STI
 

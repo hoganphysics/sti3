@@ -174,6 +174,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	clear();
 
 	if (!setState(EngineState::Parsing)) {
+		setState(EngineState::Error);
 		return;
 	}
 
@@ -183,6 +184,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		//Error: no parsed shot
         job.addMessage(ParsingMessageType::Error, 20, "Missing shot")
             << "Parsing aborted: The submited EventEngineJob has a null ParsedShot. There are no events to parse.";
+		setState(EngineState::Error);
 		return;
 	}
     if (!job.getDependencies(dependencyTree)) {
@@ -190,6 +192,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		job.addMessage(ParsingMessageType::Error, 21, "Missing dependency graph")
             << "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
 			<< "Cannot proceed without the event target dependency graph.";
+		setState(EngineState::Error);
 		return;
 	}
 
@@ -208,6 +211,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		job.addMessage(ParsingMessageType::Error, 22, "Null event vector")
             << "Parsing aborted: The submited EventEngineJob has a null RawEventVector. "
 			<< "There are no events to parse.";
+		setState(EngineState::Error);
 	}
 	
 
@@ -253,34 +257,51 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	//Note that ownedTargets is only modified during the previous while loop,
 	//so from now on it is a static list of the owned devices of this device.
 
+	// //Wait for all owned target devices to reach Parsed state
+	// if (ownedTargets.size() > 0) {
+	// 	// This device is a server; wait for owned devices to send Parsed messages
+	// 	while (isState(EngineState::Parsing)) {
+			
+	// 		//When an owned device finishes parsing, it sends this device a message and will be added to parsedOwnedTargets
+	// 		if (parsedOwnedTargets.size() == ownedTargets.size()) {
+	// 			if (!setState(EngineState::Parsed)) {
+	// 				setState(EngineState::Error);
+	// 			}
+	// 		}
+	// 		else {
+	// 			parseCondition.wait(parseLock);
+	// 		}
+	// 	}
+	// }
+	// else {
+	// 	// Non-server device
+	// 	if (!setState(EngineState::Parsed)) {
+	// 		setState(EngineState::Error);
+	// 		//error
+	// 	}
+	// }
+
 	//Wait for all owned target devices to reach Parsed state
 	if (ownedTargets.size() > 0) {
-		// This device is a server; wait for owned devices to send Parsed messages
-		while (isState(EngineState::Parsing)) {
-			
-			//When an owned device finishes parsing, it sends this device a message and will be added to parsedOwnedTargets
-			if (parsedOwnedTargets.size() == ownedTargets.size()) {
-				if (!setState(EngineState::Parsed)) {
-					setState(EngineState::Error);
-				}
-			}
-			else {
-				parseCondition.wait(parseLock);
-			}
-		}
-	}
-	else {
-		// Non-server device
-		if (!setState(EngineState::Parsed)) {
-			setState(EngineState::Error);
-			//error
+		// This device is a server; wait for owned devices to send Parsed messages.
+		// When an owned device finishes parsing, it sends this device a message and will be added to parsedOwnedTargets
+		while (isState(EngineState::Parsing) && parsedOwnedTargets.size() != ownedTargets.size()) {
+			parseCondition.wait(parseLock);
 		}
 	}
 
 
 	//TODO:  Parse errors and warnings
+	auto& localErrors = parser.getErrors();
 
+	if (localErrors.size() > 0 ) {	//|| job.hasErrors()
+		setState(EngineState::Error);
+	}
 
+	if (!setState(EngineState::Parsed)) {
+		setState(EngineState::Error);
+		//error
+	}
 
 	// Send message upstream indicating that this device (and all owned devices) has finished
 	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
@@ -309,6 +330,12 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 			//successfully parsed
 			mergePartnerEvents(parser.partnerEvents);
 		}
+
+		auto& localErrors = parser.getErrors();
+
+		// for (auto& err : localErrors) {
+		// 	job.addMessage(ParsingMessageType::Error, 1, "Parsing Error") << err.messageText();
+		// }
 
 		//temp!  Send event?  Must send event (with errors) upstream to client
 		localSubtree->removeNode(localDeviceID);

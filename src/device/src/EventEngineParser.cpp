@@ -12,6 +12,8 @@
 #include "MixedValue.h"
 
 #include "EngineParsingError.h"
+#include "EngineParsingMessage.h"
+
 #include "DeviceID.h"
 
 #include <set>
@@ -26,7 +28,7 @@ using STI::Utils::MixedValueType;
 using STI::Utils::MixedValue;
 using std::endl;
 using STI::Device::Channel;
-
+using STI::Engine::EngineParsingMessage;
 
 EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
 	: engine(engine), deviceParser(deviceParser)
@@ -37,11 +39,17 @@ EventEngineParser::~EventEngineParser()
 {
 }
 
+const std::vector<STI::Engine::EngineParsingError>& EventEngineParser::getErrors() const
+{
+	return errors;
+}
+
 bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents)
 {
 	bool success = true;
 
 	errors.clear();
+	messages.clear();
 
 	success = groupEventsByTime(events);
 
@@ -99,6 +107,12 @@ bool EventEngineParser::groupEventsByTime(const STI::Engine::RawEventVector& eve
 	return success;
 }
 
+EngineParsingMessage& EventEngineParser::addParsingError(unsigned id, const std::string& name)
+{
+    messages.emplace_back(ParsingMessageType::Error, id, name);
+    return messages.back();
+}
+
 bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
 {
 	bool success = true;
@@ -116,6 +130,16 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 		//Missing channel
 		success = false;
 		errorCount++;
+
+		(addParsingError(1, "Missing Channel") 
+			<< "Error: Channel #" << rawEvent.channel()
+			<< " is not defined on this device. \n")
+			.addEvent(rawEvent);
+		
+		messages.push_back(EngineParsingMessage(ParsingMessageType::Error, 1, "Missing Channel"));
+		messages.back() << "Error: Channel #" << rawEvent.channel()
+			<< " is not defined on this device. \n";
+		messages.back().addEvent(rawEvent);
 
 		//Error: Channel #24 is not defined on this device. Event trace:
 		errors.push_back(EngineParsingError(engine->getDeviceID()));

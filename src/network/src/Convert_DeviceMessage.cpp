@@ -29,6 +29,11 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Device::EngineSchedulerMessage;
 using STI::TNetwork::TSchedulerMessageType;
 
+using STI::Device::EngineParserDeviceMessage;
+using STI::TNetwork::TEngineParserDeviceMessage;
+
+using STI::Engine::ParseID;
+using STI::TNetwork::TParseID;
 
 template<>
 TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(const DeviceMessageType& type)
@@ -214,6 +219,9 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 	case DeviceMessageType::EngineScheduler:
 		success = convertMessage<EngineSchedulerMessage, TEngineSchedulerMessage>(deviceMessage, tAnyMessage);
 		break;
+	case DeviceMessageType::EngineParser:
+		success = convertMessage<EngineParserDeviceMessage, TEngineParserDeviceMessage>(deviceMessage, tAnyMessage);
+		break;
 	}
 
 
@@ -259,9 +267,10 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 		//}
 		break;
 	case TDeviceMessageType::MessageEngineScheduler:
-
 		success = extractMessage<TEngineSchedulerMessage, EngineSchedulerMessage>(tAnyMessage.mess, deviceMessage);
-
+		break;
+	case TDeviceMessageType::MessageEngineParser:
+		success = extractMessage<TEngineParserDeviceMessage, EngineParserDeviceMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	}
 
@@ -405,5 +414,31 @@ EngineSchedulerMessage::SchedulerMessageType STI::Network::convert<TSchedulerMes
 	return type;
 }
 
+
+
+//EngineParserDeviceMessage
+template<>
+bool STI::Network::convert<TEngineParserDeviceMessage, std::shared_ptr<EngineParserDeviceMessage>>(
+	const TEngineParserDeviceMessage& tMessage, std::shared_ptr<EngineParserDeviceMessage>& deviceMessage)
+{
+	// STI::Engine::ParseID pid;
+	// std::vector<STI::Engine::EngineParsingMessage> messages;
+
+	deviceMessage->pid = convert<TParseID, ParseID>(tMessage.pid);
+
+	convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+	return true;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EngineParserDeviceMessage>, TEngineParserDeviceMessage>(
+	const std::shared_ptr<EngineParserDeviceMessage>& deviceMessage, TEngineParserDeviceMessage& tMessage)
+{
+	tMessage.pid = convert<ParseID, TParseID>(deviceMessage->pid);
+	
+	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+	
+	return true;
+}
 
 

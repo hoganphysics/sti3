@@ -21,6 +21,7 @@ namespace Engine
 
 class EngineParsingError;
 class LocalEventEngine;
+class EngineParsingMessage;
 
 class EventEngineParser
 {
@@ -34,6 +35,10 @@ public:
 
 	RawEventMap rawEvents;
 	DeviceEventMap partnerEvents;
+
+	EngineParsingMessage& addParsingError(unsigned id, const std::string& name);
+
+	const std::vector<EngineParsingError>& getErrors() const;
 
 private:
 
@@ -59,6 +64,7 @@ private:
 	bool maxErrorCheck(unsigned errorCount, unsigned maxErrors);
 
 	std::vector<EngineParsingError> errors;
+	std::vector<EngineParsingMessage> messages;
 
 	LocalEventEngine* engine;
 	DeviceEventParser* deviceParser;

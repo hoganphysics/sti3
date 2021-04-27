@@ -23,10 +23,13 @@ public:
     void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::Shot>& shot);
     void play(const STI::Engine::ShotID& shotID);
 
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
     
-    void addDeviceEventTargets(STI::Engine::EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
+                                std::set<STI::Device::DeviceID>& missingTargets, std::vector<STI::Engine::EngineParsingMessage>& messages, 
+                                const STI::Device::DeviceTrace& trace);
+
+    void addDeviceEventTargets(STI::Engine::EventEngineDependencyTree& tree, 
+                                std::vector<STI::Engine::EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
     
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
     void cancelJob(const STI::Engine::EngineJobID& jobID);
