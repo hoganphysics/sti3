@@ -19,6 +19,7 @@
 #include "utils/GraphPathLabel.h"
 #include "EventEngine.h"
 #include "TimeStamp.h"
+#include "EngineParsingMessage.h"
 
 #include <map>
 #include <memory>
@@ -483,7 +484,7 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
-        
+        {
         if (!CORBA::is_nil(tEngineJob.shot)) {
             parsedShot = std::make_shared<STI::Network::RemoteParsedShot>(tEngineJob.shot);
         }
@@ -491,9 +492,14 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
         tree = std::make_shared<EventEngineDependencyTree>();
         convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
-		engineJob = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot, tree,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner),
-			missingTargets);
+		auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
+			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
+			);
+        
+        job->setDependencies(tree);
+        job->setMissingTargets(missingTargets);
+        engineJob = job;
+        }
         break;
 	case EventEngineJobType::Play:
 		engineJob = std::make_shared<LocalEventEngineJob>(jobID,

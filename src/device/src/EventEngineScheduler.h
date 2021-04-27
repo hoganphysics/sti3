@@ -19,6 +19,7 @@ class ParseID;
 class EngineJobID;
 class EventEngineFactory;
 class ShotID;
+class EngineParsingMessage;
 
 class EventEngineScheduler
 {
@@ -30,9 +31,10 @@ public:
     virtual void play(const ShotID& shotID) = 0;
 
     virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace) = 0;
+                                std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                                const STI::Device::DeviceTrace& trace) = 0;
     
-    virtual void addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace) = 0;
+    virtual void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace) = 0;
     
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;

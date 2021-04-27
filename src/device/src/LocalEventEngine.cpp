@@ -20,7 +20,7 @@
 #include "LocalParsedShot.h"
 #include "EventEngineJob.h"
 #include "EngineJobID.h"
-
+#include "EngineParsingMessage.h"
 
 #include <memory>
 #include <thread>
@@ -181,10 +181,15 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
     if (!job.getParsedShot(parsedShot)) {
 		//Error: no parsed shot
+        job.addMessage(ParsingMessageType::Error, 20, "Missing shot")
+            << "Parsing aborted: The submited EventEngineJob has a null ParsedShot. There are no events to parse.";
 		return;
 	}
     if (!job.getDependencies(dependencyTree)) {
 		//Error: no tree
+		job.addMessage(ParsingMessageType::Error, 21, "Missing dependency graph")
+            << "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
+			<< "Cannot proceed without the event target dependency graph.";
 		return;
 	}
 
@@ -200,6 +205,9 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	}
 	else {
 		//Error: null event vector
+		job.addMessage(ParsingMessageType::Error, 22, "Null event vector")
+            << "Parsing aborted: The submited EventEngineJob has a null RawEventVector. "
+			<< "There are no events to parse.";
 	}
 	
 
@@ -222,6 +230,10 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 			if (!localSubtree->getDependentNodeCount(*nextID, dependencyCount)) {
 				//Error; Could not get dependency count (?)
+				job.addMessage(ParsingMessageType::Error, 23, "Dependency count failed")
+					<< "Failed to get dependency count for device '" << nextID->getID()
+					<< "'. The device was not found in the dependency graph. "
+					<< "This should not happen and likely indicates a bug in the STI library.";
 			}
 
 			if (dependencyCount == 0) {

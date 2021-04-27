@@ -59,7 +59,13 @@ namespace Utils
 	template<class T>
 	bool compare_unique_ptr(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b)
 	{
-		return (*a) < (*b);
+		if (a != 0 && b != 0) {
+			return (*a) < (*b);
+		}
+		else if (b != 0) {
+			return true;	//a == 0, b != 0 implies a < b
+		}
+		return false;		//either a != 0 and b == 0, implying a > b, or both are null
 	}
 
 } //Utils

@@ -78,10 +78,14 @@ public:
     void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot);        //local; add event to queue
     void play(const ShotID& shotID);
 
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace);
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
+                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                        const STI::Device::DeviceTrace& trace);
     
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, std::set<STI::Device::DeviceID>& missingTargets, unsigned maxRecursions);
-    void addDeviceEventTargets(EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
+                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                        unsigned maxRecursions);
+    void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
 
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
     void cancelJob(const EngineJobID& jobID);
@@ -132,7 +136,7 @@ private:
 
 
     void getPartnerDeviceDependants(const STI::Device::DeviceID& partnerID, const std::set<STI::Device::DeviceID>& targets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingIDs, const STI::Device::DeviceTrace& trace);
+                                std::set<STI::Device::DeviceID>& missingIDs, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
 
     //void findMissingTarget(const std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     
