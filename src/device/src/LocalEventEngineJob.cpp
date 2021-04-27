@@ -28,17 +28,11 @@ using STI::Engine::ParsingMessageType;
 
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
-<<<<<<< HEAD
-                                         const std::shared_ptr<ParsedShot>& shot,
-                                         const STI::Device::DeviceID& owner)
-: parsedShot(shot), jobOwner(owner)
-=======
                                          const std::shared_ptr<Shot>& shot,
                                          const std::shared_ptr<EventEngineDependencyTree>& tree, 
                                          const STI::Device::DeviceID& owner, 
                                          const std::set<STI::Device::DeviceID>& missingTargets)
 : parsedShot(shot), dependencies(tree), jobOwner(owner)
->>>>>>> python
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 

@@ -30,15 +30,10 @@ public:
 
     //Parse jobs
     LocalEventEngineJob(const ParseID& parseID, 
-<<<<<<< HEAD
-                        const std::shared_ptr<ParsedShot>& shot,
-                        const STI::Device::DeviceID& owner);
-=======
                         const std::shared_ptr<Shot>& shot,
                         const std::shared_ptr<EventEngineDependencyTree>& tree, 
                         const STI::Device::DeviceID& owner, 
                         const std::set<STI::Device::DeviceID>& missingTargets);
->>>>>>> python
 
     //Play jobs
     LocalEventEngineJob(const EngineJobID& id, 
