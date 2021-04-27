@@ -35,6 +35,23 @@
         },
         {
 			"type": "shell",
+			"label": "CMake config",
+			"command": "cmake",
+			"args": [
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build", 
+				"env": {
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+        {
+			"type": "shell",
 			"label": "CMake build",
 			"command": "cmake",
 			"args": [

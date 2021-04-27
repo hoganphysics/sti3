@@ -43,12 +43,11 @@ public:
 
     std::shared_ptr<STIPySeq> makesequence(pybind11::object func);
 
-
     ParseTicket parse(const std::shared_ptr<STIPyShot>& shot);
     ParseTicket parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels);
     ParseTicket parse(const std::vector<ParseTicket>& tickets);  //combining multiple servers
 
-
+    ResultTicket play(const ParseTicket& ticket);
     ResultTicket play(const ParseTicket& ticket, unsigned repeats);
     ResultTicket play(const STI::Engine::ParseID& parseID, unsigned repeats);
 

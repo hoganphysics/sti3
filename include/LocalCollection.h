@@ -65,6 +65,7 @@ public:
 	~LocalCollection() {}
 	
 	void addListener(const typename LocalCollectionListener<ID>::_ptr& listener) { nodes.addListener(listener); }
+	void setPolicy(const LocalCollectionPolicy_ptr& policy) { nodes->setPolicy(policy); }
 
 	template<typename D>
 	bool add(const ID& id, const std::shared_ptr<D>& node)		//add derived types that satisfy class D : public T.

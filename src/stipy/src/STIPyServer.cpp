@@ -8,6 +8,7 @@
 #include "ShotID.h"
 
 #include <memory>
+#include <iostream>
 
 using STI::Python::STIPyServer;
 using STI::Python::STIPyShot;
@@ -58,36 +59,59 @@ std::shared_ptr<STIPySeq> STIPyServer::makesequence(pybind11::object func)
 
 ParseTicket STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot)
 {
+
+    STI::Engine::ParseID pid;
+    pid.parseTimestamp.timestamp = 1.1;
+    
+    ParseTicket ticket(pid);
+    // return ticket;
+
     std::shared_ptr<STI::Device::Device> server;
     libDevice->getServer(server);
+
+    if (server == 0) {
+        std::cout << "null server" << std::endl;
+        return ticket;
+    }
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     server->getEngineScheduler(scheduler);
 
-    STI::Engine::ParseID pid;
 
-    scheduler->parse(pid, shot);
 
-    ParseTicket ticket;
+    if (scheduler != 0)
+        scheduler->parse(pid, shot);
+
+    // ParseTicket ticket;
     return ticket;
 }
 
 ParseTicket STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels)
 {
-    ParseTicket ticket;
+    STI::Engine::ParseID pid;
+    pid.parseTimestamp.timestamp = 1.1;
+    
+    ParseTicket ticket(pid);
     return ticket;
 }
 
 ParseTicket STIPyServer::parse(const std::vector<ParseTicket>& tickets)
 {
-    ParseTicket ticket;
+    STI::Engine::ParseID pid;
+    pid.parseTimestamp.timestamp = 1.1;
+    
+    ParseTicket ticket(pid);
     return ticket;
+}
+
+ResultTicket STIPyServer::play(const ParseTicket& ticket)
+{
+    return play(ticket, 0);
 }
 
 ResultTicket STIPyServer::play(const ParseTicket& ticket, unsigned repeats)
 {
-    ResultTicket results;
-    return results;
+    return play(ticket.getParseID(), repeats);
 }
 
 ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
@@ -100,6 +124,7 @@ ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned rep
 
     STI::Engine::ShotID sid;
     sid.parseID = parseID;
+    sid.submissionTime.timestamp = 3.1;
 
     scheduler->play(sid);
 

@@ -51,6 +51,7 @@ private:
     //STIPyServer id reference, so append points to the right server
     STIPyServer* server;
     
+    
     mutable std::mutex eventMutex;
     unsigned eventNumber;
     std::shared_ptr<std::vector<STI::Engine::RawEvent>> events;

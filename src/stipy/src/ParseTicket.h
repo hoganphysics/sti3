@@ -2,6 +2,7 @@
 #ifndef STI_PYTHON_PARSETICKET_H
 #define STI_PYTHON_PARSETICKET_H
 
+#include "ParseID.h"
 
 #include <string>
 
@@ -19,7 +20,7 @@ class ParseTicket
 {
 public:
 
-    ParseTicket();
+    ParseTicket(const STI::Engine::ParseID& id);
 
     ResultTicket play();
     ResultTicket play(unsigned repeats);
@@ -27,8 +28,11 @@ public:
     ParseTicket& wait();    //blocks until parse completes; returns this for chaining
     void cancel();   //cancels parse and stops wait()
 
+    const STI::Engine::ParseID& getParseID() const;
+
 private:
 
+    STI::Engine::ParseID pid;
 
 };
 

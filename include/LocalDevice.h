@@ -91,6 +91,7 @@ private:
 
 
 	void addEventTarget(const STI::Device::DeviceID& id);
+	virtual bool isEventTarget(const DeviceID& id);
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>
 	{
@@ -106,6 +107,7 @@ private:
 
 	friend DeviceCollectionPolicy;
 	bool isPartnerDevice(const DeviceID& id);
+	bool isTargetServerOf(const DeviceID& id);
 
 	DeviceID id;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices

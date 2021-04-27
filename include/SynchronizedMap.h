@@ -129,10 +129,10 @@ public:
 	//	setPolicy(defaultPolicy);
 	//}
 //	SynchronizedMap(KeyPolicy_ptr Policy) : policy(defaultPolicy) { setPolicy(Policy); }
-	SynchronizedMap(KeyPolicy_ptr Policy);	// : SynchronizedMap() { setPolicy(Policy); }
+	SynchronizedMap(const KeyPolicy_ptr& Policy);	// : SynchronizedMap() { setPolicy(Policy); }
 	virtual ~SynchronizedMap(); // { }
 
-	void setPolicy(KeyPolicy_ptr Policy);
+	void setPolicy(const KeyPolicy_ptr& Policy);
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener);
 
 	bool contains(const Key& key) const;
@@ -188,7 +188,7 @@ STI::Utils::SynchronizedMap<Key, T>::SynchronizedMap()
 }
 
 template<class Key, class T>
-STI::Utils::SynchronizedMap<Key, T>::SynchronizedMap(KeyPolicy_ptr Policy) 
+STI::Utils::SynchronizedMap<Key, T>::SynchronizedMap(const KeyPolicy_ptr& Policy) 
 { 
 	setPolicy(Policy);
 }
@@ -199,7 +199,7 @@ STI::Utils::SynchronizedMap<Key, T>::~SynchronizedMap()
 }
 
 template<class Key, class T>
-void STI::Utils::SynchronizedMap<Key, T>::setPolicy(KeyPolicy_ptr Policy)
+void STI::Utils::SynchronizedMap<Key, T>::setPolicy(const KeyPolicy_ptr& Policy)
 {
 	std::unique_lock< std::mutex > writeLock(mapMutex);
 	if (Policy != 0)

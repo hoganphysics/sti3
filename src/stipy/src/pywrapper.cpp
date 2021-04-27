@@ -13,6 +13,8 @@ void init_STIPyDevice(py::module& m);
 void init_STIPyChannel(py::module& m);
 void init_STIPyShot(py::module& m);
 void init_STIPyServer(py::module& m);
+void init_ParseTicket(py::module& m);
+void init_ResultTicket(py::module& m);
 
 PYBIND11_MODULE(stipy, m) {
 
@@ -30,7 +32,10 @@ PYBIND11_MODULE(stipy, m) {
     init_STIPyChannel(m);
     init_STIPyShot(m);
     init_STIPyServer(m);
-    
+
+    init_ParseTicket(m);
+    init_ResultTicket(m);
+
     //init_DeviceID(m);
 
 }

@@ -42,6 +42,8 @@ pybind11_add_module(stipy
     STIPyDevice_wrap.cpp
     STIPyChannel_wrap.cpp
     STIPyServer_wrap.cpp
+    ParseTicket_wrap.cpp
+    ResultTicket_wrap.cpp
     ${STIDEVICEPY_DIR}/MixedValuePy.cpp
     ${STIDEVICEPY_DIR}/DeviceID_wrap.cpp
 )

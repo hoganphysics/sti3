@@ -42,7 +42,11 @@ add_library(stidevice SHARED
     utils.cpp
 )
 
-set_target_properties(stidevice PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(stidevice PROPERTIES 
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE ON    
+)
+# set_property(TARGET STIServer PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(stidevice PROPERTIES
     VERSION ${PROJECT_VERSION}

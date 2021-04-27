@@ -5,6 +5,8 @@
 #include "MixedValuePy.h"
 #include "STIPyChannel.h"
 
+#include "ParseID.h"
+
 
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
@@ -79,13 +81,23 @@ void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::o
 
 ParseTicket STIPyShot::parse()
 {
-    ParseTicket ticket;
+    STI::Engine::ParseID pid;
+    pid.parseTimestamp.timestamp = 1.1;
+    
+    ParseTicket ticket(pid);
+
+ //   ParseTicket ticket;
     return ticket;
 }
 
 ParseTicket STIPyShot::parse(const pybind11::dict& channels)
 {
-    ParseTicket ticket;
+
+    STI::Engine::ParseID pid;
+    pid.parseTimestamp.timestamp = 1.1;
+    
+    ParseTicket ticket(pid);
+//    ParseTicket ticket;
     return ticket;
 }
 
