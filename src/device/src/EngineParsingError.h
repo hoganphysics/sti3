@@ -38,9 +38,11 @@ public:
 
 	std::string print() const;
 	std::string messageText() const;
+	
+	std::vector<RawEvent> events;
 
 private:
-	std::vector<RawEvent> events;
+	
 	std::string errMessage;
 
 	unsigned errorcode;
