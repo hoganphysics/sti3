@@ -59,6 +59,7 @@ public:
     void setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree);
     void setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets);
 
+    void addMessages(const std::vector<EngineParsingMessage>& messages);
     EngineParsingMessage& addMessage(const EngineParsingMessage& message);
     EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name);
 

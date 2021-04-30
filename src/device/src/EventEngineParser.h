@@ -8,7 +8,7 @@
 
 #include "DeviceEventParser.h"
 #include "utils/GraphPathLabel.h"
-#include "EngineParsingError.h"
+//#include "EngineParsingError.h"
 
 #include <string>
 #include <sstream>
@@ -19,7 +19,7 @@ namespace STI
 namespace Engine
 {
 
-class EngineParsingError;
+//class EngineParsingError;
 class LocalEventEngine;
 class EngineParsingMessage;
 
@@ -36,9 +36,9 @@ public:
 	RawEventMap rawEvents;
 	DeviceEventMap partnerEvents;
 
-	EngineParsingMessage& addParsingError(unsigned id, const std::string& name);
+	EngineParsingMessage& addParsingError(const std::string& name);
 
-	const std::vector<EngineParsingError>& getErrors() const;
+	const std::vector<EngineParsingMessage>& getParsingMessages() const;
 
 private:
 
@@ -63,12 +63,16 @@ private:
 	bool countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);
 	bool maxErrorCheck(unsigned errorCount, unsigned maxErrors);
 
-	std::vector<EngineParsingError> errors;
+	void defineErrorIDs();
+
+//	std::vector<EngineParsingError> errors;
 	std::vector<EngineParsingMessage> messages;
+	bool hasErrors;
 
 	LocalEventEngine* engine;
 	DeviceEventParser* deviceParser;
 
+	std::map<std::string, unsigned> errorIDs;
 };
 
 

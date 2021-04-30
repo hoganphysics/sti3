@@ -26,6 +26,7 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
 {
     std::shared_ptr<STI::Device::Device> server;
     libDevice->getServer(server);
+
 }
 
 void STIPyServer::setChannels(const pybind11::dict& channels)
@@ -57,13 +58,13 @@ std::shared_ptr<STIPySeq> STIPyServer::makesequence(pybind11::object func)
 }
 
 
-ParseTicket STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot)
+std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot)
 {
 
     STI::Engine::ParseID pid;
     pid.parseTimestamp.timestamp = 1.1;
     
-    ParseTicket ticket(pid);
+    auto ticket = libDevice->makeParseTicket(pid);
     // return ticket;
 
     std::shared_ptr<STI::Device::Device> server;
@@ -86,21 +87,21 @@ ParseTicket STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot)
     return ticket;
 }
 
-ParseTicket STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels)
+std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels)
 {
     STI::Engine::ParseID pid;
     pid.parseTimestamp.timestamp = 1.1;
     
-    ParseTicket ticket(pid);
+    auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
 }
 
-ParseTicket STIPyServer::parse(const std::vector<ParseTicket>& tickets)
+std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& tickets)
 {
     STI::Engine::ParseID pid;
     pid.parseTimestamp.timestamp = 1.1;
     
-    ParseTicket ticket(pid);
+    auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
 }
 

@@ -2,6 +2,7 @@
 #define STI_ENGINE_ENGINEPARSINGMESSAGE_H
 
 #include "utils.h"
+#include "DeviceID.h"
 
 #include <string>
 #include <vector>
@@ -19,11 +20,13 @@ class EngineParsingMessage
 {
 public:
 
-    EngineParsingMessage(const ParsingMessageType& type, unsigned id, const std::string& name);
+    EngineParsingMessage(const STI::Device::DeviceID& source, 
+                            const ParsingMessageType& type, unsigned id, const std::string& name);
     ~EngineParsingMessage();
 
     ParsingMessageType getType() const;
-    unsigned getID() const;
+    unsigned getIDCode() const;
+    STI::Device::DeviceID getID() const;
     const std::string& getName() const;
     const std::string& getMessage() const;
     const std::vector<RawEvent>& getEvents() const;
@@ -42,6 +45,7 @@ public:
 
 private:
 
+    STI::Device::DeviceID sourceID;
     ParsingMessageType type;
 	unsigned id_code;
 	std::string name;

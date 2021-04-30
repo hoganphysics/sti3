@@ -50,6 +50,7 @@
         "forward_list": "cpp",
         "unordered_set": "cpp",
         "cinttypes": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "set": "cpp"
     }
 }

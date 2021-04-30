@@ -162,6 +162,8 @@ ParseReserve:  Ready, Not ready
 
 */
 
+//should rename this EngineParserMessage
+//EngineSchedulerMessage should deal with requesting parse/play across network
 class EngineSchedulerMessage : public DeviceMessage
 {
 public:
@@ -187,6 +189,7 @@ public:
 	std::vector<STI::Engine::RawEvent> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
 	std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 
+	std::vector<STI::Engine::EngineParsingMessage> messages;
 };
 
 // class STIParsingMessage

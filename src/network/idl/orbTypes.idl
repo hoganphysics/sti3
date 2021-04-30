@@ -163,6 +163,21 @@ module TNetwork
 	};
 
 
+	enum TParsingMessageType { ParsingError, ParsingWarning, ParsingInformation };
+
+	struct TEngineParsingMessage
+	{
+		TParsingMessageType type;
+
+		TDeviceID sourceID;
+		short id_code;
+		string name;
+		string message;
+		TRawEventSeq events;
+	};
+	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
+
+
 	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerYieldPlay };
 	
 	interface TEventEngine;
@@ -179,21 +194,10 @@ module TNetwork
 
 		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
 		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+		TEngineParsingMessageSeq messages;
 	};
 
-
-	enum TParsingMessageType { ParsingError, ParsingWarning, ParsingInformation };
-
-	struct TEngineParsingMessage
-	{
-		TParsingMessageType type;
-
-		short id_code;
-		string name;
-		string message;
-		TRawEventSeq events;
-	};
-	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
 
 	struct TEngineParserDeviceMessage
 	{

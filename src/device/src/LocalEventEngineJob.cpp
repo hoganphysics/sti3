@@ -121,14 +121,20 @@ void LocalEventEngineJob::setMissingTargets(const std::set<STI::Device::DeviceID
     missingTargetIDs = missingTargets;
 }
 
+void LocalEventEngineJob::addMessages(const std::vector<EngineParsingMessage>& messages)
+{
+    parsingMessages.insert(parsingMessages.end(), messages.begin(), messages.end());
+}
+
 EngineParsingMessage& LocalEventEngineJob::addMessage(const EngineParsingMessage& message)
 {
-    parsingMessages.push_back(std::move(message));
+    parsingMessages.push_back(message);
+    //parsingMessages.push_back(std::move(message));
     return parsingMessages.back();
 }
 
 EngineParsingMessage& LocalEventEngineJob::addMessage(const ParsingMessageType& type, unsigned id, const std::string& name)
 {
-    parsingMessages.emplace_back(type, id, name);
+    parsingMessages.emplace_back(jobOwner, type, id, name);
     return parsingMessages.back();
 }

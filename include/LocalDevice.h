@@ -4,6 +4,7 @@
 #include "Device.h"
 #include "DeviceID.h"
 #include "DeviceCollection.h"
+#include "DeviceMessageListener.h"
 #include "LocalCollection.h"
 #include "fwd/EventEngineScheduler_fwd.h"
 #include "DeviceEventParser.h"
@@ -13,6 +14,7 @@
 #include "MixedValue.h"
 #include <string>
 #include <set>
+
 
 namespace STI
 {
@@ -27,6 +29,7 @@ class LocalChannel;
 class LocalDevice;
 class LocalAttribute;
 class LocalAttributeManager;
+class DeviceMessageListenerID;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -103,7 +106,8 @@ private:
 
 		LocalDevice* localDevice;
 	};
-	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
+		
+	DeviceMessageListenerID schedulerMessageLID;
 
 	friend DeviceCollectionPolicy;
 	bool isPartnerDevice(const DeviceID& id);

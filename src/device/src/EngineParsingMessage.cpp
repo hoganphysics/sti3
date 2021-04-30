@@ -7,8 +7,9 @@ using STI::Engine::ParsingMessageType;
 using STI::Engine::RawEvent;
 
 
-EngineParsingMessage::EngineParsingMessage(const ParsingMessageType& type, unsigned id, const std::string& name)
-: type(type), id_code(id), name(name)
+EngineParsingMessage::EngineParsingMessage(const STI::Device::DeviceID& source, 
+                                            const ParsingMessageType& type, unsigned id, const std::string& name)
+: sourceID(source), type(type), id_code(id), name(name)
 {   
 }
 
@@ -21,7 +22,12 @@ ParsingMessageType EngineParsingMessage::getType() const
     return type;
 }
 
-unsigned EngineParsingMessage::getID() const
+STI::Device::DeviceID EngineParsingMessage::getID() const
+{
+    return sourceID;
+}
+
+unsigned EngineParsingMessage::getIDCode() const
 {
     return id_code;
 }

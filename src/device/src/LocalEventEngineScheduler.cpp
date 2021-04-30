@@ -257,7 +257,7 @@ void LocalEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree&
         }
         else {
             //Warning, event target device not connected
-            messages.emplace_back(ParsingMessageType::Warning, 1001, "Event Target Device Missing");
+            messages.emplace_back(localDevice->getID(), ParsingMessageType::Warning, 1001, "Event Target Device Missing");
             messages.back() 
                 << "Device '" << localDevice->getID().getID() << "' may generate events for target device '"
                 << targetID.getID() << "', but the target device's EventEngineScheduler could not be found " 

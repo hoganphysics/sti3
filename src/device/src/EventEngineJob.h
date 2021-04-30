@@ -4,6 +4,7 @@
 #include "DeviceID.h"
 
 #include <set>
+#include <vector>
 
 namespace STI
 {
@@ -45,6 +46,7 @@ public:
 
     virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
 
+    virtual void addMessages(const std::vector<EngineParsingMessage>& messages) = 0;
     virtual EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name) = 0;
 
 };

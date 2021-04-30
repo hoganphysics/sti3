@@ -79,27 +79,28 @@ void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::o
 }
 
 
-ParseTicket STIPyShot::parse()
-{
-    STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = 1.1;
+// ParseTicket STIPyShot::parse()
+// {
+//     STI::Engine::ParseID pid;
+//     pid.parseTimestamp.timestamp = 1.1;
     
-    ParseTicket ticket(pid);
+//  //   ParseTicket ticket(pid);
+//     ParseTicket ticket = libDevice->makeParseTicket(pid);
 
- //   ParseTicket ticket;
-    return ticket;
-}
+//  //   ParseTicket ticket;
+//     return ticket;
+// }
 
-ParseTicket STIPyShot::parse(const pybind11::dict& channels)
-{
+// ParseTicket STIPyShot::parse(const pybind11::dict& channels)
+// {
 
-    STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = 1.1;
+//     STI::Engine::ParseID pid;
+//     pid.parseTimestamp.timestamp = 1.1;
     
-    ParseTicket ticket(pid);
-//    ParseTicket ticket;
-    return ticket;
-}
+//     ParseTicket ticket(pid);
+// //    ParseTicket ticket;
+//     return ticket;
+// }
 
 
 void STIPyShot::append(pybind11::object func)

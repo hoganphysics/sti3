@@ -80,6 +80,8 @@ void LocalEventEngine::clear()
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
 
+	parsingMessages.clear();
+
 	//If this fails for some reason, getState() will reflect this.
 	setState(EngineState::Idle);
 	cancelled = false;
@@ -145,7 +147,7 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 			//Event target is this device or is directly owned by this device
 
 			//Deep copy to report partner events
-			handledPartnerEvents.insert(handledPartnerEvents.begin(), evts.begin(), evts.end());
+			handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
 
 			eventsByTarget[evtGroup.first].insert(eventsByTarget[evtGroup.first].end(), 
 				std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
@@ -154,7 +156,7 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 			//Event target is in the subgraph under branchID
 
 			//Deep copy to report partner events
-			handledPartnerEvents.insert(handledPartnerEvents.begin(), evts.begin(), evts.end());
+			handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
 
 			eventsByTarget[branchID].insert(eventsByTarget[branchID].end(), 
 				std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
@@ -290,17 +292,33 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
+	//job.addMessages(parsingMessages);
 
 	//TODO:  Parse errors and warnings
-	auto& localErrors = parser.getErrors();
+	//auto& localMessages = parser.getParsingMessages();
 
-	if (localErrors.size() > 0 ) {	//|| job.hasErrors()
-		setState(EngineState::Error);
+	bool errors = false;
+	bool cancelJob = false;
+
+	for (auto& pm : parsingMessages) {
+		if (pm.getType() == STI::Engine::ParsingMessageType::Error) {
+			errors = true;
+			break;
+		}
 	}
 
-	if (!setState(EngineState::Parsed)) {
+	if (errors) {
+		cancelJob = true;
+	}
+	else if (!setState(EngineState::Parsed)) {
+		cancelJob = true;
+	}
+
+	if (cancelJob) {
+		stop();
 		setState(EngineState::Error);
-		//error
+		job.markCancelled();
+		cancelled = true;
 	}
 
 	// Send message upstream indicating that this device (and all owned devices) has finished
@@ -309,9 +327,9 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	newMessage->jobID.pid = job.getJobID().pid;
 	newMessage->unhandledEvents.swap(upstreamEvents);
 	newMessage->handledEvents.swap(handledPartnerEvents);
+	newMessage->messages.insert(newMessage->messages.end(), parsingMessages.begin(), parsingMessages.end());
 
 	sendMessage(newMessage);
-
 
 	//TODO: state needs to be contingent on errors from this device or owned devices.
 
@@ -330,8 +348,14 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 			//successfully parsed
 			mergePartnerEvents(parser.partnerEvents);
 		}
+		else {
+			//parse failed
+			stop();
+		}
 
-		auto& localErrors = parser.getErrors();
+		auto& localMessages = parser.getParsingMessages();
+		parsingMessages.insert(parsingMessages.end(), localMessages.begin(), localMessages.end());
+		// job.addMessages(localMessages);
 
 		// for (auto& err : localErrors) {
 		// 	job.addMessage(ParsingMessageType::Error, 1, "Parsing Error") << err.messageText();
@@ -381,6 +405,19 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 		return;
 	}
 
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->originalSource);
+
+	//only add engine if it is owned by this device
+	if (it != ownedTargets.end()) {
+		parsedOwnedTargets.push_back(evt->originalSource);
+	}
+
+	parsingMessages.insert(parsingMessages.end(), evt->messages.begin(), evt->messages.end());
+
+	if (!isState(EngineState::Parsing)) {
+		return;
+	}
+
 	//Try to handle device generated events locally
 	divideEvents(evt->unhandledEvents);
 	
@@ -393,12 +430,6 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	//reduce dependency count in localSubtree
 	localSubtree->removeNode(evt->originalSource);
 
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->originalSource);
-	
-	//only add engine if it is owned by this device
-	if (it != ownedTargets.end()) {
-		parsedOwnedTargets.push_back(evt->originalSource);
-	}
 
 	parseCondition.notify_all();	//wake up event transfer loop
 }
@@ -549,6 +580,9 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 
+	// getAllMeasurements();	//need to get all measurements from owned devices
+	// saveShot(job);	//job needs record of shot
+
 	//After play completes (without error or abort), the engine should be in the Parsed state
 	if (!isState(EngineState::Parsed)) {
 		job.markCancelled();
@@ -594,9 +628,10 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	auto newMeasurements = std::make_shared<MeasurementVector>();
 	for (auto& synchEvent : synchedEvents) {
 		auto& evtMeasurements = synchEvent->getMeasurements();
-		for (auto& m : evtMeasurements) {
-			newMeasurements->push_back(m);
-		}
+		newMeasurements->insert(newMeasurements->end(), evtMeasurements.begin(), evtMeasurements.end());
+		// for (auto& m : evtMeasurements) {
+		// 	newMeasurements->push_back(m);
+		// }
 	}
 	measurementBuffer.add(jobID.sid, newMeasurements);	//Add this shot to the buffer
 
@@ -633,6 +668,14 @@ void LocalEventEngine::playAll(const EngineJobID& jobID, const std::shared_ptr<T
 		engine.second->play(jobID, triggerCB, debug);
 	}
 }
+
+// //play thread runs this
+// void playFunc(TriggerCallback& triggerCB)	//playShot
+// {
+// 	preplay(triggerCB);		//wait for trigger
+// 	playDeviceEvents();		//actually play the events on the device
+// 	waitForPlayAll();		//wait until all owned devices complete play
+// }
 
 void LocalEventEngine::preplay(TriggerCallback& triggerCB)
 {

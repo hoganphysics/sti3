@@ -33,7 +33,9 @@ using STI::Device::ChannelManager;
 using STI::Device::AttributeManager;
 using STI::Device::DeviceCollectionPolicy;
 using STI::Device::LocalAttribute;
-
+using STI::Device::DeviceMessageListener;
+using STI::Device::EngineSchedulerMessage;
+using STI::Device::DeviceMessageListenerID;
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
@@ -52,6 +54,10 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 
 	//setEngineFactory(engineFactory);
+
+	//EngineSchedulerMessage ListenerID
+	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
+	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 
 }
 
@@ -82,26 +88,18 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// Listen to EngineScheduler messages from:
 	// 1) Declared event targets and 2) any device that has this device as a target server.
 
-	// auto it = localDevice->eventTargets.find(id);
-	// bool isEventTarget = (it != localDevice->eventTargets.end());
-
 	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id) ) {
 		
-		//std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> listener = //localDevice->eventEngineScheduler;
-		auto listener = std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
-		//localDevice->deviceMessageReceiver->addListener(sourceDevice, listenerID, listenerX);
-		STI::Device::DeviceMessageListenerID listenerID;
-		listenerID.name = localDevice->getID().getID() + "::EventEngineScheduler";
-		listenerID.type = STI::Device::DeviceMessageType::EngineScheduler;
-
-		localDevice->deviceMessageReceiver->addListener(id, listenerID, listener);	//listen to events on new device 'id'
+		auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
+		
+		localDevice->deviceMessageReceiver->addListener(id, localDevice->schedulerMessageLID, listener);	//listen to events on new device 'id'
 	}
 }
 
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::remove(const DeviceID& id)
 {
-
+	localDevice->deviceMessageReceiver->removeListener(id, localDevice->schedulerMessageLID);
 }
 
 const DeviceID LocalDevice::getID() const

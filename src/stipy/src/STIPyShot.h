@@ -39,8 +39,8 @@ public:
 
 
     //Not sure we need these; can be done using server->parse()
-    ParseTicket parse();
-    ParseTicket parse(const pybind11::dict& channels);
+    // ParseTicket parse();
+    // ParseTicket parse(const pybind11::dict& channels);
     void append(pybind11::object func);     //treat current list of setvars as overwritten vars
     void append(const STI::Engine::RawEvent& evt);
 

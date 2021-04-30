@@ -807,17 +807,21 @@ template<>
 bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const EngineParsingMessage& parsingMessage, TEngineParsingMessage& tParsingMessage)
 {
     tParsingMessage.type = convert<ParsingMessageType, TParsingMessageType>(parsingMessage.getType());
-    tParsingMessage.id_code = static_cast<::CORBA::Short>(parsingMessage.getID());
+    tParsingMessage.id_code = static_cast<::CORBA::Short>(parsingMessage.getIDCode());
+    tParsingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(parsingMessage.getID());
     convert<std::string, ::CORBA::String_member>(parsingMessage.getName(), tParsingMessage.name);
     convert<std::string, ::CORBA::String_member>(parsingMessage.getMessage(), tParsingMessage.message);
     convert<RawEvent, TRawEvent>(parsingMessage.events, tParsingMessage.events);
     return true;
 }
 
+
+
 template<>
 bool STI::Network::convert<TEngineParsingMessage, EngineParsingMessage>(const TEngineParsingMessage& tParsingMessage, EngineParsingMessage& parsingMessage)
 {
     EngineParsingMessage newMessage(
+            convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tParsingMessage.sourceID),
             convert<TParsingMessageType, ParsingMessageType>(tParsingMessage.type),
             static_cast<unsigned>(tParsingMessage.id_code),
             convert<::CORBA::String_member, std::string>(tParsingMessage.name)

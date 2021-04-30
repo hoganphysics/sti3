@@ -25,7 +25,7 @@
 
 #include <memory>
 #include <mutex>
-
+#include <condition_variable>
 
 namespace STI
 {
@@ -196,6 +196,8 @@ private:
 	std::vector<STI::Engine::RawEvent> handledPartnerEvents;
 	std::shared_ptr<EventEngineDependencyTree> dependencyTree;
 	std::shared_ptr<EventEngineDependencyTree> localSubtree;
+
+	std::vector<EngineParsingMessage> parsingMessages;
 
 	bool isJobOwner;
 	std::vector<STI::Device::DeviceID> ownedTargets;
