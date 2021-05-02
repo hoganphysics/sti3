@@ -14,7 +14,7 @@
 #include "EventEngineFactory.h"
 #include "LocalEventEngineFactory.h"
 #include "EngineParsingMessage.h"
-
+#include "LocalShot.h"
 #include "ShotID.h"
 #include "EngineJobID.h"
 
@@ -22,6 +22,8 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+
+#include <iostream>
 
 
 using STI::Engine::LocalEventEngineJob;
@@ -43,6 +45,8 @@ using STI::Engine::EventEngineManager;
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
+using STI::Engine::LocalShot;
+
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice)
 : localDevice(localDevice), completedJobs(3)
@@ -122,6 +126,7 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     if (events != 0) {
         for(auto& evt : *events) {
             eventTargets.insert(evt.targetDevice());
+            std::cout << "parse target = " << evt.targetDevice().getID() << std::endl;
         }
     }
 
@@ -134,6 +139,18 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     // Begin multi-pass search. Keep calling while new missingTargets are found.
     getDependants(eventTargets, *tree, missingTargets, messages, 5);  //max 5 passes
 
+////////////////////////////////////
+    std::cout << "missingTargets: ";
+    for (auto& mt : missingTargets) {
+        std::cout << mt.getID() << "\n";
+    }
+    std::set<DeviceID> treeNodes;
+    tree->getNodes(treeNodes);
+    std::cout << "treeNodes: ";
+    for (auto& mt : treeNodes) {
+        std::cout << mt.getID() << "\n";
+    }
+///////////////////////////////////////
     for (auto& m : messages) {
         job->addMessage(m);
     }
@@ -150,9 +167,13 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     if (diff.size() > 0) {
         //missing targets...
         //Warning: will attempt parse but cannot play
-        job->addMessage(ParsingMessageType::Warning, 1000, "Missing Targets")
+        auto& m = job->addMessage(ParsingMessageType::Warning, 1000, "Missing Targets")
             << "Some required event targets could not be found. "
-            << "Parsing is proceeding as an abstract shot. Playing will not be possible.";
+            << "Parsing is proceeding as an abstract shot. Playing will not be possible. "
+            << "Missing targets: \n";
+        for (auto& id : diff) {
+            m << "    " << id.getID() << "\n";
+        }
     }
 
     //check for circular dependencies
@@ -545,22 +566,29 @@ void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
             manager->abortJob();
         }
         
-        completedJobs.add(jobID, job);
+        //completedJobs.add(jobID, job);
     }
 
     jobCondition.notify_all();
 }
 
-std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::createJob(const ParseID& parseID, 
-                                          const std::shared_ptr<Shot>& shot,
-                                          const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                                          const STI::Device::DeviceID& owner, 
-                                          const std::set<STI::Device::DeviceID>& missingTargets)
+// std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::createJob(const ParseID& parseID, 
+//                                           const std::shared_ptr<Shot>& shot,
+//                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
+//                                           const STI::Device::DeviceID& owner, 
+//                                           const std::set<STI::Device::DeviceID>& missingTargets)
+// {
+//     auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, owner);
+//     job->setDependencies(tree);
+//     job->setMissingTargets(missingTargets);
+//     return job;
+// }
+
+std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const std::shared_ptr<RawEventVector>& events)
 {
-    auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, owner);
-    job->setDependencies(tree);
-    job->setMissingTargets(missingTargets);
-    return job;
+    auto shot = std::make_shared<LocalShot>();
+    shot->setEvents(events);
+    return shot;
 }
 
 void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
@@ -722,9 +750,128 @@ bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared
 {
     std::shared_ptr<EventEngineJob> job;
 
-    if(runningJobs.get(jobID, job) && job != 0
+    if (runningJobs.get(jobID, job) && job != 0
         && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
         return true;
     }
     return false;
 }
+
+bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const
+{
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+    
+    EngineJobID jobID;
+    jobID.type = EventEngineJobType::Parse;
+    jobID.pid = parseID;
+
+    bool success = completedJobs.get(jobID, job);
+
+    if (!success) {
+        success = runningJobs.get(jobID, job);
+    }
+    if (!success) {
+        success = queuedJobs.get(jobID, job);
+    }
+
+    return success && (job != 0);
+}
+
+bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const
+{
+
+    std::cout << "getParsedEngine " << queuedJobs.size() 
+        << " : " <<  runningJobs.size() 
+        << " : " <<  completedJobs.size() << std::endl;
+
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineManager> manager;
+
+    EngineJobID jobID;
+    jobID.type = EventEngineJobType::Parse;
+    jobID.pid = parseID;
+
+    // std::cout << "getJob? " << (completedJobs.get(jobID, job) && job !=0) << std::endl;
+    // std::cout << "getManager? " << (engineManagers.get(job->getEngineID(), manager) && manager != 0) << std::endl;
+    // std::cout << "EngineID=" << job->getEngineID().getNumber() << std::endl;
+
+    // std::cout << "EngineIDs: ";
+    // std::set<STI::Engine::EngineID> ids;
+    // engineManagers.getKeys(ids);
+    // for (auto id : ids) {
+    //     std::cout << id.getNumber() << " ";
+    // }
+    // std::cout << std::endl;
+
+
+    // if (queuedJobs.get(jobID, job) && job !=0 
+    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    if (completedJobs.get(jobID, job) && job !=0 
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+            
+        manager->getEngine(engine);
+        
+        return engine != 0 && engine->getLastParseID() == parseID;
+    }
+
+    return false;
+}
+
+bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const
+{
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (getParsedEngine(parseID, engine)){
+        events = engine->getParsedEvents();
+        return engine->getLastParseID() == parseID;
+    }
+
+    return false;
+}
+
+bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const
+{
+    std::cout << "getParsingMessages" << std::endl;
+ 
+    {
+        std::unique_lock<std::mutex> jobLock(jobMutex);
+        std::cout << "Jobs: " << queuedJobs.size() 
+            << " : " <<  runningJobs.size() 
+            << " : " <<  completedJobs.size() << std::endl;
+    }
+
+
+    std::shared_ptr<EventEngineJob> job;
+
+    if (findJob(parseID, job)) {
+        messages = job->getParsingMessages();
+        std::cout << "messages: " << messages.size() << std::endl;
+        return true;
+    }
+
+
+    // std::shared_ptr<LocalEventEngine> engine;
+
+    // if (getParsedEngine(parseID, engine)){
+    //     messages = engine->getParsingMessages();
+
+    //     std::cout << "parsing Messages length: " << messages.size() << std::endl;
+        
+    //     return engine->getLastParseID() == parseID;
+    // }
+
+    return false;
+}
+
+bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const
+{
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (getParsedEngine(parseID, engine)){
+        tree = engine->getParsedTree();
+        return engine->getLastParseID() == parseID;
+    }
+
+    return false;
+}
+

@@ -26,24 +26,25 @@ find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
 pybind11_add_module(stipy 
+    HubID_wrap.cpp
+    ParseTicket.cpp
+    ParseTicketManager.cpp
+    ParseTicket_wrap.cpp
     pywrapper.cpp
-    stipy_wrap.cpp
+    ResultTicket.cpp
+    ResultTicket_wrap.cpp
+    STIPyChannel.cpp
+    STIPyChannel_wrap.cpp
     stipy.cpp
     STIPyDevice.cpp
-    STIPyChannel.cpp
-    STIPyServer.cpp
-    STIPyShot.cpp
-    STIPySeq.cpp
-    STIPyLibDevice.cpp
-    ParseTicket.cpp
-    ResultTicket.cpp
-    HubID_wrap.cpp
-    STIPyShot_wrap.cpp
     STIPyDevice_wrap.cpp
-    STIPyChannel_wrap.cpp
+    STIPyLibDevice.cpp
+    STIPySeq.cpp
+    STIPyServer.cpp
     STIPyServer_wrap.cpp
-    ParseTicket_wrap.cpp
-    ResultTicket_wrap.cpp
+    STIPyShot.cpp
+    STIPyShot_wrap.cpp
+    stipy_wrap.cpp
     ${STIDEVICEPY_DIR}/MixedValuePy.cpp
     ${STIDEVICEPY_DIR}/DeviceID_wrap.cpp
 )

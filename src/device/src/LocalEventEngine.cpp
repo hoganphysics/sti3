@@ -17,7 +17,7 @@
 #include "LocalTriggerCallback.h"
 #include "Device.h"
 #include "Shot.h"
-#include "LocalParsedShot.h"
+#include "LocalShot.h"
 #include "EventEngineJob.h"
 #include "EngineJobID.h"
 #include "EngineParsingMessage.h"
@@ -28,6 +28,7 @@
 #include <vector>
 #include <functional>
 
+#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
@@ -40,10 +41,12 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Engine::DeviceEventMap;
 using STI::Engine::TimeStamp;
 using STI::Engine::LocalEventEngineJob;
-using STI::Engine::LocalParsedShot;
+using STI::Engine::LocalShot;
 using STI::Engine::LocalTriggerCallback;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EngineJobID;
+using STI::Engine::EngineParsingMessage;
+
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
@@ -80,7 +83,7 @@ void LocalEventEngine::clear()
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
 
-	parsingMessages.clear();
+	localParsingMessages.clear();
 
 	//If this fails for some reason, getState() will reflect this.
 	setState(EngineState::Idle);
@@ -119,6 +122,10 @@ void LocalEventEngine::divideEvents(const RawEventVector& events)
 		if (localDeviceID == evt.targetDevice() || it != ownedIDs.end()) {
 			//Event target is this device or is directly owned by this device
 			eventsByTarget[evt.targetDevice()].push_back(std::move(evt));
+
+			std::cout << "eventsByTarget[" << evt.targetDevice().getID() << "].push("
+			<< eventsByTarget[evt.targetDevice()].back().targetDevice().getID() << ", "
+			<< eventsByTarget[evt.targetDevice()].back().time() << ")\n";
 		}
 		else if (dependencyTree->getBranchToTarget(localDeviceID, evt.targetDevice(), branchID)) {
 			//Event target is in the subgraph under branchID
@@ -175,17 +182,20 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	clear();
 
+	// job.addMessage(ParsingMessageType::Warning, 100, "Test message")
+    //         << "This is a test.";
+
 	if (!setState(EngineState::Parsing)) {
 		setState(EngineState::Error);
 		return;
 	}
 
-	std::shared_ptr<Shot> parsedShot;
+	std::shared_ptr<Shot> shot;
 
-    if (!job.getParsedShot(parsedShot)) {
+    if (!job.getShot(shot)) {
 		//Error: no parsed shot
         job.addMessage(ParsingMessageType::Error, 20, "Missing shot")
-            << "Parsing aborted: The submited EventEngineJob has a null ParsedShot. There are no events to parse.";
+            << "Parsing aborted: The submited EventEngineJob has a null Shot. There are no events to parse.";
 		setState(EngineState::Error);
 		return;
 	}
@@ -201,9 +211,9 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseID = job.getJobID().pid;
 //	dependencyTree = job.dependencies;
 
-//	auto parsedShot = job.parsedShot;
+
 	std::shared_ptr<RawEventVector> events;
-	parsedShot->getEvents(events);
+	shot->getEvents(events);
 
 	if (events != 0) {
 		divideEvents(*events);
@@ -292,7 +302,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
-	//job.addMessages(parsingMessages);
+	job.addMessages(localParsingMessages);
+	const std::vector<EngineParsingMessage>& jobMessages = job.getParsingMessages();
 
 	//TODO:  Parse errors and warnings
 	//auto& localMessages = parser.getParsingMessages();
@@ -300,8 +311,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	bool errors = false;
 	bool cancelJob = false;
 
-	for (auto& pm : parsingMessages) {
-		if (pm.getType() == STI::Engine::ParsingMessageType::Error) {
+	for (auto& m : jobMessages) {
+		if (m.getType() == STI::Engine::ParsingMessageType::Error) {
 			errors = true;
 			break;
 		}
@@ -327,7 +338,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	newMessage->jobID.pid = job.getJobID().pid;
 	newMessage->unhandledEvents.swap(upstreamEvents);
 	newMessage->handledEvents.swap(handledPartnerEvents);
-	newMessage->messages.insert(newMessage->messages.end(), parsingMessages.begin(), parsingMessages.end());
+	newMessage->messages.insert(newMessage->messages.end(), jobMessages.begin(), jobMessages.end());
 
 	sendMessage(newMessage);
 
@@ -350,11 +361,12 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		}
 		else {
 			//parse failed
+			std::cout << "local parse failed " << "\n";
 			stop();
 		}
 
-		auto& localMessages = parser.getParsingMessages();
-		parsingMessages.insert(parsingMessages.end(), localMessages.begin(), localMessages.end());
+		auto& engineParserMessages = parser.getParsingMessages();
+		localParsingMessages.insert(localParsingMessages.end(), engineParserMessages.begin(), engineParserMessages.end());
 		// job.addMessages(localMessages);
 
 		// for (auto& err : localErrors) {
@@ -370,21 +382,30 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	    std::shared_ptr<STI::Device::Device> device;
     	std::shared_ptr<EventEngineScheduler> scheduler;
 
-		auto shot = std::make_shared<LocalParsedShot>();
-		auto evts = std::make_shared<RawEventVector>();
-		(*evts) = std::move(eventsByTarget[id]);
-		//shot->events = std::move(eventsByTarget[id]);		//expensive deep copy?
-		shot->setEvents(evts);
-
-		// auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot,
-        //            dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
+		//auto shot = std::make_shared<LocalShot>();
+		//shot->setEvents(evts);
 
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
+
+				std::cout << "parseDevice::eventsByTarget[" << id.getID() << "] = "
+					<< eventsByTarget[id].size()
+					<< "\n";
+
+				auto evts = std::make_shared<RawEventVector>();
+				(*evts) = std::move(eventsByTarget[id]);			//expensive deep copy?
+
+				std::cout << "parseDevice else events: " << evts->size() << "\n";
+
+				auto shot = scheduler->createShot(evts);
 				
-				//make the scheduler into a factory so remote schedulers will make remotejobs?
-				auto newJob = scheduler->createJob(job.getJobID().pid, shot,
-                   dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
+				// //make the scheduler into a factory so remote schedulers will make remotejobs?
+				// auto newJob = scheduler->createJob(job.getJobID().pid, shot,
+                //    dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
+				
+				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
+				newJob->setDependencies(dependencyTree);
+				newJob->setMissingTargets(job.getMissingTargetIDs());
 				
 				job.attachSubjob(newJob);
 
@@ -393,6 +414,9 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		}
 		else {
 			//Warning: Could not contact device. Parsing is abstract only; cannot be played.
+			job.addMessage(ParsingMessageType::Warning, 1100, "Missing device")
+			<< "Could not contact device '" << id.getID()
+			<< "'. Parsing is abstract only and cannot be played.";
 		}
 	}
 }
@@ -412,7 +436,7 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 		parsedOwnedTargets.push_back(evt->originalSource);
 	}
 
-	parsingMessages.insert(parsingMessages.end(), evt->messages.begin(), evt->messages.end());
+	localParsingMessages.insert(localParsingMessages.end(), evt->messages.begin(), evt->messages.end());
 
 	if (!isState(EngineState::Parsing)) {
 		return;
@@ -458,6 +482,7 @@ void LocalEventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMe
 
 	playCondition.notify_all();
 }
+
 
 void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOwner)
 {
@@ -885,19 +910,19 @@ void LocalEventEngine::stop()
 
 void LocalEventEngine::releaseParseLock()
 {
-	std::unique_lock<std::mutex> parseLock(parseMutex);
+//	std::unique_lock<std::mutex> parseLock(parseMutex);
 	parseCondition.notify_all();
 }
 
 void LocalEventEngine::releasePlayLock()
 {
-	std::unique_lock<std::mutex> playLock(playMutex);
+//	std::unique_lock<std::mutex> playLock(playMutex);
 	playCondition.notify_all();		//release play(job)
 }
 
 void LocalEventEngine::releaseTriggerLock()
 {
-	std::unique_lock<std::mutex> triggerLock(triggerMutex);
+//	std::unique_lock<std::mutex> triggerLock(triggerMutex);
 	triggerCondition.notify_all();			//releases waitForTrigger
 }
 

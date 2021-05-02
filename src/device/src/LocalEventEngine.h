@@ -100,9 +100,13 @@ public:
 	//STI::Device::ChannelMap& localChannels;
 	std::shared_ptr<STI::Device::ChannelManager> getLocalChannels() { return localChannels; }
 
-	const STI::Engine::ParseID& getLastParseID() { return lastParseID; }
+	const STI::Engine::ParseID& getLastParseID() const { return lastParseID; }
 
 	bool jobCancelled() const { return cancelled; }
+
+	const DeviceEventMap& getParsedEvents() const { return eventsByTarget; }
+
+	std::shared_ptr<EventEngineDependencyTree> getParsedTree() const { return dependencyTree; }
 
 private:
 
@@ -191,13 +195,14 @@ private:
 	std::shared_ptr<STI::Device::ChannelManager> localChannels;
 
 	//server events
-	std::map<STI::Device::DeviceID, RawEventVector> eventsByTarget;
+	DeviceEventMap eventsByTarget;
+	//std::map<STI::Device::DeviceID, RawEventVector> eventsByTarget;
 	RawEventVector upstreamEvents;
 	std::vector<STI::Engine::RawEvent> handledPartnerEvents;
 	std::shared_ptr<EventEngineDependencyTree> dependencyTree;
 	std::shared_ptr<EventEngineDependencyTree> localSubtree;
 
-	std::vector<EngineParsingMessage> parsingMessages;
+	std::vector<EngineParsingMessage> localParsingMessages;
 
 	bool isJobOwner;
 	std::vector<STI::Device::DeviceID> ownedTargets;

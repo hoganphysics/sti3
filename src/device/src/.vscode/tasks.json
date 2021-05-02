@@ -38,6 +38,7 @@
 			"label": "CMake config",
 			"command": "cmake",
 			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
 				".."
 			],
 			"options": {

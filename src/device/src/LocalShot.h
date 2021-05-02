@@ -1,5 +1,5 @@
-#ifndef STI_ENGINE_LOCALPARSEDSHOT_H
-#define STI_ENGINE_LOCALPARSEDSHOT_H
+#ifndef STI_ENGINE_LOCALSHOT_H
+#define STI_ENGINE_LOCALSHOT_H
 
 #include "Shot.h"
 
@@ -13,15 +13,15 @@ namespace Engine
 
 class RawEvent;
 
-class LocalParsedShot : public Shot
+class LocalShot : public Shot
 {
 public:
 
-    LocalParsedShot()
+    LocalShot()
     {
         events = std::make_shared<std::vector<RawEvent>>();
     }
-    ~LocalParsedShot()
+    ~LocalShot()
     {
     }
 

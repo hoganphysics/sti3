@@ -96,7 +96,7 @@ module TNetwork
 		//void addEvent(in TDeviceEvent evt);
 	};
 
-	interface TParsedShot
+	interface TShot
 	{
 		void getEvents(out TRawEventSeq events);
 	};
@@ -117,7 +117,7 @@ module TNetwork
 	// 	boolean getEngine(out TEventEngine eventEngine);
 	// 	void setEventEngine(in TEventEngine eventEngine);
 
-	// 	boolean getParsedShot(out TParsedShot shot);
+	// 	boolean getParsedShot(out TShot shot);
 	// 	boolean getDependencies(out TEventEngineDependencyTree tree);
 
 	// 	TDeviceIDSeq getMissingTargetIDs();
@@ -132,7 +132,7 @@ module TNetwork
 		TEngineID engineID;
 		//TEventEngine eventEngine;
 
-		TParsedShot shot;
+		TShot shot;
 		TEventEngineDependencyTree dependencies;
 		TDeviceIDSeq missingTargetIDs;
 	};
@@ -161,7 +161,7 @@ module TNetwork
 
 	interface TEventEngineScheduler
 	{
-	    void parse(in TParseID parseID, in TParsedShot shot);
+	    void parse(in TParseID parseID, in TShot shot);
 	    void play(in TShotID shotID);
 
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
@@ -171,6 +171,10 @@ module TNetwork
     
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
+
+		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
+    	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
+    	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
 	};
 
 	interface TChannelManager

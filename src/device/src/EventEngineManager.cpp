@@ -17,7 +17,9 @@ using STI::Engine::LocalEventEngine;
 using STI::Engine::LocalEventEngineScheduler;
 
 
-EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler)
+EventEngineManager::EventEngineManager(const EngineID& engineID, 
+                                        const std::shared_ptr<LocalEventEngine>& engine, 
+                                        LocalEventEngineScheduler* scheduler)
 : engineID(engineID), engine(engine), scheduler(scheduler), running(false)
 {
 }
@@ -29,6 +31,11 @@ EventEngineManager::~EventEngineManager()
     if(jobThread.joinable()) {
         jobThread.join();
     }
+}
+
+void EventEngineManager::getEngine(std::shared_ptr<LocalEventEngine>& eventEngine)
+{
+    eventEngine = engine;
 }
 
 bool EventEngineManager::isParsed(const ParseID& parseID)

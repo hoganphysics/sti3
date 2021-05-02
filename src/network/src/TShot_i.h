@@ -1,5 +1,5 @@
-#ifndef STI_TNETWORK_TPARSEDSHOT_I_H
-#define STI_TNETWORK_TPARSEDSHOT_I_H
+#ifndef STI_TNETWORK_TSHOT_I_H
+#define STI_TNETWORK_TSHOT_I_H
 
 #include "Shot.h"
 #include "deviceNet.h"
@@ -11,12 +11,12 @@ namespace STI
 namespace TNetwork
 {
 
-class TParsedShot_i : public POA_STI::TNetwork::TParsedShot
+class TShot_i : public POA_STI::TNetwork::TShot
 {
 public:
 
-	TParsedShot_i(const std::shared_ptr<STI::Engine::Shot>& shot);
-	~TParsedShot_i();
+	TShot_i(const std::shared_ptr<STI::Engine::Shot>& shot);
+	~TShot_i();
 
     void getEvents(::STI::TNetwork::TRawEventSeq_out events);
 

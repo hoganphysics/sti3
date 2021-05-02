@@ -9,8 +9,8 @@ STIPyDevice::STIPyDevice(const std::string& name)
 {
 }
 
-STIPyDevice::STIPyDevice(const std::string& name, const std::string& address, unsigned module)
-: abstract_(false), deviceID(name, address, module)
+STIPyDevice::STIPyDevice(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID)
+: abstract_(false), deviceID(name, address, module, targetServerID)
 {
 }
 

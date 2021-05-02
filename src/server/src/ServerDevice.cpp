@@ -8,6 +8,11 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
     const std::string& targetServer)
 : STI::Device::LocalDevice(name, address, module, targetServer)
 {
+	STI::Engine::EngineID id(0);
+	addEventEngine(id);
+
+	addChannel(1, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
+
 }
 
 ServerDevice::~ServerDevice()

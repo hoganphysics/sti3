@@ -13,11 +13,15 @@ using STI::Python::ParseTicket;
 using STI::Engine::RawEventType;
 using STI::Python::STIPyChannel;
 
-STIPyShot::STIPyShot(STIPyServer* server)
-: server(server)
+STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
+: shot(shot)
 {
     eventNumber = 0;
-    events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+//    events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+
+    if (shot != 0) {
+        shot->getEvents(events);
+    }
 
     vars = std::make_shared<std::map<std::string, pybind11::object>>();
 }
@@ -60,10 +64,13 @@ void STIPyShot::event(const STIPyChannel& channel, double time, const pybind11::
 
     valuepy.setValue_py(value);
 
-    events->push_back(
-        STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
-                                valuepy, description, events->size(), RawEventType::Play)
-            );
+    if (events != 0) {
+        events->push_back(
+            STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
+                                    valuepy, description, events->size(), RawEventType::Play)
+                );        
+    }
+
 }
 
 void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
@@ -72,10 +79,12 @@ void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::o
     
     std::string description = "";
     
-    events->push_back(
-        STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
-                                MixedValuePy(value), description, events->size(), RawEventType::Measurement)
-            );
+    if (events != 0) {
+        events->push_back(
+            STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
+                                    MixedValuePy(value), description, events->size(), RawEventType::Measurement)
+                );
+    }
 }
 
 
@@ -111,15 +120,20 @@ void STIPyShot::append(const STI::Engine::RawEvent& evt)
 {
 }
 
-// std::vector<STI::Engine::RawEvent> STIPyShot::getEvents()
-// {
-//     std::vector<STI::Engine::RawEvent> events;
-//     return events;
-// }
-
-
-void STIPyShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
+std::vector<STI::Engine::RawEvent> STIPyShot::getEvents()
 {
-    evts = events;
+    if (events != 0) {
+        return *events;
+    }
+    else {
+        auto nullEvts = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+        return *nullEvts;
+    }
 }
+
+
+// void STIPyShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
+// {
+//     evts = events;
+// }
 

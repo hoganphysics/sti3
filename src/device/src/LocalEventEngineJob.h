@@ -51,7 +51,7 @@ public:
     bool getEngine(std::shared_ptr<EventEngine>& eventEngine) const { eventEngine = engine; return (eventEngine != 0); }
     void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine) { engine = eventEngine; }
 
-    bool getParsedShot(std::shared_ptr<Shot>& shot) const;
+    bool getShot(std::shared_ptr<Shot>& shot) const;
     bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const;
 
     std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
@@ -63,10 +63,12 @@ public:
     EngineParsingMessage& addMessage(const EngineParsingMessage& message);
     EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name);
 
+    const std::vector<EngineParsingMessage>& getParsingMessages() const { return parsingMessages; }
+
 private:
 
     STI::Device::DeviceID jobOwner;    
-    std::shared_ptr<Shot> parsedShot;
+    std::shared_ptr<Shot> shot_;
     std::shared_ptr<EventEngineDependencyTree> dependencies;
     std::set<STI::Device::DeviceID> missingTargetIDs;
 

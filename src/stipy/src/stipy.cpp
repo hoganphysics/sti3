@@ -4,6 +4,8 @@
 #include "NetworkDeviceHub.h"
 #include "STIPyLibDevice.h"
 
+#include <iostream>
+
 using STI::Python::STIPyServer;
 
 using STI::Python::STIPyLibDevice;
@@ -46,10 +48,11 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
     //multiple computers connecting, multiple connections from each computer
     //Use local IP address.  Generate Name that is unique using time?
     //Could also generate a module this way, or could query the server to get list of connections
-
+    
     std::string uniqueName = "STIPy";   //Add timestamp?  STIPy::<timestamp>
 
     auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName, localIP, 0, serverID, serverHubID);
+
     hub->addDevice(stipydev);
     hub->run(false);
 

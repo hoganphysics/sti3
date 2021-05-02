@@ -88,7 +88,15 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// Listen to EngineScheduler messages from:
 	// 1) Declared event targets and 2) any device that has this device as a target server.
 
-	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id) ) {
+	// if (localDevice->isTargetServerOf(id)) {
+	// 	localDevice->addEventTarget(id);
+	// }
+
+	std::cout << "***** LocalDevice::DeviceCollectionListener::add? ";
+
+	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id)) {
+
+		std::cout << "yes\n";
 		
 		auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
 		

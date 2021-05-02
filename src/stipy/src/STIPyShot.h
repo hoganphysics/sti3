@@ -23,19 +23,19 @@ class STIPyServer;
 class ParseTicket;
 
 
-class STIPyShot : public STI::Engine::Shot
+class STIPyShot
 {
 public:
 
-    STIPyShot(STIPyServer* server);
+    STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot);
 
     void setvar(const std::string& name, const pybind11::object& value);
     void event(const STIPyChannel& channel, double time, const pybind11::object& value);
     void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
 
-    void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
+//    void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
 
-//    std::vector<STI::Engine::RawEvent> getEvents();
+    std::vector<STI::Engine::RawEvent> getEvents();
 
 
     //Not sure we need these; can be done using server->parse()
@@ -45,12 +45,11 @@ public:
     void append(const STI::Engine::RawEvent& evt);
 
 
+    std::shared_ptr<STI::Engine::Shot> getShot() { return shot; }
 
 private:
 
-    //STIPyServer id reference, so append points to the right server
-    STIPyServer* server;
-    
+    std::shared_ptr<STI::Engine::Shot> shot;
     
     mutable std::mutex eventMutex;
     unsigned eventNumber;

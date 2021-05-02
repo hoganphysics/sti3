@@ -1,10 +1,10 @@
-#ifndef STI_ENGINE_NETWORKPARSEDSHOTWRAPPER_H
-#define STI_ENGINE_NETWORKPARSEDSHOTWRAPPER_H
+#ifndef STI_ENGINE_NETWORKSHOTWRAPPER_H
+#define STI_ENGINE_NETWORKSHOTWRAPPER_H
 
 #include "Shot.h"
-//#include "TParsedShotRefInterface.h"
+//#include "TShotRefInterface.h"
 
-#include "TParsedShot_i.h"
+#include "TShot_i.h"
 #include "deviceNet.h"
 
 #include <vector>
@@ -18,18 +18,18 @@ namespace Network
 
 
 
-class NetworkParsedShotWrapper : public STI::Engine::Shot
-                                 //public STI::Network::TParsedShotRefInterface	//mixin
+class NetworkShotWrapper : public STI::Engine::Shot
+                                 //public STI::Network::TShotRefInterface	//mixin
 {
 public:
 
 
-    NetworkParsedShotWrapper(const std::shared_ptr<STI::Engine::Shot>& shot)
+    NetworkShotWrapper(const std::shared_ptr<STI::Engine::Shot>& shot)
     : localshot(shot), parsedShotServant(shot)
     {
     }
 
-    ~NetworkParsedShotWrapper()
+    ~NetworkShotWrapper()
     {
     }
 
@@ -40,11 +40,11 @@ public:
         }
     }
 
-	static bool getTParsedShotReference(
+	static bool getTShotReference(
 		const typename std::shared_ptr<STI::Engine::Shot>& shot, 
-        STI::TNetwork::TParsedShot_ptr& tShot)
+        STI::TNetwork::TShot_ptr& tShot)
 	{
-		auto wrapper = std::dynamic_pointer_cast<NetworkParsedShotWrapper>(shot);
+		auto wrapper = std::dynamic_pointer_cast<NetworkShotWrapper>(shot);
 		if (wrapper) {
 			tShot = wrapper->parsedShotServant._this();
 			return !CORBA::is_nil(tShot);
@@ -54,9 +54,9 @@ public:
 
 private:
 
-    // bool getTParsedShotRef(STI::TNetwork::TParsedShot_ptr& tParsedShot)
+    // bool getTShotRef(STI::TNetwork::TShot_ptr& tParsedShot)
     // {
-    //     STI::TNetwork::TParsedShot_var newShot;
+    //     STI::TNetwork::TShot_var newShot;
     //     newShot = _tShot;		//implicit duplicate
 
     //     tParsedShot = newShot.out();
@@ -70,8 +70,8 @@ private:
 
 
     std::shared_ptr<STI::Engine::Shot> localshot;
-//    ::STI::TNetwork::TParsedShot_var _tShot;		//remote reference
-    STI::TNetwork::TParsedShot_i parsedShotServant;
+//    ::STI::TNetwork::TShot_var _tShot;		//remote reference
+    STI::TNetwork::TShot_i parsedShotServant;
 
 };
 

@@ -158,11 +158,12 @@ private:
 	//The event type is the template parameter of the ListenerGroupMap type.
 	//These listener groups are stored here in a map, keyed by the DeviceID of the event's source
 	//(that is, the remote device that they are listening to).
+	//***CAREFUL: Do not declare multiple ListenerGroupMap<T> of the same T!
 	ListenerGroupMap<RefreshDeviceMessage> refreshListeners;
 	ListenerGroupMap<ChannelUpdateDeviceMessage> channelUpdateListeners;
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
-	ListenerGroupMap<EngineSchedulerMessage> engineParserListeners;
+	ListenerGroupMap<EngineParserDeviceMessage> engineParserListeners;
 	//...
 
 	/**

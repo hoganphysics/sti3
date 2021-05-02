@@ -21,7 +21,7 @@ public:
 	TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TEventEngineScheduler_i();
 
-    void parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParsedShot_ptr shot) ;
+    void parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TShot_ptr shot) ;
     void play(const ::STI::TNetwork::TShotID& shotID);
 
     void getDependants(const ::STI::TNetwork::TDeviceIDSeq& evtTargets, 
@@ -39,6 +39,10 @@ public:
     //void addJob(::STI::TNetwork::TEventEngineJob_ptr newJob);
     void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
     void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
+
+    ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
+    ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
+    ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);
 
 private:
 

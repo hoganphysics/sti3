@@ -3,6 +3,7 @@
 
 #include "ParseID.h"
 #include "DeviceMessageListener.h"
+#include "Device.h"
 
 #include <map>
 #include <memory>
@@ -15,7 +16,6 @@ namespace Python
 class ParseTicket;
 
 
-
 class ParseTicketManager : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
@@ -23,13 +23,14 @@ public:
     ParseTicketManager();
     ~ParseTicketManager();
 
-    void add(const ParseTicket&);
-    void remove(const STI::Engine::ParseID&);
+    void add(const std::shared_ptr<ParseTicket>& ticket);
+    void remove(const STI::Engine::ParseID& id);
 
-    void cancel(const STI::Engine::ParseID&);
+    void cancel(const STI::Engine::ParseID& id);
     void cancelAll();
 
-    std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
+    std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid, 
+                                                const std::shared_ptr<STI::Device::Device>& server);
 
 private:
 

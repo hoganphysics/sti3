@@ -39,7 +39,11 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
    	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
-    receiver->addListener(server->getID(), schedulerMessageLID, listener);	//listen to events from server
+    if (receiver != 0 && server != 0) {
+        receiver->addListener(server->getID(), schedulerMessageLID, listener);	//listen to events from server
+    }
+
+    std::cout << "STIPyLibDevice connecting"<<std::endl;
 }
 
 bool STIPyLibDevice::addto(const STI::Network::HubID& target)
@@ -54,12 +58,15 @@ bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
     
     std::cout << "Collection: " << deviceCollection->size() << std::endl;
 
-    return (deviceCollection != 0) && deviceCollection->get(serverID, server);
+    return (deviceCollection != 0) && deviceCollection->get(serverID, server) && (server != 0);
 }
 
 
 std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::ParseID& pid)
 {
-    return ticketManager->makeParseTicket(pid);
+    std::shared_ptr<Device> server;
+    getServer(server);
+
+    return ticketManager->makeParseTicket(pid, server);
 }
 

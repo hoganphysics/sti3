@@ -28,7 +28,7 @@ public:
     TEngineID getEngineID();
     ::CORBA::Boolean getEngine(::STI::TNetwork::TEventEngine_out eventEngine);
     void setEventEngine(::STI::TNetwork::TEventEngine_ptr eventEngine);
-    ::CORBA::Boolean getParsedShot(::STI::TNetwork::TParsedShot_out shot);
+    ::CORBA::Boolean getParsedShot(::STI::TNetwork::TShot_out shot);
     ::CORBA::Boolean getDependencies(::STI::TNetwork::TEventEngineDependencyTree_out tree);
     TDeviceIDSeq* getMissingTargetIDs();
 

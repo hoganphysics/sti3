@@ -133,6 +133,13 @@ template<>
 Engine::RawEvent Network::convert<TNetwork::TRawEvent, Engine::RawEvent>(const TNetwork::TRawEvent& tEvent);
 
 
+//STI::Engine::DeviceEventMap
+template<>
+bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
+template<>
+bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
+
+
 //ParseID
 template<>
 TNetwork::TParseID Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID& pid);
@@ -148,9 +155,9 @@ Engine::ShotID Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwor
 
 //Shot
 template<>
-bool Network::convert<TNetwork::TParsedShot_ptr, std::shared_ptr<Engine::Shot>>(const TNetwork::TParsedShot_ptr& tShot, std::shared_ptr<Engine::Shot>& shot);
+bool Network::convert<TNetwork::TShot_ptr, std::shared_ptr<Engine::Shot>>(const TNetwork::TShot_ptr& tShot, std::shared_ptr<Engine::Shot>& shot);
 template<>
-bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TParsedShot_ptr>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TParsedShot_ptr& tShot);
+bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TShot_ptr>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TShot_ptr& tShot);
 
 
 
@@ -180,6 +187,11 @@ template<>
 bool Network::convert<Engine::EngineParsingMessage, TNetwork::TEngineParsingMessage>(const Engine::EngineParsingMessage& parsingMessage, TNetwork::TEngineParsingMessage& tParsingMessage);
 template<>
 bool Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage, Engine::EngineParsingMessage& parsingMessage);
+
+template<>
+Engine::EngineParsingMessage Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage);
+
+
 
 //ParsingMessageType
 template<>

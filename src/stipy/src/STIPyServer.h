@@ -43,8 +43,8 @@ public:
 
     std::shared_ptr<STIPySeq> makesequence(pybind11::object func);
 
-    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& shot);
-    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels);
+    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
+    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
     std::shared_ptr<ParseTicket> parse(const std::vector<ParseTicket>& tickets);  //combining multiple servers
 
     ResultTicket play(const ParseTicket& ticket);
@@ -52,6 +52,8 @@ public:
     ResultTicket play(const STI::Engine::ParseID& parseID, unsigned repeats);
 
 private:
+
+    bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 
     std::shared_ptr<STI::Network::NetworkDeviceHub> libDeviceHub;
     std::shared_ptr<STIPyLibDevice> libDevice;

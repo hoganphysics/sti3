@@ -20,13 +20,14 @@ void init_STIPyShot(py::module& m)
     py::class_<STI::Python::STIPyShot, std::shared_ptr<STI::Python::STIPyShot>>(m, "STIPyShot")
 
         .def("event", &STI::Python::STIPyShot::event)
-        .def("getEvents",
-            [](STI::Python::STIPyShot& self) {
-                std::shared_ptr<std::vector<STI::Engine::RawEvent>> evts;
-                self.getEvents(evts);
-                return (*evts);
-            }
-        )
+        .def("getEvents", &STI::Python::STIPyShot::getEvents)
+        // .def("getEvents",
+        //     [](STI::Python::STIPyShot& self) {
+        //         std::shared_ptr<std::vector<STI::Engine::RawEvent>> evts;
+        //         self.getEvents(evts);
+        //         return (*evts);
+        //     }
+        // )
         ;
 
 }

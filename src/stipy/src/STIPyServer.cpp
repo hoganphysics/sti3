@@ -35,20 +35,25 @@ void STIPyServer::setChannels(const pybind11::dict& channels)
 
 std::shared_ptr<STIPyShot> STIPyServer::makeshot()
 {
-    auto shot = std::make_shared<STIPyShot>(this);
-    return shot;
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    std::shared_ptr<STI::Engine::Shot> shot;
+    
+    if (getScheduler(scheduler)) {
+        auto evts = std::make_shared<STI::Engine::RawEventVector>();
+        shot = scheduler->createShot(evts);
+    }
+    auto pyShot = std::make_shared<STIPyShot>(shot);
+    return pyShot;
 }
 
 std::shared_ptr<STIPyShot> STIPyServer::makeshot(pybind11::object func)
 {
-    auto shot = std::make_shared<STIPyShot>(this);
-    return shot;
+    return makeshot();
 }
 
 std::shared_ptr<STIPyShot> STIPyServer::makeshot(pybind11::object func, const pybind11::dict& vars)
 {
-    auto shot = std::make_shared<STIPyShot>(this);
-    return shot;
+    return makeshot();
 }
 
 std::shared_ptr<STIPySeq> STIPyServer::makesequence(pybind11::object func)
@@ -57,8 +62,18 @@ std::shared_ptr<STIPySeq> STIPyServer::makesequence(pybind11::object func)
     return seq;
 }
 
+bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+{
+    std::shared_ptr<STI::Device::Device> server;
+    
+    if (libDevice->getServer(server)) {
+        return server->getEngineScheduler(scheduler);
+    }
 
-std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot)
+    return false;
+}
+
+std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot)
 {
 
     STI::Engine::ParseID pid;
@@ -79,15 +94,15 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
     server->getEngineScheduler(scheduler);
 
 
-
     if (scheduler != 0)
-        scheduler->parse(pid, shot);
+        std::cout << "scheduler->parse" << std::endl;
+        scheduler->parse(pid, pyShot->getShot());
 
     // ParseTicket ticket;
     return ticket;
 }
 
-std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& shot, const pybind11::dict& channels)
+std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
 {
     STI::Engine::ParseID pid;
     pid.parseTimestamp.timestamp = 1.1;

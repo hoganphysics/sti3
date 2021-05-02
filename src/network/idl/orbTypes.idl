@@ -92,6 +92,13 @@ module TNetwork
 	};
 	typedef sequence<TRawEvent> TRawEventSeq;
 
+	struct TDeviceEvents
+	{
+		TDeviceID targetDeviceID;
+		TRawEventSeq events;
+	};
+	typedef sequence<TDeviceEvents> TDeviceEventsSeq;
+
 	struct TEngineID
 	{
 		short engineNumber;

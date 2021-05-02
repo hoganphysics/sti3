@@ -16,7 +16,7 @@ public:
 
     STIPyDevice(const std::string& name);   //abstract
 
-    STIPyDevice(const std::string& name, const std::string& address, unsigned module);
+    STIPyDevice(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID);
     STIPyDevice(const STI::Device::DeviceID& id);
 
     bool isAbstract() const;

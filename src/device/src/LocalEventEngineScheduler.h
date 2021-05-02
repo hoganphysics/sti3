@@ -91,15 +91,21 @@ public:
     void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
 
-    std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-                                              const std::shared_ptr<Shot>& shot,
-                                              const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                                              const STI::Device::DeviceID& owner, 
-                                              const std::set<STI::Device::DeviceID>& missingTargets);
+    // std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
+    //                                           const std::shared_ptr<Shot>& shot,
+    //                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
+    //                                           const STI::Device::DeviceID& owner, 
+    //                                           const std::set<STI::Device::DeviceID>& missingTargets);
+    
+    std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
     void addEngine(const EngineID& engineID);
+
+    bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
+    bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
+    bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const;
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -148,6 +154,9 @@ private:
 
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
+
+    bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
+    bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     STI::Device::LocalDevice* localDevice;
 

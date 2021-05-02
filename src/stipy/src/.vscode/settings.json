@@ -51,6 +51,11 @@
         "unordered_set": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "list": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp"
     }
 }

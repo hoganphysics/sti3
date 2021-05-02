@@ -1,5 +1,5 @@
 
-#include "RemoteParsedShot.h"
+#include "RemoteShot.h"
 
 #include "Convert_EventEngine.h"
 #include "RawEvent.h"
@@ -7,19 +7,19 @@
 #include <memory>
 #include <vector>
 
-using STI::Network::RemoteParsedShot;
+using STI::Network::RemoteShot;
 
 
-RemoteParsedShot::RemoteParsedShot(::STI::TNetwork::TParsedShot_ptr shot)
-	: _tShot(STI::TNetwork::TParsedShot::_duplicate(shot))
+RemoteShot::RemoteShot(::STI::TNetwork::TShot_ptr shot)
+	: _tShot(STI::TNetwork::TShot::_duplicate(shot))
 {
 }
 
-RemoteParsedShot::~RemoteParsedShot()
+RemoteShot::~RemoteShot()
 {
 }
 
-void RemoteParsedShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
+void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
 {
 
 //	STI::TNetwork::TRawEventSeq_var tEvents(new STI::TNetwork::TRawEventSeq);

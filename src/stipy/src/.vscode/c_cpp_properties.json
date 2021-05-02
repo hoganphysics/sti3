@@ -1,9 +1,15 @@
 {
+    "env": {
+        "stiBasePath": "${workspaceFolder}/../../.."
+    },
     "configurations": [
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${stiBasePath}/include/**",
+                "${stiBasePath}/src/device/src/**",
+                "${stiBasePath}/src/network/src/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

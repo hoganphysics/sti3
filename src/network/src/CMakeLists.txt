@@ -41,7 +41,7 @@ add_library(stinetwork SHARED
     RemoteDeviceMessageHandler.cpp
     RemoteEventEngine.cpp
     RemoteEventEngineScheduler.cpp
-    RemoteParsedShot.cpp
+    RemoteShot.cpp
     RemoteTriggerCallback.cpp
     TChannelManager_i.cpp
     TDeviceCollection_i.cpp
@@ -51,7 +51,7 @@ add_library(stinetwork SHARED
     TDeviceMessageHandler_i.cpp
     TEventEngine_i.cpp
     TEventEngineScheduler_i.cpp
-    TParsedShot_i.cpp
+    TShot_i.cpp
     TRefreshIndicator_i.cpp
     TTriggerCallback_i.cpp
 )

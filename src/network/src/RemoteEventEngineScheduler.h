@@ -2,7 +2,7 @@
 #define STI_ENGINE_REMOTEEVENTENGINESCHEDULER_H
 
 #include "EventEngineScheduler.h"
-
+#include "DeviceMessage.h"
 #include "deviceNet.h"
 
 #include <memory>
@@ -34,14 +34,19 @@ public:
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
     void cancelJob(const STI::Engine::EngineJobID& jobID);
 
-    std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
-                                              const std::shared_ptr<STI::Engine::Shot>& shot,
-                                              const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 
-                                              const STI::Device::DeviceID& owner, 
-                                              const std::set<STI::Device::DeviceID>& missingTargets);
+    // std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
+    //                                           const std::shared_ptr<STI::Engine::Shot>& shot,
+    //                                           const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 
+    //                                           const STI::Device::DeviceID& owner, 
+    //                                           const std::set<STI::Device::DeviceID>& missingTargets);
+
+    std::shared_ptr<STI::Engine::Shot> createShot(const std::shared_ptr<STI::Engine::RawEventVector>& events);
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
+    bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& events) const;
+    bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
+    bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree) const;
 	
 private:
 

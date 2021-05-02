@@ -12,7 +12,7 @@
 #include "EngineID.h"
 #include "Channel.h"
 #include "ParseID.h"
-#include "LocalParsedShot.h"
+#include "LocalShot.h"
 #include "RawEvent.h"
 #include "Channel.h"
 
@@ -65,7 +65,11 @@ public:
 	{
 		cout << "Destroying " << getID().getName() << endl;
 	}
-
+	void tmp()
+	{
+		STI::Device::DeviceID sid("dev1", "localhost", 0);
+		addPartner(sid);
+	}
 
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) 
@@ -134,33 +138,58 @@ int main(int argc, char **argv)
 
 void testDevice()
 {
-	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+//	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/STI Server");
 
 	auto hub1 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 
 	dev2->getID();
 
+//	dev2->tmp();
+
 	hub1->addDevice(dev2);
 
-	hub1->run(true);
+	hub1->run(false);
+
+	int x;
+	std::cin >> x;
+
+	STI::Engine::ParseID pid;
+	pid.parseTimestamp.timestamp = 1.1;
+
+	std::vector<STI::Engine::EngineParsingMessage> messages;
+
+
+	// //check remote access
+	// STI::Device::DeviceID sid("dev1", "localhost", 0);
+	// std::shared_ptr<STI::Device::DeviceCollection> dcollection;
+	// std::shared_ptr<STI::Device::Device> server;
+	// std::shared_ptr<STI::Engine::EventEngineScheduler> remoteScheduler;
+	// dev2->getCollection(dcollection);
+	// dcollection->get(sid, server);
+	// server->getEngineScheduler(remoteScheduler);
+
+	// messages.clear();
+	//remoteScheduler->getParsingMessages(pid, messages);
 
 }
 
 void testServer()
 {
 
-	STI::Device::DeviceID id2("dev2", "localhost", 0, "localhost/0/dev1");
+	STI::Device::DeviceID id2("dev2", "localhost", 0, "localhost/0/STI Server");
 
-	auto dev1 = std::make_shared<TestDevice>("dev1", "localhost", 0, "srv1");
-//	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/dev1");
+	auto dev1 = std::make_shared<TestDevice>("STI Server", "localhost", 0, "root");
+//	auto dev2 = std::make_shared<TestDevice>("dev2", "localhost", 0, "localhost/0/STI Server");
 	auto dev3 = std::make_shared<TestDevice>("dev3", "localhost", 0, "localhost/0/dev2");
-	auto dev4 = std::make_shared<TestDevice>("dev4", "localhost", 0, "localhost/0/dev1");
+	auto dev4 = std::make_shared<TestDevice>("dev4", "localhost", 0, "localhost/0/STI Server");
 
+	dev4->tmp();
 
 
 	STI::Engine::ParseID pid0;
 	pid0.parseTimestamp.timestamp = 1.1;
-	auto shot0 = std::make_shared<STI::Engine::LocalParsedShot>();
+	auto shot0 = std::make_shared<STI::Engine::LocalShot>();
 	STI::Utils::MixedValue value0;
 	value0.setValue(28.0);
 	auto evt0 = STI::Engine::RawEvent(dev1->getID(), 2.01, 1, value0, "desc", 0, STI::Engine::RawEventType::Play);
@@ -196,17 +225,17 @@ void testServer()
 	hub1->addDevice(dev4);
 
 
-	hub1->run(true);
+	hub1->run(false);
 
 	int x;
-	//std::cin >> x;
+	std::cin >> x;
 
 
 	//dev3->addEventTarget(dev1->getID());
 
 	STI::Engine::ParseID pid;
 	pid.parseTimestamp.timestamp = 1.1;
-	auto shot = std::make_shared<STI::Engine::LocalParsedShot>();
+	auto shot = std::make_shared<STI::Engine::LocalShot>();
 
 	STI::Utils::MixedValue value;
 	value.setValue(27.0);
@@ -226,7 +255,11 @@ void testServer()
 	std::cout << "Length events: " << events->size() << std::endl;
 
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> scheduler;
+	
 	dev1->getEngineScheduler(scheduler);
+
+	std::cin >> x;
+	
 	scheduler->parse(pid, shot);
 
 //	hub2->addNode(dev3->id, dev3);
@@ -234,6 +267,21 @@ void testServer()
 
 
 	std::cin >> x;
+
+	std::vector<STI::Engine::EngineParsingMessage> messages;
+	scheduler->getParsingMessages(pid, messages);
+
+
+	//check remote access
+	std::shared_ptr<STI::Device::DeviceCollection> dcollection;
+	std::shared_ptr<STI::Device::Device> server;
+	std::shared_ptr<STI::Engine::EventEngineScheduler> remoteScheduler;
+	dev4->getCollection(dcollection);
+	dcollection->get(dev1->getID(), server);
+	server->getEngineScheduler(remoteScheduler);
+
+	messages.clear();
+	remoteScheduler->getParsingMessages(pid, messages);
 
 	STI::Engine::ShotID shotID;
 	shotID.parseID = pid;

@@ -3,6 +3,7 @@
 
 #include "DeviceID.h"
 #include "DeviceTrace.h"
+#include "fwd/RawEvent_fwd.h"
 
 #include <memory>
 #include <set>
@@ -41,14 +42,19 @@ public:
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;
 
-    virtual std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-                                                      const std::shared_ptr<Shot>& shot,
-                                                      const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                                                      const STI::Device::DeviceID& owner, 
-                                                      const std::set<STI::Device::DeviceID>& missingTargets) = 0;
+    // virtual std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
+    //                                                   const std::shared_ptr<Shot>& shot,
+    //                                                   const std::shared_ptr<EventEngineDependencyTree>& tree, 
+    //                                                   const STI::Device::DeviceID& owner, 
+    //                                                   const std::set<STI::Device::DeviceID>& missingTargets) = 0;
+
+    virtual std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events) = 0;
 
    	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 
+    virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const = 0;
+    virtual bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const = 0;
+    virtual bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
 };
 
 

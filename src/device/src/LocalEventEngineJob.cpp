@@ -30,7 +30,7 @@ using STI::Engine::ParsingMessageType;
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<Shot>& shot,
                                          const STI::Device::DeviceID& owner)
-: parsedShot(shot), jobOwner(owner)
+: shot_(shot), jobOwner(owner)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 
@@ -93,9 +93,9 @@ void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& jo
     attachedJobs.push_back(job);
 }
 
-bool LocalEventEngineJob::getParsedShot(std::shared_ptr<Shot>& shot) const
+bool LocalEventEngineJob::getShot(std::shared_ptr<Shot>& shot) const
 {
-    shot = parsedShot;
+    shot = shot_;
 
     return (shot != 0);
 }

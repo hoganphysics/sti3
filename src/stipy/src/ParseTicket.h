@@ -3,6 +3,10 @@
 #define STI_PYTHON_PARSETICKET_H
 
 #include "ParseID.h"
+#include "Device.h"
+#include "fwd/RawEvent_fwd.h"
+#include "EngineParsingMessage.h"
+
 
 #include <string>
 #include <mutex>
@@ -22,12 +26,13 @@ class ParseTicket
 {
 public:
 
-    ParseTicket(const STI::Engine::ParseID& id, ParseTicketManager* manager);
+    ParseTicket(const STI::Engine::ParseID& id, ParseTicketManager* manager, 
+                const std::shared_ptr<STI::Device::Device>& server);
     ~ParseTicket();
  
     const STI::Engine::ParseID& getParseID() const;
 
-    ParseTicket& wait();    //blocks until parse completes; returns this for chaining
+    void wait();    //blocks until parse completes; returns this for chaining
 
     // ResultTicket play();
     // ResultTicket play(unsigned repeats);
@@ -37,13 +42,25 @@ public:
 
     enum class ParseTicketStatus { Parsing, Complete, Cancelled };
 
+    std::vector<STI::Engine::EngineParsingMessage> getMessages();
+    STI::Engine::DeviceEventMap& getEvents();
+    void getTree();
+
 private:
+
+    bool eventsBuffered;
+    STI::Engine::DeviceEventMap events;
+
+    bool messagesBuffered;
+    std::vector<STI::Engine::EngineParsingMessage> messages;
 
     STI::Engine::ParseID pid;
 
     ParseTicketStatus status;
 
     ParseTicketManager* ticketManager;
+
+    std::shared_ptr<STI::Device::Device> server;
 
     mutable std::mutex parseMutex;
     mutable std::condition_variable parseCondition;
