@@ -23,7 +23,7 @@ class EventEngineJob
 {
 public:
 
-    enum class EngineJobStatus { New, Running, Completed, Cancelled };
+    enum class EngineJobStatus { New, Running, Completed, Canceled };
 
     virtual ~EventEngineJob() {}
 

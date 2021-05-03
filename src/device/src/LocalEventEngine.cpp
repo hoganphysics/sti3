@@ -28,7 +28,6 @@
 #include <vector>
 #include <functional>
 
-#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
@@ -122,10 +121,6 @@ void LocalEventEngine::divideEvents(const RawEventVector& events)
 		if (localDeviceID == evt.targetDevice() || it != ownedIDs.end()) {
 			//Event target is this device or is directly owned by this device
 			eventsByTarget[evt.targetDevice()].push_back(std::move(evt));
-
-			std::cout << "eventsByTarget[" << evt.targetDevice().getID() << "].push("
-			<< eventsByTarget[evt.targetDevice()].back().targetDevice().getID() << ", "
-			<< eventsByTarget[evt.targetDevice()].back().time() << ")\n";
 		}
 		else if (dependencyTree->getBranchToTarget(localDeviceID, evt.targetDevice(), branchID)) {
 			//Event target is in the subgraph under branchID
@@ -361,7 +356,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		}
 		else {
 			//parse failed
-			std::cout << "local parse failed " << "\n";
 			stop();
 		}
 
@@ -388,14 +382,8 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 
-				std::cout << "parseDevice::eventsByTarget[" << id.getID() << "] = "
-					<< eventsByTarget[id].size()
-					<< "\n";
-
 				auto evts = std::make_shared<RawEventVector>();
 				(*evts) = std::move(eventsByTarget[id]);			//expensive deep copy?
-
-				std::cout << "parseDevice else events: " << evts->size() << "\n";
 
 				auto shot = scheduler->createShot(evts);
 				

@@ -45,7 +45,7 @@ module TNetwork
 		TDeviceIDSeq ids;
 	};
 
-	enum TEngineJobStatus { New, Running, Completed, Cancelled };
+	enum TEngineJobStatus { New, Running, Completed, Canceled };
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 

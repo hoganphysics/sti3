@@ -23,8 +23,6 @@
 #include <memory>
 #include <algorithm>
 
-#include <iostream>
-
 
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalEventEngineScheduler;
@@ -126,7 +124,6 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     if (events != 0) {
         for(auto& evt : *events) {
             eventTargets.insert(evt.targetDevice());
-            std::cout << "parse target = " << evt.targetDevice().getID() << std::endl;
         }
     }
 
@@ -139,18 +136,6 @@ void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_
     // Begin multi-pass search. Keep calling while new missingTargets are found.
     getDependants(eventTargets, *tree, missingTargets, messages, 5);  //max 5 passes
 
-////////////////////////////////////
-    std::cout << "missingTargets: ";
-    for (auto& mt : missingTargets) {
-        std::cout << mt.getID() << "\n";
-    }
-    std::set<DeviceID> treeNodes;
-    tree->getNodes(treeNodes);
-    std::cout << "treeNodes: ";
-    for (auto& mt : treeNodes) {
-        std::cout << mt.getID() << "\n";
-    }
-///////////////////////////////////////
     for (auto& m : messages) {
         job->addMessage(m);
     }
@@ -536,10 +521,54 @@ void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& ne
     jobCondition.notify_all();
 }
 
+void LocalEventEngineScheduler::cancelAll()
+{
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
+    std::set<EngineJobID> ids;
+    
+    queuedJobs.getKeys(ids);
+    for (auto& jobID : ids) {
+        _cancelJob(jobID);
+    }
+
+    ids.clear();
+    
+    runningJobs.getKeys(ids);
+    for (auto& jobID : ids) {
+        _cancelJob(jobID);
+    }
+
+    stopAll();
+
+}
+
+void LocalEventEngineScheduler::stopAll()
+{
+    std::set<EngineID> ids;
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+    engineManagers.getKeys(ids);
+
+    for (auto& id : ids) {
+        if (engineManagers.get(id, manager) && (manager != 0)) {
+            manager->getEngine(engine);
+            if (engine != 0) {
+                engine->stop();
+            }
+        }
+    }
+}
+
 void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
-    
+    _cancelJob(jobID);
+}
+
+void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
+{
+   
     // std::set<EngineJobID> jobIDs;
     // runningJobs.getKeys(jobIDs);
     
@@ -560,13 +589,20 @@ void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
-        //job->markCancelled();
+        job->markCancelled();
         
-        if (getManager(jobID, manager) && manager != 0) {
-            manager->abortJob();
-        }
+        completedJobs.add(jobID, job);
+    }
+
+    if (queuedJobs.get(jobID, job) && job != 0) {
+        queuedJobs.remove(jobID);
+        job->markCancelled();
         
-        //completedJobs.add(jobID, job);
+        completedJobs.add(jobID, job);
+    }
+
+    if (getManager(jobID, manager) && manager != 0) {
+        manager->abortJob();
     }
 
     jobCondition.notify_all();
@@ -591,8 +627,12 @@ std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const std::shared_pt
     return shot;
 }
 
+
+
 void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
 {
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
     std::shared_ptr<EventEngineJob> job;
     
     if (runningJobs.get(jobID, job) && job != 0) {
@@ -611,14 +651,23 @@ void LocalEventEngineScheduler::assignJobs()
     std::set<EngineID> allEngines;
     std::set<EngineID> freeEngines;
     std::set<EngineJobID> queuedJobIDs;     //sorted by priority
+
+//    std::set<EngineJobID> queuedPlayJobIDs;     //sorted by priority
   
     std::shared_ptr<EventEngineManager> manager;
     EngineID engineID;
+
+    int assignableJobCount;
 
     do {
         engineManagers.getKeys(allEngines);
         queuedJobs.getKeys(queuedJobIDs);
         freeEngines.clear();
+
+        // //Filter play jobs
+        // queuedPlayJobIDs.clear();
+        // std::copy_if(queuedJobIDs.begin(), queuedJobIDs.end(), std::back_inserter(queuedPlayJobIDs),
+        //          [](const EngineJobID& id){ return id.type == EventEngineJobType::Play; });
 
         //check for available engines
         for (auto& id : allEngines) {
@@ -626,38 +675,66 @@ void LocalEventEngineScheduler::assignJobs()
                 freeEngines.insert(id);
             }
         }
+        assignableJobCount = queuedJobIDs.size();
+        //assignableFreeEngines = freeEngines.size();
 
         if (freeEngines.size() > 0) {
             
             //First priority is to run a play event if a free engine is parsed for it, regardless of position in set.
             for (auto jobID : queuedJobIDs) {
                 
-                if (jobID.type == EventEngineJobType::Play 
-                        && findParsedEngine(jobID.pid, freeEngines, engineID)
-                        && assignJob(jobID, engineID)) 
-                {
-                    //play job assigned to engineID
-                    freeEngines.erase(engineID);
+                if (jobID.type == EventEngineJobType::Play) {
+                    
+                    //check if the associated parse job was canceled
+                    if (isCanceledJob(jobID.pid)) {
+                        _cancelJob(jobID);  //cancel play if parse was canceled
+                    }
+
+                    // findParsedEngine(jobID.pid, freeEngines, engineID)
+                    //     && assignJob(jobID, engineID)
+                
+                    if (findParsedEngine(jobID.pid, freeEngines, engineID) && assignJob(jobID, engineID)) {
+                        //play job assigned to engineID
+                        freeEngines.erase(engineID);
+                    }
+                    else {
+                        assignableJobCount--;
+                    }
                 }
             }
 
             //assign parse jobs
             for (auto jobID : queuedJobIDs) {
-                if (jobID.type == EventEngineJobType::Parse
-                        && findOldestParsedEngine(freeEngines, engineID)
-                        && assignJob(jobID, engineID)) 
-                {
-                    freeEngines.erase(engineID);
-                } 
+                if (jobID.type == EventEngineJobType::Parse) {
+
+                    if (findOldestParsedEngine(freeEngines, engineID) && assignJob(jobID, engineID)) {
+                        freeEngines.erase(engineID);
+                    }
+                    else {
+                        assignableJobCount--;
+                    }
+                }
             }
         }
 
-        if (queuedJobs.size() == 0 || freeEngines.size() == 0) {
+        if (queuedJobs.size() == 0 || freeEngines.size() == 0 || assignableJobCount < 1) {
             jobCondition.wait(jobLock);
         }
 
     } while (running);
 
+}
+
+bool LocalEventEngineScheduler::isCanceledJob(const STI::Engine::ParseID& parseID)
+{
+    EngineJobID jobID;
+    jobID.type = EventEngineJobType::Parse;
+    jobID.pid = parseID;
+
+    std::shared_ptr<EventEngineJob> job;
+    bool success = completedJobs.get(jobID, job) && job != 0;
+
+    return (success && job->getStatus() == EventEngineJob::EngineJobStatus::Canceled);
 }
 
 bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& engineID)
@@ -681,14 +758,14 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
 }
 
 
-bool LocalEventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parsedID, 
+bool LocalEventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& parseID, 
                                                  std::set<EngineID>& freeEngines, EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
     bool found = false;
 
     for (auto& id : freeEngines) {
-        if (engineManagers.get(id, manager) && manager != 0 && manager->isParsed(parsedID)) {
+        if (engineManagers.get(id, manager) && manager != 0 && manager->isParsed(parseID)) {
             engineID = id;
             found = true;
             break;
@@ -708,7 +785,7 @@ bool LocalEventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeE
     for (auto& id : freeEngines) {
         if (engineManagers.get(id, manager) && manager != 0) {
  
-            //first time through, found == false, so we initial with this timestamp
+            //first time through, found == false, so we initialize with the first timestamp
             if (!found || manager->getLastParseID().parseTimestamp < oldest) {
                 oldest = manager->getLastParseID().parseTimestamp;
                 engineID = id;
@@ -779,11 +856,6 @@ bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<
 
 bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const
 {
-
-    std::cout << "getParsedEngine " << queuedJobs.size() 
-        << " : " <<  runningJobs.size() 
-        << " : " <<  completedJobs.size() << std::endl;
-
     std::shared_ptr<EventEngineJob> job;
     std::shared_ptr<EventEngineManager> manager;
 
@@ -831,21 +903,19 @@ bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEv
 
 bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const
 {
-    std::cout << "getParsingMessages" << std::endl;
- 
-    {
-        std::unique_lock<std::mutex> jobLock(jobMutex);
-        std::cout << "Jobs: " << queuedJobs.size() 
-            << " : " <<  runningJobs.size() 
-            << " : " <<  completedJobs.size() << std::endl;
-    }
+
+    // {
+    //     std::unique_lock<std::mutex> jobLock(jobMutex);
+    //     std::cout << "Jobs: " << queuedJobs.size() 
+    //         << " : " <<  runningJobs.size() 
+    //         << " : " <<  completedJobs.size() << std::endl;
+    // }
 
 
     std::shared_ptr<EventEngineJob> job;
 
     if (findJob(parseID, job)) {
         messages = job->getParsingMessages();
-        std::cout << "messages: " << messages.size() << std::endl;
         return true;
     }
 

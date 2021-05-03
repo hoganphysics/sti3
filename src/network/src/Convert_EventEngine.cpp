@@ -375,8 +375,8 @@ bool STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(co
     case EventEngineJob::EngineJobStatus::Completed:
         tJobStatus = TEngineJobStatus::Completed;
         break;
-    case EventEngineJob::EngineJobStatus::Cancelled:
-        tJobStatus = TEngineJobStatus::Cancelled;
+    case EventEngineJob::EngineJobStatus::Canceled:
+        tJobStatus = TEngineJobStatus::Canceled;
         break;
     default:
         tJobStatus = TEngineJobStatus::New;
@@ -400,8 +400,8 @@ bool STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(co
     case TEngineJobStatus::Completed:
         jobStatus = EventEngineJob::EngineJobStatus::Completed;
         break;
-    case TEngineJobStatus::Cancelled:
-        jobStatus = EventEngineJob::EngineJobStatus::Cancelled;
+    case TEngineJobStatus::Canceled:
+        jobStatus = EventEngineJob::EngineJobStatus::Canceled;
         break;
     default:
         jobStatus = EventEngineJob::EngineJobStatus::New;

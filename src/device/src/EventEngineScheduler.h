@@ -42,6 +42,9 @@ public:
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;
 
+    //getJobs();
+    virtual void cancelAll() = 0;
+
     // virtual std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
     //                                                   const std::shared_ptr<Shot>& shot,
     //                                                   const std::shared_ptr<EventEngineDependencyTree>& tree, 

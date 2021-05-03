@@ -39,6 +39,7 @@ public:
     //void addJob(::STI::TNetwork::TEventEngineJob_ptr newJob);
     void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
     void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
+    void cancelAll();
 
     ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
     ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);

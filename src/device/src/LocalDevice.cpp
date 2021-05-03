@@ -15,10 +15,6 @@
 #include "LocalAttributeManager.h"
 
 #include <memory>
-#include <iostream>
-
-using std::cout;
-using std::endl;
 
 using STI::Device::Device;
 using STI::Device::DeviceID;
@@ -92,11 +88,7 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// 	localDevice->addEventTarget(id);
 	// }
 
-	std::cout << "***** LocalDevice::DeviceCollectionListener::add? ";
-
 	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id)) {
-
-		std::cout << "yes\n";
 		
 		auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
 		

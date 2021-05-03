@@ -321,7 +321,7 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
-//		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
 	}
 
 	return deviceMessage != 0;
@@ -342,7 +342,7 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->handledEvents, tMessage.handledEvents);
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
-//	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
 	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine)) {

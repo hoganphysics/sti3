@@ -34,6 +34,8 @@ public:
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
     void cancelJob(const STI::Engine::EngineJobID& jobID);
 
+    void cancelAll();
+
     // std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
     //                                           const std::shared_ptr<STI::Engine::Shot>& shot,
     //                                           const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 

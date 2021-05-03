@@ -18,7 +18,6 @@
 
 #include <set>
 
-#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;
@@ -75,10 +74,8 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 	}
 
 	//Check for error messages
-	std::cout << "EventEngineParser::parse messages: \n";
 	for (auto& m : messages) {
 		if (m.getType() == ParsingMessageType::Error) {
-			std::cout << m.getMessage() << "\n";
 			hasErrors = true;
 			break;
 		}

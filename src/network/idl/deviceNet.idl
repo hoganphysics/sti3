@@ -172,6 +172,8 @@ module TNetwork
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
 
+		void cancelAll();
+
 		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
     	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
     	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);

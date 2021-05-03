@@ -27,6 +27,7 @@ void init_ParseTicket(py::module& m)
     py::class_<STI::Python::ParseTicket, std::shared_ptr<STI::Python::ParseTicket>>(m, "ParseTicket")
 
         .def("wait", &STI::Python::ParseTicket::wait)
+        .def("cancel", &STI::Python::ParseTicket::cancel)
         .def("getMessages", &STI::Python::ParseTicket::getMessages)
 
         ;

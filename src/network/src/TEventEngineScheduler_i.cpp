@@ -18,7 +18,6 @@
 
 #include <memory>
 
-#include <iostream>
 
 using STI::TNetwork::TEventEngineScheduler_i;
 using ::STI::TNetwork::TDeviceIDSeq;
@@ -52,8 +51,6 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
 
 void TEventEngineScheduler_i::parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TShot_ptr shot)
 {
-	std::cout << "TEventEngineScheduler_i::parse" << std::endl;
-
 	std::shared_ptr<Shot> parsedShot;
 	bool success = convert<::STI::TNetwork::TShot_ptr, std::shared_ptr<Shot>>(shot, parsedShot);
     
@@ -218,6 +215,14 @@ void TEventEngineScheduler_i::cancelJob(const ::STI::TNetwork::TEngineJobID& job
     if (engineScheduler != 0) {
 
 		engineScheduler->cancelJob(convert<TEngineJobID, STI::Engine::EngineJobID>(jobID));
+	}
+}
+
+void TEventEngineScheduler_i::cancelAll()
+{
+    if (engineScheduler != 0) {
+
+		engineScheduler->cancelAll();
 	}
 }
 

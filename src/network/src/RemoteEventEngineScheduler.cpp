@@ -179,6 +179,19 @@ void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 	}
 }
 
+void  RemoteEventEngineScheduler::cancelAll()
+{
+	try {
+		tEventEngineScheduler->cancelAll();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
 
 // std::shared_ptr<STI::Engine::EventEngineJob> RemoteEventEngineScheduler::createJob(const STI::Engine::ParseID& parseID, 
 //                                           const std::shared_ptr<STI::Engine::Shot>& shot,

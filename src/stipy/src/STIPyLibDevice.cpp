@@ -27,8 +27,8 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
     ticketManager = std::make_shared<ParseTicketManager>();
 
-    std::shared_ptr<Device> server;
-    getServer(server);
+    // std::shared_ptr<Device> server;
+    // getServer(server);
 
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
@@ -39,11 +39,11 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
    	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
-    if (receiver != 0 && server != 0) {
-        receiver->addListener(server->getID(), schedulerMessageLID, listener);	//listen to events from server
+    if (receiver != 0) {
+        receiver->addListener(serverID, schedulerMessageLID, listener);	//listen to events from server
     }
 
-    std::cout << "STIPyLibDevice connecting"<<std::endl;
+    // std::cout << "STIPyLibDevice connecting"<<std::endl;
 }
 
 bool STIPyLibDevice::addto(const STI::Network::HubID& target)
@@ -56,7 +56,7 @@ bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
     getCollection(deviceCollection);
     
-    std::cout << "Collection: " << deviceCollection->size() << std::endl;
+    //std::cout << "Collection: " << deviceCollection->size() << std::endl;
 
     return (deviceCollection != 0) && deviceCollection->get(serverID, server) && (server != 0);
 }
@@ -65,8 +65,13 @@ bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
 std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::ParseID& pid)
 {
     std::shared_ptr<Device> server;
-    getServer(server);
+    bool connected = getServer(server);
 
-    return ticketManager->makeParseTicket(pid, server);
+    auto ticket = ticketManager->makeParseTicket(pid, server);
+    
+    if (!connected && ticket != 0) {
+        ticket->cancel();
+    }
+    return ticket;
 }
 

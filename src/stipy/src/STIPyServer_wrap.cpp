@@ -22,7 +22,9 @@ void init_STIPyServer(py::module& m)
 
         .def("makeshot", py::overload_cast<>(&STIPyServer::makeshot))
         .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse))
-        .def("play", py::overload_cast<const ParseTicket&>(&STIPyServer::play))
+        .def("play", py::overload_cast<const std::shared_ptr<ParseTicket>&>(&STIPyServer::play))
+        .def("cancelAll", &STIPyServer::cancelAll)
+        
         ;
 
 }

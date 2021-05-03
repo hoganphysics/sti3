@@ -7,6 +7,8 @@
 #include "EventEngineScheduler.h"
 #include "ShotID.h"
 
+#include <chrono>
+
 #include <memory>
 #include <iostream>
 
@@ -75,30 +77,22 @@ bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler
 
 std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot)
 {
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
     STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = 1.1;
+    pid.parseTimestamp.timestamp = ms.count();
+    std::cout << "parse time: " << pid.parseTimestamp.timestamp << std::endl;
     
     auto ticket = libDevice->makeParseTicket(pid);
-    // return ticket;
-
-    std::shared_ptr<STI::Device::Device> server;
-    libDevice->getServer(server);
-
-    if (server == 0) {
-        std::cout << "null server" << std::endl;
-        return ticket;
-    }
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    server->getEngineScheduler(scheduler);
 
-
-    if (scheduler != 0)
-        std::cout << "scheduler->parse" << std::endl;
+    if (getScheduler(scheduler)) {
         scheduler->parse(pid, pyShot->getShot());
+    }
 
-    // ParseTicket ticket;
     return ticket;
 }
 
@@ -120,31 +114,56 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& 
     return ticket;
 }
 
-ResultTicket STIPyServer::play(const ParseTicket& ticket)
+ResultTicket STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket)
 {
     return play(ticket, 0);
 }
 
-ResultTicket STIPyServer::play(const ParseTicket& ticket, unsigned repeats)
+ResultTicket STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats)
 {
-    return play(ticket.getParseID(), repeats);
+    if (ticket != 0) {
+        return play(ticket->getParseID(), repeats);
+    }
+
+    ResultTicket rticket;
+    return rticket;
 }
 
 ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
 {
-    std::shared_ptr<STI::Device::Device> server;
-    libDevice->getServer(server);
-    
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    server->getEngineScheduler(scheduler);
+
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
     STI::Engine::ShotID sid;
     sid.parseID = parseID;
-    sid.submissionTime.timestamp = 3.1;
+    sid.submissionTime.timestamp = ms.count();
 
-    scheduler->play(sid);
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    if (getScheduler(scheduler)) {
+        scheduler->play(sid);
+    }
+
+    // std::shared_ptr<STI::Device::Device> server;
+    // libDevice->getServer(server);
+    
+    // std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    // server->getEngineScheduler(scheduler);
+
 
     ResultTicket ticket;
     return ticket;
+}
+
+
+void STIPyServer::cancelAll()
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    if (getScheduler(scheduler)) {
+        scheduler->cancelAll();
+    }
 }
 

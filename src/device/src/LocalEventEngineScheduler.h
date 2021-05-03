@@ -91,6 +91,10 @@ public:
     void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
 
+
+    void cancelAll();
+    void stopAll();
+    
     // std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
     //                                           const std::shared_ptr<Shot>& shot,
     //                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
@@ -148,8 +152,10 @@ private:
     
     void assignJobs();
     bool assignJob(const EngineJobID& jobID, const EngineID& engineID);
+    void _cancelJob(const EngineJobID& jobID);
+    bool isCanceledJob(const STI::Engine::ParseID& parseID);
 
-    bool findParsedEngine(const STI::Engine::ParseID& parsedID, std::set<EngineID>& freeEngines, EngineID& engineID);
+    bool findParsedEngine(const STI::Engine::ParseID& parseID, std::set<EngineID>& freeEngines, EngineID& engineID);
     bool findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID);
 
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);

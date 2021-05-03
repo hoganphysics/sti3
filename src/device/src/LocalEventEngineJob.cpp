@@ -83,7 +83,7 @@ void LocalEventEngineJob::markComplete()
 void LocalEventEngineJob::markCancelled()
 {
      std::unique_lock< std::mutex > writeLock(jobMutex);
-     status = EventEngineJob::EngineJobStatus::Cancelled;
+     status = EventEngineJob::EngineJobStatus::Canceled;
 }
 
 void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& job)

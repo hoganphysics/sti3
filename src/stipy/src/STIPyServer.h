@@ -47,11 +47,14 @@ public:
     std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
     std::shared_ptr<ParseTicket> parse(const std::vector<ParseTicket>& tickets);  //combining multiple servers
 
-    ResultTicket play(const ParseTicket& ticket);
-    ResultTicket play(const ParseTicket& ticket, unsigned repeats);
+    ResultTicket play(const std::shared_ptr<ParseTicket>& ticket);
+    ResultTicket play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats);
     ResultTicket play(const STI::Engine::ParseID& parseID, unsigned repeats);
 
+    void cancelAll();
+
 private:
+
 
     bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 
