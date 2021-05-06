@@ -77,6 +77,20 @@ module TNetwork
 		string  value_s;
 	};
 
+
+	typedef sequence<string> TStringSeq;
+
+	struct TAttribute
+	{
+		string key;
+		string value;
+		string group;
+		TStringSeq allowedValues;
+		TMixedValue metaData;
+	};
+	typedef sequence<TAttribute> TAttributeSeq;
+
+
 	struct TRawEvent
 	{
 		double time;
@@ -147,6 +161,8 @@ module TNetwork
 	};
 
 
+	//DeviceMessage *************************//
+
 	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
 							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
 							MessageEngineStatus, MessageEngineParser, MessageUnknown };
@@ -205,6 +221,41 @@ module TNetwork
 		TEngineParsingMessageSeq messages;
 	};
 
+	struct TAttributeUpdateTuple
+	{
+		string key;
+		string value;
+	};
+	typedef sequence<TAttributeUpdateTuple> TAttributeUpdateTupleSeq;
+
+	struct TAttributeUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TAttributeUpdateTupleSeq attributes;		//{key, value} pairs
+	};
+
+	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };
+
+	struct TChannelUpdateTuple
+	{
+		short channelNumber;
+		TMixedValue value;
+	};
+	typedef sequence<TChannelUpdateTuple> TChannelUpdateTupleSeq;
+
+	struct TChannelUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TChannelUpdateMessageType channelUpdateType;
+
+		TChannelUpdateTupleSeq channelValues;	//{channel, value} pairs
+
+		//only used for ChannelName messages
+		short channelNumber;
+		string channelName;
+	};
 
 	struct TEngineParserDeviceMessage
 	{
@@ -212,6 +263,9 @@ module TNetwork
 		TParseID pid;
 		TEngineParsingMessageSeq messages;
 	};
+
+	//**********************************//
+
 
 	enum TChannelType { TChannelOutput, TChannelInput };
 

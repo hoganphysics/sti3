@@ -172,6 +172,15 @@ void STI::Device::MessageGrouper<Message>::addMessage(const std::shared_ptr<Mess
         return;
     }
 
+    //For non-groupable messages, just send immediately
+    if (!mess->groupable()) {
+        if (messageDispatcher != 0) {
+            messageDispatcher->addMessage(message);            
+        }
+        return;
+    }
+
+    //For groupable messages
     switch (state)
     {
     case MessageGrouperState::Idle:

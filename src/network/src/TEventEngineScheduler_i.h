@@ -45,6 +45,8 @@ public:
     ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
     ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);
 
+    ::CORBA::Boolean ping();
+
 private:
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> engineScheduler;

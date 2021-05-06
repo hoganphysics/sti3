@@ -50,6 +50,8 @@ public:
     bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
     bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree) const;
 	
+    bool ping() const;
+
 private:
 
 	::STI::TNetwork::TEventEngineScheduler_var tEventEngineScheduler;		//remote reference

@@ -35,7 +35,7 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
     //EventEngineScheduler message listener
     auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(ticketManager);
-    DeviceMessageListenerID schedulerMessageLID;
+    
    	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
@@ -44,6 +44,18 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
     }
 
     // std::cout << "STIPyLibDevice connecting"<<std::endl;
+}
+
+STIPyLibDevice::~STIPyLibDevice()
+{
+    std::shared_ptr<DeviceMessageReceiver> receiver;
+    getMessageReceiver(receiver);
+
+    //Should make this RAII -- the listener class should call removeListener on destruction.
+    //Could make a mixin class that remembers the listenerID and automatically calls remove
+    if (receiver != 0) {
+        receiver->removeListener(serverID, schedulerMessageLID);
+    }
 }
 
 bool STIPyLibDevice::addto(const STI::Network::HubID& target)

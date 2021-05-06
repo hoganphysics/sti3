@@ -39,6 +39,19 @@ public:
 };
 
 
+// template<class Message>
+// class DeviceMessageListenerRAII : public DeviceMessageListener<Message>
+// {
+// 	virtual ~DeviceMessageListenerRAII()
+// 	{
+// 		if (receiver != 0) {
+// 			receiver->removeListener(serverID, schedulerMessageLID);
+// 		}
+// 	}
+
+// 	std::shared_ptr<DeviceMessageReceiver> receiver;
+// };
+
 } //Device
 } //STI
 

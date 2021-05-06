@@ -45,8 +45,9 @@ RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 
 void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<Shot>& shot)
 {
-	STI::TNetwork::TShot_ptr tShot;
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
 
+	STI::TNetwork::TShot_ptr tShot;
 
 	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot_ptr>(shot, tShot)) {
 	//	return;
@@ -74,6 +75,8 @@ void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, cons
 
 void RemoteEventEngineScheduler::play(const STI::Engine::ShotID& shotID)
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
+
 	try {
         
 		tEventEngineScheduler->play(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(shotID));	//remote call
@@ -92,6 +95,8 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
                                 std::set<STI::Device::DeviceID>& missingTargets, std::vector<STI::Engine::EngineParsingMessage>& messages, 
 								const STI::Device::DeviceTrace& trace)
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
+
 //	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
 	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
 
@@ -126,6 +131,7 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
 void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, 
 														std::vector<EngineParsingMessage>& messages, const DeviceTrace& trace)
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
 
 //	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
 	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
@@ -152,8 +158,9 @@ void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree
     
 void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
+
 	try {
-        
 		tEventEngineScheduler->addJob(convert<EventEngineJob, TEventEngineJob>(*newJob));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -167,6 +174,8 @@ void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& n
 
 void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
+
 	try {
 		tEventEngineScheduler->cancelJob(convert<EngineJobID, TEngineJobID>(jobID));	//remote call
 	}
@@ -181,6 +190,8 @@ void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 
 void  RemoteEventEngineScheduler::cancelAll()
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return;
+
 	try {
 		tEventEngineScheduler->cancelAll();	//remote call
 	}
@@ -220,6 +231,8 @@ std::shared_ptr<Shot> RemoteEventEngineScheduler::createShot(const std::shared_p
 
 bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& events) const
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return false;
+
 	try {
 //		tEventEngineScheduler->getParsedEvents(convert<ParseID, TParseID>(parseID), );	//remote call
 	}
@@ -235,6 +248,8 @@ bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& par
 
 bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return false;
+
 	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
 //	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
 
@@ -259,6 +274,8 @@ bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& 
 
 bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree) const
 {
+	if (CORBA::is_nil(tEventEngineScheduler)) return false;
+
 	STI::TNetwork::TEventEngineDependencyTree_var tTree(new STI::TNetwork::TEventEngineDependencyTree);
 //	STI::TNetwork::TEventEngineDependencyTree_var tTree;
 	
@@ -270,6 +287,26 @@ bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parse
 		success = tEventEngineScheduler->getParsedTree(convert<ParseID, TParseID>(parseID), tTree);	//remote call
 
         convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, *tree);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return success;
+}
+
+bool RemoteEventEngineScheduler::ping() const
+{
+	if (CORBA::is_nil(tEventEngineScheduler)) return false;
+
+	bool success = false;
+
+	try {
+		success = tEventEngineScheduler->ping();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

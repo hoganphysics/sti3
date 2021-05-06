@@ -2,10 +2,12 @@
 #define STI_NETWORK_REMOTECHANNELMANAGER_H
 
 #include "ChannelManager.h"
-
+#include "DeviceMessageListener.h"
+#include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "deviceNet.h"
 
 #include <memory>
+#include <mutex>
 
 namespace STI
 {
@@ -19,8 +21,10 @@ class RemoteChannelManager : public STI::Device::ChannelManager
 {
 public:
 
-	RemoteChannelManager(::STI::TNetwork::TChannelManager_ptr channelManager);
-	~RemoteChannelManager() {}
+	RemoteChannelManager(::STI::TNetwork::TChannelManager_ptr channelManager, 
+                            const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
+                            const STI::Device::DeviceID& remoteID);
+	~RemoteChannelManager();
 
     void getChannels(std::vector<std::shared_ptr<STI::Device::Channel>>& channels);
     bool getChannel(short channelNumber, std::shared_ptr<STI::Device::Channel>& channel);
@@ -28,9 +32,54 @@ public:
     bool writeChannel(short channel, const STI::Utils::MixedValue& value);
     bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
+    bool setChannelName(short channel, const std::string& name);
+    bool ping() const;
+
+	std::string getChannelName(short channel) const;
+	STI::Utils::MixedValue getLastValue(short channel) const;
+
 private:
 	
+    struct ChannelDataTuple
+    {
+        std::string name;
+        STI::Utils::MixedValue value;
+    };
+    std::map<short, ChannelDataTuple> channelData;
+
+    void setChannelData(const std::shared_ptr<STI::Device::Channel>& channel);
+
+    friend class ChannelUpdater;
+
+    //ChannelUpdater
+    class ChannelUpdater : public STI::Device::DeviceMessageListener<STI::Device::ChannelUpdateMessage>
+    {
+    public:
+
+        ChannelUpdater(RemoteChannelManager* manager) : channelManager(manager) {}
+
+        void handleMessage(const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess)
+        {
+            if (channelManager == 0) return;
+            
+            channelManager->handleMessage(mess);
+        }
+
+    private:
+
+        RemoteChannelManager* channelManager;
+    };
+
+    void handleMessage(const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess);
+
+    STI::Device::DeviceID remoteID;
+    STI::Device::DeviceMessageListenerID listenerID;
+
     ::STI::TNetwork::TChannelManager_var tChannelManager;		//remote reference
+
+    std::shared_ptr<STI::Device::DeviceMessageListenerForwarder> listenerForwarder;
+
+    mutable std::mutex managerMutex;
 
 };
 

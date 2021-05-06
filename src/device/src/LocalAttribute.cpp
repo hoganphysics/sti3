@@ -32,7 +32,7 @@ const std::string& LocalAttribute::getKey() const
     return key_;
 }
 
-const std::string& LocalAttribute::getValue() const
+const std::string& LocalAttribute::getValue()
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
 
@@ -137,13 +137,13 @@ LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const STI::U
 const STI::Utils::MixedValue& LocalAttribute::getMetaData() const
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
-    metaData.getMetaData();
+    return metaData.getMetaData();
 }
 
 STI::Utils::MixedValue LocalAttribute::getMetaData(const std::string& key) const
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
-    metaData.getMetaData(key);
+    return metaData.getMetaData(key);
 }
 
 void LocalAttribute::addRefreshListener(AttributeRefreshListener* listener)

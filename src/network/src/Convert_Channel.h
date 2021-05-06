@@ -12,17 +12,23 @@ namespace STI
 
 namespace Device
 {
-
 class Channel;
-
 } //Device
+
+namespace Network
+{
+class RemoteChannel;
+} //Network
 
 
 //Channel
 template<>
 bool Network::convert<std::shared_ptr<Device::Channel>, TNetwork::TChannel>(const std::shared_ptr<Device::Channel>& channel, TNetwork::TChannel& tChannel);
 template<>
-bool Network::convert<TNetwork::TChannel, std::shared_ptr<Device::Channel>>(const TNetwork::TChannel& tChannel, std::shared_ptr<Device::Channel>& channel);
+bool Network::convert<TNetwork::TChannel, std::shared_ptr<Network::RemoteChannel>>(const TNetwork::TChannel& tChannel, std::shared_ptr<Network::RemoteChannel>& channel);
+
+template<>
+std::shared_ptr<Network::RemoteChannel> Network::convert<TNetwork::TChannel, std::shared_ptr<Network::RemoteChannel>>(const TNetwork::TChannel& tChannel);
 
 
 //ChannelType

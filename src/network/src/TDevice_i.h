@@ -8,6 +8,7 @@
 #include "TDeviceMessageDispatcher_i.h"
 #include "TEventEngineScheduler_i.h"
 #include "TChannelManager_i.h"
+#include "TAttributeManager_i.h"
 
 #include <memory>
 
@@ -29,6 +30,7 @@ public:
 	TDeviceMessageDispatcher_ptr getMessageDispatcher();
 	TEventEngineScheduler_ptr getEngineScheduler();
 	TChannelManager_ptr getChannelManager();
+	TAttributeManager_ptr getAttributeManager();
 	TDeviceID* getID();
 
 
@@ -38,6 +40,7 @@ private:
 	TDeviceMessageDispatcher_i messageDispatcherServant;	//Servant for this Device's event dispatcher.
 	TEventEngineScheduler_i eventSchedulerServant;		//Servant for this Device's event scheduler.
 	TChannelManager_i channelManagerServant;
+	TAttributeManager_i attributeManagerServant;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };

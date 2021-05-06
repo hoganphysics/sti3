@@ -14,6 +14,8 @@
 #include "LocalAttribute.h"
 #include "LocalAttributeManager.h"
 
+#include "DeviceMessageListenerForwarder.h"
+
 #include <memory>
 
 using STI::Device::Device;
@@ -46,7 +48,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localCollection->addListener(deviceCollectionListener);
 
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
-	localChannelManager = std::make_shared<LocalChannelManager>(this);
+	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 
 	//setEngineFactory(engineFactory);
@@ -54,6 +56,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	//EngineSchedulerMessage ListenerID
 	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
+
+	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
 
 }
 
@@ -93,6 +97,13 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 		auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
 		
 		localDevice->deviceMessageReceiver->addListener(id, localDevice->schedulerMessageLID, listener);	//listen to events on new device 'id'
+	}
+	
+	//The DeviceMessageListenerForwarder allows newly added devices to register message listeners via the
+	//local DeviceMessageReceiver, allowing update messages to be passed to the stored device instance.
+	std::shared_ptr<Device> newDevice;
+	if (localDevice->localCollection->get(id, newDevice) && newDevice != 0) {
+		newDevice->attachMessageListenerForwarder(localDevice->listenerForwarder);
 	}
 }
 

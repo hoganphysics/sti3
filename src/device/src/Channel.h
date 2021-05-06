@@ -36,6 +36,7 @@ public:
 	virtual void saveLastValue(const STI::Utils::MixedValue& value) = 0;
 	virtual const STI::Utils::MixedValue getLastValue() const = 0;
 
+	//Metadata can be used for GUI layout, tooltips, units, etc.
 	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
 	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 

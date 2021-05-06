@@ -12,6 +12,7 @@ namespace STI
 namespace Device
 {
 
+class DeviceMessageListenerForwarder;
 class DeviceMessageDispatcher;
 class ChannelManager;
 class AttributeManager;
@@ -28,6 +29,8 @@ public:
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
+
+	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
 

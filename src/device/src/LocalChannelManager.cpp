@@ -3,14 +3,20 @@
 #include "LocalChannelManager.h"
 #include "Channel.h"
 #include "LocalDevice.h"
+#include "DeviceMessageDispatcher.h"
+
+#include "DeviceMessage.h"
+
 
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::Channel;
 using STI::Utils::MixedValue;
+using STI::Device::DeviceMessageDispatcher;
 
-LocalChannelManager::LocalChannelManager(LocalDevice* localDevice)
- : localDevice(localDevice)
+
+LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
+ : localDevice(localDevice), messageGrouper(dispatcher)
 {
 }
 
@@ -64,5 +70,17 @@ void LocalChannelManager::addChannel(const std::shared_ptr<Channel>& channel)
     if (channel != 0) {
         channelMap.add(channel->getChannelNumber(), channel);
     }
+}
+
+void LocalChannelManager::handleChannelRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value)
+{
+    auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(localDevice->getID(), channelNumber, value);
+    messageGrouper.addMessage(message);
+}
+
+void LocalChannelManager::handleChannelNameRefreshEvent(short channelNumber, const std::string& name)
+{
+    auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(localDevice->getID(), channelNumber, name);
+    messageGrouper.addMessage(message);
 }
 

@@ -70,6 +70,8 @@ module TNetwork
 
 		void cleanup();
 		void clear();
+
+		boolean ping();
 	};
 
 	interface TRefreshIndicator
@@ -94,6 +96,8 @@ module TNetwork
 		void removeMessageHandler(in TDeviceID targetID);
 
 		//void addEvent(in TDeviceEvent evt);
+
+		boolean ping();
 	};
 
 	interface TShot
@@ -177,15 +181,37 @@ module TNetwork
 		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
     	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
     	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
+
+		boolean ping();
 	};
 
 	interface TChannelManager
 	{
-		TChannelSeq getChannels();
+		void getChannels(out TChannelSeq channels);
 		boolean getChannel(in short channelNumber, out TChannel channel);
+
+		boolean setChannelName(in short channelNumber, in string name);
 
 		boolean writeChannel(in short channel, in TMixedValue value);
 		boolean readChannel(in short channel, in TMixedValue value, out TMixedValue data);
+
+		boolean ping();
+	};
+
+	interface TAttributeManager
+	{
+	    string getValue(in string key);
+	    boolean setValue(in string key, in string value);
+
+		void refreshValue(in string key);
+
+		// TMixedValue getMetaDataAll(in string key);
+		// TMixedValue getMetaData(in string key, in string metaKey);
+
+    	boolean getAttribute(in string key, out TAttribute attrib);
+    	void getAttributes(out TAttributeSeq attributes);
+
+		boolean ping();
 	};
 
 	interface TDevice
@@ -193,20 +219,20 @@ module TNetwork
 		//Node interface
 		boolean refresh();
 
-		//Collector interface
-		TDeviceCollection getDeviceCollection();
-
 		//Device interface
 		TDeviceID getID();
-	//	void write(in unsigned long input);		//temp
 
-		//Device event passing
+		//Device collector interface
+		TDeviceCollection getDeviceCollection();
+
+		//Device message passing
 		TDeviceMessageDispatcher getMessageDispatcher();
 
 		//Event engine system
 		TEventEngineScheduler getEngineScheduler();
 
 		TChannelManager getChannelManager();
+		TAttributeManager getAttributeManager();
 	};
 
 };	//TNetwork

@@ -21,7 +21,7 @@ public:
 	virtual ~Attribute() {}
 
 	virtual const std::string& getKey() const = 0;
-	virtual const std::string& getValue() const = 0;
+	virtual const std::string& getValue() = 0;
     virtual const std::vector<std::string>& getAllowedValues() const = 0;
     virtual const std::string& getGroup() const = 0;
 
@@ -29,8 +29,9 @@ public:
 
     virtual bool setValue(const std::string& value) = 0;
 
+	//Metadata can be used for GUI layout, tooltips, units, etc.
 	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
-	virtual  STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
+	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 
 };
 

@@ -48,3 +48,8 @@ void TDeviceMessageDispatcher_i::removeMessageHandler(const TDeviceID& targetID)
 	}
 }
 
+::CORBA::Boolean TDeviceMessageDispatcher_i::ping()
+{
+	return true;
+}
+

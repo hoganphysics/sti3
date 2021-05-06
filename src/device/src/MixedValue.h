@@ -109,6 +109,7 @@ public:
 	}
 
 	MixedValueType getType() const;
+	bool isType(const MixedValueType& mixedValueType) const;
 
 	bool getBoolean() const;
 	int getInt() const;

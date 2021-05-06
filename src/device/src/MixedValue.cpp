@@ -184,6 +184,11 @@ MixedValueType MixedValue::getType() const
 	return type;
 }
 
+bool MixedValue::isType(const MixedValueType& mixedValueType) const
+{
+	return type == mixedValueType;
+}
+
 bool MixedValue::getBoolean() const
 {
 	if(type == MixedValueType::Boolean)

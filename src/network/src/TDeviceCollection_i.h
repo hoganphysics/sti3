@@ -27,6 +27,7 @@ public:
 	void getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq);
 	void cleanup();
 	void clear();
+	::CORBA::Boolean ping();
 
 private:
 

@@ -31,7 +31,7 @@ public:
 	~LocalAttribute();
 
 	const std::string& getKey() const;
-	const std::string& getValue() const;
+	const std::string& getValue();
     const std::vector<std::string>& getAllowedValues() const;
     const std::string& getGroup() const;
 

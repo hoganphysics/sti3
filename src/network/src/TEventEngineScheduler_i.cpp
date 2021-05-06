@@ -304,3 +304,8 @@ void TEventEngineScheduler_i::cancelAll()
 	return success;
 }
 
+::CORBA::Boolean TEventEngineScheduler_i::ping()
+{
+	return true;
+}
+

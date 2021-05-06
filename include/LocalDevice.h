@@ -92,6 +92,10 @@ private:
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return false; }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return false; }
 
+	friend class DeviceMessageListenerForwarder;
+	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device
+	// DeviceMessageListenerForwarder listenerForwarder;
+	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
 
 	void addEventTarget(const STI::Device::DeviceID& id);
 	virtual bool isEventTarget(const DeviceID& id);

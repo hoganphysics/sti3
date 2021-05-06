@@ -23,6 +23,7 @@ public:
     
     STIPyLibDevice(const std::string& name, const std::string& address, unsigned short module,
 		                const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID);
+    ~STIPyLibDevice();
 
     bool addto(const STI::Network::HubID& target);
 
@@ -31,6 +32,8 @@ public:
     std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
 
 private:
+
+    STI::Device::DeviceMessageListenerID schedulerMessageLID;
 
     std::shared_ptr<ParseTicketManager> ticketManager;
 

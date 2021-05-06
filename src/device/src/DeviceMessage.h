@@ -80,16 +80,62 @@ private:
 
 };
 
+class ChannelUpdateMessage;
 
-class ChannelUpdateDeviceMessage : public DeviceMessage
+class ChannelUpdateMessage : public DeviceMessage, 
+							 public STI::Device::GroupableMessage<ChannelUpdateMessage>
 {
 public:
 
-	ChannelUpdateDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::ChannelUpdate) {}
+	enum class ChannelUpdateMessageType { ChannelValue, ChannelName };
 
-	//MixedValue channelValue();
+	ChannelUpdateMessage(const STI::Device::DeviceID& source) 
+	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	{
+		channelUpdateType = ChannelUpdateMessageType::ChannelValue;
+	}
 
+	ChannelUpdateMessage(const STI::Device::DeviceID& source, short channel, const STI::Utils::MixedValue& value) 
+	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	{
+		channelUpdateType = ChannelUpdateMessageType::ChannelValue;
+		channelValues[channel] = value;
+	}
+
+	ChannelUpdateMessage(const STI::Device::DeviceID& source, short channel, const std::string& name) 
+	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	{
+		channelUpdateType = ChannelUpdateMessageType::ChannelName;
+		channelNumber = channel;
+		channelName = name;
+	}
+	
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::ChannelUpdate; }
+
+    bool appendMessage(const ChannelUpdateMessage& mess)
+	{
+        for (auto& pair : mess.channelValues) {
+            channelValues[pair.first] = pair.second;  //overwrites
+        }
+		return true;
+	}
+    
+	bool groupable() const
+	{
+		return channelUpdateType == ChannelUpdateMessageType::ChannelValue;
+	}
+
+	ChannelUpdateMessage& get()
+	{
+		return *this;
+	}
+
+	ChannelUpdateMessageType channelUpdateType;
+	std::map<short, STI::Utils::MixedValue> channelValues;	//just {channel, value} pairs
+
+	//only used for ChannelName messages
+	short channelNumber;
+	std::string channelName;
 
 };
 
@@ -97,15 +143,20 @@ public:
 class AttributeUpdateMessage;
 
 class AttributeUpdateMessage : public DeviceMessage,
-									 public STI::Device::GroupableMessage<AttributeUpdateMessage>
+							   public STI::Device::GroupableMessage<AttributeUpdateMessage>
 {
 public:
 
+	AttributeUpdateMessage(const STI::Device::DeviceID& source) 
+	: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
+	{
+	}
+
 	AttributeUpdateMessage(const STI::Device::DeviceID& source, const std::string& key, const std::string& value) 
-		: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
-		{
-			attributes[key] = value;
-		}
+	: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
+	{
+		attributes[key] = value;
+	}
 
 	//MixedValue channelValue();
 
@@ -116,6 +167,11 @@ public:
         for (auto& pair : mess.attributes) {
             attributes[pair.first] = pair.second;  //overwrites
         }
+		return true;
+	}
+	
+	bool groupable() const
+	{
 		return true;
 	}
 

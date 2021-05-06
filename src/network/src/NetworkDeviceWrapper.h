@@ -8,6 +8,7 @@
 #include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
 #include "EventEngineScheduler.h"
+#include "DeviceMessageListenerForwarder.h"
 
 #include <memory>
 
@@ -63,6 +64,11 @@ public:
 	bool refresh() { return localDevice->refresh(); }
 
 private:
+
+	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)
+	{
+		localDevice->attachMessageListenerForwarder(forwarder);
+	}
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
 	{

@@ -1,6 +1,6 @@
 
 #include "Convert_Channel.h"
-#include "LocalChannel.h"
+#include "RemoteChannel.h"
 
 #include "MixedValue.h"
 
@@ -16,6 +16,8 @@ using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValue;
 using STI::Device::ChannelType;
 using STI::TNetwork::TChannelType;
+using STI::Network::RemoteChannel;
+
 
 //Channel
 template<>
@@ -40,32 +42,43 @@ bool STI::Network::convert<std::shared_ptr<Channel>, TChannel>(const std::shared
 }
 
 template<>
-bool STI::Network::convert<TChannel, std::shared_ptr<Channel>>(const TChannel& tChannel, std::shared_ptr<Channel>& channel)
+bool STI::Network::convert<TChannel, std::shared_ptr<RemoteChannel>>(const TChannel& tChannel, std::shared_ptr<RemoteChannel>& channel)
 {
-    auto localChannel = std::make_shared<STI::Device::LocalChannel>(
+    channel = STI::Network::convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannel);
+
+    return (channel != 0);
+}
+
+template<>
+std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<RemoteChannel>>(const TChannel& tChannel)
+{
+
+    //Meta data
+    MixedValue metaData = convert<TMixedValue, MixedValue>(tChannel.metaData);
+    // const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
+
+    auto remoteChannel = std::make_shared<STI::Network::RemoteChannel>(
                             static_cast<short>(tChannel.channelNumber),
                             convert<TChannelType, ChannelType>(tChannel.type),
                             convert<TMixedValueType, MixedValueType>(tChannel.inputType),
                             convert<TMixedValueType, MixedValueType>(tChannel.outputType),
-                            convert<::CORBA::String_member, std::string>(tChannel.channelName));
+                            convert<::CORBA::String_member, std::string>(tChannel.channelName),
+                            metaData);
 
-    //Meta data
-    MixedValue metaData = convert<TMixedValue, MixedValue>(tChannel.metaData);
-    const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
 
-    for (auto& tuple : metaValues) {
+
+    // for (auto& tuple : metaValues) {
         
-        const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
+    //     const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
         
-        if (labeledData.size() == 2) {
-            localChannel->addMetaData(labeledData.at(0).getString(), labeledData.at(1));
-        }
-    }
+    //     if (labeledData.size() == 2) {
+    //         localChannel->addMetaData(labeledData.at(0).getString(), labeledData.at(1));
+    //     }
+    // }
 
-    channel = localChannel;
-
-    return (channel != 0);
+    return remoteChannel;
 }
+
 
 
 //ChannelType

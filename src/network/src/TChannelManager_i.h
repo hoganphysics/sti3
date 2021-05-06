@@ -21,11 +21,12 @@ public:
 	TChannelManager_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TChannelManager_i();
 
-    TChannelSeq* getChannels();
+    void getChannels(::STI::TNetwork::TChannelSeq_out channels);
     ::CORBA::Boolean getChannel(::CORBA::Short channelNumber, ::STI::TNetwork::TChannel_out channel);
+    ::CORBA::Boolean setChannelName(::CORBA::Short channelNumber, const char* name);
     ::CORBA::Boolean writeChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value);
     ::CORBA::Boolean readChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value, ::STI::TNetwork::TMixedValue_out data);
-
+    ::CORBA::Boolean ping();
 
 private:
 

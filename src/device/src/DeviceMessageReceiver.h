@@ -16,6 +16,7 @@ namespace STI
 namespace Device
 {
 
+
 class Device;
 class DeviceMessageDispatcher;
 
@@ -160,7 +161,7 @@ private:
 	//(that is, the remote device that they are listening to).
 	//***CAREFUL: Do not declare multiple ListenerGroupMap<T> of the same T!
 	ListenerGroupMap<RefreshDeviceMessage> refreshListeners;
-	ListenerGroupMap<ChannelUpdateDeviceMessage> channelUpdateListeners;
+	ListenerGroupMap<ChannelUpdateMessage> channelUpdateListeners;
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
 	ListenerGroupMap<EngineParserDeviceMessage> engineParserListeners;
