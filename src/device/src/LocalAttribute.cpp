@@ -2,8 +2,13 @@
 #include "LocalAttribute.h"
 #include "AttributeRefreshListener.h"
 
+#include "utils.h"
+
+#include <sstream>
+
 using STI::Device::LocalAttribute;
 using STI::Device::AttributeRefreshListener;
+
 
 
 LocalAttribute::LocalAttribute(const std::string& key, const std::string& initalValue, 
@@ -14,12 +19,24 @@ LocalAttribute::LocalAttribute(const std::string& key, const std::string& inital
 }
 
 LocalAttribute::LocalAttribute(const std::string& key, const std::string& initalValue)
-: key_(key), value_(initalValue)
+: value_(initalValue)
 {
+    //parse group
+    auto pos = key.find_last_of("::");  //group separator, such as Config::Exposure time
+    
+    if (pos != std::string::npos) {
+        group_ = key.substr(0, pos - 1);
+        key_ = key.substr(pos + 1, key.size());        
+    }
+    else {
+        key_ = key;
+    }
+
     //Default setter/refresher behavior makes the Attribute act as a simple synchronized key/value 
     //pair storage with no side effects. Setting always succeeds and refreshing returns the last set value.
     setSetter( [](const std::string&) { return true; } );
-    setRefresher( [this](void) -> const std::string& { return this->value_; } );
+    // setRefresher( [this](void) -> const std::string& { return this->value_; } );
+    setRefresher( [this](void) -> std::string { return this->value_; } );
 }
 
 LocalAttribute::~LocalAttribute()
@@ -32,7 +49,7 @@ const std::string& LocalAttribute::getKey() const
     return key_;
 }
 
-const std::string& LocalAttribute::getValue()
+const std::string& LocalAttribute::getValue() const
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
 
@@ -110,7 +127,7 @@ void LocalAttribute::_fireRefreshEvent()
     }
 }
 
-LocalAttribute& LocalAttribute::setRefresher(const std::function<const std::string&(void)>& refresher)
+LocalAttribute& LocalAttribute::setRefresher(const std::function<std::string(void)>& refresher)
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
 

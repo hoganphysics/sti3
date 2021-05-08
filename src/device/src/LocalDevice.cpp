@@ -149,19 +149,32 @@ LocalChannel& LocalDevice::addChannel(unsigned short channelNumber, STI::Device:
 	return *channel;
 }
 
+
+void LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, 
+								std::shared_ptr<STI::Device::LocalAttribute>& attribute)
+{
+    attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue);
+	localAttributeManager->addAttribute(attribute);
+}
+
 LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::string& initialValue)
 {
-    auto attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue);
-	localAttributeManager->addAttribute(attribute);
-
+	std::shared_ptr<STI::Device::LocalAttribute> attribute;
+	addAttribute(key, initialValue, attribute);
 	return *attribute;
+}
+
+void LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues, 
+								std::shared_ptr<STI::Device::LocalAttribute>& attribute)
+{
+    attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue, allowedValues);
+	localAttributeManager->addAttribute(attribute);
 }
 
 LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues)
 {
-    auto attribute = std::make_shared<STI::Device::LocalAttribute>(key, initialValue, allowedValues);
-	localAttributeManager->addAttribute(attribute);
-
+	std::shared_ptr<STI::Device::LocalAttribute> attribute;
+	addAttribute(key, initialValue, allowedValues, attribute);
 	return *attribute;
 }
 

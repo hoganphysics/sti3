@@ -1,0 +1,107 @@
+
+
+#include "LocalAttribute.h"
+#include "Attribute.h"
+#include "MixedValuePy.h"
+#include "utils.h"
+
+#include <string>
+#include <memory>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/cast.h>
+
+namespace py = pybind11;
+
+using STI::Device::Attribute;
+using STI::Device::LocalAttribute;
+using STI::Utils::MixedValue;
+using STI::Python::MixedValuePy;
+
+
+void init_Attribute(py::module& m) 
+{
+
+
+    py::class_<Attribute, std::shared_ptr<Attribute>>(m, "Attribute")
+        .def("getKey", &Attribute::getKey)
+        .def("getValue", &Attribute::getValue)
+        .def("getAllowedValues", &Attribute::getAllowedValues)
+        .def("getGroup", &Attribute::getGroup)
+        .def("refreshValue", &Attribute::refreshValue)
+        .def("setValue", &Attribute::setValue)
+        // .def("setValue", py::overload_cast<const std::string&>(&Attribute::setValue))
+        // .def("setValue", [](Attribute& self, const std::string& value) {
+        //         // return self.setValue(value);
+        //         return true;
+        //     })
+        .def("getMetaData", [](Attribute& self) {
+                MixedValuePy value(self.getMetaData());
+                return value.getValue_py();
+            })
+        .def("getMetaData", [](Attribute& self, const std::string& key) {
+                MixedValuePy value(self.getMetaData(key));
+                return value.getValue_py();
+            })
+        .def("__repr__",
+            [](const Attribute& att) {
+                return "<key=" + att.getKey()
+                    + ", value=" + att.getValue()
+                    + ", group=" + att.getGroup()
+                    + ">";
+            })
+        ;
+
+    py::class_<LocalAttribute, Attribute, std::shared_ptr<LocalAttribute>>(m, "LocalAttribute")
+        .def(py::init<const std::string&, const std::string&>(), 
+                     py::arg("key"), py::arg("value") )
+        .def(py::init(
+            [](const std::string& key, const std::string& initalValue, 
+              const std::vector<std::string>& allowedValues) 
+                {
+                    return new STI::Device::LocalAttribute(key, initalValue, allowedValues);
+                } ))
+        // .def("setRefresher", &LocalAttribute::setRefresher, py::return_value_policy::reference)
+        .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refesher) {
+                self->setRefresher(refesher);
+                return self;
+            })
+        // .def("setSetter", &LocalAttribute::setSetter, py::return_value_policy::reference)   //py::return_value_policy::reference
+        .def("setSetter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
+                self->setSetter(setter);
+                return self;
+            })
+
+        // .def("setValue", [&](LocalAttribute& self, const std::string& value) {
+        //         return self.setValue<std::string>(value);
+        //         // return true;
+        //     })
+        // .def("setValue", py::overload_cast<const std::string&>(&LocalAttribute::setValue))
+        // .def("setRefresher", 
+        //     [](LocalAttribute& self, const std::string& key, const MixedValuePy& value) {
+
+        //         std::function<const std::string&(void)> refreshValueCallback;
+                
+        //         self.setRefresher(refreshValueCallback);
+        //         const MixedValue& v = static_cast<const MixedValue&>(value);
+        //         //LocalChannel& ch = self.addMetaData(key, v);
+        //         //return ch;        //error: use of deleted function ‘STI::Device::LocalChannel::LocalChannel(const STI::Device::LocalChannel&’
+        //         self.addMetaData(key, v);
+        //         return;
+        //     } ) //, py::return_value_policy::reference)
+        .def("addMetaData", 
+            [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::string& key, const MixedValuePy& value) {
+                const MixedValue& v = static_cast<const MixedValue&>(value);
+                //LocalChannel& ch = self.addMetaData(key, v);
+                //return ch;        //error: use of deleted function ‘STI::Device::LocalChannel::LocalChannel(const STI::Device::LocalChannel&’
+                self->addMetaData(key, v);
+                return self;
+            } ) //, py::return_value_policy::reference)
+        ;
+
+
+}
+

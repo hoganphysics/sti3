@@ -17,9 +17,9 @@ void init_MixedValue(py::module& m);
 void init_ChannelManager(py::module& m);
 void init_LocalDevice(py::module& m);
 void init_DeviceCollection(py::module& m);
-
+void init_Attribute(py::module& m);
 void init_RawEvent(py::module& m);
-
+void init_AttributeManager(py::module& m);
 
 int add(int i, int j) {
     return i + j;
@@ -112,7 +112,8 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_DeviceCollection(m);
     init_LocalDevice(m);
     init_RawEvent(m);
-
+    init_Attribute(m);
+    init_AttributeManager(m);
 }
 
 int main(int argc, char *argv[])

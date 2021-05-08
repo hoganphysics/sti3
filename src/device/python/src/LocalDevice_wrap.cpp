@@ -6,12 +6,16 @@
 #include "MixedValuePy.h"
 #include "ChannelManagerPy.h"
 #include "DeviceMessageDispatcher.h"
-
+#include "LocalAttribute.h"
 #include "EventEngineSchedulerPy.h"
+#include "AttributeManagerPy.h"
+
 
 #include <memory>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
 namespace py = pybind11;
 
 //using STI::Python::DevicePy;
@@ -52,6 +56,7 @@ void init_LocalDevice(py::module& m)
         .def("getEngineScheduler", &DevicePy::getEngineScheduler)
         .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)
         .def("getChannelManager", &DevicePy::getChannelManager)
+        .def("getAttributeManager", &DevicePy::getAttributeManager)
         ;
 
     py::class_<LocalDevicePy, DevicePy, LocalDevicePyTrampoline, std::shared_ptr<LocalDevicePy>>(m, "LocalDevice") 
@@ -62,7 +67,16 @@ void init_LocalDevice(py::module& m)
          .def("readChannel", &LocalDevicePy::readChannel)
          .def("addChannel", &LocalDevicePy::addChannel)
          .def("addPartner", &LocalDevicePy::addPartner)
-         .def("test2", &LocalDevicePy::test2);
+        //  .def("addAttribute", &LocalDevicePy::addAttribute)
+         .def("addAttribute", 
+                py::overload_cast<const std::string&, const std::string&>(&LocalDevicePy::addAttribute), 
+                py::return_value_policy::reference)
+        //  .def("addAttribute", py::overload_cast<const std::string&, const std::string&, const pybind11::list&>(&LocalDevicePy::addAttribute))
+         .def("addAttribute", 
+                py::overload_cast<const std::string&, const std::string&, const std::vector<std::string>&>(&LocalDevicePy::addAttribute), 
+                py::return_value_policy::reference)
+         .def("test2", &LocalDevicePy::test2)
+         ;
 
 
 

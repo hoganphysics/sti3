@@ -59,6 +59,7 @@ namespace Python
 
 class ChannelManagerPy;
 class EventEngineSchedulerPy;
+class AttributeManagerPy;
 
 
 class DevicePy
@@ -77,6 +78,7 @@ public:
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher();
     std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler();
     std::shared_ptr<ChannelManagerPy> getChannelManager();
+    std::shared_ptr<AttributeManagerPy> getAttributeManager();
 
     const STI::Device::DeviceID getID() const;
 //    int test2(int x);

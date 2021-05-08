@@ -26,7 +26,7 @@ public:
     void attachManager(RemoteAttributeManager* manager);
 
 	const std::string& getKey() const;
-	const std::string& getValue();
+	const std::string& getValue() const;
     const std::vector<std::string>& getAllowedValues() const;
     const std::string& getGroup() const;
 
@@ -44,7 +44,7 @@ public:
 private:
 
     std::string key_;
-    std::string value_;
+    mutable std::string value_;     //value is stored in RemoteAttributeManager, so value_ is just a copy. Mutable so we can return (and store) a reference
     std::string group_;
     std::vector<std::string> allowedValues_;
     STI::Utils::MetaData metaData_;

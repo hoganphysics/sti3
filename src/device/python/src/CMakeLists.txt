@@ -28,6 +28,9 @@ find_package(PythonLibs 3.6.2 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 pybind11_add_module(stidevicepy 
+    AttributeManager_wrap.cpp
+    Attribute_wrap.cpp
+    AttributeManagerPy.cpp
     ChannelManagerPy.cpp
     ChannelManager_wrap.cpp
     Channel_wrap.cpp
@@ -79,6 +82,7 @@ target_include_directories(stidevicepy PRIVATE
 #****add_library
 #pybind11_add_module  PRIVATE pybind11::headers 
 add_library(stidevicepybase SHARED
+    AttributeManagerPy.cpp
     ChannelManagerPy.cpp
     DeviceCollectionPy.cpp
     DevicePy.cpp

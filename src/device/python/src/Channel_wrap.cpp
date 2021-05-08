@@ -18,8 +18,18 @@ using STI::Device::LocalChannel;
 using STI::Utils::MixedValue;
 using STI::Python::MixedValuePy;
 
+using STI::Device::ChannelType;
+using STI::Utils::MixedValueType;
+
 void init_Channel(py::module& m) 
 {
+
+    py::enum_<ChannelType>(m, "ChannelType")
+        .value("Output", ChannelType::Output)
+        .value("Input", ChannelType::Input)
+        .export_values();
+
+
 
     py::class_<Channel, std::shared_ptr<Channel>>(m, "Channel")
         .def("getChannelNumber", &Channel::getChannelNumber)

@@ -6,7 +6,7 @@
 #include "ChannelManager.h"
 #include "DeviceCollection.h"
 #include "EventEngineSchedulerPy.h"
-
+#include "AttributeManagerPy.h"
 
 #include <iostream>
 
@@ -16,7 +16,8 @@ using STI::Device::ChannelManager;
 
 using STI::Python::DeviceCollectionPy;
 using STI::Python::EventEngineSchedulerPy;
-
+using STI::Python::AttributeManagerPy;
+using STI::Device::AttributeManager;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -107,6 +108,23 @@ std::shared_ptr<ChannelManagerPy> DevicePy::getChannelManager()
 //        std::cout << "manager != 0" << std::endl;
         wrapper = std::make_shared<ChannelManagerPy>(manager);
 //        std::cout << "manager != 0 and wrapper == " << (wrapper==0 ? "0" : "1") << std::endl;
+    }
+
+    return wrapper;
+}
+
+
+std::shared_ptr<AttributeManagerPy> DevicePy::getAttributeManager()
+{
+    std::shared_ptr<AttributeManager> manager;
+    std::shared_ptr<AttributeManagerPy> wrapper;
+
+    if (device_ != 0) {
+        device_->getAttributeManager(manager);
+    }
+
+    if (manager != 0) {
+        wrapper = std::make_shared<AttributeManagerPy>(manager);
     }
 
     return wrapper;

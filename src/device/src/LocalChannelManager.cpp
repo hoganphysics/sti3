@@ -1,7 +1,7 @@
 
 
 #include "LocalChannelManager.h"
-#include "Channel.h"
+#include "LocalChannel.h"
 #include "LocalDevice.h"
 #include "DeviceMessageDispatcher.h"
 
@@ -11,6 +11,7 @@
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::Channel;
+using STI::Device::LocalChannel;
 using STI::Utils::MixedValue;
 using STI::Device::DeviceMessageDispatcher;
 
@@ -18,6 +19,10 @@ using STI::Device::DeviceMessageDispatcher;
 LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
  : localDevice(localDevice), messageGrouper(dispatcher)
 {
+    messageGrouper.setWarmup(100);   //ms
+    messageGrouper.setCooldown(500); //ms
+
+    messageGrouper.start();
 }
 
 
@@ -65,10 +70,11 @@ bool LocalChannelManager::readChannel(short channel, const MixedValue& value, Mi
     return false;
 }
 
-void LocalChannelManager::addChannel(const std::shared_ptr<Channel>& channel)
+void LocalChannelManager::addChannel(const std::shared_ptr<LocalChannel>& channel)
 {
     if (channel != 0) {
         channelMap.add(channel->getChannelNumber(), channel);
+        channel->addRefreshListener(this);
     }
 }
 

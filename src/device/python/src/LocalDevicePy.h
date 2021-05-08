@@ -70,6 +70,26 @@ public:
         device->addPartner(id);
     }
 
+     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
+    {
+        std::shared_ptr<STI::Device::LocalAttribute> attribute;
+        device->addAttribute(key, initialValue, attribute);
+        return attribute;
+    }
+
+    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues)
+    {
+        std::shared_ptr<STI::Device::LocalAttribute> attribute;
+        device->addAttribute(key, initialValue, allowedValues, attribute);
+        return attribute;
+    }
+
+
+    // void addAttribute(const std::string& key, const std::string& initialValue, const pybind11::list& allowedValues)
+    // {
+    //     device->addAttribute(key, initialValue);
+    // }
+
 private:
 
 

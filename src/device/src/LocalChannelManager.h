@@ -17,6 +17,7 @@ namespace Device
 class LocalDevice;
 class DeviceMessageDispatcher;
 class ChannelUpdateMessage;
+class LocalChannel;
 
 
 class LocalChannelManager : public ChannelManager,
@@ -33,7 +34,7 @@ public:
     bool writeChannel(short channel, const STI::Utils::MixedValue& value);
     bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
-    void addChannel(const std::shared_ptr<Channel>& channel);
+    void addChannel(const std::shared_ptr<LocalChannel>& channel);
 
 
 private:

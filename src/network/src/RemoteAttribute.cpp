@@ -24,7 +24,7 @@ const std::string& RemoteAttribute::getKey() const
     return key_;
 }
 
-const std::string& RemoteAttribute::getValue()
+const std::string& RemoteAttribute::getValue() const
 {
     if (remoteManager != 0) {
         value_ = remoteManager->getUpdatedValue(key_);
