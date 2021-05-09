@@ -25,6 +25,8 @@ void init_stipy(py::module& m)
 
     m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
 
+    m.def("printNetwork", &STI::Python::printNetwork, "Print the STI network tree");
+
 
 }
 

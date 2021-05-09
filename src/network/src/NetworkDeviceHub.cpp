@@ -31,17 +31,27 @@ NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress)
 
 NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress)
 {
-	_autoReconnectRemoteHubs = true;
 	_autoConnect = true;
 	_nameServiceAddress = nameServiceAddress;
 	_usingDefaultHubID = false;
 
 	localHub = std::make_shared<LocalDeviceHub>(name, address, module);
 	deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
+	
+	stiContext = "STI";
+	hubObjectName = "TDeviceHub.Object";
+
+	refreshHubContext();
 }
 
 NetworkDeviceHub::~NetworkDeviceHub()
 {
+}
+
+void NetworkDeviceHub::refreshHubContext()
+{
+	thisHubContext = makeHubContext(stiContext, localHub->getID().toString());
+	hubContextPath = makeHubContextPath(stiContext, localHub->getID().toString());
 }
 
 std::string NetworkDeviceHub::nextHubName()
@@ -59,10 +69,6 @@ void NetworkDeviceHub::setTargetHubs(const std::vector<std::string>& hubIDs)
 	}
 }
 
-void NetworkDeviceHub::autoReconnectRemoteHubs(bool enabled)
-{ 
-	_autoReconnectRemoteHubs = enabled;
-}
 
 bool NetworkDeviceHub::addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
 {
@@ -79,6 +85,7 @@ bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_pt
 		//By default, the HubID is set to match the DeviceID of the first added node.
 		HubID newHubID(id.getName(), id.getAddress(), id.getModule());
 		localHub->setID(newHubID);
+		refreshHubContext();
 	}
 
 	bool success = false;
@@ -113,127 +120,120 @@ bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 	return LocalDeviceHub::connect(deviceHubWrapper, localHubWrapper);
 }
 
+bool NetworkDeviceHub::unregisterHubContext()
+{
+	return false;
+}
+
+bool NetworkDeviceHub::registerHubContext()
+{
+	// Register this TDeviceHub reference in two contexts in the NameService:
+	// (1)  STI/<Hub ID>/TDeviceHub.Object
+	// (2)  STI/<Target Server ID>/<Hub ID>/TDeviceHub.Object  (for all target hubs, except root)
+
+	bool success = false;
+	STI::TNetwork::TDeviceHub_ptr tDeviceHubLocal;
+
+	if (!NetworkDeviceHubWrapper::getTDeviceHubReference(deviceHubWrapper, tDeviceHubLocal)) {
+		std::cerr
+			<< "Error: Unable to get TDeviceHub reference from servant." << std::endl;
+		return false;
+	}
+
+	// (1) Bind primary reference to this Hub under root context
+	success = orbmanager->bindObjectReference(thisHubContext, tDeviceHubLocal);
+
+	// (2) Bind reference to this Hub under all target Hub contexts (for reconnect when target Hub restarts)
+	for (auto& targetHub : targetHubs) {
+
+		std::string targetHubPath = makeHubContextPath(stiContext, targetHub);
+
+		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
+		success &= orbmanager->bindObjectReference( 
+			makeHubContext(targetHubPath, localHub->getID().toString()), 
+			tDeviceHubLocal);
+	}
+
+	return success;
+}
+
+
 void NetworkDeviceHub::run(bool block)
 {
 	if (orbmanager != 0 && orbmanager->running()) {
 		return;
 	}
 	else {
-		//orbmanager = std::make_unique<ORBManager>(_nameServiceAddress, "");
 		orbmanager = ORBManager::getInstance(_nameServiceAddress, "");
 	}
 
-	//All hubs register references in two contexts in the NameService:
-	//(1)  STI/<Hub ID>/TDeviceHub.Object
-	//(2)  STI/<Target Server ID>/<Hub ID>/TDeviceHub.Object  (for all target hubs, except root)
-
-	//Register this TDeviceHub with NameService
-	std::stringstream hubContext;
-	STI::TNetwork::TDeviceHub_ptr tDeviceHubLocal;	//var type instead?
-	STI::TNetwork::TDeviceHub_ptr tDeviceHubRemote;// = STI::TNetwork::TDeviceHub::_nil();
-	CORBA::Object_ptr obj;
-
-	hubContext << "STI" << "/" << localHub->getID().id() << "/" << "TDeviceHub.Object";
-
-	if (!NetworkDeviceHubWrapper::getTDeviceHubReference(deviceHubWrapper, tDeviceHubLocal)) {
-		std::cerr
-			<< "Error: Unable to get TDeviceHub reference from servant." << std::endl;
+	if (!registerHubContext()) {
 		return;
 	}
 
-	orbmanager->bindObjectReference(hubContext.str(), tDeviceHubLocal);
-
-
-	hubContext.str("");
-	hubContext.clear();
-	hubContext << "STI" << "/" << localHub->getID().id();// << "/";
-
-
-	//Auto reconnect to Hubs that have connected before
+	// Find live registered Hubs that attempted to connect to this Hub. Attempt to connect.
 	std::vector<std::string> liveHubs;
-	orbmanager->getAllLiveObjectContexts(hubContext.str(), "TDeviceHub.Object", liveHubs);
-	std::shared_ptr<RemoteDeviceHub> remoteHub;
-	
-	hubContext << "/" << "TDeviceHub.Object";
-	std::string thisHubContext = hubContext.str();
+	orbmanager->getAllLiveObjectContexts(hubContextPath, hubObjectName, liveHubs);
 
-	//Get TDeviceHub from all live hubs under Hub context; wrap them in RemoteDeviceHubs and reconnect
-	for (auto& hubRefContextName : liveHubs) {
-		if (hubRefContextName.compare(thisHubContext) != 0 &&	//don't connect to self
-			orbmanager->getObjectReference(hubRefContextName, obj)) {
-			
-			tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
-
-			if (!CORBA::is_nil(tDeviceHubRemote)) {
-				
-				remoteHub = std::make_shared<RemoteDeviceHub>(tDeviceHubRemote);
-
-				LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
-			}
-
+	for (auto& hubContext : liveHubs) {
+		if (hubContext.compare(thisHubContext) != 0) {		//don't connect to self
+			connectRemoteHub(hubContext);
 		}
 	}
 
-	//Add reference to this Hub under all target Hubs (for rebind if target Hub restarts)
-	for (auto& targetHub : targetHubs) {
-		hubContext.str("");
-		hubContext.clear();
+	// Attempt to connect to target Hubs of this Hub
+	connectToTargetHubs();
 
-		hubContext << "STI" << "/" << STI::Utils::replaceChars(targetHub, ".", "_") << "/"
-			<< localHub->getID().id() << "/" << "TDeviceHub.Object";
-
-		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
-		orbmanager->bindObjectReference(hubContext.str(), tDeviceHubLocal);
-	}
-
-	//Reconnect to target Hubs if they are live
-	reconnectToTargetHubs();		//attempt once; make background thread instead?
-
+	//Start ORB (network servants go live)
 	orbmanager->run();	//doesn't block
-
-	orbmanager->getAllLiveObjectContexts("STI", "TDeviceHub.Object", liveHubs);
 
 	if (block) {
 		orbmanager->block();
 	}
 }
 
-void NetworkDeviceHub::reconnectToTargetHubs()
+void NetworkDeviceHub::connectToTargetHubs()
 {
-	std::cout << "Attempting to connect to targets... ";
-
-	unsigned count = 0;
-
 	HubID hubID;
 
 	//Reconnect to target Hubs if they are live
-	for (auto& targetHub : targetHubs) {
+	for (auto& targetHubID : targetHubs) {
 
-		if (HubID::stringToHubID(targetHub, hubID) && !localHub->containsHub(hubID)) {
-			if (reconnectToTargetHub(targetHub)) { count++; }
+		if (HubID::stringToHubID(targetHubID, hubID) && !localHub->containsHub(hubID)) {
+			connectRemoteHub( makeHubContext(stiContext, targetHubID) );
 		}
 	}
-
-	std::cout << "success for " << count << "/" << targetHubs.size() << std::endl;
 }
 
-bool NetworkDeviceHub::reconnectToTargetHub(const std::string& targetHub)
+std::string NetworkDeviceHub::makeHubContextPath(const std::string& baseContext, const std::string& hubID)
+{
+	std::stringstream hubContext;
+	
+	hubContext << baseContext << "/" << STI::Utils::replaceChars(hubID, ".", "_");
+
+	return hubContext.str();
+}
+
+
+std::string NetworkDeviceHub::makeHubContext(const std::string& baseContext, const std::string& hubID)
+{
+	std::stringstream hubContext;
+
+	hubContext << makeHubContextPath(baseContext, hubID) << "/" << hubObjectName;
+
+	return hubContext.str();
+}
+
+bool NetworkDeviceHub::connectRemoteHub(const std::string& remoteHubContext)
 {
 	bool success = false;
 
-	std::stringstream hubContext;
-
+	std::shared_ptr<RemoteDeviceHub> remoteHub;
 	STI::TNetwork::TDeviceHub_ptr tDeviceHubRemote; // = STI::TNetwork::TDeviceHub::_nil();
 	CORBA::Object_ptr obj;
 
-	std::shared_ptr<RemoteDeviceHub> remoteHub;
-
-	//Context of target hub reference
-	hubContext << "STI" << "/" << STI::Utils::replaceChars(targetHub, ".", "_")
-		<< "/" << "TDeviceHub.Object";
-
-	//Reconnect to target hub if it is live
-	if (orbmanager->getObjectReference(hubContext.str(), obj)) {
+	//Attempt to find and connect to live hub with remoteHubContext in NameService
+	if (orbmanager->getObjectReference(remoteHubContext, obj)) {
 
 		tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
 
@@ -245,16 +245,6 @@ bool NetworkDeviceHub::reconnectToTargetHub(const std::string& targetHub)
 	}
 
 	return success;
-}
-
-void NetworkDeviceHub::reconnectLoop()
-{
-	std::unique_lock<std::mutex> lck(hubMutex);
-
-	do {
-		reconnectToTargetHubs();
-
-	} while (reconnectCondition.wait_for(lck, std::chrono::seconds(1)) == std::cv_status::timeout);
 }
 
 void NetworkDeviceHub::walk(LocalDeviceHub::HubNodeWalker& root) const

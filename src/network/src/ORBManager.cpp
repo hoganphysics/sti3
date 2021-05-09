@@ -107,7 +107,7 @@ namespace Network
 class Concrete_ORBManager : public ORBManager
 {
 public:
-//	Concrete_ORBManager() : ORBManager() {}
+
 	Concrete_ORBManager(const std::string& nameServiceIP, const std::string& args) 
 		: ORBManager(nameServiceIP, args) {}
 };
@@ -119,12 +119,13 @@ bool ORBManager::orb_initialized = false;
 
 std::shared_ptr<ORBManager> ORBManager::instance = 0;
 
+
 std::shared_ptr<ORBManager> ORBManager::getInstance(const std::string& nameServiceIP, const std::string& args)
 {
 	//need mutex lock here
 	if (!orb_initialized) {
+
 		instance = std::make_shared<STI::Network::Concrete_ORBManager>(nameServiceIP, args);
-		//instance = std::make_shared<STI::Network::Concrete_ORBManager>();
 		orb_initialized = true;
 	}
 	return instance;
@@ -145,8 +146,6 @@ ORBManager::ORBManager(const std::string& nameServiceIP, const std::string& args
 		//strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
 	}
 
-
-//	std::string nameservice = "NameService=corbaname::host1.example.com";
 	std::string nameservice = "NameService=corbaname::" + nameServiceIP;
 
 	const char* options[][2] = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
@@ -186,9 +185,6 @@ ORBManager::ORBManager(const std::string& nameServiceIP, const std::string& args
 
 ORBManager::~ORBManager()
 {
-//	std::cerr << "Shutting down ORB" << std::endl;
-//	orb->shutdown(false);
-//	orb->destroy();
 	shutdown();
 }
 
@@ -202,11 +198,7 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 
 		if (objref != 0) {
 			orbManager->poa->deactivate_object(*objref);
-		}
-		
-		// orbManager->poa->deactivate_object(
-		// 	*(orbManager->poa->servant_to_id(p_servant)));
-		
+		}	
 	}
 }
 
@@ -225,9 +217,8 @@ void ORBManager::run()
 		}
 		_running = true;
 	}
-	std::cerr << "ORB: perform_work()" << std::endl;
+
 	orb->perform_work();
-//	orb->run();
 }
 
 void ORBManager::block()
@@ -240,16 +231,11 @@ void ORBManager::block()
 	while (_blocking) {
 		wakeCondition.wait(writeLock);
 	}
-
-//	orb->run();
 }
 
 void ORBManager::signal_callback_handler(int signum)
 {
-	std::cout << "Caught signal: " << signum << std::endl
-		<< "ORBManager releasing block." << std::endl;
-	// Terminate program
-	//exit(signum);
+	std::cout << "Caught signal: " << signum << std::endl;
 
 	//Caught control-C:  Stop blocking
 	ORBManager::instance->unblock();
@@ -272,55 +258,38 @@ void ORBManager::shutdown()
 		std::cerr << "Shutting down ORB" << std::endl;
 		orb->shutdown(false);
 		orb->destroy();
-		std::cerr << "ORB destroyed" << std::endl;
 	}
 }
 
-
-//bool ORBManager::registerHub(const HubID& hubID,
-//	const std::shared_ptr<NetworkDeviceHubWrapper>& deviceHub)
-//{
-//	std::unique_lock<std::mutex> writeLock(orbMutex);
-//	
-//	STI::TNetwork::TDeviceHub_ptr tDeviceHubRef;
-//	if (NetworkDeviceHubWrapper::getTDeviceHubReference(deviceHub, tDeviceHubRef)) {
-//		//setupContext(hubID.address);
-//		//bindObjectToName(hubID.name, tDeviceHubRef);
-//		return true;
-//	}
-//	return false;
-//}
-
-void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, 
-	std::vector<std::string>& objContexts)
+std::string ORBManager::printNameTree(const std::string& baseContext) const
 {
 	CosNaming::NamingContext_var base(getNamingContext(baseContext));
 
-	//COSBindingNode node("Base", base);
+	COSBindingNode node(baseContext, base);
+
+	return node.printTree();
+}
+
+void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, 
+											std::vector<std::string>& objContexts)
+{
+	CosNaming::NamingContext_var base(getNamingContext(baseContext));
+
 	COSBindingNode node(baseContext, base);
 	node.prune();
 	
-	std::cout << node.printTree() << std::endl;
-
 	node.getLiveLeafs(objectName, objContexts);
 }
 
-//void f(COSBindingNode& node)
-//{
-//	for (auto& n : node.branches()) {
-//		if (n->hasBranches()) {
-//			//n->
-//		}
-//	}
-//}
 
-bool ORBManager::getRootContext(CosNaming::NamingContext_var& context)
+bool ORBManager::getRootContext(CosNaming::NamingContext_var& context) const
 {
 	//Obtains the root context of the Name Service
 
 	bool success = false;
 	
 	try {
+		
 		CORBA::Object_var obj = orb->resolve_initial_references("NameService");
 
 		context = CosNaming::NamingContext::_narrow(obj);		// Narrow the reference to a Context.
@@ -353,57 +322,47 @@ bool ORBManager::getRootContext(CosNaming::NamingContext_var& context)
 	return success;
 }
 
-CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& context)
+CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& context) const
 {
 	CosNaming::NamingContext_var contextBase;
 
 	bool success = false;
 
-	//auto tmp = context.c_str();
+	try {
+		CosNaming::Name_var contextName;
 
-	while (!success) {
+		contextName = omni::omniURI::stringToName(context.c_str());
 
+		getRootContext(contextBase);
+		contextBase = CosNaming::NamingContext::_narrow(contextBase->resolve(contextName));
 
-		try {
-			CosNaming::Name_var contextName;
-			//contextName-> tmp;
-			contextName = omni::omniURI::stringToName(context.c_str());
-
-			getRootContext(contextBase);
-			contextBase = CosNaming::NamingContext::_narrow(contextBase->resolve(contextName));
-
-			success = true;
-		}
-		catch (CORBA::Exception& ex)
-		{
-			std::cerr << "NamingContext exception." << std::endl;
-		}
-		catch (...) {
-			std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
-		}
-
+		success = true;
 	}
+	catch (CORBA::Exception& ex)
+	{
+		success = false;
+		std::cerr << "NamingContext exception." << std::endl;
+	}
+	catch (...) {
+		success = false;
+		std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
+	}
+
 	return contextBase._retn();
 }
 
 
 bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref)
-//CORBA::Boolean ORBManager::bindObjectToName(CORBA::Object_ptr objref, string objectStringName)
 {
-//	PortableServer::ObjectId_var myechoid poa->deactivate_object()
-
 	CORBA::Object_var obj;
 	CosNaming::NamingContext_var context;
 	CosNaming::Name_var contextName;
 	CosNaming::Name_var objectName;
 
-	// Split the objectStringName into a vector of substrings
-	// of the form {Context, Context, ..., Context, Object}
+	// Split object full name into a list of the form {Context, Context, ..., Context, Object}
 	std::vector<std::string> tokens;
-//	tokenize(objectStringName, "/", tokens);
 	STI::Utils::splitString(objectFullPath, "/", tokens);
 
-	// Obtain the Root Context
 	if (!getRootContext(context)) {
 		return false;
 	}
@@ -412,7 +371,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 	try {
 		// Sequentially binds a context with name tokens[i] to the previous context
 		for (unsigned i = 0; i < tokens.size() - 1; ++i) {	//skip the last token (the object name)
-		//for(auto& token : tokens) {
+
 			contextName = omni::omniURI::stringToName(tokens.at(i).c_str());
 
 			try {
@@ -422,12 +381,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 			catch (CosNaming::NamingContext::AlreadyBound&)
 			{
 				// If the context already exists, this exception will be raised.
-				// In this case, just resolve the name and assign context
-				// to the object
-				//				errStream << "Warning: Caught CORBA::" << ex._name() << endl
-				//					<< "when attemping to bind context '" << tokens[i] 
-				//					<< "':" << endl << "The context already exists."  
-				//					<< " Attempting to resolve the existing context." << endl;
+				// In this case, just resolve the name and assign context to the object.
 
 				obj = context->resolve(contextName);
 				context = CosNaming::NamingContext::_narrow(obj);
@@ -449,12 +403,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 		}
 		catch (CosNaming::NamingContext::AlreadyBound&)
 		{
-			// Using rebind() will overwrite any Object previously bound
-			// to ../../context/objectName with objref.
-			//			errStream << "Warning: Caught CORBA::" << ex._name() << endl
-			//				<< "when attemping to bind Object '" << tokens.back() 
-			//				<< "':" << endl << "The Object already exists "
-			//				<< "in this context and will be overwritten." << endl;
+			// rebind() will overwrite any Object previously bound to context/objectName
 
 			context->rebind(objectName, objref);
 		}
@@ -478,6 +427,16 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 
 	return true;
 }
+
+
+bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
+{
+
+	// CosNaming::NamingContext_var base(getNamingContext(baseContext));
+
+	return false;
+}
+
 
 bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref)
 {
@@ -511,6 +470,5 @@ bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Ob
 			<< " while using the naming service." << std::endl;
 	}
 
-//	return CORBA::Object::_nil();
 	return success;
 }

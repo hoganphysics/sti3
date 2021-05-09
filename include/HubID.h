@@ -19,8 +19,8 @@ public:
 
 	HubID(std::string name, std::string address, unsigned short module) : name(name), address(address), module(module) {}
 
-	bool operator<(const HubID& rhs) const { return id().compare(rhs.id()) < 0; }
-	bool operator==(const HubID& rhs) const { return id().compare(rhs.id()) == 0; }
+	bool operator<(const HubID& rhs) const { return toString().compare(rhs.toString()) < 0; }
+	bool operator==(const HubID& rhs) const { return toString().compare(rhs.toString()) == 0; }
 	bool operator!=(const HubID& rhs) const { return !((*this) == rhs); }
 
 
@@ -28,7 +28,7 @@ public:
 	std::string address;
 	unsigned short module;
 
-	std::string id() const
+	std::string toString() const
 	{
 		std::stringstream hubid;
 
@@ -37,7 +37,6 @@ public:
 		hubid << clean(address) << "/" << module << "/" << clean(name);
 		return hubid.str();
 
-//		return name + address;
 	}
 
 	static bool stringToHubID(const std::string& id, HubID& hubID)

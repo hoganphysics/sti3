@@ -45,7 +45,7 @@ void disconnect();
 
 //in case HubID is not default!
 
-
+std::string printNetwork(const std::string& nameServerAddress, const std::string& baseContext);
 
 //std::shared_ptr<STIPyShot> makeshot();
 

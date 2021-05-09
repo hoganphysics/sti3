@@ -4,6 +4,9 @@
 #include "NetworkDeviceHub.h"
 #include "STIPyLibDevice.h"
 
+#include "ORBManager.h"
+
+
 #include <iostream>
 
 using STI::Python::STIPyServer;
@@ -64,5 +67,12 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 void STI::Python::disconnect()
 {
 
+}
+
+std::string STI::Python::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
+{
+    auto orbmanager = STI::Network::ORBManager::getInstance(nameServerAddress, "");
+
+    return orbmanager->printNameTree(baseContext);
 }
 

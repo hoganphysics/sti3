@@ -4,12 +4,11 @@
 #include "ParseTicket.h"
 #include "DeviceMessage.h"
 
-#include <iostream>
 
 using STI::Python::ParseTicketManager;
 using STI::Python::ParseTicket;
-
 using STI::Device::EngineSchedulerMessage;
+
 
 ParseTicketManager::ParseTicketManager()
 {
@@ -68,8 +67,6 @@ void ParseTicketManager::cancelAll()
 
 void ParseTicketManager::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
 {
-    std::cout << "ParseTicketManager::handleMessage" << mess->sourceID().getID() << std::endl;
-
     auto it = tickets.find(mess->jobID.pid);
 
     if (it == tickets.end()) return;
@@ -81,6 +78,5 @@ void ParseTicketManager::handleMessage(const std::shared_ptr<STI::Device::Engine
     else {      //todo -- if cancel
         it->second->cancel();
     }
-
 }
 

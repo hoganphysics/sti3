@@ -35,28 +35,35 @@ public:
 	void setTargetHubs(const std::vector<std::string>& hubIDs);
 
 	//options
-	void autoConnectToTargetServers(bool enabled) { _autoConnect = enabled; }
-	void autoReconnectRemoteHubs(bool enabled);
+	// void autoConnectToTargetServers(bool enabled) { _autoConnect = enabled; }
 	void setNameServiceAddress(const std::string& nameServiceAddress) { _nameServiceAddress = nameServiceAddress; }
 
 	void run(bool block = true);
 
 	void walk(LocalDeviceHub::HubNodeWalker& root) const;
 
+	void printNetwork();
+
 private:
 
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
 
-	void reconnectLoop();
-	void reconnectToTargetHubs();
-	bool reconnectToTargetHub(const std::string& targetHub);
+	void connectToTargetHubs();
+	
+	bool registerHubContext();
+	bool unregisterHubContext();
+	void refreshHubContext();
+
+	std::string makeHubContextPath(const std::string& baseContext, const std::string& hubID);
+	std::string makeHubContext(const std::string& baseContext, const std::string& hubID);
+	
+	bool connectRemoteHub(const std::string& remoteHubContext);
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;
 
 	std::set<std::string> targetHubs;	//std::set so they are unique (only one copy of each)
 
-	bool _autoReconnectRemoteHubs;
 	bool _autoConnect;
 	std::string _nameServiceAddress;
 	bool _usingDefaultHubID;
@@ -64,6 +71,12 @@ private:
 	//makes sure default names are unique
 	static std::string nextHubName();
 	static unsigned hubNumber;
+
+	std::string stiContext;
+	std::string hubObjectName;
+
+	std::string thisHubContext;
+	std::string hubContextPath;
 
 	mutable std::mutex hubMutex;
 	mutable std::condition_variable reconnectCondition;
