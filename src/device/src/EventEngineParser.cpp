@@ -31,15 +31,31 @@ using std::endl;
 using STI::Device::Channel;
 using STI::Engine::EngineParsingMessage;
 
-EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
-	: engine(engine), deviceParser(deviceParser)
+
+EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
+					const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
+					DeviceEventParser* deviceParser)
+: engineID(engineID), localDeviceID(localDeviceID), channelManager(channelManager), deviceParser(deviceParser)
 {
 	defineErrorIDs();
 	hasErrors = false;
 }
 
+// EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
+// 	: engine(engine), deviceParser(deviceParser)
+// {
+// 	defineErrorIDs();
+// 	hasErrors = false;
+// }
+
 EventEngineParser::~EventEngineParser()
 {
+}
+
+void EventEngineParser::clear()
+{
+	rawEvents.clear();
+	partnerEvents.clear();
 }
 
 const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages() const
@@ -54,6 +70,8 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 //	errors.clear();
 	messages.clear();
 	hasErrors = false;
+
+	if (channelManager == 0) return false;
 
 	success = groupEventsByTime(events);
 
@@ -128,7 +146,7 @@ EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name
 		id = it->second;
 	}
 
-    messages.emplace_back(engine->getDeviceID(), ParsingMessageType::Error, id, name);
+    messages.emplace_back(localDeviceID, ParsingMessageType::Error, id, name);
 	
 	hasErrors = true;
 	
@@ -140,15 +158,13 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 	bool success = true;
 
 	//check that newest event's channel is defined
-	auto channels = engine->getLocalChannels();
-	
 	std::shared_ptr<Channel> channel;
 
 	//auto channel = engine->localChannels.find(rawEvent.channel());
 
 	//check that newest event's channel is defined and that the value type is correct
 //	if (channel == engine->localChannels.end()) {
-	if (!channels->getChannel(rawEvent.channel(), channel)) {
+	if (!channelManager->getChannel(rawEvent.channel(), channel)) {
 		//Missing channel
 		success = false;
 		errorCount++;
@@ -237,15 +253,15 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 	unsigned maxErrors = 10;
 
 	//Device generated event setup (events created by user code in parseDeviceEvents)
-	deviceParser->clearEventNumber();						//Each device generated event gets a unique number appended to the graph label
-	deviceParser->setPartnerEventTarget(&partnerEvents);	//Set partner event target to point to this engine.
+//	deviceParser->clearEventNumber();						//Each device generated event gets a unique number appended to the graph label
+//	deviceParser->setPartnerEventTarget(&partnerEvents);	//Set partner event target to point to this engine.
 
 	do {
 		success = true;	//Each time through the loop any offending events 
 						//are removed before trying again. This way all events
 						//can generate errors messages before returning.
 		try {
-			deviceParser->parseEvents(rawEvents, synchedEvents);	//delegates to parseDeviceEvents (user code)
+			deviceParser->parseEvents(rawEvents, synchedEvents, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
 		}
 		catch (EventConflictException& eventConflict)
 		{

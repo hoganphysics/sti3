@@ -47,9 +47,11 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
 
-	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this);
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
+
+    auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>(getID(), localChannelManager, deviceMessageDispatcher, localCollection);
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory);
 
 	//setEngineFactory(engineFactory);
 
@@ -134,9 +136,12 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 {
 //	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceMessageDispatcher, localCollection);
-	eventEngineScheduler->addEngine(engineID);
-}
 
+	if (eventEngineScheduler != 0) {
+		eventEngineScheduler->addEngine(engineID, this);		
+	}
+
+}
 
 
 LocalChannel& LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,

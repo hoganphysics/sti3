@@ -33,9 +33,11 @@ EventEngineManager::~EventEngineManager()
     }
 }
 
-void EventEngineManager::getEngine(std::shared_ptr<LocalEventEngine>& eventEngine)
+bool EventEngineManager::getEngine(std::shared_ptr<LocalEventEngine>& eventEngine)
 {
     eventEngine = engine;
+    
+    return (eventEngine != 0);
 }
 
 bool EventEngineManager::isParsed(const ParseID& parseID)

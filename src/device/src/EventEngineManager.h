@@ -40,7 +40,7 @@ public:
     bool isParsed(const ParseID& parseID);
     const ParseID& getLastParseID();
 
-    void getEngine(std::shared_ptr<LocalEventEngine>& eventEngine);
+    bool getEngine(std::shared_ptr<LocalEventEngine>& eventEngine);
 
 private:
 

@@ -5,7 +5,26 @@
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::DeviceEventMap;
+using STI::Engine::RawEventMap;
 using STI::Engine::RawEvent;
+using STI::Engine::SynchronousEventVector;
+
+
+
+void DeviceEventParser::parseEvents(const RawEventMap& events, 
+					SynchronousEventVector& synchedEvents, const STI::Engine::EngineID& engineID, DeviceEventMap* target)
+{
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+	
+	clearEventNumber();
+
+	setPartnerEventTarget(target);
+
+	currentEngineID = engineID;
+
+	parseEvents(events, synchedEvents);		//call pure virtual
+}
+
 
 void DeviceEventParser::setPartnerEventTarget(DeviceEventMap* target)
 {

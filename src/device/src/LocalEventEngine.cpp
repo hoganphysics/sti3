@@ -51,13 +51,14 @@ using STI::Engine::EngineParsingMessage;
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
 
 
-LocalEventEngine::LocalEventEngine(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Device::ChannelManager>& channels,
+LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::DeviceID& localID, 
+								   const std::shared_ptr<STI::Device::ChannelManager>& channels,
  								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
  								   const std::shared_ptr<STI::Device::DeviceCollection>& collection) 
   : MessageGenerator(dispatcher),
-	parser(this, deviceParser), 
-	rawEvents(parser.rawEvents), 
-	partnerEvents(parser.partnerEvents), 
+  	engineID(engineID),
+	parser(engineID, localID, channels, deviceParser), 
+	deviceParser(deviceParser),
 	measurementBuffer(3),
 	localDeviceID(localID),
 	localChannels(channels),
@@ -72,9 +73,9 @@ LocalEventEngine::~LocalEventEngine()
 
 void LocalEventEngine::clear()
 {
-	rawEvents.clear();
+	parser.clear();
+
 	synchedEvents.clear();
-	partnerEvents.clear();
 
 	eventsByTarget.clear();
 	upstreamEvents.clear();

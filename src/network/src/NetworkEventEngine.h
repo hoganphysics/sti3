@@ -17,12 +17,13 @@ class NetworkEventEngine : public STI::Engine::LocalEventEngine
 public:
 
 	NetworkEventEngine(
+        const STI::Engine::EngineID& engineID,
 		const STI::Device::DeviceID& localID,
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 		STI::Engine::DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection)
-		: LocalEventEngine(localID, channels, deviceParser, dispatcher, collection), eventEngineServant(this) {}
+		: LocalEventEngine(engineID, localID, channels, deviceParser, dispatcher, collection), eventEngineServant(this) {}
 
 	~NetworkEventEngine() {}
 

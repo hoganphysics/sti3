@@ -71,7 +71,8 @@ class LocalEventEngineScheduler : public EventEngineScheduler,
 {
 public:
     
-    LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice);
+    // LocalEventEngineScheduler(const STI::Device::DeviceID& localDeviceID, const std::shared_ptr<STI::Device::DeviceCollection>& localCollection);
+    LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
     ~LocalEventEngineScheduler();
 
     //local interface (called from python, for example)
@@ -105,7 +106,7 @@ public:
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
-    void addEngine(const EngineID& engineID);
+    void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser);
 
     bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
     bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
@@ -138,6 +139,8 @@ private:
 
     void getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs);
     
+    bool getTargetScheduler(const STI::Device::DeviceID& id, std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+
     void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
                                 std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
     
@@ -165,6 +168,8 @@ private:
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     STI::Device::LocalDevice* localDevice;
+    STI::Device::DeviceID localDeviceID;
+   std::shared_ptr<STI::Device::DeviceCollection> localCollection;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;
 
