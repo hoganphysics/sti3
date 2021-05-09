@@ -106,15 +106,6 @@ bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_pt
 
 bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 {
-	//could just wrap localHub with a NetworkDeviceHubWrapper here so the local hub
-	//is transparently on the network.  Would still act local.
-	//Problem: hubs connected to other local hubs...
-	//**Probably better if we have a walker visitor that can gather Network connection info.
-
-	//No -- it should wrap hub in a NetworkDeviceHubWrapper ! 
-
-	//return LocalDeviceHub::connect(localHub, hub);
-
 	auto localHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(hub);
 
 	return LocalDeviceHub::connect(deviceHubWrapper, localHubWrapper);
