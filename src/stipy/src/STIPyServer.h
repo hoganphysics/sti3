@@ -8,8 +8,11 @@
 #include "NetworkDeviceHub.h"
 #include "STIPyLibDevice.h"
 
-#include <pybind11/pybind11.h>
+#include <functional>
 #include <string>
+
+#include <pybind11/pybind11.h>
+
 
 namespace STI
 {
@@ -32,15 +35,18 @@ class STIPyServer
 {
 public:
 
-    STIPyServer();//tmp
-    STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, const std::shared_ptr<STIPyLibDevice>& libDevice);
+    // STIPyServer();//tmp
+    STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
+                const std::shared_ptr<STIPyLibDevice>& libDevice, 
+                const STI::Device::DeviceID& serverID);
 
     void setChannels(const pybind11::dict& channels);
 
     std::shared_ptr<STIPyShot> makeshot();
-    std::shared_ptr<STIPyShot> makeshot(pybind11::object func);
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func);
     std::shared_ptr<STIPyShot> makeshot(pybind11::object func, const pybind11::dict& vars);    //uses dictionary vars to override servars
 
+    std::shared_ptr<STIPySeq> makesequence();
     std::shared_ptr<STIPySeq> makesequence(pybind11::object func);
 
     std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
@@ -60,6 +66,7 @@ private:
 
     std::shared_ptr<STI::Network::NetworkDeviceHub> libDeviceHub;
     std::shared_ptr<STIPyLibDevice> libDevice;
+    STI::Device::DeviceID serverID;
 
 };
 

@@ -7,6 +7,8 @@
 #include "EventEngineScheduler.h"
 #include "ShotID.h"
 
+#include "STIPyGlobal.h"
+
 #include <chrono>
 
 #include <memory>
@@ -19,12 +21,14 @@ using STI::Python::ParseTicket;
 using STI::Python::ResultTicket;
 
 
-STIPyServer::STIPyServer()
-{
-}
+// STIPyServer::STIPyServer()
+// {
+// }
 
-STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, const std::shared_ptr<STIPyLibDevice>& libDevice)
-: libDeviceHub(libDeviceHub), libDevice(libDevice)
+STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
+                         const std::shared_ptr<STIPyLibDevice>& libDevice, 
+                         const STI::Device::DeviceID& serverID)
+: libDeviceHub(libDeviceHub), libDevice(libDevice), serverID(serverID)
 {
     std::shared_ptr<STI::Device::Device> server;
     libDevice->getServer(server);
@@ -44,18 +48,23 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
         auto evts = std::make_shared<STI::Engine::RawEventVector>();
         shot = scheduler->createShot(evts);
     }
-    auto pyShot = std::make_shared<STIPyShot>(shot);
+    auto pyShot = std::make_shared<STIPyShot>(shot, serverID);
     return pyShot;
 }
 
-std::shared_ptr<STIPyShot> STIPyServer::makeshot(pybind11::object func)
+std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>& func)
 {
-    return makeshot();
+    auto shot = makeshot();
+    auto stipy = STI::Python::STIPyGlobal::getInstance();
+
+    stipy->makeShot(shot, func);
+
+    return shot;
 }
 
 std::shared_ptr<STIPyShot> STIPyServer::makeshot(pybind11::object func, const pybind11::dict& vars)
 {
-    return makeshot();
+    return makeshot(func);
 }
 
 std::shared_ptr<STIPySeq> STIPyServer::makesequence(pybind11::object func)

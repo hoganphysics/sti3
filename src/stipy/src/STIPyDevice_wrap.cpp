@@ -11,8 +11,6 @@ namespace py = pybind11;
 void init_STIPyDevice(py::module& m) 
 {
 
-//    m.def("add", [](int a, int b) { return a + b; });
-
     py::class_<STI::Python::STIPyDevice, std::shared_ptr<STI::Python::STIPyDevice>>(m, "STIPyDevice")
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                         py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )

@@ -10,11 +10,13 @@
 
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
+using STI::Engine::RawEvent;
 using STI::Engine::RawEventType;
 using STI::Python::STIPyChannel;
 
-STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
-: shot(shot)
+
+STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Device::DeviceID& serverID)
+: shot(shot), serverID(serverID)
 {
     eventNumber = 0;
 //    events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
@@ -53,40 +55,30 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value)
 
 void STIPyShot::event(const STIPyChannel& channel, double time, const pybind11::object& value)
 {
-    std::unique_lock<std::mutex> evtLock(eventMutex);
-
-    //RawEvent(const STI::Device::DeviceID& targetDeviceID, double time, unsigned short channel, const STI::Utils::MixedValue& value,
-	//const std::string& description, unsigned eventNumber, const RawEventType& eventType)
-
-    std::string description = "";
-//    eventNumber++;
-    STI::Python::MixedValuePy valuepy; //(value);
-
-    valuepy.setValue_py(value);
-
-    if (events != 0) {
-        events->push_back(
-            STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
-                                    valuepy, description, events->size(), RawEventType::Play)
-                );        
-    }
-
+    addEvent(channel, time, value, RawEventType::Play);
 }
 
 void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
 {
-    std::unique_lock<std::mutex> evtLock(eventMutex);
-    
-    std::string description = "";
-    
-    if (events != 0) {
-        events->push_back(
-            STI::Engine::RawEvent(channel.device()->id(), time, channel.channel(), 
-                                    MixedValuePy(value), description, events->size(), RawEventType::Measurement)
-                );
-    }
+    addEvent(channel, time, value, RawEventType::Measurement);
 }
 
+void STIPyShot::addEvent(const STIPyChannel& channel, double time, const pybind11::object& value, const RawEventType& type)
+{
+    std::unique_lock<std::mutex> evtLock(eventMutex);
+
+    std::string description = "";
+//    eventNumber++;
+    STI::Python::MixedValuePy valuepy;
+
+    valuepy.setValue_py(value);
+
+    if (events != 0) {
+        events->push_back( RawEvent(channel.device()->id(), time, channel.channel(), 
+                                    valuepy, description, events->size(), type) );        
+    }
+
+}
 
 // ParseTicket STIPyShot::parse()
 // {

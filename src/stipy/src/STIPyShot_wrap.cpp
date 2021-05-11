@@ -20,6 +20,7 @@ void init_STIPyShot(py::module& m)
     py::class_<STI::Python::STIPyShot, std::shared_ptr<STI::Python::STIPyShot>>(m, "STIPyShot")
 
         .def("event", &STI::Python::STIPyShot::event)
+        .def("meas", &STI::Python::STIPyShot::meas)
         .def("getEvents", &STI::Python::STIPyShot::getEvents)
         // .def("getEvents",
         //     [](STI::Python::STIPyShot& self) {

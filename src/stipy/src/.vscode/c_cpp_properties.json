@@ -9,6 +9,7 @@
                 "${workspaceFolder}/**",
                 "${stiBasePath}/include/**",
                 "${stiBasePath}/src/device/src/**",
+                "${stiBasePath}/src/device/python/src/**",
                 "${stiBasePath}/src/network/src/**"
             ],
             "defines": [],

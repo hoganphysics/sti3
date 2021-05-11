@@ -13,8 +13,6 @@ namespace py = pybind11;
 void init_ParseTicket(py::module& m) 
 {
 
-//    m.def("add", [](int a, int b) { return a + b; });
-
     py::class_<STI::Engine::EngineParsingMessage>(m, "EngineParsingMessage")
         .def("getMessage", &STI::Engine::EngineParsingMessage::getMessage)
         .def("getEvents", &STI::Engine::EngineParsingMessage::getEvents)

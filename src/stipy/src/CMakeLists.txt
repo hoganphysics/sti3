@@ -38,6 +38,7 @@ pybind11_add_module(stipy
     stipy.cpp
     STIPyDevice.cpp
     STIPyDevice_wrap.cpp
+    STIPyGlobal.cpp
     STIPyLibDevice.cpp
     STIPySeq.cpp
     STIPyServer.cpp
