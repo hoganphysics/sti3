@@ -71,6 +71,11 @@ void init_RawEvent(py::module& m)
             [](const STI::Engine::RawEvent& self, const STI::Engine::RawEvent& other) {
                 return self == other;
             })
+        .def("__lt__",  // operator <
+            [](const STI::Engine::RawEvent& self, const STI::Engine::RawEvent& other) {
+                return self < other;
+            })
+            
         ;
 
 }

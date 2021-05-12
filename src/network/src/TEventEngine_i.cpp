@@ -7,6 +7,7 @@
 #include "EngineState.h"
 #include "RemoteTriggerCallback.h"
 #include "LocalEventEngineJob.h"
+#include "RawEvent.h"
 
 using STI::TNetwork::TEventEngine_i;
 using STI::Engine::EventEngine;
@@ -127,4 +128,26 @@ TEngineState TEventEngine_i::getState()
 	}
 
     return tState;
+}
+
+
+::CORBA::Boolean TEventEngine_i::getParsedEvents(::STI::TNetwork::TDeviceEventsSeq_out events)
+{
+	bool success = false;
+
+    if (eventEngine != 0) {
+
+		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
+		STI::Engine::DeviceEventMap deviceEvents;
+
+		deviceEvents = eventEngine->getParsedEvents();
+
+		success = convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);
+
+		events = new STI::TNetwork::TDeviceEventsSeq();
+		(*events) = tDeviceEventsSeq_var;
+
+	}
+
+	return success;
 }

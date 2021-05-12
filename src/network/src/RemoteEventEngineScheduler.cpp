@@ -233,8 +233,15 @@ bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& par
 {
 	if (CORBA::is_nil(tEventEngineScheduler)) return false;
 
+	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
+
+	bool success = false;
+
 	try {
-//		tEventEngineScheduler->getParsedEvents(convert<ParseID, TParseID>(parseID), );	//remote call
+
+		success = tEventEngineScheduler->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
+
+		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, events);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -243,7 +250,7 @@ bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& par
 	catch (CORBA::Exception&)
 	{
 	}
-	return false;
+	return success;
 }
 
 bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const
@@ -251,7 +258,6 @@ bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& 
 	if (CORBA::is_nil(tEventEngineScheduler)) return false;
 
 	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
-//	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
 
 	bool success = false;
 

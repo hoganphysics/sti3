@@ -22,7 +22,7 @@ ParseTicketManager::~ParseTicketManager()
 std::shared_ptr<ParseTicket> ParseTicketManager::makeParseTicket(const STI::Engine::ParseID& pid,
                                                     const std::shared_ptr<STI::Device::Device>& server)
 {
-    auto ticket = std::make_shared<ParseTicket>(pid, this, server);
+    auto ticket = std::make_shared<ParseTicket>(pid, server);
 
     add(ticket);
 
@@ -31,6 +31,8 @@ std::shared_ptr<ParseTicket> ParseTicketManager::makeParseTicket(const STI::Engi
 
 void ParseTicketManager::add(const std::shared_ptr<ParseTicket>& ticket)
 {
+    std::unique_lock<std::mutex> ticketLock(ticketMutex);
+
     if (ticket != 0) {
         tickets[ticket->getParseID()] = ticket;
     }
@@ -38,15 +40,19 @@ void ParseTicketManager::add(const std::shared_ptr<ParseTicket>& ticket)
 
 void ParseTicketManager::remove(const STI::Engine::ParseID& id)
 {
+    std::unique_lock<std::mutex> ticketLock(ticketMutex);
+
     auto it = tickets.find(id);
 
     if(it != tickets.end()) {
-    //    tickets.erase(it);    //causing double free() in python
+       tickets.erase(it);    //causing double free() in python
     }
 }
 
 void ParseTicketManager::cancel(const STI::Engine::ParseID& id)
 {
+    std::unique_lock<std::mutex> ticketLock(ticketMutex);
+
     auto it = tickets.find(id);
     
     if(it != tickets.end()) {
@@ -58,6 +64,8 @@ void ParseTicketManager::cancel(const STI::Engine::ParseID& id)
 
 void ParseTicketManager::cancelAll()
 {
+    std::unique_lock<std::mutex> ticketLock(ticketMutex);
+
     for (auto& ticket : tickets) {
         if (ticket.second != 0 ) {
             ticket.second->cancel();
@@ -67,6 +75,8 @@ void ParseTicketManager::cancelAll()
 
 void ParseTicketManager::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
 {
+    std::unique_lock<std::mutex> ticketLock(ticketMutex);
+    
     auto it = tickets.find(mess->jobID.pid);
 
     if (it == tickets.end()) return;
@@ -78,5 +88,8 @@ void ParseTicketManager::handleMessage(const std::shared_ptr<STI::Device::Engine
     else {      //todo -- if cancel
         it->second->cancel();
     }
+
+    // Ticket complete
+    tickets.erase(it);  //avoid storing ticket indefinitely (memory leak)
 }
 

@@ -161,6 +161,8 @@ module TNetwork
 
     	TDeviceID getDeviceID();
 		TEngineState getState();
+
+		boolean getParsedEvents(out TDeviceEventsSeq events);
 	};
 
 	interface TEventEngineScheduler

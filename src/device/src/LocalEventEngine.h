@@ -104,7 +104,7 @@ public:
 
 	bool jobCancelled() const { return cancelled; }
 
-	const DeviceEventMap& getParsedEvents() const { return eventsByTarget; }
+	const DeviceEventMap& getParsedEvents();
 
 	std::shared_ptr<EventEngineDependencyTree> getParsedTree() const { return dependencyTree; }
 

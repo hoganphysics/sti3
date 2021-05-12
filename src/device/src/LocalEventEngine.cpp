@@ -172,6 +172,34 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 	}
 }
 
+const DeviceEventMap& LocalEventEngine::getParsedEvents()
+{
+	// Todo: cache bool, mutex lock
+	//Should pipe through parseID to make sure the engine hasn't erased the relevant events (compare to lastParseID)
+	//bool LocalEventEngine::getParsedEvents(const ParseID& parseID, const DeviceEventMap& events)
+
+	//sort local  events
+	for(auto& tuple : eventsByTarget) {
+
+		std::sort(tuple.second.begin(), tuple.second.end());
+	}
+
+	//get owned device events
+	for(auto& engine : engines) {
+		auto& engineEventsByTarget = engine.second->getParsedEvents();
+
+		for (auto& tuple : engineEventsByTarget) {
+			auto& evts = tuple.second;
+			eventsByTarget[tuple.first].insert(eventsByTarget[tuple.first].end(),
+					std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
+		}
+
+	}
+
+	return eventsByTarget; 
+	
+}
+
 void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);		//parse function is not reentrant
@@ -335,6 +363,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	newMessage->unhandledEvents.swap(upstreamEvents);
 	newMessage->handledEvents.swap(handledPartnerEvents);
 	newMessage->messages.insert(newMessage->messages.end(), jobMessages.begin(), jobMessages.end());
+	job.getEngine( newMessage->engine );	//pass local engine reference upstream to server
 
 	sendMessage(newMessage);
 
@@ -442,6 +471,20 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	
 	//reduce dependency count in localSubtree
 	localSubtree->removeNode(evt->originalSource);
+
+
+	std::shared_ptr<EventEngine> remoteEngine;
+	if (evt != 0) {
+		remoteEngine = evt->engine;
+	}
+	if (remoteEngine == 0) {
+		//error
+		return;
+	}
+	//only add engine if it is owned by this device
+	if (it != ownedTargets.end()) {
+		engines[remoteEngine->getDeviceID()] = remoteEngine;
+	}
 
 
 	parseCondition.notify_all();	//wake up event transfer loop

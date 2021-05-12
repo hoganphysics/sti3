@@ -1,20 +1,22 @@
 
 #include "ParseTicket.h"
-#include "ParseTicketManager.h"
+// #include "ParseTicketManager.h"
 #include "EventEngineScheduler.h"
+
+#include "RawEvent.h"
 
 #include <chrono>
 #include <pybind11/pybind11.h>
 
 using STI::Python::ParseTicket;
-using STI::Python::ParseTicketManager;
+// using STI::Python::ParseTicketManager;
 
 namespace py = pybind11;
 
 
-ParseTicket::ParseTicket(const STI::Engine::ParseID& pid, ParseTicketManager* manager,
+ParseTicket::ParseTicket(const STI::Engine::ParseID& pid, 
                             const std::shared_ptr<STI::Device::Device>& server)
-: pid(pid), ticketManager(manager), server(server)
+: pid(pid), server(server)
 {
     status = ParseTicketStatus::Parsing;
 
@@ -24,9 +26,6 @@ ParseTicket::ParseTicket(const STI::Engine::ParseID& pid, ParseTicketManager* ma
 
 ParseTicket::~ParseTicket()
 {
-    if (ticketManager != 0) {
-        ticketManager->remove(pid);
-    }
 }
 
 const STI::Engine::ParseID& ParseTicket::getParseID() const

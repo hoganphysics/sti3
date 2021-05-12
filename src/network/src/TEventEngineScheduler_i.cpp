@@ -267,16 +267,6 @@ void TEventEngineScheduler_i::cancelAll()
 		
 		messages = new STI::TNetwork::TEngineParsingMessageSeq();
 		(*messages) = tEngineParsingMessageSeq_var;
-
-		// if (success && convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
-		// 	(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
-
-		// 	messages = new STI::TNetwork::TEngineParsingMessageSeq();
-		// 	(*messages) = tEngineParsingMessageSeq_var;
-		// }
-		// else {
-		// 	success = false;
-		// }
 	}
 
 	return success;

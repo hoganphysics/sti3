@@ -34,6 +34,7 @@ public:
 
 	STI::Engine::EngineState getState() const;
 
+	const STI::Engine::DeviceEventMap& getParsedEvents();
 
 private:
 
@@ -42,6 +43,8 @@ private:
     std::shared_ptr<STI::TNetwork::TTriggerCallback_i> triggerCallbackServant;
 
     ::STI::TNetwork::TEventEngine_var _tEngine; //remote reference
+
+	STI::Engine::DeviceEventMap events;
 };
 
 

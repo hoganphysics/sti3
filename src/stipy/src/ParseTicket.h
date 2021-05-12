@@ -7,7 +7,6 @@
 #include "fwd/RawEvent_fwd.h"
 #include "EngineParsingMessage.h"
 
-
 #include <string>
 #include <mutex>
 #include <condition_variable>
@@ -20,13 +19,13 @@ namespace Python
 
 class ResultTicket;
 class ParseTicket;
-class ParseTicketManager;
+// class ParseTicketManager;
 
 class ParseTicket
 {
 public:
 
-    ParseTicket(const STI::Engine::ParseID& id, ParseTicketManager* manager, 
+    ParseTicket(const STI::Engine::ParseID& id, 
                 const std::shared_ptr<STI::Device::Device>& server);
     ~ParseTicket();
  
@@ -58,7 +57,7 @@ private:
 
     ParseTicketStatus status;
 
-    ParseTicketManager* ticketManager;
+    // ParseTicketManager* ticketManager;
 
     std::shared_ptr<STI::Device::Device> server;
 

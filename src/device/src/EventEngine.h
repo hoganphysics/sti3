@@ -3,6 +3,7 @@
 
 #include "EngineState.h"
 #include "DeviceID.h"
+#include "fwd/RawEvent_fwd.h"
 
 #include <memory>
 
@@ -35,6 +36,8 @@ public:
     virtual STI::Device::DeviceID getDeviceID() const = 0;
 
 	virtual STI::Engine::EngineState getState() const = 0;
+
+	virtual const DeviceEventMap& getParsedEvents() = 0;
 };
 
 } //Engine

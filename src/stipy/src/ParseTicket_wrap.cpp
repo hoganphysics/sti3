@@ -27,7 +27,7 @@ void init_ParseTicket(py::module& m)
         .def("wait", &STI::Python::ParseTicket::wait)
         .def("cancel", &STI::Python::ParseTicket::cancel)
         .def("getMessages", &STI::Python::ParseTicket::getMessages)
-
+        .def("getEvents", &STI::Python::ParseTicket::getEvents)
         ;
 
 }

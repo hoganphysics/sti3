@@ -15,6 +15,7 @@ void init_STIPyShot(py::module& m);
 void init_STIPyServer(py::module& m);
 void init_ParseTicket(py::module& m);
 void init_ResultTicket(py::module& m);
+// void init_DeviceID(py::module& m);
 
 PYBIND11_MODULE(stipy, m) {
 
@@ -25,6 +26,7 @@ PYBIND11_MODULE(stipy, m) {
 
 
     init_HubID(m);
+    // init_DeviceID(m);
 
     init_stipy(m);
 

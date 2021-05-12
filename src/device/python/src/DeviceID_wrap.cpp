@@ -2,6 +2,7 @@
 #include "DeviceID.h"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 
 namespace py = pybind11;
 
@@ -26,6 +27,16 @@ void init_DeviceID(py::module& m)
     .def("__repr__",
         [](const STI::Device::DeviceID& id) {
             return id.getID();
+        })
+    // .def(py::hash(py::self))
+    .def("__hash__",
+        [](const STI::Device::DeviceID& id) {
+            // return py::hash(id.getID());
+            // return py::hash(py::self);
+            std::hash<std::string> hasher;
+            auto hash = hasher(id.getID());
+            // int h = std::stoi(id.getID());
+            return hash;
         })
     .def("__eq__",  // operator ==
         [](const STI::Device::DeviceID& self, const STI::Device::DeviceID& other) {

@@ -7,6 +7,7 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 
 namespace STI
 {
@@ -37,6 +38,8 @@ private:
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     std::map<STI::Engine::ParseID, std::shared_ptr<ParseTicket>> tickets;
+
+    mutable std::mutex ticketMutex;
 };
 
 

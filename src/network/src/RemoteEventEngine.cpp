@@ -1,6 +1,7 @@
 
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
+#include "RawEvent.h"
 
 using STI::Network::RemoteEventEngine;
 
@@ -8,6 +9,9 @@ using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
 using STI::Network::convert;
 using STI::Engine::TriggerCallback;
+using STI::TNetwork::TParseID;
+using STI::Engine::ParseID;
+
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
 	: _tEngine(STI::TNetwork::TEventEngine::_duplicate(engine))
@@ -180,3 +184,30 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 
 	return state;
 }
+
+const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
+{
+	events.clear();
+	
+	if (CORBA::is_nil(_tEngine)) return events;
+
+	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
+
+	bool success = false;
+
+	try {
+
+		success = _tEngine->getParsedEvents(tEngineParsedEvents);	//remote call
+
+		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, events);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return events;
+}
+

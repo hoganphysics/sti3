@@ -627,8 +627,10 @@ bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEvents
     deviceEvents.clear();
 
     for (unsigned i = 0; i < tDeviceEvents.length(); ++i) {
-
+        //get RawEventVector for this DeviceID
         auto& evts = deviceEvents[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceEvents[i].targetDeviceID)];
+        
+        //populate vector with converted events
         convert<TRawEvent, RawEvent>(tDeviceEvents[i].events, evts);
     }
     return true;
