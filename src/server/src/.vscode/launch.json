@@ -43,8 +43,10 @@
             ],
             "preLaunchTask": "CMake build",
             "miDebuggerPath": "/usr/bin/gdb"
+            // "sourceFileMap": {
+            //     "${workspaceFolder}/build": "${workspaceFolder}"
+            // }
+            
         }
-
-
     ]
 }

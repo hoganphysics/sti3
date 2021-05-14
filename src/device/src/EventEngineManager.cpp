@@ -146,9 +146,16 @@ void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::E
     }
 }
 
-void EventEngineManager::handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+void EventEngineManager::handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
 {
     if(jobRunning()) {
-        engine->handlePlayMessage(evt);
+        engine->handlePlayReadyMessage(evt);
+    }
+}
+
+void EventEngineManager::handlePlayCompleteMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+{
+    if(jobRunning()) {
+        engine->handlePlayCompleteMessage(evt);
     }
 }

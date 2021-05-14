@@ -7,50 +7,50 @@ using STI::Engine::EventEngineStateMachine;
 using STI::Engine::EngineState;
 
 EventEngineStateMachine::EventEngineStateMachine()
-	: state(Idle)
+	: state(EngineState::Idle)
 {
 	//states
-	stateTree.addVertex(Idle);
-	stateTree.addVertex(Parsing);
-	stateTree.addVertex(Parsed);
+	stateTree.addVertex(EngineState::Idle);
+	stateTree.addVertex(EngineState::Parsing);
+	stateTree.addVertex(EngineState::Parsed);
 //	stateTree.addVertex(Arming);
-	stateTree.addVertex(PreparingPlay);
-	stateTree.addVertex(PlayReady);	
-	stateTree.addVertex(WaitingForTrigger);
-	stateTree.addVertex(Playing);
+	stateTree.addVertex(EngineState::PreparingPlay);
+	stateTree.addVertex(EngineState::PlayReady);	
+	stateTree.addVertex(EngineState::WaitingForTrigger);
+	stateTree.addVertex(EngineState::Playing);
 
-	stateTree.addVertex(Unknown);
-	stateTree.addVertex(Missing);
-	stateTree.addVertex(Error);
+	stateTree.addVertex(EngineState::Unknown);
+	stateTree.addVertex(EngineState::Missing);
+	stateTree.addVertex(EngineState::Error);
 
 	//allowed transitions: addEdge(source, target)
-	stateTree.addEdge(Idle, Parsing);
-	stateTree.addEdge(Parsing, Idle);
-	stateTree.addEdge(Parsing, Parsed);
+	stateTree.addEdge(EngineState::Idle, EngineState::Parsing);
+	stateTree.addEdge(EngineState::Parsing, EngineState::Idle);
+	stateTree.addEdge(EngineState::Parsing, EngineState::Parsed);
 
-	stateTree.addEdge(Parsed, Idle);
-	stateTree.addEdge(Parsed, PreparingPlay);
-	stateTree.addEdge(PreparingPlay, Parsed);
+	stateTree.addEdge(EngineState::Parsed, EngineState::Idle);
+	stateTree.addEdge(EngineState::Parsed, EngineState::PreparingPlay);
+	stateTree.addEdge(EngineState::PreparingPlay, EngineState::Parsed);
 
-	stateTree.addEdge(PreparingPlay, PlayReady);
-	stateTree.addEdge(PlayReady, WaitingForTrigger);
-	stateTree.addEdge(PlayReady, Parsed);
+	stateTree.addEdge(EngineState::PreparingPlay, EngineState::PlayReady);
+	stateTree.addEdge(EngineState::PlayReady, EngineState::WaitingForTrigger);
+	stateTree.addEdge(EngineState::PlayReady, EngineState::Parsed);
 
-	stateTree.addEdge(WaitingForTrigger, Parsed);
-	stateTree.addEdge(WaitingForTrigger, Playing);
-	stateTree.addEdge(Playing, Parsed);
+	stateTree.addEdge(EngineState::WaitingForTrigger, EngineState::Parsed);
+	stateTree.addEdge(EngineState::WaitingForTrigger, EngineState::Playing);
+	stateTree.addEdge(EngineState::Playing, EngineState::Parsed);
 
 	//Error states
-	stateTree.addEdge(Unknown, Idle);
-	stateTree.addEdge(Missing, Idle);
-	stateTree.addEdge(Error, Idle);
+	stateTree.addEdge(EngineState::Unknown, EngineState::Idle);
+	stateTree.addEdge(EngineState::Missing, EngineState::Idle);
+	stateTree.addEdge(EngineState::Error, EngineState::Idle);
 
-	std::vector<EngineState> allStates = { Idle, Parsing, Parsed, PreparingPlay, PlayReady, WaitingForTrigger, Playing };
+	std::vector<EngineState> allStates = { EngineState::Idle, EngineState::Parsing, EngineState::Parsed, EngineState::PreparingPlay, EngineState::PlayReady, EngineState::WaitingForTrigger, EngineState::Playing };
 
 	//All states can transition to these states
 	for (auto s : allStates) {
-		stateTree.addEdge(s, Error);
-		stateTree.addEdge(s, Unknown);
+		stateTree.addEdge(s, EngineState::Error);
+		stateTree.addEdge(s, EngineState::Unknown);
 	}
 }
 
@@ -70,20 +70,20 @@ void EventEngineStateMachine::stop()
 
 	//using fall through to send groups of "-ing" states to a common static state
 	switch (state) {
-	case Parsing:
-		success = _setState(Idle);
+	case EngineState::Parsing:
+		success = _setState(EngineState::Idle);
 		break;
 
-	case PreparingPlay:
-	case PlayReady:
-	case WaitingForTrigger:
-	case Playing:
-		success = _setState(Parsed);
+	case EngineState::PreparingPlay:
+	case EngineState::PlayReady:
+	case EngineState::WaitingForTrigger:
+	case EngineState::Playing:
+		success = _setState(EngineState::Parsed);
 		break;
 	}
 
 	if (!success) {
-		_setState(Unknown);
+		_setState(EngineState::Unknown);
 	}
 }
 

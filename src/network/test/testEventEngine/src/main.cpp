@@ -22,6 +22,9 @@
 
 #include "Convert_EventEngine.h"
 
+#include "DeviceMessageReceiver.h"
+#include "DeviceMessage.h"
+
 #include <iostream>
 #include <memory>
 #include <string>
@@ -31,6 +34,21 @@
 using std::cout;
 using std::endl;
 using STI::Device::LocalDevice;
+
+
+class TempListener : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+{
+public:
+
+	TempListener(const std::string& name) : name(name) {}
+
+	void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
+	{
+		std::cout << "handle " << name << std::endl;
+	}
+
+	std::string name;
+};
 
 
 class TestDevice : public LocalDevice
@@ -59,6 +77,42 @@ public:
 
 //		auto engine = std::make_shared<STI::Engine::LocalEventEngine>(getID(), channels, this, dispatcher, collection);
 //		scheduler->addEngine(id, engine);
+
+
+
+
+
+
+///////////////////////////////////////
+    std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+    getMessageReceiver(receiver);
+
+	auto l1 = std::make_shared<TempListener>("L1");
+    auto l2 = std::make_shared<TempListener>("L2");
+	
+	STI::Device::DeviceMessageListenerID schedulerMessageLID;
+    STI::Device::DeviceMessageListenerID schedulerMessageLID2;
+
+
+    //EventEngineScheduler message listener
+    auto listener = std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>>(l1);
+    
+   	schedulerMessageLID.name = "::EventEngineScheduler::ParseResult";	//getID().getID() + 
+	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
+	
+    auto listener2 = std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>>(l2);
+    
+   	schedulerMessageLID2.name = "::EventEngineScheduler::ResultTicket";	//getID().getID() + 
+	schedulerMessageLID2.type = STI::Device::DeviceMessageType::EngineScheduler;
+
+	// std::cout << "Adding Listeners? ";
+    // if (receiver != 0) {
+	// 	std::cout << " add" << std::endl;
+    //     receiver->addListener(getID(), schedulerMessageLID, listener);	//listen to events from server
+    //     receiver->addListener(getID(), schedulerMessageLID2, listener2);	//listen to events from server
+    // }
+
+
 
 	}
 	~TestDevice()

@@ -12,7 +12,7 @@
 #include "ResultTicket.h"
 #include "ShotID.h"
 #include "TimeStamp.h"
-#include "TriggerCallback.h"
+
 #include "utils/OrderedBufferMap.h"
 #include "ChannelManager.h"
 
@@ -36,7 +36,7 @@ class EventEngine;
 class EventEngineJob;
 class EventEngineDependencyTree;
 class DeviceMessageDispatcher;
-
+class MasterTrigger;
 class TriggerCallback;
 
 
@@ -88,8 +88,9 @@ public:
 
 //	Debug: inspect state:  return current values of all out channels, and what RawEvent was last played, what time it thinks it is...
 
-	void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
-	void handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+	void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& message);
+	void handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& message);
+	void handlePlayCompleteMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& message);
 
 	bool isState(EngineState target) const;
 	STI::Engine::EngineState getState() const;
@@ -122,11 +123,15 @@ private:
 	bool setState(EngineState target);
 	bool setState(EngineState target, EngineState fallback);
 
-	void preparePlayAll(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
+	void scheduleAllPlayJobs(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
 	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);
-	void preplay(TriggerCallback& triggerCB);
+
+	void playShot(TriggerCallback& triggerCB);
+
 	void resetPlayThread();
 	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
+
+	void waitForPlayAll();
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;
@@ -143,41 +148,8 @@ private:
 	bool waitUntil(double time);
 	TimeStamp getCurrentTimeStamp();
 
+	bool allEngineStateCheck(const std::map<STI::Device::DeviceID, STI::Engine::EngineState>& engineStates, const STI::Engine::EngineState& state);
 
-	class MasterTrigger : public TriggerCallbackTarget
-	{
-	public:
-
-		MasterTrigger(LocalEventEngine* engine, const STI::Device::DeviceID& triggerDevice) 
-						: engine(engine), triggerDevice(triggerDevice), running(false) {}
-
-		enum class TriggerStatus { Arming, Waiting, Triggered };
-
-		void arm(const STI::Device::DeviceID& id);
-		void arm();
-		void wait();
-		void stop();
-		bool allStatusMatch(const TriggerStatus& target);
-
-		STI::Device::DeviceID& triggerID() { return triggerDevice; }
-
-		void ready(const STI::Device::DeviceID& id);
-		void triggerFired(const STI::Device::DeviceID& id);
-
-		std::map<STI::Device::DeviceID, TriggerStatus> status;
-
-	private:
-
-		bool _allStatusMatch(const TriggerStatus& target);
-
-		LocalEventEngine* engine;
-		STI::Device::DeviceID triggerDevice;
-
-		bool running;
-
-		mutable std::mutex mtriggerMutex;
-		mutable std::condition_variable mtriggerCondition;
-	};
 
 
 	std::shared_ptr<MasterTrigger> masterTrigger;
@@ -213,7 +185,9 @@ private:
 
 	bool isJobOwner;
 	std::vector<STI::Device::DeviceID> ownedTargets;
-	std::vector<STI::Device::DeviceID> parsedOwnedTargets;
+	std::map<STI::Device::DeviceID, STI::Engine::EngineState> parsedOwnedTargets;
+	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playReadyOwnedTargets;
+	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playedOwnedTargets;
 	std::map<STI::Device::DeviceID, std::shared_ptr<EventEngine>> engines;
 
 	std::thread playThread;

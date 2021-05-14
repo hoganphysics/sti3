@@ -7,6 +7,7 @@
 #include "EngineJobID.h"
 #include "GroupableMessage.h"
 #include "EngineParsingMessage.h"
+#include "EngineState.h"
 
 #include <sstream>
 
@@ -225,7 +226,7 @@ class EngineSchedulerMessage : public DeviceMessage
 public:
 
 	//enum class ReserveStatus { Success, Yield };
-	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
+	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, PlayComplete, YieldPlay };
 
 	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
 	: DeviceMessage(source, DeviceMessageType::EngineScheduler), schedulerMessageType(type), originalSource(originalSource) 
@@ -246,6 +247,8 @@ public:
 	std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 
 	std::vector<STI::Engine::EngineParsingMessage> messages;
+
+	STI::Engine::EngineState engineState;
 };
 
 // class STIParsingMessage

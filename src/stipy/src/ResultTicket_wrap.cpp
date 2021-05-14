@@ -9,12 +9,11 @@ namespace py = pybind11;
 void init_ResultTicket(py::module& m) 
 {
 
-//    m.def("add", [](int a, int b) { return a + b; });
 
-    py::class_<STI::Python::ResultTicket>(m, "ResultTicket")
+    py::class_<STI::Python::ResultTicket, std::shared_ptr<STI::Python::ResultTicket>>(m, "ResultTicket")
 
-        //.def("getID", &STI::Network::HubID::id)
-        
+        .def("wait", &STI::Python::ResultTicket::wait)
+        .def("cancel", &STI::Python::ResultTicket::cancel)
         ;
 
 }

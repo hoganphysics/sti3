@@ -818,7 +818,11 @@ void LocalEventEngineScheduler::handleMessage(const std::shared_ptr<EngineSchedu
         
         case MessageType::PlayReady:
             if (getManager(mess->jobID, manager)) {
-                manager->handlePlayMessage(mess);
+                manager->handlePlayReadyMessage(mess);
+            }
+        case MessageType::PlayComplete:
+            if (getManager(mess->jobID, manager)) {
+                manager->handlePlayCompleteMessage(mess);
             }
         break;
     }
@@ -828,10 +832,20 @@ bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared
 {
     std::shared_ptr<EventEngineJob> job;
 
-    if (runningJobs.get(jobID, job) && job != 0
-        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    // if (runningJobs.get(jobID, job) && job != 0
+    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    //     return true;
+    // }
+
+    bool b1 = runningJobs.get(jobID, job);
+    bool b2 = b1 && job != 0;
+    bool b3 = b2 && engineManagers.get(job->getEngineID(), manager);
+    bool b4 = b3 && manager != 0;
+
+    if (b4) {
         return true;
     }
+
     return false;
 }
 

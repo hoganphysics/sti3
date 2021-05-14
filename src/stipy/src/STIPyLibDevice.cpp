@@ -7,17 +7,21 @@
 #include "DeviceMessageReceiver.h"
 #include "ParseTicket.h"
 
+#include "ResultTicketManager.h"
 #include <memory>
 #include <iostream>
 
 using STI::Python::STIPyLibDevice;
 using STI::Python::ParseTicket;
 using STI::Device::LocalDevice;
+using STI::Python::ResultTicket;
 using STI::Python::ParseTicketManager;
+using STI::Python::ResultTicketManager;
 using STI::Device::DeviceMessageReceiver;
 using STI::Device::DeviceMessageListener;
 using STI::Device::EngineSchedulerMessage;
 using STI::Device::DeviceMessageListenerID;
+
 
 STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& address, unsigned short module,
 		const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID)
@@ -25,7 +29,8 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 {
     addPartner(serverID);
 
-    ticketManager = std::make_shared<ParseTicketManager>();
+    parseTicketManager = std::make_shared<ParseTicketManager>();
+    resultTicketManager = std::make_shared<ResultTicketManager>();
 
     // std::shared_ptr<Device> server;
     // getServer(server);
@@ -34,13 +39,19 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
     getMessageReceiver(receiver);
 
     //EventEngineScheduler message listener
-    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(ticketManager);
+    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(parseTicketManager);
     
-   	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
+   	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler::ParseResult";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
+    auto listener2 = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(resultTicketManager);
+    
+   	schedulerMessageLID2.name = getID().getID() + "::EventEngineScheduler::ResultTicket";
+	schedulerMessageLID2.type = STI::Device::DeviceMessageType::EngineScheduler;
+
     if (receiver != 0) {
         receiver->addListener(serverID, schedulerMessageLID, listener);	//listen to events from server
+        receiver->addListener(serverID, schedulerMessageLID2, listener2);	//listen to events from server
     }
 
     // std::cout << "STIPyLibDevice connecting"<<std::endl;
@@ -79,7 +90,7 @@ std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::
     std::shared_ptr<Device> server;
     bool connected = getServer(server);
 
-    auto ticket = ticketManager->makeParseTicket(pid, server);
+    auto ticket = parseTicketManager->makeTicket(pid, server);
     
     if (!connected && ticket != 0) {
         ticket->cancel();
@@ -87,3 +98,16 @@ std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::
     return ticket;
 }
 
+
+std::shared_ptr<ResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engine::ShotID& sid)
+{
+    std::shared_ptr<Device> server;
+    bool connected = getServer(server);
+
+    auto ticket = resultTicketManager->makeTicket(sid, server);
+    
+    if (!connected && ticket != 0) {
+        ticket->cancel();
+    }
+    return ticket;
+}

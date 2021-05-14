@@ -21,6 +21,7 @@
 #include "EventEngineJob.h"
 #include "EngineJobID.h"
 #include "EngineParsingMessage.h"
+#include "MasterTrigger.h"
 
 #include <memory>
 #include <thread>
@@ -45,7 +46,7 @@ using STI::Engine::LocalTriggerCallback;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EngineJobID;
 using STI::Engine::EngineParsingMessage;
-
+using STI::Engine::MasterTrigger;
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
@@ -82,6 +83,8 @@ void LocalEventEngine::clear()
 	handledPartnerEvents.clear();
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
+	playReadyOwnedTargets.clear();
+	playedOwnedTargets.clear();
 
 	localParsingMessages.clear();
 
@@ -326,6 +329,17 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
+	// // Check that owned devices are Parsed
+	// bool ownedDevicesParsed = true;
+	// for (auto& tuple : parsedOwnedTargets) {
+	// 	ownedDevicesParsed &= (tuple.second == EngineState::Parsed);
+	// }
+
+	// Check that owned devices are Parsed
+	bool ownedDevicesParsed = allEngineStateCheck(parsedOwnedTargets, EngineState::Parsed);
+
+
+
 	job.addMessages(localParsingMessages);
 	const std::vector<EngineParsingMessage>& jobMessages = job.getParsingMessages();
 
@@ -342,7 +356,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
-	if (errors) {
+	if (errors || !ownedDevicesParsed) {
 		cancelJob = true;
 	}
 	else if (!setState(EngineState::Parsed)) {
@@ -357,15 +371,17 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	}
 
 	// Send message upstream indicating that this device (and all owned devices) has finished
-	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+	auto parseCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
 							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
-	newMessage->jobID.pid = job.getJobID().pid;
-	newMessage->unhandledEvents.swap(upstreamEvents);
-	newMessage->handledEvents.swap(handledPartnerEvents);
-	newMessage->messages.insert(newMessage->messages.end(), jobMessages.begin(), jobMessages.end());
-	job.getEngine( newMessage->engine );	//pass local engine reference upstream to server
+	parseCompleteMessage->jobID.type = job.getJobID().type;
+	parseCompleteMessage->jobID.pid = job.getJobID().pid;
+	parseCompleteMessage->unhandledEvents.swap(upstreamEvents);
+	parseCompleteMessage->handledEvents.swap(handledPartnerEvents);
+	parseCompleteMessage->messages.insert(parseCompleteMessage->messages.end(), jobMessages.begin(), jobMessages.end());
+	parseCompleteMessage->engineState = getState();
+	job.getEngine( parseCompleteMessage->engine );	//pass local engine reference upstream to server
 
-	sendMessage(newMessage);
+	sendMessage(parseCompleteMessage);
 
 	//TODO: state needs to be contingent on errors from this device or owned devices.
 
@@ -439,65 +455,59 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	}
 }
 
-void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& message)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
 	
-	if (evt == 0) {
+	if (message == 0) {
 		return;
 	}
 
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), evt->originalSource);
+	std::shared_ptr<EventEngine> remoteEngine;
+	remoteEngine = message->engine;
+
+	if (remoteEngine == 0) {
+		//error
+		return;
+	}
+
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSource);
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
-		parsedOwnedTargets.push_back(evt->originalSource);
+		parsedOwnedTargets[message->originalSource] = message->engineState;
+		engines[remoteEngine->getDeviceID()] = remoteEngine;
 	}
 
-	localParsingMessages.insert(localParsingMessages.end(), evt->messages.begin(), evt->messages.end());
+	localParsingMessages.insert(localParsingMessages.end(), message->messages.begin(), message->messages.end());
 
 	if (!isState(EngineState::Parsing)) {
 		return;
 	}
 
 	//Try to handle device generated events locally
-	divideEvents(evt->unhandledEvents);
+	divideEvents(message->unhandledEvents);
 	
 	//Collect any handled partner events
-	auto& evts = evt->handledEvents;
+	auto& evts = message->handledEvents;
 	handledPartnerEvents.insert(handledPartnerEvents.end(), 
 								std::make_move_iterator(evts.begin()), 
 								std::make_move_iterator(evts.end()) );
 	
 	//reduce dependency count in localSubtree
-	localSubtree->removeNode(evt->originalSource);
-
-
-	std::shared_ptr<EventEngine> remoteEngine;
-	if (evt != 0) {
-		remoteEngine = evt->engine;
-	}
-	if (remoteEngine == 0) {
-		//error
-		return;
-	}
-	//only add engine if it is owned by this device
-	if (it != ownedTargets.end()) {
-		engines[remoteEngine->getDeviceID()] = remoteEngine;
-	}
-
+	localSubtree->removeNode(message->originalSource);
 
 	parseCondition.notify_all();	//wake up event transfer loop
 }
 
-void LocalEventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMessage>& evt)
+void LocalEventEngine::handlePlayReadyMessage(const std::shared_ptr<EngineSchedulerMessage>& message)
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
 
 	std::shared_ptr<EventEngine> remoteEngine;
 
-	if (evt != 0) {
-		remoteEngine = evt->engine;
+	if (message != 0) {
+		remoteEngine = message->engine;
 	}
 
 	if (remoteEngine == 0) {
@@ -510,13 +520,39 @@ void LocalEventEngine::handlePlayMessage(const std::shared_ptr<EngineSchedulerMe
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
 		engines[remoteEngine->getDeviceID()] = remoteEngine;
+		playReadyOwnedTargets[message->originalSource] = message->engineState;
 	}
 
 	playCondition.notify_all();
 }
 
+void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSchedulerMessage>& message)
+{
+	std::unique_lock<std::mutex> playLock(playMutex);
 
-void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& jobOwner)
+	if (message == 0) {
+		return;
+	}
+
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSource);
+
+	//only add if it is owned by this device
+	if (it != ownedTargets.end()) {
+		playedOwnedTargets[message->originalSource] = message->engineState;
+	}
+
+	playCondition.notify_all();
+}
+
+TimeStamp LocalEventEngine::getCurrentTimeStamp()
+{
+	TimeStamp ts;
+	ts.timestamp = 0;
+	return ts;
+}
+
+
+void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const DeviceID& jobOwner)
 {
 	if (ownedTargets.size() == 0) {
 		return;
@@ -539,12 +575,6 @@ void LocalEventEngine::preparePlayAll(const EngineJobID& jobID, const DeviceID& 
 	}
 }
 
-TimeStamp LocalEventEngine::getCurrentTimeStamp()
-{
-	TimeStamp ts;
-	ts.timestamp = 0;
-	return ts;
-}
 
 void LocalEventEngine::play(EventEngineJob& job)
 {
@@ -563,7 +593,9 @@ void LocalEventEngine::play(EventEngineJob& job)
 		return;
 	}
 
-	engines.clear();
+	playReadyOwnedTargets.clear();
+	playedOwnedTargets.clear();
+	// engines.clear();
 
 	TimeStamp playTime;
 	EngineJobID jobID = job.getJobID();
@@ -578,53 +610,115 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 	jobID.sid.playTime = playTime;
 
-	preparePlayAll(jobID, job.getJobOwner());
+	scheduleAllPlayJobs(jobID, job.getJobOwner());
+
+	// //Wait for all owned target devices to reach PlayReady state
+	// if (ownedTargets.size() > 0) {
+	// 	// This device is a server; wait for owned devices to send ready messages
+	// 	while (isState(EngineState::PreparingPlay)) {
+
+	// 		//When an owned device is in PlayReady, it will send its engine to this device
+	// 		if (engines.size() == ownedTargets.size()) {
+	// 			if (!setState(EngineState::PlayReady)) {
+	// 				setState(EngineState::Error);
+	// 			}
+	// 		}
+	// 		else {
+	// 			playCondition.wait(playLock);
+	// 		}
+	// 	}
+	// }
+	// else {
+	// 	// Non-server device
+	// 	if (!setState(EngineState::PlayReady)) {
+	// 		setState(EngineState::Error);
+	// 	}
+	// }
+/////////////////////////////////
+
+	// //Wait for all owned target devices to reach PlayReady state
+	// if (ownedTargets.size() > 0) {
+	// 	// This device is a server; wait for owned devices to send PlayReady messages.
+	// 	while (isState(EngineState::PreparingPlay) && playReadyOwnedTargets.size() != ownedTargets.size()) {
+	// 		playCondition.wait(playLock);
+	// 	}
+	// }
 
 	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {
-		// This device is a server; wait for owned devices to send ready messages
-		while (isState(EngineState::PreparingPlay)) {
+		// This device is a server; wait for owned devices to send PlayReady messages.
+		while (isState(EngineState::PreparingPlay) && playReadyOwnedTargets.size() != ownedTargets.size()) {
+			playCondition.wait(playLock);
+		}
+	}
 
-			//When an owned device is in PlayReady, it will send its engine to this device
-			if (engines.size() == ownedTargets.size()) {
-				if (!setState(EngineState::PlayReady)) {
-					setState(EngineState::Error);
-				}
-			}
-			else {
-				playCondition.wait(playLock);
-			}
-		}
+	// // Check that owned devices are PlayReady
+	// bool ownedDevicesPlayReady = true;
+	// for (auto& tuple : playReadyOwnedTargets) {
+	// 	ownedDevicesPlayReady &= (tuple.second == EngineState::PlayReady);
+	// }
+
+
+	bool ownedDevicesPlayReady = allEngineStateCheck(playReadyOwnedTargets, EngineState::PlayReady);
+
+
+
+	if (!ownedDevicesPlayReady) {
+		stop();
+
+		// auto& err = job.addMessage(PlayingMessageType::Error, 1, "PlayReady")
+		// 	<< "The following devices failed to reach the PlayReady state: \n";
+		// for (auto& tuple : playReadyOwnedTargets) {
+		// 	if (tuple.second != EngineState::PlayReady) {
+		// 		err << tuple.first.getID() << " (EngineState = " << print(tuple.second) << ")\n";
+		// 	}
+		// }
 	}
-	else {
-		// Non-server device
-		if (!setState(EngineState::PlayReady)) {
-			setState(EngineState::Error);
-		}
+
+	if (!setState(EngineState::PlayReady)) {
+		setState(EngineState::Error);
 	}
+
+
+	// // Check that owned devices are PlayReady
+	// bool ownedDevicesPlayReady = true;
+	// for (auto& tuple : playReadyOwnedTargets) {
+	// 	ownedDevicesPlayReady &= (tuple.second == EngineState::PlayReady);
+	// }
+
+	// if (!ownedDevicesPlayReady) {
+	// 	if (!setState(EngineState::PlayReady)) {
+	// 		setState(EngineState::Error);
+	// 	}
+	// }
+
+/////////////////////////////////
+
+
+	//Send PlayReady message with local engine reference
+	auto playReadyMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+								EngineSchedulerMessage::SchedulerMessageType::PlayReady);
+	playReadyMessage->jobID.pid = job.getJobID().pid;
+	playReadyMessage->jobID.sid = job.getJobID().sid;
+	playReadyMessage->jobID.type = job.getJobID().type;
+	playReadyMessage->engineState = getState();
+	job.getEngine( playReadyMessage->engine );	//pass local engine reference upstream to server
+	sendMessage(playReadyMessage);
+
 
 	if (!isState(EngineState::PlayReady)) {
-		// an error occurred, or parse was aborted
+		// an error occurred, or play was aborted
+		job.markCancelled();
+		stop();
 		return;
 	}
 
-	//Send PlayReady message with local engine reference
-	auto newMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
-								EngineSchedulerMessage::SchedulerMessageType::PlayReady);
-	newMessage->jobID.pid = job.getJobID().pid;
-	newMessage->jobID.sid = job.getJobID().sid;
-	newMessage->jobID.type = job.getJobID().type;
-	job.getEngine( newMessage->engine );	//pass local engine reference upstream to server
-
-	if (isState(EngineState::PlayReady)) {
-		sendMessage(newMessage);
-	}
 
 	// Setup trigger
 
 	STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
-	masterTrigger = std::make_shared<LocalEventEngine::MasterTrigger>(this, triggerDeviceID);
-	masterTrigger->arm();
+	masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
+	masterTrigger->arm(ownedTargets);
 
 	if (isJobOwner || ownedTargets.size() > 0) {
 		
@@ -637,6 +731,16 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 
+
+	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
+	playCompleteMessage->jobID.pid = job.getJobID().pid;
+	playCompleteMessage->jobID.sid = job.getJobID().sid;
+	playCompleteMessage->jobID.type = job.getJobID().type;
+	playCompleteMessage->engineState = getState();
+	// playCompleteMessage->messages
+	sendMessage(playCompleteMessage);
+
 	// getAllMeasurements();	//need to get all measurements from owned devices
 	// saveShot(job);	//job needs record of shot
 
@@ -647,6 +751,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 }
 
+
 void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLock)
 {
 	while (isState(EngineState::PlayReady) || isState(EngineState::PreparingPlay) ||
@@ -655,16 +760,6 @@ void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLoc
 	}
 }
 
-void LocalEventEngine::resetPlayThread()
-{
-	if (playThread.joinable()) {
-		if (isState(EngineState::Playing) || isState(EngineState::WaitingForTrigger)) {
-			//Error; this should not happen
-			stop();
-		}
-		playThread.join();
-	}
-}
 
 void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
@@ -702,18 +797,25 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		//masterTrigger is the local server's master trigger (works for all levels of network)
 		playAll(jobID, masterTriggerCB, debug);		//all owned devices
 	}
-
-	if (isJobOwner || ownedTargets.size() > 0) {	//this device is a server for some devices
+	
+	//masterTrigger->arm(localDeviceID);
+	
+	// if (isJobOwner || ownedTargets.size() > 0) {	//this device is a server for some devices
 		
-		masterTrigger->wait();
-	}
+	// 	// masterTrigger->wait();
+	// }
+
+	//need to wait for owned device to arm before entering playShot to arm locally
+	masterTrigger->waitForArm();		//wait for all owned devices to enter WaitingForTrigger state
+	masterTrigger->arm(localDeviceID);	//add local device to the arming list
 
 	resetPlayThread();
-	playThread = std::thread(&LocalEventEngine::preplay, this, std::ref(*triggerCB));	//callback to calling server (not masterTrigger) 
+	playThread = std::thread(&LocalEventEngine::playShot, this, std::ref(*triggerCB));	//callback to calling server (not masterTrigger) 
 
+	//Only the job owner actually calls trigger, even if the trigger is delegated to another device
 	if (isJobOwner) {
-		masterTrigger->arm(localDeviceID);
-		masterTrigger->wait();		//need to wait for the local device to arm its trigger
+		
+		masterTrigger->waitForArm();		//waits for the local device to enter WaitingForTrigger
 
 		trigger(masterTrigger->triggerID());
 	}
@@ -726,27 +828,47 @@ void LocalEventEngine::playAll(const EngineJobID& jobID, const std::shared_ptr<T
 	}
 }
 
-// //play thread runs this
-// void playFunc(TriggerCallback& triggerCB)	//playShot
-// {
-// 	preplay(triggerCB);		//wait for trigger
-// 	playDeviceEvents();		//actually play the events on the device
-// 	waitForPlayAll();		//wait until all owned devices complete play
-// }
 
-void LocalEventEngine::preplay(TriggerCallback& triggerCB)
+void LocalEventEngine::resetPlayThread()
+{
+	if (playThread.joinable()) {
+		if (isState(EngineState::Playing) || isState(EngineState::WaitingForTrigger)) {
+			//Error; this should not happen
+			stop();
+		}
+		playThread.join();
+	}
+}
+
+
+void LocalEventEngine::playShot(TriggerCallback& triggerCB)	//playShot
 {
 	if (!armTrigger(triggerCB)) {
+
+		setState(EngineState::Error);
+		stop();
+		masterTrigger->stop();
 		return;
 	}
 
 	waitForTrigger();
 	
 	triggerCB.triggerFired(localDeviceID);		//Callback to the device that called play to confirm that this device is playing.
-									//Also, if this device is a delegated system trigger, this indicated 
-									//that the rest of the system should now be triggered.
+												//Also, if this device is a delegated system trigger, this indicated 
+												//that the rest of the system should now be triggered.
 
-	playDeviceEvents();
+	playDeviceEvents();		//actually play the events on the device
+	waitForPlayAll();		//wait until all owned devices complete play
+
+	// bool success = true;
+	if (isState(EngineState::Playing)) {
+		if (!setState(EngineState::Parsed)) {
+			setState(EngineState::Error);
+			// success = false;
+		}
+	}
+	
+	playCondition.notify_all();		//wake up waitForPlayComplete
 }
 
 bool LocalEventEngine::armTrigger(TriggerCallback& triggerCB)
@@ -755,11 +877,14 @@ bool LocalEventEngine::armTrigger(TriggerCallback& triggerCB)
 		setState(EngineState::Error);
 		return false;
 	}
-
+	
 	triggerCB.ready(localDeviceID);		//need to include jobID; or make server's callback job dependent (better!)
 
+	masterTrigger->ready(localDeviceID);
+	
 	return true;
 }
+
 
 void LocalEventEngine::waitForTrigger() const
 {
@@ -769,6 +894,25 @@ void LocalEventEngine::waitForTrigger() const
 		triggerCondition.wait(triggerLock);
 	}
 }
+
+
+void LocalEventEngine::waitForPlayAll()
+{
+	std::unique_lock<std::mutex> playLock(playMutex);
+	
+	//Wait for all owned target devices to finish play
+	if (ownedTargets.size() > 0) {
+		// This device is a server; wait for owned devices to send ready messages
+		while (isState(EngineState::Playing) && playedOwnedTargets.size() < ownedTargets.size()) {
+
+			playCondition.wait(playLock);
+		}
+	}
+
+	allEngineStateCheck(playedOwnedTargets, EngineState::Parsed);
+
+}
+
 
 void LocalEventEngine::trigger(const STI::Device::DeviceID& target)
 {
@@ -807,6 +951,7 @@ void LocalEventEngine::triggerOwnedDevices()
 	}
 }
 
+
 bool LocalEventEngine::playDeviceEvents()
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
@@ -836,15 +981,6 @@ bool LocalEventEngine::playDeviceEvents()
 
 	measurementThread.join();	//wait for measurement collection to complete
 
-	bool success = true;
-	if (isState(EngineState::Playing)) {
-		if (!setState(EngineState::Parsed)) {
-			setState(EngineState::Error);
-			success = false;
-		}
-	}
-	playCondition.notify_all();
-
 	return true;	//play and collect were a success, or where cleanly stopped
 }
 
@@ -852,6 +988,8 @@ bool LocalEventEngine::waitUntil(double time)
 {
 	return isState(EngineState::Playing);
 }
+
+
 
 
 void LocalEventEngine::pause()
@@ -898,33 +1036,31 @@ void LocalEventEngine::measureData()
 
 void LocalEventEngine::stop()
 {
-	bool success = true;
-
 	switch (getState()) {
 	case EngineState::Parsing:
-		success = setState(EngineState::Idle, EngineState::Error);
+		setState(EngineState::Idle, EngineState::Error);
 		cancelled = true;
 		releaseParseLock();
 		break;	
 	case EngineState::PreparingPlay:
-		success = setState(EngineState::Parsed, EngineState::Error);
+		setState(EngineState::Parsed, EngineState::Error);
 		cancelled = true;
 		releasePlayLock();
 		break;
 	case EngineState::PlayReady:
-		success = setState(EngineState::Parsed, EngineState::Error);
+		setState(EngineState::Parsed, EngineState::Error);
 		cancelled = true;
 		releasePlayLock();
 		break;
 	case EngineState::WaitingForTrigger:
-		success = setState(EngineState::Parsed, EngineState::Error);
+		setState(EngineState::Parsed, EngineState::Error);
 		cancelled = true;
 		//trigger();			//in case WaitingForTrigger
 		releaseTriggerLock();
 		releasePlayLock();
 		break;
 	case EngineState::Playing:
-		success = setState(EngineState::Parsed, EngineState::Error);
+		setState(EngineState::Parsed, EngineState::Error);
 		cancelled = true;
 		releasePlayLock();
 		stopDeviceEvents();
@@ -932,10 +1068,6 @@ void LocalEventEngine::stop()
 	}
 	
 	stopOwnedDevices();
-
-//	if (!success) {
-//		setState(EngineState::Error);
-//	}
 }
 
 
@@ -998,85 +1130,22 @@ bool LocalEventEngine::setState(EngineState target)
 }
 
 
-// MasterTrigger
-
-void LocalEventEngine::MasterTrigger::arm()
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-
-	status.clear();
-	running = false;
-
-	for (auto& id : engine->ownedTargets) {
-		status[id] = MasterTrigger::TriggerStatus::Arming;
-	}
-	//status[engine->localDeviceID] = MasterTrigger::TriggerStatus::Arming;
-}
-
-void LocalEventEngine::MasterTrigger::arm(const DeviceID& id)
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-
-	status[id] = MasterTrigger::TriggerStatus::Arming;
-}
-
-void LocalEventEngine::MasterTrigger::wait()
-{
-	//Wait for all devices to be in WaitingForTrigger state; device callback to this when then are ready
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-	running = true;
-
-	while (running && !_allStatusMatch(MasterTrigger::TriggerStatus::Waiting)) {
-		mtriggerCondition.wait(mtriggerLock);
-	}
-}
-
-bool LocalEventEngine::MasterTrigger::allStatusMatch(const LocalEventEngine::MasterTrigger::TriggerStatus& target)
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-	return _allStatusMatch(target);
-}
-
-bool LocalEventEngine::MasterTrigger::_allStatusMatch(const LocalEventEngine::MasterTrigger::TriggerStatus& target)
+bool LocalEventEngine::allEngineStateCheck(const std::map<STI::Device::DeviceID, STI::Engine::EngineState>& engineStates, const STI::Engine::EngineState& state)
 {
 	bool success = true;
 
-	for (auto& s : status) {
-		if (s.second != target) {
-			success = false;
-			break;
+	for(auto& id : ownedTargets) {
+		auto it = engineStates.find(id);
+		if (it != engineStates.end()) {
+			success &= (it->second == state);
 		}
+		else {
+			success = false;
+		}
+
+		if (!success) break;
 	}
 	return success;
 }
 
-void LocalEventEngine::MasterTrigger::stop()
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-	
-	running = false;
-	mtriggerCondition.notify_all();
 
-}
-
-void LocalEventEngine::MasterTrigger::ready(const STI::Device::DeviceID& id)
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-
-	auto it = status.find(id);
-	if (it != status.end()) {
-		it->second = MasterTrigger::TriggerStatus::Waiting;
-	}
-	mtriggerCondition.notify_all();
-}
-
-void LocalEventEngine::MasterTrigger::triggerFired(const STI::Device::DeviceID& id)
-{
-	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
-
-	auto it = status.find(id);
-	if (it != status.end()) {
-		it->second = MasterTrigger::TriggerStatus::Triggered;
-	}
-	mtriggerCondition.notify_all();
-}

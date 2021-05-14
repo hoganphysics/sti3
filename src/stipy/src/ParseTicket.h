@@ -2,14 +2,16 @@
 #ifndef STI_PYTHON_PARSETICKET_H
 #define STI_PYTHON_PARSETICKET_H
 
+
+#include "Ticket.h"
 #include "ParseID.h"
 #include "Device.h"
 #include "fwd/RawEvent_fwd.h"
 #include "EngineParsingMessage.h"
 
-#include <string>
-#include <mutex>
-#include <condition_variable>
+// #include <string>
+// #include <mutex>
+// #include <condition_variable>
 
 namespace STI
 {
@@ -21,7 +23,7 @@ class ResultTicket;
 class ParseTicket;
 // class ParseTicketManager;
 
-class ParseTicket
+class ParseTicket : public Ticket
 {
 public:
 
@@ -31,15 +33,15 @@ public:
  
     const STI::Engine::ParseID& getParseID() const;
 
-    void wait();    //blocks until parse completes; returns this for chaining
+    // void wait();    //blocks until parse completes; returns this for chaining
 
-    // ResultTicket play();
-    // ResultTicket play(unsigned repeats);
+    // // ResultTicket play();
+    // // ResultTicket play(unsigned repeats);
 
-    void setComplete();
-    void cancel();   //cancels parse and stops wait()
+    // void setComplete();
+    // void cancel();   //cancels parse and stops wait()
 
-    enum class ParseTicketStatus { Parsing, Complete, Cancelled };
+    // enum class ParseTicketStatus { Parsing, Complete, Cancelled };
 
     std::vector<STI::Engine::EngineParsingMessage> getMessages();
     STI::Engine::DeviceEventMap& getEvents();
@@ -55,14 +57,14 @@ private:
 
     STI::Engine::ParseID pid;
 
-    ParseTicketStatus status;
+    // ParseTicketStatus status;
 
     // ParseTicketManager* ticketManager;
 
     std::shared_ptr<STI::Device::Device> server;
 
-    mutable std::mutex parseMutex;
-    mutable std::condition_variable parseCondition;
+    // mutable std::mutex parseMutex;
+    // mutable std::condition_variable parseCondition;
 
 };
 

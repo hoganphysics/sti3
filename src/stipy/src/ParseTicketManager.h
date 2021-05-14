@@ -2,6 +2,7 @@
 #define STI_PYTHON_STIPARSETICKETMANAGER_H
 
 #include "ParseID.h"
+#include "TicketManager.h"
 #include "DeviceMessageListener.h"
 #include "Device.h"
 
@@ -14,32 +15,35 @@ namespace STI
 namespace Python
 {
 
+
+
 class ParseTicket;
 
 
-class ParseTicketManager : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+class ParseTicketManager : public TicketManager<STI::Engine::ParseID, ParseTicket>,
+                           public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
 
     ParseTicketManager();
     ~ParseTicketManager();
 
-    void add(const std::shared_ptr<ParseTicket>& ticket);
-    void remove(const STI::Engine::ParseID& id);
+    // void add(const std::shared_ptr<ParseTicket>& ticket);
+    // void remove(const STI::Engine::ParseID& id);
 
-    void cancel(const STI::Engine::ParseID& id);
-    void cancelAll();
+    // void cancel(const STI::Engine::ParseID& id);
+    // void cancelAll();
 
-    std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid, 
-                                                const std::shared_ptr<STI::Device::Device>& server);
+    // std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid, 
+    //                                             const std::shared_ptr<STI::Device::Device>& server);
 
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
-    std::map<STI::Engine::ParseID, std::shared_ptr<ParseTicket>> tickets;
+    // std::map<STI::Engine::ParseID, std::shared_ptr<ParseTicket>> tickets;
 
-    mutable std::mutex ticketMutex;
+    // mutable std::mutex ticketMutex;
 };
 
 

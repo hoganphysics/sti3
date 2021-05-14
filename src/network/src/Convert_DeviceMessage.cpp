@@ -343,6 +343,7 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
 		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+		convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tMessage.engineState, deviceMessage->engineState);
 	}
 
 	return deviceMessage != 0;
@@ -368,6 +369,7 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
 	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
 	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine)) {
@@ -399,6 +401,9 @@ TSchedulerMessageType STI::Network::convert<EngineSchedulerMessage::SchedulerMes
 	case EngineSchedulerMessage::SchedulerMessageType::PlayReady:
 		tType = TSchedulerMessageType::SchedulerPlayReady;
 		break;
+	case EngineSchedulerMessage::SchedulerMessageType::PlayComplete:
+		tType = TSchedulerMessageType::SchedulerPlayComplete;
+		break;
 	case EngineSchedulerMessage::SchedulerMessageType::YieldPlay:
 		tType = TSchedulerMessageType::SchedulerYieldPlay;
 		break;
@@ -429,6 +434,9 @@ EngineSchedulerMessage::SchedulerMessageType STI::Network::convert<TSchedulerMes
 		break;
 	case TSchedulerMessageType::SchedulerPlayReady:
 		type = EngineSchedulerMessage::SchedulerMessageType::PlayReady;
+		break;
+	case TSchedulerMessageType::SchedulerPlayComplete:
+		type = EngineSchedulerMessage::SchedulerMessageType::PlayComplete;
 		break;
 	case TSchedulerMessageType::SchedulerYieldPlay:
 		type = EngineSchedulerMessage::SchedulerMessageType::YieldPlay;

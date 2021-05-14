@@ -33,6 +33,7 @@ pybind11_add_module(stipy
     pywrapper.cpp
     ResultTicket.cpp
     ResultTicket_wrap.cpp
+    ResultTicketManager.cpp
     STIPyChannel.cpp
     STIPyChannel_wrap.cpp
     stipy.cpp
@@ -46,6 +47,7 @@ pybind11_add_module(stipy
     STIPyShot.cpp
     STIPyShot_wrap.cpp
     stipy_wrap.cpp
+    Ticket.cpp
     ${STIDEVICEPY_DIR}/MixedValuePy.cpp
     ${STIDEVICEPY_DIR}/DeviceID_wrap.cpp
 )

@@ -9,7 +9,7 @@ namespace STI
 namespace Device
 {
 
-class ServerDevice : public STI::Device::LocalDevice
+class ServerDevice : public STI::Device::LocalDevice	//LocalServer ?
 {
 public:
     ServerDevice(const std::string& name, const std::string& address, unsigned short module,

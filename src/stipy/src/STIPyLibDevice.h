@@ -14,7 +14,9 @@ namespace Python
 {
 
 class ParseTicket;
+class ResultTicket;
 class ParseTicketManager;
+class ResultTicketManager;
 class ParseID;
 
 class STIPyLibDevice : public STI::Device::LocalDevice
@@ -30,12 +32,15 @@ public:
     bool getServer(std::shared_ptr<Device>& server);
 
     std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
+    std::shared_ptr<ResultTicket> makeResultTicket(const STI::Engine::ShotID& sid);
 
 private:
 
     STI::Device::DeviceMessageListenerID schedulerMessageLID;
+    STI::Device::DeviceMessageListenerID schedulerMessageLID2;
 
-    std::shared_ptr<ParseTicketManager> ticketManager;
+    std::shared_ptr<ParseTicketManager> parseTicketManager;
+    std::shared_ptr<ResultTicketManager> resultTicketManager;
 
     STI::Network::HubID serverHubID;
     const STI::Device::DeviceID serverID;

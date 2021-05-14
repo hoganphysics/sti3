@@ -201,7 +201,7 @@ module TNetwork
 	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
 
 
-	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerYieldPlay };
+	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerPlayComplete, SchedulerYieldPlay };
 	
 	interface TEventEngine;
 
@@ -219,6 +219,8 @@ module TNetwork
 		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 
 		TEngineParsingMessageSeq messages;
+
+		TEngineState engineState;
 	};
 
 	struct TAttributeUpdateTuple

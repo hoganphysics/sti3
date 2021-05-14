@@ -35,7 +35,8 @@ public:
     void abortJob();
     
     void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
-    void handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+    void handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+    void handlePlayCompleteMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
 
     bool isParsed(const ParseID& parseID);
     const ParseID& getLastParseID();

@@ -98,7 +98,7 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 
-    if (getScheduler(scheduler)) {
+    if (getScheduler(scheduler) && pyShot != 0) {
         scheduler->parse(pid, pyShot->getShot());
     }
 
@@ -123,22 +123,24 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& 
     return ticket;
 }
 
-ResultTicket STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket)
+
+std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket)
 {
     return play(ticket, 0);
 }
 
-ResultTicket STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats)
+std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats)
 {
+    std::shared_ptr<ResultTicket> rticket;
+
     if (ticket != 0) {
-        return play(ticket->getParseID(), repeats);
+        rticket = play(ticket->getParseID(), repeats);
     }
 
-    ResultTicket rticket;
     return rticket;
 }
 
-ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
+std::shared_ptr<ResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
 {
 
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
@@ -148,6 +150,9 @@ ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned rep
     STI::Engine::ShotID sid;
     sid.parseID = parseID;
     sid.submissionTime.timestamp = ms.count();
+
+
+    auto ticket = libDevice->makeResultTicket(sid);
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 
@@ -162,7 +167,7 @@ ResultTicket STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned rep
     // server->getEngineScheduler(scheduler);
 
 
-    ResultTicket ticket;
+    // ResultTicket ticket;
     return ticket;
 }
 
