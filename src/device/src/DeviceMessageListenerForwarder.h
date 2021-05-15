@@ -15,9 +15,9 @@ namespace Device
 
 class LocalDevice;
 
+
 class DeviceMessageListenerForwarder
 {
-
 public:
 	
 	DeviceMessageListenerForwarder(LocalDevice* localDevice) : localDevice(localDevice) {}
@@ -43,7 +43,6 @@ private:
 
 	LocalDevice* localDevice;
 };
-
 
 
 } //Device

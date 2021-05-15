@@ -26,10 +26,12 @@
 #include <string>
 #include <exception>
 
+
 namespace STI
 {
 namespace Engine
 {
+
 
 class STI_Exception : public std::exception
 {

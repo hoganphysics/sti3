@@ -260,7 +260,5 @@ void STI::Device::MessageGrouper<Message>::messageHandlerLoop()
 }
 
 
-
-
 #endif
 

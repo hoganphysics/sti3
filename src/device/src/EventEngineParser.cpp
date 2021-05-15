@@ -41,13 +41,6 @@ EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device
 	hasErrors = false;
 }
 
-// EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
-// 	: engine(engine), deviceParser(deviceParser)
-// {
-// 	defineErrorIDs();
-// 	hasErrors = false;
-// }
-
 EventEngineParser::~EventEngineParser()
 {
 }
@@ -67,7 +60,6 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 {
 	bool success = true;
 
-//	errors.clear();
 	messages.clear();
 	hasErrors = false;
 
@@ -160,24 +152,11 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 	//check that newest event's channel is defined
 	std::shared_ptr<Channel> channel;
 
-	//auto channel = engine->localChannels.find(rawEvent.channel());
-
 	//check that newest event's channel is defined and that the value type is correct
-//	if (channel == engine->localChannels.end()) {
 	if (!channelManager->getChannel(rawEvent.channel(), channel)) {
 		//Missing channel
 		success = false;
 		errorCount++;
-
-		// struct EEParserError
-		// {
-		// 	EEParserError(unsigned id, const std::string& name) : id(id), name(name) {}
-		// 	unsigned id;
-		// 	std::string name;
-		// };
-		// enum class ErrorType { ErrorMissingChannel };
-		// std::map<ErrorType,EEParserError> errorList;
-		// errorList[ErrorType::ErrorMissingChannel] = EEParserError(30, "Missing Channel");
 
 		//Error: Channel #24 is not defined on this device. Event trace:
 		addParsingError("Missing Channel").addEvent(rawEvent)
@@ -209,8 +188,6 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 	//Store pointers to all measurement RawEvents, indexed by their event graph identifier.  
 	//This is for fast reverse lookup in checkMeasurements(...)
 	if (rawEvent.isMeasurementEvent()) {
-		//Entries in map: {GraphPathLabel, *RawEvent}
-		//measurementEventGraph.insert({ rawEvent.getEventGraphPath(), &(rawEvents[eventTime].back()) });
 
 		//Entries in map: {GraphPathLabel, MeasurementCounter}
 		measurementEventGraph.insert(
@@ -473,3 +450,4 @@ void EventEngineParser::defineErrorIDs()
 	errorIDs["Max Error Count Reached"] 			= 41;
 
 }
+

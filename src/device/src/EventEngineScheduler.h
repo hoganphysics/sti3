@@ -8,6 +8,7 @@
 #include <memory>
 #include <set>
 
+
 namespace STI
 {
 namespace Engine
@@ -21,6 +22,7 @@ class EngineJobID;
 class EventEngineFactory;
 class ShotID;
 class EngineParsingMessage;
+
 
 class EventEngineScheduler
 {
@@ -42,14 +44,7 @@ public:
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;
 
-    //getJobs();
     virtual void cancelAll() = 0;
-
-    // virtual std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-    //                                                   const std::shared_ptr<Shot>& shot,
-    //                                                   const std::shared_ptr<EventEngineDependencyTree>& tree, 
-    //                                                   const STI::Device::DeviceID& owner, 
-    //                                                   const std::set<STI::Device::DeviceID>& missingTargets) = 0;
 
     virtual std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events) = 0;
 

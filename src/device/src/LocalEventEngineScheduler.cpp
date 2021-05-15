@@ -541,7 +541,6 @@ void LocalEventEngineScheduler::cancelAll()
     }
 
     stopAll();
-
 }
 
 void LocalEventEngineScheduler::stopAll()
@@ -569,24 +568,8 @@ void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 
 void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 {
-   
-    // std::set<EngineJobID> jobIDs;
-    // runningJobs.getKeys(jobIDs);
-    
     std::shared_ptr<EventEngineJob> job;
     std::shared_ptr<EventEngineManager> manager;
-
-    // auto it = jobIDs.find(jobID);   //find in runningJobs
-
-    // if (it != jobIDs.end() && runningJobs.get(*it, job) && job != 0) {
-    //     runningJobs.remove(jobID);
-    //     job->markCancelled();
-    //     completedJobs.add(jobID, job);
-
-    //     if (getManager(jobID, manager) && manager != 0) {
-    //         manager->abortJob();
-    //     }        
-    // }
 
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
@@ -609,17 +592,6 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
     jobCondition.notify_all();
 }
 
-// std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::createJob(const ParseID& parseID, 
-//                                           const std::shared_ptr<Shot>& shot,
-//                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
-//                                           const STI::Device::DeviceID& owner, 
-//                                           const std::set<STI::Device::DeviceID>& missingTargets)
-// {
-//     auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, owner);
-//     job->setDependencies(tree);
-//     job->setMissingTargets(missingTargets);
-//     return job;
-// }
 
 std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const std::shared_ptr<RawEventVector>& events)
 {
@@ -627,7 +599,6 @@ std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const std::shared_pt
     shot->setEvents(events);
     return shot;
 }
-
 
 
 void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
@@ -690,9 +661,6 @@ void LocalEventEngineScheduler::assignJobs()
                     if (isCanceledJob(jobID.pid)) {
                         _cancelJob(jobID);  //cancel play if parse was canceled
                     }
-
-                    // findParsedEngine(jobID.pid, freeEngines, engineID)
-                    //     && assignJob(jobID, engineID)
                 
                     if (findParsedEngine(jobID.pid, freeEngines, engineID) && assignJob(jobID, engineID)) {
                         //play job assigned to engineID
@@ -832,17 +800,8 @@ bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared
 {
     std::shared_ptr<EventEngineJob> job;
 
-    // if (runningJobs.get(jobID, job) && job != 0
-    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
-    //     return true;
-    // }
-
-    bool b1 = runningJobs.get(jobID, job);
-    bool b2 = b1 && job != 0;
-    bool b3 = b2 && engineManagers.get(job->getEngineID(), manager);
-    bool b4 = b3 && manager != 0;
-
-    if (b4) {
+    if (runningJobs.get(jobID, job) && job != 0
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
         return true;
     }
 
@@ -878,21 +837,6 @@ bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::sha
     jobID.type = EventEngineJobType::Parse;
     jobID.pid = parseID;
 
-    // std::cout << "getJob? " << (completedJobs.get(jobID, job) && job !=0) << std::endl;
-    // std::cout << "getManager? " << (engineManagers.get(job->getEngineID(), manager) && manager != 0) << std::endl;
-    // std::cout << "EngineID=" << job->getEngineID().getNumber() << std::endl;
-
-    // std::cout << "EngineIDs: ";
-    // std::set<STI::Engine::EngineID> ids;
-    // engineManagers.getKeys(ids);
-    // for (auto id : ids) {
-    //     std::cout << id.getNumber() << " ";
-    // }
-    // std::cout << std::endl;
-
-
-    // if (queuedJobs.get(jobID, job) && job !=0 
-    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
     if (completedJobs.get(jobID, job) && job !=0 
         && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
             
@@ -918,32 +862,12 @@ bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEv
 
 bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const
 {
-
-    // {
-    //     std::unique_lock<std::mutex> jobLock(jobMutex);
-    //     std::cout << "Jobs: " << queuedJobs.size() 
-    //         << " : " <<  runningJobs.size() 
-    //         << " : " <<  completedJobs.size() << std::endl;
-    // }
-
-
     std::shared_ptr<EventEngineJob> job;
 
     if (findJob(parseID, job)) {
         messages = job->getParsingMessages();
         return true;
     }
-
-
-    // std::shared_ptr<LocalEventEngine> engine;
-
-    // if (getParsedEngine(parseID, engine)){
-    //     messages = engine->getParsingMessages();
-
-    //     std::cout << "parsing Messages length: " << messages.size() << std::endl;
-        
-    //     return engine->getLastParseID() == parseID;
-    // }
 
     return false;
 }

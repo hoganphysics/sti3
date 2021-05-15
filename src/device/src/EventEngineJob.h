@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 
+
 namespace STI
 {
 namespace Engine
@@ -18,6 +19,7 @@ class Shot;
 class EngineJobID;
 class EngineParsingMessage;
 enum class ParsingMessageType;
+
 
 class EventEngineJob
 {

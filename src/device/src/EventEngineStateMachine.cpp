@@ -13,7 +13,7 @@ EventEngineStateMachine::EventEngineStateMachine()
 	stateTree.addVertex(EngineState::Idle);
 	stateTree.addVertex(EngineState::Parsing);
 	stateTree.addVertex(EngineState::Parsed);
-//	stateTree.addVertex(Arming);
+
 	stateTree.addVertex(EngineState::PreparingPlay);
 	stateTree.addVertex(EngineState::PlayReady);	
 	stateTree.addVertex(EngineState::WaitingForTrigger);

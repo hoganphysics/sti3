@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+
 namespace STI
 {
 namespace Engine
@@ -18,9 +19,11 @@ namespace Engine
 class EventConflictException;
 class EventParsingException;
 
+
 class EngineParsingError
 {
 public:
+
 	EngineParsingError(const STI::Device::DeviceID& deviceID);
 	EngineParsingError(const STI::Device::DeviceID& deviceID, const EventConflictException& exception);
 	EngineParsingError(const STI::Device::DeviceID& deviceID, const EventParsingException& exception);

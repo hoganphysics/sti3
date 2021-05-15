@@ -10,6 +10,7 @@
 #include <map>
 #include <vector>
 
+
 namespace STI
 {
 namespace Engine
@@ -49,7 +50,6 @@ private:
     mutable std::mutex mtriggerMutex;
     mutable std::condition_variable mtriggerCondition;
 };
-
 
 
 } //Engine

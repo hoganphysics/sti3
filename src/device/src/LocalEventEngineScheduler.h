@@ -22,7 +22,6 @@
 #include "EventEngineDependencyTree.h"
 #include "DeviceTrace.h"
 
-//#include <queue>
 
 #include <list>
 #include <map>
@@ -66,6 +65,7 @@ class ParseID;
 class Shot;
 class EventEngineFactory;
 
+
 class LocalEventEngineScheduler : public EventEngineScheduler, 
                                   public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
@@ -95,13 +95,7 @@ public:
 
     void cancelAll();
     void stopAll();
-    
-    // std::shared_ptr<EventEngineJob> createJob(const ParseID& parseID, 
-    //                                           const std::shared_ptr<Shot>& shot,
-    //                                           const std::shared_ptr<EventEngineDependencyTree>& tree, 
-    //                                           const STI::Device::DeviceID& owner, 
-    //                                           const std::set<STI::Device::DeviceID>& missingTargets);
-    
+  
     std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
@@ -169,7 +163,7 @@ private:
 
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;
-   std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;
 

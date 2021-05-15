@@ -6,10 +6,12 @@
 
 #include <mutex>
 
+
 namespace STI
 {
 namespace Engine
 {
+
 
 class EventEngineStateMachine
 {

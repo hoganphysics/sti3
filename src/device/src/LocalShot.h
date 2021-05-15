@@ -6,12 +6,14 @@
 #include <vector>
 #include <memory>
 
+
 namespace STI
 {
 namespace Engine
 {
 
 class RawEvent;
+
 
 class LocalShot : public Shot
 {
@@ -25,15 +27,14 @@ public:
     {
     }
 
-    void setEvents(const std::shared_ptr<std::vector<RawEvent>>& ets)
+    void setEvents(const std::shared_ptr<std::vector<RawEvent>>& evts)
     {
-        events = ets;
+        events = evts;
     }
 
-    void getEvents(std::shared_ptr<std::vector<RawEvent>>& ets)
-    //void getEvents(std::shared_ptr<std::vector<RawEvent>>& ets)
+    void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts)
     {
-        ets = events;
+        evts = events;
     }
 
 private:

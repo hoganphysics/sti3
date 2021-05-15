@@ -72,3 +72,4 @@ std::string EngineParsingError::print() const
 	}
 	return errMessage + eventMessage.str();
 }
+

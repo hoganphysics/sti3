@@ -2,7 +2,6 @@
 
 #include "LocalEventEngine.h"
 
-//#include "Channel.h"
 #include "DeviceCollection.h"
 #include "DeviceID.h"
 #include "DeviceMessageDispatcher.h"
@@ -12,7 +11,7 @@
 #include "LocalEventEngineJob.h"
 #include "EventEngineParser.h"
 #include "EventEngineScheduler.h"
-//#include "RawEvent.h"
+
 #include "SynchronousEvent.h"
 #include "LocalTriggerCallback.h"
 #include "Device.h"
@@ -292,33 +291,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
-
 	//Note that ownedTargets is only modified during the previous while loop,
 	//so from now on it is a static list of the owned devices of this device.
-
-	// //Wait for all owned target devices to reach Parsed state
-	// if (ownedTargets.size() > 0) {
-	// 	// This device is a server; wait for owned devices to send Parsed messages
-	// 	while (isState(EngineState::Parsing)) {
-			
-	// 		//When an owned device finishes parsing, it sends this device a message and will be added to parsedOwnedTargets
-	// 		if (parsedOwnedTargets.size() == ownedTargets.size()) {
-	// 			if (!setState(EngineState::Parsed)) {
-	// 				setState(EngineState::Error);
-	// 			}
-	// 		}
-	// 		else {
-	// 			parseCondition.wait(parseLock);
-	// 		}
-	// 	}
-	// }
-	// else {
-	// 	// Non-server device
-	// 	if (!setState(EngineState::Parsed)) {
-	// 		setState(EngineState::Error);
-	// 		//error
-	// 	}
-	// }
 
 	//Wait for all owned target devices to reach Parsed state
 	if (ownedTargets.size() > 0) {
@@ -329,16 +303,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
-	// // Check that owned devices are Parsed
-	// bool ownedDevicesParsed = true;
-	// for (auto& tuple : parsedOwnedTargets) {
-	// 	ownedDevicesParsed &= (tuple.second == EngineState::Parsed);
-	// }
-
 	// Check that owned devices are Parsed
 	bool ownedDevicesParsed = allEngineStateCheck(parsedOwnedTargets, EngineState::Parsed);
-
-
 
 	job.addMessages(localParsingMessages);
 	const std::vector<EngineParsingMessage>& jobMessages = job.getParsingMessages();
@@ -385,11 +351,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	//TODO: state needs to be contingent on errors from this device or owned devices.
 
-
-	// if (!setState(EngineState::Parsed)) {
-	// 	setState(EngineState::Error);
-	// 	//error
-	// }
 }
 
 void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job)
@@ -407,11 +368,7 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 
 		auto& engineParserMessages = parser.getParsingMessages();
 		localParsingMessages.insert(localParsingMessages.end(), engineParserMessages.begin(), engineParserMessages.end());
-		// job.addMessages(localMessages);
 
-		// for (auto& err : localErrors) {
-		// 	job.addMessage(ParsingMessageType::Error, 1, "Parsing Error") << err.messageText();
-		// }
 
 		//temp!  Send event?  Must send event (with errors) upstream to client
 		localSubtree->removeNode(localDeviceID);
@@ -422,20 +379,13 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	    std::shared_ptr<STI::Device::Device> device;
     	std::shared_ptr<EventEngineScheduler> scheduler;
 
-		//auto shot = std::make_shared<LocalShot>();
-		//shot->setEvents(evts);
-
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 
 				auto evts = std::make_shared<RawEventVector>();
-				(*evts) = std::move(eventsByTarget[id]);			//expensive deep copy?
+				(*evts) = std::move(eventsByTarget[id]);
 
 				auto shot = scheduler->createShot(evts);
-				
-				// //make the scheduler into a factory so remote schedulers will make remotejobs?
-				// auto newJob = scheduler->createJob(job.getJobID().pid, shot,
-                //    dependencyTree, job.getJobOwner(), job.getMissingTargetIDs());
 				
 				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
 				newJob->setDependencies(dependencyTree);
@@ -612,38 +562,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	scheduleAllPlayJobs(jobID, job.getJobOwner());
 
-	// //Wait for all owned target devices to reach PlayReady state
-	// if (ownedTargets.size() > 0) {
-	// 	// This device is a server; wait for owned devices to send ready messages
-	// 	while (isState(EngineState::PreparingPlay)) {
-
-	// 		//When an owned device is in PlayReady, it will send its engine to this device
-	// 		if (engines.size() == ownedTargets.size()) {
-	// 			if (!setState(EngineState::PlayReady)) {
-	// 				setState(EngineState::Error);
-	// 			}
-	// 		}
-	// 		else {
-	// 			playCondition.wait(playLock);
-	// 		}
-	// 	}
-	// }
-	// else {
-	// 	// Non-server device
-	// 	if (!setState(EngineState::PlayReady)) {
-	// 		setState(EngineState::Error);
-	// 	}
-	// }
-/////////////////////////////////
-
-	// //Wait for all owned target devices to reach PlayReady state
-	// if (ownedTargets.size() > 0) {
-	// 	// This device is a server; wait for owned devices to send PlayReady messages.
-	// 	while (isState(EngineState::PreparingPlay) && playReadyOwnedTargets.size() != ownedTargets.size()) {
-	// 		playCondition.wait(playLock);
-	// 	}
-	// }
-
 	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {
 		// This device is a server; wait for owned devices to send PlayReady messages.
@@ -652,16 +570,8 @@ void LocalEventEngine::play(EventEngineJob& job)
 		}
 	}
 
-	// // Check that owned devices are PlayReady
-	// bool ownedDevicesPlayReady = true;
-	// for (auto& tuple : playReadyOwnedTargets) {
-	// 	ownedDevicesPlayReady &= (tuple.second == EngineState::PlayReady);
-	// }
-
-
+	// Check that owned devices are PlayReady
 	bool ownedDevicesPlayReady = allEngineStateCheck(playReadyOwnedTargets, EngineState::PlayReady);
-
-
 
 	if (!ownedDevicesPlayReady) {
 		stop();
@@ -678,22 +588,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 	if (!setState(EngineState::PlayReady)) {
 		setState(EngineState::Error);
 	}
-
-
-	// // Check that owned devices are PlayReady
-	// bool ownedDevicesPlayReady = true;
-	// for (auto& tuple : playReadyOwnedTargets) {
-	// 	ownedDevicesPlayReady &= (tuple.second == EngineState::PlayReady);
-	// }
-
-	// if (!ownedDevicesPlayReady) {
-	// 	if (!setState(EngineState::PlayReady)) {
-	// 		setState(EngineState::Error);
-	// 	}
-	// }
-
-/////////////////////////////////
-
 
 	//Send PlayReady message with local engine reference
 	auto playReadyMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
@@ -713,9 +607,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		return;
 	}
 
-
 	// Setup trigger
-
 	STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
 	masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
 	masterTrigger->arm(ownedTargets);
@@ -798,13 +690,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		playAll(jobID, masterTriggerCB, debug);		//all owned devices
 	}
 	
-	//masterTrigger->arm(localDeviceID);
-	
-	// if (isJobOwner || ownedTargets.size() > 0) {	//this device is a server for some devices
-		
-	// 	// masterTrigger->wait();
-	// }
-
 	//need to wait for owned device to arm before entering playShot to arm locally
 	masterTrigger->waitForArm();		//wait for all owned devices to enter WaitingForTrigger state
 	masterTrigger->arm(localDeviceID);	//add local device to the arming list
@@ -841,7 +726,7 @@ void LocalEventEngine::resetPlayThread()
 }
 
 
-void LocalEventEngine::playShot(TriggerCallback& triggerCB)	//playShot
+void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 {
 	if (!armTrigger(triggerCB)) {
 
@@ -910,7 +795,6 @@ void LocalEventEngine::waitForPlayAll()
 	}
 
 	allEngineStateCheck(playedOwnedTargets, EngineState::Parsed);
-
 }
 
 
@@ -984,12 +868,11 @@ bool LocalEventEngine::playDeviceEvents()
 	return true;	//play and collect were a success, or where cleanly stopped
 }
 
+
 bool LocalEventEngine::waitUntil(double time)
 {
 	return isState(EngineState::Playing);
 }
-
-
 
 
 void LocalEventEngine::pause()
@@ -1071,7 +954,6 @@ void LocalEventEngine::stop()
 }
 
 
-
 void LocalEventEngine::releaseParseLock()
 {
 //	std::unique_lock<std::mutex> parseLock(parseMutex);
@@ -1147,5 +1029,4 @@ bool LocalEventEngine::allEngineStateCheck(const std::map<STI::Device::DeviceID,
 	}
 	return success;
 }
-
 

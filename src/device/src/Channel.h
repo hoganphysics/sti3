@@ -12,11 +12,6 @@ namespace STI
 namespace Device
 {
 
-//enum MixedValueType { Boolean, Int, Double, String, Vector, Empty }; File, Image, Any
-//enum TValue { ValueNumber, ValueString, ValueVector, ValueNone };
-//enum TData { DataBoolean, DataOctet, DataLong, DataDouble, DataString, DataPicture, DataVector, DataFile, DataNone };
-
-
 
 class Channel
 {

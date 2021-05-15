@@ -20,7 +20,6 @@ void MasterTrigger::arm(const std::vector<STI::Device::DeviceID>& ids)
 	for (auto& id : ids) {
 		status[id] = MasterTrigger::TriggerStatus::Arming;
 	}
-	//status[engine->localDeviceID] = MasterTrigger::TriggerStatus::Arming;
 }
 
 void MasterTrigger::arm(const DeviceID& id)

@@ -1,7 +1,6 @@
 #ifndef STI_DEVICE_DEVICEMESSAGEHANDLER_H
 #define STI_DEVICE_DEVICEMESSAGEHANDLER_H
 
-//#include "DeviceMessage.h"
 
 #include <memory>
 
@@ -13,6 +12,7 @@ namespace Device
 enum class DeviceMessageType;
 class AbstractMessageListenerGroup;
 class DeviceMessage;
+
 
 class DeviceMessageHandler
 {
@@ -28,7 +28,6 @@ public:
 	virtual void clearMessages() = 0;
 
 	virtual bool hasListeners(const std::shared_ptr<DeviceMessage>& mess) = 0;
-
 };
 
 

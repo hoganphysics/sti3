@@ -33,13 +33,7 @@ void DeviceEventParser::setPartnerEventTarget(DeviceEventMap* target)
 
 void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceEvent)
 {
-	//RawEvent newEvent(evt, referenceEvent, eventNumber);
-	//_target->insert({ evt.targetDevice(), newEvent });
-
 	if (_target != nullptr) {
-		//_target->emplace(std::piecewise_construct,
-		//	std::make_tuple(evt.targetDevice()),
-		//	std::make_tuple(evt, referenceEvent, eventNumber));
 		
 		//(*_target) is map<DeviceID, vector<RawEvent>>
 
@@ -50,7 +44,6 @@ void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceE
 
 		eventNumber++;
 	}
-
 }
 
 void DeviceEventParser::clearEventNumber()

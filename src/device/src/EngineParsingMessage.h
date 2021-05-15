@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+
 namespace STI
 {
 namespace Engine
@@ -15,6 +16,7 @@ namespace Engine
 class RawEvent;
 
 enum class ParsingMessageType { Error, Warning, Information };
+
 
 class EngineParsingMessage
 {

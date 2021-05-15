@@ -5,12 +5,14 @@
 #include <vector>
 #include <memory>
 
+
 namespace STI
 {
 namespace Engine
 {
 
 class RawEvent;
+
 
 class Shot
 {
@@ -19,7 +21,6 @@ public:
     virtual ~Shot() {}
 
     virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts) = 0;
-    //virtual void getEvents(std::vector<RawEvent>& ets) = 0;
 
 private:
 

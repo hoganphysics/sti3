@@ -35,6 +35,7 @@ using STI::Device::DeviceMessageListener;
 using STI::Device::EngineSchedulerMessage;
 using STI::Device::DeviceMessageListenerID;
 
+
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
 {

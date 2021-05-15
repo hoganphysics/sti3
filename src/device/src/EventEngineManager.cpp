@@ -133,10 +133,6 @@ void EventEngineManager::runJob()
     else {
         scheduler->jobComplete(currentJob->getJobID());
     }
-
-    // if (currentJob->getStatus() == EventEngineJob::EngineJobStatus::Running) {
-        
-    // }
 }
 
 void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)

@@ -15,6 +15,7 @@ namespace Device
 class ChannelRefreshListener
 {
 public:
+
     virtual void handleChannelRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value) = 0;
     virtual void handleChannelNameRefreshEvent(short channelNumber, const std::string& name) = 0;
 };
