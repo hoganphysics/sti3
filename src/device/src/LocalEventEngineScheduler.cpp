@@ -853,8 +853,7 @@ bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEv
     std::shared_ptr<LocalEventEngine> engine;
 
     if (getParsedEngine(parseID, engine)){
-        events = engine->getParsedEvents();
-        return engine->getLastParseID() == parseID;
+        return engine->getParsedEvents(parseID, events);
     }
 
     return false;

@@ -78,6 +78,7 @@ void LocalEventEngine::clear()
 	synchedEvents.clear();
 
 	eventsByTarget.clear();
+	eventsByTargetCached = false;
 	upstreamEvents.clear();
 	handledPartnerEvents.clear();
 	ownedTargets.clear();
@@ -174,32 +175,53 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 	}
 }
 
-const DeviceEventMap& LocalEventEngine::getParsedEvents()
+const STI::Engine::ParseID& LocalEventEngine::getLastParseID() const 
 {
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+
+	return lastParseID;
+}
+
+//return a deep copy (rather than a reference) to ensure that the returned events are not modifed by a subsequent operation in LocalEventEngine
+bool LocalEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, DeviceEventMap& parsedEvents)
+{
+
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+
+	bool available = lastParseID == parseID && isState(EngineState::Parsed);
+
+	if (!available) return false;
+
 	// Todo: cache bool, mutex lock
 	//Should pipe through parseID to make sure the engine hasn't erased the relevant events (compare to lastParseID)
 	//bool LocalEventEngine::getParsedEvents(const ParseID& parseID, const DeviceEventMap& events)
 
-	//sort local  events
-	for(auto& tuple : eventsByTarget) {
+	if (!eventsByTargetCached) {
+		//sort local  events
+		for(auto& tuple : eventsByTarget) {
 
-		std::sort(tuple.second.begin(), tuple.second.end());
-	}
-
-	//get owned device events
-	for(auto& engine : engines) {
-		auto& engineEventsByTarget = engine.second->getParsedEvents();
-
-		for (auto& tuple : engineEventsByTarget) {
-			auto& evts = tuple.second;
-			eventsByTarget[tuple.first].insert(eventsByTarget[tuple.first].end(),
-					std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
+			std::sort(tuple.second.begin(), tuple.second.end());
 		}
 
+		bool success = true;
+
+		//get owned device events
+		for(auto& engine : engines) {
+			DeviceEventMap engineEventsByTarget;
+			success = engine.second->getParsedEvents(parseID, engineEventsByTarget);
+			if (!success) return false;	//fails if any owned devices have overwritten parseID
+
+			for (auto& tuple : engineEventsByTarget) {
+				auto& evts = tuple.second;
+				eventsByTarget[tuple.first].insert(eventsByTarget[tuple.first].end(),
+						std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
+			}
+		}
+		eventsByTargetCached = true;
 	}
 
-	return eventsByTarget; 
-	
+	parsedEvents = eventsByTarget;	//deep copy
+	return true;
 }
 
 void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)

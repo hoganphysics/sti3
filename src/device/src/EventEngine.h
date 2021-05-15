@@ -15,6 +15,7 @@ namespace Engine
 class TriggerCallback;
 class EventEngineJob;
 class EngineJobID;
+class ParseID;
 
 
 class EventEngine
@@ -37,7 +38,8 @@ public:
 
 	virtual STI::Engine::EngineState getState() const = 0;
 
-	virtual const DeviceEventMap& getParsedEvents() = 0;
+	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
+	// virtual const DeviceEventMap& getParsedEvents() = 0;
 };
 
 } //Engine

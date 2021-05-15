@@ -185,21 +185,20 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 	return state;
 }
 
-const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
+
+// const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
+bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
 {
-	events.clear();
-	
-	if (CORBA::is_nil(_tEngine)) return events;
+	if (CORBA::is_nil(_tEngine)) return false;
 
 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
 
 	bool success = false;
 
 	try {
+		success = _tEngine->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
 
-		success = _tEngine->getParsedEvents(tEngineParsedEvents);	//remote call
-
-		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, events);
+		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -208,6 +207,6 @@ const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
 	catch (CORBA::Exception&)
 	{
 	}
-	return events;
+	return success;
 }
 

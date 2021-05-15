@@ -100,10 +100,11 @@ public:
 	
 	std::shared_ptr<STI::Device::ChannelManager> getLocalChannels() { return localChannels; }
 
-	const STI::Engine::ParseID& getLastParseID() const { return lastParseID; }
+	const STI::Engine::ParseID& getLastParseID() const;
 	bool jobCancelled() const { return cancelled; }
 
-	const DeviceEventMap& getParsedEvents();
+//	const DeviceEventMap& getParsedEvents(const STI::Engine::ParseID& parseID);
+	bool getParsedEvents(const STI::Engine::ParseID& parseID, DeviceEventMap& parsedEvents);
 	std::shared_ptr<EventEngineDependencyTree> getParsedTree() const { return dependencyTree; }
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
@@ -189,6 +190,7 @@ private:
 
 	bool cancelled;
 	bool isJobOwner;
+	bool eventsByTargetCached;
 
 	//trigger
 	mutable std::mutex triggerMutex;

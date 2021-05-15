@@ -34,7 +34,7 @@ public:
 
 	STI::Engine::EngineState getState() const;
 
-	const STI::Engine::DeviceEventMap& getParsedEvents();
+	bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents);
 
 private:
 
@@ -44,7 +44,7 @@ private:
 
     ::STI::TNetwork::TEventEngine_var _tEngine; //remote reference
 
-	STI::Engine::DeviceEventMap events;
+	// STI::Engine::DeviceEventMap events;
 };
 
 
