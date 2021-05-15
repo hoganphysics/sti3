@@ -35,8 +35,6 @@ public:
 
 private:
 
-    // void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
-
     STI::Utils::SynchronizedMap<ID, std::shared_ptr<T>> tickets;
 
 };

@@ -11,6 +11,7 @@
 #include "fwd/Measurement_fwd.h"
 #include "fwd/DeviceID_fwd.h"
 
+
 namespace STI
 {
 namespace Python
@@ -23,10 +24,8 @@ public:
 
     ResultTicket(const STI::Engine::ShotID& id, 
                 const std::shared_ptr<STI::Device::Device>& server);
-
-    // void wait();    //blocks until play completes
-    // void setComplete();
-    // void cancel();   //cancels play and stops wait()
+    ResultTicket(const STI::Engine::ShotID& id, 
+                const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus);
 
     STI::Engine::MeasurementVector measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);
@@ -34,9 +33,7 @@ public:
 private:
 
     STI::Engine::ShotID sid;
-
     std::shared_ptr<STI::Device::Device> server;
-
 };
 
 

@@ -19,6 +19,7 @@ class ParseTicketManager;
 class ResultTicketManager;
 class ParseID;
 
+
 class STIPyLibDevice : public STI::Device::LocalDevice
 {
 public:
@@ -36,11 +37,30 @@ public:
 
 private:
 
-    STI::Device::DeviceMessageListenerID schedulerMessageLID;
-    STI::Device::DeviceMessageListenerID schedulerMessageLID2;
-
     std::shared_ptr<ParseTicketManager> parseTicketManager;
     std::shared_ptr<ResultTicketManager> resultTicketManager;
+
+    STI::Device::DeviceMessageListenerID schedulerMessageLID;
+
+
+    class TicketManagerListener : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+    {
+    public:
+        typedef STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage> EngineMessageListener;
+
+        TicketManagerListener(const std::shared_ptr<EngineMessageListener>& parseTicketManager, 
+                              const std::shared_ptr<EngineMessageListener>& resultTicketManager)
+        : parseTicketManager(parseTicketManager), resultTicketManager(resultTicketManager) {}
+
+        void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
+    
+    private:
+
+        std::shared_ptr<EngineMessageListener> parseTicketManager;
+        std::shared_ptr<EngineMessageListener> resultTicketManager;
+    };
+
+    std::shared_ptr<TicketManagerListener> engineMessageListener;
 
     STI::Network::HubID serverHubID;
     const STI::Device::DeviceID serverID;

@@ -131,43 +131,42 @@ std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicke
 
 std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats)
 {
-    std::shared_ptr<ResultTicket> rticket;
+    std::shared_ptr<ResultTicket> resultTicket;
 
     if (ticket != 0) {
-        rticket = play(ticket->getParseID(), repeats);
+
+        if (ticket->getStatus() == ParseTicket::TicketStatus::Complete) {
+            resultTicket = play(ticket->getParseID(), repeats);            
+        }
+        else {
+            auto shotID = STI::Engine::ShotID::generateUniqueID(ticket->getParseID());
+            resultTicket = libDevice->makeResultTicket(shotID);
+            resultTicket->cancel();
+        }
     }
 
-    return rticket;
+    return resultTicket;
 }
 
 std::shared_ptr<ResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
 {
+    // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    // std::chrono::system_clock::duration tp = now.time_since_epoch();
+    // std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    std::chrono::system_clock::duration tp = now.time_since_epoch();
-    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
+    // STI::Engine::ShotID sid;
+    // sid.parseID = parseID;
+    // sid.submissionTime.timestamp = ms.count();
 
-    STI::Engine::ShotID sid;
-    sid.parseID = parseID;
-    sid.submissionTime.timestamp = ms.count();
-
-
-    auto ticket = libDevice->makeResultTicket(sid);
+    auto shotID = STI::Engine::ShotID::generateUniqueID(parseID);
+    auto ticket = libDevice->makeResultTicket(shotID);
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 
     if (getScheduler(scheduler)) {
-        scheduler->play(sid);
+        scheduler->play(shotID);
     }
 
-    // std::shared_ptr<STI::Device::Device> server;
-    // libDevice->getServer(server);
-    
-    // std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    // server->getEngineScheduler(scheduler);
-
-
-    // ResultTicket ticket;
     return ticket;
 }
 

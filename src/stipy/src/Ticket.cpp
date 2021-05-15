@@ -43,3 +43,8 @@ void Ticket::cancel()
     statusCondition.notify_all();
 }
 
+Ticket::TicketStatus Ticket::getStatus()
+{
+    std::unique_lock<std::mutex> statusLock(statusMutex);
+    return status;
+}

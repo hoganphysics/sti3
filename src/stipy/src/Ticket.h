@@ -25,6 +25,8 @@ public:
     void setComplete();
     void cancel();
 
+    TicketStatus getStatus();
+
 private:
 
     TicketStatus status;

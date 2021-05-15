@@ -6,6 +6,7 @@
 #include "ParseTicketManager.h"
 #include "DeviceMessageReceiver.h"
 #include "ParseTicket.h"
+#include "DeviceMessage.h"
 
 #include "ResultTicketManager.h"
 #include <memory>
@@ -32,29 +33,19 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
     parseTicketManager = std::make_shared<ParseTicketManager>();
     resultTicketManager = std::make_shared<ResultTicketManager>();
 
-    // std::shared_ptr<Device> server;
-    // getServer(server);
-
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 
     //EventEngineScheduler message listener
-    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(parseTicketManager);
+    engineMessageListener = std::make_shared<STIPyLibDevice::TicketManagerListener>(parseTicketManager, resultTicketManager);
+    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(engineMessageListener);
     
-   	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler::ParseResult";
+   	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler::TicketManagers";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
-    auto listener2 = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(resultTicketManager);
-    
-   	schedulerMessageLID2.name = getID().getID() + "::EventEngineScheduler::ResultTicket";
-	schedulerMessageLID2.type = STI::Device::DeviceMessageType::EngineScheduler;
-
     if (receiver != 0) {
-        receiver->addListener(serverID, schedulerMessageLID, listener);	//listen to events from server
-        receiver->addListener(serverID, schedulerMessageLID2, listener2);	//listen to events from server
+        receiver->addListener(serverID, schedulerMessageLID, listener);	//listen to engine events from server
     }
-
-    // std::cout << "STIPyLibDevice connecting"<<std::endl;
 }
 
 STIPyLibDevice::~STIPyLibDevice()
@@ -62,24 +53,22 @@ STIPyLibDevice::~STIPyLibDevice()
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 
-    //Should make this RAII -- the listener class should call removeListener on destruction.
-    //Could make a mixin class that remembers the listenerID and automatically calls remove
     if (receiver != 0) {
         receiver->removeListener(serverID, schedulerMessageLID);
     }
 }
+
 
 bool STIPyLibDevice::addto(const STI::Network::HubID& target)
 {
     return serverHubID == target;
 }
 
+
 bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
 {
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
     getCollection(deviceCollection);
-    
-    //std::cout << "Collection: " << deviceCollection->size() << std::endl;
 
     return (deviceCollection != 0) && deviceCollection->get(serverID, server) && (server != 0);
 }
@@ -110,4 +99,23 @@ std::shared_ptr<ResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engine
         ticket->cancel();
     }
     return ticket;
+}
+
+
+void STIPyLibDevice::TicketManagerListener::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
+{
+    if (mess == 0) return;
+
+    typedef STI::Device::EngineSchedulerMessage::SchedulerMessageType MessageSubtype;
+
+    switch (mess->schedulerMessageType)
+    {
+    case MessageSubtype::ParseComplete:
+        parseTicketManager->handleMessage(mess);
+        break;
+    case MessageSubtype::PlayComplete:
+        resultTicketManager->handleMessage(mess);
+    default:
+        break;
+    }
 }

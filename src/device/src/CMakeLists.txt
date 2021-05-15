@@ -41,6 +41,7 @@ add_library(stidevice SHARED
     MetaData.cpp
     MixedValue.cpp
     RawEvent.cpp
+    ShotID.cpp
     SynchronousEvent.cpp
     utils.cpp
 )

@@ -4,12 +4,11 @@
 #include "ShotID.h"
 #include "DeviceMessage.h"
 
-#include <iostream>
-
 using STI::Python::ResultTicketManager;
 using STI::Python::ResultTicket;
 using STI::Engine::ShotID;
 using STI::Device::EngineSchedulerMessage;
+
 
 ResultTicketManager::ResultTicketManager()
 {
@@ -23,20 +22,16 @@ void ResultTicketManager::handleMessage(const std::shared_ptr<STI::Device::Engin
 {
     std::shared_ptr<ResultTicket> ticket;
     
-    std::cout << "ResultTicketManager::handleMessage" << std::endl;
-
     const auto& id = mess->jobID.sid;
     if (!get(id, ticket)) {
         return;
     }
 
-    //handle message
-
-    typedef EngineSchedulerMessage::SchedulerMessageType MessageType;
-    if (mess->schedulerMessageType == MessageType::PlayComplete) {
+    // The engine should return to Parsed state after successful play
+    if (mess->engineState == STI::Engine::EngineState::Parsed) {
         ticket->setComplete();
     }
-    else {      //todo -- if cancel
+    else {
         ticket->cancel();
     }
 

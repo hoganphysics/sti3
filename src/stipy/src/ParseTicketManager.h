@@ -10,12 +10,11 @@
 #include <memory>
 #include <mutex>
 
+
 namespace STI
 {
 namespace Python
 {
-
-
 
 class ParseTicket;
 
@@ -28,25 +27,11 @@ public:
     ParseTicketManager();
     ~ParseTicketManager();
 
-    // void add(const std::shared_ptr<ParseTicket>& ticket);
-    // void remove(const STI::Engine::ParseID& id);
-
-    // void cancel(const STI::Engine::ParseID& id);
-    // void cancelAll();
-
-    // std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid, 
-    //                                             const std::shared_ptr<STI::Device::Device>& server);
-
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
-    // std::map<STI::Engine::ParseID, std::shared_ptr<ParseTicket>> tickets;
-
-    // mutable std::mutex ticketMutex;
 };
-
-
 
 
 } //Python
