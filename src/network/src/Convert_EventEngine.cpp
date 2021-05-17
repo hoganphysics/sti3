@@ -848,7 +848,7 @@ bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const En
     tParsingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(parsingMessage.getID());
     convert<std::string, ::CORBA::String_member>(parsingMessage.getName(), tParsingMessage.name);
     convert<std::string, ::CORBA::String_member>(parsingMessage.getMessage(), tParsingMessage.message);
-    convert<RawEvent, TRawEvent>(parsingMessage.events, tParsingMessage.events);
+    convert<RawEvent, TRawEvent>(parsingMessage.getEvents(), tParsingMessage.events);
     return true;
 }
 
@@ -874,7 +874,7 @@ EngineParsingMessage STI::Network::convert<TEngineParsingMessage, EngineParsingM
 
     parsingMessage.appendMessage( convert<::CORBA::String_member, std::string>(tParsingMessage.message) );
 
-    convert<TRawEvent, RawEvent>(tParsingMessage.events, parsingMessage.events);
+    convert<TRawEvent, RawEvent>(tParsingMessage.events, parsingMessage.getEventVector());
 
     return parsingMessage;
 }

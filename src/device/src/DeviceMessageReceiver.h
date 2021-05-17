@@ -32,7 +32,6 @@ public:
 	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		const std::shared_ptr<DeviceMessageListener<T>>& listener)
 	{
-
 		bool success = false;
 		std::shared_ptr<DeviceMessageListenerGroup<T>> listenerGroup;
 

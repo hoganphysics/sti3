@@ -59,3 +59,10 @@ EngineParsingMessage& EngineParsingMessage::appendMessage(const std::string& mes
     message_.append(message);
     return (*this);
 }
+
+void EngineParsingMessage::setEvents(std::vector<RawEvent>& evts)
+{
+    events.clear();
+    events = evts;
+}
+

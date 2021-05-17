@@ -19,7 +19,7 @@ add_library(stidevice SHARED
     DeviceID.cpp
     DeviceMessage.cpp
     DeviceMessageReceiver.cpp
-    EngineParsingError.cpp
+    # EngineParsingError.cpp
     EngineParsingMessage.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp

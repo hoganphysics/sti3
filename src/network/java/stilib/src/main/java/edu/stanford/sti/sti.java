@@ -9,4 +9,8 @@
 package edu.stanford.sti;
 
 public class sti {
+  public static String print(EngineState state) {
+    return stiJNI.print(state.swigValue());
+  }
+
 }

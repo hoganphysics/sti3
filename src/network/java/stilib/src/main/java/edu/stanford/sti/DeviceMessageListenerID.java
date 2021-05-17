@@ -60,6 +60,10 @@ public class DeviceMessageListenerID {
     return stiJNI.DeviceMessageListenerID_opEquals(swigCPtr, this, DeviceMessageListenerID.getCPtr(rhs), rhs);
   }
 
+  public boolean opNotEquals(DeviceMessageListenerID rhs) {
+    return stiJNI.DeviceMessageListenerID_opNotEquals(swigCPtr, this, DeviceMessageListenerID.getCPtr(rhs), rhs);
+  }
+
   public DeviceMessageListenerID() {
     this(stiJNI.new_DeviceMessageListenerID(), true);
   }

@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class EngineParserMessageListener {
+public class EngineParserDeviceMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected EngineParserMessageListener(long cPtr, boolean cMemoryOwn) {
+  protected EngineParserDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(EngineParserMessageListener obj) {
+  protected static long getCPtr(EngineParserDeviceMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class EngineParserMessageListener {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_EngineParserMessageListener(swigCPtr);
+        stiJNI.delete_EngineParserDeviceMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,21 +47,21 @@ public class EngineParserMessageListener {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.EngineParserMessageListener_change_ownership(this, swigCPtr, false);
+    stiJNI.EngineParserDeviceMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.EngineParserMessageListener_change_ownership(this, swigCPtr, true);
+    stiJNI.EngineParserDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleMessage(EngineParserMessage mess) {
-    stiJNI.EngineParserMessageListener_handleMessage(swigCPtr, this, EngineParserMessage.getCPtr(mess), mess);
+  public void handleMessage(EngineParserDeviceMessage mess) {
+    stiJNI.EngineParserDeviceMessageListener_handleMessage(swigCPtr, this, EngineParserDeviceMessage.getCPtr(mess), mess);
   }
 
-  public EngineParserMessageListener() {
-    this(stiJNI.new_EngineParserMessageListener(), true);
-    stiJNI.EngineParserMessageListener_director_connect(this, swigCPtr, true, true);
+  public EngineParserDeviceMessageListener() {
+    this(stiJNI.new_EngineParserDeviceMessageListener(), true);
+    stiJNI.EngineParserDeviceMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

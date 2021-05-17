@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class ParsedShot {
+public class ChannelUpdateMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected ParsedShot(long cPtr, boolean cMemoryOwn) {
+  protected ChannelUpdateMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(ParsedShot obj) {
+  protected static long getCPtr(ChannelUpdateMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class ParsedShot {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_ParsedShot(swigCPtr);
+        stiJNI.delete_ChannelUpdateMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,21 +47,21 @@ public class ParsedShot {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.ParsedShot_change_ownership(this, swigCPtr, false);
+    stiJNI.ChannelUpdateMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.ParsedShot_change_ownership(this, swigCPtr, true);
+    stiJNI.ChannelUpdateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void getEvents(RawEventVector ets) {
-    stiJNI.ParsedShot_getEvents(swigCPtr, this, RawEventVector.getCPtr(ets), ets);
+  public void handleMessage(ChannelUpdateMessage mess) {
+    stiJNI.ChannelUpdateMessageListener_handleMessage(swigCPtr, this, ChannelUpdateMessage.getCPtr(mess), mess);
   }
 
-  public ParsedShot() {
-    this(stiJNI.new_ParsedShot(), true);
-    stiJNI.ParsedShot_director_connect(this, swigCPtr, true, true);
+  public ChannelUpdateMessageListener() {
+    this(stiJNI.new_ChannelUpdateMessageListener(), true);
+    stiJNI.ChannelUpdateMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

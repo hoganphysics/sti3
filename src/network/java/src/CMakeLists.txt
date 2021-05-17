@@ -46,6 +46,7 @@ set_target_properties(stijava PROPERTIES
     VERSION ${PROJECT_VERSION}
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
+    POSITION_INDEPENDENT_CODE ON
 )
 
 target_include_directories(stijava PRIVATE 
@@ -64,4 +65,4 @@ install(TARGETS stijava
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
-# target_link_libraries(testDevice stidevice stinetwork)
+# target_link_libraries(stijava stidevice stinetwork)

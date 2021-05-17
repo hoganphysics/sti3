@@ -42,10 +42,13 @@ public:
         return appendMessage(STI::Utils::valueToString(message));
 	}
 
-    //Fix this; exposed to help with conversion
-	std::vector<RawEvent> events;
+    void setEvents(std::vector<RawEvent>& evts);
+    std::vector<RawEvent>& getEventVector() { return events; }
 
 private:
+
+    //Fix this; exposed to help with conversion
+	std::vector<RawEvent> events;
 
     STI::Device::DeviceID sourceID;
     ParsingMessageType type;

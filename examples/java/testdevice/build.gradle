@@ -30,7 +30,7 @@ dependencies {
     //Either of these work:
 
  //   implementation files('../../../lib/sti-0.0.1.jar')
-    implementation fileTree(dir: '../../../lib', include: 'sti-*.jar')
+    implementation fileTree(dir: '../../../lib', include: 'sti.jar')
 }
 
 //println "test gradle"
@@ -40,7 +40,20 @@ def BUILD_DIR=project.buildDir
 application {
     // Define the main class for the application.
     mainClassName = 'edu.stanford.testdevice.TestDeviceApplication'
-    applicationDefaultJvmArgs = ["-Djava.library.path=${BUILD_DIR}/libs/"]      //location of libstijava.so
+    // applicationDefaultJvmArgs = ["-Djava.library.path=${BUILD_DIR}/libs/"]      //location of libstijava.so
+    // applicationDefaultJvmArgs = ["-Djava.library.path=${BUILD_DIR}/../../../../lib/"]      //location of libstijava.so
+    // applicationDefaultJvmArgs = ["-Djava.library.path=/home/hogan/code/dev/sti3/lib/"]      //location of libstijava.so
+}
+
+
+//Needed by bootRun to find libstijava.so
+//However, other *.so are not found unless they are in the project root dir
+tasks.withType(JavaExec) {
+	// systemProperty "java.library.path", "libs"
+//	systemProperty "java.library.path", "../../../lib"
+    // println "test JavaExec"
+    environment "LD_LIBRARY_PATH", "/home/hogan/code/dev/sti3/lib/"
+	systemProperty "java.library.path", "/home/hogan/code/dev/sti3/lib"
 }
 
 // by default, implementation cannot be referenced, 
@@ -54,7 +67,8 @@ jar {
         attributes(
             'Main-Class': 'edu.stanford.testdevice.TestDeviceApplication',
 //            "Class-Path": configurations.implementation.collect { it.name }.join(' ') 
-            'Class-Path': 'sti-0.0.1.jar'
+            // 'Class-Path': 'sti-0.0.1.jar'
+            'Class-Path': 'sti.jar'
         )
     }
 

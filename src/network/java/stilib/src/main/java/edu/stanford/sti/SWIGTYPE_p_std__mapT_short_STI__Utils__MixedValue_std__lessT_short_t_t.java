@@ -8,18 +8,18 @@
 
 package edu.stanford.sti;
 
-public class SWIGTYPE_p_std__vectorT_STI__Device__STIParsingMessage_t {
+public class SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_std__vectorT_STI__Device__STIParsingMessage_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_std__vectorT_STI__Device__STIParsingMessage_t() {
+  protected SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_std__vectorT_STI__Device__STIParsingMessage_t obj) {
+  protected static long getCPtr(SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }

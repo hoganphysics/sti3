@@ -99,6 +99,7 @@ public class stiJNI {
   public final static native long RawEvent_getStackTrace(long jarg1, RawEvent jarg1_);
   public final static native long RawEvent_getEventGraphPath(long jarg1, RawEvent jarg1_);
   public final static native boolean RawEvent_isMeasurementEvent(long jarg1, RawEvent jarg1_);
+  public final static native boolean RawEvent_opLess(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_);
   public final static native boolean RawEvent_opEquals(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_);
   public final static native boolean RawEvent_opNotEquals(long jarg1, RawEvent jarg1_, long jarg2, RawEvent jarg2_);
   public final static native void RawEvent_setTargetID(long jarg1, RawEvent jarg1_, long jarg2, DeviceID jarg2_);
@@ -142,6 +143,7 @@ public class stiJNI {
   public final static native long JDevice_getMessageDispatcher(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getEngineScheduler(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getChannelManager(long jarg1, JDevice jarg1_);
+  public final static native long JDevice_getAttributeManager(long jarg1, JDevice jarg1_);
   public final static native void JDevice_director_connect(JDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JDevice_change_ownership(JDevice obj, long cptr, boolean take_or_release);
   public final static native long new_DeviceMessage__SWIG_0();
@@ -158,14 +160,29 @@ public class stiJNI {
   public final static native void delete_RefreshDeviceMessage(long jarg1);
   public final static native void RefreshDeviceMessage_director_connect(RefreshDeviceMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void RefreshDeviceMessage_change_ownership(RefreshDeviceMessage obj, long cptr, boolean take_or_release);
-  public final static native long new_ChannelUpdateDeviceMessage(long jarg1, DeviceID jarg1_);
-  public final static native int ChannelUpdateDeviceMessage_getMessageClassType();
-  public final static native void delete_ChannelUpdateDeviceMessage(long jarg1);
-  public final static native void ChannelUpdateDeviceMessage_director_connect(ChannelUpdateDeviceMessage obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void ChannelUpdateDeviceMessage_change_ownership(ChannelUpdateDeviceMessage obj, long cptr, boolean take_or_release);
-  public final static native long new_AttributeUpdateMessage(long jarg1, DeviceID jarg1_, String jarg2, String jarg3);
+  public final static native long new_ChannelUpdateMessage__SWIG_0(long jarg1, DeviceID jarg1_);
+  public final static native long new_ChannelUpdateMessage__SWIG_1(long jarg1, DeviceID jarg1_, short jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long new_ChannelUpdateMessage__SWIG_2(long jarg1, DeviceID jarg1_, short jarg2, String jarg3);
+  public final static native int ChannelUpdateMessage_getMessageClassType();
+  public final static native boolean ChannelUpdateMessage_appendMessage(long jarg1, ChannelUpdateMessage jarg1_, long jarg2, ChannelUpdateMessage jarg2_);
+  public final static native boolean ChannelUpdateMessage_groupable(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native long ChannelUpdateMessage_get(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native void ChannelUpdateMessage_channelUpdateType_set(long jarg1, ChannelUpdateMessage jarg1_, int jarg2);
+  public final static native int ChannelUpdateMessage_channelUpdateType_get(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native void ChannelUpdateMessage_channelValues_set(long jarg1, ChannelUpdateMessage jarg1_, long jarg2);
+  public final static native long ChannelUpdateMessage_channelValues_get(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native void ChannelUpdateMessage_channelNumber_set(long jarg1, ChannelUpdateMessage jarg1_, short jarg2);
+  public final static native short ChannelUpdateMessage_channelNumber_get(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native void ChannelUpdateMessage_channelName_set(long jarg1, ChannelUpdateMessage jarg1_, String jarg2);
+  public final static native String ChannelUpdateMessage_channelName_get(long jarg1, ChannelUpdateMessage jarg1_);
+  public final static native void delete_ChannelUpdateMessage(long jarg1);
+  public final static native void ChannelUpdateMessage_director_connect(ChannelUpdateMessage obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ChannelUpdateMessage_change_ownership(ChannelUpdateMessage obj, long cptr, boolean take_or_release);
+  public final static native long new_AttributeUpdateMessage__SWIG_0(long jarg1, DeviceID jarg1_);
+  public final static native long new_AttributeUpdateMessage__SWIG_1(long jarg1, DeviceID jarg1_, String jarg2, String jarg3);
   public final static native int AttributeUpdateMessage_getMessageClassType();
   public final static native boolean AttributeUpdateMessage_appendMessage(long jarg1, AttributeUpdateMessage jarg1_, long jarg2, AttributeUpdateMessage jarg2_);
+  public final static native boolean AttributeUpdateMessage_groupable(long jarg1, AttributeUpdateMessage jarg1_);
   public final static native long AttributeUpdateMessage_get(long jarg1, AttributeUpdateMessage jarg1_);
   public final static native void AttributeUpdateMessage_attributes_set(long jarg1, AttributeUpdateMessage jarg1_, long jarg2, StringMap jarg2_);
   public final static native long AttributeUpdateMessage_attributes_get(long jarg1, AttributeUpdateMessage jarg1_);
@@ -187,27 +204,22 @@ public class stiJNI {
   public final static native long EngineSchedulerMessage_handledEvents_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void EngineSchedulerMessage_unhandledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, RawEventVector jarg2_);
   public final static native long EngineSchedulerMessage_unhandledEvents_get(long jarg1, EngineSchedulerMessage jarg1_);
+  public final static native void EngineSchedulerMessage_messages_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, EngineParserMessageVector jarg2_);
+  public final static native long EngineSchedulerMessage_messages_get(long jarg1, EngineSchedulerMessage jarg1_);
+  public final static native void EngineSchedulerMessage_engineState_set(long jarg1, EngineSchedulerMessage jarg1_, int jarg2);
+  public final static native int EngineSchedulerMessage_engineState_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void delete_EngineSchedulerMessage(long jarg1);
   public final static native void EngineSchedulerMessage_director_connect(EngineSchedulerMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineSchedulerMessage_change_ownership(EngineSchedulerMessage obj, long cptr, boolean take_or_release);
-  public final static native void STIParsingMessage_id_code_set(long jarg1, STIParsingMessage jarg1_, long jarg2);
-  public final static native long STIParsingMessage_id_code_get(long jarg1, STIParsingMessage jarg1_);
-  public final static native void STIParsingMessage_name_set(long jarg1, STIParsingMessage jarg1_, String jarg2);
-  public final static native String STIParsingMessage_name_get(long jarg1, STIParsingMessage jarg1_);
-  public final static native void STIParsingMessage_message_set(long jarg1, STIParsingMessage jarg1_, String jarg2);
-  public final static native String STIParsingMessage_message_get(long jarg1, STIParsingMessage jarg1_);
-  public final static native void STIParsingMessage_events_set(long jarg1, STIParsingMessage jarg1_, long jarg2, RawEventVector jarg2_);
-  public final static native long STIParsingMessage_events_get(long jarg1, STIParsingMessage jarg1_);
-  public final static native long new_STIParsingMessage();
-  public final static native void delete_STIParsingMessage(long jarg1);
-  public final static native void EngineParserMessage_pid_set(long jarg1, EngineParserMessage jarg1_, long jarg2, ParseID jarg2_);
-  public final static native long EngineParserMessage_pid_get(long jarg1, EngineParserMessage jarg1_);
-  public final static native void EngineParserMessage_messages_set(long jarg1, EngineParserMessage jarg1_, long jarg2);
-  public final static native long EngineParserMessage_messages_get(long jarg1, EngineParserMessage jarg1_);
-  public final static native long new_EngineParserMessage();
-  public final static native void delete_EngineParserMessage(long jarg1);
-  public final static native void EngineParserMessage_director_connect(EngineParserMessage obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void EngineParserMessage_change_ownership(EngineParserMessage obj, long cptr, boolean take_or_release);
+  public final static native long new_EngineParserDeviceMessage(long jarg1, DeviceID jarg1_, long jarg2, ParseID jarg2_);
+  public final static native void EngineParserDeviceMessage_addParseMessage(long jarg1, EngineParserDeviceMessage jarg1_, long jarg2, EngineParsingMessage jarg2_);
+  public final static native void EngineParserDeviceMessage_pid_set(long jarg1, EngineParserDeviceMessage jarg1_, long jarg2, ParseID jarg2_);
+  public final static native long EngineParserDeviceMessage_pid_get(long jarg1, EngineParserDeviceMessage jarg1_);
+  public final static native void EngineParserDeviceMessage_messages_set(long jarg1, EngineParserDeviceMessage jarg1_, long jarg2, EngineParserMessageVector jarg2_);
+  public final static native long EngineParserDeviceMessage_messages_get(long jarg1, EngineParserDeviceMessage jarg1_);
+  public final static native void delete_EngineParserDeviceMessage(long jarg1);
+  public final static native void EngineParserDeviceMessage_director_connect(EngineParserDeviceMessage obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void EngineParserDeviceMessage_change_ownership(EngineParserDeviceMessage obj, long cptr, boolean take_or_release);
   public final static native long new_EventEngineMessage();
   public final static native void delete_EventEngineMessage(long jarg1);
   public final static native void EventEngineMessage_director_connect(EventEngineMessage obj, long cptr, boolean mem_own, boolean weak_global);
@@ -218,6 +230,7 @@ public class stiJNI {
   public final static native String DeviceMessageListenerID_name_get(long jarg1, DeviceMessageListenerID jarg1_);
   public final static native boolean DeviceMessageListenerID_opLess(long jarg1, DeviceMessageListenerID jarg1_, long jarg2, DeviceMessageListenerID jarg2_);
   public final static native boolean DeviceMessageListenerID_opEquals(long jarg1, DeviceMessageListenerID jarg1_, long jarg2, DeviceMessageListenerID jarg2_);
+  public final static native boolean DeviceMessageListenerID_opNotEquals(long jarg1, DeviceMessageListenerID jarg1_, long jarg2, DeviceMessageListenerID jarg2_);
   public final static native long new_DeviceMessageListenerID();
   public final static native void delete_DeviceMessageListenerID(long jarg1);
   public final static native void delete_RefreshDeviceMessageListener(long jarg1);
@@ -225,11 +238,11 @@ public class stiJNI {
   public final static native long new_RefreshDeviceMessageListener();
   public final static native void RefreshDeviceMessageListener_director_connect(RefreshDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void RefreshDeviceMessageListener_change_ownership(RefreshDeviceMessageListener obj, long cptr, boolean take_or_release);
-  public final static native void delete_ChannelUpdateDeviceMessageListener(long jarg1);
-  public final static native void ChannelUpdateDeviceMessageListener_handleMessage(long jarg1, ChannelUpdateDeviceMessageListener jarg1_, long jarg2, ChannelUpdateDeviceMessage jarg2_);
-  public final static native long new_ChannelUpdateDeviceMessageListener();
-  public final static native void ChannelUpdateDeviceMessageListener_director_connect(ChannelUpdateDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void ChannelUpdateDeviceMessageListener_change_ownership(ChannelUpdateDeviceMessageListener obj, long cptr, boolean take_or_release);
+  public final static native void delete_ChannelUpdateMessageListener(long jarg1);
+  public final static native void ChannelUpdateMessageListener_handleMessage(long jarg1, ChannelUpdateMessageListener jarg1_, long jarg2, ChannelUpdateMessage jarg2_);
+  public final static native long new_ChannelUpdateMessageListener();
+  public final static native void ChannelUpdateMessageListener_director_connect(ChannelUpdateMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ChannelUpdateMessageListener_change_ownership(ChannelUpdateMessageListener obj, long cptr, boolean take_or_release);
   public final static native void delete_AttributeUpdateMessageListener(long jarg1);
   public final static native void AttributeUpdateMessageListener_handleMessage(long jarg1, AttributeUpdateMessageListener jarg1_, long jarg2, AttributeUpdateMessage jarg2_);
   public final static native long new_AttributeUpdateMessageListener();
@@ -240,20 +253,22 @@ public class stiJNI {
   public final static native long new_EngineSchedulerMessageListener();
   public final static native void EngineSchedulerMessageListener_director_connect(EngineSchedulerMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineSchedulerMessageListener_change_ownership(EngineSchedulerMessageListener obj, long cptr, boolean take_or_release);
-  public final static native void delete_EngineParserMessageListener(long jarg1);
-  public final static native void EngineParserMessageListener_handleMessage(long jarg1, EngineParserMessageListener jarg1_, long jarg2, EngineParserMessage jarg2_);
-  public final static native long new_EngineParserMessageListener();
-  public final static native void EngineParserMessageListener_director_connect(EngineParserMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void EngineParserMessageListener_change_ownership(EngineParserMessageListener obj, long cptr, boolean take_or_release);
   public final static native void delete_EventEngineMessageListener(long jarg1);
   public final static native void EventEngineMessageListener_handleMessage(long jarg1, EventEngineMessageListener jarg1_, long jarg2, EventEngineMessage jarg2_);
   public final static native long new_EventEngineMessageListener();
   public final static native void EventEngineMessageListener_director_connect(EventEngineMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EventEngineMessageListener_change_ownership(EventEngineMessageListener obj, long cptr, boolean take_or_release);
+  public final static native void delete_EngineParserDeviceMessageListener(long jarg1);
+  public final static native void EngineParserDeviceMessageListener_handleMessage(long jarg1, EngineParserDeviceMessageListener jarg1_, long jarg2, EngineParserDeviceMessage jarg2_);
+  public final static native long new_EngineParserDeviceMessageListener();
+  public final static native void EngineParserDeviceMessageListener_director_connect(EngineParserDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void EngineParserDeviceMessageListener_change_ownership(EngineParserDeviceMessageListener obj, long cptr, boolean take_or_release);
   public final static native long new_JDeviceMessageReceiver(long jarg1);
   public final static native void delete_JDeviceMessageReceiver(long jarg1);
   public final static native void JDeviceMessageReceiver_addListener__SWIG_0(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, RefreshDeviceMessageListener jarg4_);
-  public final static native void JDeviceMessageReceiver_addListener__SWIG_1(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, ChannelUpdateDeviceMessageListener jarg4_);
+  public final static native void JDeviceMessageReceiver_addListener__SWIG_1(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, ChannelUpdateMessageListener jarg4_);
+  public final static native void JDeviceMessageReceiver_addListener__SWIG_2(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, AttributeUpdateMessageListener jarg4_);
+  public final static native void JDeviceMessageReceiver_addListener__SWIG_3(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, EngineSchedulerMessageListener jarg4_);
   public final static native void JDeviceMessageReceiver_removeListener(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_);
   public final static native long new_JDeviceMessageDispatcher(long jarg1);
   public final static native void delete_JDeviceMessageDispatcher(long jarg1);
@@ -319,8 +334,15 @@ public class stiJNI {
   public final static native void LocalChannel_saveLastValue(long jarg1, LocalChannel jarg1_, long jarg2, MixedValue jarg2_);
   public final static native void LocalChannel_saveLastValueSwigExplicitLocalChannel(long jarg1, LocalChannel jarg1_, long jarg2, MixedValue jarg2_);
   public final static native long LocalChannel_addMetaData(long jarg1, LocalChannel jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void LocalChannel_addRefreshListener(long jarg1, LocalChannel jarg1_, long jarg2, ChannelRefreshListener jarg2_);
   public final static native void LocalChannel_director_connect(LocalChannel obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void LocalChannel_change_ownership(LocalChannel obj, long cptr, boolean take_or_release);
+  public final static native void delete_ChannelRefreshListener(long jarg1);
+  public final static native void ChannelRefreshListener_handleChannelRefreshEvent(long jarg1, ChannelRefreshListener jarg1_, short jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void ChannelRefreshListener_handleChannelNameRefreshEvent(long jarg1, ChannelRefreshListener jarg1_, short jarg2, String jarg3);
+  public final static native long new_ChannelRefreshListener();
+  public final static native void ChannelRefreshListener_director_connect(ChannelRefreshListener obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ChannelRefreshListener_change_ownership(ChannelRefreshListener obj, long cptr, boolean take_or_release);
   public final static native void TimeStamp_timestamp_set(long jarg1, TimeStamp jarg1_, double jarg2);
   public final static native double TimeStamp_timestamp_get(long jarg1, TimeStamp jarg1_);
   public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
@@ -359,6 +381,7 @@ public class stiJNI {
   public final static native boolean ShotID_opLess(long jarg1, ShotID jarg1_, long jarg2, ShotID jarg2_);
   public final static native boolean ShotID_opEquals(long jarg1, ShotID jarg1_, long jarg2, ShotID jarg2_);
   public final static native boolean ShotID_opNotEquals(long jarg1, ShotID jarg1_, long jarg2, ShotID jarg2_);
+  public final static native long ShotID_generateUniqueID(long jarg1, ParseID jarg1_);
   public final static native long new_ShotID();
   public final static native void delete_ShotID(long jarg1);
   public final static native long new_StringMap__SWIG_0();
@@ -379,13 +402,17 @@ public class stiJNI {
   public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
   public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
   public final static native void delete_StringMap(long jarg1);
+  public final static native long new_JAttributeManager(long jarg1);
+  public final static native void delete_JAttributeManager(long jarg1);
+  public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
+  public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
   public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JLocalDevice(long jarg1);
   public final static native long JLocalDevice_getMessageReceiver(long jarg1, JLocalDevice jarg1_);
-  public final static native long JLocalDevice_getEngineScheduler(long jarg1, JLocalDevice jarg1_);
   public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, int jarg2);
   public final static native long JLocalDevice_addChannel(long jarg1, JLocalDevice jarg1_, int jarg2, int jarg3, int jarg4, int jarg5, String jarg6);
   public final static native void JLocalDevice_addEventEngine(long jarg1, JLocalDevice jarg1_, long jarg2, EngineID jarg2_);
+  public final static native void JLocalDevice_addPartner(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
   public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native boolean EngineJobID_opEquals(long jarg1, EngineJobID jarg1_, long jarg2, EngineJobID jarg2_);
@@ -412,6 +439,7 @@ public class stiJNI {
   public final static native void MixedValue_setValue__SWIG_10(long jarg1, MixedValue jarg1_, short jarg2);
   public final static native void MixedValue_clear(long jarg1, MixedValue jarg1_);
   public final static native int MixedValue_getType(long jarg1, MixedValue jarg1_);
+  public final static native boolean MixedValue_isType(long jarg1, MixedValue jarg1_, int jarg2);
   public final static native boolean MixedValue_getBoolean(long jarg1, MixedValue jarg1_);
   public final static native int MixedValue_getInt(long jarg1, MixedValue jarg1_);
   public final static native double MixedValue_getDouble(long jarg1, MixedValue jarg1_);
@@ -437,18 +465,44 @@ public class stiJNI {
   public final static native long MixedValueVec_doSet(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
   public final static native void MixedValueVec_doRemoveRange(long jarg1, MixedValueVec jarg1_, int jarg2, int jarg3);
   public final static native void delete_MixedValueVec(long jarg1);
-  public final static native void delete_ParsedShot(long jarg1);
-  public final static native void ParsedShot_getEvents(long jarg1, ParsedShot jarg1_, long jarg2, RawEventVector jarg2_);
-  public final static native long new_ParsedShot();
-  public final static native void ParsedShot_director_connect(ParsedShot obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void ParsedShot_change_ownership(ParsedShot obj, long cptr, boolean take_or_release);
+  public final static native long new_JShot(long jarg1);
+  public final static native void delete_JShot(long jarg1);
+  public final static native long JShot_getEvents(long jarg1, JShot jarg1_);
   public final static native long new_JEventEngineScheduler(long jarg1);
   public final static native void delete_JEventEngineScheduler(long jarg1);
   public final static native void JEventEngineScheduler_id_set(long jarg1, JEventEngineScheduler jarg1_, long jarg2, DeviceID jarg2_);
   public final static native long JEventEngineScheduler_id_get(long jarg1, JEventEngineScheduler jarg1_);
-  public final static native void JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, ParsedShot jarg3_);
+  public final static native void JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, JShot jarg3_);
   public final static native void JEventEngineScheduler_play(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ShotID jarg2_);
   public final static native void JEventEngineScheduler_cancelJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
+  public final static native long new_EngineParsingMessage(long jarg1, DeviceID jarg1_, int jarg2, long jarg3, String jarg4);
+  public final static native void delete_EngineParsingMessage(long jarg1);
+  public final static native int EngineParsingMessage_getType(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long EngineParsingMessage_getIDCode(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long EngineParsingMessage_getID(long jarg1, EngineParsingMessage jarg1_);
+  public final static native String EngineParsingMessage_getName(long jarg1, EngineParsingMessage jarg1_);
+  public final static native String EngineParsingMessage_getMessage(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long EngineParsingMessage_getEvents(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long EngineParsingMessage_addEvent(long jarg1, EngineParsingMessage jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native long EngineParsingMessage_appendMessage(long jarg1, EngineParsingMessage jarg1_, String jarg2);
+  public final static native void EngineParsingMessage_setEvents(long jarg1, EngineParsingMessage jarg1_, long jarg2, RawEventVector jarg2_);
+  public final static native long EngineParsingMessage_getEventVector(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long new_EngineParserMessageVector__SWIG_0();
+  public final static native long new_EngineParserMessageVector__SWIG_1(long jarg1, EngineParserMessageVector jarg1_);
+  public final static native long EngineParserMessageVector_capacity(long jarg1, EngineParserMessageVector jarg1_);
+  public final static native void EngineParserMessageVector_reserve(long jarg1, EngineParserMessageVector jarg1_, long jarg2);
+  public final static native boolean EngineParserMessageVector_isEmpty(long jarg1, EngineParserMessageVector jarg1_);
+  public final static native void EngineParserMessageVector_clear(long jarg1, EngineParserMessageVector jarg1_);
+  public final static native long new_EngineParserMessageVector__SWIG_2(int jarg1, long jarg2, EngineParsingMessage jarg2_);
+  public final static native int EngineParserMessageVector_doSize(long jarg1, EngineParserMessageVector jarg1_);
+  public final static native void EngineParserMessageVector_doAdd__SWIG_0(long jarg1, EngineParserMessageVector jarg1_, long jarg2, EngineParsingMessage jarg2_);
+  public final static native void EngineParserMessageVector_doAdd__SWIG_1(long jarg1, EngineParserMessageVector jarg1_, int jarg2, long jarg3, EngineParsingMessage jarg3_);
+  public final static native long EngineParserMessageVector_doRemove(long jarg1, EngineParserMessageVector jarg1_, int jarg2);
+  public final static native long EngineParserMessageVector_doGet(long jarg1, EngineParserMessageVector jarg1_, int jarg2);
+  public final static native long EngineParserMessageVector_doSet(long jarg1, EngineParserMessageVector jarg1_, int jarg2, long jarg3, EngineParsingMessage jarg3_);
+  public final static native void EngineParserMessageVector_doRemoveRange(long jarg1, EngineParserMessageVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_EngineParserMessageVector(long jarg1);
+  public final static native String print(int jarg1);
   public final static native long new_JNetworkDeviceHub__SWIG_0(String jarg1);
   public final static native long new_JNetworkDeviceHub__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JNetworkDeviceHub(long jarg1);
@@ -467,7 +521,7 @@ public class stiJNI {
   public final static native String HubID_address_get(long jarg1, HubID jarg1_);
   public final static native void HubID_module_set(long jarg1, HubID jarg1_, int jarg2);
   public final static native int HubID_module_get(long jarg1, HubID jarg1_);
-  public final static native String HubID_id(long jarg1, HubID jarg1_);
+  public final static native String HubID_toString(long jarg1, HubID jarg1_);
   public final static native boolean HubID_stringToHubID(String jarg1, long jarg2, HubID jarg2_);
   public final static native void delete_HubID(long jarg1);
   public final static native long new_JHubGraphNode(long jarg1);
@@ -514,10 +568,10 @@ public class stiJNI {
   public final static native void JDeviceGraphNodeVector_doRemoveRange(long jarg1, JDeviceGraphNodeVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_JDeviceGraphNodeVector(long jarg1);
   public final static native long RefreshDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
-  public final static native long ChannelUpdateDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long ChannelUpdateMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long AttributeUpdateMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EngineSchedulerMessage_SWIGSmartPtrUpcast(long jarg1);
-  public final static native long EngineParserMessage_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long EngineParserDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EventEngineMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long LocalChannel_SWIGSmartPtrUpcast(long jarg1);
   public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
@@ -525,8 +579,8 @@ public class stiJNI {
   public static void SwigDirector_RefreshDeviceMessageListener_handleMessage(RefreshDeviceMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new RefreshDeviceMessage(mess, true));
   }
-  public static void SwigDirector_ChannelUpdateDeviceMessageListener_handleMessage(ChannelUpdateDeviceMessageListener jself, long mess) {
-    jself.handleMessage((mess == 0) ? null : new ChannelUpdateDeviceMessage(mess, true));
+  public static void SwigDirector_ChannelUpdateMessageListener_handleMessage(ChannelUpdateMessageListener jself, long mess) {
+    jself.handleMessage((mess == 0) ? null : new ChannelUpdateMessage(mess, true));
   }
   public static void SwigDirector_AttributeUpdateMessageListener_handleMessage(AttributeUpdateMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new AttributeUpdateMessage(mess, true));
@@ -534,11 +588,11 @@ public class stiJNI {
   public static void SwigDirector_EngineSchedulerMessageListener_handleMessage(EngineSchedulerMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new EngineSchedulerMessage(mess, true));
   }
-  public static void SwigDirector_EngineParserMessageListener_handleMessage(EngineParserMessageListener jself, long mess) {
-    jself.handleMessage((mess == 0) ? null : new EngineParserMessage(mess, true));
-  }
   public static void SwigDirector_EventEngineMessageListener_handleMessage(EventEngineMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new EventEngineMessage(mess, true));
+  }
+  public static void SwigDirector_EngineParserDeviceMessageListener_handleMessage(EngineParserDeviceMessageListener jself, long mess) {
+    jself.handleMessage((mess == 0) ? null : new EngineParserDeviceMessage(mess, true));
   }
   public static short SwigDirector_Channel_getChannelNumber(Channel jself) {
     return jself.getChannelNumber();
@@ -600,11 +654,14 @@ public class stiJNI {
   public static long SwigDirector_LocalChannel_getMetaData__SWIG_1(LocalChannel jself, String key) {
     return MixedValue.getCPtr(jself.getMetaData(key));
   }
+  public static void SwigDirector_ChannelRefreshListener_handleChannelRefreshEvent(ChannelRefreshListener jself, short channelNumber, long value) {
+    jself.handleChannelRefreshEvent(channelNumber, new MixedValue(value, false));
+  }
+  public static void SwigDirector_ChannelRefreshListener_handleChannelNameRefreshEvent(ChannelRefreshListener jself, short channelNumber, String name) {
+    jself.handleChannelNameRefreshEvent(channelNumber, name);
+  }
   public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
     jself.parseEvents(temp);
-  }
-  public static void SwigDirector_ParsedShot_getEvents(ParsedShot jself, long ets) {
-    jself.getEvents((ets == 0) ? null : new RawEventVector(ets, true));
   }
 
   private final static native void swig_module_init();

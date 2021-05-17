@@ -21,11 +21,12 @@ public class TestDeviceApplication {
         //STI.Reload();
 	
 //        TestJDevice testDevice = new TestJDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
-        TestJDevice testDevice = new TestJDevice("dev2", "localhost", 0, "localhost/0/dev1");    
+        TestJDevice testDevice = new TestJDevice("devJava", "localhost", 0, "localhost/0/STI Server");    
         
         JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.4:2809");
         hub.addNode(testDevice);
 
         hub.run();
+        
     }
 }

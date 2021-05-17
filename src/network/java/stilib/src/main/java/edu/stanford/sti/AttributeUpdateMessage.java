@@ -58,8 +58,13 @@ public class AttributeUpdateMessage extends DeviceMessage {
     stiJNI.AttributeUpdateMessage_change_ownership(this, swigCPtr, true);
   }
 
+  public AttributeUpdateMessage(DeviceID source) {
+    this(stiJNI.new_AttributeUpdateMessage__SWIG_0(DeviceID.getCPtr(source), source), true);
+    stiJNI.AttributeUpdateMessage_director_connect(this, swigCPtr, true, true);
+  }
+
   public AttributeUpdateMessage(DeviceID source, String key, String value) {
-    this(stiJNI.new_AttributeUpdateMessage(DeviceID.getCPtr(source), source, key, value), true);
+    this(stiJNI.new_AttributeUpdateMessage__SWIG_1(DeviceID.getCPtr(source), source, key, value), true);
     stiJNI.AttributeUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 
@@ -69,6 +74,10 @@ public class AttributeUpdateMessage extends DeviceMessage {
 
   public boolean appendMessage(AttributeUpdateMessage mess) {
     return stiJNI.AttributeUpdateMessage_appendMessage(swigCPtr, this, AttributeUpdateMessage.getCPtr(mess), mess);
+  }
+
+  public boolean groupable() {
+    return stiJNI.AttributeUpdateMessage_groupable(swigCPtr, this);
   }
 
   public AttributeUpdateMessage get() {

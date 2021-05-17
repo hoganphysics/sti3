@@ -24,8 +24,9 @@ public class STI {
 
     public static void Reload() {
         try {
-            System.out.println("Loading stijava...");
+            System.out.print("Loading stijava...");
             System.loadLibrary("stijava");
+            System.out.println("done.");
             //Runtime.getRuntime().loadLibrary("stijava");  //seems to be the same as System.loadLibrary
             //System.out.println("Loaded stijava");
         } catch (UnsatisfiedLinkError e) {
