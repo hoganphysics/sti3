@@ -8,18 +8,18 @@
 
 package edu.stanford.sti;
 
-public class STI {
+public class STIJava {
 
 
     static {
         Reload();
     }
 
-    private STI() {
+    private STIJava() {
     }
 
     public static void LoadLibrary() {
-        STI sti = new STI();    //creating instance runs static block
+        STIJava sti = new STIJava();    //creating instance runs static block
     }
 
     public static void Reload() {
