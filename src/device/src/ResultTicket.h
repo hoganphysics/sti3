@@ -6,10 +6,12 @@
 
 #include <memory>
 
+
 namespace STI
 {
 namespace Engine
 {
+
 
 class ResultTicket
 {

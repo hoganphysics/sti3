@@ -2,13 +2,14 @@
 
 #include "LocalEventEngineJob.h"
 #include "EventEngineJob.h"
-#include "ParsedShot.h"
+#include "Shot.h"
 #include "EventEngineDependencyTree.h"
 #include "DeviceID.h"
 #include "ParseID.h"
 #include "EngineJobID.h"
 #include "EngineID.h"
-
+#include "EngineParsingMessage.h"
+#include "RawEvent.h"
 
 #include <set>
 #include <memory>
@@ -17,32 +18,33 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::EngineJobID;
 using STI::Engine::ParseID;
-using STI::Engine::ParsedShot;
+using STI::Engine::Shot;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
 using STI::Device::DeviceID;
 using STI::Engine::EngineID;
+using STI::Engine::EngineParsingMessage;
+using STI::Engine::ParsingMessageType;
+
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
-                                         const std::shared_ptr<ParsedShot>& shot,
-                                         const std::shared_ptr<EventEngineDependencyTree>& tree, 
-                                         const STI::Device::DeviceID& owner, 
-                                         const std::set<STI::Device::DeviceID>& missingTargets)
-: parsedShot(shot), dependencies(tree), jobOwner(owner)
+                                         const std::shared_ptr<Shot>& shot,
+                                         const STI::Device::DeviceID& owner)
+: shot_(shot), jobOwner(owner)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 
-    missingTargetIDs = missingTargets;
-
     status = EventEngineJob::EngineJobStatus::New;
-
     jobID.type = EventEngineJobType::Parse;
+
     jobID.pid = parseID;
 }
+
 
 LocalEventEngineJob::LocalEventEngineJob(const EngineJobID& id, const DeviceID& owner)
 : jobID(id), jobOwner(owner)
 {
+    status = EventEngineJob::EngineJobStatus::New;
     jobID.type = EventEngineJobType::Play;
 }
                    
@@ -81,7 +83,7 @@ void LocalEventEngineJob::markComplete()
 void LocalEventEngineJob::markCancelled()
 {
      std::unique_lock< std::mutex > writeLock(jobMutex);
-     status = EventEngineJob::EngineJobStatus::Cancelled;
+     status = EventEngineJob::EngineJobStatus::Canceled;
 }
 
 void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& job)
@@ -91,9 +93,9 @@ void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& jo
     attachedJobs.push_back(job);
 }
 
-bool LocalEventEngineJob::getParsedShot(std::shared_ptr<ParsedShot>& shot) const
+bool LocalEventEngineJob::getShot(std::shared_ptr<Shot>& shot) const
 {
-    shot = parsedShot;
+    shot = shot_;
 
     return (shot != 0);
 }
@@ -108,4 +110,31 @@ bool LocalEventEngineJob::getDependencies(std::shared_ptr<EventEngineDependencyT
 std::set<STI::Device::DeviceID> LocalEventEngineJob::getMissingTargetIDs() const
 {
     return missingTargetIDs;
+}
+
+void LocalEventEngineJob::setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree)
+{
+    dependencies = tree;
+}
+void LocalEventEngineJob::setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets)
+{
+    missingTargetIDs = missingTargets;
+}
+
+void LocalEventEngineJob::addMessages(const std::vector<EngineParsingMessage>& messages)
+{
+    parsingMessages.insert(parsingMessages.end(), messages.begin(), messages.end());
+}
+
+EngineParsingMessage& LocalEventEngineJob::addMessage(const EngineParsingMessage& message)
+{
+    parsingMessages.push_back(message);
+    //parsingMessages.push_back(std::move(message));
+    return parsingMessages.back();
+}
+
+EngineParsingMessage& LocalEventEngineJob::addMessage(const ParsingMessageType& type, unsigned id, const std::string& name)
+{
+    parsingMessages.emplace_back(jobOwner, type, id, name);
+    return parsingMessages.back();
 }

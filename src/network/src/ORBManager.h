@@ -33,7 +33,9 @@ private:
 public:
 	
 	virtual ~ORBManager();
-
+	
+	static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);
+	
 	bool running();
 	
 	void run();
@@ -41,15 +43,13 @@ public:
 	void block();
 	void unblock();
 
-//	bool registerHub(const HubID& hubID, const std::shared_ptr<NetworkDeviceHubWrapper>& deviceHub);
-
+	std::string printNameTree(const std::string& baseContext) const;
 
 	void getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, std::vector<std::string>& objContexts);
 
 	bool bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref);
+	bool unbindObjectReference(const std::string& objectFullPath);	
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
-
-	static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);
 
 	static void deactivateServant(PortableServer::Servant p_servant);
 
@@ -58,8 +58,8 @@ private:
 	static bool orb_initialized;
 	static std::shared_ptr<ORBManager> instance;
 
-	bool getRootContext(CosNaming::NamingContext_var& context);
-	CosNaming::NamingContext_ptr getNamingContext(const std::string& context);
+	bool getRootContext(CosNaming::NamingContext_var& context) const;
+	CosNaming::NamingContext_ptr getNamingContext(const std::string& context) const;
 
 	CORBA::ORB_var orb;
 	PortableServer::POAManager_var poa_manager;
@@ -68,13 +68,10 @@ private:
 	bool _running;
 	bool _blocking;
 
-	//std::unique_ptr<COSBindingNode> bindingTree;
-
 	mutable std::mutex orbMutex;
 	mutable std::condition_variable wakeCondition;
 
 	static void signal_callback_handler(int signum);
-
 	
 };
 

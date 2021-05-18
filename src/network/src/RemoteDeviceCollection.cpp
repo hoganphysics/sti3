@@ -24,6 +24,8 @@ RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollectio
 
 bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Device::Device>& node)
 {
+	if (CORBA::is_nil(tDeviceCollection)) return false;
+
 	STI::TNetwork::TDevice_ptr tDevice;
 
 	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
@@ -54,6 +56,8 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 
 bool RemoteDeviceCollection::remove(const STI::Device::DeviceID& id)
 {
+	if (CORBA::is_nil(tDeviceCollection)) return false;
+
 	bool success = false;
 
 	try {
@@ -72,6 +76,8 @@ bool RemoteDeviceCollection::remove(const STI::Device::DeviceID& id)
 
 bool RemoteDeviceCollection::contains(const STI::Device::DeviceID& id) const
 {
+	if (CORBA::is_nil(tDeviceCollection)) return false;
+
 	bool success = false;
 
 	try {
@@ -91,6 +97,9 @@ bool RemoteDeviceCollection::contains(const STI::Device::DeviceID& id) const
 unsigned RemoteDeviceCollection::size() const
 {
 	unsigned result = 0;
+
+	if (CORBA::is_nil(tDeviceCollection)) return result;
+
 	try {
 		result = tDeviceCollection->size();	//remote call
 	}
@@ -107,6 +116,8 @@ unsigned RemoteDeviceCollection::size() const
 
 bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_ptr<STI::Device::Device>& node) const
 {
+	if (CORBA::is_nil(tDeviceCollection)) return false;
+
 	bool success = false;
 
 	STI::TNetwork::TDevice_var tDevice;
@@ -131,6 +142,8 @@ bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_pt
 
 void RemoteDeviceCollection::getIDs(std::set<STI::Device::DeviceID>& ids) const
 {
+	if (CORBA::is_nil(tDeviceCollection)) return;
+	
 	STI::TNetwork::TDeviceIDSeq_var tIDs(new STI::TNetwork::TDeviceIDSeq);
 
 	try {
@@ -149,6 +162,8 @@ void RemoteDeviceCollection::getIDs(std::set<STI::Device::DeviceID>& ids) const
 
 void RemoteDeviceCollection::cleanup()
 {
+	if (CORBA::is_nil(tDeviceCollection)) return;
+
 	try {
 		tDeviceCollection->cleanup();	//remote call
 	}
@@ -163,6 +178,8 @@ void RemoteDeviceCollection::cleanup()
 
 void RemoteDeviceCollection::clear()
 {
+	if (CORBA::is_nil(tDeviceCollection)) return;
+
 	try {
 		tDeviceCollection->clear();	//remote call
 	}
@@ -173,5 +190,25 @@ void RemoteDeviceCollection::clear()
 	catch (CORBA::Exception&)
 	{
 	}
+}
+
+bool RemoteDeviceCollection::ping() const
+{
+	if (CORBA::is_nil(tDeviceCollection)) return false;
+
+	bool success = false;
+
+	try {
+		success = tDeviceCollection->ping();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return success;
 }
 

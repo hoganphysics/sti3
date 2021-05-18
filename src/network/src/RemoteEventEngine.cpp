@@ -1,6 +1,7 @@
 
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
+#include "RawEvent.h"
 
 using STI::Network::RemoteEventEngine;
 
@@ -8,6 +9,9 @@ using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
 using STI::Network::convert;
 using STI::Engine::TriggerCallback;
+using STI::TNetwork::TParseID;
+using STI::Engine::ParseID;
+
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
 	: _tEngine(STI::TNetwork::TEventEngine::_duplicate(engine))
@@ -180,3 +184,29 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 
 	return state;
 }
+
+
+// const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
+bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
+{
+	if (CORBA::is_nil(_tEngine)) return false;
+
+	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
+
+	bool success = false;
+
+	try {
+		success = _tEngine->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
+
+		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return success;
+}
+

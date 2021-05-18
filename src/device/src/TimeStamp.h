@@ -3,10 +3,12 @@
 
 #include <string>
 
+
 namespace STI
 {
 namespace Engine
 {
+
 
 class TimeStamp
 {

@@ -3,7 +3,7 @@
  */
 package edu.stanford.testdevice;
 
-import edu.stanford.sti.STI;
+import edu.stanford.sti.STIJava;
 import edu.stanford.sti.JNetworkDeviceHub;
 
 import edu.stanford.testdevice.TestJDevice;
@@ -15,17 +15,16 @@ public class TestDeviceApplication {
     public static void main(String[] args) {
         
         System.out.println("Hello");
-//    STI sti = new STI();
 
-        STI.LoadLibrary();
-        //STI.Reload();
-	
+        STIJava.LoadLibrary();
+
 //        TestJDevice testDevice = new TestJDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
-        TestJDevice testDevice = new TestJDevice("dev2", "localhost", 0, "localhost/0/dev1");    
+        TestJDevice testDevice = new TestJDevice("devJava", "localhost", 0, "localhost/0/STI Server");    
         
         JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.4:2809");
         hub.addNode(testDevice);
 
         hub.run();
+        
     }
 }

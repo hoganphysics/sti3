@@ -32,6 +32,8 @@ public:
 
 	void clear();
 
+	bool ping() const;
+
 private:
 
 	::STI::TNetwork::TDeviceCollection_var tDeviceCollection;		//remote reference

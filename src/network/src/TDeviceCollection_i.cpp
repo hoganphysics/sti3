@@ -120,3 +120,8 @@ void TDeviceCollection_i::clear()
 		return deviceCollection->clear();
 	}
 }
+
+::CORBA::Boolean TDeviceCollection_i::ping()
+{
+	return true;
+}

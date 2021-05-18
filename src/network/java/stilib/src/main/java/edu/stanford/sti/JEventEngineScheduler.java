@@ -53,8 +53,8 @@ public class JEventEngineScheduler {
     return (cPtr == 0) ? null : new DeviceID(cPtr, false);
   }
 
-  public void parse(ParseID parseID, ParsedShot shot) {
-    stiJNI.JEventEngineScheduler_parse(swigCPtr, this, ParseID.getCPtr(parseID), parseID, ParsedShot.getCPtr(shot), shot);
+  public void parse(ParseID parseID, JShot shot) {
+    stiJNI.JEventEngineScheduler_parse(swigCPtr, this, ParseID.getCPtr(parseID), parseID, JShot.getCPtr(shot), shot);
   }
 
   public void play(ShotID shotID) {

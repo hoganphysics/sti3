@@ -13,9 +13,10 @@ template<typename Message>
 class GroupableMessage
 {
 public:
-//    virtual bool appendMessage(const GroupableMessage<Message>& mess) = 0;
 
     virtual bool appendMessage(const Message& mess) = 0;
+
+    virtual bool groupable() const = 0;
 
     virtual Message& get() = 0;
 };

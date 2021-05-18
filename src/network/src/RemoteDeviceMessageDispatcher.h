@@ -28,6 +28,7 @@ public:
 	void addMessage(const std::shared_ptr<STI::Device::DeviceMessage>& mess);
 	void clearMessages();
 
+	bool ping() const;
 
 private:
 

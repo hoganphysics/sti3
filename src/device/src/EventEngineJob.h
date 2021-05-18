@@ -4,6 +4,8 @@
 #include "DeviceID.h"
 
 #include <set>
+#include <vector>
+
 
 namespace STI
 {
@@ -13,14 +15,17 @@ namespace Engine
 class EventEngineDependencyTree;
 class EventEngine;
 class EngineID;
-class ParsedShot;
+class Shot;
 class EngineJobID;
+class EngineParsingMessage;
+enum class ParsingMessageType;
+
 
 class EventEngineJob
 {
 public:
 
-    enum class EngineJobStatus { New, Running, Completed, Cancelled };
+    enum class EngineJobStatus { New, Running, Completed, Canceled };
 
     virtual ~EventEngineJob() {}
 
@@ -38,10 +43,14 @@ public:
     virtual bool getEngine(std::shared_ptr<EventEngine>& eventEngine) const  = 0;
     virtual void setEventEngine(const std::shared_ptr<EventEngine>& eventEngine)  = 0;
 
-    virtual bool getParsedShot(std::shared_ptr<ParsedShot>& shot) const = 0;
+    virtual bool getShot(std::shared_ptr<Shot>& shot) const = 0;
     virtual bool getDependencies(std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
 
     virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
+
+    virtual void addMessages(const std::vector<EngineParsingMessage>& messages) = 0;
+    virtual EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name) = 0;
+    virtual const std::vector<EngineParsingMessage>& getParsingMessages() const = 0;
 
 };
 

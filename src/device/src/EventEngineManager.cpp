@@ -17,7 +17,9 @@ using STI::Engine::LocalEventEngine;
 using STI::Engine::LocalEventEngineScheduler;
 
 
-EventEngineManager::EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler)
+EventEngineManager::EventEngineManager(const EngineID& engineID, 
+                                        const std::shared_ptr<LocalEventEngine>& engine, 
+                                        LocalEventEngineScheduler* scheduler)
 : engineID(engineID), engine(engine), scheduler(scheduler), running(false)
 {
 }
@@ -29,6 +31,13 @@ EventEngineManager::~EventEngineManager()
     if(jobThread.joinable()) {
         jobThread.join();
     }
+}
+
+bool EventEngineManager::getEngine(std::shared_ptr<LocalEventEngine>& eventEngine)
+{
+    eventEngine = engine;
+    
+    return (eventEngine != 0);
 }
 
 bool EventEngineManager::isParsed(const ParseID& parseID)
@@ -124,10 +133,6 @@ void EventEngineManager::runJob()
     else {
         scheduler->jobComplete(currentJob->getJobID());
     }
-
-    // if (currentJob->getStatus() == EventEngineJob::EngineJobStatus::Running) {
-        
-    // }
 }
 
 void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
@@ -137,9 +142,16 @@ void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::E
     }
 }
 
-void EventEngineManager::handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+void EventEngineManager::handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
 {
     if(jobRunning()) {
-        engine->handlePlayMessage(evt);
+        engine->handlePlayReadyMessage(evt);
+    }
+}
+
+void EventEngineManager::handlePlayCompleteMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
+{
+    if(jobRunning()) {
+        engine->handlePlayCompleteMessage(evt);
     }
 }

@@ -88,3 +88,21 @@ void RemoteDeviceMessageDispatcher::clearMessages()
 {
 }
 
+bool RemoteDeviceMessageDispatcher::ping() const
+{
+	bool success = false;
+
+	try {
+		success = tMessageDispatcher->ping();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return success;
+}
+

@@ -93,4 +93,9 @@ public class JDevice {
     return (cPtr == 0) ? null : new JChannelManager(cPtr, true);
   }
 
+  public JAttributeManager getAttributeManager() {
+    long cPtr = stiJNI.JDevice_getAttributeManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new JAttributeManager(cPtr, true);
+  }
+
 }

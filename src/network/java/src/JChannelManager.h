@@ -32,7 +32,7 @@ public:
 
 private:
 
-    std::shared_ptr<STI::Device::ChannelManager>& localManager;
+    std::shared_ptr<STI::Device::ChannelManager> localManager;
 
 };
 
@@ -40,3 +40,4 @@ private:
 } //STI
 
 #endif
+

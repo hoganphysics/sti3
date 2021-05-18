@@ -13,6 +13,8 @@ namespace STI
 namespace Device
 {
 
+class ChannelRefreshListener;
+
 
 class LocalChannel	: public Channel //: public EventEmitter<ChannelEvent>
 {
@@ -41,6 +43,7 @@ public:
 	void saveLastValue(const STI::Utils::MixedValue& value);
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
 
+	void addRefreshListener(ChannelRefreshListener* listener);
 
 	// void saveLastInValue(const STI::Utils::MixedValue& value);
 	// const STI::Utils::MixedValue getLastInValue() const;
@@ -54,6 +57,9 @@ public:
 
 private:
 
+    void _fireRefreshChannelEvent();
+	void _fireRefreshChannelNameEvent();
+
 	short channelNumber;
 	std::string channelName;
 
@@ -63,7 +69,8 @@ private:
 	
 	STI::Utils::MixedValue lastValue;
 //	STI::Utils::MixedValue lastInValue;
-	
+
+	std::vector<ChannelRefreshListener*> listeners;	
 
 	STI::Utils::MixedValue metaData;	//usage tip, units, etc
 

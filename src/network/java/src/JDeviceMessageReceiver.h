@@ -43,7 +43,11 @@ public:
     void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		                 const std::shared_ptr<DeviceMessageListener<RefreshDeviceMessage>>& listener);
     void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
-		                 const std::shared_ptr<DeviceMessageListener<ChannelUpdateDeviceMessage>>& listener);
+		                 const std::shared_ptr<DeviceMessageListener<ChannelUpdateMessage>>& listener);
+    void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<DeviceMessageListener<AttributeUpdateMessage>>& listener);
+    void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<DeviceMessageListener<EngineSchedulerMessage>>& listener);
     //...
 
     void removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID);

@@ -8,6 +8,7 @@
 #include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
 #include "EventEngineScheduler.h"
+#include "DeviceMessageListenerForwarder.h"
 
 #include <memory>
 
@@ -25,7 +26,15 @@ public:
 	NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device)
 		: localDevice(device), deviceServant(device) 
 	{
-		auto networkEngineFactory = std::make_shared<STI::Engine::NetworkEventEngineFactory>();
+
+		std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
+		getMessageDispatcher(dispatcher);
+		std::shared_ptr<STI::Device::ChannelManager> channels;
+		getChannelManager(channels);
+		std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
+		getCollection(deviceCollection);
+
+		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(getID(), channels, dispatcher, deviceCollection);
 		//localDevice->setEngineFactory(networkEngineFactory);
 
 		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
@@ -35,29 +44,57 @@ public:
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
 	{
-		localDevice->getCollection(collection);
+		if (localDevice != 0) {
+			localDevice->getCollection(collection);			
+		}
 	}
 
 	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
 	{
-		localDevice->getMessageDispatcher(dispatcher);
+		if (localDevice != 0) {
+			localDevice->getMessageDispatcher(dispatcher);
+		}
 	}
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
 	{
-		return localDevice->getEngineScheduler(scheduler);
+		return localDevice != 0 && localDevice->getEngineScheduler(scheduler);
 	}
 
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager)
 	{
-		localDevice->getChannelManager(manager);
+		if (localDevice != 0) {
+			localDevice->getChannelManager(manager);
+		}
 	}
 
-	const STI::Device::DeviceID getID() const { return localDevice->getID(); }
+	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
+	{
+		if (localDevice != 0) {
+			localDevice->getAttributeManager(manager);
+		}
+	}
 
-	bool refresh() { return localDevice->refresh(); }
+	const STI::Device::DeviceID getID() const 
+	{
+		if (localDevice != 0) {
+			return localDevice->getID();
+		}
+
+		STI::Device::DeviceID missing;
+		return missing;
+	}
+
+	bool refresh() { return localDevice != 0 && localDevice->refresh(); }
 
 private:
+
+	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)
+	{
+		if (localDevice != 0) {
+			localDevice->attachMessageListenerForwarder(forwarder);
+		}
+	}
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
 	{

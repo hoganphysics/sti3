@@ -6,38 +6,41 @@
 #include "ChannelManager.h"
 #include "DeviceCollection.h"
 #include "EventEngineSchedulerPy.h"
-
+#include "AttributeManagerPy.h"
 
 #include <iostream>
 
-using STI::Python::DevicePy2;
+using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
 
 using STI::Python::DeviceCollectionPy;
 using STI::Python::EventEngineSchedulerPy;
+using STI::Python::AttributeManagerPy;
+using STI::Device::AttributeManager;
 
-DevicePy2::DevicePy2(const std::shared_ptr<STI::Device::Device>& device)
+
+DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
 : device_(device)
 {
 }
 
-DevicePy2::~DevicePy2()
+DevicePy::~DevicePy()
 {
 }
 
-void DevicePy2::setDevice(const std::shared_ptr<STI::Device::Device>& device)
+void DevicePy::setDevice(const std::shared_ptr<STI::Device::Device>& device)
 {
     device_ = device;
 }
 
-std::shared_ptr<STI::Device::Device> DevicePy2::getDevice()
+std::shared_ptr<STI::Device::Device> DevicePy::getDevice()
 {
 //    std::cout << "getDevice() device_ == " << (device_==0 ? "0" : "1") << std::endl;
     return device_;
 }
 
-const STI::Device::DeviceID DevicePy2::getID() const
+const STI::Device::DeviceID DevicePy::getID() const
 {
     if (device_ != 0) {
         return device_->getID();
@@ -47,7 +50,7 @@ const STI::Device::DeviceID DevicePy2::getID() const
     return dummy;
 }
 
-std::shared_ptr<STI::Python::DeviceCollectionPy> DevicePy2::getDeviceCollection()
+std::shared_ptr<STI::Python::DeviceCollectionPy> DevicePy::getDeviceCollection()
 {
     std::shared_ptr<STI::Device::DeviceCollection> collection;
     std::shared_ptr<STI::Python::DeviceCollectionPy> wrapper;
@@ -63,7 +66,7 @@ std::shared_ptr<STI::Python::DeviceCollectionPy> DevicePy2::getDeviceCollection(
     return wrapper;
 }
 
-std::shared_ptr<EventEngineSchedulerPy> DevicePy2::getEngineScheduler()
+std::shared_ptr<EventEngineSchedulerPy> DevicePy::getEngineScheduler()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     std::shared_ptr<STI::Python::EventEngineSchedulerPy> wrapper;
@@ -79,7 +82,7 @@ std::shared_ptr<EventEngineSchedulerPy> DevicePy2::getEngineScheduler()
     return wrapper;
 }
 
-std::shared_ptr<STI::Device::DeviceMessageDispatcher> DevicePy2::getMessageDispatcher()
+std::shared_ptr<STI::Device::DeviceMessageDispatcher> DevicePy::getMessageDispatcher()
 {
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
     
@@ -90,7 +93,7 @@ std::shared_ptr<STI::Device::DeviceMessageDispatcher> DevicePy2::getMessageDispa
     return dispatcher;
 }
 
-std::shared_ptr<ChannelManagerPy> DevicePy2::getChannelManager()
+std::shared_ptr<ChannelManagerPy> DevicePy::getChannelManager()
 {
     std::shared_ptr<ChannelManager> manager;
     std::shared_ptr<ChannelManagerPy> wrapper;
@@ -105,6 +108,23 @@ std::shared_ptr<ChannelManagerPy> DevicePy2::getChannelManager()
 //        std::cout << "manager != 0" << std::endl;
         wrapper = std::make_shared<ChannelManagerPy>(manager);
 //        std::cout << "manager != 0 and wrapper == " << (wrapper==0 ? "0" : "1") << std::endl;
+    }
+
+    return wrapper;
+}
+
+
+std::shared_ptr<AttributeManagerPy> DevicePy::getAttributeManager()
+{
+    std::shared_ptr<AttributeManager> manager;
+    std::shared_ptr<AttributeManagerPy> wrapper;
+
+    if (device_ != 0) {
+        device_->getAttributeManager(manager);
+    }
+
+    if (manager != 0) {
+        wrapper = std::make_shared<AttributeManagerPy>(manager);
     }
 
     return wrapper;

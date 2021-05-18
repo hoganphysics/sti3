@@ -1,13 +1,14 @@
 #ifndef STI_ENGINE_EVENTSTATE_H
 #define STI_ENGINE_EVENTSTATE_H
 
+#include <string>
 
 namespace STI
 {
 namespace Engine
 {
 
-enum EngineState
+enum class EngineState
 {
 //	Empty, Clearing, Transferring, Parsed, Loading, Loaded,
 //	PreparingToPlay, ReadyToPlay, WaitingForTrigger, Playing, Unknown, Missing, Error, STATES_LENGTH
@@ -19,6 +20,7 @@ enum EngineState
 
 };
 
+std::string print(const EngineState& state);
 
 } //Engine
 } //STI

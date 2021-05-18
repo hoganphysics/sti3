@@ -16,7 +16,7 @@
             "name": "g++ - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/testEventEngine",
+            "program": "${workspaceFolder}/testEventEngine",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

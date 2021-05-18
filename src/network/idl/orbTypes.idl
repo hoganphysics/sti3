@@ -45,7 +45,7 @@ module TNetwork
 		TDeviceIDSeq ids;
 	};
 
-	enum TEngineJobStatus { New, Running, Completed, Cancelled };
+	enum TEngineJobStatus { New, Running, Completed, Canceled };
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
@@ -77,6 +77,20 @@ module TNetwork
 		string  value_s;
 	};
 
+
+	typedef sequence<string> TStringSeq;
+
+	struct TAttribute
+	{
+		string key;
+		string value;
+		string group;
+		TStringSeq allowedValues;
+		TMixedValue metaData;
+	};
+	typedef sequence<TAttribute> TAttributeSeq;
+
+
 	struct TRawEvent
 	{
 		double time;
@@ -91,6 +105,13 @@ module TNetwork
 		TGraphPathLabel eventGraphPath;
 	};
 	typedef sequence<TRawEvent> TRawEventSeq;
+
+	struct TDeviceEvents
+	{
+		TDeviceID targetDeviceID;
+		TRawEventSeq events;
+	};
+	typedef sequence<TDeviceEvents> TDeviceEventsSeq;
 
 	struct TEngineID
 	{
@@ -140,6 +161,8 @@ module TNetwork
 	};
 
 
+	//DeviceMessage *************************//
+
 	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
 							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
 							MessageEngineStatus, MessageEngineParser, MessageUnknown };
@@ -163,7 +186,22 @@ module TNetwork
 	};
 
 
-	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerYieldPlay };
+	enum TParsingMessageType { ParsingError, ParsingWarning, ParsingInformation };
+
+	struct TEngineParsingMessage
+	{
+		TParsingMessageType type;
+
+		TDeviceID sourceID;
+		short id_code;
+		string name;
+		string message;
+		TRawEventSeq events;
+	};
+	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
+
+
+	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerPlayComplete, SchedulerYieldPlay };
 	
 	interface TEventEngine;
 
@@ -179,7 +217,56 @@ module TNetwork
 
 		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
 		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+		TEngineParsingMessageSeq messages;
+
+		TEngineState engineState;
 	};
+
+	struct TAttributeUpdateTuple
+	{
+		string key;
+		string value;
+	};
+	typedef sequence<TAttributeUpdateTuple> TAttributeUpdateTupleSeq;
+
+	struct TAttributeUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TAttributeUpdateTupleSeq attributes;		//{key, value} pairs
+	};
+
+	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };
+
+	struct TChannelUpdateTuple
+	{
+		short channelNumber;
+		TMixedValue value;
+	};
+	typedef sequence<TChannelUpdateTuple> TChannelUpdateTupleSeq;
+
+	struct TChannelUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TChannelUpdateMessageType channelUpdateType;
+
+		TChannelUpdateTupleSeq channelValues;	//{channel, value} pairs
+
+		//only used for ChannelName messages
+		short channelNumber;
+		string channelName;
+	};
+
+	struct TEngineParserDeviceMessage
+	{
+		TDeviceMessage base;	//base class data
+		TParseID pid;
+		TEngineParsingMessageSeq messages;
+	};
+
+	//**********************************//
 
 
 	enum TChannelType { TChannelOutput, TChannelInput };
@@ -213,10 +300,7 @@ module TNetwork
 	// 	TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 	// };
 
-	// struct TEngineSchedulerPlayMessage
-	// {
-	// 	TDeviceEvent base;	//base class data
-
+	// struct TEngineSchedulerTRawEventSeq
 	// 	TEngineJobID jobID;
 	// 	TSchedulerMessageType type;
 

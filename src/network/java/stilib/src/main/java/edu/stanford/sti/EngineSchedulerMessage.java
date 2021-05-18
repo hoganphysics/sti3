@@ -120,11 +120,29 @@ public class EngineSchedulerMessage extends DeviceMessage {
     return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
   }
 
+  public void setMessages(EngineParserMessageVector value) {
+    stiJNI.EngineSchedulerMessage_messages_set(swigCPtr, this, EngineParserMessageVector.getCPtr(value), value);
+  }
+
+  public EngineParserMessageVector getMessages() {
+    long cPtr = stiJNI.EngineSchedulerMessage_messages_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new EngineParserMessageVector(cPtr, false);
+  }
+
+  public void setEngineState(EngineState value) {
+    stiJNI.EngineSchedulerMessage_engineState_set(swigCPtr, this, value.swigValue());
+  }
+
+  public EngineState getEngineState() {
+    return EngineState.swigToEnum(stiJNI.EngineSchedulerMessage_engineState_get(swigCPtr, this));
+  }
+
   public final static class SchedulerMessageType {
     public final static EngineSchedulerMessage.SchedulerMessageType ParseComplete = new EngineSchedulerMessage.SchedulerMessageType("ParseComplete");
     public final static EngineSchedulerMessage.SchedulerMessageType YieldParse = new EngineSchedulerMessage.SchedulerMessageType("YieldParse");
     public final static EngineSchedulerMessage.SchedulerMessageType PartialParse = new EngineSchedulerMessage.SchedulerMessageType("PartialParse");
     public final static EngineSchedulerMessage.SchedulerMessageType PlayReady = new EngineSchedulerMessage.SchedulerMessageType("PlayReady");
+    public final static EngineSchedulerMessage.SchedulerMessageType PlayComplete = new EngineSchedulerMessage.SchedulerMessageType("PlayComplete");
     public final static EngineSchedulerMessage.SchedulerMessageType YieldPlay = new EngineSchedulerMessage.SchedulerMessageType("YieldPlay");
 
     public final int swigValue() {
@@ -161,7 +179,7 @@ public class EngineSchedulerMessage extends DeviceMessage {
       swigNext = this.swigValue+1;
     }
 
-    private static SchedulerMessageType[] swigValues = { ParseComplete, YieldParse, PartialParse, PlayReady, YieldPlay };
+    private static SchedulerMessageType[] swigValues = { ParseComplete, YieldParse, PartialParse, PlayReady, PlayComplete, YieldPlay };
     private static int swigNext = 0;
     private final int swigValue;
     private final String swigName;

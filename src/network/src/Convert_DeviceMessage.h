@@ -71,6 +71,41 @@ Device::EngineSchedulerMessage::SchedulerMessageType Network::convert<TNetwork::
 
 
 
+//EngineParserDeviceMessage
+template<>
+bool Network::convert<TNetwork::TEngineParserDeviceMessage, std::shared_ptr<Device::EngineParserDeviceMessage>>(
+	const TNetwork::TEngineParserDeviceMessage& tMessage, std::shared_ptr<Device::EngineParserDeviceMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::EngineParserDeviceMessage>, TNetwork::TEngineParserDeviceMessage>(
+	const std::shared_ptr<Device::EngineParserDeviceMessage>& deviceMessage, TNetwork::TEngineParserDeviceMessage& tMessage);
+
+
+
+//ChannelUpdateMessage
+template<>
+bool Network::convert<TNetwork::TChannelUpdateMessage, std::shared_ptr<Device::ChannelUpdateMessage>>(
+	const TNetwork::TChannelUpdateMessage& tMessage, std::shared_ptr<Device::ChannelUpdateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::ChannelUpdateMessage>, TNetwork::TChannelUpdateMessage>(
+	const std::shared_ptr<Device::ChannelUpdateMessage>& deviceMessage, TNetwork::TChannelUpdateMessage& tMessage);
+
+//ChannelUpdateMessageType
+template<>
+TNetwork::TChannelUpdateMessageType Network::convert<Device::ChannelUpdateMessage::ChannelUpdateMessageType, TNetwork::TChannelUpdateMessageType>(const Device::ChannelUpdateMessage::ChannelUpdateMessageType& type);
+template<>
+Device::ChannelUpdateMessage::ChannelUpdateMessageType Network::convert<TNetwork::TChannelUpdateMessageType, Device::ChannelUpdateMessage::ChannelUpdateMessageType>(const TNetwork::TChannelUpdateMessageType& tType);
+
+
+
+//AttributeUpdateMessage
+template<>
+bool Network::convert<TNetwork::TAttributeUpdateMessage, std::shared_ptr<Device::AttributeUpdateMessage>>(
+	const TNetwork::TAttributeUpdateMessage& tMessage, std::shared_ptr<Device::AttributeUpdateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::AttributeUpdateMessage>, TNetwork::TAttributeUpdateMessage>(
+	const std::shared_ptr<Device::AttributeUpdateMessage>& deviceMessage, TNetwork::TAttributeUpdateMessage& tMessage);
+
+
 
 } //STI
 

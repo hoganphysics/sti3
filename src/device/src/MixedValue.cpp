@@ -45,7 +45,6 @@ MixedValue::~MixedValue()
 }
 
 
-
 bool MixedValue::operator==(const MixedValue& other) const
 {
 	if(type != other.getType())
@@ -182,6 +181,11 @@ void MixedValue::clear()
 MixedValueType MixedValue::getType() const
 {
 	return type;
+}
+
+bool MixedValue::isType(const MixedValueType& mixedValueType) const
+{
+	return type == mixedValueType;
 }
 
 bool MixedValue::getBoolean() const

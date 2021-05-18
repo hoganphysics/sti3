@@ -4,36 +4,46 @@
 #include "fwd/RawEvent_fwd.h"
 #include "fwd/Measurement_fwd.h"
 #include "fwd/SynchronousEvent_fwd.h"
-#include "fwd/DeviceID_fwd.h"
-
+#include "DeviceID.h"
+#include "fwd/ChannelManager_fwd.h"
 #include "DeviceEventParser.h"
 #include "utils/GraphPathLabel.h"
-#include "EngineParsingError.h"
+#include "EngineID.h"
 
 #include <string>
 #include <sstream>
 #include <set>
+
 
 namespace STI
 {
 namespace Engine
 {
 
-class EngineParsingError;
 class LocalEventEngine;
+class EngineParsingMessage;
+
 
 class EventEngineParser
 {
 public:
 
-	EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser);
+
+	EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
+					  const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
+					  DeviceEventParser* deviceParser);
 	~EventEngineParser();
 
 	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
 	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);
+	void clear();
 
 	RawEventMap rawEvents;
 	DeviceEventMap partnerEvents;
+
+	EngineParsingMessage& addParsingError(const std::string& name);
+
+	const std::vector<EngineParsingMessage>& getParsingMessages() const;
 
 private:
 
@@ -53,16 +63,22 @@ private:
 	};
 
 	std::map<STI::Utils::GraphPathLabel, MeasurementCounter> measurementEventGraph;
-//	std::map<STI::Utils::GraphPathLabel, const RawEvent*> measurementEventGraph;
 
 	bool countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);
 	bool maxErrorCheck(unsigned errorCount, unsigned maxErrors);
 
-	std::vector<EngineParsingError> errors;
+	void defineErrorIDs();
 
-	LocalEventEngine* engine;
+	std::vector<EngineParsingMessage> messages;
+	bool hasErrors;
+
 	DeviceEventParser* deviceParser;
 
+	EngineID engineID;
+	STI::Device::DeviceID localDeviceID;
+	std::shared_ptr<STI::Device::ChannelManager> channelManager;
+
+	std::map<std::string, unsigned> errorIDs;
 };
 
 

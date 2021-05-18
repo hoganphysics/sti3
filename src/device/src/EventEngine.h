@@ -3,6 +3,7 @@
 
 #include "EngineState.h"
 #include "DeviceID.h"
+#include "fwd/RawEvent_fwd.h"
 
 #include <memory>
 
@@ -14,6 +15,7 @@ namespace Engine
 class TriggerCallback;
 class EventEngineJob;
 class EngineJobID;
+class ParseID;
 
 
 class EventEngine
@@ -35,6 +37,9 @@ public:
     virtual STI::Device::DeviceID getDeviceID() const = 0;
 
 	virtual STI::Engine::EngineState getState() const = 0;
+
+	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
+	// virtual const DeviceEventMap& getParsedEvents() = 0;
 };
 
 } //Engine

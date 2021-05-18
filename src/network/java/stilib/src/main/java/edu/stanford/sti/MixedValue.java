@@ -105,6 +105,10 @@ public class MixedValue {
     return MixedValueType.swigToEnum(stiJNI.MixedValue_getType(swigCPtr, this));
   }
 
+  public boolean isType(MixedValueType mixedValueType) {
+    return stiJNI.MixedValue_isType(swigCPtr, this, mixedValueType.swigValue());
+  }
+
   public boolean getBoolean() {
     return stiJNI.MixedValue_getBoolean(swigCPtr, this);
   }

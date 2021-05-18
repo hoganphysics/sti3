@@ -7,10 +7,12 @@
 
 #include <memory>
 
+
 namespace STI
 {
 namespace Device
 {
+
 
 class AbstractMessageListenerGroup
 {
@@ -22,6 +24,7 @@ public:
 	virtual void handleMessage(const std::shared_ptr<DeviceMessage>& mess) = 0;
 
 };
+
 
 template<class Message>
 class DeviceMessageListenerGroup : public AbstractMessageListenerGroup

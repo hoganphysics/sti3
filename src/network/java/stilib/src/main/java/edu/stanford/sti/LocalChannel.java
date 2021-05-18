@@ -112,4 +112,8 @@ public class LocalChannel extends Channel {
     return new LocalChannel(stiJNI.LocalChannel_addMetaData(swigCPtr, this, key, MixedValue.getCPtr(value), value), true);
   }
 
+  public void addRefreshListener(ChannelRefreshListener listener) {
+    stiJNI.LocalChannel_addRefreshListener(swigCPtr, this, ChannelRefreshListener.getCPtr(listener), listener);
+  }
+
 }

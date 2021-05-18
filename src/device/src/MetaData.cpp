@@ -4,10 +4,29 @@
 
 using STI::Utils::MetaData;
 using STI::Utils::MixedValue;
-
+using STI::Utils::MixedValueType;
 
 MetaData::MetaData()
 {
+}
+
+MetaData::MetaData(const STI::Utils::MixedValue& data)
+{
+	if (!data.isType(MixedValueType::Vector)) {
+		return;
+	}
+
+	const STI::Utils::MixedValueVector& values = data.getVector();
+
+	for (auto& tuple : values) {
+		if (isTuple(tuple)) {
+			
+			addMetaData( 
+				tuple.getVector().at(0).getString(), 	//key
+				tuple.getVector().at(1)				 	//value
+				);
+		}
+	}
 }
 
 MetaData::~MetaData()
@@ -21,19 +40,18 @@ bool MetaData::contains(const std::string& key) const
 	const STI::Utils::MixedValueVector& values = metaData.getVector();
 
 	for (auto& tuple : values) {
-		const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
-
-		if (labeledData.size() > 0 && labeledData.at(0).getString().compare(key) == 0) {
+		if (tupleMatch(tuple, key)) {
 			found = true;
 			break;
 		}
 	}
+
     return found;
 }
 
 void MetaData::addMetaData(const std::string& key, const STI::Utils::MixedValue& value)
 {
-    if (resetMetaDataEntry(key, value)) {   //if key already exists, overwrite
+    if (contains(key) && resetMetaDataEntry(key, value)) {   //if key already exists, overwrite
         return;
     }
     //else add new key/value pair
@@ -49,16 +67,30 @@ bool MetaData::resetMetaDataEntry(const std::string& key, const STI::Utils::Mixe
 {
     bool success = false;
 
+	STI::Utils::MixedValue newMetaData;
 	const STI::Utils::MixedValueVector& values = metaData.getVector();
 
 	for (auto& tuple : values) {
-		const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
+		STI::Utils::MixedValue labeledData;
+		labeledData.clear();
+	
+		if (tupleMatch(tuple, key)) {
+			labeledData.addValue( key ); 		//key
+			labeledData.addValue( newValue );	//value
 
-		if (labeledData.size() == 2 && labeledData.at(0).getString().compare(key) == 0) {
-			//labeledData.at(1).setValue(newValue);
-            //success = true;
-			break;
+			newMetaData.addValue(labeledData);
+			success = true;
 		}
+		else if (isTuple(tuple)) {
+			labeledData.addValue( tuple.getVector().at(0) ); //key
+			labeledData.addValue( tuple.getVector().at(1) ); //value
+
+			newMetaData.addValue(labeledData);
+		}
+	}
+
+	if (success) {
+		metaData = newMetaData;
 	}
 
     return success;
@@ -76,13 +108,29 @@ STI::Utils::MixedValue MetaData::getMetaData(const std::string& key) const
 	const STI::Utils::MixedValueVector& values = metaData.getVector();
 
 	for (auto& tuple : values) {
-		const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
-		if (labeledData.size() == 2 && labeledData.at(0).getString().compare(key) == 0) {
-			data = labeledData.at(1);
+		if (tupleMatch(tuple, key)) {
+			data = tuple.getVector().at(1);
 			break;
 		}
 	}
 
 	return data;
+}
+
+
+bool MetaData::isTuple(const STI::Utils::MixedValue& tuple)
+{
+	if (tuple.isType(MixedValueType::Vector)) {
+		const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
+
+		return (labeledData.size() == 2 && labeledData.at(0).isType(MixedValueType::String));
+	}
+	return false;
+}
+
+
+bool MetaData::tupleMatch(const STI::Utils::MixedValue& tuple, const std::string& key)
+{
+	return (isTuple(tuple) && tuple.getVector().at(0).getString().compare(key) == 0);
 }
 

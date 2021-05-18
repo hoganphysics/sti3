@@ -9,7 +9,7 @@ namespace py = pybind11;
 using std::cout;
 using std::endl;
 
-void init_DeviceID(py::module &);
+void init_DeviceID(pybind11::module &);
 void init_DeviceMessage(py::module& m);
 void init_DeviceMessageDispatcher(py::module& m);
 void init_Channel(py::module& m);
@@ -17,9 +17,9 @@ void init_MixedValue(py::module& m);
 void init_ChannelManager(py::module& m);
 void init_LocalDevice(py::module& m);
 void init_DeviceCollection(py::module& m);
-
+void init_Attribute(py::module& m);
 void init_RawEvent(py::module& m);
-
+void init_AttributeManager(py::module& m);
 
 int add(int i, int j) {
     return i + j;
@@ -86,7 +86,8 @@ std::string call_go(Animal *animal) {
 //     m.def("add", &add, "A function which adds two numbers");
 // }
 
-PYBIND11_MODULE(example, m) {
+
+PYBIND11_MODULE(stidevicepy, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
     m.def("add", &add, "A function which adds two numbers");
 
@@ -100,6 +101,8 @@ PYBIND11_MODULE(example, m) {
 
     m.def("call_go", &call_go);
 
+    // py::module_::import("stidevicepybase");
+
     init_DeviceID(m);
     init_DeviceMessage(m);
     init_DeviceMessageDispatcher(m);
@@ -109,7 +112,8 @@ PYBIND11_MODULE(example, m) {
     init_DeviceCollection(m);
     init_LocalDevice(m);
     init_RawEvent(m);
-
+    init_Attribute(m);
+    init_AttributeManager(m);
 }
 
 int main(int argc, char *argv[])

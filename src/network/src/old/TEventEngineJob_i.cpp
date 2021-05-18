@@ -134,7 +134,7 @@ void TEventEngineJob_i::setEventEngine(::STI::TNetwork::TEventEngine_ptr eventEn
 	return false;
 }
 
-::CORBA::Boolean TEventEngineJob_i::getParsedShot(::STI::TNetwork::TParsedShot_out shot)
+::CORBA::Boolean TEventEngineJob_i::getParsedShot(::STI::TNetwork::TShot_out shot)
 {
 }
 

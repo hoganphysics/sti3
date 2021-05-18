@@ -5,6 +5,7 @@
 #include "TimeStamp.h"
 
 #include <string>
+#include <mutex>
 
 namespace STI
 {
@@ -38,6 +39,13 @@ public:
 
 	bool operator==(const ShotID& rhs) const { return parseID == rhs.parseID && submissionTime == rhs.submissionTime; }
 	bool operator!=(const ShotID& rhs) const { return !((*this) == rhs); }
+
+	static ShotID generateUniqueID(const ParseID& pid);
+
+private:
+
+	static TimeStamp lastPlayTime;
+	static std::mutex IDmutex;
 
 };
 

@@ -14,6 +14,9 @@ namespace Device
 class AttributeRefreshListener
 {
 public:
+
+    virtual ~AttributeRefreshListener() {}
+
     virtual void handleAttributeRefreshEvent(const std::string& key, const std::string& value) = 0;
 };
 
