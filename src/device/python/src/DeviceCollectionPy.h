@@ -16,7 +16,7 @@ namespace STI
 namespace Python
 {
 
-class DevicePy2;
+class DevicePy;
 
 class DeviceCollectionPy
 {
@@ -25,13 +25,13 @@ public:
     DeviceCollectionPy(const std::shared_ptr<STI::Device::DeviceCollection>& collection);
     virtual ~DeviceCollectionPy();
 
-	bool add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Python::DevicePy2>& node);
+	bool add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Python::DevicePy>& node);
 	bool remove(const STI::Device::DeviceID& id);
 
 	bool contains(const STI::Device::DeviceID& id) const;
 	unsigned size() const;
 
-	std::shared_ptr<STI::Python::DevicePy2> get(const STI::Device::DeviceID& id) const;
+	std::shared_ptr<STI::Python::DevicePy> get(const STI::Device::DeviceID& id) const;
 	std::vector<STI::Device::DeviceID> getIDs() const;
 
 	void clear();

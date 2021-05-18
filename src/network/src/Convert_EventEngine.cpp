@@ -13,12 +13,14 @@
 #include "RawEvent.h"
 #include "ParseID.h"
 #include "ShotID.h"
-#include "ParsedShot.h"
-#include "NetworkParsedShotWrapper.h"
-#include "RemoteParsedShot.h"
+#include "Shot.h"
+#include "NetworkShotWrapper.h"
+#include "RemoteShot.h"
 #include "utils/GraphPathLabel.h"
 #include "EventEngine.h"
 #include "TimeStamp.h"
+#include "EngineParsingMessage.h"
+
 
 #include <map>
 #include <memory>
@@ -45,7 +47,7 @@ using STI::Engine::ParseID;
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
-using STI::Network::NetworkParsedShotWrapper;
+using STI::Network::NetworkShotWrapper;
 using STI::Engine::EventEngine;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::RawEventType;
@@ -54,8 +56,14 @@ using STI::Engine::TimeStamp;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;
-using STI::TNetwork::TParsedShot_ptr;
-using STI::Engine::ParsedShot;
+using STI::TNetwork::TShot_ptr;
+using STI::Engine::Shot;
+using STI::Engine::EngineParsingMessage;
+using STI::TNetwork::TEngineParsingMessage;
+using STI::Engine::ParsingMessageType;
+using STI::TNetwork::TParsingMessageType;
+using STI::Engine::DeviceEventMap;
+using STI::TNetwork::TDeviceEventsSeq;
 
 //EventEngineDependencyTree
 template<>
@@ -367,8 +375,8 @@ bool STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(co
     case EventEngineJob::EngineJobStatus::Completed:
         tJobStatus = TEngineJobStatus::Completed;
         break;
-    case EventEngineJob::EngineJobStatus::Cancelled:
-        tJobStatus = TEngineJobStatus::Cancelled;
+    case EventEngineJob::EngineJobStatus::Canceled:
+        tJobStatus = TEngineJobStatus::Canceled;
         break;
     default:
         tJobStatus = TEngineJobStatus::New;
@@ -392,8 +400,8 @@ bool STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(co
     case TEngineJobStatus::Completed:
         jobStatus = EventEngineJob::EngineJobStatus::Completed;
         break;
-    case TEngineJobStatus::Cancelled:
-        jobStatus = EventEngineJob::EngineJobStatus::Cancelled;
+    case TEngineJobStatus::Canceled:
+        jobStatus = EventEngineJob::EngineJobStatus::Canceled;
         break;
     default:
         jobStatus = EventEngineJob::EngineJobStatus::New;
@@ -446,10 +454,10 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null
 
-    std::shared_ptr<ParsedShot> parsedShot;
-    STI::TNetwork::TParsedShot_ptr tShot;
+    std::shared_ptr<Shot> shot;
+    STI::TNetwork::TShot_ptr tShot;
     
-    if (engineJob.getParsedShot(parsedShot) && NetworkParsedShotWrapper::getTParsedShotReference(parsedShot, tShot)) {
+    if (engineJob.getShot(shot) && NetworkShotWrapper::getTShotReference(shot, tShot)) {
 
         tEngineJob.shot = tShot;
     }
@@ -476,24 +484,29 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
 
     EngineJobID jobID = convert<TEngineJobID, EngineJobID>(tEngineJob.jobID);
 
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
     std::shared_ptr<EventEngineDependencyTree> tree;
     std::set<STI::Device::DeviceID> missingTargets;     //empty
 
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
-        
+        {
         if (!CORBA::is_nil(tEngineJob.shot)) {
-            parsedShot = std::make_shared<STI::Network::RemoteParsedShot>(tEngineJob.shot);
+            parsedShot = std::make_shared<STI::Network::RemoteShot>(tEngineJob.shot);
         }
 
         tree = std::make_shared<EventEngineDependencyTree>();
         convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
-		engineJob = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot, tree,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner),
-			missingTargets);
+		auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
+			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
+			);
+        
+        job->setDependencies(tree);
+        job->setMissingTargets(missingTargets);
+        engineJob = job;
+        }
         break;
 	case EventEngineJobType::Play:
 		engineJob = std::make_shared<LocalEventEngineJob>(jobID,
@@ -587,6 +600,42 @@ RawEvent STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent)
 
     return evt;
 }
+
+
+//STI::Engine::DeviceEventMap
+template<>
+bool STI::Network::convert<DeviceEventMap, TDeviceEventsSeq>(const DeviceEventMap& deviceEvents, TDeviceEventsSeq& tDeviceEvents)
+{
+    tDeviceEvents.length(deviceEvents.size());
+
+    unsigned i = 0;
+
+    for (auto& targetEvents : deviceEvents) {
+        tDeviceEvents[i].targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(targetEvents.first);
+        
+        convert<RawEvent, TRawEvent>(targetEvents.second, tDeviceEvents[i].events);
+
+        i++;
+    }
+    return true;
+}
+
+
+template<>
+bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEventsSeq& tDeviceEvents, DeviceEventMap& deviceEvents)
+{
+    deviceEvents.clear();
+
+    for (unsigned i = 0; i < tDeviceEvents.length(); ++i) {
+        //get RawEventVector for this DeviceID
+        auto& evts = deviceEvents[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceEvents[i].targetDeviceID)];
+        
+        //populate vector with converted events
+        convert<TRawEvent, RawEvent>(tDeviceEvents[i].events, evts);
+    }
+    return true;
+}
+
 
 
 //ParseID
@@ -699,14 +748,14 @@ EngineJobSourceID STI::Network::convert<TEngineJobSourceID, EngineJobSourceID>(c
 
 
 template<>
-bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<ParsedShot>>(const TParsedShot_ptr& tShot, std::shared_ptr<ParsedShot>& shot)
+bool STI::Network::convert<TShot_ptr, std::shared_ptr<Shot>>(const TShot_ptr& tShot, std::shared_ptr<Shot>& shot)
 {
     bool success = false;
 
-    std::shared_ptr<ParsedShot> parsedShot;
+    std::shared_ptr<Shot> parsedShot;
 
     if (!CORBA::is_nil(tShot)) {
-        shot = std::make_shared<STI::Network::RemoteParsedShot>(tShot);
+        shot = std::make_shared<STI::Network::RemoteShot>(tShot);
         success = (shot != 0);
     }
 
@@ -715,12 +764,12 @@ bool STI::Network::convert<TParsedShot_ptr, std::shared_ptr<ParsedShot>>(const T
 
 
 template<>
-bool STI::Network::convert<std::shared_ptr<ParsedShot>, TParsedShot_ptr>(const std::shared_ptr<ParsedShot>& shot, TParsedShot_ptr& tShot)
+bool STI::Network::convert<std::shared_ptr<Shot>, TShot_ptr>(const std::shared_ptr<Shot>& shot, TShot_ptr& tShot)
 {
-    //std::shared_ptr<ParsedShot> parsedShot;
-//    STI::TNetwork::TParsedShot_ptr tShot;
+    //std::shared_ptr<Shot> parsedShot;
+//    STI::TNetwork::TShot_ptr tShot;
     
-    if (shot != 0 && NetworkParsedShotWrapper::getTParsedShotReference(shot, tShot)) {
+    if (shot != 0 && NetworkShotWrapper::getTShotReference(shot, tShot)) {
         return !CORBA::is_nil(tShot);
     }
     return false;
@@ -787,5 +836,96 @@ RawEventType STI::Network::convert<TRawEventType, RawEventType>(const TRawEventT
     }
 
     return evtType;
+}
+
+
+//EngineParsingMessage
+template<>
+bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const EngineParsingMessage& parsingMessage, TEngineParsingMessage& tParsingMessage)
+{
+    tParsingMessage.type = convert<ParsingMessageType, TParsingMessageType>(parsingMessage.getType());
+    tParsingMessage.id_code = static_cast<::CORBA::Short>(parsingMessage.getIDCode());
+    tParsingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(parsingMessage.getID());
+    convert<std::string, ::CORBA::String_member>(parsingMessage.getName(), tParsingMessage.name);
+    convert<std::string, ::CORBA::String_member>(parsingMessage.getMessage(), tParsingMessage.message);
+    convert<RawEvent, TRawEvent>(parsingMessage.getEvents(), tParsingMessage.events);
+    return true;
+}
+
+
+
+template<>
+bool STI::Network::convert<TEngineParsingMessage, EngineParsingMessage>(const TEngineParsingMessage& tParsingMessage, EngineParsingMessage& parsingMessage)
+{
+    parsingMessage = convert<TEngineParsingMessage, EngineParsingMessage>(tParsingMessage);
+
+    return true;
+}
+
+template<>
+EngineParsingMessage STI::Network::convert<TEngineParsingMessage, EngineParsingMessage>(const TEngineParsingMessage& tParsingMessage)
+{
+    EngineParsingMessage parsingMessage(
+            convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tParsingMessage.sourceID),
+            convert<TParsingMessageType, ParsingMessageType>(tParsingMessage.type),
+            static_cast<unsigned>(tParsingMessage.id_code),
+            convert<::CORBA::String_member, std::string>(tParsingMessage.name)
+            );
+
+    parsingMessage.appendMessage( convert<::CORBA::String_member, std::string>(tParsingMessage.message) );
+
+    convert<TRawEvent, RawEvent>(tParsingMessage.events, parsingMessage.getEventVector());
+
+    return parsingMessage;
+}
+
+
+//ParsingMessageType
+template<>
+TParsingMessageType STI::Network::convert<ParsingMessageType, TParsingMessageType>(const Engine::ParsingMessageType& messType)
+{
+    TParsingMessageType tMessType;
+
+    switch (messType)
+    {
+    case ParsingMessageType::Error:
+        tMessType = TParsingMessageType::ParsingError;
+        break;
+    case ParsingMessageType::Warning:
+        tMessType = TParsingMessageType::ParsingWarning;
+        break;
+    case ParsingMessageType::Information:
+        tMessType = TParsingMessageType::ParsingInformation;
+        break;
+    default:
+        tMessType = TParsingMessageType::ParsingError;
+        break;
+    }
+
+    return tMessType;
+}
+
+template<>
+ParsingMessageType STI::Network::convert<TParsingMessageType, ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType)
+{
+    ParsingMessageType messType;
+
+    switch (tMessType)
+    {
+    case TParsingMessageType::ParsingError:
+        messType = ParsingMessageType::Error;
+        break;
+    case TParsingMessageType::ParsingWarning:
+        messType = ParsingMessageType::Warning;
+        break;
+    case TParsingMessageType::ParsingInformation:
+        messType = ParsingMessageType::Information;
+        break;
+    default:
+        messType = ParsingMessageType::Error;
+        break;
+    }
+
+    return messType;
 }
 

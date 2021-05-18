@@ -48,7 +48,6 @@ void COSBindingNode::prune()
 	CosNaming::Name_var contextName;
 
 	for (auto& branch : _branches) {
-//	for(unsigned i=0; i < branches(); i++) {
 		branch->prune();
 	}
 
@@ -59,10 +58,10 @@ void COSBindingNode::prune()
 
 	//Unbind all dead branches
 	for (auto& branch : _branches) {
-//	for (unsigned i = 0; i < branches(); i++) {
+
 		if (branch->isDead()) {
-			contextName = omni::omniURI::stringToName(
-				branch->getName().c_str());
+			
+			contextName = omni::omniURI::stringToName( branch->getName().c_str() );
 
 			context->unbind(contextName);
 		}
@@ -132,13 +131,13 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 
 	while(biIter->next_one(binding))
 	{
+		deadServantFound = false;
 		i++;
 		//get the context for this branch and add a new node
 		obj = nodeContext->resolve( binding->binding_name );
 
 		try {
-			//CORBA::is_nil(obj);
-			//obj->
+
 			obj->_non_existent();
 		}
 		catch(CORBA::TRANSIENT&)
@@ -147,10 +146,6 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 			deadServantFound = true;
 
 			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
-
-			//_branches.push_back( 
-			//	new COSBindingNode(
-			//	omni::omniURI::nameToString( binding->binding_name ), true) );
 		}
 		catch(CORBA::COMM_FAILURE)
 		{
@@ -158,16 +153,13 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 			deadServantFound = true;
 
 			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
-			//_branches.push_back(
-			//	new COSBindingNode(
-			//	omni::omniURI::nameToString( binding->binding_name ), true) );
 		}
 
 		if( !deadServantFound )
 		{
 			try {
-				newNodeContext = CosNaming::NamingContext::
-					_narrow( obj );
+
+				newNodeContext = CosNaming::NamingContext::_narrow( obj );
 			}
 			catch(...)
 			{
@@ -175,12 +167,8 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 			}
 
 			try {
+
 				addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)), newNodeContext);
-				
-				//_branches.push_back( 
-				//	new COSBindingNode(
-				//	omni::omniURI::nameToString( binding->binding_name ), newNodeContext)
-				//	);
 			}
 			catch(CORBA::INV_OBJREF&)
 			{

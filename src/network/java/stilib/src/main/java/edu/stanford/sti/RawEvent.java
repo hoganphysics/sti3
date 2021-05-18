@@ -88,6 +88,10 @@ public class RawEvent {
     return stiJNI.RawEvent_isMeasurementEvent(swigCPtr, this);
   }
 
+  public boolean opLess(RawEvent rhs) {
+    return stiJNI.RawEvent_opLess(swigCPtr, this, RawEvent.getCPtr(rhs), rhs);
+  }
+
   public boolean opEquals(RawEvent rhs) {
     return stiJNI.RawEvent_opEquals(swigCPtr, this, RawEvent.getCPtr(rhs), rhs);
   }

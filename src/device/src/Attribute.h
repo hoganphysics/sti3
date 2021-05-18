@@ -29,8 +29,9 @@ public:
 
     virtual bool setValue(const std::string& value) = 0;
 
+	//Metadata can be used for GUI layout, tooltips, units, etc.
 	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
-	virtual  STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
+	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 
 };
 

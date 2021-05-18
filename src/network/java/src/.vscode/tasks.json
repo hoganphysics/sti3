@@ -66,6 +66,24 @@
 			],
 			"group": "build"
         },
+		{
+			"type": "shell",
+			"label": "CMake config",
+			"command": "cmake",
+			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build", 
+				"env": {
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
         {
 			"type": "shell",
 			"label": "CMake build",

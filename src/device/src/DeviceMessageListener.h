@@ -6,10 +6,12 @@
 #include <memory>
 #include <string>
 
+
 namespace STI
 {
 namespace Device
 {
+
 
 struct DeviceMessageListenerID
 {
@@ -18,12 +20,23 @@ struct DeviceMessageListenerID
 
 	bool operator<(const DeviceMessageListenerID& rhs) const 
 	{
-		return type < rhs.type && name.compare(rhs.name) < 0;
+		if (type == rhs.type) {
+			return name.compare(rhs.name) < 0;
+		}
+
+		return type < rhs.type;
+
+		// return type < rhs.type && name.compare(rhs.name) < 0;
 	}
 
 	bool operator==(const DeviceMessageListenerID& rhs) const
 	{ 
 		return type == rhs.type && (name.compare(rhs.name) == 0);
+	}
+
+	bool operator!=(const DeviceMessageListenerID& rhs) const
+	{
+		return !((*this) == rhs);
 	}
 
 };

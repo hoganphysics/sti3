@@ -25,7 +25,7 @@ class EventEngineManager
 {
 public:
 
-    EventEngineManager(const EngineID& engineID, std::shared_ptr<LocalEventEngine> engine, LocalEventEngineScheduler* scheduler);
+    EventEngineManager(const EngineID& engineID, const std::shared_ptr<LocalEventEngine>& engine, LocalEventEngineScheduler* scheduler);
     ~EventEngineManager();
 
     bool submitJob(const std::shared_ptr<EventEngineJob>& job);
@@ -35,10 +35,13 @@ public:
     void abortJob();
     
     void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
-    void handlePlayMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+    void handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
+    void handlePlayCompleteMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
 
     bool isParsed(const ParseID& parseID);
     const ParseID& getLastParseID();
+
+    bool getEngine(std::shared_ptr<LocalEventEngine>& eventEngine);
 
 private:
 

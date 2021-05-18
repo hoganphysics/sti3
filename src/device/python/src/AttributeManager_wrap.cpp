@@ -1,0 +1,33 @@
+
+#include "AttributeManagerPy.h"
+#include "AttributeManager.h"
+
+#include "Attribute.h"
+
+#include <string>
+#include <memory>
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/cast.h>
+
+
+namespace py = pybind11;
+
+using STI::Device::Attribute;
+using STI::Python::AttributeManagerPy;
+using STI::Device::AttributeManager;
+
+void init_AttributeManager(py::module& m) 
+{
+
+    py::class_<AttributeManagerPy, std::shared_ptr<AttributeManagerPy>>(m, "AttributeManager")
+        .def("getValue", &AttributeManagerPy::getValue)
+        .def("setValue", &AttributeManagerPy::setValue)
+        .def("getAttribute", py::overload_cast<const std::string&>(&AttributeManagerPy::getAttribute))
+        .def("getAttributes", py::overload_cast<>(&AttributeManagerPy::getAttributes))
+        ;
+
+
+}
+

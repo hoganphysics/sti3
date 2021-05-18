@@ -16,6 +16,7 @@ include_directories(".")
 
 # add the executable
 add_library(stinetwork SHARED 
+    Convert_Attribute.cpp
     Convert_Channel.cpp
     Convert_DeviceID.cpp
     Convert_DeviceMessage.cpp
@@ -33,6 +34,9 @@ add_library(stinetwork SHARED
     ORBManager.cpp
     orbTypes.cpp
     orbTypesDynSK.cpp
+    RemoteAttribute.cpp
+    RemoteAttributeManager.cpp
+    RemoteChannel.cpp
     RemoteChannelManager.cpp
     RemoteDeviceCollection.cpp
     RemoteDevice.cpp
@@ -41,8 +45,9 @@ add_library(stinetwork SHARED
     RemoteDeviceMessageHandler.cpp
     RemoteEventEngine.cpp
     RemoteEventEngineScheduler.cpp
-    RemoteParsedShot.cpp
+    RemoteShot.cpp
     RemoteTriggerCallback.cpp
+    TAttributeManager_i.cpp
     TChannelManager_i.cpp
     TDeviceCollection_i.cpp
     TDeviceHub_i.cpp
@@ -51,8 +56,8 @@ add_library(stinetwork SHARED
     TDeviceMessageHandler_i.cpp
     TEventEngine_i.cpp
     TEventEngineScheduler_i.cpp
-    TParsedShot_i.cpp
     TRefreshIndicator_i.cpp
+    TShot_i.cpp
     TTriggerCallback_i.cpp
 )
 

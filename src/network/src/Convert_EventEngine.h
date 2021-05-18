@@ -32,6 +32,9 @@ class EngineID;
 class EngineJobID;
 //class EventEngineJobType;
 
+class EngineParsingMessage;
+enum class ParsingMessageType;
+
 } //Engine
 
 //EventEngineDependencyTree
@@ -102,7 +105,7 @@ Engine::EventEngineJob::EngineJobStatus Network::convert<TNetwork::TEngineJobSta
 
 //EventEngineJob
 
-//Note: when converting ParsedShot, this must get the T referene (from the servant) using a dynamic cast; the servant is hosted locally
+//Note: when converting Shot, this must get the T referene (from the servant) using a dynamic cast; the servant is hosted locally
 //Also, engineJob->setEventEngine(...);
 // template<> 
 // Engine::LocalEventEngineJob Network::convert<TNetwork::TEventEngineJob, Engine::LocalEventEngineJob>(const TNetwork::TEventEngineJob& tEngineJob);
@@ -130,6 +133,13 @@ template<>
 Engine::RawEvent Network::convert<TNetwork::TRawEvent, Engine::RawEvent>(const TNetwork::TRawEvent& tEvent);
 
 
+//STI::Engine::DeviceEventMap
+template<>
+bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
+template<>
+bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
+
+
 //ParseID
 template<>
 TNetwork::TParseID Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID& pid);
@@ -143,11 +153,11 @@ template<>
 Engine::ShotID Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid);
 
 
-//ParsedShot
+//Shot
 template<>
-bool Network::convert<TNetwork::TParsedShot_ptr, std::shared_ptr<Engine::ParsedShot>>(const TNetwork::TParsedShot_ptr& tShot, std::shared_ptr<Engine::ParsedShot>& shot);
+bool Network::convert<TNetwork::TShot_ptr, std::shared_ptr<Engine::Shot>>(const TNetwork::TShot_ptr& tShot, std::shared_ptr<Engine::Shot>& shot);
 template<>
-bool Network::convert<std::shared_ptr<Engine::ParsedShot>, TNetwork::TParsedShot_ptr>(const std::shared_ptr<Engine::ParsedShot>& shot, TNetwork::TParsedShot_ptr& tShot);
+bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TShot_ptr>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TShot_ptr& tShot);
 
 
 
@@ -171,6 +181,23 @@ TNetwork::TEngineJobSourceID Network::convert<Engine::EngineJobSourceID, TNetwor
 template<>
 Engine::EngineJobSourceID Network::convert<TNetwork::TEngineJobSourceID, Engine::EngineJobSourceID>(const TNetwork::TEngineJobSourceID& tJobSourceID);
 
+
+//EngineParsingMessage
+template<>
+bool Network::convert<Engine::EngineParsingMessage, TNetwork::TEngineParsingMessage>(const Engine::EngineParsingMessage& parsingMessage, TNetwork::TEngineParsingMessage& tParsingMessage);
+template<>
+bool Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage, Engine::EngineParsingMessage& parsingMessage);
+
+template<>
+Engine::EngineParsingMessage Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage);
+
+
+
+//ParsingMessageType
+template<>
+TNetwork::TParsingMessageType Network::convert<Engine::ParsingMessageType, TNetwork::TParsingMessageType>(const Engine::ParsingMessageType& messType);
+template<>
+Engine::ParsingMessageType Network::convert<TNetwork::TParsingMessageType, Engine::ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType);
 
 
 } //STI

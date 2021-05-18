@@ -4,6 +4,7 @@
 #include "Device.h"
 #include "DeviceID.h"
 #include "DeviceCollection.h"
+#include "DeviceMessageListener.h"
 #include "LocalCollection.h"
 #include "fwd/EventEngineScheduler_fwd.h"
 #include "DeviceEventParser.h"
@@ -13,6 +14,7 @@
 #include "MixedValue.h"
 #include <string>
 #include <set>
+
 
 namespace STI
 {
@@ -27,6 +29,7 @@ class LocalChannel;
 class LocalDevice;
 class LocalAttribute;
 class LocalAttributeManager;
+class DeviceMessageListenerID;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -69,6 +72,10 @@ public:
 	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 
+
+	void addAttribute(const std::string& key, const std::string& initialValue, std::shared_ptr<STI::Device::LocalAttribute>& attribute);
+	void addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues, std::shared_ptr<STI::Device::LocalAttribute>& attribute);
+
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
 
@@ -89,8 +96,13 @@ private:
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return false; }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return false; }
 
+	friend class DeviceMessageListenerForwarder;
+	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device
+	// DeviceMessageListenerForwarder listenerForwarder;
+	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
 
 	void addEventTarget(const STI::Device::DeviceID& id);
+	virtual bool isEventTarget(const DeviceID& id);
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>
 	{
@@ -102,10 +114,12 @@ private:
 
 		LocalDevice* localDevice;
 	};
-	//std::shared_ptr<DeviceCollectionListener> deviceCollectionListener;
+		
+	DeviceMessageListenerID schedulerMessageLID;
 
 	friend DeviceCollectionPolicy;
 	bool isPartnerDevice(const DeviceID& id);
+	bool isTargetServerOf(const DeviceID& id);
 
 	DeviceID id;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices

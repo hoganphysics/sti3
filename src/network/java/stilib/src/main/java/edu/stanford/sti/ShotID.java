@@ -84,6 +84,10 @@ public class ShotID {
     return stiJNI.ShotID_opNotEquals(swigCPtr, this, ShotID.getCPtr(rhs), rhs);
   }
 
+  public static ShotID generateUniqueID(ParseID pid) {
+    return new ShotID(stiJNI.ShotID_generateUniqueID(ParseID.getCPtr(pid), pid), true);
+  }
+
   public ShotID() {
     this(stiJNI.new_ShotID(), true);
   }

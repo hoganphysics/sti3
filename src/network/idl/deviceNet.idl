@@ -70,6 +70,8 @@ module TNetwork
 
 		void cleanup();
 		void clear();
+
+		boolean ping();
 	};
 
 	interface TRefreshIndicator
@@ -94,9 +96,11 @@ module TNetwork
 		void removeMessageHandler(in TDeviceID targetID);
 
 		//void addEvent(in TDeviceEvent evt);
+
+		boolean ping();
 	};
 
-	interface TParsedShot
+	interface TShot
 	{
 		void getEvents(out TRawEventSeq events);
 	};
@@ -117,7 +121,7 @@ module TNetwork
 	// 	boolean getEngine(out TEventEngine eventEngine);
 	// 	void setEventEngine(in TEventEngine eventEngine);
 
-	// 	boolean getParsedShot(out TParsedShot shot);
+	// 	boolean getParsedShot(out TShot shot);
 	// 	boolean getDependencies(out TEventEngineDependencyTree tree);
 
 	// 	TDeviceIDSeq getMissingTargetIDs();
@@ -132,7 +136,7 @@ module TNetwork
 		TEngineID engineID;
 		//TEventEngine eventEngine;
 
-		TParsedShot shot;
+		TShot shot;
 		TEventEngineDependencyTree dependencies;
 		TDeviceIDSeq missingTargetIDs;
 	};
@@ -157,29 +161,59 @@ module TNetwork
 
     	TDeviceID getDeviceID();
 		TEngineState getState();
+
+		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
 	};
 
 	interface TEventEngineScheduler
 	{
-	    void parse(in TParseID parseID, in TParsedShot shot);
+	    void parse(in TParseID parseID, in TShot shot);
 	    void play(in TShotID shotID);
 
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
-                                inout TDeviceIDSeq missingTargets, in TDeviceTrace trace);
+                                inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
-    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, in TDeviceTrace trace);
+    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
+
+		void cancelAll();
+
+		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
+    	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
+    	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
+
+		boolean ping();
 	};
 
 	interface TChannelManager
 	{
-		TChannelSeq getChannels();
+		void getChannels(out TChannelSeq channels);
 		boolean getChannel(in short channelNumber, out TChannel channel);
+
+		boolean setChannelName(in short channelNumber, in string name);
 
 		boolean writeChannel(in short channel, in TMixedValue value);
 		boolean readChannel(in short channel, in TMixedValue value, out TMixedValue data);
+
+		boolean ping();
+	};
+
+	interface TAttributeManager
+	{
+	    string getValue(in string key);
+	    boolean setValue(in string key, in string value);
+
+		void refreshValue(in string key);
+
+		// TMixedValue getMetaDataAll(in string key);
+		// TMixedValue getMetaData(in string key, in string metaKey);
+
+    	boolean getAttribute(in string key, out TAttribute attrib);
+    	void getAttributes(out TAttributeSeq attributes);
+
+		boolean ping();
 	};
 
 	interface TDevice
@@ -187,20 +221,20 @@ module TNetwork
 		//Node interface
 		boolean refresh();
 
-		//Collector interface
-		TDeviceCollection getDeviceCollection();
-
 		//Device interface
 		TDeviceID getID();
-	//	void write(in unsigned long input);		//temp
 
-		//Device event passing
+		//Device collector interface
+		TDeviceCollection getDeviceCollection();
+
+		//Device message passing
 		TDeviceMessageDispatcher getMessageDispatcher();
 
 		//Event engine system
 		TEventEngineScheduler getEngineScheduler();
 
 		TChannelManager getChannelManager();
+		TAttributeManager getAttributeManager();
 	};
 
 };	//TNetwork

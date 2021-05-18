@@ -68,11 +68,6 @@ public class JLocalDevice extends JDevice {
     return (cPtr == 0) ? null : new JDeviceMessageReceiver(cPtr, true);
   }
 
-  public JEventEngineScheduler getEngineScheduler() {
-    long cPtr = stiJNI.JLocalDevice_getEngineScheduler(swigCPtr, this);
-    return (cPtr == 0) ? null : new JEventEngineScheduler(cPtr, true);
-  }
-
   public void parseEvents(int temp) {
     stiJNI.JLocalDevice_parseEvents(swigCPtr, this, temp);
   }
@@ -83,6 +78,10 @@ public class JLocalDevice extends JDevice {
 
   public void addEventEngine(EngineID engineID) {
     stiJNI.JLocalDevice_addEventEngine(swigCPtr, this, EngineID.getCPtr(engineID), engineID);
+  }
+
+  public void addPartner(DeviceID id) {
+    stiJNI.JLocalDevice_addPartner(swigCPtr, this, DeviceID.getCPtr(id), id);
   }
 
 }

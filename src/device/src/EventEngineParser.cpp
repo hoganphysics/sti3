@@ -11,10 +11,13 @@
 #include "utils.h"
 #include "MixedValue.h"
 
-#include "EngineParsingError.h"
+// #include "EngineParsingError.h"
+#include "EngineParsingMessage.h"
+
 #include "DeviceID.h"
 
 #include <set>
+
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;
@@ -26,22 +29,41 @@ using STI::Utils::MixedValueType;
 using STI::Utils::MixedValue;
 using std::endl;
 using STI::Device::Channel;
+using STI::Engine::EngineParsingMessage;
 
 
-EventEngineParser::EventEngineParser(LocalEventEngine* engine, DeviceEventParser* deviceParser) 
-	: engine(engine), deviceParser(deviceParser)
+EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
+					const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
+					DeviceEventParser* deviceParser)
+: engineID(engineID), localDeviceID(localDeviceID), channelManager(channelManager), deviceParser(deviceParser)
 {
+	defineErrorIDs();
+	hasErrors = false;
 }
 
 EventEngineParser::~EventEngineParser()
 {
 }
 
+void EventEngineParser::clear()
+{
+	rawEvents.clear();
+	partnerEvents.clear();
+}
+
+const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages() const
+{
+	return messages;
+}
+
 bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents)
 {
 	bool success = true;
 
-	errors.clear();
+	messages.clear();
+	hasErrors = false;
+
+	if (channelManager == 0) return false;
 
 	success = groupEventsByTime(events);
 
@@ -61,7 +83,15 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 		success = checkMeasurements(synchedEvents);		//make sure all meas() events have been registered
 	}
 
-	return success;
+	//Check for error messages
+	for (auto& m : messages) {
+		if (m.getType() == ParsingMessageType::Error) {
+			hasErrors = true;
+			break;
+		}
+	}
+
+	return success && !hasErrors;
 }
 
 void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetIDs)
@@ -99,29 +129,40 @@ bool EventEngineParser::groupEventsByTime(const STI::Engine::RawEventVector& eve
 	return success;
 }
 
+EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name)
+{
+	unsigned id = 0;	//default ID
+	auto it = errorIDs.find(name);
+
+	if (it != errorIDs.end()) {
+		id = it->second;
+	}
+
+    messages.emplace_back(localDeviceID, ParsingMessageType::Error, id, name);
+	
+	hasErrors = true;
+	
+	return messages.back();
+}
+
 bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
 {
 	bool success = true;
 
 	//check that newest event's channel is defined
-	auto channels = engine->getLocalChannels();
-	
 	std::shared_ptr<Channel> channel;
 
-	//auto channel = engine->localChannels.find(rawEvent.channel());
-
 	//check that newest event's channel is defined and that the value type is correct
-//	if (channel == engine->localChannels.end()) {
-	if (!channels->getChannel(rawEvent.channel(), channel)) {
+	if (!channelManager->getChannel(rawEvent.channel(), channel)) {
 		//Missing channel
 		success = false;
 		errorCount++;
 
 		//Error: Channel #24 is not defined on this device. Event trace:
-		errors.push_back(EngineParsingError(engine->getDeviceID()));
-		errors.back() << "Error: Channel #" << rawEvent.channel()
-			<< " is not defined on this device. \n";
-		errors.back().addEvent(rawEvent);
+		addParsingError("Missing Channel").addEvent(rawEvent)
+			<< "Channel #" << rawEvent.channel()
+			<< " is not defined on this device.";
+
 	}
 	else if (rawEvent.value().getType() != channel->getOutputType()) {
 		//Wrong type
@@ -129,12 +170,11 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 		errorCount++;
 
 		//Error: Incorrect type found for event on channel #5. Expected type 'Number'. Event trace:
-		errors.push_back(EngineParsingError(engine->getDeviceID()));
-		errors.back()
-			<< "Error: Incorrect type found for event on channel #" << rawEvent.channel()
+		addParsingError("Incorrect Type").addEvent(rawEvent)
+			<< "Incorrect type found for event on channel #" << rawEvent.channel()
 			<< ". Expected type '"
-			<< MixedValue::TypeToString(channel->getOutputType()) << "'. " << "\n";
-		errors.back().addEvent(rawEvent);
+			<< MixedValue::TypeToString(channel->getOutputType()) << "' but received type ' " 
+			<< MixedValue::TypeToString(rawEvent.value().getType()) << "'.";
 	}
 
 	if (!success)
@@ -148,8 +188,6 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 	//Store pointers to all measurement RawEvents, indexed by their event graph identifier.  
 	//This is for fast reverse lookup in checkMeasurements(...)
 	if (rawEvent.isMeasurementEvent()) {
-		//Entries in map: {GraphPathLabel, *RawEvent}
-		//measurementEventGraph.insert({ rawEvent.getEventGraphPath(), &(rawEvents[eventTime].back()) });
 
 		//Entries in map: {GraphPathLabel, MeasurementCounter}
 		measurementEventGraph.insert(
@@ -169,12 +207,10 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 			errorCount++;
 
 			//Error: Multiple events scheduled on channel #24 ('Laser power') at time 2.56:
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back() << "Error: Multiple events scheduled on channel #" << rawEvent.channel()
+			addParsingError("Event Conflict").addEvent(rawEvent).addEvent(rawEvents[eventTime].at(j))
+				<< "Multiple events scheduled on channel #" << rawEvent.channel()
 				<< " ('" << channel->getChannelName() << "') "
-				<< " at time " << STI::Utils::printTimeFormated(eventTime) << ":" << "\n";
-			errors.back().addEvent(rawEvent);
-			errors.back().addEvent(rawEvents[eventTime].at(j));
+				<< " at time " << STI::Utils::printTimeFormated(eventTime) << ".";
 		}
 		if (errorCount > maxErrors)
 			break;
@@ -194,15 +230,15 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 	unsigned maxErrors = 10;
 
 	//Device generated event setup (events created by user code in parseDeviceEvents)
-	deviceParser->clearEventNumber();						//Each device generated event gets a unique number appended to the graph label
-	deviceParser->setPartnerEventTarget(&partnerEvents);	//Set partner event target to point to this engine.
+//	deviceParser->clearEventNumber();						//Each device generated event gets a unique number appended to the graph label
+//	deviceParser->setPartnerEventTarget(&partnerEvents);	//Set partner event target to point to this engine.
 
 	do {
 		success = true;	//Each time through the loop any offending events 
 						//are removed before trying again. This way all events
 						//can generate errors messages before returning.
 		try {
-			deviceParser->parseEvents(rawEvents, synchedEvents);	//delegates to parseDeviceEvents (user code)
+			deviceParser->parseEvents(rawEvents, synchedEvents, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
 		}
 		catch (EventConflictException& eventConflict)
 		{
@@ -210,7 +246,10 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 			success = false;
 			//Error: Event conflict. <Device Specific Message>
 			//       Event trace:
-			errors.push_back(EngineParsingError(engine->getDeviceID(), eventConflict));
+			addParsingError("Event Conflict Exception")
+				.addEvent(eventConflict.getEvent1())
+				.addEvent(eventConflict.getEvent2())
+				<< "Event conflict. " << eventConflict.printMessage();
 
 			//find the latest event associated with this exception
 			badEvent = rawEvents.find(eventConflict.lastTime());
@@ -221,7 +260,9 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 			success = false;
 			//Error: Event parsing error. <Device Specific Message>
 			//       Event trace:
-			errors.push_back(EngineParsingError(engine->getDeviceID(), eventParsing));
+			addParsingError("Event Parsing Exception")
+				.addEvent(eventParsing.getEvent())
+				<< eventParsing.printMessage();
 
 			//find the event associated with this exception
 			badEvent = rawEvents.find(eventParsing.getEvent().time());
@@ -231,9 +272,10 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 			errorCount++;
 			success = false;
 
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "Error: " << exception.printMessage() << "\n";
+			addParsingError("Generic Parsing Exception")
+				 << "Caught generic STI_Exception while parsing events in device code. "
+				 << "Message: '"
+				 << exception.printMessage() << "'.";
 
 			return false;		//break the error loop immediately
 		}
@@ -242,10 +284,9 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 			errorCount++;
 			success = false;
 			//Error: Event error or conflict detected. Debug info not available.
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "Error: Event error or conflict detected. " << "\n"
-				<< "       Debug info not available." << "\n";
+			addParsingError("Unhandled Parsing Exception")
+				<< "Unhandled exception while parsing events in device. "
+				<< "Debug info not available.";
 
 			return false;		//break the error loop immediately
 		}
@@ -280,11 +321,10 @@ bool EventEngineParser::countMeasurementRefs(const std::vector<std::shared_ptr<M
 		else {
 			//Error: A Measurement points to an event that doesn't exist in the graph.
 			//Check to see if it's a known RawEvent, but not a measurement event.
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "A scheduled Measurement points to a RawEvent that doesn't exist in the measurement event list.\n"
-				<< "This could mean a RawEvent that is not a measurement was registered with a SynchronousEvent.\n"
-				<< "This is an error in the device's implemented parseDeviceEvents(...) function.\n";
+			addParsingError("Invalid Measurement Registration")
+				<< "A scheduled Measurement points to a RawEvent that doesn't exist in the measurement event list. "
+				<< "This could mean a RawEvent that is not a measurement was registered with a SynchronousEvent. "
+				<< "This is an error in the device's implemented parse events function.";
 
 			return false;
 		}
@@ -329,21 +369,19 @@ bool EventEngineParser::checkMeasurements(SynchronousEventVector& synchedEvents)
 			errorCount++;
 
 			//Error: RawEvent was not registered by any SynchronousEvent
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "The following measurement event is not associated with a SynchronousEvent." << "\n"
-				<< "This is an error in the device's implemented parseDeviceEvents(...) function.\n";
-			errors.back().addEvent( *(me.second.rawEvent) );
+			addParsingError("Unregistered Measurement").addEvent( *(me.second.rawEvent) )
+				<< "The following measurement event is not associated with a SynchronousEvent. "
+				<< "This is an error in the device's implemented parse events function.";
 		}
 		else if (me.second.count > 1) {
 			errorCount++;
 
 			//Error: Multiple SynchronousEvents registered the same RawEvent
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "The same measurement event has been registered with multiple SynchronousEvents.\n"
-				<< "Each measurement RawEvent must be added to exactly one SynchronousEvent.\n"
-				<< "This is an error in the device's implemented parseDeviceEvents(...) function.\n";
+			addParsingError("Multiple Measurement Registrations").addEvent( *(me.second.rawEvent) )
+				<< "The same measurement event has been registered with multiple SynchronousEvents "
+				<< "(registration count = " << me.second.count << "). "
+				<< "Each measurement RawEvent must be added to exactly one SynchronousEvent. "
+				<< "This is an error in the device's implemented parse events function.";
 		}
 
 		if (maxErrorCheck(errorCount, maxErrors)) {
@@ -360,13 +398,13 @@ bool EventEngineParser::checkMeasurements(SynchronousEventVector& synchedEvents)
 			&& synchedEvents.at(i)->getTime() == synchedEvents.at(i + 1)->getTime()) {
 			errorCount++;
 
-			errors.push_back(EngineParsingError(engine->getDeviceID()));
-			errors.back()
-				<< "Error: Multiple parsed events are scheduled at the same time." << "\n"
-				<< "       Events that occur on multiple channels at the same time must be grouped" << "\n"
-				<< "       into a single SynchonousEvent in STI_Device::parseDeviceEvents(...)." << "\n"
-				<< "       Only one SynchonousEvent is allowed at any time." << "\n"
-				<< "This is an error in the device's implemented parseDeviceEvents(...) function.\n";
+			addParsingError("Multiple SynchonousEvents")
+				<< "Multiple SynchonousEvent are scheduled at time " 
+				<< STI::Utils::printTimeFormated(synchedEvents.at(i)->getTime()) << ". "
+				<< "Events that occur on multiple channels at the same time must be grouped "
+				<< "into a single SynchonousEvent. "
+				<< "Only one SynchonousEvent is allowed at any time. "
+				<< "This is an error in the device's implemented parse events function.";
 		}
 
 		if (maxErrorCheck(errorCount, maxErrors)) {
@@ -382,12 +420,34 @@ bool EventEngineParser::maxErrorCheck(unsigned errorCount, unsigned maxErrors)
 	if (errorCount > maxErrors) {
 
 		//Too many errors; stop parsing and tell the user that there may be more
-		errors.push_back(EngineParsingError(engine->getDeviceID()));
-		errors.back()
-			<< "****Too many errors: Parsing aborted after " 
-			<< errorCount << " errors." << "\n";
+		addParsingError("Max Error Count Reached")
+			<< "Too many errors. Parsing aborted after " 
+			<< errorCount << " errors.";
 
 		return true;		//break the error loop immediately
 	}
 	return false;
 }
+
+void EventEngineParser::defineErrorIDs()
+{
+	errorIDs["Missing Channel"] 					= 30;
+	errorIDs["Incorrect Type"]  					= 31;
+
+	errorIDs["Event Conflict"]  					= 32;
+	errorIDs["Event Conflict Exception"]  			= 33;
+
+	errorIDs["Event Parsing Exception"]   			= 34;
+	errorIDs["Generic Parsing Exception"] 			= 35;
+
+	errorIDs["Unhandled Parsing Exception"] 		= 36;
+	errorIDs["Invalid Measurement Registration"] 	= 37;
+
+	errorIDs["Unregistered Measurement"] 			= 38;
+	errorIDs["Multiple Measurement Registrations"] 	= 39;
+
+	errorIDs["Multiple SynchonousEvents"] 			= 40;
+	errorIDs["Max Error Count Reached"] 			= 41;
+
+}
+

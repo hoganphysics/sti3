@@ -9,6 +9,9 @@
 #include "ChannelManager.h"
 #include "DeviceMessageDispatcher.h"
 #include "JChannelManager.h"
+#include "AttributeManager.h"
+#include "JAttributeManager.h"
+#include "JEventEngineScheduler.h"
 
 #include <memory>
 
@@ -19,9 +22,11 @@ using STI::Device::DeviceCollection;
 using STI::Device::JDeviceCollection;
 using STI::Device::DeviceMessageDispatcher;
 using STI::Device::JDeviceMessageDispatcher;
-using STI::Device::JEventEngineScheduler;
+using STI::Engine::JEventEngineScheduler;
 using STI::Device::ChannelManager;
 using STI::Device::JChannelManager;
+using STI::Device::AttributeManager;
+using STI::Device::JAttributeManager;
 
 
 JDevice::JDevice(const std::shared_ptr<STI::Device::Device>& device)
@@ -74,17 +79,17 @@ std::shared_ptr<STI::Device::JDeviceMessageDispatcher> JDevice::getMessageDispat
     return jDispatcher;
 }
 
-std::shared_ptr<STI::Device::JEventEngineScheduler> JDevice::getEngineScheduler()
+std::shared_ptr<STI::Engine::JEventEngineScheduler> JDevice::getEngineScheduler()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    std::shared_ptr<STI::Device::JEventEngineScheduler> jScheduler;
+    std::shared_ptr<STI::Engine::JEventEngineScheduler> jScheduler;
 
     if (wrappedDevice != 0) {
 
         wrappedDevice->getEngineScheduler(scheduler);
     }
     if (scheduler != 0) {
-        jScheduler = std::make_shared<STI::Device::JEventEngineScheduler>(scheduler);
+        jScheduler = std::make_shared<STI::Engine::JEventEngineScheduler>(scheduler);
     }
 
     return jScheduler;
@@ -104,6 +109,23 @@ std::shared_ptr<STI::Device::JChannelManager> JDevice::getChannelManager()
 
     return jmanager;
 }
+
+
+std::shared_ptr<STI::Device::JAttributeManager> JDevice::getAttributeManager()
+{
+    std::shared_ptr<STI::Device::AttributeManager> manager;
+    std::shared_ptr<STI::Device::JAttributeManager> jmanager;
+
+    if (wrappedDevice != 0) {
+        wrappedDevice->getAttributeManager(manager);
+    }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JAttributeManager>(manager);
+    }
+
+    return jmanager;
+}
+
 
 void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
@@ -133,6 +155,12 @@ void JDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)
     }
 }
 
+void JDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->getAttributeManager(manager);
+    }
+}
 
 
 bool JDevice::refresh()

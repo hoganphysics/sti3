@@ -13,7 +13,7 @@
 
 using STI::Device::JLocalDevice;
 using STI::Device::JDeviceMessageReceiver;
-using STI::Device::JEventEngineScheduler;
+using STI::Engine::JEventEngineScheduler;
 using STI::Engine::EventEngineScheduler;
 using STI::Device::LocalChannel;
 using STI::Engine::EngineID;
@@ -31,7 +31,7 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
     //wrapped pointer. Using the local constructor, the pointer is created as a LocalDevice but 
     //stored in JDevice as a Device so the JDevice class can also wrap RemoteDevices. So here we 
     //dynamic_cast back...
-    //Note JDevoce::wrappedDevice was just created as a LocalDevice, so this is guaranteed to work.
+    //Note JDevice::wrappedDevice was just created as a LocalDevice, so this is guaranteed to work.
 
     wrappedLocalDevice = std::dynamic_pointer_cast<STI::Device::LocalDevice>(wrappedDevice);
 
@@ -44,9 +44,9 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
         jReceiver = std::make_shared<JDeviceMessageReceiver>(receiver);
 
 
-        std::shared_ptr<EventEngineScheduler> scheduler;
-        wrappedLocalDevice->getEngineScheduler(scheduler);
-        jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);        
+        // std::shared_ptr<EventEngineScheduler> scheduler;
+        // wrappedLocalDevice->getEngineScheduler(scheduler);
+        // jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);        
     }
 
 }
@@ -73,6 +73,13 @@ void JLocalDevice::addEventEngine(const EngineID& engineID)
     }
 }
 
+void JLocalDevice::addPartner(const DeviceID& id)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addPartner(id);
+    }
+}
+
 std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getMessageReceiver()
 {
     return jReceiver;
@@ -83,10 +90,10 @@ std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getMessageRec
 //     return jReceiver;
 // }
 
-std::shared_ptr<STI::Device::JEventEngineScheduler> JLocalDevice::getEngineScheduler()
-{
-    return jScheduler;
-}
+// std::shared_ptr<JEventEngineScheduler> JLocalDevice::getEngineScheduler()
+// {
+//     return jScheduler;
+// }
 
 
 

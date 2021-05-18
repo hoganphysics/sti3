@@ -6,10 +6,12 @@
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceMessage.h"
 #include "NetworkEventEngine.h"
+#include "MixedValue.h"
 
 #include "orbTypes.h"
 
 #include <memory>
+
 
 using STI::Network::convert;
 using STI::Device::DeviceMessage;
@@ -20,8 +22,14 @@ using STI::TNetwork::TDeviceMessageType;
 using STI::TNetwork::TDeviceMessage;
 using STI::TNetwork::TAnyMessage;
 
+using STI::Utils::MixedValue;
+using STI::TNetwork::TMixedValue;
+
 using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
+
+using STI::Device::RefreshDeviceMessage;
+using STI::TNetwork::TRefreshDeviceMessage;
 
 using STI::TNetwork::TEngineSchedulerMessage;
 using STI::Device::EngineSchedulerMessage;
@@ -29,6 +37,18 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Device::EngineSchedulerMessage;
 using STI::TNetwork::TSchedulerMessageType;
 
+using STI::Device::EngineParserDeviceMessage;
+using STI::TNetwork::TEngineParserDeviceMessage;
+
+using STI::Engine::ParseID;
+using STI::TNetwork::TParseID;
+
+using STI::TNetwork::TChannelUpdateMessage;
+using STI::Device::ChannelUpdateMessage;
+using STI::TNetwork::TChannelUpdateMessageType;
+
+using STI::TNetwork::TAttributeUpdateMessage;
+using STI::Device::AttributeUpdateMessage;
 
 template<>
 TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(const DeviceMessageType& type)
@@ -195,24 +215,36 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 
 	switch (deviceMessage->getType())
 	{
+	// case DeviceMessageType::Refresh:
+	// 	{
+	// 		STI::TNetwork::TRefreshDeviceMessage tRefreshMess;
+	// 		auto rde = std::dynamic_pointer_cast<STI::Device::RefreshDeviceMessage>(deviceMessage);
+	// 		if (rde != 0 &&
+	// 			convert<std::shared_ptr<DeviceMessage>, TDeviceMessage>(deviceMessage, tRefreshMess.base)) 
+	// 		{
+	// //			tRefreshEvt.base.type = convert<DeviceMessageType, TDeviceMessageType>(deviceMessage->getType());
+	// 	//		tRefreshEvt.base.sourceID = convert<DeviceID, TDeviceID>(deviceMessage->sourceID());
+	// 			tAnyMessage.mess <<= tRefreshMess;
+	// 			tAnyMessage.type = convert<DeviceMessageType, TDeviceMessageType>(deviceMessage->getType());
+	// 			success = true;
+	// 			//convert<std::shared_ptr<STI::Device::RefreshDeviceMessage>, STI::TNetwork::TRefreshDeviceMessage>(rde, tRefreshEvt);
+	// 		}
+	// 	}
+	// 	break;
 	case DeviceMessageType::Refresh:
-		{
-			STI::TNetwork::TRefreshDeviceMessage tRefreshMess;
-			auto rde = std::dynamic_pointer_cast<STI::Device::RefreshDeviceMessage>(deviceMessage);
-			if (rde != 0 &&
-				convert<std::shared_ptr<DeviceMessage>, TDeviceMessage>(deviceMessage, tRefreshMess.base)) 
-			{
-	//			tRefreshEvt.base.type = convert<DeviceMessageType, TDeviceMessageType>(deviceMessage->getType());
-		//		tRefreshEvt.base.sourceID = convert<DeviceID, TDeviceID>(deviceMessage->sourceID());
-				tAnyMessage.mess <<= tRefreshMess;
-				tAnyMessage.type = convert<DeviceMessageType, TDeviceMessageType>(deviceMessage->getType());
-				success = true;
-				//convert<std::shared_ptr<STI::Device::RefreshDeviceMessage>, STI::TNetwork::TRefreshDeviceMessage>(rde, tRefreshEvt);
-			}
-		}
+		success = convertMessage<RefreshDeviceMessage, TRefreshDeviceMessage>(deviceMessage, tAnyMessage);
 		break;
 	case DeviceMessageType::EngineScheduler:
 		success = convertMessage<EngineSchedulerMessage, TEngineSchedulerMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::EngineParser:
+		success = convertMessage<EngineParserDeviceMessage, TEngineParserDeviceMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::AttributeUpdate:
+		success = convertMessage<AttributeUpdateMessage, TAttributeUpdateMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::ChannelUpdate:
+		success = convertMessage<ChannelUpdateMessage, TChannelUpdateMessage>(deviceMessage, tAnyMessage);
 		break;
 	}
 
@@ -247,21 +279,19 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 
 	switch (tAnyMessage.type) {
 	case TDeviceMessageType::MessageRefresh:
-
 		success = extractMessage<STI::TNetwork::TRefreshDeviceMessage, STI::Device::RefreshDeviceMessage>(tAnyMessage.mess, deviceMessage);
-
-		//STI::TNetwork::TRefreshDeviceMessage* evt;
-		////convert<CORBA::Any, TRefreshDeviceMessage>(tAnyMessage.evt, evt);			//extract from any
-		////deviceMessage = convert<TRefreshDeviceMessage, RefreshDeviceMessage>(evt)
-
-		//if (tAnyMessage.evt >>= evt) {	//memory managed by CORBA::Any
-
-		//}
 		break;
 	case TDeviceMessageType::MessageEngineScheduler:
-
 		success = extractMessage<TEngineSchedulerMessage, EngineSchedulerMessage>(tAnyMessage.mess, deviceMessage);
-
+		break;
+	case TDeviceMessageType::MessageEngineParser:
+		success = extractMessage<TEngineParserDeviceMessage, EngineParserDeviceMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageAttributeUpdate:
+		success = extractMessage<TAttributeUpdateMessage, AttributeUpdateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageChannelUpdate:
+		success = extractMessage<TChannelUpdateMessage, ChannelUpdateMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	}
 
@@ -284,7 +314,7 @@ bool STI::Network::convert<std::shared_ptr<STI::Device::RefreshDeviceMessage>, S
 	const std::shared_ptr<STI::Device::RefreshDeviceMessage>& deviceMessage, STI::TNetwork::TRefreshDeviceMessage& tMessage)
 {
 	//no other fields
-	return true;
+	return (deviceMessage != 0);
 }
 
 
@@ -312,6 +342,8 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
+		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+		convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tMessage.engineState, deviceMessage->engineState);
 	}
 
 	return deviceMessage != 0;
@@ -325,13 +357,19 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	// STI::Engine::EngineJobID jobID;
 	// std::shared_ptr<STI::Engine::EventEngine> engine;
 	// std::vector<STI::Engine::RawEvent> handledEvents;
-	// std::vector<STI::Engine::RawEvent> unhandledEvents;	
+	// std::vector<STI::Engine::RawEvent> unhandledEvents;
+
+	if (deviceMessage == 0) {
+		return false;
+	}
 	
 	tMessage.originalSource = convert<DeviceID, TDeviceID>(deviceMessage->originalSource);
 	tMessage.jobID = convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(deviceMessage->jobID);
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->handledEvents, tMessage.handledEvents);
 	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
+	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
 	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine)) {
@@ -362,6 +400,9 @@ TSchedulerMessageType STI::Network::convert<EngineSchedulerMessage::SchedulerMes
 		break;
 	case EngineSchedulerMessage::SchedulerMessageType::PlayReady:
 		tType = TSchedulerMessageType::SchedulerPlayReady;
+		break;
+	case EngineSchedulerMessage::SchedulerMessageType::PlayComplete:
+		tType = TSchedulerMessageType::SchedulerPlayComplete;
 		break;
 	case EngineSchedulerMessage::SchedulerMessageType::YieldPlay:
 		tType = TSchedulerMessageType::SchedulerYieldPlay;
@@ -394,6 +435,9 @@ EngineSchedulerMessage::SchedulerMessageType STI::Network::convert<TSchedulerMes
 	case TSchedulerMessageType::SchedulerPlayReady:
 		type = EngineSchedulerMessage::SchedulerMessageType::PlayReady;
 		break;
+	case TSchedulerMessageType::SchedulerPlayComplete:
+		type = EngineSchedulerMessage::SchedulerMessageType::PlayComplete;
+		break;
 	case TSchedulerMessageType::SchedulerYieldPlay:
 		type = EngineSchedulerMessage::SchedulerMessageType::YieldPlay;
 		break;
@@ -406,4 +450,186 @@ EngineSchedulerMessage::SchedulerMessageType STI::Network::convert<TSchedulerMes
 }
 
 
+//EngineParserDeviceMessage
+template<>
+bool STI::Network::convert<TEngineParserDeviceMessage, std::shared_ptr<EngineParserDeviceMessage>>(
+	const TEngineParserDeviceMessage& tMessage, std::shared_ptr<EngineParserDeviceMessage>& deviceMessage)
+{
+	// STI::Engine::ParseID pid;
+	// std::vector<STI::Engine::EngineParsingMessage> messages;
+
+	deviceMessage = std::make_shared<EngineParserDeviceMessage>(
+		convert<TDeviceID, DeviceID>(tMessage.base.sourceID),
+		convert<TParseID, ParseID>(tMessage.pid)
+		);
+
+	// if (deviceMessage == 0) {
+	// 	return false;
+	// }
+
+	// deviceMessage->pid = convert<TParseID, ParseID>(tMessage.pid);
+
+	bool success = convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+	return success;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EngineParserDeviceMessage>, TEngineParserDeviceMessage>(
+	const std::shared_ptr<EngineParserDeviceMessage>& deviceMessage, TEngineParserDeviceMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+	
+	tMessage.pid = convert<ParseID, TParseID>(deviceMessage->pid);
+	
+	return convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+}
+
+
+
+//ChannelUpdateMessage
+template<>
+bool STI::Network::convert<TChannelUpdateMessage, std::shared_ptr<ChannelUpdateMessage>>(
+	const TChannelUpdateMessage& tMessage, std::shared_ptr<ChannelUpdateMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<ChannelUpdateMessage>(
+		convert<TDeviceID, DeviceID>(tMessage.base.sourceID)		
+		);
+
+	deviceMessage->channelUpdateType = convert<TChannelUpdateMessageType, ChannelUpdateMessage::ChannelUpdateMessageType>(tMessage.channelUpdateType);
+
+	if (deviceMessage->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue) {
+		//channel value message
+		for(unsigned i = 0; i < tMessage.channelValues.length(); ++i) {
+
+			deviceMessage->channelValues.insert(
+				std::pair<short, MixedValue>(
+					static_cast<short>(tMessage.channelValues[i].channelNumber),
+					convert<TMixedValue, MixedValue>(tMessage.channelValues[i].value)
+				));
+		}		
+	}
+	else {
+		//channel name message
+		deviceMessage->channelNumber = static_cast<short>(tMessage.channelNumber);
+		deviceMessage->channelName = convert<CORBA::String_member, std::string>(tMessage.channelName);
+	}
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<ChannelUpdateMessage>, TChannelUpdateMessage>(
+	const std::shared_ptr<ChannelUpdateMessage>& deviceMessage, TChannelUpdateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.channelUpdateType = convert<ChannelUpdateMessage::ChannelUpdateMessageType, TChannelUpdateMessageType>(deviceMessage->channelUpdateType);
+
+	tMessage.channelValues.length( static_cast<unsigned>(deviceMessage->channelValues.size()) );
+
+	unsigned i = 0;
+	for (auto& ch : deviceMessage->channelValues) {
+		if (i < tMessage.channelValues.length()) {
+			tMessage.channelValues[i].channelNumber = static_cast<CORBA::Short>(ch.first);
+			tMessage.channelValues[i].value = convert<MixedValue, TMixedValue>(ch.second);
+		}
+		++i;
+	}
+
+	tMessage.channelNumber = static_cast<CORBA::Short>(deviceMessage->channelNumber);
+	tMessage.channelName = convert<std::string, CORBA::String_member>(deviceMessage->channelName);
+
+	return true;
+}
+
+//ChannelUpdateMessageType
+template<>
+TChannelUpdateMessageType STI::Network::convert<ChannelUpdateMessage::ChannelUpdateMessageType, TChannelUpdateMessageType>(const ChannelUpdateMessage::ChannelUpdateMessageType& type)
+{
+	TChannelUpdateMessageType tType;
+
+	switch (type)
+	{
+	case ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue:
+		tType = TChannelUpdateMessageType::ChannelUpdataValue;
+		break;
+	case ChannelUpdateMessage::ChannelUpdateMessageType::ChannelName:
+		tType = TChannelUpdateMessageType::ChannelUpdateName;
+		break;
+	default:
+		tType = TChannelUpdateMessageType::ChannelUpdataValue;
+		break;
+	}
+
+	return tType;
+}
+
+template<>
+ChannelUpdateMessage::ChannelUpdateMessageType STI::Network::convert<TChannelUpdateMessageType, ChannelUpdateMessage::ChannelUpdateMessageType>(const TChannelUpdateMessageType& tType)
+{
+	ChannelUpdateMessage::ChannelUpdateMessageType type;
+
+	switch (tType)
+	{
+	case TChannelUpdateMessageType::ChannelUpdataValue:
+		type = ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue;
+		break;
+	case TChannelUpdateMessageType::ChannelUpdateName:
+		type = ChannelUpdateMessage::ChannelUpdateMessageType::ChannelName;
+		break;
+	default:
+		type = ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue;
+		break;
+	}
+
+	return type;
+}
+
+
+//AttributeUpdateMessage
+template<>
+bool STI::Network::convert<TAttributeUpdateMessage, std::shared_ptr<AttributeUpdateMessage>>(
+	const TAttributeUpdateMessage& tMessage, std::shared_ptr<AttributeUpdateMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<AttributeUpdateMessage>(
+		convert<TDeviceID, DeviceID>(tMessage.base.sourceID)		
+		);
+
+	for(unsigned i = 0; i < tMessage.attributes.length(); ++i) {
+
+		deviceMessage->attributes.insert(
+			std::pair<std::string, std::string>(
+				convert<CORBA::String_member, std::string>(tMessage.attributes[i].key),
+				convert<CORBA::String_member, std::string>(tMessage.attributes[i].value)
+			));
+	}
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<AttributeUpdateMessage>, TAttributeUpdateMessage>(
+	const std::shared_ptr<AttributeUpdateMessage>& deviceMessage, TAttributeUpdateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.attributes.length( static_cast<unsigned>(deviceMessage->attributes.size()) );
+
+	unsigned i = 0;
+	for (auto& attrib : deviceMessage->attributes) {
+		if (i < tMessage.attributes.length()) {
+			tMessage.attributes[i].key = convert<std::string, CORBA::String_member>(attrib.first);
+			tMessage.attributes[i].key = convert<std::string, CORBA::String_member>(attrib.second);
+		}
+		++i;
+	}
+
+	return true;
+}
 

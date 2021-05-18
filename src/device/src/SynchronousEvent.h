@@ -6,6 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 
+
 namespace STI
 {
 namespace Engine
@@ -13,6 +14,7 @@ namespace Engine
 
 class RawEvent;
 class Measurement;
+
 
 class SynchronousEvent
 {

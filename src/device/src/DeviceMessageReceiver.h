@@ -16,6 +16,7 @@ namespace STI
 namespace Device
 {
 
+
 class Device;
 class DeviceMessageDispatcher;
 
@@ -31,7 +32,6 @@ public:
 	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		const std::shared_ptr<DeviceMessageListener<T>>& listener)
 	{
-
 		bool success = false;
 		std::shared_ptr<DeviceMessageListenerGroup<T>> listenerGroup;
 
@@ -47,6 +47,9 @@ public:
 			break;
 		case DeviceMessageType::EngineScheduler:
 			success = getListenerGroup(sourceDeviceID, engineSchedulerListeners, listenerGroup);
+			break;
+		case DeviceMessageType::EngineParser:
+			success = getListenerGroup(sourceDeviceID, engineParserListeners, listenerGroup);
 			break;
 		}
 
@@ -155,10 +158,12 @@ private:
 	//The event type is the template parameter of the ListenerGroupMap type.
 	//These listener groups are stored here in a map, keyed by the DeviceID of the event's source
 	//(that is, the remote device that they are listening to).
+	//***CAREFUL: Do not declare multiple ListenerGroupMap<T> of the same T!
 	ListenerGroupMap<RefreshDeviceMessage> refreshListeners;
-	ListenerGroupMap<ChannelUpdateDeviceMessage> channelUpdateListeners;
+	ListenerGroupMap<ChannelUpdateMessage> channelUpdateListeners;
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
+	ListenerGroupMap<EngineParserDeviceMessage> engineParserListeners;
 	//...
 
 	/**

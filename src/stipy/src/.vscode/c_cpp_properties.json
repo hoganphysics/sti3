@@ -1,0 +1,23 @@
+{
+    "env": {
+        "stiBasePath": "${workspaceFolder}/../../.."
+    },
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${stiBasePath}/include/**",
+                "${stiBasePath}/src/device/src/**",
+                "${stiBasePath}/src/device/python/src/**",
+                "${stiBasePath}/src/network/src/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}

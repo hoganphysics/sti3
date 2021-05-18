@@ -48,8 +48,16 @@ public class JDeviceMessageReceiver {
     stiJNI.JDeviceMessageReceiver_addListener__SWIG_0(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, RefreshDeviceMessageListener.getCPtr(listener), listener);
   }
 
-  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, ChannelUpdateDeviceMessageListener listener) {
-    stiJNI.JDeviceMessageReceiver_addListener__SWIG_1(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, ChannelUpdateDeviceMessageListener.getCPtr(listener), listener);
+  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, ChannelUpdateMessageListener listener) {
+    stiJNI.JDeviceMessageReceiver_addListener__SWIG_1(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, ChannelUpdateMessageListener.getCPtr(listener), listener);
+  }
+
+  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, AttributeUpdateMessageListener listener) {
+    stiJNI.JDeviceMessageReceiver_addListener__SWIG_2(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, AttributeUpdateMessageListener.getCPtr(listener), listener);
+  }
+
+  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, EngineSchedulerMessageListener listener) {
+    stiJNI.JDeviceMessageReceiver_addListener__SWIG_3(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, EngineSchedulerMessageListener.getCPtr(listener), listener);
   }
 
   public void removeListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID) {

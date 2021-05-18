@@ -4,6 +4,7 @@
 
 #include "DeviceMessageDispatcher.h"
 
+
 namespace STI
 {
 namespace Device

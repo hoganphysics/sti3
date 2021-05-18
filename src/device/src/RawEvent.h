@@ -35,6 +35,7 @@
 #include <map>
 #include <memory>
 
+
 namespace STI
 {
 namespace Engine
@@ -88,6 +89,10 @@ public:
 
 	bool isMeasurementEvent() const { return isMeasurement; }
 	//bool isScheduled() const { return _isScheduled; }
+
+	bool operator<(const RawEvent& rhs) const { 
+		return (time() < rhs.time()) 
+					|| ((time() == rhs.time()) && (channel() < rhs.channel())); }
 
 	bool operator==(const RawEvent& rhs) const { return eventGraphPath == rhs.eventGraphPath; }
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }

@@ -98,6 +98,7 @@ void DeviceMessageReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID
 	refreshListenerGroup(sourceDeviceID, channelUpdateListeners, handler);
 	refreshListenerGroup(sourceDeviceID, attributeUpdateListeners, handler);
 	refreshListenerGroup(sourceDeviceID, engineSchedulerListeners, handler);
+	refreshListenerGroup(sourceDeviceID, engineParserListeners, handler);
 }
 
 
@@ -117,6 +118,9 @@ void DeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const
 		break;
 	case DeviceMessageType::EngineScheduler:
 		success = removeListener(sourceDeviceID, listenerID, engineSchedulerListeners);
+		break;
+	case DeviceMessageType::EngineParser:
+		success = removeListener(sourceDeviceID, listenerID, engineParserListeners);
 		break;
 	}
 	

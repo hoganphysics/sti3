@@ -12,6 +12,7 @@
 #include <mutex>
 #include <vector>
 
+
 namespace STI
 {
 namespace Device
@@ -45,7 +46,8 @@ public:
     bool setValue(const std::string& value);
 
 
-    LocalAttribute& setRefresher(const std::function<const std::string&(void)>& refesher);
+    // LocalAttribute& setRefresher(const std::function<const std::string&(void)>& refesher);
+    LocalAttribute& setRefresher(const std::function<std::string(void)>& refesher);
     LocalAttribute& setSetter(const std::function<bool(const std::string&)>& setter);
     LocalAttribute& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
 
@@ -65,7 +67,7 @@ private:
     std::vector<std::string> allowedValues_;
     std::string group_;     // "::attribute" on global group "::".  "MyGroup::attribute" in group "::MyGroup". "MyGroup::Sub::attribute" in group "::MyGroup::Sub".
 
-    std::function<const std::string&(void)> refreshValueCallback;
+    std::function<std::string(void)> refreshValueCallback;
     std::function<bool(const std::string&)> setValueCallback;
 
     STI::Utils::MetaData metaData;

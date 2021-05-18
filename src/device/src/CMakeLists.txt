@@ -19,11 +19,13 @@ add_library(stidevice SHARED
     DeviceID.cpp
     DeviceMessage.cpp
     DeviceMessageReceiver.cpp
-    EngineParsingError.cpp
+    # EngineParsingError.cpp
+    EngineParsingMessage.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    EngineState.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -34,15 +36,21 @@ add_library(stidevice SHARED
     LocalEventEngine.cpp
     LocalEventEngineJob.cpp
     LocalEventEngineScheduler.cpp
+    MasterTrigger.cpp
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
     RawEvent.cpp
+    ShotID.cpp
     SynchronousEvent.cpp
     utils.cpp
 )
 
-set_target_properties(stidevice PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(stidevice PROPERTIES 
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE ON    
+)
+# set_property(TARGET STIServer PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(stidevice PROPERTIES
     VERSION ${PROJECT_VERSION}

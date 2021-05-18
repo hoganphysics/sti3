@@ -24,21 +24,21 @@ TChannelManager_i::~TChannelManager_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-TChannelSeq* TChannelManager_i::getChannels()
+// TChannelSeq* TChannelManager_i::getChannels()
+void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 {
-    STI::TNetwork::TChannelSeq_var tChannels( new TChannelSeq );
-
-    std::vector<std::shared_ptr<STI::Device::Channel>> channels;
+    STI::TNetwork::TChannelSeq_var tChannelSeq_var( new TChannelSeq );
+    std::vector<std::shared_ptr<STI::Device::Channel>> localChannels;
 
     if (channelManager != 0) {
 
-		channelManager->getChannels(channels);
+		channelManager->getChannels(localChannels);
 
-        convert<std::shared_ptr<STI::Device::Channel>, TChannel>(channels, 
-                        (_CORBA_Unbounded_Sequence<STI::TNetwork::TChannel>&) tChannels);
+        convert<std::shared_ptr<STI::Device::Channel>, TChannel>(localChannels, tChannelSeq_var);
+
+        channels = new STI::TNetwork::TChannelSeq();
+		(*channels) = tChannelSeq_var;
 	}
-
-    return tChannels._retn();
 }
 
 ::CORBA::Boolean TChannelManager_i::getChannel(::CORBA::Short channelNumber, ::STI::TNetwork::TChannel_out channel)
@@ -57,6 +57,23 @@ TChannelSeq* TChannelManager_i::getChannels()
         
         success = convert<std::shared_ptr<STI::Device::Channel>, TChannel>(localChannel, (TChannel&)(*channel));
     }
+
+    return success;
+}
+
+::CORBA::Boolean TChannelManager_i::setChannelName(::CORBA::Short channelNumber, const char* name)
+{
+    bool success = false;
+
+    std::shared_ptr<STI::Device::Channel> localChannel;
+
+    if (channelManager != 0 
+        && channelManager->getChannel(static_cast<short>(channelNumber), localChannel)
+        && localChannel != 0)
+    {
+        localChannel->setChannelName(convert<CORBA::String_member, std::string>(name));
+        success = true;
+	}
 
     return success;
 }
@@ -91,5 +108,10 @@ TChannelSeq* TChannelManager_i::getChannels()
     }
 
     return success;
+}
+
+::CORBA::Boolean TChannelManager_i::ping()
+{
+    return true;
 }
 

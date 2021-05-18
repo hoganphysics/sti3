@@ -3,8 +3,8 @@
 
 #include "Device.h"
 #include "DeviceCollection.h"
-
 #include "JEventEngineScheduler.h"
+
 
 #include <memory>
 #include <string>
@@ -26,6 +26,8 @@ class JDeviceCollection;
 class JDeviceMessageReceiver;
 class JDeviceMessageDispatcher;
 class JChannelManager;
+class JAttributeManager;
+
 
 //Java Device wrapper
 class JDevice : public STI::Device::Device
@@ -45,16 +47,22 @@ public:
 
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
 	std::shared_ptr<STI::Device::JDeviceMessageDispatcher> getMessageDispatcher();
-	std::shared_ptr<STI::Device::JEventEngineScheduler> getEngineScheduler();
+	std::shared_ptr<STI::Engine::JEventEngineScheduler> getEngineScheduler();
 	std::shared_ptr<STI::Device::JChannelManager> getChannelManager();
+	std::shared_ptr<STI::Device::JAttributeManager> getAttributeManager();
+
 
 private:
+
 	friend class JLocalDevice;
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
+	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
+
+	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
 
     std::shared_ptr<Device> wrappedDevice;
 

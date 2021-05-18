@@ -18,6 +18,7 @@ class MetaData
 public:
 
     MetaData();
+    MetaData(const STI::Utils::MixedValue& data);
 	~MetaData();
 
     bool contains(const std::string& key) const;
@@ -29,6 +30,9 @@ public:
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
 
 private:
+
+    static bool isTuple(const STI::Utils::MixedValue& tuple);
+    static bool tupleMatch(const STI::Utils::MixedValue& tuple, const std::string& key);
 
     STI::Utils::MixedValue metaData;
 

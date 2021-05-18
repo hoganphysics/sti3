@@ -23,7 +23,8 @@ public:
 	void addMessageHandler(const ::STI::TNetwork::TDeviceID& targetID, ::STI::TNetwork::TDeviceMessageHandler_ptr handler);
 	void removeMessageHandler(const ::STI::TNetwork::TDeviceID& targetID);
 
-
+	::CORBA::Boolean ping();
+	
 private:
 
 	std::shared_ptr<STI::Device::DeviceMessageDispatcher> messageDispatcher;
