@@ -11978,7 +11978,7 @@ SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_HubID_1module_1get(JNIEnv *
 }
 
 
-SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_HubID_1toString(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_HubID_1getID(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   STI::Network::HubID *arg1 = (STI::Network::HubID *) 0 ;
   std::string result;
@@ -11987,7 +11987,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_HubID_1toString(JNIEnv *
   (void)jcls;
   (void)jarg1_;
   arg1 = *(STI::Network::HubID **)&jarg1; 
-  result = ((STI::Network::HubID const *)arg1)->toString();
+  result = ((STI::Network::HubID const *)arg1)->getID();
   jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }

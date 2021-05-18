@@ -30,6 +30,7 @@ public class STI {
             //Runtime.getRuntime().loadLibrary("stijava");  //seems to be the same as System.loadLibrary
             //System.out.println("Loaded stijava");
         } catch (UnsatisfiedLinkError e) {
+            System.out.println("failed.");
             //External library for loading an so the is stored inside the jar (cz.adamh.utils.NativeUtils)
             // try {
             //     NativeUtils.loadLibraryFromJar("/natives/libsti.so"); // during runtime. .DLL within .JAR

@@ -17,10 +17,10 @@ void init_HubID(py::module& m)
         .def_readwrite("name", &STI::Network::HubID::name)
         .def_readwrite("address", &STI::Network::HubID::address)
         .def_readwrite("module", &STI::Network::HubID::module)
-        .def("toString", &STI::Network::HubID::toString)
+        .def("toString", &STI::Network::HubID::getID)
         .def("__repr__",
             [](const STI::Network::HubID& id) {
-                return id.toString();
+                return id.getID();
             })
         .def("__eq__",  // operator ==
             [](const STI::Network::HubID& self, const STI::Network::HubID& other) {

@@ -50,8 +50,8 @@ NetworkDeviceHub::~NetworkDeviceHub()
 
 void NetworkDeviceHub::refreshHubContext()
 {
-	thisHubContext = makeHubContext(stiContext, localHub->getID().toString());
-	hubContextPath = makeHubContextPath(stiContext, localHub->getID().toString());
+	thisHubContext = makeHubContext(stiContext, localHub->getID().getID());
+	hubContextPath = makeHubContextPath(stiContext, localHub->getID().getID());
 }
 
 std::string NetworkDeviceHub::nextHubName()
@@ -141,7 +141,7 @@ bool NetworkDeviceHub::registerHubContext()
 
 		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
 		success &= orbmanager->bindObjectReference( 
-			makeHubContext(targetHubPath, localHub->getID().toString()), 
+			makeHubContext(targetHubPath, localHub->getID().getID()), 
 			tDeviceHubLocal);
 	}
 

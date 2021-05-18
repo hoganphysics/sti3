@@ -521,7 +521,7 @@ public class stiJNI {
   public final static native String HubID_address_get(long jarg1, HubID jarg1_);
   public final static native void HubID_module_set(long jarg1, HubID jarg1_, int jarg2);
   public final static native int HubID_module_get(long jarg1, HubID jarg1_);
-  public final static native String HubID_toString(long jarg1, HubID jarg1_);
+  public final static native String HubID_getID(long jarg1, HubID jarg1_);
   public final static native boolean HubID_stringToHubID(String jarg1, long jarg2, HubID jarg2_);
   public final static native void delete_HubID(long jarg1);
   public final static native long new_JHubGraphNode(long jarg1);

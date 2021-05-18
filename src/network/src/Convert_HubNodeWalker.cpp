@@ -147,13 +147,13 @@ bool STI::Network::convert<TDeviceNode, DeviceDirectedGraphNode>(
 
 	success = false;	//reset
 
-	if (!CORBA::is_nil(tDeviceNode.node)) {
+	// if (!CORBA::is_nil(tDeviceNode.node)) {
 
 		auto remoteDevice = std::make_shared<RemoteDevice>(tDeviceNode.node);	//std::shared_ptr<STI::Device::Device>
 		graphDeviceNode.node = remoteDevice;
 
 		success = (remoteDevice != 0);
-	}
+	// }
 
 	return success;
 }
