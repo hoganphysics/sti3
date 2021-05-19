@@ -4,6 +4,7 @@
 #include "RemoteAttribute.h"
 #include "DeviceMessageListenerForwarder.h"
 #include "DeviceMessage.h"
+#include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 
 #include "deviceNet.h"
@@ -65,7 +66,7 @@ std::string RemoteAttributeManager::getValue(const std::string& key)
 		auto tValue = tAttributeManager->getValue(
                     convert<std::string, CORBA::String_member>(key));	//remote call
 
-		convert<CORBA::String_member, std::string>(tValue, value);
+		value = convert<CORBA::String_member, std::string>(tValue);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

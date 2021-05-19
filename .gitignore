@@ -40,3 +40,10 @@ doc/~$vice tree.docx
 /src/device/test/testDependencyTree/main
 src/device/python/src/__pycache__/
 src/network/test/testEventEngine/x64/
+src/network/src/.vs/
+src/device/src/.vs/
+src/server/src/.vs/
+examples/cpp/testwin/testwindll/testwindll/x64/
+examples/cpp/testwin/testwindll/.vs/
+src/server/vcproject/x64/
+src/server/vcproject/.vs/

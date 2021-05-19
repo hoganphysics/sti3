@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+cmake_policy(SET CMP0091 NEW)
+
 # set the project name
 project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
 
@@ -8,17 +10,27 @@ project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+
 set(STI_BASE_DIR ../../..)
 
 
 link_directories(${STI_BASE_DIR}/lib)
+
+#add_definitions(-D_ITERATOR_DEBUG_LEVEL=0) 
 
 # add the executable
 add_executable(STIServer 
     main.cpp 
     ServerDevice.cpp
 )
-set_property(TARGET STIServer PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET STIServer 
+    PROPERTY POSITION_INDEPENDENT_CODE ON
+    #MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    #MSVC_RUNTIME_LIBRARY "MultiThreaded"
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+    )
 
 target_include_directories(STIServer PRIVATE 
     ${WORKING_DIRECTORY}
@@ -27,7 +39,14 @@ target_include_directories(STIServer PRIVATE
     ${STI_BASE_DIR}/src/network/src
 )
 
-target_link_libraries(STIServer stidevice stinetwork)
+target_link_directories(STIServer PUBLIC 
+    "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
+    "C:/Users/Jason/Code/dev/sti3/src/network/src/build/install/x64-Debug/lib"
+)
+
+target_link_libraries(STIServer 
+stidevice 
+stinetwork)
 
 install(TARGETS STIServer
     #DESTINATION ${STI_BASE_DIR}/lib

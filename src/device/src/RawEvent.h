@@ -104,7 +104,11 @@ public:
 	void setValue(const STI::Utils::MixedValue& value) { _value = value; }
 	void setDescription(const std::string& description) { _description = description; }
 	void setEventGraphPath(const STI::Utils::GraphPathLabel& pathLabel) { eventGraphPath = pathLabel;}
-	void setEventType(const RawEventType& eventType) { _eventType = eventType; }
+	void setEventType(const RawEventType& eventType) 
+	{ 
+		isMeasurement = (eventType == RawEventType::Measurement);
+		_eventType = eventType;
+	}
 
 private:
 	

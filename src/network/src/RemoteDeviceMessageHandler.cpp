@@ -3,6 +3,8 @@
 #include "NetworkConvert.h"
 #include "DeviceMessage.h"
 
+#include "Convert_DeviceMessage.h"
+
 #include "deviceNet.h"
 #include "orbTypes.h"
 

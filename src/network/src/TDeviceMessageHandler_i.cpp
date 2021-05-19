@@ -4,6 +4,8 @@
 #include "ORBManager.h"
 #include "NetworkConvert.h"
 
+#include "Convert_DeviceMessage.h"
+
 #include <set>
 
 using STI::TNetwork::TDeviceMessageHandler_i;

@@ -111,7 +111,10 @@ bool RemoteChannelManager::getChannel(short channelNumber, std::shared_ptr<STI::
 	{
 	}
 
-    if (success && convert<TChannel, std::shared_ptr<Channel>>(tChannel, channel)) {
+	std::shared_ptr<RemoteChannel> remoteChannel;
+
+    if (success && convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannel, remoteChannel)) {
+		remoteChannel->attachManager(this);
 		setChannelData(channel);
 	}
 

@@ -104,9 +104,16 @@ std::string Network::convert<::CORBA::String_member, std::string>(const ::CORBA:
 template<>
 ::CORBA::String_member Network::convert<std::string, ::CORBA::String_member>(const std::string& str);
 
-
 template<>
 bool Network::convert<std::string, ::CORBA::String_member>(const std::string& str, ::CORBA::String_member& tString);
+
+
+template<>
+bool Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(const std::vector<std::string>& stringVec, STI::TNetwork::TStringSeq& tStringSeq);
+template<>
+bool Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(const STI::TNetwork::TStringSeq& tStringSeq, std::vector<std::string>& stringVec);
+
+
 
 //can only list one way since the ::CORBA::UShort is just typedefed as unsigned short...
 template<>

@@ -31,6 +31,32 @@ bool STI::Network::convert<std::string, ::CORBA::String_member>(const std::strin
 	return true;
 }
 
+
+template<>
+bool STI::Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(const std::vector<std::string>& stringVec, STI::TNetwork::TStringSeq& tStringSeq)
+{
+	tStringSeq.length(static_cast<unsigned>(stringVec.size()));
+
+	typename std::vector<std::string>::const_iterator in = stringVec.begin();
+	for (unsigned i = 0; i < tStringSeq.length() && in != stringVec.end(); ++i, ++in) {
+		tStringSeq[i] = convert<std::string, ::CORBA::String_member>(*in);
+	}
+	return (stringVec.size() == tStringSeq.length());
+}
+
+template<>
+bool STI::Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(const STI::TNetwork::TStringSeq& tStringSeq, std::vector<std::string>& stringVec)
+{
+	stringVec.clear();
+	for (unsigned i = 0; i < tStringSeq.length(); ++i) {
+		//stringVec.push_back(convert<::CORBA::String_member, std::string>(tStringSeq[i]));
+		stringVec.push_back(tStringSeq[i]._NP_ref());
+	}
+	return (stringVec.size() == tStringSeq.length());
+}
+
+
+
 template<>
 ::CORBA::UShort STI::Network::convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort)
 {

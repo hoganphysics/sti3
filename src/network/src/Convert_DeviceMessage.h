@@ -38,7 +38,7 @@ bool Network::convert<TNetwork::TAnyMessage, std::shared_ptr<STI::Device::Device
 template<>
 TNetwork::TDeviceMessageType Network::convert<Device::DeviceMessageType, TNetwork::TDeviceMessageType>(const Device::DeviceMessageType& type);
 template<>
-Device::DeviceMessageType Network::convert<TNetwork::TDeviceMessageType, Device::DeviceMessageType>(const TNetwork::TDeviceMessageType& tType);
+enum Device::DeviceMessageType Network::convert<TNetwork::TDeviceMessageType, Device::DeviceMessageType>(const TNetwork::TDeviceMessageType& tType);
 template<>
 bool Network::convert<Device::DeviceMessageType, TNetwork::TDeviceMessageType>(const Device::DeviceMessageType& type, TNetwork::TDeviceMessageType& tType);
 template<>

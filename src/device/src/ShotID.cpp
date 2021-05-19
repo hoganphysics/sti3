@@ -23,7 +23,7 @@ ShotID ShotID::generateUniqueID(const ParseID& pid)
     std::chrono::system_clock::duration tp = now.time_since_epoch();
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
-    sid.submissionTime.timestamp = ms.count();
+    sid.submissionTime.timestamp = static_cast<double>(ms.count());
 
     if (sid.submissionTime.timestamp == lastPlayTime.timestamp) {
         //error: increment TimeStamp to ensure ShotID is unique!

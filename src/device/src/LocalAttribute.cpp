@@ -132,6 +132,8 @@ LocalAttribute& LocalAttribute::setRefresher(const std::function<std::string(voi
     std::unique_lock<std::mutex> attributeLock(attMutex);
 
     refreshValueCallback = refresher;
+
+    return (*this);
 }
 
 LocalAttribute& LocalAttribute::setSetter(const std::function<bool(const std::string&)>& setter)
@@ -139,6 +141,8 @@ LocalAttribute& LocalAttribute::setSetter(const std::function<bool(const std::st
     std::unique_lock<std::mutex> attributeLock(attMutex);
 
     setValueCallback = setter;
+
+    return (*this);
 }
 
 LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const STI::Utils::MixedValue& data)

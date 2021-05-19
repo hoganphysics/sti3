@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+cmake_policy(SET CMP0091 NEW)
+
 # set the project name
 project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 
@@ -7,9 +9,24 @@ project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_DEBUG_POSTFIX "_d")
+
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+
+FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
+find_package(Threads REQUIRED)
+
+#find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
+add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
+
+
 set(STI_BASE_DIR ../../..)
 
-include_directories(".")
+# include_directories("." ${OMNIORB4_INCLUDE_DIR})
+#include_directories("." "C:\Users\Jason\Code\lib\omniORB-4.2.1.x64\include")
+include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
+
 # include_directories("${STI_BASE_DIR}/src/device/src")
 
 #link_directories(${STI_BASE_DIR}/lib)
@@ -61,24 +78,58 @@ add_library(stinetwork SHARED
     TTriggerCallback_i.cpp
 )
 
+target_link_directories(stinetwork PUBLIC 
+    "${OMNIORB_PATH}/lib/x86_win32"
+    "${STI_BASE_DIR}/lib"
+   # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
+   # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
+)
+
+if (MSVC)
+    set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
+endif (MSVC)
+
+
 target_link_libraries(stinetwork 
-    pthread
-    omnithread
-    omniORB4
-    omniDynamic4
-    omniCodeSets4
+    Threads::Threads
+    # pthread
+    omnithread${OMNI_EXT}
+    omniORB4${OMNI_EXT}
+    omniDynamic4${OMNI_EXT}
+    omniCodeSets4${OMNI_EXT}
     # omnisslTP4   #if OpenSSL is available
-    COS4
-    COSDynamic4
+    COS4${OMNI_EXT}
+    COSDynamic4${OMNI_EXT}
+    stidevice${CMAKE_DEBUG_POSTFIX}
 )
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
 
+#https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
+#https://stackoverflow.com/questions/33062728/cmake-link-shared-library-on-windows
+
+
+
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
+    BUILD_SHARED_LIBS TRUE
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+    #MSVC_RUNTIME_LIBRARY "MultiThreadedDebug>"
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
+
+message("OMNIORB_PATH:")
+message(STATUS "${OMNIORB_PATH}")
+
+
+#file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "CONFIG is $<CONFIG>")
+message(STATUS "${CMAKE_CURRENT_BINARY_DIR}")
+#file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "MSVC_RUNTIME_LIBRARY is MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "OMNI_EXT is ${OMNI_EXT}")
+
 
 target_include_directories(stinetwork PRIVATE 
     ${WORKING_DIRECTORY}

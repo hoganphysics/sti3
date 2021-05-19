@@ -13,8 +13,10 @@ namespace Device
 {
 
 
-struct DeviceMessageListenerID
+class DeviceMessageListenerID
 {
+public:
+
 	DeviceMessageType type;
 	std::string name;
 
