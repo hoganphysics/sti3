@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+if (MSVC)
 cmake_policy(SET CMP0091 NEW)
+endif (MSVC)
 
 # set the project name
 project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
@@ -9,8 +11,9 @@ project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (MSVC)
 set(CMAKE_DEBUG_POSTFIX "_d")
-
+endif (MSVC)
 
 #set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )

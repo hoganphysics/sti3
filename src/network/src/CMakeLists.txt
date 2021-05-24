@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+if (MSVC)
 cmake_policy(SET CMP0091 NEW)
+endif (MSVC)
 
 # set the project name
 project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
@@ -9,7 +11,9 @@ project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (MSVC)
 set(CMAKE_DEBUG_POSTFIX "_d")
+endif (MSVC)
 
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
@@ -18,8 +22,9 @@ FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
 find_package(Threads REQUIRED)
 
 #find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
+if (MSVC)
 add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
-
+endif (MSVC)
 
 set(STI_BASE_DIR ../../..)
 
@@ -78,16 +83,23 @@ add_library(stinetwork SHARED
     TTriggerCallback_i.cpp
 )
 
-target_link_directories(stinetwork PUBLIC 
-    "${OMNIORB_PATH}/lib/x86_win32"
-    "${STI_BASE_DIR}/lib"
-   # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
-   # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
-)
-
 if (MSVC)
+
+    target_link_directories(stinetwork PUBLIC 
+        "${OMNIORB_PATH}/lib/x86_win32"
+        "${STI_BASE_DIR}/lib"
+    # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
+    # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
+    )
+
+    set(STIDEVICE_LIB stidevice${CMAKE_DEBUG_POSTFIX})
     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
+
 endif (MSVC)
+
+# if (MSVC)
+#     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
+# endif (MSVC)
 
 
 target_link_libraries(stinetwork 
@@ -100,7 +112,7 @@ target_link_libraries(stinetwork
     # omnisslTP4   #if OpenSSL is available
     COS4${OMNI_EXT}
     COSDynamic4${OMNI_EXT}
-    stidevice${CMAKE_DEBUG_POSTFIX}
+    ${STIDEVICE_LIB}
 )
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
