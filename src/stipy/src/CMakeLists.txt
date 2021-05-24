@@ -14,6 +14,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(STI_BASE_DIR ../../..)
 set(STIDEVICEPY_DIR ${STI_BASE_DIR}/src/device/python/src)
 
+
+if (MSVC)
+set(USE_STI_DEBUG_POSTFIX True)
+endif (MSVC)
+
+if (USE_STI_DEBUG_POSTFIX)
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+endif (USE_STI_DEBUG_POSTFIX)
+
+
 include_directories(".")
 
 link_directories(${STI_BASE_DIR}/lib)
@@ -26,7 +36,10 @@ link_directories(${STI_BASE_DIR}/lib)
 
 #find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
+if (MSVC)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+endif (MSVC)
+
 
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
@@ -85,7 +98,7 @@ install(TARGETS stipy
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+
 
 target_link_libraries(stipy PRIVATE 
     stidevice${STI_LIB_POSTFIX}

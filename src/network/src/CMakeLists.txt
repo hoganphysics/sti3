@@ -12,8 +12,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
-set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+set(USE_STI_DEBUG_POSTFIX True)
 endif (MSVC)
+
+if (USE_STI_DEBUG_POSTFIX)
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+endif (USE_STI_DEBUG_POSTFIX)
 #set(CMAKE_DEBUG_POSTFIX "_d")
 
 
@@ -114,9 +118,15 @@ target_link_libraries(stinetwork
     # omnisslTP4   #if OpenSSL is available
     COS4${OMNI_EXT}
     COSDynamic4${OMNI_EXT}
-    stidevice${STI_LIB_POSTFIX}
+    # stidevice${STI_LIB_POSTFIX}
     # Ws2_32
 )
+
+if (MSVC)
+target_link_libraries(stinetwork 
+    stidevice${STI_LIB_POSTFIX}
+)
+endif (MSVC)
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
 
@@ -124,9 +134,13 @@ target_link_libraries(stinetwork
 #https://stackoverflow.com/questions/33062728/cmake-link-shared-library-on-windows
 
 
+
+
+
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
-    DEBUG_POSTFIX "_d"
+#    DEBUG_POSTFIX "$<IF:$<CONFIG:Debug>,${STI_LIB_POSTFIX},"">"
+#    "$<$<CONFIG:Debug>,DEBUG_POSTFIX ${STI_LIB_POSTFIX}>"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
@@ -135,6 +149,15 @@ set_target_properties(stinetwork PROPERTIES
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
+
+if (USE_STI_DEBUG_POSTFIX) 
+
+    set_target_properties(stinetwork PROPERTIES
+        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+    )
+
+endif (USE_STI_DEBUG_POSTFIX)
+
 
 message("OMNIORB_PATH:")
 message(STATUS "${OMNIORB_PATH}")

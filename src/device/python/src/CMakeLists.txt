@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+if (MSVC)
 cmake_policy(SET CMP0091 NEW)
+endif (MSVC)
 
 # set the project name
 project(stidevicepy VERSION 3.0.0 DESCRIPTION "STI device lib python wrapper" LANGUAGES CXX)
@@ -10,6 +12,17 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #set(CMAKE_DEBUG_POSTFIX "_d")
+
+if (MSVC)
+set(USE_STI_DEBUG_POSTFIX True)
+endif (MSVC)
+
+if (USE_STI_DEBUG_POSTFIX)
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+endif (USE_STI_DEBUG_POSTFIX)
+
+# set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+
 
 set(STI_BASE_DIR ../../../..)
 
@@ -24,7 +37,10 @@ link_directories(${STI_BASE_DIR}/lib)
 
 find_package(Threads REQUIRED)
 
+if (MSVC)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+endif (MSVC)
+
 
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
@@ -108,7 +124,7 @@ add_library(stidevicepybase SHARED
 
 set_target_properties(stidevicepybase PROPERTIES
     VERSION ${PROJECT_VERSION}
-    DEBUG_POSTFIX "_d"
+    # DEBUG_POSTFIX "_d"
     POSITION_INDEPENDENT_CODE TRUE
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
@@ -117,6 +133,15 @@ set_target_properties(stidevicepybase PROPERTIES
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
+
+if (USE_STI_DEBUG_POSTFIX) 
+
+    set_target_properties(stidevicepybase PROPERTIES
+        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+    )
+
+endif (USE_STI_DEBUG_POSTFIX)
+
 
 set_target_properties(stidevicepy PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -147,7 +172,7 @@ install(TARGETS stidevicepy stidevicepybase
 
 #  target_link_libraries(stidevicepybase PRIVATE stidevice)
 
-set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+
 
 target_link_libraries(stidevicepybase 
 #    pthread 
