@@ -12,7 +12,6 @@
 #include <sstream>
 #include <iostream>
 
-
 using STI::Network::NetworkDeviceHub;
 using STI::Device::DeviceID;
 using STI::Network::LocalDeviceHub;
@@ -41,11 +40,27 @@ NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& a
 	stiContext = "STI";
 	hubObjectName = "TDeviceHub.Object";
 
+	persistence.bindToRootContext = true;
+	persistence.bindToTargetContexts = true;
+
 	refreshHubContext();
 }
 
 NetworkDeviceHub::~NetworkDeviceHub()
 {
+}
+
+//static
+std::string NetworkDeviceHub::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
+{
+	auto orbmanager = STI::Network::ORBManager::getInstance(nameServerAddress, "");
+
+	return orbmanager->printNameTree(baseContext);
+}
+
+NetworkDeviceHub::PersistenceOptions& NetworkDeviceHub::getPersistenceOptions()
+{
+	return persistence;
 }
 
 void NetworkDeviceHub::refreshHubContext()
@@ -132,7 +147,13 @@ bool NetworkDeviceHub::registerHubContext()
 	}
 
 	// (1) Bind primary reference to this Hub under root context
-	success = orbmanager->bindObjectReference(thisHubContext, tDeviceHubLocal);
+	if (persistence.bindToRootContext) {
+		success = orbmanager->bindObjectReference(thisHubContext, tDeviceHubLocal);
+	}
+	else {
+		success = true;
+	}
+
 
 	// (2) Bind reference to this Hub under all target Hub contexts (for reconnect when target Hub restarts)
 	for (auto& targetHub : targetHubs) {
@@ -140,14 +161,25 @@ bool NetworkDeviceHub::registerHubContext()
 		std::string targetHubPath = makeHubContextPath(stiContext, targetHub);
 
 		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
-		success &= orbmanager->bindObjectReference( 
-			makeHubContext(targetHubPath, localHub->getID().getID()), 
-			tDeviceHubLocal);
+		if (persistence.bindToTargetContexts) {
+			success &= orbmanager->bindObjectReference(
+				makeHubContext(targetHubPath, localHub->getID().getID()),
+				tDeviceHubLocal);
+		}
+		else {
+			success &= true;
+		}
 	}
 
 	return success;
 }
 
+void NetworkDeviceHub::shutdown()
+{
+	if (orbmanager != 0 && orbmanager->running()) {
+		orbmanager->shutdown();
+	}
+}
 
 void NetworkDeviceHub::run(bool block)
 {
@@ -156,6 +188,10 @@ void NetworkDeviceHub::run(bool block)
 	}
 	else {
 		orbmanager = ORBManager::getInstance(_nameServiceAddress, "");
+	}
+
+	if (orbmanager == 0) {
+		return;
 	}
 
 	if (!registerHubContext()) {

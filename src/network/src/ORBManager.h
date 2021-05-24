@@ -31,7 +31,7 @@ private:
 	friend class Concrete_ORBManager;
 
 public:
-	
+
 	virtual ~ORBManager();
 	
 	static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);

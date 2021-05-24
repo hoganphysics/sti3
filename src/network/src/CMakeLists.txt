@@ -12,8 +12,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
-set(CMAKE_DEBUG_POSTFIX "_d")
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
 endif (MSVC)
+#set(CMAKE_DEBUG_POSTFIX "_d")
+
 
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
@@ -92,7 +94,7 @@ if (MSVC)
     # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
     )
 
-    set(STIDEVICE_LIB stidevice${CMAKE_DEBUG_POSTFIX})
+    # set(STIDEVICE_LIB stidevice${CMAKE_DEBUG_POSTFIX})
     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
 
 endif (MSVC)
@@ -112,7 +114,8 @@ target_link_libraries(stinetwork
     # omnisslTP4   #if OpenSSL is available
     COS4${OMNI_EXT}
     COSDynamic4${OMNI_EXT}
-    ${STIDEVICE_LIB}
+    stidevice${STI_LIB_POSTFIX}
+    # Ws2_32
 )
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
@@ -121,9 +124,9 @@ target_link_libraries(stinetwork
 #https://stackoverflow.com/questions/33062728/cmake-link-shared-library-on-windows
 
 
-
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
+    DEBUG_POSTFIX "_d"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE

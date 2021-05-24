@@ -30,9 +30,16 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
                          const STI::Device::DeviceID& serverID)
 : libDeviceHub(libDeviceHub), libDevice(libDevice), serverID(serverID)
 {
-    std::shared_ptr<STI::Device::Device> server;
-    libDevice->getServer(server);
+//    std::shared_ptr<STI::Device::Device> server;
+//    libDevice->getServer(server);
 
+}
+
+//temp
+STIPyServer::~STIPyServer()
+{
+    std::cout << "STIPyServer: hub shutdown" << std::endl;
+    libDeviceHub->shutdown();
 }
 
 void STIPyServer::setChannels(const pybind11::dict& channels)
@@ -77,7 +84,7 @@ bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler
 {
     std::shared_ptr<STI::Device::Device> server;
     
-    if (libDevice->getServer(server)) {
+    if (libDevice != 0 && libDevice->getServer(server)) {
         return server->getEngineScheduler(scheduler);
     }
 
@@ -87,11 +94,11 @@ bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler
 std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot)
 {
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    auto tp = now.time_since_epoch();
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
     STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = ms.count();
+    pid.parseTimestamp.timestamp = static_cast<double>(ms.count());
     std::cout << "parse time: " << pid.parseTimestamp.timestamp << std::endl;
     
     auto ticket = libDevice->makeParseTicket(pid);

@@ -47,3 +47,5 @@ examples/cpp/testwin/testwindll/testwindll/x64/
 examples/cpp/testwin/testwindll/.vs/
 src/server/vcproject/x64/
 src/server/vcproject/.vs/
+src/stipy/src/.vs/
+src/device/python/src/.vs/

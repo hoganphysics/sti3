@@ -20,7 +20,7 @@ class STIPyShot;
 class STIPyDevice;
 class STIPyChannel;
 class STIPyGlobal;
-class Concrete_STIPyGlobal;
+struct Concrete_STIPyGlobal;
 
 
 class STIPyGlobal

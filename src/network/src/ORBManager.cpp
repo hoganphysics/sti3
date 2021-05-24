@@ -1,9 +1,6 @@
 
 #include "ORBManager.h"
 
-#include "HubID.h"
-#include "NetworkDeviceHubWrapper.h"
-
 #include <omniORB4/omniURI.h>
 
 #include "utils.h"
@@ -14,8 +11,6 @@
 #include <string.h>
 
 using STI::Network::ORBManager;
-using STI::Network::HubID;
-using STI::Network::NetworkDeviceHubWrapper;
 using STI::Network::COSBindingNode;
 
 
@@ -83,7 +78,7 @@ NameServer IP:Port = 192.168.1.1:2809
 
 */
 
-namespace {
+//namespace {
 
 //class Concrete_ORBManager : public ORBManager
 //{
@@ -97,7 +92,7 @@ namespace {
 //struct Concrete_ORBManager : public ORBManager {};
 
 
-} // anonymous
+//} // anonymous
 
 namespace STI
 {
@@ -219,6 +214,7 @@ void ORBManager::run()
 	}
 
 	orb->perform_work();
+//	orb->run();
 }
 
 void ORBManager::block()
@@ -255,9 +251,11 @@ void ORBManager::shutdown()
 	if (_running)
 	{
 		_running = false;
+		orb_initialized = false;
 		std::cerr << "Shutting down ORB" << std::endl;
-		orb->shutdown(false);
+		orb->shutdown(true);
 		orb->destroy();
+
 	}
 }
 
