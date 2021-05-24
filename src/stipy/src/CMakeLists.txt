@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+if (MSVC)
+cmake_policy(SET CMP0091 NEW)
+endif (MSVC)
+
 # set the project name
 project(stidevicepy VERSION 3.0.0 DESCRIPTION "STIPy python wrapper" LANGUAGES CXX)
 
@@ -21,6 +25,8 @@ link_directories(${STI_BASE_DIR}/lib)
 
 
 #find_package(Python COMPONENTS Interpreter Development REQUIRED)
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
@@ -52,10 +58,15 @@ pybind11_add_module(stipy
     ${STIDEVICEPY_DIR}/DeviceID_wrap.cpp
 )
 
-set_target_properties(stipy PROPERTIES VERSION ${PROJECT_VERSION})
+#set_target_properties(stipy PROPERTIES VERSION ${PROJECT_VERSION})
 
 set_target_properties(stipy PROPERTIES
     VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE TRUE
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
+    BUILD_SHARED_LIBS TRUE
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
@@ -74,9 +85,11 @@ install(TARGETS stipy
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+
 target_link_libraries(stipy PRIVATE 
-    stidevice 
-    stinetwork
- PUBLIC stidevicepybase
+    stidevice${STI_LIB_POSTFIX}
+    stinetwork${STI_LIB_POSTFIX}
+ PUBLIC stidevicepybase${STI_LIB_POSTFIX}
     # stidevicepybase.cpython-36m-x86_64-linux-gnu
 )

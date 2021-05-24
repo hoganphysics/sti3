@@ -9,7 +9,8 @@ project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_DEBUG_POSTFIX "_d")
+#set(CMAKE_DEBUG_POSTFIX "_d")
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
 
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
@@ -18,7 +19,7 @@ FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
 find_package(Threads REQUIRED)
 
 #find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
-add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
+add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG  OMNI_UNLOADABLE_STUBS
 
 
 set(STI_BASE_DIR ../../..)
@@ -100,7 +101,8 @@ target_link_libraries(stinetwork
     # omnisslTP4   #if OpenSSL is available
     COS4${OMNI_EXT}
     COSDynamic4${OMNI_EXT}
-    stidevice${CMAKE_DEBUG_POSTFIX}
+    stidevice${STI_LIB_POSTFIX}
+    Ws2_32
 )
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
@@ -109,9 +111,9 @@ target_link_libraries(stinetwork
 #https://stackoverflow.com/questions/33062728/cmake-link-shared-library-on-windows
 
 
-
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
+    DEBUG_POSTFIX "_d"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE

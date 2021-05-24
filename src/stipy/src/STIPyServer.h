@@ -39,6 +39,7 @@ public:
     STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
                 const std::shared_ptr<STIPyLibDevice>& libDevice, 
                 const STI::Device::DeviceID& serverID);
+    ~STIPyServer();
 
     void setChannels(const pybind11::dict& channels);
 

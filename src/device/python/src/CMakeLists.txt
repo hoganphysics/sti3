@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 
+cmake_policy(SET CMP0091 NEW)
+
 # set the project name
 project(stidevicepy VERSION 3.0.0 DESCRIPTION "STI device lib python wrapper" LANGUAGES CXX)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+#set(CMAKE_DEBUG_POSTFIX "_d")
 
 set(STI_BASE_DIR ../../../..)
 
@@ -18,14 +22,16 @@ link_directories(${STI_BASE_DIR}/lib)
 # -Dpybind11_ROOT
 #add_subdirectory(/home/hogan/.local/lib/python3.6/site-packages/pybind11/share/cmake/pybind11 .)
 
+find_package(Threads REQUIRED)
 
-#find_package(Python COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
 find_package(PythonLibs 3.6.2 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
+
 
 pybind11_add_module(stidevicepy 
     AttributeManager_wrap.cpp
@@ -64,13 +70,13 @@ pybind11_add_module(stidevicepy
 
 add_dependencies(stidevicepy stidevicepybase)
 
-set_target_properties(stidevicepy PROPERTIES VERSION ${PROJECT_VERSION})
+#set_target_properties(stidevicepy PROPERTIES VERSION ${PROJECT_VERSION})
 
-set_target_properties(stidevicepy PROPERTIES
-    VERSION ${PROJECT_VERSION}
+#set_target_properties(stidevicepy PROPERTIES
+#    VERSION ${PROJECT_VERSION}
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
-)
+#)
 
 target_include_directories(stidevicepy PRIVATE 
     ${WORKING_DIRECTORY}
@@ -91,21 +97,38 @@ add_library(stidevicepybase SHARED
     MixedValuePy.cpp
 )
 
-set_target_properties(stidevicepybase 
-    PROPERTIES 
-        VERSION ${PROJECT_VERSION}
+
+#set_target_properties(stidevicepybase PROPERTIES 
+#        VERSION ${PROJECT_VERSION}
         # HEADER pybind11::headers
         # PREFIX lib
         # SUFFIX .so
 #        NO_SONAME OFF
-)
+#)
 
 set_target_properties(stidevicepybase PROPERTIES
     VERSION ${PROJECT_VERSION}
+    DEBUG_POSTFIX "_d"
     POSITION_INDEPENDENT_CODE TRUE
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
+    BUILD_SHARED_LIBS TRUE
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
+
+set_target_properties(stidevicepy PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    POSITION_INDEPENDENT_CODE TRUE
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
+    BUILD_SHARED_LIBS TRUE
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+#    SOVERSION 1
+#    PUBLIC_HEADER api/mylib.h
+)
+
 
 
 target_include_directories(stidevicepybase PRIVATE 
@@ -124,9 +147,17 @@ install(TARGETS stidevicepy stidevicepybase
 
 #  target_link_libraries(stidevicepybase PRIVATE stidevice)
 
-target_link_libraries(stidevicepybase pthread pybind11::module pybind11::headers stidevice ${PYTHON_LIBRARIES})
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
 
-target_link_libraries(stidevicepy PRIVATE stidevice 
-                                   PRIVATE stidevicepybase)
+target_link_libraries(stidevicepybase 
+#    pthread 
+    Threads::Threads
+    pybind11::module 
+    pybind11::headers 
+    stidevice${STI_LIB_POSTFIX}
+    ${PYTHON_LIBRARIES})
+
+target_link_libraries(stidevicepy PRIVATE stidevice${STI_LIB_POSTFIX} 
+                                   PRIVATE stidevicepybase${STI_LIB_POSTFIX})
 
 

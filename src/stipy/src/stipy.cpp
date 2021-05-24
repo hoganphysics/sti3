@@ -5,7 +5,7 @@
 #include "STIPyLibDevice.h"
 #include "STIPyShot.h"
 #include "STIPyGlobal.h"
-#include "ORBManager.h"
+//#include "ORBManager.h"
 
 #include "STIPyChannel.h"
 
@@ -57,6 +57,8 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
     auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress);
+//    hub->getPersistenceOptions().bindToRootContext = false;
+//    hub->getPersistenceOptions().bindToTargetContexts = false;
 
     //Need to ensure that the DeviceID is unique.  Could have:
     //multiple computers connecting, multiple connections from each computer
@@ -84,11 +86,8 @@ void STI::Python::disconnect()
 
 std::string STI::Python::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
 {
-    auto orbmanager = STI::Network::ORBManager::getInstance(nameServerAddress, "");
-
-    return orbmanager->printNameTree(baseContext);
+    return STI::Network::NetworkDeviceHub::printNetwork(nameServerAddress, baseContext);
 }
-
 
 
 void STI::Python::event(const STIPyChannel& channel, double time, const pybind11::object& value)

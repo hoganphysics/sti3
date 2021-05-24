@@ -39,10 +39,21 @@ public:
 	void setNameServiceAddress(const std::string& nameServiceAddress) { _nameServiceAddress = nameServiceAddress; }
 
 	void run(bool block = true);
+	void shutdown();
 
 	void walk(LocalDeviceHub::HubNodeWalker& root) const;
 
-	void printNetwork();
+	//void printNetwork();
+	
+	static std::string printNetwork(const std::string& nameServerAddress, const std::string& baseContext);
+
+	struct PersistenceOptions
+	{
+		bool bindToRootContext;
+		bool bindToTargetContexts;
+	};
+
+	PersistenceOptions& getPersistenceOptions();
 
 private:
 
@@ -58,6 +69,8 @@ private:
 	std::string makeHubContext(const std::string& baseContext, const std::string& hubID);
 	
 	bool connectRemoteHub(const std::string& remoteHubContext);
+
+	PersistenceOptions persistence;
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;

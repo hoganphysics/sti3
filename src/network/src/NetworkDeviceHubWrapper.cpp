@@ -151,13 +151,16 @@ void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device
 bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
 	STI::TNetwork::TDeviceHub_ptr& tDeviceHub)
 {
+	bool success = false;
 	std::shared_ptr<NetworkDeviceHubWrapper> networkDeviceHubWrapper;
 	networkDeviceHubWrapper = std::dynamic_pointer_cast<NetworkDeviceHubWrapper>(deviceHub);
 
 	if (networkDeviceHubWrapper) {		//check dynamic_pointer_cast
 
+		//std::cout << "NetworkDeviceHubWrapper::getTDeviceHubReference()" << std::endl;
 		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
+		success = true;
 	}
 
-	return !CORBA::is_nil(tDeviceHub);
+	return success && !CORBA::is_nil(tDeviceHub);
 }
