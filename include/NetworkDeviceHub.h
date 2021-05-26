@@ -32,6 +32,8 @@ public:
 	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node);
 	bool connect(const std::shared_ptr<LocalDeviceHub>& hub);
 
+	void getDeviceIDs(std::set<STI::Device::DeviceID>& ids) const;
+
 	void setTargetHubs(const std::vector<std::string>& hubIDs);
 
 	//options

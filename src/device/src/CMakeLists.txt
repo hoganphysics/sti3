@@ -12,7 +12,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #set(CMAKE_DEBUG_POSTFIX "_d")
+if (MSVC)
+set(USE_STI_DEBUG_POSTFIX True)
+endif (MSVC)
 
+if (USE_STI_DEBUG_POSTFIX)
+set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+endif (USE_STI_DEBUG_POSTFIX)
 
 #set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )
@@ -71,7 +77,7 @@ set_target_properties(stidevice PROPERTIES
 
 set_target_properties(stidevice PROPERTIES
     VERSION ${PROJECT_VERSION}
-    DEBUG_POSTFIX "_d"
+    # DEBUG_POSTFIX "_d"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
@@ -79,6 +85,14 @@ set_target_properties(stidevice PROPERTIES
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
+
+if (USE_STI_DEBUG_POSTFIX) 
+
+    set_target_properties(stidevice PROPERTIES
+        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+    )
+
+endif (USE_STI_DEBUG_POSTFIX)
 
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}

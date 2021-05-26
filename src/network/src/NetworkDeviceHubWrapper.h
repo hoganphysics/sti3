@@ -26,6 +26,7 @@ public:
 	~NetworkDeviceHubWrapper();
 
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
+	bool removeNode(const STI::Device::DeviceID& id);
 	bool removeNode(const STI::Device::DeviceID& id, const HubTrace& trace);
 
 	//bool addHub(const HubID& id, const typename std::shared_ptr<Hub<ID, T>>& hub)

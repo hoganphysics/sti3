@@ -44,6 +44,8 @@ public:
 
     bool ping() const;
 
+    void disable();
+
     std::string getUpdatedValue(const std::string& key);
 
 private:

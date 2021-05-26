@@ -174,13 +174,18 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 {
 	bool success = false;
 
-	STI::TNetwork::TDevice_ptr tDevice;
+	// STI::TNetwork::TDevice_ptr tDevice;
 
+	// if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
+	// 		return false;
+	// }
 
-	//if (!getRemoteDevice(node, tDevice)) {
+	STI::TNetwork::TDevice_var tDevice;
+
 	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 			return false;
 	}
+
 
 	try {
 		success = tDeviceHub->distribute(

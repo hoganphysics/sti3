@@ -20,6 +20,7 @@ public:
 	void ping() { return; }
 
 	virtual bool refresh() = 0;
+	virtual void disable() = 0;
 
 	//Optimization to allow Nodes to be selective about when Hubs they are broadcast to.
 	//If the Node is known to be restricted to specific hubs, this potentially avoid unneeded network calls.

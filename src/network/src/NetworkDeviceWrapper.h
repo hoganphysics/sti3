@@ -87,6 +87,20 @@ public:
 
 	bool refresh() { return localDevice != 0 && localDevice->refresh(); }
 
+	void kill() 
+	{
+		if (localDevice != 0) {
+			localDevice->kill();
+		}
+	}
+
+	void disable()
+	{
+		if (localDevice != 0) {
+			localDevice->disable();
+		}
+	}
+
 private:
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)
@@ -96,7 +110,14 @@ private:
 		}
 	}
 
-	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+	// bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+	// {
+	// 	tDevice = deviceServant._this();
+		
+	// 	return !CORBA::is_nil(tDevice);
+	// }
+
+	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice)
 	{
 		tDevice = deviceServant._this();
 		

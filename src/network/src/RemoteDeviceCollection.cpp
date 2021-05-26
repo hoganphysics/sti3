@@ -26,11 +26,18 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 {
 	if (CORBA::is_nil(tDeviceCollection)) return false;
 
-	STI::TNetwork::TDevice_ptr tDevice;
+	// STI::TNetwork::TDevice_ptr tDevice;
+
+	// if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
+	// 	return false;
+	// }
+
+	STI::TNetwork::TDevice_var tDevice;
 
 	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 		return false;
 	}
+
 
 //	STI::TNetwork::TDevice_var tDevicevar = tDevice;
 
@@ -126,7 +133,8 @@ bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_pt
 		success = tDeviceCollection->get(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 
 		if (success && tDevice != 0 && !tDevice->_is_nil()) {
-			node = std::make_shared<RemoteDevice>( STI::TNetwork::TDevice::_duplicate(tDevice) );
+			//node = std::make_shared<RemoteDevice>( STI::TNetwork::TDevice::_duplicate(tDevice) );
+			node = std::make_shared<RemoteDevice>(tDevice);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

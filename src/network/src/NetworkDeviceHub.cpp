@@ -119,6 +119,11 @@ bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_pt
 	return success;
 }
 
+void NetworkDeviceHub::getDeviceIDs(std::set<DeviceID>& ids) const
+{
+	localHub->getNodeIDs(ids);
+}
+
 bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 {
 	auto localHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(hub);
@@ -176,6 +181,13 @@ bool NetworkDeviceHub::registerHubContext()
 
 void NetworkDeviceHub::shutdown()
 {
+	std::set<DeviceID> ids;
+	getDeviceIDs(ids);
+
+	for(auto id : ids) {
+		deviceHubWrapper->removeNode(id);
+	}
+
 	if (orbmanager != 0 && orbmanager->running()) {
 		orbmanager->shutdown();
 	}

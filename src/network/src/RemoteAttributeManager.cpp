@@ -47,6 +47,14 @@ RemoteAttributeManager::~RemoteAttributeManager()
 	}
 }
 
+void RemoteAttributeManager::disable()
+{
+	std::unique_lock<std::mutex> managerLock(managerMutex);
+
+	::STI::TNetwork::TAttributeManager_var nilManager = ::STI::TNetwork::TAttributeManager::_nil();
+	tAttributeManager = nilManager;	//release reference; reference is now nil
+}
+
 void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute)
 {
 	if (attribute != 0) {

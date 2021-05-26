@@ -56,6 +56,8 @@ public:
 	const DeviceID getID() const;
 
 	bool refresh() { return true; }
+	void kill() {}
+	void disable() {}
 //	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);

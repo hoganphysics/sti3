@@ -259,6 +259,12 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id, const HubTrace& tra
 
 	std::unique_lock<std::mutex> distributerLock(distributerMutex);
 
+	//kill
+	std::shared_ptr<T> node;
+	if (nodeDistributer.contains(id) && nodeDistributer.getNode(id, node) && node != 0) {
+		node->disable();
+	}
+
 	nodeDistributer.remove(id);	//remove locally
 
 	//Forward call to network (with appended trace)

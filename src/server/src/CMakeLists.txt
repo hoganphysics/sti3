@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+if (MSVC)
 cmake_policy(SET CMP0091 NEW)
+endif (MSVC)
 
 # set the project name
 project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
@@ -39,10 +41,10 @@ target_include_directories(STIServer PRIVATE
     ${STI_BASE_DIR}/src/network/src
 )
 
-target_link_directories(STIServer PUBLIC 
-    "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
-    "C:/Users/Jason/Code/dev/sti3/src/network/src/build/install/x64-Debug/lib"
-)
+# target_link_directories(STIServer PUBLIC 
+#     "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
+#     "C:/Users/Jason/Code/dev/sti3/src/network/src/build/install/x64-Debug/lib"
+# )
 
 target_link_libraries(STIServer 
 stidevice 

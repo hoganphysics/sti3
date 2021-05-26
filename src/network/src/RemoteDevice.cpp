@@ -26,16 +26,23 @@ RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 
 
 
-bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+// bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
+// {
+// 	STI::TNetwork::TDevice_var newDev;
+// 	newDev = _tDevice;		//implicit duplicate
+
+// 	tDevice = newDev.out();
+
+// 	//tDevice = STI::TNetwork::TDeviceHub::_duplicate();
+// 	//tDevice = _tDevice;
+// 	//tDevice = _tDevice->_duplicate(_tDevice);
+// 	return !CORBA::is_nil(tDevice);
+// }
+
+bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_var& tDevice)
 {
-	STI::TNetwork::TDevice_var newDev;
-	newDev = _tDevice;		//implicit duplicate
+	tDevice = _tDevice;		//implicit duplicate
 
-	tDevice = newDev.out();
-
-	//tDevice = STI::TNetwork::TDeviceHub::_duplicate();
-	//tDevice = _tDevice;
-	//tDevice = _tDevice->_duplicate(_tDevice);
 	return !CORBA::is_nil(tDevice);
 }
 
@@ -69,6 +76,38 @@ bool RemoteDevice::refresh()
 	}
 
 	return success;
+}
+
+void RemoteDevice::kill()
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (CORBA::is_nil(_tDevice)) return;
+
+	bool success = false;
+
+	try {
+		_tDevice->kill();
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteDevice::disable()
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	::STI::TNetwork::TDevice_var nilDevice = ::STI::TNetwork::TDevice::_nil();
+	_tDevice = nilDevice;	//release reference; reference is now nil
+
+	if (remoteAttributeManager != 0) {
+		remoteAttributeManager->disable();
+	}
 }
 
 const STI::Device::DeviceID RemoteDevice::getID() const
@@ -117,7 +156,7 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	
 	bool success = false;
 
-	::STI::TNetwork::TDeviceCollection_ptr tDeviceCollection;	//remote reference
+	::STI::TNetwork::TDeviceCollection_var tDeviceCollection;	//remote reference
 	// std::shared_ptr<RemoteDeviceCollection> remoteCollection;	//wrapper
 
 	try {
@@ -151,7 +190,7 @@ void RemoteDevice::getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessa
 
 	bool success = false;
 
-	::STI::TNetwork::TDeviceMessageDispatcher_ptr tMessageDispatcher;	//remote reference
+	::STI::TNetwork::TDeviceMessageDispatcher_var tMessageDispatcher;	//remote reference
 	// std::shared_ptr<RemoteDeviceMessageDispatcher> remoteDispatcher;		//wrapper
 
 	try {
@@ -185,7 +224,7 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 
 	bool success = false;
 
-	::STI::TNetwork::TEventEngineScheduler_ptr tEngineScheduler;	//remote reference
+	::STI::TNetwork::TEventEngineScheduler_var tEngineScheduler;	//remote reference
 	// std::shared_ptr<RemoteEventEngineScheduler> remoteScheduler;	//wrapper
 
 	try {
@@ -223,7 +262,7 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 	bool success = false;
 
-	::STI::TNetwork::TChannelManager_ptr tChannelManager;	//remote reference
+	::STI::TNetwork::TChannelManager_var tChannelManager;	//remote reference
 	
 	try {
 		tChannelManager = _tDevice->getChannelManager();	//remote call
@@ -261,7 +300,7 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 
 	if (listenerForwarder == 0) return;
 
-	::STI::TNetwork::TAttributeManager_ptr tAttributelManager;	//remote reference
+	::STI::TNetwork::TAttributeManager_var tAttributelManager;	//remote reference
 	
 	try {
 		tAttributelManager = _tDevice->getAttributeManager();	//remote call

@@ -26,6 +26,8 @@ public:
 	~TDevice_i();
 
 	::CORBA::Boolean refresh();
+	void kill();
+	void disable();
 	TDeviceCollection_ptr getDeviceCollection();
 	TDeviceMessageDispatcher_ptr getMessageDispatcher();
 	TEventEngineScheduler_ptr getEngineScheduler();

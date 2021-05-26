@@ -122,7 +122,7 @@ bool STI::Network::convert<DeviceDirectedGraphNode, TDeviceNode>(
 	//Conversion happens where the Devices are hosted.  All Device reference should therefore be
 	//NetworkDeviceWrappers, so the TDeviceRefInterface is available.
 
-	STI::TNetwork::TDevice_ptr tDevice;
+	STI::TNetwork::TDevice_var tDevice;
 
 	if (!TDeviceRefInterface::getTDeviceReference(graphDeviceNode.node, tDevice)) {
 		tDeviceNode.node = tDevice;

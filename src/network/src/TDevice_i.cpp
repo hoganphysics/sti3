@@ -31,6 +31,16 @@ TDevice_i::~TDevice_i()
 	return localDevice->refresh();
 }
 
+void TDevice_i::disable()
+{
+	return localDevice->disable();
+}
+
+void TDevice_i::kill()
+{
+	return localDevice->kill();
+}
+
 TDeviceCollection_ptr TDevice_i::getDeviceCollection()
 {
 	return deviceCollectionServant._this();

@@ -220,6 +220,8 @@ module TNetwork
 	{
 		//Node interface
 		boolean refresh();
+		void kill();
+		void disable();
 
 		//Device interface
 		TDeviceID getID();

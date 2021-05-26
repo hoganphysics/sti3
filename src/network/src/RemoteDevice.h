@@ -34,7 +34,9 @@ public:
 	RemoteDevice(::STI::TNetwork::TDevice_ptr device);
 
 	bool refresh();
-
+	void kill();
+	void disable();
+	
 	const STI::Device::DeviceID getID() const;
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
@@ -42,6 +44,8 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
+
+
 
 private:
 
@@ -53,7 +57,8 @@ private:
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
 
-	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
+//	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
+	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice);
 
 	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
 

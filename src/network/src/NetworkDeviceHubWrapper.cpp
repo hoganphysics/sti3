@@ -92,6 +92,11 @@ bool NetworkDeviceHubWrapper::removeHub(const HubID& id)
 	return false;
 }
 
+bool NetworkDeviceHubWrapper::removeNode(const STI::Device::DeviceID& id)
+{
+	HubTrace trace;
+	return removeNode(id, trace);
+}
 
 bool NetworkDeviceHubWrapper::removeNode(const STI::Device::DeviceID& id, const HubTrace& trace)
 {

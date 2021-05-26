@@ -16,7 +16,9 @@ using STI::Network::convert;
 
 TDeviceCollection_i::TDeviceCollection_i(const std::shared_ptr<STI::Device::DeviceCollector>& collector)
 {
-	collector->getCollection(deviceCollection);
+	if (collector != 0) {
+		collector->getCollection(deviceCollection);		
+	}
 }
 
 TDeviceCollection_i::~TDeviceCollection_i()
@@ -77,14 +79,16 @@ TDeviceCollection_i::~TDeviceCollection_i()
 		return false;
 	}
 
-	STI::TNetwork::TDevice_ptr tDevice;
+	// STI::TNetwork::TDevice_ptr tDevice;
+	// success = TDeviceRefInterface::getTDeviceReference(localDevice, tDevice);
+	STI::TNetwork::TDevice_var tDevice;
 	success = TDeviceRefInterface::getTDeviceReference(localDevice, tDevice);
 
 	if (success) {
 		
-		STI::TNetwork::TDevice_var tDeviceVar(tDevice);		//managed
-
-		device = tDeviceVar.out();
+		// STI::TNetwork::TDevice_var tDeviceVar(tDevice);		//managed
+		// device = tDeviceVar.out();
+		device = tDevice.out();
 	}
 
 	return success;
