@@ -35,7 +35,7 @@ class RemoteDevice : public STI::Device::Device,
 public:
 
 	RemoteDevice(::STI::TNetwork::TDevice_ptr device);
-	~RemoteDevice() {}
+	~RemoteDevice();
 
 	bool refresh();
 	void kill();

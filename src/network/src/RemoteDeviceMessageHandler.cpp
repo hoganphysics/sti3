@@ -19,6 +19,8 @@ RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceM
 : TReferenceHolder<TDeviceMessageHandler>(deviceHandler, handlerMutex)
 //	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
 {
+	std::unique_lock<std::mutex> handlerLock(handlerMutex);
+
 //	STI::TNetwork::TDeviceEventHandler
 //	CORBA::remove_ref(deviceHandler);
 	//install refresh indicator on the remote resource this object is wrapping
@@ -66,6 +68,8 @@ void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::D
 		return;
 	}
 
+	std::unique_lock<std::mutex> handlerLock(handlerMutex);
+
 	if (isDisabled()) return;
 
 	STI::TNetwork::TAnyMessage tAnyMessage;
@@ -88,6 +92,8 @@ void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::D
 
 void RemoteDeviceMessageHandler::clearMessages()
 {
+	std::unique_lock<std::mutex> handlerLock(handlerMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -108,7 +114,7 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 	using ::STI::TNetwork::TDeviceMessageType;
 	using STI::Device::DeviceMessageType;
 
-	std::unique_lock<std::mutex> writelock(handlerMutex);		//avoids reentrant calls
+	std::unique_lock<std::mutex> handlerLock(handlerMutex);		//avoids reentrant calls
 
 	bool success = true;
 

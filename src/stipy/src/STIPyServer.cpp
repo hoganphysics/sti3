@@ -38,8 +38,9 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
 //temp
 STIPyServer::~STIPyServer()
 {
-    std::cout << "STIPyServer: hub shutdown" << std::endl;
-    libDeviceHub->shutdown();
+    std::cout << "~STIPyServer()" << std::endl;
+//    std::cout << "STIPyServer: hub shutdown" << std::endl;
+//    libDeviceHub->shutdown();
 }
 
 void STIPyServer::setChannels(const pybind11::dict& channels)

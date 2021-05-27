@@ -71,7 +71,7 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 
 	if (isDisabled()) return false;
 
-	STI::TNetwork::TDeviceHub_ptr tDeviceHubRef;
+	STI::TNetwork::TDeviceHub_var tDeviceHubRef;
 
 	if (!NetworkDeviceHubWrapper::getTDeviceHubReference(hub, tDeviceHubRef)) {
 		return false;

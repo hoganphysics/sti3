@@ -50,6 +50,8 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
 STIPyLibDevice::~STIPyLibDevice()
 {
+    std::cout << "~STIPyLibDevice()" << std::endl;
+
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 

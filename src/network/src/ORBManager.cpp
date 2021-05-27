@@ -261,7 +261,11 @@ void ORBManager::shutdown()
 
 std::string ORBManager::printNameTree(const std::string& baseContext) const
 {
-	CosNaming::NamingContext_var base(getNamingContext(baseContext));
+	//CosNaming::NamingContext_var base(getNamingContext(baseContext));
+
+	CosNaming::NamingContext_var baseContextVar;
+	getNamingContext(baseContext, baseContextVar);
+	CosNaming::NamingContext_var base(baseContextVar);
 
 	COSBindingNode node(baseContext, base);
 
@@ -271,7 +275,11 @@ std::string ORBManager::printNameTree(const std::string& baseContext) const
 void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, 
 											std::vector<std::string>& objContexts)
 {
-	CosNaming::NamingContext_var base(getNamingContext(baseContext));
+	CosNaming::NamingContext_var baseContextVar;
+
+	//CosNaming::NamingContext_var base(getNamingContext(baseContext));
+	getNamingContext(baseContext, baseContextVar);
+	CosNaming::NamingContext_var base(baseContextVar);
 
 	COSBindingNode node(baseContext, base);
 	node.prune();
@@ -320,9 +328,11 @@ bool ORBManager::getRootContext(CosNaming::NamingContext_var& context) const
 	return success;
 }
 
-CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& context) const
+//CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& context) const
+bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingContext_var& contextBase) const
 {
-	CosNaming::NamingContext_var contextBase;
+//	CosNaming::NamingContext_var contextBase;
+	CosNaming::NamingContext_var rootContext;
 
 	bool success = false;
 
@@ -331,8 +341,8 @@ CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& con
 
 		contextName = omni::omniURI::stringToName(context.c_str());
 
-		getRootContext(contextBase);
-		contextBase = CosNaming::NamingContext::_narrow(contextBase->resolve(contextName));
+		getRootContext(rootContext);
+		contextBase = CosNaming::NamingContext::_narrow(rootContext->resolve(contextName));
 
 		success = true;
 	}
@@ -346,7 +356,8 @@ CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& con
 		std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
 	}
 
-	return contextBase._retn();
+	//return contextBase._retn();
+	return success;
 }
 
 

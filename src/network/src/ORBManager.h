@@ -59,7 +59,8 @@ private:
 	static std::shared_ptr<ORBManager> instance;
 
 	bool getRootContext(CosNaming::NamingContext_var& context) const;
-	CosNaming::NamingContext_ptr getNamingContext(const std::string& context) const;
+	//CosNaming::NamingContext_ptr getNamingContext(const std::string& context) const;
+	bool getNamingContext(const std::string& context, CosNaming::NamingContext_var& contextBase) const;
 
 	CORBA::ORB_var orb;
 	PortableServer::POAManager_var poa_manager;

@@ -197,6 +197,8 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 
 bool RemoteAttributeManager::ping() const
 {
+	std::unique_lock<std::mutex> managerLock(managerMutex);
+
 	if (isDisabled()) return false;
 	
 	bool success = false;

@@ -49,3 +49,4 @@ src/server/vcproject/x64/
 src/server/vcproject/.vs/
 src/stipy/src/.vs/
 src/device/python/src/.vs/
+*.pyd

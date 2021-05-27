@@ -18,7 +18,8 @@ set(USE_STI_DEBUG_POSTFIX True)
 endif (MSVC)
 
 if (USE_STI_DEBUG_POSTFIX)
-set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
 # set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")

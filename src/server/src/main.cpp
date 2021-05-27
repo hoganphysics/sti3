@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
     hub->addDevice(server);
 
-    hub->run();
+    hub->run(true);
 
     return 0;
 }

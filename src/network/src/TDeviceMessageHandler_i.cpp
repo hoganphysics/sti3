@@ -73,6 +73,7 @@ TDeviceMessageTypeSeq* TDeviceMessageHandler_i::listenersTypes()
 
 void TDeviceMessageHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher)
 {
+	std::unique_lock<std::mutex> handlerLock(refreshMutex);
 
 	tRefreshIndicatorHolder = std::make_unique<TReferenceHolder<TRefreshIndicator>>(refresher, refreshMutex);
 	//tRefreshIndicator = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
@@ -83,6 +84,8 @@ void TDeviceMessageHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndic
 
 void TDeviceMessageHandler_i::refresh()
 {
+	std::unique_lock<std::mutex> handlerLock(refreshMutex);
+
 	try {
 		if(tRefreshIndicatorInstalled && tRefreshIndicatorHolder !=0 && !tRefreshIndicatorHolder->isDisabled()) {
 			tRefreshIndicatorHolder->getTRef()->refresh();	//remote call

@@ -27,6 +27,8 @@ RemoteEventEngine::~RemoteEventEngine()
 
 void RemoteEventEngine::play(EventEngineJob& job)
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -43,6 +45,8 @@ void RemoteEventEngine::play(EventEngineJob& job)
 
 void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
     triggerCallbackServant = std::make_shared<STI::TNetwork::TTriggerCallback_i>(triggerCB);
@@ -69,6 +73,8 @@ void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::s
 
 void RemoteEventEngine::trigger()
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -85,6 +91,8 @@ void RemoteEventEngine::trigger()
 
 void RemoteEventEngine::trigger(const STI::Device::DeviceID& target)
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -102,6 +110,8 @@ void RemoteEventEngine::trigger(const STI::Device::DeviceID& target)
 
 void RemoteEventEngine::stop()
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -118,6 +128,8 @@ void RemoteEventEngine::stop()
 
 void RemoteEventEngine::pause()
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -134,6 +146,8 @@ void RemoteEventEngine::pause()
 
 void RemoteEventEngine::unpause(bool retrigger)
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -151,6 +165,8 @@ void RemoteEventEngine::unpause(bool retrigger)
 
 STI::Device::DeviceID RemoteEventEngine::getDeviceID() const
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	::STI::TNetwork::TDeviceID_var tDeviceID;
 
 	bool success = false;
@@ -181,6 +197,8 @@ STI::Device::DeviceID RemoteEventEngine::getDeviceID() const
 
 STI::Engine::EngineState RemoteEventEngine::getState() const
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	::STI::TNetwork::TEngineState tState = ::STI::TNetwork::EngineUnknown;
 
 	bool success = false;
@@ -212,6 +230,8 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 // const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
 bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
 {
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
 	if (isDisabled()) return false;
 
 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);

@@ -16,8 +16,11 @@ if (MSVC)
 set(USE_STI_DEBUG_POSTFIX True)
 endif (MSVC)
 
+#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+
 if (USE_STI_DEBUG_POSTFIX)
-set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
+set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
 #set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -82,16 +85,17 @@ set_target_properties(stidevice PROPERTIES
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+#    DEBUG_POSTFIX ${STI_LIB_POSTFIX}
 #    SOVERSION 1
 #    PUBLIC_HEADER api/mylib.h
 )
 
 if (USE_STI_DEBUG_POSTFIX) 
-
     set_target_properties(stidevice PROPERTIES
-        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
-    )
-
+    #DEBUG_POSTFIX "_d"
+    DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+    #DEBUG_POSTFIX "$<$<CONFIG:Debug>:_d>"
+)
 endif (USE_STI_DEBUG_POSTFIX)
 
 target_include_directories(stidevice PRIVATE 

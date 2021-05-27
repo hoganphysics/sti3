@@ -8,6 +8,7 @@
 #include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
 
+#include <iostream>
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -30,7 +31,10 @@ RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	addDependent(remoteAttributeManager);
 }
 
-
+RemoteDevice::~RemoteDevice()
+{
+	std::cout << "~RemoteDevice() " << getID().getID() << std::endl;
+}
 
 // bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
 // {

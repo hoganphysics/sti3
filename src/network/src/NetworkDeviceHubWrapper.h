@@ -47,7 +47,7 @@ public:
 
 
 	static bool getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
-		STI::TNetwork::TDeviceHub_ptr& tDeviceHub);
+		STI::TNetwork::TDeviceHub_var& tDeviceHub);
 
 private:
 

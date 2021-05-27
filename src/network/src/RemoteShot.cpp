@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 
+#include <iostream>
+
 using STI::Network::RemoteShot;
 
 
@@ -14,11 +16,14 @@ RemoteShot::RemoteShot(::STI::TNetwork::TShot_ptr shot)
 : STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>(shot, shotMutex)
 //	: _tShot(STI::TNetwork::TShot::_duplicate(shot))
 {
+	std::cout << "create RemoteShot()" << std::endl;
+
 }
 
 RemoteShot::~RemoteShot()
 {
 	disable();
+	std::cout << "~RemoteShot()" << std::endl;
 }
 
 void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)

@@ -146,7 +146,7 @@ bool NetworkDeviceHub::registerHubContext()
 	// (2)  STI/<Target Server ID>/<Hub ID>/TDeviceHub.Object  (for all target hubs, except root)
 
 	bool success = false;
-	STI::TNetwork::TDeviceHub_ptr tDeviceHubLocal;
+	STI::TNetwork::TDeviceHub_var tDeviceHubLocal;
 
 	if (!NetworkDeviceHubWrapper::getTDeviceHubReference(deviceHubWrapper, tDeviceHubLocal)) {
 		std::cerr

@@ -47,6 +47,8 @@ RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 
 void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<Shot>& shot)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 	STI::TNetwork::TShot_ptr tShot;
@@ -77,6 +79,8 @@ void RemoteEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, cons
 
 void RemoteEventEngineScheduler::play(const STI::Engine::ShotID& shotID)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -97,6 +101,8 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
                                 std::set<STI::Device::DeviceID>& missingTargets, std::vector<STI::Engine::EngineParsingMessage>& messages, 
 								const STI::Device::DeviceTrace& trace)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 //	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
@@ -133,6 +139,8 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
 void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, 
 														std::vector<EngineParsingMessage>& messages, const DeviceTrace& trace)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 //	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
@@ -160,6 +168,8 @@ void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree
     
 void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -176,6 +186,8 @@ void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& n
 
 void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -192,6 +204,8 @@ void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 
 void  RemoteEventEngineScheduler::cancelAll()
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return;
 
 	try {
@@ -233,6 +247,8 @@ std::shared_ptr<Shot> RemoteEventEngineScheduler::createShot(const std::shared_p
 
 bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& events) const
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return false;
 
 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
@@ -257,6 +273,8 @@ bool RemoteEventEngineScheduler::getParsedEvents(const STI::Engine::ParseID& par
 
 bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return false;
 
 	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages(new STI::TNetwork::TEngineParsingMessageSeq);
@@ -282,6 +300,8 @@ bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& 
 
 bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree) const
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return false;
 
 	STI::TNetwork::TEventEngineDependencyTree_var tTree(new STI::TNetwork::TEventEngineDependencyTree);
@@ -309,6 +329,8 @@ bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parse
 
 bool RemoteEventEngineScheduler::ping() const
 {
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
 	if (isDisabled()) return false;
 
 	bool success = false;
