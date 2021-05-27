@@ -48,6 +48,9 @@ NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& a
 
 NetworkDeviceHub::~NetworkDeviceHub()
 {
+	if (localHub != 0) {
+		localHub->clear();
+	}
 }
 
 //static
@@ -181,11 +184,14 @@ bool NetworkDeviceHub::registerHubContext()
 
 void NetworkDeviceHub::shutdown()
 {
-	std::set<DeviceID> ids;
-	getDeviceIDs(ids);
+	// std::set<DeviceID> ids;
+	// getDeviceIDs(ids);
 
-	for(auto id : ids) {
-		deviceHubWrapper->removeNode(id);
+	// for(auto id : ids) {
+	// 	deviceHubWrapper->removeNode(id);
+	// }
+	if (localHub != 0) {
+		localHub->clear();
 	}
 
 	if (orbmanager != 0 && orbmanager->running()) {

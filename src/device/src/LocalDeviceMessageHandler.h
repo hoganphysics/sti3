@@ -38,6 +38,8 @@ public:
 	bool hasListeners(const std::shared_ptr<DeviceMessage>& mess);
 	void getListenerTypes(std::set<DeviceMessageType>& types);
 
+	void disable() {}
+
 private:
 
 	class HandlerEventQueue : public STI::Utils::EventQueue<std::shared_ptr<DeviceMessage>>

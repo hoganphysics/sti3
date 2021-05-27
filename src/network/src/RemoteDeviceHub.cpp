@@ -26,7 +26,8 @@ using STI::Network::NodeWalker;
 
 
 RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
-	: tDeviceHub(STI::TNetwork::TDeviceHub::_duplicate(deviceHub))
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceHub>(deviceHub, hubMutex)
+//	: tDeviceHub(STI::TNetwork::TDeviceHub::_duplicate(deviceHub))
 {
 	_getHubID();	// network call to get HubID once and save locally
 }
@@ -34,7 +35,7 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 //void RemoteDeviceHub::getNodeIDs(std::set<STI::Device::DeviceID>& ids) const
 //{
 //	try {
-//		tDeviceHub->getNodeIDs(
+//		getTRef()->getNodeIDs(
 //			
 //		);	//remote call
 //	}
@@ -50,7 +51,7 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 //void RemoteDeviceHub::getHubIDs(std::set<HubID>& ids) const
 //{
 //	try {
-//		tDeviceHub->getHubIDs(
+//		getTRef()->getHubIDs(
 //
 //		);	//remote call
 //	}
@@ -65,7 +66,10 @@ RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 
 bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
 //	return false;
+
+	if (isDisabled()) return false;
 
 	STI::TNetwork::TDeviceHub_ptr tDeviceHubRef;
 
@@ -78,7 +82,7 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 	bool success = false;
 
 	try {
-		success = tDeviceHub->addHub(convert<HubID, TDeviceHubID>(id), tDeviceHubRefvar);	//remote call
+		success = getTRef()->addHub(convert<HubID, TDeviceHubID>(id), tDeviceHubRefvar);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -95,10 +99,14 @@ bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& 
 
 bool RemoteDeviceHub::removeHub(const HubID& id)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->removeHub(
+		success = getTRef()->removeHub(
 			convert<STI::Network::HubID, STI::TNetwork::TDeviceHubID>(id)
 		);	//remote call
 	}
@@ -116,10 +124,14 @@ bool RemoteDeviceHub::removeHub(const HubID& id)
 
 bool RemoteDeviceHub::removeNode(const STI::Device::DeviceID& id, const HubTrace& trace)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->removeNode(
+		success = getTRef()->removeNode(
 			convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id),
 			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace)
 		);	//remote call
@@ -138,10 +150,14 @@ bool RemoteDeviceHub::removeNode(const STI::Device::DeviceID& id, const HubTrace
 
 bool RemoteDeviceHub::refresh(const HubTrace& trace)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->refreshNetwork(
+		success = getTRef()->refreshNetwork(
 			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace)
 		);	//remote call
 	}
@@ -172,6 +188,10 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 	const typename std::shared_ptr<STI::Device::Device>& node,
 	const HubTrace& trace, const HubID& first)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	// STI::TNetwork::TDevice_ptr tDevice;
@@ -188,7 +208,7 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 
 
 	try {
-		success = tDeviceHub->distribute(
+		success = getTRef()->distribute(
 			convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id),
 			tDevice,
 			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace),
@@ -209,10 +229,14 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 
 bool RemoteDeviceHub::distributeNodes(const HubID& targetHub)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->distributeNodes(
+		success = getTRef()->distributeNodes(
 			convert<STI::Network::HubID, STI::TNetwork::TDeviceHubID>(targetHub)
 		);	//remote call
 	}
@@ -229,10 +253,14 @@ bool RemoteDeviceHub::distributeNodes(const HubID& targetHub)
 
 bool RemoteDeviceHub::redistributeNodes(const HubTrace& trace)
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tDeviceHub->redistributeNodes(
+		success = getTRef()->redistributeNodes(
 			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace)
 		);	//remote call
 	}
@@ -254,6 +282,10 @@ const HubID& RemoteDeviceHub::getID() const
 
 void RemoteDeviceHub::_getHubID()
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return;
+
 	using STI::TNetwork::TDeviceHubID_var;
 	
 	TDeviceHubID_var tHubID;
@@ -261,7 +293,7 @@ void RemoteDeviceHub::_getHubID()
 	bool success = false;
 
 	try {
-		tHubID = tDeviceHub->deviceHubID();	//remote call
+		tHubID = getTRef()->deviceHubID();	//remote call
 		success = true;
 
 		if (success) {
@@ -279,6 +311,10 @@ void RemoteDeviceHub::_getHubID()
 
 void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
 {
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return;
+
 	bool success = false;
 
 	//convert in values
@@ -289,7 +325,7 @@ void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device
 	convert<STI::Network::DeviceHub::HubNodeWalker, STI::TNetwork::TNodeWalker>(root, tRoot);
 
 	try {
-		tDeviceHub->walk(
+		getTRef()->walk(
 			tRoot,
 			convert<STI::Network::HubTrace, STI::TNetwork::TDeviceHubTrace>(trace)
 		);	//remote call

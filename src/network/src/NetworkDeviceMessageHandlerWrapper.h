@@ -45,6 +45,8 @@ public:
 		return false;
 	}
 
+	void disable();
+
 private:
 
 	std::shared_ptr<STI::Device::LocalDeviceMessageHandler> localMessageHandler;

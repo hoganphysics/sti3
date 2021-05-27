@@ -53,6 +53,8 @@ public:
 
 	static bool connect(const std::shared_ptr<Hub<ID, T>>& hub1, const std::shared_ptr<Hub<ID, T>>& hub2);
 
+//	static bool disconnect(const std::shared_ptr<Hub<ID, T>>& hub1, const std::shared_ptr<Hub<ID, T>>& hub2);
+
 };
 
 
@@ -78,6 +80,20 @@ bool STI::Network::Hub<ID, T>::connect(const std::shared_ptr<Hub<ID, T>>& hub1, 
 	return false;
 }
 
+// template<class ID, class T>
+// bool STI::Network::Hub<ID, T>::disconnect(const std::shared_ptr<Hub<ID, T>>& hub1, const std::shared_ptr<Hub<ID, T>>& hub2)
+// {
+// 	if (hub1 != 0 && hub2 != 0 
+// 		&& hub1->removeHub(hub2->getID())
+// 		&& hub2->removeHub(hub1->getID())) {
+
+// 		hub1->refresh();
+// 		hub2->refresh();
+
+// 		return true;
+// 	}
+// 	return false;
+// }
 
 #endif
 

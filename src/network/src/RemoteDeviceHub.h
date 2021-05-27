@@ -8,8 +8,11 @@
 #include "HubTrace.h"
 #include "DeviceHub.h"
 #include "deviceNet.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
+#include <mutex>
+
 
 namespace STI
 {
@@ -17,11 +20,8 @@ namespace Network
 {
 
 
-//ACTUALLY this doesn't work, since the Hub can't resolve the child class.  Not possible to know when
-//to send a servant reference with this approach...
-
-//thin wrapper around a LocalDevice that also holds a TDevice_i servant of the same Device
-class RemoteDeviceHub : public STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>
+class RemoteDeviceHub : public STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>,
+						public STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceHub>	//mixin
 {
 public:
 
@@ -54,8 +54,9 @@ private:
 
 	//bool getRemoteDevice(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice);
 
-	::STI::TNetwork::TDeviceHub_var tDeviceHub;		//remote reference
+	//::STI::TNetwork::TDeviceHub_var tDeviceHub;		//remote reference
 	
+	mutable std::mutex hubMutex;
 
 	mutable HubID hubID;
 

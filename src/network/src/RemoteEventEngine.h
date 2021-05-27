@@ -5,15 +5,19 @@
 
 #include "EventEngine.h"
 #include "TTriggerCallback_i.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
+#include <mutex>
+
 
 namespace STI
 {
 namespace Network
 {
 
-class RemoteEventEngine : public STI::Engine::EventEngine
+class RemoteEventEngine : public STI::Engine::EventEngine,
+						  public STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngine>	//mixin
 {
 public:
 
@@ -42,9 +46,11 @@ private:
 
     std::shared_ptr<STI::TNetwork::TTriggerCallback_i> triggerCallbackServant;
 
-    ::STI::TNetwork::TEventEngine_var _tEngine; //remote reference
+    //::STI::TNetwork::TEventEngine_var _tEngine; //remote reference
 
 	// STI::Engine::DeviceEventMap events;
+
+	mutable std::mutex engineMutex;
 };
 
 

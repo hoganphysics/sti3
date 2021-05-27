@@ -5,7 +5,10 @@
 #include "DeviceMessage.h"
 #include "deviceNet.h"
 
+#include "TReferenceHolder.h"
+
 #include <memory>
+#include <mutex>
 #include <set>
 
 namespace STI
@@ -13,7 +16,8 @@ namespace STI
 namespace Network
 {
 
-class RemoteEventEngineScheduler : public STI::Engine::EventEngineScheduler
+class RemoteEventEngineScheduler : public STI::Engine::EventEngineScheduler,
+                                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>	//mixin
 {
 public:
 
@@ -54,7 +58,9 @@ public:
 
 private:
 
-	::STI::TNetwork::TEventEngineScheduler_var tEventEngineScheduler;		//remote reference
+	//::STI::TNetwork::TEventEngineScheduler_var tEventEngineScheduler;		//remote reference
+
+    mutable std::mutex schedulerMutex;
 
 };
 

@@ -32,7 +32,7 @@ class LocalHub : public Hub<ID, T>
 {
 public:
 	LocalHub();
-	virtual ~LocalHub() {}
+	virtual ~LocalHub();
 
 	//local only
 
@@ -79,6 +79,8 @@ public:
 
 	virtual const HubID& getID() const = 0;
 
+	void disconnect(const HubID& hid);
+
 	void walk(typename LocalHub<ID, T>::HubNodeWalker& root) const;
 	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
 
@@ -104,6 +106,12 @@ private:
 template<class ID, class T>
 STI::Network::LocalHub<ID, T>::LocalHub()
 {
+}
+
+template<class ID, class T>
+STI::Network::LocalHub<ID, T>::~LocalHub()
+{
+	clear();
 }
 
 template<class ID, class T>
@@ -321,7 +329,10 @@ bool STI::Network::LocalHub<ID, T>::refreshNodeReferences(const ID& id, const ty
 	std::set<ID> refIDs;
 	std::shared_ptr<T> nodeRef;
 
+	if (node == 0) return false;
+
 	node->getCollection(collection);
+
 	if (collection != 0) {
 		collection->getIDs(refIDs);
 
@@ -487,16 +498,34 @@ bool STI::Network::LocalHub<ID, T>::redistributeNodes(const HubTrace& trace)
 template<class ID, class T>
 void STI::Network::LocalHub<ID, T>::clear()
 {
-	////removeNode all owned references for connected Hubs?
-	//std::set<HubID> hubIDs;
-	//hubs.getKeys(hubIDs);
-	//std::shared_ptr<Hub> hub;
+	std::set<ID> ids;
+	getNodeIDs(ids);
 
-	//for (auto& hubID : hubIDs) {
-	//	hubs
-	//}
+	for(auto id : ids) {
+		removeNode(id);
+	}
 
+	std::set<HubID> hids;
+	getHubIDs(hids);
+
+	for(auto hid : hids) {
+		disconnect(hid);
+	}
+
+	//These should be empty; clear just in case
+	nodeDistributer.clearAll();
 	hubs.clear();
+}
+
+
+template<class ID, class T>
+void STI::Network::LocalHub<ID, T>::disconnect(const HubID& hid)
+{
+	std::shared_ptr<Hub<ID, T>> hub;
+	
+	if (getHub(hid, hub) && hub != 0 && hub->removeHub( getID() )) {
+		removeHub(hid);
+	}
 }
 
 

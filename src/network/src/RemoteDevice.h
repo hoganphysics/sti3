@@ -9,6 +9,8 @@
 #include "DeviceMessageDispatcher.h"
 #include "fwd/ChannelManager_fwd.h"
 
+#include "TReferenceHolder.h"
+
 #include <memory>
 #include <mutex>
 
@@ -27,11 +29,13 @@ class RemoteAttributeManager;
 
 
 class RemoteDevice : public STI::Device::Device, 
-					 public STI::Network::TDeviceRefInterface	//mixin
+					 public STI::Network::TDeviceRefInterface,	//mixin
+					 public STI::TNetwork::TReferenceHolder<STI::TNetwork::TDevice>	//mixin
 {
 public:
 
 	RemoteDevice(::STI::TNetwork::TDevice_ptr device);
+	~RemoteDevice() {}
 
 	bool refresh();
 	void kill();
@@ -52,7 +56,7 @@ private:
 	template<typename T>
 	bool isLive(const std::shared_ptr<T>& remote)
 	{
-		return (remote != 0 && remote->ping());
+		return (remote != 0 && !remote->isDisabled() && remote->ping());
 	}
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
@@ -60,7 +64,7 @@ private:
 //	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
 	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice);
 
-	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
+//	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
 
 	std::shared_ptr<STI::Device::DeviceMessageListenerForwarder> listenerForwarder;
 

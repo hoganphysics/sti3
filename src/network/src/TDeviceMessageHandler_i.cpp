@@ -13,6 +13,9 @@ using STI::TNetwork::TDeviceMessageTypeSeq;
 using STI::Device::DeviceMessage;
 using STI::Network::convert;
 
+using STI::TNetwork::TReferenceHolder;
+using STI::TNetwork::TRefreshIndicator;
+
 
 TDeviceMessageHandler_i::TDeviceMessageHandler_i(const std::shared_ptr<STI::Device::LocalDeviceMessageHandler>& handler)
 	: messageHandler(handler), tRefreshIndicatorInstalled(false)
@@ -21,7 +24,16 @@ TDeviceMessageHandler_i::TDeviceMessageHandler_i(const std::shared_ptr<STI::Devi
 
 TDeviceMessageHandler_i::~TDeviceMessageHandler_i()
 {
+	disableRefreshIndicator();
+
 	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+}
+
+void TDeviceMessageHandler_i::disableRefreshIndicator()
+{
+	if (tRefreshIndicatorHolder != 0) {
+		tRefreshIndicatorHolder->disable();
+	}
 }
 
 void TDeviceMessageHandler_i::addMessage(const ::STI::TNetwork::TAnyMessage& mess)
@@ -58,18 +70,22 @@ TDeviceMessageTypeSeq* TDeviceMessageHandler_i::listenersTypes()
 	return tMessageTypes._retn();
 }
 
+
 void TDeviceMessageHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndicator_ptr refresher)
 {
-	tRefreshIndicator = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
 
-	tRefreshIndicatorInstalled = !CORBA::is_nil(tRefreshIndicator);
+	tRefreshIndicatorHolder = std::make_unique<TReferenceHolder<TRefreshIndicator>>(refresher, refreshMutex);
+	//tRefreshIndicator = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
+
+	tRefreshIndicatorInstalled = tRefreshIndicatorHolder !=0 && !tRefreshIndicatorHolder->isDisabled();
+//	tRefreshIndicatorInstalled = !CORBA::is_nil(tRefreshIndicator);
 }
 
 void TDeviceMessageHandler_i::refresh()
 {
 	try {
-		if(tRefreshIndicatorInstalled && !CORBA::is_nil(tRefreshIndicator)) {
-			tRefreshIndicator->refresh();	//remote call
+		if(tRefreshIndicatorInstalled && tRefreshIndicatorHolder !=0 && !tRefreshIndicatorHolder->isDisabled()) {
+			tRefreshIndicatorHolder->getTRef()->refresh();	//remote call
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

@@ -19,7 +19,7 @@ using STI::TNetwork::TDeviceHubTrace;
 using STI::TNetwork::TDeviceID;
 using STI::Network::convert;
 
-TDeviceHub_i::TDeviceHub_i(const std::shared_ptr<STI::Network::DeviceHub>& hub)
+TDeviceHub_i::TDeviceHub_i(const std::shared_ptr<STI::Network::LocalDeviceHub>& hub)
 	: localHub(hub)
 {
 }
@@ -53,6 +53,17 @@ TDeviceHub_i::~TDeviceHub_i()
 {
 	bool success = false;
 	if (localHub != 0) {
+
+		//If this is a RemoteHub stored locally, then this TDeviceHub_i is its owner.
+		//Attempt to resolve the RemoteDeviceHub and disable it to free references.
+		std::shared_ptr<STI::Network::DeviceHub> hub;
+		if (localHub->getHub(convert<TDeviceHubID, STI::Network::HubID>(hubID), hub) && hub != 0) {
+			auto remoteHub = std::dynamic_pointer_cast<RemoteDeviceHub>(hub);
+
+			if (remoteHub != 0) {
+				remoteHub->disable();
+			}
+		}
 
 		success = localHub->removeHub(
 			convert<TDeviceHubID, STI::Network::HubID>(hubID)

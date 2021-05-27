@@ -4,6 +4,7 @@
 #include "deviceNet.h"
 #include "DeviceMessageHandler.h"
 #include "TRefreshIndicator_i.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
 #include <set>
@@ -14,7 +15,8 @@ namespace STI
 namespace Network
 {
 
-class RemoteDeviceMessageHandler : public STI::Device::DeviceMessageHandler
+class RemoteDeviceMessageHandler : public STI::Device::DeviceMessageHandler,
+								   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageHandler>	//mixin
 {
 public:
 	
@@ -26,18 +28,20 @@ public:
 
 	bool hasListeners(const std::shared_ptr<STI::Device::DeviceMessage>& mess);
 
+	void disable();
+
 private:
 
 	void addListenerGroup(const STI::Device::DeviceMessageType& type, std::shared_ptr<STI::Device::AbstractMessageListenerGroup>& listenerGroup);
 	void removeListenerGroup(const STI::Device::DeviceMessageType& type);
 
-	::STI::TNetwork::TDeviceMessageHandler_var tDeviceHandler;		//remote reference
+	//::STI::TNetwork::TDeviceMessageHandler_var tDeviceHandler;		//remote reference
 
 	::STI::TNetwork::TRefreshIndicator_i refreshIndicator;		//records if the remote resource refreshed
 
 	std::set<STI::Device::DeviceMessageType> listenersTypes;		//set of all event types this handler responds to
 
-	mutable std::mutex listenersMutex;
+	mutable std::mutex handlerMutex;
 
 };
 

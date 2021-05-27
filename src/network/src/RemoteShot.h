@@ -4,6 +4,7 @@
 #include "deviceNet.h"
 
 #include "Shot.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
 #include <vector>
@@ -13,7 +14,8 @@ namespace STI
 namespace Network
 {
 
-class RemoteShot : public STI::Engine::Shot
+class RemoteShot : public STI::Engine::Shot,
+                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>	//mixin
 {
 public:
 
@@ -24,7 +26,8 @@ public:
 
 private:
 
-    ::STI::TNetwork::TShot_var _tShot;    //remote reference
+    //::STI::TNetwork::TShot_var _tShot;    //remote reference
+    mutable std::mutex shotMutex;
 };
 
 

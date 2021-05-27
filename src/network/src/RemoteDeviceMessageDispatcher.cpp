@@ -14,7 +14,8 @@ using STI::Network::convert;
 
 
 RemoteDeviceMessageDispatcher::RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_ptr messageDispatcher)
-	: tMessageDispatcher(STI::TNetwork::TDeviceMessageDispatcher::_duplicate(messageDispatcher))
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageDispatcher>(messageDispatcher, dispatcherMutex)
+//	: tMessageDispatcher(STI::TNetwork::TDeviceMessageDispatcher::_duplicate(messageDispatcher))
 {
 }
 
@@ -27,24 +28,19 @@ RemoteDeviceMessageDispatcher::~RemoteDeviceMessageDispatcher()
 //Need the EventReceiver to own wrapped handlers, which include handler servants.
 void RemoteDeviceMessageDispatcher::addMessageHandler(const STI::Device::DeviceID& targetID, const std::shared_ptr<STI::Device::DeviceMessageHandler>& handler)
 {
+	std::unique_lock<std::mutex> dispatcherLock(dispatcherMutex);
+
+	if (isDisabled()) return;
+
 	//need to upcast to NetworkDeviceMessageHandlerWrapper and extract TDeviceMessageHandler_ptr reference from servant
 	STI::TNetwork::TDeviceMessageHandler_ptr tMessageHandler;
-	//STI::TNetwork::TDeviceEventHandler_var tEventHandlervar;
 
 	if (!NetworkDeviceMessageHandlerWrapper::getTDeviceMessageHandlerReference(handler, tMessageHandler)) {
 		return;
 	}
 
-
-//	STI::TNetwork::TDeviceEventHandler_var tEventHandlervar = tEventHandler;
-
-	//tEventHandlervar.inout()
-
 	try {
-//		tEventDispatcher->removeEventHandler(convert<DeviceID, TDeviceID>(targetID));	//remote call
-
-//		tEventDispatcher->addEventHandler(convert<DeviceID, TDeviceID>(targetID), tEventHandlervar);	//remote call
-		tMessageDispatcher->addMessageHandler(convert<DeviceID, TDeviceID>(targetID), tMessageHandler);	//remote call
+		getTRef()->addMessageHandler(convert<DeviceID, TDeviceID>(targetID), tMessageHandler);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -54,14 +50,16 @@ void RemoteDeviceMessageDispatcher::addMessageHandler(const STI::Device::DeviceI
 	{
 	}
 
-//	CORBA::release(tEventHandler);
-
 }
 
 void RemoteDeviceMessageDispatcher::removeMessageHandler(const STI::Device::DeviceID& targetID)
 {
+	std::unique_lock<std::mutex> dispatcherLock(dispatcherMutex);
+
+	if (isDisabled()) return;
+
 	try {
-		tMessageDispatcher->removeMessageHandler(convert<DeviceID, TDeviceID>(targetID));	//remote call
+		getTRef()->removeMessageHandler(convert<DeviceID, TDeviceID>(targetID));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -90,10 +88,14 @@ void RemoteDeviceMessageDispatcher::clearMessages()
 
 bool RemoteDeviceMessageDispatcher::ping() const
 {
+	std::unique_lock<std::mutex> dispatcherLock(dispatcherMutex);
+
+	if (isDisabled()) return false;
+
 	bool success = false;
 
 	try {
-		success = tMessageDispatcher->ping();	//remote call
+		success = getTRef()->ping();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

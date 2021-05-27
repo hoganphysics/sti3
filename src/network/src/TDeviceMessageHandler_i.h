@@ -5,8 +5,10 @@
 
 #include "deviceNet.h"
 #include "orbTypes.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
+#include <mutex>
 
 namespace STI
 {
@@ -27,12 +29,17 @@ public:
 
 	void refresh();
 
+	void disableRefreshIndicator();
+
 private:
 
 	std::shared_ptr<STI::Device::LocalDeviceMessageHandler> messageHandler;
 
-	::STI::TNetwork::TRefreshIndicator_var tRefreshIndicator;
+//	::STI::TNetwork::TRefreshIndicator_var tRefreshIndicator;
 	bool tRefreshIndicatorInstalled;
+
+	std::unique_ptr<STI::TNetwork::TReferenceHolder<STI::TNetwork::TRefreshIndicator>> tRefreshIndicatorHolder;
+	mutable std::mutex refreshMutex;
 };
 
 } //TNetwork

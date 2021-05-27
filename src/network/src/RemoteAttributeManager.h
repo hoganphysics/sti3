@@ -6,6 +6,7 @@
 #include "deviceNet.h"
 #include "DeviceMessageListener.h"
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
 #include <string>
@@ -21,7 +22,8 @@ namespace Network
 class RemoteAttribute;
 
 
-class RemoteAttributeManager : public STI::Device::AttributeManager
+class RemoteAttributeManager : public STI::Device::AttributeManager,
+                               public STI::TNetwork::TReferenceHolder<STI::TNetwork::TAttributeManager>	//mixin
 {
 public:
 
@@ -43,8 +45,6 @@ public:
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
 
     bool ping() const;
-
-    void disable();
 
     std::string getUpdatedValue(const std::string& key);
 
@@ -81,7 +81,7 @@ private:
 
     std::shared_ptr<STI::Device::DeviceMessageListenerForwarder> listenerForwarder;
 
-    ::STI::TNetwork::TAttributeManager_var tAttributeManager;		//remote reference
+    //::STI::TNetwork::TAttributeManager_var tAttributeManager;		//remote reference
 
     mutable std::mutex managerMutex;
 };

@@ -167,7 +167,7 @@ private:
 		std::set<ID> collectorIDs;
 		collectors.getKeys(collectorIDs);
 
-		//Make all stored Collectiors enforce their collection policies.
+		//Make all stored Collectors enforce their collection policies.
 		cleanup(collectorIDs);
 	}
 

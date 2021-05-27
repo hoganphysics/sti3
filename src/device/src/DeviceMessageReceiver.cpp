@@ -54,6 +54,11 @@ void DeviceMessageReceiver::removeDeviceMessageHandler(const DeviceID& sourceDev
 {
 	std::shared_ptr<DeviceMessageDispatcher> dispatcher;
 
+	std::shared_ptr<DeviceMessageHandler> handler;
+	if (handlers.get(sourceDeviceID, handler) && handler != 0) {
+		handler->disable();
+	}
+
 	//Attempt to remove from the remote dispatcher
 	if (getSourceDeviceMessageDispatcher(sourceDeviceID, dispatcher)) {
 		dispatcher->removeMessageHandler(localID);	//remove this handler to the remote dispatcher

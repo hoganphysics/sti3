@@ -69,6 +69,7 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 
 LocalEventEngine::~LocalEventEngine()
 {
+	resetPlayThread();
 }
 
 void LocalEventEngine::clear()
@@ -645,7 +646,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 
-
 	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
 								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
 	playCompleteMessage->jobID.pid = job.getJobID().pid;
@@ -672,6 +672,7 @@ void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLoc
 		   isState(EngineState::WaitingForTrigger) || isState(EngineState::Playing)) {
 		playCondition.wait(playLock);
 	}
+	resetPlayThread();	//calls thread::join on playThread
 }
 
 

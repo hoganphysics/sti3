@@ -4,7 +4,7 @@
 #include "deviceNet.h"
 
 #include "Device.h"
-#include "DeviceHub.h"
+#include "LocalDeviceHub.h"
 
 #include <memory>
 
@@ -18,7 +18,7 @@ class TDeviceHub_i : public POA_STI::TNetwork::TDeviceHub
 {
 public:
 
-	TDeviceHub_i(const std::shared_ptr<STI::Network::DeviceHub>& hub);
+	TDeviceHub_i(const std::shared_ptr<STI::Network::LocalDeviceHub>& hub);
 	~TDeviceHub_i();
 
 	::CORBA::Boolean addHub(const ::STI::TNetwork::TDeviceHubID& hubID, ::STI::TNetwork::TDeviceHub_ptr hub);
@@ -36,7 +36,7 @@ public:
 
 private:
 
-	std::shared_ptr<STI::Network::DeviceHub> localHub;
+	std::shared_ptr<STI::Network::LocalDeviceHub> localHub;
 };
 
 } //TNetwork

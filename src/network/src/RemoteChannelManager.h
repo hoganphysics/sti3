@@ -5,6 +5,7 @@
 #include "DeviceMessageListener.h"
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "deviceNet.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
 #include <mutex>
@@ -17,7 +18,8 @@ namespace Network
 class LocalDevice;
 
 
-class RemoteChannelManager : public STI::Device::ChannelManager
+class RemoteChannelManager : public STI::Device::ChannelManager,
+                             public STI::TNetwork::TReferenceHolder<STI::TNetwork::TChannelManager>	//mixin
 {
 public:
 
@@ -75,7 +77,7 @@ private:
     STI::Device::DeviceID remoteID;
     STI::Device::DeviceMessageListenerID listenerID;
 
-    ::STI::TNetwork::TChannelManager_var tChannelManager;		//remote reference
+    //::STI::TNetwork::TChannelManager_var tChannelManager;		//remote reference
 
     std::shared_ptr<STI::Device::DeviceMessageListenerForwarder> listenerForwarder;
 

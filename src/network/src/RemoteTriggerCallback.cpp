@@ -3,21 +3,29 @@
 #include "NetworkConvert.h"
 
 using STI::Network::RemoteTriggerCallback;
+using STI::TNetwork::TReferenceHolder;
+using STI::TNetwork::TTriggerCallback;
 
 
 RemoteTriggerCallback::RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_ptr trigger)
-	: _tTrigger(STI::TNetwork::TTriggerCallback::_duplicate(trigger))
+: TReferenceHolder<TTriggerCallback>(trigger, cbMutex)
+//	: _tTrigger(STI::TNetwork::TTriggerCallback::_duplicate(trigger))
 {
 }
 
 RemoteTriggerCallback::~RemoteTriggerCallback()
 {
+	disable();
 }
 
 void RemoteTriggerCallback::ready(const STI::Device::DeviceID& id)
 {
+	std::unique_lock<std::mutex> cbLock(cbMutex);
+
+	if (isDisabled()) return;
+
 	try {
-		_tTrigger->ready(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id));
+		getTRef()->ready(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id));
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -30,8 +38,12 @@ void RemoteTriggerCallback::ready(const STI::Device::DeviceID& id)
 
 void RemoteTriggerCallback::triggerFired(const STI::Device::DeviceID& id)
 {
+	std::unique_lock<std::mutex> cbLock(cbMutex);
+
+	if (isDisabled()) return;
+
 	try {
-		_tTrigger->triggerFired(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id));
+		getTRef()->triggerFired(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id));
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

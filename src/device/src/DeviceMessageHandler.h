@@ -28,6 +28,8 @@ public:
 	virtual void clearMessages() = 0;
 
 	virtual bool hasListeners(const std::shared_ptr<DeviceMessage>& mess) = 0;
+
+	virtual void disable() = 0;
 };
 
 

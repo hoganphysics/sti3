@@ -6,15 +6,20 @@
 #include "DeviceID.h"
 
 #include "deviceNet.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
+#include <mutex>
+
 
 namespace STI
 {
 namespace Network
 {
 
-class RemoteDeviceMessageDispatcher : public STI::Device::DeviceMessageDispatcher
+
+class RemoteDeviceMessageDispatcher : public STI::Device::DeviceMessageDispatcher,
+									  public STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageDispatcher>	//mixin
 {
 public:
 
@@ -32,7 +37,8 @@ public:
 
 private:
 
-	::STI::TNetwork::TDeviceMessageDispatcher_var tMessageDispatcher;		//remote reference
+	mutable std::mutex dispatcherMutex;
+	//::STI::TNetwork::TDeviceMessageDispatcher_var tMessageDispatcher;		//remote reference
 
 };
 

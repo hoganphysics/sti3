@@ -5,15 +5,18 @@
 #include "DeviceCollection.h"
 #include "Device.h"
 #include "DeviceID.h"
+#include "TReferenceHolder.h"
 
 #include <memory>
+#include <mutex>
 
 namespace STI
 {
 namespace Network
 {
 
-class RemoteDeviceCollection : public STI::Device::DeviceCollection
+class RemoteDeviceCollection : public STI::Device::DeviceCollection,
+							   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceCollection>	//mixin
 {
 public:
 
@@ -36,7 +39,9 @@ public:
 
 private:
 
-	::STI::TNetwork::TDeviceCollection_var tDeviceCollection;		//remote reference
+	mutable std::mutex collectionMutex;
+
+	//::STI::TNetwork::TDeviceCollection_var tDeviceCollection;		//remote reference
 
 };
 

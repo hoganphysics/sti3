@@ -14,19 +14,23 @@ using STI::Engine::ParseID;
 
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
-	: _tEngine(STI::TNetwork::TEventEngine::_duplicate(engine))
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngine>(engine, engineMutex)
+//	: _tEngine(STI::TNetwork::TEventEngine::_duplicate(engine))
 {
 }
 
 RemoteEventEngine::~RemoteEventEngine()
 {
+	disable();
 }
 
 
 void RemoteEventEngine::play(EventEngineJob& job)
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->play(convert<EventEngineJob, TEventEngineJob>(job));
+		getTRef()->play(convert<EventEngineJob, TEventEngineJob>(job));
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -39,14 +43,19 @@ void RemoteEventEngine::play(EventEngineJob& job)
 
 void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
+	if (isDisabled()) return;
+
     triggerCallbackServant = std::make_shared<STI::TNetwork::TTriggerCallback_i>(triggerCB);
 
 	try {
-		_tEngine->playCB(
-            convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(jobID),
-            (*triggerCallbackServant)._this(),
-            static_cast<CORBA::Boolean>(debug)
-            );
+		if (triggerCallbackServant != 0) {
+			
+			getTRef()->playCB(
+				convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(jobID),
+				(*triggerCallbackServant)._this(),
+				static_cast<CORBA::Boolean>(debug)
+				);			
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -60,8 +69,10 @@ void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::s
 
 void RemoteEventEngine::trigger()
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->trigger();
+		getTRef()->trigger();
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -74,8 +85,10 @@ void RemoteEventEngine::trigger()
 
 void RemoteEventEngine::trigger(const STI::Device::DeviceID& target)
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->triggerTarget(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(target));
+		getTRef()->triggerTarget(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(target));
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -89,8 +102,10 @@ void RemoteEventEngine::trigger(const STI::Device::DeviceID& target)
 
 void RemoteEventEngine::stop()
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->stop();
+		getTRef()->stop();
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -103,8 +118,10 @@ void RemoteEventEngine::stop()
 
 void RemoteEventEngine::pause()
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->pause();
+		getTRef()->pause();
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -117,8 +134,10 @@ void RemoteEventEngine::pause()
 
 void RemoteEventEngine::unpause(bool retrigger)
 {
+	if (isDisabled()) return;
+
 	try {
-		_tEngine->unpause(static_cast<CORBA::Boolean>(retrigger));
+		getTRef()->unpause(static_cast<CORBA::Boolean>(retrigger));
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -137,8 +156,10 @@ STI::Device::DeviceID RemoteEventEngine::getDeviceID() const
 	bool success = false;
 
 	try {
-		tDeviceID = _tEngine->getDeviceID();
-		success = true;
+		if (!isDisabled()) {
+			tDeviceID = getTRef()->getDeviceID();
+			success = true;
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -165,8 +186,10 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 	bool success = false;
 
 	try {
-		tState = _tEngine->getState();
-		success = true;
+		if (!isDisabled()) {
+			tState = getTRef()->getState();
+			success = true;			
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -176,7 +199,7 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 	{
 	}
 
-	STI::Engine::EngineState state;
+	STI::Engine::EngineState state = STI::Engine::EngineState::Missing;
 
 	if(success) {
 		convert<::STI::TNetwork::TEngineState, STI::Engine::EngineState>(tState, state);
@@ -189,14 +212,14 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 // const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
 bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
 {
-	if (CORBA::is_nil(_tEngine)) return false;
+	if (isDisabled()) return false;
 
 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
 
 	bool success = false;
 
 	try {
-		success = _tEngine->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
+		success = getTRef()->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
 
 		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
 	}

@@ -12,9 +12,12 @@
 
 using STI::Network::RemoteDeviceMessageHandler;
 using STI::Network::convert;
+using STI::TNetwork::TReferenceHolder;
+using STI::TNetwork::TDeviceMessageHandler;
 
 RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_ptr deviceHandler)
-	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
+: TReferenceHolder<TDeviceMessageHandler>(deviceHandler, handlerMutex)
+//	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
 {
 //	STI::TNetwork::TDeviceEventHandler
 //	CORBA::remove_ref(deviceHandler);
@@ -22,9 +25,9 @@ RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceM
 	try {
 
 		//STI::TNetwork::TRefreshIndicator_var refreshIndicatorVar = refreshIndicator._this();
-		//tDeviceHandler->setRefreshIndicator(refreshIndicatorVar);	//remote call
+		//getTRef()->setRefreshIndicator(refreshIndicatorVar);	//remote call
 		
-		tDeviceHandler->setRefreshIndicator(refreshIndicator._this());	//remote call
+		getTRef()->setRefreshIndicator(refreshIndicator._this());	//remote call
 
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -38,6 +41,12 @@ RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceM
 
 RemoteDeviceMessageHandler::~RemoteDeviceMessageHandler()
 {
+	TReferenceHolder<TDeviceMessageHandler>::disable();
+}
+
+void RemoteDeviceMessageHandler::disable()
+{
+	TReferenceHolder<TDeviceMessageHandler>::disable();
 }
 
 void RemoteDeviceMessageHandler::addListenerGroup(const STI::Device::DeviceMessageType& type, 
@@ -57,6 +66,8 @@ void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::D
 		return;
 	}
 
+	if (isDisabled()) return;
+
 	STI::TNetwork::TAnyMessage tAnyMessage;
 
 	if (!convert<std::shared_ptr<STI::Device::DeviceMessage>, STI::TNetwork::TAnyMessage>(mess, tAnyMessage)) {
@@ -64,7 +75,7 @@ void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::D
 	}
 
 	try {
-		tDeviceHandler->addMessage(tAnyMessage);	//remote call
+		getTRef()->addMessage(tAnyMessage);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -77,9 +88,10 @@ void RemoteDeviceMessageHandler::addMessage(const std::shared_ptr<STI::Device::D
 
 void RemoteDeviceMessageHandler::clearMessages()
 {
+	if (isDisabled()) return;
 
 	try {
-		tDeviceHandler->clearMessages();	//remote call
+		getTRef()->clearMessages();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -96,18 +108,20 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 	using ::STI::TNetwork::TDeviceMessageType;
 	using STI::Device::DeviceMessageType;
 
-	std::unique_lock<std::mutex> writelock(listenersMutex);		//avoids reentrant calls
+	std::unique_lock<std::mutex> writelock(handlerMutex);		//avoids reentrant calls
+
+	bool success = true;
 
 	//A remote call is only made to refresh the event filter list if the remote resource refreshed.
 	if (refreshIndicator.checkThenReset()) {
 		//a refresh occurred on the remote resource; we need to refresh
 		
-		bool success = false;
+		success = false;
 		TDeviceMessageTypeSeq_var tListenersTypes;
 
 		try {
-			if (!CORBA::is_nil(tDeviceHandler)) {
-				tListenersTypes = tDeviceHandler->listenersTypes();	//remote call
+			if (!isDisabled()) {
+				tListenersTypes = getTRef()->listenersTypes();	//remote call
 				success = true;
 			}
 		}
@@ -126,10 +140,14 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 			convert<TDeviceMessageType, DeviceMessageType>(
 				(const _CORBA_Unbounded_Sequence<TDeviceMessageType>&) tListenersTypes, listenersTypes);
 		}
+		else {
+			//A refresh occured, but remote call failed, so update was not completed.
+			refreshIndicator.refresh();	//undo reset done by checkThenReset()
+		}
 	}
 
 	//Event filter based on whether listeners of a given type are present on the remote device
-	return listenersTypes.count(mess->getType()) > 0;
+	return success && listenersTypes.count(mess->getType()) > 0;
 	
 }
 

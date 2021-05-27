@@ -15,16 +15,21 @@ using STI::Network::RemoteDeviceCollection;
 using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
 using STI::Network::convert;
+using STI::TNetwork::TDeviceCollection;
+using STI::TNetwork::TReferenceHolder;
 
 
 RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_ptr deviceCollection)
-	: tDeviceCollection(STI::TNetwork::TDeviceCollection::_duplicate(deviceCollection))
+: TReferenceHolder<TDeviceCollection>(deviceCollection, collectionMutex)
+//: tDeviceCollection(STI::TNetwork::TDeviceCollection::_duplicate(deviceCollection))
 {
 }
 
 bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Device::Device>& node)
 {
-	if (CORBA::is_nil(tDeviceCollection)) return false;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return false;
 
 	// STI::TNetwork::TDevice_ptr tDevice;
 
@@ -46,7 +51,7 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 	//std::cout << "RemoteDeviceCollection::add( " << CORBA::is_nil(tDevice) << " )" << std::endl;
 
 	try {
-		success = tDeviceCollection->add(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
+		success = getTRef()->add(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -56,19 +61,21 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 	{
 	}
 
-	//std::cout << "after tDeviceCollection->add" << std::endl;
+	//std::cout << "after getTRef()->add" << std::endl;
 
 	return success;
 }
 
 bool RemoteDeviceCollection::remove(const STI::Device::DeviceID& id)
 {
-	if (CORBA::is_nil(tDeviceCollection)) return false;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return false;
 
 	bool success = false;
 
 	try {
-		success = tDeviceCollection->remove(convert<DeviceID, TDeviceID>(id));	//remote call
+		success = getTRef()->remove(convert<DeviceID, TDeviceID>(id));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -83,12 +90,14 @@ bool RemoteDeviceCollection::remove(const STI::Device::DeviceID& id)
 
 bool RemoteDeviceCollection::contains(const STI::Device::DeviceID& id) const
 {
-	if (CORBA::is_nil(tDeviceCollection)) return false;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return false;
 
 	bool success = false;
 
 	try {
-		success = tDeviceCollection->contains(convert<DeviceID, TDeviceID>(id));	//remote call
+		success = getTRef()->contains(convert<DeviceID, TDeviceID>(id));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -103,12 +112,14 @@ bool RemoteDeviceCollection::contains(const STI::Device::DeviceID& id) const
 
 unsigned RemoteDeviceCollection::size() const
 {
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
 	unsigned result = 0;
 
-	if (CORBA::is_nil(tDeviceCollection)) return result;
+	if (isDisabled()) return result;
 
 	try {
-		result = tDeviceCollection->size();	//remote call
+		result = getTRef()->size();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -123,14 +134,16 @@ unsigned RemoteDeviceCollection::size() const
 
 bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_ptr<STI::Device::Device>& node) const
 {
-	if (CORBA::is_nil(tDeviceCollection)) return false;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return false;
 
 	bool success = false;
 
 	STI::TNetwork::TDevice_var tDevice;
 
 	try {
-		success = tDeviceCollection->get(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
+		success = getTRef()->get(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 
 		if (success && tDevice != 0 && !tDevice->_is_nil()) {
 			//node = std::make_shared<RemoteDevice>( STI::TNetwork::TDevice::_duplicate(tDevice) );
@@ -150,12 +163,14 @@ bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_pt
 
 void RemoteDeviceCollection::getIDs(std::set<STI::Device::DeviceID>& ids) const
 {
-	if (CORBA::is_nil(tDeviceCollection)) return;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return;
 	
 	STI::TNetwork::TDeviceIDSeq_var tIDs(new STI::TNetwork::TDeviceIDSeq);
 
 	try {
-		tDeviceCollection->getIDs(tIDs);	//remote call
+		getTRef()->getIDs(tIDs);	//remote call
 
 		convert<TDeviceID, DeviceID>(tIDs, ids);
 	}
@@ -170,10 +185,12 @@ void RemoteDeviceCollection::getIDs(std::set<STI::Device::DeviceID>& ids) const
 
 void RemoteDeviceCollection::cleanup()
 {
-	if (CORBA::is_nil(tDeviceCollection)) return;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return;
 
 	try {
-		tDeviceCollection->cleanup();	//remote call
+		getTRef()->cleanup();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -186,10 +203,12 @@ void RemoteDeviceCollection::cleanup()
 
 void RemoteDeviceCollection::clear()
 {
-	if (CORBA::is_nil(tDeviceCollection)) return;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return;
 
 	try {
-		tDeviceCollection->clear();	//remote call
+		getTRef()->clear();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -202,12 +221,14 @@ void RemoteDeviceCollection::clear()
 
 bool RemoteDeviceCollection::ping() const
 {
-	if (CORBA::is_nil(tDeviceCollection)) return false;
+	std::unique_lock<std::mutex> collectionLock(collectionMutex);
+
+	if (isDisabled()) return false;
 
 	bool success = false;
 
 	try {
-		success = tDeviceCollection->ping();	//remote call
+		success = getTRef()->ping();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

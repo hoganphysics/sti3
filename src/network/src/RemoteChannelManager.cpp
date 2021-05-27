@@ -20,7 +20,9 @@ using STI::Device::ChannelUpdateMessage;
 RemoteChannelManager::RemoteChannelManager(::STI::TNetwork::TChannelManager_ptr channelManager,
 											const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
 											const STI::Device::DeviceID& remoteID)
-	: tChannelManager(STI::TNetwork::TChannelManager::_duplicate(channelManager)), listenerForwarder(forwarder), remoteID(remoteID)
+	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TChannelManager>(channelManager, managerMutex), 
+	listenerForwarder(forwarder), remoteID(remoteID)
+	//: tChannelManager(STI::TNetwork::TChannelManager::_duplicate(channelManager))
 {
 
 	//Message listener for channel update messages
@@ -58,13 +60,13 @@ void RemoteChannelManager::getChannels(std::vector<std::shared_ptr<STI::Device::
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-    if (CORBA::is_nil(tChannelManager)) return;
+    if (isDisabled()) return;
 
 	STI::TNetwork::TChannelSeq_var tChannels(new STI::TNetwork::TChannelSeq);
 	std::vector<std::shared_ptr<RemoteChannel>> remoteChannels;
 
     try {
-		tChannelManager->getChannels(tChannels);	//remote call
+		getTRef()->getChannels(tChannels);	//remote call
 
 		if (convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannels, remoteChannels)) {
 			
@@ -95,13 +97,13 @@ bool RemoteChannelManager::getChannel(short channelNumber, std::shared_ptr<STI::
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-    if (CORBA::is_nil(tChannelManager)) return false;
+    if (isDisabled()) return false;
 
     bool success = false;
     STI::TNetwork::TChannel_var tChannel;
 
 	try {
-		success = tChannelManager->getChannel(static_cast<CORBA::Short>(channelNumber), tChannel);	//remote call
+		success = getTRef()->getChannel(static_cast<CORBA::Short>(channelNumber), tChannel);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -126,12 +128,12 @@ bool RemoteChannelManager::writeChannel(short channel, const STI::Utils::MixedVa
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-    if (CORBA::is_nil(tChannelManager)) return false;
+    if (isDisabled()) return false;
 
     bool success = false;
 
 	try {
-		success = tChannelManager->writeChannel(static_cast<CORBA::Short>(channel),
+		success = getTRef()->writeChannel(static_cast<CORBA::Short>(channel),
                                       convert<MixedValue, TMixedValue>(value));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -149,13 +151,13 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
     
-	if (CORBA::is_nil(tChannelManager)) return false;
+	if (isDisabled()) return false;
 
     bool success = false;
     STI::TNetwork::TMixedValue_var tData;
 
 	try {
-		success = tChannelManager->readChannel(static_cast<CORBA::Short>(channel), 
+		success = getTRef()->readChannel(static_cast<CORBA::Short>(channel), 
                                                 convert<MixedValue, TMixedValue>(value),
                                                 tData);	//remote call
 	}
@@ -178,12 +180,12 @@ bool RemoteChannelManager::setChannelName(short channel, const std::string& name
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-    if (CORBA::is_nil(tChannelManager)) return false;
+    if (isDisabled()) return false;
 
     bool success = false;
 
 	try {
-		success = tChannelManager->setChannelName(static_cast<CORBA::Short>(channel),
+		success = getTRef()->setChannelName(static_cast<CORBA::Short>(channel),
                                       convert<std::string, CORBA::String_member>(name));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -201,12 +203,12 @@ bool RemoteChannelManager::ping() const
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-	if (CORBA::is_nil(tChannelManager)) return false;
+	if (isDisabled()) return false;
 	
 	bool success = false;
 
 	try {
-		success = tChannelManager->ping();	//remote call
+		success = getTRef()->ping();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

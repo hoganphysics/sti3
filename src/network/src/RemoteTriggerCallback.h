@@ -4,6 +4,7 @@
 #include "deviceNet.h"
 
 #include "TriggerCallback.h"
+#include "TReferenceHolder.h"
 
 
 namespace STI
@@ -11,7 +12,8 @@ namespace STI
 namespace Network
 {
 
-class RemoteTriggerCallback : public STI::Engine::TriggerCallback
+class RemoteTriggerCallback : public STI::Engine::TriggerCallback,
+							  public STI::TNetwork::TReferenceHolder<STI::TNetwork::TTriggerCallback>	//mixin
 {
 public:
 
@@ -23,7 +25,8 @@ public:
 
 private:
 
-    ::STI::TNetwork::TTriggerCallback_var _tTrigger; //remote reference
+//    ::STI::TNetwork::TTriggerCallback_var _tTrigger; //remote reference
+	mutable std::mutex cbMutex;
 };
 
 

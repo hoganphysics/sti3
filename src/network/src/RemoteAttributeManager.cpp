@@ -17,12 +17,16 @@ using STI::TNetwork::TMixedValue;
 using STI::TNetwork::TAttribute;
 using STI::Device::Attribute;
 using STI::Network::RemoteAttribute;
+using STI::TNetwork::TAttributeManager;
+using STI::TNetwork::TReferenceHolder;
 
 
 RemoteAttributeManager::RemoteAttributeManager(::STI::TNetwork::TAttributeManager_ptr attributeManager,
                             const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
                             const STI::Device::DeviceID& remoteID)
-: tAttributeManager(STI::TNetwork::TAttributeManager::_duplicate(attributeManager)), listenerForwarder(forwarder), remoteID(remoteID)
+: TReferenceHolder<TAttributeManager>(attributeManager, managerMutex),
+//: tAttributeManager(STI::TNetwork::TAttributeManager::_duplicate(attributeManager))
+listenerForwarder(forwarder), remoteID(remoteID)
 {
 	//Message listener for attribute update messages
 	std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::AttributeUpdateMessage>> listener;
@@ -47,14 +51,6 @@ RemoteAttributeManager::~RemoteAttributeManager()
 	}
 }
 
-void RemoteAttributeManager::disable()
-{
-	std::unique_lock<std::mutex> managerLock(managerMutex);
-
-	::STI::TNetwork::TAttributeManager_var nilManager = ::STI::TNetwork::TAttributeManager::_nil();
-	tAttributeManager = nilManager;	//release reference; reference is now nil
-}
-
 void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute)
 {
 	if (attribute != 0) {
@@ -68,10 +64,10 @@ std::string RemoteAttributeManager::getValue(const std::string& key)
 
     std::string value = "";
 
-	if (CORBA::is_nil(tAttributeManager)) return value;
+	if (isDisabled()) return value;
     
 	try {
-		auto tValue = tAttributeManager->getValue(
+		auto tValue = getTRef()->getValue(
                     convert<std::string, CORBA::String_member>(key));	//remote call
 
 		value = convert<CORBA::String_member, std::string>(tValue);
@@ -104,13 +100,13 @@ bool RemoteAttributeManager::setValue(const std::string& key, const std::string&
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-	if (CORBA::is_nil(tAttributeManager)) return false;
+	if (isDisabled()) return false;
 
     bool success = false;
 
     try {
 
-		success = tAttributeManager->setValue(
+		success = getTRef()->setValue(
                     convert<std::string, CORBA::String_member>(key), 
                     convert<std::string, CORBA::String_member>(value));	//remote call
 	}
@@ -129,7 +125,7 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-	if (CORBA::is_nil(tAttributeManager)) return false;
+	if (isDisabled()) return false;
 
     bool success = false;
 	STI::TNetwork::TAttribute_var tAttribute(new STI::TNetwork::TAttribute);
@@ -137,7 +133,7 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
 
     try {
 
-		tAttributeManager->getAttribute(
+		getTRef()->getAttribute(
                     convert<std::string, CORBA::String_member>(key), tAttribute);	//remote call
 
 		success = convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttribute, remoteAttribute);
@@ -165,7 +161,7 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
 
-	if (CORBA::is_nil(tAttributeManager)) return;
+	if (isDisabled()) return;
 
 	std::vector<std::shared_ptr<RemoteAttribute>> remoteAttributes;
 
@@ -173,7 +169,7 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 
     try {
 
-		tAttributeManager->getAttributes(tAttributes);	//remote call
+		getTRef()->getAttributes(tAttributes);	//remote call
 
 		// convert<TAttribute, std::shared_ptr<Attribute>>(tAttributes, attributes);
 		if (convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttributes, remoteAttributes)) {
@@ -201,12 +197,12 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 
 bool RemoteAttributeManager::ping() const
 {
-	if (CORBA::is_nil(tAttributeManager)) return false;
+	if (isDisabled()) return false;
 	
 	bool success = false;
 
 	try {
-		success = tAttributeManager->ping();	//remote call
+		success = getTRef()->ping();	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

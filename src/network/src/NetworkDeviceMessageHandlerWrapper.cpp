@@ -18,6 +18,10 @@ NetworkDeviceMessageHandlerWrapper::~NetworkDeviceMessageHandlerWrapper()
 {
 }
 
+void NetworkDeviceMessageHandlerWrapper::disable()
+{
+	messageHandlerServant.disableRefreshIndicator();
+}
 
 void NetworkDeviceMessageHandlerWrapper::addListenerGroup(const DeviceMessageType& type, 
 	std::shared_ptr<STI::Device::AbstractMessageListenerGroup>& listenerGroup)

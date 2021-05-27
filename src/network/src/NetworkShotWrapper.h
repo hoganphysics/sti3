@@ -10,12 +10,11 @@
 #include <vector>
 #include <memory>
 
+
 namespace STI
 {
 namespace Network
 {
-
-
 
 
 class NetworkShotWrapper : public STI::Engine::Shot
@@ -53,21 +52,6 @@ public:
 	}
 
 private:
-
-    // bool getTShotRef(STI::TNetwork::TShot_ptr& tParsedShot)
-    // {
-    //     STI::TNetwork::TShot_var newShot;
-    //     newShot = _tShot;		//implicit duplicate
-
-    //     tParsedShot = newShot.out();
-    //     return !CORBA::is_nil(tParsedShot);
-    // }
-
-    
-
-
-
-
 
     std::shared_ptr<STI::Engine::Shot> localshot;
 //    ::STI::TNetwork::TShot_var _tShot;		//remote reference
