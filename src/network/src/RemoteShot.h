@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+
 namespace STI
 {
 namespace Network
@@ -24,7 +25,13 @@ public:
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events);
 
+    void refreshEvents();
+
 private:
+
+    bool refreshRequired;
+
+    std::shared_ptr<std::vector<STI::Engine::RawEvent>> storedEvents;
 
     //::STI::TNetwork::TShot_var _tShot;    //remote reference
     mutable std::mutex shotMutex;

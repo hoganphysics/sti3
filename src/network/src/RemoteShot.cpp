@@ -16,6 +16,10 @@ RemoteShot::RemoteShot(::STI::TNetwork::TShot_ptr shot)
 : STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>(shot, shotMutex)
 //	: _tShot(STI::TNetwork::TShot::_duplicate(shot))
 {
+	std::unique_lock<std::mutex> shotLock(shotMutex);
+
+	refreshRequired = true;
+
 	std::cout << "create RemoteShot()" << std::endl;
 
 }
@@ -30,18 +34,34 @@ void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& 
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
-	STI::TNetwork::TRawEventSeq_var tEvents;
+	if (refreshRequired) {
+		refreshEvents();
 
-    events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+		//once events have been received, release remote reference
+		if (!refreshRequired) {
+			disable(shotLock);
+		}
+	}
 
+	events = storedEvents;
+}
+
+void RemoteShot::refreshEvents()
+{
 	if (isDisabled()) return;
+
+	storedEvents = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+
+	STI::TNetwork::TRawEventSeq_var tEvents;
 
 	try {
 
         getTRef()->getEvents(tEvents); 	//remote call
 
-		if (events != 0) {
-			convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *events);
+		refreshRequired = false;
+
+		if (storedEvents != 0) {
+			convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *storedEvents);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

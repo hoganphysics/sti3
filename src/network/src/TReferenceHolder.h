@@ -52,7 +52,12 @@ public:
 	void disable()
 	{
 		std::unique_lock<std::mutex> refLock(refMutex);
+		
+		disable(refLock);
+	}
 
+	void disable(const std::unique_lock<std::mutex>& lock)
+	{
 		typename T::_var_type nilRef = T::_nil();
 		tReference = nilRef;	//release reference; reference is now nil
 
