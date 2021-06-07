@@ -69,6 +69,14 @@ public class JDevice {
     return new DeviceID(stiJNI.JDevice_getID(swigCPtr, this), true);
   }
 
+  public void kill() {
+    stiJNI.JDevice_kill(swigCPtr, this);
+  }
+
+  public void disable() {
+    stiJNI.JDevice_disable(swigCPtr, this);
+  }
+
   public boolean refresh() {
     return stiJNI.JDevice_refresh(swigCPtr, this);
   }

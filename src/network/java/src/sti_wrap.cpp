@@ -5306,6 +5306,34 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JDevice_1getID(JNIEnv *jen
 }
 
 
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JDevice_1kill(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  STI::Device::JDevice *arg1 = (STI::Device::JDevice *) 0 ;
+  std::shared_ptr< STI::Device::JDevice > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JDevice > **)&jarg1;
+  arg1 = (STI::Device::JDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->kill();
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_JDevice_1disable(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  STI::Device::JDevice *arg1 = (STI::Device::JDevice *) 0 ;
+  std::shared_ptr< STI::Device::JDevice > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Device::JDevice > **)&jarg1;
+  arg1 = (STI::Device::JDevice *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->disable();
+}
+
+
 SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_JDevice_1refresh(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   STI::Device::JDevice *arg1 = (STI::Device::JDevice *) 0 ;

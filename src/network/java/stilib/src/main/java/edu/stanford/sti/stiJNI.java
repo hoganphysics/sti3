@@ -138,6 +138,8 @@ public class stiJNI {
   public final static native long new_JDevice__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JDevice(long jarg1);
   public final static native long JDevice_getID(long jarg1, JDevice jarg1_);
+  public final static native void JDevice_kill(long jarg1, JDevice jarg1_);
+  public final static native void JDevice_disable(long jarg1, JDevice jarg1_);
   public final static native boolean JDevice_refresh(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getCollection(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getMessageDispatcher(long jarg1, JDevice jarg1_);
