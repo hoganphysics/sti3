@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <iostream>
+
 using STI::Device::JDeviceMessageReceiver;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageListenerID;
@@ -59,6 +61,14 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
 {
     if(deviceMessageReceiver != 0) {
         deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerID, listener);
+
+        auto listenerIDtmp = listenerID;
+        listenerIDtmp.name = listenerID.name + "tmp";
+
+        deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerIDtmp,
+        [](auto message) {
+            std::cout << "*** Java CollectionUpdateMessage ***" << std::endl;
+        });
     }
 }
 
