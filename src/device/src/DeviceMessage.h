@@ -8,6 +8,7 @@
 #include "GroupableMessage.h"
 #include "EngineParsingMessage.h"
 #include "EngineState.h"
+#include "DeviceTrace.h"
 
 #include <sstream>
 
@@ -35,11 +36,19 @@ class DeviceMessage
 public:
 	DeviceMessage() : _type(DeviceMessageType::Unknown) {}
 	DeviceMessage(const STI::Device::DeviceID& source, DeviceMessageType type);
+	DeviceMessage(const STI::Device::DeviceTrace& trace, DeviceMessageType type);
+//	DeviceMessage(const STI::Device::DeviceID& relayingID, const DeviceMessage& message);
 	virtual ~DeviceMessage();
 
-	const STI::Device::DeviceID& sourceID() const;
+	const STI::Device::DeviceID sourceID() const;
+
+	const STI::Device::DeviceID originalSourceID() const;
 
 	DeviceMessageType getType() const;
+	const DeviceTrace& getDeviceTrace() const;
+
+	void addRelayingID(const STI::Device::DeviceID& relayingID);
+
 
 	template <typename T>
 	static bool convert(const std::shared_ptr<DeviceMessage>& evt, std::shared_ptr<T>& outEvt)
@@ -64,8 +73,8 @@ public:
 private:
 
 	DeviceMessageType _type;
-	STI::Device::DeviceID _source;
-
+	//STI::Device::DeviceID _source;
+	STI::Device::DeviceTrace _trace;
 };
 
 
@@ -73,13 +82,65 @@ class RefreshDeviceMessage : public DeviceMessage
 {
 public:
 
-	RefreshDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::Refresh) {}
+	RefreshDeviceMessage(const STI::Device::DeviceTrace& trace) : DeviceMessage(trace, DeviceMessageType::Refresh) {}
 
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::Refresh; }
 
 private:
 
 };
+
+
+
+class CollectionUpdateMessage;
+
+class CollectionUpdateMessage : public DeviceMessage, 
+						  		public STI::Device::GroupableMessage<CollectionUpdateMessage>
+{
+public:
+
+	enum class CollectionMessageType { Add, Remove, Refresh };
+
+	CollectionUpdateMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::CollectionUpdate), updateType(CollectionMessageType::Refresh)
+	{
+	}
+
+	static std::shared_ptr<CollectionUpdateMessage> makeMessage(const STI::Device::DeviceID& source)
+	{
+		STI::Device::DeviceTrace trace(source);
+		auto mess = std::make_shared<CollectionUpdateMessage>(trace);
+		return mess;
+	}
+
+	// CollectionUpdateMessage(const STI::Device::DeviceID& source, const CollectionMessageType& type, const STI::Device::DeviceID& updatedID) 
+	// : DeviceMessage(source, DeviceMessageType::CollectionUpdate), id(id), updateType(type)
+	// {
+	// 	channelValues[channel] = value;
+	// }
+	
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::CollectionUpdate; }
+
+    bool appendMessage(const CollectionUpdateMessage& mess)
+	{
+		return true;
+	}
+    
+	bool groupable() const
+	{
+		return true;
+	}
+
+	CollectionUpdateMessage& get()
+	{
+		return *this;
+	}
+
+	CollectionMessageType updateType;
+
+};
+
+
 
 class ChannelUpdateMessage;
 
@@ -90,21 +151,21 @@ public:
 
 	enum class ChannelUpdateMessageType { ChannelValue, ChannelName };
 
-	ChannelUpdateMessage(const STI::Device::DeviceID& source) 
-	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	ChannelUpdateMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::ChannelUpdate) 
 	{
 		channelUpdateType = ChannelUpdateMessageType::ChannelValue;
 	}
 
-	ChannelUpdateMessage(const STI::Device::DeviceID& source, short channel, const STI::Utils::MixedValue& value) 
-	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	ChannelUpdateMessage(const STI::Device::DeviceTrace& trace, short channel, const STI::Utils::MixedValue& value) 
+	: DeviceMessage(trace, DeviceMessageType::ChannelUpdate) 
 	{
 		channelUpdateType = ChannelUpdateMessageType::ChannelValue;
 		channelValues[channel] = value;
 	}
 
-	ChannelUpdateMessage(const STI::Device::DeviceID& source, short channel, const std::string& name) 
-	: DeviceMessage(source, DeviceMessageType::ChannelUpdate) 
+	ChannelUpdateMessage(const STI::Device::DeviceTrace& trace, short channel, const std::string& name) 
+	: DeviceMessage(trace, DeviceMessageType::ChannelUpdate) 
 	{
 		channelUpdateType = ChannelUpdateMessageType::ChannelName;
 		channelNumber = channel;
@@ -148,13 +209,13 @@ class AttributeUpdateMessage : public DeviceMessage,
 {
 public:
 
-	AttributeUpdateMessage(const STI::Device::DeviceID& source) 
-	: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
+	AttributeUpdateMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::AttributeUpdate) 
 	{
 	}
 
-	AttributeUpdateMessage(const STI::Device::DeviceID& source, const std::string& key, const std::string& value) 
-	: DeviceMessage(source, DeviceMessageType::AttributeUpdate) 
+	AttributeUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& key, const std::string& value) 
+	: DeviceMessage(trace, DeviceMessageType::AttributeUpdate) 
 	{
 		attributes[key] = value;
 	}
@@ -228,8 +289,8 @@ public:
 	//enum class ReserveStatus { Success, Yield };
 	enum class SchedulerMessageType { ParseComplete, YieldParse, PartialParse, PlayReady, PlayComplete, YieldPlay };
 
-	EngineSchedulerMessage(const STI::Device::DeviceID& source, STI::Device::DeviceID originalSource, const SchedulerMessageType& type) 
-	: DeviceMessage(source, DeviceMessageType::EngineScheduler), schedulerMessageType(type), originalSource(originalSource) 
+	EngineSchedulerMessage(const STI::Device::DeviceTrace& trace, const SchedulerMessageType& type) 	//STI::Device::DeviceID originalSource,
+	: DeviceMessage(trace, DeviceMessageType::EngineScheduler), schedulerMessageType(type)	//, originalSource(originalSource) 
 	{
 	}
 	
@@ -237,7 +298,7 @@ public:
 
 	SchedulerMessageType schedulerMessageType;
 
-	STI::Device::DeviceID originalSource;	//device that generated the original message
+	//STI::Device::DeviceID originalSource;	//device that generated the original message
 	STI::Engine::EngineJobID jobID;
 	std::shared_ptr<STI::Engine::EventEngine> engine;
 	// std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
@@ -272,8 +333,8 @@ class EngineParserDeviceMessage : public DeviceMessage
 {
 public:
 
-	EngineParserDeviceMessage(const STI::Device::DeviceID& source, const STI::Engine::ParseID& parseID) 
-	: DeviceMessage(source, DeviceMessageType::EngineParser), pid(parseID)
+	EngineParserDeviceMessage(const STI::Device::DeviceTrace& trace, const STI::Engine::ParseID& parseID) 
+	: DeviceMessage(trace, DeviceMessageType::EngineParser), pid(parseID)
 	{
 	}
 

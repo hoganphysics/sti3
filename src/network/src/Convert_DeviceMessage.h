@@ -47,10 +47,30 @@ bool Network::convert<TNetwork::TDeviceMessageType, Device::DeviceMessageType>(c
 
 //RefreshDeviceMessage
 template<>
-bool Network::convert<TNetwork::TRefreshDeviceMessage, std::shared_ptr<Device::RefreshDeviceMessage>>(const TNetwork::TRefreshDeviceMessage& tMessage, std::shared_ptr<Device::RefreshDeviceMessage>& deviceMessage);
+bool Network::convert<TNetwork::TRefreshDeviceMessage, std::shared_ptr<Device::RefreshDeviceMessage>>(
+	const TNetwork::TRefreshDeviceMessage& tMessage, std::shared_ptr<Device::RefreshDeviceMessage>& deviceMessage);
 template<>
 bool Network::convert<std::shared_ptr<Device::RefreshDeviceMessage>, TNetwork::TRefreshDeviceMessage>(
 	const std::shared_ptr<Device::RefreshDeviceMessage>& deviceMessage, TNetwork::TRefreshDeviceMessage& tMessage);
+
+
+//CollectionUpdateMessage
+template<>
+bool Network::convert<TNetwork::TCollectionUpdateMessage, std::shared_ptr<Device::CollectionUpdateMessage>>(
+	const TNetwork::TCollectionUpdateMessage& tMessage, std::shared_ptr<Device::CollectionUpdateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::CollectionUpdateMessage>, TNetwork::TCollectionUpdateMessage>(
+	const std::shared_ptr<Device::CollectionUpdateMessage>& deviceMessage, TNetwork::TCollectionUpdateMessage& tMessage);
+
+
+//CollectionMessageType
+template<>
+TNetwork::TCollectionMessageType Network::convert<Device::CollectionUpdateMessage::CollectionMessageType, TNetwork::TCollectionMessageType>(
+	const Device::CollectionUpdateMessage::CollectionMessageType& type);
+template<>
+Device::CollectionUpdateMessage::CollectionMessageType Network::convert<TNetwork::TCollectionMessageType, Device::CollectionUpdateMessage::CollectionMessageType>(
+	const TNetwork::TCollectionMessageType& tType);
+
 
 
 //EngineSchedulerMessage
@@ -63,7 +83,7 @@ bool Network::convert<std::shared_ptr<Device::EngineSchedulerMessage>, TNetwork:
 
 
 
-  //SchedulerMessageType
+//SchedulerMessageType
 template<>
 TNetwork::TSchedulerMessageType Network::convert<Device::EngineSchedulerMessage::SchedulerMessageType, TNetwork::TSchedulerMessageType>(const Device::EngineSchedulerMessage::SchedulerMessageType& type);
 template<>

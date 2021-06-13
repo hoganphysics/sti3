@@ -6,6 +6,7 @@
 #include "SynchronizedMap.h"
 #include "LocalCollection.h"
 #include "DeviceMessageListenerGroup.h"
+#include <functional>
 
 #include <memory>
 #include <string>
@@ -27,6 +28,16 @@ public:
 	DeviceMessageReceiver(const DeviceID& localID, 
 		const std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>>& deviceCollection);
 	~DeviceMessageReceiver();
+
+
+	template<typename T>
+	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		const std::function<void (const std::shared_ptr<T>&)>& handler)
+	{
+		auto listener = std::make_shared<DeviceMessageListenerLambda<T>>(handler);
+		addListener(sourceDeviceID, listenerID, std::static_pointer_cast<DeviceMessageListener<T>>(listener));
+	}
+
 
 	template<typename T>
 	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
@@ -51,7 +62,11 @@ public:
 		case DeviceMessageType::EngineParser:
 			success = getListenerGroup(sourceDeviceID, engineParserListeners, listenerGroup);
 			break;
+		case DeviceMessageType::CollectionUpdate:
+			success = getListenerGroup(sourceDeviceID, collectionUpdateListeners, listenerGroup);
+			break;
 		}
+
 
 		if (success) {
 			listenerGroup->addListener(listenerID, listener);
@@ -66,6 +81,8 @@ public:
 	}
 
 	void removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID);
+
+	void clearListeners();
 
 private:
 
@@ -154,6 +171,23 @@ private:
 		return success;
 	}
 
+	template<typename T>
+	void clearListenerGroups(ListenerGroupMap<T>& listenerGroupMap)
+	{
+		std::shared_ptr<DeviceMessageListenerGroup<T>> listenerGroup;
+
+		std::set<DeviceID> ids;
+		listenerGroupMap.getKeys(ids);
+
+		for (auto id : ids) {
+			if (listenerGroupMap.get(id, listenerGroup) && listenerGroup != 0) {
+				listenerGroup->clear();
+			}
+		}
+	}
+
+	void clearAllListenerGroups();
+
 	//All attached listeners are collected in groups, based on the type of event they listen to.
 	//The event type is the template parameter of the ListenerGroupMap type.
 	//These listener groups are stored here in a map, keyed by the DeviceID of the event's source
@@ -164,6 +198,7 @@ private:
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
 	ListenerGroupMap<EngineParserDeviceMessage> engineParserListeners;
+	ListenerGroupMap<CollectionUpdateMessage> collectionUpdateListeners;
 	//...
 
 	/**

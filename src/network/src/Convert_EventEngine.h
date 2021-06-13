@@ -44,13 +44,6 @@ template<>
 bool Network::convert<TNetwork::TEventEngineDependencyTree, Engine::EventEngineDependencyTree>(const TNetwork::TEventEngineDependencyTree& tTree, Engine::EventEngineDependencyTree& tree);
 
 
-//DeviceTrace
-template<> 
-Device::DeviceTrace Network::convert<TNetwork::TDeviceTrace, Device::DeviceTrace>(const TNetwork::TDeviceTrace& tDeviceTrace);
-template<>
-TNetwork::TDeviceTrace Network::convert<Device::DeviceTrace, TNetwork::TDeviceTrace>(const Device::DeviceTrace& deviceTrace);
-
-
 //EngineState
 template<>
 bool Network::convert<Engine::EngineState, TNetwork::TEngineState>(const Engine::EngineState& state, TNetwork::TEngineState& tState);

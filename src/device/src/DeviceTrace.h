@@ -24,7 +24,26 @@ public:
 
 	void addID(const DeviceID& id) { ids.push_back(id); }
 	bool includesID(const DeviceID& id) const { return std::find(ids.begin(), ids.end(), id) != ids.end(); }
-	const DeviceID& first() const { return ids.at(0); }  //consider returning DeviceID and making an empty DeviceID() in case the vector is empty
+	const DeviceID first() const 
+	{	
+		if (!ids.empty()) {
+			return ids.front(); 			
+		}
+
+		DeviceID id;	//empty
+		return id;
+	}
+
+	const DeviceID last() const 
+	{	
+		if (!ids.empty()) {
+			return ids.back(); 			
+		}
+
+		DeviceID id;	//empty
+		return id;
+	}
+	
 	unsigned size() const { return static_cast<unsigned>(ids.size()); }
 
 	const std::vector<DeviceID>& getIDs() const { return ids; }

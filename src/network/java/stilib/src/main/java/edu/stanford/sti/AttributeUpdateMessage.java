@@ -58,13 +58,13 @@ public class AttributeUpdateMessage extends DeviceMessage {
     stiJNI.AttributeUpdateMessage_change_ownership(this, swigCPtr, true);
   }
 
-  public AttributeUpdateMessage(DeviceID source) {
-    this(stiJNI.new_AttributeUpdateMessage__SWIG_0(DeviceID.getCPtr(source), source), true);
+  public AttributeUpdateMessage(DeviceTrace trace) {
+    this(stiJNI.new_AttributeUpdateMessage__SWIG_0(DeviceTrace.getCPtr(trace), trace), true);
     stiJNI.AttributeUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 
-  public AttributeUpdateMessage(DeviceID source, String key, String value) {
-    this(stiJNI.new_AttributeUpdateMessage__SWIG_1(DeviceID.getCPtr(source), source, key, value), true);
+  public AttributeUpdateMessage(DeviceTrace trace, String key, String value) {
+    this(stiJNI.new_AttributeUpdateMessage__SWIG_1(DeviceTrace.getCPtr(trace), trace, key, value), true);
     stiJNI.AttributeUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 

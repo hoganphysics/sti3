@@ -62,9 +62,14 @@ public:
 	LocalCollection() {}
 	LocalCollection(const LocalCollectionPolicy_ptr& policy) : nodes(policy) {}
 
-	~LocalCollection() {}
+	~LocalCollection() 
+	{
+		clear();
+		clearListeners();
+	}
 	
 	void addListener(const typename LocalCollectionListener<ID>::_ptr& listener) { nodes.addListener(listener); }
+	void clearListeners() { nodes.clearListeners(); }
 	void setPolicy(const LocalCollectionPolicy_ptr& policy) { nodes->setPolicy(policy); }
 
 	template<typename D>

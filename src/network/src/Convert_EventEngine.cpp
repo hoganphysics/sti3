@@ -1,7 +1,7 @@
 
 #include "NetworkConvert.h"
 #include "Convert_EventEngine.h"
-
+#include "Convert_DeviceTrace.h"
 
 #include "DeviceTrace.h"
 #include "EventEngineDependencyTree.h"
@@ -27,8 +27,6 @@
 
 using STI::Engine::EventEngineDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
-using STI::Device::DeviceTrace;
-using STI::TNetwork::TDeviceTrace;
 using STI::Engine::EngineState;
 using STI::TNetwork::TEngineState;
 using STI::Engine::EngineJobID;
@@ -119,28 +117,6 @@ bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree
     }
 
     return true;
-}
-
-
-//DeviceTrace
-template<> 
-DeviceTrace STI::Network::convert<TDeviceTrace, DeviceTrace>(const TDeviceTrace& tDeviceTrace)
-{
-    DeviceTrace trace;
-
-    for (unsigned i = 0; i < tDeviceTrace.ids.length(); ++i) {
-        trace.addID( convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceTrace.ids[i]) );
-    }
-
-	return trace;
-}
-
-template<>
-TDeviceTrace STI::Network::convert<DeviceTrace, TDeviceTrace>(const DeviceTrace& deviceTrace)
-{
-    TDeviceTrace tTrace;
-    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceTrace.getIDs(), tTrace.ids);
-	return tTrace;
 }
 
 

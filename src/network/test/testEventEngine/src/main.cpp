@@ -203,10 +203,10 @@ void testDevice()
 
 	hub1->addDevice(dev2);
 
-	hub1->run(false);
+	hub1->run(true);
 
-	int x;
-	std::cin >> x;
+	// int x;
+	// std::cin >> x;
 
 	STI::Engine::ParseID pid;
 	pid.parseTimestamp.timestamp = 1.1;

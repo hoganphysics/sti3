@@ -58,18 +58,18 @@ public class ChannelUpdateMessage extends DeviceMessage {
     stiJNI.ChannelUpdateMessage_change_ownership(this, swigCPtr, true);
   }
 
-  public ChannelUpdateMessage(DeviceID source) {
-    this(stiJNI.new_ChannelUpdateMessage__SWIG_0(DeviceID.getCPtr(source), source), true);
+  public ChannelUpdateMessage(DeviceTrace trace) {
+    this(stiJNI.new_ChannelUpdateMessage__SWIG_0(DeviceTrace.getCPtr(trace), trace), true);
     stiJNI.ChannelUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 
-  public ChannelUpdateMessage(DeviceID source, short channel, MixedValue value) {
-    this(stiJNI.new_ChannelUpdateMessage__SWIG_1(DeviceID.getCPtr(source), source, channel, MixedValue.getCPtr(value), value), true);
+  public ChannelUpdateMessage(DeviceTrace trace, short channel, MixedValue value) {
+    this(stiJNI.new_ChannelUpdateMessage__SWIG_1(DeviceTrace.getCPtr(trace), trace, channel, MixedValue.getCPtr(value), value), true);
     stiJNI.ChannelUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 
-  public ChannelUpdateMessage(DeviceID source, short channel, String name) {
-    this(stiJNI.new_ChannelUpdateMessage__SWIG_2(DeviceID.getCPtr(source), source, channel, name), true);
+  public ChannelUpdateMessage(DeviceTrace trace, short channel, String name) {
+    this(stiJNI.new_ChannelUpdateMessage__SWIG_2(DeviceTrace.getCPtr(trace), trace, channel, name), true);
     stiJNI.ChannelUpdateMessage_director_connect(this, swigCPtr, true, true);
   }
 

@@ -54,6 +54,7 @@ add_library(stinetwork SHARED
     Convert_HubID.cpp
     Convert_HubNodeWalker.cpp
     Convert_HubTrace.cpp
+    Convert_DeviceTrace.cpp
     COSBindingNode.cpp
     deviceNet.cpp
     deviceNetDynSK.cpp

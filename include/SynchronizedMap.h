@@ -67,13 +67,22 @@ public:
 
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
 	{
+		std::unique_lock<std::mutex> writeLock(listenersMutex);
+
 		STI::Utils::EventQueue<SynchronizedMapEvent<Key>>::start();	//start event handler loop (does nothing if already running)
 		listeners.push_back(listener);
+	}
+	void clearListeners()
+	{
+		std::unique_lock<std::mutex> writeLock(listenersMutex);
+		listeners.clear();
 	}
 
 private:
 	void handleEvent(const SynchronizedMapEvent<Key>& evt)
 	{
+		std::unique_lock<std::mutex> writeLock(listenersMutex);
+
 		for (typename ListenerVector::iterator it = listeners.begin(); it != listeners.end(); ++it) {
 			switch (evt.type) {
 			case SynchronizedMapEvent<Key>::Type::Add:
@@ -90,7 +99,9 @@ private:
 	}
 
 	ListenerVector listeners;
+	mutable std::mutex listenersMutex;
 };
+
 
 template<class Key>
 class SynchronizedMapPolicy
@@ -134,6 +145,7 @@ public:
 
 	void setPolicy(const KeyPolicy_ptr& Policy);
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener);
+	void clearListeners();
 
 	bool contains(const Key& key) const;
 	bool include(const Key& key) const;
@@ -152,6 +164,8 @@ private:
 	//Internal functions with no mutex protection.
 	bool _contains(const Key& key) const;
 	bool _include(const Key& key) const;
+	void _getKeys(std::set<Key>& keys) const;
+	bool _remove(const Key& key);
 
 //	static shared_ptr<KeyPolicy> defaultPolicy;
 	
@@ -212,6 +226,14 @@ void STI::Utils::SynchronizedMap<Key, T>::addListener(const typename Synchronize
 	eventHandler.addListener(listener);
 	eventHandler.start();
 }
+
+
+template<class Key, class T>
+void STI::Utils::SynchronizedMap<Key, T>::clearListeners()
+{
+	eventHandler.clearListeners();
+}
+
 
 template<class Key, class T>
 void STI::Utils::SynchronizedMap<Key, T>::pushAddEvent(const Key& key)
@@ -285,8 +307,17 @@ template<class Key, class T>
 bool STI::Utils::SynchronizedMap<Key, T>::remove(const Key& key)
 {
 	std::unique_lock< std::mutex > writeLock(mapMutex);
-	items.erase(key);
-	pushRemoveEvent(key);
+	return _remove(key);
+}
+
+template<class Key, class T>
+bool STI::Utils::SynchronizedMap<Key, T>::_remove(const Key& key)
+{
+	if (_contains(key)) {
+		items.erase(key);
+		pushRemoveEvent(key);
+	}
+
 	return !_contains(key);
 }
 
@@ -308,9 +339,15 @@ bool STI::Utils::SynchronizedMap<Key, T>::get(const Key& key, T& item) const
 template<class Key, class T>
 void STI::Utils::SynchronizedMap<Key, T>::getKeys(std::set<Key>& keys) const
 {
-	keys.clear();
-
 	std::unique_lock< std::mutex > readLock(mapMutex);
+
+	_getKeys(keys);
+}
+
+template<class Key, class T>
+void STI::Utils::SynchronizedMap<Key, T>::_getKeys(std::set<Key>& keys) const
+{
+	keys.clear();
 
 	for(typename TMap::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
@@ -350,6 +387,14 @@ template<class Key, class T>
 void STI::Utils::SynchronizedMap<Key, T>::clear()
 {
 	std::unique_lock< std::mutex > writeLock(mapMutex);
+
+	std::set<Key> keys;
+	_getKeys(keys);
+
+	for(typename std::set<Key>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
+		_remove(*it);
+	}
+
 	items.clear();
 	pushRefreshEvent();
 }

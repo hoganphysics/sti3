@@ -21,6 +21,7 @@ public:
 	virtual ~AbstractMessageListenerGroup() {}
 
 	virtual unsigned size() = 0;
+	virtual void clear() = 0;
 	virtual void handleMessage(const std::shared_ptr<DeviceMessage>& mess) = 0;
 
 };
@@ -49,6 +50,11 @@ public:
 	bool contains(const DeviceMessageListenerID& id) const
 	{
 		return listeners.contains(id);
+	}
+
+	void clear()
+	{
+		listeners.clear();
 	}
 
 	void handleMessage(const std::shared_ptr<DeviceMessage>& mess)

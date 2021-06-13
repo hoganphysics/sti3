@@ -360,7 +360,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	}
 
 	// Send message upstream indicating that this device (and all owned devices) has finished
-	auto parseCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+	auto parseCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
 							EngineSchedulerMessage::SchedulerMessageType::ParseComplete);
 	parseCompleteMessage->jobID.type = job.getJobID().type;
 	parseCompleteMessage->jobID.pid = job.getJobID().pid;
@@ -444,11 +444,11 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 		return;
 	}
 
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSource);
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSourceID());
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
-		parsedOwnedTargets[message->originalSource] = message->engineState;
+		parsedOwnedTargets[message->originalSourceID()] = message->engineState;
 		engines[remoteEngine->getDeviceID()] = remoteEngine;
 	}
 
@@ -468,7 +468,7 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 								std::make_move_iterator(evts.end()) );
 	
 	//reduce dependency count in localSubtree
-	localSubtree->removeNode(message->originalSource);
+	localSubtree->removeNode(message->originalSourceID());
 
 	parseCondition.notify_all();	//wake up event transfer loop
 }
@@ -493,7 +493,7 @@ void LocalEventEngine::handlePlayReadyMessage(const std::shared_ptr<EngineSchedu
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
 		engines[remoteEngine->getDeviceID()] = remoteEngine;
-		playReadyOwnedTargets[message->originalSource] = message->engineState;
+		playReadyOwnedTargets[message->originalSourceID()] = message->engineState;
 	}
 
 	playCondition.notify_all();
@@ -507,11 +507,11 @@ void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSch
 		return;
 	}
 
-	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSource);
+	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSourceID());
 
 	//only add if it is owned by this device
 	if (it != ownedTargets.end()) {
-		playedOwnedTargets[message->originalSource] = message->engineState;
+		playedOwnedTargets[message->originalSourceID()] = message->engineState;
 	}
 
 	playCondition.notify_all();
@@ -613,7 +613,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 
 	//Send PlayReady message with local engine reference
-	auto playReadyMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+	auto playReadyMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
 								EngineSchedulerMessage::SchedulerMessageType::PlayReady);
 	playReadyMessage->jobID.pid = job.getJobID().pid;
 	playReadyMessage->jobID.sid = job.getJobID().sid;
@@ -646,7 +646,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 
-	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, localDeviceID, 
+	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
 								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
 	playCompleteMessage->jobID.pid = job.getJobID().pid;
 	playCompleteMessage->jobID.sid = job.getJobID().sid;

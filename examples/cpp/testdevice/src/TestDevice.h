@@ -17,6 +17,7 @@ public:
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
+	STI::Device::DeviceMessageListenerID collectionMessageLID;
 
     //Custom device event class
 	class TestEvent : public STI::Engine::SynchronousEventAdapter

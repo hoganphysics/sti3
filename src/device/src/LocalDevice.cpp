@@ -16,7 +16,10 @@
 
 #include "DeviceMessageListenerForwarder.h"
 
+#include "ServerMessageRelayer.h"
+
 #include <memory>
+#include <iostream>
 
 using STI::Device::Device;
 using STI::Device::DeviceID;
@@ -34,7 +37,7 @@ using STI::Device::LocalAttribute;
 using STI::Device::DeviceMessageListener;
 using STI::Device::EngineSchedulerMessage;
 using STI::Device::DeviceMessageListenerID;
-
+using STI::Device::CollectionUpdateMessage;
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
@@ -56,17 +59,46 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	//setEngineFactory(engineFactory);
 
+	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
+
 	//EngineSchedulerMessage ListenerID
 	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
+	messageListenerIDs.push_back(schedulerMessageLID);
 
-	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
+	//CollectionMessage ListenerID
+	collectionMessageLID.name = getID().getID() + "::DeviceCollection";
+	collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
+	messageListenerIDs.push_back(collectionMessageLID);
+
+	serverMessageRelayer = std::make_shared<STI::Device::ServerMessageRelayer>(getID(), deviceMessageDispatcher);
+
+	// auto listenerTest = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(r1);
+	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest);
+
+	// auto listenerTest2 = std::static_pointer_cast<DeviceMessageListener<STI::Device::CollectionUpdateMessage>>(r1);
+	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest2);
 
 }
 
 LocalDevice::~LocalDevice()
 {
+	// std::cout << "~LocalDevice()" << std::endl;
+	localCollection->clear();
 }
+
+
+void LocalDevice::disable()
+{
+	if (deviceMessageReceiver != 0) {
+		deviceMessageReceiver->clearListeners();
+	}
+
+	if (localCollection != 0) {
+		localCollection->clearListeners();
+	}
+}
+
 
 void LocalDevice::addEventTarget(const STI::Device::DeviceID& id)
 {
@@ -85,9 +117,18 @@ bool LocalDevice::isTargetServerOf(const DeviceID& id)
 	return id.getTargetServerID() == getID().getID();
 }
 
+void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
+{
+	if (deviceMessageDispatcher != 0) {
+		deviceMessageDispatcher->addMessage(mess);
+	}
+}
+
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 {
+	std::cout << "++++ DeviceCollectionListener::add( " << id.getID() << " )" << std::endl;
+
 	// Listen to EngineScheduler messages from:
 	// 1) Declared event targets and 2) any device that has this device as a target server.
 
@@ -95,9 +136,15 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// 	localDevice->addEventTarget(id);
 	// }
 
+	if ( localDevice->isTargetServerOf(id) ) {
+		STI::Device::ServerMessageRelayer::addAllListeners(localDevice->deviceMessageReceiver, id, localDevice->serverMessageRelayer);
+	}
+
+
 	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id)) {
 		
-		auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
+		//auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
+		auto listener = localDevice->eventEngineScheduler->getMessageListener();
 		
 		localDevice->deviceMessageReceiver->addListener(id, localDevice->schedulerMessageLID, listener);	//listen to events on new device 'id'
 	}
@@ -108,12 +155,30 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	if (localDevice->localCollection->get(id, newDevice) && newDevice != 0) {
 		newDevice->attachMessageListenerForwarder(localDevice->listenerForwarder);
 	}
+
+	auto mess = std::make_shared<CollectionUpdateMessage>(localDevice->getID());
+//	auto mess = CollectionUpdateMessage::makeMessage(localDevice->getID());
+	localDevice->sendMessage(mess);
+
 }
 
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::remove(const DeviceID& id)
 {
+	auto mess = std::make_shared<CollectionUpdateMessage>(localDevice->getID());
+//	auto mess = CollectionUpdateMessage::makeMessage(localDevice->getID());
+	localDevice->sendMessage(mess);
+
+	if ( localDevice->isTargetServerOf(id) ) {
+		STI::Device::ServerMessageRelayer::removeAllListeners(localDevice->deviceMessageReceiver, id, localDevice->serverMessageRelayer);
+	}
+	// std::cout << "DeviceCollectionListener::remove" << std::endl;
+
 	localDevice->deviceMessageReceiver->removeListener(id, localDevice->schedulerMessageLID);
+
+	std::cout << "---- DeviceCollectionListener::remove( " << id.getID() << " )" << std::endl;
+
+
 }
 
 const DeviceID LocalDevice::getID() const

@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <string>
-
+#include <functional>
 
 namespace STI
 {
@@ -51,6 +51,28 @@ public:
 	virtual ~DeviceMessageListener() {}
 	
 	virtual void handleMessage(const std::shared_ptr<Message>& mess) = 0;
+};
+
+template<class Message>
+class DeviceMessageListenerLambda : public DeviceMessageListener<Message>
+{
+public:
+
+	DeviceMessageListenerLambda(const std::function<void (const std::shared_ptr<Message>&)>& handler)
+	{
+		_handler = handler;
+	}
+
+	~DeviceMessageListenerLambda() {}
+	
+	void handleMessage(const std::shared_ptr<Message>& mess)
+	{
+		_handler(mess);
+	}
+
+private:
+
+	std::function<void (const std::shared_ptr<Message>&)> _handler;
 };
 
 

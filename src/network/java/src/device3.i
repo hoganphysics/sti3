@@ -24,6 +24,8 @@
     #include "JNodeWalker.h"
     #include "HubID.h"
 
+    #include "DeviceTrace.h"
+
     #include "DeviceMessageListener.h"
     #include "DeviceMessageReceiver.h"
     #include "DeviceMessageDispatcher.h"
@@ -110,6 +112,7 @@
 // %shared_ptr(STI::Device::EngineParserMessage);
 %shared_ptr(STI::Device::EventEngineMessage);
 %shared_ptr(STI::Device::EngineParserDeviceMessage);
+%shared_ptr(STI::Device::CollectionUpdateMessage);
 
 
 //DeviceID
@@ -120,6 +123,8 @@
 %include "DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
 %template(DeviceIDvector) std::vector< STI::Device::DeviceID >;
+
+%include "DeviceTrace.h"
 
 //EngineID
 %include "EngineID.h"
@@ -176,6 +181,9 @@
 
 %shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineParserDeviceMessage >);
 %template(EngineParserDeviceMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineParserDeviceMessage >;
+
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::CollectionUpdateMessage >);
+%template(CollectionUpdateMessageListener) STI::Device::DeviceMessageListener< STI::Device::CollectionUpdateMessage >;
 
 
 //Event handling system

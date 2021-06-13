@@ -48,6 +48,8 @@ public:
 		                 const std::shared_ptr<DeviceMessageListener<AttributeUpdateMessage>>& listener);
     void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		                 const std::shared_ptr<DeviceMessageListener<EngineSchedulerMessage>>& listener);
+    void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<DeviceMessageListener<CollectionUpdateMessage>>& listener);
     //...
 
     void removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID);

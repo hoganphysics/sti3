@@ -58,8 +58,8 @@ public class RefreshDeviceMessage extends DeviceMessage {
     stiJNI.RefreshDeviceMessage_change_ownership(this, swigCPtr, true);
   }
 
-  public RefreshDeviceMessage(DeviceID source) {
-    this(stiJNI.new_RefreshDeviceMessage(DeviceID.getCPtr(source), source), true);
+  public RefreshDeviceMessage(DeviceTrace trace) {
+    this(stiJNI.new_RefreshDeviceMessage(DeviceTrace.getCPtr(trace), trace), true);
     stiJNI.RefreshDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 

@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include <iostream>
 
 int main(int argc, char **argv)
 {
@@ -16,6 +17,14 @@ int main(int argc, char **argv)
     hub->addDevice(server);
 
     hub->run(true);
+
+    // int x;
+    // std::cin >> x;
+
+    // server = 0;
+    // hub->shutdown();
+
+    // std::cin >> x;
 
     return 0;
 }

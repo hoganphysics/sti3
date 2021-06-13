@@ -54,6 +54,14 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
     }
 }
 
+void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<DeviceMessageListener<CollectionUpdateMessage>>& listener)
+{
+    if(deviceMessageReceiver != 0) {
+        deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerID, listener);
+    }
+}
+
 void JDeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID)
 {
     if(deviceMessageReceiver != 0) {

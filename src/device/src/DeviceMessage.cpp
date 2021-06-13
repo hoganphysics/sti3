@@ -8,22 +8,48 @@ using STI::Device::DeviceMessageType;
 using STI::Device::RefreshDeviceMessage;
 
 DeviceMessage::DeviceMessage(const STI::Device::DeviceID& source, DeviceMessageType type)
-	: _source(source), _type(type)
+: _trace(source), _type(type)
 {
 }
+
+DeviceMessage::DeviceMessage(const STI::Device::DeviceTrace& trace, DeviceMessageType type)
+: _trace(trace), _type(type)
+{
+}
+
+// DeviceMessage::DeviceMessage(const STI::Device::DeviceID& relayingID, const DeviceMessage& message)
+// : _trace(message._trace), _type(message._type)
+// {
+// 	_trace.addID(relayingID);
+// }
 
 DeviceMessage::~DeviceMessage()
 {
 }
 
-const STI::Device::DeviceID& DeviceMessage::sourceID() const
+void DeviceMessage::addRelayingID(const STI::Device::DeviceID& relayingID)
+{
+	_trace.addID(relayingID);
+}
+
+const STI::Device::DeviceID DeviceMessage::sourceID() const
 { 
-	return _source; 
+	return _trace.last();
+}
+
+const STI::Device::DeviceID DeviceMessage::originalSourceID() const
+{
+	return _trace.first();
 }
 
 DeviceMessageType DeviceMessage::getType() const 
 { 
 	return _type;
+}
+
+const STI::Device::DeviceTrace& DeviceMessage::getDeviceTrace() const
+{
+	return _trace;
 }
 
 std::string DeviceMessage::typeToString(const DeviceMessageType& type)

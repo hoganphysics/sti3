@@ -65,12 +65,29 @@ public class DeviceMessage {
     stiJNI.DeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 
+  public DeviceMessage(DeviceTrace trace, DeviceMessageType type) {
+    this(stiJNI.new_DeviceMessage__SWIG_2(DeviceTrace.getCPtr(trace), trace, type.swigValue()), true);
+    stiJNI.DeviceMessage_director_connect(this, swigCPtr, true, true);
+  }
+
   public DeviceID sourceID() {
-    return new DeviceID(stiJNI.DeviceMessage_sourceID(swigCPtr, this), false);
+    return new DeviceID(stiJNI.DeviceMessage_sourceID(swigCPtr, this), true);
+  }
+
+  public DeviceID originalSourceID() {
+    return new DeviceID(stiJNI.DeviceMessage_originalSourceID(swigCPtr, this), true);
   }
 
   public DeviceMessageType getType() {
     return DeviceMessageType.swigToEnum(stiJNI.DeviceMessage_getType(swigCPtr, this));
+  }
+
+  public DeviceTrace getDeviceTrace() {
+    return new DeviceTrace(stiJNI.DeviceMessage_getDeviceTrace(swigCPtr, this), false);
+  }
+
+  public void addRelayingID(DeviceID relayingID) {
+    stiJNI.DeviceMessage_addRelayingID(swigCPtr, this, DeviceID.getCPtr(relayingID), relayingID);
   }
 
   public static DeviceMessageType getMessageClassType() {

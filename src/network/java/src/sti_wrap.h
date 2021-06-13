@@ -30,6 +30,7 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_DeviceMessage(JNIEnv *jenv);
     SwigDirector_DeviceMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, STI::Device::DeviceMessageType type);
+    SwigDirector_DeviceMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, STI::Device::DeviceMessageType type);
     virtual ~SwigDirector_DeviceMessage();
 public:
     bool swig_overrides(int n) {
@@ -41,8 +42,20 @@ class SwigDirector_RefreshDeviceMessage : public STI::Device::RefreshDeviceMessa
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_RefreshDeviceMessage(JNIEnv *jenv, STI::Device::DeviceID const &source);
+    SwigDirector_RefreshDeviceMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace);
     virtual ~SwigDirector_RefreshDeviceMessage();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
+class SwigDirector_CollectionUpdateMessage : public STI::Device::CollectionUpdateMessage, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_CollectionUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace);
+    virtual ~SwigDirector_CollectionUpdateMessage();
 public:
     bool swig_overrides(int n) {
       return false;
@@ -53,9 +66,9 @@ class SwigDirector_ChannelUpdateMessage : public STI::Device::ChannelUpdateMessa
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceID const &source);
-    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, short channel, STI::Utils::MixedValue const &value);
-    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, short channel, std::string const &name);
+    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace);
+    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, short channel, STI::Utils::MixedValue const &value);
+    SwigDirector_ChannelUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, short channel, std::string const &name);
     virtual ~SwigDirector_ChannelUpdateMessage();
 public:
     bool swig_overrides(int n) {
@@ -67,8 +80,8 @@ class SwigDirector_AttributeUpdateMessage : public STI::Device::AttributeUpdateM
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_AttributeUpdateMessage(JNIEnv *jenv, STI::Device::DeviceID const &source);
-    SwigDirector_AttributeUpdateMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, std::string const &key, std::string const &value);
+    SwigDirector_AttributeUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace);
+    SwigDirector_AttributeUpdateMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, std::string const &key, std::string const &value);
     virtual ~SwigDirector_AttributeUpdateMessage();
 public:
     bool swig_overrides(int n) {
@@ -80,7 +93,7 @@ class SwigDirector_EngineSchedulerMessage : public STI::Device::EngineSchedulerM
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_EngineSchedulerMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, STI::Device::DeviceID originalSource, STI::Device::EngineSchedulerMessage::SchedulerMessageType const &type);
+    SwigDirector_EngineSchedulerMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, STI::Device::EngineSchedulerMessage::SchedulerMessageType const &type);
     virtual ~SwigDirector_EngineSchedulerMessage();
 public:
     bool swig_overrides(int n) {
@@ -92,7 +105,7 @@ class SwigDirector_EngineParserDeviceMessage : public STI::Device::EngineParserD
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_EngineParserDeviceMessage(JNIEnv *jenv, STI::Device::DeviceID const &source, STI::Engine::ParseID const &parseID);
+    SwigDirector_EngineParserDeviceMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, STI::Engine::ParseID const &parseID);
     virtual ~SwigDirector_EngineParserDeviceMessage();
 public:
     bool swig_overrides(int n) {
@@ -194,6 +207,21 @@ public:
     SwigDirector_EngineParserDeviceMessageListener(JNIEnv *jenv);
     virtual ~SwigDirector_EngineParserDeviceMessageListener();
     virtual void handleMessage(std::shared_ptr< STI::Device::EngineParserDeviceMessage > const &mess);
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_CollectionUpdateMessageListener : public STI::Device::DeviceMessageListener< STI::Device::CollectionUpdateMessage >, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_CollectionUpdateMessageListener(JNIEnv *jenv);
+    virtual ~SwigDirector_CollectionUpdateMessageListener();
+    virtual void handleMessage(std::shared_ptr< STI::Device::CollectionUpdateMessage > const &mess);
 public:
     bool swig_overrides(int n) {
       return (n < 1 ? swig_override[n] : false);

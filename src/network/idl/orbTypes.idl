@@ -177,7 +177,8 @@ module TNetwork
 	struct TDeviceMessage
 	{
 		TDeviceMessageType type;
-		TDeviceID sourceID;
+		TDeviceTrace sourceTrace;
+		//TDeviceID sourceID;
 	};
 
 	struct TRefreshDeviceMessage
@@ -185,6 +186,13 @@ module TNetwork
 		TDeviceMessage base;	//base class data
 	};
 
+	enum TCollectionMessageType { CollectionMessageAdd, CollectionMessageRemove, CollectionMessageRefresh };
+
+	struct TCollectionUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+		TCollectionMessageType collectionUpdateType;
+	};
 
 	enum TParsingMessageType { ParsingError, ParsingWarning, ParsingInformation };
 
@@ -212,7 +220,7 @@ module TNetwork
 		TSchedulerMessageType type;
 		TEngineJobID jobID;
 
-		TDeviceID originalSource;	//device that generated the original message
+		//TDeviceID originalSource;	//device that generated the original message
 		TEventEngine engine;
 
 		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed

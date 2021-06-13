@@ -58,8 +58,8 @@ public class EngineParserDeviceMessage extends DeviceMessage {
     stiJNI.EngineParserDeviceMessage_change_ownership(this, swigCPtr, true);
   }
 
-  public EngineParserDeviceMessage(DeviceID source, ParseID parseID) {
-    this(stiJNI.new_EngineParserDeviceMessage(DeviceID.getCPtr(source), source, ParseID.getCPtr(parseID), parseID), true);
+  public EngineParserDeviceMessage(DeviceTrace trace, ParseID parseID) {
+    this(stiJNI.new_EngineParserDeviceMessage(DeviceTrace.getCPtr(trace), trace, ParseID.getCPtr(parseID), parseID), true);
     stiJNI.EngineParserDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 

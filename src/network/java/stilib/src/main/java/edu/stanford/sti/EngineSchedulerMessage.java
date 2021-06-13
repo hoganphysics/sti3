@@ -58,8 +58,8 @@ public class EngineSchedulerMessage extends DeviceMessage {
     stiJNI.EngineSchedulerMessage_change_ownership(this, swigCPtr, true);
   }
 
-  public EngineSchedulerMessage(DeviceID source, DeviceID originalSource, EngineSchedulerMessage.SchedulerMessageType type) {
-    this(stiJNI.new_EngineSchedulerMessage(DeviceID.getCPtr(source), source, DeviceID.getCPtr(originalSource), originalSource, type.swigValue()), true);
+  public EngineSchedulerMessage(DeviceTrace trace, EngineSchedulerMessage.SchedulerMessageType type) {
+    this(stiJNI.new_EngineSchedulerMessage(DeviceTrace.getCPtr(trace), trace, type.swigValue()), true);
     stiJNI.EngineSchedulerMessage_director_connect(this, swigCPtr, true, true);
   }
 
@@ -73,15 +73,6 @@ public class EngineSchedulerMessage extends DeviceMessage {
 
   public EngineSchedulerMessage.SchedulerMessageType getSchedulerMessageType() {
     return EngineSchedulerMessage.SchedulerMessageType.swigToEnum(stiJNI.EngineSchedulerMessage_schedulerMessageType_get(swigCPtr, this));
-  }
-
-  public void setOriginalSource(DeviceID value) {
-    stiJNI.EngineSchedulerMessage_originalSource_set(swigCPtr, this, DeviceID.getCPtr(value), value);
-  }
-
-  public DeviceID getOriginalSource() {
-    long cPtr = stiJNI.EngineSchedulerMessage_originalSource_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DeviceID(cPtr, false);
   }
 
   public void setJobID(EngineJobID value) {

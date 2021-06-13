@@ -5,6 +5,21 @@
 #include <string>
 
 
+class TempListener : public STI::Device::DeviceMessageListener<STI::Device::CollectionUpdateMessage>
+{
+public:
+
+	TempListener(const std::string& name) : name(name) {}
+
+	void handleMessage(const std::shared_ptr<STI::Device::CollectionUpdateMessage>& mess)
+	{
+		std::cout << "handle " << name << std::endl;
+	}
+
+	std::string name;
+};
+
+
 TestDevice::TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer)
 : STI::Device::LocalDevice(name, address, module, targetServer)
@@ -17,6 +32,30 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
 
     STI::Engine::EngineID id(0);
     addEventEngine(id);
+    
+    STI::Device::DeviceID serverID;
+    STI::Device::DeviceID::stringToDeviceID(getID().getTargetServerID(), serverID);
+
+    addPartner(serverID);
+
+    std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+    getMessageReceiver(receiver);
+
+    auto l1 = std::make_shared<TempListener>("L1");
+    
+    collectionMessageLID.name = "::CollectionUpdateMessage::Test";	//getID().getID() + 
+	collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
+
+    // receiver->addListener(serverID, collectionMessageLID, std::static_pointer_cast<STI::Device::DeviceMessageListener<STI::Device::CollectionUpdateMessage>>(l1));	//listen to events from server
+
+    // receiver->addListener<STI::Device::CollectionUpdateMessage>(serverID, collectionMessageLID, 
+    //     [](const std::shared_ptr<STI::Device::CollectionUpdateMessage>& message) { } );
+    
+    receiver->addListener<STI::Device::CollectionUpdateMessage>(serverID, collectionMessageLID, 
+        [](auto message) { 
+            std::cout << "handle functional " << STI::Device::DeviceMessage::typeToString(message->getMessageClassType()) << std::endl;
+        } );
+
 }
 
 TestDevice::~TestDevice()

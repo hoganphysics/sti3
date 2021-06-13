@@ -59,6 +59,8 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
     schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
 
     setEngineFactory(engineFactory);
+
+    engineSchedulerMessageListenerDelegate = std::make_shared<LocalEventEngineScheduler::EngineSchedulerMessageListenerDelegate>(this);
 }
 
 LocalEventEngineScheduler::~LocalEventEngineScheduler()

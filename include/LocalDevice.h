@@ -12,6 +12,8 @@
 #include "fwd/Channel_fwd.h"
 #include "fwd/ChannelManager_fwd.h"
 #include "MixedValue.h"
+#include "ServerMessageRelayer.h"
+
 #include <string>
 #include <set>
 
@@ -57,7 +59,7 @@ public:
 
 	bool refresh() { return true; }
 	void kill() {}
-	void disable() {}
+	void disable();
 //	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
@@ -83,6 +85,7 @@ public:
 
 	void addPartner(const DeviceID& id) { partnerDevices.insert(id); }
 
+	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 	void getEventTargets(std::set<DeviceID>& targetIDs)
@@ -115,9 +118,14 @@ private:
 		void remove(const DeviceID& id);
 
 		LocalDevice* localDevice;
+		//MessageGrouper<CollectionMessage> messageGrouper;
 	};
-		
+	
+	DeviceMessageListenerID collectionMessageLID;
 	DeviceMessageListenerID schedulerMessageLID;
+
+	std::vector<DeviceMessageListenerID> messageListenerIDs;
+	
 
 	friend DeviceCollectionPolicy;
 	bool isPartnerDevice(const DeviceID& id);
@@ -132,6 +140,8 @@ private:
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 	std::shared_ptr<LocalAttributeManager> localAttributeManager;
+
+	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
 	std::set<DeviceID> partnerDevices;
 

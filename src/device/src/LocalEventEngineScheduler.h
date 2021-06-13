@@ -66,8 +66,8 @@ class Shot;
 class EventEngineFactory;
 
 
-class LocalEventEngineScheduler : public EventEngineScheduler, 
-                                  public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+class LocalEventEngineScheduler : public EventEngineScheduler
+//                                  public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
     
@@ -105,6 +105,11 @@ public:
     bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
     bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
     bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const;
+
+    std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
+    {
+        return engineSchedulerMessageListenerDelegate;
+    }
 
     //how to indicate that a "single line timing file" plays on engine 0?
     //how to customize engine behavior per engine, (e.g., allocate memory ranges for FPGA)
@@ -156,6 +161,9 @@ private:
     bool findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID);
 
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
+
+
+
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
@@ -180,6 +188,28 @@ private:
 
     mutable std::mutex jobMutex;
     mutable std::condition_variable jobCondition;
+
+
+    class EngineSchedulerMessageListenerDelegate : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+    {
+    public:
+
+        EngineSchedulerMessageListenerDelegate(LocalEventEngineScheduler* scheduler) : scheduler(scheduler) {}
+
+        void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
+        {
+            scheduler->handleMessage(mess);
+        }
+
+    private:
+
+        LocalEventEngineScheduler* scheduler;
+    };
+
+    std::shared_ptr<EngineSchedulerMessageListenerDelegate> engineSchedulerMessageListenerDelegate;
+
+
+
 
 };
 
