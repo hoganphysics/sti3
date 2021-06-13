@@ -12,6 +12,7 @@
 #include "ResultTicket.h"
 #include "ShotID.h"
 #include "TimeStamp.h"
+#include "EngineClock.h"
 
 #include "utils/OrderedBufferMap.h"
 #include "ChannelManager.h"
@@ -140,7 +141,7 @@ private:
 	void pauseOwnedDevices();
 	void unpauseOwnedDevices(bool retrigger);
 
-	bool waitUntil(double time);
+	bool waitUntil(std::unique_lock<std::mutex>& lock, double time);
 	TimeStamp getCurrentTimeStamp();
 
 	bool setState(EngineState target);
@@ -152,7 +153,7 @@ private:
 	void releaseTriggerLock();
 
 
-	//Clock time;
+	EngineClock engineClock;
 
 	EngineID engineID;
 	STI::Device::DeviceID localDeviceID;	//The DeviceID of the host of this engine

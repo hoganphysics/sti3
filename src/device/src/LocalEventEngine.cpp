@@ -871,7 +871,7 @@ bool LocalEventEngine::playDeviceEvents()
 	//launch measurements thread
 	auto measurementThread = std::thread(&LocalEventEngine::measureData, this);
 	
-	//time.reset();
+	engineClock.reset();
 
 	//play all events (at appropriate times)
 	for (auto& evt : synchedEvents) {
@@ -881,7 +881,7 @@ bool LocalEventEngine::playDeviceEvents()
 
 		//switch(waitUntil(evt->getTime())),  cases for play, pause, stop ?
 
-		if (waitUntil(evt->getTime())) {	//success if not interrupted
+		if (waitUntil(playLock, evt->getTime())) {	//success if not interrupted
 			evt->play();
 		}
 	}
@@ -892,8 +892,14 @@ bool LocalEventEngine::playDeviceEvents()
 }
 
 
-bool LocalEventEngine::waitUntil(double time)
+bool LocalEventEngine::waitUntil(std::unique_lock<std::mutex>& lock, double time)
 {
+	int64_t deltaT;
+
+	while(isState(EngineState::Playing) && (deltaT = engineClock.getWaitInterval(time)) > 0) {
+		playCondition.wait_for(lock, std::chrono::nanoseconds(deltaT));
+	}
+
 	return isState(EngineState::Playing);
 }
 

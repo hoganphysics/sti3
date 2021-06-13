@@ -790,6 +790,8 @@ void LocalEventEngineScheduler::handleMessage(const std::shared_ptr<EngineSchedu
             if (getManager(mess->jobID, manager)) {
                 manager->handlePlayReadyMessage(mess);
             }
+        break;
+        
         case MessageType::PlayComplete:
             if (getManager(mess->jobID, manager)) {
                 manager->handlePlayCompleteMessage(mess);
