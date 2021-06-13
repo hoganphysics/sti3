@@ -61,6 +61,16 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
     //     receiver->addListener(getID(), schedulerMessageLID2, listener2);	//listen to events from server
     // }
 
+
+	STI::Device::DeviceID tmpDeviceID("dev3", "localhost", 0, "localhost/0/STI Server");
+	STI::Device::DeviceMessageListenerID channelMessageLID;
+	channelMessageLID.name = "::ChannelUpdateMessage::dev3";
+	channelMessageLID.type = STI::Device::DeviceMessageType::ChannelUpdate;
+    receiver->addListener<STI::Device::ChannelUpdateMessage>(tmpDeviceID, channelMessageLID, 
+        [](auto message) { 
+            std::cout << "New value: " << message->channelValues[1].print() << std::endl;
+        } );
+
 }
 
 ServerDevice::~ServerDevice()

@@ -21,6 +21,7 @@
 #include "EngineJobID.h"
 #include "EngineParsingMessage.h"
 #include "MasterTrigger.h"
+#include "Channel.h"
 
 #include <memory>
 #include <thread>
@@ -873,6 +874,9 @@ bool LocalEventEngine::playDeviceEvents()
 	
 	engineClock.reset();
 
+	auto& rawEventsByTime = parser.rawEvents;
+	auto nextRawEvents = rawEventsByTime.begin();
+
 	//play all events (at appropriate times)
 	for (auto& evt : synchedEvents) {
 		
@@ -881,10 +885,24 @@ bool LocalEventEngine::playDeviceEvents()
 
 		//switch(waitUntil(evt->getTime())),  cases for play, pause, stop ?
 
-		if (waitUntil(playLock, evt->getTime())) {	//success if not interrupted
+		if (evt != 0 && waitUntil(playLock, evt->getTime())) {	//success if not interrupted
+			evt->waitBeforePlay();
 			evt->play();
 		}
+
+		//push channel value updates
+		if (nextRawEvents != rawEventsByTime.end() 
+				&& engineClock.getTime() >= nextRawEvents->first) {
+			updateChannelValues(nextRawEvents->second);
+			++nextRawEvents;
+		}
 	}
+
+	//Make sure the last event is saved
+	if (nextRawEvents != rawEventsByTime.end()) {
+		//only called if the most recent nextRawEvents was not the end() for some reason
+		updateChannelValues(rawEventsByTime.rbegin()->second);	//last entry
+	}	
 
 	measurementThread.join();	//wait for measurement collection to complete
 
@@ -903,6 +921,19 @@ bool LocalEventEngine::waitUntil(std::unique_lock<std::mutex>& lock, double time
 	return isState(EngineState::Playing);
 }
 
+void LocalEventEngine::updateChannelValues(const RawEventVector& rawEvents)
+{
+	//All of these events happen at the same time and have been played.
+
+	std::shared_ptr<STI::Device::Channel> channel;
+
+//	for (const auto& evt : rawEvents) {
+	for (unsigned i = 0; i < rawEvents.size(); ++i) {
+		if (localChannels->getChannel(rawEvents.at(i).channel(), channel)) {
+			channel->saveLastValue(rawEvents.at(i).value());
+		}
+	}	
+}
 
 void LocalEventEngine::pause()
 {

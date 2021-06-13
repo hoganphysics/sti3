@@ -120,6 +120,8 @@ private:
 	void divideEvents(const RawEventVector& events);
 	void mergePartnerEvents(const DeviceEventMap& events);
 
+	void updateChannelValues(const RawEventVector& rawEvents);
+
 	void scheduleAllPlayJobs(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
 
 	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);

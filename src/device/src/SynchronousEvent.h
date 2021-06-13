@@ -34,6 +34,11 @@ public:
 	void pause();
 	void unpause(bool retrigger);
 
+	//Custom waiters
+	//Note: these wait functions *must* return/abort when stopEvent() is called!
+	virtual void waitBeforePlay() {}		//adds extra wait before playEvent (after cpu waits for getTime())
+	virtual void waitBeforeCollectData() {}	//adds extra wait before collectMeasurementData (after play())
+
 	void reset();		//must call before playing again
 	void unload();		//call to indicate that the event is no longer loaded
 
@@ -48,7 +53,7 @@ private:
 	virtual void pauseEvent() = 0;
 	virtual void unpauseEvent(bool retrigger) = 0;
 
-	void wait();
+	void waitForPlayComplete();
 
 	bool played;
 	bool loaded;

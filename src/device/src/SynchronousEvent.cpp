@@ -63,7 +63,8 @@ void SynchronousEvent::play()
 
 void SynchronousEvent::collectData()
 {
-	wait();						//until play completes
+	waitForPlayComplete();		//until play completes
+	waitBeforeCollectData();	//optional custom waiter
 	collectMeasurementData();	//pure virtual
 }
 
@@ -77,7 +78,8 @@ void SynchronousEvent::stop()
 	condition.notify_all();
 }
 
-void SynchronousEvent::wait()
+
+void SynchronousEvent::waitForPlayComplete()
 {
 	std::unique_lock<std::mutex> playLock(evtMutex);
 
