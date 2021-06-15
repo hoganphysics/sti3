@@ -10,7 +10,7 @@ package edu.stanford.sti;
 
 public class JEventEngine {
   private transient long swigCPtr;
-  protected transient boolean swigCMemOwn;
+  private transient boolean swigCMemOwn;
 
   protected JEventEngine(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
@@ -19,6 +19,10 @@ public class JEventEngine {
 
   protected static long getCPtr(JEventEngine obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
+  }
+
+  protected void swigSetCMemOwn(boolean own) {
+    swigCMemOwn = own;
   }
 
   @SuppressWarnings("deprecation")

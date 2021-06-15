@@ -339,6 +339,19 @@ protected:
     Swig::BoolArray<1> swig_override;
 };
 
+class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_MixedValue(JNIEnv *jenv);
+    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
+    virtual ~SwigDirector_MixedValue();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
 class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
 
 public:
@@ -358,19 +371,6 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_EventEngineDependencyTree(JNIEnv *jenv);
     virtual ~SwigDirector_EventEngineDependencyTree();
-public:
-    bool swig_overrides(int n) {
-      return false;
-    }
-};
-
-class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
-
-public:
-    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_MixedValue(JNIEnv *jenv);
-    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
-    virtual ~SwigDirector_MixedValue();
 public:
     bool swig_overrides(int n) {
       return false;

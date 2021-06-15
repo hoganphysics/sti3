@@ -80,24 +80,6 @@
 
     #include "JAttributeManager.h"
 
-    #include "JEventEngineJob.h"
-    using STI::Engine::JEventEngineJob;
-    #include "EventEngineJob.h"
-    using STI::Engine::EventEngineJob;
-    
-    #include "EngineJobStatus.h"
-    using STI::Engine::EngineJobStatus;
-
-    #include "EventEngineDependencyTree.h"
-    using STI::Engine::EventEngineDependencyTree;
-
-    namespace boost {};
-
-    #include "utils/DependencyTree.h"
-    using STI::Utils::DependencyTree;
-
-    #include "JEventEngine.h"
-    using STI::Engine::JEventEngine;
 
 %}
 
@@ -109,6 +91,8 @@
 %include "std_map.i"
 %include "std_pair.i"
 %include "typemaps.i"
+
+//***** Shared pointer definitions ********//
 
 %shared_ptr(STI::Device::JDevice);
 %shared_ptr(STI::Device::JLocalDevice);
@@ -142,11 +126,15 @@
 %shared_ptr(STI::Device::EngineJobUpdateDeviceMessage);
 %shared_ptr(STI::Device::JEngineJobUpdateDeviceMessage);
 
-//Event Engine
+//Event Engine Job
 %shared_ptr(STI::Engine::JEventEngineJob);
 // %shared_ptr(STI::Engine::EventEngineJob);
+
 %shared_ptr(STI::Engine::EventEngineDependencyTree);
 
+%shared_ptr(STI::Engine::JEventEngine);
+
+////////////////////////////////////
 
 
 
@@ -189,8 +177,6 @@
 
 
 //EngineStateMessage
-//%template(EngineIDtoStateMapPair) std::pair< STI::Engine::EngineID, STI::Engine::EngineState >;
-
 %template(EngineIDtoStateMap) std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< STI::Engine::EngineID > >;
 typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< STI::Engine::EngineID > >::iterator EngineIDtoStateMapIterator;
 
@@ -238,7 +224,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 
 
-//Event handling system
+//Message handling system
 %ignore STI::Device::DeviceMessageReceiver;
 %include "JDeviceMessageReceiver.h"
 
@@ -273,40 +259,6 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 
 
-//EventEngineDependencyTree
-
-
-
-namespace boost {};
-%include "utils/DependencyTree.h"
-%extend STI::Utils::DependencyTree< STI::Device::DeviceID > 
-{
-    int STI::Utils::DependencyTree< STI::Device::DeviceID >::getDependentNodeCount(const STI::Device::DeviceID& node) const
-    {
-        int count;
-        self->getDependentNodeCount(node, count);
-        return count;
-    }
-
-} 
-%ignore STI::Utils::DependencyTree< STI::Device::DeviceID >::getDependentNodeCount(const STI::Device::DeviceID& node, int& count) const;
-// %apply int& INOUT { int& count };
-
-
-%shared_ptr(STI::Utils::DependencyTree< STI::Device::DeviceID >);
-%template(DeviceIDDependencyTree) STI::Utils::DependencyTree< STI::Device::DeviceID >;
-
-%include "EventEngineDependencyTree.h"
-
-
-
-
-%include "EngineJobStatus.h"
-
-%import "EventEngine.h"
-%include "JEventEngine.h"
-%shared_ptr(STI::Engine::JEventEngine);
-
 
 //MixedValue
 %warnfilter(516) STI::Utils::MixedValue::setValue;
@@ -332,19 +284,6 @@ namespace boost {};
 //EngineParsingMessage
 %include "EngineParsingMessage.h"
 %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
-
-%include "EngineState.h"
-
-//JEventEngineJob
-
-// %rename(JEngineJobStatus) STI::Engine::EventEngineJob::EngineJobStatus;
-// %{
-// typedef STI::Engine::EventEngineJob::EngineJobStatus JEngineJobStatus;
-// %}
-// %import "EventEngineJob.h"
-
-%ignore STI::Engine::EventEngineJob;
-%include "JEventEngineJob.h"
 
 
 //ChannelUpdateMessage
