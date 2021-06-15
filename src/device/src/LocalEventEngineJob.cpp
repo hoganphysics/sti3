@@ -25,7 +25,7 @@ using STI::Device::DeviceID;
 using STI::Engine::EngineID;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
-
+using STI::Engine::EngineJobStatus;
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<Shot>& shot,
@@ -34,7 +34,7 @@ LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID,
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
 
-    status = EventEngineJob::EngineJobStatus::New;
+    status = EngineJobStatus::New;
     jobID.type = EventEngineJobType::Parse;
 
     jobID.pid = parseID;
@@ -44,7 +44,7 @@ LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID,
 LocalEventEngineJob::LocalEventEngineJob(const EngineJobID& id, const DeviceID& owner)
 : jobID(id), jobOwner(owner)
 {
-    status = EventEngineJob::EngineJobStatus::New;
+    status = EngineJobStatus::New;
     jobID.type = EventEngineJobType::Play;
 }
                    
@@ -60,7 +60,7 @@ STI::Device::DeviceID LocalEventEngineJob::getJobOwner() const
     return jobOwner;
 }
 
-EventEngineJob::EngineJobStatus LocalEventEngineJob::getStatus() const
+EngineJobStatus LocalEventEngineJob::getStatus() const
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
     return status;
@@ -69,21 +69,21 @@ EventEngineJob::EngineJobStatus LocalEventEngineJob::getStatus() const
 void LocalEventEngineJob::markRunning(const EngineID& id)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
-    status = EventEngineJob::EngineJobStatus::Running;
+    status = EngineJobStatus::Running;
     engineID = id;
 }
 
 void LocalEventEngineJob::markComplete()
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
-    status = EventEngineJob::EngineJobStatus::Completed;
+    status = EngineJobStatus::Completed;
 }
 
 
 void LocalEventEngineJob::markCancelled()
 {
      std::unique_lock< std::mutex > writeLock(jobMutex);
-     status = EventEngineJob::EngineJobStatus::Canceled;
+     status = EngineJobStatus::Canceled;
 }
 
 void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& job)

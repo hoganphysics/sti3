@@ -36,6 +36,9 @@ using STI::TNetwork::TEventEngineJobType;
 using STI::Engine::EngineID;
 using STI::TNetwork::TEngineID;
 using STI::Engine::EventEngineJob;
+
+using STI::Engine::EngineJobStatus;
+
 using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
@@ -338,20 +341,20 @@ EngineID STI::Network::convert<TEngineID, EngineID>(const TEngineID& tEngineID)
 
 //EngineJobStatus
 template<>
-bool STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(const EventEngineJob::EngineJobStatus& jobStatus, TEngineJobStatus& tJobStatus)
+bool STI::Network::convert<EngineJobStatus, TEngineJobStatus>(const EngineJobStatus& jobStatus, TEngineJobStatus& tJobStatus)
 {
     switch (jobStatus)
     {
-    case EventEngineJob::EngineJobStatus::New:
+    case EngineJobStatus::New:
         tJobStatus = TEngineJobStatus::New;
         break;
-    case EventEngineJob::EngineJobStatus::Running:
+    case EngineJobStatus::Running:
         tJobStatus = TEngineJobStatus::Running;
         break;
-    case EventEngineJob::EngineJobStatus::Completed:
+    case EngineJobStatus::Completed:
         tJobStatus = TEngineJobStatus::Completed;
         break;
-    case EventEngineJob::EngineJobStatus::Canceled:
+    case EngineJobStatus::Canceled:
         tJobStatus = TEngineJobStatus::Canceled;
         break;
     default:
@@ -362,46 +365,46 @@ bool STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(co
 }
 
 template<>
-bool STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(const TEngineJobStatus& tJobStatus, EventEngineJob::EngineJobStatus& jobStatus)
+bool STI::Network::convert<TEngineJobStatus, EngineJobStatus>(const TEngineJobStatus& tJobStatus, EngineJobStatus& jobStatus)
 {
     
     switch (tJobStatus)
     {
     case TEngineJobStatus::New:
-        jobStatus = EventEngineJob::EngineJobStatus::New;
+        jobStatus = EngineJobStatus::New;
         break;
     case TEngineJobStatus::Running:
-        jobStatus = EventEngineJob::EngineJobStatus::Running;
+        jobStatus = EngineJobStatus::Running;
         break;
     case TEngineJobStatus::Completed:
-        jobStatus = EventEngineJob::EngineJobStatus::Completed;
+        jobStatus = EngineJobStatus::Completed;
         break;
     case TEngineJobStatus::Canceled:
-        jobStatus = EventEngineJob::EngineJobStatus::Canceled;
+        jobStatus = EngineJobStatus::Canceled;
         break;
     default:
-        jobStatus = EventEngineJob::EngineJobStatus::New;
+        jobStatus = EngineJobStatus::New;
         break;
     }
     return true;
 }
 
 template<>
-TEngineJobStatus STI::Network::convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(const EventEngineJob::EngineJobStatus& jobStatus)
+TEngineJobStatus STI::Network::convert<EngineJobStatus, TEngineJobStatus>(const EngineJobStatus& jobStatus)
 {
 	TEngineJobStatus tStatus;
 
-	convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(jobStatus, tStatus);
+	convert<EngineJobStatus, TEngineJobStatus>(jobStatus, tStatus);
 
 	return tStatus;
 }
 
 template<>
-EventEngineJob::EngineJobStatus STI::Network::convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(const TEngineJobStatus& tJobStatus)
+EngineJobStatus STI::Network::convert<TEngineJobStatus, EngineJobStatus>(const TEngineJobStatus& tJobStatus)
 {
-	EventEngineJob::EngineJobStatus status;
+	EngineJobStatus status;
 
-	convert<TEngineJobStatus, EventEngineJob::EngineJobStatus>(tJobStatus, status);
+	convert<TEngineJobStatus, EngineJobStatus>(tJobStatus, status);
 
 	return status;
 }
@@ -425,7 +428,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
 {
     tEngineJob.jobID = convert<EngineJobID, TEngineJobID>(engineJob.getJobID());
     tEngineJob.jobOwner = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getJobOwner());
-    tEngineJob.status = convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(engineJob.getStatus());
+    tEngineJob.status = convert<EngineJobStatus, TEngineJobStatus>(engineJob.getStatus());
     tEngineJob.engineID = convert<EngineID, TEngineID>(engineJob.getEngineID());
     
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null

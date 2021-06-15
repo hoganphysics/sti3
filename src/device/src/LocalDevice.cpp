@@ -55,7 +55,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 
     auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>(getID(), localChannelManager, deviceMessageDispatcher, localCollection);
-	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory);
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
 
 	//setEngineFactory(engineFactory);
 

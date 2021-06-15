@@ -9,6 +9,10 @@
 #include "EngineParsingMessage.h"
 #include "EngineState.h"
 #include "DeviceTrace.h"
+#include "EngineID.h"
+#include "EngineParsingMessage.h"
+#include "EventEngineDependencyTree.h"
+#include "EventEngineJob.h"
 
 #include <sstream>
 
@@ -23,13 +27,14 @@ enum class DeviceMessageType {
 	ChannelUpdate, ChannelsRefresh, 
 	AttributeUpdate, AttributesRefresh, 
 	MonitorUpdate, 
-//	EngineJobUpdate,
+	EngineJobUpdate,
 	EngineScheduler, 
 	EngineParser,
 	EngineStatus,
 	Unknown };
 //DeviceMessage, 
-//DeviceMessageReceiver::addListener, ::removeListener, ::refreshListenerGroups,  and add a dedicated ListenerGroupMap instance
+//DeviceMessageReceiver::addListener, ::removeListener, ::refreshListenerGroups, ::clearAllListenerGroups, 
+//and add a dedicated ListenerGroupMap instance
 
 class DeviceMessage
 {
@@ -260,19 +265,37 @@ public:
 
 
 
-// class EngineJobUpdateDeviceMessage : public DeviceMessage
-// {
-// public:
+enum class EngineJobUpdateTarget { Queued, Running, Completed };
 
-// 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceID& source) : DeviceMessage(source, DeviceMessageType::EngineJobUpdate) {}
+class EngineJobUpdateDeviceMessage : public DeviceMessage
+{
+public:
 
-// 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineJobUpdate; }
+	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate) {}
 
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineJobUpdate; }
 
+	void toQueuedList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
+	{
+		targetList = EngineJobUpdateTarget::Queued;
+		engineJob = job;
+	}
+	void toRunningList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
+	{
+		targetList = EngineJobUpdateTarget::Running;
+		engineJob = job;
+	}
+	void toCompleteList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
+	{
+		targetList = EngineJobUpdateTarget::Completed;
+		engineJob = job;
+	}
 
-// private:
+	EngineJobUpdateTarget targetList;	//the list the job belongs in
+	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
 
-// };
+};
 
 /*
 
@@ -338,6 +361,8 @@ public:
 	{
 	}
 
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineParser; }
+
 	void addParseMessage(const STI::Engine::EngineParsingMessage& message)
 	{
 		messages.push_back(message);
@@ -347,13 +372,52 @@ public:
 	//status
 	STI::Engine::ParseID pid;
 	std::vector<STI::Engine::EngineParsingMessage> messages;
+	std::shared_ptr<STI::Engine::EventEngineDependencyTree> parsedTree;
 
 };
 
-class EventEngineMessage : public DeviceMessage
+
+
+class EngineStateMessage;
+
+class EngineStateMessage : public DeviceMessage,
+						   public STI::Device::GroupableMessage<EngineStateMessage>
 {
 public:
 	//engine status
+
+	EngineStateMessage(const STI::Device::DeviceTrace& trace)
+	: DeviceMessage(trace, DeviceMessageType::EngineStatus)
+	{
+	}
+
+	EngineStateMessage(const STI::Device::DeviceTrace& trace, const STI::Engine::EngineID& engineID, const STI::Engine::EngineState& state) 
+	: DeviceMessage(trace, DeviceMessageType::EngineStatus) 
+	{
+		engineStates[engineID] = state;
+	}
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineStatus; }
+
+    bool appendMessage(const EngineStateMessage& mess)
+	{
+		for (auto& pair : mess.engineStates) {
+			engineStates[pair.first] = pair.second;
+		}
+		return true;
+	}
+	
+	bool groupable() const
+	{
+		return true;
+	}
+
+    EngineStateMessage& get()
+	{
+		return *this;
+	}
+//, STI::Engine::EngineID::EngineIDCompare
+	std::map<STI::Engine::EngineID, STI::Engine::EngineState> engineStates;
 
 };
 

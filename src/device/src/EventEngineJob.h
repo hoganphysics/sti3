@@ -2,6 +2,7 @@
 #define STI_ENGINE_EVENTENGINEJOB_H
 
 #include "DeviceID.h"
+#include "EngineJobStatus.h"
 
 #include <set>
 #include <vector>
@@ -24,8 +25,6 @@ enum class ParsingMessageType;
 class EventEngineJob
 {
 public:
-
-    enum class EngineJobStatus { New, Running, Completed, Canceled };
 
     virtual ~EventEngineJob() {}
 

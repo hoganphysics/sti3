@@ -15,6 +15,7 @@ namespace Device
 class DeviceMessageReceiver;
 class DeviceID;
 class DeviceMessageListenerID;
+class JEngineJobUpdateDeviceMessageListener;
 
 //Listeners
 
@@ -50,6 +51,15 @@ public:
 		                 const std::shared_ptr<DeviceMessageListener<EngineSchedulerMessage>>& listener);
     void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		                 const std::shared_ptr<DeviceMessageListener<CollectionUpdateMessage>>& listener);
+    void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<DeviceMessageListener<EngineStateMessage>>& listener);
+    // void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+	// 	                 const std::shared_ptr<DeviceMessageListener<EngineJobUpdateDeviceMessage>>& listener);
+    
+    void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+		                 const std::shared_ptr<JEngineJobUpdateDeviceMessageListener>& jListener);
+
+                         
     //...
 
     void removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID);

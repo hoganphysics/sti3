@@ -160,12 +160,28 @@ module TNetwork
     	TShotID sid;
 	};
 
+	interface TShot;
+
+	struct TEventEngineJob
+	{
+		TEngineJobID jobID;
+		TDeviceID jobOwner;
+		TEngineJobStatus status;
+
+		TEngineID engineID;
+		//TEventEngine eventEngine;
+
+		TShot shot;
+		TEventEngineDependencyTree dependencies;
+		TDeviceIDSeq missingTargetIDs;
+	};
+
 
 	//DeviceMessage *************************//
 
 	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
 							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
-							MessageEngineStatus, MessageEngineParser, MessageUnknown };
+							MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown };
 	typedef sequence<TDeviceMessageType> TDeviceMessageTypeSeq;
 
 	struct TAnyMessage
@@ -231,6 +247,16 @@ module TNetwork
 		TEngineState engineState;
 	};
 
+	enum TEngineJobUpdateTarget {  JobUpdateTargetQueued, JobUpdateTargetRunning, JobUpdateTargetCompleted };
+
+	struct TEngineJobUpdateDeviceMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TEngineJobUpdateTarget targetList;
+		TEventEngineJob engineJob;
+	};
+
 	struct TAttributeUpdateTuple
 	{
 		string key;
@@ -266,6 +292,23 @@ module TNetwork
 		short channelNumber;
 		string channelName;
 	};
+
+
+	struct TEngineStateTuple
+	{
+		TEngineID engineID;
+		TEngineState state;
+	};
+	typedef sequence<TEngineStateTuple> TEngineStateTupleSeq;
+
+	struct TEngineStateMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TEngineStateTupleSeq engineStates;	//{engineID, state} pairs
+	};
+
+
 
 	struct TEngineParserDeviceMessage
 	{

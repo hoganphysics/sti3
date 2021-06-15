@@ -79,6 +79,10 @@ Grouping considerations:
 
 // };
 
+// class AbstractMessageGrouper
+// {
+// public:
+// };
 
 
 //States: Idle, Warming, Sending, Cooling
@@ -168,14 +172,14 @@ void STI::Device::MessageGrouper<Message>::addMessage(const std::shared_ptr<Mess
 {
     std::unique_lock<std::mutex> writeLock(cacherMutex);
 
-    if (mess == 0) {
+    if (!running || mess == 0) {
         return;
     }
 
     //For non-groupable messages, just send immediately
     if (!mess->groupable()) {
         if (messageDispatcher != 0) {
-            messageDispatcher->addMessage(message);            
+            messageDispatcher->addMessage(mess);            
         }
         return;
     }

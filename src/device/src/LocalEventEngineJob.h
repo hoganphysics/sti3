@@ -3,6 +3,7 @@
 
 #include "EventEngineJob.h"
 
+#include "EngineJobStatus.h"
 #include "EngineJobID.h"
 #include "DeviceID.h"
 #include "Shot.h"
@@ -12,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+
 
 namespace STI
 {
@@ -39,7 +41,7 @@ public:
 
     EngineJobID getJobID() const;
     STI::Device::DeviceID getJobOwner() const;
-    EventEngineJob::EngineJobStatus getStatus() const;
+    EngineJobStatus getStatus() const;
 
     void markRunning(const EngineID& id);
     void markComplete();
@@ -76,7 +78,7 @@ private:
     EngineID engineID;
     std::shared_ptr<EventEngine> engine;
 
-    EventEngineJob::EngineJobStatus status;
+    EngineJobStatus status;
 
     std::vector<std::shared_ptr<EventEngineJob>> attachedJobs;
 

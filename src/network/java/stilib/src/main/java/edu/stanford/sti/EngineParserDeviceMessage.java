@@ -63,6 +63,10 @@ public class EngineParserDeviceMessage extends DeviceMessage {
     stiJNI.EngineParserDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 
+  public static DeviceMessageType getMessageClassType() {
+    return DeviceMessageType.swigToEnum(stiJNI.EngineParserDeviceMessage_getMessageClassType());
+  }
+
   public void addParseMessage(EngineParsingMessage message) {
     stiJNI.EngineParserDeviceMessage_addParseMessage(swigCPtr, this, EngineParsingMessage.getCPtr(message), message);
   }
@@ -83,6 +87,15 @@ public class EngineParserDeviceMessage extends DeviceMessage {
   public EngineParserMessageVector getMessages() {
     long cPtr = stiJNI.EngineParserDeviceMessage_messages_get(swigCPtr, this);
     return (cPtr == 0) ? null : new EngineParserMessageVector(cPtr, false);
+  }
+
+  public void setParsedTree(EventEngineDependencyTree value) {
+    stiJNI.EngineParserDeviceMessage_parsedTree_set(swigCPtr, this, EventEngineDependencyTree.getCPtr(value), value);
+  }
+
+  public EventEngineDependencyTree getParsedTree() {
+    long cPtr = stiJNI.EngineParserDeviceMessage_parsedTree_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new EventEngineDependencyTree(cPtr, true);
   }
 
 }

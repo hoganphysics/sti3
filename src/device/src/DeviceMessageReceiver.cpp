@@ -105,7 +105,8 @@ void DeviceMessageReceiver::refreshListenerGroups(const DeviceID& sourceDeviceID
 	refreshListenerGroup(sourceDeviceID, engineSchedulerListeners, handler);
 	refreshListenerGroup(sourceDeviceID, engineParserListeners, handler);
 	refreshListenerGroup(sourceDeviceID, collectionUpdateListeners, handler);
-	
+	refreshListenerGroup(sourceDeviceID, engineStateListeners, handler);
+	refreshListenerGroup(sourceDeviceID, engineJobUpdateListeners, handler);
 }
 
 void DeviceMessageReceiver::clearAllListenerGroups()
@@ -116,6 +117,8 @@ void DeviceMessageReceiver::clearAllListenerGroups()
 	clearListenerGroups(engineSchedulerListeners);
 	clearListenerGroups(engineParserListeners);
 	clearListenerGroups(collectionUpdateListeners);
+	clearListenerGroups(engineStateListeners);
+	clearListenerGroups(engineJobUpdateListeners);
 }
 
 void DeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID)
@@ -141,6 +144,12 @@ void DeviceMessageReceiver::removeListener(const DeviceID& sourceDeviceID, const
 	case DeviceMessageType::CollectionUpdate:
 		success = removeListener(sourceDeviceID, listenerID, collectionUpdateListeners);
 		break;
+	case DeviceMessageType::EngineStatus:
+		success = removeListener(sourceDeviceID, listenerID, engineStateListeners);
+		break;
+	case DeviceMessageType::EngineJobUpdate:
+		success = removeListener(sourceDeviceID, listenerID, engineJobUpdateListeners);
+		break;	
 	}
 	
 	if (success) {

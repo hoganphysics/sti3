@@ -28,7 +28,9 @@ LocalDeviceMessageDispatcher::~LocalDeviceMessageDispatcher()
 
 void LocalDeviceMessageDispatcher::addMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
-	eventQueue.addEvent(mess);
+	if (mess != 0) {
+		eventQueue.addEvent(mess);		
+	}
 }
 
 

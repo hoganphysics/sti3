@@ -4,6 +4,7 @@
 #include "DeviceMessageReceiver.h"
 #include "DeviceMessageListener.h"
 #include "DeviceID.h"
+#include "JEngineJobUpdateDeviceMessage.h"
 
 #include <memory>
 
@@ -13,6 +14,8 @@ using STI::Device::JDeviceMessageReceiver;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageListenerID;
 using STI::Device::DeviceMessageListener;
+using STI::Device::JEngineJobUpdateDeviceMessageListener;
+
 
 
 JDeviceMessageReceiver::JDeviceMessageReceiver(std::shared_ptr<STI::Device::DeviceMessageReceiver>& receiver)
@@ -69,6 +72,32 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
         [](auto message) {
             std::cout << "*** Java CollectionUpdateMessage ***" << std::endl;
         });
+    }
+}
+
+void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+                        const std::shared_ptr<DeviceMessageListener<EngineStateMessage>>& listener)
+{
+    if(deviceMessageReceiver != 0) {
+        deviceMessageReceiver->addListener<STI::Device::EngineStateMessage>(sourceDeviceID, listenerID, listener);
+    }
+}
+
+// void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+//                         const std::shared_ptr<DeviceMessageListener<EngineJobUpdateDeviceMessage>>& listener)
+// {
+//     if(deviceMessageReceiver != 0) {
+//         deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, listener);
+//     }
+// }
+
+void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
+                        const std::shared_ptr<JEngineJobUpdateDeviceMessageListener>& jListener)
+{
+    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineJobUpdateDeviceMessage>>(jListener);
+
+    if(deviceMessageReceiver != 0) {
+        deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, listener);
     }
 }
 

@@ -8,18 +8,18 @@
 
 package edu.stanford.sti;
 
-public class SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t {
+public class SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t() {
+  protected SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t obj) {
+  protected static long getCPtr(SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }

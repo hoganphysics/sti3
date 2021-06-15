@@ -1,0 +1,53 @@
+#ifndef STI_DEVICE_JEVENTENGINEJOB_H
+#define STI_DEVICE_JEVENTENGINEJOB_H
+
+
+#include "EventEngineJob.h"
+#include "EngineJobStatus.h"
+
+#include <memory>
+
+
+namespace STI
+{
+namespace Engine
+{
+
+class JShot;
+class JEventEngine;
+
+class JEventEngineJob
+{
+public:
+	
+	JEventEngineJob(const std::shared_ptr<EventEngineJob>& eventEngineJob);
+    ~JEventEngineJob();
+
+    EngineJobID getJobID() const;
+    STI::Device::DeviceID getJobOwner() const;
+    EngineJobStatus getStatus() const;
+
+    const EngineID& getEngineID() const;
+    std::shared_ptr<JEventEngine> getEngine() const;
+
+    std::shared_ptr<JShot> getShot() const;
+    std::shared_ptr<EventEngineDependencyTree> getDependencies() const;
+
+    std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
+
+    const std::vector<EngineParsingMessage>& getParsingMessages() const;
+
+private:
+
+    friend class JEventEngine;
+
+    std::shared_ptr<EventEngineJob> eventEngineJob;
+    std::shared_ptr<JShot> jshot;
+
+};
+
+
+} //Engine
+} //STI
+
+#endif

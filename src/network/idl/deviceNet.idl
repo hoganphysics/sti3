@@ -127,19 +127,7 @@ module TNetwork
 	// 	TDeviceIDSeq getMissingTargetIDs();
 	// };
 
-	struct TEventEngineJob
-	{
-		TEngineJobID jobID;
-		TDeviceID jobOwner;
-		TEngineJobStatus status;
 
-		TEngineID engineID;
-		//TEventEngine eventEngine;
-
-		TShot shot;
-		TEventEngineDependencyTree dependencies;
-		TDeviceIDSeq missingTargetIDs;
-	};
 	
 	interface TTriggerCallback
 	{

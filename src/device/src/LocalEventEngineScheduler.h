@@ -21,7 +21,7 @@
 #include "EngineID.h"
 #include "EventEngineDependencyTree.h"
 #include "DeviceTrace.h"
-
+#include "MessageGenerator.h"
 
 #include <list>
 #include <map>
@@ -66,13 +66,16 @@ class Shot;
 class EventEngineFactory;
 
 
-class LocalEventEngineScheduler : public EventEngineScheduler
+class LocalEventEngineScheduler : public EventEngineScheduler,
+                                  public STI::Device::MessageGenerator
 //                                  public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
     
     // LocalEventEngineScheduler(const STI::Device::DeviceID& localDeviceID, const std::shared_ptr<STI::Device::DeviceCollection>& localCollection);
-    LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
+    LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
+                                const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
+                                const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
     ~LocalEventEngineScheduler();
 
     //local interface (called from python, for example)

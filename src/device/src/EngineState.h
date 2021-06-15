@@ -1,5 +1,5 @@
-#ifndef STI_ENGINE_EVENTSTATE_H
-#define STI_ENGINE_EVENTSTATE_H
+#ifndef STI_ENGINE_ENGINESTATE_H
+#define STI_ENGINE_ENGINESTATE_H
 
 #include <string>
 

@@ -7,6 +7,7 @@
 #include "EventEngineJob.h"
 #include "EngineJobID.h"
 #include "fwd/RawEvent_fwd.h"
+#include "EngineJobStatus.h"
 
 #include <memory>
 
@@ -85,14 +86,14 @@ Engine::EngineID Network::convert<TNetwork::TEngineID, Engine::EngineID>(const T
 
 //EngineJobStatus
 template<>
-bool Network::convert<Engine::EventEngineJob::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EventEngineJob::EngineJobStatus& jobStatus, TNetwork::TEngineJobStatus& tJobStatus);
+bool Network::convert<Engine::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EngineJobStatus& jobStatus, TNetwork::TEngineJobStatus& tJobStatus);
 template<>
-bool Network::convert<TNetwork::TEngineJobStatus, Engine::EventEngineJob::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus, Engine::EventEngineJob::EngineJobStatus& jobStatus);
+bool Network::convert<TNetwork::TEngineJobStatus, Engine::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus, Engine::EngineJobStatus& jobStatus);
 
 template<>
-TNetwork::TEngineJobStatus Network::convert<Engine::EventEngineJob::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EventEngineJob::EngineJobStatus& jobStatus);
+TNetwork::TEngineJobStatus Network::convert<Engine::EngineJobStatus, TNetwork::TEngineJobStatus>(const Engine::EngineJobStatus& jobStatus);
 template<>
-Engine::EventEngineJob::EngineJobStatus Network::convert<TNetwork::TEngineJobStatus, Engine::EventEngineJob::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus);
+Engine::EngineJobStatus Network::convert<TNetwork::TEngineJobStatus, Engine::EngineJobStatus>(const TNetwork::TEngineJobStatus& tJobStatus);
 
 
 

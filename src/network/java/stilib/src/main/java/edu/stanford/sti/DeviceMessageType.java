@@ -16,6 +16,7 @@ public final class DeviceMessageType {
   public final static DeviceMessageType AttributeUpdate = new DeviceMessageType("AttributeUpdate");
   public final static DeviceMessageType AttributesRefresh = new DeviceMessageType("AttributesRefresh");
   public final static DeviceMessageType MonitorUpdate = new DeviceMessageType("MonitorUpdate");
+  public final static DeviceMessageType EngineJobUpdate = new DeviceMessageType("EngineJobUpdate");
   public final static DeviceMessageType EngineScheduler = new DeviceMessageType("EngineScheduler");
   public final static DeviceMessageType EngineParser = new DeviceMessageType("EngineParser");
   public final static DeviceMessageType EngineStatus = new DeviceMessageType("EngineStatus");
@@ -55,7 +56,7 @@ public final class DeviceMessageType {
     swigNext = this.swigValue+1;
   }
 
-  private static DeviceMessageType[] swigValues = { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, EngineScheduler, EngineParser, EngineStatus, Unknown };
+  private static DeviceMessageType[] swigValues = { Refresh, CollectionUpdate, ChannelUpdate, ChannelsRefresh, AttributeUpdate, AttributesRefresh, MonitorUpdate, EngineJobUpdate, EngineScheduler, EngineParser, EngineStatus, Unknown };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

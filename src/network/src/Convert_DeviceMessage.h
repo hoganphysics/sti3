@@ -126,6 +126,33 @@ bool Network::convert<std::shared_ptr<Device::AttributeUpdateMessage>, TNetwork:
 	const std::shared_ptr<Device::AttributeUpdateMessage>& deviceMessage, TNetwork::TAttributeUpdateMessage& tMessage);
 
 
+//EngineStateMessage
+template<>
+bool Network::convert<TNetwork::TEngineStateMessage, std::shared_ptr<Device::EngineStateMessage>>(
+	const TNetwork::TEngineStateMessage& tMessage, std::shared_ptr<Device::EngineStateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::EngineStateMessage>, TNetwork::TEngineStateMessage>(
+	const std::shared_ptr<Device::EngineStateMessage>& deviceMessage, TNetwork::TEngineStateMessage& tMessage);
+
+
+//EngineJobUpdateDeviceMessage
+template<>
+bool Network::convert<TNetwork::TEngineJobUpdateDeviceMessage, std::shared_ptr<Device::EngineJobUpdateDeviceMessage>>(
+	const TNetwork::TEngineJobUpdateDeviceMessage& tMessage, std::shared_ptr<Device::EngineJobUpdateDeviceMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::EngineJobUpdateDeviceMessage>, TNetwork::TEngineJobUpdateDeviceMessage>(
+	const std::shared_ptr<Device::EngineJobUpdateDeviceMessage>& deviceMessage, TNetwork::TEngineJobUpdateDeviceMessage& tMessage);
+
+//EngineJobUpdateTarget
+template<>
+TNetwork::TEngineJobUpdateTarget Network::convert
+	<Device::EngineJobUpdateTarget, TNetwork::TEngineJobUpdateTarget>(
+		const Device::EngineJobUpdateTarget& type);
+template<>
+Device::EngineJobUpdateTarget Network::convert
+	<TNetwork::TEngineJobUpdateTarget, Device::EngineJobUpdateTarget>(
+		const TNetwork::TEngineJobUpdateTarget& tType);
+
 
 } //STI
 

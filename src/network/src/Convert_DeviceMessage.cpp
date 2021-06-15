@@ -58,6 +58,21 @@ using STI::TNetwork::TCollectionMessageType;
 using STI::Device::DeviceTrace;
 using STI::TNetwork::TDeviceTrace;
 
+using STI::TNetwork::TEngineStateMessage;
+using STI::Device::EngineStateMessage;
+
+using STI::Engine::EngineID;
+using STI::TNetwork::TEngineID;
+
+using STI::Engine::EngineState;
+using STI::TNetwork::TEngineState;
+
+using STI::TNetwork::TEngineJobUpdateDeviceMessage;
+using STI::Device::EngineJobUpdateDeviceMessage;
+using STI::TNetwork::TEngineJobUpdateTarget;
+using STI::Device::EngineJobUpdateTarget;
+
+
 template<>
 TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(const DeviceMessageType& type)
 {
@@ -94,6 +109,9 @@ TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(
 			break;
 		case DeviceMessageType::EngineStatus:
 			tType = TDeviceMessageType::MessageEngineStatus;
+			break;
+		case DeviceMessageType::EngineJobUpdate:
+			tType = TDeviceMessageType::MessageEngineJobUpdate;
 			break;
 		default:
 			tType = TDeviceMessageType::MessageUnknown;
@@ -140,6 +158,9 @@ DeviceMessageType STI::Network::convert<TDeviceMessageType, DeviceMessageType>(c
 		case TDeviceMessageType::MessageEngineStatus:
 			type = DeviceMessageType::EngineStatus;
 			break;
+		case TDeviceMessageType::MessageEngineJobUpdate:
+			type = DeviceMessageType::EngineJobUpdate;
+			break;		
 		default:
 			type = DeviceMessageType::Unknown;
 			break;
@@ -242,6 +263,12 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 	case DeviceMessageType::CollectionUpdate:
 		success = convertMessage<CollectionUpdateMessage, TCollectionUpdateMessage>(deviceMessage, tAnyMessage);
 		break;
+	case DeviceMessageType::EngineStatus:
+		success = convertMessage<EngineStateMessage, TEngineStateMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::EngineJobUpdate:
+		success = convertMessage<EngineJobUpdateDeviceMessage, TEngineJobUpdateDeviceMessage>(deviceMessage, tAnyMessage);
+		break;
 	}
 
 	return success;
@@ -290,6 +317,12 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 		break;
 	case TDeviceMessageType::MessageCollectionUpdate:
 		success = extractMessage<TCollectionUpdateMessage, CollectionUpdateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageEngineStatus:
+		success = extractMessage<TEngineStateMessage, EngineStateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageEngineJobUpdate:
+		success = extractMessage<TEngineJobUpdateDeviceMessage, EngineJobUpdateDeviceMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	}
 
@@ -712,5 +745,137 @@ bool STI::Network::convert<std::shared_ptr<AttributeUpdateMessage>, TAttributeUp
 	}
 
 	return true;
+}
+
+
+
+//EngineStateMessage
+template<>
+bool STI::Network::convert<TEngineStateMessage, std::shared_ptr<EngineStateMessage>>(
+	const TEngineStateMessage& tMessage, std::shared_ptr<EngineStateMessage>& deviceMessage)
+{
+
+	deviceMessage = std::make_shared<EngineStateMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		);
+
+	for(unsigned i = 0; i < tMessage.engineStates.length(); ++i) {
+
+		deviceMessage->engineStates.insert(
+			std::pair<EngineID, EngineState>(
+				convert<TEngineID, EngineID>(tMessage.engineStates[i].engineID),
+				convert<TEngineState, EngineState>(tMessage.engineStates[i].state)
+			));
+	}
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EngineStateMessage>, TEngineStateMessage>(
+	const std::shared_ptr<EngineStateMessage>& deviceMessage, TEngineStateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.engineStates.length( static_cast<unsigned>(deviceMessage->engineStates.size()) );
+
+	unsigned i = 0;
+	for (auto& tuple : deviceMessage->engineStates) {
+		if (i < tMessage.engineStates.length()) {
+			tMessage.engineStates[i].engineID = convert<EngineID, TEngineID>(tuple.first);
+			tMessage.engineStates[i].state = convert<EngineState, TEngineState>(tuple.second);
+		}
+		++i;
+	}
+
+	return true;
+}
+
+
+
+//EngineJobUpdateDeviceMessage
+template<>
+bool STI::Network::convert<TEngineJobUpdateDeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(
+	const TEngineJobUpdateDeviceMessage& tMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<EngineJobUpdateDeviceMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		);
+
+	deviceMessage->targetList = convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
+								tMessage.targetList);
+
+	return convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, deviceMessage->engineJob)
+			&&  (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngineJobUpdateDeviceMessage>(
+	const std::shared_ptr<EngineJobUpdateDeviceMessage>& deviceMessage, TEngineJobUpdateDeviceMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.targetList = convert<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
+								deviceMessage->targetList);
+
+	return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->engineJob, tMessage.engineJob);
+}
+
+
+//EngineJobUpdateTarget
+template<>
+TEngineJobUpdateTarget STI::Network::convert
+	<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
+		const EngineJobUpdateTarget& type)
+{
+	TEngineJobUpdateTarget tType;
+
+	switch (type)
+	{
+	case EngineJobUpdateTarget::Queued:
+		tType = TEngineJobUpdateTarget::JobUpdateTargetQueued;
+		break;
+	case EngineJobUpdateTarget::Running:
+		tType = TEngineJobUpdateTarget::JobUpdateTargetRunning;
+		break;
+	case EngineJobUpdateTarget::Completed:
+		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
+		break;
+	default:
+		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
+		break;
+	}
+
+	return tType;
+}
+
+template<>
+EngineJobUpdateTarget STI::Network::convert
+	<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
+		const TEngineJobUpdateTarget& tType)
+{
+	EngineJobUpdateTarget type;
+
+	switch (tType)
+	{
+	case TEngineJobUpdateTarget::JobUpdateTargetQueued:
+		type = EngineJobUpdateTarget::Queued;
+		break;
+	case TEngineJobUpdateTarget::JobUpdateTargetRunning:
+		type = EngineJobUpdateTarget::Running;
+		break;
+	case TEngineJobUpdateTarget::JobUpdateTargetCompleted:
+		type = EngineJobUpdateTarget::Completed;
+		break;
+	default:
+		type = EngineJobUpdateTarget::Completed;
+		break;
+	}
+
+	return type;
 }
 

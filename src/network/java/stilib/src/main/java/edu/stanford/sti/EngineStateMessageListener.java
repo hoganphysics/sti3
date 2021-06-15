@@ -8,23 +8,21 @@
 
 package edu.stanford.sti;
 
-public class EventEngineMessage extends DeviceMessage {
+public class EngineStateMessageListener {
   private transient long swigCPtr;
-  private transient boolean swigCMemOwnDerived;
+  private transient boolean swigCMemOwn;
 
-  protected EventEngineMessage(long cPtr, boolean cMemoryOwn) {
-    super(stiJNI.EventEngineMessage_SWIGSmartPtrUpcast(cPtr), true);
-    swigCMemOwnDerived = cMemoryOwn;
+  protected EngineStateMessageListener(long cPtr, boolean cMemoryOwn) {
+    swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(EventEngineMessage obj) {
+  protected static long getCPtr(EngineStateMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
   protected void swigSetCMemOwn(boolean own) {
-    swigCMemOwnDerived = own;
-    super.swigSetCMemOwn(own);
+    swigCMemOwn = own;
   }
 
   @SuppressWarnings("deprecation")
@@ -34,13 +32,12 @@ public class EventEngineMessage extends DeviceMessage {
 
   public synchronized void delete() {
     if (swigCPtr != 0) {
-      if (swigCMemOwnDerived) {
-        swigCMemOwnDerived = false;
-        stiJNI.delete_EventEngineMessage(swigCPtr);
+      if (swigCMemOwn) {
+        swigCMemOwn = false;
+        stiJNI.delete_EngineStateMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
-    super.delete();
   }
 
   protected void swigDirectorDisconnect() {
@@ -50,17 +47,21 @@ public class EventEngineMessage extends DeviceMessage {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.EventEngineMessage_change_ownership(this, swigCPtr, false);
+    stiJNI.EngineStateMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.EventEngineMessage_change_ownership(this, swigCPtr, true);
+    stiJNI.EngineStateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public EventEngineMessage() {
-    this(stiJNI.new_EventEngineMessage(), true);
-    stiJNI.EventEngineMessage_director_connect(this, swigCPtr, true, true);
+  public void handleMessage(EngineStateMessage mess) {
+    stiJNI.EngineStateMessageListener_handleMessage(swigCPtr, this, EngineStateMessage.getCPtr(mess), mess);
+  }
+
+  public EngineStateMessageListener() {
+    this(stiJNI.new_EngineStateMessageListener(), true);
+    stiJNI.EngineStateMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
 }

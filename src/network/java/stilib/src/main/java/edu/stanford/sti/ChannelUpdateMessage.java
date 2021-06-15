@@ -97,13 +97,13 @@ public class ChannelUpdateMessage extends DeviceMessage {
     return ChannelUpdateMessage.ChannelUpdateMessageType.swigToEnum(stiJNI.ChannelUpdateMessage_channelUpdateType_get(swigCPtr, this));
   }
 
-  public void setChannelValues(SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t value) {
-    stiJNI.ChannelUpdateMessage_channelValues_set(swigCPtr, this, SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t.getCPtr(value));
+  public void setChannelValues(ChannelMixedValueMap value) {
+    stiJNI.ChannelUpdateMessage_channelValues_set(swigCPtr, this, ChannelMixedValueMap.getCPtr(value), value);
   }
 
-  public SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t getChannelValues() {
+  public ChannelMixedValueMap getChannelValues() {
     long cPtr = stiJNI.ChannelUpdateMessage_channelValues_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__mapT_short_STI__Utils__MixedValue_std__lessT_short_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new ChannelMixedValueMap(cPtr, false);
   }
 
   public void setChannelNumber(short value) {

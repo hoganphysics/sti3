@@ -64,6 +64,14 @@ public class JDeviceMessageReceiver {
     stiJNI.JDeviceMessageReceiver_addListener__SWIG_4(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, CollectionUpdateMessageListener.getCPtr(listener), listener);
   }
 
+  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, EngineStateMessageListener listener) {
+    stiJNI.JDeviceMessageReceiver_addListener__SWIG_5(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, EngineStateMessageListener.getCPtr(listener), listener);
+  }
+
+  public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, JEngineJobUpdateDeviceMessageListener jListener) {
+    stiJNI.JDeviceMessageReceiver_addListener__SWIG_6(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, JEngineJobUpdateDeviceMessageListener.getCPtr(jListener), jListener);
+  }
+
   public void removeListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID) {
     stiJNI.JDeviceMessageReceiver_removeListener(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID);
   }

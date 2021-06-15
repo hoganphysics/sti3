@@ -5,6 +5,7 @@
 #include "MessageGenerator.h"
 
 #include "DeviceMessage.h"
+#include "MessageGrouper.h"
 #include "DeviceCollection.h"
 #include "EventEngineParser.h"
 #include "EventEngineStateMachine.h"
@@ -154,6 +155,7 @@ private:
 	void releasePlayLock();
 	void releaseTriggerLock();
 
+	STI::Device::MessageGrouper<STI::Device::EngineStateMessage> engineStateMessageGrouper;
 
 	EngineClock engineClock;
 

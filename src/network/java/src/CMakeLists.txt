@@ -28,6 +28,8 @@ add_library(stijava SHARED
     JDevice.cpp
     JDeviceMessageDispatcher.cpp
     JDeviceMessageReceiver.cpp
+    JEventEngine.cpp
+    JEventEngineJob.cpp
     JEventEngineScheduler.cpp
     JLocalDevice.cpp
     JNetworkDeviceHub.cpp

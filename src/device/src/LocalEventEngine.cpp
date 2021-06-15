@@ -64,13 +64,19 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 	localDeviceID(localID),
 	localChannels(channels),
 	deviceCollection(collection),
-	cancelled(false)
+	cancelled(false),
+	engineStateMessageGrouper(dispatcher)
 {
+	engineStateMessageGrouper.setWarmup(100);   //ms
+    engineStateMessageGrouper.setCooldown(500); //ms
+
+	engineStateMessageGrouper.start();
 }
 
 LocalEventEngine::~LocalEventEngine()
 {
 	resetPlayThread();
+	engineStateMessageGrouper.stop();
 }
 
 void LocalEventEngine::clear()
@@ -1068,7 +1074,14 @@ bool LocalEventEngine::setState(EngineState target, EngineState fallback)
 
 bool LocalEventEngine::setState(EngineState target)
 {
-	return stateMachine.setState(target);
+	if (stateMachine.setState(target)) {
+
+		auto eventStatusMessage = std::make_shared<STI::Device::EngineStateMessage>(getDeviceID(), engineID, getState());
+		engineStateMessageGrouper.addMessage(eventStatusMessage);
+
+		return true;
+	}
+	return false;
 }
 
 

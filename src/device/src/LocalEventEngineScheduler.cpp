@@ -17,6 +17,7 @@
 #include "LocalShot.h"
 #include "ShotID.h"
 #include "EngineJobID.h"
+#include "DeviceMessage.h"
 
 #include <set>
 #include <vector>
@@ -47,8 +48,9 @@ using STI::Engine::LocalShot;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
-                                                    const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory)
-: localDevice(localDevice), completedJobs(3)
+                                                    const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
+                                                    const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
+: MessageGenerator(dispatcher), localDevice(localDevice), completedJobs(3)
 {
     completedJobs.setMaxSize(3);
 
@@ -513,12 +515,18 @@ void LocalEventEngineScheduler::getDownstreamIDs(const std::map<std::string, std
 
 }
 
+
+
 void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
         
     if (newJob != 0) {
         queuedJobs.add(newJob->getJobID(), newJob);
+
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toQueuedList(newJob);
+        sendMessage(message);
     }
 
     jobCondition.notify_all();
@@ -578,6 +586,11 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         job->markCancelled();
         
         completedJobs.add(jobID, job);
+
+        //Message: Job complete
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toCompleteList(job);
+        sendMessage(message);
     }
 
     if (queuedJobs.get(jobID, job) && job != 0) {
@@ -585,6 +598,11 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         job->markCancelled();
         
         completedJobs.add(jobID, job);
+
+        //Message: Job complete
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toCompleteList(job);
+        sendMessage(message);
     }
 
     if (getManager(jobID, manager) && manager != 0) {
@@ -613,6 +631,11 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
         runningJobs.remove(jobID);
         job->markComplete();
         completedJobs.add(jobID, job);
+
+        //Message: Job complete
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toCompleteList(job);
+        sendMessage(message);
     }
 
     jobCondition.notify_all();
@@ -705,7 +728,7 @@ bool LocalEventEngineScheduler::isCanceledJob(const STI::Engine::ParseID& parseI
     std::shared_ptr<EventEngineJob> job;
     bool success = completedJobs.get(jobID, job) && job != 0;
 
-    return (success && job->getStatus() == EventEngineJob::EngineJobStatus::Canceled);
+    return (success && job->getStatus() == EngineJobStatus::Canceled);
 }
 
 bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& engineID)
@@ -721,6 +744,11 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
         
         queuedJobs.remove(jobID);
         runningJobs.add(jobID, job);
+
+        //Message: Job running
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toRunningList(job);
+        sendMessage(message);
         
         return true;
     }
