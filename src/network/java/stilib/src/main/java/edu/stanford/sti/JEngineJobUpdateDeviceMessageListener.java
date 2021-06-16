@@ -8,17 +8,23 @@
 
 package edu.stanford.sti;
 
-public class JEngineJobUpdateDeviceMessageListener {
+public class JEngineJobUpdateDeviceMessageListener extends EngineJobUpdateDeviceMessageListener {
   private transient long swigCPtr;
-  protected transient boolean swigCMemOwn;
+  private transient boolean swigCMemOwnDerived;
 
   protected JEngineJobUpdateDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
+    super(stiJNI.JEngineJobUpdateDeviceMessageListener_SWIGSmartPtrUpcast(cPtr), true);
+    swigCMemOwnDerived = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
   protected static long getCPtr(JEngineJobUpdateDeviceMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
+  }
+
+  protected void swigSetCMemOwn(boolean own) {
+    swigCMemOwnDerived = own;
+    super.swigSetCMemOwn(own);
   }
 
   @SuppressWarnings("deprecation")
@@ -28,36 +34,41 @@ public class JEngineJobUpdateDeviceMessageListener {
 
   public synchronized void delete() {
     if (swigCPtr != 0) {
-      if (swigCMemOwn) {
-        swigCMemOwn = false;
+      if (swigCMemOwnDerived) {
+        swigCMemOwnDerived = false;
         stiJNI.delete_JEngineJobUpdateDeviceMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
+    super.delete();
   }
 
   protected void swigDirectorDisconnect() {
-    swigCMemOwn = false;
+    swigSetCMemOwn(false);
     delete();
   }
 
   public void swigReleaseOwnership() {
-    swigCMemOwn = false;
+    swigSetCMemOwn(false);
     stiJNI.JEngineJobUpdateDeviceMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
-    swigCMemOwn = true;
+    swigSetCMemOwn(true);
     stiJNI.JEngineJobUpdateDeviceMessageListener_change_ownership(this, swigCPtr, true);
-  }
-
-  public void handleMessage(JEngineJobUpdateDeviceMessage mess) {
-    stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage(swigCPtr, this, JEngineJobUpdateDeviceMessage.getCPtr(mess), mess);
   }
 
   public JEngineJobUpdateDeviceMessageListener() {
     this(stiJNI.new_JEngineJobUpdateDeviceMessageListener(), true);
     stiJNI.JEngineJobUpdateDeviceMessageListener_director_connect(this, swigCPtr, true, true);
+  }
+
+  public void handleMessage(JEngineJobUpdateDeviceMessage mess) {
+    stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_0(swigCPtr, this, JEngineJobUpdateDeviceMessage.getCPtr(mess), mess);
+  }
+
+  public void handleMessage(EngineJobUpdateDeviceMessage mess) {
+    if (getClass() == JEngineJobUpdateDeviceMessageListener.class) stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_1(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess); else stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessageSwigExplicitJEngineJobUpdateDeviceMessageListener__SWIG_1(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess);
   }
 
 }

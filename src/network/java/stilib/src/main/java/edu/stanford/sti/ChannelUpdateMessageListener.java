@@ -55,13 +55,13 @@ public class ChannelUpdateMessageListener {
     stiJNI.ChannelUpdateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleMessage(ChannelUpdateMessage mess) {
-    stiJNI.ChannelUpdateMessageListener_handleMessage(swigCPtr, this, ChannelUpdateMessage.getCPtr(mess), mess);
-  }
-
   public ChannelUpdateMessageListener() {
     this(stiJNI.new_ChannelUpdateMessageListener(), true);
     stiJNI.ChannelUpdateMessageListener_director_connect(this, swigCPtr, true, true);
+  }
+
+  public void handleMessage(ChannelUpdateMessage mess) {
+    stiJNI.ChannelUpdateMessageListener_handleMessage(swigCPtr, this, ChannelUpdateMessage.getCPtr(mess), mess);
   }
 
 }

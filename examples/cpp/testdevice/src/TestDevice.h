@@ -19,6 +19,8 @@ public:
 
 	STI::Device::DeviceMessageListenerID collectionMessageLID;
 
+	STI::Device::DeviceMessageListenerID jobMessageLID;
+
     //Custom device event class
 	class TestEvent : public STI::Engine::SynchronousEventAdapter
 	{

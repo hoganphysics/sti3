@@ -295,6 +295,29 @@ public:
 	EngineJobUpdateTarget targetList;	//the list the job belongs in
 	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
 
+	static std::string jobTargetToString(EngineJobUpdateTarget target) 
+	{
+		std::string result;
+
+		switch (target)
+		{
+		case EngineJobUpdateTarget::Queued:
+			result = "Queued";
+			break;
+		case EngineJobUpdateTarget::Running:
+			result = "Running";
+			break;
+		case EngineJobUpdateTarget::Completed:
+			result = "Completed";
+			break;
+		default:
+			result = "Unknown";
+			break;
+		}
+
+		return result;
+	}
+
 };
 
 /*

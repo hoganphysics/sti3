@@ -2,9 +2,17 @@
 package edu.stanford.testdevice;
 
 import edu.stanford.sti.*;
+import edu.stanford.sti.JEngineJobUpdateDeviceMessageListener;
+import edu.stanford.sti.EngineStateMessageListener;
+import edu.stanford.sti.EngineParsingMessage;
+
 
 public class TestJDevice extends JLocalDevice {
     
+    private JEngineJobUpdateDeviceMessageListener joblistener;
+    private EngineStateMessageListener statelistener;
+
+
     public TestJDevice(String name, String address, int module, String targetServer) {
         super(name, address, module, targetServer);
       
@@ -23,14 +31,16 @@ public class TestJDevice extends JLocalDevice {
 
         //edu.stanford.sti.DeviceID sourceDeviceID = new DeviceID("dev2", "localhost", 0);
         edu.stanford.sti.DeviceMessageListenerID listenerID = new DeviceMessageListenerID();
-        listenerID.setName("test");
-        listenerID.setType(DeviceMessageType.Refresh);
-        edu.stanford.sti.RefreshDeviceMessageListener listener = new edu.stanford.sti.RefreshDeviceMessageListener() {
-            public void handleMessage(edu.stanford.sti.RefreshDeviceMessage mess) {
-                System.out.println(mess.sourceID().getID());
+        listenerID.setName("Test JobUpdate");
+        listenerID.setType(DeviceMessageType.EngineJobUpdate);
+        
+        joblistener = new edu.stanford.sti.JEngineJobUpdateDeviceMessageListener() {
+            public void handleMessage(edu.stanford.sti.JEngineJobUpdateDeviceMessage mess) {
+                // System.out.println("Job:" + mess.getJEngineJob().getJobID().getPid().getParseTimestamp().getTimestamp());
+                System.out.println("Job: " + mess.getTargetList().toString() + " : " + mess.getDeviceTrace().print());
             }
         };
-        messageReceiver.addListener(getID(), listenerID, listener);
+        messageReceiver.addListener(serverID, listenerID, joblistener);
       
 
 
@@ -39,15 +49,31 @@ public class TestJDevice extends JLocalDevice {
         listenerID2.setType(DeviceMessageType.EngineScheduler);
         edu.stanford.sti.EngineSchedulerMessageListener listener2 = new edu.stanford.sti.EngineSchedulerMessageListener() {
             public void handleMessage(edu.stanford.sti.EngineSchedulerMessage mess) {
-                System.out.println("Engine Message:" + mess.sourceID().getID());
-                System.out.println("Engine state:" + mess.getEngineState());
+                // System.out.println("Engine Message:" + mess.sourceID().getID());
+                // System.out.println("Engine state:" + mess.getEngineState());
+                System.out.println("Scheduler Message: " + mess.getSchedulerMessageType().toString());
+                for (EngineParsingMessage m : mess.getMessages()) {
+                    System.out.println("---- Message: " + m.getMessage());
+                    
+                }
             }
         };
         messageReceiver.addListener(serverID, listenerID2, listener2);
 
 
-        EngineID id = new EngineID((short) 0);
+        edu.stanford.sti.DeviceMessageListenerID listenerID3 = new DeviceMessageListenerID();
+        listenerID3.setName("enginestatelistener");
+        listenerID3.setType(DeviceMessageType.EngineStatus);
+        statelistener = new EngineStateMessageListener() {
+            public void handleMessage(edu.stanford.sti.EngineStateMessage mess) {
+                // System.out.println("Engine Message:" + mess.sourceID().getID());
+                System.out.println("Engine state:" + mess.getEngineStates().values().iterator().next());
+            }
+        };
+        messageReceiver.addListener(serverID, listenerID3, statelistener);
 
+
+        EngineID id = new EngineID((short) 0);
         addEventEngine(id);
     }
 

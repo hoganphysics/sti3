@@ -49,6 +49,7 @@
     using STI::Engine::EngineState;
 
     #include "JEngineJobUpdateDeviceMessage.h"
+    #include "JEngineJobUpdateDeviceMessageListener.h"
 
     #include "JShot.h"
     using STI::Engine::JShot;
@@ -79,6 +80,8 @@
     using STI::Device::ChannelRefreshListener;
 
     #include "JAttributeManager.h"
+
+    #include "JEventEngine.h"
 
 
 %}
@@ -181,13 +184,26 @@
 typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< STI::Engine::EngineID > >::iterator EngineIDtoStateMapIterator;
 
 
+//shared_ptr declaration must be before %include call
+%shared_ptr(STI::Device::JEngineJobUpdateDeviceMessageListener);
+
 
 //DeviceMessage
-%ignore STI::Device::EngineJobUpdateDeviceMessage;
+// %ignore STI::Device::EngineJobUpdateDeviceMessage;
 %include "DeviceMessage.h"
 %include "DeviceMessageListener.h"
 
-%include "JEngineJobUpdateDeviceMessage.h"
+%extend STI::Device::EngineSchedulerMessage 
+{
+    std::shared_ptr< STI::Engine::JEventEngine > STI::Device::EngineSchedulerMessage::getJEventEngine() const
+    {
+        auto jEventEngine = std::make_shared< STI::Engine::JEventEngine >(self->engine);
+        return jEventEngine;
+    }
+
+} 
+// %ignore STI::Device::EngineSchedulerMessage::getEngine;
+
 
 //Listeners
 //Note: It's *very* important that the %shared_ptr definition comes before the %template call.
@@ -216,11 +232,18 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineStateMessage >);
 %template(EngineStateMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineStateMessage >;
 
-// %shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >);
-// %template(EngineJobUpdateDeviceMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >;
+%shared_ptr(STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >);
+%template(EngineJobUpdateDeviceMessageListener) STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >;
 
-%shared_ptr(STI::Device::JEngineJobUpdateDeviceMessageListener);
+%include "JEngineJobUpdateDeviceMessage.h"
 
+
+// %rename(handleMessage33) STI::Device::JEngineJobUpdateDeviceMessageListener::handleJMessage(const std::shared_ptr< STI::Device::JEngineJobUpdateDeviceMessage >&);
+
+%rename(handleMessage) STI::Device::JEngineJobUpdateDeviceMessageListener::handleJMessage;
+%include "JEngineJobUpdateDeviceMessageListener.h"
+
+// %ignore STI::Device::JEngineJobUpdateDeviceMessageListener::handleMessage(const std::shared_ptr< STI::Device::EngineJobUpdateDeviceMessage >& mess);
 
 
 

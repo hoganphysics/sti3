@@ -72,4 +72,12 @@ public class DeviceTrace {
     return new DeviceIDvector(stiJNI.DeviceTrace_getIDs(swigCPtr, this), false);
   }
 
+  public String print(String separator) {
+    return stiJNI.DeviceTrace_print__SWIG_0(swigCPtr, this, separator);
+  }
+
+  public String print() {
+    return stiJNI.DeviceTrace_print__SWIG_1(swigCPtr, this);
+  }
+
 }

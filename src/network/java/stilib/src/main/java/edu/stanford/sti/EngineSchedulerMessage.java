@@ -128,6 +128,11 @@ public class EngineSchedulerMessage extends DeviceMessage {
     return EngineState.swigToEnum(stiJNI.EngineSchedulerMessage_engineState_get(swigCPtr, this));
   }
 
+  public JEventEngine getJEventEngine() {
+    long cPtr = stiJNI.EngineSchedulerMessage_getJEventEngine(swigCPtr, this);
+    return (cPtr == 0) ? null : new JEventEngine(cPtr, true);
+  }
+
   public final static class SchedulerMessageType {
     public final static EngineSchedulerMessage.SchedulerMessageType ParseComplete = new EngineSchedulerMessage.SchedulerMessageType("ParseComplete");
     public final static EngineSchedulerMessage.SchedulerMessageType YieldParse = new EngineSchedulerMessage.SchedulerMessageType("YieldParse");

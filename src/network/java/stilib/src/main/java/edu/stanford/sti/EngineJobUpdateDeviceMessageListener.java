@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class RefreshDeviceMessageListener {
+public class EngineJobUpdateDeviceMessageListener {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected RefreshDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
+  protected EngineJobUpdateDeviceMessageListener(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(RefreshDeviceMessageListener obj) {
+  protected static long getCPtr(EngineJobUpdateDeviceMessageListener obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class RefreshDeviceMessageListener {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_RefreshDeviceMessageListener(swigCPtr);
+        stiJNI.delete_EngineJobUpdateDeviceMessageListener(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,21 +47,21 @@ public class RefreshDeviceMessageListener {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.RefreshDeviceMessageListener_change_ownership(this, swigCPtr, false);
+    stiJNI.EngineJobUpdateDeviceMessageListener_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.RefreshDeviceMessageListener_change_ownership(this, swigCPtr, true);
+    stiJNI.EngineJobUpdateDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public RefreshDeviceMessageListener() {
-    this(stiJNI.new_RefreshDeviceMessageListener(), true);
-    stiJNI.RefreshDeviceMessageListener_director_connect(this, swigCPtr, true, true);
+  public EngineJobUpdateDeviceMessageListener() {
+    this(stiJNI.new_EngineJobUpdateDeviceMessageListener(), true);
+    stiJNI.EngineJobUpdateDeviceMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
-  public void handleMessage(RefreshDeviceMessage mess) {
-    stiJNI.RefreshDeviceMessageListener_handleMessage(swigCPtr, this, RefreshDeviceMessage.getCPtr(mess), mess);
+  public void handleMessage(EngineJobUpdateDeviceMessage mess) {
+    stiJNI.EngineJobUpdateDeviceMessageListener_handleMessage(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess);
   }
 
 }

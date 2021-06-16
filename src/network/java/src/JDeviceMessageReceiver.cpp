@@ -5,6 +5,7 @@
 #include "DeviceMessageListener.h"
 #include "DeviceID.h"
 #include "JEngineJobUpdateDeviceMessage.h"
+#include "JEngineJobUpdateDeviceMessageListener.h"
 
 #include <memory>
 
@@ -94,10 +95,20 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
 void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
                         const std::shared_ptr<JEngineJobUpdateDeviceMessageListener>& jListener)
 {
+
+    // std::cout << "JDeviceMessageReceiver addListener JOB***" << std::endl;
+
     auto listener = std::static_pointer_cast<DeviceMessageListener<EngineJobUpdateDeviceMessage>>(jListener);
 
     if(deviceMessageReceiver != 0) {
-        deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, listener);
+       deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, listener);
+
+    //    deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, 
+    //         [jListener](auto message) {
+    //             std::cout << "JDeviceMessageReceiver handleMessage" << std::endl;
+    //             jListener->handleMessage(message);
+    //         }
+    //     );
     }
 }
 

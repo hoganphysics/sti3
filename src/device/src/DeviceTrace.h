@@ -48,8 +48,27 @@ public:
 
 	const std::vector<DeviceID>& getIDs() const { return ids; }
 
+	std::string print(const std::string& separator = " -> ") const
+	{
+		std::string result;
+
+		// for (auto& id : ids) {
+		for (unsigned i = 0; i < ids.size(); ++i) {
+			
+			result += ids[i].getID();
+			
+			if (i < ids.size() - 1) {
+				result += separator;				
+			}
+		}
+
+		return result;
+	}
+
 private:
+
 	std::vector<DeviceID> ids;
+
 };
 
 } //Device

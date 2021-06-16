@@ -70,32 +70,6 @@ public:
 
 
 
-class JEngineJobUpdateDeviceMessageListener : public DeviceMessageListener<EngineJobUpdateDeviceMessage>
-{
-public:
-
-    virtual ~JEngineJobUpdateDeviceMessageListener() {}
-
-    virtual void handleMessage(const std::shared_ptr<JEngineJobUpdateDeviceMessage>& mess) = 0;
-
-private:
-
-    void handleMessage(const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) {}
-
-    void handleMessage2(const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) 
-    {
-        if (mess == 0 || mess->engineJob == 0) return;
-
-        auto jMess = JEngineJobUpdateDeviceMessage::makeJMessage(*mess);
-
-        JEngineJobUpdateDeviceMessageListener::handleMessage(jMess);
-    }
-
-};
-
-
-
-
 } //Device
 } //STI
 

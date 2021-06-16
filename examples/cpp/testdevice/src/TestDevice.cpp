@@ -56,6 +56,15 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
             std::cout << "handle functional " << STI::Device::DeviceMessage::typeToString(message->getMessageClassType()) << std::endl;
         } );
 
+    
+    jobMessageLID.name = "::JobUpdateMessage::Test";	//getID().getID() + 
+	jobMessageLID.type = STI::Device::DeviceMessageType::EngineJobUpdate;
+
+    receiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(serverID, jobMessageLID, 
+        [](auto message) { 
+            std::cout << "Job message: " << STI::Device::EngineJobUpdateDeviceMessage::jobTargetToString(message->targetList)// << STI::Device::DeviceMessage::typeToString(message->getMessageClassType())
+            << " : " <<  message->getDeviceTrace().print() << " : " << message->engineJob->getJobID().pid.parseTimestamp.timestamp << std::endl;
+        } );
 }
 
 TestDevice::~TestDevice()

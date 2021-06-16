@@ -55,13 +55,13 @@ public class EngineStateMessageListener {
     stiJNI.EngineStateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleMessage(EngineStateMessage mess) {
-    stiJNI.EngineStateMessageListener_handleMessage(swigCPtr, this, EngineStateMessage.getCPtr(mess), mess);
-  }
-
   public EngineStateMessageListener() {
     this(stiJNI.new_EngineStateMessageListener(), true);
     stiJNI.EngineStateMessageListener_director_connect(this, swigCPtr, true, true);
+  }
+
+  public void handleMessage(EngineStateMessage mess) {
+    stiJNI.EngineStateMessageListener_handleMessage(swigCPtr, this, EngineStateMessage.getCPtr(mess), mess);
   }
 
 }

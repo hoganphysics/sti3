@@ -88,6 +88,9 @@ std::string DeviceMessage::typeToString(const DeviceMessageType& type)
 	case DeviceMessageType::EngineStatus:
 		name = "EngineStatus";
 		break;
+	case DeviceMessageType::EngineJobUpdate:
+		name = "EngineJobUpdate";
+		break;
 	case DeviceMessageType::Unknown:
 		name = "Unknown";
 		break;

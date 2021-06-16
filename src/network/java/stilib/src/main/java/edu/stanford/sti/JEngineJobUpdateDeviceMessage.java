@@ -8,12 +8,13 @@
 
 package edu.stanford.sti;
 
-public class JEngineJobUpdateDeviceMessage {
+public class JEngineJobUpdateDeviceMessage extends EngineJobUpdateDeviceMessage {
   private transient long swigCPtr;
-  private transient boolean swigCMemOwn;
+  private transient boolean swigCMemOwnDerived;
 
   protected JEngineJobUpdateDeviceMessage(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
+    super(stiJNI.JEngineJobUpdateDeviceMessage_SWIGSmartPtrUpcast(cPtr), true);
+    swigCMemOwnDerived = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
@@ -22,7 +23,8 @@ public class JEngineJobUpdateDeviceMessage {
   }
 
   protected void swigSetCMemOwn(boolean own) {
-    swigCMemOwn = own;
+    swigCMemOwnDerived = own;
+    super.swigSetCMemOwn(own);
   }
 
   @SuppressWarnings("deprecation")
@@ -32,12 +34,13 @@ public class JEngineJobUpdateDeviceMessage {
 
   public synchronized void delete() {
     if (swigCPtr != 0) {
-      if (swigCMemOwn) {
-        swigCMemOwn = false;
+      if (swigCMemOwnDerived) {
+        swigCMemOwnDerived = false;
         stiJNI.delete_JEngineJobUpdateDeviceMessage(swigCPtr);
       }
       swigCPtr = 0;
     }
+    super.delete();
   }
 
   protected void swigDirectorDisconnect() {
@@ -69,8 +72,8 @@ public class JEngineJobUpdateDeviceMessage {
     return (cPtr == 0) ? null : new JEventEngineJob(cPtr, true);
   }
 
-  public JEngineJobUpdateDeviceMessage(SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage mess) {
-    this(stiJNI.new_JEngineJobUpdateDeviceMessage__SWIG_1(SWIGTYPE_p_STI__Device__EngineJobUpdateDeviceMessage.getCPtr(mess)), true);
+  public JEngineJobUpdateDeviceMessage(EngineJobUpdateDeviceMessage mess) {
+    this(stiJNI.new_JEngineJobUpdateDeviceMessage__SWIG_1(EngineJobUpdateDeviceMessage.getCPtr(mess), mess), true);
     stiJNI.JEngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 

@@ -34,6 +34,7 @@ add_library(stijava SHARED
     JLocalDevice.cpp
     JNetworkDeviceHub.cpp
     JNodeWalker.cpp
+    JShot.cpp
     sti_wrap.cpp
 )
 

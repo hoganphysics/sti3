@@ -55,13 +55,13 @@ public class EngineSchedulerMessageListener {
     stiJNI.EngineSchedulerMessageListener_change_ownership(this, swigCPtr, true);
   }
 
-  public void handleMessage(EngineSchedulerMessage mess) {
-    stiJNI.EngineSchedulerMessageListener_handleMessage(swigCPtr, this, EngineSchedulerMessage.getCPtr(mess), mess);
-  }
-
   public EngineSchedulerMessageListener() {
     this(stiJNI.new_EngineSchedulerMessageListener(), true);
     stiJNI.EngineSchedulerMessageListener_director_connect(this, swigCPtr, true, true);
+  }
+
+  public void handleMessage(EngineSchedulerMessage mess) {
+    stiJNI.EngineSchedulerMessageListener_handleMessage(swigCPtr, this, EngineSchedulerMessage.getCPtr(mess), mess);
   }
 
 }

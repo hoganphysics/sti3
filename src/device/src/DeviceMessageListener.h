@@ -48,6 +48,8 @@ class DeviceMessageListener
 {
 public:
 
+	DeviceMessageListener() {}
+
 	virtual ~DeviceMessageListener() {}
 	
 	virtual void handleMessage(const std::shared_ptr<Message>& mess) = 0;
