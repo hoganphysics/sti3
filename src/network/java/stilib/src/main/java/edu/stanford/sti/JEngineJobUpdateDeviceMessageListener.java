@@ -58,17 +58,13 @@ public class JEngineJobUpdateDeviceMessageListener extends EngineJobUpdateDevice
     stiJNI.JEngineJobUpdateDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
+  public void handleMessage(JEngineJobUpdateDeviceMessage mess) {
+    stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage(swigCPtr, this, JEngineJobUpdateDeviceMessage.getCPtr(mess), mess);
+  }
+
   public JEngineJobUpdateDeviceMessageListener() {
     this(stiJNI.new_JEngineJobUpdateDeviceMessageListener(), true);
     stiJNI.JEngineJobUpdateDeviceMessageListener_director_connect(this, swigCPtr, true, true);
-  }
-
-  public void handleMessage(JEngineJobUpdateDeviceMessage mess) {
-    stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_0(swigCPtr, this, JEngineJobUpdateDeviceMessage.getCPtr(mess), mess);
-  }
-
-  public void handleMessage(EngineJobUpdateDeviceMessage mess) {
-    if (getClass() == JEngineJobUpdateDeviceMessageListener.class) stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_1(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess); else stiJNI.JEngineJobUpdateDeviceMessageListener_handleMessageSwigExplicitJEngineJobUpdateDeviceMessageListener__SWIG_1(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess);
   }
 
 }

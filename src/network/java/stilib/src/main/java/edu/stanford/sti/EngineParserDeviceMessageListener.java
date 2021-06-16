@@ -55,13 +55,13 @@ public class EngineParserDeviceMessageListener {
     stiJNI.EngineParserDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
+  public void handleMessage(EngineParserDeviceMessage mess) {
+    stiJNI.EngineParserDeviceMessageListener_handleMessage(swigCPtr, this, EngineParserDeviceMessage.getCPtr(mess), mess);
+  }
+
   public EngineParserDeviceMessageListener() {
     this(stiJNI.new_EngineParserDeviceMessageListener(), true);
     stiJNI.EngineParserDeviceMessageListener_director_connect(this, swigCPtr, true, true);
-  }
-
-  public void handleMessage(EngineParserDeviceMessage mess) {
-    stiJNI.EngineParserDeviceMessageListener_handleMessage(swigCPtr, this, EngineParserDeviceMessage.getCPtr(mess), mess);
   }
 
 }

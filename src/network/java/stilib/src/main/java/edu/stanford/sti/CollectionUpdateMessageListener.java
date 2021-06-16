@@ -55,13 +55,13 @@ public class CollectionUpdateMessageListener {
     stiJNI.CollectionUpdateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
+  public void handleMessage(CollectionUpdateMessage mess) {
+    stiJNI.CollectionUpdateMessageListener_handleMessage(swigCPtr, this, CollectionUpdateMessage.getCPtr(mess), mess);
+  }
+
   public CollectionUpdateMessageListener() {
     this(stiJNI.new_CollectionUpdateMessageListener(), true);
     stiJNI.CollectionUpdateMessageListener_director_connect(this, swigCPtr, true, true);
-  }
-
-  public void handleMessage(CollectionUpdateMessage mess) {
-    stiJNI.CollectionUpdateMessageListener_handleMessage(swigCPtr, this, CollectionUpdateMessage.getCPtr(mess), mess);
   }
 
 }

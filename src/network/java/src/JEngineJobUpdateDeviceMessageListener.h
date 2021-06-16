@@ -21,9 +21,9 @@ class JEngineJobUpdateDeviceMessageListener : public DeviceMessageListener<Engin
 {
 public:
 
-    JEngineJobUpdateDeviceMessageListener() : DeviceMessageListener<EngineJobUpdateDeviceMessage>() {}
+    // JEngineJobUpdateDeviceMessageListener() : DeviceMessageListener<EngineJobUpdateDeviceMessage>() {}
 
-    virtual ~JEngineJobUpdateDeviceMessageListener() {}
+    ~JEngineJobUpdateDeviceMessageListener() {}
 
     virtual void handleJMessage(const std::shared_ptr<JEngineJobUpdateDeviceMessage>& mess) = 0;
 

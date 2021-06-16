@@ -193,6 +193,8 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "DeviceMessage.h"
 %include "DeviceMessageListener.h"
 
+%ignore STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >::handleMessage;
+
 %extend STI::Device::EngineSchedulerMessage 
 {
     std::shared_ptr< STI::Engine::JEventEngine > STI::Device::EngineSchedulerMessage::getJEventEngine() const

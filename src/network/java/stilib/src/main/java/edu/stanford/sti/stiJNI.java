@@ -302,44 +302,43 @@ public class stiJNI {
   public final static native boolean DeviceMessageListenerID_opNotEquals(long jarg1, DeviceMessageListenerID jarg1_, long jarg2, DeviceMessageListenerID jarg2_);
   public final static native long new_DeviceMessageListenerID();
   public final static native void delete_DeviceMessageListenerID(long jarg1);
-  public final static native long new_RefreshDeviceMessageListener();
   public final static native void delete_RefreshDeviceMessageListener(long jarg1);
   public final static native void RefreshDeviceMessageListener_handleMessage(long jarg1, RefreshDeviceMessageListener jarg1_, long jarg2, RefreshDeviceMessage jarg2_);
+  public final static native long new_RefreshDeviceMessageListener();
   public final static native void RefreshDeviceMessageListener_director_connect(RefreshDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void RefreshDeviceMessageListener_change_ownership(RefreshDeviceMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_ChannelUpdateMessageListener();
   public final static native void delete_ChannelUpdateMessageListener(long jarg1);
   public final static native void ChannelUpdateMessageListener_handleMessage(long jarg1, ChannelUpdateMessageListener jarg1_, long jarg2, ChannelUpdateMessage jarg2_);
+  public final static native long new_ChannelUpdateMessageListener();
   public final static native void ChannelUpdateMessageListener_director_connect(ChannelUpdateMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void ChannelUpdateMessageListener_change_ownership(ChannelUpdateMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_AttributeUpdateMessageListener();
   public final static native void delete_AttributeUpdateMessageListener(long jarg1);
   public final static native void AttributeUpdateMessageListener_handleMessage(long jarg1, AttributeUpdateMessageListener jarg1_, long jarg2, AttributeUpdateMessage jarg2_);
+  public final static native long new_AttributeUpdateMessageListener();
   public final static native void AttributeUpdateMessageListener_director_connect(AttributeUpdateMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void AttributeUpdateMessageListener_change_ownership(AttributeUpdateMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineSchedulerMessageListener();
   public final static native void delete_EngineSchedulerMessageListener(long jarg1);
   public final static native void EngineSchedulerMessageListener_handleMessage(long jarg1, EngineSchedulerMessageListener jarg1_, long jarg2, EngineSchedulerMessage jarg2_);
+  public final static native long new_EngineSchedulerMessageListener();
   public final static native void EngineSchedulerMessageListener_director_connect(EngineSchedulerMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineSchedulerMessageListener_change_ownership(EngineSchedulerMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineParserDeviceMessageListener();
   public final static native void delete_EngineParserDeviceMessageListener(long jarg1);
   public final static native void EngineParserDeviceMessageListener_handleMessage(long jarg1, EngineParserDeviceMessageListener jarg1_, long jarg2, EngineParserDeviceMessage jarg2_);
+  public final static native long new_EngineParserDeviceMessageListener();
   public final static native void EngineParserDeviceMessageListener_director_connect(EngineParserDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineParserDeviceMessageListener_change_ownership(EngineParserDeviceMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_CollectionUpdateMessageListener();
   public final static native void delete_CollectionUpdateMessageListener(long jarg1);
   public final static native void CollectionUpdateMessageListener_handleMessage(long jarg1, CollectionUpdateMessageListener jarg1_, long jarg2, CollectionUpdateMessage jarg2_);
+  public final static native long new_CollectionUpdateMessageListener();
   public final static native void CollectionUpdateMessageListener_director_connect(CollectionUpdateMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void CollectionUpdateMessageListener_change_ownership(CollectionUpdateMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineStateMessageListener();
   public final static native void delete_EngineStateMessageListener(long jarg1);
   public final static native void EngineStateMessageListener_handleMessage(long jarg1, EngineStateMessageListener jarg1_, long jarg2, EngineStateMessage jarg2_);
+  public final static native long new_EngineStateMessageListener();
   public final static native void EngineStateMessageListener_director_connect(EngineStateMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineStateMessageListener_change_ownership(EngineStateMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineJobUpdateDeviceMessageListener();
   public final static native void delete_EngineJobUpdateDeviceMessageListener(long jarg1);
-  public final static native void EngineJobUpdateDeviceMessageListener_handleMessage(long jarg1, EngineJobUpdateDeviceMessageListener jarg1_, long jarg2, EngineJobUpdateDeviceMessage jarg2_);
+  public final static native long new_EngineJobUpdateDeviceMessageListener();
   public final static native void EngineJobUpdateDeviceMessageListener_director_connect(EngineJobUpdateDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineJobUpdateDeviceMessageListener_change_ownership(EngineJobUpdateDeviceMessageListener obj, long cptr, boolean take_or_release);
   public final static native long new_JEngineJobUpdateDeviceMessage__SWIG_0(long jarg1, DeviceTrace jarg1_);
@@ -349,11 +348,9 @@ public class stiJNI {
   public final static native long new_JEngineJobUpdateDeviceMessage__SWIG_1(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
   public final static native void JEngineJobUpdateDeviceMessage_director_connect(JEngineJobUpdateDeviceMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JEngineJobUpdateDeviceMessage_change_ownership(JEngineJobUpdateDeviceMessage obj, long cptr, boolean take_or_release);
-  public final static native long new_JEngineJobUpdateDeviceMessageListener();
   public final static native void delete_JEngineJobUpdateDeviceMessageListener(long jarg1);
-  public final static native void JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_0(long jarg1, JEngineJobUpdateDeviceMessageListener jarg1_, long jarg2, JEngineJobUpdateDeviceMessage jarg2_);
-  public final static native void JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_1(long jarg1, JEngineJobUpdateDeviceMessageListener jarg1_, long jarg2, EngineJobUpdateDeviceMessage jarg2_);
-  public final static native void JEngineJobUpdateDeviceMessageListener_handleMessageSwigExplicitJEngineJobUpdateDeviceMessageListener__SWIG_1(long jarg1, JEngineJobUpdateDeviceMessageListener jarg1_, long jarg2, EngineJobUpdateDeviceMessage jarg2_);
+  public final static native void JEngineJobUpdateDeviceMessageListener_handleMessage(long jarg1, JEngineJobUpdateDeviceMessageListener jarg1_, long jarg2, JEngineJobUpdateDeviceMessage jarg2_);
+  public final static native long new_JEngineJobUpdateDeviceMessageListener();
   public final static native void JEngineJobUpdateDeviceMessageListener_director_connect(JEngineJobUpdateDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JEngineJobUpdateDeviceMessageListener_change_ownership(JEngineJobUpdateDeviceMessageListener obj, long cptr, boolean take_or_release);
   public final static native long new_JDeviceMessageReceiver(long jarg1);
@@ -762,13 +759,7 @@ public class stiJNI {
   public static void SwigDirector_EngineStateMessageListener_handleMessage(EngineStateMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new EngineStateMessage(mess, true));
   }
-  public static void SwigDirector_EngineJobUpdateDeviceMessageListener_handleMessage(EngineJobUpdateDeviceMessageListener jself, long mess) {
-    jself.handleMessage((mess == 0) ? null : new EngineJobUpdateDeviceMessage(mess, true));
-  }
-  public static void SwigDirector_JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_1(JEngineJobUpdateDeviceMessageListener jself, long mess) {
-    jself.handleMessage((mess == 0) ? null : new EngineJobUpdateDeviceMessage(mess, true));
-  }
-  public static void SwigDirector_JEngineJobUpdateDeviceMessageListener_handleMessage__SWIG_0(JEngineJobUpdateDeviceMessageListener jself, long mess) {
+  public static void SwigDirector_JEngineJobUpdateDeviceMessageListener_handleMessage(JEngineJobUpdateDeviceMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new JEngineJobUpdateDeviceMessage(mess, true));
   }
   public static short SwigDirector_Channel_getChannelNumber(Channel jself) {

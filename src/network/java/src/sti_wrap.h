@@ -252,10 +252,8 @@ public:
     virtual void handleMessage(std::shared_ptr< STI::Device::EngineJobUpdateDeviceMessage > const &mess);
 public:
     bool swig_overrides(int n) {
-      return (n < 1 ? swig_override[n] : false);
+      return false;
     }
-protected:
-    Swig::BoolArray<1> swig_override;
 };
 
 class SwigDirector_JEngineJobUpdateDeviceMessage : public STI::Device::JEngineJobUpdateDeviceMessage, public Swig::Director {
@@ -281,10 +279,10 @@ public:
     virtual void handleJMessage(std::shared_ptr< STI::Device::JEngineJobUpdateDeviceMessage > const &mess);
 public:
     bool swig_overrides(int n) {
-      return (n < 2 ? swig_override[n] : false);
+      return (n < 1 ? swig_override[n] : false);
     }
 protected:
-    Swig::BoolArray<2> swig_override;
+    Swig::BoolArray<1> swig_override;
 };
 
 class SwigDirector_Channel : public STI::Device::Channel, public Swig::Director {

@@ -48,7 +48,7 @@ class DeviceMessageListener
 {
 public:
 
-	DeviceMessageListener() {}
+	// DeviceMessageListener() {}
 
 	virtual ~DeviceMessageListener() {}
 	

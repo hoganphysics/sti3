@@ -55,13 +55,13 @@ public class RefreshDeviceMessageListener {
     stiJNI.RefreshDeviceMessageListener_change_ownership(this, swigCPtr, true);
   }
 
+  public void handleMessage(RefreshDeviceMessage mess) {
+    stiJNI.RefreshDeviceMessageListener_handleMessage(swigCPtr, this, RefreshDeviceMessage.getCPtr(mess), mess);
+  }
+
   public RefreshDeviceMessageListener() {
     this(stiJNI.new_RefreshDeviceMessageListener(), true);
     stiJNI.RefreshDeviceMessageListener_director_connect(this, swigCPtr, true, true);
-  }
-
-  public void handleMessage(RefreshDeviceMessage mess) {
-    stiJNI.RefreshDeviceMessageListener_handleMessage(swigCPtr, this, RefreshDeviceMessage.getCPtr(mess), mess);
   }
 
 }

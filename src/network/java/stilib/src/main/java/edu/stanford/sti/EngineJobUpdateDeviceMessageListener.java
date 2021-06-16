@@ -60,8 +60,4 @@ public class EngineJobUpdateDeviceMessageListener {
     stiJNI.EngineJobUpdateDeviceMessageListener_director_connect(this, swigCPtr, true, true);
   }
 
-  public void handleMessage(EngineJobUpdateDeviceMessage mess) {
-    stiJNI.EngineJobUpdateDeviceMessageListener_handleMessage(swigCPtr, this, EngineJobUpdateDeviceMessage.getCPtr(mess), mess);
-  }
-
 }

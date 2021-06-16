@@ -55,13 +55,13 @@ public class AttributeUpdateMessageListener {
     stiJNI.AttributeUpdateMessageListener_change_ownership(this, swigCPtr, true);
   }
 
+  public void handleMessage(AttributeUpdateMessage mess) {
+    stiJNI.AttributeUpdateMessageListener_handleMessage(swigCPtr, this, AttributeUpdateMessage.getCPtr(mess), mess);
+  }
+
   public AttributeUpdateMessageListener() {
     this(stiJNI.new_AttributeUpdateMessageListener(), true);
     stiJNI.AttributeUpdateMessageListener_director_connect(this, swigCPtr, true, true);
-  }
-
-  public void handleMessage(AttributeUpdateMessage mess) {
-    stiJNI.AttributeUpdateMessageListener_handleMessage(swigCPtr, this, AttributeUpdateMessage.getCPtr(mess), mess);
   }
 
 }
