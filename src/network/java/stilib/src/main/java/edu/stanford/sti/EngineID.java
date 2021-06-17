@@ -40,7 +40,7 @@ public class EngineID {
     this(stiJNI.new_EngineID__SWIG_0(), true);
   }
 
-  public EngineID(short number) {
+  public EngineID(int number) {
     this(stiJNI.new_EngineID__SWIG_1(number), true);
   }
 
@@ -56,11 +56,11 @@ public class EngineID {
     return stiJNI.EngineID_opNotEquals(swigCPtr, this, EngineID.getCPtr(rhs), rhs);
   }
 
-  public short getNumber() {
+  public int getNumber() {
     return stiJNI.EngineID_getNumber(swigCPtr, this);
   }
 
-  public void setNumber(short number) {
+  public void setNumber(int number) {
     stiJNI.EngineID_setNumber(swigCPtr, this, number);
   }
 

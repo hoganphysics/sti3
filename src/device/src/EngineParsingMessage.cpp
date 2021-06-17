@@ -22,7 +22,7 @@ ParsingMessageType EngineParsingMessage::getType() const
     return type;
 }
 
-STI::Device::DeviceID EngineParsingMessage::getID() const
+STI::Device::DeviceID EngineParsingMessage::getSourceID() const
 {
     return sourceID;
 }

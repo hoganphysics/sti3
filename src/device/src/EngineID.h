@@ -12,7 +12,7 @@ class EngineID
 public:
 
 	EngineID() : engineNumber(0) {}
-	EngineID(short number) : engineNumber(number) {}
+	EngineID(int number) : engineNumber(number) {}
 
 
 	// struct EngineIDCompare 
@@ -31,12 +31,12 @@ public:
 	}
 	bool operator!=(const EngineID& rhs) const { return !((*this) == rhs); }
 
-	short getNumber() const { return engineNumber; }
-	void setNumber(short number) { engineNumber = number; }
+	int getNumber() const { return engineNumber; }
+	void setNumber(int number) { engineNumber = number; }
 
 private:
 
-	short engineNumber;
+	int engineNumber;
 
 };
 

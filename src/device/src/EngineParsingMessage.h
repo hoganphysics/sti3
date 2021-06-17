@@ -28,7 +28,7 @@ public:
 
     ParsingMessageType getType() const;
     unsigned getIDCode() const;
-    STI::Device::DeviceID getID() const;
+    STI::Device::DeviceID getSourceID() const;
     const std::string& getName() const;
     const std::string& getMessage() const;
     const std::vector<RawEvent>& getEvents() const;

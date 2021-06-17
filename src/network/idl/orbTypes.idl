@@ -115,7 +115,7 @@ module TNetwork
 
 	struct TEngineID
 	{
-		short engineNumber;
+		long engineNumber;
 	};
 
 	enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError };

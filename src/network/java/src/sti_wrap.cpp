@@ -4474,14 +4474,14 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1EngineID_1_1SWIG_10(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1EngineID_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jshort jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1EngineID_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
-  short arg1 ;
+  int arg1 ;
   STI::Engine::EngineID *result = 0 ;
   
   (void)jenv;
   (void)jcls;
-  arg1 = (short)jarg1; 
+  arg1 = (int)jarg1; 
   result = (STI::Engine::EngineID *)new STI::Engine::EngineID(arg1);
   *(STI::Engine::EngineID **)&jresult = result; 
   return jresult;
@@ -4554,30 +4554,30 @@ SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_EngineID_1opNotEquals(J
 }
 
 
-SWIGEXPORT jshort JNICALL Java_edu_stanford_sti_stiJNI_EngineID_1getNumber(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jshort jresult = 0 ;
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_EngineID_1getNumber(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
   STI::Engine::EngineID *arg1 = (STI::Engine::EngineID *) 0 ;
-  short result;
+  int result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(STI::Engine::EngineID **)&jarg1; 
-  result = (short)((STI::Engine::EngineID const *)arg1)->getNumber();
-  jresult = (jshort)result; 
+  result = (int)((STI::Engine::EngineID const *)arg1)->getNumber();
+  jresult = (jint)result; 
   return jresult;
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineID_1setNumber(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_EngineID_1setNumber(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   STI::Engine::EngineID *arg1 = (STI::Engine::EngineID *) 0 ;
-  short arg2 ;
+  int arg2 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(STI::Engine::EngineID **)&jarg1; 
-  arg2 = (short)jarg2; 
+  arg2 = (int)jarg2; 
   (arg1)->setNumber(arg2);
 }
 
@@ -13209,7 +13209,7 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineParsingMessage_1getI
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineParsingMessage_1getID(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineParsingMessage_1getSourceID(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   STI::Engine::EngineParsingMessage *arg1 = (STI::Engine::EngineParsingMessage *) 0 ;
   STI::Device::DeviceID result;
@@ -13218,7 +13218,7 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_EngineParsingMessage_1getI
   (void)jcls;
   (void)jarg1_;
   arg1 = *(STI::Engine::EngineParsingMessage **)&jarg1; 
-  result = ((STI::Engine::EngineParsingMessage const *)arg1)->getID();
+  result = ((STI::Engine::EngineParsingMessage const *)arg1)->getSourceID();
   *(STI::Device::DeviceID **)&jresult = new STI::Device::DeviceID((const STI::Device::DeviceID &)result); 
   return jresult;
 }

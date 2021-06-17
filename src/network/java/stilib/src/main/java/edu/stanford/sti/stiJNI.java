@@ -69,12 +69,12 @@ public class stiJNI {
   public final static native String DeviceTrace_print__SWIG_1(long jarg1, DeviceTrace jarg1_);
   public final static native void delete_DeviceTrace(long jarg1);
   public final static native long new_EngineID__SWIG_0();
-  public final static native long new_EngineID__SWIG_1(short jarg1);
+  public final static native long new_EngineID__SWIG_1(int jarg1);
   public final static native boolean EngineID_opLess(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
   public final static native boolean EngineID_opEquals(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
   public final static native boolean EngineID_opNotEquals(long jarg1, EngineID jarg1_, long jarg2, EngineID jarg2_);
-  public final static native short EngineID_getNumber(long jarg1, EngineID jarg1_);
-  public final static native void EngineID_setNumber(long jarg1, EngineID jarg1_, short jarg2);
+  public final static native int EngineID_getNumber(long jarg1, EngineID jarg1_);
+  public final static native void EngineID_setNumber(long jarg1, EngineID jarg1_, int jarg2);
   public final static native void delete_EngineID(long jarg1);
   public final static native long new_UIntVector__SWIG_0();
   public final static native long new_UIntVector__SWIG_1(long jarg1, UIntVector jarg1_);
@@ -572,7 +572,7 @@ public class stiJNI {
   public final static native void delete_EngineParsingMessage(long jarg1);
   public final static native int EngineParsingMessage_getType(long jarg1, EngineParsingMessage jarg1_);
   public final static native long EngineParsingMessage_getIDCode(long jarg1, EngineParsingMessage jarg1_);
-  public final static native long EngineParsingMessage_getID(long jarg1, EngineParsingMessage jarg1_);
+  public final static native long EngineParsingMessage_getSourceID(long jarg1, EngineParsingMessage jarg1_);
   public final static native String EngineParsingMessage_getName(long jarg1, EngineParsingMessage jarg1_);
   public final static native String EngineParsingMessage_getMessage(long jarg1, EngineParsingMessage jarg1_);
   public final static native long EngineParsingMessage_getEvents(long jarg1, EngineParsingMessage jarg1_);

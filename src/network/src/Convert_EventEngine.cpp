@@ -306,7 +306,7 @@ EventEngineJobType STI::Network::convert<TEventEngineJobType, EventEngineJobType
 template<>
 bool STI::Network::convert<EngineID, TEngineID>(const EngineID& engineID, TEngineID& tEngineID)
 {
-    tEngineID.engineNumber = static_cast<CORBA::Short>(engineID.getNumber());
+    tEngineID.engineNumber = static_cast<CORBA::Long>(engineID.getNumber());
 
     return true;
 }
@@ -824,7 +824,7 @@ bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const En
 {
     tParsingMessage.type = convert<ParsingMessageType, TParsingMessageType>(parsingMessage.getType());
     tParsingMessage.id_code = static_cast<::CORBA::Short>(parsingMessage.getIDCode());
-    tParsingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(parsingMessage.getID());
+    tParsingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(parsingMessage.getSourceID());
     convert<std::string, ::CORBA::String_member>(parsingMessage.getName(), tParsingMessage.name);
     convert<std::string, ::CORBA::String_member>(parsingMessage.getMessage(), tParsingMessage.message);
     convert<RawEvent, TRawEvent>(parsingMessage.getEvents(), tParsingMessage.events);

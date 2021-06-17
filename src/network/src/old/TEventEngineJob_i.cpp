@@ -18,6 +18,7 @@ using STI::Engine::EngineJobID;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngine;
 using STI::Network::convert;
+using STI::Engine::EngineJobStatus;
 
 
 TEventEngineJob_i::TEventEngineJob_i(const std::shared_ptr<EventEngineJob>& engineJob)
@@ -57,7 +58,7 @@ TEngineJobStatus TEventEngineJob_i::getStatus()
     TEngineJobStatus tStatus;
 
     if (eventEngineJob != 0) {
-        convert<EventEngineJob::EngineJobStatus, TEngineJobStatus>(eventEngineJob->getStatus(), tStatus);
+        convert<EngineJobStatus, TEngineJobStatus>(eventEngineJob->getStatus(), tStatus);
 	}
     return tStatus;
 }

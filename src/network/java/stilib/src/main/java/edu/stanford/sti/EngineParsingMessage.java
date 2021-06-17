@@ -48,8 +48,8 @@ public class EngineParsingMessage {
     return stiJNI.EngineParsingMessage_getIDCode(swigCPtr, this);
   }
 
-  public DeviceID getID() {
-    return new DeviceID(stiJNI.EngineParsingMessage_getID(swigCPtr, this), true);
+  public DeviceID getSourceID() {
+    return new DeviceID(stiJNI.EngineParsingMessage_getSourceID(swigCPtr, this), true);
   }
 
   public String getName() {
