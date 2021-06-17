@@ -6,24 +6,39 @@
 #include "fwd/MixedValue_fwd.h"
 
 #include <memory>
+#include <type_traits>
 
 namespace STI
 {
 namespace Network
 {
 
+//This template is only instantiated if a convert function is not specified.
+//This will force a compiler error to indicated the convert is missing.
+template<typename In, typename Out>
+bool convertExists()
+{
+	return false;
+}
+
+
 template<typename In, typename Out>
 bool convert(const In& input, Out& output)
 {
 	//Compiler error if an explicit specialization is not found.
+	//Only specializations can be used.
+	static_assert(convertExists<In, Out>(), "bool NetworkConvert::convert<In, Out> not specialized.");
 }
+
 
 template<typename In, typename Out>
 Out convert(const In& input)
 {
 	//Compiler error. This template should never be instantiated.
 	//Only specializations can be used.
+	static_assert(convertExists<In, Out>(), "Out NetworkConvert::convert<In, Out> not specialized.");
 }
+
 
 
 //////////////// Lists //////////////////////

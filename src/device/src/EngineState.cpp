@@ -3,7 +3,7 @@
 
 using STI::Engine::EngineState;
 
-std::string print(const EngineState& state) {
+std::string STI::Engine::print(const EngineState& state) {
 	std::string name = "";
 
 	switch(state) {

@@ -66,6 +66,11 @@ using STI::TNetwork::TParsingMessageType;
 using STI::Engine::DeviceEventMap;
 using STI::TNetwork::TDeviceEventsSeq;
 
+using STI::Engine::ParseID; 
+using STI::TNetwork::TParseID;
+using STI::Engine::ShotID;
+using STI::TNetwork::TShotID;
+
 //EventEngineDependencyTree
 template<>
 bool STI::Network::convert<EventEngineDependencyTree, TEventEngineDependencyTree>(const EventEngineDependencyTree& tree, TEventEngineDependencyTree& tTree)
@@ -210,10 +215,22 @@ bool STI::Network::convert<TEngineState, EngineState>(const TEngineState& tState
     return true;
 }
 
-using STI::Engine::ParseID; 
-using STI::TNetwork::TParseID;
-using STI::Engine::ShotID;
-using STI::TNetwork::TShotID;
+template<>
+TEngineState STI::Network::convert<EngineState, TEngineState>(const EngineState& state)
+{
+    TEngineState tState;
+    convert<EngineState, TEngineState>(state, tState);
+    return tState;
+}
+
+template<>
+EngineState STI::Network::convert<TEngineState, EngineState>(const TEngineState& tState)
+{
+    EngineState state;
+    convert<TEngineState, EngineState>(tState, state);
+    return state;
+}
+
 
 //EngineJobID
 template<>

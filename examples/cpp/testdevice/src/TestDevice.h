@@ -20,6 +20,7 @@ public:
 	STI::Device::DeviceMessageListenerID collectionMessageLID;
 
 	STI::Device::DeviceMessageListenerID jobMessageLID;
+	STI::Device::DeviceMessageListenerID stateMessageLID;
 
     //Custom device event class
 	class TestEvent : public STI::Engine::SynchronousEventAdapter

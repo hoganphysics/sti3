@@ -9,6 +9,7 @@
 #include "EngineJobID.h"
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
+#include "Convert_DeviceTrace.h"
 #include "Shot.h"
 #include "RawEvent.h"
 

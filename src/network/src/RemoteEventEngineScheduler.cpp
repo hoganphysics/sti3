@@ -4,6 +4,9 @@
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
+
+#include "Convert_DeviceTrace.h"
+
 #include "deviceNet.h"
 #include "orbTypes.h"
 #include "NetworkShotWrapper.h"

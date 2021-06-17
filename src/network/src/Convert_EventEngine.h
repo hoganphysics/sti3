@@ -50,6 +50,10 @@ template<>
 bool Network::convert<Engine::EngineState, TNetwork::TEngineState>(const Engine::EngineState& state, TNetwork::TEngineState& tState);
 template<>
 bool Network::convert<TNetwork::TEngineState, Engine::EngineState>(const TNetwork::TEngineState& tState, Engine::EngineState& state);
+template<>
+TNetwork::TEngineState Network::convert<Engine::EngineState, TNetwork::TEngineState>(const Engine::EngineState& state);
+template<>
+Engine::EngineState STI::Network::convert<TNetwork::TEngineState, Engine::EngineState>(const TNetwork::TEngineState& tState);
 
 
 //EngineJobID

@@ -1,5 +1,9 @@
 
+
 #include "TestDevice.h"
+
+#include "EngineState.h"
+
 
 #include <iostream>
 #include <string>
@@ -64,6 +68,14 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
         [](auto message) { 
             std::cout << "Job message: " << STI::Device::EngineJobUpdateDeviceMessage::jobTargetToString(message->targetList)// << STI::Device::DeviceMessage::typeToString(message->getMessageClassType())
             << " : " <<  message->getDeviceTrace().print() << " : " << message->engineJob->getJobID().pid.parseTimestamp.timestamp << std::endl;
+        } );
+
+    stateMessageLID.name = "::EngineStateMessage::Test";	//getID().getID() + 
+	stateMessageLID.type = STI::Device::DeviceMessageType::EngineStatus;
+
+    receiver->addListener<STI::Device::EngineStateMessage>(serverID, stateMessageLID, 
+        [](auto message) { 
+            std::cout << "State message: " << STI::Engine::print((message->engineStates.begin()->second)) << std::endl;
         } );
 }
 
