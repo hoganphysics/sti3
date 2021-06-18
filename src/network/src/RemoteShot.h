@@ -5,6 +5,7 @@
 
 #include "Shot.h"
 #include "TReferenceHolder.h"
+#include "TShotRefInterface.h"
 
 #include <memory>
 #include <vector>
@@ -16,7 +17,8 @@ namespace Network
 {
 
 class RemoteShot : public STI::Engine::Shot,
-                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>	//mixin
+                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>,	//mixin
+                   public STI::Network::TShotRefInterface	//mixin
 {
 public:
 
@@ -25,10 +27,13 @@ public:
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events);
 
-    void refreshEvents();
+
 
 private:
 
+    bool getTShotReference(STI::TNetwork::TShot_ptr& tShot);
+
+    void _refreshEvents();
     bool refreshRequired;
 
     std::shared_ptr<std::vector<STI::Engine::RawEvent>> storedEvents;

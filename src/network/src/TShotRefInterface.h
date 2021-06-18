@@ -17,20 +17,35 @@ class TShotRefInterface
 {
 public:
 
-	static bool getTShotReference(const typename std::shared_ptr<STI::Engine::Shot>& shot, STI::TNetwork::TShot_ptr& tShot)
+	static bool getTShotReference(
+			const typename std::shared_ptr<STI::Engine::Shot>& shot, 
+		    STI::TNetwork::TShot_ptr& tShot)
 	{
-		std::shared_ptr<TShotRefInterface> tParsedShotRefInterface;
-		tParsedShotRefInterface = std::dynamic_pointer_cast<TShotRefInterface>(shot);
-
-		return (tParsedShotRefInterface != 0 &&					    //check dynamic_pointer_cast
-			tParsedShotRefInterface->getTShotRef(tShot) &&	//polymorphic call
-			!CORBA::is_nil(tShot)
-			);
+		auto refInterface = std::dynamic_pointer_cast<TShotRefInterface>(shot);
+		if (refInterface) {
+			return refInterface->getTShotReference(tShot);
+		}
+		return false;
 	}
 
 private:
 
-	virtual bool getTShotRef(STI::TNetwork::TShot_ptr& tParsedShot) = 0;
+	virtual bool getTShotReference(STI::TNetwork::TShot_ptr& tShot) = 0;
+
+// 	static bool getTShotReference(const typename std::shared_ptr<STI::Engine::Shot>& shot, STI::TNetwork::TShot_ptr& tShot)
+// 	{
+// 		std::shared_ptr<TShotRefInterface> tParsedShotRefInterface;
+// 		tParsedShotRefInterface = std::dynamic_pointer_cast<TShotRefInterface>(shot);
+
+// 		return (tParsedShotRefInterface != 0 &&					    //check dynamic_pointer_cast
+// 			tParsedShotRefInterface->getTShotRef(tShot) &&	//polymorphic call
+// 			!CORBA::is_nil(tShot)
+// 			);
+// 	}
+
+// private:
+
+// 	virtual bool getTShotRef(STI::TNetwork::TShot_ptr& tParsedShot) = 0;
 
 };
 

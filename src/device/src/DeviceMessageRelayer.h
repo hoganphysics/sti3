@@ -44,6 +44,13 @@ public:
         DeviceMessageRelayer<T ...>::removeAllListeners(receiver, id, relayer);
     }
 
+    template<typename W>
+    void addFilter(const std::function<bool(const std::shared_ptr<W>&)>& filter) 
+    {
+        DeviceMessageRelayer<U>::addFilter(filter);
+        DeviceMessageRelayer<T ...>::addFilter(filter);
+    }
+
 };
 
 
@@ -63,19 +70,36 @@ public:
 
     virtual ~DeviceMessageRelayer() {}
 
-	void handleMessage(const std::shared_ptr<M>& mess) 
+    void addFilter(const std::function<bool(const std::shared_ptr<M>&)>& filter) 
     {
-        if (mess == 0) return;
+        //match
+        DeviceMessageRelayer<M>::filters.push_back(filter);
+    }
+
+    template<typename U>
+    void addFilter(const std::function<bool(const std::shared_ptr<U>&)>& filter) 
+    {
+        //catch wrong type
+    }
+
+	void handleMessage(const std::shared_ptr<M>& message) 
+    {
+        if (message == 0) return;
         
-        if (mess->getDeviceTrace().includesID(DeviceMessageRelayer<M>::relayerID)) {
+        if (message->getDeviceTrace().includesID(DeviceMessageRelayer<M>::relayerID)) {
             return; //loop detected
         }
 
+        //apply filters
+        for (auto& relayQ : DeviceMessageRelayer<M>::filters) {
+            if(!relayQ(message)) return;
+        }
+
         //relay message
-        mess->addRelayingID(DeviceMessageRelayer<M>::relayerID);
+        message->addRelayingID(DeviceMessageRelayer<M>::relayerID);
 
         if (DeviceMessageRelayer<M>::dispatcher != 0) {
-            DeviceMessageRelayer<M>::dispatcher->addMessage(mess);
+            DeviceMessageRelayer<M>::dispatcher->addMessage(message);
         }
     }
 
@@ -91,7 +115,7 @@ public:
         }
     }
 
-     static void removeAllListeners(const std::shared_ptr<DeviceMessageReceiver>& receiver, 
+    static void removeAllListeners(const std::shared_ptr<DeviceMessageReceiver>& receiver, 
                                     const DeviceID& id, const std::shared_ptr<DeviceMessageRelayer<M>>& relayer)
     {
         // std::cout << "remove DeviceMessageRelayer<" << M::typeToString( M::getMessageClassType() ) << ">" << std::endl;
@@ -102,6 +126,8 @@ public:
     }
 
 private:
+
+    std::vector<std::function<bool(const std::shared_ptr<M>&)>> filters;
 
     DeviceID relayerID;
     DeviceMessageListenerID listenerID;

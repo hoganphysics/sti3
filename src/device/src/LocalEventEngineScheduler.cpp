@@ -524,6 +524,11 @@ void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& ne
     if (newJob != 0) {
         queuedJobs.add(newJob->getJobID(), newJob);
 
+        //only the owner of the job sends job messages
+        // if (newJob->getJobOwner() == localDeviceID) {
+
+        // }
+
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toQueuedList(newJob);
         sendMessage(message);
@@ -591,6 +596,7 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toCompleteList(job);
         sendMessage(message);
+
     }
 
     if (queuedJobs.get(jobID, job) && job != 0) {
@@ -749,7 +755,7 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toRunningList(job);
         sendMessage(message);
-        
+       
         return true;
     }
 

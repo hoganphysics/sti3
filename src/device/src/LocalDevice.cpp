@@ -73,6 +73,24 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	serverMessageRelayer = std::make_shared<STI::Device::ServerMessageRelayer>(getID(), deviceMessageDispatcher);
 
+	serverMessageRelayer->addFilter<STI::Device::EngineJobUpdateDeviceMessage>( 
+		[](const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& message)->bool {
+			//only relay job messages that originate from the job owner (avoids duplicates)
+			return message->engineJob->getJobOwner() == message->originalSourceID();
+		});
+
+	// serverMessageRelayer->addFilter<STI::Device::EngineStateMessage>( 
+	// 	[](const std::shared_ptr<STI::Device::EngineStateMessage>& message)->bool {
+	// 		//only relay job messages that originate from the job owner (avoids duplicates)
+	// 		return true;
+	// 	});
+
+
+	// serverMessageRelayer->test<STI::Device::EngineJobUpdateDeviceMessage>( 
+	// 	[](const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& message)->bool {
+	// 		return true;
+	// 	});
+
 	// auto listenerTest = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(r1);
 	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest);
 

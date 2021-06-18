@@ -453,7 +453,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     std::shared_ptr<Shot> shot;
     STI::TNetwork::TShot_ptr tShot;
     
-    if (engineJob.getShot(shot) && NetworkShotWrapper::getTShotReference(shot, tShot)) {
+    if (engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShot)) {
 
         tEngineJob.shot = tShot;
     }
@@ -765,7 +765,7 @@ bool STI::Network::convert<std::shared_ptr<Shot>, TShot_ptr>(const std::shared_p
     //std::shared_ptr<Shot> parsedShot;
 //    STI::TNetwork::TShot_ptr tShot;
     
-    if (shot != 0 && NetworkShotWrapper::getTShotReference(shot, tShot)) {
+    if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShot)) {
         return !CORBA::is_nil(tShot);
     }
     return false;

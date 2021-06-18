@@ -38,6 +38,7 @@ public class TestJDevice extends JLocalDevice {
             public void handleMessage(edu.stanford.sti.JEngineJobUpdateDeviceMessage mess) {
                 // System.out.println("Job:" + mess.getJEngineJob().getJobID().getPid().getParseTimestamp().getTimestamp());
                 System.out.println("Job: " + mess.getTargetList().toString() + " : " + mess.getDeviceTrace().print());
+                System.out.println("Job message: " + mess.getJEngineJob().getParsingMessages().toString());
             }
         };
         messageReceiver.addListener(serverID, listenerID, joblistener);
