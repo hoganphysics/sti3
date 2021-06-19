@@ -68,6 +68,7 @@ add_library(stidevice SHARED
     RawEvent.cpp
     ShotID.cpp
     SynchronousEvent.cpp
+    TimeStamp.cpp
     utils.cpp
 )
 

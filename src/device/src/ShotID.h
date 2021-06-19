@@ -24,9 +24,6 @@ public:
 
 	EngineJobSourceID jobSourceID;
 
-	// std::string user;
-	// std::string machine;
-
 	bool operator<(const ShotID& rhs) const 
 	{
 		if (parseID == rhs.parseID) {
@@ -44,7 +41,7 @@ public:
 
 private:
 
-	static TimeStamp lastPlayTime;
+	static TimeStamp lastSubmissionTime;
 	static std::mutex IDmutex;
 
 };

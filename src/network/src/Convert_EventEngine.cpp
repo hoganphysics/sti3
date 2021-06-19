@@ -700,7 +700,15 @@ TTimeStamp STI::Network::convert<TimeStamp, TTimeStamp>(const TimeStamp& timeSta
 {
     TTimeStamp tTime;
 
-    tTime.timestamp = static_cast<CORBA::Double>(timeStamp.timestamp);
+    tTime.year = timeStamp.year();
+    tTime.month = timeStamp.month();
+    tTime.day = timeStamp.day();
+    tTime.hour = timeStamp.hour();
+    tTime.min = timeStamp.min();
+    tTime.sec = timeStamp.sec();
+    tTime.millis = timeStamp.millis();
+    tTime.micros = timeStamp.micros();
+    tTime.nanos = timeStamp.nanos();
 
     return tTime;
 }
@@ -708,9 +716,8 @@ TTimeStamp STI::Network::convert<TimeStamp, TTimeStamp>(const TimeStamp& timeSta
 template<>
 TimeStamp STI::Network::convert<TTimeStamp, TimeStamp>(const TTimeStamp& tTime)
 {
-    TimeStamp time;
-
-    time.timestamp = static_cast<double>(tTime.timestamp);
+    TimeStamp time(tTime.year, tTime.month, tTime.day, tTime.hour, tTime.min, tTime.sec,
+                    tTime.millis, tTime.micros, tTime.nanos);
 
     return time;
 }

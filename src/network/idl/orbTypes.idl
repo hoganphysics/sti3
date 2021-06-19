@@ -124,7 +124,15 @@ module TNetwork
 	
 	struct TTimeStamp
 	{
-		double timestamp;
+		long year;
+		long month;
+		long day;
+		long hour;
+		long min;
+		long sec;
+		long millis;
+		long micros;
+		long nanos;
 	};
 
 	struct TEngineJobSourceID

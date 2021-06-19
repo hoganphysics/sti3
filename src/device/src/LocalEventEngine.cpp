@@ -527,7 +527,7 @@ void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSch
 TimeStamp LocalEventEngine::getCurrentTimeStamp()
 {
 	TimeStamp ts;
-	ts.timestamp = 0;
+	// ts.timestamp = 0;
 	return ts;
 }
 

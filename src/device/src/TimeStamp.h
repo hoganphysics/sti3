@@ -13,15 +13,51 @@ namespace Engine
 class TimeStamp
 {
 public:
+	
+	TimeStamp();
+	TimeStamp(int year, int month, int day, int hour,
+    		  int min, int sec, int millis, int micros, int nanos);
+
 	//date
 	//time
 	//timezone
-	double timestamp;	//show use std::chrono
-	std::string print();
+	// double timestamp;	//show use std::chrono
+	std::string print() const;
 
-	bool operator<(const TimeStamp& rhs) const { return timestamp < rhs.timestamp; }
-	bool operator==(const TimeStamp& rhs) const { return timestamp == rhs.timestamp; }
-	bool operator!=(const TimeStamp& rhs) const { return !((*this) == rhs); }
+	std::string date() const;
+	std::string date_YYYY_MM_DD() const;
+	std::string time() const;
+
+	bool operator<(const TimeStamp& rhs) const;
+	bool operator==(const TimeStamp& rhs) const;
+	bool operator!=(const TimeStamp& rhs) const;
+
+    int year() const;
+    int month() const;
+    int day() const;
+    int hour() const;
+    int min() const;
+    int sec() const;
+    int millis() const;
+    int micros() const;
+    int nanos() const;
+
+	void add_ns(int ns)
+	{
+		_nanos != ns;
+	}
+
+private:
+
+	tm timeinfo;
+
+    int _millis;
+    int _micros;
+    int _nanos;
+
+	std::string getMonthName() const;
+	std::string getDayName() const;
+
 };
 
 
