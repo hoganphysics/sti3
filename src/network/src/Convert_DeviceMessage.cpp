@@ -448,7 +448,8 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		convert<STI::TNetwork::TEngineJobID, STI::Engine::EngineJobID>(tMessage.jobID, deviceMessage->jobID);
 
 		if (!CORBA::is_nil(tMessage.engine)) {
-			deviceMessage->engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+			auto engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+			deviceMessage->setEngine(engine);
 		}
 		
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
@@ -483,7 +484,7 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);
 
 	STI::TNetwork::TEventEngine_ptr tEngine;
-	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->engine, tEngine)) {
+	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->getEngine(), tEngine)) {
 		tMessage.engine = tEngine;
 	}
 
@@ -800,15 +801,23 @@ template<>
 bool STI::Network::convert<TEngineJobUpdateDeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(
 	const TEngineJobUpdateDeviceMessage& tMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>& deviceMessage)
 {
+	std::shared_ptr<EventEngineJob> engineJob;
+
+	convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, engineJob);
+
 	deviceMessage = std::make_shared<EngineJobUpdateDeviceMessage>(
-		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace),
+		engineJob,
+		convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(tMessage.targetList)
 		);
 
-	deviceMessage->targetList = convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
-								tMessage.targetList);
+	// deviceMessage->targetList = convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
+	// 							tMessage.targetList);
 
-	return convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, deviceMessage->engineJob)
-			&&  (deviceMessage != 0);
+	// return convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, deviceMessage->engineJob)
+	// 		&&  (deviceMessage != 0);
+
+	return (deviceMessage != 0);
 }
 
 template<>
@@ -820,9 +829,9 @@ bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngin
 	}
 
 	tMessage.targetList = convert<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
-								deviceMessage->targetList);
+								deviceMessage->getTargetList());
 
-	return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->engineJob, tMessage.engineJob);
+	return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->getEngineJob(), tMessage.engineJob);
 }
 
 

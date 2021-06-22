@@ -84,15 +84,6 @@ public class EngineSchedulerMessage extends DeviceMessage {
     return (cPtr == 0) ? null : new EngineJobID(cPtr, false);
   }
 
-  public void setEngine(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t value) {
-    stiJNI.EngineSchedulerMessage_engine_set(swigCPtr, this, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t.getCPtr(value));
-  }
-
-  public SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t getEngine() {
-    long cPtr = stiJNI.EngineSchedulerMessage_engine_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t(cPtr, false);
-  }
-
   public void setHandledEvents(RawEventVector value) {
     stiJNI.EngineSchedulerMessage_handledEvents_set(swigCPtr, this, RawEventVector.getCPtr(value), value);
   }

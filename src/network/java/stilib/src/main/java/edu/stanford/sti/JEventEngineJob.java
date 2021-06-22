@@ -40,10 +40,6 @@ public class JEventEngineJob {
     }
   }
 
-  public JEventEngineJob(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t eventEngineJob) {
-    this(stiJNI.new_JEventEngineJob(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(eventEngineJob)), true);
-  }
-
   public EngineJobID getJobID() {
     return new EngineJobID(stiJNI.JEventEngineJob_getJobID(swigCPtr, this), true);
   }

@@ -144,8 +144,9 @@ void JDevice::getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dis
 bool JDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
 {
     if(wrappedDevice != 0) {
-        wrappedDevice->getEngineScheduler(scheduler);
+        return wrappedDevice->getEngineScheduler(scheduler);
     }
+    return false;
 }
 
 void JDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)

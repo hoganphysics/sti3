@@ -227,6 +227,25 @@ module TNetwork
 		TAttributeManager getAttributeManager();
 	};
 
+	interface TFileHolder;
+
+	interface TFileHolder
+	{
+		string getFilename();
+		boolean exists();
+		string md5Checksum();
+
+		boolean transferFile(in TFileHolder destination);
+		long maxBufferSize();
+
+		boolean deleteFile();
+		
+		boolean write(in OctetSeq buffer);
+
+		boolean openFile();
+		void closeFile();
+	};
+
 };	//TNetwork
 };	//STI
 

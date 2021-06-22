@@ -40,10 +40,6 @@ public class JDeviceMessageDispatcher {
     }
   }
 
-  public JDeviceMessageDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t dispatcher) {
-    this(stiJNI.new_JDeviceMessageDispatcher(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageDispatcher_t.getCPtr(dispatcher)), true);
-  }
-
   public void addMessage(DeviceMessage mess) {
     stiJNI.JDeviceMessageDispatcher_addMessage(swigCPtr, this, DeviceMessage.getCPtr(mess), mess);
   }

@@ -65,6 +65,7 @@ private:
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
+	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}
 
     std::shared_ptr<Device> wrappedDevice;
 

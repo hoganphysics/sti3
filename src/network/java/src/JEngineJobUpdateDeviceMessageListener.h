@@ -35,7 +35,7 @@ public:
     void handleMessage(const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) 
     {
         // std::cout << "JEngineJobUpdateDeviceMessageListener::handleMessage " << std::endl;
-        if (mess == 0 || mess->engineJob == 0) return;
+        if (mess == 0 || mess->getEngineJob() == 0) return;
 
         auto jMess = JEngineJobUpdateDeviceMessage::makeJMessage(*mess);
 

@@ -4,6 +4,7 @@
 #include "Node.h"
 #include "DeviceID.h"
 #include "fwd/EventEngineScheduler_fwd.h"
+#include "FileHolderFactory.h"
 
 #include <memory>
 
@@ -34,6 +35,8 @@ public:
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
+
+	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 
 };
 

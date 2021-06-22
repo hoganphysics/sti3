@@ -41,7 +41,7 @@ public:
     template<typename T>
     bool setValue(const T& value)
     {
-        setValue(STI::Utils::valueToString(value));
+        return setValue(STI::Utils::valueToString(value));
     }
     bool setValue(const std::string& value);
 

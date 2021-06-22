@@ -56,6 +56,17 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "iomanip": "cpp",
+        "bit": "cpp",
+        "codecvt": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "filesystem": "cpp"
     }
 }

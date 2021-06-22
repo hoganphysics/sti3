@@ -375,7 +375,11 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	parseCompleteMessage->handledEvents.swap(handledPartnerEvents);
 	parseCompleteMessage->messages.insert(parseCompleteMessage->messages.end(), jobMessages.begin(), jobMessages.end());
 	parseCompleteMessage->engineState = getState();
-	job.getEngine( parseCompleteMessage->engine );	//pass local engine reference upstream to server
+
+	//pass local engine reference upstream to server
+	std::shared_ptr<STI::Engine::EventEngine> jobEngine;
+	job.getEngine(jobEngine);
+	parseCompleteMessage->setEngine(jobEngine);
 
 	sendMessage(parseCompleteMessage);
 
@@ -444,7 +448,7 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	}
 
 	std::shared_ptr<EventEngine> remoteEngine;
-	remoteEngine = message->engine;
+	remoteEngine = message->getEngine();
 
 	if (remoteEngine == 0) {
 		//error
@@ -487,7 +491,7 @@ void LocalEventEngine::handlePlayReadyMessage(const std::shared_ptr<EngineSchedu
 	std::shared_ptr<EventEngine> remoteEngine;
 
 	if (message != 0) {
-		remoteEngine = message->engine;
+		remoteEngine = message->getEngine();
 	}
 
 	if (remoteEngine == 0) {
@@ -626,7 +630,12 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playReadyMessage->jobID.sid = job.getJobID().sid;
 	playReadyMessage->jobID.type = job.getJobID().type;
 	playReadyMessage->engineState = getState();
-	job.getEngine( playReadyMessage->engine );	//pass local engine reference upstream to server
+	
+	//pass local engine reference upstream to server
+	std::shared_ptr<STI::Engine::EventEngine> jobEngine;
+	job.getEngine(jobEngine);
+	playReadyMessage->setEngine(jobEngine);
+	
 	sendMessage(playReadyMessage);
 
 

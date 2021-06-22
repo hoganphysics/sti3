@@ -7,6 +7,8 @@
 #include "DeviceMessage.h"
 #include "LocalEventEngineFactory.h"
 
+#include "LocalFileHolder.h"
+
 #include "MixedValue.h"
 #include "LocalChannelManager.h"
 #include "LocalChannel.h"
@@ -57,6 +59,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
     auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>(getID(), localChannelManager, deviceMessageDispatcher, localCollection);
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
 
+	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+	setFileHolderFactory(localFileHolderFactory);
+	
 	//setEngineFactory(engineFactory);
 
 	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
@@ -76,7 +81,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	serverMessageRelayer->addFilter<STI::Device::EngineJobUpdateDeviceMessage>( 
 		[](const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& message)->bool {
 			//only relay job messages that originate from the job owner (avoids duplicates)
-			return message->engineJob->getJobOwner() == message->originalSourceID();
+			return message->getEngineJob()->getJobOwner() == message->originalSourceID();
 		});
 
 	// serverMessageRelayer->addFilter<STI::Device::EngineStateMessage>( 

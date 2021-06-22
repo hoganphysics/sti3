@@ -13,6 +13,7 @@
 #include "fwd/ChannelManager_fwd.h"
 #include "MixedValue.h"
 #include "ServerMessageRelayer.h"
+#include "FileHolderFactory.h"
 
 #include <string>
 #include <set>
@@ -96,6 +97,22 @@ public:
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
+	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
+	{
+		fileHolderFactory = factory;
+	}
+
+	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
+	{
+		std::shared_ptr<STI::Utils::FileHolder> holder;
+
+		if (fileHolderFactory != 0) {
+			holder = fileHolderFactory->makeFileHolder(filename);
+		}
+
+		return holder;
+	}
+
 private:
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return false; }
@@ -144,6 +161,8 @@ private:
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
 	std::set<DeviceID> partnerDevices;
+
+	std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
 
 };
 

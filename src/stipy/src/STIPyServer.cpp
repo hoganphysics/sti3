@@ -99,8 +99,8 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(tp);
 
     STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = static_cast<double>(ms.count());
-    std::cout << "parse time: " << pid.parseTimestamp.timestamp << std::endl;
+    // pid.parseTimestamp.timestamp = static_cast<double>(ms.count());
+    std::cout << "parse time: " << pid.parseTimestamp.print() << std::endl;
     
     auto ticket = libDevice->makeParseTicket(pid);
 
@@ -116,7 +116,7 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
 std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
 {
     STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = 1.1;
+    // pid.parseTimestamp.timestamp = 1.1;
     
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
@@ -125,7 +125,7 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
 std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& tickets)
 {
     STI::Engine::ParseID pid;
-    pid.parseTimestamp.timestamp = 1.1;
+    // pid.parseTimestamp.timestamp = 1.1;
     
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;

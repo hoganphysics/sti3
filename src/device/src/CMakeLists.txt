@@ -8,7 +8,7 @@ endif (MSVC)
 project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #set(CMAKE_DEBUG_POSTFIX "_d")
@@ -27,6 +27,8 @@ endif (USE_STI_DEBUG_POSTFIX)
 #set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )
 
 # add_compile_definitions(_DEBUG)
+
+find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
 FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
 #INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
@@ -65,6 +67,7 @@ add_library(stidevice SHARED
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
+    LocalFileHolder.cpp
     RawEvent.cpp
     ShotID.cpp
     SynchronousEvent.cpp
@@ -102,9 +105,14 @@ endif (USE_STI_DEBUG_POSTFIX)
 
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}
+    ${OPENSSL_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
     ${WORKING_DIRECTORY}/fwd
     ${WORKING_DIRECTORY}/utils
+)
+
+target_link_libraries(stidevice 
+    ${OPENSSL_LIBRARIES}
 )
 
 install(TARGETS stidevice

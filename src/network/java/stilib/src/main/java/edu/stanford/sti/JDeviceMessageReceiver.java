@@ -40,10 +40,6 @@ public class JDeviceMessageReceiver {
     }
   }
 
-  public JDeviceMessageReceiver(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageReceiver_t receiver) {
-    this(stiJNI.new_JDeviceMessageReceiver(SWIGTYPE_p_std__shared_ptrT_STI__Device__DeviceMessageReceiver_t.getCPtr(receiver)), true);
-  }
-
   public void addListener(DeviceID sourceDeviceID, DeviceMessageListenerID listenerID, RefreshDeviceMessageListener listener) {
     stiJNI.JDeviceMessageReceiver_addListener__SWIG_0(swigCPtr, this, DeviceID.getCPtr(sourceDeviceID), sourceDeviceID, DeviceMessageListenerID.getCPtr(listenerID), listenerID, RefreshDeviceMessageListener.getCPtr(listener), listener);
   }

@@ -9,6 +9,7 @@
 #include "orbTypes.h"
 #include "EventEngineScheduler.h"
 #include "DeviceMessageListenerForwarder.h"
+#include "NetworkFileHolder.h"
 
 #include <memory>
 
@@ -40,6 +41,10 @@ public:
 		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 		localDevice->getEngineScheduler(scheduler);
 		scheduler->setEngineFactory(networkEngineFactory);
+
+		auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+
+		localDevice->setFileHolderFactory(networkFileHolderFactory);
 	}
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
@@ -102,6 +107,13 @@ public:
 	}
 
 private:
+
+	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
+	{
+		if (localDevice != 0) {
+			localDevice->setFileHolderFactory(factory);
+		}
+	}
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)
 	{

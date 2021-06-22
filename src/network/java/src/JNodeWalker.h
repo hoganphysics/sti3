@@ -75,7 +75,7 @@ private:
     std::set<STI::Device::DeviceID> outConnections;
 };
 
-} //Device
+} //Network
 } //STI
 
 #endif

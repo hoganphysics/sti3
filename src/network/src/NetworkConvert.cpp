@@ -3,6 +3,8 @@
 
 #include "orbTypes.h"
 #include "MixedValue.h"
+#include "TFileHolderRefInterface.h"
+
 
 using STI::Network::convert;
 
@@ -56,6 +58,41 @@ bool STI::Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(
 }
 
 
+// Buffer
+
+// template<>
+// bool STI::Network::convert<char*, ::STI::TNetwork::OctetSeq>(const char*& buffer, ::STI::TNetwork::OctetSeq& tBuffer)
+// {
+// 	return false;
+// }
+
+bool STI::Network::convertBuffer(const char* buffer, unsigned length, ::STI::TNetwork::OctetSeq& tBuffer)
+{
+	tBuffer.length(length);
+	
+	for (unsigned i = 0; i < tBuffer.length(); ++i) {
+		tBuffer[i] = buffer[i];
+	}
+	return false;
+}
+
+bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer)
+{
+	for (unsigned i = 0; i < tBuffer.length(); ++i) {
+		buffer[i] = tBuffer[i];
+	}
+	return true;
+}
+
+// template<>
+// bool STI::Network::convert<::STI::TNetwork::OctetSeq, char*>(const STI::TNetwork::OctetSeq& tBuffer, char*& buffer)
+// {
+// 	for (unsigned i = 0; i < tBuffer.length(); ++i) {
+// 		buffer[i] = tBuffer[i];
+// 	}
+// 	return true;
+// }
+
 
 template<>
 ::CORBA::UShort STI::Network::convert<unsigned short, ::CORBA::UShort>(const unsigned short& ushort)
@@ -77,25 +114,25 @@ TMixedValue STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& val
 template<>
 bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
 {
-	tValue.type = convert<MixedValueType, TMixedValueType>(value.getType());
+	// tValue.type = convert<MixedValueType, TMixedValueType>(value.getType());
 
 	switch (value.getType())
 	{
 	case MixedValueType::Boolean:
-		tValue.value_b = static_cast<CORBA::Boolean>(value.getBoolean());
+		tValue.value_b( static_cast<CORBA::Boolean>(value.getBoolean()) );
 		break;
 	case MixedValueType::Int:
-		tValue.value_i = static_cast<CORBA::Long>(value.getInt());
+		tValue.value_i( static_cast<CORBA::Long>(value.getInt()) );
 		break;
 	case MixedValueType::Double:
-		tValue.value_d = static_cast<CORBA::Double>(value.getDouble());
+		tValue.value_d( static_cast<CORBA::Double>(value.getDouble()) );
 		break;
 	case MixedValueType::String:
-		tValue.value_s = convert<std::string, ::CORBA::String_member>(value.getString());
+		tValue.value_s( convert<std::string, ::CORBA::String_member>(value.getString()) );
 		break;
 	case MixedValueType::Vector:
-
-		convert<MixedValue, TMixedValue>(value.getVector(), tValue.values);
+		tValue.values(STI::TNetwork::TMixedValueSeq());
+		convert<MixedValue, TMixedValue>(value.getVector(), tValue.values());
 
 		// const std::vector<MixedValue>& values = value.getVector();
 		// tValue.values.length(values.size());
@@ -106,8 +143,14 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 
 		break;
 	case MixedValueType::Empty:
+		tValue.empty();
 		break;
 	case MixedValueType::File:
+		{
+			STI::TNetwork::TFileHolder_var tFileHolder;
+			TFileHolderRefInterface::getTFileHolderReference(value.getFile(), tFileHolder);
+			tValue.value_file(tFileHolder);			
+		}
 		break;
 	case MixedValueType::Image:
 		break;
@@ -125,24 +168,24 @@ MixedValue STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tVa
 {
 	MixedValue value;
 
-	switch (tValue.type)
+	switch (tValue._d())
 	{
 	case TMixedValueType::MixedValueBoolean:
-		value = static_cast<bool>(tValue.value_b);
+		value = static_cast<bool>(tValue.value_b());
 		break;
 	case TMixedValueType::MixedValueInt:
-		value = static_cast<int>(tValue.value_i);
+		value = static_cast<int>(tValue.value_i());
 		break;
 	case TMixedValueType::MixedValueDouble:
-		value = static_cast<double>(tValue.value_d);
+		value = static_cast<double>(tValue.value_d());
 		break;
 	case TMixedValueType::MixedValueString:
-		value = convert<::CORBA::String_member, std::string>(tValue.value_s);
+		value = convert<::CORBA::String_member, std::string>(tValue.value_s());
 		break;
 	case TMixedValueType::MixedValueVector:
 
-		for (unsigned i = 0; i < tValue.values.length(); ++i) {
-			value.addValue(convert<TMixedValue, MixedValue>(tValue.values[i]));
+		for (unsigned i = 0; i < tValue.values().length(); ++i) {
+			value.addValue(convert<TMixedValue, MixedValue>(tValue.values()[i]));
 		}
 
 		break;

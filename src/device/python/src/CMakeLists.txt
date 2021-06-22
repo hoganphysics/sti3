@@ -8,7 +8,7 @@ endif (MSVC)
 project(stidevicepy VERSION 3.0.0 DESCRIPTION "STI device lib python wrapper" LANGUAGES CXX)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #set(CMAKE_DEBUG_POSTFIX "_d")

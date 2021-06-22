@@ -27,7 +27,7 @@
             // "sourceFileMap": {
             //     "${workspaceFolder}/build": "${workspaceFolder}"
             // }
-            
+        }
         
     ]
 }

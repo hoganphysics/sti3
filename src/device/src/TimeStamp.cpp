@@ -35,6 +35,7 @@ TimeStamp::TimeStamp(int year, int month, int day, int hour,
     timeinfo.tm_hour = hour;
     timeinfo.tm_min = min;
     timeinfo.tm_sec = sec;
+    timeinfo.tm_isdst = -1; //use local system timezone (mktime will fill this in)
 
     std::time_t now_time = mktime(&timeinfo);
     timeinfo = *localtime(&now_time);

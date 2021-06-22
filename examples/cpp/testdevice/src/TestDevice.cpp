@@ -67,7 +67,7 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
     receiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(serverID, jobMessageLID, 
         [](auto message) { 
             std::cout << "Job message: " << STI::Device::EngineJobUpdateDeviceMessage::jobTargetToString(message->targetList)// << STI::Device::DeviceMessage::typeToString(message->getMessageClassType())
-            << " : " <<  message->getDeviceTrace().print() << " : " << message->engineJob->getJobID().pid.parseTimestamp.timestamp << std::endl;
+            << " : " <<  message->getDeviceTrace().print() << " : " << message->engineJob->getJobID().pid.parseTimestamp.print() << std::endl;
         } );
 
     stateMessageLID.name = "::EngineStateMessage::Test";	//getID().getID() + 

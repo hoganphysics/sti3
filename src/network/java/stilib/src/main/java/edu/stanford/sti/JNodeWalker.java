@@ -36,10 +36,6 @@ public class JNodeWalker {
     }
   }
 
-  public JNodeWalker(SWIGTYPE_p_STI__Network__LocalDeviceHub__HubNodeWalker root) {
-    this(stiJNI.new_JNodeWalker(SWIGTYPE_p_STI__Network__LocalDeviceHub__HubNodeWalker.getCPtr(root)), true);
-  }
-
   public JHubGraphNode getNode() {
     return new JHubGraphNode(stiJNI.JNodeWalker_getNode(swigCPtr, this), false);
   }

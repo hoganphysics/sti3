@@ -49,33 +49,37 @@ module TNetwork
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
-//	union TMixedValue;
-	struct TMixedValue;
+	typedef sequence<octet> OctetSeq;
+
+	interface TFileHolder;
+
+	union TMixedValue;
+	// struct TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
 	enum TMixedValueType { MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueEmpty, MixedValueFile, MixedValueImage, MixedValueAny};
 	
-	// union TMixedValue switch(TMixedValueType) {
-	// 	case MixedValueBoolean: boolean value_b;
-	// 	case MixedValueInt:		long    value_i;
-	// 	case MixedValueDouble: 	double  value_d;
-	// 	case MixedValueString:	string  value_s;
-	// 	case MixedValueVector: 	TMixedValueSeq value_v;
-	// 	case MixedValueEmpty: 	boolean empty;
-	// 	case MixedValueFile: 	TFile	value_file;
-	// 	case MixedValueImage:	TImage	value_image;
-	// };
-
-	struct TMixedValue
-	{
-		TMixedValueSeq values;
-
-		TMixedValueType type;
-
-		boolean value_b;
-		long    value_i;
-		double  value_d;
-		string  value_s;
+	union TMixedValue switch(TMixedValueType) {
+		case MixedValueBoolean: boolean value_b;
+		case MixedValueInt:		long    value_i;
+		case MixedValueDouble: 	double  value_d;
+		case MixedValueString:	string  value_s;
+		case MixedValueVector: 	TMixedValueSeq values;
+		case MixedValueEmpty: 	boolean empty;
+		case MixedValueFile: 	TFileHolder	value_file;
+		// case MixedValueImage:	TImage	value_image;
 	};
+
+	// struct TMixedValue
+	// {
+	// 	TMixedValueSeq values;
+
+	// 	TMixedValueType type;
+
+	// 	boolean value_b;
+	// 	long    value_i;
+	// 	double  value_d;
+	// 	string  value_s;
+	// };
 
 
 	typedef sequence<string> TStringSeq;

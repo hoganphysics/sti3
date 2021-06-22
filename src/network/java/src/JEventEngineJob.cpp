@@ -67,7 +67,11 @@ std::shared_ptr<JEventEngine> JEventEngineJob::getEngine() const
 
 std::shared_ptr<JShot> JEventEngineJob::getShot() const
 {
-    // return eventEngineJob->getShot(shot);
+    std::shared_ptr<STI::Engine::Shot> shot;
+    eventEngineJob->getShot(shot);
+
+    auto jshot = std::make_shared<JShot>(shot);
+    return jshot;
 }
 
 
@@ -82,7 +86,7 @@ std::shared_ptr<EventEngineDependencyTree> JEventEngineJob::getDependencies() co
 
 std::set<STI::Device::DeviceID> JEventEngineJob::getMissingTargetIDs() const
 {
-    // return eventEngineJob->getMissingTargetIDs();
+    return eventEngineJob->getMissingTargetIDs();
 }
 
 

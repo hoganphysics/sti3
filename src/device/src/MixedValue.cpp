@@ -248,6 +248,11 @@ const MixedValueVector& MixedValue::getVector() const
 	return values;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> MixedValue::getFile() const
+{
+	return value_file;
+}
+
 void MixedValue::convertToVector()
 {
 	if(type == MixedValueType::Vector)

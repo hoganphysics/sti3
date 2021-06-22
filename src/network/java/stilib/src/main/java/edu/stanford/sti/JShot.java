@@ -40,10 +40,6 @@ public class JShot {
     }
   }
 
-  public JShot(SWIGTYPE_p_std__shared_ptrT_STI__Engine__Shot_t shot) {
-    this(stiJNI.new_JShot(SWIGTYPE_p_std__shared_ptrT_STI__Engine__Shot_t.getCPtr(shot)), true);
-  }
-
   public RawEventVector getEvents() {
     long cPtr = stiJNI.JShot_getEvents(swigCPtr, this);
     return (cPtr == 0) ? null : new RawEventVector(cPtr, true);

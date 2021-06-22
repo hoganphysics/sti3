@@ -209,7 +209,7 @@ void testDevice()
 	// std::cin >> x;
 
 	STI::Engine::ParseID pid;
-	pid.parseTimestamp.timestamp = 1.1;
+	// pid.parseTimestamp.timestamp = 1.1;
 
 	std::vector<STI::Engine::EngineParsingMessage> messages;
 
@@ -242,7 +242,7 @@ void testServer()
 
 
 	STI::Engine::ParseID pid0;
-	pid0.parseTimestamp.timestamp = 1.1;
+	// pid0.parseTimestamp.timestamp = 1.1;
 	auto shot0 = std::make_shared<STI::Engine::LocalShot>();
 	STI::Utils::MixedValue value0;
 	value0.setValue(28.0);
@@ -288,7 +288,7 @@ void testServer()
 	//dev3->addEventTarget(dev1->getID());
 
 	STI::Engine::ParseID pid;
-	pid.parseTimestamp.timestamp = 1.1;
+	// pid.parseTimestamp.timestamp = 1.1;
 	auto shot = std::make_shared<STI::Engine::LocalShot>();
 
 	STI::Utils::MixedValue value;
@@ -339,7 +339,7 @@ void testServer()
 
 	STI::Engine::ShotID shotID;
 	shotID.parseID = pid;
-	shotID.submissionTime.timestamp = 3.1;
+	// shotID.submissionTime.timestamp = 3.1;
 
 	scheduler->play(shotID);
 

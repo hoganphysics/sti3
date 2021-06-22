@@ -55,13 +55,8 @@ public class JDevice {
     stiJNI.JDevice_change_ownership(this, swigCPtr, true);
   }
 
-  public JDevice(SWIGTYPE_p_std__shared_ptrT_STI__Device__Device_t device) {
-    this(stiJNI.new_JDevice__SWIG_0(SWIGTYPE_p_std__shared_ptrT_STI__Device__Device_t.getCPtr(device)), true);
-    stiJNI.JDevice_director_connect(this, swigCPtr, true, true);
-  }
-
   public JDevice(String name, String address, int module, String targetServer) {
-    this(stiJNI.new_JDevice__SWIG_1(name, address, module, targetServer), true);
+    this(stiJNI.new_JDevice(name, address, module, targetServer), true);
     stiJNI.JDevice_director_connect(this, swigCPtr, true, true);
   }
 

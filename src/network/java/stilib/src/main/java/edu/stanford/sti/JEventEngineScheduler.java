@@ -40,10 +40,6 @@ public class JEventEngineScheduler {
     }
   }
 
-  public JEventEngineScheduler(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineScheduler_t scheduler) {
-    this(stiJNI.new_JEventEngineScheduler(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineScheduler_t.getCPtr(scheduler)), true);
-  }
-
   public void setId(DeviceID value) {
     stiJNI.JEventEngineScheduler_id_set(swigCPtr, this, DeviceID.getCPtr(value), value);
   }

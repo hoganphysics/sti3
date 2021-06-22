@@ -40,10 +40,6 @@ public class JChannelManager {
     }
   }
 
-  public JChannelManager(SWIGTYPE_p_std__shared_ptrT_STI__Device__ChannelManager_t manager) {
-    this(stiJNI.new_JChannelManager(SWIGTYPE_p_std__shared_ptrT_STI__Device__ChannelManager_t.getCPtr(manager)), true);
-  }
-
   public ChannelVector getChannels() {
     return new ChannelVector(stiJNI.JChannelManager_getChannels(swigCPtr, this), true);
   }

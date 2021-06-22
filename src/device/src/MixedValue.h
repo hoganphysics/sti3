@@ -25,8 +25,11 @@
 
 #include "fwd/MixedValue_fwd.h"
 
+#include "utils/FileHolder.h"
+
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace STI
 {
@@ -118,6 +121,7 @@ public:
 	double getNumber() const;
 	std::string getString() const;
 	const MixedValueVector& getVector() const;
+	std::shared_ptr<STI::Utils::FileHolder> getFile() const;
 
 	std::string print() const;
 
@@ -137,6 +141,8 @@ private:
 	int         value_i;
 	double      value_d;
 	std::string value_s;
+
+	std::shared_ptr<STI::Utils::FileHolder> value_file;
 
 };
 

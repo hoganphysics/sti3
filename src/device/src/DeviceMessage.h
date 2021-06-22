@@ -274,6 +274,25 @@ public:
 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace) 
 	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate) {}
 
+	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, 
+		const std::shared_ptr<STI::Engine::EventEngineJob>& job, EngineJobUpdateTarget targetList) 
+	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate)
+	{
+		switch (targetList) {
+			case EngineJobUpdateTarget::Queued:
+				toQueuedList(job);
+				break;
+			case EngineJobUpdateTarget::Running:
+				toRunningList(job);
+				break;
+			case EngineJobUpdateTarget::Completed:
+				toCompleteList(job);
+				break;
+			default:
+				toCompleteList(job);
+		}
+	}
+
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineJobUpdate; }
 
 	void toQueuedList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
@@ -292,8 +311,15 @@ public:
 		engineJob = job;
 	}
 
-	EngineJobUpdateTarget targetList;	//the list the job belongs in
-	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
+	EngineJobUpdateTarget getTargetList() const
+	{
+		return targetList;
+	}
+
+	std::shared_ptr<STI::Engine::EventEngineJob> getEngineJob() const
+	{
+		return engineJob;
+	}
 
 	static std::string jobTargetToString(EngineJobUpdateTarget target) 
 	{
@@ -317,6 +343,11 @@ public:
 
 		return result;
 	}
+
+private:
+
+	EngineJobUpdateTarget targetList;	//the list the job belongs in
+	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
 
 };
 
@@ -342,11 +373,21 @@ public:
 	
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineScheduler; }
 
+
 	SchedulerMessageType schedulerMessageType;
 
 	//STI::Device::DeviceID originalSource;	//device that generated the original message
 	STI::Engine::EngineJobID jobID;
-	std::shared_ptr<STI::Engine::EventEngine> engine;
+
+	std::shared_ptr<STI::Engine::EventEngine> getEngine() const
+	{
+		return _engine;
+	}
+	void setEngine(const std::shared_ptr<STI::Engine::EventEngine>& engine)
+	{
+		_engine = engine;
+	}
+
 	// std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
 	// std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
 
@@ -356,6 +397,10 @@ public:
 	std::vector<STI::Engine::EngineParsingMessage> messages;
 
 	STI::Engine::EngineState engineState;
+
+private:
+
+	std::shared_ptr<STI::Engine::EventEngine> _engine;
 };
 
 // class STIParsingMessage

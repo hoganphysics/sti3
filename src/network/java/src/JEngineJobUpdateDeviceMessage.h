@@ -57,8 +57,8 @@ public:
     JEngineJobUpdateDeviceMessage(const EngineJobUpdateDeviceMessage& mess)
     : EngineJobUpdateDeviceMessage(mess.getDeviceTrace())
     {
-        targetList = mess.targetList;
-        jEngineJob = std::make_shared<STI::Engine::JEventEngineJob>(mess.engineJob);
+        targetList = mess.getTargetList();
+        jEngineJob = std::make_shared<STI::Engine::JEventEngineJob>(mess.getEngineJob());
     }
 
 };

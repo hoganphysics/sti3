@@ -59,7 +59,12 @@ public class EngineJobUpdateDeviceMessage extends DeviceMessage {
   }
 
   public EngineJobUpdateDeviceMessage(DeviceTrace trace) {
-    this(stiJNI.new_EngineJobUpdateDeviceMessage(DeviceTrace.getCPtr(trace), trace), true);
+    this(stiJNI.new_EngineJobUpdateDeviceMessage__SWIG_0(DeviceTrace.getCPtr(trace), trace), true);
+    stiJNI.EngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
+  }
+
+  public EngineJobUpdateDeviceMessage(DeviceTrace trace, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t job, EngineJobUpdateTarget targetList) {
+    this(stiJNI.new_EngineJobUpdateDeviceMessage__SWIG_1(DeviceTrace.getCPtr(trace), trace, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(job), targetList.swigValue()), true);
     stiJNI.EngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 
@@ -67,37 +72,17 @@ public class EngineJobUpdateDeviceMessage extends DeviceMessage {
     return DeviceMessageType.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_getMessageClassType());
   }
 
-  public void toQueuedList(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t job) {
-    stiJNI.EngineJobUpdateDeviceMessage_toQueuedList(swigCPtr, this, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(job));
-  }
-
-  public void toRunningList(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t job) {
-    stiJNI.EngineJobUpdateDeviceMessage_toRunningList(swigCPtr, this, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(job));
-  }
-
-  public void toCompleteList(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t job) {
-    stiJNI.EngineJobUpdateDeviceMessage_toCompleteList(swigCPtr, this, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(job));
-  }
-
-  public void setTargetList(EngineJobUpdateTarget value) {
-    stiJNI.EngineJobUpdateDeviceMessage_targetList_set(swigCPtr, this, value.swigValue());
-  }
-
   public EngineJobUpdateTarget getTargetList() {
-    return EngineJobUpdateTarget.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_targetList_get(swigCPtr, this));
-  }
-
-  public void setEngineJob(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t value) {
-    stiJNI.EngineJobUpdateDeviceMessage_engineJob_set(swigCPtr, this, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(value));
-  }
-
-  public SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t getEngineJob() {
-    long cPtr = stiJNI.EngineJobUpdateDeviceMessage_engineJob_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t(cPtr, false);
+    return EngineJobUpdateTarget.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_getTargetList(swigCPtr, this));
   }
 
   public static String jobTargetToString(EngineJobUpdateTarget target) {
     return stiJNI.EngineJobUpdateDeviceMessage_jobTargetToString(target.swigValue());
+  }
+
+  public JEventEngineJob getJEventEngineJob() {
+    long cPtr = stiJNI.EngineJobUpdateDeviceMessage_getJEventEngineJob(swigCPtr, this);
+    return (cPtr == 0) ? null : new JEventEngineJob(cPtr, true);
   }
 
 }

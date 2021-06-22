@@ -18,5 +18,6 @@
 
 //JEventEngineJob
 %ignore STI::Engine::EventEngineJob;
+%ignore STI::Engine::JEventEngineJob::JEventEngineJob(const std::shared_ptr< EventEngineJob >& eventEngineJob);
 %include "JEventEngineJob.h"
 

@@ -136,7 +136,6 @@ public class stiJNI {
   public final static native long RawEventVector_doSet(long jarg1, RawEventVector jarg1_, int jarg2, long jarg3, RawEvent jarg3_);
   public final static native void RawEventVector_doRemoveRange(long jarg1, RawEventVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_RawEventVector(long jarg1);
-  public final static native long new_JDeviceCollection(long jarg1);
   public final static native void delete_JDeviceCollection(long jarg1);
   public final static native boolean JDeviceCollection_add(long jarg1, JDeviceCollection jarg1_, long jarg2, DeviceID jarg2_, long jarg3, JDevice jarg3_);
   public final static native long JDeviceCollection_get(long jarg1, JDeviceCollection jarg1_, long jarg2, DeviceID jarg2_);
@@ -146,8 +145,7 @@ public class stiJNI {
   public final static native long JDeviceCollection_size(long jarg1, JDeviceCollection jarg1_);
   public final static native void JDeviceCollection_cleanup(long jarg1, JDeviceCollection jarg1_);
   public final static native void JDeviceCollection_clear(long jarg1, JDeviceCollection jarg1_);
-  public final static native long new_JDevice__SWIG_0(long jarg1);
-  public final static native long new_JDevice__SWIG_1(String jarg1, String jarg2, int jarg3, String jarg4);
+  public final static native long new_JDevice(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JDevice(long jarg1);
   public final static native long JDevice_getID(long jarg1, JDevice jarg1_);
   public final static native void JDevice_kill(long jarg1, JDevice jarg1_);
@@ -237,16 +235,12 @@ public class stiJNI {
   public final static native void delete_AttributeUpdateMessage(long jarg1);
   public final static native void AttributeUpdateMessage_director_connect(AttributeUpdateMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void AttributeUpdateMessage_change_ownership(AttributeUpdateMessage obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineJobUpdateDeviceMessage(long jarg1, DeviceTrace jarg1_);
+  public final static native long new_EngineJobUpdateDeviceMessage__SWIG_0(long jarg1, DeviceTrace jarg1_);
+  public final static native long new_EngineJobUpdateDeviceMessage__SWIG_1(long jarg1, DeviceTrace jarg1_, long jarg2, int jarg3);
   public final static native int EngineJobUpdateDeviceMessage_getMessageClassType();
-  public final static native void EngineJobUpdateDeviceMessage_toQueuedList(long jarg1, EngineJobUpdateDeviceMessage jarg1_, long jarg2);
-  public final static native void EngineJobUpdateDeviceMessage_toRunningList(long jarg1, EngineJobUpdateDeviceMessage jarg1_, long jarg2);
-  public final static native void EngineJobUpdateDeviceMessage_toCompleteList(long jarg1, EngineJobUpdateDeviceMessage jarg1_, long jarg2);
-  public final static native void EngineJobUpdateDeviceMessage_targetList_set(long jarg1, EngineJobUpdateDeviceMessage jarg1_, int jarg2);
-  public final static native int EngineJobUpdateDeviceMessage_targetList_get(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
-  public final static native void EngineJobUpdateDeviceMessage_engineJob_set(long jarg1, EngineJobUpdateDeviceMessage jarg1_, long jarg2);
-  public final static native long EngineJobUpdateDeviceMessage_engineJob_get(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
+  public final static native int EngineJobUpdateDeviceMessage_getTargetList(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
   public final static native String EngineJobUpdateDeviceMessage_jobTargetToString(int jarg1);
+  public final static native long EngineJobUpdateDeviceMessage_getJEventEngineJob(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
   public final static native void delete_EngineJobUpdateDeviceMessage(long jarg1);
   public final static native void EngineJobUpdateDeviceMessage_director_connect(EngineJobUpdateDeviceMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EngineJobUpdateDeviceMessage_change_ownership(EngineJobUpdateDeviceMessage obj, long cptr, boolean take_or_release);
@@ -256,8 +250,6 @@ public class stiJNI {
   public final static native int EngineSchedulerMessage_schedulerMessageType_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void EngineSchedulerMessage_jobID_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, EngineJobID jarg2_);
   public final static native long EngineSchedulerMessage_jobID_get(long jarg1, EngineSchedulerMessage jarg1_);
-  public final static native void EngineSchedulerMessage_engine_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2);
-  public final static native long EngineSchedulerMessage_engine_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void EngineSchedulerMessage_handledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, RawEventVector jarg2_);
   public final static native long EngineSchedulerMessage_handledEvents_get(long jarg1, EngineSchedulerMessage jarg1_);
   public final static native void EngineSchedulerMessage_unhandledEvents_set(long jarg1, EngineSchedulerMessage jarg1_, long jarg2, RawEventVector jarg2_);
@@ -353,7 +345,6 @@ public class stiJNI {
   public final static native long new_JEngineJobUpdateDeviceMessageListener();
   public final static native void JEngineJobUpdateDeviceMessageListener_director_connect(JEngineJobUpdateDeviceMessageListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JEngineJobUpdateDeviceMessageListener_change_ownership(JEngineJobUpdateDeviceMessageListener obj, long cptr, boolean take_or_release);
-  public final static native long new_JDeviceMessageReceiver(long jarg1);
   public final static native void delete_JDeviceMessageReceiver(long jarg1);
   public final static native void JDeviceMessageReceiver_addListener__SWIG_0(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, RefreshDeviceMessageListener jarg4_);
   public final static native void JDeviceMessageReceiver_addListener__SWIG_1(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, ChannelUpdateMessageListener jarg4_);
@@ -363,7 +354,6 @@ public class stiJNI {
   public final static native void JDeviceMessageReceiver_addListener__SWIG_5(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, EngineStateMessageListener jarg4_);
   public final static native void JDeviceMessageReceiver_addListener__SWIG_6(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_, long jarg4, JEngineJobUpdateDeviceMessageListener jarg4_);
   public final static native void JDeviceMessageReceiver_removeListener(long jarg1, JDeviceMessageReceiver jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceMessageListenerID jarg3_);
-  public final static native long new_JDeviceMessageDispatcher(long jarg1);
   public final static native void delete_JDeviceMessageDispatcher(long jarg1);
   public final static native void JDeviceMessageDispatcher_addMessage(long jarg1, JDeviceMessageDispatcher jarg1_, long jarg2, DeviceMessage jarg2_);
   public final static native void JDeviceMessageDispatcher_clearMessages(long jarg1, JDeviceMessageDispatcher jarg1_);
@@ -397,7 +387,6 @@ public class stiJNI {
   public final static native long ChannelVector_doSet(long jarg1, ChannelVector jarg1_, int jarg2, long jarg3, Channel jarg3_);
   public final static native void ChannelVector_doRemoveRange(long jarg1, ChannelVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_ChannelVector(long jarg1);
-  public final static native long new_JChannelManager(long jarg1);
   public final static native void delete_JChannelManager(long jarg1);
   public final static native long JChannelManager_getChannels(long jarg1, JChannelManager jarg1_);
   public final static native long JChannelManager_getChannel(long jarg1, JChannelManager jarg1_, short jarg2);
@@ -436,13 +425,25 @@ public class stiJNI {
   public final static native long new_ChannelRefreshListener();
   public final static native void ChannelRefreshListener_director_connect(ChannelRefreshListener obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void ChannelRefreshListener_change_ownership(ChannelRefreshListener obj, long cptr, boolean take_or_release);
-  public final static native void TimeStamp_timestamp_set(long jarg1, TimeStamp jarg1_, double jarg2);
-  public final static native double TimeStamp_timestamp_get(long jarg1, TimeStamp jarg1_);
+  public final static native long new_TimeStamp__SWIG_0();
+  public final static native long new_TimeStamp__SWIG_1(int jarg1, int jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7, int jarg8, int jarg9);
   public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_date(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_date_YYYY_MM_DD(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_time(long jarg1, TimeStamp jarg1_);
   public final static native boolean TimeStamp_opLess(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
   public final static native boolean TimeStamp_opEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
   public final static native boolean TimeStamp_opNotEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
-  public final static native long new_TimeStamp();
+  public final static native int TimeStamp_year(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_month(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_day(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_hour(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_min(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_sec(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_millis(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_micros(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_nanos(long jarg1, TimeStamp jarg1_);
+  public final static native void TimeStamp_add_ns(long jarg1, TimeStamp jarg1_, int jarg2);
   public final static native void delete_TimeStamp(long jarg1);
   public final static native void EngineJobSourceID_user_set(long jarg1, EngineJobSourceID jarg1_, String jarg2);
   public final static native String EngineJobSourceID_user_get(long jarg1, EngineJobSourceID jarg1_);
@@ -495,7 +496,6 @@ public class stiJNI {
   public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
   public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
   public final static native void delete_StringMap(long jarg1);
-  public final static native long new_JAttributeManager(long jarg1);
   public final static native void delete_JAttributeManager(long jarg1);
   public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
   public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
@@ -518,6 +518,16 @@ public class stiJNI {
   public final static native long EngineJobID_sid_get(long jarg1, EngineJobID jarg1_);
   public final static native long new_EngineJobID();
   public final static native void delete_EngineJobID(long jarg1);
+  public final static native void delete_FileHolder(long jarg1);
+  public final static native String FileHolder_getFilename(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_exists(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_transferFile(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native long FileHolder_maxBufferSize(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_deleteFile(long jarg1, FileHolder jarg1_);
+  public final static native String FileHolder_md5Checksum(long jarg1, FileHolder jarg1_);
+  public final static native long new_FileHolder();
+  public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void FileHolder_change_ownership(FileHolder obj, long cptr, boolean take_or_release);
   public final static native long new_MixedValue__SWIG_0();
   public final static native long new_MixedValue__SWIG_2(long jarg1, MixedValue jarg1_);
   public final static native void delete_MixedValue(long jarg1);
@@ -539,6 +549,7 @@ public class stiJNI {
   public final static native double MixedValue_getNumber(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_getString(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_TypeToString(int jarg1);
   public final static native void MixedValue_director_connect(MixedValue obj, long cptr, boolean mem_own, boolean weak_global);
@@ -558,10 +569,8 @@ public class stiJNI {
   public final static native long MixedValueVec_doSet(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
   public final static native void MixedValueVec_doRemoveRange(long jarg1, MixedValueVec jarg1_, int jarg2, int jarg3);
   public final static native void delete_MixedValueVec(long jarg1);
-  public final static native long new_JShot(long jarg1);
   public final static native void delete_JShot(long jarg1);
   public final static native long JShot_getEvents(long jarg1, JShot jarg1_);
-  public final static native long new_JEventEngineScheduler(long jarg1);
   public final static native void delete_JEventEngineScheduler(long jarg1);
   public final static native void JEventEngineScheduler_id_set(long jarg1, JEventEngineScheduler jarg1_, long jarg2, DeviceID jarg2_);
   public final static native long JEventEngineScheduler_id_get(long jarg1, JEventEngineScheduler jarg1_);
@@ -634,15 +643,12 @@ public class stiJNI {
   public final static native String HubID_getID(long jarg1, HubID jarg1_);
   public final static native boolean HubID_stringToHubID(String jarg1, long jarg2, HubID jarg2_);
   public final static native void delete_HubID(long jarg1);
-  public final static native long new_JHubGraphNode(long jarg1);
   public final static native void delete_JHubGraphNode(long jarg1);
   public final static native long JHubGraphNode_getHubID(long jarg1, JHubGraphNode jarg1_);
   public final static native long JHubGraphNode_getNodes(long jarg1, JHubGraphNode jarg1_);
-  public final static native long new_JNodeWalker(long jarg1);
   public final static native void delete_JNodeWalker(long jarg1);
   public final static native long JNodeWalker_getNode(long jarg1, JNodeWalker jarg1_);
   public final static native long JNodeWalker_getConnections(long jarg1, JNodeWalker jarg1_);
-  public final static native long new_JDeviceGraphNode(long jarg1);
   public final static native void delete_JDeviceGraphNode(long jarg1);
   public final static native long JDeviceGraphNode_getID(long jarg1, JDeviceGraphNode jarg1_);
   public final static native long JDeviceGraphNode_getNode(long jarg1, JDeviceGraphNode jarg1_);
@@ -704,7 +710,6 @@ public class stiJNI {
   public final static native void delete_EventEngineDependencyTree(long jarg1);
   public final static native void EventEngineDependencyTree_director_connect(EventEngineDependencyTree obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void EventEngineDependencyTree_change_ownership(EventEngineDependencyTree obj, long cptr, boolean take_or_release);
-  public final static native long new_JEventEngine(long jarg1);
   public final static native void delete_JEventEngine(long jarg1);
   public final static native void JEventEngine_play(long jarg1, JEventEngine jarg1_, long jarg2, JEventEngineJob jarg2_);
   public final static native void JEventEngine_stop(long jarg1, JEventEngine jarg1_);
@@ -713,7 +718,6 @@ public class stiJNI {
   public final static native long JEventEngine_getDeviceID(long jarg1, JEventEngine jarg1_);
   public final static native int JEventEngine_getState(long jarg1, JEventEngine jarg1_);
   public final static native String print(int jarg1);
-  public final static native long new_JEventEngineJob(long jarg1);
   public final static native void delete_JEventEngineJob(long jarg1);
   public final static native long JEventEngineJob_getJobID(long jarg1, JEventEngineJob jarg1_);
   public final static native long JEventEngineJob_getJobOwner(long jarg1, JEventEngineJob jarg1_);
@@ -830,6 +834,24 @@ public class stiJNI {
   }
   public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
     jself.parseEvents(temp);
+  }
+  public static String SwigDirector_FileHolder_getFilename(FileHolder jself) {
+    return jself.getFilename();
+  }
+  public static boolean SwigDirector_FileHolder_exists(FileHolder jself) {
+    return jself.exists();
+  }
+  public static boolean SwigDirector_FileHolder_transferFile(FileHolder jself, long destination) {
+    return jself.transferFile((destination == 0) ? null : new FileHolder(destination, true));
+  }
+  public static long SwigDirector_FileHolder_maxBufferSize(FileHolder jself) {
+    return jself.maxBufferSize();
+  }
+  public static boolean SwigDirector_FileHolder_deleteFile(FileHolder jself) {
+    return jself.deleteFile();
+  }
+  public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
+    return jself.md5Checksum();
   }
 
   private final static native void swig_module_init();

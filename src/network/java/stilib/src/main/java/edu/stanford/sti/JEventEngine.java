@@ -40,10 +40,6 @@ public class JEventEngine {
     }
   }
 
-  public JEventEngine(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t engine) {
-    this(stiJNI.new_JEventEngine(SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngine_t.getCPtr(engine)), true);
-  }
-
   public void play(JEventEngineJob job) {
     stiJNI.JEventEngine_play(swigCPtr, this, JEventEngineJob.getCPtr(job), job);
   }

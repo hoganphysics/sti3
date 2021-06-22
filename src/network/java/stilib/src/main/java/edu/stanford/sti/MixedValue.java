@@ -133,6 +133,11 @@ public class MixedValue {
     return new MixedValueVec(stiJNI.MixedValue_getVector(swigCPtr, this), false);
   }
 
+  public FileHolder getFile() {
+    long cPtr = stiJNI.MixedValue_getFile(swigCPtr, this);
+    return (cPtr == 0) ? null : new FileHolder(cPtr, true);
+  }
+
   public String print() {
     return stiJNI.MixedValue_print(swigCPtr, this);
   }

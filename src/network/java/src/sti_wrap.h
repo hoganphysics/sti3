@@ -15,7 +15,6 @@ class SwigDirector_JDevice : public STI::Device::JDevice, public Swig::Director 
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_JDevice(JNIEnv *jenv, std::shared_ptr< STI::Device::Device > const &device);
     SwigDirector_JDevice(JNIEnv *jenv, std::string const &name, std::string const &address, unsigned short module, std::string const &targetServer);
     virtual ~SwigDirector_JDevice();
 public:
@@ -94,6 +93,7 @@ class SwigDirector_EngineJobUpdateDeviceMessage : public STI::Device::EngineJobU
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_EngineJobUpdateDeviceMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace);
+    SwigDirector_EngineJobUpdateDeviceMessage(JNIEnv *jenv, STI::Device::DeviceTrace const &trace, std::shared_ptr< STI::Engine::EventEngineJob > const &job, STI::Device::EngineJobUpdateTarget targetList);
     virtual ~SwigDirector_EngineJobUpdateDeviceMessage();
 public:
     bool swig_overrides(int n) {
@@ -363,6 +363,29 @@ public:
     }
 protected:
     Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_FileHolder : public STI::Utils::FileHolder, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_FileHolder(JNIEnv *jenv);
+    virtual ~SwigDirector_FileHolder();
+    virtual std::string getFilename() const;
+    virtual bool exists() const;
+    virtual bool transferFile(std::shared_ptr< STI::Utils::FileHolder > const &destination);
+    virtual unsigned int maxBufferSize() const;
+    virtual bool deleteFile();
+    virtual std::string md5Checksum();
+    virtual bool write(char const *buffer, unsigned int length);
+    virtual bool openFile();
+    virtual void closeFile();
+public:
+    bool swig_overrides(int n) {
+      return (n < 6 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<6> swig_override;
 };
 
 class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {

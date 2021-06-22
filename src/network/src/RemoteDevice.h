@@ -53,6 +53,8 @@ public:
 
 private:
 
+	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}
+
 	template<typename T>
 	bool isLive(const std::shared_ptr<T>& remote)
 	{

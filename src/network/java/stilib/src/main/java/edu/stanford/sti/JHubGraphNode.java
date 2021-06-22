@@ -36,10 +36,6 @@ public class JHubGraphNode {
     }
   }
 
-  public JHubGraphNode(SWIGTYPE_p_STI__Network__DirectedGraphHubT_STI__Device__DeviceID_STI__Device__Device_t hub) {
-    this(stiJNI.new_JHubGraphNode(SWIGTYPE_p_STI__Network__DirectedGraphHubT_STI__Device__DeviceID_STI__Device__Device_t.getCPtr(hub)), true);
-  }
-
   public HubID getHubID() {
     return new HubID(stiJNI.JHubGraphNode_getHubID(swigCPtr, this), false);
   }

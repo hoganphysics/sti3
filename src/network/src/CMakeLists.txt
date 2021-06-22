@@ -8,7 +8,7 @@ endif (MSVC)
 project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
@@ -76,6 +76,7 @@ add_library(stinetwork SHARED
     RemoteDeviceMessageHandler.cpp
     RemoteEventEngine.cpp
     RemoteEventEngineScheduler.cpp
+    RemoteFileHolder.cpp
     RemoteShot.cpp
     RemoteTriggerCallback.cpp
     TAttributeManager_i.cpp
@@ -87,6 +88,7 @@ add_library(stinetwork SHARED
     TDeviceMessageHandler_i.cpp
     TEventEngine_i.cpp
     TEventEngineScheduler_i.cpp
+    TFileHolder_i.cpp
     TRefreshIndicator_i.cpp
     TShot_i.cpp
     TTriggerCallback_i.cpp

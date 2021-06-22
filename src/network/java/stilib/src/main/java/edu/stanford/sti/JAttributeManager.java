@@ -40,10 +40,6 @@ public class JAttributeManager {
     }
   }
 
-  public JAttributeManager(SWIGTYPE_p_std__shared_ptrT_STI__Device__AttributeManager_t manager) {
-    this(stiJNI.new_JAttributeManager(SWIGTYPE_p_std__shared_ptrT_STI__Device__AttributeManager_t.getCPtr(manager)), true);
-  }
-
   public String getValue(String key) {
     return stiJNI.JAttributeManager_getValue(swigCPtr, this, key);
   }

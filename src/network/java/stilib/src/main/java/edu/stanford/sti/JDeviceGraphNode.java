@@ -36,10 +36,6 @@ public class JDeviceGraphNode {
     }
   }
 
-  public JDeviceGraphNode(SWIGTYPE_p_STI__Network__DirectedGraphNodeT_STI__Device__DeviceID_STI__Device__Device_t deviceNode) {
-    this(stiJNI.new_JDeviceGraphNode(SWIGTYPE_p_STI__Network__DirectedGraphNodeT_STI__Device__DeviceID_STI__Device__Device_t.getCPtr(deviceNode)), true);
-  }
-
   public DeviceID getID() {
     return new DeviceID(stiJNI.JDeviceGraphNode_getID(swigCPtr, this), false);
   }

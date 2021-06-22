@@ -40,10 +40,6 @@ public class JDeviceCollection {
     }
   }
 
-  public JDeviceCollection(SWIGTYPE_p_STI__Device__DeviceCollection collection) {
-    this(stiJNI.new_JDeviceCollection(SWIGTYPE_p_STI__Device__DeviceCollection.getCPtr(collection)), true);
-  }
-
   public boolean add(DeviceID id, JDevice node) {
     return stiJNI.JDeviceCollection_add(swigCPtr, this, DeviceID.getCPtr(id), id, JDevice.getCPtr(node), node);
   }

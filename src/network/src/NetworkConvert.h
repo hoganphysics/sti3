@@ -28,6 +28,7 @@ bool convert(const In& input, Out& output)
 	//Compiler error if an explicit specialization is not found.
 	//Only specializations can be used.
 	static_assert(convertExists<In, Out>(), "bool NetworkConvert::convert<In, Out> not specialized.");
+	return false;
 }
 
 
@@ -37,6 +38,7 @@ Out convert(const In& input)
 	//Compiler error. This template should never be instantiated.
 	//Only specializations can be used.
 	static_assert(convertExists<In, Out>(), "Out NetworkConvert::convert<In, Out> not specialized.");
+	return false;
 }
 
 
@@ -105,6 +107,9 @@ bool convert(const _CORBA_Unbounded_Sequence_Forward<In>& input, std::vector<Out
 	return convertlist(input, output);
 }
 
+bool convertBuffer(const char* buffer, unsigned length, ::STI::TNetwork::OctetSeq& tBuffer);
+bool convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer);
+
 
 } //Network
 
@@ -127,6 +132,10 @@ template<>
 bool Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(const std::vector<std::string>& stringVec, STI::TNetwork::TStringSeq& tStringSeq);
 template<>
 bool Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(const STI::TNetwork::TStringSeq& tStringSeq, std::vector<std::string>& stringVec);
+
+
+
+
 
 
 

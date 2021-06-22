@@ -36,16 +36,28 @@ public class TimeStamp {
     }
   }
 
-  public void setTimestamp(double value) {
-    stiJNI.TimeStamp_timestamp_set(swigCPtr, this, value);
+  public TimeStamp() {
+    this(stiJNI.new_TimeStamp__SWIG_0(), true);
   }
 
-  public double getTimestamp() {
-    return stiJNI.TimeStamp_timestamp_get(swigCPtr, this);
+  public TimeStamp(int year, int month, int day, int hour, int min, int sec, int millis, int micros, int nanos) {
+    this(stiJNI.new_TimeStamp__SWIG_1(year, month, day, hour, min, sec, millis, micros, nanos), true);
   }
 
   public String print() {
     return stiJNI.TimeStamp_print(swigCPtr, this);
+  }
+
+  public String date() {
+    return stiJNI.TimeStamp_date(swigCPtr, this);
+  }
+
+  public String date_YYYY_MM_DD() {
+    return stiJNI.TimeStamp_date_YYYY_MM_DD(swigCPtr, this);
+  }
+
+  public String time() {
+    return stiJNI.TimeStamp_time(swigCPtr, this);
   }
 
   public boolean opLess(TimeStamp rhs) {
@@ -60,8 +72,44 @@ public class TimeStamp {
     return stiJNI.TimeStamp_opNotEquals(swigCPtr, this, TimeStamp.getCPtr(rhs), rhs);
   }
 
-  public TimeStamp() {
-    this(stiJNI.new_TimeStamp(), true);
+  public int year() {
+    return stiJNI.TimeStamp_year(swigCPtr, this);
+  }
+
+  public int month() {
+    return stiJNI.TimeStamp_month(swigCPtr, this);
+  }
+
+  public int day() {
+    return stiJNI.TimeStamp_day(swigCPtr, this);
+  }
+
+  public int hour() {
+    return stiJNI.TimeStamp_hour(swigCPtr, this);
+  }
+
+  public int min() {
+    return stiJNI.TimeStamp_min(swigCPtr, this);
+  }
+
+  public int sec() {
+    return stiJNI.TimeStamp_sec(swigCPtr, this);
+  }
+
+  public int millis() {
+    return stiJNI.TimeStamp_millis(swigCPtr, this);
+  }
+
+  public int micros() {
+    return stiJNI.TimeStamp_micros(swigCPtr, this);
+  }
+
+  public int nanos() {
+    return stiJNI.TimeStamp_nanos(swigCPtr, this);
+  }
+
+  public void add_ns(int ns) {
+    stiJNI.TimeStamp_add_ns(swigCPtr, this, ns);
   }
 
 }
