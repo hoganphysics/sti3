@@ -4,6 +4,7 @@
 #include "EngineState.h"
 #include "DeviceID.h"
 #include "fwd/RawEvent_fwd.h"
+#include "fwd/Measurement_fwd.h"
 
 #include <memory>
 
@@ -16,7 +17,7 @@ class TriggerCallback;
 class EventEngineJob;
 class EngineJobID;
 class ParseID;
-
+class ShotID;
 
 class EventEngine
 {
@@ -40,6 +41,9 @@ public:
 
 	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
 	// virtual const DeviceEventMap& getParsedEvents() = 0;
+	
+	virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
+	virtual bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 };
 
 } //Engine

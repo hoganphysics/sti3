@@ -111,6 +111,9 @@ public:
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
 
+	bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+	bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+
 private:
 
 	void parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job);
@@ -131,6 +134,7 @@ private:
 	void resetPlayThread();
 	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
 	void waitForPlayAll();
+	void transferAllMeasurements(const ShotID& sid);
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;

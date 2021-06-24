@@ -661,7 +661,13 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
-
+	
+	if (isJobOwner || ownedTargets.size() > 0) {
+		transferAllMeasurements(jobID.sid);	//need to get all measurements from owned devices
+	}
+	
+	// saveShot(job);	//job needs record of shot
+	
 	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
 								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
 	playCompleteMessage->jobID.pid = job.getJobID().pid;
@@ -671,8 +677,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 	// playCompleteMessage->messages
 	sendMessage(playCompleteMessage);
 
-	// getAllMeasurements();	//need to get all measurements from owned devices
-	// saveShot(job);	//job needs record of shot
 
 	//After play completes (without error or abort), the engine should be in the Parsed state
 	if (!isState(EngineState::Parsed)) {
@@ -681,6 +685,38 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 }
 
+
+void LocalEventEngine::transferAllMeasurements(const ShotID& sid)
+{
+	std::shared_ptr<MeasurementVector> measurements;
+	std::shared_ptr<MeasurementVector> targetMeasurements;
+
+	measurementBuffer.get(sid, measurements);
+
+	for (auto& engine : engines) {
+		if (engine.second->transferMeasurements(sid, targetMeasurements)) {
+
+			measurements->insert(measurements->end(), 
+							std::make_move_iterator(targetMeasurements->begin()), 
+							std::make_move_iterator(targetMeasurements->end()));			
+		}
+	}
+}
+
+bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
+{
+	return measurementBuffer.get(sid, measurements) && (measurements != 0);
+}
+
+// bool LocalEventEngine::transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementCollector>& collector);
+bool LocalEventEngine::transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
+{
+	if (measurementBuffer.get(sid, measurements)) {
+		//ownership of measurements transfered to caller
+		return (measurements != 0) && measurementBuffer.remove(sid);
+	}
+	return false;
+}
 
 void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLock)
 {
@@ -712,9 +748,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	for (auto& synchEvent : synchedEvents) {
 		auto& evtMeasurements = synchEvent->getMeasurements();
 		newMeasurements->insert(newMeasurements->end(), evtMeasurements.begin(), evtMeasurements.end());
-		// for (auto& m : evtMeasurements) {
-		// 	newMeasurements->push_back(m);
-		// }
 	}
 	measurementBuffer.add(jobID.sid, newMeasurements);	//Add this shot to the buffer
 
