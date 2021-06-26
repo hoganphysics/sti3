@@ -346,7 +346,7 @@ bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingC
 
 		success = true;
 	}
-	catch (CORBA::Exception& ex)
+	catch (CORBA::Exception&)
 	{
 		success = false;
 		std::cerr << "NamingContext exception." << std::endl;

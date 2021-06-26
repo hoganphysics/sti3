@@ -82,7 +82,7 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
     else {
         bufferSize = maxBufferSize;
     }
-    char buffer[bufferSize];
+    char* buffer = new char[bufferSize];
 
     //compute md5 on local file while reading
     MD5_CTX md5Context; 
@@ -96,10 +96,12 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
         amountRead += nextReadSize;
         nextReadSize = std::min(bufferSize, filesize - amountRead);
 
-        destination->write(buffer, ifs.gcount());
+        destination->write(buffer, static_cast<unsigned>(ifs.gcount()));
 
         MD5_Update(&md5Context, buffer, ifs.gcount());
     }
+
+    delete[] buffer;
 
     unsigned char digest[MD5_DIGEST_LENGTH];
     int res = MD5_Final(digest, &md5Context);
@@ -164,10 +166,9 @@ void LocalFileHolder::closeFile()
 
 
 bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5string, unsigned bufferSize) 
-{ 
-    
-    char buffer[bufferSize];
-    
+{
+    char* buffer = new char[bufferSize];
+
     std::ifstream ifs(fname, std::ifstream::binary);
 
     if (! ifs.is_open()) return false;
@@ -182,6 +183,8 @@ bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5stri
         MD5_Update(&md5Context, buffer, ifs.gcount());
     } 
     
+    delete[] buffer;
+
     ifs.close(); 
 
     unsigned char digest[MD5_DIGEST_LENGTH];

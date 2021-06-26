@@ -16,6 +16,7 @@ if (MSVC)
 set(USE_STI_DEBUG_POSTFIX True)
 endif (MSVC)
 
+
 #set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
 
 if (USE_STI_DEBUG_POSTFIX)
@@ -26,7 +27,8 @@ endif (USE_STI_DEBUG_POSTFIX)
 #set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )
 
-# add_compile_definitions(_DEBUG)
+#add_compile_definitions(_DEBUG)
+add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 
 find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 

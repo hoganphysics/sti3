@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 
 set(STI_BASE_DIR ../../..)
 
+#FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
 
 link_directories(${STI_BASE_DIR}/lib)
 
@@ -36,6 +37,7 @@ set_property(TARGET STIServer
 
 target_include_directories(STIServer PRIVATE 
     ${WORKING_DIRECTORY}
+#    ${Boost_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
     ${STI_BASE_DIR}/src/network/src

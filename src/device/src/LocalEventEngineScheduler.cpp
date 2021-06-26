@@ -678,7 +678,7 @@ void LocalEventEngineScheduler::assignJobs()
                 freeEngines.insert(id);
             }
         }
-        assignableJobCount = queuedJobIDs.size();
+        assignableJobCount = static_cast<int>(queuedJobIDs.size());
         //assignableFreeEngines = freeEngines.size();
 
         if (freeEngines.size() > 0) {

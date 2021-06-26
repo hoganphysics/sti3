@@ -36,7 +36,7 @@ public:
     int month() const;
     int day() const;
     int hour() const;
-    int min() const;
+    int minute() const;
     int sec() const;
     int millis() const;
     int micros() const;
@@ -44,7 +44,7 @@ public:
 
 	void add_ns(int ns)
 	{
-		_nanos != ns;
+		_nanos += ns;
 	}
 
 private:

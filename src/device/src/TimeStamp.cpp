@@ -11,7 +11,8 @@ TimeStamp::TimeStamp()
 {
     auto now = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-    timeinfo = *localtime(&now_time);
+//    timeinfo = *localtime(&now_time);
+    localtime_s(&timeinfo, &now_time);
 
     auto duration = now.time_since_epoch();
 
@@ -38,7 +39,8 @@ TimeStamp::TimeStamp(int year, int month, int day, int hour,
     timeinfo.tm_isdst = -1; //use local system timezone (mktime will fill this in)
 
     std::time_t now_time = mktime(&timeinfo);
-    timeinfo = *localtime(&now_time);
+    //timeinfo = *localtime(&now_time);
+    localtime_s(&timeinfo, &now_time);
 }
 
 int TimeStamp::year() const
@@ -57,7 +59,7 @@ int TimeStamp::hour() const
 {
     return timeinfo.tm_hour;
 }
-int TimeStamp::min() const
+int TimeStamp::minute() const
 {
     return timeinfo.tm_min;
 }
@@ -129,7 +131,7 @@ std::string TimeStamp::time() const
 
     ts << std::setfill('0') << std::setw(2) << hour();
     ts << ":";
-    ts << std::setfill('0') << std::setw(2) << min();
+    ts << std::setfill('0') << std::setw(2) << minute();
     ts << ":";
     ts << std::setfill('0') << std::setw(2) << sec();
     ts << ".";
@@ -178,9 +180,9 @@ bool TimeStamp::operator<(const TimeStamp& rhs) const
     else if (hour() > rhs.hour())
         return false;
     
-    if (min() < rhs.min())
+    if (minute() < rhs.minute())
         return true;
-    else if (min() > rhs.min())
+    else if (minute() > rhs.minute())
         return false;
 
     if (sec() < rhs.sec())
@@ -207,7 +209,7 @@ bool TimeStamp::operator==(const TimeStamp& rhs) const
            micros() == rhs.micros() &&
            millis() == rhs.millis() &&
            sec() == rhs.sec() &&
-           min() == rhs.min() &&
+           minute() == rhs.minute() &&
            hour() == rhs.hour() &&
            day() == rhs.day() &&
            month() == rhs.month() &&

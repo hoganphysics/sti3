@@ -34,6 +34,8 @@ if (MSVC)
 add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
 endif (MSVC)
 
+add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+
 set(STI_BASE_DIR ../../..)
 
 # include_directories("." ${OMNIORB4_INCLUDE_DIR})

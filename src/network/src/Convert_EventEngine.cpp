@@ -602,7 +602,7 @@ RawEvent STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent)
 template<>
 bool STI::Network::convert<DeviceEventMap, TDeviceEventsSeq>(const DeviceEventMap& deviceEvents, TDeviceEventsSeq& tDeviceEvents)
 {
-    tDeviceEvents.length(deviceEvents.size());
+    tDeviceEvents.length(static_cast<CORBA::ULong>(deviceEvents.size()));
 
     unsigned i = 0;
 
@@ -704,7 +704,7 @@ TTimeStamp STI::Network::convert<TimeStamp, TTimeStamp>(const TimeStamp& timeSta
     tTime.month = timeStamp.month();
     tTime.day = timeStamp.day();
     tTime.hour = timeStamp.hour();
-    tTime.min = timeStamp.min();
+    tTime.min = timeStamp.minute();
     tTime.sec = timeStamp.sec();
     tTime.millis = timeStamp.millis();
     tTime.micros = timeStamp.micros();

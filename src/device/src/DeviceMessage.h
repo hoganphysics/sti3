@@ -11,7 +11,7 @@
 #include "DeviceTrace.h"
 #include "EngineID.h"
 #include "EngineParsingMessage.h"
-#include "EventEngineDependencyTree.h"
+//#include "EventEngineDependencyTree.h"
 #include "EventEngineJob.h"
 
 #include <sstream>
@@ -440,7 +440,7 @@ public:
 	//status
 	STI::Engine::ParseID pid;
 	std::vector<STI::Engine::EngineParsingMessage> messages;
-	std::shared_ptr<STI::Engine::EventEngineDependencyTree> parsedTree;
+//	std::shared_ptr<STI::Engine::EventEngineDependencyTree> parsedTree;
 
 };
 

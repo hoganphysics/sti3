@@ -87,11 +87,13 @@ char* TFileHolder_i::md5Checksum()
 
     if (localFileHolder != 0) {
 
-        char copyBuffer[buffer.length()];
+        char* copyBuffer = new char[buffer.length()];
 
         convertBuffer(buffer, copyBuffer);
 
 		result = localFileHolder->write(copyBuffer, buffer.length());
+
+        delete[] copyBuffer;
 	}
     return static_cast<::CORBA::Boolean>(result);
 }
