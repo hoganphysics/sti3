@@ -1,5 +1,5 @@
-#ifndef STI_PYTHON_TICKETMANAGER_H
-#define STI_PYTHON_TICKETMANAGER_H
+#ifndef STI_ENGINE_TICKETMANAGER_H
+#define STI_ENGINE_TICKETMANAGER_H
 
 
 #include "Device.h"
@@ -12,7 +12,7 @@
 
 namespace STI
 {
-namespace Python
+namespace Engine
 {
 
 
@@ -40,41 +40,41 @@ private:
 };
 
 
-} //Python
+} //Engine
 } //STI
 
 
 template<typename ID, typename T>
-STI::Python::TicketManager<ID, T>::TicketManager()
+STI::Engine::TicketManager<ID, T>::TicketManager()
 {
 }
 
 template<typename ID, typename T>
-STI::Python::TicketManager<ID, T>::~TicketManager()
+STI::Engine::TicketManager<ID, T>::~TicketManager()
 {
     cancelAll();
 }
 
 template<typename ID, typename T>
-void STI::Python::TicketManager<ID, T>::add(const ID& id, const std::shared_ptr<T>& ticket)
+void STI::Engine::TicketManager<ID, T>::add(const ID& id, const std::shared_ptr<T>& ticket)
 {
     tickets.add(id, ticket);
 }
 
 template<typename ID, typename T>
-void STI::Python::TicketManager<ID, T>::remove(const ID& id)
+void STI::Engine::TicketManager<ID, T>::remove(const ID& id)
 {
     tickets.remove(id);
 }
 
 template<typename ID, typename T>
-bool STI::Python::TicketManager<ID, T>::get(const ID& id, std::shared_ptr<T>& ticket)
+bool STI::Engine::TicketManager<ID, T>::get(const ID& id, std::shared_ptr<T>& ticket)
 {
     return tickets.get(id, ticket);
 }
 
 template<typename ID, typename T>
-void STI::Python::TicketManager<ID, T>::cancel(const ID& id)
+void STI::Engine::TicketManager<ID, T>::cancel(const ID& id)
 {
     std::shared_ptr<T> ticket;
 
@@ -84,7 +84,7 @@ void STI::Python::TicketManager<ID, T>::cancel(const ID& id)
 }
 
 template<typename ID, typename T>
-void STI::Python::TicketManager<ID, T>::cancelAll()
+void STI::Engine::TicketManager<ID, T>::cancelAll()
 {
     std::set<ID> ids;
     tickets.getKeys(ids);
@@ -95,7 +95,7 @@ void STI::Python::TicketManager<ID, T>::cancelAll()
 }
 
 template<typename ID, typename T>
-std::shared_ptr<T> STI::Python::TicketManager<ID, T>::makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server)
+std::shared_ptr<T> STI::Engine::TicketManager<ID, T>::makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server)
 {
     auto ticket = std::make_shared<T>(id, server);
 

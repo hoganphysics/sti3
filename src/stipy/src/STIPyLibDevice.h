@@ -13,10 +13,10 @@ namespace STI
 namespace Python
 {
 
-class ParseTicket;
-class ResultTicket;
-class ParseTicketManager;
-class ResultTicketManager;
+class PyParseTicket;
+class PyResultTicket;
+class PyParseTicketManager;
+class PyResultTicketManager;
 class ParseID;
 
 
@@ -32,13 +32,13 @@ public:
 
     bool getServer(std::shared_ptr<Device>& server);
 
-    std::shared_ptr<ParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
-    std::shared_ptr<ResultTicket> makeResultTicket(const STI::Engine::ShotID& sid);
+    std::shared_ptr<PyParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
+    std::shared_ptr<PyResultTicket> makeResultTicket(const STI::Engine::ShotID& sid);
 
 private:
 
-    std::shared_ptr<ParseTicketManager> parseTicketManager;
-    std::shared_ptr<ResultTicketManager> resultTicketManager;
+    std::shared_ptr<PyParseTicketManager> parseTicketManager;
+    std::shared_ptr<PyResultTicketManager> resultTicketManager;
 
     STI::Device::DeviceMessageListenerID schedulerMessageLID;
 

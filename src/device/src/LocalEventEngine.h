@@ -24,6 +24,7 @@
 #include "fwd/Measurement_fwd.h"
 #include "fwd/RawEvent_fwd.h"
 #include "fwd/SynchronousEvent_fwd.h"
+#include "PersistenceManager.h"
 
 #include <memory>
 #include <mutex>
@@ -40,7 +41,7 @@ class EventEngineDependencyTree;
 class DeviceMessageDispatcher;
 class MasterTrigger;
 class TriggerCallback;
-
+class ResultsCollector;
 
 class EventTime
 {
@@ -112,7 +113,9 @@ public:
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
 
 	bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
-	bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+	// bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+
+	bool transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector);
 
 private:
 
@@ -134,7 +137,7 @@ private:
 	void resetPlayThread();
 	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
 	void waitForPlayAll();
-	void transferAllMeasurements(const ShotID& sid);
+	// void transferAllMeasurements(const ShotID& sid);
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;
@@ -174,6 +177,7 @@ private:
 
 	std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 	std::shared_ptr<STI::Device::ChannelManager> localChannels;
+	std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 
 	std::shared_ptr<EventEngineDependencyTree> dependencyTree;
 	std::shared_ptr<EventEngineDependencyTree> localSubtree;

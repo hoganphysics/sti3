@@ -1,6 +1,8 @@
 #ifndef STI_ENGINE_MEASUREMENT_H
 #define STI_ENGINE_MEASUREMENT_H
 
+#include "fwd/Measurement_fwd.h"
+
 #include "MixedValue.h"
 #include "DeviceID.h"
 #include "utils/GraphPathLabel.h"

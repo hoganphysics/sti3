@@ -109,6 +109,9 @@ public:
     bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
     bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const;
 
+    bool transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector);
+    bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);
+
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {
         return engineSchedulerMessageListenerDelegate;
@@ -171,6 +174,7 @@ private:
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
+    bool getEngineByShot(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;
@@ -180,9 +184,14 @@ private:
 
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
 
+    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> queuedJobs;
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> runningJobs;
     STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<EventEngineJob>> completedJobs;
+
+    bool findCompletedEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
+    bool findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     void stop();
 
@@ -214,7 +223,10 @@ private:
 
 
 
+
 };
+
+
 
 
 } //Engine

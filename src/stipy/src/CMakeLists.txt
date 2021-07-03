@@ -47,13 +47,13 @@ message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
 pybind11_add_module(stipy 
     HubID_wrap.cpp
-    ParseTicket.cpp
-    ParseTicketManager.cpp
+    # ParseTicket.cpp
     ParseTicket_wrap.cpp
     pywrapper.cpp
-    ResultTicket.cpp
+    PyResultTicket.cpp
+    PyParseTicket.cpp
+    # ResultTicket.cpp
     ResultTicket_wrap.cpp
-    ResultTicketManager.cpp
     STIPyChannel.cpp
     STIPyChannel_wrap.cpp
     stipy.cpp
@@ -67,7 +67,7 @@ pybind11_add_module(stipy
     STIPyShot.cpp
     STIPyShot_wrap.cpp
     stipy_wrap.cpp
-    Ticket.cpp
+    # Ticket.cpp
     ${STIDEVICEPY_DIR}/MixedValuePy.cpp
     ${STIDEVICEPY_DIR}/DeviceID_wrap.cpp
 )

@@ -2,13 +2,13 @@
 #include "Ticket.h"
 
 #include <chrono>
-#include <pybind11/pybind11.h>
+// #include <pybind11/pybind11.h>
 
 
-using STI::Python::Ticket;
+using STI::Engine::Ticket;
 
 
-namespace py = pybind11;
+// namespace py = pybind11;
 
 Ticket::Ticket(const Ticket::TicketStatus& initalStatus)
 : status(initalStatus)
@@ -19,12 +19,21 @@ void Ticket::wait()
 {
     std::unique_lock<std::mutex> statusLock(statusMutex);
 
-    while (status == TicketStatus::Running) {
+    bool keepWaiting = true;
+
+    while (status == TicketStatus::Running && keepWaiting) {
         statusCondition.wait_for(statusLock, std::chrono::milliseconds(100));
 
-        if (PyErr_CheckSignals() != 0) 
-            throw py::error_already_set();
+        keepWaiting = waitCheck();
     }
+}
+
+bool Ticket::waitCheck()
+{
+    // if (PyErr_CheckSignals() != 0) 
+    //     throw py::error_already_set();
+    
+    return true;
 }
 
 void Ticket::setComplete()

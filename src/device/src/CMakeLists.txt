@@ -63,15 +63,20 @@ add_library(stidevice SHARED
     LocalEventEngine.cpp
     LocalEventEngineJob.cpp
     LocalEventEngineScheduler.cpp
+    LocalFileHolder.cpp
+    LocalPersistenceManager.cpp
+    LocalResultsCollector.cpp
     MasterTrigger.cpp
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
-    LocalFileHolder.cpp
+    ParseTicket.cpp
     RawEvent.cpp
+    ResultTicket.cpp
     ShotID.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp
+    Ticket.cpp
     utils.cpp
 )
 

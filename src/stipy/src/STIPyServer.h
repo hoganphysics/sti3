@@ -21,8 +21,8 @@ namespace Python
 
 class STIPyShot;
 class STIPySeq;
-class ParseTicket;
-class ResultTicket;
+class PyParseTicket;
+class PyResultTicket;
 
 
 //maybe this should be the same as STIPyLibDevice, and should have a getServer() function to return the server device reference
@@ -50,13 +50,13 @@ public:
     std::shared_ptr<STIPySeq> makesequence();
     std::shared_ptr<STIPySeq> makesequence(pybind11::object func);
 
-    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
-    std::shared_ptr<ParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
-    std::shared_ptr<ParseTicket> parse(const std::vector<ParseTicket>& tickets);  //combining multiple servers
+    std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
+    std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
+    std::shared_ptr<PyParseTicket> parse(const std::vector<PyParseTicket>& tickets);  //combining multiple servers
 
-    std::shared_ptr<ResultTicket> play(const std::shared_ptr<ParseTicket>& ticket);
-    std::shared_ptr<ResultTicket> play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats);
-    std::shared_ptr<ResultTicket> play(const STI::Engine::ParseID& parseID, unsigned repeats);
+    std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket);
+    std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket, unsigned repeats);
+    std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID, unsigned repeats);
 
     void cancelAll();
 

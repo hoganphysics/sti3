@@ -1,6 +1,6 @@
 
-#ifndef STI_PYTHON_TICKET_H
-#define STI_PYTHON_TICKET_H
+#ifndef STI_ENGINE_TICKET_H
+#define STI_ENGINE_TICKET_H
 
 #include <mutex>
 #include <condition_variable>
@@ -8,7 +8,7 @@
 
 namespace STI
 {
-namespace Python
+namespace Engine
 {
 
 
@@ -29,6 +29,8 @@ public:
 
 private:
 
+    virtual bool waitCheck();
+
     TicketStatus status;
 
     mutable std::mutex statusMutex;
@@ -36,7 +38,7 @@ private:
 };
 
 
-} //Python
+} //Engine
 } //STI
 
 #endif

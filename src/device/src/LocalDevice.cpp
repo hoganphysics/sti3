@@ -19,6 +19,8 @@
 #include "DeviceMessageListenerForwarder.h"
 
 #include "ServerMessageRelayer.h"
+#include "LocalPersistenceManager.h"
+
 
 #include <memory>
 #include <iostream>
@@ -41,6 +43,7 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Device::DeviceMessageListenerID;
 using STI::Device::CollectionUpdateMessage;
 
+
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)
 {
@@ -55,12 +58,17 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
+	
+	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(localFileHolderFactory);
+
+	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
+
 
     auto engineFactory = std::make_shared<STI::Engine::LocalEventEngineFactory>(getID(), localChannelManager, deviceMessageDispatcher, localCollection);
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
 
-	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-	setFileHolderFactory(localFileHolderFactory);
+
 	
 	//setEngineFactory(engineFactory);
 
@@ -308,6 +316,11 @@ void LocalDevice::getChannelManager(std::shared_ptr<ChannelManager>& manager)
 void LocalDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager)
 {
 	manager = localAttributeManager;	
+}
+
+void LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
+{
+	manager = localPersistenceManager;
 }
 
 bool LocalDevice::isPartnerDevice(const DeviceID& id)

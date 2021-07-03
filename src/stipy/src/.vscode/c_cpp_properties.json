@@ -10,10 +10,11 @@
                 "${stiBasePath}/include/**",
                 "${stiBasePath}/src/device/src/**",
                 "${stiBasePath}/src/device/python/src/**",
-                "${stiBasePath}/src/network/src/**"
+                "${stiBasePath}/src/network/src/**",
+                "/home/hogan/.local/lib/python3.6/site-packages/pybind11/include/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/g++-11",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-clang-x64"

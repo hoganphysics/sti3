@@ -33,6 +33,8 @@ class LocalDevice;
 class LocalAttribute;
 class LocalAttributeManager;
 class DeviceMessageListenerID;
+class LocalPersistenceManager;
+class PersistenceManager;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -69,6 +71,7 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
+	void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -97,21 +100,16 @@ public:
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
-	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-	{
-		fileHolderFactory = factory;
-	}
+	// std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
+	// {
+	// 	std::shared_ptr<STI::Utils::FileHolder> holder;
 
-	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
-	{
-		std::shared_ptr<STI::Utils::FileHolder> holder;
+	// 	if (fileHolderFactory != 0) {
+	// 		holder = fileHolderFactory->makeFileHolder(filename);
+	// 	}
 
-		if (fileHolderFactory != 0) {
-			holder = fileHolderFactory->makeFileHolder(filename);
-		}
-
-		return holder;
-	}
+	// 	return holder;
+	// }
 
 private:
 
@@ -157,12 +155,11 @@ private:
 	std::shared_ptr<STI::Engine::LocalEventEngineScheduler> eventEngineScheduler;
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 	std::shared_ptr<LocalAttributeManager> localAttributeManager;
-
+	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
+	
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
 	std::set<DeviceID> partnerDevices;
-
-	std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
 
 };
 
