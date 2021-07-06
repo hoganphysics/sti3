@@ -84,7 +84,11 @@ public:
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
 
-	void addPartner(const DeviceID& id) { partnerDevices.insert(id); }
+	void addPartner(const DeviceID& id)
+	{
+		partnerDevices.insert(id);
+		addEventTarget(id);
+	}
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 

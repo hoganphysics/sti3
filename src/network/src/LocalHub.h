@@ -77,7 +77,9 @@ public:
 
 	void clear();
 
-	virtual const HubID& getID() const = 0;
+	const HubID& getID() const { return id; }
+	void setID(const STI::Network::HubID hubID) { id = hubID; }
+//	virtual const HubID& getID() const = 0;
 
 	void disconnect(const HubID& hid);
 
@@ -91,6 +93,8 @@ private:
 	STI::Utils::Distributer<ID, T> nodeDistributer;		///< The hub is built around a NodeDistributer.
 
 	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub<ID, T>>> hubs;
+
+	STI::Network::HubID id;
 
 	mutable std::mutex distributerMutex;
 

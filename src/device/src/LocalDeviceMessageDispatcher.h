@@ -39,6 +39,10 @@ private:
 	{
 	public:
 		DispatcherEventQueue(LocalDeviceMessageDispatcher* dispatcher) : dispatcher(dispatcher) {}
+		~DispatcherEventQueue()
+		{
+			stop();
+		}
 
 	private:
 		void handleEvent(const std::shared_ptr<DeviceMessage>& mess)

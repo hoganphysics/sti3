@@ -69,6 +69,7 @@ try:
 except KeyboardInterrupt:
     print("Abort wait")
     tick.cancel()
+	shotCancelled = True
 
 errMessages=tick.getMessages()
 print(errMessages)
@@ -81,6 +82,14 @@ print(tick.getEvents())
 # print(errMessages[0].getEvents())
 
 playTick=server.play(tick)
-playTick.wait()
+
+
+try:
+    if (!shotCancelled) :
+        playTick.wait()
+except KeyboardInterrupt:
+    print("Abort wait")
+    playTick.cancel()
+#playTick.wait()
 
 # time.sleep(0.1)

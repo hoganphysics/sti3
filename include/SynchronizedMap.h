@@ -65,6 +65,11 @@ class SynchronizedMapEventHandler : public EventQueue<SynchronizedMapEvent<Key>>
 public:
 	typedef std::vector<typename SynchronizedMapListener<Key>::_ptr> ListenerVector;
 
+	virtual ~SynchronizedMapEventHandler()
+	{
+		EventQueue<SynchronizedMapEvent<Key>>::stop();
+	}
+
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
 	{
 		std::unique_lock<std::mutex> writeLock(listenersMutex);
@@ -171,7 +176,7 @@ private:
 	
 	
 //	SynchronizedMapEventHandler< SynchronizedMapEvent<Key> > eventHandler;
-	SynchronizedMapEventHandler< Key > eventHandler;
+	SynchronizedMapEventHandler<Key> eventHandler;
 	void pushAddEvent(const Key& key);
 	void pushRemoveEvent(const Key& key);
 	void pushRefreshEvent();

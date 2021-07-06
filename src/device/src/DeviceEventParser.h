@@ -26,7 +26,8 @@ class DeviceEventParser
 public:
 
 	virtual ~DeviceEventParser() {}
-
+	
+	virtual bool isEventTarget(const STI::Device::DeviceID& id) = 0;
 	virtual void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs) = 0;
 
 	void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents, const STI::Engine::EngineID& engineID, DeviceEventMap* target);

@@ -19,18 +19,28 @@ class LocalDeviceHub : public STI::Network::LocalHub<STI::Device::DeviceID, STI:
 public:
 	LocalDeviceHub(const std::string& name, const std::string& address = "localhost", unsigned short module = 0)
 	{
+		STI::Network::HubID id;
+
 		id.name = name;
 		id.address = address;
 		id.module = module;
+
+		setID(id);
 	}
 
-	const STI::Network::HubID& getID() const { return id; }
+	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
+	{
+		if (node != 0) {
+			return addNode(node->getID(), node);
+		}
+		return false;
+	}
 
-	void setID(const STI::Network::HubID hubID) { id = hubID; }
+
 
 private:
 
-	STI::Network::HubID id;
+	
 };
 
 } //Network

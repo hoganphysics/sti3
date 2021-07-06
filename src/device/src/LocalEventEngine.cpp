@@ -54,7 +54,8 @@ using STI::Engine::MasterTrigger;
 
 LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::DeviceID& localID, 
 								   const std::shared_ptr<STI::Device::ChannelManager>& channels,
- 								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
+ 								   DeviceEventParser* deviceParser, 
+								   const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
  								   const std::shared_ptr<STI::Device::DeviceCollection>& collection) 
   : MessageGenerator(dispatcher),
   	engineID(engineID),
@@ -65,7 +66,9 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 	localChannels(channels),
 	deviceCollection(collection),
 	cancelled(false),
-	engineStateMessageGrouper(dispatcher)
+	engineStateMessageGrouper(dispatcher),
+	isJobOwner(false),
+	eventsByTargetCached(false)
 {
 	engineStateMessageGrouper.setWarmup(100);   //ms
     engineStateMessageGrouper.setCooldown(500); //ms
@@ -109,7 +112,7 @@ void LocalEventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedI
 
 	//Remove any devices that do not list this device as server
 	for(auto& id : ids) {
-		if(isTargetServerForDevice(id)) {
+		if(isActingServerForDevice(id)) {
 			ownedIDs.insert(id);
 		}
 	}
@@ -118,6 +121,14 @@ void LocalEventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedI
 bool LocalEventEngine::isTargetServerForDevice(const STI::Device::DeviceID& id)
 {
 	return id.getTargetServerID() == localDeviceID.getID();
+}
+
+bool LocalEventEngine::isActingServerForDevice(const STI::Device::DeviceID& id)
+{
+	//The local device will act as the server for any of its partner devices *if* it is the job owner.
+	//A partner device will return return true for isEventTarget(id).
+	bool isPartnerServer = isJobOwner && deviceParser->isEventTarget(id);
+	return isTargetServerForDevice(id) || isPartnerServer;
 }
 
 void LocalEventEngine::divideEvents(const RawEventVector& events)
@@ -238,6 +249,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	clear();
 
+	isJobOwner = (job.getJobOwner() == localDeviceID);
+
 	// job.addMessage(ParsingMessageType::Warning, 100, "Test message")
     //         << "This is a test.";
 
@@ -296,7 +309,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	while (isState(EngineState::Parsing) && nextID != orderedDependents.end()) {
 
-		if (isTargetServerForDevice(*nextID) || (*nextID) == localDeviceID) {
+		if (isActingServerForDevice(*nextID) || (*nextID) == localDeviceID) {
 			
 			std::string devName = nextID->getName();
 

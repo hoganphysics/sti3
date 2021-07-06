@@ -50,3 +50,6 @@ src/server/vcproject/.vs/
 src/stipy/src/.vs/
 src/device/python/src/.vs/
 *.pyd
+examples/cpp/testPartners/project/x64/
+examples/cpp/testPartners/project/.vs/
+src/server/test/log/

@@ -46,6 +46,10 @@ private:
 	{
 	public:
 		HandlerEventQueue(LocalDeviceMessageHandler* handler) : handler(handler) {}
+		~HandlerEventQueue()
+		{
+			stop();
+		}
 
 	private:
 		void handleEvent(const std::shared_ptr<DeviceMessage>& mess)

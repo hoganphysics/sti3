@@ -64,7 +64,7 @@ STI::Utils::EventQueue<Event>::EventQueue() : running(false)
 template<class Event>
 STI::Utils::EventQueue<Event>::~EventQueue() 
 {
-	stop();
+//	stop();
 }
 
 template<class Event>
