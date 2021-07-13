@@ -8,6 +8,8 @@
 #include "RemoteTriggerCallback.h"
 #include "LocalEventEngineJob.h"
 #include "RawEvent.h"
+#include "RemoteResultsCollector.h"
+
 
 using STI::TNetwork::TEventEngine_i;
 using STI::Engine::EventEngine;
@@ -21,6 +23,7 @@ using STI::Network::RemoteTriggerCallback;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EngineJobID;
 using STI::TNetwork::TEventEngineJob;
+using ::STI::TNetwork::TEventEngineDependencyTree;
 
 //TEventEngine_i::TEventEngine_i(const std::shared_ptr<EventEngine>& engine)
 //: eventEngine(engine)
@@ -150,3 +153,53 @@ TEngineState TEventEngine_i::getState()
 
 	return success;
 }
+
+
+TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
+{
+	STI::TNetwork::TEventEngineDependencyTree_var tEventEngineDependencyTree_var(new STI::TNetwork::TEventEngineDependencyTree);
+	
+	if (eventEngine != 0) {
+		convert<std::shared_ptr<STI::Engine::ParsedDependencyTree>, TEventEngineDependencyTree>(
+									eventEngine->getParsedTree(), tEventEngineDependencyTree_var);
+	}
+
+	return tEventEngineDependencyTree_var._retn();
+}
+
+::CORBA::Boolean TEventEngine_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
+{
+	bool success = false;
+
+    if (eventEngine != 0) {
+
+		STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
+		auto localMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
+
+		success = eventEngine->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
+
+		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
+					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
+
+		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
+		
+		measurements = new STI::TNetwork::TMeasurementSeq();
+		(*measurements) = tMeasurementSeq_var;
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngine_i::transferMeasurements(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
+{
+	bool success = false;
+
+	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
+
+	if (eventEngine != 0) {
+		success = eventEngine->transferMeasurements(remoteCollector);
+	}
+
+	return success;
+}
+

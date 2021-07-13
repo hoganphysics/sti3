@@ -16,6 +16,9 @@ module TNetwork
 
 	interface TDevice;
 
+	interface TFileHolder;
+	typedef sequence<TFileHolder> TFileHolderSeq;
+
 	struct TDeviceNode	//for NodeWalker
 	{
 		TDeviceID deviceID;
@@ -135,6 +138,17 @@ module TNetwork
 		void triggerFired(in TDeviceID id);
 	};
 
+	interface TResultsCollector
+	{
+		TShotID getShotID();
+		TEventEngineDependencyTree getDependencies();
+
+		void addEvents(in TDeviceEventsSeq parsedEvents);
+		void addTimingFiles(in TFileHolderSeq files);
+		boolean addMeasurements(in TMeasurementSeq measurements);
+		boolean addAttributes(in TDeviceID deviceID, in TAttributeSeq attributes);
+	};
+
 	interface TEventEngine
 	{
 		void play(in TEventEngineJob job);
@@ -151,6 +165,10 @@ module TNetwork
 		TEngineState getState();
 
 		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
+		TEventEngineDependencyTree getParsedTree();
+
+		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
+		boolean transferMeasurements(in TResultsCollector resultsCollector);
 	};
 
 	interface TEventEngineScheduler
@@ -204,6 +222,23 @@ module TNetwork
 		boolean ping();
 	};
 
+
+	interface TPersistenceManager
+	{
+		boolean saveShot(in TShotID sid, in TEventEngine eventEngine);
+		boolean transferMeasurements(in TResultsCollector resultsCollector);
+		boolean getResultTicket(in TShotID sid, out TResultTicket ticket);
+
+		boolean ping();
+	};
+
+	interface TShotRepository
+	{
+		boolean findShot(in TShotID sid);
+		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
+		// TMeasurementSeq getMeasurements();
+	};
+
 	interface TDevice
 	{
 		//Node interface
@@ -225,9 +260,9 @@ module TNetwork
 
 		TChannelManager getChannelManager();
 		TAttributeManager getAttributeManager();
+		TPersistenceManager getPersistenceManager();
 	};
 
-	interface TFileHolder;
 
 	interface TFileHolder
 	{

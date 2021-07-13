@@ -33,7 +33,10 @@ public:
     TDeviceID* getDeviceID();
     TEngineState getState();
     ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
-
+    TEventEngineDependencyTree* getParsedTree();
+    ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements);
+    ::CORBA::Boolean transferMeasurements(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
+     
 
 private:
 

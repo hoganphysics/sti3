@@ -15,15 +15,33 @@ namespace STI
 namespace Engine
 {
 
+class ShotRepository;
 
-class ResultTicket : public Ticket
+class ShotResult
+{
+public:
+
+    virtual ~ShotResult() {}
+
+    virtual STI::Engine::MeasurementVector measurements() = 0;
+    virtual STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id) = 0;
+};
+
+//class URLShotResult : public ShotResult
+
+class ResultTicket : public Ticket, public ShotResult
 {
 public:
 
     ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server);
     ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus);
-    
+    ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& repo, const TicketStatus& initialStatus);
+    // ResultTicket(const STI::Engine::ShotID& id, const std::string& url);
+
     virtual ~ResultTicket() {}
+
+    ShotID getShotID();
+    bool getShotRepository(std::shared_ptr<ShotRepository>& repo);
 
     STI::Engine::MeasurementVector measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);
@@ -43,6 +61,8 @@ private:
 
     bool measurements_loaded;
     std::shared_ptr<MeasurementVector> measurements_;
+
+    std::shared_ptr<ShotRepository> shotRepository;
 
 };
 

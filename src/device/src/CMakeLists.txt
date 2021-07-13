@@ -70,9 +70,11 @@ add_library(stidevice SHARED
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
-    ParseTicket.cpp
+    ParsedDependencyTree.cpp
+    ParseTicket.cpp  
     RawEvent.cpp
     ResultTicket.cpp
+    SerializedRepository.cpp
     ShotID.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp

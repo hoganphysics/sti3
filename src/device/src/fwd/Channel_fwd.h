@@ -1,7 +1,6 @@
 #ifndef STI_DEVICE_CHANNEL_FWD_H
 #define STI_DEVICE_CHANNEL_FWD_H
 
-#include <map>
 
 namespace STI
 {

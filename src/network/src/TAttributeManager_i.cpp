@@ -15,7 +15,9 @@ using STI::TNetwork::TAttribute;
 
 TAttributeManager_i::TAttributeManager_i(const std::shared_ptr<STI::Device::Device>& device)
 {
-    device->getAttributeManager(attributeManager);
+    if (device != 0) {
+        device->getAttributeManager(attributeManager);        
+    }
 }
 
 TAttributeManager_i::~TAttributeManager_i()

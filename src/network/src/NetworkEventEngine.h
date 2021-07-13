@@ -22,15 +22,16 @@ public:
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 		STI::Engine::DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
-		const std::shared_ptr<STI::Device::DeviceCollection>& collection)
-		: LocalEventEngine(engineID, localID, channels, deviceParser, dispatcher, collection), eventEngineServant(this) {}
+		const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+        const std::shared_ptr<STI::Device::PersistenceManager>& persistence)
+		: LocalEventEngine(engineID, localID, channels, deviceParser, dispatcher, collection, persistence), eventEngineServant(this) {}
 
 	~NetworkEventEngine() {}
 
 
     static bool getTEventEngineReference(
         const typename std::shared_ptr<STI::Engine::EventEngine>& engine, 
-        STI::TNetwork::TEventEngine_ptr& tEngine)
+        STI::TNetwork::TEventEngine_var& tEngine)
     {
         if (engine == 0) {
             return false;
@@ -51,7 +52,7 @@ private:
 
 
 
-} //Engine
+} //Network
 } //STI
 
 #endif

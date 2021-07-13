@@ -2,6 +2,7 @@
 #include "RemoteEventEngineScheduler.h"
 #include "DeviceTrace.h"
 #include "EventEngineDependencyTree.h"
+#include "ParsedDependencyTree.h"
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
 
@@ -15,6 +16,7 @@
 #include "RawEvent.h"
 #include "LocalShot.h"
 
+
 #include <memory>
 
 
@@ -24,6 +26,7 @@ using STI::TNetwork::TEngineJobID;
 using STI::Network::convert;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngineDependencyTree;
+using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Device::DeviceTrace;
 using STI::TNetwork::TDeviceTrace;
@@ -37,6 +40,7 @@ using STI::Engine::ParseID;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TReferenceHolder;
+
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
 	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler, schedulerMutex)
@@ -301,23 +305,21 @@ bool RemoteEventEngineScheduler::getParsingMessages(const STI::Engine::ParseID& 
 	return success;
 }
 
-bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree) const
+bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parseID, 
+									std::shared_ptr<STI::Engine::ParsedDependencyTree>& tree) const
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
 	if (isDisabled()) return false;
 
 	STI::TNetwork::TEventEngineDependencyTree_var tTree(new STI::TNetwork::TEventEngineDependencyTree);
-//	STI::TNetwork::TEventEngineDependencyTree_var tTree;
-	
-	tree = std::make_shared<STI::Engine::EventEngineDependencyTree>();
 
 	bool success = false;
 
     try {
 		success = getTRef()->getParsedTree(convert<ParseID, TParseID>(parseID), tTree);	//remote call
 
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, *tree);
+        success &= convert<TEventEngineDependencyTree, std::shared_ptr<STI::Engine::ParsedDependencyTree>>(tTree, tree);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -327,8 +329,16 @@ bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parse
 	{
 	}
 
+	if (!success) {
+		auto emptyTree = std::make_shared<STI::Engine::EventEngineDependencyTree>();
+		tree = std::make_shared<STI::Engine::ParsedDependencyTree>(emptyTree);
+	}
+
 	return success;
 }
+
+    bool transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
+    bool getResults(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ResultTicket>& results);
 
 bool RemoteEventEngineScheduler::ping() const
 {

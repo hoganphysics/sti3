@@ -24,6 +24,7 @@
 #include "Channel.h"
 #include "ResultsCollector.h"
 #include "LocalPersistenceManager.h"
+#include "ParsedDependencyTree.h"
 
 #include <memory>
 #include <thread>
@@ -50,6 +51,8 @@ using STI::Engine::EngineJobID;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::MasterTrigger;
 using STI::Engine::ResultsCollector;
+using STI::Engine::ParsedDependencyTree;
+
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
@@ -58,7 +61,8 @@ using STI::Engine::ResultsCollector;
 LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::DeviceID& localID, 
 								   const std::shared_ptr<STI::Device::ChannelManager>& channels,
  								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
- 								   const std::shared_ptr<STI::Device::DeviceCollection>& collection) 
+ 								   const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+								   const std::shared_ptr<STI::Device::PersistenceManager>& persistence) 
   : MessageGenerator(dispatcher),
   	engineID(engineID),
 	parser(engineID, localID, channels, deviceParser), 
@@ -68,7 +72,8 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 	localChannels(channels),
 	deviceCollection(collection),
 	cancelled(false),
-	engineStateMessageGrouper(dispatcher)
+	engineStateMessageGrouper(dispatcher),
+	persistenceManager(persistence)
 {
 	engineStateMessageGrouper.setWarmup(100);   //ms
     engineStateMessageGrouper.setCooldown(500); //ms
@@ -233,6 +238,12 @@ bool LocalEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, Devi
 
 	parsedEvents = eventsByTarget;	//deep copy
 	return true;
+}
+
+std::shared_ptr<ParsedDependencyTree> LocalEventEngine::getParsedTree() const 
+{
+	auto tree = std::make_shared<ParsedDependencyTree>(dependencyTree);
+	return tree; 
 }
 
 void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
@@ -742,12 +753,13 @@ bool LocalEventEngine::transferMeasurements(const std::shared_ptr<ResultsCollect
 
 	auto tree = resultsCollector->getDependencies();
 
-	EventEngineDependencyTree subtree;
-	tree->getSubtree(localDeviceID, subtree);
+	// EventEngineDependencyTree subtree;
+	// tree->getSubtree(localDeviceID, subtree);
 
     std::vector<DeviceID> nodes;
-	subtree.getDependedentNodes(localDeviceID, nodes);
-
+	if (tree != 0) {
+		tree->getDependedentNodes(localDeviceID, nodes);		
+	}
 
 	std::shared_ptr<STI::Device::Device> device;
     std::shared_ptr<EventEngineScheduler> scheduler;

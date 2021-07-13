@@ -24,6 +24,7 @@ class ShotID;
 class EngineParsingMessage;
 class ResultsCollector;
 class ResultTicket;
+class ParsedDependencyTree;
 
 
 class EventEngineScheduler
@@ -54,12 +55,11 @@ public:
 
     virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const = 0;
     virtual bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const = 0;
-    virtual bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const = 0;
+    virtual bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const = 0;
 
     virtual bool transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;
     virtual bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results) = 0;
 };
-
 
 
 } //Engine

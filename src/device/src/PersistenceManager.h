@@ -7,6 +7,7 @@
 #include "EventEngineJob.h"
 // #include "ResultsCollectorFactory.h"
 #include "FileHolderFactory.h"
+#include "ShotRepository.h"
 
 #include <memory>
 
@@ -29,9 +30,10 @@ public:
 
     virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
     
-	//could be part of PersistenceManager
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 
+    virtual void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;
+    virtual bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;
 
     // virtual std::shared_ptr<STI::Engine::ResultsCollector> createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine) = 0;
 

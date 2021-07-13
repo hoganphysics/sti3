@@ -6,6 +6,7 @@
 #include <deque>
 #include <memory>
 #include <set>
+#include <algorithm>
 
 /*
 This template class is an insertion-ordered buffer of fixed length, with arbitrary buffer access.

@@ -59,7 +59,8 @@ public:
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 		DeviceEventParser* deviceParser,
 		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
-		const std::shared_ptr<STI::Device::DeviceCollection>& collection);
+		const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+		const std::shared_ptr<STI::Device::PersistenceManager>& persistence);
 	virtual ~LocalEventEngine();
 
 	//Could pass in a DocumentationTarget that the engine (attempts) to use to save data.  Falls back on its local DocTarget.
@@ -108,7 +109,7 @@ public:
 
 //	const DeviceEventMap& getParsedEvents(const STI::Engine::ParseID& parseID);
 	bool getParsedEvents(const STI::Engine::ParseID& parseID, DeviceEventMap& parsedEvents);
-	std::shared_ptr<EventEngineDependencyTree> getParsedTree() const { return dependencyTree; }
+	std::shared_ptr<ParsedDependencyTree> getParsedTree() const;
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
 

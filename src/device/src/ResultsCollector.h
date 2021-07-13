@@ -16,7 +16,7 @@ namespace Engine
 {
 
 class ResultsTicket;
-class EventEngineDependencyTree;
+class ParsedDependencyTree;
 
 
 class ResultsCollector
@@ -26,7 +26,7 @@ public:
     virtual ~ResultsCollector() {}
 
     virtual ShotID getShotID() = 0;
-    virtual std::shared_ptr<EventEngineDependencyTree> getDependencies() = 0;
+    virtual std::shared_ptr<ParsedDependencyTree> getDependencies() = 0;
 
     virtual void addEvents(const DeviceEventMap& parsedEvents) = 0;
     virtual void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files) = 0;

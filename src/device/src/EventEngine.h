@@ -19,7 +19,7 @@ class EngineJobID;
 class ParseID;
 class ShotID;
 class ResultsCollector;
-class EventEngineDependencyTree;
+class ParsedDependencyTree;
 
 
 class EventEngine
@@ -42,7 +42,7 @@ public:
 
 	virtual STI::Engine::EngineState getState() const = 0;
 
-	virtual std::shared_ptr<EventEngineDependencyTree> getParsedTree() const = 0;
+	virtual std::shared_ptr<ParsedDependencyTree> getParsedTree() const = 0;
 	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
 	// virtual const DeviceEventMap& getParsedEvents() = 0;
 	

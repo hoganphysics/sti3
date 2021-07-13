@@ -5,6 +5,13 @@
 using STI::Engine::Measurement;
 using STI::Engine::RawEvent;
 
+
+Measurement::Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
+							const STI::Utils::GraphPathLabel& measurementGraphPath)
+: _time(time), _channel(channel),  _device(device), measurementGraphPath(measurementGraphPath), data_ready(false)
+{
+}
+
 Measurement::Measurement(const RawEvent& sourceEvent) : data_ready(false), _device(sourceEvent.targetDevice())
 {
 	_time = sourceEvent.time();

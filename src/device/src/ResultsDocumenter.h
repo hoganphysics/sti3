@@ -18,6 +18,7 @@ class LocalResultsCollector;
 
 struct ResultsPaths
 {
+    std::string tempPath;
     std::string basePath;
     std::string dataPath;
     std::string timingPath;
@@ -33,6 +34,7 @@ public:
     virtual bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector) = 0;
 
 };
+
 
 } //Engine
 } //STI

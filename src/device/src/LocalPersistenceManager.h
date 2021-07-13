@@ -6,6 +6,7 @@
 #include "PersistenceManager.h"
 #include "SynchronizedMap.h"
 #include "ResultsDocumenter.h"
+#include "ShotRepository.h"
 
 #include <memory>
 
@@ -22,7 +23,9 @@ class LocalPersistenceManager : public PersistenceManager
 {
 public:
 
-    LocalPersistenceManager(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory);
+    LocalPersistenceManager(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
+        const std::shared_ptr<STI::Engine::ResultsDocumenter>& resultsDocumenter,
+        const std::shared_ptr<STI::Engine::ShotRepository>& shotRepository);
 
 
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
@@ -46,11 +49,15 @@ public:
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
     void setResultsDocumenter(const std::shared_ptr<STI::Engine::ResultsDocumenter>& documenter);
 
+    void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
+    bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
+
 private:
 
     bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
 
     std::shared_ptr<STI::Engine::ResultsDocumenter> resultsDocumenter;
+    std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
 
     STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;
     STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<PersistenceManager>> delegates;

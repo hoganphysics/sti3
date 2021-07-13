@@ -45,6 +45,17 @@ Out convert(const In& input)
 
 //////////////// Lists //////////////////////
 
+
+//_CORBA_Unbounded_Sequence_ObjRef< _objref_TFileHolder, _CORBA_ObjRef_Element< _objref_TFileHolder, TFileHolder_Helper> , TFileHolder_Helper >
+//_CORBA_Unbounded_Sequence_ObjRef<TFileHolder_var::T_element::T_var::T_ptr*, TFileHolder_var::T_element, TFileHolder_Helper>
+
+// template<typename In, typename Out, typename Out_Helper>
+// bool convert(const std::vector<In>& input, typename _CORBA_Unbounded_Sequence_ObjRef<typename Out::T_element::T_var::T_ptr*, typename Out::T_element, Out_Helper>& output)
+// {
+// 	return false;
+// }
+
+
 template<typename In, typename Out>
 bool convert(const std::vector<In>& input, _CORBA_Unbounded_Sequence<Out>& output)
 {

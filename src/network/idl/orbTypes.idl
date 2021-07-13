@@ -117,6 +117,19 @@ module TNetwork
 	};
 	typedef sequence<TDeviceEvents> TDeviceEventsSeq;
 
+	struct TMeasurement
+	{
+		TMixedValue measurementResult;
+	
+		double time;
+		unsigned short channel;
+		TGraphPathLabel measurementGraphPath;
+		TDeviceID device;
+	};
+	typedef sequence<TMeasurement> TMeasurementSeq;
+
+
+
 	struct TEngineID
 	{
 		long engineNumber;
@@ -188,6 +201,21 @@ module TNetwork
 		TDeviceIDSeq missingTargetIDs;
 	};
 
+	interface TShotRepository;
+	
+	enum TTicketStatus { TicketRunning, TicketComplete, TicketCancelled, TicketNotFound };
+
+	struct TResultTicket
+	{
+		TShotID sid;
+		TTicketStatus status;
+		
+		// string url;
+		// boolean hasURL;
+
+		TShotRepository repo;
+		boolean hasRepo;
+	};
 
 	//DeviceMessage *************************//
 

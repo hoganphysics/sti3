@@ -107,7 +107,7 @@ public:
 
     bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
     bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
-    bool getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const;
+    bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const;
 
     bool transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector);
     bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);

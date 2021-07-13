@@ -14,6 +14,7 @@
 #include "MixedValue.h"
 #include "ServerMessageRelayer.h"
 #include "FileHolderFactory.h"
+#include "SerializedRepository.h"
 
 #include <string>
 #include <set>
@@ -158,6 +159,8 @@ private:
 	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
 	
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
+
+	std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
 
 	std::set<DeviceID> partnerDevices;
 

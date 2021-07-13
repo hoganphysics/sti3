@@ -55,6 +55,8 @@ add_library(stinetwork SHARED
     Convert_HubNodeWalker.cpp
     Convert_HubTrace.cpp
     Convert_DeviceTrace.cpp
+    Convert_ResultsCollector.cpp
+    Convert_ResultTicket.cpp
     COSBindingNode.cpp
     deviceNet.cpp
     deviceNetDynSK.cpp
@@ -62,6 +64,7 @@ add_library(stinetwork SHARED
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
     NetworkDeviceMessageHandlerWrapper.cpp
+    NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
     orbTypes.cpp
     orbTypesDynSK.cpp
@@ -77,7 +80,10 @@ add_library(stinetwork SHARED
     RemoteEventEngine.cpp
     RemoteEventEngineScheduler.cpp
     RemoteFileHolder.cpp
+    RemotePersistenceManager.cpp
+    RemoteResultsCollector.cpp
     RemoteShot.cpp
+    RemoteShotRepository.cpp
     RemoteTriggerCallback.cpp
     TAttributeManager_i.cpp
     TChannelManager_i.cpp
@@ -89,8 +95,11 @@ add_library(stinetwork SHARED
     TEventEngine_i.cpp
     TEventEngineScheduler_i.cpp
     TFileHolder_i.cpp
+    TPersistenceManager_i.cpp
     TRefreshIndicator_i.cpp
+    TResultsCollector_i.cpp
     TShot_i.cpp
+    TShotRepository_i.cpp
     TTriggerCallback_i.cpp
 )
 

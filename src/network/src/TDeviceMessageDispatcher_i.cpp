@@ -16,10 +16,9 @@ using STI::Network::convert;
 
 TDeviceMessageDispatcher_i::TDeviceMessageDispatcher_i(const std::shared_ptr<STI::Device::Device>& device)
 {
-	std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
-	device->getMessageDispatcher(dispatcher);
-
-	messageDispatcher = dispatcher;
+	if (device != 0) {
+        device->getMessageDispatcher(messageDispatcher);        
+    }
 }
 
 TDeviceMessageDispatcher_i::~TDeviceMessageDispatcher_i()

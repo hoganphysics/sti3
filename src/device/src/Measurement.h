@@ -18,6 +18,8 @@ class Measurement
 {
 public:
 	
+	Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
+							const STI::Utils::GraphPathLabel& measurementGraphPath);
 	Measurement(const RawEvent& sourceEvent);
 	Measurement(const Measurement& measurement);
 

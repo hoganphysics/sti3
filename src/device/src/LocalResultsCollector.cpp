@@ -2,7 +2,7 @@
 #include "LocalResultsCollector.h"
 #include "ShotID.h"
 #include "EventEngine.h"
-#include "EventEngineDependencyTree.h"
+#include "ParsedDependencyTree.h"
 #include "Measurement.h"
 #include "RawEvent.h"
 
@@ -11,14 +11,14 @@ namespace fs = std::filesystem;
 
 using STI::Engine::LocalResultsCollector;
 using STI::Engine::ShotID;
-using STI::Engine::EventEngineDependencyTree;
+using STI::Engine::ParsedDependencyTree;
 using STI::Engine::Measurement;
 using STI::Engine::MeasurementVector;
 
 
 LocalResultsCollector::LocalResultsCollector(const ShotID& shotID, 
                     const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
-                    const std::shared_ptr<EventEngineDependencyTree>& dependencies,
+                    const std::shared_ptr<ParsedDependencyTree>& dependencies,
                     const ResultsPaths& paths,
                     const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 : sid(shotID), eventEngine(eventEngine), dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
@@ -32,7 +32,7 @@ ShotID LocalResultsCollector::getShotID()
     return sid;
 }
 
-std::shared_ptr<EventEngineDependencyTree> LocalResultsCollector::getDependencies()
+std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
 {
     return dependencies;
 }
@@ -93,6 +93,11 @@ bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVec
 
     }
     return success;
+}
+
+std::shared_ptr<MeasurementVector> LocalResultsCollector::getMeasurements()
+{
+    return measurements_;
 }
 
 std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)

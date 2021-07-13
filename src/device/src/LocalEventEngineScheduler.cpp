@@ -911,7 +911,7 @@ bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::
     return false;
 }
 
-bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const
+bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const
 {
     std::shared_ptr<LocalEventEngine> engine;
 
@@ -966,7 +966,6 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
 }
 
 
-
 bool LocalEventEngineScheduler::transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector)
 {
     bool success = false;
@@ -990,7 +989,7 @@ bool LocalEventEngineScheduler::transferMeasurements(const std::shared_ptr<Resul
     return success;
 }
 
-bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results)
+bool LocalEventEngineScheduler::getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results)
 {
     return false;
 }

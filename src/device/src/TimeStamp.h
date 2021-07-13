@@ -27,6 +27,8 @@ public:
 	std::string date() const;
 	std::string date_YYYY_MM_DD() const;
 	std::string time() const;
+	std::string time_hh_mm_ss() const;
+	std::string time_hh_mm_ss_mmmuuunnn() const;
 
 	bool operator<(const TimeStamp& rhs) const;
 	bool operator==(const TimeStamp& rhs) const;
