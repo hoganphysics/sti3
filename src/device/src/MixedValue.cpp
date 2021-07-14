@@ -134,6 +134,14 @@ void MixedValue::setValue(const std::string& value)
 	type = MixedValueType::String;
 }
 
+void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
+{
+	clear();
+
+	value_file = value;
+	type = MixedValueType::File;
+}
+
 void MixedValue::setValue(const MixedValue& value)
 {
 	//clear();

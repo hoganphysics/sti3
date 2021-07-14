@@ -20,11 +20,18 @@
 #include "EventEngine.h"
 #include "TimeStamp.h"
 #include "EngineParsingMessage.h"
+#include "ParsedDependencyTree.h"
+#include "Measurement.h"
+#include "NetworkEventEngine.h"
+#include "RemoteEventEngine.h"
 
 
 #include <map>
 #include <memory>
 
+using STI::TNetwork::TEventEngine_var;
+using STI::Engine::EventEngine;
+using STI::Engine::ParsedDependencyTree;
 using STI::Engine::EventEngineDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Engine::EngineState;
@@ -36,9 +43,7 @@ using STI::TNetwork::TEventEngineJobType;
 using STI::Engine::EngineID;
 using STI::TNetwork::TEngineID;
 using STI::Engine::EventEngineJob;
-
 using STI::Engine::EngineJobStatus;
-
 using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
@@ -65,11 +70,40 @@ using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
 using STI::Engine::DeviceEventMap;
 using STI::TNetwork::TDeviceEventsSeq;
-
 using STI::Engine::ParseID; 
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
+using STI::TNetwork::TMeasurement;
+using STI::Engine::Measurement;
+
+
+bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
+bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath);
+
+
+
+
+//EventEngine
+template<>
+bool STI::Network::convert<TEventEngine_var, std::shared_ptr<EventEngine>>(
+        const TEventEngine_var& tEventEngine, std::shared_ptr<EventEngine>& eventEngine)
+{
+    if (!CORBA::is_nil(tEventEngine)) {
+        eventEngine = std::make_shared<STI::Network::RemoteEventEngine>(tEventEngine);
+        return (eventEngine != 0);
+    }
+    return false;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<EventEngine>, TEventEngine_var>(
+        const std::shared_ptr<EventEngine>& eventEngine, TEventEngine_var& tEventEngine)
+{
+	return STI::Network::NetworkEventEngine::getTEventEngineReference(eventEngine, tEventEngine);
+}
+
+
 
 //EventEngineDependencyTree
 template<>
@@ -104,7 +138,8 @@ bool STI::Network::convert<EventEngineDependencyTree, TEventEngineDependencyTree
 }
 
 template<>
-bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree>(const TEventEngineDependencyTree& tTree, EventEngineDependencyTree& tree)
+bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree>(
+            const TEventEngineDependencyTree& tTree, EventEngineDependencyTree& tree)
 {
     std::vector<STI::Device::DeviceID> nodes;
     
@@ -125,6 +160,55 @@ bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree
     }
 
     return true;
+}
+
+//ParsedDependencyTree
+template<>
+bool STI::Network::convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDependencyTree>(
+                    const std::shared_ptr<ParsedDependencyTree>& tree, TEventEngineDependencyTree& tTree)
+{
+    if (tree == 0) return false;
+
+    std::vector<STI::Device::DeviceID> nodes;
+    tree->getNodes(nodes);
+
+    //setup vertexMap
+    std::map<STI::Device::DeviceID, unsigned> vertexMap;
+    for (unsigned i = 0; i < nodes.size(); ++i) {
+        vertexMap[nodes.at(i)] = i;
+    }
+    
+    std::vector<STI::Device::DeviceID> outNodes;
+
+    tTree.vertices.length(static_cast<CORBA::ULong>(nodes.size()));
+
+    for (unsigned i = 0; i < nodes.size(); ++i) {
+        convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(nodes.at(i), tTree.vertices[i].id);
+        
+        tree->getDependedentNodes(nodes.at(i), outNodes);
+
+        tTree.vertices[i].outConnections.length(static_cast<CORBA::ULong>(outNodes.size()));
+
+        for (unsigned j = 0; j < outNodes.size(); ++j) {
+            tTree.vertices[i].outConnections[j] = vertexMap[outNodes.at(j)];
+        }
+    }
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TEventEngineDependencyTree, std::shared_ptr<ParsedDependencyTree>>(
+                    const TEventEngineDependencyTree& tTree, std::shared_ptr<ParsedDependencyTree>& tree)
+{
+    auto depTree = std::make_shared<EventEngineDependencyTree>();
+
+    if (convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, *depTree) ) {
+        tree = std::make_shared<ParsedDependencyTree>(depTree);
+        return (tree != 0);
+    }
+
+    return false;
 }
 
 
@@ -525,6 +609,25 @@ TEventEngineJob STI::Network::convert<EventEngineJob, TEventEngineJob>(const Eve
     return tJob;
 }
 
+//GraphPathLabel
+bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath)
+{
+    tGraphPath.length(static_cast<CORBA::ULong>(graphPath.size()));
+
+    for (unsigned i = 0; i < graphPath.size(); ++i) {
+        tGraphPath[i] = static_cast<CORBA::ULong>(graphPath.at(i));
+    }
+    return true;
+}
+
+bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath)
+{
+    for (unsigned i = 0; i < tGraphPath.length(); ++i) {
+         graphPath.push_back( static_cast<unsigned>(tGraphPath[i]) );
+    }
+
+    return true;
+}
 
 //RawEvent
 template<>
@@ -532,25 +635,13 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
 {
     tEvent.time = static_cast<CORBA::Double>(evt.time());
     tEvent.channel = static_cast<CORBA::UShort>(evt.channel());
-    //tEvent.value = convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value());
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.value);
-
-//    tEvent.description(evt.description().c_str());
-
-//    tEvent.description = "test";
-
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
     //trace
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice(), tEvent.targetDeviceID);
-
-    auto& gpl = evt.getEventGraphPath();
-    tEvent.eventGraphPath.length(static_cast<CORBA::ULong>(gpl.size()));
-
-    for (unsigned i = 0; i < gpl.size(); ++i) {
-        tEvent.eventGraphPath[i] = static_cast<CORBA::ULong>(gpl.at(i));
-    }
+    convertEventGraphPath(evt.getEventGraphPath(), tEvent.eventGraphPath);
 
     return true;
 }
@@ -567,11 +658,7 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
 
     STI::Utils::GraphPathLabel gpl;
-
-    for (unsigned i = 0; i < tEvent.eventGraphPath.length(); ++i) {
-         gpl.push_back( static_cast<unsigned>(tEvent.eventGraphPath[i]) );
-    }
-
+    convertEventGraphPath(tEvent.eventGraphPath, gpl);
 	evt.setEventGraphPath(gpl);
 
     return true;
@@ -666,32 +753,61 @@ ParseID STI::Network::convert<TParseID, ParseID>(const TParseID& tpid)
 template<>
 TShotID STI::Network::convert<ShotID, TShotID>(const ShotID& sid)
 {
-    TShotID tShot;
+    TShotID tsid;
+    convert<ShotID, TShotID>(sid, tsid);
 
-    tShot.parseID = convert<ParseID, TParseID>(sid.parseID);
+    // tShot.parseID = convert<ParseID, TParseID>(sid.parseID);
 
-    tShot.submissionTime = convert<TimeStamp, TTimeStamp>(sid.submissionTime);
-    tShot.playTime = convert<TimeStamp, TTimeStamp>(sid.playTime);
+    // tShot.submissionTime = convert<TimeStamp, TTimeStamp>(sid.submissionTime);
+    // tShot.playTime = convert<TimeStamp, TTimeStamp>(sid.playTime);
     
-    tShot.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
+    // tShot.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
 
-    return tShot;
+    return tsid;
 }
 
 template<>
 ShotID STI::Network::convert<TShotID, ShotID>(const TShotID& tsid)
 {
-    ShotID shot;
+    ShotID sid;
+    convert<TShotID, ShotID>(tsid, sid);
 
-    shot.parseID = convert<TParseID, ParseID>(tsid.parseID);
+    // shot.parseID = convert<TParseID, ParseID>(tsid.parseID);
 
-    shot.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
-    shot.playTime = convert<TTimeStamp, TimeStamp>(tsid.playTime);
+    // shot.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
+    // shot.playTime = convert<TTimeStamp, TimeStamp>(tsid.playTime);
     
-    shot.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
+    // shot.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
 
-    return shot;
+    return sid;
 }
+
+template<>
+bool STI::Network::convert<ShotID, TShotID>(const ShotID& sid, TShotID& tsid)
+{
+    tsid.parseID = convert<ParseID, TParseID>(sid.parseID);
+
+    tsid.submissionTime = convert<TimeStamp, TTimeStamp>(sid.submissionTime);
+    tsid.playTime = convert<TimeStamp, TTimeStamp>(sid.playTime);
+    
+    tsid.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TShotID, ShotID>(const TShotID& tsid, ShotID& sid)
+{
+    sid.parseID = convert<TParseID, ParseID>(tsid.parseID);
+
+    sid.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
+    sid.playTime = convert<TTimeStamp, TimeStamp>(tsid.playTime);
+    
+    sid.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
+
+    return true;
+}
+
 
 
 //TimeStamp
@@ -930,5 +1046,58 @@ ParsingMessageType STI::Network::convert<TParsingMessageType, ParsingMessageType
     }
 
     return messType;
+}
+
+
+//Measurement
+template<>
+bool STI::Network::convert<std::shared_ptr<Measurement>, TMeasurement>(
+        const std::shared_ptr<Measurement>& measurement, TMeasurement& tMeasurement)
+{
+    if (measurement == 0) return false;
+
+    tMeasurement.time = static_cast<CORBA::Double>(measurement->time());
+    tMeasurement.channel = static_cast<CORBA::UShort>(measurement->channel());
+    convertEventGraphPath(measurement->getMeasurementGraphPath(), tMeasurement.measurementGraphPath);
+    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(measurement->device(), tMeasurement.device);
+    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(measurement->data(), tMeasurement.measurementResult);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TMeasurement, std::shared_ptr<Measurement>>(
+        const TMeasurement& tMeasurement, std::shared_ptr<Measurement>& measurement)
+{
+    STI::Utils::GraphPathLabel gpl;
+    convertEventGraphPath(tMeasurement.measurementGraphPath, gpl);
+
+    measurement = std::make_shared<Measurement>(
+        static_cast<double>(tMeasurement.time),
+        static_cast<unsigned short>(tMeasurement.channel),
+        convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tMeasurement.device),
+        gpl);
+
+    auto data = convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tMeasurement.measurementResult);
+    measurement->setMeasurementResult(data);
+
+    return true;
+}
+
+template<>
+TMeasurement STI::Network::convert<std::shared_ptr<Measurement>, TMeasurement>(
+        const std::shared_ptr<Measurement>& measurement)
+{
+    TMeasurement tMeasurement;
+    convert<std::shared_ptr<Measurement>, TMeasurement>(measurement, tMeasurement);
+    return tMeasurement;
+}
+
+template<>
+std::shared_ptr<Measurement> STI::Network::convert<TMeasurement, std::shared_ptr<Measurement>>(
+        const TMeasurement& tMeasurement)
+{
+    std::shared_ptr<Measurement> measurement;
+    convert<TMeasurement, std::shared_ptr<Measurement>>(tMeasurement, measurement);
+    return measurement;
 }
 

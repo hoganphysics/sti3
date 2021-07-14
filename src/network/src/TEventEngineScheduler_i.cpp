@@ -39,10 +39,9 @@ using STI::Engine::Shot;
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
 {
-   	std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-	device->getEngineScheduler(scheduler);
-
-	engineScheduler = scheduler;
+	if (device != 0) {
+        device->getEngineScheduler(engineScheduler);        
+    }
 }
 
 TEventEngineScheduler_i::~TEventEngineScheduler_i()
@@ -136,76 +135,14 @@ void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& 
 	}
 }
 
-// void TEventEngineScheduler_i::addJob(::STI::TNetwork::TEventEngineJob_ptr newJob)
-// {
-//     if (engineScheduler != 0) {
-
-//         auto remoteJob = std::make_shared<RemoteEventEngineJob>(newJob);
-
-// 		engineScheduler->addJob(remoteJob);
-// 	}
-// }
 
 void TEventEngineScheduler_i::addJob(const ::STI::TNetwork::TEventEngineJob& newJob)
 {
-
-
-	// TEngineJobID jobID;
-	// TDeviceID jobOwner;
-	// TEngineJobStatus status;
-
-	// TEngineID engineID;
-	// TEventEngine eventEngine;
-
-	// TShot shot;
-	// TEventEngineDependencyTree dependencies;
-	// TDeviceIDSeq missingTargetIDs;
-
-
-	
-
-
-
 	if (engineScheduler != 0) {
 
 		std::shared_ptr<EventEngineJob> remoteJob;
 
 		convert<TNetwork::TEventEngineJob, std::shared_ptr<EventEngineJob>>(newJob, remoteJob);
-
-
-		// EngineJobID jobID;
-		// convert<TEngineJobID, EngineJobID>(newJob.jobID, jobID);
-
-		// switch(jobID.type) {
-		// 	case EventEngineJobType::Parse:
-		// 		remoteJob = std::make_shared<LocalEventEngineJob>(
-		// 			jobID.pid,
-		// 			,
-		// 			convert<TDeviceID, DeviceID>(newJob.jobOwner),
-
-		// 		);
-		// 	break;
-
-		// 	case EventEngineJobType::Play:
-		// 		remoteJob = std::make_shared<LocalEventEngineJob>(
-		// 			jobID,
-		// 			convert<TDeviceID, DeviceID>(newJob.jobOwner)
-		// 		);
-		// 	break;
-		// }
-
-
-		// //Parse jobs
-		// LocalEventEngineJob(const ParseID& parseID, 
-		// 					const std::shared_ptr<Shot>& shot,
-		// 					const std::shared_ptr<EventEngineDependencyTree>& tree, 
-		// 					const STI::Device::DeviceID& owner, 
-		// 					const std::set<STI::Device::DeviceID>& missingTargets);
-
-		// //Play jobs
-		// LocalEventEngineJob(const EngineJobID& id, 
-		// 					const STI::Device::DeviceID& owner);
-
 
 		engineScheduler->addJob(remoteJob);
 	}
@@ -280,16 +217,15 @@ void TEventEngineScheduler_i::cancelAll()
     if (engineScheduler != 0) {
 
 		STI::TNetwork::TEventEngineDependencyTree_var tEventEngineDependencyTree_var(new STI::TNetwork::TEventEngineDependencyTree);
-		std::shared_ptr<STI::Engine::EventEngineDependencyTree> depTree;
+		std::shared_ptr<STI::Engine::ParsedDependencyTree> depTree;
 
 		success = engineScheduler->getParsedTree(
 					convert<TParseID, STI::Engine::ParseID>(parseID),
 					depTree);
-
-		success = convert<STI::Engine::EventEngineDependencyTree, TEventEngineDependencyTree>(*depTree, tEventEngineDependencyTree_var);
-
+		success &= convert<std::shared_ptr<STI::Engine::ParsedDependencyTree>, TEventEngineDependencyTree>(
+					depTree, tEventEngineDependencyTree_var);
 		tree = new STI::TNetwork::TEventEngineDependencyTree();
-		(*tree) = tEventEngineDependencyTree_var;
+		(*tree) = tEventEngineDependencyTree_var;		
 	}
 
 	return success;

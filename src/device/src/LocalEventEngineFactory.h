@@ -11,7 +11,6 @@ namespace STI
 namespace Engine
 {
 
-
 class LocalEventEngineFactory : public EventEngineFactory
 {
 public:
@@ -19,14 +18,17 @@ public:
     LocalEventEngineFactory(const STI::Device::DeviceID& localID, 
                                 const std::shared_ptr<STI::Device::ChannelManager>& channelManager,
                                 const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
-                                const std::shared_ptr<STI::Device::DeviceCollection>& collection) 
-    : localDeviceID(localID), channelManager(channelManager), messageDispatcher(dispatcher), localCollection(collection)
+                                const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+                                const std::shared_ptr<STI::Device::PersistenceManager>& persistence) 
+    : localDeviceID(localID), channelManager(channelManager), messageDispatcher(dispatcher), localCollection(collection),
+    localPersistenceManager(persistence)
     {
     }
 
     std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser)
     {
-        auto engine = std::make_shared<STI::Engine::LocalEventEngine>(engineID, localDeviceID, channelManager, deviceParser, messageDispatcher, localCollection);
+        auto engine = std::make_shared<STI::Engine::LocalEventEngine>(engineID, localDeviceID, channelManager, 
+        deviceParser, messageDispatcher, localCollection, localPersistenceManager);
         return engine;       
     }
 
@@ -36,6 +38,7 @@ private:
     std::shared_ptr<STI::Device::ChannelManager> channelManager;
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> messageDispatcher;
     std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    std::shared_ptr<STI::Device::PersistenceManager> localPersistenceManager;
 
 };
 

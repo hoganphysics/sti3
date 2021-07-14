@@ -10,14 +10,17 @@ using STI::TNetwork::TDeviceMessageDispatcher_ptr;
 using STI::TNetwork::TEventEngineScheduler_ptr;
 using STI::TNetwork::TChannelManager_ptr;
 using STI::TNetwork::TAttributeManager_ptr;
+using STI::TNetwork::TPersistenceManager_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
 
+
 //Device is a DeviceCollector, so we can simply pass the device pointer to both
 TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
 	: localDevice(device), deviceCollectionServant(device), messageDispatcherServant(device), 
-		eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device)
+		eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device), 
+		persistenceManagerServant(device)
 {
 }
 
@@ -64,6 +67,11 @@ TChannelManager_ptr TDevice_i::getChannelManager()
 TAttributeManager_ptr TDevice_i::getAttributeManager()
 {
 	return attributeManagerServant._this();	
+}
+
+TPersistenceManager_ptr TDevice_i::getPersistenceManager()
+{
+	return persistenceManagerServant._this();
 }
 
 TDeviceID* TDevice_i::getID()

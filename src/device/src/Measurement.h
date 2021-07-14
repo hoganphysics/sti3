@@ -1,6 +1,8 @@
 #ifndef STI_ENGINE_MEASUREMENT_H
 #define STI_ENGINE_MEASUREMENT_H
 
+#include "fwd/Measurement_fwd.h"
+
 #include "MixedValue.h"
 #include "DeviceID.h"
 #include "utils/GraphPathLabel.h"
@@ -16,6 +18,8 @@ class Measurement
 {
 public:
 	
+	Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
+							const STI::Utils::GraphPathLabel& measurementGraphPath);
 	Measurement(const RawEvent& sourceEvent);
 	Measurement(const Measurement& measurement);
 

@@ -133,10 +133,11 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
 
     try {
 
-		getTRef()->getAttribute(
+		success = getTRef()->getAttribute(
                     convert<std::string, CORBA::String_member>(key), tAttribute);	//remote call
-
-		success = convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttribute, remoteAttribute);
+		if (success) {
+			success &= convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttribute, remoteAttribute);
+		}
 
         if (success && remoteAttribute != 0) {
             // _attributes[key] = remoteAttribute;

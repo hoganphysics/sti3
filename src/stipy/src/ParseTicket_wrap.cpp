@@ -1,5 +1,5 @@
 
-#include "ParseTicket.h"
+#include "PyParseTicket.h"
 #include "EngineParsingMessage.h"
 #include "RawEvent.h"
 
@@ -22,12 +22,12 @@ void init_ParseTicket(py::module& m)
             })
         ;
 
-    py::class_<STI::Python::ParseTicket, std::shared_ptr<STI::Python::ParseTicket>>(m, "ParseTicket")
+    py::class_<STI::Python::PyParseTicket, std::shared_ptr<STI::Python::PyParseTicket>>(m, "ParseTicket")
 
-        .def("wait", &STI::Python::ParseTicket::wait)
-        .def("cancel", &STI::Python::ParseTicket::cancel)
-        .def("getMessages", &STI::Python::ParseTicket::getMessages)
-        .def("getEvents", &STI::Python::ParseTicket::getEvents)
+        .def("wait", &STI::Python::PyParseTicket::wait)
+        .def("cancel", &STI::Python::PyParseTicket::cancel)
+        .def("getMessages", &STI::Python::PyParseTicket::getMessages)
+        .def("getEvents", &STI::Python::PyParseTicket::getEvents)
         ;
 
 }

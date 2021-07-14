@@ -2,15 +2,19 @@
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
 #include "RawEvent.h"
+#include "ParsedDependencyTree.h"
+
 
 using STI::Network::RemoteEventEngine;
-
 using STI::Engine::EventEngineJob;
 using STI::TNetwork::TEventEngineJob;
 using STI::Network::convert;
 using STI::Engine::TriggerCallback;
 using STI::TNetwork::TParseID;
 using STI::Engine::ParseID;
+using STI::Engine::ParsedDependencyTree;
+using STI::TNetwork::TShotID;
+using STI::Engine::ShotID;
 
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
@@ -226,6 +230,36 @@ STI::Engine::EngineState RemoteEventEngine::getState() const
 	return state;
 }
 
+std::shared_ptr<STI::Engine::ParsedDependencyTree> RemoteEventEngine::getParsedTree() const
+{
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
+	::STI::TNetwork::TEventEngineDependencyTree_var tTree(new ::STI::TNetwork::TEventEngineDependencyTree);
+
+	bool success = false;
+
+	try {
+		if (!isDisabled()) {
+			tTree = getTRef()->getParsedTree();
+			success = true;			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	std::shared_ptr<STI::Engine::ParsedDependencyTree> tree;
+
+	if(success) {
+		convert<::STI::TNetwork::TEventEngineDependencyTree, std::shared_ptr<STI::Engine::ParsedDependencyTree>>(tTree, tree);
+	}
+
+	return tree;
+}
 
 // const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
 bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
@@ -241,7 +275,7 @@ bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI
 	try {
 		success = getTRef()->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
 
-		convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
+		success &= convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -253,3 +287,36 @@ bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI
 	return success;
 }
 
+bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
+{
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
+	measurements = std::make_shared<STI::Engine::MeasurementVector>();
+
+	bool success = false;
+
+	try {
+		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
+
+		//success &= convert<::STI::TNetwork::TMeasurementSeq, STI::Engine::MeasurementVector>(tMeasurements, *measurements); (_CORBA_Unbounded_Sequence<::STI::TNetwork::TMeasurement>) 
+		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return success;
+
+	return false;
+}
+
+bool RemoteEventEngine::transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+{
+	return false;
+}

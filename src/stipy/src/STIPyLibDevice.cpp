@@ -3,21 +3,22 @@
 #include "DeviceID.h"
 #include "DeviceCollection.h"
 #include "ParseID.h"
-#include "ParseTicketManager.h"
+#include "PyParseTicketManager.h"
 #include "DeviceMessageReceiver.h"
-#include "ParseTicket.h"
+#include "PyParseTicket.h"
 #include "DeviceMessage.h"
+#include "PyResultTicket.h"
+#include "PyResultTicketManager.h"
 
-#include "ResultTicketManager.h"
 #include <memory>
 #include <iostream>
 
 using STI::Python::STIPyLibDevice;
-using STI::Python::ParseTicket;
+using STI::Python::PyParseTicket;
 using STI::Device::LocalDevice;
-using STI::Python::ResultTicket;
-using STI::Python::ParseTicketManager;
-using STI::Python::ResultTicketManager;
+using STI::Python::PyResultTicket;
+using STI::Python::PyParseTicketManager;
+using STI::Python::PyResultTicketManager;
 using STI::Device::DeviceMessageReceiver;
 using STI::Device::DeviceMessageListener;
 using STI::Device::EngineSchedulerMessage;
@@ -30,8 +31,8 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 {
     addPartner(serverID);
 
-    parseTicketManager = std::make_shared<ParseTicketManager>();
-    resultTicketManager = std::make_shared<ResultTicketManager>();
+    parseTicketManager = std::make_shared<PyParseTicketManager>();
+    resultTicketManager = std::make_shared<PyResultTicketManager>();
 
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
@@ -76,7 +77,7 @@ bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
 }
 
 
-std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::ParseID& pid)
+std::shared_ptr<PyParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::ParseID& pid)
 {
     std::shared_ptr<Device> server;
     bool connected = getServer(server);
@@ -90,7 +91,7 @@ std::shared_ptr<ParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::
 }
 
 
-std::shared_ptr<ResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engine::ShotID& sid)
+std::shared_ptr<PyResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engine::ShotID& sid)
 {
     std::shared_ptr<Device> server;
     bool connected = getServer(server);

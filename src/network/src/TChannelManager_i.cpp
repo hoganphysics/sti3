@@ -16,7 +16,9 @@ using STI::TNetwork::TChannel;
 
 TChannelManager_i::TChannelManager_i(const std::shared_ptr<STI::Device::Device>& device)
 {
-    device->getChannelManager(channelManager);
+    if (device != 0) {
+        device->getChannelManager(channelManager);        
+    }
 }
 
 TChannelManager_i::~TChannelManager_i()

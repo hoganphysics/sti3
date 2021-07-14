@@ -20,7 +20,6 @@ public:
     bool getBranchToTarget(const STI::Device::DeviceID& root, const STI::Device::DeviceID& target, STI::Device::DeviceID& branch) const;
     bool hasBranchToTarget(const STI::Device::DeviceID& root, const STI::Device::DeviceID& target) const;
 
-
 };
 
 

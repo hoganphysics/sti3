@@ -1,7 +1,7 @@
 
 #include "STIPyServer.h"
-#include "ParseTicket.h"
-#include "ResultTicket.h"
+#include "PyParseTicket.h"
+#include "PyResultTicket.h"
 #include "STIPySeq.h"
 #include "STIPyShot.h"
 #include "EventEngineScheduler.h"
@@ -10,15 +10,13 @@
 #include "STIPyGlobal.h"
 
 #include <chrono>
-
-#include <memory>
 #include <iostream>
 
 using STI::Python::STIPyServer;
 using STI::Python::STIPyShot;
 using STI::Python::STIPySeq;
-using STI::Python::ParseTicket;
-using STI::Python::ResultTicket;
+using STI::Python::PyParseTicket;
+using STI::Python::PyResultTicket;
 
 
 // STIPyServer::STIPyServer()
@@ -92,7 +90,7 @@ bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler
     return false;
 }
 
-std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot)
+std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot)
 {
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
     auto tp = now.time_since_epoch();
@@ -113,7 +111,7 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
     return ticket;
 }
 
-std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
+std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
 {
     STI::Engine::ParseID pid;
     // pid.parseTimestamp.timestamp = 1.1;
@@ -122,7 +120,7 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>
     return ticket;
 }
 
-std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& tickets)
+std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::vector<PyParseTicket>& tickets)
 {
     STI::Engine::ParseID pid;
     // pid.parseTimestamp.timestamp = 1.1;
@@ -132,18 +130,18 @@ std::shared_ptr<ParseTicket> STIPyServer::parse(const std::vector<ParseTicket>& 
 }
 
 
-std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket)
+std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseTicket>& ticket)
 {
     return play(ticket, 0);
 }
 
-std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicket>& ticket, unsigned repeats)
+std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseTicket>& ticket, unsigned repeats)
 {
-    std::shared_ptr<ResultTicket> resultTicket;
+    std::shared_ptr<PyResultTicket> resultTicket;
 
     if (ticket != 0) {
 
-        if (ticket->getStatus() == ParseTicket::TicketStatus::Complete) {
+        if (ticket->getStatus() == PyParseTicket::TicketStatus::Complete) {
             resultTicket = play(ticket->getParseID(), repeats);            
         }
         else {
@@ -156,7 +154,7 @@ std::shared_ptr<ResultTicket> STIPyServer::play(const std::shared_ptr<ParseTicke
     return resultTicket;
 }
 
-std::shared_ptr<ResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
+std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
 {
     // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     // std::chrono::system_clock::duration tp = now.time_since_epoch();

@@ -7,6 +7,7 @@
 #include "ChannelManager.h"
 #include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
+#include "RemotePersistenceManager.h"
 
 #include <iostream>
 
@@ -350,5 +351,40 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 	}
 
 	manager = remoteAttributeManager;
+}
+
+void RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remotePersistenceManager)) {
+		manager = remotePersistenceManager;
+		return;
+	}
+	else if (remotePersistenceManager != 0) {
+		//non-null but not live for some reason; disable
+		remotePersistenceManager->disable();
+	}
+
+	if (isDisabled()) return;
+
+	::STI::TNetwork::TPersistenceManager_var tPersistenceManager;	//remote reference
+	
+	try {
+		tPersistenceManager = getTRef()->getPersistenceManager();	//remote call
+
+		if (!CORBA::is_nil(tPersistenceManager)) {
+			remotePersistenceManager = std::make_shared<RemotePersistenceManager>(tPersistenceManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remotePersistenceManager;
 }
 

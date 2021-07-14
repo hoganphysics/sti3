@@ -69,6 +69,9 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
     unsigned filesize = static_cast<unsigned>(ifs.tellg());
     ifs.seekg(0, std::ios::beg);   //move to beginning
 
+    //Can only transfer to an new destination file
+    if (destination->exists()) return false;
+
     //open destination file for writing
     if (!destination->openFile()) return false;
 

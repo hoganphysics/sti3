@@ -25,7 +25,7 @@ class RemoteDeviceMessageDispatcher;
 class RemoteEventEngineScheduler;
 class RemoteChannelManager;
 class RemoteAttributeManager;
-
+class RemotePersistenceManager;
 
 
 class RemoteDevice : public STI::Device::Device, 
@@ -48,12 +48,10 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
-
+	void getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 
 
 private:
-
-	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}
 
 	template<typename T>
 	bool isLive(const std::shared_ptr<T>& remote)
@@ -75,6 +73,7 @@ private:
 	std::shared_ptr<RemoteEventEngineScheduler> remoteScheduler;
 	std::shared_ptr<RemoteChannelManager> remoteChannelManager;
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
+	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
 
 	mutable std::mutex deviceMutex;
 

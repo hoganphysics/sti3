@@ -10,6 +10,8 @@
 #include "EventEngineScheduler.h"
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkFileHolder.h"
+#include "PersistenceManager.h"
+#include "NetworkShotRepositoryWrapper.h"
 
 #include <memory>
 
@@ -34,17 +36,26 @@ public:
 		getChannelManager(channels);
 		std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 		getCollection(deviceCollection);
+		std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+		getPersistenceManager(persistenceManager);
 
-		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(getID(), channels, dispatcher, deviceCollection);
+		auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+		persistenceManager->setFileHolderFactory(networkFileHolderFactory);
+
+		std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
+		persistenceManager->getShotRepository(shotRepo);
+		auto networkShotRepository = std::make_shared<STI::Network::NetworkShotRepositoryWrapper>(shotRepo);
+		persistenceManager->setShotRepository(shotRepo);
+
+		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(
+				getID(), channels, dispatcher, deviceCollection, persistenceManager);
 		//localDevice->setEngineFactory(networkEngineFactory);
 
 		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 		localDevice->getEngineScheduler(scheduler);
 		scheduler->setEngineFactory(networkEngineFactory);
 
-		auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
 
-		localDevice->setFileHolderFactory(networkFileHolderFactory);
 	}
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
@@ -80,6 +91,13 @@ public:
 		}
 	}
 
+	void getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
+	{
+		if (localDevice != 0) {
+			localDevice->getPersistenceManager(manager);
+		}
+	}
+
 	const STI::Device::DeviceID getID() const 
 	{
 		if (localDevice != 0) {
@@ -107,13 +125,6 @@ public:
 	}
 
 private:
-
-	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-	{
-		if (localDevice != 0) {
-			localDevice->setFileHolderFactory(factory);
-		}
-	}
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)
 	{

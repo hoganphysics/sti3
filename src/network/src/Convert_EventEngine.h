@@ -26,23 +26,46 @@ namespace Engine
 {
 
 class EventEngineDependencyTree;
+class ParsedDependencyTree;
 class RawEvent;
 class EventEngineJob;
 class LocalEventEngineJob;
 class EngineID;
 class EngineJobID;
 //class EventEngineJobType;
+class Measurement;
 
 class EngineParsingMessage;
 enum class ParsingMessageType;
 
 } //Engine
 
+
+//EventEngine
+template<>
+bool Network::convert<TNetwork::TEventEngine_var, std::shared_ptr<Engine::EventEngine>>(
+        const TNetwork::TEventEngine_var& tEventEngine, std::shared_ptr<Engine::EventEngine>& eventEngine);
+template<>
+bool Network::convert<std::shared_ptr<Engine::EventEngine>, TNetwork::TEventEngine_var>(
+        const std::shared_ptr<Engine::EventEngine>& eventEngine, TNetwork::TEventEngine_var& tEventEngine);
+
+
 //EventEngineDependencyTree
 template<>
-bool Network::convert<Engine::EventEngineDependencyTree, TNetwork::TEventEngineDependencyTree>(const Engine::EventEngineDependencyTree& tree, TNetwork::TEventEngineDependencyTree& tTree);
+bool Network::convert<Engine::EventEngineDependencyTree, TNetwork::TEventEngineDependencyTree>(
+            const Engine::EventEngineDependencyTree& tree, TNetwork::TEventEngineDependencyTree& tTree);
 template<>
-bool Network::convert<TNetwork::TEventEngineDependencyTree, Engine::EventEngineDependencyTree>(const TNetwork::TEventEngineDependencyTree& tTree, Engine::EventEngineDependencyTree& tree);
+bool Network::convert<TNetwork::TEventEngineDependencyTree, Engine::EventEngineDependencyTree>(
+            const TNetwork::TEventEngineDependencyTree& tTree, Engine::EventEngineDependencyTree& tree);
+
+//ParsedDependencyTree
+template<>
+bool Network::convert<std::shared_ptr<Engine::ParsedDependencyTree>, TNetwork::TEventEngineDependencyTree>(
+            const std::shared_ptr<Engine::ParsedDependencyTree>& tree, TNetwork::TEventEngineDependencyTree& tTree);
+template<>
+bool Network::convert<TNetwork::TEventEngineDependencyTree, std::shared_ptr<Engine::ParsedDependencyTree>>(
+            const TNetwork::TEventEngineDependencyTree& tTree, std::shared_ptr<Engine::ParsedDependencyTree>& tree);
+
 
 
 //EngineState
@@ -150,6 +173,12 @@ TNetwork::TShotID Network::convert<Engine::ShotID, TNetwork::TShotID>(const Engi
 template<>
 Engine::ShotID Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid);
 
+template<>
+bool Network::convert<Engine::ShotID, TNetwork::TShotID>(const Engine::ShotID& sid, TNetwork::TShotID& tsid);
+template<>
+bool Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid, Engine::ShotID& sid);
+
+
 
 //Shot
 template<>
@@ -196,6 +225,23 @@ template<>
 TNetwork::TParsingMessageType Network::convert<Engine::ParsingMessageType, TNetwork::TParsingMessageType>(const Engine::ParsingMessageType& messType);
 template<>
 Engine::ParsingMessageType Network::convert<TNetwork::TParsingMessageType, Engine::ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType);
+
+
+//Measurement
+template<>
+bool Network::convert<std::shared_ptr<Engine::Measurement>, TNetwork::TMeasurement>(
+        const std::shared_ptr<Engine::Measurement>& measurement, TNetwork::TMeasurement& tMeasurement);
+template<>
+bool Network::convert<TNetwork::TMeasurement, std::shared_ptr<Engine::Measurement>>(
+        const TNetwork::TMeasurement& tMeasurement, std::shared_ptr<Engine::Measurement>& measurement);
+
+template<>
+TNetwork::TMeasurement Network::convert<std::shared_ptr<Engine::Measurement>, TNetwork::TMeasurement>(
+        const std::shared_ptr<Engine::Measurement>& measurement);
+template<>
+std::shared_ptr<Engine::Measurement> Network::convert<TNetwork::TMeasurement, std::shared_ptr<Engine::Measurement>>(
+        const TNetwork::TMeasurement& tMeasurement);
+
 
 
 } //STI

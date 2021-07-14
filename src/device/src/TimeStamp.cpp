@@ -4,6 +4,7 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
+//#include <time.h>
 
 using STI::Engine::TimeStamp;
 
@@ -11,8 +12,9 @@ TimeStamp::TimeStamp()
 {
     auto now = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-//    timeinfo = *localtime(&now_time);
-    localtime_s(&timeinfo, &now_time);
+
+    timeinfo = *localtime(&now_time);
+//    localtime_s(&timeinfo, &now_time);
 
     auto duration = now.time_since_epoch();
 
@@ -39,8 +41,9 @@ TimeStamp::TimeStamp(int year, int month, int day, int hour,
     timeinfo.tm_isdst = -1; //use local system timezone (mktime will fill this in)
 
     std::time_t now_time = mktime(&timeinfo);
-    //timeinfo = *localtime(&now_time);
-    localtime_s(&timeinfo, &now_time);
+    
+    timeinfo = *localtime(&now_time);
+    //localtime_s(&timeinfo, &now_time);
 }
 
 int TimeStamp::year() const
@@ -140,6 +143,32 @@ std::string TimeStamp::time() const
     ts << " ";
     ts << std::setfill('0') << std::setw(3) << micros();
     ts << " ";
+    ts << std::setfill('0') << std::setw(3) << nanos();
+
+    return ts.str();
+}
+
+std::string TimeStamp::time_hh_mm_ss() const
+{
+    std::stringstream ts;
+
+    ts << std::setfill('0') << std::setw(2) << hour();
+    ts << "_";
+    ts << std::setfill('0') << std::setw(2) << minute();
+    ts << "_";
+    ts << std::setfill('0') << std::setw(2) << sec();
+
+    return ts.str();
+}
+
+std::string TimeStamp::time_hh_mm_ss_mmmuuunnn() const
+{
+    std::stringstream ts;
+    
+    ts << time_hh_mm_ss();
+    ts << "_";
+    ts << std::setfill('0') << std::setw(3) << millis();
+    ts << std::setfill('0') << std::setw(3) << micros();
     ts << std::setfill('0') << std::setw(3) << nanos();
 
     return ts.str();

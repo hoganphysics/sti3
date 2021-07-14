@@ -4,7 +4,6 @@
 #include "Node.h"
 #include "DeviceID.h"
 #include "fwd/EventEngineScheduler_fwd.h"
-#include "FileHolderFactory.h"
 
 #include <memory>
 
@@ -17,7 +16,9 @@ class DeviceMessageListenerForwarder;
 class DeviceMessageDispatcher;
 class ChannelManager;
 class AttributeManager;
+class PersistenceManager;
 class Device;
+
 
 class Device : public STI::Network::Node<DeviceID, Device>
 {
@@ -31,12 +32,11 @@ public:
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
+	virtual void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) = 0;
 
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
-
-	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 
 };
 

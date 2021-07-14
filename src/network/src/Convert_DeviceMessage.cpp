@@ -72,6 +72,9 @@ using STI::Device::EngineJobUpdateDeviceMessage;
 using STI::TNetwork::TEngineJobUpdateTarget;
 using STI::Device::EngineJobUpdateTarget;
 
+using STI::Engine::EventEngine;
+using STI::TNetwork::TEventEngine_var;
+
 
 template<>
 TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(const DeviceMessageType& type)
@@ -447,10 +450,15 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 
 		convert<STI::TNetwork::TEngineJobID, STI::Engine::EngineJobID>(tMessage.jobID, deviceMessage->jobID);
 
-		if (!CORBA::is_nil(tMessage.engine)) {
-			auto engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+		std::shared_ptr<STI::Engine::EventEngine> engine;
+		if (convert<TEventEngine_var, std::shared_ptr<EventEngine>>(tMessage.engine, engine)) {
 			deviceMessage->setEngine(engine);
 		}
+
+		// if (!CORBA::is_nil(tMessage.engine)) {
+		// 	auto engine = std::make_shared<STI::Network::RemoteEventEngine>(tMessage.engine);
+		// 	deviceMessage->setEngine(engine);
+		// }
 		
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
 		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
@@ -460,6 +468,8 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 
 	return deviceMessage != 0;
 }
+
+
 
 template<>
 bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSchedulerMessage>(
@@ -483,10 +493,14 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
 	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);
 
-	STI::TNetwork::TEventEngine_ptr tEngine;
-	if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->getEngine(), tEngine)) {
-		tMessage.engine = tEngine;
-	}
+	STI::TNetwork::TEventEngine_var tEngine;
+	convert<std::shared_ptr<EventEngine>, TEventEngine_var>(deviceMessage->getEngine(), tEngine);
+	tMessage.engine = tEngine;
+
+	// STI::TNetwork::TEventEngine_ptr tEngine;
+	// if (STI::Network::NetworkEventEngine::getTEventEngineReference(deviceMessage->getEngine(), tEngine)) {
+	// 	tMessage.engine = tEngine;
+	// }
 
 	return true;
 }

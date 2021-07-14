@@ -18,6 +18,8 @@
 #include "ShotID.h"
 #include "EngineJobID.h"
 #include "DeviceMessage.h"
+#include "ResultTicket.h"
+#include "ResultsCollector.h"
 
 #include <set>
 #include <vector>
@@ -45,7 +47,8 @@ using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::Engine::LocalShot;
-
+using STI::Engine::ResultTicket;
+using STI::Engine::ResultsCollector;
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
@@ -876,10 +879,9 @@ bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::sha
     jobID.pid = parseID;
 
     if (completedJobs.get(jobID, job) && job !=0 
-        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
-            
-        manager->getEngine(engine);
-        
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) 
+    {        
+        manager->getEngine(engine);   
         return engine != 0 && engine->getLastParseID() == parseID;
     }
 
@@ -890,7 +892,7 @@ bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEv
 {
     std::shared_ptr<LocalEventEngine> engine;
 
-    if (getParsedEngine(parseID, engine)){
+    if (getParsedEngine(parseID, engine)) {
         return engine->getParsedEvents(parseID, events);
     }
 
@@ -909,15 +911,86 @@ bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::
     return false;
 }
 
-bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<EventEngineDependencyTree>& tree) const
+bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const
 {
     std::shared_ptr<LocalEventEngine> engine;
 
-    if (getParsedEngine(parseID, engine)){
+    if (getParsedEngine(parseID, engine)) {
         tree = engine->getParsedTree();
         return engine->getLastParseID() == parseID;
     }
 
+    return false;
+}
+
+
+bool LocalEventEngineScheduler::findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const
+{
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineManager> manager;
+
+    EngineJobID jobID;
+    jobID.type = EventEngineJobType::Play;
+    jobID.sid = shotID;
+    jobID.pid = shotID.parseID;
+
+    if (runningJobs.get(jobID, job) && job !=0 
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) 
+    {       
+        manager->getEngine(engine);   
+        return engine != 0;
+    }
+
+    return false;
+}
+
+
+bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const
+{
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineManager> manager;
+
+    EngineJobID jobID;
+    jobID.type = EventEngineJobType::Play;
+    jobID.sid = shotID;
+    jobID.pid = shotID.parseID;
+
+    if (completedJobs.get(jobID, job) && job !=0 
+        && engineManagers.get(job->getEngineID(), manager) && manager != 0) 
+    {       
+        manager->getEngine(engine);
+        return engine != 0;
+    }
+
+    return false;
+}
+
+
+bool LocalEventEngineScheduler::transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector)
+{
+    bool success = false;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (findRunningEngine(resultsCollector->getShotID(), engine) 
+            && engine->transferMeasurements(resultsCollector))
+    {
+        success = true;
+    }
+    else if ( findCompletedEngine(resultsCollector->getShotID(), engine) 
+                && engine->transferMeasurements(resultsCollector) ) 
+    {
+        success = true;
+    }
+    else 
+    {
+        success = (persistenceManager != 0) && persistenceManager->transferMeasurements(resultsCollector);
+    }
+
+    return success;
+}
+
+bool LocalEventEngineScheduler::getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results)
+{
     return false;
 }
 
