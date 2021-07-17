@@ -740,7 +740,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 }
 
 
-bool LocalEventEngine::transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector)
+bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
 {
 	if (resultsCollector == 0) return false;
 
@@ -780,11 +780,11 @@ bool LocalEventEngine::transferMeasurements(const std::shared_ptr<ResultsCollect
 
 	for (auto& id : nodes) {
 
-		if (isTargetServerForDevice(id) 
+		if (isActingServerForDevice(id) 
 			&& deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) 
 		{
-			success = scheduler->transferMeasurements(resultsCollector);
+			success = scheduler->transferResults(resultsCollector);
 		}
 	}
 

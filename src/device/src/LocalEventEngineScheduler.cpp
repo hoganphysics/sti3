@@ -966,24 +966,24 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
 }
 
 
-bool LocalEventEngineScheduler::transferMeasurements(const std::shared_ptr<ResultsCollector>& resultsCollector)
+bool LocalEventEngineScheduler::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
 {
     bool success = false;
     std::shared_ptr<LocalEventEngine> engine;
 
     if (findRunningEngine(resultsCollector->getShotID(), engine) 
-            && engine->transferMeasurements(resultsCollector))
+            && engine->transferResults(resultsCollector))
     {
         success = true;
     }
     else if ( findCompletedEngine(resultsCollector->getShotID(), engine) 
-                && engine->transferMeasurements(resultsCollector) ) 
+                && engine->transferResults(resultsCollector) ) 
     {
         success = true;
     }
     else 
     {
-        success = (persistenceManager != 0) && persistenceManager->transferMeasurements(resultsCollector);
+        success = (persistenceManager != 0) && persistenceManager->transferResults(resultsCollector);
     }
 
     return success;

@@ -23,6 +23,7 @@ using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;
 using STI::Engine::LocalEventEngine;
 using STI::Engine::RawEvent;
+using STI::Engine::RawEventType;
 using STI::Engine::Measurement;
 using STI::Engine::SynchronousEventVector;
 using STI::Utils::MixedValueType;
@@ -165,16 +166,55 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 
 	}
 	else if (rawEvent.value().getType() != channel->getOutputType()) {
-		//Wrong type
+		//Wrong output type
 		success = false;
 		errorCount++;
 
 		//Error: Incorrect type found for event on channel #5. Expected type 'Number'. Event trace:
-		addParsingError("Incorrect Type").addEvent(rawEvent)
-			<< "Incorrect type found for event on channel #" << rawEvent.channel()
+		addParsingError("Incorrect Output Type").addEvent(rawEvent)
+			<< "Incorrect output type found for event on channel #" << rawEvent.channel()
 			<< ". Expected type '"
 			<< MixedValue::TypeToString(channel->getOutputType()) << "' but received type ' " 
 			<< MixedValue::TypeToString(rawEvent.value().getType()) << "'.";
+	}
+
+	if (!success || channel == 0)
+		return false;
+
+	switch (rawEvent.type())
+	{
+	case RawEventType::Play:
+		if(channel->getType() != STI::Device::ChannelType::Output) {
+			//Play called on a non-output channel
+			success = false;
+			errorCount++;
+
+			//Error: Incorrect type found for event on channel #5. Expected type 'Number'. Event trace:
+			addParsingError("Illegal Output Event").addEvent(rawEvent)
+				<< "Output event requested on channel #" << rawEvent.channel()
+				<< ", but this is an input channel.";
+		}
+		break;
+	case RawEventType::Measurement:
+		if(channel->getType() != STI::Device::ChannelType::Input) {
+			//Measurement called on a non-input channel
+			success = false;
+			errorCount++;
+
+			//Error: Incorrect type found for event on channel #5. Expected type 'Number'. Event trace:
+			addParsingError("Illegal Input Event").addEvent(rawEvent)
+				<< "Input measurement requested on channel #" << rawEvent.channel()
+				<< ", but this is an output channel.";
+		}
+		break;
+	case RawEventType::Waveform:
+		break;
+	case RawEventType::Pause:
+		break;
+	case RawEventType::Jump:
+		break;
+	default:
+		break;
 	}
 
 	if (!success)
@@ -432,7 +472,7 @@ bool EventEngineParser::maxErrorCheck(unsigned errorCount, unsigned maxErrors)
 void EventEngineParser::defineErrorIDs()
 {
 	errorIDs["Missing Channel"] 					= 30;
-	errorIDs["Incorrect Type"]  					= 31;
+	errorIDs["Incorrect Output Type"]  				= 31;
 
 	errorIDs["Event Conflict"]  					= 32;
 	errorIDs["Event Conflict Exception"]  			= 33;
@@ -448,6 +488,9 @@ void EventEngineParser::defineErrorIDs()
 
 	errorIDs["Multiple SynchonousEvents"] 			= 40;
 	errorIDs["Max Error Count Reached"] 			= 41;
+
+	errorIDs["Illegal Output Event"] 				= 42;
+	errorIDs["Illegal Input Event"] 				= 43;
 
 }
 

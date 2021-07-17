@@ -59,11 +59,13 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
 
+	auto basePath = LocalPersistenceManager::makeBasePath(".sti", getID());
+
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 	
 	
-	localSerializedRepository = std::make_shared<SerializedRepository>(".sti", getID());
+	localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(localFileHolderFactory, localSerializedRepository, localSerializedRepository);

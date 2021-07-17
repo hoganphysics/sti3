@@ -8,6 +8,7 @@
 #include "ResultsDocumenter.h"
 #include "RawEvent.h"
 
+#include <filesystem>
 
 using STI::Device::LocalPersistenceManager;
 using STI::Engine::ResultsCollector;
@@ -27,6 +28,28 @@ LocalPersistenceManager::LocalPersistenceManager(const std::shared_ptr<STI::Util
 : fileHolderFactory(fileHolderFactory), resultsDocumenter(resultsDocumenter), shotRepository(shotRepository)
 {
     //documenter = std::make_shared<DefaultResultsDocumenter>();    //save to local .sti dir
+}
+
+LocalPersistenceManager::~LocalPersistenceManager()
+{
+    //serialize all shots in memory
+}
+
+std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const DeviceID& deviceID)
+{
+    std::filesystem::path root(rootPath);
+
+    if (!std::filesystem::exists(root)) {
+        std::filesystem::create_directory(root);
+    }
+
+    auto devicePath = root / deviceID.getID();
+
+    if (!std::filesystem::exists(devicePath)) {
+        std::filesystem::create_directories(devicePath);
+    }
+
+    return devicePath.string();
 }
 
 void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
@@ -50,8 +73,21 @@ bool LocalPersistenceManager::getShotRepository(std::shared_ptr<STI::Engine::Sho
     return (repo != 0);
 }
 
-bool LocalPersistenceManager::transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+bool LocalPersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
 {
+    if (resultsCollector == 0 || shotRepository == 0) return false;
+
+    auto sid = resultsCollector->getShotID();
+
+    if (shotRepository->findShot(sid) ) {
+        std::shared_ptr<STI::Engine::MeasurementVector> measurements;
+        
+        if (shotRepository->getMeasurements(sid, measurements)) {
+            //resultsCollector->addAttributes();
+            return resultsCollector->addMeasurements(measurements);
+        }
+    }
+
     return false;
 }
 
@@ -99,7 +135,7 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     collector = std::make_shared<LocalResultsCollector>(sid, eventEngine, eventEngine->getParsedTree(), 
                                                         resultsPaths, fileHolderFactory);
 
-    eventEngine->transferMeasurements(collector);   //collector is passed on to all devices in shot
+    eventEngine->transferResults(collector);   //collector is passed on to all devices in shot
 
     return resultsDocumenter->save(resultsPaths, collector);
 }
@@ -143,7 +179,7 @@ bool LocalPersistenceManager::getResultTicket(const ShotID& sid, std::shared_ptr
     std::set<unsigned> priorities;
     delegatePriorities.getKeys(priorities);
 
-    std::vector<std::shared_ptr<PersistenceManager>> orderedDelegates;
+    // std::vector<std::shared_ptr<PersistenceManager>> orderedDelegates;
 
     bool found = false;
 

@@ -27,9 +27,11 @@ public:
         const std::shared_ptr<STI::Engine::ResultsDocumenter>& resultsDocumenter,
         const std::shared_ptr<STI::Engine::ShotRepository>& shotRepository);
 
+    ~LocalPersistenceManager();
+
 
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
-    bool transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
+    bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
 
 
 
@@ -52,18 +54,22 @@ public:
     void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
     bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
 
-private:
+    // std::string getBaseLocalPath();
 
-    bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
+    static std::string makeBasePath(const std::string& rootPath, const DeviceID& deviceID);
 
-    std::shared_ptr<STI::Engine::ResultsDocumenter> resultsDocumenter;
-    std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
+    private:
 
-    STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;
-    STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<PersistenceManager>> delegates;
+        bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
 
-	std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
-};
+        std::shared_ptr<STI::Engine::ResultsDocumenter> resultsDocumenter;
+        std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
+
+        STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;
+        STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<PersistenceManager>> delegates;
+
+        std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
+    };
 
 
 } //Device

@@ -55,6 +55,8 @@ private:
 
     bool loadResultsFromURL();
 
+    void loadMeasurements();
+
 
     std::string url;
     bool hasURL;

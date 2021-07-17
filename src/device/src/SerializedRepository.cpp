@@ -14,10 +14,10 @@ using STI::Engine::ShotID;
 using STI::Engine::LocalResultsCollector;
 
 
-SerializedRepository::SerializedRepository(const std::string& rootPath, const STI::Device::DeviceID& deviceID)
-: cachedPaths(5), deviceID(deviceID), rootPath(rootPath)
+SerializedRepository::SerializedRepository(const std::string& baseDevicePath)
+: cachedPaths(5), baseDevicePath(baseDevicePath)
 {
-    baseDevicePath = makeBaseDevicePath();
+    // baseDevicePath = makeBaseDevicePath();
 }
 
 
@@ -113,9 +113,10 @@ ResultsPaths SerializedRepository::makePaths(const ShotID& sid)
     // std::filesystem::create_directory(uniqueBasePath);
 
 
-    std::filesystem::path uniqueBasePath = makeBaseDevicePath();
+    std::filesystem::path uniqueBasePath = baseDevicePath;
+    uniqueBasePath /= "shot_cache";
+    uniqueBasePath /= sid.playTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
 
-    
     paths.basePath = uniqueBasePath.string();
 
     auto tempPath = uniqueBasePath / "temp";
@@ -150,19 +151,19 @@ std::string SerializedRepository::getShotBasePath(const ShotID& sid)
     return uniqueBasePath.string();
 }
 
-std::string SerializedRepository::makeBaseDevicePath()
-{
-    std::filesystem::path root(rootPath);
+// std::string SerializedRepository::makeBaseDevicePath()
+// {
+//     std::filesystem::path root(rootPath);
 
-    if (!std::filesystem::exists(root)) {
-        std::filesystem::create_directory(root);
-    }
+//     if (!std::filesystem::exists(root)) {
+//         std::filesystem::create_directory(root);
+//     }
 
-    auto devicePath = root / deviceID.getID();
+//     auto devicePath = root / deviceID.getID();
 
-    if (!std::filesystem::exists(devicePath)) {
-        std::filesystem::create_directories(devicePath);
-    }
+//     if (!std::filesystem::exists(devicePath)) {
+//         std::filesystem::create_directories(devicePath);
+//     }
 
-    return devicePath.string();
-}
+//     return devicePath.string();
+// }

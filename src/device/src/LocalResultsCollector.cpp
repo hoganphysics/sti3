@@ -24,6 +24,7 @@ LocalResultsCollector::LocalResultsCollector(const ShotID& shotID,
 : sid(shotID), eventEngine(eventEngine), dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
 {
     // resultTicket = std::make_shared<STI::Engine::ResultTicket>(shotID, );
+    measurements_ = std::make_shared<MeasurementVector>();
 }
 
 
@@ -40,12 +41,15 @@ std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
 
 void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
 {
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
     // resultsTicket.events = parsedEvents;
     parsedEvents_ = std::move(parsedEvents);
 }
 
 void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
 {
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
     for (auto& file : files) {
         std::string localPath = makeLocalPath(resultsPaths.timingPath, file->getFilename());
         auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
@@ -58,9 +62,18 @@ void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI
 
 bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVector>& measurements)
 {
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
     if (measurements == 0) return false;
 
-    measurements_ = measurements;
+    if (measurements_ == 0 || measurements_->size() == 0) {
+        measurements_ = measurements;
+    }
+    else {
+        //vector contains shared_ptr so deep copy is inexpensive
+        measurements_->insert(measurements_->end(), measurements->begin(), measurements->end());
+    }
+    
 
     bool success = true;
 
@@ -131,5 +144,6 @@ std::string LocalResultsCollector::makeUniquePath(const std::string& filename)
 
 bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes)
 {
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
     return false;
 }

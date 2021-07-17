@@ -30,7 +30,7 @@ ParsedDependencyTree::ParsedDependencyTree(const std::shared_ptr<EventEngineDepe
         vertex.id = id;
 
         for (auto& dep : dependents) {
-            vertex.outConnections.push_back(indexmap[id]);
+            vertex.outConnections.push_back(indexmap[dep]);
         }
 
         vertices.push_back(vertex);

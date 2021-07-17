@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <string>
+#include <mutex>
+
 
 namespace STI
 {
@@ -54,6 +56,8 @@ private:
 
     std::shared_ptr<MeasurementVector> measurements_;
     DeviceEventMap parsedEvents_;
+
+    mutable std::mutex collectorMutex;
 
 };
 
