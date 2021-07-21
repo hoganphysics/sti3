@@ -57,7 +57,7 @@ bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const st
     return success && (eventEngine != 0);
 }
 
-bool RemotePersistenceManager::transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+bool RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
 	

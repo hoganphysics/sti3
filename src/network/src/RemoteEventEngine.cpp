@@ -3,7 +3,7 @@
 #include "Convert_EventEngine.h"
 #include "RawEvent.h"
 #include "ParsedDependencyTree.h"
-
+#include "NetworkResultsCollector.h"
 
 using STI::Network::RemoteEventEngine;
 using STI::Engine::EventEngineJob;
@@ -15,6 +15,8 @@ using STI::Engine::ParseID;
 using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TShotID;
 using STI::Engine::ShotID;
+
+using STI::Network::NetworkResultsCollector;
 
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
@@ -312,11 +314,30 @@ bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::sha
 	{
 	}
 	return success;
-
-	return false;
 }
 
-bool RemoteEventEngine::transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+bool RemoteEventEngine::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
 {
-	return false;
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TResultsCollector_var tResultsCollector;
+
+	bool success = false;
+
+	try {
+
+		if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
+			success = getTRef()->transferResults(tResultsCollector);	//remote call
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+	return success;
 }
+

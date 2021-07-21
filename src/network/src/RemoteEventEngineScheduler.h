@@ -54,7 +54,7 @@ public:
     bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
     bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParsedDependencyTree>& tree) const;
 	
-    bool transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
+    bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
     bool getResults(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ResultTicket>& results);
 
     bool ping() const;

@@ -10,8 +10,10 @@
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_ResultTicket.h"
 #include "Shot.h"
 #include "RawEvent.h"
+#include "RemoteResultsCollector.h"
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
@@ -210,7 +212,8 @@ void TEventEngineScheduler_i::cancelAll()
 	return success;
 }
 
-::CORBA::Boolean TEventEngineScheduler_i::getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree)
+::CORBA::Boolean TEventEngineScheduler_i::getParsedTree(const ::STI::TNetwork::TParseID& parseID, 
+															::STI::TNetwork::TEventEngineDependencyTree_out tree)
 {
 	bool success = false;
 
@@ -226,6 +229,40 @@ void TEventEngineScheduler_i::cancelAll()
 					depTree, tEventEngineDependencyTree_var);
 		tree = new STI::TNetwork::TEventEngineDependencyTree();
 		(*tree) = tEventEngineDependencyTree_var;		
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngineScheduler_i::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
+{
+	bool success = false;
+
+	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
+
+	if (engineScheduler != 0) {
+		success = engineScheduler->transferResults(remoteCollector);
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngineScheduler_i::getResults(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TResultTicket_out results)
+{
+	bool success = false;
+
+    if (engineScheduler != 0) {
+
+		std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
+		STI::TNetwork::TResultTicket_var tResultTicket_var(new STI::TNetwork::TResultTicket);
+
+		success = engineScheduler->getResults(convert<TShotID, STI::Engine::ShotID>(shotID), resultTicket);
+
+		success &= convert<std::shared_ptr<STI::Engine::ResultTicket>, TResultTicket>(
+					resultTicket, tResultTicket_var);
+
+		results = new STI::TNetwork::TResultTicket();
+		(*results) = tResultTicket_var;		
 	}
 
 	return success;

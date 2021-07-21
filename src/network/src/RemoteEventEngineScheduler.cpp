@@ -7,6 +7,7 @@
 #include "Convert_EventEngine.h"
 
 #include "Convert_DeviceTrace.h"
+#include "Convert_ResultTicket.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"
@@ -15,7 +16,7 @@
 #include "EngineParsingMessage.h"
 #include "RawEvent.h"
 #include "LocalShot.h"
-
+#include "NetworkResultsCollector.h"
 
 #include <memory>
 
@@ -40,6 +41,7 @@ using STI::Engine::ParseID;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TReferenceHolder;
+using STI::Network::NetworkResultsCollector;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
@@ -337,8 +339,54 @@ bool RemoteEventEngineScheduler::getParsedTree(const STI::Engine::ParseID& parse
 	return success;
 }
 
-    bool transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
-    bool getResults(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ResultTicket>& results);
+bool RemoteEventEngineScheduler::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+
+	STI::TNetwork::TResultsCollector_var tResultsCollector;
+
+	try {
+        if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
+			success = getTRef()->transferResults(tResultsCollector);	//remote call
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+	return success;
+}
+
+bool RemoteEventEngineScheduler::getResults(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ResultTicket>& results)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TResultTicket_var tResultTicket(new STI::TNetwork::TResultTicket);
+
+	bool success = false;
+
+	try {
+        
+		success = getTRef()->getResults(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(shotID), tResultTicket);	//remote call
+
+		success &= convert<STI::TNetwork::TResultTicket, std::shared_ptr<STI::Engine::ResultTicket>>(tResultTicket, results);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+	return success;
+}
 
 bool RemoteEventEngineScheduler::ping() const
 {

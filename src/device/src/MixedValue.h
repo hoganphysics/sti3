@@ -47,6 +47,7 @@ public:
 		setValue(value);
 	}
 	MixedValue(const MixedValue& copy);
+	MixedValue(const MixedValueType& value);
 
 	virtual ~MixedValue();
 

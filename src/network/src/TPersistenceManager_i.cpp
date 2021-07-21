@@ -33,10 +33,14 @@ TPersistenceManager_i::~TPersistenceManager_i()
 	std::shared_ptr<EventEngine> engine;
 	bool success = convert<::STI::TNetwork::TEventEngine_var, std::shared_ptr<EventEngine>>(eventEngine, engine);
     
-	if (persistenceManager != 0 ) {	//&& success
+	if (persistenceManager != 0 && success) {
 
-		persistenceManager->saveShot(convert<TShotID, ShotID>(sid), engine);
+		success &= persistenceManager->saveShot(convert<TShotID, ShotID>(sid), engine);
 	}
+	else {
+		success = false;
+	}
+	return success;
 }
 
 ::CORBA::Boolean TPersistenceManager_i::transferMeasurements(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
@@ -46,8 +50,13 @@ TPersistenceManager_i::~TPersistenceManager_i()
     
 	if (persistenceManager != 0 && success) {
 
-		persistenceManager->transferMeasurements(remoteCollector);
+		success &= persistenceManager->transferResults(remoteCollector);
 	}
+	else {
+		success = false;
+	}
+
+	return success;
 }
 
 ::CORBA::Boolean TPersistenceManager_i::getResultTicket(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TResultTicket_out ticket)

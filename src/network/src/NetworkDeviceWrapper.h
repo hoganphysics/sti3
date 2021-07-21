@@ -34,6 +34,8 @@ public:
 		getMessageDispatcher(dispatcher);
 		std::shared_ptr<STI::Device::ChannelManager> channels;
 		getChannelManager(channels);
+		std::shared_ptr<STI::Device::AttributeManager> attributeManager;
+		getAttributeManager(attributeManager);
 		std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 		getCollection(deviceCollection);
 		std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
@@ -48,7 +50,7 @@ public:
 		persistenceManager->setShotRepository(shotRepo);
 
 		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(
-				getID(), channels, dispatcher, deviceCollection, persistenceManager);
+				getID(), channels, attributeManager, dispatcher, deviceCollection, persistenceManager);
 		//localDevice->setEngineFactory(networkEngineFactory);
 
 		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;

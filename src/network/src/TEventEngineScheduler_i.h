@@ -45,6 +45,9 @@ public:
     ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
     ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);
 
+    ::CORBA::Boolean transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
+    ::CORBA::Boolean getResults(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TResultTicket_out results);
+
     ::CORBA::Boolean ping();
 
 private:

@@ -73,7 +73,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
 
 
-    auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, deviceMessageDispatcher, localCollection, localPersistenceManager);
+    auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
+																	localCollection, localPersistenceManager);
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
 
 

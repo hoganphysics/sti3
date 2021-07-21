@@ -40,6 +40,16 @@ MixedValue::MixedValue(const MixedValue& copy)
 	setValue(copy);
 }
 
+MixedValue::MixedValue(const MixedValueType& valueType)
+{
+	if (valueType == MixedValueType::Empty) {
+		type = MixedValueType::Empty;
+	}
+	else {
+		setValue(valueType);	//error
+	}
+}
+
 MixedValue::~MixedValue()
 {
 }

@@ -73,7 +73,7 @@ public:
 		addEventEngine(id0);
 
 		addChannel(0, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::String, "trigger");
-		addChannel(1, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::String, STI::Utils::MixedValueType::Double, "");
+		addChannel(1, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::String, STI::Utils::MixedValueType::Empty, "");
 	}
 	~TriggerDevice() {}
 	
@@ -134,7 +134,9 @@ int main(int argc, char **argv)
 	STI::Engine::RawEvent evt0(analogin->getID(), 0, 0, 12.0, "", 0, STI::Engine::RawEventType::Measurement);
 	events->push_back(evt0);
 
-	STI::Engine::RawEvent evt1(trigger->getID(), 50, 1, 22.0, "", 0, STI::Engine::RawEventType::Measurement);
+
+	//STI::Utils::MixedValueType::Empty
+	STI::Engine::RawEvent evt1(trigger->getID(), 50, 1, STI::Utils::MixedValueType::Empty, "", 0, STI::Engine::RawEventType::Measurement);
 	events->push_back(evt1);
 
 	shot->setEvents(events);

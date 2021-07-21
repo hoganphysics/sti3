@@ -22,7 +22,7 @@ public:
     ~RemotePersistenceManager();
 
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
-    bool transferMeasurements(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
+    bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
     bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
 

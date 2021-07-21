@@ -190,14 +190,14 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 	return success;
 }
 
-::CORBA::Boolean TEventEngine_i::transferMeasurements(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
+::CORBA::Boolean TEventEngine_i::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
 {
 	bool success = false;
 
 	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
 
 	if (eventEngine != 0) {
-		success = eventEngine->transferMeasurements(remoteCollector);
+		success = eventEngine->transferResults(remoteCollector);
 	}
 
 	return success;

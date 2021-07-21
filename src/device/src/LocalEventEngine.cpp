@@ -25,6 +25,7 @@
 #include "ResultsCollector.h"
 #include "LocalPersistenceManager.h"
 #include "ParsedDependencyTree.h"
+#include "AttributeManager.h"
 
 #include <memory>
 #include <thread>
@@ -60,6 +61,7 @@ using STI::Engine::ParsedDependencyTree;
 
 LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::DeviceID& localID, 
 								   const std::shared_ptr<STI::Device::ChannelManager>& channels,
+								   const std::shared_ptr<STI::Device::AttributeManager>& attributeManager,
  								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
  								   const std::shared_ptr<STI::Device::DeviceCollection>& collection,
 								   const std::shared_ptr<STI::Device::PersistenceManager>& persistence) 
@@ -67,9 +69,10 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
   	engineID(engineID),
 	parser(engineID, localID, channels, deviceParser), 
 	deviceParser(deviceParser),
-	measurementBuffer(3),
+	resultBuffer(3),
 	localDeviceID(localID),
 	localChannels(channels),
+	attributeManager(attributeManager),
 	deviceCollection(collection),
 	cancelled(false),
 	engineStateMessageGrouper(dispatcher),
@@ -744,21 +747,54 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 {
 	if (resultsCollector == 0) return false;
 
-	std::shared_ptr<MeasurementVector> measurements;
+	std::shared_ptr<LocalEventEngine::CachedShot> cachedShot;
 
-	if (measurementBuffer.get(resultsCollector->getShotID(), measurements)) {
-		if (resultsCollector->addMeasurements(measurements)) {
-			measurementBuffer.remove(resultsCollector->getShotID());
+	if (resultBuffer.get(resultsCollector->getShotID(), cachedShot) && cachedShot != 0) {
+
+		bool success = true;
+
+		if (isJobOwner) {
+			getParsedEvents(resultsCollector->getShotID().parseID, cachedShot->parsedEvents);
+			resultsCollector->addEvents(cachedShot->parsedEvents);
+	//		resultsCollector->addTimingFiles();
+	//		resultsCollector->addVariables();
+		}
+
+		//Attributes
+		success &= resultsCollector->addAttributes(localDeviceID, cachedShot->attributes);
+
+		//Measurements
+		success &= resultsCollector->addMeasurements(cachedShot->measurements);
+
+		if (success) {
+			resultBuffer.remove(resultsCollector->getShotID());
 		}
 	}
 
-	if (isJobOwner) {
-//		resultsCollector->addTimingFiles();
-//		resultsCollector->addVariables();
-		DeviceEventMap parsedEvents;
-		getParsedEvents(resultsCollector->getShotID().parseID, parsedEvents);
-		resultsCollector->addEvents(parsedEvents);
-	}
+// 	std::shared_ptr<MeasurementVector> measurements;
+
+// 	if (measurementBuffer.get(resultsCollector->getShotID(), measurements)) {
+// 		//Measurements
+// 		if (resultsCollector->addMeasurements(measurements)) {
+// 			measurementBuffer.remove(resultsCollector->getShotID());
+// 		}
+
+// 		//Attributes
+// 		std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
+// 		if (attributeManager != 0) {
+// 			attributeManager->getAttributes(attributes);
+// 			resultsCollector->addAttributes(localDeviceID, attributes);
+// 		}
+
+// 	}
+
+// 	if (isJobOwner) {
+// //		resultsCollector->addTimingFiles();
+// //		resultsCollector->addVariables();
+// 		DeviceEventMap parsedEvents;
+// 		getParsedEvents(resultsCollector->getShotID().parseID, parsedEvents);
+// 		resultsCollector->addEvents(parsedEvents);
+// 	}
 
 	//this device's attributes
 //	resultsCollector->addAttributes(localDeviceID, attributes);
@@ -813,7 +849,14 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 
 bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
-	return measurementBuffer.get(sid, measurements) && (measurements != 0);
+	std::shared_ptr<LocalEventEngine::CachedShot> shot;
+
+	if (resultBuffer.get(sid, shot) && shot != 0) {
+		measurements = shot->measurements;
+		return (measurements != 0);
+	}
+	return false;
+//	return measurementBuffer.get(sid, measurements) && (measurements != 0);
 }
 
 
@@ -858,7 +901,16 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		auto& evtMeasurements = synchEvent->getMeasurements();
 		newMeasurements->insert(newMeasurements->end(), evtMeasurements.begin(), evtMeasurements.end());
 	}
-	measurementBuffer.add(jobID.sid, newMeasurements);	//Add this shot to the buffer
+
+	auto cachedShot = std::make_shared<LocalEventEngine::CachedShot>();
+	cachedShot->measurements = newMeasurements;
+
+	if (attributeManager != 0) {
+		attributeManager->getAttributes(cachedShot->attributes);
+	}
+
+	resultBuffer.add(jobID.sid, cachedShot);	//Add this shot to the buffer
+	//measurementBuffer.add(jobID.sid, newMeasurements);	//Add this shot to the buffer
 
 	//Prepare local events
 	for (auto& synchEvent : synchedEvents) {
