@@ -89,6 +89,21 @@ void STIPyGlobal::meas(const STIPyChannel& channel, double time, const pybind11:
     }
 }
 
+void STIPyGlobal::meas(const STIPyChannel& channel, double time)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'meas(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot != 0) {
+        currentShot->meas(channel, time);
+    }
+}
+
 std::shared_ptr<STIPyDevice> STIPyGlobal::dev(const std::string& name, const std::string& address, unsigned module)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);

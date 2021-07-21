@@ -35,6 +35,7 @@ public:
 
     void event(const STIPyChannel& channel, double time, const pybind11::object& value);
     void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
+    void meas(const STIPyChannel& channel, double time);
 
     std::shared_ptr<STIPyDevice> dev(const std::string& name, const std::string& address, unsigned module);
 

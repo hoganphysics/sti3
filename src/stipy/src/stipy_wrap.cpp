@@ -3,12 +3,14 @@
 
 #include "STIPyChannel.h"
 #include "STIPyServer.h"
+#include "STIPyChannel.h"
 
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
 // using STI::Python::connect4;
 
+using STI::Python::STIPyChannel;
 
 
 
@@ -29,7 +31,10 @@ void init_stipy(py::module& m)
     m.def("printNetwork", &STI::Python::printNetwork, "Print the STI network tree");
 
     m.def("event", &STI::Python::event);
-    m.def("meas", &STI::Python::event);
+    m.def("meas", py::overload_cast<const STIPyChannel&, double, const pybind11::object&>(&STI::Python::meas));
+    m.def("meas", py::overload_cast<const STIPyChannel&, double>(&STI::Python::meas));
+
+
 
 
 

@@ -57,6 +57,7 @@ std::string printNetwork(const std::string& nameServerAddress, const std::string
 
 void event(const STIPyChannel& channel, double time, const pybind11::object& value);
 void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
+void meas(const STIPyChannel& channel, double time);
 
 std::shared_ptr<STIPyDevice> 
 dev(const std::string& name, const std::string& address, unsigned module);

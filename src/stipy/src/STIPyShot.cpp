@@ -58,6 +58,12 @@ void STIPyShot::event(const STIPyChannel& channel, double time, const pybind11::
     addEvent(channel, time, value, RawEventType::Play);
 }
 
+void STIPyShot::meas(const STIPyChannel& channel, double time)
+{
+    STI::Python::MixedValuePy valuepy;  //empty
+    addEvent(channel, time, valuepy, RawEventType::Measurement);
+}
+
 void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
 {
     addEvent(channel, time, value, RawEventType::Measurement);
@@ -65,13 +71,18 @@ void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::o
 
 void STIPyShot::addEvent(const STIPyChannel& channel, double time, const pybind11::object& value, const RawEventType& type)
 {
+    STI::Python::MixedValuePy valuepy;
+    valuepy.setValue_py(value);
+
+    addEvent(channel, time, valuepy, type);
+}
+
+void STIPyShot::addEvent(const STIPyChannel& channel, double time, const MixedValuePy& valuepy, const STI::Engine::RawEventType& type)
+{
     std::unique_lock<std::mutex> evtLock(eventMutex);
 
     std::string description = "";
 //    eventNumber++;
-    STI::Python::MixedValuePy valuepy;
-
-    valuepy.setValue_py(value);
 
     if (events != 0) {
         events->push_back( RawEvent(channel.device()->id(), time, channel.channel(), 

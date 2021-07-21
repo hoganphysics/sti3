@@ -21,7 +21,7 @@ namespace Python
 class STIPyChannel;
 class STIPyServer;
 class ParseTicket;
-
+class MixedValuePy;
 
 class STIPyShot
 {
@@ -31,6 +31,8 @@ public:
 
     void setvar(const std::string& name, const pybind11::object& value);
     void event(const STIPyChannel& channel, double time, const pybind11::object& value);
+    
+    void meas(const STIPyChannel& channel, double time);
     void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
 
 //    void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
@@ -49,6 +51,9 @@ public:
     std::shared_ptr<STI::Engine::Shot> getShot() { return shot; }
 
 private:
+
+
+    void addEvent(const STIPyChannel& channel, double time, const MixedValuePy& valuepy, const STI::Engine::RawEventType& type);
 
     void addEvent(const STIPyChannel& channel, double time, const pybind11::object& value, const STI::Engine::RawEventType& type);
 

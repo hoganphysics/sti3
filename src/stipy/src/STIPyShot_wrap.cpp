@@ -11,6 +11,9 @@
 
 namespace py = pybind11;
 
+using STI::Python::STIPyChannel;
+using STI::Python::STIPyShot;
+
 
 void init_STIPyShot(py::module& m) 
 {
@@ -20,8 +23,13 @@ void init_STIPyShot(py::module& m)
     py::class_<STI::Python::STIPyShot, std::shared_ptr<STI::Python::STIPyShot>>(m, "STIPyShot")
 
         .def("event", &STI::Python::STIPyShot::event)
-        .def("meas", &STI::Python::STIPyShot::meas)
+        .def("meas", py::overload_cast<const STIPyChannel&, double, const pybind11::object&>(&STIPyShot::meas))
+        .def("meas", py::overload_cast<const STIPyChannel&, double>(&STIPyShot::meas))
         .def("getEvents", &STI::Python::STIPyShot::getEvents)
+
+
+
+
         // .def("getEvents",
         //     [](STI::Python::STIPyShot& self) {
         //         std::shared_ptr<std::vector<STI::Engine::RawEvent>> evts;

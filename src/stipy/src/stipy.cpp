@@ -95,7 +95,7 @@ void STI::Python::event(const STIPyChannel& channel, double time, const pybind11
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->event(channel, time, value);        
+        stipy->event(channel, time, value);
     }
 }
 
@@ -104,7 +104,16 @@ void STI::Python::meas(const STIPyChannel& channel, double time, const pybind11:
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->meas(channel, time, value);        
+        stipy->meas(channel, time, value);
+    }
+}
+
+void STI::Python::meas(const STIPyChannel& channel, double time)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->meas(channel, time);
     }
 }
 
