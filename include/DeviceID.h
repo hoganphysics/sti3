@@ -12,7 +12,7 @@ namespace Device
 class DeviceIDBase
 {
 public:
-
+	DeviceIDBase();
 	DeviceIDBase(const std::string& name, const std::string& address, unsigned short module, 
 		const std::string& targetServerID)
 		: name_l(name), address_l(address), module_l(module), _targetServerID(targetServerID) 
@@ -29,6 +29,11 @@ public:
 	void setModule(unsigned short module) { module_l = module; regenerateID();}
 //	void setID(const std::string& deviceID) { deviceID_l = deviceID; }
 
+	template<class Archive>
+	void serialize(Archive & archive);
+	// {
+	// 	archive( name_l, address_l, module_l, deviceID_l, _targetServerID ); 
+	// }
 
 private:
 
@@ -72,6 +77,12 @@ public:
 
 	static std::string generateID(const std::string& name, const std::string& address, unsigned short module);
 	static std::string generateContext(const DeviceID& deviceID);
+
+	template<class Archive>
+	void serialize(Archive& archive);
+	// {
+	// 	archive( deviceIDBase ); 
+	// }
 
 private:
 

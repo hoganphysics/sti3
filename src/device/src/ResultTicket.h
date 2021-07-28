@@ -17,19 +17,22 @@ namespace Engine
 
 class ShotRepository;
 
-class ShotResult
-{
-public:
+// class ShotResult
+// {
+// public:
 
-    virtual ~ShotResult() {}
+//     virtual ~ShotResult() {}
 
-    virtual STI::Engine::MeasurementVector measurements() = 0;
-    virtual STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id) = 0;
-};
+//     virtual STI::Engine::MeasurementVector measurements() = 0;
+//     virtual STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id) = 0;
+// };
+
+
+	
 
 //class URLShotResult : public ShotResult
 
-class ResultTicket : public Ticket, public ShotResult
+class ResultTicket : public Ticket  //, public ShotResult
 {
 public:
 

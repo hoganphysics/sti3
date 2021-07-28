@@ -13,6 +13,7 @@ namespace Engine
 
 class ShotID;
 class LocalResultsCollector;
+class ShotResult;
 
 //should this be shot-specific, or general?
 
@@ -32,6 +33,7 @@ public:
 
     virtual ResultsPaths preparePaths(const ShotID& sid) = 0;
     virtual bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector) = 0;
+    virtual bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult) = 0;
 
 };
 

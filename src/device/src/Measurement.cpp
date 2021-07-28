@@ -1,10 +1,21 @@
 
 #include "Measurement.h"
 #include "RawEvent.h"
+#include "DeviceID.h"
+
+#include "CerealArchives.h"
+#include <cereal/types/common.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/string.hpp>
 
 using STI::Engine::Measurement;
 using STI::Engine::RawEvent;
+using STI::Device::DeviceID;
 
+Measurement::Measurement()
+{
+}
 
 Measurement::Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
 							const STI::Utils::GraphPathLabel& measurementGraphPath)
@@ -69,3 +80,19 @@ const STI::Device::DeviceID& Measurement::device() const
 	return _device;
 }
 
+
+template<class Archive>
+void Measurement::serialize(Archive& archive)
+{
+	archive(
+		cereal::make_nvp("time", _time), 
+		cereal::make_nvp("channel", _channel), 
+		cereal::make_nvp("device", _device), 
+		cereal::make_nvp("measurementResult", measurementResult),
+		cereal::make_nvp("measurementGraphPath", measurementGraphPath), 
+		cereal::make_nvp("data_ready", data_ready)
+		);
+}
+
+template void Measurement::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void Measurement::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

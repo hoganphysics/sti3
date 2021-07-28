@@ -5,7 +5,15 @@
 #include <memory>
 #include <functional>
 
-using namespace STI::Device;
+
+#include "CerealArchives.h"
+#include <cereal/types/memory.hpp>
+#include <cereal/types/string.hpp>
+
+//using namespace STI::Device;
+
+using STI::Device::DeviceID;
+using STI::Device::DeviceIDBase;
 
 DeviceID::DeviceID()
 {
@@ -72,4 +80,34 @@ std::string DeviceID::generateContext(const DeviceID& deviceID)
 	return context.str();
 }
 
+DeviceIDBase::DeviceIDBase()
+: DeviceIDBase("", "", 0, "")
+{
+}
+
 void DeviceIDBase::regenerateID() { deviceID_l = DeviceID::generateID(name_l, address_l, module_l); }
+
+template<class Archive>
+void DeviceIDBase::serialize(Archive& archive)
+{
+	archive( 
+		cereal::make_nvp("name", name_l), 
+		cereal::make_nvp("address", address_l), 
+		cereal::make_nvp("module", module_l), 
+		cereal::make_nvp("deviceID", deviceID_l), 
+		cereal::make_nvp("targetServerID", _targetServerID)
+		); 
+}
+
+template<class Archive>
+void DeviceID::serialize(Archive& archive)
+{
+	archive( cereal::make_nvp("DeviceIDBase", deviceIDBase) );
+}
+
+
+template void DeviceIDBase::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void DeviceIDBase::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+
+template void DeviceID::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void DeviceID::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

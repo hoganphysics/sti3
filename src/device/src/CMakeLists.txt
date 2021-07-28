@@ -56,6 +56,7 @@ add_library(stidevice SHARED
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    EventStackTrace.cpp
     EngineState.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
@@ -74,12 +75,14 @@ add_library(stidevice SHARED
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
+    ParseID.cpp
     ParsedDependencyTree.cpp
     ParseTicket.cpp  
     RawEvent.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     ShotID.cpp
+    ShotResult.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp
     Ticket.cpp
@@ -118,6 +121,7 @@ target_include_directories(stidevice PRIVATE
     ${WORKING_DIRECTORY}
     ${OPENSSL_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
+    ${STI_BASE_DIR}/include/extern
     ${WORKING_DIRECTORY}/fwd
     ${WORKING_DIRECTORY}/utils
 )

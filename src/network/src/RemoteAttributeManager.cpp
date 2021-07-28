@@ -196,6 +196,20 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 	}
 }
 
+void RemoteAttributeManager::getAttributes(std::map<std::string, std::string>& attributes)
+{
+	attributes.clear();
+
+	std::vector<std::shared_ptr<Attribute>> remoteAttributes;
+	getAttributes(remoteAttributes);
+
+	for (auto& at : remoteAttributes) {
+		if (at != 0) {
+			attributes[at->getKey()] = at->getValue();
+		}
+	}
+}
+
 bool RemoteAttributeManager::ping() const
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);

@@ -18,6 +18,7 @@ namespace Engine
 class EventEngine;
 class ParsedDependencyTree;
 struct ResultsPaths;
+struct ShotResult;
 
 
 class LocalResultsCollector : public ResultsCollector
@@ -37,26 +38,32 @@ public:
     void addEvents(const DeviceEventMap& parsedEvents);
     void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
     bool addMeasurements(const std::shared_ptr<MeasurementVector>& measurements);
-    bool addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes);
+    bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
     std::shared_ptr<MeasurementVector> getMeasurements();
+
+    std::shared_ptr<ShotResult> getResults();
 
 private:
 
     virtual std::string makeLocalPath(const std::string& basePath, const std::string& remoteFilename);
     std::string makeUniquePath(const std::string& filename);
 
-    ShotID sid;
-    std::shared_ptr<STI::Engine::EventEngine> eventEngine;    
     std::shared_ptr<ParsedDependencyTree> dependencies;
-    // std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
-
-    ResultsPaths resultsPaths;
+    std::shared_ptr<STI::Engine::EventEngine> eventEngine;   
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
+    ResultsPaths resultsPaths;
 
-    std::shared_ptr<MeasurementVector> measurements_;
-    DeviceEventMap parsedEvents_;
 
+    std::shared_ptr<ShotResult> shotResult;
+
+//    ShotID sid;
+     
+//    std::shared_ptr<MeasurementVector> measurements_;
+//    DeviceEventMap parsedEvents_;
+
+    // std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
+    
     mutable std::mutex collectorMutex;
 
 };

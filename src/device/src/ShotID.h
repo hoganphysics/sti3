@@ -39,6 +39,9 @@ public:
 
 	static ShotID generateUniqueID(const ParseID& pid);
 
+	template<class Archive>
+	void serialize(Archive& archive);
+
 private:
 
 	static TimeStamp lastSubmissionTime;

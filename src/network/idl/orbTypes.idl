@@ -95,6 +95,14 @@ module TNetwork
 	typedef sequence<TAttribute> TAttributeSeq;
 
 
+	struct TStringPair
+	{
+		string key;
+		string value;
+	};
+	typedef sequence<TStringPair> TStringPairSeq;
+
+
 	struct TRawEvent
 	{
 		double time;

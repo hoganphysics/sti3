@@ -173,7 +173,8 @@ bool RemoteResultsCollector::addMeasurements(const std::shared_ptr<STI::Engine::
     return success;
 }
 
-bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes)
+bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes)
+//bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes)
 {
 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
@@ -181,11 +182,11 @@ bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID
 
     bool success = false;
     
-    STI::TNetwork::TAttributeSeq_var tAttributes(new STI::TNetwork::TAttributeSeq);
+    STI::TNetwork::TStringPairSeq_var tAttributes(new STI::TNetwork::TStringPairSeq);
 
 	try {
 
-		convert<std::shared_ptr<STI::Device::Attribute>, STI::TNetwork::TAttribute>(attributes, tAttributes);
+		convert<std::map<std::string, std::string>, STI::TNetwork::TStringPairSeq>(attributes, tAttributes);
 
 		success = getTRef()->addAttributes(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceID), tAttributes);	//remote call
 

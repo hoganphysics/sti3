@@ -26,7 +26,8 @@ LocalAttribute::LocalAttribute(const std::string& key, const std::string& inital
     
     if (pos != std::string::npos) {
         group_ = key.substr(0, pos - 1);
-        key_ = key.substr(pos + 1, key.size());        
+//        key_ = key.substr(pos + 1, key.size());
+        key_ = key; //store full key with group
     }
     else {
         key_ = key;

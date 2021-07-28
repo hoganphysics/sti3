@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
 
 
 namespace STI
@@ -26,6 +27,7 @@ public:
 
     virtual bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute) = 0;
     virtual void getAttributes(std::vector<std::shared_ptr<Attribute>>& attributes) = 0;
+    virtual void getAttributes(std::map<std::string, std::string>& attributes) = 0;
 
 };
 

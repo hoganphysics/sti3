@@ -69,6 +69,21 @@ void LocalAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute>
     }
 }
 
+void LocalAttributeManager::getAttributes(std::map<std::string, std::string>& attributes)
+{
+    attributes.clear();
+
+    std::set<std::string> keys;
+    attributeMap.getKeys(keys);
+
+    std::shared_ptr<Attribute> attribute;
+    
+    for (auto& key : keys) {
+        if (getAttribute(key, attribute) && attribute != 0) {
+            attributes[attribute->getKey()] = attribute->getValue();
+        }
+    }
+}
 
 bool LocalAttributeManager::setValue(const std::string& key, const std::string& value)
 {

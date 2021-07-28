@@ -24,6 +24,13 @@
 #include "MixedValue.h"
 #include "utils.h"
 
+#include "CerealArchives.h"
+
+#include <cereal/types/common.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/memory.hpp>
+
 #include <sstream>
 #include <iostream>
 
@@ -388,4 +395,23 @@ void MixedValue::printError()
 {
 	std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
 }
+
+
+template<class Archive>
+void MixedValue::serialize(Archive& archive)
+{
+	archive(
+		cereal::make_nvp("type", type), 
+		cereal::make_nvp("value_b", value_b), 
+		cereal::make_nvp("value_i", value_i), 
+		cereal::make_nvp("value_d", value_d), 
+		cereal::make_nvp("value_s", value_s),
+		cereal::make_nvp("value_file", value_file),
+		cereal::make_nvp("values", values)
+		);
+}
+
+
+template void MixedValue::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void MixedValue::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 

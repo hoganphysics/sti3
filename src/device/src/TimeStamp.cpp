@@ -6,6 +6,9 @@
 #include <iomanip>
 //#include <time.h>
 
+#include "CerealArchives.h"
+
+
 using STI::Engine::TimeStamp;
 
 TimeStamp::TimeStamp()
@@ -250,3 +253,32 @@ bool TimeStamp::operator!=(const TimeStamp& rhs) const
     return !((*this) == rhs);
 }
 
+
+template<class Archive>
+void serialize(Archive& archive, tm& timeinfo)
+{
+    archive(cereal::make_nvp("sec", timeinfo.tm_sec),
+            cereal::make_nvp("min", timeinfo.tm_min),
+            cereal::make_nvp("hour", timeinfo.tm_hour),
+            cereal::make_nvp("mday", timeinfo.tm_mday),
+            cereal::make_nvp("mon", timeinfo.tm_mon),
+            cereal::make_nvp("year", timeinfo.tm_year),
+            cereal::make_nvp("wday", timeinfo.tm_wday),
+            cereal::make_nvp("year", timeinfo.tm_yday),
+            cereal::make_nvp("isdst", timeinfo.tm_isdst));
+}
+
+template<class Archive>
+void TimeStamp::serialize(Archive& archive)
+{
+    
+    archive(cereal::make_nvp("timeinfo", timeinfo), 
+            cereal::make_nvp("millis", _millis), 
+            cereal::make_nvp("micros", _micros), 
+            cereal::make_nvp("nanos", _nanos));//timeinfo, 
+}
+
+// Note that we need to instantiate for both loading and saving, even
+// if we use a single serialize function
+template void STI::Engine::TimeStamp::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void STI::Engine::TimeStamp::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

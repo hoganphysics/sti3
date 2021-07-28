@@ -129,6 +129,9 @@ public:
 
 	static std::string TypeToString(const MixedValueType& type);
 
+	template<class Archive>
+	void serialize(Archive& archive);
+
 private:
 
 	void printError();

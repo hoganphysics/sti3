@@ -31,7 +31,7 @@ public:
     virtual void addEvents(const DeviceEventMap& parsedEvents) = 0;
     virtual void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files) = 0;
     virtual bool addMeasurements(const std::shared_ptr<MeasurementVector>& measurements) = 0;
-    virtual bool addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes) = 0;
+    virtual bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes) = 0;
 
 };
 

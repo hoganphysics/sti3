@@ -2,7 +2,7 @@
 #define STI_ENGINE_EVENTSTACKTRACE_H
 
 #include <string>
-#include <sstream>
+
 
 namespace STI
 {
@@ -14,17 +14,14 @@ class EventStackTrace
 {
 public:
 
-	std::string file() const { return ""; }
-	long line() const { return 0; }
+	std::string file() const;
+	long line() const;
 
-	std::string print(std::string indent = "       ") const
-	{
-		//this is a temporary implementation to mock things up
-		std::stringstream trace;
-		trace << indent << ">>> " << file() << ", line " << line() << "." << std::endl;
+	std::string print(std::string indent = "       ") const;
 
-		return trace.str();
-	}
+	template<class Archive>
+	void serialize(Archive& archive);
+
 };
 
 

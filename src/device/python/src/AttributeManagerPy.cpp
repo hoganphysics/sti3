@@ -67,3 +67,9 @@ void AttributeManagerPy::getAttributes(std::vector<std::shared_ptr<STI::Device::
     }
 }
 
+void AttributeManagerPy::getAttributes(std::map<std::string, std::string>& attributes)
+{
+    if (attributeManager != 0) {
+        return attributeManager->getAttributes(attributes);
+    }
+}

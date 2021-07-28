@@ -25,6 +25,12 @@
 #include "MixedValue.h"
 #include "utils.h"
 
+#include "CerealArchives.h"
+#include <cereal/types/common.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/string.hpp>
+
 #include <sstream>
 
 using STI::Engine::RawEvent;
@@ -98,3 +104,24 @@ const STI::Device::DeviceID& RawEvent::targetDevice() const
 {
 	return targetDeviceID;
 }
+
+template<class Archive>
+void RawEvent::serialize(Archive& archive)
+{
+	archive(
+		cereal::make_nvp("time", _time), 
+		cereal::make_nvp("channel", _channel), 
+		cereal::make_nvp("targetDeviceID", targetDeviceID), 
+		cereal::make_nvp("value", _value),
+		cereal::make_nvp("description", _description),
+		cereal::make_nvp("eventType", _eventType),
+		cereal::make_nvp("stackTrace", trace),
+		cereal::make_nvp("eventGraphPath", eventGraphPath), 
+		cereal::make_nvp("isMeasurement", isMeasurement)
+		);
+}
+
+
+template void RawEvent::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void RawEvent::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+

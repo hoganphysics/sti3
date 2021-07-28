@@ -16,6 +16,9 @@ class EngineJobSourceID
 public:
 	std::string user;
 	std::string machine;
+
+	template<class Archive>
+	void serialize(Archive& archive);
 };
 
 
@@ -35,6 +38,9 @@ public:
 	bool operator!=(const ParseID& rhs) const { return !((*this) == rhs); }
 
 	enum class ShotType { Single, Sequence };//?
+
+	template<class Archive>
+	void serialize(Archive& archive);
 };
 
 

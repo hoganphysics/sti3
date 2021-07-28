@@ -37,6 +37,7 @@ public:
 
     bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute);
     void getAttributes(std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes);
+    void getAttributes(std::map<std::string, std::string>& attributes);
 
     STI::Utils::MixedValue getMetaData(const std::string& key);
     STI::Utils::MixedValue getMetaData(const std::string& key, const std::string& metaKey);

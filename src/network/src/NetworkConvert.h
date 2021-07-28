@@ -156,6 +156,16 @@ template<>
 
 
 
+template<>
+bool Network::convert<std::map<std::string, std::string>, STI::TNetwork::TStringPairSeq>(
+	const std::map<std::string, std::string>& stringMap, STI::TNetwork::TStringPairSeq& tStringMap);
+
+template<>
+bool Network::convert<STI::TNetwork::TStringPairSeq, std::map<std::string, std::string>>(
+	const STI::TNetwork::TStringPairSeq& tStringMap, std::map<std::string, std::string>& stringMap);
+
+
+
 namespace Device
 {
 

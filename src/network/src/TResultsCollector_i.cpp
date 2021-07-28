@@ -101,12 +101,15 @@ void TResultsCollector_i::addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& 
     return false;
 }
 
-::CORBA::Boolean TResultsCollector_i::addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TAttributeSeq& attributes)
+::CORBA::Boolean TResultsCollector_i::addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes)
+//::CORBA::Boolean TResultsCollector_i::addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TAttributeSeq& attributes)
 {
     if (resultsCollector != 0) {
 
-	    std::vector<std::shared_ptr<Attribute>> remoteAttributes;
-	    convert<TAttribute, std::shared_ptr<Attribute>>(attributes, remoteAttributes);
+		std::map<std::string, std::string> remoteAttributes;
+
+//	    std::vector<std::shared_ptr<Attribute>> remoteAttributes;
+	    convert<::STI::TNetwork::TStringPairSeq, std::map<std::string, std::string>>(attributes, remoteAttributes);
 
 		return resultsCollector->addAttributes(convert<TDeviceID, DeviceID>(deviceID), remoteAttributes);
 	}

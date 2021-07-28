@@ -28,6 +28,8 @@ public:
 		addPartner(triggerID);
 
 		addChannel(0, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Double, STI::Utils::MixedValueType::Double, "");
+
+		addAttribute("settings::testAttrib", "the value of the attribute");
 	}
 	~AnalogInDevice() {}
 

@@ -7,7 +7,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${stiBasePath}/include/**"
+                "${stiBasePath}/include/**",
+                "${stiBasePath}/include/extern/**"
             ],
             "defines": [
                 

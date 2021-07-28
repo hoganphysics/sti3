@@ -146,7 +146,7 @@ module TNetwork
 		void addEvents(in TDeviceEventsSeq parsedEvents);
 		void addTimingFiles(in TFileHolderSeq files);
 		boolean addMeasurements(in TMeasurementSeq measurements);
-		boolean addAttributes(in TDeviceID deviceID, in TAttributeSeq attributes);
+		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
 	};
 
 	interface TEventEngine

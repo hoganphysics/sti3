@@ -11,8 +11,18 @@
 
 #include <filesystem>
 
+#include "CerealArchives.h"
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+
 using STI::Utils::FileHolder;
 using STI::Utils::LocalFileHolder;
+
+
+//Serialization
+CEREAL_REGISTER_TYPE(LocalFileHolder);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(FileHolder, LocalFileHolder)
+
 
 
 
@@ -30,6 +40,11 @@ std::string digestToString(unsigned char (&digest)[MD5_DIGEST_LENGTH])
 
 LocalFileHolder::LocalFileHolder(const std::string& filename)
 : filename(filename), hashed(false)
+{
+}
+
+LocalFileHolder::LocalFileHolder()
+: hashed(false)
 {
 }
 
@@ -200,3 +215,17 @@ bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5stri
     
     return true;
 }
+
+template<class Archive>
+void LocalFileHolder::serialize(Archive& archive)
+{
+	archive(
+		cereal::make_nvp("filename", filename), 
+		cereal::make_nvp("md5hash", md5hash), 
+		cereal::make_nvp("hashed", hashed)
+		);
+}
+
+template void LocalFileHolder::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void LocalFileHolder::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+

@@ -19,6 +19,7 @@ class LocalFileHolder : public FileHolder
 {
 public:
 
+    LocalFileHolder();    //for serialization
 
     virtual ~LocalFileHolder();
 
@@ -39,6 +40,9 @@ public:
     void closeFile();
     
     static bool makeMD5hash(const std::string& fname, std::string& md5string, unsigned bufferSize);
+
+   	template<class Archive>
+	void serialize(Archive& archive);
 
 protected:
     

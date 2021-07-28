@@ -122,7 +122,9 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std
 }
 
 
-
+//replace resultsDocumenter with localDocumenter and make it a function argument.
+//allow engine to call saveShotLocal with a TransientResultsDocumenter which auto deletes itself
+//after going out of scope. Data is copied from this documenter into a MixedValue when read() is called.
 bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine)
 {
     if (resultsDocumenter == 0) return false;

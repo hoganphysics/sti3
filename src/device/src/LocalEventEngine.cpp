@@ -27,6 +27,8 @@
 #include "ParsedDependencyTree.h"
 #include "AttributeManager.h"
 
+#include "ShotResult.h"
+
 #include <memory>
 #include <thread>
 #include <iterator>
@@ -53,6 +55,7 @@ using STI::Engine::EngineParsingMessage;
 using STI::Engine::MasterTrigger;
 using STI::Engine::ResultsCollector;
 using STI::Engine::ParsedDependencyTree;
+using STI::Engine::ShotResult;
 
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
@@ -747,7 +750,7 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 {
 	if (resultsCollector == 0) return false;
 
-	std::shared_ptr<LocalEventEngine::CachedShot> cachedShot;
+	std::shared_ptr<ShotResult> cachedShot;
 
 	if (resultBuffer.get(resultsCollector->getShotID(), cachedShot) && cachedShot != 0) {
 
@@ -761,7 +764,7 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 		}
 
 		//Attributes
-		success &= resultsCollector->addAttributes(localDeviceID, cachedShot->attributes);
+		success &= resultsCollector->addAttributes(localDeviceID, (cachedShot->attributes)[localDeviceID]);
 
 		//Measurements
 		success &= resultsCollector->addMeasurements(cachedShot->measurements);
@@ -849,7 +852,7 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 
 bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
-	std::shared_ptr<LocalEventEngine::CachedShot> shot;
+	std::shared_ptr<ShotResult> shot;
 
 	if (resultBuffer.get(sid, shot) && shot != 0) {
 		measurements = shot->measurements;
@@ -902,14 +905,18 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		newMeasurements->insert(newMeasurements->end(), evtMeasurements.begin(), evtMeasurements.end());
 	}
 
-	auto cachedShot = std::make_shared<LocalEventEngine::CachedShot>();
+	auto cachedShot = std::make_shared<ShotResult>();
+	cachedShot->sid = jobID.sid;
 	cachedShot->measurements = newMeasurements;
 
 	if (attributeManager != 0) {
-		attributeManager->getAttributes(cachedShot->attributes);
+		std::map<std::string, std::string> attributes;
+		attributeManager->getAttributes(attributes);
+
+		(cachedShot->attributes)[localDeviceID] = attributes;
 	}
 
-	resultBuffer.add(jobID.sid, cachedShot);	//Add this shot to the buffer
+	resultBuffer.add(cachedShot->sid, cachedShot);	//Add this shot to the buffer
 	//measurementBuffer.add(jobID.sid, newMeasurements);	//Add this shot to the buffer
 
 	//Prepare local events

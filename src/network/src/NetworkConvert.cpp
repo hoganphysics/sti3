@@ -12,6 +12,7 @@ using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValueType;
 using STI::Utils::MixedValueType;
+using STI::TNetwork::TStringPairSeq;
 
 
 template<>
@@ -35,7 +36,8 @@ bool STI::Network::convert<std::string, ::CORBA::String_member>(const std::strin
 
 
 template<>
-bool STI::Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(const std::vector<std::string>& stringVec, STI::TNetwork::TStringSeq& tStringSeq)
+bool STI::Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(
+	const std::vector<std::string>& stringVec, STI::TNetwork::TStringSeq& tStringSeq)
 {
 	tStringSeq.length(static_cast<unsigned>(stringVec.size()));
 
@@ -47,7 +49,8 @@ bool STI::Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(
 }
 
 template<>
-bool STI::Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(const STI::TNetwork::TStringSeq& tStringSeq, std::vector<std::string>& stringVec)
+bool STI::Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(
+	const STI::TNetwork::TStringSeq& tStringSeq, std::vector<std::string>& stringVec)
 {
 	stringVec.clear();
 	for (unsigned i = 0; i < tStringSeq.length(); ++i) {
@@ -56,6 +59,39 @@ bool STI::Network::convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(
 	}
 	return (stringVec.size() == tStringSeq.length());
 }
+
+
+template<>
+bool STI::Network::convert<std::map<std::string, std::string>, STI::TNetwork::TStringPairSeq>(
+	const std::map<std::string, std::string>& stringMap, STI::TNetwork::TStringPairSeq& tStringMap)
+{
+	tStringMap.length( stringMap.size() );
+
+	auto it = stringMap.begin();
+	for (unsigned i = 0; it != stringMap.end() && i < tStringMap.length(); ++i, ++it) {
+		tStringMap[i].key = convert<std::string, ::CORBA::String_member>(it->first);
+		tStringMap[i].value = convert<std::string, ::CORBA::String_member>(it->second);
+	}
+
+	return (stringMap.size() == tStringMap.length());
+}
+
+template<>
+bool STI::Network::convert<STI::TNetwork::TStringPairSeq, std::map<std::string, std::string>>(
+	const STI::TNetwork::TStringPairSeq& tStringMap, std::map<std::string, std::string>& stringMap)
+{
+	stringMap.clear();
+
+	for (unsigned i = 0; i < tStringMap.length(); ++i) {
+		stringMap.insert( std::pair<std::string, std::string>(
+							convert<::CORBA::String_member, std::string>(tStringMap[i].key),
+							convert<::CORBA::String_member, std::string>(tStringMap[i].value)
+						));
+	}
+	return (stringMap.size() == tStringMap.length());
+}
+
+
 
 
 // Buffer

@@ -42,6 +42,7 @@ class DeviceMessageDispatcher;
 class MasterTrigger;
 class TriggerCallback;
 class ResultsCollector;
+class ShotResult;
 
 class EventTime
 {
@@ -71,7 +72,7 @@ public:
 	//If DocTarget pulls, it is now the owner of the shot's data and is reponsible for providing persistence.
 	
 	void clear();
-	void parse(STI::Engine::EventEngineJob& job);
+	void parse(STI::Engine::EventEngineJob& job);	//include results callback in job?
 
 	void play(STI::Engine::EventEngineJob& job);
 	void play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug = false);	//ticket is a callback that will fire when results are ready;  playCB could push event number
@@ -186,15 +187,15 @@ private:
 	std::shared_ptr<EventEngineDependencyTree> dependencyTree;
 	std::shared_ptr<EventEngineDependencyTree> localSubtree;
 
-	struct CachedShot
-	{
-		DeviceEventMap parsedEvents;
-		std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
-		std::shared_ptr<MeasurementVector> measurements;
-		std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
-	};
+	// struct CachedShot
+	// {
+	// 	DeviceEventMap parsedEvents;
+	// 	std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
+	// 	std::shared_ptr<MeasurementVector> measurements;
+	// 	std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
+	// };
 	
-	STI::Utils::OrderedBufferMap<ShotID, std::shared_ptr<CachedShot>> resultBuffer;	//Each ShotID refers to a single shot's cached results.
+	STI::Utils::OrderedBufferMap<ShotID, std::shared_ptr<ShotResult>> resultBuffer;	//Each ShotID refers to a single shot's cached results.
 
 	DeviceEventMap eventsByTarget;
 	RawEventVector upstreamEvents;

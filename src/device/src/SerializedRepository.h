@@ -17,6 +17,7 @@ namespace STI
 namespace Engine
 {
 
+class ShotResult;
 
 class SerializedRepository : public ShotRepository, 
                              public ResultsDocumenter
@@ -34,6 +35,8 @@ public:
     ResultsPaths preparePaths(const ShotID& sid);
     bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
 
+    bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
+
 private:
 
     ResultsPaths makePaths(const ShotID& sid);
@@ -46,6 +49,8 @@ private:
     // STI::Device::DeviceID deviceID;
     std::string rootPath;
     std::string baseDevicePath;
+
+    std::string archiveFilename;
 
     STI::Utils::OrderedBufferMap<ShotID, ResultsPaths> cachedPaths;
 

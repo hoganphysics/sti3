@@ -8,6 +8,7 @@
 #include "SynchronizedMap.h"
 #include "MessageGrouper.h"
 
+#include <map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -38,6 +39,8 @@ public:
 
     bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
     void getAttributes(std::vector<std::shared_ptr<Attribute>>& attributes);
+
+    void getAttributes(std::map<std::string, std::string>& attributes);
 
     bool addAttribute(const std::shared_ptr<LocalAttribute>& attribute);
 

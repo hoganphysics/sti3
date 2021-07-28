@@ -49,6 +49,12 @@ public:
 		_nanos += ns;
 	}
 
+	template<class Archive>
+	void serialize(Archive& archive);
+	// {
+	// 	archive(_millis, _micros, _nanos);//timeinfo, 
+	// }
+
 private:
 
 	tm timeinfo;

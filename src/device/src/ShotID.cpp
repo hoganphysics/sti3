@@ -1,6 +1,9 @@
 
 #include "ShotID.h"
 
+#include "CerealArchives.h"
+#include <cereal/types/string.hpp>
+
 using STI::Engine::ShotID;
 using STI::Engine::ParseID;
 using STI::Engine::TimeStamp;
@@ -27,3 +30,14 @@ ShotID ShotID::generateUniqueID(const ParseID& pid)
     return sid;
 }
 
+template<class Archive>
+void ShotID::serialize(Archive& archive)
+{
+    archive(cereal::make_nvp("parseID", parseID), 
+            cereal::make_nvp("submissionTime", submissionTime), 
+            cereal::make_nvp("playTime", playTime), 
+            cereal::make_nvp("jobSourceID", jobSourceID));
+}
+
+template void STI::Engine::ShotID::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void STI::Engine::ShotID::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

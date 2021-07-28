@@ -5,6 +5,7 @@
 #include "ParsedDependencyTree.h"
 #include "Measurement.h"
 #include "RawEvent.h"
+#include "ShotResult.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -14,23 +15,25 @@ using STI::Engine::ShotID;
 using STI::Engine::ParsedDependencyTree;
 using STI::Engine::Measurement;
 using STI::Engine::MeasurementVector;
-
+using STI::Engine::ShotResult;
 
 LocalResultsCollector::LocalResultsCollector(const ShotID& shotID, 
                     const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
                     const std::shared_ptr<ParsedDependencyTree>& dependencies,
                     const ResultsPaths& paths,
                     const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-: sid(shotID), eventEngine(eventEngine), dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
+: eventEngine(eventEngine), dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
 {
+    shotResult = std::make_shared<ShotResult>();
+    shotResult->sid = shotID;
     // resultTicket = std::make_shared<STI::Engine::ResultTicket>(shotID, );
-    measurements_ = std::make_shared<MeasurementVector>();
+    shotResult->measurements = std::make_shared<MeasurementVector>();
 }
 
 
 ShotID LocalResultsCollector::getShotID()
 {
-    return sid;
+    return shotResult->sid;
 }
 
 std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
@@ -38,12 +41,16 @@ std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
     return dependencies;
 }
 
+std::shared_ptr<ShotResult> LocalResultsCollector::getResults()
+{
+    return shotResult;
+}
 
 void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
     // resultsTicket.events = parsedEvents;
-    parsedEvents_ = std::move(parsedEvents);
+    shotResult->parsedEvents = std::move(parsedEvents);
 }
 
 void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
@@ -55,6 +62,7 @@ void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI
         auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
 
         if (file->transferFile(localFileHandle)) {
+            shotResult->timingFiles.push_back(localFileHandle);
         }
     }
 }
@@ -64,14 +72,14 @@ bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVec
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (measurements == 0) return false;
+    if (shotResult == 0 || measurements == 0) return false;
 
-    if (measurements_ == 0 || measurements_->size() == 0) {
-        measurements_ = measurements;
+    if (shotResult->measurements == 0 || shotResult->measurements->size() == 0) {
+        shotResult->measurements = measurements;
     }
     else {
         //vector contains shared_ptr so deep copy is inexpensive
-        measurements_->insert(measurements_->end(), measurements->begin(), measurements->end());
+        shotResult->measurements->insert(shotResult->measurements->end(), measurements->begin(), measurements->end());
     }
     
 
@@ -110,7 +118,7 @@ bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVec
 
 std::shared_ptr<MeasurementVector> LocalResultsCollector::getMeasurements()
 {
-    return measurements_;
+    return shotResult->measurements;
 }
 
 std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)
@@ -142,8 +150,9 @@ std::string LocalResultsCollector::makeUniquePath(const std::string& filename)
     return trialPath.string();
 }
 
-bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes)
+bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
-    return false;
+    (shotResult->attributes)[deviceID] = attributes;
+    return true;
 }

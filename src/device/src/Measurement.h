@@ -18,6 +18,8 @@ class Measurement
 {
 public:
 	
+	Measurement();	//for serialzation
+
 	Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
 							const STI::Utils::GraphPathLabel& measurementGraphPath);
 	Measurement(const RawEvent& sourceEvent);
@@ -36,6 +38,9 @@ public:
 
 	const std::vector<unsigned>& getMeasurementGraphPath() const { return measurementGraphPath; }
 
+	template<class Archive>
+	void serialize(Archive& archive);
+
 private:
 
 //	const RawEvent& sourceEvent;
@@ -47,7 +52,7 @@ private:
 
 	STI::Utils::GraphPathLabel measurementGraphPath;
 
-	const STI::Device::DeviceID _device;
+	STI::Device::DeviceID _device;
 
 };
 

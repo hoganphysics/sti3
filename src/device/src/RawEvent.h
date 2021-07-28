@@ -110,6 +110,9 @@ public:
 		_eventType = eventType;
 	}
 
+	template<class Archive>
+	void serialize(Archive& archive);
+
 private:
 	
 	double _time;

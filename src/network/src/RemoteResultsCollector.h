@@ -7,6 +7,9 @@
 
 #include <memory>
 #include <mutex>
+#include <string>
+#include <map>
+
 
 namespace STI
 {
@@ -27,7 +30,8 @@ public:
     void addEvents(const STI::Engine::DeviceEventMap& parsedEvents);
     void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
     bool addMeasurements(const std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
-    bool addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes);
+    //bool addAttributes(const STI::Device::DeviceID& deviceID, const std::vector<std::shared_ptr<STI::Device::Attribute>>& attributes);
+    bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
 private:
 
