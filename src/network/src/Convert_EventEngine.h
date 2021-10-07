@@ -161,6 +161,14 @@ template<>
 bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
 
 
+
+//ShotType
+template<>
+TNetwork::TShotType Network::convert<Engine::ParseID::ShotType, TNetwork::TShotType>(const Engine::ParseID::ShotType& shotType);
+template<>
+Engine::ParseID::ShotType Network::convert<TNetwork::TShotType, Engine::ParseID::ShotType>(const TNetwork::TShotType& tShotType);
+
+
 //ParseID
 template<>
 TNetwork::TParseID Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID& pid);

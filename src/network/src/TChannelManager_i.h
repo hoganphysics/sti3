@@ -26,6 +26,7 @@ public:
     ::CORBA::Boolean setChannelName(::CORBA::Short channelNumber, const char* name);
     ::CORBA::Boolean writeChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value);
     ::CORBA::Boolean readChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value, ::STI::TNetwork::TMixedValue_out data);
+    void stop();
     ::CORBA::Boolean ping();
 
 private:

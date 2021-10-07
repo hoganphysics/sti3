@@ -70,6 +70,11 @@ bool LocalChannelManager::readChannel(short channel, const MixedValue& value, Mi
     return false;
 }
 
+void LocalChannelManager::stop()
+{
+    localDevice->stopRW();
+}
+
 void LocalChannelManager::addChannel(const std::shared_ptr<LocalChannel>& channel)
 {
     if (channel != 0) {

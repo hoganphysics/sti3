@@ -10,8 +10,8 @@ namespace py = pybind11;
 
 
 PyParseTicket::PyParseTicket(const STI::Engine::ParseID& id, 
-            const std::shared_ptr<STI::Device::Device>& server)
-: ParseTicket(id, server)
+            const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+: ParseTicket(id, scheduler)
 {
 }
  

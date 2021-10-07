@@ -96,6 +96,11 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std
     std::shared_ptr<ResultsCollector> collector;
     std::shared_ptr<PersistenceManager> delegate;
 
+    if (sid.parseID.shotType == STI::Engine::ParseID::ShotType::SingleUndocumented) {
+        //Skip documentation
+        return true;
+    }
+
     std::set<unsigned> priorities;
     delegatePriorities.getKeys(priorities);
 

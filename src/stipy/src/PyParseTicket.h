@@ -17,7 +17,7 @@ class PyParseTicket : public STI::Engine::ParseTicket
 public:
 
     PyParseTicket(const STI::Engine::ParseID& id, 
-                const std::shared_ptr<STI::Device::Device>& server);
+                const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
  
 private:
 

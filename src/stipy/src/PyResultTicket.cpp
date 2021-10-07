@@ -5,19 +5,20 @@
 
 using STI::Python::PyResultTicket;
 using STI::Engine::ResultTicket;
+using STI::Engine::ShotRepository;
+using STI::Engine::ShotID;
 
 namespace py = pybind11;
 
 
-PyResultTicket::PyResultTicket(const STI::Engine::ShotID& id, 
-                const std::shared_ptr<STI::Device::Device>& server)
-: ResultTicket(id, server)
+PyResultTicket::PyResultTicket(const ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository)
+: ResultTicket(id, shotRepository)
 {
 }
 
-PyResultTicket::PyResultTicket(const STI::Engine::ShotID& id, 
-            const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus)
-: ResultTicket(id, server, initialStatus)
+PyResultTicket::PyResultTicket(const ShotID& id, 
+            const std::shared_ptr<ShotRepository>& shotRepository, const TicketStatus& initialStatus)
+: ResultTicket(id, shotRepository, initialStatus)
 {
 }
 

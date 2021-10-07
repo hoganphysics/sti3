@@ -16,6 +16,11 @@ namespace Device
 class DeviceMessageListenerID
 {
 public:
+	
+	DeviceMessageListenerID() {}
+
+	DeviceMessageListenerID(const DeviceMessageType& type, const std::string& name) 
+	: type(type), name(name) {}
 
 	DeviceMessageType type;
 	std::string name;

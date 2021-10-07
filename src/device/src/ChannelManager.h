@@ -25,6 +25,7 @@ public:
 
     virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) = 0;
     virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) = 0;
+    virtual void stop() = 0;
 
 };
 

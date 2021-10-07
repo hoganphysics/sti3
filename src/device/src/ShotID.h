@@ -17,6 +17,9 @@ class ShotID
 {
 public:
 
+	ShotID() {}
+	ShotID(const ParseID& pid) : parseID(pid) {}
+
 	ParseID parseID;
 	
 	TimeStamp submissionTime;	//when the shot was submitted (not when it was played)

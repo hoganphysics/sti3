@@ -205,6 +205,7 @@ module TNetwork
 
 		boolean writeChannel(in short channel, in TMixedValue value);
 		boolean readChannel(in short channel, in TMixedValue value, out TMixedValue data);
+		void stop();
 
 		boolean ping();
 	};

@@ -112,6 +112,13 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
     return success;
 }
 
+void TChannelManager_i::stop()
+{
+    if (channelManager != 0) {
+		channelManager->stop();
+	}
+}
+
 ::CORBA::Boolean TChannelManager_i::ping()
 {
     return true;

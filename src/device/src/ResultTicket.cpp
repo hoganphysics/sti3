@@ -7,24 +7,24 @@ using STI::Engine::ResultTicket;
 using STI::Engine::ShotRepository;
 
 
-ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server)
+ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository)
 // : Ticket(Ticket::TicketStatus::Running)
-: ResultTicket(id, server, Ticket::TicketStatus::Running)
+: ResultTicket(id, shotRepository, Ticket::TicketStatus::Running)
 {
 }
 
-ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus)
-: Ticket(initialStatus), sid(id), measurements_loaded(false)
-{
-    if (server != 0) {
-        std::shared_ptr<STI::Device::PersistenceManager> manager;
-        server->getPersistenceManager(manager);
-        if (manager != 0) {
-            manager->getShotRepository(shotRepository);
-        }
-    }
+// ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus)
+// : Ticket(initialStatus), sid(id), measurements_loaded(false)
+// {
+    // if (server != 0) {
+    //     std::shared_ptr<STI::Device::PersistenceManager> manager;
+    //     server->getPersistenceManager(manager);
+    //     if (manager != 0) {
+    //         manager->getShotRepository(shotRepository);
+    //     }
+    // }
 
-}
+// }
 
 ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& repo, const TicketStatus& initialStatus)
 : Ticket(initialStatus), sid(id), shotRepository(repo), measurements_loaded(false)

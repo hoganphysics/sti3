@@ -31,7 +31,9 @@ public:
     void cancel(const ID& id);
     void cancelAll();
 
-    std::shared_ptr<T> makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server);
+    std::set<ID> getIDs();
+
+//    std::shared_ptr<T> makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server);
 
 private:
 
@@ -81,6 +83,7 @@ void STI::Engine::TicketManager<ID, T>::cancel(const ID& id)
     if (tickets.get(id, ticket)) {
         ticket->cancel();
     }
+    remove(id);
 }
 
 template<typename ID, typename T>
@@ -95,14 +98,22 @@ void STI::Engine::TicketManager<ID, T>::cancelAll()
 }
 
 template<typename ID, typename T>
-std::shared_ptr<T> STI::Engine::TicketManager<ID, T>::makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server)
+std::set<ID> STI::Engine::TicketManager<ID, T>::getIDs()
 {
-    auto ticket = std::make_shared<T>(id, server);
-
-    add(id, ticket);
-
-    return ticket;
+    std::set<ID> ids;
+    tickets.getKeys(ids);
+    return ids;
 }
+
+// template<typename ID, typename T>
+// std::shared_ptr<T> STI::Engine::TicketManager<ID, T>::makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server)
+// {
+//     auto ticket = std::make_shared<T>(id, server);
+
+//     add(id, ticket);
+
+//     return ticket;
+// }
 
 
 #endif

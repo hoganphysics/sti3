@@ -76,6 +76,7 @@ using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
 using STI::TNetwork::TMeasurement;
 using STI::Engine::Measurement;
+using STI::TNetwork::TShotType;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
@@ -720,6 +721,55 @@ bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEvents
 }
 
 
+//ShotType
+template<>
+TShotType STI::Network::convert<ParseID::ShotType, TShotType>(const ParseID::ShotType& shotType)
+{
+    TShotType tShotType;
+
+    switch (shotType)
+    {
+    case ParseID::ShotType::Single:
+        tShotType = TShotType::ShotTypeSingle;
+        break;
+    case ParseID::ShotType::Sequence:
+        tShotType = TShotType::ShotTypeSequence;
+        break;
+    case ParseID::ShotType::SingleUndocumented:
+        tShotType = TShotType::ShotTypeSingleUndocumented;
+        break;      
+    default:
+        tShotType = TShotType::ShotTypeSingle;
+        break;
+    }
+
+    return tShotType;
+}
+
+template<>
+ParseID::ShotType STI::Network::convert<TShotType, ParseID::ShotType>(const TShotType& tShotType)
+{
+    ParseID::ShotType shotType;
+
+    switch (tShotType)
+    {
+    case TShotType::ShotTypeSingle:
+        shotType = ParseID::ShotType::Single;
+        break;
+    case TShotType::ShotTypeSequence:
+        shotType = ParseID::ShotType::Sequence;
+        break;
+    case TShotType::ShotTypeSingleUndocumented:
+        shotType = ParseID::ShotType::SingleUndocumented;
+        break;      
+    default:
+        shotType = ParseID::ShotType::Single;
+        break;
+    }
+
+    return shotType;
+}
+
 
 //ParseID
 template<>
@@ -731,6 +781,9 @@ TParseID STI::Network::convert<ParseID, TParseID>(const ParseID& pid)
     tParseID.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(pid.jobSourceID);
     tParseID.file = convert<std::string, ::CORBA::String_member>(pid.file);
     tParseID.comment = convert<std::string, ::CORBA::String_member>(pid.comment);
+    tParseID.shotType = convert<ParseID::ShotType, TShotType>(pid.shotType);
+    tParseID.targetEnginePool = static_cast<CORBA::Long>(pid.targetEnginePool);
+
 
     return tParseID;
 }
@@ -744,6 +797,8 @@ ParseID STI::Network::convert<TParseID, ParseID>(const TParseID& tpid)
     parseID.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tpid.jobSourceID);
     parseID.file = convert<::CORBA::String_member, std::string>(tpid.file);
     parseID.comment = convert<::CORBA::String_member, std::string>(tpid.comment);
+    parseID.shotType = convert<TShotType, ParseID::ShotType>(tpid.shotType);
+    parseID.targetEnginePool = static_cast<int>(tpid.targetEnginePool);
 
     return parseID;
 }

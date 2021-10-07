@@ -166,14 +166,19 @@ module TNetwork
 		string machine;
 	};
 
+	enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented };
+
 	struct TParseID
 	{
 		TTimeStamp parseTimestamp;
 		
 		TEngineJobSourceID jobSourceID;
 
+		TShotType shotType;
+
 		string file;
 		string comment;
+		long targetEnginePool;
 	};
 
 	struct TShotID

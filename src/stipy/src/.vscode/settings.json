@@ -57,6 +57,18 @@
         "list": "cpp",
         "functional": "cpp",
         "iterator": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "bit": "cpp",
+        "codecvt": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "iomanip": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "valarray": "cpp",
+        "filesystem": "cpp"
     }
 }

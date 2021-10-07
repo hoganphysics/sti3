@@ -15,10 +15,12 @@
 #include "ServerMessageRelayer.h"
 #include "FileHolderFactory.h"
 #include "SerializedRepository.h"
+#include "ParseTicketManager.h"
+#include "ResultTicketManager.h"
 
 #include <string>
 #include <set>
-
+#include <mutex>
 
 namespace STI
 {
@@ -64,7 +66,6 @@ public:
 	bool refresh() { return true; }
 	void kill() {}
 	void disable();
-//	void write(unsigned input);	//temp
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
@@ -104,6 +105,7 @@ public:
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+	void stopRW();
 
 	// std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
 	// {
@@ -118,8 +120,12 @@ public:
 
 private:
 
-	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return false; }
-	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return false; }
+	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
+	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }
+
+	bool writeChannelDefault(short channel, const STI::Utils::MixedValue& value);
+	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
 
 	friend class DeviceMessageListenerForwarder;
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device
@@ -146,6 +152,8 @@ private:
 
 	std::vector<DeviceMessageListenerID> messageListenerIDs;
 	
+	std::shared_ptr<STI::Engine::ParseTicketManager<>> parseTicketManager;
+	std::shared_ptr<STI::Engine::ResultTicketManager<>> resultTicketManager;
 
 	friend DeviceCollectionPolicy;
 	bool isPartnerDevice(const DeviceID& id);
@@ -167,6 +175,8 @@ private:
 	std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
 
 	std::set<DeviceID> partnerDevices;
+
+	mutable std::mutex deviceMutex;
 
 };
 

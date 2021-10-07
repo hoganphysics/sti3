@@ -7,12 +7,12 @@
 
 
 using STI::Engine::ParseTicket;
+using STI::Engine::ParseID;
+using STI::Engine::EventEngineScheduler;
 
 
-
-ParseTicket::ParseTicket(const STI::Engine::ParseID& pid, 
-                            const std::shared_ptr<STI::Device::Device>& server)
-: Ticket(Ticket::TicketStatus::Running), pid(pid), server(server)
+ParseTicket::ParseTicket(const ParseID& pid, const std::shared_ptr<EventEngineScheduler>& scheduler)
+: Ticket(Ticket::TicketStatus::Running), pid(pid), engineScheduler(scheduler)
 {
     eventsBuffered = false;
     messagesBuffered = false;
@@ -30,10 +30,11 @@ const STI::Engine::ParseID& ParseTicket::getParseID() const
 
 STI::Engine::DeviceEventMap& ParseTicket::getEvents()
 {
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    
+    // if (!eventsBuffered && server != 0 && server->getEngineScheduler(scheduler) 
+    //     && scheduler != 0 && scheduler->getParsedEvents(pid, events)) {
 
-    if (!eventsBuffered && server != 0 && server->getEngineScheduler(scheduler) 
-        && scheduler != 0 && scheduler->getParsedEvents(pid, events)) {
+    if (!eventsBuffered && engineScheduler != 0 && engineScheduler->getParsedEvents(pid, events)) {
             
             eventsBuffered = true;
     }
@@ -43,10 +44,7 @@ STI::Engine::DeviceEventMap& ParseTicket::getEvents()
 
 std::vector<STI::Engine::EngineParsingMessage> ParseTicket::getMessages()
 {
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-
-    if (!messagesBuffered && server != 0 && server->getEngineScheduler(scheduler) 
-        && scheduler != 0 && scheduler->getParsingMessages(pid, messages)) {
+    if (!messagesBuffered && engineScheduler != 0 && engineScheduler->getParsingMessages(pid, messages)) {
 
             messagesBuffered = true;
     }

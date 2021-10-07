@@ -176,6 +176,24 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
     return false;
 }
 
+void RemoteChannelManager::stop()
+{
+	std::unique_lock<std::mutex> managerLock(managerMutex);
+    
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->stop();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
 bool RemoteChannelManager::setChannelName(short channel, const std::string& name)
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);

@@ -22,6 +22,12 @@
 #include "LocalPersistenceManager.h"
 #include "SerializedRepository.h"
 
+#include "LocalShot.h"
+#include "ParseTicket.h"
+
+#include "ShotRepository.h"
+
+#include "Measurement.h"
 
 #include <memory>
 #include <iostream>
@@ -45,6 +51,8 @@ using STI::Device::DeviceMessageListenerID;
 using STI::Device::CollectionUpdateMessage;
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::SerializedRepository;
+using STI::Engine::ParseID;
+using STI::Engine::ShotID;
 
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
@@ -78,7 +86,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
 
 
-	
+
+
+
 	//setEngineFactory(engineFactory);
 
 	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
@@ -118,6 +128,25 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	// auto listenerTest2 = std::static_pointer_cast<DeviceMessageListener<STI::Device::CollectionUpdateMessage>>(r1);
 	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest2);
+
+	STI::Engine::EngineID id0(0);
+	addEventEngine(id0);
+
+
+	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>();
+	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>();
+	// DeviceMessageListenerID lid(DeviceMessageType::EngineScheduler, "");
+
+	// deviceMessageReceiver->addListener(id, DeviceMessageListenerID(DeviceMessageType::EngineScheduler, ""), 
+	// 	std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(parseTicketManager));
+	// deviceMessageReceiver->addListener(id, DeviceMessageListenerID(DeviceMessageType::EngineScheduler, ""), 
+	// 	std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(resultTicketManager));
+
+
+	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
+	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
+
+
 
 }
 
@@ -236,6 +265,102 @@ bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
 	return readChannel(channel, value, data);
+}
+
+void LocalDevice::stopRW()
+{
+	auto pids = parseTicketManager->getIDs();
+
+	auto pit = std::find_if(pids.begin(), pids.end(), [](const ParseID& pid){ return false; });
+
+	if (pit != pids.end()) {
+		parseTicketManager->cancel(*pit);
+	}
+
+	auto sids = resultTicketManager->getIDs();
+
+	auto sit = std::find_if(sids.begin(), sids.end(), [](const ShotID& sid){ return false; });
+
+	if (sit != sids.end()) {
+		resultTicketManager->cancel(*sit);
+	}
+}
+
+bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket)
+{
+	std::unique_lock<std::mutex> playLock(deviceMutex);
+
+	STI::Engine::ParseID parseID;
+	parseID.targetEnginePool = 0;	//0=async pool
+	parseID.shotType = ParseID::ShotType::SingleUndocumented;
+	parseID.jobSourceID.user = "<async play>";
+	parseID.jobSourceID.machine = getID().getAddress();
+	
+	auto shot = std::make_shared<STI::Engine::LocalShot>();
+	auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+
+	events->push_back(event);
+	shot->setEvents(events);
+
+	//STI::Engine::ParseTicket parseTicket(parseID, eventEngineScheduler);
+	auto parseTicket = parseTicketManager->makeTicket(parseID, eventEngineScheduler);
+
+	eventEngineScheduler->parse(parseID, shot);
+	parseTicket->wait();
+
+	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		return false;
+	}
+
+	STI::Engine::ShotID sid(parseID);
+
+	std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
+	localPersistenceManager->getShotRepository(shotRepository);
+
+	//STI::Engine::ResultTicket resultTicket(sid, shotRepository);
+	resultTicket = resultTicketManager->makeTicket(sid, shotRepository);
+
+	eventEngineScheduler->play(sid);
+	resultTicket->wait();
+
+	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		return false;
+	}
+
+	return true;
+}
+
+bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValue& value)
+{
+
+	double eventTime = 100;
+	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "writeChannelDefault", 0, STI::Engine::RawEventType::Play);
+	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
+
+	if (!playSingleEvent(evt0, resultTicket))
+		return false;
+
+	return true;
+}
+
+bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+{
+
+	double eventTime = 100;
+	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "readChannelDefault", 0, STI::Engine::RawEventType::Measurement);
+	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
+
+	if (!playSingleEvent(evt0, resultTicket))
+		return false;
+
+	auto measurements = resultTicket->measurements(getID());
+	
+	if (measurements.size() > 0) {
+		measurements.at(0)->extractMeasurementResult(data);
+		return true;
+	}
+
+	return false;
 }
 
 

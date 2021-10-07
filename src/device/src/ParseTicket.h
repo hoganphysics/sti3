@@ -25,7 +25,7 @@ class ParseTicket : public Ticket
 public:
 
     ParseTicket(const STI::Engine::ParseID& id, 
-                const std::shared_ptr<STI::Device::Device>& server);
+                const std::shared_ptr<EventEngineScheduler>& scheduler);
     virtual ~ParseTicket();
  
     const STI::Engine::ParseID& getParseID() const;
@@ -45,7 +45,8 @@ private:
     bool messagesBuffered;
     std::vector<STI::Engine::EngineParsingMessage> messages;
     STI::Engine::ParseID pid;
-    std::shared_ptr<STI::Device::Device> server;
+//    std::shared_ptr<STI::Device::Device> server;
+    std::shared_ptr<EventEngineScheduler> engineScheduler;
 
 };
 

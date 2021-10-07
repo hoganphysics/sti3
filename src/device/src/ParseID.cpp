@@ -8,6 +8,11 @@
 using STI::Engine::ParseID;
 using STI::Engine::EngineJobSourceID;
 
+ParseID::ParseID()
+{
+    targetEnginePool = 1;   //1=common shot pool, 0=async pool (readChannel/writeChannel)
+}
+
 template<class Archive>
 void EngineJobSourceID::serialize(Archive& archive)
 {

@@ -36,8 +36,8 @@ class ResultTicket : public Ticket  //, public ShotResult
 {
 public:
 
-    ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server);
-    ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus);
+    ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository);
+    // ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::Device>& server, const TicketStatus& initialStatus);
     ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& repo, const TicketStatus& initialStatus);
     // ResultTicket(const STI::Engine::ShotID& id, const std::string& url);
 

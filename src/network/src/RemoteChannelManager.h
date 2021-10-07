@@ -33,6 +33,7 @@ public:
 
     bool writeChannel(short channel, const STI::Utils::MixedValue& value);
     bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+    void stop();
 
     bool setChannelName(short channel, const std::string& name);
     bool ping() const;

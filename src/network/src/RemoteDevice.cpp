@@ -221,6 +221,7 @@ void RemoteDevice::getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessa
 		if (success && !CORBA::is_nil(tMessageDispatcher)) {
 			remoteDispatcher = std::make_shared<RemoteDeviceMessageDispatcher>(tMessageDispatcher);
 			dispatcher = remoteDispatcher;
+			success = (dispatcher != 0);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -259,6 +260,7 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 		if (success && !CORBA::is_nil(tEngineScheduler)) {
 			remoteScheduler = std::make_shared<RemoteEventEngineScheduler>(tEngineScheduler);
 			scheduler = remoteScheduler;
+			success = (scheduler != 0);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

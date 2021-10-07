@@ -26,11 +26,24 @@ public:
     ParseTicketManager() {}
     virtual ~ParseTicketManager() {}
 
+    std::shared_ptr<T> makeTicket(const STI::Engine::ParseID& id, const std::shared_ptr<EventEngineScheduler>& scheduler);
+
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
 };
+
+
+template<class T>
+std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID& id, const std::shared_ptr<EventEngineScheduler>& scheduler)
+{
+    auto ticket = std::make_shared<T>(id, scheduler);
+
+    TicketManager<STI::Engine::ParseID, T>::add(id, ticket);
+
+    return ticket;
+}
 
 
 template<class T>

@@ -38,6 +38,12 @@ public:
 		addListener(sourceDeviceID, listenerID, std::static_pointer_cast<DeviceMessageListener<T>>(listener));
 	}
 
+	template<typename T, typename U>
+	void addListener(const DeviceID& sourceDeviceID, const std::string& listenerName, const std::shared_ptr<U>& listener)
+	{
+		addListener(sourceDeviceID, DeviceMessageListenerID(T::getMessageClassType(), listenerName), 
+			std::static_pointer_cast<DeviceMessageListener<T>>(listener));
+	}
 
 	template<typename T>
 	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
