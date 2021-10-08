@@ -45,6 +45,8 @@ include_directories("." ${Boost_INCLUDE_DIR})
 
 # add the executable
 add_library(stidevice SHARED 
+    ConfigFile.cpp
+    Configuration.cpp
     DeviceEventParser.cpp
     DeviceID.cpp
     DeviceMessage.cpp

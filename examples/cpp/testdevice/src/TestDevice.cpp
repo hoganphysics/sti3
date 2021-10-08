@@ -23,10 +23,20 @@ public:
 	std::string name;
 };
 
+TestDevice::TestDevice(const STI::Device::Configuration& config)
+: STI::Device::LocalDevice(config)
+{
+    init();
+}
 
 TestDevice::TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer)
 : STI::Device::LocalDevice(name, address, module, targetServer)
+{
+    init();
+}
+
+void TestDevice::init()
 {
     addChannel(1, 
                STI::Device::ChannelType::Output, 

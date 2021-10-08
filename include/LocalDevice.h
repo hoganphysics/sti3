@@ -38,6 +38,7 @@ class LocalAttributeManager;
 class DeviceMessageListenerID;
 class LocalPersistenceManager;
 class PersistenceManager;
+class Configuration;
 
 
 class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
@@ -57,6 +58,7 @@ class LocalDevice : public Device, public STI::Engine::DeviceEventParser
 {
 public:
 	
+	LocalDevice(const Configuration& config, const std::string& section="");
 	LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer);
 	virtual ~LocalDevice();

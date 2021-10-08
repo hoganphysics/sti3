@@ -28,6 +28,7 @@
 #include "ShotRepository.h"
 
 #include "Measurement.h"
+#include "Configuration.h"
 
 #include <memory>
 #include <iostream>
@@ -53,7 +54,17 @@ using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::SerializedRepository;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
+using STI::Device::Configuration;
 
+
+LocalDevice::LocalDevice(const Configuration& config, const std::string& section)
+: LocalDevice(
+	config.get<std::string>(section, "Device Name", ""), 
+	config.get<std::string>(section, "IP Address", ""), 
+	config.get<unsigned short>(section, "Module", 0),
+	config.get<std::string>(section, "Target Server", ""))
+{
+}
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer) : id(name, address, module, targetServer)

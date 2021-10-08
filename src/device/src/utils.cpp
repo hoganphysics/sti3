@@ -25,6 +25,11 @@ namespace STI
 namespace Utils
 {
 
+std::string valueToString(const std::string& inValue)
+{
+	return inValue;
+}
+
 std::string printTimeFormated(double time)
 {
 	double baseUnit_ns = 1.0;	//units of "time" in ns
@@ -135,6 +140,25 @@ std::string replaceChar(const std::string& input, const std::string& removedChar
 
 	return output;
 }
+
+std::string trim(const std::string& input, std::string white)
+{
+	if (input.length() == 0) {
+		return input;
+	}
+
+	std::size_t start = input.find_first_not_of(white);
+	std::size_t end = input.find_last_not_of(white);
+
+	if (start == std::string::npos || end == std::string::npos) {
+		return input;
+	}
+
+	return input.substr(start, end + 1);
+}
+
+
+
 
 }// Utils
 }// STI

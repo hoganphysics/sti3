@@ -25,6 +25,8 @@ namespace Utils
 	std::string replaceChar(const std::string& input, const std::string& removedChar, const std::string& replacementChar);
 	std::string replaceChars(const std::string& input, const std::string& removedChars, const std::string& replacementChar);
 
+	std::string trim(const std::string& input, std::string white = " \n\r\t");
+
 	template<typename T> 
 	bool stringToValue(const std::string& inString, T& outValue, std::ios::fmtflags numBase=std::ios::dec, std::streamsize precision=9)
 	{
@@ -55,6 +57,8 @@ namespace Utils
 		else
 			return Default;
 	}
+
+	std::string valueToString(const std::string& inValue);
 
 	template<class T>
 	bool compare_unique_ptr(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b)
