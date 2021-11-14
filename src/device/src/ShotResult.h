@@ -24,13 +24,19 @@ class ShotResult
 {
 public:
 
-    ShotID sid;
+    ShotID sid; //contains a record of shot type (single, sequence, undocumented)
 
     DeviceEventMap parsedEvents;
     std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
     std::shared_ptr<MeasurementVector> measurements;
     //std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
+
+    //The result is stored by the device in a repository. Initially, only the local device data is available.
+    //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.
+    //This is the list of devices (owned by the local device) that have not been collected yet.
+    //It doubles as a record of the owned devices for this shot.
+    std::vector<STI::Device::DeviceID> missingDependencies; 
 
     template<class Archive>
     void serialize(Archive& archive);

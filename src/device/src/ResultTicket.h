@@ -16,6 +16,7 @@ namespace Engine
 {
 
 class ShotRepository;
+class ShotResult;
 
 // class ShotResult
 // {
@@ -44,7 +45,9 @@ public:
     virtual ~ResultTicket() {}
 
     ShotID getShotID();
-    bool getShotRepository(std::shared_ptr<ShotRepository>& repo);
+    //bool getShotRepository(std::shared_ptr<ShotRepository>& repo);
+
+    bool getShotResult(const STI::Engine::ShotID& id, std::shared_ptr<ShotResult>& result);
 
     STI::Engine::MeasurementVector measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);

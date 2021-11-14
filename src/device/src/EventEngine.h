@@ -46,7 +46,7 @@ public:
 	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
 	// virtual const DeviceEventMap& getParsedEvents() = 0;
 	
-	virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
+	//virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 	// virtual bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 
 	virtual bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;

@@ -12,6 +12,7 @@
 #include "AttributeManager.h"
 #include "JAttributeManager.h"
 #include "JEventEngineScheduler.h"
+#include "JPersistenceManager.h"
 
 #include <memory>
 
@@ -27,6 +28,8 @@ using STI::Device::ChannelManager;
 using STI::Device::JChannelManager;
 using STI::Device::AttributeManager;
 using STI::Device::JAttributeManager;
+using STI::Device::PersistenceManager;
+using STI::Device::JPersistenceManager;
 
 
 JDevice::JDevice(const std::shared_ptr<STI::Device::Device>& device)
@@ -126,6 +129,21 @@ std::shared_ptr<STI::Device::JAttributeManager> JDevice::getAttributeManager()
     return jmanager;
 }
 
+std::shared_ptr<STI::Device::JPersistenceManager> JDevice::getPersistenceManager()
+{
+    std::shared_ptr<STI::Device::PersistenceManager> manager;
+    std::shared_ptr<STI::Device::JPersistenceManager> jmanager;
+
+    if (wrappedDevice != 0) {
+        wrappedDevice->getPersistenceManager(manager);
+    }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JPersistenceManager>(manager);
+    }
+
+    return jmanager;
+}
+
 
 void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
@@ -163,6 +181,12 @@ void JDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager)
     }
 }
 
+void JDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->getPersistenceManager(manager);
+    }
+}
 
 bool JDevice::refresh()
 {

@@ -11,7 +11,6 @@ namespace STI
 namespace Device
 {
 
-class Channel;
 class AttributeManager;
 
 

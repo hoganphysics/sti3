@@ -4,7 +4,7 @@
 #include "Device.h"
 #include "DeviceCollection.h"
 #include "JEventEngineScheduler.h"
-
+#include "FileHolderFactory.h"
 
 #include <memory>
 #include <string>
@@ -27,6 +27,7 @@ class JDeviceMessageReceiver;
 class JDeviceMessageDispatcher;
 class JChannelManager;
 class JAttributeManager;
+class JPersistenceManager;
 
 
 //Java Device wrapper
@@ -52,7 +53,7 @@ public:
 	std::shared_ptr<STI::Engine::JEventEngineScheduler> getEngineScheduler();
 	std::shared_ptr<STI::Device::JChannelManager> getChannelManager();
 	std::shared_ptr<STI::Device::JAttributeManager> getAttributeManager();
-
+	std::shared_ptr<STI::Device::JPersistenceManager> getPersistenceManager();
 
 private:
 
@@ -63,6 +64,7 @@ private:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
+	void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}

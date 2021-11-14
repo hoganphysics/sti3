@@ -36,11 +36,11 @@ STI::Engine::ShotID ResultTicket::getShotID()
     return sid;
 }
 
-bool ResultTicket::getShotRepository(std::shared_ptr<ShotRepository>& repo)
-{
-    repo = shotRepository;
-    return repo != 0;
-}
+// bool ResultTicket::getShotRepository(std::shared_ptr<ShotRepository>& repo)
+// {
+//     repo = shotRepository;
+//     return repo != 0;
+// }
 
 STI::Engine::MeasurementVector ResultTicket::measurements()
 {

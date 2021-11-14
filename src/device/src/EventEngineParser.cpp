@@ -278,7 +278,7 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 						//are removed before trying again. This way all events
 						//can generate errors messages before returning.
 		try {
-			deviceParser->parseEvents(rawEvents, synchedEvents, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
+			deviceParser->parseEvents(rawEvents, synchedEvents, localDeviceID, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
 		}
 		catch (EventConflictException& eventConflict)
 		{
@@ -343,6 +343,9 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 		}
 
 	} while (!success && rawEvents.size() != 0);
+
+	auto& deviceParsingMessages = deviceParser->getParsingMessages();
+	messages.insert(messages.begin(), deviceParsingMessages.begin(), deviceParsingMessages.end());
 
 	return success;
 }

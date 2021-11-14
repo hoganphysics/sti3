@@ -111,13 +111,12 @@ public:
 } // STI
 
 bool ORBManager::orb_initialized = false;
-
 std::shared_ptr<ORBManager> ORBManager::instance = 0;
-
 
 std::shared_ptr<ORBManager> ORBManager::getInstance(const std::string& nameServiceIP, const std::string& args)
 {
-	//need mutex lock here
+	std::unique_lock<std::mutex> writeLock(orbInitMutex);
+
 	if (!orb_initialized) {
 
 		instance = std::make_shared<STI::Network::Concrete_ORBManager>(nameServiceIP, args);

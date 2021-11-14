@@ -819,7 +819,7 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 
 	for (auto& id : nodes) {
 
-		if (isActingServerForDevice(id) 
+		if (isActingServerForDevice(id) 	//problem: only works if this shot is the most recently parsed shot
 			&& deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) 
 		{
@@ -850,17 +850,17 @@ bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& 
 
 
 
-bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
-{
-	std::shared_ptr<ShotResult> shot;
+// bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
+// {
+// 	std::shared_ptr<ShotResult> shot;
 
-	if (resultBuffer.get(sid, shot) && shot != 0) {
-		measurements = shot->measurements;
-		return (measurements != 0);
-	}
-	return false;
-//	return measurementBuffer.get(sid, measurements) && (measurements != 0);
-}
+// 	if (resultBuffer.get(sid, shot) && shot != 0) {
+// 		measurements = shot->measurements;
+// 		return (measurements != 0);
+// 	}
+// 	return false;
+// //	return measurementBuffer.get(sid, measurements) && (measurements != 0);
+// }
 
 
 // // bool LocalEventEngine::transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementCollector>& collector);

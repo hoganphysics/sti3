@@ -1,7 +1,7 @@
 
 #include "LocalResultsCollector.h"
 #include "ShotID.h"
-#include "EventEngine.h"
+//#include "EventEngine.h"
 #include "ParsedDependencyTree.h"
 #include "Measurement.h"
 #include "RawEvent.h"
@@ -18,11 +18,11 @@ using STI::Engine::MeasurementVector;
 using STI::Engine::ShotResult;
 
 LocalResultsCollector::LocalResultsCollector(const ShotID& shotID, 
-                    const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
+                //    const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
                     const std::shared_ptr<ParsedDependencyTree>& dependencies,
                     const ResultsPaths& paths,
                     const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-: eventEngine(eventEngine), dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
+: dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
 {
     shotResult = std::make_shared<ShotResult>();
     shotResult->sid = shotID;

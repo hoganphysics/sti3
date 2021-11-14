@@ -139,7 +139,7 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     
     ResultsPaths resultsPaths = resultsDocumenter->preparePaths(sid);    //e.g., make directory sturcture
 
-    collector = std::make_shared<LocalResultsCollector>(sid, eventEngine, eventEngine->getParsedTree(), 
+    collector = std::make_shared<LocalResultsCollector>(sid, eventEngine->getParsedTree(), 
                                                         resultsPaths, fileHolderFactory);
 
     eventEngine->transferResults(collector);   //collector is passed on to all devices in shot

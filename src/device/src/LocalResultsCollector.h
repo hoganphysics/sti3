@@ -26,7 +26,7 @@ class LocalResultsCollector : public ResultsCollector
 public:
 
     LocalResultsCollector(const STI::Engine::ShotID& sid, 
-            const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
+           // const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
             const std::shared_ptr<ParsedDependencyTree>& dependencies,
             const ResultsPaths& paths,
             const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
@@ -50,7 +50,7 @@ private:
     std::string makeUniquePath(const std::string& filename);
 
     std::shared_ptr<ParsedDependencyTree> dependencies;
-    std::shared_ptr<STI::Engine::EventEngine> eventEngine;   
+    //std::shared_ptr<STI::Engine::EventEngine> eventEngine;   
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     ResultsPaths resultsPaths;
 

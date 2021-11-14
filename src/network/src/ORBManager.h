@@ -56,6 +56,7 @@ public:
 private:
 
 	static bool orb_initialized;
+	static std::mutex orbInitMutex;
 	static std::shared_ptr<ORBManager> instance;
 
 	bool getRootContext(CosNaming::NamingContext_var& context) const;

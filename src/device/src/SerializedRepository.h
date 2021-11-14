@@ -28,6 +28,8 @@ public:
 
     //ShotRepositroy
     bool findShot(const ShotID& sid);
+    bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& result);
+    
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
     bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
