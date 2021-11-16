@@ -8,6 +8,9 @@
 //#include <iostream>
 #include <time.h>
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 using std::string;
 
 //Different compilers read numeric constants differently
@@ -91,6 +94,28 @@ bool isUniqueString(const std::string& value, std::vector<std::string>& list)
 	}
 	return !found;
 }
+
+
+std::string makeUniquePath(const std::string& filename)
+{
+    fs::path initialPath = filename;
+
+    fs::path trialPath = initialPath;
+    unsigned n = 0;
+
+    while (fs::exists(trialPath)) {
+        n++;
+        trialPath = initialPath.parent_path();
+        trialPath /= initialPath.stem();
+        trialPath /= "_";
+        trialPath /= std::to_string(n);
+        trialPath.replace_extension( initialPath.extension() );
+    }
+
+    return trialPath.string();
+}
+
+
 //
 //std::string generateTimeBasedFileName(const std::string& basefilename, const std::string& extension)
 //{

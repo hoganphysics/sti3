@@ -8,11 +8,16 @@
 #include "ShotID.h"
 #include "utils/FileHolder.h"
 #include "Attribute.h"
+#include "ShotResultRecord.h"
+#include "Measurement.h"
+
 
 #include <vector>
 #include <memory>
 #include <map>
 #include <string>
+#include <set>
+
 
 namespace STI
 {
@@ -23,6 +28,15 @@ namespace Engine
 class ShotResult
 {
 public:
+
+    ShotResult() {}
+    ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs)
+    {
+        shotResultRecord.deviceID = deviceID;
+        for (auto& id : ownedIDs) {
+            shotResultRecord.dependencies.push_back(id);    
+        }
+    }
 
     ShotID sid; //contains a record of shot type (single, sequence, undocumented)
 
@@ -36,7 +50,25 @@ public:
     //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.
     //This is the list of devices (owned by the local device) that have not been collected yet.
     //It doubles as a record of the owned devices for this shot.
-    std::vector<STI::Device::DeviceID> missingDependencies; 
+    //std::vector<STI::Device::DeviceID> missingDependencies; 
+    ShotResultRecord shotResultRecord;
+
+    static void deleteShotFiles(ShotResult& shot)
+    {
+        for (auto& file : shot.timingFiles) {
+            if (file != 0) {
+                file->deleteFile();
+            }
+        }
+
+        if (shot.measurements != 0) {
+            for (auto& meas : *(shot.measurements)) {
+                if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
+                    meas->data().getFile()->deleteFile();
+                }
+            }           
+        }
+    }
 
     template<class Archive>
     void serialize(Archive& archive);

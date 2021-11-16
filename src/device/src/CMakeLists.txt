@@ -88,6 +88,7 @@ add_library(stidevice SHARED
     SynchronousEvent.cpp
     TimeStamp.cpp
     Ticket.cpp
+    TransientRepository.cpp
     utils.cpp
 )
 

@@ -622,7 +622,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		playTime = getCurrentTimeStamp();
 	}
 	else {
-		playTime = job.getJobID().sid.playTime;
+		playTime = jobID.sid.playTime;
 	}
 	jobID.sid.playTime = playTime;
 
@@ -698,33 +698,42 @@ void LocalEventEngine::play(EventEngineJob& job)
 	// 	transferAllMeasurements(jobID.sid);	//need to get all measurements from owned devices
 	// }
 	
-	if (isJobOwner) {
-		
-		std::shared_ptr<STI::Engine::EventEngine> localEngine;	//reference to this engine
-        job.getEngine(localEngine);
+	std::shared_ptr<ShotResult> cachedShot;
+	if (resultBuffer.get(jobID.sid, cachedShot) && cachedShot != 0) {
+		if (persistenceManager != 0 && persistenceManager->saveShot(jobID.sid, cachedShot, isJobOwner)) {
 
-		//auto resultsCollector = persistenceManager->createResultsCollector(job.getJobID().sid, localEngine);
-		
-		//resultsCollector->addEvents(...);
-		//resultsCollector->addTimingFiles(...);
-		// resultsCollector->addVars(...);
-		// persistenceManager->saveShot(resultsCollector);
-		bool success = (persistenceManager != 0) && persistenceManager->saveShot(job.getJobID().sid, localEngine);
-
-		if (!success) {
-			//stash? or leave in measurement buffer for now (eventually it will be stashed)
+			//successfully saved; remove from buffer
+			resultBuffer.remove(jobID.sid);
 		}
-
-		//transferMeasurements(job.getJobID().sid, resultsCollector);
-
-		//get resultsCollector from persistence; should not point to a particular persistence manager
-		//addEvents, addTimingFiles, addDeviceTree
-		//addEngines;  uses engines if available to pull data; otherwise falls back to deviceID->persistenceManager on remote devices
-		//persistenceManager could loop through devices in DeviceTree, calling on engine map by id, and falling back to remotePersistenceManager
-		//persistenceManager->saveShot(resultsCollector);  
-		// - Uses the first documentation target to setup directory
-		// - calls transfer on all engines (or remotePersistenceManager), which sends a callback, which transfers files and then deletes local measurements
 	}
+
+	// if (isJobOwner) {
+		
+	// 	std::shared_ptr<STI::Engine::EventEngine> localEngine;	//reference to this engine
+    //     job.getEngine(localEngine);
+
+	// 	//auto resultsCollector = persistenceManager->createResultsCollector(job.getJobID().sid, localEngine);
+		
+	// 	//resultsCollector->addEvents(...);
+	// 	//resultsCollector->addTimingFiles(...);
+	// 	// resultsCollector->addVars(...);
+	// 	// persistenceManager->saveShot(resultsCollector);
+	// 	bool success = (persistenceManager != 0) && persistenceManager->saveShot(job.getJobID().sid, localEngine);
+
+	// 	if (!success) {
+	// 		//stash? or leave in measurement buffer for now (eventually it will be stashed)
+	// 	}
+
+	// 	//transferMeasurements(job.getJobID().sid, resultsCollector);
+
+	// 	//get resultsCollector from persistence; should not point to a particular persistence manager
+	// 	//addEvents, addTimingFiles, addDeviceTree
+	// 	//addEngines;  uses engines if available to pull data; otherwise falls back to deviceID->persistenceManager on remote devices
+	// 	//persistenceManager could loop through devices in DeviceTree, calling on engine map by id, and falling back to remotePersistenceManager
+	// 	//persistenceManager->saveShot(resultsCollector);  
+	// 	// - Uses the first documentation target to setup directory
+	// 	// - calls transfer on all engines (or remotePersistenceManager), which sends a callback, which transfers files and then deletes local measurements
+	// }
 
 	// saveShot(job);	//job needs record of shot
 	
@@ -746,89 +755,89 @@ void LocalEventEngine::play(EventEngineJob& job)
 }
 
 
-bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
-{
-	if (resultsCollector == 0) return false;
+// bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
+// {
+// 	if (resultsCollector == 0) return false;
 
-	std::shared_ptr<ShotResult> cachedShot;
+// 	std::shared_ptr<ShotResult> cachedShot;
 
-	if (resultBuffer.get(resultsCollector->getShotID(), cachedShot) && cachedShot != 0) {
+// 	if (resultBuffer.get(resultsCollector->getShotID(), cachedShot) && cachedShot != 0) {
 
-		bool success = true;
+// 		bool success = true;
 
-		if (isJobOwner) {
-			getParsedEvents(resultsCollector->getShotID().parseID, cachedShot->parsedEvents);
-			resultsCollector->addEvents(cachedShot->parsedEvents);
-	//		resultsCollector->addTimingFiles();
-	//		resultsCollector->addVariables();
-		}
-
-		//Attributes
-		success &= resultsCollector->addAttributes(localDeviceID, (cachedShot->attributes)[localDeviceID]);
-
-		//Measurements
-		success &= resultsCollector->addMeasurements(cachedShot->measurements);
-
-		if (success) {
-			resultBuffer.remove(resultsCollector->getShotID());
-		}
-	}
-
-// 	std::shared_ptr<MeasurementVector> measurements;
-
-// 	if (measurementBuffer.get(resultsCollector->getShotID(), measurements)) {
-// 		//Measurements
-// 		if (resultsCollector->addMeasurements(measurements)) {
-// 			measurementBuffer.remove(resultsCollector->getShotID());
+// 		if (isJobOwner) {
+// 			getParsedEvents(resultsCollector->getShotID().parseID, cachedShot->parsedEvents);
+// 			resultsCollector->addEvents(cachedShot->parsedEvents);
+// 	//		resultsCollector->addTimingFiles();
+// 	//		resultsCollector->addVariables();
 // 		}
 
 // 		//Attributes
-// 		std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
-// 		if (attributeManager != 0) {
-// 			attributeManager->getAttributes(attributes);
-// 			resultsCollector->addAttributes(localDeviceID, attributes);
+// 		success &= resultsCollector->addAttributes(localDeviceID, (cachedShot->attributes)[localDeviceID]);
+
+// 		//Measurements
+// 		success &= resultsCollector->addMeasurements(cachedShot->measurements);
+
+// 		if (success) {
+// 			resultBuffer.remove(resultsCollector->getShotID());
 // 		}
-
 // 	}
 
-// 	if (isJobOwner) {
-// //		resultsCollector->addTimingFiles();
-// //		resultsCollector->addVariables();
-// 		DeviceEventMap parsedEvents;
-// 		getParsedEvents(resultsCollector->getShotID().parseID, parsedEvents);
-// 		resultsCollector->addEvents(parsedEvents);
+// // 	std::shared_ptr<MeasurementVector> measurements;
+
+// // 	if (measurementBuffer.get(resultsCollector->getShotID(), measurements)) {
+// // 		//Measurements
+// // 		if (resultsCollector->addMeasurements(measurements)) {
+// // 			measurementBuffer.remove(resultsCollector->getShotID());
+// // 		}
+
+// // 		//Attributes
+// // 		std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
+// // 		if (attributeManager != 0) {
+// // 			attributeManager->getAttributes(attributes);
+// // 			resultsCollector->addAttributes(localDeviceID, attributes);
+// // 		}
+
+// // 	}
+
+// // 	if (isJobOwner) {
+// // //		resultsCollector->addTimingFiles();
+// // //		resultsCollector->addVariables();
+// // 		DeviceEventMap parsedEvents;
+// // 		getParsedEvents(resultsCollector->getShotID().parseID, parsedEvents);
+// // 		resultsCollector->addEvents(parsedEvents);
+// // 	}
+
+// 	//this device's attributes
+// //	resultsCollector->addAttributes(localDeviceID, attributes);
+
+// 	auto tree = resultsCollector->getDependencies();
+
+// 	// EventEngineDependencyTree subtree;
+// 	// tree->getSubtree(localDeviceID, subtree);
+
+//     std::vector<DeviceID> nodes;
+// 	if (tree != 0) {
+// 		tree->getDependedentNodes(localDeviceID, nodes);		
 // 	}
 
-	//this device's attributes
-//	resultsCollector->addAttributes(localDeviceID, attributes);
+// 	std::shared_ptr<STI::Device::Device> device;
+//     std::shared_ptr<EventEngineScheduler> scheduler;
 
-	auto tree = resultsCollector->getDependencies();
+// 	bool success;
 
-	// EventEngineDependencyTree subtree;
-	// tree->getSubtree(localDeviceID, subtree);
+// 	for (auto& id : nodes) {
 
-    std::vector<DeviceID> nodes;
-	if (tree != 0) {
-		tree->getDependedentNodes(localDeviceID, nodes);		
-	}
+// 		if (isActingServerForDevice(id) 	//problem: only works if this shot is the most recently parsed shot
+// 			&& deviceCollection->get(id, device) && device != 0 
+// 			&& device->getEngineScheduler(scheduler)) 
+// 		{
+// 			success = scheduler->transferResults(resultsCollector);
+// 		}
+// 	}
 
-	std::shared_ptr<STI::Device::Device> device;
-    std::shared_ptr<EventEngineScheduler> scheduler;
-
-	bool success;
-
-	for (auto& id : nodes) {
-
-		if (isActingServerForDevice(id) 	//problem: only works if this shot is the most recently parsed shot
-			&& deviceCollection->get(id, device) && device != 0 
-			&& device->getEngineScheduler(scheduler)) 
-		{
-			success = scheduler->transferResults(resultsCollector);
-		}
-	}
-
-	return true;
-}
+// 	return true;
+// }
 
 
 // void LocalEventEngine::transferAllMeasurements(const ShotID& sid)
@@ -905,7 +914,10 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		newMeasurements->insert(newMeasurements->end(), evtMeasurements.begin(), evtMeasurements.end());
 	}
 
-	auto cachedShot = std::make_shared<ShotResult>();
+	std::set<STI::Device::DeviceID> ownedIDs;
+	getOwnedDeviceIDs(ownedIDs);
+
+	auto cachedShot = std::make_shared<ShotResult>(localDeviceID, ownedIDs);
 	cachedShot->sid = jobID.sid;
 	cachedShot->measurements = newMeasurements;
 

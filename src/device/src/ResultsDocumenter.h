@@ -15,17 +15,9 @@ class ShotID;
 class LocalResultsCollector;
 class ShotResult;
 
-//should this be shot-specific, or general?
 
-struct ResultsPaths
-{
-    std::string tempPath;
-    std::string basePath;
-    std::string dataPath;
-    std::string timingPath;
-    std::string experimentPath;
-    std::string sequencePath;
-};
+
+
 
 class ResultsDocumenter
 {

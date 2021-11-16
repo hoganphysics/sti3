@@ -18,6 +18,7 @@ namespace Utils
 //		std::string generateTimeBasedFileName(tm* timeStruct, const std::string& basefilename, const std::string& extension);
 //		std::string generateTimeBasedFileName(const std::string& basefilename, const std::string& extension);
 
+	std::string makeUniquePath(const std::string& filename);
 
 	void convertArgs(int argc, char** argvInput, std::vector<std::string>& argvOutput);
 	void splitString(const std::string& inString, const std::string& delimiter, std::vector<std::string>& outVector);

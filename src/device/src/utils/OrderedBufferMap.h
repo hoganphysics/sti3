@@ -51,10 +51,13 @@ public:
 	void setMaxSize(unsigned size);
 	unsigned size() const;
 
+	bool contains(const Key& key) const;
+
 	bool get(const Key& key, T& item) const;
 	void getKeys(std::set<Key>& keys) const;
 	bool add(const Key& key, T item);
 	bool remove(const Key& key);
+	bool addAndRemove(const Key& key, T newItem, T& oldItem);
 
 	void clear();
 
@@ -105,6 +108,13 @@ unsigned STI::Utils::OrderedBufferMap<Key, T>::size() const
 	return buffer.size();
 }
 
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::contains(const Key& key) const
+{
+	return buffer.contains(key);
+}
+
 template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::get(const Key& key, T& item) const
 {
@@ -134,6 +144,29 @@ bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)
 		buffer_keys.pop_front();	//add failed; remove the new key from front
 	}
 	return success;
+}
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::addAndRemove(const Key& key, T newItem, T& oldItem)
+{
+	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	bool oldItemValid = false;
+
+	buffer_keys.push_front(key);		//add new key to front
+	buffer.add(key, newItem);	//attempt to add item to buffer
+
+	if (buffer_keys.size() > max_size) {
+
+		auto lastKey = buffer_keys.back();
+		oldItemValid = buffer.get(lastKey, oldItem);
+
+	}
+
+	trimToSize();
+
+	return oldItemValid;
+
 }
 
 template<class Key, class T>

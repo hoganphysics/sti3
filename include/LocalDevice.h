@@ -75,7 +75,7 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
-	void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -174,7 +174,7 @@ private:
 	
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
-	std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
+	//std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
 
 	std::set<DeviceID> partnerDevices;
 

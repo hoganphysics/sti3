@@ -32,7 +32,7 @@ public:
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
-	virtual void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) = 0;
+	virtual bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) = 0;
 
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 

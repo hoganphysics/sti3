@@ -2,7 +2,7 @@
 #define STI_ENGINE_LOCALRESULTSCOLLECTOR_H
 
 #include "ResultsCollector.h"
-#include "ResultsDocumenter.h"
+#include "ShotRepository.h"
 #include "FileHolderFactory.h"
 
 #include <memory>
@@ -16,9 +16,10 @@ namespace Engine
 {
 
 class EventEngine;
-class ParsedDependencyTree;
+//class ParsedDependencyTree;
 struct ResultsPaths;
 struct ShotResult;
+class ShotResultRecord;
 
 
 class LocalResultsCollector : public ResultsCollector
@@ -27,13 +28,14 @@ public:
 
     LocalResultsCollector(const STI::Engine::ShotID& sid, 
            // const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
-            const std::shared_ptr<ParsedDependencyTree>& dependencies,
+           // const std::shared_ptr<ParsedDependencyTree>& dependencies,
             const ResultsPaths& paths,
             const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
     virtual ~LocalResultsCollector() {}
 
-    ShotID getShotID();
-    std::shared_ptr<ParsedDependencyTree> getDependencies();
+    ShotID getShotID() const;
+    //std::shared_ptr<ParsedDependencyTree> getDependencies();
+    
 
     void addEvents(const DeviceEventMap& parsedEvents);
     void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
@@ -42,18 +44,18 @@ public:
 
     std::shared_ptr<MeasurementVector> getMeasurements();
 
-    std::shared_ptr<ShotResult> getResults();
+    void setRecord(const ShotResultRecord& shotRecord);
+    std::shared_ptr<ShotResult> getResults() const;
 
 private:
 
     virtual std::string makeLocalPath(const std::string& basePath, const std::string& remoteFilename);
-    std::string makeUniquePath(const std::string& filename);
+    //std::string makeUniquePath(const std::string& filename);
 
-    std::shared_ptr<ParsedDependencyTree> dependencies;
+    //std::shared_ptr<ParsedDependencyTree> dependencies;
     //std::shared_ptr<STI::Engine::EventEngine> eventEngine;   
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     ResultsPaths resultsPaths;
-
 
     std::shared_ptr<ShotResult> shotResult;
 

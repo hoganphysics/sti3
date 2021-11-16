@@ -76,6 +76,7 @@ void SerializedRepository::makePathIfNew(const std::string& pathName)
     if (!std::filesystem::exists(newPath)) {
         std::filesystem::create_directories(newPath);
     }
+
 }
 
 // template<class Archive>
@@ -96,16 +97,18 @@ void SerializedRepository::makePathIfNew(const std::string& pathName)
 // tm timeinfo;
 
 
-
-bool SerializedRepository::save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector)
+bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult)
+//bool SerializedRepository::save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector)
 {
-    auto measurements = resultsCollector->getMeasurements();
+    // auto measurements = resultsCollector->getMeasurements();
 
-    if (measurements != 0) {
-        for(auto& meas : *measurements) {
-            std::cout << "Meas: " << meas->data().print() << std::endl;
-        }
-    }
+    // if (measurements != 0) {
+    //     for(auto& meas : *measurements) {
+    //         std::cout << "Meas: " << meas->data().print() << std::endl;
+    //     }
+    // }
+
+    auto paths = preparePaths(sid);
 
     std::filesystem::path serializePath = paths.dataPath;
     serializePath /= archiveFilename;
@@ -115,12 +118,13 @@ bool SerializedRepository::save(const ResultsPaths& paths, const std::shared_ptr
         std::ofstream file( serializePath.string() );
         cereal::XMLOutputArchive archive( file );
 
-        auto results = resultsCollector->getResults();
+        //auto results = resultsCollector->getResults();
 
         // STI::Device::DeviceID id("test", "localhost", 2);
 
         //archive(id);
-        archive( results );
+        //archive( results );
+        archive( shotResult );
 
         // archive( 
         //     cereal::make_nvp("ShotID", results->sid),
@@ -148,18 +152,21 @@ bool SerializedRepository::save(const ResultsPaths& paths, const std::shared_ptr
 
     //test
 
-    std::shared_ptr<STI::Engine::ShotResult> testResult;
+    // std::shared_ptr<STI::Engine::ShotResult> testResult;
 
-    load( resultsCollector->getShotID(), testResult);
+    // getShot( resultsCollector->getShotID(), testResult);
 
-    std::cout << "Test result: " << testResult->measurements->at(0)->data().print() << std::endl;
+    // std::cout << "Test result: " << testResult->measurements->at(0)->data().print() << std::endl;
 
     return true;
 }
 
-bool SerializedRepository::load(const ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult)
+
+
+bool SerializedRepository::getShot(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult)
+//bool SerializedRepository::load(const ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult)
 {
-//    if (!findShot(sid)) return false;
+    if (!findShot(sid)) return false;
 
     auto paths = preparePaths(sid);
 

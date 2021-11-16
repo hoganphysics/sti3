@@ -8,6 +8,7 @@
 // #include "ResultsCollectorFactory.h"
 #include "FileHolderFactory.h"
 #include "ShotRepository.h"
+#include "ShotResultRecord.h"
 
 #include <memory>
 
@@ -24,11 +25,14 @@ public:
 
     virtual ~PersistenceManager() {}
 
-    virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine) = 0;
+    virtual bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result) = 0;
+    virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner) = 0;
 
-    virtual bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector) = 0;
+    virtual STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector) = 0;
 
-    virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
+    virtual bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements) = 0;
+
+    //virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 

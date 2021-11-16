@@ -109,8 +109,8 @@ public:
     bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
     bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const;
 
-    bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
-    bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);
+//    bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
+//    bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {

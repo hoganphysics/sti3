@@ -7,6 +7,7 @@
 #include "DeviceMessageListener.h"
 #include "ResultTicket.h"
 #include "DeviceMessage.h"
+#include "PersistenceManager.h"
 
 #include <memory>
 
@@ -26,7 +27,7 @@ public:
     ResultTicketManager() {}
     virtual ~ResultTicketManager() {}
 
-    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository);
+    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
 
 private:
 
@@ -35,9 +36,9 @@ private:
 };
 
 template<class T>
-std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository)
+std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager)
 {
-    auto ticket = std::make_shared<T>(id, shotRepository);
+    auto ticket = std::make_shared<T>(id, persistenceManager);
 
     TicketManager<STI::Engine::ShotID, T>::add(id, ticket);
 

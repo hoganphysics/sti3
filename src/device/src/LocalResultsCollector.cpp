@@ -6,6 +6,8 @@
 #include "Measurement.h"
 #include "RawEvent.h"
 #include "ShotResult.h"
+#include "utils.h"
+#include "ShotResultRecord.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -16,32 +18,42 @@ using STI::Engine::ParsedDependencyTree;
 using STI::Engine::Measurement;
 using STI::Engine::MeasurementVector;
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultRecord;
 
-LocalResultsCollector::LocalResultsCollector(const ShotID& shotID, 
+
+LocalResultsCollector::LocalResultsCollector(const STI::Engine::ShotID& sid, 
                 //    const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
-                    const std::shared_ptr<ParsedDependencyTree>& dependencies,
+                //    const std::shared_ptr<ParsedDependencyTree>& dependencies,
                     const ResultsPaths& paths,
                     const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-: dependencies(dependencies), resultsPaths(paths), fileHolderFactory(factory)
+: resultsPaths(paths), fileHolderFactory(factory)
 {
     shotResult = std::make_shared<ShotResult>();
-    shotResult->sid = shotID;
-    // resultTicket = std::make_shared<STI::Engine::ResultTicket>(shotID, );
-    shotResult->measurements = std::make_shared<MeasurementVector>();
+    shotResult->sid = sid;
 }
 
 
-ShotID LocalResultsCollector::getShotID()
+ShotID LocalResultsCollector::getShotID() const
 {
     return shotResult->sid;
 }
 
-std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
+// std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
+// {
+//     return dependencies;
+// }
+
+
+void LocalResultsCollector::setRecord(const ShotResultRecord& shotRecord)
 {
-    return dependencies;
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (shotResult != 0) {
+        shotResult->shotResultRecord = shotRecord;
+    }
 }
 
-std::shared_ptr<ShotResult> LocalResultsCollector::getResults()
+std::shared_ptr<ShotResult> LocalResultsCollector::getResults() const
 {
     return shotResult;
 }
@@ -49,6 +61,9 @@ std::shared_ptr<ShotResult> LocalResultsCollector::getResults()
 void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (shotResult == 0) return;
+    
     // resultsTicket.events = parsedEvents;
     shotResult->parsedEvents = std::move(parsedEvents);
 }
@@ -56,6 +71,8 @@ void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
 void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (shotResult == 0) return;
 
     for (auto& file : files) {
         std::string localPath = makeLocalPath(resultsPaths.timingPath, file->getFilename());
@@ -128,31 +145,17 @@ std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, co
 
     localPath /= remotePath.filename();
 
-    return makeUniquePath( localPath.string() );
+    return STI::Utils::makeUniquePath( localPath.string() );
 }
 
-std::string LocalResultsCollector::makeUniquePath(const std::string& filename)
-{
-    fs::path initialPath = filename;
 
-    fs::path trialPath = initialPath;
-    unsigned n = 0;
-
-    while (fs::exists(trialPath)) {
-        n++;
-        trialPath = initialPath.parent_path();
-        trialPath /= initialPath.stem();
-        trialPath /= "_";
-        trialPath /= std::to_string(n);
-        trialPath.replace_extension( initialPath.extension() );
-    }
-
-    return trialPath.string();
-}
 
 bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (shotResult == 0) return false;
+
     (shotResult->attributes)[deviceID] = attributes;
     return true;
 }

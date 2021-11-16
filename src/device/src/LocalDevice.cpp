@@ -20,7 +20,7 @@
 
 #include "ServerMessageRelayer.h"
 #include "LocalPersistenceManager.h"
-#include "SerializedRepository.h"
+//#include "SerializedRepository.h"
 
 #include "LocalShot.h"
 #include "ParseTicket.h"
@@ -51,7 +51,7 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Device::DeviceMessageListenerID;
 using STI::Device::CollectionUpdateMessage;
 using STI::Engine::LocalEventEngineFactory;
-using STI::Engine::SerializedRepository;
+//using STI::Engine::SerializedRepository;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
 using STI::Device::Configuration;
@@ -84,10 +84,10 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 	
 	
-	localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
+	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-	localPersistenceManager = std::make_shared<LocalPersistenceManager>(localFileHolderFactory, localSerializedRepository, localSerializedRepository);
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), basePath, localFileHolderFactory, localCollection);
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
 
@@ -288,7 +288,7 @@ void LocalDevice::stopRW()
 		parseTicketManager->cancel(*pit);
 	}
 
-	auto sids = resultTicketManager->getIDs();
+	auto sids = resultTicketManager->getIDs();	//ShotIDs
 
 	auto sit = std::find_if(sids.begin(), sids.end(), [](const ShotID& sid){ return false; });
 
@@ -325,11 +325,11 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	STI::Engine::ShotID sid(parseID);
 
-	std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
-	localPersistenceManager->getShotRepository(shotRepository);
+	//std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
+	//localPersistenceManager->getShotRepository(shotRepository);
 
 	//STI::Engine::ResultTicket resultTicket(sid, shotRepository);
-	resultTicket = resultTicketManager->makeTicket(sid, shotRepository);
+	resultTicket = resultTicketManager->makeTicket(sid, localPersistenceManager);
 
 	eventEngineScheduler->play(sid);
 	resultTicket->wait();
@@ -463,9 +463,10 @@ void LocalDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager
 	manager = localAttributeManager;	
 }
 
-void LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
+bool LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
 {
 	manager = localPersistenceManager;
+	return manager != 0;
 }
 
 bool LocalDevice::isPartnerDevice(const DeviceID& id)

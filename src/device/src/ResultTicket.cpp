@@ -5,11 +5,12 @@
 
 using STI::Engine::ResultTicket;
 using STI::Engine::ShotRepository;
+using STI::Device::PersistenceManager;
 
 
-ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& shotRepository)
+ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<PersistenceManager>& persistenceManager)
 // : Ticket(Ticket::TicketStatus::Running)
-: ResultTicket(id, shotRepository, Ticket::TicketStatus::Running)
+: ResultTicket(id, persistenceManager, Ticket::TicketStatus::Running)
 {
 }
 
@@ -26,8 +27,8 @@ ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<
 
 // }
 
-ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<ShotRepository>& repo, const TicketStatus& initialStatus)
-: Ticket(initialStatus), sid(id), shotRepository(repo), measurements_loaded(false)
+ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<PersistenceManager>& persistenceManager, const TicketStatus& initialStatus)
+: Ticket(initialStatus), sid(id), persistenceManager(persistenceManager), measurements_loaded(false)
 {
 }
 
@@ -68,7 +69,7 @@ void ResultTicket::loadMeasurements()
         return;
     }
     
-    if (shotRepository->getMeasurements(sid, measurements_)) {
+    if (persistenceManager->getMeasurements(sid, measurements_)) {
         measurements_loaded = true;
         return;
     }

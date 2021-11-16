@@ -22,7 +22,7 @@ class TicketManager
 public:
 
     TicketManager();
-    ~TicketManager();
+    virtual ~TicketManager();
 
     void add(const ID& id, const std::shared_ptr<T>& ticket);
     void remove(const ID& id);

@@ -966,31 +966,31 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
 }
 
 
-bool LocalEventEngineScheduler::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
-{
-    bool success = false;
-    std::shared_ptr<LocalEventEngine> engine;
+// bool LocalEventEngineScheduler::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
+// {
+//     bool success = false;
+//     std::shared_ptr<LocalEventEngine> engine;
 
-    if (findRunningEngine(resultsCollector->getShotID(), engine) 
-            && engine->transferResults(resultsCollector))
-    {
-        success = true;
-    }
-    else if ( findCompletedEngine(resultsCollector->getShotID(), engine) 
-                && engine->transferResults(resultsCollector) ) 
-    {
-        success = true;
-    }
-    else 
-    {
-        success = (persistenceManager != 0) && persistenceManager->transferResults(resultsCollector);
-    }
+//     if (findRunningEngine(resultsCollector->getShotID(), engine) 
+//             && engine->transferResults(resultsCollector))
+//     {
+//         success = true;
+//     }
+//     else if ( findCompletedEngine(resultsCollector->getShotID(), engine) 
+//                 && engine->transferResults(resultsCollector) ) 
+//     {
+//         success = true;
+//     }
+//     else 
+//     {
+//         success = (persistenceManager != 0) && persistenceManager->transferResults(resultsCollector);
+//     }
 
-    return success;
-}
+//     return success;
+// }
 
-bool LocalEventEngineScheduler::getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results)
-{
-    return false;
-}
+// bool LocalEventEngineScheduler::getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results)
+// {
+//     return false;
+// }
 

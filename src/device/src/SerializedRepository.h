@@ -3,7 +3,7 @@
 #define STI_ENGINE_SERIALIZEDREPOSITORY_H
 
 #include "ShotRepository.h"
-#include "ResultsDocumenter.h"
+//#include "ResultsDocumenter.h"
 #include "DeviceID.h"
 #include "utils/OrderedBufferMap.h"
 
@@ -19,25 +19,27 @@ namespace Engine
 
 class ShotResult;
 
-class SerializedRepository : public ShotRepository, 
-                             public ResultsDocumenter
+class SerializedRepository : public ShotRepository
+                           //  public ResultsDocumenter
 {
 public:
 
     SerializedRepository(const std::string& baseDevicePath);
 
+
     //ShotRepositroy
     bool findShot(const ShotID& sid);
-    bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& result);
-    
+    bool getShot(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);
+    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult);
+
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
     bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter
     ResultsPaths preparePaths(const ShotID& sid);
-    bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
+    // bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
 
-    bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
+    // bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
 
 private:
 
