@@ -36,6 +36,8 @@ SerializedRepository::SerializedRepository(const std::string& baseDevicePath)
 
 bool SerializedRepository::findShot(const ShotID& sid)
 {
+    //std::unique_lock<std::mutex> pathLock(pathMutex);
+
     std::filesystem::path shotPath = getShotBasePath(sid);
 
     return std::filesystem::exists(shotPath);
@@ -43,17 +45,24 @@ bool SerializedRepository::findShot(const ShotID& sid)
 
 bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
-    if (!findShot(sid)) return false;
+    //if (!findShot(sid)) return false;
+
+    std::shared_ptr<ShotResult> shotResult;
+    
+    if (getShot(sid, shotResult) && shotResult != 0 && shotResult->measurements != 0) {
+        measurements = shotResult->measurements;
+        return (measurements != 0);
+    }
 
     return false;
 }
 
-bool SerializedRepository::getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket)
-{
-    if (!findShot(sid)) return false;
+// bool SerializedRepository::getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket)
+// {
+//     if (!findShot(sid)) return false;
 
-    return false;
-}
+//     return false;
+// }
 
 
 ResultsPaths SerializedRepository::preparePaths(const ShotID& sid)
@@ -219,11 +228,12 @@ ResultsPaths SerializedRepository::makePaths(const ShotID& sid)
     // auto uniqueBasePath = basePath / sid.playTime.time_hh_mm_ss_mmmuuunnn();
     // std::filesystem::create_directory(uniqueBasePath);
 
+    std::filesystem::path uniqueBasePath = getShotBasePath(sid);
 
-    std::filesystem::path uniqueBasePath = baseDevicePath;
-    uniqueBasePath /= "shot_cache";
-    uniqueBasePath /= sid.playTime.date_YYYY_MM_DD();
-    uniqueBasePath /= sid.playTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
+    // std::filesystem::path uniqueBasePath = baseDevicePath;
+    // uniqueBasePath /= "shot_cache";
+    // uniqueBasePath /= sid.playTime.date_YYYY_MM_DD();
+    // uniqueBasePath /= sid.playTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
 
     paths.basePath = uniqueBasePath.string();
 
@@ -249,14 +259,15 @@ ResultsPaths SerializedRepository::makePaths(const ShotID& sid)
 
 std::string SerializedRepository::getShotBasePath(const ShotID& sid)
 {
-    std::unique_lock<std::mutex> pathLock(pathMutex);
+//    std::unique_lock<std::mutex> pathLock(pathMutex);
 
     std::filesystem::path basePath(baseDevicePath);
-
+    basePath /= "shot_cache";
     basePath /= sid.playTime.date_YYYY_MM_DD();
-    auto uniqueBasePath = basePath / sid.playTime.time_hh_mm_ss_mmmuuunnn();
+    basePath /= sid.playTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
+    //auto uniqueBasePath = basePath / sid.playTime.time_hh_mm_ss_mmmuuunnn();
 
-    return uniqueBasePath.string();
+    return basePath.string();
 }
 
 // std::string SerializedRepository::makeBaseDevicePath()

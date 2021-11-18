@@ -73,7 +73,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
 
 	deviceMessageDispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
-	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection);
+	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection, deviceMessageDispatcher);
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);

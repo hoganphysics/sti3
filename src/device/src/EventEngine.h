@@ -49,7 +49,7 @@ public:
 	//virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 	// virtual bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 
-	virtual bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;
+	//virtual bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;
 };
 
 } //Engine

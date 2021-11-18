@@ -33,7 +33,7 @@ public:
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult);
 
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
-    bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
+    // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter
     ResultsPaths preparePaths(const ShotID& sid);

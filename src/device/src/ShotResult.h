@@ -29,14 +29,8 @@ class ShotResult
 {
 public:
 
-    ShotResult() {}
-    ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs)
-    {
-        shotResultRecord.deviceID = deviceID;
-        for (auto& id : ownedIDs) {
-            shotResultRecord.dependencies.push_back(id);    
-        }
-    }
+    ShotResult();
+    ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs);
 
     ShotID sid; //contains a record of shot type (single, sequence, undocumented)
 
@@ -53,22 +47,7 @@ public:
     //std::vector<STI::Device::DeviceID> missingDependencies; 
     ShotResultRecord shotResultRecord;
 
-    static void deleteShotFiles(ShotResult& shot)
-    {
-        for (auto& file : shot.timingFiles) {
-            if (file != 0) {
-                file->deleteFile();
-            }
-        }
-
-        if (shot.measurements != 0) {
-            for (auto& meas : *(shot.measurements)) {
-                if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
-                    meas->data().getFile()->deleteFile();
-                }
-            }           
-        }
-    }
+    static void deleteShotFiles(ShotResult& shot);
 
     template<class Archive>
     void serialize(Archive& archive);

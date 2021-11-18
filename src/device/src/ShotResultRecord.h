@@ -20,31 +20,10 @@ public:
 
     enum class RecordStatus { Unqueried, Complete, MissingDevice, MissingResults, Error };
 
-    ShotResultRecord() 
-    : recordStatus(RecordStatus::Unqueried)
-    {
-    }
+    ShotResultRecord();
+    ShotResultRecord(const STI::Device::DeviceID& deviceID) ;
 
-    ShotResultRecord(const STI::Device::DeviceID& deviceID) 
-    : deviceID(deviceID), recordStatus(RecordStatus::Unqueried)
-    {
-    }
-
-    bool isPartialRecord()
-    {
-        if (recordStatus != RecordStatus::Complete) return true;
-
-        bool isPartial = false;
-
-        for (auto& record : dependencies) {
-            if(record.isPartialRecord()) {
-                isPartial = true;
-                break;
-            }
-        }
-        return isPartial;
-    }
-
+    bool isPartialRecord();
     
     STI::Device::DeviceID deviceID;
     RecordStatus recordStatus;

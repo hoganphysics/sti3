@@ -99,15 +99,25 @@ public:
 	{
 		std::cout << "Parse Trigger" << std::endl;
 
-		auto evt = std::make_unique<TriggerEvent>(0,0);
-		synchedEvents.push_back(std::move(evt));
+		for (auto& ev : events) {
+			auto evt = std::make_unique<TriggerEvent>(ev.first, ev.second.front().channel());
 
-		auto ev = events.begin();
-		ev++;
+			if (ev.second.front().channel() == 1) {
+				evt->addMeasurement(ev.second.front());
+			}
+
+			synchedEvents.push_back(std::move(evt));
+		}
+
+		// auto evt = std::make_unique<TriggerEvent>(0,0);
+		// synchedEvents.push_back(std::move(evt));
+
+		// auto ev = events.begin();
+		// ev++;
 		
-		auto evt2 = std::make_unique<TriggerEvent>(ev->first, 1);
-		evt2->addMeasurement(ev->second.at(0));
-		synchedEvents.push_back(std::move(evt2));
+		// auto evt2 = std::make_unique<TriggerEvent>(ev->first, 1);
+		// evt2->addMeasurement(ev->second.at(0));
+		// synchedEvents.push_back(std::move(evt2));
 	}
 
 };
@@ -115,7 +125,6 @@ public:
 
 int main(int argc, char **argv)
 {
-
 	auto analogin = std::make_shared<AnalogInDevice>("AnalogIn", "localhost", 0, "localhost/0/STI Server");
 	auto trigger = std::make_shared<TriggerDevice>("Trigger", "localhost", 0, "localhost/0/STI Server");
 
@@ -157,6 +166,11 @@ int main(int argc, char **argv)
 	scheduler->play(sid);
 
 	std::cin >> x;
+
+	STI::Utils::MixedValue data;
+	analogin->read(0, 2.2, data);
+
+	std::cout << "Data = " << data.print() << std::endl;
 
 	return 0;
 }

@@ -59,12 +59,13 @@ void ResultTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::En
 
     if (mess->schedulerMessageType == STI::Device::EngineSchedulerMessage::SchedulerMessageType::PlayComplete) {
         ticket->setComplete();
+        TicketManager<STI::Engine::ShotID, T>::remove(id);
     }
     else {
-        ticket->cancel();
+    //    ticket->cancel();
     }
 
-    TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
+    //TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
 }
 
 

@@ -118,7 +118,7 @@ public:
 	//bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
 	// bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
 
-	bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
+	//bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
 
 private:
 

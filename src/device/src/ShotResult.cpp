@@ -16,6 +16,35 @@
 using STI::Engine::ShotResult;
 
 
+ShotResult::ShotResult()
+{
+}
+
+ShotResult::ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs)
+{
+    shotResultRecord.deviceID = deviceID;
+    for (auto& id : ownedIDs) {
+        shotResultRecord.dependencies.push_back(id);    
+    }
+}
+
+void ShotResult::deleteShotFiles(ShotResult& shot)
+    {
+        for (auto& file : shot.timingFiles) {
+            if (file != 0) {
+                file->deleteFile();
+            }
+        }
+
+        if (shot.measurements != 0) {
+            for (auto& meas : *(shot.measurements)) {
+                if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
+                    meas->data().getFile()->deleteFile();
+                }
+            }           
+        }
+    }
+
 template<class Archive>
 void ShotResult::serialize(Archive& archive)
 {
@@ -24,7 +53,8 @@ void ShotResult::serialize(Archive& archive)
         cereal::make_nvp("Attributes", attributes), 
         cereal::make_nvp("Measurements", measurements),
         cereal::make_nvp("timingFiles", timingFiles),
-        cereal::make_nvp("parsedEvents", parsedEvents)
+        cereal::make_nvp("parsedEvents", parsedEvents),
+        cereal::make_nvp("ShotResultRecord", shotResultRecord)
         );
 }
 

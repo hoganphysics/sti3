@@ -117,7 +117,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
         return record;
     }
 
-    bool success = false;
+    bool success = true;
 
     //Attributes
     for (auto& attribs : shotResult->attributes) {
@@ -142,8 +142,6 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
 
 	std::shared_ptr<STI::Device::Device> device;
     std::shared_ptr<PersistenceManager> persistenceManager;
-	
-    success = false;
 
     for (auto& dependency : shotResult->shotResultRecord.dependencies) {
 

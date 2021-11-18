@@ -85,6 +85,7 @@ add_library(stidevice SHARED
     SerializedRepository.cpp
     ShotID.cpp
     ShotResult.cpp
+    ShotResultRecord.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp
     Ticket.cpp
