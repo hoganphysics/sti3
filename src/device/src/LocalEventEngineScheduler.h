@@ -9,6 +9,7 @@
 #include "DeviceCollection.h"
 
 #include "EngineJobID.h"
+#include "EngineJobStatus.h"
 
 #include "DeviceMessage.h"
 #include "DeviceMessageListener.h"
@@ -79,8 +80,14 @@ public:
     ~LocalEventEngineScheduler();
 
     //local interface (called from python, for example)
-    void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot);        //local; add event to queue
-    void play(const ShotID& shotID);
+    // void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot);
+    // void play(const ShotID& shotID);
+
+    ParseID parse(const std::shared_ptr<Shot>& shot);        //local; add event to queue
+    ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
+
+    EngineJobStatus getStatus(const ParseID& pid);
+    EngineJobStatus getStatus(const ShotID& sid);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
                         std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
@@ -99,7 +106,7 @@ public:
     void cancelAll();
     void stopAll();
   
-    std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events);
+    std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
@@ -173,8 +180,10 @@ private:
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
+    bool findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const;
+
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
-    bool getEngineByShot(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
+    //bool getEngineByShot(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;

@@ -34,9 +34,9 @@ template<class Archive>
 void ShotID::serialize(Archive& archive)
 {
     archive(cereal::make_nvp("parseID", parseID), 
-            cereal::make_nvp("submissionTime", submissionTime), 
-            cereal::make_nvp("playTime", playTime), 
-            cereal::make_nvp("jobSourceID", jobSourceID));
+            cereal::make_nvp("jobSourceID", jobSourceID),
+            cereal::make_nvp("submissionTime", submissionTime)
+            );
 }
 
 template void STI::Engine::ShotID::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );

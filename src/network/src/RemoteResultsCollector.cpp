@@ -28,7 +28,7 @@ RemoteResultsCollector::~RemoteResultsCollector()
 {
 }
 
-STI::Engine::ShotID RemoteResultsCollector::getShotID()
+STI::Engine::ShotID RemoteResultsCollector::getShotID() const
 {
 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 

@@ -54,6 +54,7 @@ add_library(stidevice SHARED
     # EngineParsingError.cpp
     EngineClock.cpp
     EngineParsingMessage.cpp
+    EngineJobSourceID.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp
     EventEngineParser.cpp
@@ -83,6 +84,7 @@ add_library(stidevice SHARED
     RawEvent.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
+    ShotConfig.cpp
     ShotID.cpp
     ShotResult.cpp
     ShotResultRecord.cpp

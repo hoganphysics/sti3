@@ -144,8 +144,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	addEventEngine(id0);
 
 
-	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>();
-	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>();
+	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>(eventEngineScheduler);
+	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>(localPersistenceManager, eventEngineScheduler);
 	// DeviceMessageListenerID lid(DeviceMessageType::EngineScheduler, "");
 
 	// deviceMessageReceiver->addListener(id, DeviceMessageListenerID(DeviceMessageType::EngineScheduler, ""), 
@@ -301,37 +301,30 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 {
 	std::unique_lock<std::mutex> playLock(deviceMutex);
 
-	STI::Engine::ParseID parseID;
-	parseID.targetEnginePool = 0;	//0=async pool
-	parseID.shotType = ParseID::ShotType::SingleUndocumented;
-	parseID.jobSourceID.user = "<async play>";
-	parseID.jobSourceID.machine = getID().getAddress();
+	STI::Engine::ShotConfig shotConfig;
+	shotConfig.targetEnginePool = 0;	//0=async pool
+	shotConfig.shotType = STI::Engine::ShotConfig::ShotType::SingleUndocumented;
+	shotConfig.jobSourceID.user = "<async play>";
+	shotConfig.jobSourceID.machine = getID().getAddress();
 	
-	auto shot = std::make_shared<STI::Engine::LocalShot>();
+	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
 	auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
 
 	events->push_back(event);
 	shot->setEvents(events);
 
-	//STI::Engine::ParseTicket parseTicket(parseID, eventEngineScheduler);
-	auto parseTicket = parseTicketManager->makeTicket(parseID, eventEngineScheduler);
+	auto parseID = eventEngineScheduler->parse(shot);
 
-	eventEngineScheduler->parse(parseID, shot);
+	auto parseTicket = parseTicketManager->makeTicket(parseID);
 	parseTicket->wait();
 
 	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
 		return false;
 	}
 
-	STI::Engine::ShotID sid(parseID);
+	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
 
-	//std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
-	//localPersistenceManager->getShotRepository(shotRepository);
-
-	//STI::Engine::ResultTicket resultTicket(sid, shotRepository);
-	resultTicket = resultTicketManager->makeTicket(sid, localPersistenceManager);
-
-	eventEngineScheduler->play(sid);
+	resultTicket = resultTicketManager->makeTicket(sid);
 	resultTicket->wait();
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {

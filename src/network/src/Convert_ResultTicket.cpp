@@ -5,7 +5,7 @@
 #include "ResultTicket.h"
 #include "RemoteResultsCollector.h"
 #include "ShotRepository.h"
-#include "NetworkShotRepositoryWrapper.h"
+//#include "NetworkShotRepositoryWrapper.h"
 #include "RemoteShotRepository.h"
 
 
@@ -19,9 +19,9 @@ using STI::Engine::ShotRepository;
 using STI::Engine::Ticket;
 using STI::TNetwork::TTicketStatus;
 using STI::Engine::ShotRepository;
-using STI::TNetwork::TShotRepository_var;
-using STI::Network::NetworkShotRepositoryWrapper;
-using STI::Network::RemoteShotRepository;
+// using STI::TNetwork::TShotRepository_var;
+// using STI::Network::NetworkShotRepositoryWrapper;
+// using STI::Network::RemoteShotRepository;
 
 
 //ResultsCollector
@@ -96,8 +96,8 @@ Ticket::TicketStatus STI::Network::convert<TTicketStatus, Ticket::TicketStatus>(
         case TTicketStatus::TicketComplete:
 			status = Ticket::TicketStatus::Complete;
 			break;
-        case TTicketStatus::TicketCancelled:
-			status = Ticket::TicketStatus::Cancelled;
+        case TTicketStatus::TicketCanceled:
+			status = Ticket::TicketStatus::Canceled;
 			break;
         case TTicketStatus::TicketNotFound:
 			status = Ticket::TicketStatus::NotFound;

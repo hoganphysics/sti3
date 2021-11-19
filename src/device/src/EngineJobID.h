@@ -83,6 +83,7 @@ public:
     EventEngineJobType type;
     ParseID pid;
     ShotID sid;
+    TimeStamp runTime;  //time job was run
 
 };
 

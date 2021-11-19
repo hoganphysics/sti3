@@ -289,55 +289,55 @@ bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI
 	return success;
 }
 
-bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
-{
-	std::unique_lock<std::mutex> engineLock(engineMutex);
+// bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
+// {
+// 	std::unique_lock<std::mutex> engineLock(engineMutex);
 
-	if (isDisabled()) return false;
+// 	if (isDisabled()) return false;
 
-	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
-	measurements = std::make_shared<STI::Engine::MeasurementVector>();
+// 	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
+// 	measurements = std::make_shared<STI::Engine::MeasurementVector>();
 
-	bool success = false;
+// 	bool success = false;
 
-	try {
-		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
+// 	try {
+// 		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
 
-		//success &= convert<::STI::TNetwork::TMeasurementSeq, STI::Engine::MeasurementVector>(tMeasurements, *measurements); (_CORBA_Unbounded_Sequence<::STI::TNetwork::TMeasurement>) 
-		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-	return success;
-}
+// 		//success &= convert<::STI::TNetwork::TMeasurementSeq, STI::Engine::MeasurementVector>(tMeasurements, *measurements); (_CORBA_Unbounded_Sequence<::STI::TNetwork::TMeasurement>) 
+// 		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// 	return success;
+// }
 
-bool RemoteEventEngine::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
-{
-	std::unique_lock<std::mutex> engineLock(engineMutex);
+// bool RemoteEventEngine::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+// {
+// 	std::unique_lock<std::mutex> engineLock(engineMutex);
 
-	if (isDisabled()) return false;
+// 	if (isDisabled()) return false;
 
-	STI::TNetwork::TResultsCollector_var tResultsCollector;
+// 	STI::TNetwork::TResultsCollector_var tResultsCollector;
 
-	bool success = false;
+// 	bool success = false;
 
-	try {
+// 	try {
 
-		if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
-			success = getTRef()->transferResults(tResultsCollector);	//remote call
-		}
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&) {
-	}
-	return success;
-}
+// 		if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
+// 			success = getTRef()->transferResults(tResultsCollector);	//remote call
+// 		}
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&) {
+// 	}
+// 	return success;
+// }
 

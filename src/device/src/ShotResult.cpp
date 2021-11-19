@@ -50,10 +50,11 @@ void ShotResult::serialize(Archive& archive)
 {
     archive( 
         cereal::make_nvp("ShotID", sid),
+        cereal::make_nvp("playTime", playTime),
         cereal::make_nvp("Attributes", attributes), 
         cereal::make_nvp("Measurements", measurements),
-        cereal::make_nvp("timingFiles", timingFiles),
-        cereal::make_nvp("parsedEvents", parsedEvents),
+        cereal::make_nvp("TimingFiles", timingFiles),
+        cereal::make_nvp("ParsedEvents", parsedEvents),
         cereal::make_nvp("ShotResultRecord", shotResultRecord)
         );
 }

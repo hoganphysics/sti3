@@ -18,6 +18,8 @@ using STI::TNetwork::TResultTicket;
 using STI::TNetwork::TEventEngine_ptr;
 using STI::Engine::ResultsCollector;
 using STI::Engine::EventEngine;
+using STI::TNetwork::TShotID;
+using STI::Engine::ShotID;
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
@@ -28,6 +30,12 @@ RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistence
 RemotePersistenceManager::~RemotePersistenceManager()
 {
 }
+
+bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
+{
+
+}
+
 
 bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine)
 {
@@ -57,7 +65,7 @@ bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const st
     return success && (eventEngine != 0);
 }
 
-bool RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+STI::Engine::ShotResultRecord RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
 	
@@ -82,34 +90,59 @@ bool RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine
     return success;
 }
 
-
-
-bool RemotePersistenceManager::getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket)
+bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
-	
-    if (isDisabled()) return false;
-    
-    bool success = false;
-   	STI::TNetwork::TResultTicket_var tResultTicket(new TResultTicket);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
+	measurements = std::make_shared<STI::Engine::MeasurementVector>();
+
+	bool success = false;
 
 	try {
+		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
 
-		success = getTRef()->getResultTicket(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), tResultTicket);	//remote call
-
-        if (success) {
-            success &= convert<STI::TNetwork::TResultTicket, std::shared_ptr<ResultTicket>>(tResultTicket.in(), ticket);
-        }
+		//success &= convert<::STI::TNetwork::TMeasurementSeq, STI::Engine::MeasurementVector>(tMeasurements, *measurements); (_CORBA_Unbounded_Sequence<::STI::TNetwork::TMeasurement>) 
+		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
 	catch (CORBA::SystemException&) {
 	}
-	catch (CORBA::Exception&) {
+	catch (CORBA::Exception&)
+	{
 	}
-
-    return success && (ticket != 0);
+	return success;
 }
+
+// bool RemotePersistenceManager::getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket)
+// {
+// 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+	
+//     if (isDisabled()) return false;
+    
+//     bool success = false;
+//    	STI::TNetwork::TResultTicket_var tResultTicket(new TResultTicket);
+
+// 	try {
+
+// 		success = getTRef()->getResultTicket(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), tResultTicket);	//remote call
+
+//         if (success) {
+//             success &= convert<STI::TNetwork::TResultTicket, std::shared_ptr<ResultTicket>>(tResultTicket.in(), ticket);
+//         }
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&) {
+// 	}
+
+//     return success && (ticket != 0);
+// }
 
 void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 {

@@ -37,6 +37,8 @@ public:
 
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 
+	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
+
     //bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
     //std::shared_ptr<STI::Engine::ResultsCollector> createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
 
@@ -49,8 +51,6 @@ public:
 
     void addPersistenceDelegate(const DeviceID& id, const std::shared_ptr<PersistenceManager>& manager, unsigned priority);
     void removePersistenceDelegate(const DeviceID& id);
-
-	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
 
     void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
     bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);

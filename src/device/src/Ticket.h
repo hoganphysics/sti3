@@ -16,7 +16,7 @@ class Ticket
 {
 public:
     
-    enum class TicketStatus { Running, Complete, Cancelled, NotFound };
+    enum class TicketStatus { Running, Complete, Canceled, NotFound };
 
     Ticket(const TicketStatus& initalState);
     virtual ~Ticket() {}

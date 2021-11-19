@@ -138,20 +138,18 @@ int main(int argc, char **argv)
 	std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 	analogin->getEngineScheduler(scheduler);
 
-	STI::Engine::ParseID parseID;
-	auto shot = std::make_shared<STI::Engine::LocalShot>();
-	auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+	STI::Engine::ShotConfig shotConfig;
+	shotConfig.shotType = STI::Engine::ShotConfig::ShotType::Single;
+	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
 
 	STI::Engine::RawEvent evt0(analogin->getID(), 0, 0, 12.0, "", 0, STI::Engine::RawEventType::Measurement);
-	events->push_back(evt0);
-
+	shot->addEvent(evt0);
 
 	//STI::Utils::MixedValueType::Empty
 	STI::Engine::RawEvent evt1(trigger->getID(), 50, 1, STI::Utils::MixedValueType::Empty, "", 0, STI::Engine::RawEventType::Measurement);
-	events->push_back(evt1);
+	shot->addEvent(evt1);
 
-	shot->setEvents(events);
-	scheduler->parse(parseID, shot);
+	auto parseID = scheduler->parse(shot);
 
 	std::cin >> x;
 
@@ -161,9 +159,7 @@ int main(int argc, char **argv)
 		std::cout << "Message: " << m.getMessage() << std::endl;
 	}
 
-	STI::Engine::ShotID sid;
-	sid.parseID = parseID;
-	scheduler->play(sid);
+	auto sid = scheduler->play(parseID, parseID.shotConfig.jobSourceID);
 
 	std::cin >> x;
 

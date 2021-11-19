@@ -21,9 +21,10 @@ public:
 	TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TPersistenceManager_i();
 
-    ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TEventEngine_ptr eventEngine);
-    ::CORBA::Boolean transferMeasurements(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
-    ::CORBA::Boolean getResultTicket(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TResultTicket_out ticket);
+    ::CORBA::Boolean getShot(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult);
+    ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TShotResult& tShotResult, ::CORBA::Boolean isOwner);
+    TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector);
+    ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements);
 
     ::CORBA::Boolean ping();
 

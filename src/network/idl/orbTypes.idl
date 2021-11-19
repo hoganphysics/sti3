@@ -45,13 +45,14 @@ module TNetwork
 		TDeviceIDSeq ids;
 	};
 
-	enum TEngineJobStatus { New, Running, Completed, Canceled };
+	enum TEngineJobStatus { JobNew, JobRunning, JobCompleted, JobCanceled, JobNotFound };
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
 	typedef sequence<octet> OctetSeq;
 
 	interface TFileHolder;
+	typedef sequence<TFileHolder> TFileHolderSeq;
 
 	union TMixedValue;
 	// struct TMixedValue;
@@ -214,20 +215,24 @@ module TNetwork
 		TDeviceIDSeq missingTargetIDs;
 	};
 
-	interface TShotRepository;
+	//interface TShotRepository;
+
+	interface TPersistenceManager;
 	
-	enum TTicketStatus { TicketRunning, TicketComplete, TicketCancelled, TicketNotFound };
+	enum TTicketStatus { TicketRunning, TicketComplete, TicketCanceled, TicketNotFound };
 
 	struct TResultTicket
 	{
 		TShotID sid;
 		TTicketStatus status;
-		
+
+		TPersistenceManager persistenceManager;
+
 		// string url;
 		// boolean hasURL;
 
-		TShotRepository repo;
-		boolean hasRepo;
+		//TShotRepository repo;
+		//boolean hasRepo;
 	};
 
 	//DeviceMessage *************************//
@@ -310,18 +315,18 @@ module TNetwork
 		TEventEngineJob engineJob;
 	};
 
-	struct TAttributeUpdateTuple
+	struct TAttributeTuple
 	{
 		string key;
 		string value;
 	};
-	typedef sequence<TAttributeUpdateTuple> TAttributeUpdateTupleSeq;
+	typedef sequence<TAttributeTuple> TAttributeTupleSeq;
 
 	struct TAttributeUpdateMessage
 	{
 		TDeviceMessage base;	//base class data
 
-		TAttributeUpdateTupleSeq attributes;		//{key, value} pairs
+		TAttributeTupleSeq attributes;		//{key, value} pairs
 	};
 
 	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };
@@ -390,6 +395,44 @@ module TNetwork
 		TMixedValue metaData;
 	};
 	typedef sequence<TChannel> TChannelSeq;
+
+
+
+
+	enum TRecordStatus { TRecordUnqueried, TRecordComplete, TRecordMissingDevice, TRecordMissingResults, TRecordError };
+
+	struct TShotResultRecord;
+	typedef sequence<TShotResultRecord> TShotResultRecordSeq;
+
+	struct TShotResultRecord
+	{
+		TDeviceID deviceID;
+		TRecordStatus recordStatus;
+		TShotResultRecordSeq dependencies;
+	};
+
+	struct TDeviceIDAttributesTuple
+	{
+		TDeviceID id;
+		TAttributeTupleSeq attributes;
+	};
+
+	typedef sequence<TDeviceIDAttributesTuple> TDeviceIDAttributesTupleSeq;
+
+	struct TShotID;
+
+	struct TShotResult
+	{
+		TShotID sid;
+
+		TDeviceEventsSeq parsedEvents;
+		TFileHolderSeq timingFiles;
+		TMeasurementSeq measurements;
+		TDeviceIDAttributesTupleSeq attributes;
+
+		TShotResultRecord shotResultRecord;
+	};
+
 
 	// struct TEngineSchedulerParseMessage
 	// {

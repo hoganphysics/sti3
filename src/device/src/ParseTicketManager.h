@@ -6,8 +6,10 @@
 #include "DeviceMessageListener.h"
 #include "DeviceMessage.h"
 #include "ParseTicket.h"
+#include "EventEngineScheduler.h"
 
 #include <memory>
+
 
 namespace STI
 {
@@ -23,24 +25,58 @@ class ParseTicketManager : public STI::Engine::TicketManager<STI::Engine::ParseI
 {
 public:
 
-    ParseTicketManager() {}
+    ParseTicketManager(const std::shared_ptr<EventEngineScheduler>& scheduler);
     virtual ~ParseTicketManager() {}
 
-    std::shared_ptr<T> makeTicket(const STI::Engine::ParseID& id, const std::shared_ptr<EventEngineScheduler>& scheduler);
+    std::shared_ptr<T> makeTicket(const STI::Engine::ParseID& id);
 
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
+    std::shared_ptr<EventEngineScheduler> eventEngineScheduler;
+
 };
 
 
 template<class T>
-std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID& id, const std::shared_ptr<EventEngineScheduler>& scheduler)
+ParseTicketManager<T>::ParseTicketManager(const std::shared_ptr<EventEngineScheduler>& scheduler)
+: eventEngineScheduler(scheduler)
 {
-    auto ticket = std::make_shared<T>(id, scheduler);
+}
+
+template<class T>
+std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID& id)
+{
+    auto ticket = std::make_shared<T>(id, eventEngineScheduler);
 
     TicketManager<STI::Engine::ParseID, T>::add(id, ticket);
+
+    //The job could have completed before the ticket was created and added to the manager
+    bool removeTicket = false;
+    switch (eventEngineScheduler->getStatus(id))
+    {
+    case EngineJobStatus::New:
+        break;
+    case EngineJobStatus::Running:
+        break;
+    case EngineJobStatus::Completed:
+        ticket->setComplete();
+        removeTicket = true;
+        break;
+    case EngineJobStatus::Canceled:
+        ticket->cancel();
+        removeTicket = true;
+        break;
+    case EngineJobStatus::NotFound:
+        ticket->cancel();
+        removeTicket = true;
+        break;
+    }
+
+    if (removeTicket) {
+        TicketManager<STI::Engine::ParseID, T>::remove(id);
+    }
 
     return ticket;
 }

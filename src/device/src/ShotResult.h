@@ -33,7 +33,8 @@ public:
     ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs);
 
     ShotID sid; //contains a record of shot type (single, sequence, undocumented)
-
+	TimeStamp playTime;
+    
     DeviceEventMap parsedEvents;
     std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
     std::shared_ptr<MeasurementVector> measurements;

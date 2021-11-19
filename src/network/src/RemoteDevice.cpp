@@ -355,20 +355,20 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 	manager = remoteAttributeManager;
 }
 
-void RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
+bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 {
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
 	if (isLive(remotePersistenceManager)) {
 		manager = remotePersistenceManager;
-		return;
+		return (manager != 0);
 	}
 	else if (remotePersistenceManager != 0) {
 		//non-null but not live for some reason; disable
 		remotePersistenceManager->disable();
 	}
 
-	if (isDisabled()) return;
+	if (isDisabled()) return false;
 
 	::STI::TNetwork::TPersistenceManager_var tPersistenceManager;	//remote reference
 	
@@ -388,5 +388,6 @@ void RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 	}
 
 	manager = remotePersistenceManager;
+	return (manager != 0);
 }
 

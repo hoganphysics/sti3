@@ -2,6 +2,7 @@
 #define STI_ENGINE_LOCALSHOT_H
 
 #include "Shot.h"
+#include "ShotConfig.h"
 
 #include <vector>
 #include <memory>
@@ -19,12 +20,18 @@ class LocalShot : public Shot
 {
 public:
 
-    LocalShot()
+    LocalShot(const ShotConfig& config)
+    : shotConfig(config)
     {
         events = std::make_shared<std::vector<RawEvent>>();
     }
     ~LocalShot()
     {
+    }
+
+    ShotConfig& getShotConfig()
+    {
+        return shotConfig;
     }
 
     void setEvents(const std::shared_ptr<std::vector<RawEvent>>& evts)
@@ -37,7 +44,16 @@ public:
         evts = events;
     }
 
+    void addEvent(const RawEvent& evt)
+    {
+        if (events != 0) {
+            events->push_back(evt);
+        }
+    }
+
 private:
+
+    ShotConfig shotConfig;
 
     std::shared_ptr<std::vector<RawEvent>> events;
 

@@ -304,7 +304,7 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     std::shared_ptr<STI::Engine::ShotRepository> repo;
     if (!getShotRepository(repo)) return false;
 
-    if (sid.parseID.shotType == STI::Engine::ParseID::ShotType::SingleUndocumented) {
+    if (sid.parseID.shotConfig.shotType == STI::Engine::ShotConfig::ShotType::SingleUndocumented) {
         repo = transientRepository;
     }
 

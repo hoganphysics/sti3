@@ -48,7 +48,7 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
-	void getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
+	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 
 
 private:

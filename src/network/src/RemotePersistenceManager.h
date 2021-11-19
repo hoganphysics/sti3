@@ -21,9 +21,13 @@ public:
 	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager);
     ~RemotePersistenceManager();
 
+    bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
-    bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
-    bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
+
+    STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
+
+    bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
+
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
 
     void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo) {}

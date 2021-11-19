@@ -167,39 +167,39 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 	return tEventEngineDependencyTree_var._retn();
 }
 
-::CORBA::Boolean TEventEngine_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
-{
-	bool success = false;
+// ::CORBA::Boolean TEventEngine_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
+// {
+// 	bool success = false;
 
-    if (eventEngine != 0) {
+//     if (eventEngine != 0) {
 
-		STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
-		auto localMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
+// 		STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
+// 		auto localMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
 
-		success = eventEngine->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
+// 		success = eventEngine->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
 
-		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
-					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
+// 		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
+// 					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
 
-		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
+// 		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
 		
-		measurements = new STI::TNetwork::TMeasurementSeq();
-		(*measurements) = tMeasurementSeq_var;
-	}
+// 		measurements = new STI::TNetwork::TMeasurementSeq();
+// 		(*measurements) = tMeasurementSeq_var;
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 
-::CORBA::Boolean TEventEngine_i::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
-{
-	bool success = false;
+// ::CORBA::Boolean TEventEngine_i::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
+// {
+// 	bool success = false;
 
-	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
+// 	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
 
-	if (eventEngine != 0) {
-		success = eventEngine->transferResults(remoteCollector);
-	}
+// 	if (eventEngine != 0) {
+// 		success = eventEngine->transferResults(remoteCollector);
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 

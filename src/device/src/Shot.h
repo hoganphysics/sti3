@@ -12,6 +12,7 @@ namespace Engine
 {
 
 class RawEvent;
+class ShotConfig;
 
 
 class Shot
@@ -20,6 +21,7 @@ public:
 
     virtual ~Shot() {}
 
+    virtual ShotConfig& getShotConfig() = 0;
     virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts) = 0;
 
 private:

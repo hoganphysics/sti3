@@ -19,11 +19,9 @@ class NetworkResultsCollector : public STI::Engine::LocalResultsCollector
 public:
 
     NetworkResultsCollector(const STI::Engine::ShotID& sid, 
-            const std::shared_ptr<STI::Engine::EventEngine>& eventEngine, 
-            const std::shared_ptr<STI::Engine::ParsedDependencyTree>& dependencies,
             const STI::Engine::ResultsPaths& paths,
             const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-		: STI::Engine::LocalResultsCollector(sid, eventEngine, dependencies, paths, factory), resultsCollectorServant(this) {}
+        : STI::Engine::LocalResultsCollector(sid, paths, factory), resultsCollectorServant(this) {}
 
 	~NetworkResultsCollector() {}
 

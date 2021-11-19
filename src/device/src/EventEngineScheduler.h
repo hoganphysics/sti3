@@ -2,6 +2,7 @@
 #define STI_ENGINE_EVENTENGINESCHEDULER_H
 
 #include "DeviceID.h"
+#include "EngineJobStatus.h"
 #include "DeviceTrace.h"
 #include "fwd/RawEvent_fwd.h"
 
@@ -25,6 +26,8 @@ class EngineParsingMessage;
 class ResultsCollector;
 class ResultTicket;
 class ParsedDependencyTree;
+class EngineJobSourceID;
+class ShotConfig;
 
 
 class EventEngineScheduler
@@ -34,8 +37,14 @@ public:
     virtual ~EventEngineScheduler() {}
 
     //possibly unneeded?
-    virtual void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot) = 0;
-    virtual void play(const ShotID& shotID) = 0;
+    //virtual void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot) = 0;
+    //virtual void play(const ShotID& shotID) = 0;
+
+    virtual ParseID parse(const std::shared_ptr<Shot>& shot) = 0;
+    virtual ShotID play(const ParseID& parseID, const EngineJobSourceID& source) = 0;
+
+    virtual EngineJobStatus getStatus(const ParseID& sid) = 0;
+    virtual EngineJobStatus getStatus(const ShotID& sid) = 0;
 
     virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
                                 std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
@@ -50,7 +59,7 @@ public:
 
     virtual void cancelAll() = 0;
 
-    virtual std::shared_ptr<Shot> createShot(const std::shared_ptr<RawEventVector>& events) = 0;
+    virtual std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events) = 0;
 
    	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 

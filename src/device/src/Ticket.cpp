@@ -48,7 +48,7 @@ void Ticket::cancel()
 {
     std::unique_lock<std::mutex> statusLock(statusMutex);
 
-    status = TicketStatus::Cancelled;
+    status = TicketStatus::Canceled;
     statusCondition.notify_all();
 }
 

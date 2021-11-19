@@ -109,18 +109,12 @@ std::shared_ptr<PyResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engi
         server->getPersistenceManager(persistenceManager);       
     }
 
-    std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
+    auto ticket = resultTicketManager->makeTicket(sid, persistenceManager);
 
-    bool success = false;
-    if (persistenceManager != 0) {
-        success = persistenceManager->getShotRepository(shotRepository);
-    }
-
-    auto ticket = resultTicketManager->makeTicket(sid, shotRepository);   //ok even if shotRepository is null
-    
-    if (!success && ticket != 0) {
+    if (persistenceManager == 0 || !connected) {
         ticket->cancel();
     }
+
     return ticket;
 }
 

@@ -67,7 +67,7 @@ add_library(stinetwork SHARED
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
     NetworkDeviceMessageHandlerWrapper.cpp
-    NetworkShotRepositoryWrapper.cpp
+    #NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
     orbTypes.cpp
     orbTypesDynSK.cpp
@@ -86,7 +86,7 @@ add_library(stinetwork SHARED
     RemotePersistenceManager.cpp
     RemoteResultsCollector.cpp
     RemoteShot.cpp
-    RemoteShotRepository.cpp
+    #RemoteShotRepository.cpp
     RemoteTriggerCallback.cpp
     TAttributeManager_i.cpp
     TChannelManager_i.cpp
@@ -102,7 +102,7 @@ add_library(stinetwork SHARED
     TRefreshIndicator_i.cpp
     TResultsCollector_i.cpp
     TShot_i.cpp
-    TShotRepository_i.cpp
+    #TShotRepository_i.cpp
     TTriggerCallback_i.cpp
 )
 

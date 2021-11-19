@@ -18,14 +18,12 @@ class ShotID
 public:
 
 	ShotID() {}
-	ShotID(const ParseID& pid) : parseID(pid) {}
+	ShotID(const ParseID& pid, const EngineJobSourceID& jobSourceID) : parseID(pid), jobSourceID(jobSourceID) {}
 
 	ParseID parseID;
+	EngineJobSourceID jobSourceID;
 	
 	TimeStamp submissionTime;	//when the shot was submitted (not when it was played)
-	TimeStamp playTime;
-
-	EngineJobSourceID jobSourceID;
 
 	bool operator<(const ShotID& rhs) const 
 	{

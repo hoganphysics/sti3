@@ -24,7 +24,7 @@ public:
 	RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector);
     ~RemoteResultsCollector();
 
-    STI::Engine::ShotID getShotID();
+    STI::Engine::ShotID getShotID() const;
     std::shared_ptr<STI::Engine::ParsedDependencyTree> getDependencies();
 
     void addEvents(const STI::Engine::DeviceEventMap& parsedEvents);

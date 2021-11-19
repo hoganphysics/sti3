@@ -263,8 +263,8 @@ std::string SerializedRepository::getShotBasePath(const ShotID& sid)
 
     std::filesystem::path basePath(baseDevicePath);
     basePath /= "shot_cache";
-    basePath /= sid.playTime.date_YYYY_MM_DD();
-    basePath /= sid.playTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
+    basePath /= sid.submissionTime.date_YYYY_MM_DD();
+    basePath /= sid.submissionTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
     //auto uniqueBasePath = basePath / sid.playTime.time_hh_mm_ss_mmmuuunnn();
 
     return basePath.string();

@@ -451,7 +451,7 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 				auto evts = std::make_shared<RawEventVector>();
 				(*evts) = std::move(eventsByTarget[id]);
 
-				auto shot = scheduler->createShot(evts);
+				auto shot = scheduler->createShot(job.getJobID().pid.shotConfig, evts);
 				
 				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
 				newJob->setDependencies(dependencyTree);
@@ -613,18 +613,21 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playedOwnedTargets.clear();
 	// engines.clear();
 
-	TimeStamp playTime;
+	//TimeStamp playTime;
 	EngineJobID jobID = job.getJobID();
 	
 	isJobOwner = (job.getJobOwner() == localDeviceID);
 
 	if (isJobOwner) {
-		playTime = getCurrentTimeStamp();
+		//playTime = getCurrentTimeStamp();
+		jobID.runTime = getCurrentTimeStamp();
 	}
-	else {
-		playTime = jobID.sid.playTime;
-	}
-	jobID.sid.playTime = playTime;
+// 	else {
+// 		jobID.runTime = jobID.runTime;
+// //		playTime = jobID.sid.playTime;
+// 	}
+	//jobID.runTime =
+	//jobID.sid.playTime = playTime;
 
 	scheduleAllPlayJobs(jobID, job.getJobOwner());
 

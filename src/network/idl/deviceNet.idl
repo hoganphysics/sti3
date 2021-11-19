@@ -16,9 +16,6 @@ module TNetwork
 
 	interface TDevice;
 
-	interface TFileHolder;
-	typedef sequence<TFileHolder> TFileHolderSeq;
-
 	struct TDeviceNode	//for NodeWalker
 	{
 		TDeviceID deviceID;
@@ -167,8 +164,8 @@ module TNetwork
 		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
 		TEventEngineDependencyTree getParsedTree();
 
-		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
-		boolean transferResults(in TResultsCollector resultsCollector);
+		//boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
+		//boolean transferResults(in TResultsCollector resultsCollector);
 	};
 
 	interface TEventEngineScheduler
@@ -190,8 +187,8 @@ module TNetwork
     	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
     	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
 		
-		boolean transferResults(in TResultsCollector resultsCollector);
-		boolean getResults(in TShotID shotID, out TResultTicket results);
+		//boolean transferResults(in TResultsCollector resultsCollector);
+		//boolean getResults(in TShotID shotID, out TResultTicket results);
 
 		boolean ping();
 	};
@@ -229,19 +226,23 @@ module TNetwork
 
 	interface TPersistenceManager
 	{
-		boolean saveShot(in TShotID sid, in TEventEngine eventEngine);
-		boolean transferMeasurements(in TResultsCollector resultsCollector);
-		boolean getResultTicket(in TShotID sid, out TResultTicket ticket);
+		boolean getShot(in TShotID sid, out TShotResult shotResult);
+		boolean saveShot(in TShotID sid, in TShotResult shotResult, in boolean isOwner);
+		
+		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
+		//boolean getResultTicket(in TShotID sid, out TResultTicket ticket);
+
+		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
 
 		boolean ping();
 	};
 
-	interface TShotRepository
-	{
-		boolean findShot(in TShotID sid);
-		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
-		// TMeasurementSeq getMeasurements();
-	};
+	// interface TShotRepository
+	// {
+	// 	boolean findShot(in TShotID sid);
+	// 	boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
+	// 	// TMeasurementSeq getMeasurements();
+	// };
 
 	interface TDevice
 	{
