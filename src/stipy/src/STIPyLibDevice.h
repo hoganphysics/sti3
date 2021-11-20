@@ -7,6 +7,9 @@
 
 #include <string>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
+
 
 namespace STI
 {
@@ -35,7 +38,11 @@ public:
     std::shared_ptr<PyParseTicket> makeParseTicket(const STI::Engine::ParseID& pid);
     std::shared_ptr<PyResultTicket> makeResultTicket(const STI::Engine::ShotID& sid);
 
+    void waitForConnection();
+
 private:
+
+    void connectToServer();
 
     std::shared_ptr<PyParseTicketManager> parseTicketManager;
     std::shared_ptr<PyResultTicketManager> resultTicketManager;
@@ -64,6 +71,10 @@ private:
 
     STI::Network::HubID serverHubID;
     const STI::Device::DeviceID serverID;
+
+    mutable std::mutex connectionMutex;
+    mutable std::condition_variable connectionCondition;
+    bool connected;
 
 };
 

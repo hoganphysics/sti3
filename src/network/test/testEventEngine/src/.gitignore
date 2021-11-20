@@ -1,3 +1,4 @@
 testEventEngine
 tmp/
 *.so.3.0.0
+.sti/

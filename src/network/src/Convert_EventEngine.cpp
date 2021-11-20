@@ -558,8 +558,9 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
 
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
 
-        tEngineJob.shot = tShot;
     }
+
+    tEngineJob.shot = tShot;
 
     std::shared_ptr<EventEngineDependencyTree> tree;
     

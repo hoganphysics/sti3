@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 	analogin->getEngineScheduler(scheduler);
 
 	STI::Engine::ShotConfig shotConfig;
-	shotConfig.shotType = STI::Engine::ShotConfig::ShotType::Single;
+	shotConfig.shotType = STI::Engine::ShotType::Single;
 	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
 
 	STI::Engine::RawEvent evt0(analogin->getID(), 0, 0, 12.0, "", 0, STI::Engine::RawEventType::Measurement);

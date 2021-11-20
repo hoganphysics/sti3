@@ -100,12 +100,18 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
     bool success = false;
     STI::Engine::ParseID pid;
 
+    std::cout << "parse" << std::endl;
+
     if (getScheduler(scheduler) && pyShot != 0) {
         pid = scheduler->parse(pyShot->getShot());
         success = true;
     }
+
+    std::cout << "parse = " << success << std::endl;
     
     auto ticket = libDevice->makeParseTicket(pid);
+
+    std::cout << "parse ticket " << (ticket->getStatus() == STI::Engine::Ticket::TicketStatus::Canceled) << std::endl;
 
     if (!success && ticket != 0) {
         ticket->cancel();

@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv)
 {
-	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.2:2809");
+	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 //    hub->getPersistenceOptions().bindToRootContext = false;
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
 

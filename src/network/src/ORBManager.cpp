@@ -112,6 +112,7 @@ public:
 
 bool ORBManager::orb_initialized = false;
 std::shared_ptr<ORBManager> ORBManager::instance = 0;
+std::mutex ORBManager::orbInitMutex = std::mutex();
 
 std::shared_ptr<ORBManager> ORBManager::getInstance(const std::string& nameServiceIP, const std::string& args)
 {

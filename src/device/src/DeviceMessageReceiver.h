@@ -31,6 +31,13 @@ public:
 	~DeviceMessageReceiver();
 
 	template<typename T>
+	void addListener(const DeviceID& sourceDeviceID, const std::string& listenerName, 
+		const std::function<void (const std::shared_ptr<T>&)>& handler)
+	{
+		addListener(sourceDeviceID, DeviceMessageListenerID(T::getMessageClassType(), listenerName), handler);
+	}
+
+	template<typename T>
 	void addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
 		const std::function<void (const std::shared_ptr<T>&)>& handler)
 	{

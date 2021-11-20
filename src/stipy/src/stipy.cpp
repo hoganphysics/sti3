@@ -74,6 +74,8 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
     hub->addDevice(stipydev);
     hub->run(false);
 
+    stipydev->waitForConnection();
+
     auto server = std::make_shared<STIPyServer>(hub, stipydev, serverID);
     return server;
 }

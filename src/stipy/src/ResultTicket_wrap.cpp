@@ -14,6 +14,7 @@ void init_ResultTicket(py::module& m)
 
         .def("wait", &STI::Python::PyResultTicket::wait)
         .def("cancel", &STI::Python::PyResultTicket::cancel)
+        .def("getStatus", &STI::Python::PyResultTicket::getStatus)
         ;
 
 }

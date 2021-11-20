@@ -170,6 +170,8 @@ void testServer();
 
 int main(int argc, char **argv)
 {
+	testDevice();
+	
 	int select;
 	std::cout << "(1) Server, (2) Device: ";
 	std::cin >> select;
@@ -208,10 +210,10 @@ void testDevice()
 	// int x;
 	// std::cin >> x;
 
-	STI::Engine::ParseID pid;
+	//STI::Engine::ParseID pid;
 	// pid.parseTimestamp.timestamp = 1.1;
 
-	std::vector<STI::Engine::EngineParsingMessage> messages;
+	//std::vector<STI::Engine::EngineParsingMessage> messages;
 
 
 	// //check remote access
@@ -241,9 +243,8 @@ void testServer()
 	dev4->tmp();
 
 
-	STI::Engine::ParseID pid0;
-	// pid0.parseTimestamp.timestamp = 1.1;
-	auto shot0 = std::make_shared<STI::Engine::LocalShot>();
+	STI::Engine::ShotConfig shotConfig0;
+	auto shot0 = std::make_shared<STI::Engine::LocalShot>(shotConfig0);
 	STI::Utils::MixedValue value0;
 	value0.setValue(28.0);
 	auto evt0 = STI::Engine::RawEvent(dev1->getID(), 2.01, 1, value0, "desc", 0, STI::Engine::RawEventType::Play);
@@ -287,9 +288,8 @@ void testServer()
 
 	//dev3->addEventTarget(dev1->getID());
 
-	STI::Engine::ParseID pid;
-	// pid.parseTimestamp.timestamp = 1.1;
-	auto shot = std::make_shared<STI::Engine::LocalShot>();
+	STI::Engine::ShotConfig shotConfig;
+	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
 
 	STI::Utils::MixedValue value;
 	value.setValue(27.0);
@@ -314,7 +314,7 @@ void testServer()
 
 	std::cin >> x;
 	
-	scheduler->parse(pid, shot);
+	STI::Engine::ParseID pid = scheduler->parse(shot);
 
 //	hub2->addNode(dev3->id, dev3);
 //	hub2->addNode(dev4->id, dev4);
@@ -331,17 +331,16 @@ void testServer()
 	std::shared_ptr<STI::Device::Device> server;
 	std::shared_ptr<STI::Engine::EventEngineScheduler> remoteScheduler;
 	dev4->getCollection(dcollection);
-	dcollection->get(dev1->getID(), server);
-	server->getEngineScheduler(remoteScheduler);
+	
+	if (dcollection->get(dev1->getID(), server) && server != 0) {
+		server->getEngineScheduler(remoteScheduler);
 
-	messages.clear();
-	remoteScheduler->getParsingMessages(pid, messages);
+		messages.clear();
+		remoteScheduler->getParsingMessages(pid, messages);
+	}
+	
 
-	STI::Engine::ShotID shotID;
-	shotID.parseID = pid;
-	// shotID.submissionTime.timestamp = 3.1;
-
-	scheduler->play(shotID);
+	STI::Engine::ShotID shotID = scheduler->play(pid, pid.shotConfig.jobSourceID);
 
 	std::cin >> x;
 
