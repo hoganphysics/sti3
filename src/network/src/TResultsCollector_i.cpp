@@ -52,20 +52,6 @@ TShotID* TResultsCollector_i::getShotID()
 	return tShotID._retn();
 }
 
-TEventEngineDependencyTree* TResultsCollector_i::getDependencies()
-{
-    // std::shared_ptr<ParsedDependencyTree> tree;
-
-	STI::TNetwork::TEventEngineDependencyTree_var tTree(new STI::TNetwork::TEventEngineDependencyTree);
-
-	if(resultsCollector != 0) {
-        auto tree = resultsCollector->getDependencies();
-        convert<std::shared_ptr<Engine::ParsedDependencyTree>, STI::TNetwork::TEventEngineDependencyTree>(tree, tTree);
-	}
-
-	return tTree._retn();   
-}
-
 void TResultsCollector_i::addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents)
 {
     if (resultsCollector != 0) {

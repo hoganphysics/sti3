@@ -11,7 +11,7 @@
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkFileHolder.h"
 #include "PersistenceManager.h"
-#include "NetworkShotRepositoryWrapper.h"
+// #include "NetworkShotRepositoryWrapper.h"
 
 #include <memory>
 
@@ -44,10 +44,10 @@ public:
 		auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
 		persistenceManager->setFileHolderFactory(networkFileHolderFactory);
 
-		std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
-		persistenceManager->getShotRepository(shotRepo);
-		auto networkShotRepository = std::make_shared<STI::Network::NetworkShotRepositoryWrapper>(shotRepo);
-		persistenceManager->setShotRepository(shotRepo);
+		// std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
+		// persistenceManager->getShotRepository(shotRepo);
+		// auto networkShotRepository = std::make_shared<STI::Network::NetworkShotRepositoryWrapper>(shotRepo);
+		// persistenceManager->setShotRepository(shotRepo);
 
 		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(
 				getID(), channels, attributeManager, dispatcher, deviceCollection, persistenceManager);
@@ -93,11 +93,9 @@ public:
 		}
 	}
 
-	void getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
+	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 	{
-		if (localDevice != 0) {
-			localDevice->getPersistenceManager(manager);
-		}
+		return localDevice != 0 && localDevice->getPersistenceManager(manager);
 	}
 
 	const STI::Device::DeviceID getID() const 
@@ -134,13 +132,6 @@ private:
 			localDevice->attachMessageListenerForwarder(forwarder);
 		}
 	}
-
-	// bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
-	// {
-	// 	tDevice = deviceServant._this();
-		
-	// 	return !CORBA::is_nil(tDevice);
-	// }
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice)
 	{

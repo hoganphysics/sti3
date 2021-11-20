@@ -22,16 +22,13 @@ public:
     ~RemotePersistenceManager();
 
     bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
-    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
+    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner);
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
 
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
-
-    void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo) {}
-    bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo) { return false; }
 
     bool ping() const;
 

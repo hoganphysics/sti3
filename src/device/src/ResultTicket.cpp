@@ -69,7 +69,7 @@ void ResultTicket::loadMeasurements()
         return;
     }
     
-    if (persistenceManager->getMeasurements(sid, measurements_)) {
+    if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements_)) {
         measurements_loaded = true;
         return;
     }

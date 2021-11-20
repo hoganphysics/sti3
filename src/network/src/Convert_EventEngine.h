@@ -38,6 +38,10 @@ class Measurement;
 class EngineParsingMessage;
 enum class ParsingMessageType;
 
+class ShotResultRecord;
+enum class ShotType;
+enum class RecordStatus;
+
 } //Engine
 
 
@@ -162,11 +166,36 @@ bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const 
 
 
 
+
+//TShotConfig
+template<>
+TNetwork::TShotConfig Network::convert<Engine::ShotConfig, TNetwork::TShotConfig>(const Engine::ShotConfig& shotConfig);
+template<>
+Engine::ShotConfig Network::convert<TNetwork::TShotConfig, Engine::ShotConfig>(const TNetwork::TShotConfig& tShotConfig);
+
+//TRecordStatus
+template<>
+TNetwork::TRecordStatus Network::convert<Engine::RecordStatus, TNetwork::TRecordStatus>(const Engine::RecordStatus& recordStatus);
+template<>
+Engine::RecordStatus Network::convert<TNetwork::TRecordStatus, Engine::RecordStatus>(const TNetwork::TRecordStatus& tRecordStatus);
+
+//TShotResultRecord
+template<>
+TNetwork::TShotResultRecord Network::convert<Engine::ShotResultRecord, TNetwork::TShotResultRecord>(const Engine::ShotResultRecord& shotResultRecord);
+template<>
+Engine::ShotResultRecord Network::convert<TNetwork::TShotResultRecord, Engine::ShotResultRecord>(const TNetwork::TShotResultRecord& tShotResultRecord);
+
+template<>
+bool Network::convert<Engine::ShotResultRecord, TNetwork::TShotResultRecord>(const Engine::ShotResultRecord& shotResultRecord, TNetwork::TShotResultRecord& tShotResultRecord);
+template<>
+bool Network::convert<TNetwork::TShotResultRecord, Engine::ShotResultRecord>(const TNetwork::TShotResultRecord& tShotResultRecord, Engine::ShotResultRecord& shotResultRecord);
+
+
 //ShotType
 template<>
-TNetwork::TShotType Network::convert<Engine::ParseID::ShotType, TNetwork::TShotType>(const Engine::ParseID::ShotType& shotType);
+TNetwork::TShotType Network::convert<Engine::ShotType, TNetwork::TShotType>(const Engine::ShotType& shotType);
 template<>
-Engine::ParseID::ShotType Network::convert<TNetwork::TShotType, Engine::ParseID::ShotType>(const TNetwork::TShotType& tShotType);
+Engine::ShotType Network::convert<TNetwork::TShotType, Engine::ShotType>(const TNetwork::TShotType& tShotType);
 
 
 //ParseID
@@ -174,6 +203,11 @@ template<>
 TNetwork::TParseID Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID& pid);
 template<>
 Engine::ParseID Network::convert<TNetwork::TParseID, Engine::ParseID>(const TNetwork::TParseID& tpid);
+
+template<>
+bool Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID& pid, TNetwork::TParseID& tpid);
+template<>
+bool Network::convert<TNetwork::TParseID, Engine::ParseID>(const TNetwork::TParseID& tpid, Engine::ParseID& pid);
 
 //ShotID
 template<>
@@ -187,12 +221,11 @@ template<>
 bool Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid, Engine::ShotID& sid);
 
 
-
 //Shot
 template<>
-bool Network::convert<TNetwork::TShot_ptr, std::shared_ptr<Engine::Shot>>(const TNetwork::TShot_ptr& tShot, std::shared_ptr<Engine::Shot>& shot);
+bool Network::convert<TNetwork::TShot, std::shared_ptr<Engine::Shot>>(const TNetwork::TShot& tShot, std::shared_ptr<Engine::Shot>& shot);
 template<>
-bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TShot_ptr>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TShot_ptr& tShot);
+bool Network::convert<std::shared_ptr<Engine::Shot>, TNetwork::TShot>(const std::shared_ptr<Engine::Shot>& shot, TNetwork::TShot& tShot);
 
 
 

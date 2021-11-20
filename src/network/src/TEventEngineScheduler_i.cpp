@@ -10,10 +10,10 @@
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
-#include "Convert_ResultTicket.h"
 #include "Shot.h"
 #include "RawEvent.h"
 #include "RemoteResultsCollector.h"
+#include "ShotID.h"
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
@@ -38,6 +38,12 @@ using ::STI::TNetwork::TEngineJobID;
 using STI::Engine::EventEngineJobType;
 using STI::Engine::EventEngineJob;
 using STI::Engine::Shot;
+using ::STI::TNetwork::TEngineJobStatus;
+using ::STI::TNetwork::TParseID;
+using ::STI::TNetwork::TShotID;
+using STI::Engine::ParseID;
+using STI::Engine::ShotID;
+
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -51,23 +57,57 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-void TEventEngineScheduler_i::parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TShot_ptr shot)
+TParseID* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
 {
-	std::shared_ptr<Shot> parsedShot;
-	bool success = convert<::STI::TNetwork::TShot_ptr, std::shared_ptr<Shot>>(shot, parsedShot);
-    
-	if (engineScheduler != 0 ) {	//&& success
+	STI::TNetwork::TParseID_var tParseID(new STI::TNetwork::TParseID);
 
-		engineScheduler->parse(convert<TParseID, STI::Engine::ParseID>(parseID), parsedShot);
+	std::shared_ptr<Shot> parsedShot;
+	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
+    
+	if (engineScheduler != 0) {
+		auto pid = engineScheduler->parse(parsedShot);
+		convert<ParseID, TParseID>(pid, tParseID.inout());
 	}
+
+	return tParseID._retn();
 }
 
-void TEventEngineScheduler_i::play(const ::STI::TNetwork::TShotID& shotID)
-{
-    if (engineScheduler != 0) {
 
-		engineScheduler->play(convert<TShotID, STI::Engine::ShotID>(shotID));
+TShotID* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJobSourceID& source)
+{
+	STI::TNetwork::TShotID_var tShotID(new STI::TNetwork::TShotID);
+
+    if (engineScheduler != 0) {
+		auto sid = engineScheduler->play(convert<TParseID, STI::Engine::ParseID>(parseID), 
+										 convert<TEngineJobSourceID, STI::Engine::EngineJobSourceID>(source));
+		convert<ShotID, TShotID>(sid, tShotID.inout());
 	}
+
+	return tShotID._retn();
+}
+
+
+TEngineJobStatus TEventEngineScheduler_i::getStatusPID(const ::STI::TNetwork::TParseID& pid)
+{
+	TEngineJobStatus tStatus;
+
+	if (engineScheduler != 0) {
+		auto status = engineScheduler->getStatus(convert<TParseID, STI::Engine::ParseID>(pid));
+		convert<STI::Engine::EngineJobStatus, TEngineJobStatus>(status, tStatus);
+	}
+	return tStatus;
+}
+
+
+TEngineJobStatus TEventEngineScheduler_i::getStatusSID(const ::STI::TNetwork::TShotID& sid)
+{
+	TEngineJobStatus tStatus;
+
+	if (engineScheduler != 0) {
+		auto status = engineScheduler->getStatus(convert<TShotID, STI::Engine::ShotID>(sid));
+		convert<STI::Engine::EngineJobStatus, TEngineJobStatus>(status, tStatus);
+	}
+	return tStatus;
 }
 
 

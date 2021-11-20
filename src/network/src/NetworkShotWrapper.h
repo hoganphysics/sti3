@@ -4,7 +4,7 @@
 #include "Shot.h"
 #include "TShotRefInterface.h"
 
-#include "TShot_i.h"
+#include "TShotEventsCallback_i.h"
 #include "deviceNet.h"
 
 #include <vector>
@@ -22,14 +22,21 @@ class NetworkShotWrapper : public STI::Engine::Shot,
 {
 public:
 
-
     NetworkShotWrapper(const std::shared_ptr<STI::Engine::Shot>& shot)
     : localshot(shot), parsedShotServant(shot)
     {
+        if (localshot != 0) {
+            shotConfig = localshot->getShotConfig();
+        }
     }
 
     ~NetworkShotWrapper()
     {
+    }
+
+    STI::Engine::ShotConfig& getShotConfig()
+    {
+        return shotConfig;
     }
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
@@ -41,29 +48,16 @@ public:
 
 private:
 
-    bool getTShotReference(STI::TNetwork::TShot_ptr& tShot)
+    bool getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback)
     {
-        tShot = parsedShotServant._this();
-        return !CORBA::is_nil(tShot);
+        tShotCallback = parsedShotServant._this();
+        return !CORBA::is_nil(tShotCallback);
     }
 
-	// static bool getTShotReference(
-	// 	const typename std::shared_ptr<STI::Engine::Shot>& shot, 
-    //     STI::TNetwork::TShot_ptr& tShot)
-	// {
-	// 	auto wrapper = std::dynamic_pointer_cast<NetworkShotWrapper>(shot);
-	// 	if (wrapper) {
-	// 		tShot = wrapper->parsedShotServant._this();
-	// 		return !CORBA::is_nil(tShot);
-	// 	}
-	// 	return false;
-	// }
-
-
+    STI::Engine::ShotConfig shotConfig;
 
     std::shared_ptr<STI::Engine::Shot> localshot;
-//    ::STI::TNetwork::TShot_var _tShot;		//remote reference
-    STI::TNetwork::TShot_i parsedShotServant;
+    STI::TNetwork::TShotEventsCallback_i parsedShotServant;
 
 };
 

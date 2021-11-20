@@ -24,6 +24,8 @@
 #include "Measurement.h"
 #include "NetworkEventEngine.h"
 #include "RemoteEventEngine.h"
+#include "ShotConfig.h"
+#include "ShotResultRecord.h"
 
 
 #include <map>
@@ -62,7 +64,7 @@ using STI::Engine::TimeStamp;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;
-using STI::TNetwork::TShot_ptr;
+using STI::TNetwork::TShot;
 using STI::Engine::Shot;
 using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TEngineParsingMessage;
@@ -76,6 +78,15 @@ using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
 using STI::TNetwork::TMeasurement;
 using STI::Engine::Measurement;
+using STI::TNetwork::TShotType;
+using STI::Engine::ShotConfig; 
+using STI::TNetwork::TShotConfig;
+
+using STI::Engine::RecordStatus;
+using STI::TNetwork::TRecordStatus;
+using STI::Engine::ShotResultRecord;
+using STI::TNetwork::TShotResultRecord;
+using STI::Engine::ShotType;
 using STI::TNetwork::TShotType;
 
 
@@ -448,19 +459,19 @@ bool STI::Network::convert<EngineJobStatus, TEngineJobStatus>(const EngineJobSta
     switch (jobStatus)
     {
     case EngineJobStatus::New:
-        tJobStatus = TEngineJobStatus::New;
+        tJobStatus = TEngineJobStatus::JobNew;
         break;
     case EngineJobStatus::Running:
-        tJobStatus = TEngineJobStatus::Running;
+        tJobStatus = TEngineJobStatus::JobRunning;
         break;
     case EngineJobStatus::Completed:
-        tJobStatus = TEngineJobStatus::Completed;
+        tJobStatus = TEngineJobStatus::JobCompleted;
         break;
     case EngineJobStatus::Canceled:
-        tJobStatus = TEngineJobStatus::Canceled;
+        tJobStatus = TEngineJobStatus::JobCanceled;
         break;
     default:
-        tJobStatus = TEngineJobStatus::New;
+        tJobStatus = TEngineJobStatus::JobNew;
         break;
     }
     return true;
@@ -472,16 +483,16 @@ bool STI::Network::convert<TEngineJobStatus, EngineJobStatus>(const TEngineJobSt
     
     switch (tJobStatus)
     {
-    case TEngineJobStatus::New:
+    case TEngineJobStatus::JobNew:
         jobStatus = EngineJobStatus::New;
         break;
-    case TEngineJobStatus::Running:
+    case TEngineJobStatus::JobRunning:
         jobStatus = EngineJobStatus::Running;
         break;
-    case TEngineJobStatus::Completed:
+    case TEngineJobStatus::JobCompleted:
         jobStatus = EngineJobStatus::Completed;
         break;
-    case TEngineJobStatus::Canceled:
+    case TEngineJobStatus::JobCanceled:
         jobStatus = EngineJobStatus::Canceled;
         break;
     default:
@@ -536,9 +547,16 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null
 
     std::shared_ptr<Shot> shot;
-    STI::TNetwork::TShot_ptr tShot;
+    STI::TNetwork::TShot tShot;
+
+    // ::STI::TNetwork::TShotEventsCallback_var tShotCallback(new STI::TNetwork::TShotEventsCallback());
+    ::STI::TNetwork::TShotEventsCallback_ptr tShotCallback;
     
-    if (engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShot)) {
+    if (engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
+
+        tShot.shotEventsCallback = tShotCallback;
+
+        tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
 
         tEngineJob.shot = tShot;
     }
@@ -573,8 +591,10 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     {
     case EventEngineJobType::Parse:
         {
-        if (!CORBA::is_nil(tEngineJob.shot)) {
-            parsedShot = std::make_shared<STI::Network::RemoteShot>(tEngineJob.shot);
+        if (!CORBA::is_nil(tEngineJob.shot.shotEventsCallback)) {
+
+            parsedShot = std::make_shared<STI::Network::RemoteShot>(
+                convert<TShotConfig, ShotConfig>(tEngineJob.shot.shotConfig), tEngineJob.shot.shotEventsCallback);
         }
 
         tree = std::make_shared<EventEngineDependencyTree>();
@@ -721,21 +741,158 @@ bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEvents
 }
 
 
+
+
+//TShotConfig
+template<>
+TShotConfig STI::Network::convert<ShotConfig, TShotConfig>(const ShotConfig& shotConfig)
+{
+    TShotConfig tShotConfig;
+
+    tShotConfig.shotType = convert<ShotType, TShotType>(shotConfig.shotType);
+    tShotConfig.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(shotConfig.jobSourceID);
+
+    tShotConfig.targetEnginePool = static_cast<CORBA::Long>(shotConfig.targetEnginePool);
+
+    tShotConfig.file = convert<std::string, ::CORBA::String_member>(shotConfig.file);
+    tShotConfig.comment = convert<std::string, ::CORBA::String_member>(shotConfig.comment);
+
+    return tShotConfig;
+}
+
+template<>
+ShotConfig STI::Network::convert<TShotConfig, ShotConfig>(const TShotConfig& tShotConfig)
+{
+    ShotConfig shotConfig;
+
+    shotConfig.shotType = convert<TShotType, ShotType>(tShotConfig.shotType);
+    shotConfig.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tShotConfig.jobSourceID);
+
+    shotConfig.targetEnginePool = static_cast<int>(tShotConfig.targetEnginePool);
+
+    shotConfig.file = convert<::CORBA::String_member, std::string>(tShotConfig.file);
+    shotConfig.comment = convert<::CORBA::String_member, std::string>(tShotConfig.comment);
+
+    return shotConfig;
+}
+
+//TRecordStatus
+template<>
+TRecordStatus STI::Network::convert<RecordStatus, TRecordStatus>(const RecordStatus& recordStatus)
+{
+    TRecordStatus tRecordStatus;
+
+    switch (recordStatus)
+    {
+    case RecordStatus::Unqueried:
+        tRecordStatus = TRecordStatus::TRecordUnqueried;
+        break;
+    case RecordStatus::Complete:
+        tRecordStatus = TRecordStatus::TRecordComplete;
+        break;
+    case RecordStatus::MissingDevice:
+        tRecordStatus = TRecordStatus::TRecordMissingDevice;
+        break;
+    case RecordStatus::MissingResults:
+        tRecordStatus = TRecordStatus::TRecordMissingResults;
+        break;
+    case RecordStatus::Error:
+        tRecordStatus = TRecordStatus::TRecordError;
+        break;
+    default:
+        tRecordStatus = TRecordStatus::TRecordError;
+        break;
+    }
+
+    return tRecordStatus;
+}
+
+template<>
+RecordStatus STI::Network::convert<TRecordStatus, RecordStatus>(const TRecordStatus& tRecordStatus)
+{
+    RecordStatus recordStatus;
+
+    switch (tRecordStatus)
+    {
+    case TRecordStatus::TRecordUnqueried:
+        recordStatus = RecordStatus::Unqueried;
+        break;
+    case TRecordStatus::TRecordComplete:
+        recordStatus = RecordStatus::Complete;
+        break;
+    case TRecordStatus::TRecordMissingDevice:
+        recordStatus = RecordStatus::MissingDevice;
+        break;
+    case TRecordStatus::TRecordMissingResults:
+        recordStatus = RecordStatus::MissingResults;
+        break;
+    case TRecordStatus::TRecordError:
+        recordStatus = RecordStatus::Error;
+        break;
+    default:
+        recordStatus = RecordStatus::Error;
+        break;
+    }
+
+    return recordStatus;
+}
+
+//TShotResultRecord
+template<>
+TShotResultRecord STI::Network::convert<ShotResultRecord, TShotResultRecord>(const ShotResultRecord& shotResultRecord)
+{
+    TShotResultRecord tShotResultRecord = convert<ShotResultRecord, TShotResultRecord>(shotResultRecord);
+
+    return tShotResultRecord;
+
+}
+
+template<>
+ShotResultRecord STI::Network::convert<TShotResultRecord, ShotResultRecord>(const TShotResultRecord& tShotResultRecord)
+{
+    ShotResultRecord shotResultRecord = convert<TShotResultRecord, ShotResultRecord>(tShotResultRecord);
+
+    return shotResultRecord;
+}
+
+template<>
+bool STI::Network::convert<ShotResultRecord, TShotResultRecord>(const ShotResultRecord& shotResultRecord, TShotResultRecord& tShotResultRecord)
+{
+    tShotResultRecord.deviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(shotResultRecord.deviceID);
+    tShotResultRecord.recordStatus = convert<RecordStatus, TRecordStatus>(shotResultRecord.recordStatus);
+
+    convert<ShotResultRecord, TShotResultRecord>(shotResultRecord.dependencies, tShotResultRecord.dependencies);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TShotResultRecord, ShotResultRecord>(const TShotResultRecord& tShotResultRecord, ShotResultRecord& shotResultRecord)
+{   
+    shotResultRecord.deviceID = convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tShotResultRecord.deviceID);
+    shotResultRecord.recordStatus = convert<TRecordStatus, RecordStatus>(tShotResultRecord.recordStatus);
+
+    convert<TShotResultRecord, ShotResultRecord>(tShotResultRecord.dependencies, shotResultRecord.dependencies);
+
+    return true;
+}
+
+
 //ShotType
 template<>
-TShotType STI::Network::convert<ParseID::ShotType, TShotType>(const ParseID::ShotType& shotType)
+TShotType STI::Network::convert<ShotType, TShotType>(const ShotType& shotType)
 {
     TShotType tShotType;
 
     switch (shotType)
     {
-    case ParseID::ShotType::Single:
+    case ShotType::Single:
         tShotType = TShotType::ShotTypeSingle;
         break;
-    case ParseID::ShotType::Sequence:
+    case ShotType::Sequence:
         tShotType = TShotType::ShotTypeSequence;
         break;
-    case ParseID::ShotType::SingleUndocumented:
+    case ShotType::SingleUndocumented:
         tShotType = TShotType::ShotTypeSingleUndocumented;
         break;      
     default:
@@ -747,23 +904,23 @@ TShotType STI::Network::convert<ParseID::ShotType, TShotType>(const ParseID::Sho
 }
 
 template<>
-ParseID::ShotType STI::Network::convert<TShotType, ParseID::ShotType>(const TShotType& tShotType)
+ShotType STI::Network::convert<TShotType, ShotType>(const TShotType& tShotType)
 {
-    ParseID::ShotType shotType;
+    ShotType shotType;
 
     switch (tShotType)
     {
     case TShotType::ShotTypeSingle:
-        shotType = ParseID::ShotType::Single;
+        shotType = ShotType::Single;
         break;
     case TShotType::ShotTypeSequence:
-        shotType = ParseID::ShotType::Sequence;
+        shotType = ShotType::Sequence;
         break;
     case TShotType::ShotTypeSingleUndocumented:
-        shotType = ParseID::ShotType::SingleUndocumented;
+        shotType = ShotType::SingleUndocumented;
         break;      
     default:
-        shotType = ParseID::ShotType::Single;
+        shotType = ShotType::Single;
         break;
     }
 
@@ -778,12 +935,7 @@ TParseID STI::Network::convert<ParseID, TParseID>(const ParseID& pid)
     TParseID tParseID;
 
     tParseID.parseTimestamp = convert<TimeStamp, TTimeStamp>(pid.parseTimestamp);
-    tParseID.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(pid.jobSourceID);
-    tParseID.file = convert<std::string, ::CORBA::String_member>(pid.file);
-    tParseID.comment = convert<std::string, ::CORBA::String_member>(pid.comment);
-    tParseID.shotType = convert<ParseID::ShotType, TShotType>(pid.shotType);
-    tParseID.targetEnginePool = static_cast<CORBA::Long>(pid.targetEnginePool);
-
+    tParseID.shotConfig = convert<ShotConfig, TShotConfig>(pid.shotConfig);
 
     return tParseID;
 }
@@ -794,13 +946,24 @@ ParseID STI::Network::convert<TParseID, ParseID>(const TParseID& tpid)
     ParseID parseID;
 
     parseID.parseTimestamp = convert<TTimeStamp, TimeStamp>(tpid.parseTimestamp);
-    parseID.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tpid.jobSourceID);
-    parseID.file = convert<::CORBA::String_member, std::string>(tpid.file);
-    parseID.comment = convert<::CORBA::String_member, std::string>(tpid.comment);
-    parseID.shotType = convert<TShotType, ParseID::ShotType>(tpid.shotType);
-    parseID.targetEnginePool = static_cast<int>(tpid.targetEnginePool);
+    parseID.shotConfig = convert<TShotConfig, ShotConfig>(tpid.shotConfig);
 
     return parseID;
+}
+
+
+template<>
+bool STI::Network::convert<ParseID, TParseID>(const ParseID& pid, TParseID& tpid)
+{
+    tpid = convert<ParseID, TParseID>(pid);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TParseID, ParseID>(const TParseID& tpid, ParseID& pid)
+{
+    pid = convert<TParseID, ParseID>(tpid);
+    return true;
 }
 
 
@@ -841,11 +1004,9 @@ template<>
 bool STI::Network::convert<ShotID, TShotID>(const ShotID& sid, TShotID& tsid)
 {
     tsid.parseID = convert<ParseID, TParseID>(sid.parseID);
+    tsid.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
 
     tsid.submissionTime = convert<TimeStamp, TTimeStamp>(sid.submissionTime);
-    tsid.playTime = convert<TimeStamp, TTimeStamp>(sid.playTime);
-    
-    tsid.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
 
     return true;
 }
@@ -854,11 +1015,9 @@ template<>
 bool STI::Network::convert<TShotID, ShotID>(const TShotID& tsid, ShotID& sid)
 {
     sid.parseID = convert<TParseID, ParseID>(tsid.parseID);
+    sid.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
 
     sid.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
-    sid.playTime = convert<TTimeStamp, TimeStamp>(tsid.playTime);
-    
-    sid.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
 
     return true;
 }
@@ -919,36 +1078,38 @@ EngineJobSourceID STI::Network::convert<TEngineJobSourceID, EngineJobSourceID>(c
 }
 
 
-
-
 template<>
-bool STI::Network::convert<TShot_ptr, std::shared_ptr<Shot>>(const TShot_ptr& tShot, std::shared_ptr<Shot>& shot)
+bool STI::Network::convert<TShot, std::shared_ptr<Shot>>(const TShot& tShot, std::shared_ptr<Shot>& shot)
 {
     bool success = false;
 
-    std::shared_ptr<Shot> parsedShot;
-
-    if (!CORBA::is_nil(tShot)) {
-        shot = std::make_shared<STI::Network::RemoteShot>(tShot);
+    if (!CORBA::is_nil(tShot.shotEventsCallback)) {
+        
+        shot = std::make_shared<STI::Network::RemoteShot>(
+                    convert<TShotConfig, ShotConfig>(tShot.shotConfig), 
+                    tShot.shotEventsCallback);
+        
         success = (shot != 0);
     }
-
     return success;
 }
 
 
 template<>
-bool STI::Network::convert<std::shared_ptr<Shot>, TShot_ptr>(const std::shared_ptr<Shot>& shot, TShot_ptr& tShot)
+bool STI::Network::convert<std::shared_ptr<Shot>, TShot>(const std::shared_ptr<Shot>& shot, TShot& tShot)
 {
-    //std::shared_ptr<Shot> parsedShot;
-//    STI::TNetwork::TShot_ptr tShot;
-    
-    if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShot)) {
-        return !CORBA::is_nil(tShot);
+    ::STI::TNetwork::TShotEventsCallback_ptr tShotCallback;
+
+    if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
+
+        tShot.shotEventsCallback = tShotCallback;
+     
+        tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
+
+        return !CORBA::is_nil(tShot.shotEventsCallback);
     }
     return false;
 }
-
 
 
 //RawEventType

@@ -43,7 +43,7 @@ public:
     virtual ParseID parse(const std::shared_ptr<Shot>& shot) = 0;
     virtual ShotID play(const ParseID& parseID, const EngineJobSourceID& source) = 0;
 
-    virtual EngineJobStatus getStatus(const ParseID& sid) = 0;
+    virtual EngineJobStatus getStatus(const ParseID& pid) = 0;
     virtual EngineJobStatus getStatus(const ShotID& sid) = 0;
 
     virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 

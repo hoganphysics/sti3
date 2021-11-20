@@ -73,7 +73,12 @@ py::object ChannelManagerPy::readChannelPy(short channel, const pybind11::object
     return py::none();
 }
 
-
+void ChannelManagerPy::stop()
+{
+    if (channelManager != 0) {
+        channelManager->stop();
+    }
+}
 
 
 // bool ChannelManagerPy::writeChannelPy(short channel, const MixedValuePy& value)

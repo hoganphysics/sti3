@@ -1,5 +1,5 @@
 
-#include "TShot_i.h"
+#include "TShotEventsCallback_i.h"
 
 #include "ORBManager.h"
 #include "RawEvent.h"
@@ -10,21 +10,21 @@
 #include <vector>
 #include <memory>
 
-using STI::TNetwork::TShot_i;
+using STI::TNetwork::TShotEventsCallback_i;
 using STI::Network::convert;
 
 
-TShot_i::TShot_i(const std::shared_ptr<STI::Engine::Shot>& shot)
+TShotEventsCallback_i::TShotEventsCallback_i(const std::shared_ptr<STI::Engine::Shot>& shot)
 : localShot(shot)
 {
 }
 
-TShot_i::~TShot_i()
+TShotEventsCallback_i::~TShotEventsCallback_i()
 {
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-void TShot_i::getEvents(::STI::TNetwork::TRawEventSeq_out events)
+void TShotEventsCallback_i::getEvents(::STI::TNetwork::TRawEventSeq_out events)
 {
     // if (localShot != 0) {
     //     std::shared_ptr<STI::Engine::RawEventVector> evts;

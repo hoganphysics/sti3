@@ -32,8 +32,18 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 {
     addPartner(serverID);
 
-    parseTicketManager = std::make_shared<PyParseTicketManager>();
-    resultTicketManager = std::make_shared<PyResultTicketManager>();
+    std::shared_ptr<Device> server;
+    bool connected = getServer(server);
+    
+    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+    std::shared_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
+    if (connected && server != 0) {
+        server->getPersistenceManager(persistenceManager);
+        server->getEngineScheduler(eventEngineScheduler);
+    }
+
+    parseTicketManager = std::make_shared<PyParseTicketManager>(eventEngineScheduler);
+    resultTicketManager = std::make_shared<PyResultTicketManager>(persistenceManager, eventEngineScheduler);
 
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
@@ -80,41 +90,14 @@ bool STIPyLibDevice::getServer(std::shared_ptr<Device>& server)
 
 std::shared_ptr<PyParseTicket> STIPyLibDevice::makeParseTicket(const STI::Engine::ParseID& pid)
 {
-    std::shared_ptr<Device> server;
-    bool connected = getServer(server);
-
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-
-    bool success = false;
-    if (connected && server != 0 && server->getEngineScheduler(scheduler)) {
-        success = (scheduler != 0);
-    }
-
-    auto ticket = parseTicketManager->makeTicket(pid, scheduler);   //ok even if scheduler is null
-    
-    if (!success && ticket != 0) {
-        ticket->cancel();
-    }
+    auto ticket = parseTicketManager->makeTicket(pid);
     return ticket;
 }
 
 
 std::shared_ptr<PyResultTicket> STIPyLibDevice::makeResultTicket(const STI::Engine::ShotID& sid)
 {
-    std::shared_ptr<Device> server;
-    bool connected = getServer(server);
-    
-    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
-    if (connected) {
-        server->getPersistenceManager(persistenceManager);       
-    }
-
-    auto ticket = resultTicketManager->makeTicket(sid, persistenceManager);
-
-    if (persistenceManager == 0 || !connected) {
-        ticket->cancel();
-    }
-
+    auto ticket = resultTicketManager->makeTicket(sid);
     return ticket;
 }
 

@@ -3,7 +3,7 @@
 #include "ORBManager.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
-#include "Convert_ResultTicket.h"
+#include "Convert_ShotResult.h"
 #include "PersistenceManager.h"
 #include "ShotResultRecord.h"
 
@@ -52,7 +52,8 @@ TPersistenceManager_i::~TPersistenceManager_i()
 }
 
 
-::CORBA::Boolean TPersistenceManager_i::saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TShotResult& tShotResult, ::CORBA::Boolean isOwner)
+::CORBA::Boolean TPersistenceManager_i::saveShot(const ::STI::TNetwork::TShotID& sid, 
+												 const ::STI::TNetwork::TShotResult& tShotResult, ::CORBA::Boolean isOwner)
 {
 	std::shared_ptr<ShotResult> shotResult;
 	bool success = convert<::STI::TNetwork::TShotResult, std::shared_ptr<ShotResult>>(tShotResult, shotResult);
@@ -83,7 +84,7 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 		convert<ShotResultRecord, TShotResultRecord>(record, tShotResultRecord);
 	}
 	else {
-		record.recordStatus = ShotResultRecord::RecordStatus::Error;
+		record.recordStatus = STI::Engine::RecordStatus::Error;
 	}
 
 	return tShotResultRecord._retn();

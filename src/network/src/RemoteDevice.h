@@ -50,7 +50,6 @@ public:
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 
-
 private:
 
 	template<typename T>

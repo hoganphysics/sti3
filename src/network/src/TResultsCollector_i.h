@@ -21,7 +21,6 @@ public:
 	~TResultsCollector_i();
 
     TShotID* getShotID();
-    TEventEngineDependencyTree* getDependencies();
     void addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents);
     void addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& files);
     ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TMeasurementSeq& measurements);

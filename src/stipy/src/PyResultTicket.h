@@ -18,9 +18,9 @@ class PyResultTicket : public STI::Engine::ResultTicket
 public:
 
     PyResultTicket(const STI::Engine::ShotID& id, 
-                const std::shared_ptr<STI::Engine::ShotRepository>& shotRepository);
+                const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
     PyResultTicket(const STI::Engine::ShotID& id, 
-                const std::shared_ptr<STI::Engine::ShotRepository>& shotRepository, const TicketStatus& initialStatus);
+                const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, const TicketStatus& initialStatus);
 
 private:
 

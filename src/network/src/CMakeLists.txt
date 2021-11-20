@@ -59,7 +59,8 @@ add_library(stinetwork SHARED
     Convert_HubTrace.cpp
     Convert_DeviceTrace.cpp
     Convert_ResultsCollector.cpp
-    Convert_ResultTicket.cpp
+    Convert_ShotResult.cpp
+    #Convert_ResultTicket.cpp
     COSBindingNode.cpp
     deviceNet.cpp
     deviceNetDynSK.cpp
@@ -101,7 +102,7 @@ add_library(stinetwork SHARED
     TPersistenceManager_i.cpp
     TRefreshIndicator_i.cpp
     TResultsCollector_i.cpp
-    TShot_i.cpp
+    TShotEventsCallback_i.cpp
     #TShotRepository_i.cpp
     TTriggerCallback_i.cpp
 )

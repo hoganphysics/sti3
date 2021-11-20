@@ -100,10 +100,11 @@ module TNetwork
 		boolean ping();
 	};
 
-	interface TShot
+	interface TShotEventsCallback
 	{
 		void getEvents(out TRawEventSeq events);
 	};
+
 
 	interface TEventEngine;
 
@@ -138,7 +139,7 @@ module TNetwork
 	interface TResultsCollector
 	{
 		TShotID getShotID();
-		TEventEngineDependencyTree getDependencies();
+		//TEventEngineDependencyTree getDependencies();
 
 		void addEvents(in TDeviceEventsSeq parsedEvents);
 		void addTimingFiles(in TFileHolderSeq files);
@@ -170,8 +171,14 @@ module TNetwork
 
 	interface TEventEngineScheduler
 	{
-	    void parse(in TParseID parseID, in TShot shot);
-	    void play(in TShotID shotID);
+		TParseID parse(in TShot shot);
+		TShotID play(in TParseID parseID, in TEngineJobSourceID source);
+
+    	TEngineJobStatus getStatusPID(in TParseID pid);
+    	TEngineJobStatus getStatusSID(in TShotID sid);
+
+	    // void parse(in TParseID parseID, in TShot shot);
+	    // void play(in TShotID shotID);
 
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
                                 inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);

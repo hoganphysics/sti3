@@ -31,13 +31,13 @@ bool Network::convert<std::shared_ptr<Engine::ResultTicket>, TNetwork::TResultTi
         const std::shared_ptr<Engine::ResultTicket>& resultTicket, TNetwork::TResultTicket& tResultTicket);
 
 
-//ShotRepository
-template<>
-bool Network::convert<TNetwork::TShotRepository_var, std::shared_ptr<Engine::ShotRepository>>(
-        const TNetwork::TShotRepository_var& tShotRepository, std::shared_ptr<Engine::ShotRepository>& shotRepository);
-template<>
-bool Network::convert<std::shared_ptr<Engine::ShotRepository>, TNetwork::TShotRepository_var>(
-        const std::shared_ptr<Engine::ShotRepository>& shotRepository, TNetwork::TShotRepository_var& tShotRepository);
+// //ShotRepository
+// template<>
+// bool Network::convert<TNetwork::TShotRepository_var, std::shared_ptr<Engine::ShotRepository>>(
+//         const TNetwork::TShotRepository_var& tShotRepository, std::shared_ptr<Engine::ShotRepository>& shotRepository);
+// template<>
+// bool Network::convert<std::shared_ptr<Engine::ShotRepository>, TNetwork::TShotRepository_var>(
+//         const std::shared_ptr<Engine::ShotRepository>& shotRepository, TNetwork::TShotRepository_var& tShotRepository);
 
 
 //TicketStatus

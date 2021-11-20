@@ -10,37 +10,37 @@
 #include <iostream>
 
 using STI::Network::RemoteShot;
+using STI::Engine::ShotConfig;
 
 
-RemoteShot::RemoteShot(::STI::TNetwork::TShot_ptr shot)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>(shot, shotMutex)
-//	: _tShot(STI::TNetwork::TShot::_duplicate(shot))
+RemoteShot::RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotEventsCallback_ptr shotCallback)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotEventsCallback>(shotCallback, shotMutex), shotConfig(shotConfig)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
 	refreshRequired = true;
-
-	std::cout << "create RemoteShot()" << std::endl;
-
 }
 
 RemoteShot::~RemoteShot()
 {
 	disable();
-	std::cout << "~RemoteShot()" << std::endl;
 }
 
-bool RemoteShot::getTShotReference(STI::TNetwork::TShot_ptr& tShot)
+bool RemoteShot::getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
 	if (isDisabled()) return false;
 
-	tShot = STI::TNetwork::TShot::_duplicate(getTRef());
+	tShotCallback = STI::TNetwork::TShotEventsCallback::_duplicate(getTRef());
 
-	return !CORBA::is_nil(tShot);
+	return !CORBA::is_nil(tShotCallback);
 }
 
+ShotConfig& RemoteShot::getShotConfig()
+{
+	return shotConfig;
+}
 
 void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
 {

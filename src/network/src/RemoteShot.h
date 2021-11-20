@@ -3,6 +3,7 @@
 
 #include "deviceNet.h"
 
+#include "ShotConfig.h"
 #include "Shot.h"
 #include "TReferenceHolder.h"
 #include "TShotRefInterface.h"
@@ -17,26 +18,28 @@ namespace Network
 {
 
 class RemoteShot : public STI::Engine::Shot,
-                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TShot>,	//mixin
+                   public STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotEventsCallback>,	//mixin
                    public STI::Network::TShotRefInterface	//mixin
 {
 public:
 
-	RemoteShot(::STI::TNetwork::TShot_ptr shot);
+	RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotEventsCallback_ptr shotCallback);
     ~RemoteShot();
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events);
 
+    STI::Engine::ShotConfig& getShotConfig();
 
 
 private:
 
-    bool getTShotReference(STI::TNetwork::TShot_ptr& tShot);
+    bool getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback);
 
     void _refreshEvents();
     bool refreshRequired;
 
     std::shared_ptr<std::vector<STI::Engine::RawEvent>> storedEvents;
+    STI::Engine::ShotConfig shotConfig;
 
     //::STI::TNetwork::TShot_var _tShot;    //remote reference
     mutable std::mutex shotMutex;

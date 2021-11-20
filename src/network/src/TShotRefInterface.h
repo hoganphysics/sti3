@@ -19,18 +19,18 @@ public:
 
 	static bool getTShotReference(
 			const typename std::shared_ptr<STI::Engine::Shot>& shot, 
-		    STI::TNetwork::TShot_ptr& tShot)
+		    STI::TNetwork::TShotEventsCallback_ptr& tShotCallback)
 	{
 		auto refInterface = std::dynamic_pointer_cast<TShotRefInterface>(shot);
 		if (refInterface) {
-			return refInterface->getTShotReference(tShot);
+			return refInterface->getTShotReference(tShotCallback);
 		}
 		return false;
 	}
 
 private:
 
-	virtual bool getTShotReference(STI::TNetwork::TShot_ptr& tShot) = 0;
+	virtual bool getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback) = 0;
 
 // 	static bool getTShotReference(const typename std::shared_ptr<STI::Engine::Shot>& shot, STI::TNetwork::TShot_ptr& tShot)
 // 	{

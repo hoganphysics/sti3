@@ -10,6 +10,7 @@ using STI::Engine::ShotConfig;
 ShotConfig::ShotConfig()
 {
     targetEnginePool = 1;   //1=common shot pool, 0=async pool (readChannel/writeChannel)
+    shotType = ShotType::Single;
 }
 
 template<class Archive>

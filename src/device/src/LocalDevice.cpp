@@ -303,7 +303,7 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	STI::Engine::ShotConfig shotConfig;
 	shotConfig.targetEnginePool = 0;	//0=async pool
-	shotConfig.shotType = STI::Engine::ShotConfig::ShotType::SingleUndocumented;
+	shotConfig.shotType = STI::Engine::ShotType::SingleUndocumented;
 	shotConfig.jobSourceID.user = "<async play>";
 	shotConfig.jobSourceID.machine = getID().getAddress();
 	

@@ -21,8 +21,14 @@ public:
 	TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TEventEngineScheduler_i();
 
-    void parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TShot_ptr shot) ;
-    void play(const ::STI::TNetwork::TShotID& shotID);
+    TParseID* parse(const ::STI::TNetwork::TShot& shot);
+    TShotID* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
+    
+    TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid);
+    TEngineJobStatus getStatusSID(const ::STI::TNetwork::TShotID& sid);
+
+    // void parse(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TShot_ptr shot) ;
+    // void play(const ::STI::TNetwork::TShotID& shotID);
 
     void getDependants(const ::STI::TNetwork::TDeviceIDSeq& evtTargets, 
                         ::STI::TNetwork::TEventEngineDependencyTree& tree, 

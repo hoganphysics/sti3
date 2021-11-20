@@ -90,7 +90,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     ShotResultRecord record(localDeviceID);
 
     if (resultsCollector == 0) {
-        record.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::Error;
+        record.recordStatus = STI::Engine::RecordStatus::Error;
         return record;
     }
 
@@ -99,7 +99,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     if (!getShotLocal(resultsCollector->getShotID(), shotResult)) {
         //Shot not found. This means the data from the local device is not available, and 
         //there is no record of the list of dependent devices that this device owned for this shot.
-        record.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::MissingResults;
+        record.recordStatus = STI::Engine::RecordStatus::MissingResults;
         return record;
     }
 
@@ -113,7 +113,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     ShotResultRecord record(localDeviceID);
     
     if (resultsCollector == 0 || shotResult == 0) {
-        record.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::Error;
+        record.recordStatus = STI::Engine::RecordStatus::Error;
         return record;
     }
 
@@ -134,10 +134,10 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
 
     if (success) {
         //resultsCollector->markRecord(shotResult->);
-        record.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::Complete;
+        record.recordStatus = STI::Engine::RecordStatus::Complete;
     }
     else {
-        record.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::Error;
+        record.recordStatus = STI::Engine::RecordStatus::Error;
     }
 
 	std::shared_ptr<STI::Device::Device> device;
@@ -156,7 +156,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
 
             }
             else {
-                depRecord.recordStatus = STI::Engine::ShotResultRecord::RecordStatus::MissingDevice;
+                depRecord.recordStatus = STI::Engine::RecordStatus::MissingDevice;
             }
         }
 
@@ -304,7 +304,7 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     std::shared_ptr<STI::Engine::ShotRepository> repo;
     if (!getShotRepository(repo)) return false;
 
-    if (sid.parseID.shotConfig.shotType == STI::Engine::ShotConfig::ShotType::SingleUndocumented) {
+    if (sid.parseID.shotConfig.shotType == STI::Engine::ShotType::SingleUndocumented) {
         repo = transientRepository;
     }
 

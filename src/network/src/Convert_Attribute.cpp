@@ -7,6 +7,9 @@
 
 #include "NetworkConvert.h"
 
+#include <map>
+#include <string>
+
 using STI::Network::convert;
 using STI::Device::Attribute; 
 using STI::TNetwork::TAttribute;
@@ -77,3 +80,39 @@ std::shared_ptr<RemoteAttribute> STI::Network::convert<TAttribute, std::shared_p
 
     return remoteAttribute;
 }
+
+
+//Attribute Map
+template<>
+bool STI::Network::convert<std::map<std::string, std::string>, STI::TNetwork::TAttributeTupleSeq>(
+	const std::map<std::string, std::string>& attributeMap, STI::TNetwork::TAttributeTupleSeq& tAttributeMap)
+{
+    tAttributeMap.length(attributeMap.size());
+
+    unsigned i = 0;
+    for (auto& attribute : attributeMap) {
+        convert<std::string, ::CORBA::String_member>(attribute.first, tAttributeMap[i].key);
+        convert<std::string, ::CORBA::String_member>(attribute.second, tAttributeMap[i].value);
+        i++;
+    }
+    return true;
+}
+
+template<>
+bool STI::Network::convert<STI::TNetwork::TAttributeTupleSeq, std::map<std::string, std::string>>(
+	const STI::TNetwork::TAttributeTupleSeq& tAttributeMap, std::map<std::string, std::string>& attributeMap)
+{
+    attributeMap.clear();
+
+    for (unsigned i = 0; i < tAttributeMap.length(); ++i) {
+        attributeMap.insert( 
+            std::pair<std::string, std::string>(
+                convert<::CORBA::String_member, std::string>(tAttributeMap[i].key),
+                convert<::CORBA::String_member, std::string>(tAttributeMap[i].value)
+                )
+            );
+    }
+    return true;
+}
+
+

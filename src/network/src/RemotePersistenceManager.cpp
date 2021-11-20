@@ -3,7 +3,7 @@
 
 #include "Convert_ResultsCollector.h"
 #include "Convert_EventEngine.h"
-#include "Convert_ResultTicket.h"
+#include "Convert_ShotResult.h"
 #include "orbTypes.h"
 #include "NetworkResultsCollector.h"
 #include "RawEvent.h"
@@ -13,13 +13,15 @@ using STI::Network::RemotePersistenceManager;
 using STI::TNetwork::TReferenceHolder;
 using STI::Network::convert;
 using ::STI::TNetwork::TPersistenceManager;
-using STI::Engine::ResultTicket;
-using STI::TNetwork::TResultTicket;
 using STI::TNetwork::TEventEngine_ptr;
 using STI::Engine::ResultsCollector;
 using STI::Engine::EventEngine;
 using STI::TNetwork::TShotID;
 using STI::Engine::ShotID;
+using STI::Engine::ShotResultRecord;
+using STI::TNetwork::TShotResultRecord;
+using STI::Engine::ShotResult;
+using STI::TNetwork::TShotResult;
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
@@ -33,52 +35,21 @@ RemotePersistenceManager::~RemotePersistenceManager()
 
 bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
-
-}
-
-
-bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine)
-{
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
-	
-    if (isDisabled()) return false;
-    
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TShotResult_var tShotResult(new STI::TNetwork::TShotResult);
+
     bool success = false;
-   	STI::TNetwork::TEventEngine_var tEventEngine;
 
 	try {
 
-        success &= convert<std::shared_ptr<EventEngine>, STI::TNetwork::TEventEngine_var>(eventEngine, tEventEngine);
+		success = getTRef()->getShot(
+					convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), 
+					tShotResult);	//remote call
 
-        if (success) {
-    		success = getTRef()->saveShot(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), tEventEngine);	//remote call
-        }
-
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&) {
-	}
-
-    return success && (eventEngine != 0);
-}
-
-STI::Engine::ShotResultRecord RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
-{
-	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
-	
-    if (isDisabled()) return false;
-    
-    bool success = false;
-   	STI::TNetwork::TResultsCollector_var tResultsCollector;
-
-	try {
-
-        if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
-		    success = getTRef()->transferMeasurements(tResultsCollector);	//remote call            
-        }
+		convert<TShotResult, std::shared_ptr<ShotResult>>(tShotResult, result);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -88,6 +59,70 @@ STI::Engine::ShotResultRecord RemotePersistenceManager::transferResults(const st
 	}
 
     return success;
+}
+
+
+bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+	
+    if (isDisabled()) return false;
+    
+    bool success = false;
+   	STI::TNetwork::TShotResult tShotResult;
+
+	try {
+
+        success &= convert<std::shared_ptr<ShotResult>, TShotResult>(shotResult, tShotResult);
+
+        if (success) {
+    		success = getTRef()->saveShot(
+						convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), 
+						tShotResult,
+						static_cast<::CORBA::Boolean>(isOwner));	//remote call
+        }
+
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
+}
+
+
+STI::Engine::ShotResultRecord RemotePersistenceManager::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	ShotResultRecord record;
+	
+    if (isDisabled()) return record;
+    
+    bool success = false;
+   	STI::TNetwork::TResultsCollector_var tResultsCollector;
+
+	try {
+
+        if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
+		    auto tRecord = getTRef()->transferResults(tResultsCollector);	//remote call
+
+			if (tRecord != 0) {
+				record = convert<TShotResultRecord, ShotResultRecord>(*tRecord);
+			}
+        }
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return record;
 }
 
 bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)

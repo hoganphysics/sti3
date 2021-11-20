@@ -38,6 +38,17 @@ std::shared_ptr<Network::RemoteAttribute> Network::convert<TNetwork::TAttribute,
 
 
 
+//Attribute Map
+template<>
+bool Network::convert<std::map<std::string, std::string>, STI::TNetwork::TAttributeTupleSeq>(
+	const std::map<std::string, std::string>& attributeMap, STI::TNetwork::TAttributeTupleSeq& tAttributeMap);
+
+template<>
+bool Network::convert<STI::TNetwork::TAttributeTupleSeq, std::map<std::string, std::string>>(
+	const STI::TNetwork::TAttributeTupleSeq& tAttributeMap, std::map<std::string, std::string>& attributeMap);
+
+
+
 
 
 } //STI

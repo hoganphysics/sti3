@@ -1,5 +1,5 @@
-#ifndef STI_TNETWORK_TSHOT_I_H
-#define STI_TNETWORK_TSHOT_I_H
+#ifndef STI_TNETWORK_TSHOTEVENTSCALLBACK_I_H
+#define STI_TNETWORK_TSHOTEVENTSCALLBACK_I_H
 
 #include "Shot.h"
 #include "deviceNet.h"
@@ -11,12 +11,12 @@ namespace STI
 namespace TNetwork
 {
 
-class TShot_i : public POA_STI::TNetwork::TShot
+class TShotEventsCallback_i : public POA_STI::TNetwork::TShotEventsCallback
 {
 public:
 
-	TShot_i(const std::shared_ptr<STI::Engine::Shot>& shot);
-	~TShot_i();
+	TShotEventsCallback_i(const std::shared_ptr<STI::Engine::Shot>& shot);
+	~TShotEventsCallback_i();
 
     void getEvents(::STI::TNetwork::TRawEventSeq_out events);
 

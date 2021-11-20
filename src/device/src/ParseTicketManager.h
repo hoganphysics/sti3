@@ -50,6 +50,12 @@ std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID&
 {
     auto ticket = std::make_shared<T>(id, eventEngineScheduler);
 
+    if (eventEngineScheduler == 0) {
+        //not connected
+        ticket->cancel();
+        return ticket;
+    }
+
     TicketManager<STI::Engine::ParseID, T>::add(id, ticket);
 
     //The job could have completed before the ticket was created and added to the manager

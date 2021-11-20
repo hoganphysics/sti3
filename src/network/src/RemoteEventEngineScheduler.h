@@ -24,10 +24,12 @@ public:
     RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler);
     ~RemoteEventEngineScheduler();
 
-    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::Shot>& shot);
-    void play(const STI::Engine::ShotID& shotID);
+    STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::Shot>& shot);
+    STI::Engine::ShotID play(const STI::Engine::ParseID& parseID, const STI::Engine::EngineJobSourceID& source);
 
-    
+    STI::Engine::EngineJobStatus getStatus(const STI::Engine::ParseID& pid);
+    STI::Engine::EngineJobStatus getStatus(const STI::Engine::ShotID& sid);
+
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
                                 std::set<STI::Device::DeviceID>& missingTargets, std::vector<STI::Engine::EngineParsingMessage>& messages, 
                                 const STI::Device::DeviceTrace& trace);
@@ -46,7 +48,7 @@ public:
     //                                           const STI::Device::DeviceID& owner, 
     //                                           const std::set<STI::Device::DeviceID>& missingTargets);
 
-    std::shared_ptr<STI::Engine::Shot> createShot(const std::shared_ptr<STI::Engine::RawEventVector>& events);
+    std::shared_ptr<STI::Engine::Shot> createShot(const STI::Engine::ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventVector>& events);
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
@@ -54,9 +56,6 @@ public:
     bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
     bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParsedDependencyTree>& tree) const;
 	
-    bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
-    bool getResults(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ResultTicket>& results);
-
     bool ping() const;
 
 private:

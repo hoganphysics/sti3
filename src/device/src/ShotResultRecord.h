@@ -14,11 +14,12 @@ namespace Engine
 
 class ShotResultRecord;
 
+enum class RecordStatus { Unqueried, Complete, MissingDevice, MissingResults, Error };
+
+
 class ShotResultRecord
 {
-public:
-
-    enum class RecordStatus { Unqueried, Complete, MissingDevice, MissingResults, Error };
+public: 
 
     ShotResultRecord();
     ShotResultRecord(const STI::Device::DeviceID& deviceID) ;

@@ -169,27 +169,33 @@ module TNetwork
 
 	enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented };
 
-	struct TParseID
+
+	struct TShotConfig
 	{
-		TTimeStamp parseTimestamp;
+
+		TShotType shotType;
 		
 		TEngineJobSourceID jobSourceID;
 
-		TShotType shotType;
+		long targetEnginePool;
 
 		string file;
 		string comment;
-		long targetEnginePool;
+
+	};
+
+	struct TParseID
+	{
+		TTimeStamp parseTimestamp;
+		TShotConfig shotConfig;
 	};
 
 	struct TShotID
 	{
 		TParseID parseID;
-		
-		TTimeStamp submissionTime;
-		TTimeStamp playTime;
-
 		TEngineJobSourceID jobSourceID;
+
+		TTimeStamp submissionTime;
 	};
 
 	struct TEngineJobID
@@ -199,7 +205,15 @@ module TNetwork
     	TShotID sid;
 	};
 
-	interface TShot;
+	struct TShot;
+
+	interface TShotEventsCallback;
+
+	struct TShot
+	{
+		TShotConfig shotConfig;
+		TShotEventsCallback shotEventsCallback;		//getEvents()
+	};
 
 	struct TEventEngineJob
 	{
@@ -219,21 +233,21 @@ module TNetwork
 
 	interface TPersistenceManager;
 	
-	enum TTicketStatus { TicketRunning, TicketComplete, TicketCanceled, TicketNotFound };
+	//enum TTicketStatus { TicketRunning, TicketComplete, TicketCanceled, TicketNotFound };
 
-	struct TResultTicket
-	{
-		TShotID sid;
-		TTicketStatus status;
+	// struct TResultTicket
+	// {
+	// 	TShotID sid;
+	// 	TTicketStatus status;
 
-		TPersistenceManager persistenceManager;
+	// 	TPersistenceManager persistenceManager;
 
-		// string url;
-		// boolean hasURL;
+	// 	// string url;
+	// 	// boolean hasURL;
 
-		//TShotRepository repo;
-		//boolean hasRepo;
-	};
+	// 	//TShotRepository repo;
+	// 	//boolean hasRepo;
+	// };
 
 	//DeviceMessage *************************//
 
@@ -424,6 +438,7 @@ module TNetwork
 	struct TShotResult
 	{
 		TShotID sid;
+		TTimeStamp playTime;
 
 		TDeviceEventsSeq parsedEvents;
 		TFileHolderSeq timingFiles;

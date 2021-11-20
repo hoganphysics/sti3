@@ -25,8 +25,6 @@ public:
     ~RemoteResultsCollector();
 
     STI::Engine::ShotID getShotID() const;
-    std::shared_ptr<STI::Engine::ParsedDependencyTree> getDependencies();
-
     void addEvents(const STI::Engine::DeviceEventMap& parsedEvents);
     void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
     bool addMeasurements(const std::shared_ptr<STI::Engine::MeasurementVector>& measurements);

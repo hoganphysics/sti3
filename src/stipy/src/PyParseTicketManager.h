@@ -12,6 +12,9 @@ namespace Python
 
 class PyParseTicketManager : public STI::Engine::ParseTicketManager<PyParseTicket>
 {
+public:
+    PyParseTicketManager(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) 
+    : STI::Engine::ParseTicketManager<PyParseTicket>(scheduler) {}
 };
 
 

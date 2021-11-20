@@ -22,6 +22,8 @@ ShotConfig
 
 */
 
+enum class ShotType { Single, Sequence, SingleUndocumented };
+
 
 class ShotConfig
 {
@@ -29,7 +31,6 @@ public:
 
     ShotConfig();
 
-	enum class ShotType { Single, Sequence, SingleUndocumented };
 	ShotType shotType;
 
 	EngineJobSourceID jobSourceID;

@@ -22,7 +22,8 @@ class ResultTicketManager : public STI::Engine::TicketManager<STI::Engine::ShotI
                             public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
 {
 public:
-    ResultTicketManager(const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, const std::shared_ptr<EventEngineScheduler>& scheduler);
+    ResultTicketManager(const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, 
+                        const std::shared_ptr<EventEngineScheduler>& scheduler);
     virtual ~ResultTicketManager() {}
 
     std::shared_ptr<T> makeTicket(const STI::Engine::ShotID &id);
@@ -48,6 +49,12 @@ std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID 
     using STI::Engine::EngineJobStatus;
 
     auto ticket = std::make_shared<T>(id, persistenceManager);
+
+    if (persistenceManager == 0 || eventEngineScheduler == 0) {
+        //not connected
+        ticket->cancel();
+        return ticket;
+    }
 
     TicketManager<STI::Engine::ShotID, T>::add(id, ticket);
 

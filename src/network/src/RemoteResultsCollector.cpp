@@ -57,46 +57,6 @@ STI::Engine::ShotID RemoteResultsCollector::getShotID() const
     return sid;
 }
 
-
-std::shared_ptr<STI::Engine::ParsedDependencyTree> RemoteResultsCollector::getDependencies()
-{
-	std::unique_lock<std::mutex> collectorLock(collectorMutex);
-
-    std::shared_ptr<STI::Engine::ParsedDependencyTree> tree;
-
-    if (isDisabled()) {
-        auto emptyTree = std::make_shared<STI::Engine::EventEngineDependencyTree>();
-        tree = std::make_shared<STI::Engine::ParsedDependencyTree>(emptyTree);
-        return tree; //empty
-    }
-
-    bool success = false;
-
-	try {
-
-		auto tTree = getTRef()->getDependencies();	//remote call
-
-        if (tTree != 0) {
-            success = convert<TEventEngineDependencyTree, std::shared_ptr<STI::Engine::ParsedDependencyTree>>(*tTree, tree);           
-        }
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-
-    if (!success) {
-        auto emptyTree = std::make_shared<STI::Engine::EventEngineDependencyTree>();
-        tree = std::make_shared<STI::Engine::ParsedDependencyTree>(emptyTree);
-        return tree; //empty
-    }
-
-    return tree;
-}
-
 void RemoteResultsCollector::addEvents(const STI::Engine::DeviceEventMap& parsedEvents)
 {
 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
