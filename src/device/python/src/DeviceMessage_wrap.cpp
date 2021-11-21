@@ -43,7 +43,8 @@ void init_DeviceMessage(py::module& m)
 
 
     py::class_<RefreshDeviceMessage, DeviceMessage, std::shared_ptr<RefreshDeviceMessage>>(m, "RefreshDeviceMessage")
-        .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") );
+        .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") 
+        );
 
 
 }

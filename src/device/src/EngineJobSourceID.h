@@ -16,6 +16,8 @@ public:
 	std::string user;
 	std::string machine;
 
+	std::string print() const;
+
 	template<class Archive>
 	void serialize(Archive& archive);
 };

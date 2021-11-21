@@ -21,7 +21,7 @@ public:
 
     virtual ~Shot() {}
 
-    virtual ShotConfig& getShotConfig() = 0;
+    virtual const ShotConfig& getShotConfig() const = 0;
     virtual void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts) = 0;
 
 private:

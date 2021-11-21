@@ -27,6 +27,8 @@ public:
 	bool operator==(const ParseID& rhs) const { return parseTimestamp == rhs.parseTimestamp; }
 	bool operator!=(const ParseID& rhs) const { return !((*this) == rhs); }
 
+	std::string print() const;
+
 	template<class Archive>
 	void serialize(Archive& archive);
 };

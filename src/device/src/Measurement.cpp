@@ -2,6 +2,9 @@
 #include "Measurement.h"
 #include "RawEvent.h"
 #include "DeviceID.h"
+#include "utils.h"
+
+#include <sstream>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -12,6 +15,9 @@
 using STI::Engine::Measurement;
 using STI::Engine::RawEvent;
 using STI::Device::DeviceID;
+using STI::Utils::MixedValue;
+using STI::Utils::MixedValueType;
+
 
 Measurement::Measurement()
 {
@@ -80,6 +86,20 @@ const STI::Device::DeviceID& Measurement::device() const
 	return _device;
 }
 
+std::string Measurement::print() const
+{
+	std::stringstream meas;
+
+	//<Time=2.1, Channel=4, Type=Number, Value=3.4>
+	meas << "<Time=" << STI::Utils::printTimeFormated(time());
+	meas << ", Channel=" << channel();
+	meas << ", Type=";
+
+	meas << MixedValue::TypeToString(data().getType());
+	meas << ", Value=" << data().print() << ">";
+	
+	return meas.str();
+}
 
 template<class Archive>
 void Measurement::serialize(Archive& archive)

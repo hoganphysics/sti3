@@ -7,6 +7,8 @@
 #include "DeviceID.h"
 #include "utils/GraphPathLabel.h"
 
+#include <string>
+
 namespace STI
 {
 namespace Engine
@@ -37,6 +39,16 @@ public:
 	const STI::Device::DeviceID& device() const;
 
 	const std::vector<unsigned>& getMeasurementGraphPath() const { return measurementGraphPath; }
+
+	std::string print() const;
+
+	bool operator<(const Measurement& rhs) const { 
+		return time() < rhs.time() ||
+			( time() == rhs.time() && ( device() < rhs.device() || 
+			( device() == rhs.device() && channel() < rhs.channel() ) ) );
+	}
+	bool operator==(const Measurement& rhs) const { return measurementGraphPath == rhs.measurementGraphPath; }
+	bool operator!=(const Measurement& rhs) const { return !((*this) == rhs); }
 
 	template<class Archive>
 	void serialize(Archive& archive);

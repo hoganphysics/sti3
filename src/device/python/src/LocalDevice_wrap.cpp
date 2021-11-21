@@ -9,12 +9,16 @@
 #include "LocalAttribute.h"
 #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
-
+#include "PersistenceManagerPy.h"
+#include "EngineID.h"
+#include "SynchronousEventPy.h"
 
 #include <memory>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/cast.h>
+
 
 namespace py = pybind11;
 
@@ -26,6 +30,8 @@ namespace py = pybind11;
 using STI::Python::DevicePy;
 using STI::Python::LocalDevicePy;
 using STI::Python::LocalDevicePyTrampoline;
+using STI::Utils::MixedValueType;
+using STI::Device::ChannelType;
 
 // using STI::Python::Animal2;
 // using STI::Python::PyAnimal2;
@@ -52,31 +58,43 @@ void init_LocalDevice(py::module& m)
     //    .def(py::init<const std::shared_ptr<STI::Device::Device>&>())
         .def(py::init<>())
         .def("getID", &DevicePy::getID)
+        .def("kill", &DevicePy::kill)
         .def("getDeviceCollection", &DevicePy::getDeviceCollection)
+        .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)      
         .def("getEngineScheduler", &DevicePy::getEngineScheduler)
-        .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)
         .def("getChannelManager", &DevicePy::getChannelManager)
         .def("getAttributeManager", &DevicePy::getAttributeManager)
+        .def("getPersistenceManager", &DevicePy::getPersistenceManager)
         ;
 
     py::class_<LocalDevicePy, DevicePy, LocalDevicePyTrampoline, std::shared_ptr<LocalDevicePy>>(m, "LocalDevice") 
         //.def(py::init<>())
-         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
+        .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                      py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )
-         .def("writeChannel", &LocalDevicePy::writeChannel)
-         .def("readChannel", &LocalDevicePy::readChannel)
-         .def("addChannel", &LocalDevicePy::addChannel)
-         .def("addPartner", &LocalDevicePy::addPartner)
+        .def("write", &LocalDevicePy::write)
+        .def("read", &LocalDevicePy::read)
+        .def("writeChannel", &LocalDevicePy::writeChannel)
+        .def("readChannel", &LocalDevicePy::readChannel)
+        .def("stopRW", &LocalDevicePy::stopRW)
+        
+        .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents"))
+
+        .def("addChannel", 
+            py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
+            py::arg("channelNumber"), py::arg("type"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))
+        .def("addPartner", &LocalDevicePy::addPartner)
+        .def("addEventEngine", py::overload_cast<const STI::Engine::EngineID&>(&LocalDevicePy::addEventEngine), py::arg("engineID"))
+
         //  .def("addAttribute", &LocalDevicePy::addAttribute)
-         .def("addAttribute", 
+        .def("addAttribute", 
                 py::overload_cast<const std::string&, const std::string&>(&LocalDevicePy::addAttribute), 
                 py::return_value_policy::reference)
         //  .def("addAttribute", py::overload_cast<const std::string&, const std::string&, const pybind11::list&>(&LocalDevicePy::addAttribute))
-         .def("addAttribute", 
+        .def("addAttribute", 
                 py::overload_cast<const std::string&, const std::string&, const std::vector<std::string>&>(&LocalDevicePy::addAttribute), 
                 py::return_value_policy::reference)
-         .def("test2", &LocalDevicePy::test2)
-         ;
+        .def("test2", &LocalDevicePy::test2)
+        ;
 
 
 

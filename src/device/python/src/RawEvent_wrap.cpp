@@ -20,7 +20,7 @@ void init_RawEvent(py::module& m)
 
     py::enum_<RawEventType>(m, "RawEventType")
         .value("Play", RawEventType::Play)
-        .value("Measurement", RawEventType::Measurement)
+        .value("MeasurementEvent", RawEventType::Measurement)
         .value("Waveform", RawEventType::Waveform)
         .value("Pause", RawEventType::Pause)
         .value("Jump", RawEventType::Jump)

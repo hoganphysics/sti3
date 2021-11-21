@@ -129,8 +129,10 @@ std::vector<STI::Engine::RawEvent> STIPyShot::getEvents()
         return *events;
     }
     else {
-        auto nullEvts = std::make_shared<std::vector<STI::Engine::RawEvent>>();
-        return *nullEvts;
+        // auto nullEvts = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+        // return *nullEvts;
+        std::vector<STI::Engine::RawEvent> nullEvts;
+        return nullEvts;
     }
 }
 

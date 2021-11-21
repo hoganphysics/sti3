@@ -102,13 +102,28 @@ std::string makeUniquePath(const std::string& filename)
 
     fs::path trialPath = initialPath;
     unsigned n = 0;
+	
 
     while (fs::exists(trialPath)) {
         n++;
+		
+		std::string newFileName;
+		newFileName = initialPath.stem();
+		newFileName += "_";
+		newFileName += std::to_string(n);
+
+		// if (fs::is_directory(trialPath)) {
+
+		// }
+		// else {
+
+		// }
+
         trialPath = initialPath.parent_path();
-        trialPath /= initialPath.stem();
-        trialPath /= "_";
-        trialPath /= std::to_string(n);
+		trialPath /= newFileName;
+        // trialPath /= initialPath.stem();
+        // trialPath /= "_";
+        // trialPath /= std::to_string(n);
         trialPath.replace_extension( initialPath.extension() );
     }
 

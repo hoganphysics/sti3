@@ -25,11 +25,11 @@ public:
     {
         events = std::make_shared<std::vector<RawEvent>>();
     }
-    ~LocalShot()
+    virtual ~LocalShot()
     {
     }
 
-    ShotConfig& getShotConfig()
+    const ShotConfig& getShotConfig() const
     {
         return shotConfig;
     }

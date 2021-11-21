@@ -3,6 +3,7 @@
 #include "DevicePy.h"
 #include "ChannelManagerPy.h"
 #include "DeviceMessageDispatcher.h"
+#include "MixedValue.h"
 
 #include <iostream>
 
@@ -19,7 +20,7 @@ using STI::Python::DevicePy;
 
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
-
+using STI::Utils::MixedValue;
 
 
 LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
@@ -35,13 +36,47 @@ LocalDevicePy::~LocalDevicePy()
 {
 }
 
-bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
+
+bool LocalDevicePy::write(short channel, const pybind11::object& value)
 {
-    return false;
+    return device->write(channel, MixedValuePy(value));
 }
 
+pybind11::object LocalDevicePy::read(short channel, const pybind11::object& value)
+{
+    MixedValue data;
+    
+    bool success = device->read(channel, MixedValuePy(value), data);
+
+    if (success) {
+        MixedValuePy pydata(data);
+        return pydata.getValue_py();
+    }
+    return py::none();
+}
+
+void LocalDevicePy::stopRW()
+{
+    device->stopRW();
+}
+
+
+//Can be overridden in python
+bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
+{
+    return device->writeChannelDefault(channel, MixedValuePy(value));
+}
+
+//Can be overridden in python
 pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::object& value)
 {
+    MixedValue data;
+    bool success = device->readChannelDefault(channel, MixedValuePy(value), data);
+
+    if (success) {
+        MixedValuePy pydata(data);
+        return pydata.getValue_py();
+    }
     return py::none();
 }
 

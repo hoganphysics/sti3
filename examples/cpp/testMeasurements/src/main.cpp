@@ -168,5 +168,7 @@ int main(int argc, char **argv)
 
 	std::cout << "Data = " << data.print() << std::endl;
 
+	std::cin >> x;
+
 	return 0;
 }

@@ -4,6 +4,8 @@
 #include "CerealArchives.h"
 #include <cereal/types/string.hpp>
 
+#include <sstream>
+
 using STI::Engine::ShotID;
 using STI::Engine::ParseID;
 using STI::Engine::TimeStamp;
@@ -29,6 +31,18 @@ ShotID ShotID::generateUniqueID(const ParseID& pid)
 
     return sid;
 }
+
+std::string ShotID::print() const
+{
+	std::stringstream sid;
+
+    sid << "ParseID: " << parseID.print() << "\n";
+    sid << "Source: " << jobSourceID.print() << "\n";
+    sid << "Submission time: " << submissionTime.print();
+
+    return sid.str();
+}
+
 
 template<class Archive>
 void ShotID::serialize(Archive& archive)

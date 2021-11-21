@@ -109,25 +109,15 @@ public:
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	void stopRW();
 
-	// std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
-	// {
-	// 	std::shared_ptr<STI::Utils::FileHolder> holder;
-
-	// 	if (fileHolderFactory != 0) {
-	// 		holder = fileHolderFactory->makeFileHolder(filename);
-	// 	}
-
-	// 	return holder;
-	// }
+	bool writeChannelDefault(short channel, const STI::Utils::MixedValue& value);
+	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
 
 private:
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }
 
-	bool writeChannelDefault(short channel, const STI::Utils::MixedValue& value);
-	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
-	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
 
 	friend class DeviceMessageListenerForwarder;
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device

@@ -2,6 +2,8 @@
 #include "ParseID.h"
 #include "EngineJobSourceID.h"
 
+#include <sstream>
+
 #include "CerealArchives.h"
 #include <cereal/types/string.hpp>
 
@@ -13,6 +15,15 @@ ParseID::ParseID()
 {
 }
 
+std::string ParseID::print() const
+{
+	std::stringstream pid;
+
+    pid << shotConfig.print() << "\n";
+    pid << "Parse time: " << parseTimestamp.print();
+
+    return pid.str();
+}
 
 template<class Archive>
 void ParseID::serialize(Archive& archive)

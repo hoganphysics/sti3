@@ -40,6 +40,8 @@ public:
 
 	static ShotID generateUniqueID(const ParseID& pid);
 
+	std::string print() const;
+
 	template<class Archive>
 	void serialize(Archive& archive);
 

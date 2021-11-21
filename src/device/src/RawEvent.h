@@ -91,8 +91,10 @@ public:
 	//bool isScheduled() const { return _isScheduled; }
 
 	bool operator<(const RawEvent& rhs) const { 
-		return (time() < rhs.time()) 
-					|| ((time() == rhs.time()) && (channel() < rhs.channel())); }
+		return time() < rhs.time() ||
+			( time() == rhs.time() && ( targetDevice() < rhs.targetDevice() || 
+			( targetDevice() == rhs.targetDevice() && channel() < rhs.channel() ) ) );
+	}
 
 	bool operator==(const RawEvent& rhs) const { return eventGraphPath == rhs.eventGraphPath; }
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }

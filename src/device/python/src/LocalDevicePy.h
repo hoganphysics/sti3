@@ -60,11 +60,23 @@ public:
     virtual bool writeChannel(short channel, const pybind11::object& value);
     virtual pybind11::object readChannel(short channel, const pybind11::object& value);
 
-    void addChannel(unsigned short channelNumber)
+	bool write(short channel, const pybind11::object& value);
+	pybind11::object read(short channel, const pybind11::object& value);
+	void stopRW();
+
+    virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
+
+    void addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
     {
-        device->addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Double, STI::Utils::MixedValueType::Double, "Temp");
+        device->addChannel(channelNumber, type, inputType, outputType, defaultName);
     }
     
+    void addEventEngine(const STI::Engine::EngineID& engineID)
+    {
+        device->addEventEngine(engineID);
+    }
+
     void addPartner(const STI::Device::DeviceID& id)
     {
         device->addPartner(id);
@@ -138,6 +150,11 @@ private:
 
             return true;
         }
+
+        void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
+        {
+            localDevicePy->parseEvents(events, synchedEvents);
+        }
     
     private:
 
@@ -183,6 +200,16 @@ public:
             LocalDevicePy,       /* Parent class */
             readChannel,          /* Name of function in C++ (must match Python name) */
             channel, value        /* Argument(s) */
+        );
+    }
+
+    void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) override
+    {
+        PYBIND11_OVERRIDE(
+            void,     /* Return type */
+            LocalDevicePy,       /* Parent class */
+            parseEvents,          /* Name of function in C++ (must match Python name) */
+            events, synchedEvents        /* Argument(s) */
         );
     }
 

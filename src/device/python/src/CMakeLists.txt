@@ -64,12 +64,18 @@ pybind11_add_module(stidevicepy
     DeviceMessage_wrap.cpp
     DevicePy.cpp
     EventEngineSchedulerPy.cpp
+    EventEngineScheduler_wrap.cpp
+    EngineID_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
+    LocalShotPy.cpp
     MixedValuePy.cpp
     MixedValue_wrap.cpp
+    PersistenceManagerPy.cpp
+    PersistenceManager_wrap.cpp
     pywrapper.cpp
     RawEvent_wrap.cpp
+    SynchronousEvent_wrap.cpp
 )
 
 
@@ -112,6 +118,7 @@ add_library(stidevicepybase SHARED
     EventEngineSchedulerPy.cpp
     LocalDevicePy.cpp
     MixedValuePy.cpp
+    PersistenceManagerPy.cpp
 )
 
 

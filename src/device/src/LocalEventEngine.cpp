@@ -921,6 +921,7 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	getOwnedDeviceIDs(ownedIDs);
 
 	auto cachedShot = std::make_shared<ShotResult>(localDeviceID, ownedIDs);
+	cachedShot->playTime = jobID.runTime;
 	cachedShot->sid = jobID.sid;
 	cachedShot->measurements = newMeasurements;
 
