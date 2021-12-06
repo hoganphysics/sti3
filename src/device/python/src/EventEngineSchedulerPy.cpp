@@ -4,6 +4,7 @@
 #include "ShotID.h"
 #include "LocalShotPy.h"
 #include "RawEvent.h"
+#include "EngineJobID.h"
 
 
 using STI::Python::EventEngineSchedulerPy;
@@ -77,5 +78,35 @@ void EventEngineSchedulerPy::cancelAll()
     if (engineScheduler != 0) {
         engineScheduler->cancelAll();
     }
+}
+
+std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getQueuedJobs() const
+{
+    std::set<STI::Engine::EngineJobID> ids;
+    
+    if (engineScheduler != 0) {
+        engineScheduler->getQueuedJobs(ids);
+    }
+    return ids;
+}
+
+std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getRunningJobs() const
+{
+    std::set<STI::Engine::EngineJobID> ids;
+    
+    if (engineScheduler != 0) {
+        engineScheduler->getRunningJobs(ids);
+    }
+    return ids;
+}
+
+std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getCompletedJobs() const
+{
+    std::set<STI::Engine::EngineJobID> ids;
+    
+    if (engineScheduler != 0) {
+        engineScheduler->getCompletedJobs(ids);
+    }
+    return ids;
 }
 

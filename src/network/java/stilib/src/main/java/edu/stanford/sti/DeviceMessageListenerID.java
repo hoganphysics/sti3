@@ -36,6 +36,14 @@ public class DeviceMessageListenerID {
     }
   }
 
+  public DeviceMessageListenerID() {
+    this(stiJNI.new_DeviceMessageListenerID__SWIG_0(), true);
+  }
+
+  public DeviceMessageListenerID(DeviceMessageType type, String name) {
+    this(stiJNI.new_DeviceMessageListenerID__SWIG_1(type.swigValue(), name), true);
+  }
+
   public void setType(DeviceMessageType value) {
     stiJNI.DeviceMessageListenerID_type_set(swigCPtr, this, value.swigValue());
   }
@@ -62,10 +70,6 @@ public class DeviceMessageListenerID {
 
   public boolean opNotEquals(DeviceMessageListenerID rhs) {
     return stiJNI.DeviceMessageListenerID_opNotEquals(swigCPtr, this, DeviceMessageListenerID.getCPtr(rhs), rhs);
-  }
-
-  public DeviceMessageListenerID() {
-    this(stiJNI.new_DeviceMessageListenerID(), true);
   }
 
 }

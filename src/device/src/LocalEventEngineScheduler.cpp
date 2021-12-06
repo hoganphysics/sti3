@@ -638,6 +638,21 @@ void LocalEventEngineScheduler::stopAll()
     }
 }
 
+void LocalEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+{
+    queuedJobs.getKeys(jobIDs);
+}
+
+void LocalEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+{
+    runningJobs.getKeys(jobIDs);
+}
+
+void LocalEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
+{
+    completedJobs.getKeys(jobIDs);
+}
+
 void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);

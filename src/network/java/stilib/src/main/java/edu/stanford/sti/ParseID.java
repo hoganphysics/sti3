@@ -36,6 +36,10 @@ public class ParseID {
     }
   }
 
+  public ParseID() {
+    this(stiJNI.new_ParseID(), true);
+  }
+
   public void setParseTimestamp(TimeStamp value) {
     stiJNI.ParseID_parseTimestamp_set(swigCPtr, this, TimeStamp.getCPtr(value), value);
   }
@@ -45,29 +49,13 @@ public class ParseID {
     return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
   }
 
-  public void setFile(String value) {
-    stiJNI.ParseID_file_set(swigCPtr, this, value);
+  public void setShotConfig(ShotConfig value) {
+    stiJNI.ParseID_shotConfig_set(swigCPtr, this, ShotConfig.getCPtr(value), value);
   }
 
-  public String getFile() {
-    return stiJNI.ParseID_file_get(swigCPtr, this);
-  }
-
-  public void setJobSourceID(EngineJobSourceID value) {
-    stiJNI.ParseID_jobSourceID_set(swigCPtr, this, EngineJobSourceID.getCPtr(value), value);
-  }
-
-  public EngineJobSourceID getJobSourceID() {
-    long cPtr = stiJNI.ParseID_jobSourceID_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new EngineJobSourceID(cPtr, false);
-  }
-
-  public void setComment(String value) {
-    stiJNI.ParseID_comment_set(swigCPtr, this, value);
-  }
-
-  public String getComment() {
-    return stiJNI.ParseID_comment_get(swigCPtr, this);
+  public ShotConfig getShotConfig() {
+    long cPtr = stiJNI.ParseID_shotConfig_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new ShotConfig(cPtr, false);
   }
 
   public boolean opLess(ParseID rhs) {
@@ -82,52 +70,8 @@ public class ParseID {
     return stiJNI.ParseID_opNotEquals(swigCPtr, this, ParseID.getCPtr(rhs), rhs);
   }
 
-  public ParseID() {
-    this(stiJNI.new_ParseID(), true);
-  }
-
-  public final static class ShotType {
-    public final static ParseID.ShotType Single = new ParseID.ShotType("Single");
-    public final static ParseID.ShotType Sequence = new ParseID.ShotType("Sequence");
-
-    public final int swigValue() {
-      return swigValue;
-    }
-
-    public String toString() {
-      return swigName;
-    }
-
-    public static ShotType swigToEnum(int swigValue) {
-      if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
-        return swigValues[swigValue];
-      for (int i = 0; i < swigValues.length; i++)
-        if (swigValues[i].swigValue == swigValue)
-          return swigValues[i];
-      throw new IllegalArgumentException("No enum " + ShotType.class + " with value " + swigValue);
-    }
-
-    private ShotType(String swigName) {
-      this.swigName = swigName;
-      this.swigValue = swigNext++;
-    }
-
-    private ShotType(String swigName, int swigValue) {
-      this.swigName = swigName;
-      this.swigValue = swigValue;
-      swigNext = swigValue+1;
-    }
-
-    private ShotType(String swigName, ShotType swigEnum) {
-      this.swigName = swigName;
-      this.swigValue = swigEnum.swigValue;
-      swigNext = this.swigValue+1;
-    }
-
-    private static ShotType[] swigValues = { Single, Sequence };
-    private static int swigNext = 0;
-    private final int swigValue;
-    private final String swigName;
+  public String print() {
+    return stiJNI.ParseID_print(swigCPtr, this);
   }
 
 }

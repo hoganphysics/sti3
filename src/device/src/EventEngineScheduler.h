@@ -59,6 +59,10 @@ public:
 
     virtual void cancelAll() = 0;
 
+    virtual void getQueuedJobs(std::set<EngineJobID>& jobIDs) const = 0;
+    virtual void getRunningJobs(std::set<EngineJobID>& jobIDs) const = 0;
+    virtual void getCompletedJobs(std::set<EngineJobID>& jobIDs) const = 0;
+
     virtual std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events) = 0;
 
    	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;

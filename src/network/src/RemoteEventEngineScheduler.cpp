@@ -276,7 +276,7 @@ void RemoteEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 	}
 }
 
-void  RemoteEventEngineScheduler::cancelAll()
+void RemoteEventEngineScheduler::cancelAll()
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
@@ -293,6 +293,76 @@ void  RemoteEventEngineScheduler::cancelAll()
 	{
 	}
 }
+
+void RemoteEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+
+    try {
+
+		getTRef()->getQueuedJobs(tEngineJobIDs);	//remote call
+
+		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+
+    try {
+
+		getTRef()->getRunningJobs(tEngineJobIDs);	//remote call
+
+		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+
+    try {
+
+		getTRef()->getCompletedJobs(tEngineJobIDs);	//remote call
+
+		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
 
 // std::shared_ptr<STI::Engine::EventEngineJob> RemoteEventEngineScheduler::createJob(const STI::Engine::ParseID& parseID, 
 //                                           const std::shared_ptr<STI::Engine::Shot>& shot,

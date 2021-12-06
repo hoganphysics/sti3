@@ -61,6 +61,11 @@ public class MixedValue {
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
+  public MixedValue(MixedValueType value) {
+    this(stiJNI.new_MixedValue__SWIG_3(value.swigValue()), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
   public boolean opEquals(MixedValue other) {
     return stiJNI.MixedValue_opEquals(swigCPtr, this, MixedValue.getCPtr(other), other);
   }
@@ -81,20 +86,24 @@ public class MixedValue {
     stiJNI.MixedValue_setValue__SWIG_4(swigCPtr, this, value);
   }
 
+  public void setValue(FileHolder value) {
+    stiJNI.MixedValue_setValue__SWIG_5(swigCPtr, this, FileHolder.getCPtr(value), value);
+  }
+
   public void setValue(String value) {
-    stiJNI.MixedValue_setValue__SWIG_5(swigCPtr, this, value);
+    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, value);
   }
 
   public void setValue(MixedValue value) {
-    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, MixedValue.getCPtr(value), value);
+    stiJNI.MixedValue_setValue__SWIG_7(swigCPtr, this, MixedValue.getCPtr(value), value);
   }
 
   public void setValue() {
-    stiJNI.MixedValue_setValue__SWIG_7(swigCPtr, this);
+    stiJNI.MixedValue_setValue__SWIG_8(swigCPtr, this);
   }
 
   public void setValue(short value) {
-    stiJNI.MixedValue_setValue__SWIG_10(swigCPtr, this, value);
+    stiJNI.MixedValue_setValue__SWIG_11(swigCPtr, this, value);
   }
 
   public void clear() {

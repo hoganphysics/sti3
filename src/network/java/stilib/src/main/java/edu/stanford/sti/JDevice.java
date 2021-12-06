@@ -101,4 +101,9 @@ public class JDevice {
     return (cPtr == 0) ? null : new JAttributeManager(cPtr, true);
   }
 
+  public JPersistenceManager getPersistenceManager() {
+    long cPtr = stiJNI.JDevice_getPersistenceManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new JPersistenceManager(cPtr, true);
+  }
+
 }

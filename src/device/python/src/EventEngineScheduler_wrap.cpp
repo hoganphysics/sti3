@@ -6,6 +6,8 @@
 #include "RawEvent.h"
 #include "LocalShotPy.h"
 
+#include "EngineJobID.h"
+
 #include <string>
 #include <memory>
 
@@ -121,6 +123,10 @@ void init_EventEngineScheduler(py::module& m)
         .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineSchedulerPy::getStatus), py::arg("parseID"))
         .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineSchedulerPy::getStatus), py::arg("shotID"))
         .def("cancelAll", &EventEngineSchedulerPy::cancelAll)
+        .def("getQueuedJobs", &EventEngineSchedulerPy::getQueuedJobs)
+        .def("getRunningJobs", &EventEngineSchedulerPy::getRunningJobs)
+        .def("getCompletedJobs", &EventEngineSchedulerPy::getCompletedJobs)
         ;
+
 
 }

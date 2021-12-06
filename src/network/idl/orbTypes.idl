@@ -204,6 +204,7 @@ module TNetwork
     	TParseID pid;
     	TShotID sid;
 	};
+	typedef sequence<TEngineJobID> TEngineJobIDSeq;
 
 	struct TShot;
 

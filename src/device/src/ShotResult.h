@@ -37,7 +37,7 @@ public:
     
     DeviceEventMap parsedEvents;
     std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
-    std::shared_ptr<MeasurementVector> measurements;
+    std::shared_ptr<STI::Engine::MeasurementVector> measurements;
     //std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
 

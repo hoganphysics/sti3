@@ -89,13 +89,4 @@ public class EngineParserDeviceMessage extends DeviceMessage {
     return (cPtr == 0) ? null : new EngineParserMessageVector(cPtr, false);
   }
 
-  public void setParsedTree(EventEngineDependencyTree value) {
-    stiJNI.EngineParserDeviceMessage_parsedTree_set(swigCPtr, this, EventEngineDependencyTree.getCPtr(value), value);
-  }
-
-  public EventEngineDependencyTree getParsedTree() {
-    long cPtr = stiJNI.EngineParserDeviceMessage_parsedTree_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new EventEngineDependencyTree(cPtr, true);
-  }
-
 }

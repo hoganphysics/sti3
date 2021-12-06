@@ -206,6 +206,55 @@ void TEventEngineScheduler_i::cancelAll()
 	}
 }
 
+void TEventEngineScheduler_i::getQueuedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs)
+{
+    if (engineScheduler != 0) {
+
+		STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDSeq_var(new STI::TNetwork::TEngineJobIDSeq);
+		std::set<STI::Engine::EngineJobID> ids;
+
+		engineScheduler->getQueuedJobs(ids);
+
+		convert<STI::Engine::EngineJobID, ::STI::TNetwork::TEngineJobID>(ids, tEngineJobIDSeq_var);
+
+		jobIDs = new STI::TNetwork::TEngineJobIDSeq();
+		(*jobIDs) = tEngineJobIDSeq_var;
+	}
+}
+
+void TEventEngineScheduler_i::getRunningJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs)
+{
+    if (engineScheduler != 0) {
+
+		STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDSeq_var(new STI::TNetwork::TEngineJobIDSeq);
+		std::set<STI::Engine::EngineJobID> ids;
+
+		engineScheduler->getRunningJobs(ids);
+
+		convert<STI::Engine::EngineJobID, ::STI::TNetwork::TEngineJobID>(ids, tEngineJobIDSeq_var);
+
+		jobIDs = new STI::TNetwork::TEngineJobIDSeq();
+		(*jobIDs) = tEngineJobIDSeq_var;
+	}
+}
+
+void TEventEngineScheduler_i::getCompletedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs)
+{
+    if (engineScheduler != 0) {
+
+		STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDSeq_var(new STI::TNetwork::TEngineJobIDSeq);
+		std::set<STI::Engine::EngineJobID> ids;
+
+		engineScheduler->getCompletedJobs(ids);
+
+		convert<STI::Engine::EngineJobID, ::STI::TNetwork::TEngineJobID>(ids, tEngineJobIDSeq_var);
+
+		jobIDs = new STI::TNetwork::TEngineJobIDSeq();
+		(*jobIDs) = tEngineJobIDSeq_var;
+	}
+}
+
+
 ::CORBA::Boolean TEventEngineScheduler_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
 {
 	bool success = false;

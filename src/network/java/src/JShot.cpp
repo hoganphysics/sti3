@@ -1,12 +1,14 @@
 
 #include "JShot.h"
 #include "RawEvent.h"
+#include "ShotConfig.h"
 
 using STI::Engine::JShot;
+using STI::Engine::ShotConfig;
 
 
 JShot::JShot(std::shared_ptr<STI::Engine::Shot>& shot)
-: shot_(shot)
+: shot_(shot), shotConfig(shot->getShotConfig())
 {
 }
 
@@ -14,6 +16,10 @@ JShot::~JShot()
 {
 }
 
+const ShotConfig& JShot::getShotConfig() const
+{
+    return shotConfig;
+}
 
 std::shared_ptr<std::vector<STI::Engine::RawEvent>> JShot::getEvents()
 {

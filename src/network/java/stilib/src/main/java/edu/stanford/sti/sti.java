@@ -9,6 +9,10 @@
 package edu.stanford.sti;
 
 public class sti {
+  public static String printShotType(ShotType type) {
+    return stiJNI.printShotType(type.swigValue());
+  }
+
   public static String print(EngineState state) {
     return stiJNI.print(state.swigValue());
   }

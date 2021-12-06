@@ -64,7 +64,7 @@ private:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
-	void getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}

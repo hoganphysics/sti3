@@ -8,12 +8,10 @@
 
 package edu.stanford.sti;
 
-public final class EngineJobStatus {
-  public final static EngineJobStatus New = new EngineJobStatus("New");
-  public final static EngineJobStatus Running = new EngineJobStatus("Running");
-  public final static EngineJobStatus Completed = new EngineJobStatus("Completed");
-  public final static EngineJobStatus Canceled = new EngineJobStatus("Canceled");
-  public final static EngineJobStatus NotFound = new EngineJobStatus("NotFound");
+public final class ShotType {
+  public final static ShotType Single = new ShotType("Single");
+  public final static ShotType Sequence = new ShotType("Sequence");
+  public final static ShotType SingleUndocumented = new ShotType("SingleUndocumented");
 
   public final int swigValue() {
     return swigValue;
@@ -23,33 +21,33 @@ public final class EngineJobStatus {
     return swigName;
   }
 
-  public static EngineJobStatus swigToEnum(int swigValue) {
+  public static ShotType swigToEnum(int swigValue) {
     if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
       return swigValues[swigValue];
     for (int i = 0; i < swigValues.length; i++)
       if (swigValues[i].swigValue == swigValue)
         return swigValues[i];
-    throw new IllegalArgumentException("No enum " + EngineJobStatus.class + " with value " + swigValue);
+    throw new IllegalArgumentException("No enum " + ShotType.class + " with value " + swigValue);
   }
 
-  private EngineJobStatus(String swigName) {
+  private ShotType(String swigName) {
     this.swigName = swigName;
     this.swigValue = swigNext++;
   }
 
-  private EngineJobStatus(String swigName, int swigValue) {
+  private ShotType(String swigName, int swigValue) {
     this.swigName = swigName;
     this.swigValue = swigValue;
     swigNext = swigValue+1;
   }
 
-  private EngineJobStatus(String swigName, EngineJobStatus swigEnum) {
+  private ShotType(String swigName, ShotType swigEnum) {
     this.swigName = swigName;
     this.swigValue = swigEnum.swigValue;
     swigNext = this.swigValue+1;
   }
 
-  private static EngineJobStatus[] swigValues = { New, Running, Completed, Canceled, NotFound };
+  private static ShotType[] swigValues = { Single, Sequence, SingleUndocumented };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

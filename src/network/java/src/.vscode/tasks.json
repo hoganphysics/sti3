@@ -14,6 +14,7 @@
                 //"-debug-typedef",
                 //"-debug-classes",
                 "-I${workspaceFolder}/../../../device/src/",
+				"-I${workspaceFolder}/../../../device/src/utils/",
                 "-I${workspaceFolder}/../../../../include/",
                 "-outdir",
                 "../stilib/src/main/java/edu/stanford/sti/",

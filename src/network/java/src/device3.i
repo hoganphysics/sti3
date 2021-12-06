@@ -50,6 +50,12 @@
 
     #include "JEngineJobUpdateDeviceMessage.h"
     #include "JEngineJobUpdateDeviceMessageListener.h"
+    
+    #include "EngineJobSourceID.h"
+    using STI::Engine::EngineJobSourceID;
+
+    #include "ShotConfig.h"
+    using STI::Engine::ShotConfig;
 
     #include "JShot.h"
     using STI::Engine::JShot;
@@ -84,8 +90,12 @@
 
     #include "JAttributeManager.h"
 
-    #include "JEventEngine.h"
+    #include "ShotResult.h"
+    
 
+    // #include "JPersistenceManager.h"
+
+    #include "JEventEngine.h"
 
 %}
 
@@ -109,6 +119,8 @@
 %shared_ptr(STI::Engine::JEventEngineScheduler);
 %shared_ptr(STI::Device::JChannelManager);
 %shared_ptr(STI::Device::JAttributeManager);
+%shared_ptr(STI::Device::JPersistenceManager);
+
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
 
@@ -292,6 +304,12 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "LocalChannel.h"
 %include "ChannelRefreshListener.h"
 
+//EngineJobSourceID
+%include "EngineJobSourceID.h"
+
+//ShotConfig
+%include "ShotConfig.h"
+
 
 %include "TimeStamp.h"
 %include "ParseID.h"
@@ -304,10 +322,12 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "JAttributeManager.h"
 
 
+
 //JLocalDevice
 %include "JLocalDevice.h"
 
 //EngineJobID
+%template(EngineJobIDSet) std::set< STI::Engine::EngineJobID >;
 %include "EngineJobID.h"
 
 
@@ -327,6 +347,10 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
+
+
+
+
 //JShot
 %ignore STI::Engine::JShot::JShot(std::shared_ptr< STI::Engine::Shot >& shot);
 %include "JShot.h"
@@ -335,6 +359,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 // %nspace STI::Engine::ParseID
 // %nspace STI::Engine::ShotID
 // %nspace STI::Engine::TimeStamp
+
 
 
 //JEventEngineScheduler

@@ -2,9 +2,15 @@
 #include "JEventEngineScheduler.h"
 #include "JShot.h"
 
+#include "ParseID.h"
+#include "ShotID.h"
+#include "EngineJobID.h"
+
+
 using STI::Engine::JEventEngineScheduler;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngineDependencyTree;
+using STI::Engine::EngineJobID;
 
 
 JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
@@ -42,12 +48,26 @@ JEventEngineScheduler::~JEventEngineScheduler()
 //     }
 // }
 
-void JEventEngineScheduler::parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::JShot>& jshot)
+
+STI::Engine::ParseID JEventEngineScheduler::parse(const std::shared_ptr<STI::Engine::JShot>& jshot)
 {
+    STI::Engine::ParseID pid;
+
     if(localScheduler != 0) {
         std::shared_ptr<STI::Engine::Shot> shot = std::static_pointer_cast<STI::Engine::Shot>(jshot);
-        localScheduler->parse(parseID, shot);
+        pid = localScheduler->parse(shot);
     }
+    return pid;
+}
+
+STI::Engine::ShotID JEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
+{
+    STI::Engine::ShotID sid;
+
+    if(localScheduler != 0) {
+        sid = localScheduler->play(parseID, source);
+    }
+    return sid;
 }
 
 void JEventEngineScheduler::cancelJob(const STI::Engine::EngineJobID& jobID)
@@ -57,19 +77,40 @@ void JEventEngineScheduler::cancelJob(const STI::Engine::EngineJobID& jobID)
     }
 }
 
-// std::shared_ptr<EventEngineJob> JEventEngineScheduler::createJob(const STI::Engine::ParseID& parseID, 
-//                                                     const std::shared_ptr<STI::Engine::Shot>& shot,
-//                                                     const std::shared_ptr<EventEngineDependencyTree>& tree, 
-//                                                     const STI::Device::DeviceID& owner, 
-//                                                     const std::set<STI::Device::DeviceID>& missingTargets)
-// {
-//     std::shared_ptr<STI::Engine::EventEngineJob> job;
+void JEventEngineScheduler::cancelAll()
+{
+    if(localScheduler != 0) {
+        localScheduler->cancelAll();
+    }
+}
 
-//     if(localScheduler != 0) {
-//         job = localScheduler->createJob(parseID, shot, tree, owner, missingTargets);
-//     }
+std::set<EngineJobID> JEventEngineScheduler::getQueuedJobs() const
+{
+    std::set<EngineJobID> ids;
 
-//     return job;
+    if(localScheduler != 0) {
+        localScheduler->getQueuedJobs(ids);
+    }
+    return ids;
+}
 
-// }
+std::set<EngineJobID> JEventEngineScheduler::getRunningJobs() const
+{
+    std::set<EngineJobID> ids;
+
+    if(localScheduler != 0) {
+        localScheduler->getRunningJobs(ids);
+    }
+    return ids;
+}
+
+std::set<EngineJobID> JEventEngineScheduler::getCompletedJobs() const
+{
+    std::set<EngineJobID> ids;
+
+    if(localScheduler != 0) {
+        localScheduler->getCompletedJobs(ids);
+    }
+    return ids;
+}
 

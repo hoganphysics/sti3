@@ -181,11 +181,14 @@ void JDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager)
     }
 }
 
-void JDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
+bool JDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
 {
+    bool success = false;
+
     if(wrappedDevice != 0) {
-        wrappedDevice->getPersistenceManager(manager);
+        success = wrappedDevice->getPersistenceManager(manager);
     }
+    return success;
 }
 
 bool JDevice::refresh()

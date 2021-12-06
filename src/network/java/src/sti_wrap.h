@@ -394,6 +394,7 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_MixedValue(JNIEnv *jenv);
     SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
+    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValueType const &value);
     virtual ~SwigDirector_MixedValue();
 public:
     bool swig_overrides(int n) {

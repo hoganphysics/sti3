@@ -60,6 +60,14 @@ public class TimeStamp {
     return stiJNI.TimeStamp_time(swigCPtr, this);
   }
 
+  public String time_hh_mm_ss() {
+    return stiJNI.TimeStamp_time_hh_mm_ss(swigCPtr, this);
+  }
+
+  public String time_hh_mm_ss_mmmuuunnn() {
+    return stiJNI.TimeStamp_time_hh_mm_ss_mmmuuunnn(swigCPtr, this);
+  }
+
   public boolean opLess(TimeStamp rhs) {
     return stiJNI.TimeStamp_opLess(swigCPtr, this, TimeStamp.getCPtr(rhs), rhs);
   }
@@ -88,8 +96,8 @@ public class TimeStamp {
     return stiJNI.TimeStamp_hour(swigCPtr, this);
   }
 
-  public int min() {
-    return stiJNI.TimeStamp_min(swigCPtr, this);
+  public int minute() {
+    return stiJNI.TimeStamp_minute(swigCPtr, this);
   }
 
   public int sec() {

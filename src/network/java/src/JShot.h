@@ -21,12 +21,14 @@ public:
 	JShot(std::shared_ptr<STI::Engine::Shot>& shot);
 	~JShot();
 
+    const ShotConfig& getShotConfig() const;
     std::shared_ptr<std::vector<STI::Engine::RawEvent>> getEvents();
 
 private:
 
     void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
 
+    const ShotConfig& shotConfig;
     std::shared_ptr<STI::Engine::Shot> shot_;
 
 };

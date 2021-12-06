@@ -31,6 +31,10 @@ public:
     void cancelJob(const STI::Engine::EngineJobID& jobID);
     void cancelAll();
 
+    std::set<STI::Engine::EngineJobID> getQueuedJobs() const;
+    std::set<STI::Engine::EngineJobID> getRunningJobs() const;
+    std::set<STI::Engine::EngineJobID> getCompletedJobs() const;
+
     // void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::ParsedShot>& shot);
     // void play(const STI::Engine::ShotID& shotID);
     // void cancelJob(const STI::Engine::EngineJobID& jobID);

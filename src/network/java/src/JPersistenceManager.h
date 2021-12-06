@@ -2,7 +2,7 @@
 #ifndef STI_DEVICE_JPERSISTENCEMANAGER_H
 #define STI_DEVICE_JPERSISTENCEMANAGER_H
 
-#include "AttributeManager.h"
+#include "PersistenceManager.h"
 
 #include <memory>
 
@@ -23,12 +23,12 @@ public:
 	JPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 	~JPersistenceManager();
 
-    bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
-    bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
+    std::shared_ptr<STI::Engine::ShotResult> getShot(const STI::Engine::ShotID& sid);
+    std::shared_ptr<STI::Engine::MeasurementVector> getMeasurements(const STI::Engine::ShotID& sid);
 
 private:
 
-    std::shared_ptr<STI::Device::PersistenceManager> localManager;
+    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 
 };
 

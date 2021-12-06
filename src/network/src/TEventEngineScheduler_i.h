@@ -47,6 +47,10 @@ public:
     void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
     void cancelAll();
 
+    void getQueuedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+    void getRunningJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+    void getCompletedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+
     ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
     ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
     ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);

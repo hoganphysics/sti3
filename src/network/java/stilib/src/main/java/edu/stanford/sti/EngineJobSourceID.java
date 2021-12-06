@@ -52,6 +52,10 @@ public class EngineJobSourceID {
     return stiJNI.EngineJobSourceID_machine_get(swigCPtr, this);
   }
 
+  public String print() {
+    return stiJNI.EngineJobSourceID_print(swigCPtr, this);
+  }
+
   public EngineJobSourceID() {
     this(stiJNI.new_EngineJobSourceID(), true);
   }

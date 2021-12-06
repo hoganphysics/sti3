@@ -36,6 +36,14 @@ public class ShotID {
     }
   }
 
+  public ShotID() {
+    this(stiJNI.new_ShotID__SWIG_0(), true);
+  }
+
+  public ShotID(ParseID pid, EngineJobSourceID jobSourceID) {
+    this(stiJNI.new_ShotID__SWIG_1(ParseID.getCPtr(pid), pid, EngineJobSourceID.getCPtr(jobSourceID), jobSourceID), true);
+  }
+
   public void setParseID(ParseID value) {
     stiJNI.ShotID_parseID_set(swigCPtr, this, ParseID.getCPtr(value), value);
   }
@@ -45,24 +53,6 @@ public class ShotID {
     return (cPtr == 0) ? null : new ParseID(cPtr, false);
   }
 
-  public void setSubmissionTime(TimeStamp value) {
-    stiJNI.ShotID_submissionTime_set(swigCPtr, this, TimeStamp.getCPtr(value), value);
-  }
-
-  public TimeStamp getSubmissionTime() {
-    long cPtr = stiJNI.ShotID_submissionTime_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
-  }
-
-  public void setPlayTime(TimeStamp value) {
-    stiJNI.ShotID_playTime_set(swigCPtr, this, TimeStamp.getCPtr(value), value);
-  }
-
-  public TimeStamp getPlayTime() {
-    long cPtr = stiJNI.ShotID_playTime_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
-  }
-
   public void setJobSourceID(EngineJobSourceID value) {
     stiJNI.ShotID_jobSourceID_set(swigCPtr, this, EngineJobSourceID.getCPtr(value), value);
   }
@@ -70,6 +60,15 @@ public class ShotID {
   public EngineJobSourceID getJobSourceID() {
     long cPtr = stiJNI.ShotID_jobSourceID_get(swigCPtr, this);
     return (cPtr == 0) ? null : new EngineJobSourceID(cPtr, false);
+  }
+
+  public void setSubmissionTime(TimeStamp value) {
+    stiJNI.ShotID_submissionTime_set(swigCPtr, this, TimeStamp.getCPtr(value), value);
+  }
+
+  public TimeStamp getSubmissionTime() {
+    long cPtr = stiJNI.ShotID_submissionTime_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
   }
 
   public boolean opLess(ShotID rhs) {
@@ -88,8 +87,8 @@ public class ShotID {
     return new ShotID(stiJNI.ShotID_generateUniqueID(ParseID.getCPtr(pid), pid), true);
   }
 
-  public ShotID() {
-    this(stiJNI.new_ShotID(), true);
+  public String print() {
+    return stiJNI.ShotID_print(swigCPtr, this);
   }
 
 }

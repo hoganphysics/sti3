@@ -25,21 +25,6 @@ void init_SynchronousEvent(py::module& m)
     py::class_<SynchronousEvent, std::shared_ptr<SynchronousEvent>>(m, "SynchronousEventBase")
         ;
 
-    // py::class_<SynchronousEventAdapter, SynchronousEvent, SynchronousEventPy, std::shared_ptr<SynchronousEventAdapter>>(m, "SynchronousEventAdapter")
-    //     .def(py::init<double>(), py::arg("time"))
-    //     .def("loadEvent", &SynchronousEventAdapter::loadEvent)
-    //     .def("play", &SynchronousEventAdapter::play)
-    //     .def("playEvent", &SynchronousEventAdapter::playEvent)
-    //     .def("collectMeasurementData", &SynchronousEventAdapter::collectMeasurementData)
-    //     .def("stopEvent", &SynchronousEventAdapter::stopEvent)
-    //     .def("pauseEvent", &SynchronousEventAdapter::pauseEvent)
-    //     .def("unpauseEvent", &SynchronousEventAdapter::unpauseEvent, py::arg("retrigger"))
-    //     .def("waitBeforePlay", &SynchronousEventAdapter::waitBeforePlay)
-    //     .def("waitBeforeCollectData", &SynchronousEventAdapter::waitBeforeCollectData)
-    //     ;
-
-
-
     py::class_<SynchronousEventAdapter, std::shared_ptr<SynchronousEventAdapter>, SynchronousEventPy, SynchronousEvent>(m, "SynchronousEvent")  //py::nodelete
         .def(py::init<double>(), py::arg("time"))
         .def("loadEvent", &SynchronousEventAdapter::loadEvent)

@@ -99,10 +99,13 @@ public:
     void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
 
-
     void cancelAll();
     void stopAll();
-  
+
+    void getQueuedJobs(std::set<EngineJobID>& jobIDs) const;
+    void getRunningJobs(std::set<EngineJobID>& jobIDs) const;
+    void getCompletedJobs(std::set<EngineJobID>& jobIDs) const;
+
     std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);

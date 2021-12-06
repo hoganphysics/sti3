@@ -70,6 +70,15 @@ public class EngineJobID {
     return (cPtr == 0) ? null : new ShotID(cPtr, false);
   }
 
+  public void setRunTime(TimeStamp value) {
+    stiJNI.EngineJobID_runTime_set(swigCPtr, this, TimeStamp.getCPtr(value), value);
+  }
+
+  public TimeStamp getRunTime() {
+    long cPtr = stiJNI.EngineJobID_runTime_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
+  }
+
   public EngineJobID() {
     this(stiJNI.new_EngineJobID(), true);
   }

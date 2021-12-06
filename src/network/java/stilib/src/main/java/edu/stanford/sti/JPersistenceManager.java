@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class JShot {
+public class JPersistenceManager {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected JShot(long cPtr, boolean cMemoryOwn) {
+  protected JPersistenceManager(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(JShot obj) {
+  protected static long getCPtr(JPersistenceManager obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,19 +34,20 @@ public class JShot {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_JShot(swigCPtr);
+        stiJNI.delete_JPersistenceManager(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public ShotConfig getShotConfig() {
-    return new ShotConfig(stiJNI.JShot_getShotConfig(swigCPtr, this), false);
+  public ShotResult getShot(ShotID sid) {
+    long cPtr = stiJNI.JPersistenceManager_getShot(swigCPtr, this, ShotID.getCPtr(sid), sid);
+    return (cPtr == 0) ? null : new ShotResult(cPtr, true);
   }
 
-  public RawEventVector getEvents() {
-    long cPtr = stiJNI.JShot_getEvents(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
+  public MeasurementVector getMeasurements(ShotID sid) {
+    long cPtr = stiJNI.JPersistenceManager_getMeasurements(swigCPtr, this, ShotID.getCPtr(sid), sid);
+    return (cPtr == 0) ? null : new MeasurementVector(cPtr, true);
   }
 
 }

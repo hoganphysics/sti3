@@ -42,6 +42,10 @@ public:
 
     void cancelAll();
 
+    void getQueuedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+    void getRunningJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+    void getCompletedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+
     // std::shared_ptr<STI::Engine::EventEngineJob> createJob(const STI::Engine::ParseID& parseID, 
     //                                           const std::shared_ptr<STI::Engine::Shot>& shot,
     //                                           const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree, 

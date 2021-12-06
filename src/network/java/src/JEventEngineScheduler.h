@@ -26,11 +26,17 @@ public:
 
     //EventEngineScheduler
 
-    STI::Device::DeviceID id;
+    // STI::Device::DeviceID id;
 
-    void parse(const STI::Engine::ParseID& parseID, const std::shared_ptr<STI::Engine::JShot>& shot);
-    void play(const STI::Engine::ShotID& shotID);
+    STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::JShot>& shot);
+    STI::Engine::ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
     void cancelJob(const STI::Engine::EngineJobID& jobID);
+
+    void cancelAll();
+
+    std::set<EngineJobID> getQueuedJobs() const;
+    std::set<EngineJobID> getRunningJobs() const;
+    std::set<EngineJobID> getCompletedJobs() const;
 
 private:
 
