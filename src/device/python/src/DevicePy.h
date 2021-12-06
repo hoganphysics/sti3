@@ -72,7 +72,6 @@ public:
 
     void setDevice(const std::shared_ptr<STI::Device::Device>& device);
     std::shared_ptr<STI::Device::Device> getDevice();
-    //virtual const STI::Device::DeviceID getIDpy() const = 0;
 
     const STI::Device::DeviceID getID() const;
     void kill();
@@ -84,8 +83,6 @@ public:
     std::shared_ptr<AttributeManagerPy> getAttributeManager();
     std::shared_ptr<PersistenceManagerPy> getPersistenceManager();
 
-
-//    int test2(int x);
 
 private:
 

@@ -16,9 +16,8 @@ void init_DeviceMessageDispatcher(py::module& m)
 
     py::class_<DeviceMessageDispatcher, std::shared_ptr<DeviceMessageDispatcher>>(m, "DeviceMessageDispatcher")
         .def("addMessage", &DeviceMessageDispatcher::addMessage, 
-                            "Overload docstring", py::arg("message") )
+                            "Add message to outgoing queue", py::arg("message") )
         .def("clearMessages", &DeviceMessageDispatcher::clearMessages);
-
 
 
 }

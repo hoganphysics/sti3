@@ -84,13 +84,18 @@ void init_PersistenceManager(py::module& m)
         .def_readonly("playTime", &ShotResult::playTime)
         .def_readonly("parsedEvents", &ShotResult::parsedEvents)
         // .def_readonly("timingFiles", &ShotResult::timingFiles)
+        .def("measurements", 
+            [](const ShotResult& self) {
+                if (self.measurements != 0) {
+                    return *(self.measurements);
+                }
+                STI::Engine::MeasurementVector missing;
+                return missing;
+            })
+        // .def_readonly("measurements", &ShotResult::measurements)
         // .def("measurements", 
         //     [](const ShotResult& self) {
-        //         if (self.measurements != 0) {
-        //             return *(self.measurements);
-        //         }
-        //         STI::Engine::MeasurementVector missing;
-        //         return missing;
+        //         return self.measurements;
         //     })
         .def_readonly("attributes", &ShotResult::attributes)
         .def_readonly("shotResultRecord", &ShotResult::shotResultRecord)
@@ -112,8 +117,8 @@ void init_PersistenceManager(py::module& m)
 
 
     py::class_<PersistenceManagerPy, std::shared_ptr<PersistenceManagerPy>>(m, "PersistenceManager")
-        .def("getShot", &PersistenceManagerPy::getShot)
-        .def("setValue", &PersistenceManagerPy::getMeasurements)
+        .def("getShot", &PersistenceManagerPy::getShot, py::arg("shotID"))
+        .def("getMeasurements", &PersistenceManagerPy::getMeasurements, py::arg("shotID"))
         ;
 
 }

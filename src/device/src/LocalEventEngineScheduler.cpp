@@ -26,8 +26,6 @@
 #include <memory>
 #include <algorithm>
 
-#include <iostream>
-
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::EventEngineDependencyTree;
@@ -75,24 +73,6 @@ LocalEventEngineScheduler::~LocalEventEngineScheduler()
 {
     stop();
     schedulerThread.join();
- 
-    std::cout << "~LocalEventEngineScheduler() " << queuedJobs.size() << ", " << runningJobs.size() << ", " << completedJobs.size() << std::endl;
-    
-    // std::set<STI::Engine::EngineJobID> jobIDs;
-    // std::shared_ptr<STI::Engine::EventEngineJob> job;
-    // std::shared_ptr<STI::Engine::EventEngine> engine;
-    // completedJobs.getKeys(jobIDs);
-    // int i = 0;
-    // for (auto& id : jobIDs) {
-    //     completedJobs.get(id, job);
-       
-    //     std::cout << "~LocalEventEngineScheduler() job " <<  ((id.type == EventEngineJobType::Parse) ? "Parse" : "Play") << " use count = " << job.use_count()-1 << std::endl;
-    //     i++;
-    //     if ((id.type == EventEngineJobType::Parse) && job->getEngine(engine)) {
-    //         std::cout << "~LocalEventEngineScheduler() parse engine count = " << engine.use_count()-1 << std::endl;
-    //     }
-    // }
-
 }
 
 

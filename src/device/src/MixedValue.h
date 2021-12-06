@@ -31,7 +31,6 @@
 #include <string>
 #include <memory>
 
-//#include <iostream>
 
 namespace STI
 {
@@ -47,34 +46,7 @@ public:
 	MixedValue();	//for std::vector
 	template<typename T> MixedValue(const T& value)
 	{
-		//std::cout << "MixedValue template constructor" << std::endl;
-
 		setValue(value);
-
-		// try {
-		// 	std::cout << "dynamic cast success" << std::endl;
-		// 	const MixedValue& new_b = dynamic_cast<const MixedValue&>(value);
-		// 	setValue(new_b);
-		// }
-		// catch (std::bad_cast& bc) {
-		// 	std::cout << "dynamic cast failed" << std::endl;
-		// 	setValue(value);
-		// }
-
-
-		// const T* ptr = &value;
-
-		// const MixedValue* mvp = dynamic_cast<const MixedValue*>(ptr);
-
-		// if (mvp != 0) {
-		// 	std::cout << "dynamic cast success" << std::endl;
-		// 	setValue(*mvp);
-		// }
-		// else {
-		// 	std::cout << "dynamic cast failed" << std::endl;
-		// 	setValue(value);
-		// }
-
 	}
 	MixedValue(const MixedValue& copy);
 	MixedValue(const MixedValueType& value);
@@ -83,8 +55,6 @@ public:
 
 	template<typename T> MixedValue& operator= (const T& other)
 	{
-		//std::cout << "MixedValue =" << std::endl;
-
 		setValue(other);
 		return (*this);
 	}

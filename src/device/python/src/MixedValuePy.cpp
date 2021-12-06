@@ -1,8 +1,6 @@
 
 #include "MixedValuePy.h"
 
-#include <iostream>
-
 using STI::Python::MixedValuePy;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -32,10 +30,6 @@ MixedValuePy::MixedValuePy(const py::object& value)
     setValue_py(value);
 }
 
-// void MixedValuePy::setValue(const MixedValuePy& value)
-// {
-//     std::cout << "MixedValuePy::setValue" << std::endl;
-// }
 
 pybind11::object MixedValuePy::getValue_py() const
 {
@@ -124,13 +118,8 @@ void MixedValuePy::addValue_py(const py::handle& value)
 
 void MixedValuePy::setValue_py(const MixedValuePy& value)
 {
-//    std::cout << "setValue_py(MixedValuePy) " << MixedValue::TypeToString(value.getType()) << std::endl;
-
     const MixedValue& v = static_cast<const MixedValue&>(value);
 
-//    std::cout << "const MixedValue& v = " << v.getInt() << std::endl;
-
-    //MixedValue::setValue(value.getInt());
     MixedValue::setValue(v);
 }
 

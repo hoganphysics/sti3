@@ -9,8 +9,6 @@
 
 #include <memory>
 
-#include <iostream>
-
 
 namespace STI
 {
@@ -111,17 +109,14 @@ public:
 
         if (receiver != 0) {
 	        receiver->addListener(id, relayer->DeviceMessageRelayer<M>::listenerID, listener);
-            // std::cout << "add DeviceMessageRelayer<" << M::typeToString( M::getMessageClassType() ) << ">" << std::endl;
         }
     }
 
     static void removeAllListeners(const std::shared_ptr<DeviceMessageReceiver>& receiver, 
                                     const DeviceID& id, const std::shared_ptr<DeviceMessageRelayer<M>>& relayer)
     {
-        // std::cout << "remove DeviceMessageRelayer<" << M::typeToString( M::getMessageClassType() ) << ">" << std::endl;
         if (receiver != 0) {
     	    receiver->removeListener(id, relayer->DeviceMessageRelayer<M>::listenerID);
-            // std::cout << "remove DeviceMessageRelayer<" << M::typeToString( M::getMessageClassType() ) << ">" << std::endl;
         }
     }
 

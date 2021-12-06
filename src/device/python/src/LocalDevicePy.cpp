@@ -42,21 +42,7 @@ LocalDevicePy::~LocalDevicePy()
 
 
 bool LocalDevicePy::write(short channel, const pybind11::object& value)
-{
-    // std::cout << "LocalDevicePy::write " << device->getID().getID() << std::endl;
-
-    // bool result = false;
-    // //auto mVal = MixedValuePy(value);
-
-
-    // //auto tmp = MixedValuePy(value);
-    // //
-    // {
-    //     //py::gil_scoped_release release;
-    //     result = device->write(channel, MixedValuePy(value));
-    // //return device->write(channel, 11.0);
-    // }
-    
+{  
     return device->write(channel, MixedValuePy(value));
 }
 
@@ -83,20 +69,13 @@ void LocalDevicePy::stopRW()
 bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
 {
     bool result = false;
-    // MixedValue mVal = static_cast<MixedValue>(MixedValuePy(value));
-
     auto mValue = MixedValuePy(value);
-    std::cout << "-----------------" << std::endl;
-//    auto mVal = static_cast<MixedValue>(tmpVal);
-//    MixedValue mVal = tmpVal;
 
     {
         //Need to run in separate thread; release python GIL
         py::gil_scoped_release release;
         result = device->writeChannelDefault(channel, mValue);
     }
-    
-    //py::gil_scoped_acquire acquire;
 
     return result;
 }
@@ -121,42 +100,6 @@ pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::objec
     return py::none();
 }
 
-void LocalDevicePy::runTest2()
-{
-    std::vector<std::shared_ptr<STI::Python::A>> avec;
-    // auto a = std::make_shared<STI::Python::A>(99);
-    // avec.push_back(a);
-    testVector2(avec);
-
-    std::cout << "LocalDevicePy::runTest2() len=" << avec.size() << std::endl;
-    for (auto& x : avec) {
-        x->run();
-        std::cout << std::hex << x.get() << std::dec << std::endl;
-    }
-}
-
-void LocalDevicePy::testVector2(std::vector<std::shared_ptr<STI::Python::A>>& avec)
-{
-
-}
-
-void LocalDevicePy::runTest()
-{
-    std::vector<int> testvec;
-    testvec.push_back(33);
-
-    testVector(testvec);
-
-    std::cout << "LocalDevicePy::runTest() len=" << testvec.size() << std::endl;
-    for (auto& x : testvec) {
-        std::cout << "c++ val=" << x << std::endl;
-    }
-
-}
-
-void LocalDevicePy::testVector(std::vector<int>& input)
-{
-}
 
 void LocalDevicePy::LocalDeviceDelegate::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 {
@@ -164,39 +107,18 @@ void LocalDevicePy::LocalDeviceDelegate::parseEvents(const STI::Engine::RawEvent
 
         auto manager = std::make_shared<STI::Python::SynchronousEventPyManager>();
         STI::Python::SynchronousEventPy::pyEventManager = manager;      //temporarily store manager in static member
-        // STI::Python::SynchronousEventPy::pyEventManager = 0;
-        // STI::Python::SynchronousEventPy::temp = 22;
 
-        // py::gil_scoped_release release;
-        std::cout << "LocalDeviceDelegate::parseEvents len=" << synchedEvents.size() << std::endl;
         localDevicePy->parseEvents(events, synchedEvents);
-        std::cout << "LocalDeviceDelegate::parseEvents len=" << synchedEvents.size() << std::endl;
-
-        std::cout << "++++++++++++++LocalDeviceDelegate::parseEvents manager=" << manager->pySynchronousEventsRefs.size() << std::endl;
-
-        if (synchedEvents.size() > 0) {
-            std::cout << "LocalDeviceDelegate::parseEvents time=" << synchedEvents.at(0)->getTime() << std::endl;
-            // std::cout << "LocalDeviceDelegate::parseEvents count=" << synchedEvents.at(0).use_count() << std::endl;
-            // synchedEvents.at(0)->playEvent();
-        }
 
         double holderEventTime = 100;
-
         if (synchedEvents.size() > 0) {
-            
             std::sort(synchedEvents.begin(), synchedEvents.end(), STI::Utils::compare_shared_ptr<STI::Engine::SynchronousEvent>);
-
             holderEventTime = synchedEvents.back()->getTime() + 100;
         }
 
         auto managerHolderEvent = std::make_shared<STI::Python::SynchronousEventPyManagerHolder>(holderEventTime, manager);
-
-
-        // synchedEvents.insert(synchedEvents.begin(), managerHolderEvent);
-
         synchedEvents.push_back(managerHolderEvent);   
 
-        // synchedEvents.clear();
         STI::Python::SynchronousEventPy::pyEventManager = 0;    //clear static member reference
 
     }
@@ -222,125 +144,4 @@ void LocalDevicePy::LocalDeviceDelegate::parseEvents(const STI::Engine::RawEvent
     //     // }
     // }
 }
-
-
-
-// using STI::Python::LocalDevicePyTrampoline;
-
-// void LocalDevicePyTrampoline::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
-// {
-//     //pybind11::gil_scoped_acquire acquire;
-
-//     //py::object dummy = py::cast(&synchedEvents);   // force re-use in the following call
-
-//     PYBIND11_OVERRIDE(
-//         void,     /* Return type */
-//         LocalDevicePy,       /* Parent class */
-//         parseEvents,          /* Name of function in C++ (must match Python name) */
-//         events, synchedEvents        /* Argument(s) */
-//     );
-// }
-
-
-
-
-
-// LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
-//     const std::string& targetServer)
-// : LocalDevice(name, address, module, targetServer)
-// //LocalDevicePy::LocalDevicePy()
-// {
-
-// }
-
-// LocalDevicePy::~LocalDevicePy()
-// {
-
-// }
-
-// std::shared_ptr<STI::Device::DeviceMessageDispatcher> LocalDevicePy::getMessageDispatcher()
-// {
-//     std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
-    
-//     LocalDevice::getMessageDispatcher(dispatcher);
-
-//     return dispatcher;
-// }
-
-// std::shared_ptr<ChannelManagerPy> LocalDevicePy::getChannelManager()
-// {
-//     std::shared_ptr<ChannelManager> manager;
-//     std::shared_ptr<ChannelManagerPy> wrapper;
-
-//     LocalDevice::getChannelManager(manager);
-
-//     if (manager != 0) {
-//         wrapper = std::make_shared<ChannelManagerPy>(manager);
-//     }
-
-//     return wrapper;
-// }
-
-// STI::Device::DeviceID LocalDevicePy::getIDpy()
-// {
-//     //int y = getID().getModule();
-//     STI::Device::DeviceID y = getID();
-//     return y;
-// }
-
-
-// const STI::Device::DeviceID LocalDevicePy::getIDpy() const
-// {
-//     std::cout << "getID()" << std::endl;
-
-//     return LocalDevice::getID();
-// }
-
-// std::shared_ptr<STI::Device::DeviceMessageDispatcher> LocalDevicePy::getMessageDispatcher()
-// {
-//     std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
-    
-//     LocalDevice::getMessageDispatcher(dispatcher);
-
-//     return dispatcher;
-// }
-
-// //    std::shared_ptr<EventEngineSchedulerPy> getEngineScheduler();    
-
-// std::shared_ptr<ChannelManagerPy> LocalDevicePy::getChannelManager()
-// {
-//     std::shared_ptr<ChannelManager> manager;
-//     std::shared_ptr<ChannelManagerPy> wrapper;
-
-//     LocalDevice::getChannelManager(manager);
-
-//     if (manager != 0) {
-//         wrapper = std::make_shared<ChannelManagerPy>(manager);
-//     }
-
-//     return wrapper;
-// }
-
-
-
-//Hooks to be implemented in python:
-// bool LocalDevicePy::writeChannelPy(short channel, const STI::Python::MixedValuePy& value)
-// {
-//     return false;
-// }
-
-//pybind11::object LocalDevicePy::readChannelPy(short channel, const STI::Python::MixedValuePy& value)
-
-
-
-// //Overrides for STI::Device::LocalDevice
-// bool LocalDevicePy::writeChannel(short channel, const STI::Utils::MixedValue& value)
-// {
-//     return false;
-// }
-
-// bool LocalDevicePy::readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
-// {
-//     return false;
-// }
 

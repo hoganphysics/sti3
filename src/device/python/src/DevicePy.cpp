@@ -9,7 +9,6 @@
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"
 
-#include <iostream>
 
 using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;

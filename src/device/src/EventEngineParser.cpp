@@ -18,7 +18,6 @@
 
 #include <set>
 
-#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;

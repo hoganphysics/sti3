@@ -4,20 +4,6 @@ import time
 import sys
 import gc
 
-# print(stidevicepy.ChannelType.Output)
-
-
-class B(stidevicepy.A):
-    def __init__(self, val):
-        super(B, self).__init__(val)
-        # stidevicepy.A.__init__(self, val)
-    def run(self):
-        print("B:" + str(self.val))
-        return
-
-class TT:
-    def __init__(self, val):
-        self.val = val
     
 
 class TestDevice(stidevicepy.LocalDevice):
@@ -35,34 +21,8 @@ class TestDevice(stidevicepy.LocalDevice):
     # def writeChannel(self, channel, value):
     #     print("write: " + str(channel))
     #     return True
-    def testVector(self, inputVec):
-        print(type(inputVec))
-        print(inputVec)
-        inputVec.append(12)
-        print(inputVec)
-        print(len(inputVec))
-        [print("val=" + str(x)) for x in inputVec]
-        return
-    def testVector2(self, inputVec):
-        print(type(inputVec))
-        print(inputVec)
-        #a = stidevicepy.A(13)
-        a = B(13)
-        inputVec.append(a)
-        b = B(88)
-        inputVec.append(b)
-        self.saveVec = []
-        self.saveVec.append(a)
-        self.saveVec.append(b)
-        print(inputVec)
-        print(len(inputVec))
-        [x.run() for x in inputVec]
-        return
-    # def parseEvents(self, eventsIn, synchedEvents):
-    #     self.saveSync=[]
-    #     tmp = self.parseEvents2(eventsIn, synchedEvents)
-    #     [self.saveSync.append(x) for x in synchedEvents]
-    #     return
+
+
     def parseEvents(self, eventsIn, synchedEvents):
         #synchedEvents=[]
         self.saveSync=[]
@@ -71,21 +31,15 @@ class TestDevice(stidevicepy.LocalDevice):
             # print(str(eventsIn.keys()))
             # print(str(key))
             # print(str(eventsIn[key]))
-            print(type(synchedEvents))
 
             for evt in eventsIn[key]:
-                print(evt)
                 testEvent = TestDeviceEvent(35.8)
-                print("testEvent ref count = " + str(sys.getrefcount(testEvent)))
-                # testEvent.play()
+
                 # synchedEvents=[testEvent]
                 synchedEvents.append(testEvent)
                 testEvent2 = TestDeviceEvent(36.8)
                 synchedEvents.extend([testEvent2])
                 # synchedEvents[0]=testEvent2
-                # testEvent=0
-                # self.saveEvt=testEvent
-                print("testEvent ref count = " + str(sys.getrefcount(testEvent)))
                 
                 
                 # synchedEvents.clear()
@@ -98,20 +52,12 @@ class TestDevice(stidevicepy.LocalDevice):
         return
 
 class TestDeviceEvent(stidevicepy.SynchronousEvent):
-    # def __new__(cls, time):
-    #     print("TestDeviceEvent new!")
-    #     tmp = stidevicepy.SynchronousEvent.__new__(cls, time)
-    #     # tmp.__class__ = stidevicepy.SynchronousEvent
-    #     # tmp.add2()
-    #     # tmp.__class__ = TestDeviceEvent
-    #     return tmp
-    #     # return super(TestDeviceEvent, cls).__new__(cls)
     def __init__(self, time):
-        print("TestDeviceEvent init!")
         stidevicepy.SynchronousEvent.__init__(self, time)
     def __del__(self):
         print("^^^^^^^^^^^ TestDeviceEvent del")
     def loadEvent(self):
+        print("****** Custom load")
         return
     def collectMeasurementData(self):
         return
@@ -127,18 +73,10 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
 
 
 
-# a = stidevicepy.A(13)
-# a.run()
-
-# b = B(73)
-# b.run()
-
-tt = TT(44)
-print("tt ref count = " + str(sys.getrefcount(tt)))
 
 dev1=TestDevice("TestDevice", "localhost", 0, "root")
 
-print("dev1 ref count = " + str(sys.getrefcount(dev1)))
+# print("dev1 ref count = " + str(sys.getrefcount(dev1)))
 
 # dev1.runTest2()
 # exit()
@@ -150,7 +88,7 @@ print("Write result=" + str(res))
 
 # time.sleep(0.1)
 
-# dev1.write(1, 6.3)
+dev1.write(1, 6.3)
 
 # b=6
 

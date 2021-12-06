@@ -9,7 +9,6 @@
 #include "EventEngineScheduler.h"
 
 #include <memory>
-#include <iostream>
 
 namespace STI
 {
@@ -50,20 +49,14 @@ std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID&
 {
     auto ticket = std::make_shared<T>(id, eventEngineScheduler);
 
-    std::cout << "ParseTicketManager<T>::makeTicket" << std::endl;
-
     if (eventEngineScheduler == 0) {
-        std::cout << "Not connected!!!" << std::endl;
         //not connected
         ticket->cancel();
         return ticket;
     }
 
     TicketManager<STI::Engine::ParseID, T>::add(id, ticket);
-
-    std::cout << "ParseTicketManager<T>::makeTicket status: " << (ticket->getStatus() == STI::Engine::Ticket::TicketStatus::Canceled) << std::endl;
-    std::cout << "::makeTicket getStatus: " << (eventEngineScheduler->getStatus(id) == EngineJobStatus::Canceled || eventEngineScheduler->getStatus(id) == EngineJobStatus::NotFound) << std::endl;
-    
+ 
     //The job could have completed before the ticket was created and added to the manager
     bool removeTicket = false;
     switch (eventEngineScheduler->getStatus(id))

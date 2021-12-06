@@ -9,7 +9,14 @@
 
 
 #include <memory>
-#include <iostream>
+
+//Modified version from pybind11 library <pybind11/stl_bind.h> that keeps python object reference in a special 
+//pyref_holder class. This holder class has a static global manager that holds the refernces
+//Note that this is required because of a known limitation in pybind11 where the python part of a derived class
+//is garbage collected even if a reference is kept in c++ of the base class. The manager class here store a
+//pybind11::object reference of the python derived class while avoiding a circular reference.  
+//See discussion here:
+//https://github.com/pybind/pybind11/issues/1333
 
 
 namespace STI
@@ -17,12 +24,7 @@ namespace STI
 namespace Python
 {
 
-// /* Fallback functions */
-// template <typename, typename, typename... Args> void vector_if_copy_constructible(const Args &...) { }
-// template <typename, typename, typename... Args> void vector_if_equal_operator(const Args &...) { }
-// template <typename, typename, typename... Args> void vector_if_insertion_operator(const Args &...) { }
-// template <typename, typename, typename... Args> void vector_modifiers(const Args &...) { }
-
+//**** Copied from pybind11/stl_bind.h with small modifications *****//
 
 // Vector modifiers -- requires a copyable vector_type:
 // (Technically, some of these (pop and __delitem__) don't actually require copyability, but it seems
@@ -213,6 +215,7 @@ void vector_modifiers_pyref(pybind11::detail::enable_if_t<pybind11::detail::is_c
 }
 
 
+//**** Copied from pybind11/stl_bind.h with small modifications *****//
 
 //
 // std::vector

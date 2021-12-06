@@ -163,7 +163,6 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 LocalDevice::~LocalDevice()
 {
-	std::cout << "~LocalDevice()" << std::endl;
 	localCollection->clear();
 }
 
@@ -269,7 +268,6 @@ const DeviceID LocalDevice::getID() const
 
 bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 {
-//	std::cout << "LocalDevice::write" << std::endl;
 	return writeChannel(channel, value);
 }
 
@@ -300,11 +298,7 @@ void LocalDevice::stopRW()
 
 bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket)
 {
-	std::cout << "LocalDevice::playSingleEvent" << std::endl;
-
 	std::unique_lock<std::mutex> playLock(deviceMutex);
-
-
 
 	STI::Engine::ShotConfig shotConfig;
 	shotConfig.targetEnginePool = 0;	//0=async pool
@@ -318,38 +312,23 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	events->push_back(event);
 	shot->setEvents(events);
 
-	
-
 	auto parseID = eventEngineScheduler->parse(shot);
 
-
-	
-	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-
 	auto parseTicket = parseTicketManager->makeTicket(parseID);
-
-///////////////	
-
 
 	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	//parseTicket->wait();
 	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
 
 	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
-
-		std::cout << "status:" << (parseTicket->getStatus() == STI::Engine::Ticket::TicketStatus::Running ? "1" : "0") <<std::endl;
 		return false;
 	}
 
-// return true;
-/////////////////
-
-	std::cout << "Parse messages:" << std::endl;
-	const auto& mess=parseTicket->getMessages();
-	for (auto& m : mess) {
-		std::cout << m.getName() <<std::endl;
-	}
+	// std::cout << "Parse messages:" << std::endl;
+	// const auto& mess=parseTicket->getMessages();
+	// for (auto& m : mess) {
+	// 	std::cout << m.getName() <<std::endl;
+	// }
 
 	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
 

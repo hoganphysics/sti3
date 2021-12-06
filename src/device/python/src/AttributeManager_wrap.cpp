@@ -22,9 +22,9 @@ void init_AttributeManager(py::module& m)
 {
 
     py::class_<AttributeManagerPy, std::shared_ptr<AttributeManagerPy>>(m, "AttributeManager")
-        .def("getValue", &AttributeManagerPy::getValue)
-        .def("setValue", &AttributeManagerPy::setValue)
-        .def("getAttribute", py::overload_cast<const std::string&>(&AttributeManagerPy::getAttribute))
+        .def("getValue", &AttributeManagerPy::getValue, py::arg("key"))
+        .def("setValue", &AttributeManagerPy::setValue, py::arg("key"), py::arg("value"))
+        .def("getAttribute", py::overload_cast<const std::string&>(&AttributeManagerPy::getAttribute), py::arg("key"))
         .def("getAttributes", py::overload_cast<>(&AttributeManagerPy::getAttributes))
         ;
 

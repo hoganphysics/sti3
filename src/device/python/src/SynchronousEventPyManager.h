@@ -21,7 +21,7 @@ public:
     void addPyEvent(const pybind11::object& evt);
     void clear();
 
-// private:
+private:
 
     std::vector<pybind11::object> pySynchronousEventsRefs;
 };

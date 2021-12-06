@@ -21,13 +21,13 @@ void init_DeviceCollection(py::module& m)
 {
 
     py::class_<DeviceCollectionPy, std::shared_ptr<DeviceCollectionPy>>(m, "DeviceCollection")
-        .def("contains", &DeviceCollectionPy::contains)
+        .def("contains", &DeviceCollectionPy::contains, py::arg("deviceID"))
         .def("size", &DeviceCollectionPy::size)
-        .def("get", &DeviceCollectionPy::get)
+        .def("get", &DeviceCollectionPy::get, py::arg("deviceID"))
         .def("getIDs", &DeviceCollectionPy::getIDs)
         .def("clear", &DeviceCollectionPy::clear)
-        .def("add", &DeviceCollectionPy::add)
-        .def("remove", &DeviceCollectionPy::remove)
+        .def("add", &DeviceCollectionPy::add, py::arg("deviceID"), py::arg("Device"))
+        .def("remove", &DeviceCollectionPy::remove, py::arg("deviceID"))
         ;
 
 

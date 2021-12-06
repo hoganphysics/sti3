@@ -16,7 +16,7 @@ void init_EngineID(py::module& m)
         .def(py::init<int>(), py::arg("number"))
 
         .def("getNumber", &EngineID::getNumber)
-        .def("setNumber", &EngineID::setNumber)
+        .def("setNumber", &EngineID::setNumber, py::arg("number"))
 
         .def("__repr__",
             [](const EngineID& id) {

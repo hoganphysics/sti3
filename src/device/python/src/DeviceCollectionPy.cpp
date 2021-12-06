@@ -3,7 +3,6 @@
 #include "DevicePy.h"
 
 #include "DeviceID.h"
-#include <iostream>
 
 using STI::Python::DeviceCollectionPy;
 
@@ -21,12 +20,6 @@ DeviceCollectionPy::~DeviceCollectionPy()
 bool DeviceCollectionPy::add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Python::DevicePy>& node)
 {
     if (deviceCollection != 0 && node != 0) {
- //       std::shared_ptr<STI::Device::Device> dev = node->getDevice();
-//        std::cout << "adding ID: " << dev->getID().getID() << std::endl;
-//        std::cout << "ID check: " << id.getID() << std::endl;
-//        std::cout << "adding before size: " << deviceCollection->size() << std::endl;
-        //bool success = deviceCollection->add(id, dev);
-//        std::cout << "adding after size: " << deviceCollection->size() << " success = " << success << std::endl;
         return deviceCollection->add(id, node->getDevice());
     }
     return false;
@@ -51,7 +44,6 @@ bool DeviceCollectionPy::contains(const STI::Device::DeviceID& id) const
 unsigned DeviceCollectionPy::size() const
 {
     if (deviceCollection != 0) {
-//        std::cout << "size: " << deviceCollection->size() << std::endl;
         return deviceCollection->size();
     }
     return 0;

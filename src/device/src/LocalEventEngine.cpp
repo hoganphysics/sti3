@@ -35,7 +35,6 @@
 #include <vector>
 #include <functional>
 
-#include <iostream>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
@@ -95,7 +94,6 @@ LocalEventEngine::~LocalEventEngine()
 	resetPlayThread();
 	engineStateMessageGrouper.stop();
 	clear();
-	std::cout << "~LocalEventEngine()" << std::endl;
 }
 
 void LocalEventEngine::clear()
@@ -269,8 +267,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);		//parse function is not reentrant
 
-	std::cout << "LocalEventEngine::parse clear()" << std::endl; 
-
 	clear();
 
 	// std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -333,8 +329,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	int dependencyCount;
 	auto nextID = orderedDependents.begin();
 
-	std::cout << "<"  << localDeviceID.getID() << ">: "<< "Entering Parsing loop" << std::endl;
-
 	while (isState(EngineState::Parsing) && nextID != orderedDependents.end()) {
 
 		std::string devName = nextID->getName();
@@ -355,8 +349,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 			parseCondition.wait(parseLock);
 		}
 	}
-
-	std::cout << "<"  << localDeviceID.getID() << ">: " << "Begin wait for ownedTargets" << std::endl;
 
 	//Note that ownedTargets is only modified during the previous while loop,
 	//so from now on it is a static list of the owned devices of this device.
@@ -430,7 +422,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	if (id == localDeviceID) {
 		//Parse local
 		if (parser.parse(eventsByTarget[localDeviceID], synchedEvents)) {
-			std::cout << "parse succeeded. Events len=" << synchedEvents.size() << std::endl;
 			//successfully parsed
 			mergePartnerEvents(parser.partnerEvents);
 		}
@@ -522,8 +513,6 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 		parsedOwnedTargets[message->originalSourceID()] = message->engineState;
 		engines[remoteEngine->getDeviceID()] = remoteEngine;
 	}
-
-	std::cout << "Engine count: " << engines.size() << std::endl;
 
 	localParsingMessages.insert(localParsingMessages.end(), message->messages.begin(), message->messages.end());
 
@@ -632,8 +621,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	std::unique_lock<std::mutex> playLock(playMutex);
 	cancelled = false;
-
-	std::cout << "LocalEventEngine::play() " << synchedEvents.size() << std::endl;
 
 	if (!setState(EngineState::PreparingPlay)) {
 		//error
@@ -934,8 +921,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		return;
 	}
 
-	std::cout << "LocalEventEngine::play(jobID, triggerCB) " << std::endl;
-
 	//std::unique_lock<std::mutex> playLock(playMutex);
 
 	//Make sure we are trying to play the shot that is currently parsed on this engine.
@@ -1135,8 +1120,6 @@ bool LocalEventEngine::playDeviceEvents()
 		return false;
 	}
 
-	std::cout << "LocalEventEngine::playDeviceEvents" << std::endl;
-
 	//launch measurements thread
 	auto measurementThread = std::thread(&LocalEventEngine::measureData, this);
 	
@@ -1155,7 +1138,6 @@ bool LocalEventEngine::playDeviceEvents()
 
 		if (evt != 0 && waitUntil(playLock, evt->getTime())) {	//success if not interrupted
 			evt->waitBeforePlay();
-			std::cout << "evt->play()" << std::endl;
 			evt->play();
 		}
 

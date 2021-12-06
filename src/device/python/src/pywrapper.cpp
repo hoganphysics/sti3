@@ -1,18 +1,7 @@
 
-#include "SynchronousEvent.h"
-
-#include <iostream>
 
 #include <pybind11/pybind11.h>
-
 namespace py = pybind11;
-
-
-// PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::SynchronousEvent>>);
-// PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::SynchronousEvent>>);
-
-using std::cout;
-using std::endl;
 
 
 void init_DeviceID(pybind11::module &);
@@ -31,93 +20,10 @@ void init_RawEvent(py::module& m);
 void init_AttributeManager(py::module& m);
 void init_PersistenceManager(py::module& m);
 
-int add(int i, int j) {
-    return i + j;
-}
-
-class Animal {
-public:
-    virtual ~Animal() { }
-    virtual std::string go(int n_times) = 0;
-    virtual std::string go2(double n_times) = 0;
-};
-
-class PyAnimal : public Animal {
-public:
-    /* Inherit the constructors */
-    using Animal::Animal;
-
-    /* Trampoline (need one for each virtual function) */
-    std::string go(int n_times) override {
-        PYBIND11_OVERLOAD_PURE(
-            std::string, /* Return type */
-            Animal,      /* Parent class */
-            go,          /* Name of function in C++ (must match Python name) */
-            n_times      /* Argument(s) */
-        );
-    }
-
-    std::string go2(double n_times) override {
-        PYBIND11_OVERLOAD_PURE(
-            std::string, /* Return type */
-            Animal,      /* Parent class */
-            go2,          /* Name of function in C++ (must match Python name) */
-            n_times      /* Argument(s) */
-        );
-    }
-};
-
-class Dog : public Animal {
-public:
-    std::string go(int n_times) override {
-        std::string result;
-        for(int i=0; i<n_times; ++i)
-            result += "woof! ";
-        return result;
-    }
-
-    std::string go2(double n_times) override {
-        std::string result;
-        for(int i=0; i<5; ++i)
-            result += "hi! ";
-        return result;
-    }
-
-};
-
-std::string call_go(Animal *animal) {
-    return animal->go(3);
-}
-
-void testVec(std::vector<int>& vec)
-{
-    std::cout << "testVec: " << vec.size() << std::endl;
-}
-
-// PYBIND11_MODULE(example, m) {
-//     m.doc() = "pybind11 example plugin"; // optional module docstring
-
-//     m.def("add", &add, "A function which adds two numbers");
-// }
-
 
 
 PYBIND11_MODULE(stidevicepy, m) {
     m.doc() = "STI Device wrapper library";
-
-    m.def("add", &add, "A function which adds two numbers");
-
-    py::class_<Animal, PyAnimal /* <--- trampoline*/>(m, "Animal")
-        .def(py::init<>())
-        .def("go", &Animal::go)
-        .def("go2", &Animal::go2);
-
-    py::class_<Dog, Animal>(m, "Dog")
-        .def(py::init<>());
-
-    m.def("call_go", &call_go);
-
-    m.def("testVec", &testVec);
 
     // py::module_::import("stidevicepybase");
 
@@ -140,9 +46,6 @@ PYBIND11_MODULE(stidevicepy, m) {
 
 int main(int argc, char *argv[])
 {
-
-//    cout << "Test" << endl;
-
     return 0;
 }
 

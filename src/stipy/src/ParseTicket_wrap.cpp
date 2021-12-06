@@ -5,6 +5,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>
 
 using STI::Engine::Ticket;
 
@@ -30,9 +31,12 @@ void init_ParseTicket(py::module& m)
             })
         ;
 
+        
+
     py::class_<STI::Python::PyParseTicket, std::shared_ptr<STI::Python::PyParseTicket>>(m, "ParseTicket")
 
-        .def("wait", &STI::Python::PyParseTicket::wait)
+        .def("wait", py::overload_cast<>(&STI::Python::PyParseTicket::wait))
+        .def("wait", py::overload_cast<const std::function<bool()>&>(&STI::Python::PyParseTicket::wait))
         .def("cancel", &STI::Python::PyParseTicket::cancel)
         .def("getMessages", &STI::Python::PyParseTicket::getMessages)
         .def("getEvents", &STI::Python::PyParseTicket::getEvents)

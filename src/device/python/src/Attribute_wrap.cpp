@@ -32,7 +32,7 @@ void init_Attribute(py::module& m)
         .def("getAllowedValues", &Attribute::getAllowedValues)
         .def("getGroup", &Attribute::getGroup)
         .def("refreshValue", &Attribute::refreshValue)
-        .def("setValue", &Attribute::setValue)
+        .def("setValue", &Attribute::setValue, py::arg("value"))
         // .def("setValue", py::overload_cast<const std::string&>(&Attribute::setValue))
         // .def("setValue", [](Attribute& self, const std::string& value) {
         //         // return self.setValue(value);
@@ -45,7 +45,7 @@ void init_Attribute(py::module& m)
         .def("getMetaData", [](Attribute& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));
                 return value.getValue_py();
-            })
+            }, py::arg("key"))
         .def("__repr__",
             [](const Attribute& att) {
                 return "<key=" + att.getKey()
@@ -63,17 +63,15 @@ void init_Attribute(py::module& m)
               const std::vector<std::string>& allowedValues) 
                 {
                     return new STI::Device::LocalAttribute(key, initalValue, allowedValues);
-                } ))
-        // .def("setRefresher", &LocalAttribute::setRefresher, py::return_value_policy::reference)
+                } ), py::arg("key"), py::arg("value"), py::arg("allowedValues"))
         .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refesher) {
                 self->setRefresher(refesher);
                 return self;
-            })
-        // .def("setSetter", &LocalAttribute::setSetter, py::return_value_policy::reference)   //py::return_value_policy::reference
+            }, py::arg("refresherFunction"))
         .def("setSetter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
                 self->setSetter(setter);
                 return self;
-            })
+            }, py::arg("setterFunction"))
 
         // .def("setValue", [&](LocalAttribute& self, const std::string& value) {
         //         return self.setValue<std::string>(value);
@@ -99,7 +97,7 @@ void init_Attribute(py::module& m)
                 //return ch;        //error: use of deleted function ‘STI::Device::LocalChannel::LocalChannel(const STI::Device::LocalChannel&’
                 self->addMetaData(key, v);
                 return self;
-            } ) //, py::return_value_policy::reference)
+            }, py::arg("key"), py::arg("value") ) //, py::return_value_policy::reference)
         ;
 
 

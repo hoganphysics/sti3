@@ -23,12 +23,10 @@ void init_ChannelManager(py::module& m)
 
     py::class_<ChannelManagerPy, std::shared_ptr<ChannelManagerPy>>(m, "ChannelManager")
         .def("getChannels", &ChannelManagerPy::getChannelsPy)
-        .def("getChannel", &ChannelManagerPy::getChannelPy)
-        .def("writeChannel", &ChannelManagerPy::writeChannelPy)
-        .def("readChannel", &ChannelManagerPy::readChannelPy)
+        .def("getChannel", &ChannelManagerPy::getChannelPy, py::arg("channelNumber"))
+        .def("writeChannel", &ChannelManagerPy::writeChannelPy, py::arg("channelNumber"), py::arg("value"))
+        .def("readChannel", &ChannelManagerPy::readChannelPy, py::arg("channelNumber"), py::arg("value"))
         ;
-
-
 
 }
 

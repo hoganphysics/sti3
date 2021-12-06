@@ -38,7 +38,9 @@ void init_RawEvent(py::module& m)
                 const std::string& description, unsigned eventNumber, const RawEventType& eventType) 
                 {
                     return new STI::Engine::RawEvent(targetDeviceID, time, channel, MixedValuePy(value), description, eventNumber, eventType);
-                } ))
+                }), 
+                py::arg("targetDeviceID"), py::arg("time"), py::arg("channelNumber"), py::arg("value"),
+                py::arg("description"), py::arg("eventNumber"), py::arg("eventType") )
         // .def("__init__",
         //     [](STI::Engine::RawEvent& instance, const STI::Device::DeviceID& targetDeviceID,
         //         double time, unsigned short channel, const pybind11::object& value,

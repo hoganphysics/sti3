@@ -44,7 +44,6 @@ MixedValue::MixedValue()
 }
 MixedValue::MixedValue(const MixedValue& copy)
 {
-	//std::cout << "MixedValue(const MixedValue&) constructor" << std::endl;
 	setValue(copy);
 }
 
@@ -162,7 +161,6 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
 
 void MixedValue::setValue(const MixedValue& value)
 {
-	//std::cout << "MixedValue::setValue(MixedValue)" << std::endl;
 	//clear();
 	//type = value.getType();
 
