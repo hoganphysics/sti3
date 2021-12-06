@@ -28,7 +28,7 @@ public:
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events);
 
-    STI::Engine::ShotConfig& getShotConfig();
+    const STI::Engine::ShotConfig& getShotConfig() const;
 
 
 private:

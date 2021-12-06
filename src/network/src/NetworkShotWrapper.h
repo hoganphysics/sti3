@@ -34,7 +34,7 @@ public:
     {
     }
 
-    STI::Engine::ShotConfig& getShotConfig()
+    const STI::Engine::ShotConfig& getShotConfig() const
     {
         return shotConfig;
     }

@@ -76,6 +76,8 @@ pybind11_add_module(stidevicepy
     pywrapper.cpp
     RawEvent_wrap.cpp
     SynchronousEvent_wrap.cpp
+    SynchronousEventPy.cpp
+    SynchronousEventPyManager.cpp
 )
 
 
@@ -130,6 +132,10 @@ add_library(stidevicepybase SHARED
 #        NO_SONAME OFF
 #)
 
+
+
+target_compile_options(stidevicepybase PRIVATE -fvisibility=hidden)
+
 set_target_properties(stidevicepybase PROPERTIES
     VERSION ${PROJECT_VERSION}
     # DEBUG_POSTFIX "_d"
@@ -150,6 +156,8 @@ if (USE_STI_DEBUG_POSTFIX)
 
 endif (USE_STI_DEBUG_POSTFIX)
 
+
+target_compile_options(stidevicepy PRIVATE -fvisibility=hidden)
 
 set_target_properties(stidevicepy PROPERTIES
     VERSION ${PROJECT_VERSION}

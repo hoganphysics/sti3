@@ -4,6 +4,7 @@
 
 #include <mutex>
 #include <condition_variable>
+#include <functional>
 
 
 namespace STI
@@ -22,6 +23,8 @@ public:
     virtual ~Ticket() {}
 
     void wait();
+    void wait(const std::function<bool()>& waitChecker);
+
     void setComplete();
     void cancel();
 

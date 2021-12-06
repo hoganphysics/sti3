@@ -1,4 +1,5 @@
 
+#include "SynchronousEvent.h"
 
 #include <iostream>
 
@@ -6,8 +7,13 @@
 
 namespace py = pybind11;
 
+
+// PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::SynchronousEvent>>);
+// PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::SynchronousEvent>>);
+
 using std::cout;
 using std::endl;
+
 
 void init_DeviceID(pybind11::module &);
 void init_EngineID(py::module& m) ;
@@ -83,6 +89,10 @@ std::string call_go(Animal *animal) {
     return animal->go(3);
 }
 
+void testVec(std::vector<int>& vec)
+{
+    std::cout << "testVec: " << vec.size() << std::endl;
+}
 
 // PYBIND11_MODULE(example, m) {
 //     m.doc() = "pybind11 example plugin"; // optional module docstring
@@ -91,8 +101,10 @@ std::string call_go(Animal *animal) {
 // }
 
 
+
 PYBIND11_MODULE(stidevicepy, m) {
-    m.doc() = "pybind11 example plugin"; // optional module docstring
+    m.doc() = "STI Device wrapper library";
+
     m.def("add", &add, "A function which adds two numbers");
 
     py::class_<Animal, PyAnimal /* <--- trampoline*/>(m, "Animal")
@@ -104,6 +116,8 @@ PYBIND11_MODULE(stidevicepy, m) {
         .def(py::init<>());
 
     m.def("call_go", &call_go);
+
+    m.def("testVec", &testVec);
 
     // py::module_::import("stidevicepybase");
 

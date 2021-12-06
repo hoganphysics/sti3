@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**", 
                 "${workspaceFolder}/../../../../include/**",
                 "${workspaceFolder}/../../src/**",
-                "/home/hogan/code/dev/stiwork/pytest/pybind11/include/**",
+                // "/home/hogan/code/dev/stiwork/pytest/pybind11/include/**",
+                "/home/hogan/.local/lib/python3.6/site-packages/pybind11/include/**",
                 "/usr/include/python3.6/**"
             ],
             "defines": [],

@@ -29,6 +29,8 @@ public:
 
 		addChannel(0, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Double, STI::Utils::MixedValueType::Double, "");
 
+		addChannel(1, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "");
+
 		addAttribute("settings::testAttrib", "the value of the attribute");
 	}
 	~AnalogInDevice() {}
@@ -46,6 +48,8 @@ public:
 			getMeasurements().at(0)->setMeasurementResult(22.3);
 		}
 	};
+
+	//void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 	{
@@ -95,6 +99,8 @@ public:
 		int channel;
 	};
 
+	void parseEvents2(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
+
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 	{
 		std::cout << "Parse Trigger" << std::endl;
@@ -132,6 +138,10 @@ int main(int argc, char **argv)
 	hub->addDevice(analogin);
 	hub->addDevice(trigger);
 	
+	auto writeCheck = analogin->write(1, 3.2);
+
+	double tmp = 44;
+
 	int x;
 	std::cin >> x;
 
@@ -169,6 +179,8 @@ int main(int argc, char **argv)
 	std::cout << "Data = " << data.print() << std::endl;
 
 	std::cin >> x;
+
+	auto res = analogin->write(1, 3.2);
 
 	return 0;
 }

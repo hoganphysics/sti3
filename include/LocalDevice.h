@@ -113,6 +113,8 @@ public:
 	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
 
+	virtual bool isEventTarget(const DeviceID& id);
+
 private:
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
@@ -125,7 +127,7 @@ private:
 	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
 
 	void addEventTarget(const STI::Device::DeviceID& id);
-	virtual bool isEventTarget(const DeviceID& id);
+
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>
 	{

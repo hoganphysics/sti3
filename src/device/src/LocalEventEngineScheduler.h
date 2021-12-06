@@ -93,9 +93,6 @@ public:
                         std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
                         const STI::Device::DeviceTrace& trace);
     
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
-                        unsigned maxRecursions);
     void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
 
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
@@ -146,6 +143,10 @@ public:
     //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
 
 private:
+
+    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
+                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                        unsigned maxRecursions);
 
     bool loopDetected(const STI::Device::DeviceTrace& trace, STI::Device::DeviceTrace& newTrace);
 

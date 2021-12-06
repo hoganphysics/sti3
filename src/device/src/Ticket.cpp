@@ -17,6 +17,12 @@ Ticket::Ticket(const Ticket::TicketStatus& initalStatus)
 
 void Ticket::wait()
 {
+    //default to (virtual) member function
+    wait( [this](){ return waitCheck(); });
+}
+
+void Ticket::wait(const std::function<bool()>& waitChecker)
+{
     std::unique_lock<std::mutex> statusLock(statusMutex);
 
     bool keepWaiting = true;
@@ -24,8 +30,9 @@ void Ticket::wait()
     while (status == TicketStatus::Running && keepWaiting) {
         statusCondition.wait_for(statusLock, std::chrono::milliseconds(100));
 
-        keepWaiting = waitCheck();
+        keepWaiting = waitChecker();
     }
+
 }
 
 bool Ticket::waitCheck()

@@ -21,7 +21,7 @@ MixedValuePy::MixedValuePy(const MixedValue& value)
 }
 
 MixedValuePy::MixedValuePy(const MixedValuePy& value)
-: MixedValue(value)
+: MixedValue(static_cast<MixedValue>(value))
 {
 
 }
@@ -31,6 +31,11 @@ MixedValuePy::MixedValuePy(const py::object& value)
 {
     setValue_py(value);
 }
+
+// void MixedValuePy::setValue(const MixedValuePy& value)
+// {
+//     std::cout << "MixedValuePy::setValue" << std::endl;
+// }
 
 pybind11::object MixedValuePy::getValue_py() const
 {

@@ -47,6 +47,62 @@ class MixedValuePy;
 
 
 
+class A
+{
+public:
+
+    A(int v) : val(v) 
+    {
+        std::cout << "Creating A:" << val << std::endl;
+    }
+    A(const A &p1)
+    {
+        std::cout << "Copy A:" << val << std::endl;
+    }
+    virtual ~A() 
+    {
+        std::cout << "Destroy A:" << val << std::endl;
+    }
+
+    virtual void run()
+    {
+        std::cout << "A:" << val << std::endl;
+    }
+    int val;
+};
+
+
+class ATrampoline : public A {
+public:
+    /* Inherit the constructors */
+    using A::A;
+    virtual ~ATrampoline() {}
+
+    virtual void run() override
+    {
+        // std::cout << "ATrampoline:run" << std::endl;
+{
+        pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+        // Try to look up the overridden method on the Python side.
+        pybind11::function override = pybind11::get_override(this, "run");
+        if (override) {  // method is found
+            // std::cout << "ATrampoline override found!" << std::endl;
+        }
+        else {
+            // std::cout << "ATrampoline override missing" << std::endl;
+        }
+}
+
+
+        PYBIND11_OVERRIDE(
+            void,     /* Return type */
+            A,       /* Parent class */
+            run,          /* Name of function in C++ (must match Python name) */
+                    /* Argument(s) */
+        );
+    }
+};
+
 class LocalDevicePy : public DevicePy
 {
 public:
@@ -57,12 +113,20 @@ public:
 
     virtual int test2(int x) { return 5; }
 
+    void runTest();
+    virtual void testVector(std::vector<int>& input);
+
+    void runTest2();
+    virtual void testVector2(std::vector<std::shared_ptr<A>>& avec);
+
     virtual bool writeChannel(short channel, const pybind11::object& value);
     virtual pybind11::object readChannel(short channel, const pybind11::object& value);
 
 	bool write(short channel, const pybind11::object& value);
 	pybind11::object read(short channel, const pybind11::object& value);
 	void stopRW();
+
+    //virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
     virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
@@ -151,10 +215,7 @@ private:
             return true;
         }
 
-        void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
-        {
-            localDevicePy->parseEvents(events, synchedEvents);
-        }
+        void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
     
     private:
 
@@ -173,6 +234,31 @@ public:
     /* Inherit the constructors */
     using LocalDevicePy::LocalDevicePy;
 
+    void testVector(std::vector<int>& input) override
+    {
+        //This is needed:
+        pybind11::object dummy = pybind11::cast(input, pybind11::return_value_policy::reference);
+
+        PYBIND11_OVERRIDE(
+            void,     /* Return type */
+            LocalDevicePy,       /* Parent class */
+            testVector,          /* Name of function in C++ (must match Python name) */
+            input        /* Argument(s) */
+        );
+    }
+
+    void testVector2(std::vector<std::shared_ptr<A>>& input) override
+    {
+        pybind11::object dummy = pybind11::cast(input, pybind11::return_value_policy::reference);
+
+        PYBIND11_OVERRIDE(
+            void,     /* Return type */
+            LocalDevicePy,       /* Parent class */
+            testVector2,          /* Name of function in C++ (must match Python name) */
+            input        /* Argument(s) */
+        );
+    }
+
     int test2(int x) override
     {
         PYBIND11_OVERRIDE(
@@ -185,6 +271,8 @@ public:
 
     bool writeChannel(short channel, const pybind11::object& value) override
     {
+        //pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
             LocalDevicePy,        /* Parent class */
@@ -195,6 +283,8 @@ public:
 
     pybind11::object readChannel(short channel, const pybind11::object& value) override
     {
+        //pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
             LocalDevicePy,       /* Parent class */
@@ -205,12 +295,29 @@ public:
 
     void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) override
     {
+//         {
+// //        pybind11::gil_scoped_acquire acquire;
+
+//         //auto synchedEventsVec = std::make_shared<STI::Engine::SynchronousEventVector>();
+//         auto synchedEventsVec = std::make_shared<std::vector<int>>();
+//         synchedEventsVec->push_back(33);
+
+//         pybind11::object dummy = pybind11::cast(synchedEventsVec, pybind11::return_value_policy::reference);   // force re-use in the following call
+
+// //        pybind11::gil_scoped_release release;
+//         }
+//        pybind11::gil_scoped_acquire acquire;
+
+        pybind11::object dummy = pybind11::cast(synchedEvents, pybind11::return_value_policy::reference);
+
         PYBIND11_OVERRIDE(
             void,     /* Return type */
             LocalDevicePy,       /* Parent class */
             parseEvents,          /* Name of function in C++ (must match Python name) */
             events, synchedEvents        /* Argument(s) */
         );
+
+        // std::cout << "After override: " << synchedEvents.size() << std::endl;
     }
 
 

@@ -9,6 +9,8 @@
 
 #include <mutex>
 
+#include <iostream>
+
 using STI::Engine::EventEngineManager;
 using STI::Engine::EventEngineJob;
 using STI::Engine::ParseID;
@@ -31,6 +33,7 @@ EventEngineManager::~EventEngineManager()
     if(jobThread.joinable()) {
         jobThread.join();
     }
+    std::cout << "~EventEngineManager() : ref count = " << engine.use_count() << " job ref count = " << currentJob.use_count() << std::endl;
 }
 
 bool EventEngineManager::getEngine(std::shared_ptr<LocalEventEngine>& eventEngine)

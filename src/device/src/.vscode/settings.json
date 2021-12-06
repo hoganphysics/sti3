@@ -67,6 +67,7 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "cerrno": "cpp"
     }
 }

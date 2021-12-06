@@ -28,6 +28,8 @@ public:
     void setValue_py(const MixedValuePy& value);
     void addValue_py(const MixedValuePy& value);
 
+    //void setValue(const MixedValuePy& value);
+
 private:
 
     static pybind11::object convertValue(const MixedValue& value);

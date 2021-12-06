@@ -37,7 +37,7 @@ bool RemoteShot::getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShot
 	return !CORBA::is_nil(tShotCallback);
 }
 
-ShotConfig& RemoteShot::getShotConfig()
+const ShotConfig& RemoteShot::getShotConfig() const
 {
 	return shotConfig;
 }

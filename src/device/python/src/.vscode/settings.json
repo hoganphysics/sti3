@@ -70,5 +70,7 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "filesystem": "cpp"
-    }
+    },
+    "jupyter.jupyterCommandLineArguments": [{"LD_LIBRARY_PATH":"/home/hogan/code/dev/sti3/lib/"}],
+    "jupyter.jupyterServerType": "local"
 }

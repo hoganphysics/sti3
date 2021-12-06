@@ -44,15 +44,15 @@ public:
 
 	bool operator<(const SynchronousEvent& rhs) const { return getTime() < rhs.getTime(); }
 
+
+
+	virtual void loadEvent() {}
+	virtual void playEvent() {}
+	virtual void collectMeasurementData() {}
+	virtual void stopEvent() {}
+	virtual void pauseEvent() {}
+	virtual void unpauseEvent(bool retrigger) {}
 private:
-
-	virtual void loadEvent() = 0;
-	virtual void playEvent() = 0;
-	virtual void collectMeasurementData() = 0;
-	virtual void stopEvent() = 0;
-	virtual void pauseEvent() = 0;
-	virtual void unpauseEvent(bool retrigger) = 0;
-
 	void waitForPlayComplete();
 
 	bool played;

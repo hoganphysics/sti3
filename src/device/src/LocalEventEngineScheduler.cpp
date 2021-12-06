@@ -26,6 +26,7 @@
 #include <memory>
 #include <algorithm>
 
+#include <iostream>
 
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalEventEngineScheduler;
@@ -74,6 +75,24 @@ LocalEventEngineScheduler::~LocalEventEngineScheduler()
 {
     stop();
     schedulerThread.join();
+ 
+    std::cout << "~LocalEventEngineScheduler() " << queuedJobs.size() << ", " << runningJobs.size() << ", " << completedJobs.size() << std::endl;
+    
+    // std::set<STI::Engine::EngineJobID> jobIDs;
+    // std::shared_ptr<STI::Engine::EventEngineJob> job;
+    // std::shared_ptr<STI::Engine::EventEngine> engine;
+    // completedJobs.getKeys(jobIDs);
+    // int i = 0;
+    // for (auto& id : jobIDs) {
+    //     completedJobs.get(id, job);
+       
+    //     std::cout << "~LocalEventEngineScheduler() job " <<  ((id.type == EventEngineJobType::Parse) ? "Parse" : "Play") << " use count = " << job.use_count()-1 << std::endl;
+    //     i++;
+    //     if ((id.type == EventEngineJobType::Parse) && job->getEngine(engine)) {
+    //         std::cout << "~LocalEventEngineScheduler() parse engine count = " << engine.use_count()-1 << std::endl;
+    //     }
+    // }
+
 }
 
 
@@ -190,7 +209,7 @@ ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
         job->addMessage(m);
     }
 
-    //Check for missing targets
+    //Check for targets missing from original event target list
     std::set<DeviceID> resolvedTargets;
     tree->getNodes(resolvedTargets);
 
@@ -334,9 +353,13 @@ void LocalEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree&
 
 void LocalEventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
 {
+    //Sort (by server) all targets that are below this device in the graph.
+    //That is, ignore targets that have a server path to the localDevice, since the localDevice
+    //is not responsible for those targets.
+
     //Note: if the id is not in the tree, it will be trivially added to set
     for (auto& id : targets) {
-        if (id !=localDeviceID && !tree.hasBranchToTarget(id, localDeviceID)) {
+        if (id != localDeviceID && !tree.hasBranchToTarget(id, localDeviceID)) {
             //this id has no server path to the local device.
             targetsByServer[id.getTargetServerID()].insert(id);
         }        
@@ -345,6 +368,7 @@ void LocalEventEngineScheduler::addToTargetsByServer(const std::set<DeviceID>& t
 
 void LocalEventEngineScheduler::getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs)
 {
+    //returns list of ids in the localDevice's collection that declare it as their server
     serverIDs.clear();
 
     std::set<STI::Device::DeviceID> ownedIDs;
@@ -405,6 +429,16 @@ void LocalEventEngineScheduler::getDependants(const std::set<DeviceID>& evtTarge
 
         getDependants(targets, tree, missingTargets, messages, STI::Device::DeviceTrace());
 
+        //Remove direct partners from missingTargets, since the localDevice will act as their server
+        for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
+            if (localDevice->isEventTarget(*it)) {
+                it = missingTargets.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+
         // If there are still missingTargets, they may be found on another pass.
         // Make sure the new missingTarget list is not the same as the last targets list, 
         // since those IDs have already been tried and were missing.
@@ -432,7 +466,7 @@ void LocalEventEngineScheduler::getDependants(const std::set<DeviceID>& evtTarge
 
     //*** (1) Check for events targeting the local device ***//
 
-    //If there are local events, add local ID *and* this device's event targets, since the local
+    //If there are local events, add local ID *and* this device's event targets (partners), since the local
     //device can generate events on its event targets.
     auto local_it = evtTargets.find(localDeviceID);
 
@@ -503,7 +537,7 @@ void LocalEventEngineScheduler::getDependants(const std::set<DeviceID>& evtTarge
 
         for (auto& id : it->second) {
             targetsForLocal.clear();
-            targetsForLocal.insert(id);
+            targetsForLocal.insert(id);     //call as getPartnerDeviceDependants(id, {id}, ...) to just add this id (and it's partners...)
 
             getPartnerDeviceDependants(id, targetsForLocal, tree, missingIDs, messages, newTrace);
         }

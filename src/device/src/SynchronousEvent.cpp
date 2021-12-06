@@ -3,6 +3,7 @@
 #include "Measurement.h"
 #include "RawEvent.h"
 
+#include <iostream>
 
 using STI::Engine::SynchronousEvent;
 using STI::Engine::RawEvent;
@@ -19,6 +20,7 @@ SynchronousEvent::SynchronousEvent(double time) : _time(time)
 
 SynchronousEvent::~SynchronousEvent()
 {
+    std::cout << "Destroying SynchronousEvent" << std::endl;
 }
 
 void SynchronousEvent::addMeasurement(const RawEvent& measurementEvent)
@@ -53,7 +55,7 @@ void SynchronousEvent::play()
 
 	if (played || stopped || paused)
 		return;
-
+	std::cout << "SynchronousEvent::play()" << std::endl;
 	playEvent();	//pure virtual
 
 	played = true;

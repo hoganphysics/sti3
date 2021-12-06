@@ -19,6 +19,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 
+#include <pybind11/stl_bind.h>
 
 namespace py = pybind11;
 
@@ -41,6 +42,11 @@ using STI::Device::ChannelType;
 //     return dev->test2(3);
 // }
 
+// PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::SynchronousEvent>>);
+PYBIND11_MAKE_OPAQUE(std::vector<int>);
+
+PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Python::A>>);
+
 void init_LocalDevice(py::module& m) 
 {
 
@@ -52,6 +58,17 @@ void init_LocalDevice(py::module& m)
     // py::class_<Dog2, Animal2>(m, "Dog2")
     //     .def(py::init<>());
 
+
+    
+    py::bind_vector<std::vector<int>>(m, "IntVector");
+    py::bind_vector<std::vector<std::shared_ptr<STI::Python::A>>>(m, "AVector");
+
+
+    py::class_<STI::Python::A, STI::Python::ATrampoline, std::shared_ptr<STI::Python::A>>(m, "A")
+        .def(py::init<int>())
+        .def("run", &STI::Python::A::run)
+        .def_readonly("val", &STI::Python::A::val)
+        ;
 
 
     py::class_<DevicePy, std::shared_ptr<DevicePy>>(m, "Device")
@@ -71,13 +88,20 @@ void init_LocalDevice(py::module& m)
         //.def(py::init<>())
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                      py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )
+        
+        .def("runTest", &LocalDevicePy::runTest)
+        .def("testVector", &LocalDevicePy::testVector, py::return_value_policy::reference)
+        
+        .def("runTest2", &LocalDevicePy::runTest2)
+        .def("testVector2", &LocalDevicePy::testVector2, py::return_value_policy::reference)
+
         .def("write", &LocalDevicePy::write)
         .def("read", &LocalDevicePy::read)
         .def("writeChannel", &LocalDevicePy::writeChannel)
         .def("readChannel", &LocalDevicePy::readChannel)
         .def("stopRW", &LocalDevicePy::stopRW)
         
-        .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents"))
+        .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
 
         .def("addChannel", 
             py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
