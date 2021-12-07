@@ -17,33 +17,22 @@ def testFunc():
     # print("Test func")
     digital=stipy.STIPyDevice("Digital Out", "localhost", 0, "localhost/0/STI Server")
     deltat = 1*5000000000
-    event(ch(digital, 0), 100, True)
-    event(ch(digital, 0), 140, False)
-    event(ch(digital, 0), 180, True)
-    #event(ch(digital, 2), 160, True)
-    #event(ch(digital, 2), 260, False)
+    #event(ch(digital, 0), 100, False)
+    #event(ch(digital, 0), 140, True)
+    #event(ch(digital, 1), 150, True)
+    #event(ch(digital, 0), 140 + 1500, False)
+#    event(ch(digital, 2), 160, True)
+#    event(ch(digital, 2), 260, False)
+    #event(ch(digital, 1), 200, False)
     #event(ch(digital, 0), 1000, False)
-    dt = 100
-    event(ch(digital, 1), 100, True)
-    event(ch(digital, 2), 100, True)
-    time = 100+dt
-    event(ch(digital, 1), time, False)
-    event(ch(digital, 2), time, False)
-    time += dt
-    event(ch(digital, 1), time, True)
-    event(ch(digital, 2), time, True)
-    time += 2*dt
-    event(ch(digital, 1), time, False)
-    event(ch(digital, 2), time, False)
-    time += 2*dt
-    event(ch(digital, 1), time, True)
-    event(ch(digital, 2), time, True)
-    time += dt
-    event(ch(digital, 1), time, False)
-    event(ch(digital, 2), time, False)
-    #event(ch(digital, 1), 1000, False)
-#    event(ch(digital, 0), 1000+deltat, True)
+    #event(ch(digital, 0), 1000+deltat, True)
 #    event(ch(digital, 1), 200, False)
+    slow=stipy.STIPyDevice("Slow Analog Out", "localhost", 1, "localhost/0/STI Server")
+    deltat2 = 1*2000000000
+    event(ch(slow, 0), 140, -4.281)
+    #event(ch(slow, 0), 140+deltat2, -0.2)
+    event(ch(slow, 0), 140+deltat2, 1.2)
+
 
 
 shot=server.makeshot(testFunc)

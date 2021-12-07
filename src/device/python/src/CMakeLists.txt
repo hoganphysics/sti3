@@ -121,6 +121,8 @@ add_library(stidevicepybase SHARED
     LocalDevicePy.cpp
     MixedValuePy.cpp
     PersistenceManagerPy.cpp
+    SynchronousEventPy.cpp
+    SynchronousEventPyManager.cpp
 )
 
 
@@ -132,9 +134,14 @@ add_library(stidevicepybase SHARED
 #        NO_SONAME OFF
 #)
 
+if (MSVC)
+set(STIDEVICEPYBASE_COMPILE_OPTIONS "")
+else ()
+set(STIDEVICEPYBASE_COMPILE_OPTIONS "-fvisibility=hidden")
+endif (MSVC)
 
-
-target_compile_options(stidevicepybase PRIVATE -fvisibility=hidden)
+#target_compile_options(stidevicepybase PRIVATE -fvisibility=hidden)
+target_compile_options(stidevicepybase PRIVATE ${STIDEVICEPYBASE_COMPILE_OPTIONS})
 
 set_target_properties(stidevicepybase PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -156,8 +163,14 @@ if (USE_STI_DEBUG_POSTFIX)
 
 endif (USE_STI_DEBUG_POSTFIX)
 
+if (MSVC)
+set(STIDEVICEPY_COMPILE_OPTIONS "")
+else ()
+set(STIDEVICEPY_COMPILE_OPTIONS "-fvisibility=hidden")
+endif (MSVC)
 
-target_compile_options(stidevicepy PRIVATE -fvisibility=hidden)
+#target_compile_options(stidevicepy PRIVATE -fvisibility=hidden)
+target_compile_options(stidevicepybase PRIVATE ${STIDEVICEPY_COMPILE_OPTIONS})
 
 set_target_properties(stidevicepy PROPERTIES
     VERSION ${PROJECT_VERSION}

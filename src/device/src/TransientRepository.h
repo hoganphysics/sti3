@@ -3,7 +3,7 @@
 #define STI_ENGINE_TRANSIENTREPOSITORY_H
 
 #include "ShotRepository.h"
-
+#include "ShotID.h"
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>

@@ -65,7 +65,7 @@ template<>
 bool STI::Network::convert<std::map<std::string, std::string>, STI::TNetwork::TStringPairSeq>(
 	const std::map<std::string, std::string>& stringMap, STI::TNetwork::TStringPairSeq& tStringMap)
 {
-	tStringMap.length( stringMap.size() );
+	tStringMap.length(static_cast<CORBA::ULong>(stringMap.size()) );
 
 	auto it = stringMap.begin();
 	for (unsigned i = 0; it != stringMap.end() && i < tStringMap.length(); ++i, ++it) {

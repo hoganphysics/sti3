@@ -107,7 +107,7 @@ std::string makeUniquePath(const std::string& filename)
         n++;
 		
 		std::string newFileName;
-		newFileName = initialPath.stem();
+		newFileName = initialPath.stem().string();
 		newFileName += "_";
 		newFileName += std::to_string(n);
 

@@ -87,7 +87,7 @@ template<>
 bool STI::Network::convert<std::map<std::string, std::string>, STI::TNetwork::TAttributeTupleSeq>(
 	const std::map<std::string, std::string>& attributeMap, STI::TNetwork::TAttributeTupleSeq& tAttributeMap)
 {
-    tAttributeMap.length(attributeMap.size());
+    tAttributeMap.length(static_cast<CORBA::ULong>(attributeMap.size()));
 
     unsigned i = 0;
     for (auto& attribute : attributeMap) {

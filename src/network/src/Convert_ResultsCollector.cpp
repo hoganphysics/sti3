@@ -58,7 +58,7 @@ template<>
 bool STI::Network::convert<std::vector<std::shared_ptr<FileHolder>>, TFileHolderSeq>(
         const std::vector<std::shared_ptr<FileHolder>>& files, TFileHolderSeq& tFiles)
 {
-    tFiles.length(files.size());
+    tFiles.length(static_cast<CORBA::ULong>(files.size()));
 
     for(unsigned i = 0; i < files.size(); ++i) {
         TFileHolder_var tFileHolder;

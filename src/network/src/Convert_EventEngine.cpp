@@ -842,7 +842,9 @@ RecordStatus STI::Network::convert<TRecordStatus, RecordStatus>(const TRecordSta
 template<>
 TShotResultRecord STI::Network::convert<ShotResultRecord, TShotResultRecord>(const ShotResultRecord& shotResultRecord)
 {
-    TShotResultRecord tShotResultRecord = convert<ShotResultRecord, TShotResultRecord>(shotResultRecord);
+    TShotResultRecord tShotResultRecord;
+    
+    convert<ShotResultRecord, TShotResultRecord>(shotResultRecord, tShotResultRecord);
 
     return tShotResultRecord;
 
@@ -851,7 +853,9 @@ TShotResultRecord STI::Network::convert<ShotResultRecord, TShotResultRecord>(con
 template<>
 ShotResultRecord STI::Network::convert<TShotResultRecord, ShotResultRecord>(const TShotResultRecord& tShotResultRecord)
 {
-    ShotResultRecord shotResultRecord = convert<TShotResultRecord, ShotResultRecord>(tShotResultRecord);
+    ShotResultRecord shotResultRecord;
+    
+    convert<TShotResultRecord, ShotResultRecord>(tShotResultRecord, shotResultRecord);
 
     return shotResultRecord;
 }

@@ -18,7 +18,7 @@ namespace Engine
 class EventEngine;
 //class ParsedDependencyTree;
 struct ResultsPaths;
-struct ShotResult;
+class ShotResult;
 class ShotResultRecord;
 
 

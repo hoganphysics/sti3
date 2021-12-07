@@ -5,6 +5,7 @@
 #include "ShotRepository.h"
 //#include "ResultsDocumenter.h"
 #include "DeviceID.h"
+#include "ShotID.h"
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>

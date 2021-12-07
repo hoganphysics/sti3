@@ -62,14 +62,15 @@ print(shot.getEvents())
 
 tick=server.parse(shot)
 
+shotCancelled = False
 
 try:
     tick.wait()
     # time.sleep(1.25)
 except KeyboardInterrupt:
-    print("Abort wait")
+    print("Abort parse wait")
     tick.cancel()
-	shotCancelled = True
+    shotCancelled = True
 
 errMessages=tick.getMessages()
 print(errMessages)
@@ -85,10 +86,10 @@ playTick=server.play(tick)
 
 
 try:
-    if (!shotCancelled) :
+    if (not shotCancelled) :
         playTick.wait()
 except KeyboardInterrupt:
-    print("Abort wait")
+    print("Abort play wait")
     playTick.cancel()
 #playTick.wait()
 
