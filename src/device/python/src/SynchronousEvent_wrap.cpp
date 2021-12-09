@@ -1,12 +1,16 @@
 
 #include "SynchronousEventPy.h"
 #include "fwd/SynchronousEvent_fwd.h"
+#include "utils.h"
+#include "RawEvent.h"
+#include "Measurement.h"
 
 #include <memory>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 
 #include "stl_bind_pyref.h"
@@ -19,7 +23,7 @@ using STI::Engine::SynchronousEventAdapter;
 void init_SynchronousEvent(py::module& m)
 {
 
-    auto vecCl = STI::Python::bind_vector_pyref<STI::Engine::SynchronousEventVector, SynchronousEventPy>(m, "SynchronousEventVector");
+    STI::Python::bind_vector_pyref<STI::Engine::SynchronousEventVector, SynchronousEventPy>(m, "SynchronousEventVector");
 
 
     py::class_<SynchronousEvent, std::shared_ptr<SynchronousEvent>>(m, "SynchronousEventBase")
@@ -27,6 +31,10 @@ void init_SynchronousEvent(py::module& m)
 
     py::class_<SynchronousEventAdapter, std::shared_ptr<SynchronousEventAdapter>, SynchronousEventPy, SynchronousEvent>(m, "SynchronousEvent")  //py::nodelete
         .def(py::init<double>(), py::arg("time"))
+        .def("getTime", &SynchronousEventAdapter::getTime)
+        .def("getMeasurements", &SynchronousEventAdapter::getMeasurements)
+        .def("addMeasurement", &SynchronousEventAdapter::addMeasurement)
+
         .def("loadEvent", &SynchronousEventAdapter::loadEvent)
         .def("play", &SynchronousEventAdapter::play)
         .def("playEvent", &STI::Engine::SynchronousEventAdapter::playEvent)
@@ -36,6 +44,14 @@ void init_SynchronousEvent(py::module& m)
         .def("unpauseEvent", &SynchronousEventAdapter::unpauseEvent, py::arg("retrigger"))
         .def("waitBeforePlay", &SynchronousEventAdapter::waitBeforePlay)
         .def("waitBeforeCollectData", &SynchronousEventAdapter::waitBeforeCollectData)
+        .def("__repr__",
+            [](const SynchronousEventAdapter& self) {
+                return "<SynchronousEvent @ " + STI::Utils::printTimeFormated(self.getTime()) + ">";
+            })
+        .def("__lt__",  // operator <
+            [](const SynchronousEventAdapter& self, const SynchronousEventAdapter& rhs) {
+                return self < rhs;
+            })
         ;
 
 }

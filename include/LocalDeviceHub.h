@@ -35,7 +35,10 @@ public:
 		}
 		return false;
 	}
-
+	bool removeDevice(const STI::Device::DeviceID& id)
+	{
+		return removeNode(id);
+	}
 
 
 private:
