@@ -83,6 +83,17 @@ std::shared_ptr<EventEngineDependencyTree> JEventEngineJob::getDependencies() co
     return tree;
 }
 
+STI::Device::DeviceIDIndexedGraph JEventEngineJob::getDependenciesIndexed() const
+{
+    std::shared_ptr<EventEngineDependencyTree> tree;
+    eventEngineJob->getDependencies(tree);
+    if (tree != 0) {
+        STI::Device::DeviceIDIndexedGraph graph(*tree);
+        return graph;
+    }
+    STI::Device::DeviceIDIndexedGraph emptyGraph;
+    return emptyGraph;
+}
 
 std::set<STI::Device::DeviceID> JEventEngineJob::getMissingTargetIDs() const
 {

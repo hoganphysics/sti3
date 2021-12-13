@@ -51,8 +51,13 @@ RemoteChannelManager::~RemoteChannelManager()
 void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Device::Channel>& channel)
 {
 	if (channel != 0) {
-		channelData[channel->getChannelNumber()].name = channel->getChannelName();
-		channelData[channel->getChannelNumber()].value = channel->getLastValue();			
+		auto channelNumber = channel->getChannelNumber();
+		// channelData[channel->getChannelNumber()].name = channel->getChannelName();
+		// channelData[channel->getChannelNumber()].value = channel->getLastValue();
+
+		//Don't call to channel->getChannelName() etc, to avoid deadlock (RemoteChannel points back to this class)
+		channelData[channel->getChannelNumber()].name = _getChannelName(channelNumber);
+		channelData[channel->getChannelNumber()].value = _getLastValue(channelNumber);
 	}
 }
 
@@ -242,7 +247,11 @@ bool RemoteChannelManager::ping() const
 std::string RemoteChannelManager::getChannelName(short channel) const
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
+	return _getChannelName(channel);
+}
 
+std::string RemoteChannelManager::_getChannelName(short channel) const
+{
 	auto it = channelData.find(channel);
 
 	if (it != channelData.end()) {
@@ -257,7 +266,11 @@ std::string RemoteChannelManager::getChannelName(short channel) const
 STI::Utils::MixedValue RemoteChannelManager::getLastValue(short channel) const
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
-	
+	return _getLastValue(channel);
+}
+
+STI::Utils::MixedValue RemoteChannelManager::_getLastValue(short channel) const
+{
 	auto it = channelData.find(channel);
 
 	if (it != channelData.end()) {

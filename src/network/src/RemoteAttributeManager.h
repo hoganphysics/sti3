@@ -50,7 +50,7 @@ public:
     std::string getUpdatedValue(const std::string& key);
 
 private:
-	
+
     friend class AttributeUpdater;
 
     //AttributeUpdater
@@ -74,6 +74,7 @@ private:
 
     void handleMessage(const std::shared_ptr<STI::Device::AttributeUpdateMessage>& mess);
    
+    std::string _getUpdatedValue(const std::string& key);
     void setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute);
     std::map<std::string, std::string> attributeData;
 

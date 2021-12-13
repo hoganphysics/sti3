@@ -24,6 +24,8 @@ link_directories(${STI_BASE_DIR}/lib)
 
 # add the executable
 add_library(stijava SHARED 
+    JAttributeManager.cpp
+    JChannelManager.cpp
     JDeviceCollection.cpp
     JDevice.cpp
     JDeviceMessageDispatcher.cpp
@@ -38,6 +40,7 @@ add_library(stijava SHARED
     JShot.cpp
     sti_wrap.cpp
 )
+
 
 target_link_libraries(stijava 
     stidevice

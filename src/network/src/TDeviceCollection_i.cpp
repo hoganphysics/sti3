@@ -88,7 +88,9 @@ TDeviceCollection_i::~TDeviceCollection_i()
 		
 		// STI::TNetwork::TDevice_var tDeviceVar(tDevice);		//managed
 		// device = tDeviceVar.out();
-		device = tDevice.out();
+		// device = tDevice.out();
+		// device = tDevice;
+		device = STI::TNetwork::TDevice::_duplicate(tDevice);
 	}
 
 	return success;
@@ -102,14 +104,16 @@ void TDeviceCollection_i::getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq)
 
 		STI::TNetwork::TDeviceIDSeq_var tDeviceIDseq_var(new STI::TNetwork::TDeviceIDSeq);
 
-		if (convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var)) {
+		convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var);
 
-			deviceIDseq = tDeviceIDseq_var.out();
-		}
+		// deviceIDseq = tDeviceIDseq_var.out();
 
+		deviceIDseq = new STI::TNetwork::TDeviceIDSeq();
+		(*deviceIDseq) = tDeviceIDseq_var;
 	}
 }
+
 
 void TDeviceCollection_i::cleanup()
 {

@@ -5,13 +5,14 @@
 #include "Device.h"
 
 #include <memory>
+#include <iostream>
 
 using STI::Device::JDeviceCollection;
 using STI::Device::DeviceID;
 using STI::Device::JDevice;
 
 
-JDeviceCollection::JDeviceCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
+JDeviceCollection::JDeviceCollection(const std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
     localDeviceCollection = collection;
 }
@@ -32,14 +33,31 @@ std::shared_ptr<JDevice> JDeviceCollection::get(const DeviceID& id) const
     std::shared_ptr<STI::Device::Device> device;
     std::shared_ptr<JDevice> jDevice;
     
+    // std::cout << "**** JDeviceCollection::get " 
+    // << ((localDeviceCollection != 0) ? "1" : "0") << "," 
+    // << ((localDeviceCollection->get(id, device)) ? "1" : "0") << "," 
+    // << ((device != 0) ? "1" : "0") 
+    // << std::endl;
+
+    // std::cout << "**** size=" << localDeviceCollection->size() << std::endl;
+    // std::set<DeviceID> ids;
+    // localDeviceCollection->getIDs(ids);
+    // for (auto& i : ids) {
+    //     std::cout << "**** id=" << i.getID() << " : " << i.getTargetServerID() << std::endl;
+    // }
+
+    
     if (localDeviceCollection != 0 && localDeviceCollection->get(id, device) && device != 0) {
+        // std::cout << "**** JDeviceCollection::get inside if" << std::endl;
         jDevice = std::make_shared<JDevice>(device);
     }
     return jDevice;
 }
 
-std::set<DeviceID>& JDeviceCollection::getIDs()
+std::set<DeviceID> JDeviceCollection::getIDs()
 {
+    std::set<DeviceID> ids;
+
     if (localDeviceCollection != 0) {
         localDeviceCollection->getIDs(ids);
     }

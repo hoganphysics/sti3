@@ -8,7 +8,6 @@
 
 #include "orbTypes.h"
 
-
 using STI::Network::TDeviceRefInterface;
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -141,12 +140,13 @@ bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_pt
 	bool success = false;
 
 	STI::TNetwork::TDevice_var tDevice;
+	
 
 	try {
 		success = getTRef()->get(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 
 		if (success && tDevice != 0 && !tDevice->_is_nil()) {
-			//node = std::make_shared<RemoteDevice>( STI::TNetwork::TDevice::_duplicate(tDevice) );
+
 			node = std::make_shared<RemoteDevice>(tDevice);
 		}
 	}

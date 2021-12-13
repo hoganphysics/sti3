@@ -1,7 +1,7 @@
 
 #include "ServerDevice.h"
 
-
+#include "ChannelManager.h"
 #include "DeviceMessageReceiver.h"
 #include <iostream>
 
@@ -70,6 +70,27 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
         [](auto message) { 
             std::cout << "New value: " << message->channelValues[1].print() << std::endl;
         } );
+
+	receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "LocalCollectionLister",
+		[this](auto& message) {
+			std::cout << "Collection: " << message->sourceID().getID() << std::endl;
+			std::shared_ptr<STI::Device::DeviceCollection> collection;
+			this->getCollection(collection);
+			DeviceID id;
+			DeviceID::stringToDeviceID("localhost/0/TestDevice", id);
+			std::shared_ptr<STI::Device::Device> device;
+			
+			std::cout << "collection->get " << (collection->get(id, device) ? "1" : "0") << std::endl;
+			std::cout << "device ? " << (device != 0 ? "1" : "0") << std::endl;
+
+			if (device != 0) {
+				std::cout << "write:" << std::endl;
+				std::shared_ptr<ChannelManager> manager;
+				device->getChannelManager(manager);
+				manager->writeChannel(1, 2.2);
+				std::cout << "write complete" << std::endl;
+			}
+		});
 
 }
 

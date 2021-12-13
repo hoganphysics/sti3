@@ -79,7 +79,7 @@ public:
 		return (tNode != 0) && nodes.add(id, tNode);
 	}
 
-	bool add(const ID& id, const typename Collection<ID, T>::T_ptr& node) { return nodes.add(id, node); }
+	bool add(const ID& id, const typename Collection<ID, T>::T_ptr& node) { return (node != 0 && nodes.add(id, node)); }
 	bool remove(const ID& id) { return nodes.remove(id); }
 
 	bool contains(const ID& id) const { return nodes.contains(id); }

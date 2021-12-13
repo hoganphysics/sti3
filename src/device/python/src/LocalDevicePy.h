@@ -89,14 +89,24 @@ private:
         {
             STI::Python::MixedValuePy valuePy(value);
 
-            bool success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
+            bool success = false;
+            {
+                pybind11::gil_scoped_release release;
+                success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
+            }
+            
             return success;
         }
 
 	    bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) 
         {
             STI::Python::MixedValuePy valuePy(value);
-            auto dataPyObj = localDevicePy->readChannel(channel, valuePy.getValue_py());
+            pybind11::object dataPyObj;
+
+            {
+                pybind11::gil_scoped_release release;
+                dataPyObj = localDevicePy->readChannel(channel, valuePy.getValue_py());
+            }           
 
             //convert result
             STI::Python::MixedValuePy dataPy;
@@ -129,7 +139,9 @@ public:
     using LocalDevicePy::LocalDevicePy;
 
     bool writeChannel(short channel, const pybind11::object& value) override
-    {
+    {   
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
             LocalDevicePy,        /* Parent class */
@@ -140,6 +152,8 @@ public:
 
     pybind11::object readChannel(short channel, const pybind11::object& value) override
     {
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
             LocalDevicePy,       /* Parent class */

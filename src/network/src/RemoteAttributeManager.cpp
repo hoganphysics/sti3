@@ -54,7 +54,8 @@ RemoteAttributeManager::~RemoteAttributeManager()
 void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute)
 {
 	if (attribute != 0) {
-		attributeData[attribute->getKey()] = attribute->getValue();	
+		auto key = attribute->getKey();
+		attributeData[key] = _getUpdatedValue(key);	
 	}
 }
 
@@ -86,6 +87,11 @@ std::string RemoteAttributeManager::getValue(const std::string& key)
 std::string RemoteAttributeManager::getUpdatedValue(const std::string& key)
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
+	return _getUpdatedValue(key);
+}
+
+std::string RemoteAttributeManager::_getUpdatedValue(const std::string& key)
+{
 	std::string value = "";
 
 	auto it = attributeData.find(key);

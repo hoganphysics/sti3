@@ -71,6 +71,10 @@ public class JEventEngineJob {
     return (cPtr == 0) ? null : new EventEngineDependencyTree(cPtr, true);
   }
 
+  public DeviceIDIndexedGraph getDependenciesIndexed() {
+    return new DeviceIDIndexedGraph(stiJNI.JEventEngineJob_getDependenciesIndexed(swigCPtr, this), true);
+  }
+
   public DeviceIDset getMissingTargetIDs() {
     return new DeviceIDset(stiJNI.JEventEngineJob_getMissingTargetIDs(swigCPtr, this), true);
   }

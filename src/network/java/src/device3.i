@@ -80,6 +80,7 @@
     using STI::Utils::MixedValueVector;
 
     #include "JChannelManager.h"
+    using STI::Device::JChannelManager;
     #include "fwd/Channel_fwd.h"
     #include "Channel.h"
     #include "LocalChannel.h"
@@ -187,7 +188,7 @@
 
 //JDeviceCollection
 %ignore STI::Device::DeviceCollection;
-%ignore STI::Device::JDeviceCollection::JDeviceCollection(std::shared_ptr< STI::Device::DeviceCollection >& collection);
+%ignore STI::Device::JDeviceCollection::JDeviceCollection(const std::shared_ptr< STI::Device::DeviceCollection >& collection);
 %include "JDeviceCollection.h"
 
 

@@ -30,6 +30,8 @@ RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	addDependent(remoteScheduler);
 	addDependent(remoteChannelManager);
 	addDependent(remoteAttributeManager);
+
+	loadDeviceID();
 }
 
 RemoteDevice::~RemoteDevice()
@@ -126,6 +128,11 @@ void RemoteDevice::disable()
 
 const STI::Device::DeviceID RemoteDevice::getID() const
 {
+	return deviceID;
+}
+
+void RemoteDevice::loadDeviceID()
+{
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
 	::STI::TNetwork::TDeviceID_var tDeviceID;
@@ -146,13 +153,13 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 		}
 	}
 
-	STI::Device::DeviceID deviceID;
+	// STI::Device::DeviceID deviceID;
 
 	if(success) {
 		deviceID = convert<::STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceID);
 	}
 
-	return deviceID;
+	// return deviceID;
 }
 
 
@@ -289,7 +296,7 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 	if (isDisabled()) return;
 
-	if (listenerForwarder == 0) return;
+	// if (listenerForwarder == 0) return;
 
 	bool success = false;
 
@@ -333,7 +340,7 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 
 	if (isDisabled()) return;
 
-	if (listenerForwarder == 0) return;
+	// if (listenerForwarder == 0) return;
 
 	::STI::TNetwork::TAttributeManager_var tAttributelManager;	//remote reference
 	

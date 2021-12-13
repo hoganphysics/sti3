@@ -3,6 +3,7 @@
 
 #include "Shot.h"
 #include "fwd/RawEvent_fwd.h"
+#include "ShotConfig.h"
 
 #include <memory>
 
@@ -28,7 +29,7 @@ private:
 
     void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
 
-    const ShotConfig& shotConfig;
+    ShotConfig shotConfig;
     std::shared_ptr<STI::Engine::Shot> shot_;
 
 };

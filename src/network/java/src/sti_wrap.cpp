@@ -834,6 +834,7 @@ namespace Swig {
     using STI::Utils::MixedValueVector;
 
     #include "JChannelManager.h"
+    using STI::Device::JChannelManager;
     #include "fwd/Channel_fwd.h"
     #include "Channel.h"
     #include "LocalChannel.h"
@@ -1794,6 +1795,67 @@ SWIGINTERN int STI_Utils_DependencyTree_Sl_STI_Device_DeviceID_Sg__getDependentN
     using STI::Engine::EngineState;
 
 
+
+    #include "DeviceIDIndexedGraph.h"
+    using STI::Device::DeviceIDIndexedGraph;
+
+    #include "utils/IndexedGraph.h"
+    using STI::Utils::IndexedGraph;   
+
+SWIGINTERN std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *new_std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg___SWIG_2(jint count,STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const &value){
+        if (count < 0)
+          throw std::out_of_range("vector count must be positive");
+        return new std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >(static_cast<std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::size_type>(count), value);
+      }
+SWIGINTERN jint std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doSize(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const *self){
+        return SWIG_VectorSize(self->size());
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doAdd__SWIG_0(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const &x){
+        self->push_back(x);
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doAdd__SWIG_1(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,jint index,std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const &x){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index <= size) {
+          self->insert(self->begin() + index, x);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doRemove(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= index && index < size) {
+          STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const old_value = (*self)[index];
+          self->erase(self->begin() + index);
+          return old_value;
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
+SWIGINTERN std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const &std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doGet(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,jint index){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size)
+          return (*self)[index];
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doSet(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,jint index,std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const &val){
+        jint size = static_cast<jint>(self->size());
+        if (index >= 0 && index < size) {
+          STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const old_value = (*self)[index];
+          (*self)[index] = val;
+          return old_value;
+        }
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+SWIGINTERN void std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doRemoveRange(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *self,jint fromIndex,jint toIndex){
+        jint size = static_cast<jint>(self->size());
+        if (0 <= fromIndex && fromIndex <= toIndex && toIndex <= size) {
+          self->erase(self->begin() + fromIndex, self->begin() + toIndex);
+        } else {
+          throw std::out_of_range("vector index out of range");
+        }
+      }
 
     #include "JEventEngineJob.h"
     using STI::Engine::JEventEngineJob;
@@ -3905,6 +3967,30 @@ void SwigDirector_EventEngineDependencyTree::swig_connect_director(JNIEnv *jenv,
   if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
     if (!baseclass) {
       baseclass = jenv->FindClass("edu/stanford/sti/EventEngineDependencyTree");
+      if (!baseclass) return;
+      baseclass = (jclass) jenv->NewGlobalRef(baseclass);
+    }
+  }
+}
+
+
+SwigDirector_DeviceIDIndexedGraph::SwigDirector_DeviceIDIndexedGraph(JNIEnv *jenv) : STI::Utils::IndexedGraph< STI::Device::DeviceID >(), Swig::Director(jenv) {
+}
+
+SwigDirector_DeviceIDIndexedGraph::SwigDirector_DeviceIDIndexedGraph(JNIEnv *jenv, STI::Utils::DependencyTree< STI::Device::DeviceID > const &tree) : STI::Utils::IndexedGraph< STI::Device::DeviceID >(tree), Swig::Director(jenv) {
+}
+
+SwigDirector_DeviceIDIndexedGraph::~SwigDirector_DeviceIDIndexedGraph() {
+  swig_disconnect_director_self("swigDirectorDisconnect");
+}
+
+
+void SwigDirector_DeviceIDIndexedGraph::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
+  static jclass baseclass = 0 ;
+  
+  if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
+    if (!baseclass) {
+      baseclass = jenv->FindClass("edu/stanford/sti/DeviceIDIndexedGraph");
       if (!baseclass) return;
       baseclass = (jclass) jenv->NewGlobalRef(baseclass);
     }
@@ -6281,7 +6367,7 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JDeviceCollection_1getIDs(
   jlong jresult = 0 ;
   STI::Device::JDeviceCollection *arg1 = (STI::Device::JDeviceCollection *) 0 ;
   std::shared_ptr< STI::Device::JDeviceCollection > *smartarg1 = 0 ;
-  std::set< STI::Device::DeviceID > *result = 0 ;
+  std::set< STI::Device::DeviceID > result;
   
   (void)jenv;
   (void)jcls;
@@ -6289,8 +6375,8 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JDeviceCollection_1getIDs(
   
   smartarg1 = *(std::shared_ptr<  STI::Device::JDeviceCollection > **)&jarg1;
   arg1 = (STI::Device::JDeviceCollection *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::set< STI::Device::DeviceID > *) &(arg1)->getIDs();
-  *(std::set< STI::Device::DeviceID > **)&jresult = result; 
+  result = (arg1)->getIDs();
+  *(std::set< STI::Device::DeviceID > **)&jresult = new std::set< STI::Device::DeviceID >((const std::set< STI::Device::DeviceID > &)result); 
   return jresult;
 }
 
@@ -19185,6 +19271,534 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_print(JNIEnv *jenv, jcla
 }
 
 
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNode_1node_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *arg2 = (STI::Device::DeviceID *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2; 
+  if (arg1) (arg1)->node = *arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNode_1node_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg1; 
+  result = (STI::Device::DeviceID *)& ((arg1)->node);
+  *(STI::Device::DeviceID **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNode_1outConnections_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(std::vector< unsigned int > **)&jarg2; 
+  if (arg1) (arg1)->outConnections = *arg2;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNode_1outConnections_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg1; 
+  result = (std::vector< unsigned int > *)& ((arg1)->outConnections);
+  *(std::vector< unsigned int > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraphNode(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *)new STI::Utils::IndexedGraphNode< STI::Device::DeviceID >();
+  *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1DeviceIDIndexedGraphNode(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraphNodeVector_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *)new std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >();
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraphNodeVector_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const & reference is null");
+    return 0;
+  } 
+  result = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *)new std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >((std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const &)*arg1);
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::size_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  result = ((std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const *)arg1)->capacity();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::size_type arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::size_type)jarg2; 
+  try {
+    (arg1)->reserve(arg2);
+  } catch(std::length_error &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  result = (bool)((std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const *)arg1)->empty();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraphNodeVector_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jint jarg1, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  jint arg1 ;
+  STI::Utils::IndexedGraphNode< STI::Device::DeviceID > *arg2 = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg2_;
+  arg1 = jarg1; 
+  arg2 = *(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const & reference is null");
+    return 0;
+  } 
+  try {
+    result = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *)new_std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg___SWIG_2(arg1,(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const &)*arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  try {
+    result = std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doSize((std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > const *)arg1);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doAdd_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const & reference is null");
+    return ;
+  } 
+  std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doAdd__SWIG_0(arg1,(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doAdd_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type *arg3 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const & reference is null");
+    return ;
+  } 
+  try {
+    std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doAdd__SWIG_1(arg1,arg2,(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doRemove(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doRemove(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jresult = new std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type((const std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doGet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = jarg2; 
+  try {
+    result = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type *) &std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doGet(arg1,arg2);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doSet(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+  jlong jresult = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint arg2 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type *arg3 = 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg3_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type const & reference is null");
+    return 0;
+  } 
+  try {
+    result = std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doSet(arg1,arg2,(STI::Utils::IndexedGraphNode< STI::Device::DeviceID > const &)*arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return 0;
+  }
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type **)&jresult = new std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type((const std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > >::value_type &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraphNodeVector_1doRemoveRange(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  jint arg2 ;
+  jint arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  arg2 = jarg2; 
+  arg3 = jarg3; 
+  try {
+    std_vector_Sl_STI_Utils_IndexedGraphNode_Sl_STI_Device_DeviceID_Sg__Sg__doRemoveRange(arg1,arg2,arg3);
+  } catch(std::out_of_range &_e) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaIndexOutOfBoundsException, (&_e)->what());
+    return ;
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1DeviceIDIndexedGraphNodeVector(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *arg1 = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraph_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *)new SwigDirector_DeviceIDIndexedGraph(jenv);
+  *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1DeviceIDIndexedGraph_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::DependencyTree< STI::Device::DeviceID > *arg1 = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  arg1 = (STI::Utils::DependencyTree< STI::Device::DeviceID > *)((*(std::shared_ptr< const STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg1) ? (*(std::shared_ptr< const STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg1)->get() : 0);
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::DependencyTree< STI::Device::DeviceID > const & reference is null");
+    return 0;
+  } 
+  result = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *)new SwigDirector_DeviceIDIndexedGraph(jenv,(STI::Utils::DependencyTree< STI::Device::DeviceID > const &)*arg1);
+  *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1DeviceIDIndexedGraph(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1getNodes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  result = (std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > *) &((STI::Utils::IndexedGraph< STI::Device::DeviceID > const *)arg1)->getNodes();
+  *(std::vector< STI::Utils::IndexedGraphNode< STI::Device::DeviceID > > **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1indexOf(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jint jresult = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *arg2 = 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return 0;
+  } 
+  result = (int)((STI::Utils::IndexedGraph< STI::Device::DeviceID > const *)arg1)->indexOf((STI::Device::DeviceID const &)*arg2);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1contains(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *arg2 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Utils::IndexedGraph< STI::Device::DeviceID > const *)arg1)->contains((STI::Device::DeviceID const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1addNode(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return ;
+  } 
+  (arg1)->addNode((STI::Device::DeviceID const &)*arg2);
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1addEdge(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+  jboolean jresult = 0 ;
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *arg1 = (STI::Utils::IndexedGraph< STI::Device::DeviceID > *) 0 ;
+  STI::Device::DeviceID *arg2 = 0 ;
+  STI::Device::DeviceID *arg3 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  (void)jarg3_;
+  arg1 = *(STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&jarg1; 
+  arg2 = *(STI::Device::DeviceID **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return 0;
+  } 
+  arg3 = *(STI::Device::DeviceID **)&jarg3;
+  if (!arg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Device::DeviceID const & reference is null");
+    return 0;
+  } 
+  result = (bool)(arg1)->addEdge((STI::Device::DeviceID const &)*arg2,(STI::Device::DeviceID const &)*arg3);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1director_1connect(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jswig_mem_own, jboolean jweak_global) {
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *obj = *((STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&objarg);
+  (void)jcls;
+  SwigDirector_DeviceIDIndexedGraph *director = static_cast<SwigDirector_DeviceIDIndexedGraph *>(obj);
+  director->swig_connect_director(jenv, jself, jenv->GetObjectClass(jself), (jswig_mem_own == JNI_TRUE), (jweak_global == JNI_TRUE));
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDIndexedGraph_1change_1ownership(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jtake_or_release) {
+  STI::Utils::IndexedGraph< STI::Device::DeviceID > *obj = *((STI::Utils::IndexedGraph< STI::Device::DeviceID > **)&objarg);
+  SwigDirector_DeviceIDIndexedGraph *director = dynamic_cast<SwigDirector_DeviceIDIndexedGraph *>(obj);
+  (void)jcls;
+  if (director) {
+    director->swig_java_change_ownership(jenv, jself, jtake_or_release ? true : false);
+  }
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1JEventEngineJob(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   STI::Engine::JEventEngineJob *arg1 = (STI::Engine::JEventEngineJob *) 0 ;
   std::shared_ptr< STI::Engine::JEventEngineJob > *smartarg1 = 0 ;
@@ -19320,6 +19934,24 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineJob_1getDepend
   arg1 = (STI::Engine::JEventEngineJob *)(smartarg1 ? smartarg1->get() : 0); 
   result = ((STI::Engine::JEventEngineJob const *)arg1)->getDependencies();
   *(std::shared_ptr< STI::Engine::EventEngineDependencyTree > **)&jresult = result ? new std::shared_ptr< STI::Engine::EventEngineDependencyTree >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_JEventEngineJob_1getDependenciesIndexed(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::JEventEngineJob *arg1 = (STI::Engine::JEventEngineJob *) 0 ;
+  std::shared_ptr< STI::Engine::JEventEngineJob const > *smartarg1 = 0 ;
+  STI::Device::DeviceIDIndexedGraph result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Engine::JEventEngineJob > **)&jarg1;
+  arg1 = (STI::Engine::JEventEngineJob *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((STI::Engine::JEventEngineJob const *)arg1)->getDependenciesIndexed();
+  *(STI::Device::DeviceIDIndexedGraph **)&jresult = new STI::Device::DeviceIDIndexedGraph((const STI::Device::DeviceIDIndexedGraph &)result); 
   return jresult;
 }
 

@@ -41,7 +41,7 @@ public:
 	void kill();
 	void disable();
 	
-	const STI::Device::DeviceID getID() const;
+	const STI::Device::DeviceID getID() const;	//use locally stored value
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
@@ -58,6 +58,8 @@ private:
 		return (remote != 0 && !remote->isDisabled() && remote->ping());
 	}
 
+	void loadDeviceID();	//remote call
+
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
 
 //	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
@@ -73,6 +75,8 @@ private:
 	std::shared_ptr<RemoteChannelManager> remoteChannelManager;
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
+
+	STI::Device::DeviceID deviceID;
 
 	mutable std::mutex deviceMutex;
 

@@ -52,6 +52,10 @@ private:
 
     void setChannelData(const std::shared_ptr<STI::Device::Channel>& channel);
 
+	std::string _getChannelName(short channel) const;
+	STI::Utils::MixedValue _getLastValue(short channel) const;
+
+
     friend class ChannelUpdater;
 
     //ChannelUpdater

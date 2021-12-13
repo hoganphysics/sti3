@@ -11,6 +11,8 @@
 
 %include JEventEngine.i
 
+%include DeviceIDIndexedGraph.i
+
 %include JEventEngineJob.i
 
 

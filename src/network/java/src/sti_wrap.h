@@ -427,5 +427,18 @@ public:
     }
 };
 
+class SwigDirector_DeviceIDIndexedGraph : public STI::Utils::IndexedGraph< STI::Device::DeviceID >, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_DeviceIDIndexedGraph(JNIEnv *jenv);
+    SwigDirector_DeviceIDIndexedGraph(JNIEnv *jenv, STI::Utils::DependencyTree< STI::Device::DeviceID > const &tree);
+    virtual ~SwigDirector_DeviceIDIndexedGraph();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
 
 #endif

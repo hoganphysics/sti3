@@ -5,6 +5,7 @@
 #include "ShotID.h"
 #include "Measurement.h"
 #include "RawEvent.h"
+#include "ShotConfig.h"
 
 #include <memory>
 
