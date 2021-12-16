@@ -561,8 +561,8 @@ public class stiJNI {
   public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void FileHolder_change_ownership(FileHolder obj, long cptr, boolean take_or_release);
   public final static native long new_MixedValue__SWIG_0();
-  public final static native long new_MixedValue__SWIG_2(long jarg1, MixedValue jarg1_);
-  public final static native long new_MixedValue__SWIG_3(int jarg1);
+  public final static native long new_MixedValue__SWIG_1(long jarg1, MixedValue jarg1_);
+  public final static native long new_MixedValue__SWIG_2(int jarg1);
   public final static native void delete_MixedValue(long jarg1);
   public final static native boolean MixedValue_opEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
   public final static native boolean MixedValue_opNotEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);

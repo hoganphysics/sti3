@@ -31,7 +31,6 @@
 #include <string>
 #include <memory>
 
-#include <iostream>
 
 namespace STI
 {
@@ -80,12 +79,8 @@ public:
 
 	template<typename T> void setValue(T value)
 	{
-		std::cout << "%%%%%%%% ERR %%%%%   " << value << std::endl;
-		//This version of the function is call for all T values that are unsupported.
-		//This template is called for all types that don't have an explicitly overloaded setValue function.
-
+		//Catch function for unsupported types.
 		printError();	//temp; push error message
-		//std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
 	}
 
 	template<typename T> void setValue(const std::vector<T>& value)
@@ -116,12 +111,10 @@ public:
 
 	template<typename T> void addValue(const T& value)
 	{
-		// std::cout << "template<typename T> MixedValue::addValue" << std::endl;
 		if (type != MixedValueType::Vector) {
 			convertToVector();
 		}
 
-		// values.push_back(MixedValue(value));
 		values.push_back(MixedValue());		//empty
 		values.back().setValue(value);
 	}

@@ -44,7 +44,6 @@ MixedValue::MixedValue()
 }
 MixedValue::MixedValue(const MixedValue& copy)
 {
-	// std::cout << "MixedValue::MixedValue(MixedValue) " << copy.print() << std::endl;
 	setValueMixed(copy);
 }
 
@@ -168,11 +167,6 @@ void MixedValue::setValue(const MixedValue& value)
 
 void MixedValue::setValueMixed(const MixedValue& value)
 {
-	// std::cout << "MixedValue::setValue(MixedValue) " << value.print() << " " 
-	// 	<< (((value.getType() == MixedValueType::Vector) ) ? value.getVector().size() : 56) << std::endl;
-	//clear();
-	//type = value.getType();
-
 	switch( value.getType() )
 	{
 	case MixedValueType::Boolean:
@@ -188,11 +182,9 @@ void MixedValue::setValueMixed(const MixedValue& value)
 		setValue( value.getString() );
 		break;
 	case MixedValueType::Vector:
-		// std::cout << "--> case MixedValueType::Vector" << std::endl;
 		setValue( value.getVector() );
 		break;
 	case MixedValueType::Empty:
-		// std::cout << "--> case MixedValueType::Empty" << std::endl;
 		setValue();
 		break;
 	default:
@@ -404,7 +396,7 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 
 void MixedValue::printError()
 {
-	std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
+	std::cout << "Error: Unsupported type was passed to MixedValue." << std::endl;
 }
 
 

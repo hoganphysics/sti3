@@ -24,19 +24,14 @@ public:
     MixedValuePy(const MixedValuePy& value);
     MixedValuePy(const pybind11::object& value);
 
+    STI::Utils::MixedValue& getMixedValue();
     pybind11::object getValue_py() const;
+
     void setValue_py(const pybind11::object& value);
     void addValue_py(const pybind11::handle& value);
 
     void setValue_py(const MixedValuePy& value);
     void addValue_py(const MixedValuePy& value);
-
-    //void setValue(const MixedValuePy& value);
-
-    STI::Utils::MixedValue& getMixedValue()
-    {
-        return (*this);
-    }
 
 private:
 
@@ -45,8 +40,6 @@ private:
     template<typename PyT, typename T>
     bool setValueExtract(const pybind11::object& value)
     {
-        // std::cout << "MixedValuePy::setValueExtract" << std::endl;
-
         bool success = false;
 
         try {
@@ -58,7 +51,6 @@ private:
             success = false;
         }
         catch(pybind11::cast_error&) {
-            std::cout << "(cast error)" << std::endl;
             success = false;
         }
 
@@ -84,9 +76,7 @@ private:
 
         return success;
     }
-
-
-
+    
 };
 
 

@@ -300,8 +300,6 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 {
 	std::unique_lock<std::mutex> playLock(deviceMutex);
 
-std::cout << "LocalDevice::playSingleEvent 1 " << event.value().print() << std::endl;
-
 	STI::Engine::ShotConfig shotConfig;
 	shotConfig.targetEnginePool = 0;	//0=async pool
 	shotConfig.shotType = STI::Engine::ShotType::SingleUndocumented;
@@ -315,8 +313,6 @@ std::cout << "LocalDevice::playSingleEvent 1 " << event.value().print() << std::
 	shot->setEvents(events);
 
 	auto parseID = eventEngineScheduler->parse(shot);
-
-std::cout << "LocalDevice::playSingleEvent 2" << std::endl;
 
 	auto parseTicket = parseTicketManager->makeTicket(parseID);
 
@@ -336,15 +332,11 @@ std::cout << "LocalDevice::playSingleEvent 2" << std::endl;
 
 	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
 
-std::cout << "LocalDevice::playSingleEvent 3" << std::endl;
-
 	resultTicket = resultTicketManager->makeTicket(sid);
 
 	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	//resultTicket->wait();
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
-
-std::cout << "LocalDevice::playSingleEvent 4" << std::endl;
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
 		return false;
@@ -355,8 +347,6 @@ std::cout << "LocalDevice::playSingleEvent 4" << std::endl;
 
 bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValue& value)
 {
-	std::cout << "+++++++++++ LocalDevice::writeChannelDefault" << std::endl;
-
 	double eventTime = 100;
 	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "writeChannelDefault", 0, STI::Engine::RawEventType::Play);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
@@ -369,7 +359,6 @@ bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValu
 
 bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
-
 	double eventTime = 100;
 	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "readChannelDefault", 0, STI::Engine::RawEventType::Measurement);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;

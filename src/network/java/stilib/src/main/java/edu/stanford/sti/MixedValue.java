@@ -57,12 +57,12 @@ public class MixedValue {
   }
 
   public MixedValue(MixedValue copy) {
-    this(stiJNI.new_MixedValue__SWIG_2(MixedValue.getCPtr(copy), copy), true);
+    this(stiJNI.new_MixedValue__SWIG_1(MixedValue.getCPtr(copy), copy), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(MixedValueType value) {
-    this(stiJNI.new_MixedValue__SWIG_3(value.swigValue()), true);
+    this(stiJNI.new_MixedValue__SWIG_2(value.swigValue()), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 

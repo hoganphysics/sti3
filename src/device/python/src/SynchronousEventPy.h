@@ -3,14 +3,13 @@
 #define STI_PYTHON_SYNCHRONOUSEVENTPY_H
 
 #include "SynchronousEvent.h"
-#include "SynchronousEventPyManager.h"
 
 #include "fwd/SynchronousEvent_fwd.h"
 
 #include <pybind11/pybind11.h>
 
 #include <memory>
-#include <iostream>
+
 
 PYBIND11_MAKE_OPAQUE(STI::Engine::SynchronousEventVector);
 
@@ -42,35 +41,17 @@ class SynchronousEventPy : public STI::Engine::SynchronousEventAdapter
 {
 public:
 
-    static std::shared_ptr<SynchronousEventPyManager> pyEventManager;   //stores reference to python objects to keep them alive
-
-    static void addPyReference(const std::shared_ptr<STI::Engine::SynchronousEvent>& value)
-    {
-        auto sepy = std::dynamic_pointer_cast<SynchronousEventPy>(value);
-
-        if (sepy) {
-            pybind11::object obj = pybind11::cast(value);
-
-            if (pyEventManager != 0) {
-                pyEventManager->addPyEvent(obj);
-            }
-        }
-    }
-
-    static void clearPyRefs()
-    {
-        if (pyEventManager != 0) {
-            pyEventManager->clear();
-        }
-    }
-
-
     using STI::Engine::SynchronousEventAdapter::SynchronousEventAdapter;  //inherit constructors
 
     virtual ~SynchronousEventPy()
     {
-        std::cout << "~SynchronousEventPy()" << std::endl;
     }
+
+    static std::shared_ptr<SynchronousEventPyManager> pyEventManager;   //stores reference to python objects to keep them alive
+
+    static void addPyReference(const std::shared_ptr<STI::Engine::SynchronousEvent>& value);
+    static void clearPyRefs();
+
 
     /* Trampoline (need one for each virtual function) */
     void loadEvent() override 

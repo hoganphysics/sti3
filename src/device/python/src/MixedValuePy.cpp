@@ -1,8 +1,6 @@
 
 #include "MixedValuePy.h"
 
-#include <iostream>
-
 using STI::Python::MixedValuePy;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -22,7 +20,6 @@ MixedValuePy::MixedValuePy(const MixedValue& value)
 
 MixedValuePy::MixedValuePy(const MixedValuePy& value)
 : MixedValue(static_cast<MixedValue>(value))
-// : MixedValuePy(value.getValue_py())
 {
 
 }
@@ -33,6 +30,10 @@ MixedValuePy::MixedValuePy(const py::object& value)
     setValue_py(value);
 }
 
+STI::Utils::MixedValue& MixedValuePy::getMixedValue()
+{
+    return (*this);
+}
 
 pybind11::object MixedValuePy::getValue_py() const
 {
@@ -44,8 +45,6 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
     py::object obj = py::none();
     
     //Boolean, Int, Double, String, Vector, Empty, File, Image, Any
-
-    // std::cout << "MixedValuePy::convertValue" << std::endl;
 
     switch (value.getType())
     {
@@ -82,20 +81,12 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 
 void MixedValuePy::setValue_py(const py::object& value)
 {
-//    pybind11::list;
-
-// std::cout << "MixedValuePy::setValue_py" << std::endl;
-
     if (setValueExtract<MixedValuePy, MixedValue>(value)) return;
 
     if (setValueExtract<py::float_, double>(value)) return;
     if (setValueExtract<py::int_, int>(value)) return;
     if (setValueExtract<py::str, std::string>(value)) return;
     if (setValueExtract<py::bool_, bool>(value)) return;
-
-    // if (pybind11::isinstance<pybind11::int_>(value)) {
-    //     MixedValue::setValue( value.cast<int>() );
-    // }
 
     if (value && py::isinstance<py::list>(value)) {
         const py::list& list_vals = value.cast<py::list>();

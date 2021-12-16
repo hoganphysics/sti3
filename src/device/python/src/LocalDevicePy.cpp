@@ -8,20 +8,16 @@
 #include "SynchronousEvent.h"
 
 #include "SynchronousEventPy.h"
+#include "SynchronousEventPyManager.h"
 
 #include <iostream>
-
 
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
 using STI::Python::LocalDevicePy;
-
-//using STI::Python::LocalDevicePy;
 using STI::Device::LocalDevice;
 using STI::Python::DevicePy;
-// using STI::Python::DevicePy2;
-
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
 using STI::Utils::MixedValue;
@@ -30,7 +26,6 @@ using STI::Utils::MixedValue;
 LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
     const std::string& targetServer)
 : DevicePy()
-//: DevicePy2( device = std::make_shared<LocalDevice>(name, address, module, targetServer) )
 {
     device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, name, address, module, targetServer);
     setDevice(device);
@@ -43,7 +38,8 @@ LocalDevicePy::~LocalDevicePy()
 
 bool LocalDevicePy::write(short channel, const pybind11::object& value)
 {  
-    return device->write(channel, MixedValuePy(value));
+    MixedValuePy valuepy(value);
+    return device->write(channel, valuepy.getMixedValue());
 }
 
 pybind11::object LocalDevicePy::read(short channel, const pybind11::object& value)
@@ -58,9 +54,10 @@ pybind11::object LocalDevicePy::read(short channel, const pybind11::object& valu
     //     valuepy.setValue_py(value);
     // }
 
-    std::cout << "LocalDevicePy::read " << valuepy.print() << std::endl;
+    // std::cout << "LocalDevicePy::read " << valuepy.print() << std::endl;
     
     bool success = device->read(channel, valuepy.getMixedValue(), data);
+    // bool success = device->read(channel, MixedValuePy(value), data);
 
     if (success) {
         pybind11::gil_scoped_acquire acquire;
@@ -85,7 +82,7 @@ bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
     {
         //Need to run in separate thread; release python GIL
         py::gil_scoped_release release;
-        std::cout << "LocalDevicePy::writeChannel: " << mValue.print()  << std::endl;
+        // std::cout << "LocalDevicePy::writeChannel: " << mValue.print()  << std::endl;
         // result = device->writeChannelDefault(channel, static_cast<MixedValue>(mValue) );
         result = device->writeChannelDefault(channel, mValue.getMixedValue() );
     }
@@ -98,7 +95,7 @@ pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::objec
 {
     // pybind11::object obj;
 
-std::cout << "LocalDevicePy::readChannel start" << std::endl;
+// std::cout << "LocalDevicePy::readChannel start" << std::endl;
     // py::gil_scoped_release release;
 
     // std::chrono::seconds dura( 5);
@@ -113,8 +110,8 @@ std::cout << "LocalDevicePy::readChannel start" << std::endl;
 
     MixedValue data;
     // auto mValue = MixedValuePy(value);
-    MixedValuePy mValue;
-    mValue.setValue_py(value);
+    MixedValuePy mValue(value);
+    // mValue.setValue_py(value);
     // mValue.addValue(33.0);
     bool success = false;
 
@@ -123,27 +120,29 @@ std::cout << "LocalDevicePy::readChannel start" << std::endl;
         py::gil_scoped_release release;
         success = device->readChannelDefault(channel, mValue.getMixedValue(), data);
     }
-std::cout << "LocalDevicePy::readChannel done" << std::endl;
+// std::cout << "LocalDevicePy::readChannel done" << std::endl;
     if (success) {
         // MixedValuePy pydata(data);
         // pybind11::gil_scoped_acquire acquire;
         // py::gil_scoped_release release;
         MixedValuePy pydata;
         pydata.setValue(data);
-        std::cout << "LocalDevicePy::readChannel value: " << pydata.print() << std::endl;
+        // std::cout << "LocalDevicePy::readChannel value: " << pydata.print() << std::endl;
         // return pydata.getValue_py();
         pybind11::object obj = pydata.getValue_py();
         // obj.inc_ref();
-        std::cout << "LocalDevicePy::got object : " << obj.ref_count()  << std::endl;
-        try {
-            return obj;
-        }
-        catch(py::error_already_set& e) {
-            std::cout << "readChannel py exception: " << e.what() << std::endl;
-        }
-        catch(...) {
-            std::cout << "readChannel unknown exception: " << std::endl;
-        }
+        // std::cout << "LocalDevicePy::got object : " << obj.ref_count()  << std::endl;
+        return obj;
+
+        // try {
+        //     return obj;
+        // }
+        // catch(py::error_already_set& e) {
+        //     std::cout << "readChannel py exception: " << e.what() << std::endl;
+        // }
+        // catch(...) {
+        //     std::cout << "readChannel unknown exception: " << std::endl;
+        // }
         // return py::none();
     }
     return py::none();
