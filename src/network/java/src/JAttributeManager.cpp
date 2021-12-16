@@ -3,7 +3,6 @@
 
 using STI::Device::JAttributeManager;
 
-JAttributeManager::
 
 JAttributeManager::JAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
 : localManager(manager)
