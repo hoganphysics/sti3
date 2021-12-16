@@ -1,6 +1,8 @@
 
 #include "MixedValuePy.h"
 
+#include <iostream>
+
 using STI::Python::MixedValuePy;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -20,6 +22,7 @@ MixedValuePy::MixedValuePy(const MixedValue& value)
 
 MixedValuePy::MixedValuePy(const MixedValuePy& value)
 : MixedValue(static_cast<MixedValue>(value))
+// : MixedValuePy(value.getValue_py())
 {
 
 }
@@ -41,6 +44,8 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
     py::object obj = py::none();
     
     //Boolean, Int, Double, String, Vector, Empty, File, Image, Any
+
+    // std::cout << "MixedValuePy::convertValue" << std::endl;
 
     switch (value.getType())
     {
@@ -79,7 +84,9 @@ void MixedValuePy::setValue_py(const py::object& value)
 {
 //    pybind11::list;
 
-    if (setValueExtract<MixedValuePy, MixedValuePy>(value)) return;
+// std::cout << "MixedValuePy::setValue_py" << std::endl;
+
+    if (setValueExtract<MixedValuePy, MixedValue>(value)) return;
 
     if (setValueExtract<py::float_, double>(value)) return;
     if (setValueExtract<py::int_, int>(value)) return;
@@ -100,17 +107,31 @@ void MixedValuePy::setValue_py(const py::object& value)
 
 void MixedValuePy::addValue_py(const py::handle& value)
 {
+    if (addValueExtract<MixedValuePy, MixedValue>(value)) return;
+
     if (addValueExtract<py::float_, double>(value)) return;
     if (addValueExtract<py::int_, int>(value)) return;
     if (addValueExtract<py::str, std::string>(value)) return;
     if (addValueExtract<py::bool_, bool>(value)) return;
 
     if (value && py::isinstance<py::list>(value)) {
-        
+
         const py::list& list_vals = value.cast<py::list>();
-        
-        for (const py::handle& obj : list_vals) {
-            addValue_py(obj);
+
+        if (isType(MixedValueType::Empty)) {
+            //add list data to this level
+            for (const py::handle& obj : list_vals) {
+                addValue_py(obj);
+            }
+        }
+        else {
+            //Make and add new sublist
+            MixedValuePy newListVal;
+
+            for (const py::handle& obj : list_vals) {
+                newListVal.addValue_py(obj);
+            }
+            addValue_py(newListVal);
         }
     }
 }

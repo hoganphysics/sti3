@@ -44,7 +44,8 @@ MixedValue::MixedValue()
 }
 MixedValue::MixedValue(const MixedValue& copy)
 {
-	setValue(copy);
+	// std::cout << "MixedValue::MixedValue(MixedValue) " << copy.print() << std::endl;
+	setValueMixed(copy);
 }
 
 MixedValue::MixedValue(const MixedValueType& valueType)
@@ -53,7 +54,8 @@ MixedValue::MixedValue(const MixedValueType& valueType)
 		type = MixedValueType::Empty;
 	}
 	else {
-		setValue(valueType);	//error
+		type = valueType;
+		// setValue(valueType);	//error
 	}
 }
 
@@ -161,6 +163,13 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
 
 void MixedValue::setValue(const MixedValue& value)
 {
+	setValueMixed(value);
+}
+
+void MixedValue::setValueMixed(const MixedValue& value)
+{
+	// std::cout << "MixedValue::setValue(MixedValue) " << value.print() << " " 
+	// 	<< (((value.getType() == MixedValueType::Vector) ) ? value.getVector().size() : 56) << std::endl;
 	//clear();
 	//type = value.getType();
 
@@ -179,9 +188,11 @@ void MixedValue::setValue(const MixedValue& value)
 		setValue( value.getString() );
 		break;
 	case MixedValueType::Vector:
+		// std::cout << "--> case MixedValueType::Vector" << std::endl;
 		setValue( value.getVector() );
 		break;
 	case MixedValueType::Empty:
+		// std::cout << "--> case MixedValueType::Empty" << std::endl;
 		setValue();
 		break;
 	default:

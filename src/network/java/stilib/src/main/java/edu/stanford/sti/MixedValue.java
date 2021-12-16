@@ -155,4 +155,12 @@ public class MixedValue {
     return stiJNI.MixedValue_TypeToString(type.swigValue());
   }
 
+  public void setValueVector(MixedValueVec value) {
+    stiJNI.MixedValue_setValueVector(swigCPtr, this, MixedValueVec.getCPtr(value), value);
+  }
+
+  public void addValue(MixedValue value) {
+    stiJNI.MixedValue_addValue(swigCPtr, this, MixedValue.getCPtr(value), value);
+  }
+
 }

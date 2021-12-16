@@ -348,6 +348,17 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
+%extend STI::Utils::MixedValue
+{
+    void STI::Utils::MixedValue::setValueVector(const std::vector< STI::Utils::MixedValue >& value)
+    {
+        self->setValue< STI::Utils::MixedValue >(value);
+    }
+    void STI::Utils::MixedValue::addValue(const STI::Utils::MixedValue& value)
+    {
+        self->addValue< STI::Utils::MixedValue >(value);
+    }
+} 
 
 
 

@@ -1286,6 +1286,12 @@ SWIGINTERN jint std_set_Sl_STI_Engine_EngineJobID_Sg__sizeImpl(std::set< STI::En
 SWIGINTERN bool std_set_Sl_STI_Engine_EngineJobID_Sg__hasNextImpl(std::set< STI::Engine::EngineJobID > const *self,std::set< STI::Engine::EngineJobID >::iterator const &itr){
         return (itr != self->end());
       }
+SWIGINTERN void STI_Utils_MixedValue_setValueVector(STI::Utils::MixedValue *self,std::vector< STI::Utils::MixedValue > const &value){
+        self->setValue< STI::Utils::MixedValue >(value);
+    }
+SWIGINTERN void STI_Utils_MixedValue_addValue(STI::Utils::MixedValue *self,STI::Utils::MixedValue const &value){
+        self->addValue< STI::Utils::MixedValue >(value);
+    }
 SWIGINTERN std::vector< STI::Utils::MixedValue > *new_std_vector_Sl_STI_Utils_MixedValue_Sg___SWIG_2(jint count,STI::Utils::MixedValue const &value){
         if (count < 0)
           throw std::out_of_range("vector count must be positive");
@@ -13978,6 +13984,42 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1TypeToString
   result = STI::Utils::MixedValue::TypeToString((enum STI::Utils::MixedValueType const &)*arg1);
   jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValueVector(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::vector< STI::Utils::MixedValue > *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = *(std::vector< STI::Utils::MixedValue > **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< STI::Utils::MixedValue > const & reference is null");
+    return ;
+  } 
+  STI_Utils_MixedValue_setValueVector(arg1,(std::vector< STI::Utils::MixedValue > const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1addValue(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  STI::Utils::MixedValue *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = *(STI::Utils::MixedValue **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::MixedValue const & reference is null");
+    return ;
+  } 
+  STI_Utils_MixedValue_addValue(arg1,(STI::Utils::MixedValue const &)*arg2);
 }
 
 

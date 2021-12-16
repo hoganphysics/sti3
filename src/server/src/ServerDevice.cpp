@@ -83,13 +83,13 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
 			std::cout << "collection->get " << (collection->get(id, device) ? "1" : "0") << std::endl;
 			std::cout << "device ? " << (device != 0 ? "1" : "0") << std::endl;
 
-			if (device != 0) {
-				std::cout << "write:" << std::endl;
-				std::shared_ptr<ChannelManager> manager;
-				device->getChannelManager(manager);
-				manager->writeChannel(1, 2.2);
-				std::cout << "write complete" << std::endl;
-			}
+			// if (device != 0) {
+			// 	std::cout << "write:" << std::endl;
+			// 	std::shared_ptr<ChannelManager> manager;
+			// 	device->getChannelManager(manager);
+			// 	manager->writeChannel(1, 2.2);
+			// 	std::cout << "write complete" << std::endl;
+			// }
 		});
 
 }

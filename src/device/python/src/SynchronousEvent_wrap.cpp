@@ -33,7 +33,7 @@ void init_SynchronousEvent(py::module& m)
         .def(py::init<double>(), py::arg("time"))
         .def("getTime", &SynchronousEventAdapter::getTime)
         .def("getMeasurements", &SynchronousEventAdapter::getMeasurements)
-        .def("addMeasurement", &SynchronousEventAdapter::addMeasurement)
+        .def("addMeasurement", &SynchronousEventAdapter::addMeasurement)    //py::call_guard<py::gil_scoped_release>()
 
         .def("loadEvent", &SynchronousEventAdapter::loadEvent)
         .def("play", &SynchronousEventAdapter::play)

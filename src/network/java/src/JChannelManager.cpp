@@ -54,7 +54,7 @@ STI::Utils::MixedValue JChannelManager::readChannel(short channel, const STI::Ut
     STI::Utils::MixedValue data;
 
     if (localManager != 0) {
-        return localManager->readChannel(channel, value, data);
+        bool success = localManager->readChannel(channel, value, data);
     }
     return data;
 }

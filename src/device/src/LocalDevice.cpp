@@ -300,6 +300,8 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 {
 	std::unique_lock<std::mutex> playLock(deviceMutex);
 
+std::cout << "LocalDevice::playSingleEvent 1 " << event.value().print() << std::endl;
+
 	STI::Engine::ShotConfig shotConfig;
 	shotConfig.targetEnginePool = 0;	//0=async pool
 	shotConfig.shotType = STI::Engine::ShotType::SingleUndocumented;
@@ -314,6 +316,8 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	auto parseID = eventEngineScheduler->parse(shot);
 
+std::cout << "LocalDevice::playSingleEvent 2" << std::endl;
+
 	auto parseTicket = parseTicketManager->makeTicket(parseID);
 
 	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
@@ -324,19 +328,23 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 		return false;
 	}
 
-	// std::cout << "Parse messages:" << std::endl;
-	// const auto& mess=parseTicket->getMessages();
-	// for (auto& m : mess) {
-	// 	std::cout << m.getName() <<std::endl;
-	// }
+	std::cout << "Parse messages:" << std::endl;
+	const auto& mess=parseTicket->getMessages();
+	for (auto& m : mess) {
+		std::cout << m.getName() <<std::endl;
+	}
 
 	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
+
+std::cout << "LocalDevice::playSingleEvent 3" << std::endl;
 
 	resultTicket = resultTicketManager->makeTicket(sid);
 
 	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	//resultTicket->wait();
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
+
+std::cout << "LocalDevice::playSingleEvent 4" << std::endl;
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
 		return false;
@@ -347,6 +355,7 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValue& value)
 {
+	std::cout << "+++++++++++ LocalDevice::writeChannelDefault" << std::endl;
 
 	double eventTime = 100;
 	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "writeChannelDefault", 0, STI::Engine::RawEventType::Play);

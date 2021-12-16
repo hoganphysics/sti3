@@ -586,6 +586,8 @@ public class stiJNI {
   public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_TypeToString(int jarg1);
+  public final static native void MixedValue_setValueVector(long jarg1, MixedValue jarg1_, long jarg2, MixedValueVec jarg2_);
+  public final static native void MixedValue_addValue(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
   public final static native void MixedValue_director_connect(MixedValue obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void MixedValue_change_ownership(MixedValue obj, long cptr, boolean take_or_release);
   public final static native long new_MixedValueVec__SWIG_0();

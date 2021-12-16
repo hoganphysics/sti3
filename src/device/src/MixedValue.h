@@ -31,6 +31,7 @@
 #include <string>
 #include <memory>
 
+#include <iostream>
 
 namespace STI
 {
@@ -44,10 +45,14 @@ class MixedValue
 public:
 
 	MixedValue();	//for std::vector
-	template<typename T> MixedValue(const T& value)
-	{
-		setValue(value);
-	}
+	// template<typename T> MixedValue(const T& value)
+	// {
+	// 	std::cout << "template<typename T> MixedValue::MixedValue" << std::endl;
+	// 	setValue(value);
+	// }
+	// template<> MixedValue<MixedValue>(const MixedValue& value)
+	// {}
+	// template<> void sort(Array<int>&);
 	MixedValue(const MixedValue& copy);
 	MixedValue(const MixedValueType& value);
 
@@ -75,6 +80,7 @@ public:
 
 	template<typename T> void setValue(T value)
 	{
+		std::cout << "%%%%%%%% ERR %%%%%   " << value << std::endl;
 		//This version of the function is call for all T values that are unsupported.
 		//This template is called for all types that don't have an explicitly overloaded setValue function.
 
@@ -108,12 +114,16 @@ public:
 
 	void clear();
 
-	template<typename T> void addValue(T value)
+	template<typename T> void addValue(const T& value)
 	{
-		if (type != MixedValueType::Vector)
+		// std::cout << "template<typename T> MixedValue::addValue" << std::endl;
+		if (type != MixedValueType::Vector) {
 			convertToVector();
+		}
 
-		values.push_back(MixedValue(value));
+		// values.push_back(MixedValue(value));
+		values.push_back(MixedValue());		//empty
+		values.back().setValue(value);
 	}
 
 	MixedValueType getType() const;
@@ -135,6 +145,8 @@ public:
 	void serialize(Archive& archive);
 
 private:
+
+	void setValueMixed(const MixedValue& value);
 
 	void printError();
 

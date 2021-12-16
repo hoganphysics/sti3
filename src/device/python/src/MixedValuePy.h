@@ -6,6 +6,9 @@
 
 #include <pybind11/pybind11.h>
 
+
+#include <iostream>
+
 namespace STI
 {
 namespace Python
@@ -30,6 +33,11 @@ public:
 
     //void setValue(const MixedValuePy& value);
 
+    STI::Utils::MixedValue& getMixedValue()
+    {
+        return (*this);
+    }
+
 private:
 
     static pybind11::object convertValue(const MixedValue& value);
@@ -37,16 +45,20 @@ private:
     template<typename PyT, typename T>
     bool setValueExtract(const pybind11::object& value)
     {
+        // std::cout << "MixedValuePy::setValueExtract" << std::endl;
+
         bool success = false;
 
         try {
             if (value && pybind11::isinstance<PyT>(value)) {
-                MixedValue::setValue( value.cast<T>() );
+                // MixedValue::setValue( value.cast<T>() );
+                MixedValue::setValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
             success = false;
         }
         catch(pybind11::cast_error&) {
+            std::cout << "(cast error)" << std::endl;
             success = false;
         }
 
@@ -60,7 +72,8 @@ private:
 
         try {
             if (value && pybind11::isinstance<PyT>(value)) {
-                MixedValue::addValue( value.cast<T>() );
+                // MixedValue::addValue( value.cast<T>() );
+                MixedValue::addValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
             success = false;
