@@ -6,6 +6,8 @@
 #include "MetaData.h"
 
 #include <string>
+#include <memory>
+
 
 namespace STI
 {
@@ -13,6 +15,7 @@ namespace Network
 {
 
 class RemoteChannelManager;
+struct ChannelDataTuple;
 
 
 class RemoteChannel : public STI::Device::Channel
@@ -21,7 +24,8 @@ public:
 
 	RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
-        const std::string& channelName, STI::Utils::MixedValue& metaData);
+        const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
+		const STI::Utils::MixedValue& metaData);
 
     void attachManager(RemoteChannelManager* manager);
 
@@ -45,14 +49,17 @@ public:
 
 private:
 
+	friend RemoteChannelManager;
+	std::shared_ptr<ChannelDataTuple> getChannelData() const;
+
     unsigned short channelNumber_;
     STI::Device::ChannelType type_;
 	STI::Utils::MixedValueType inputType_;
     STI::Utils::MixedValueType outputType_;
     // std::string channelName_;
-    STI::Utils::MetaData metaData_;
+    STI::Utils::MetaData metaData_;  
 
-    // STI::Utils::MixedValue lastValue;
+	std::shared_ptr<ChannelDataTuple> channelData;
 
     RemoteChannelManager* remoteManager;
 

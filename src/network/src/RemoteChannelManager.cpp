@@ -48,7 +48,7 @@ RemoteChannelManager::~RemoteChannelManager()
 	}
 }
 
-void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Device::Channel>& channel)
+void RemoteChannelManager::setChannelData(const std::shared_ptr<RemoteChannel>& channel)
 {
 	if (channel != 0) {
 		auto channelNumber = channel->getChannelNumber();
@@ -56,8 +56,15 @@ void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Device::Cha
 		// channelData[channel->getChannelNumber()].value = channel->getLastValue();
 
 		//Don't call to channel->getChannelName() etc, to avoid deadlock (RemoteChannel points back to this class)
-		channelData[channel->getChannelNumber()].name = _getChannelName(channelNumber);
-		channelData[channel->getChannelNumber()].value = _getLastValue(channelNumber);
+		auto chData = channel->getChannelData();
+		if (chData != 0) {
+			channelData[channelNumber] = chData;
+		}
+		else {
+			channelData[channelNumber] = std::make_shared<ChannelDataTuple>();
+		}
+		// channelData[channelNumber].name = channel->getStoredChannelName();
+		// channelData[channelNumber].value = channel->getStoredLastValue();
 	}
 }
 
@@ -76,17 +83,20 @@ void RemoteChannelManager::getChannels(std::vector<std::shared_ptr<STI::Device::
 		if (convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannels, remoteChannels)) {
 			
 			channels.clear();
+			channelData.clear();
+
 			for(auto& rch : remoteChannels) {
 				if (rch != 0) {
 					rch->attachManager(this);
+					setChannelData(rch);
 					channels.push_back( std::static_pointer_cast<Channel>(rch) );					
 				}
 			}
 
-			channelData.clear();
-			for(auto& ch : channels) {
-				setChannelData(ch);
-			}
+			// channelData.clear();
+			// for(auto& ch : channels) {
+			// 	setChannelData(ch);
+			// }
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -122,7 +132,8 @@ bool RemoteChannelManager::getChannel(short channelNumber, std::shared_ptr<STI::
 
     if (success && convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannel, remoteChannel)) {
 		remoteChannel->attachManager(this);
-		setChannelData(channel);
+		setChannelData(remoteChannel);
+		channel = remoteChannel;
 	}
 
     return success;
@@ -255,7 +266,7 @@ std::string RemoteChannelManager::_getChannelName(short channel) const
 	auto it = channelData.find(channel);
 
 	if (it != channelData.end()) {
-		return it->second.name;
+		return it->second->name;
 	}
 
 	//not found
@@ -274,7 +285,7 @@ STI::Utils::MixedValue RemoteChannelManager::_getLastValue(short channel) const
 	auto it = channelData.find(channel);
 
 	if (it != channelData.end()) {
-		return it->second.value;
+		return it->second->value;
 	}
 
 	//not found
@@ -290,11 +301,17 @@ void RemoteChannelManager::handleMessage(const std::shared_ptr<STI::Device::Chan
 
 	if (mess->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue) {
 		for (auto& tuple : mess->channelValues) {
-			channelData[tuple.first].value = tuple.second;
+			auto ch = channelData[tuple.first];
+			if (ch != 0) {
+				ch->value = tuple.second;
+			}
 		}
 	}
 	else if (mess->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelName) {
-		channelData[mess->channelNumber].name = mess->channelName;
+		auto ch = channelData[mess->channelNumber];
+		if (ch != 0) {
+			ch->name = mess->channelName;
+		}
 	}
 }
 

@@ -5,14 +5,19 @@
 
 using STI::Network::RemoteChannel;
 using STI::Network::RemoteChannelManager;
+using STI::Network::ChannelDataTuple;
 
 
 RemoteChannel::RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
-        const std::string& channelName, STI::Utils::MixedValue& metaData)
-: channelNumber_(channelNumber), type_(type), inputType_(inputType), outputType_(outputType),
+        const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
+        const STI::Utils::MixedValue& metaData)
+: channelNumber_(channelNumber), type_(type), inputType_(inputType), outputType_(outputType), 
 metaData_(metaData)
 {
+    channelData = std::make_shared<ChannelDataTuple>();
+    channelData->name = channelName;
+    channelData->value = lastValue;
 }
 
 void RemoteChannel::attachManager(RemoteChannelManager* manager)
@@ -58,6 +63,11 @@ std::string RemoteChannel::getChannelName() const
         name = remoteManager->getChannelName(channelNumber_);
     }
     return name;
+}
+
+std::shared_ptr<ChannelDataTuple> RemoteChannel::getChannelData() const
+{
+    return channelData;
 }
 
 // void RemoteChannel::updateChannelName(const std::string& name)

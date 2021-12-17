@@ -79,6 +79,9 @@
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
+    #include "MetaData.h"
+    using STI::Utils::MetaData;
+
     #include "JChannelManager.h"
     using STI::Device::JChannelManager;
     #include "fwd/Channel_fwd.h"
@@ -90,6 +93,8 @@
     using STI::Device::ChannelRefreshListener;
 
     #include "JAttributeManager.h"
+    #include "Attribute.h"
+    using STI::Device::Attribute;
 
     #include "ShotResult.h"
     
@@ -124,6 +129,8 @@
 
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
+
+%shared_ptr(STI::Device::Attribute);
 
 %shared_ptr(STI::Engine::JShot);
 
@@ -293,6 +300,9 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %ignore STI::Device::JDeviceMessageDispatcher::JDeviceMessageDispatcher(std::shared_ptr< STI::Device::DeviceMessageDispatcher >& dispatcher);
 %include "JDeviceMessageDispatcher.h"
 
+//MetaData
+%include "MetaData.h"
+
 
 //ChannelManager
 %include "fwd/Channel_fwd.h"
@@ -318,6 +328,9 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 //Attributes
 %template(StringMap) std::map< std::string, std::string >;
+%template(StringVector) std::vector< std::string >;
+%include "Attribute.h"
+%template(AttributeVector) std::vector< std::shared_ptr < STI::Device::Attribute > >;
 %ignore STI::Device::AttributeManager;
 %ignore STI::Device::JAttributeManager::JAttributeManager(std::shared_ptr< STI::Device::AttributeManager >& manager);
 %include "JAttributeManager.h"

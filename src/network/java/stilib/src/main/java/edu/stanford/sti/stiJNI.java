@@ -357,6 +357,16 @@ public class stiJNI {
   public final static native void delete_JDeviceMessageDispatcher(long jarg1);
   public final static native void JDeviceMessageDispatcher_addMessage(long jarg1, JDeviceMessageDispatcher jarg1_, long jarg2, DeviceMessage jarg2_);
   public final static native void JDeviceMessageDispatcher_clearMessages(long jarg1, JDeviceMessageDispatcher jarg1_);
+  public final static native long new_MetaData__SWIG_0();
+  public final static native long new_MetaData__SWIG_1(long jarg1, MixedValue jarg1_);
+  public final static native void delete_MetaData(long jarg1);
+  public final static native boolean MetaData_contains(long jarg1, MetaData jarg1_, String jarg2);
+  public final static native void MetaData_addMetaData(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean MetaData_resetMetaDataEntry(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long MetaData_getMetaData__SWIG_0(long jarg1, MetaData jarg1_);
+  public final static native long MetaData_getMetaData__SWIG_1(long jarg1, MetaData jarg1_, String jarg2);
+  public final static native boolean MetaData_isTuple(long jarg1, MixedValue jarg1_);
+  public final static native boolean MetaData_tupleMatch(long jarg1, MixedValue jarg1_, String jarg2);
   public final static native void delete_Channel(long jarg1);
   public final static native short Channel_getChannelNumber(long jarg1, Channel jarg1_);
   public final static native int Channel_getType(long jarg1, Channel jarg1_);
@@ -510,9 +520,54 @@ public class stiJNI {
   public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
   public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
   public final static native void delete_StringMap(long jarg1);
+  public final static native long new_StringVector__SWIG_0();
+  public final static native long new_StringVector__SWIG_1(long jarg1, StringVector jarg1_);
+  public final static native long StringVector_capacity(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_reserve(long jarg1, StringVector jarg1_, long jarg2);
+  public final static native boolean StringVector_isEmpty(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_clear(long jarg1, StringVector jarg1_);
+  public final static native long new_StringVector__SWIG_2(int jarg1, String jarg2);
+  public final static native int StringVector_doSize(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_doAdd__SWIG_0(long jarg1, StringVector jarg1_, String jarg2);
+  public final static native void StringVector_doAdd__SWIG_1(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
+  public final static native String StringVector_doRemove(long jarg1, StringVector jarg1_, int jarg2);
+  public final static native String StringVector_doGet(long jarg1, StringVector jarg1_, int jarg2);
+  public final static native String StringVector_doSet(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
+  public final static native void StringVector_doRemoveRange(long jarg1, StringVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_StringVector(long jarg1);
+  public final static native void delete_Attribute(long jarg1);
+  public final static native String Attribute_getKey(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getValue(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getAllowedValues(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getGroup(long jarg1, Attribute jarg1_);
+  public final static native void Attribute_refreshValue(long jarg1, Attribute jarg1_);
+  public final static native boolean Attribute_setValue(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long Attribute_getMetaData__SWIG_0(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getMetaData__SWIG_1(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long new_Attribute();
+  public final static native void Attribute_director_connect(Attribute obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void Attribute_change_ownership(Attribute obj, long cptr, boolean take_or_release);
+  public final static native long new_AttributeVector__SWIG_0();
+  public final static native long new_AttributeVector__SWIG_1(long jarg1, AttributeVector jarg1_);
+  public final static native long AttributeVector_capacity(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_reserve(long jarg1, AttributeVector jarg1_, long jarg2);
+  public final static native boolean AttributeVector_isEmpty(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_clear(long jarg1, AttributeVector jarg1_);
+  public final static native long new_AttributeVector__SWIG_2(int jarg1, long jarg2, Attribute jarg2_);
+  public final static native int AttributeVector_doSize(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_doAdd__SWIG_0(long jarg1, AttributeVector jarg1_, long jarg2, Attribute jarg2_);
+  public final static native void AttributeVector_doAdd__SWIG_1(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native long AttributeVector_doRemove(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doGet(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doSet(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native void AttributeVector_doRemoveRange(long jarg1, AttributeVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_AttributeVector(long jarg1);
   public final static native void delete_JAttributeManager(long jarg1);
   public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
   public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
+  public final static native long JAttributeManager_getAttribute(long jarg1, JAttributeManager jarg1_, String jarg2);
+  public final static native long JAttributeManager_getAttributes(long jarg1, JAttributeManager jarg1_);
+  public final static native long JAttributeManager_getAttributeTuples(long jarg1, JAttributeManager jarg1_);
   public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JLocalDevice(long jarg1);
   public final static native long JLocalDevice_getMessageReceiver(long jarg1, JLocalDevice jarg1_);
@@ -1024,6 +1079,30 @@ public class stiJNI {
   }
   public static void SwigDirector_ChannelRefreshListener_handleChannelNameRefreshEvent(ChannelRefreshListener jself, short channelNumber, String name) {
     jself.handleChannelNameRefreshEvent(channelNumber, name);
+  }
+  public static String SwigDirector_Attribute_getKey(Attribute jself) {
+    return jself.getKey();
+  }
+  public static String SwigDirector_Attribute_getValue(Attribute jself) {
+    return jself.getValue();
+  }
+  public static long SwigDirector_Attribute_getAllowedValues(Attribute jself) {
+    return StringVector.getCPtr(jself.getAllowedValues());
+  }
+  public static String SwigDirector_Attribute_getGroup(Attribute jself) {
+    return jself.getGroup();
+  }
+  public static void SwigDirector_Attribute_refreshValue(Attribute jself) {
+    jself.refreshValue();
+  }
+  public static boolean SwigDirector_Attribute_setValue(Attribute jself, String value) {
+    return jself.setValue(value);
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_0(Attribute jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_1(Attribute jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
   }
   public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
     jself.parseEvents(temp);

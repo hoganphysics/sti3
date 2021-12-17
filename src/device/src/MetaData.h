@@ -28,11 +28,11 @@ public:
     
     const STI::Utils::MixedValue& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
-
-private:
-
+    
     static bool isTuple(const STI::Utils::MixedValue& tuple);
     static bool tupleMatch(const STI::Utils::MixedValue& tuple, const std::string& key);
+
+private:
 
     STI::Utils::MixedValue metaData;
 

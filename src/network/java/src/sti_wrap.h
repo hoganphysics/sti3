@@ -350,6 +350,28 @@ protected:
     Swig::BoolArray<2> swig_override;
 };
 
+class SwigDirector_Attribute : public STI::Device::Attribute, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_Attribute(JNIEnv *jenv);
+    virtual ~SwigDirector_Attribute();
+    virtual std::string const &getKey() const;
+    virtual std::string const &getValue() const;
+    virtual std::vector< std::string > const &getAllowedValues() const;
+    virtual std::string const &getGroup() const;
+    virtual void refreshValue();
+    virtual bool setValue(std::string const &value);
+    virtual STI::Utils::MixedValue const &getMetaData() const;
+    virtual STI::Utils::MixedValue getMetaData(std::string const &key) const;
+public:
+    bool swig_overrides(int n) {
+      return (n < 8 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<8> swig_override;
+};
+
 class SwigDirector_JLocalDevice : public STI::Device::JLocalDevice, public Swig::Director {
 
 public:

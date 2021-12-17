@@ -3,6 +3,7 @@
 
 #include "Channel.h"
 #include "MixedValue.h"
+#include "MetaData.h"
 
 #include <string>
 #include <mutex>
@@ -72,7 +73,8 @@ private:
 
 	std::vector<ChannelRefreshListener*> listeners;	
 
-	STI::Utils::MixedValue metaData;	//usage tip, units, etc
+	// STI::Utils::MixedValue metaData;	//usage tip, units, etc
+	STI::Utils::MetaData metaData;		//usage tip, units, etc
 
     mutable std::mutex chMutex;
 

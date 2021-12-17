@@ -51,11 +51,11 @@ RemoteAttributeManager::~RemoteAttributeManager()
 	}
 }
 
-void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute)
+void RemoteAttributeManager::setAttributeData(const std::shared_ptr<RemoteAttribute>& attribute)
 {
 	if (attribute != 0) {
 		auto key = attribute->getKey();
-		attributeData[key] = _getUpdatedValue(key);	
+		attributeData[key] = attribute->getCurrentValue();
 	}
 }
 

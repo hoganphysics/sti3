@@ -1,6 +1,7 @@
 
 #include "ServerDevice.h"
 
+#include "AttributeManager.h"
 #include "ChannelManager.h"
 #include "DeviceMessageReceiver.h"
 #include <iostream>
@@ -30,7 +31,13 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
 
 	addChannel(1, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
 
+	// std::shared_ptr<AttributeManager> attributeManager;
+	// getAttributeManager(attributeManager);
+	addAttribute("test", "45");
 
+	std::shared_ptr<AttributeManager> attributeManager;
+	getAttributeManager(attributeManager);
+	std::string testAt = attributeManager->getValue("test");
 
 ///////////////////////////////////////
     std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;

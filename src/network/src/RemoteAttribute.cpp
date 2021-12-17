@@ -32,6 +32,11 @@ const std::string& RemoteAttribute::getValue() const
     return value_;
 }
 
+std::string RemoteAttribute::getCurrentValue() const
+{
+    return value_;
+}
+
 const std::vector<std::string>& RemoteAttribute::getAllowedValues() const
 {
     return allowedValues_;

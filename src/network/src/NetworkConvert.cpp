@@ -204,6 +204,24 @@ MixedValue STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tVa
 {
 	MixedValue value;
 
+	convert<TMixedValue, MixedValue>(tValue, value);
+
+	return value;
+}
+
+// template<>
+// bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
+// {
+// 	tValue = convert<MixedValue, TMixedValue>(value);
+
+// 	return true;
+// }
+
+template<>
+bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, MixedValue& value)
+{
+	// value = convert<TMixedValue, MixedValue>(tValue);
+
 	switch (tValue._d())
 	{
 	case TMixedValueType::MixedValueBoolean:
@@ -237,21 +255,6 @@ MixedValue STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tVa
 		break;
 	}
 
-	return value;
-}
-
-// template<>
-// bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
-// {
-// 	tValue = convert<MixedValue, TMixedValue>(value);
-
-// 	return true;
-// }
-
-template<>
-bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, MixedValue& value)
-{
-	value = convert<TMixedValue, MixedValue>(tValue);
 	return true;
 }
 
