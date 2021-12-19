@@ -9,6 +9,86 @@
 package edu.stanford.sti;
 
 public class stiJNI {
+  public final static native long new_FileHolderVector__SWIG_0();
+  public final static native long new_FileHolderVector__SWIG_1(long jarg1, FileHolderVector jarg1_);
+  public final static native long FileHolderVector_capacity(long jarg1, FileHolderVector jarg1_);
+  public final static native void FileHolderVector_reserve(long jarg1, FileHolderVector jarg1_, long jarg2);
+  public final static native boolean FileHolderVector_isEmpty(long jarg1, FileHolderVector jarg1_);
+  public final static native void FileHolderVector_clear(long jarg1, FileHolderVector jarg1_);
+  public final static native long new_FileHolderVector__SWIG_2(int jarg1, long jarg2, FileHolder jarg2_);
+  public final static native int FileHolderVector_doSize(long jarg1, FileHolderVector jarg1_);
+  public final static native void FileHolderVector_doAdd__SWIG_0(long jarg1, FileHolderVector jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native void FileHolderVector_doAdd__SWIG_1(long jarg1, FileHolderVector jarg1_, int jarg2, long jarg3, FileHolder jarg3_);
+  public final static native long FileHolderVector_doRemove(long jarg1, FileHolderVector jarg1_, int jarg2);
+  public final static native long FileHolderVector_doGet(long jarg1, FileHolderVector jarg1_, int jarg2);
+  public final static native long FileHolderVector_doSet(long jarg1, FileHolderVector jarg1_, int jarg2, long jarg3, FileHolder jarg3_);
+  public final static native void FileHolderVector_doRemoveRange(long jarg1, FileHolderVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_FileHolderVector(long jarg1);
+  public final static native void delete_FileHolder(long jarg1);
+  public final static native String FileHolder_getFilename(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_exists(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_transferFile(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native long FileHolder_maxBufferSize(long jarg1, FileHolder jarg1_);
+  public final static native boolean FileHolder_deleteFile(long jarg1, FileHolder jarg1_);
+  public final static native String FileHolder_md5Checksum(long jarg1, FileHolder jarg1_);
+  public final static native long new_FileHolder();
+  public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void FileHolder_change_ownership(FileHolder obj, long cptr, boolean take_or_release);
+  public final static native long new_MixedValue__SWIG_0();
+  public final static native long new_MixedValue__SWIG_1(long jarg1, MixedValue jarg1_);
+  public final static native long new_MixedValue__SWIG_2(int jarg1);
+  public final static native void delete_MixedValue(long jarg1);
+  public final static native boolean MixedValue_opEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native boolean MixedValue_opNotEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_setValue__SWIG_2(long jarg1, MixedValue jarg1_, boolean jarg2);
+  public final static native void MixedValue_setValue__SWIG_3(long jarg1, MixedValue jarg1_, int jarg2);
+  public final static native void MixedValue_setValue__SWIG_4(long jarg1, MixedValue jarg1_, double jarg2);
+  public final static native void MixedValue_setValue__SWIG_5(long jarg1, MixedValue jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, String jarg2);
+  public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_setValue__SWIG_8(long jarg1, MixedValue jarg1_);
+  public final static native void MixedValue_setValue__SWIG_11(long jarg1, MixedValue jarg1_, short jarg2);
+  public final static native void MixedValue_clear(long jarg1, MixedValue jarg1_);
+  public final static native int MixedValue_getType(long jarg1, MixedValue jarg1_);
+  public final static native boolean MixedValue_isType(long jarg1, MixedValue jarg1_, int jarg2);
+  public final static native boolean MixedValue_getBoolean(long jarg1, MixedValue jarg1_);
+  public final static native int MixedValue_getInt(long jarg1, MixedValue jarg1_);
+  public final static native double MixedValue_getDouble(long jarg1, MixedValue jarg1_);
+  public final static native double MixedValue_getNumber(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_getString(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
+  public final static native String MixedValue_TypeToString(int jarg1);
+  public final static native void MixedValue_setValueVector(long jarg1, MixedValue jarg1_, long jarg2, MixedValueVec jarg2_);
+  public final static native void MixedValue_addValue(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_director_connect(MixedValue obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void MixedValue_change_ownership(MixedValue obj, long cptr, boolean take_or_release);
+  public final static native long new_MixedValueVec__SWIG_0();
+  public final static native long new_MixedValueVec__SWIG_1(long jarg1, MixedValueVec jarg1_);
+  public final static native long MixedValueVec_capacity(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_reserve(long jarg1, MixedValueVec jarg1_, long jarg2);
+  public final static native boolean MixedValueVec_isEmpty(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_clear(long jarg1, MixedValueVec jarg1_);
+  public final static native long new_MixedValueVec__SWIG_2(int jarg1, long jarg2, MixedValue jarg2_);
+  public final static native int MixedValueVec_doSize(long jarg1, MixedValueVec jarg1_);
+  public final static native void MixedValueVec_doAdd__SWIG_0(long jarg1, MixedValueVec jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValueVec_doAdd__SWIG_1(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long MixedValueVec_doRemove(long jarg1, MixedValueVec jarg1_, int jarg2);
+  public final static native long MixedValueVec_doGet(long jarg1, MixedValueVec jarg1_, int jarg2);
+  public final static native long MixedValueVec_doSet(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void MixedValueVec_doRemoveRange(long jarg1, MixedValueVec jarg1_, int jarg2, int jarg3);
+  public final static native void delete_MixedValueVec(long jarg1);
+  public final static native long new_MetaData__SWIG_0();
+  public final static native long new_MetaData__SWIG_1(long jarg1, MixedValue jarg1_);
+  public final static native void delete_MetaData(long jarg1);
+  public final static native boolean MetaData_contains(long jarg1, MetaData jarg1_, String jarg2);
+  public final static native void MetaData_addMetaData(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean MetaData_resetMetaDataEntry(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long MetaData_getMetaData__SWIG_0(long jarg1, MetaData jarg1_);
+  public final static native long MetaData_getMetaData__SWIG_1(long jarg1, MetaData jarg1_, String jarg2);
+  public final static native boolean MetaData_isTuple(long jarg1, MixedValue jarg1_);
+  public final static native boolean MetaData_tupleMatch(long jarg1, MixedValue jarg1_, String jarg2);
   public final static native long new_DeviceID__SWIG_0();
   public final static native long new_DeviceID__SWIG_1(String jarg1);
   public final static native long new_DeviceID__SWIG_2(String jarg1, String jarg2, int jarg3);
@@ -56,6 +136,72 @@ public class stiJNI {
   public final static native long DeviceIDvector_doSet(long jarg1, DeviceIDvector jarg1_, int jarg2, long jarg3, DeviceID jarg3_);
   public final static native void DeviceIDvector_doRemoveRange(long jarg1, DeviceIDvector jarg1_, int jarg2, int jarg3);
   public final static native void delete_DeviceIDvector(long jarg1);
+  public final static native long new_StringMap__SWIG_0();
+  public final static native long new_StringMap__SWIG_1(long jarg1, StringMap jarg1_);
+  public final static native long StringMap_Iterator_getNextUnchecked(long jarg1, StringMap.Iterator jarg1_);
+  public final static native boolean StringMap_Iterator_isNot(long jarg1, StringMap.Iterator jarg1_, long jarg2, StringMap.Iterator jarg2_);
+  public final static native String StringMap_Iterator_getKey(long jarg1, StringMap.Iterator jarg1_);
+  public final static native String StringMap_Iterator_getValue(long jarg1, StringMap.Iterator jarg1_);
+  public final static native void StringMap_Iterator_setValue(long jarg1, StringMap.Iterator jarg1_, String jarg2);
+  public final static native void delete_StringMap_Iterator(long jarg1);
+  public final static native boolean StringMap_isEmpty(long jarg1, StringMap jarg1_);
+  public final static native void StringMap_clear(long jarg1, StringMap jarg1_);
+  public final static native long StringMap_find(long jarg1, StringMap jarg1_, String jarg2);
+  public final static native long StringMap_begin(long jarg1, StringMap jarg1_);
+  public final static native long StringMap_end(long jarg1, StringMap jarg1_);
+  public final static native int StringMap_sizeImpl(long jarg1, StringMap jarg1_);
+  public final static native boolean StringMap_containsImpl(long jarg1, StringMap jarg1_, String jarg2);
+  public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
+  public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
+  public final static native void delete_StringMap(long jarg1);
+  public final static native long new_StringVector__SWIG_0();
+  public final static native long new_StringVector__SWIG_1(long jarg1, StringVector jarg1_);
+  public final static native long StringVector_capacity(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_reserve(long jarg1, StringVector jarg1_, long jarg2);
+  public final static native boolean StringVector_isEmpty(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_clear(long jarg1, StringVector jarg1_);
+  public final static native long new_StringVector__SWIG_2(int jarg1, String jarg2);
+  public final static native int StringVector_doSize(long jarg1, StringVector jarg1_);
+  public final static native void StringVector_doAdd__SWIG_0(long jarg1, StringVector jarg1_, String jarg2);
+  public final static native void StringVector_doAdd__SWIG_1(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
+  public final static native String StringVector_doRemove(long jarg1, StringVector jarg1_, int jarg2);
+  public final static native String StringVector_doGet(long jarg1, StringVector jarg1_, int jarg2);
+  public final static native String StringVector_doSet(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
+  public final static native void StringVector_doRemoveRange(long jarg1, StringVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_StringVector(long jarg1);
+  public final static native void delete_Attribute(long jarg1);
+  public final static native String Attribute_getKey(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getValue(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getAllowedValues(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getGroup(long jarg1, Attribute jarg1_);
+  public final static native void Attribute_refreshValue(long jarg1, Attribute jarg1_);
+  public final static native boolean Attribute_setValue(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long Attribute_getMetaData__SWIG_0(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getMetaData__SWIG_1(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long new_Attribute();
+  public final static native void Attribute_director_connect(Attribute obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void Attribute_change_ownership(Attribute obj, long cptr, boolean take_or_release);
+  public final static native long new_AttributeVector__SWIG_0();
+  public final static native long new_AttributeVector__SWIG_1(long jarg1, AttributeVector jarg1_);
+  public final static native long AttributeVector_capacity(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_reserve(long jarg1, AttributeVector jarg1_, long jarg2);
+  public final static native boolean AttributeVector_isEmpty(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_clear(long jarg1, AttributeVector jarg1_);
+  public final static native long new_AttributeVector__SWIG_2(int jarg1, long jarg2, Attribute jarg2_);
+  public final static native int AttributeVector_doSize(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_doAdd__SWIG_0(long jarg1, AttributeVector jarg1_, long jarg2, Attribute jarg2_);
+  public final static native void AttributeVector_doAdd__SWIG_1(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native long AttributeVector_doRemove(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doGet(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doSet(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native void AttributeVector_doRemoveRange(long jarg1, AttributeVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_AttributeVector(long jarg1);
+  public final static native void delete_JAttributeManager(long jarg1);
+  public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
+  public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
+  public final static native long JAttributeManager_getAttribute(long jarg1, JAttributeManager jarg1_, String jarg2);
+  public final static native long JAttributeManager_getAttributes(long jarg1, JAttributeManager jarg1_);
+  public final static native long JAttributeManager_getAttributeTuples(long jarg1, JAttributeManager jarg1_);
   public final static native long new_DeviceTrace__SWIG_0();
   public final static native long new_DeviceTrace__SWIG_1(long jarg1, DeviceID jarg1_);
   public final static native long new_DeviceTrace__SWIG_2(long jarg1, DeviceTrace jarg1_);
@@ -236,8 +382,7 @@ public class stiJNI {
   public final static native void delete_AttributeUpdateMessage(long jarg1);
   public final static native void AttributeUpdateMessage_director_connect(AttributeUpdateMessage obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void AttributeUpdateMessage_change_ownership(AttributeUpdateMessage obj, long cptr, boolean take_or_release);
-  public final static native long new_EngineJobUpdateDeviceMessage__SWIG_0(long jarg1, DeviceTrace jarg1_);
-  public final static native long new_EngineJobUpdateDeviceMessage__SWIG_1(long jarg1, DeviceTrace jarg1_, long jarg2, int jarg3);
+  public final static native long new_EngineJobUpdateDeviceMessage(long jarg1, DeviceTrace jarg1_);
   public final static native int EngineJobUpdateDeviceMessage_getMessageClassType();
   public final static native int EngineJobUpdateDeviceMessage_getTargetList(long jarg1, EngineJobUpdateDeviceMessage jarg1_);
   public final static native String EngineJobUpdateDeviceMessage_jobTargetToString(int jarg1);
@@ -357,16 +502,6 @@ public class stiJNI {
   public final static native void delete_JDeviceMessageDispatcher(long jarg1);
   public final static native void JDeviceMessageDispatcher_addMessage(long jarg1, JDeviceMessageDispatcher jarg1_, long jarg2, DeviceMessage jarg2_);
   public final static native void JDeviceMessageDispatcher_clearMessages(long jarg1, JDeviceMessageDispatcher jarg1_);
-  public final static native long new_MetaData__SWIG_0();
-  public final static native long new_MetaData__SWIG_1(long jarg1, MixedValue jarg1_);
-  public final static native void delete_MetaData(long jarg1);
-  public final static native boolean MetaData_contains(long jarg1, MetaData jarg1_, String jarg2);
-  public final static native void MetaData_addMetaData(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
-  public final static native boolean MetaData_resetMetaDataEntry(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
-  public final static native long MetaData_getMetaData__SWIG_0(long jarg1, MetaData jarg1_);
-  public final static native long MetaData_getMetaData__SWIG_1(long jarg1, MetaData jarg1_, String jarg2);
-  public final static native boolean MetaData_isTuple(long jarg1, MixedValue jarg1_);
-  public final static native boolean MetaData_tupleMatch(long jarg1, MixedValue jarg1_, String jarg2);
   public final static native void delete_Channel(long jarg1);
   public final static native short Channel_getChannelNumber(long jarg1, Channel jarg1_);
   public final static native int Channel_getType(long jarg1, Channel jarg1_);
@@ -502,72 +637,6 @@ public class stiJNI {
   public final static native long ShotID_generateUniqueID(long jarg1, ParseID jarg1_);
   public final static native String ShotID_print(long jarg1, ShotID jarg1_);
   public final static native void delete_ShotID(long jarg1);
-  public final static native long new_StringMap__SWIG_0();
-  public final static native long new_StringMap__SWIG_1(long jarg1, StringMap jarg1_);
-  public final static native long StringMap_Iterator_getNextUnchecked(long jarg1, StringMap.Iterator jarg1_);
-  public final static native boolean StringMap_Iterator_isNot(long jarg1, StringMap.Iterator jarg1_, long jarg2, StringMap.Iterator jarg2_);
-  public final static native String StringMap_Iterator_getKey(long jarg1, StringMap.Iterator jarg1_);
-  public final static native String StringMap_Iterator_getValue(long jarg1, StringMap.Iterator jarg1_);
-  public final static native void StringMap_Iterator_setValue(long jarg1, StringMap.Iterator jarg1_, String jarg2);
-  public final static native void delete_StringMap_Iterator(long jarg1);
-  public final static native boolean StringMap_isEmpty(long jarg1, StringMap jarg1_);
-  public final static native void StringMap_clear(long jarg1, StringMap jarg1_);
-  public final static native long StringMap_find(long jarg1, StringMap jarg1_, String jarg2);
-  public final static native long StringMap_begin(long jarg1, StringMap jarg1_);
-  public final static native long StringMap_end(long jarg1, StringMap jarg1_);
-  public final static native int StringMap_sizeImpl(long jarg1, StringMap jarg1_);
-  public final static native boolean StringMap_containsImpl(long jarg1, StringMap jarg1_, String jarg2);
-  public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
-  public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
-  public final static native void delete_StringMap(long jarg1);
-  public final static native long new_StringVector__SWIG_0();
-  public final static native long new_StringVector__SWIG_1(long jarg1, StringVector jarg1_);
-  public final static native long StringVector_capacity(long jarg1, StringVector jarg1_);
-  public final static native void StringVector_reserve(long jarg1, StringVector jarg1_, long jarg2);
-  public final static native boolean StringVector_isEmpty(long jarg1, StringVector jarg1_);
-  public final static native void StringVector_clear(long jarg1, StringVector jarg1_);
-  public final static native long new_StringVector__SWIG_2(int jarg1, String jarg2);
-  public final static native int StringVector_doSize(long jarg1, StringVector jarg1_);
-  public final static native void StringVector_doAdd__SWIG_0(long jarg1, StringVector jarg1_, String jarg2);
-  public final static native void StringVector_doAdd__SWIG_1(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
-  public final static native String StringVector_doRemove(long jarg1, StringVector jarg1_, int jarg2);
-  public final static native String StringVector_doGet(long jarg1, StringVector jarg1_, int jarg2);
-  public final static native String StringVector_doSet(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
-  public final static native void StringVector_doRemoveRange(long jarg1, StringVector jarg1_, int jarg2, int jarg3);
-  public final static native void delete_StringVector(long jarg1);
-  public final static native void delete_Attribute(long jarg1);
-  public final static native String Attribute_getKey(long jarg1, Attribute jarg1_);
-  public final static native String Attribute_getValue(long jarg1, Attribute jarg1_);
-  public final static native long Attribute_getAllowedValues(long jarg1, Attribute jarg1_);
-  public final static native String Attribute_getGroup(long jarg1, Attribute jarg1_);
-  public final static native void Attribute_refreshValue(long jarg1, Attribute jarg1_);
-  public final static native boolean Attribute_setValue(long jarg1, Attribute jarg1_, String jarg2);
-  public final static native long Attribute_getMetaData__SWIG_0(long jarg1, Attribute jarg1_);
-  public final static native long Attribute_getMetaData__SWIG_1(long jarg1, Attribute jarg1_, String jarg2);
-  public final static native long new_Attribute();
-  public final static native void Attribute_director_connect(Attribute obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void Attribute_change_ownership(Attribute obj, long cptr, boolean take_or_release);
-  public final static native long new_AttributeVector__SWIG_0();
-  public final static native long new_AttributeVector__SWIG_1(long jarg1, AttributeVector jarg1_);
-  public final static native long AttributeVector_capacity(long jarg1, AttributeVector jarg1_);
-  public final static native void AttributeVector_reserve(long jarg1, AttributeVector jarg1_, long jarg2);
-  public final static native boolean AttributeVector_isEmpty(long jarg1, AttributeVector jarg1_);
-  public final static native void AttributeVector_clear(long jarg1, AttributeVector jarg1_);
-  public final static native long new_AttributeVector__SWIG_2(int jarg1, long jarg2, Attribute jarg2_);
-  public final static native int AttributeVector_doSize(long jarg1, AttributeVector jarg1_);
-  public final static native void AttributeVector_doAdd__SWIG_0(long jarg1, AttributeVector jarg1_, long jarg2, Attribute jarg2_);
-  public final static native void AttributeVector_doAdd__SWIG_1(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
-  public final static native long AttributeVector_doRemove(long jarg1, AttributeVector jarg1_, int jarg2);
-  public final static native long AttributeVector_doGet(long jarg1, AttributeVector jarg1_, int jarg2);
-  public final static native long AttributeVector_doSet(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
-  public final static native void AttributeVector_doRemoveRange(long jarg1, AttributeVector jarg1_, int jarg2, int jarg3);
-  public final static native void delete_AttributeVector(long jarg1);
-  public final static native void delete_JAttributeManager(long jarg1);
-  public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
-  public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
-  public final static native long JAttributeManager_getAttribute(long jarg1, JAttributeManager jarg1_, String jarg2);
-  public final static native long JAttributeManager_getAttributes(long jarg1, JAttributeManager jarg1_);
-  public final static native long JAttributeManager_getAttributeTuples(long jarg1, JAttributeManager jarg1_);
   public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JLocalDevice(long jarg1);
   public final static native long JLocalDevice_getMessageReceiver(long jarg1, JLocalDevice jarg1_);
@@ -605,72 +674,9 @@ public class stiJNI {
   public final static native long EngineJobID_runTime_get(long jarg1, EngineJobID jarg1_);
   public final static native long new_EngineJobID();
   public final static native void delete_EngineJobID(long jarg1);
-  public final static native void delete_FileHolder(long jarg1);
-  public final static native String FileHolder_getFilename(long jarg1, FileHolder jarg1_);
-  public final static native boolean FileHolder_exists(long jarg1, FileHolder jarg1_);
-  public final static native boolean FileHolder_transferFile(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
-  public final static native long FileHolder_maxBufferSize(long jarg1, FileHolder jarg1_);
-  public final static native boolean FileHolder_deleteFile(long jarg1, FileHolder jarg1_);
-  public final static native String FileHolder_md5Checksum(long jarg1, FileHolder jarg1_);
-  public final static native long new_FileHolder();
-  public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void FileHolder_change_ownership(FileHolder obj, long cptr, boolean take_or_release);
-  public final static native long new_MixedValue__SWIG_0();
-  public final static native long new_MixedValue__SWIG_1(long jarg1, MixedValue jarg1_);
-  public final static native long new_MixedValue__SWIG_2(int jarg1);
-  public final static native void delete_MixedValue(long jarg1);
-  public final static native boolean MixedValue_opEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native boolean MixedValue_opNotEquals(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native void MixedValue_setValue__SWIG_2(long jarg1, MixedValue jarg1_, boolean jarg2);
-  public final static native void MixedValue_setValue__SWIG_3(long jarg1, MixedValue jarg1_, int jarg2);
-  public final static native void MixedValue_setValue__SWIG_4(long jarg1, MixedValue jarg1_, double jarg2);
-  public final static native void MixedValue_setValue__SWIG_5(long jarg1, MixedValue jarg1_, long jarg2, FileHolder jarg2_);
-  public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, String jarg2);
-  public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native void MixedValue_setValue__SWIG_8(long jarg1, MixedValue jarg1_);
-  public final static native void MixedValue_setValue__SWIG_11(long jarg1, MixedValue jarg1_, short jarg2);
-  public final static native void MixedValue_clear(long jarg1, MixedValue jarg1_);
-  public final static native int MixedValue_getType(long jarg1, MixedValue jarg1_);
-  public final static native boolean MixedValue_isType(long jarg1, MixedValue jarg1_, int jarg2);
-  public final static native boolean MixedValue_getBoolean(long jarg1, MixedValue jarg1_);
-  public final static native int MixedValue_getInt(long jarg1, MixedValue jarg1_);
-  public final static native double MixedValue_getDouble(long jarg1, MixedValue jarg1_);
-  public final static native double MixedValue_getNumber(long jarg1, MixedValue jarg1_);
-  public final static native String MixedValue_getString(long jarg1, MixedValue jarg1_);
-  public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
-  public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
-  public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
-  public final static native String MixedValue_TypeToString(int jarg1);
-  public final static native void MixedValue_setValueVector(long jarg1, MixedValue jarg1_, long jarg2, MixedValueVec jarg2_);
-  public final static native void MixedValue_addValue(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native void MixedValue_director_connect(MixedValue obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void MixedValue_change_ownership(MixedValue obj, long cptr, boolean take_or_release);
-  public final static native long new_MixedValueVec__SWIG_0();
-  public final static native long new_MixedValueVec__SWIG_1(long jarg1, MixedValueVec jarg1_);
-  public final static native long MixedValueVec_capacity(long jarg1, MixedValueVec jarg1_);
-  public final static native void MixedValueVec_reserve(long jarg1, MixedValueVec jarg1_, long jarg2);
-  public final static native boolean MixedValueVec_isEmpty(long jarg1, MixedValueVec jarg1_);
-  public final static native void MixedValueVec_clear(long jarg1, MixedValueVec jarg1_);
-  public final static native long new_MixedValueVec__SWIG_2(int jarg1, long jarg2, MixedValue jarg2_);
-  public final static native int MixedValueVec_doSize(long jarg1, MixedValueVec jarg1_);
-  public final static native void MixedValueVec_doAdd__SWIG_0(long jarg1, MixedValueVec jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native void MixedValueVec_doAdd__SWIG_1(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
-  public final static native long MixedValueVec_doRemove(long jarg1, MixedValueVec jarg1_, int jarg2);
-  public final static native long MixedValueVec_doGet(long jarg1, MixedValueVec jarg1_, int jarg2);
-  public final static native long MixedValueVec_doSet(long jarg1, MixedValueVec jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
-  public final static native void MixedValueVec_doRemoveRange(long jarg1, MixedValueVec jarg1_, int jarg2, int jarg3);
-  public final static native void delete_MixedValueVec(long jarg1);
   public final static native void delete_JShot(long jarg1);
   public final static native long JShot_getShotConfig(long jarg1, JShot jarg1_);
   public final static native long JShot_getEvents(long jarg1, JShot jarg1_);
-  public final static native void delete_JEventEngineScheduler(long jarg1);
-  public final static native long JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, JShot jarg2_);
-  public final static native long JEventEngineScheduler_play(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, EngineJobSourceID jarg3_);
-  public final static native void JEventEngineScheduler_cancelJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
-  public final static native void JEventEngineScheduler_cancelAll(long jarg1, JEventEngineScheduler jarg1_);
-  public final static native long JEventEngineScheduler_getQueuedJobs(long jarg1, JEventEngineScheduler jarg1_);
-  public final static native long JEventEngineScheduler_getRunningJobs(long jarg1, JEventEngineScheduler jarg1_);
-  public final static native long JEventEngineScheduler_getCompletedJobs(long jarg1, JEventEngineScheduler jarg1_);
   public final static native long new_EngineParsingMessage(long jarg1, DeviceID jarg1_, int jarg2, long jarg3, String jarg4);
   public final static native void delete_EngineParsingMessage(long jarg1);
   public final static native int EngineParsingMessage_getType(long jarg1, EngineParsingMessage jarg1_);
@@ -792,21 +798,6 @@ public class stiJNI {
   public final static native long ShotResultRecordVector_doSet(long jarg1, ShotResultRecordVector jarg1_, int jarg2, long jarg3, ShotResultRecord jarg3_);
   public final static native void ShotResultRecordVector_doRemoveRange(long jarg1, ShotResultRecordVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_ShotResultRecordVector(long jarg1);
-  public final static native long new_FileHolderVector__SWIG_0();
-  public final static native long new_FileHolderVector__SWIG_1(long jarg1, FileHolderVector jarg1_);
-  public final static native long FileHolderVector_capacity(long jarg1, FileHolderVector jarg1_);
-  public final static native void FileHolderVector_reserve(long jarg1, FileHolderVector jarg1_, long jarg2);
-  public final static native boolean FileHolderVector_isEmpty(long jarg1, FileHolderVector jarg1_);
-  public final static native void FileHolderVector_clear(long jarg1, FileHolderVector jarg1_);
-  public final static native long new_FileHolderVector__SWIG_2(int jarg1, long jarg2, FileHolder jarg2_);
-  public final static native int FileHolderVector_doSize(long jarg1, FileHolderVector jarg1_);
-  public final static native void FileHolderVector_doAdd__SWIG_0(long jarg1, FileHolderVector jarg1_, long jarg2, FileHolder jarg2_);
-  public final static native void FileHolderVector_doAdd__SWIG_1(long jarg1, FileHolderVector jarg1_, int jarg2, long jarg3, FileHolder jarg3_);
-  public final static native long FileHolderVector_doRemove(long jarg1, FileHolderVector jarg1_, int jarg2);
-  public final static native long FileHolderVector_doGet(long jarg1, FileHolderVector jarg1_, int jarg2);
-  public final static native long FileHolderVector_doSet(long jarg1, FileHolderVector jarg1_, int jarg2, long jarg3, FileHolder jarg3_);
-  public final static native void FileHolderVector_doRemoveRange(long jarg1, FileHolderVector jarg1_, int jarg2, int jarg3);
-  public final static native void delete_FileHolderVector(long jarg1);
   public final static native long new_RawEventMap__SWIG_0();
   public final static native long new_RawEventMap__SWIG_1(long jarg1, RawEventMap jarg1_);
   public final static native long RawEventMap_Iterator_getNextUnchecked(long jarg1, RawEventMap.Iterator jarg1_);
@@ -965,6 +956,21 @@ public class stiJNI {
   public final static native boolean DeviceIDIndexedGraph_addEdge(long jarg1, DeviceIDIndexedGraph jarg1_, long jarg2, DeviceID jarg2_, long jarg3, DeviceID jarg3_);
   public final static native void DeviceIDIndexedGraph_director_connect(DeviceIDIndexedGraph obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void DeviceIDIndexedGraph_change_ownership(DeviceIDIndexedGraph obj, long cptr, boolean take_or_release);
+  public final static native long new_JEventEngineJobVector__SWIG_0();
+  public final static native long new_JEventEngineJobVector__SWIG_1(long jarg1, JEventEngineJobVector jarg1_);
+  public final static native long JEventEngineJobVector_capacity(long jarg1, JEventEngineJobVector jarg1_);
+  public final static native void JEventEngineJobVector_reserve(long jarg1, JEventEngineJobVector jarg1_, long jarg2);
+  public final static native boolean JEventEngineJobVector_isEmpty(long jarg1, JEventEngineJobVector jarg1_);
+  public final static native void JEventEngineJobVector_clear(long jarg1, JEventEngineJobVector jarg1_);
+  public final static native long new_JEventEngineJobVector__SWIG_2(int jarg1, long jarg2, JEventEngineJob jarg2_);
+  public final static native int JEventEngineJobVector_doSize(long jarg1, JEventEngineJobVector jarg1_);
+  public final static native void JEventEngineJobVector_doAdd__SWIG_0(long jarg1, JEventEngineJobVector jarg1_, long jarg2, JEventEngineJob jarg2_);
+  public final static native void JEventEngineJobVector_doAdd__SWIG_1(long jarg1, JEventEngineJobVector jarg1_, int jarg2, long jarg3, JEventEngineJob jarg3_);
+  public final static native long JEventEngineJobVector_doRemove(long jarg1, JEventEngineJobVector jarg1_, int jarg2);
+  public final static native long JEventEngineJobVector_doGet(long jarg1, JEventEngineJobVector jarg1_, int jarg2);
+  public final static native long JEventEngineJobVector_doSet(long jarg1, JEventEngineJobVector jarg1_, int jarg2, long jarg3, JEventEngineJob jarg3_);
+  public final static native void JEventEngineJobVector_doRemoveRange(long jarg1, JEventEngineJobVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_JEventEngineJobVector(long jarg1);
   public final static native void delete_JEventEngineJob(long jarg1);
   public final static native long JEventEngineJob_getJobID(long jarg1, JEventEngineJob jarg1_);
   public final static native long JEventEngineJob_getJobOwner(long jarg1, JEventEngineJob jarg1_);
@@ -976,6 +982,14 @@ public class stiJNI {
   public final static native long JEventEngineJob_getDependenciesIndexed(long jarg1, JEventEngineJob jarg1_);
   public final static native long JEventEngineJob_getMissingTargetIDs(long jarg1, JEventEngineJob jarg1_);
   public final static native long JEventEngineJob_getParsingMessages(long jarg1, JEventEngineJob jarg1_);
+  public final static native void delete_JEventEngineScheduler(long jarg1);
+  public final static native long JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, JShot jarg2_);
+  public final static native long JEventEngineScheduler_play(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, EngineJobSourceID jarg3_);
+  public final static native long JEventEngineScheduler_getJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
+  public final static native void JEventEngineScheduler_cancelJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
+  public final static native void JEventEngineScheduler_cancelAll(long jarg1, JEventEngineScheduler jarg1_);
+  public final static native long JEventEngineScheduler_getJobIDs(long jarg1, JEventEngineScheduler jarg1_, int jarg2);
+  public final static native long JEventEngineScheduler_getJobs(long jarg1, JEventEngineScheduler jarg1_, int jarg2);
   public final static native long RefreshDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long CollectionUpdateMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long ChannelUpdateMessage_SWIGSmartPtrUpcast(long jarg1);
@@ -990,6 +1004,48 @@ public class stiJNI {
   public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
   public final static native long EventEngineDependencyTree_SWIGSmartPtrUpcast(long jarg1);
 
+  public static String SwigDirector_FileHolder_getFilename(FileHolder jself) {
+    return jself.getFilename();
+  }
+  public static boolean SwigDirector_FileHolder_exists(FileHolder jself) {
+    return jself.exists();
+  }
+  public static boolean SwigDirector_FileHolder_transferFile(FileHolder jself, long destination) {
+    return jself.transferFile((destination == 0) ? null : new FileHolder(destination, true));
+  }
+  public static long SwigDirector_FileHolder_maxBufferSize(FileHolder jself) {
+    return jself.maxBufferSize();
+  }
+  public static boolean SwigDirector_FileHolder_deleteFile(FileHolder jself) {
+    return jself.deleteFile();
+  }
+  public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
+    return jself.md5Checksum();
+  }
+  public static String SwigDirector_Attribute_getKey(Attribute jself) {
+    return jself.getKey();
+  }
+  public static String SwigDirector_Attribute_getValue(Attribute jself) {
+    return jself.getValue();
+  }
+  public static long SwigDirector_Attribute_getAllowedValues(Attribute jself) {
+    return StringVector.getCPtr(jself.getAllowedValues());
+  }
+  public static String SwigDirector_Attribute_getGroup(Attribute jself) {
+    return jself.getGroup();
+  }
+  public static void SwigDirector_Attribute_refreshValue(Attribute jself) {
+    jself.refreshValue();
+  }
+  public static boolean SwigDirector_Attribute_setValue(Attribute jself, String value) {
+    return jself.setValue(value);
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_0(Attribute jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_1(Attribute jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
+  }
   public static void SwigDirector_RefreshDeviceMessageListener_handleMessage(RefreshDeviceMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new RefreshDeviceMessage(mess, true));
   }
@@ -1080,50 +1136,8 @@ public class stiJNI {
   public static void SwigDirector_ChannelRefreshListener_handleChannelNameRefreshEvent(ChannelRefreshListener jself, short channelNumber, String name) {
     jself.handleChannelNameRefreshEvent(channelNumber, name);
   }
-  public static String SwigDirector_Attribute_getKey(Attribute jself) {
-    return jself.getKey();
-  }
-  public static String SwigDirector_Attribute_getValue(Attribute jself) {
-    return jself.getValue();
-  }
-  public static long SwigDirector_Attribute_getAllowedValues(Attribute jself) {
-    return StringVector.getCPtr(jself.getAllowedValues());
-  }
-  public static String SwigDirector_Attribute_getGroup(Attribute jself) {
-    return jself.getGroup();
-  }
-  public static void SwigDirector_Attribute_refreshValue(Attribute jself) {
-    jself.refreshValue();
-  }
-  public static boolean SwigDirector_Attribute_setValue(Attribute jself, String value) {
-    return jself.setValue(value);
-  }
-  public static long SwigDirector_Attribute_getMetaData__SWIG_0(Attribute jself) {
-    return MixedValue.getCPtr(jself.getMetaData());
-  }
-  public static long SwigDirector_Attribute_getMetaData__SWIG_1(Attribute jself, String key) {
-    return MixedValue.getCPtr(jself.getMetaData(key));
-  }
   public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
     jself.parseEvents(temp);
-  }
-  public static String SwigDirector_FileHolder_getFilename(FileHolder jself) {
-    return jself.getFilename();
-  }
-  public static boolean SwigDirector_FileHolder_exists(FileHolder jself) {
-    return jself.exists();
-  }
-  public static boolean SwigDirector_FileHolder_transferFile(FileHolder jself, long destination) {
-    return jself.transferFile((destination == 0) ? null : new FileHolder(destination, true));
-  }
-  public static long SwigDirector_FileHolder_maxBufferSize(FileHolder jself) {
-    return jself.maxBufferSize();
-  }
-  public static boolean SwigDirector_FileHolder_deleteFile(FileHolder jself) {
-    return jself.deleteFile();
-  }
-  public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
-    return jself.md5Checksum();
   }
 
   private final static native void swig_module_init();

@@ -21,6 +21,7 @@ public:
 	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager);
     ~RemotePersistenceManager();
 
+    bool findShot(const STI::Engine::ShotID& sid);
     bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner);
 

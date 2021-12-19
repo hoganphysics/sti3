@@ -8,10 +8,11 @@
 
 package edu.stanford.sti;
 
-public final class EngineJobUpdateTarget {
-  public final static EngineJobUpdateTarget Queued = new EngineJobUpdateTarget("Queued");
-  public final static EngineJobUpdateTarget Running = new EngineJobUpdateTarget("Running");
-  public final static EngineJobUpdateTarget Completed = new EngineJobUpdateTarget("Completed");
+public final class EventEngineJobList {
+  public final static EventEngineJobList Queued = new EventEngineJobList("Queued");
+  public final static EventEngineJobList Running = new EventEngineJobList("Running");
+  public final static EventEngineJobList Completed = new EventEngineJobList("Completed");
+  public final static EventEngineJobList Archived = new EventEngineJobList("Archived");
 
   public final int swigValue() {
     return swigValue;
@@ -21,33 +22,33 @@ public final class EngineJobUpdateTarget {
     return swigName;
   }
 
-  public static EngineJobUpdateTarget swigToEnum(int swigValue) {
+  public static EventEngineJobList swigToEnum(int swigValue) {
     if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
       return swigValues[swigValue];
     for (int i = 0; i < swigValues.length; i++)
       if (swigValues[i].swigValue == swigValue)
         return swigValues[i];
-    throw new IllegalArgumentException("No enum " + EngineJobUpdateTarget.class + " with value " + swigValue);
+    throw new IllegalArgumentException("No enum " + EventEngineJobList.class + " with value " + swigValue);
   }
 
-  private EngineJobUpdateTarget(String swigName) {
+  private EventEngineJobList(String swigName) {
     this.swigName = swigName;
     this.swigValue = swigNext++;
   }
 
-  private EngineJobUpdateTarget(String swigName, int swigValue) {
+  private EventEngineJobList(String swigName, int swigValue) {
     this.swigName = swigName;
     this.swigValue = swigValue;
     swigNext = swigValue+1;
   }
 
-  private EngineJobUpdateTarget(String swigName, EngineJobUpdateTarget swigEnum) {
+  private EventEngineJobList(String swigName, EventEngineJobList swigEnum) {
     this.swigName = swigName;
     this.swigValue = swigEnum.swigValue;
     swigNext = this.swigValue+1;
   }
 
-  private static EngineJobUpdateTarget[] swigValues = { Queued, Running, Completed };
+  private static EventEngineJobList[] swigValues = { Queued, Running, Completed, Archived };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

@@ -86,6 +86,12 @@ void LocalEventEngineJob::markCancelled()
      status = EngineJobStatus::Canceled;
 }
 
+void LocalEventEngineJob::markArchived()
+{
+     std::unique_lock< std::mutex > writeLock(jobMutex);
+     status = EngineJobStatus::Archived;
+}
+
 void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& job)
 {
     //store job references for owned devices

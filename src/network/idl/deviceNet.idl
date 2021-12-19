@@ -184,15 +184,19 @@ module TNetwork
                                 inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
     	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
-    
+
+    	boolean getJob(in TEngineJobID id, out TEventEngineJob job);
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
 
 		void cancelAll();
 
-		void getQueuedJobs(out TEngineJobIDSeq jobIDs);
-	    void getRunningJobs(out TEngineJobIDSeq jobIDs);
-    	void getCompletedJobs(out TEngineJobIDSeq jobIDs);
+		TEngineJobIDSeq getJobIDs(in TEventEngineJobList jobListType);
+    	TEventEngineJobSeq getJobs(in TEventEngineJobList jobListType);
+
+		// void getQueuedJobs(out TEngineJobIDSeq jobIDs);
+	    // void getRunningJobs(out TEngineJobIDSeq jobIDs);
+    	// void getCompletedJobs(out TEngineJobIDSeq jobIDs);
 
 		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
     	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
@@ -237,6 +241,7 @@ module TNetwork
 
 	interface TPersistenceManager
 	{
+		boolean findShot(in TShotID sid);
 		boolean getShot(in TShotID sid, out TShotResult shotResult);
 		boolean saveShot(in TShotID sid, in TShotResult shotResult, in boolean isOwner);
 		

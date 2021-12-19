@@ -55,6 +55,8 @@ public:
 
 	bool get(const Key& key, T& item) const;
 	void getKeys(std::set<Key>& keys) const;
+	void getValues(std::vector<T>& values) const;
+	void getValues(const std::set<Key>& keys, std::vector<T>& values) const;
 	bool add(const Key& key, T item);
 	bool remove(const Key& key);
 	bool addAndRemove(const Key& key, T newItem, T& oldItem);
@@ -125,6 +127,18 @@ template<class Key, class T>
 void STI::Utils::OrderedBufferMap<Key, T>::getKeys(std::set<Key>& keys) const
 {
 	buffer.getKeys(keys);
+}
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::getValues(std::vector<T>& values) const
+{
+	buffer.getValues(values);
+}
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::getValues(const std::set<Key>& keys, std::vector<T>& values) const
+{
+	buffer.getValues(keys, values);
 }
 
 template<class Key, class T>

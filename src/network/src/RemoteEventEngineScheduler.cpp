@@ -48,6 +48,8 @@ using STI::TNetwork::TEngineJobSourceID;
 using STI::Engine::ShotConfig;
 using STI::Engine::EngineJobStatus;
 using STI::TNetwork::TEngineJobStatus;
+using STI::Engine::EventEngineJobList;
+using STI::TNetwork::TEventEngineJobList;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
@@ -239,7 +241,35 @@ void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree
 	}
 }
 
-    
+bool RemoteEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+
+	STI::TNetwork::TEventEngineJob_var tJob_var(new STI::TNetwork::TEventEngineJob);
+
+	try {
+		success = getTRef()->getJob(convert<EngineJobID, TEngineJobID>(id), tJob_var);	//remote call
+
+		if (success) {
+			success = convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tJob_var, job);
+		}
+		
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return success && (job != 0);
+}
+
+
 void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
@@ -294,17 +324,19 @@ void RemoteEventEngineScheduler::cancelAll()
 	}
 }
 
-void RemoteEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+std::set<EngineJobID> RemoteEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	if (isDisabled()) return;
+	std::set<EngineJobID> jobIDs;
+
+	if (isDisabled()) return jobIDs;
 
 	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
 
     try {
 
-		getTRef()->getQueuedJobs(tEngineJobIDs);	//remote call
+		tEngineJobIDs = getTRef()->getJobIDs(convert<EventEngineJobList, TEventEngineJobList>(jobListType));	//remote call
 
 		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
 	}
@@ -315,21 +347,24 @@ void RemoteEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) co
 	catch (CORBA::Exception&)
 	{
 	}
+	return jobIDs;
 }
 
-void RemoteEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+std::vector<std::shared_ptr<EventEngineJob>> RemoteEventEngineScheduler::getJobs(const EventEngineJobList& jobListType) const
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	if (isDisabled()) return;
+	std::vector<std::shared_ptr<EventEngineJob>> jobs;
 
-	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+	if (isDisabled()) return jobs;
+
+	STI::TNetwork::TEventEngineJobSeq_var tEngineJobs(new STI::TNetwork::TEventEngineJobSeq);
 
     try {
 
-		getTRef()->getRunningJobs(tEngineJobIDs);	//remote call
+		tEngineJobs = getTRef()->getJobs(convert<EventEngineJobList, TEventEngineJobList>(jobListType));	//remote call
 
-		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+		convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tEngineJobs, jobs);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -338,30 +373,79 @@ void RemoteEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) c
 	catch (CORBA::Exception&)
 	{
 	}
+	return jobs;
 }
 
-void RemoteEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
-{
-	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	if (isDisabled()) return;
 
-	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+// void RemoteEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+// {
+// 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-    try {
+// 	if (isDisabled()) return;
 
-		getTRef()->getCompletedJobs(tEngineJobIDs);	//remote call
+// 	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
 
-		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
+//     try {
+
+// 		getTRef()->getQueuedJobs(tEngineJobIDs);	//remote call
+
+// 		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// }
+
+// void RemoteEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+// {
+// 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+// 	if (isDisabled()) return;
+
+// 	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+
+//     try {
+
+// 		getTRef()->getRunningJobs(tEngineJobIDs);	//remote call
+
+// 		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// }
+
+// void RemoteEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
+// {
+// 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+// 	if (isDisabled()) return;
+
+// 	STI::TNetwork::TEngineJobIDSeq_var tEngineJobIDs(new STI::TNetwork::TEngineJobIDSeq);
+
+//     try {
+
+// 		getTRef()->getCompletedJobs(tEngineJobIDs);	//remote call
+
+// 		convert<TEngineJobID, EngineJobID>(tEngineJobIDs, jobIDs);
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// }
 
 
 // std::shared_ptr<STI::Engine::EventEngineJob> RemoteEventEngineScheduler::createJob(const STI::Engine::ParseID& parseID, 

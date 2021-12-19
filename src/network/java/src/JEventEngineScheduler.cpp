@@ -5,12 +5,13 @@
 #include "ParseID.h"
 #include "ShotID.h"
 #include "EngineJobID.h"
-
+#include "JEventEngineJob.h"
 
 using STI::Engine::JEventEngineScheduler;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EngineJobID;
+using STI::Engine::JEventEngineJob;
 
 
 JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
@@ -70,6 +71,19 @@ STI::Engine::ShotID JEventEngineScheduler::play(const ParseID& parseID, const En
     return sid;
 }
 
+std::shared_ptr<JEventEngineJob> JEventEngineScheduler::getJob(const EngineJobID& id) const
+{
+    std::shared_ptr<JEventEngineJob> jJob;
+    std::shared_ptr<EventEngineJob> job;
+
+    if(localScheduler != 0) {
+        if (localScheduler->getJob(id, job)) {
+            jJob = std::make_shared<JEventEngineJob>(job);
+        }
+    }
+    return jJob;
+}
+
 void JEventEngineScheduler::cancelJob(const STI::Engine::EngineJobID& jobID)
 {
     if(localScheduler != 0) {
@@ -84,33 +98,57 @@ void JEventEngineScheduler::cancelAll()
     }
 }
 
-std::set<EngineJobID> JEventEngineScheduler::getQueuedJobs() const
+std::set<EngineJobID> JEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
     std::set<EngineJobID> ids;
 
     if(localScheduler != 0) {
-        localScheduler->getQueuedJobs(ids);
+        ids = localScheduler->getJobIDs(jobListType);
     }
     return ids;
 }
 
-std::set<EngineJobID> JEventEngineScheduler::getRunningJobs() const
+std::vector<std::shared_ptr<JEventEngineJob>> JEventEngineScheduler::getJobs(const EventEngineJobList& jobListType) const
 {
-    std::set<EngineJobID> ids;
+    std::vector<std::shared_ptr<EventEngineJob>> jobs;
+    std::vector<std::shared_ptr<JEventEngineJob>> jJobs;
 
     if(localScheduler != 0) {
-        localScheduler->getRunningJobs(ids);
+        jobs = localScheduler->getJobs(jobListType);
     }
-    return ids;
+    for (auto job : jobs) {
+        jJobs.push_back(std::make_shared<JEventEngineJob>(job));
+    }
+    return jJobs;
 }
 
-std::set<EngineJobID> JEventEngineScheduler::getCompletedJobs() const
-{
-    std::set<EngineJobID> ids;
+// std::set<EngineJobID> JEventEngineScheduler::getQueuedJobs() const
+// {
+//     std::set<EngineJobID> ids;
 
-    if(localScheduler != 0) {
-        localScheduler->getCompletedJobs(ids);
-    }
-    return ids;
-}
+//     if(localScheduler != 0) {
+//         localScheduler->getQueuedJobs(ids);
+//     }
+//     return ids;
+// }
+
+// std::set<EngineJobID> JEventEngineScheduler::getRunningJobs() const
+// {
+//     std::set<EngineJobID> ids;
+
+//     if(localScheduler != 0) {
+//         localScheduler->getRunningJobs(ids);
+//     }
+//     return ids;
+// }
+
+// std::set<EngineJobID> JEventEngineScheduler::getCompletedJobs() const
+// {
+//     std::set<EngineJobID> ids;
+
+//     if(localScheduler != 0) {
+//         localScheduler->getCompletedJobs(ids);
+//     }
+//     return ids;
+// }
 

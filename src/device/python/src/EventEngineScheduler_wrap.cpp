@@ -7,6 +7,7 @@
 #include "LocalShotPy.h"
 
 #include "EngineJobID.h"
+#include "EventEngineJobList.h"
 
 #include <string>
 #include <memory>
@@ -24,6 +25,7 @@ using STI::Engine::TimeStamp;
 using STI::Engine::ShotConfig;
 using STI::Engine::ShotType;
 using STI::Python::LocalShotPy;
+using STI::Engine::EventEngineJobList;
 
 
 void init_EventEngineScheduler(py::module& m)
@@ -116,6 +118,13 @@ void init_EventEngineScheduler(py::module& m)
             })
         ;
 
+    py::enum_<EventEngineJobList>(m, "EventEngineJobList")
+        .value("Queued", EventEngineJobList::Queued)
+        .value("Running", EventEngineJobList::Running)
+        .value("Completed", EventEngineJobList::Completed)
+        .value("Archived", EventEngineJobList::Archived)
+        .export_values();
+
 
     py::class_<EventEngineSchedulerPy, std::shared_ptr<EventEngineSchedulerPy>>(m, "EventEngineScheduler")
         .def("parse", &EventEngineSchedulerPy::parse, py::arg("shot"))
@@ -123,9 +132,10 @@ void init_EventEngineScheduler(py::module& m)
         .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineSchedulerPy::getStatus), py::arg("parseID"))
         .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineSchedulerPy::getStatus), py::arg("shotID"))
         .def("cancelAll", &EventEngineSchedulerPy::cancelAll)
-        .def("getQueuedJobs", &EventEngineSchedulerPy::getQueuedJobs)
-        .def("getRunningJobs", &EventEngineSchedulerPy::getRunningJobs)
-        .def("getCompletedJobs", &EventEngineSchedulerPy::getCompletedJobs)
+        .def("getQueuedJobs", &EventEngineSchedulerPy::getJobIDs)
+        // .def("getQueuedJobs", &EventEngineSchedulerPy::getQueuedJobs)
+        // .def("getRunningJobs", &EventEngineSchedulerPy::getRunningJobs)
+        // .def("getCompletedJobs", &EventEngineSchedulerPy::getCompletedJobs)
         ;
 
 

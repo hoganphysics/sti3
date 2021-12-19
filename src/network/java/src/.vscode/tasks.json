@@ -16,9 +16,10 @@
                 "-I${workspaceFolder}/../../../device/src/",
 				"-I${workspaceFolder}/../../../device/src/utils/",
                 "-I${workspaceFolder}/../../../../include/",
+				"-outcurrentdir",
                 "-outdir",
                 "../stilib/src/main/java/edu/stanford/sti/",
-                "sti.i"
+                "interface/sti.i"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

@@ -80,33 +80,43 @@ void EventEngineSchedulerPy::cancelAll()
     }
 }
 
-std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getQueuedJobs() const
+std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getJobIDs(const STI::Engine::EventEngineJobList& jobListType) const
 {
     std::set<STI::Engine::EngineJobID> ids;
     
     if (engineScheduler != 0) {
-        engineScheduler->getQueuedJobs(ids);
+        ids = engineScheduler->getJobIDs(jobListType);
     }
     return ids;
 }
 
-std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getRunningJobs() const
-{
-    std::set<STI::Engine::EngineJobID> ids;
+// std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getQueuedJobs() const
+// {
+//     std::set<STI::Engine::EngineJobID> ids;
     
-    if (engineScheduler != 0) {
-        engineScheduler->getRunningJobs(ids);
-    }
-    return ids;
-}
+//     if (engineScheduler != 0) {
+//         engineScheduler->getQueuedJobs(ids);
+//     }
+//     return ids;
+// }
 
-std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getCompletedJobs() const
-{
-    std::set<STI::Engine::EngineJobID> ids;
+// std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getRunningJobs() const
+// {
+//     std::set<STI::Engine::EngineJobID> ids;
     
-    if (engineScheduler != 0) {
-        engineScheduler->getCompletedJobs(ids);
-    }
-    return ids;
-}
+//     if (engineScheduler != 0) {
+//         engineScheduler->getRunningJobs(ids);
+//     }
+//     return ids;
+// }
+
+// std::set<STI::Engine::EngineJobID> EventEngineSchedulerPy::getCompletedJobs() const
+// {
+//     std::set<STI::Engine::EngineJobID> ids;
+    
+//     if (engineScheduler != 0) {
+//         engineScheduler->getCompletedJobs(ids);
+//     }
+//     return ids;
+// }
 

@@ -46,6 +46,7 @@ public:
     void markRunning(const EngineID& id);
     void markComplete();
     void markCancelled();
+    void markArchived();
 
     void attachSubjob(const std::shared_ptr<EventEngineJob>& job);
 

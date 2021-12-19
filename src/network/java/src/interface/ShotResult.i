@@ -34,12 +34,6 @@
 %shared_ptr(STI::Engine::ShotResult);
 %shared_ptr(STI::Engine::Measurement);
 
-%shared_ptr(STI::Utils::FileHolder);
-
-//FileHolder
-%template(FileHolderVector) std::vector< std::shared_ptr< STI::Utils::FileHolder > >;
-%include "FileHolder.h"
-
 
 //RawEvent
 // %template(RawEventVector) std::vector< STI::Engine::RawEvent >;

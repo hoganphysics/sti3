@@ -75,8 +75,16 @@ std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID 
         removeTicket = true;
         break;
     case EngineJobStatus::NotFound:
-        ticket->cancel();
-        removeTicket = true;
+    case EngineJobStatus::Archived:
+        //check if result is archived
+        if (persistenceManager->findShot(id)) {
+            ticket->setComplete();
+        }
+        else {
+            //not found in results archive
+            ticket->cancel();
+        }
+        removeTicket = true;    //i.e., don't wait for job events
         break;
     }
 

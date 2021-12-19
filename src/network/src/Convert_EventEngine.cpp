@@ -81,19 +81,18 @@ using STI::Engine::Measurement;
 using STI::TNetwork::TShotType;
 using STI::Engine::ShotConfig; 
 using STI::TNetwork::TShotConfig;
-
 using STI::Engine::RecordStatus;
 using STI::TNetwork::TRecordStatus;
 using STI::Engine::ShotResultRecord;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotType;
 using STI::TNetwork::TShotType;
+using STI::TNetwork::TEventEngineJobList;
+using STI::Engine::EventEngineJobList;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
 bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath);
-
-
 
 
 //EventEngine
@@ -470,8 +469,14 @@ bool STI::Network::convert<EngineJobStatus, TEngineJobStatus>(const EngineJobSta
     case EngineJobStatus::Canceled:
         tJobStatus = TEngineJobStatus::JobCanceled;
         break;
+    case EngineJobStatus::NotFound:
+        tJobStatus = TEngineJobStatus::JobNotFound;
+        break;
+    case EngineJobStatus::Archived:
+        tJobStatus = TEngineJobStatus::JobArchived;
+        break;        
     default:
-        tJobStatus = TEngineJobStatus::JobNew;
+        tJobStatus = TEngineJobStatus::JobNotFound;
         break;
     }
     return true;
@@ -495,8 +500,14 @@ bool STI::Network::convert<TEngineJobStatus, EngineJobStatus>(const TEngineJobSt
     case TEngineJobStatus::JobCanceled:
         jobStatus = EngineJobStatus::Canceled;
         break;
+    case TEngineJobStatus::JobNotFound:
+        jobStatus = EngineJobStatus::NotFound;
+        break;
+    case TEngineJobStatus::JobArchived:
+        jobStatus = EngineJobStatus::Archived;
+        break;
     default:
-        jobStatus = EngineJobStatus::New;
+        jobStatus = EngineJobStatus::NotFound;
         break;
     }
     return true;
@@ -552,12 +563,14 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     // ::STI::TNetwork::TShotEventsCallback_var tShotCallback(new STI::TNetwork::TShotEventsCallback());
     ::STI::TNetwork::TShotEventsCallback_ptr tShotCallback;
     
-    if (engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
+    bool shotMissing = engineJob.getStatus() == EngineJobStatus::NotFound || 
+                       engineJob.getStatus() == EngineJobStatus::Archived;
+
+    if (!shotMissing && engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 
         tShot.shotEventsCallback = tShotCallback;
 
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
-
     }
 
     tEngineJob.shot = tShot;
@@ -581,6 +594,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
 template<>
 bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(const TEventEngineJob& tEngineJob, std::shared_ptr<EventEngineJob>& engineJob)
 {
+    bool success = false;
 
     EngineJobID jobID = convert<TEngineJobID, EngineJobID>(tEngineJob.jobID);
 
@@ -608,17 +622,19 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
         job->setDependencies(tree);
         job->setMissingTargets(missingTargets);
         engineJob = job;
+        success = true;
         }
         break;
 	case EventEngineJobType::Play:
 		engineJob = std::make_shared<LocalEventEngineJob>(jobID,
 			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
+        success = true;
 		break;
     default:
         break;
     }
     
-    return true;
+    return success && (engineJob != 0);
 }
 
 template<>
@@ -630,6 +646,84 @@ TEventEngineJob STI::Network::convert<EventEngineJob, TEventEngineJob>(const Eve
 
     return tJob;
 }
+
+template<>
+TEventEngineJob STI::Network::convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(const std::shared_ptr<EventEngineJob>& engineJob)
+{
+    TEventEngineJob tJob;
+
+    convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(engineJob, tJob);
+
+    return tJob;
+}
+
+template<>
+std::shared_ptr<EventEngineJob> STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(const TEventEngineJob& tEngineJob)
+{
+    std::shared_ptr<EventEngineJob> job;
+
+    convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tEngineJob, job);
+
+    return job;
+}
+
+
+
+//EventEngineJobList
+template<>
+TEventEngineJobList STI::Network::convert<EventEngineJobList, TEventEngineJobList>(const EventEngineJobList& jobList)
+{
+    TEventEngineJobList tJobList;
+
+    switch (jobList)
+    {
+    case EventEngineJobList::Queued:
+        tJobList = TEventEngineJobList::EngineJobListQueued;
+        break;
+    case EventEngineJobList::Running:
+        tJobList = TEventEngineJobList::EngineJobListRunning;
+        break;
+    case EventEngineJobList::Completed:
+        tJobList = TEventEngineJobList::EngineJobListCompleted;
+        break;
+    case EventEngineJobList::Archived:
+        tJobList = TEventEngineJobList::EngineJobListArchived;
+        break;
+    default:
+        tJobList = TEventEngineJobList::EngineJobListArchived;
+        break;
+    }
+
+    return tJobList;
+}
+
+template<>
+EventEngineJobList STI::Network::convert<TEventEngineJobList, EventEngineJobList>(const TEventEngineJobList& tJobList)
+{
+    EventEngineJobList jobList;
+
+    switch (tJobList)
+    {
+    case TEventEngineJobList::EngineJobListQueued:
+        jobList = EventEngineJobList::Queued;
+        break;
+    case TEventEngineJobList::EngineJobListRunning:
+        jobList = EventEngineJobList::Running;
+        break;
+    case TEventEngineJobList::EngineJobListCompleted:
+        jobList = EventEngineJobList::Completed;
+        break;
+    case TEventEngineJobList::EngineJobListArchived:
+        jobList = EventEngineJobList::Archived;
+        break;
+    default:
+        jobList = EventEngineJobList::Archived;
+        break;
+    }
+
+    return jobList;
+}
+
 
 //GraphPathLabel
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath)

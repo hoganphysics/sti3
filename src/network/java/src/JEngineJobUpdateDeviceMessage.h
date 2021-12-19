@@ -4,6 +4,7 @@
 #include "DeviceMessage.h"
 #include "DeviceMessageListener.h"
 #include "JEventEngineJob.h"
+#include "EventEngineJobList.h"
 
 #include <memory>
 
@@ -27,7 +28,7 @@ public:
     }
     virtual ~JEngineJobUpdateDeviceMessage() {}
 
-    EngineJobUpdateTarget getTargetList()
+    STI::Engine::EventEngineJobList getTargetList()
     {
         return targetList;
     }
@@ -39,7 +40,7 @@ public:
 
 private:
 	
-    EngineJobUpdateTarget targetList;
+    STI::Engine::EventEngineJobList targetList;
 	std::shared_ptr<STI::Engine::JEventEngineJob> jEngineJob;
 
     friend class JEngineJobUpdateDeviceMessageListener;

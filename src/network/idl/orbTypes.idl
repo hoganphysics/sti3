@@ -45,7 +45,7 @@ module TNetwork
 		TDeviceIDSeq ids;
 	};
 
-	enum TEngineJobStatus { JobNew, JobRunning, JobCompleted, JobCanceled, JobNotFound };
+	enum TEngineJobStatus { JobNew, JobRunning, JobCompleted, JobCanceled, JobNotFound, JobArchived };
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
@@ -216,6 +216,8 @@ module TNetwork
 		TShotEventsCallback shotEventsCallback;		//getEvents()
 	};
 
+	enum TEventEngineJobList { EngineJobListQueued, EngineJobListRunning, EngineJobListCompleted, EngineJobListArchived };
+
 	struct TEventEngineJob
 	{
 		TEngineJobID jobID;
@@ -229,6 +231,7 @@ module TNetwork
 		TEventEngineDependencyTree dependencies;
 		TDeviceIDSeq missingTargetIDs;
 	};
+	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
 
 	//interface TShotRepository;
 
@@ -320,13 +323,13 @@ module TNetwork
 		TEngineState engineState;
 	};
 
-	enum TEngineJobUpdateTarget {  JobUpdateTargetQueued, JobUpdateTargetRunning, JobUpdateTargetCompleted };
+	// enum TEngineJobUpdateTarget {  JobUpdateTargetQueued, JobUpdateTargetRunning, JobUpdateTargetCompleted };
 
 	struct TEngineJobUpdateDeviceMessage
 	{
 		TDeviceMessage base;	//base class data
 
-		TEngineJobUpdateTarget targetList;
+		TEventEngineJobList targetList;
 		TEventEngineJob engineJob;
 	};
 

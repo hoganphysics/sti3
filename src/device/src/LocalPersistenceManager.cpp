@@ -167,6 +167,30 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
 
 }
 
+bool LocalPersistenceManager::findShotLocal(const STI::Engine::ShotID& sid)
+{
+    if (resultBuffer.contains(sid)) {
+        return true;
+    }
+
+    if (transientRepository->findShot(sid)) {
+        return true;
+    }
+
+    bool success = false;
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+
+    if (getShotRepository(repo)) {
+        success = repo->findShot(sid);
+    }
+
+    if (!success) {
+        success = defaultRepository->findShot(sid);
+    }
+
+    return success;
+}
+
 bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
     if (resultBuffer.get(sid, result) ) {
@@ -189,6 +213,20 @@ bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::
     }
 
     return success;
+}
+
+bool LocalPersistenceManager::findShot(const STI::Engine::ShotID& sid)
+{
+    std::shared_ptr<PersistenceManager> delegate;
+    bool hasDelegate = false;
+
+    if (hasDelegate) {
+        if(delegate->findShot(sid)) {
+            return true;
+        }
+    }
+
+    return findShotLocal(sid);
 }
 
 bool LocalPersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)

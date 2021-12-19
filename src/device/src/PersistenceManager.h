@@ -25,6 +25,7 @@ public:
 
     virtual ~PersistenceManager() {}
 
+    virtual bool findShot(const STI::Engine::ShotID& sid) = 0;
     virtual bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result) = 0;
     virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner) = 0;
 

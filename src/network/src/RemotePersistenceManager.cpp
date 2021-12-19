@@ -33,6 +33,27 @@ RemotePersistenceManager::~RemotePersistenceManager()
 {
 }
 
+bool RemotePersistenceManager::findShot(const STI::Engine::ShotID& sid)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return false;
+
+    bool success = false;
+
+	try {
+		success = getTRef()->findShot(convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
+}
+
 bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
@@ -48,8 +69,10 @@ bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shar
 		success = getTRef()->getShot(
 					convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), 
 					tShotResult);	//remote call
-
-		convert<TShotResult, std::shared_ptr<ShotResult>>(tShotResult, result);
+		
+		if (success) {
+			success = convert<TShotResult, std::shared_ptr<ShotResult>>(tShotResult, result);
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -58,7 +81,7 @@ bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shar
 	catch (CORBA::Exception&) {
 	}
 
-    return success;
+    return success && (result != 0);
 }
 
 

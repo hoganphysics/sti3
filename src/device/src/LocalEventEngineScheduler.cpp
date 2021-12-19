@@ -638,20 +638,73 @@ void LocalEventEngineScheduler::stopAll()
     }
 }
 
-void LocalEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+std::set<EngineJobID> LocalEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
-    queuedJobs.getKeys(jobIDs);
+    std::set<EngineJobID> jobIDs;
+
+    switch (jobListType)
+    {
+    case EventEngineJobList::Queued:
+        queuedJobs.getKeys(jobIDs);
+        break;
+    case EventEngineJobList::Running:
+        runningJobs.getKeys(jobIDs);
+        break;
+    case EventEngineJobList::Completed:
+        completedJobs.getKeys(jobIDs);
+        break;
+    case EventEngineJobList::Archived:
+        break;
+    default:
+        break;
+    }
+    return jobIDs;
 }
 
-void LocalEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+std::vector<std::shared_ptr<EventEngineJob>> LocalEventEngineScheduler::getJobs(const EventEngineJobList& jobListType) const
 {
-    runningJobs.getKeys(jobIDs);
+    std::vector<std::shared_ptr<EventEngineJob>> jobs;
+
+    switch (jobListType)
+    {
+    case EventEngineJobList::Queued:
+        queuedJobs.getValues(jobs);
+        break;
+    case EventEngineJobList::Running:
+        runningJobs.getValues(jobs);
+        break;
+    case EventEngineJobList::Completed:
+        completedJobs.getValues(jobs);
+        break;
+    case EventEngineJobList::Archived:
+        break;
+    default:
+        break;
+    }
+
+    return jobs;
 }
 
-void LocalEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
+// std::shared_ptr<EventEngineJob> LocalEventEngineScheduler::getJob(const EngineJobID& id) const
+bool LocalEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const
 {
-    completedJobs.getKeys(jobIDs);
+    return findJob(id.pid, job);
 }
+
+// void LocalEventEngineScheduler::getQueuedJobs(std::set<EngineJobID>& jobIDs) const
+// {
+//     queuedJobs.getKeys(jobIDs);
+// }
+
+// void LocalEventEngineScheduler::getRunningJobs(std::set<EngineJobID>& jobIDs) const
+// {
+//     runningJobs.getKeys(jobIDs);
+// }
+
+// void LocalEventEngineScheduler::getCompletedJobs(std::set<EngineJobID>& jobIDs) const
+// {
+//     completedJobs.getKeys(jobIDs);
+// }
 
 void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
@@ -662,31 +715,40 @@ void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 {
     std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineJob> archivedJob;
+    bool archivedJobValid = false;
     std::shared_ptr<EventEngineManager> manager;
 
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
         job->markCancelled();
         
-        completedJobs.add(jobID, job);
+        archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toCompleteList(job);
         sendMessage(message);
-
     }
-
+    
     if (queuedJobs.get(jobID, job) && job != 0) {
         queuedJobs.remove(jobID);
         job->markCancelled();
         
-        completedJobs.add(jobID, job);
+        archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toCompleteList(job);
         sendMessage(message);
+    }
+
+    if (archivedJobValid) {
+        archivedJob->markArchived();
+        //Message: Job archived
+        auto message2 = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message2->toArchive(archivedJob);
+        sendMessage(message2);
     }
 
     if (getManager(jobID, manager) && manager != 0) {
@@ -710,16 +772,26 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
     std::unique_lock<std::mutex> jobLock(jobMutex);
 
     std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineJob> archivedJob;
     
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
         job->markComplete();
-        completedJobs.add(jobID, job);
+        // completedJobs.add(jobID, job);
+        bool valid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toCompleteList(job);
         sendMessage(message);
+
+        if (valid) {
+            archivedJob->markArchived();
+            //Message: Job archived
+            auto message2 = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+            message2->toArchive(archivedJob);
+            sendMessage(message2);
+        }
     }
 
     jobCondition.notify_all();

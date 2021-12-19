@@ -69,8 +69,10 @@ using STI::TNetwork::TEngineState;
 
 using STI::TNetwork::TEngineJobUpdateDeviceMessage;
 using STI::Device::EngineJobUpdateDeviceMessage;
-using STI::TNetwork::TEngineJobUpdateTarget;
-using STI::Device::EngineJobUpdateTarget;
+// using STI::TNetwork::TEngineJobUpdateTarget;
+// using STI::Device::EngineJobUpdateTarget;
+using STI::TNetwork::TEventEngineJobList;
+using STI::Engine::EventEngineJobList;
 
 using STI::Engine::EventEngine;
 using STI::TNetwork::TEventEngine_var;
@@ -822,7 +824,7 @@ bool STI::Network::convert<TEngineJobUpdateDeviceMessage, std::shared_ptr<Engine
 	deviceMessage = std::make_shared<EngineJobUpdateDeviceMessage>(
 		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace),
 		engineJob,
-		convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(tMessage.targetList)
+		convert<TEventEngineJobList, EventEngineJobList>(tMessage.targetList)
 		);
 
 	// deviceMessage->targetList = convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
@@ -842,63 +844,63 @@ bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngin
 		return false;
 	}
 
-	tMessage.targetList = convert<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
+	tMessage.targetList = convert<EventEngineJobList, TEventEngineJobList>(
 								deviceMessage->getTargetList());
 
 	return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->getEngineJob(), tMessage.engineJob);
 }
 
 
-//EngineJobUpdateTarget
-template<>
-TEngineJobUpdateTarget STI::Network::convert
-	<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
-		const EngineJobUpdateTarget& type)
-{
-	TEngineJobUpdateTarget tType;
+// //EngineJobUpdateTarget
+// template<>
+// TEngineJobUpdateTarget STI::Network::convert
+// 	<EngineJobUpdateTarget, TEngineJobUpdateTarget>(
+// 		const EngineJobUpdateTarget& type)
+// {
+// 	TEngineJobUpdateTarget tType;
 
-	switch (type)
-	{
-	case EngineJobUpdateTarget::Queued:
-		tType = TEngineJobUpdateTarget::JobUpdateTargetQueued;
-		break;
-	case EngineJobUpdateTarget::Running:
-		tType = TEngineJobUpdateTarget::JobUpdateTargetRunning;
-		break;
-	case EngineJobUpdateTarget::Completed:
-		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
-		break;
-	default:
-		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
-		break;
-	}
+// 	switch (type)
+// 	{
+// 	case EngineJobUpdateTarget::Queued:
+// 		tType = TEngineJobUpdateTarget::JobUpdateTargetQueued;
+// 		break;
+// 	case EngineJobUpdateTarget::Running:
+// 		tType = TEngineJobUpdateTarget::JobUpdateTargetRunning;
+// 		break;
+// 	case EngineJobUpdateTarget::Completed:
+// 		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
+// 		break;
+// 	default:
+// 		tType = TEngineJobUpdateTarget::JobUpdateTargetCompleted;
+// 		break;
+// 	}
 
-	return tType;
-}
+// 	return tType;
+// }
 
-template<>
-EngineJobUpdateTarget STI::Network::convert
-	<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
-		const TEngineJobUpdateTarget& tType)
-{
-	EngineJobUpdateTarget type;
+// template<>
+// EngineJobUpdateTarget STI::Network::convert
+// 	<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
+// 		const TEngineJobUpdateTarget& tType)
+// {
+// 	EngineJobUpdateTarget type;
 
-	switch (tType)
-	{
-	case TEngineJobUpdateTarget::JobUpdateTargetQueued:
-		type = EngineJobUpdateTarget::Queued;
-		break;
-	case TEngineJobUpdateTarget::JobUpdateTargetRunning:
-		type = EngineJobUpdateTarget::Running;
-		break;
-	case TEngineJobUpdateTarget::JobUpdateTargetCompleted:
-		type = EngineJobUpdateTarget::Completed;
-		break;
-	default:
-		type = EngineJobUpdateTarget::Completed;
-		break;
-	}
+// 	switch (tType)
+// 	{
+// 	case TEngineJobUpdateTarget::JobUpdateTargetQueued:
+// 		type = EngineJobUpdateTarget::Queued;
+// 		break;
+// 	case TEngineJobUpdateTarget::JobUpdateTargetRunning:
+// 		type = EngineJobUpdateTarget::Running;
+// 		break;
+// 	case TEngineJobUpdateTarget::JobUpdateTargetCompleted:
+// 		type = EngineJobUpdateTarget::Completed;
+// 		break;
+// 	default:
+// 		type = EngineJobUpdateTarget::Completed;
+// 		break;
+// 	}
 
-	return type;
-}
+// 	return type;
+// }
 

@@ -156,6 +156,8 @@ public:
 	bool include(const Key& key) const;
 	bool get(const Key& key, T& item) const;
 	void getKeys(std::set<Key>& keys) const;
+	void getValues(std::vector<T>& values) const;
+	void getValues(const std::set<Key>& keys, std::vector<T>& values) const;
 	unsigned size() const;
 
 	bool add(const Key& key, T item);
@@ -170,6 +172,7 @@ private:
 	bool _contains(const Key& key) const;
 	bool _include(const Key& key) const;
 	void _getKeys(std::set<Key>& keys) const;
+	bool _get(const Key& key, T& item) const;
 	bool _remove(const Key& key);
 
 //	static shared_ptr<KeyPolicy> defaultPolicy;
@@ -330,7 +333,12 @@ template<class Key, class T>
 bool STI::Utils::SynchronizedMap<Key, T>::get(const Key& key, T& item) const
 {
 	std::unique_lock< std::mutex > readLock(mapMutex);
+	return _get(key, item);
+}
 
+template<class Key, class T>
+bool STI::Utils::SynchronizedMap<Key, T>::_get(const Key& key, T& item) const
+{
 	typename TMap::const_iterator it = items.find(key);
 
 	if(it != items.end())
@@ -357,6 +365,27 @@ void STI::Utils::SynchronizedMap<Key, T>::_getKeys(std::set<Key>& keys) const
 	for(typename TMap::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
 		keys.insert(it->first);
+	}
+}
+
+template<class Key, class T>
+void STI::Utils::SynchronizedMap<Key, T>::getValues(std::vector<T>& values) const
+{
+	std::set<Key> keys;
+	getKeys(keys);
+	getValues(keys, values);
+}
+
+template<class Key, class T>
+void STI::Utils::SynchronizedMap<Key, T>::getValues(const std::set<Key>& keys, std::vector<T>& values) const
+{
+	std::unique_lock< std::mutex > readLock(mapMutex);
+	T value;
+
+	for (auto& key : keys) {
+		if (_get(key, value)) {
+			values.push_back(value);
+		}	
 	}
 }
 

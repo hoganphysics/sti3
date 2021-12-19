@@ -30,6 +30,18 @@ TPersistenceManager_i::~TPersistenceManager_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
+::CORBA::Boolean TPersistenceManager_i::findShot(const ::STI::TNetwork::TShotID& sid)
+{
+	bool success = false;
+
+    if (persistenceManager != 0) {
+
+		success = persistenceManager->findShot(convert<TShotID, STI::Engine::ShotID>(sid));
+	}
+
+	return success;
+}
+
 ::CORBA::Boolean TPersistenceManager_i::getShot(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult)
 {
 	bool success = false;
