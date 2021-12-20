@@ -289,6 +289,9 @@ public:
 			case STI::Engine::EventEngineJobList::Completed:
 				toCompleteList(job);
 				break;
+			case STI::Engine::EventEngineJobList::Archived:
+				toArchive(job);
+				break;
 			default:
 				toCompleteList(job);
 		}
