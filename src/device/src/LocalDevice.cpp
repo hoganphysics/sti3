@@ -203,6 +203,12 @@ void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 	}
 }
 
+void LocalDevice::addCollectionListener(const std::string& listenerName,
+	const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)
+{
+	localCollection->addListener(listener);
+}
+
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 {

@@ -115,6 +115,9 @@ public:
 
 	virtual bool isEventTarget(const DeviceID& id);
 
+	void addCollectionListener(const std::string& listenerName,
+		const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
+
 private:
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
