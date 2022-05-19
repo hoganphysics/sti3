@@ -74,7 +74,7 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 
 		success = parseEvents(synchedEvents);
 	}
-	
+
 	if (success) {
 		//sort in time ascending order
 		std::sort(synchedEvents.begin(), synchedEvents.end(), STI::Utils::compare_shared_ptr<SynchronousEvent>);

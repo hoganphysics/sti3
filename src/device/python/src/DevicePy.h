@@ -17,46 +17,6 @@ namespace STI
 namespace Python
 {
 
-
-
-// class Animal2 {
-// public:
-//     virtual ~Animal2() { }
-//     virtual std::string go(int n_times) = 0;
-//     virtual std::string getID() = 0;
-// };
-
-// class PyAnimal2 : public Animal2 {
-// public:
-//     /* Inherit the constructors */
-//     using Animal2::Animal2;
-
-//     /* Trampoline (need one for each virtual function) */
-//     std::string go(int n_times) override {
-//         PYBIND11_OVERLOAD_PURE(
-//             std::string, /* Return type */
-//             Animal2,      /* Parent class */
-//             go,          /* Name of function in C++ (must match Python name) */
-//             n_times      /* Argument(s) */
-//         );
-//     }
-
-
-//     std::string getID() override {
-//         PYBIND11_OVERLOAD_PURE(
-//             std::string, /* Return type */
-//             Animal2,      /* Parent class */
-//             getID,          /* Name of function in C++ (must match Python name) */
-            
-//         );
-//     }
-// };
-
-
-
-
-
-
 class ChannelManagerPy;
 class EventEngineSchedulerPy;
 class AttributeManagerPy;

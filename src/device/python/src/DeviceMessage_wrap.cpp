@@ -35,11 +35,12 @@ void init_DeviceMessage(py::module& m)
         .def("sourceID", &DeviceMessage::sourceID)
         .def("getType", &DeviceMessage::getType)
         .def("__repr__",
-        [](const DeviceMessage& mess) {
-            return "<DeviceMessage | type=" 
-                + DeviceMessage::typeToString(mess.getType()) 
-                + ", source=" + mess.sourceID().getID() + ">";
-        });
+            [](const DeviceMessage& mess) {
+                return "<DeviceMessage | type=" 
+                    + DeviceMessage::typeToString(mess.getType()) 
+                    + ", source=" + mess.sourceID().getID() + ">";
+            })
+        ;
 
 
     py::class_<RefreshDeviceMessage, DeviceMessage, std::shared_ptr<RefreshDeviceMessage>>(m, "RefreshDeviceMessage")

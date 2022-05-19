@@ -23,9 +23,14 @@ unsigned NetworkDeviceHub::hubNumber = 0;
 
 
 NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress)
-	: NetworkDeviceHub(NetworkDeviceHub::nextHubName(), "localhost", 0, nameServiceAddress)
+: NetworkDeviceHub(NetworkDeviceHub::nextHubName(), "localhost", 0, nameServiceAddress)
 {
 	_usingDefaultHubID = true;
+}
+
+NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress)
+: NetworkDeviceHub(hubID.name, hubID.address, hubID.module, nameServiceAddress)
+{
 }
 
 NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress)
@@ -51,6 +56,21 @@ NetworkDeviceHub::~NetworkDeviceHub()
 	if (localHub != 0) {
 		localHub->clear();
 	}
+}
+
+std::string NetworkDeviceHub::printNetwork()
+{
+	return printNetwork(stiContext);
+}
+
+std::string NetworkDeviceHub::printNetwork(const std::string& baseContext)
+{
+	std::string network;
+
+	if (orbmanager != 0) {
+		network = orbmanager->printNameTree(baseContext);
+	}
+	return network;
 }
 
 //static

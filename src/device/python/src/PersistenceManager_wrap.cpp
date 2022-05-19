@@ -38,7 +38,20 @@ void init_PersistenceManager(py::module& m)
         .def("device", &STI::Engine::Measurement::device)
         .def("getMeasurementGraphPath", &STI::Engine::Measurement::getMeasurementGraphPath)
         .def("dataReady", &STI::Engine::Measurement::dataReady)
-
+        .def("print", &STI::Engine::Measurement::print)
+        // .def("setMeasurementResult", py::overload_cast<STI::Engine::Measurement&, const MixedValuePy&>(
+        //     [](STI::Engine::Measurement& self, const MixedValuePy& result)->void {
+        //         self.setMeasurementResult(result);
+        //     }), py::arg("result"))
+        .def("setMeasurementResult", 
+            [](STI::Engine::Measurement& self, const MixedValuePy& result)->void {
+                self.setMeasurementResult(result);
+            }, py::arg("result"))
+        .def("setMeasurementResult", 
+            [](STI::Engine::Measurement& self, const py::object& obj)->void {
+                MixedValuePy result(obj);
+                self.setMeasurementResult(result);
+            }, py::arg("result"))
         .def("__repr__",
             [](const STI::Engine::Measurement& self) {
                 return self.print();

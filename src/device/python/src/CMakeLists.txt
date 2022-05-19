@@ -60,12 +60,14 @@ pybind11_add_module(stidevicepy
     DeviceCollectionPy.cpp
     DeviceCollection_wrap.cpp
     DeviceID_wrap.cpp
+    DeviceHub_wrap.cpp
     DeviceMessageDispatcher_wrap.cpp
     DeviceMessage_wrap.cpp
     DevicePy.cpp
     EventEngineSchedulerPy.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
+    HubID_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
     LocalShotPy.cpp
@@ -123,6 +125,7 @@ add_library(stidevicepybase SHARED
     PersistenceManagerPy.cpp
     SynchronousEventPy.cpp
     SynchronousEventPyManager.cpp
+    
 )
 
 
@@ -209,9 +212,12 @@ target_link_libraries(stidevicepybase
     pybind11::module 
     pybind11::headers 
     stidevice${STI_LIB_POSTFIX}
+    stinetwork${STI_LIB_POSTFIX}
     ${PYTHON_LIBRARIES})
 
-target_link_libraries(stidevicepy PRIVATE stidevice${STI_LIB_POSTFIX} 
-                                   PRIVATE stidevicepybase${STI_LIB_POSTFIX})
+target_link_libraries(stidevicepy 
+    PRIVATE stidevice${STI_LIB_POSTFIX} 
+    PRIVATE stidevicepybase${STI_LIB_POSTFIX}
+    )
 
 

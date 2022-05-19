@@ -26,6 +26,7 @@ class NetworkDeviceHub
 public:
 
 	NetworkDeviceHub(const std::string& nameServiceAddress);
+	NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress);
 	NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
 	~NetworkDeviceHub();
 	
@@ -45,7 +46,8 @@ public:
 
 	void walk(LocalDeviceHub::HubNodeWalker& root) const;
 
-	//void printNetwork();
+	std::string printNetwork();
+	std::string printNetwork(const std::string& baseContext);
 	
 	static std::string printNetwork(const std::string& nameServerAddress, const std::string& baseContext);
 

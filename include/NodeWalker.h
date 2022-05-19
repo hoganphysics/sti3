@@ -74,6 +74,8 @@ class BidirectedGraphNode
 public:
 	T node;
 	std::vector<std::unique_ptr<BidirectedGraphNode<T>>> connections;
+
+	typedef T NodeType;
 };
 
 
@@ -86,6 +88,8 @@ public:
 	HubID id;
 
 	std::vector<std::unique_ptr<DirectedGraphNode<ID, T>>> nodes;
+
+	typedef DirectedGraphNode<ID, T> DirectedGraphNodeType;
 };
 
 

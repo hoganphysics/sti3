@@ -25,7 +25,7 @@ PYBIND11_MODULE(stipy, m) {
     m.doc() = "STIPy interface allows parsing and playing of timing files on the STI network"; // module docstring
 
 
-    init_HubID(m);
+    // init_HubID(m);
     // init_DeviceID(m);
 
     init_stipy(m);

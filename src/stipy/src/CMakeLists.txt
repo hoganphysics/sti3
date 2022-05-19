@@ -46,7 +46,7 @@ find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
 pybind11_add_module(stipy 
-    HubID_wrap.cpp
+    # HubID_wrap.cpp
     # ParseTicket.cpp
     ParseTicket_wrap.cpp
     pywrapper.cpp
