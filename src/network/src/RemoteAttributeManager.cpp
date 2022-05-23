@@ -51,10 +51,10 @@ RemoteAttributeManager::~RemoteAttributeManager()
 	}
 }
 
-void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute)
+void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Network::RemoteAttribute>& attribute)
 {
 	if (attribute != 0) {
-		attributeData[attribute->getKey()] = attribute->getValue();	
+		attributeData[attribute->getKey()] = attribute->getStoredValue();	
 	}
 }
 
@@ -142,7 +142,7 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
         if (success && remoteAttribute != 0) {
             // _attributes[key] = remoteAttribute;
             remoteAttribute->attachManager(this);
-			setAttributeData(remoteAttribute);
+			setAttributeData(remoteAttribute);	//use value stored in remoteAttribute
             attribute = remoteAttribute;
         }
         
@@ -181,7 +181,7 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 			for (auto& ra : remoteAttributes) {
 				if (ra != 0) {
 					ra->attachManager(this);
-					setAttributeData(ra);
+					setAttributeData(ra);	//use value stored in ra
 					attributes.push_back(ra);					
 				}
 			}

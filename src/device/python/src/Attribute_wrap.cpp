@@ -65,11 +65,22 @@ void init_Attribute(py::module& m)
                     return new STI::Device::LocalAttribute(key, initalValue, allowedValues);
                 } ), py::arg("key"), py::arg("value"), py::arg("allowedValues"))
         .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refesher) {
-                self->setRefresher(refesher);
+                auto gil_refresher = [refesher]() {
+                    pybind11::gil_scoped_release release;
+                    return refesher();
+                };
+                self->setRefresher(gil_refresher);
+                //self->setRefresher(refesher);
                 return self;
             }, py::arg("refresherFunction"))
         .def("setSetter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
-                self->setSetter(setter);
+                
+                auto gil_setter = [setter](const std::string& value) {
+                    pybind11::gil_scoped_release release;
+                    return setter(value);
+                };
+                self->setSetter(gil_setter);
+                //self->setSetter(setter);
                 return self;
             }, py::arg("setterFunction"))
 

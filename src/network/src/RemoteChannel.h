@@ -21,7 +21,8 @@ public:
 
 	RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
-        const std::string& channelName, STI::Utils::MixedValue& metaData);
+        const std::string& channelName, STI::Utils::MixedValue& metaData, 
+		const STI::Utils::MixedValue& storedValue);
 
     void attachManager(RemoteChannelManager* manager);
 
@@ -33,9 +34,11 @@ public:
 
 	void setChannelName(const std::string& name);
 	std::string getChannelName() const;
+	std::string getStoredChannelName() const;
 
 	void saveLastValue(const STI::Utils::MixedValue& value);
 	const STI::Utils::MixedValue getLastValue() const;
+	void moveStoredValue(STI::Utils::MixedValue& value);
 
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
@@ -49,10 +52,10 @@ private:
     STI::Device::ChannelType type_;
 	STI::Utils::MixedValueType inputType_;
     STI::Utils::MixedValueType outputType_;
-    // std::string channelName_;
+    std::string channelName_;
     STI::Utils::MetaData metaData_;
 
-    // STI::Utils::MixedValue lastValue;
+    STI::Utils::MixedValue storedValue;
 
     RemoteChannelManager* remoteManager;
 

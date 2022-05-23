@@ -26,7 +26,8 @@ public:
     void attachManager(RemoteAttributeManager* manager);
 
 	const std::string& getKey() const;
-	const std::string& getValue() const;
+	const std::string& getValue() const;    //Calls RemoteAttributeManager to get updated value
+    const std::string& getStoredValue() const;  //Last value stored in this instance
     const std::vector<std::string>& getAllowedValues() const;
     const std::string& getGroup() const;
 

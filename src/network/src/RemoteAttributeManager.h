@@ -74,7 +74,7 @@ private:
 
     void handleMessage(const std::shared_ptr<STI::Device::AttributeUpdateMessage>& mess);
    
-    void setAttributeData(const std::shared_ptr<STI::Device::Attribute>& attribute);
+    void setAttributeData(const std::shared_ptr<STI::Network::RemoteAttribute>& attribute);
     std::map<std::string, std::string> attributeData;
 
     STI::Device::DeviceID remoteID;

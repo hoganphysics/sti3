@@ -20,6 +20,11 @@ public:
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
+private:
+
+	bool setTest(const std::string& value);
+	std::string getTest();
+
 	STI::Device::DeviceMessageListenerID collectionMessageLID;
 
 	STI::Device::DeviceMessageListenerID jobMessageLID;

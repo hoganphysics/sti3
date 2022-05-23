@@ -51,6 +51,20 @@ public:
     LocalAttribute& setSetter(const std::function<bool(const std::string&)>& setter);
     LocalAttribute& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
 
+    template<typename T>
+    LocalAttribute& setRefresher(std::string(T::* refresher)(void), T* self)
+    {
+        auto fRefresher = [self, refresher](void) { return (self->*refresher)(); };
+        return setRefresher(fRefresher);
+    }
+
+    template<typename T>
+    LocalAttribute& setSetter(bool (T::* setter)(const std::string&), T* self)
+    {
+        auto fSetter = [self, setter](const std::string& value) { return (self->*setter)(value); };
+        return setSetter(fSetter);
+    }
+
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
 

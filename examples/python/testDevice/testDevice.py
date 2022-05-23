@@ -13,9 +13,9 @@ class TestDevice(stidevicepy.LocalDevice):
         return
     def __del__(self):
         print("&&&&&&&&& TestDevice del")
-    # def writeChannel(self, channel, value):
-    #     print("write: " + str(channel))
-    #     return True
+    def writeChannel(self, channel, value):
+         print("write: " + str(channel))
+         return True
 
 
     def parseEvents(self, eventsIn, synchedEvents):
@@ -49,7 +49,7 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
 
 
 
-dev1=TestDevice("TestDevice", "localhost", 0, "root")
+dev1=TestDevice("TestDevice", "localhost", 1, "localhost/0/BridgeServer")
 
 hub=stidevicepy.NetworkDeviceHub("192.168.1.4:2809")
 

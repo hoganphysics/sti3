@@ -9,6 +9,7 @@
 #include <memory>
 #include <pybind11/pybind11.h>
 
+#include <iostream>
 
 namespace STI
 {
@@ -89,7 +90,12 @@ private:
         {
             STI::Python::MixedValuePy valuePy(value);
 
+            //std::cout << "LocalDeviceDelegate::writeChannel" << std::endl;
+
             bool success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
+
+            //std::cout << "LocalDeviceDelegate::writeChannel after call" << std::endl;
+
             return success;
         }
 
@@ -130,6 +136,11 @@ public:
 
     bool writeChannel(short channel, const pybind11::object& value) override
     {
+        //pybind11::gil_scoped_acquire acquire;
+        pybind11::gil_scoped_release release;
+        //std::cout << "LocalDevicePyTrampoline::writeChannel" << std::endl;
+//        return true;
+
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
             LocalDevicePy,        /* Parent class */
@@ -140,6 +151,8 @@ public:
 
     pybind11::object readChannel(short channel, const pybind11::object& value) override
     {
+        pybind11::gil_scoped_release release;
+
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
             LocalDevicePy,       /* Parent class */

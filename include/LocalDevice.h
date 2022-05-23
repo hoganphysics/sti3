@@ -91,6 +91,17 @@ public:
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
 
+	template<typename T>
+	LocalAttribute& addAttribute(const std::string& key, const T& initialValue)
+	{
+		return addAttribute(key, STI::Utils::valueToString(initialValue));
+	}
+	template<typename T>
+	LocalAttribute& addAttribute(const std::string& key, const T& initialValue, std::vector<std::string> allowedValues)
+	{
+		return addAttribute(key, STI::Utils::valueToString(initialValue), allowedValues);
+	}
+
 	void addPartner(const DeviceID& id)
 	{
 		partnerDevices.insert(id);

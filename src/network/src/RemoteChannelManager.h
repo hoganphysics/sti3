@@ -15,7 +15,7 @@ namespace STI
 namespace Network
 {
 
-class LocalDevice;
+class RemoteChannel;
 
 
 class RemoteChannelManager : public STI::Device::ChannelManager,
@@ -50,7 +50,7 @@ private:
     };
     std::map<short, ChannelDataTuple> channelData;
 
-    void setChannelData(const std::shared_ptr<STI::Device::Channel>& channel);
+    void setChannelData(const std::shared_ptr<RemoteChannel>& channel);
 
     friend class ChannelUpdater;
 

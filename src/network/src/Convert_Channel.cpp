@@ -57,13 +57,15 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
     MixedValue metaData = convert<TMixedValue, MixedValue>(tChannel.metaData);
     // const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
 
+    MixedValue lastValue = convert<TMixedValue, MixedValue>(tChannel.lastValue);
+
     auto remoteChannel = std::make_shared<STI::Network::RemoteChannel>(
                             static_cast<short>(tChannel.channelNumber),
                             convert<TChannelType, ChannelType>(tChannel.type),
                             convert<TMixedValueType, MixedValueType>(tChannel.inputType),
                             convert<TMixedValueType, MixedValueType>(tChannel.outputType),
                             convert<::CORBA::String_member, std::string>(tChannel.channelName),
-                            metaData);
+                            metaData, lastValue);
 
 
 

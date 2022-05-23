@@ -217,6 +217,7 @@ target_link_libraries(stidevicepybase
 
 target_link_libraries(stidevicepy 
     PRIVATE stidevice${STI_LIB_POSTFIX} 
+    PRIVATE stinetwork${STI_LIB_POSTFIX}
     PRIVATE stidevicepybase${STI_LIB_POSTFIX}
     )
 

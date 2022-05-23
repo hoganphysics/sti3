@@ -48,11 +48,11 @@ RemoteChannelManager::~RemoteChannelManager()
 	}
 }
 
-void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Device::Channel>& channel)
+void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Network::RemoteChannel>& channel)
 {
 	if (channel != 0) {
-		channelData[channel->getChannelNumber()].name = channel->getChannelName();
-		channelData[channel->getChannelNumber()].value = channel->getLastValue();			
+		channelData[channel->getChannelNumber()].name = channel->getStoredChannelName();
+		channel->moveStoredValue( channelData[channel->getChannelNumber()].value );
 	}
 }
 
@@ -79,7 +79,7 @@ void RemoteChannelManager::getChannels(std::vector<std::shared_ptr<STI::Device::
 			}
 
 			channelData.clear();
-			for(auto& ch : channels) {
+			for(auto& ch : remoteChannels) {
 				setChannelData(ch);
 			}
 		}
@@ -117,7 +117,8 @@ bool RemoteChannelManager::getChannel(short channelNumber, std::shared_ptr<STI::
 
     if (success && convert<TChannel, std::shared_ptr<RemoteChannel>>(tChannel, remoteChannel)) {
 		remoteChannel->attachManager(this);
-		setChannelData(channel);
+		setChannelData(remoteChannel);
+		channel = remoteChannel;
 	}
 
     return success;
