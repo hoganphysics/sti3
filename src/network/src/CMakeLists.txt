@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
-if (MSVC)
-cmake_policy(SET CMP0091 NEW)
-endif (MSVC)
+#if (MSVC)
+#  cmake_policy(SET CMP0091 NEW)
+#endif()
 
 # set the project name
 project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
@@ -11,16 +11,28 @@ project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if (MSVC)
-set(USE_STI_DEBUG_POSTFIX True)
-endif (MSVC)
+if(MSVC)
+  if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Build type: Debug")
+    set(USE_STI_DEBUG_POSTFIX True)
+  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message("Build type: RelWithDebInfo")
+    set(USE_STI_DEBUG_POSTFIX False)
+  else()
+    message("Build type: Release")
+    set(USE_STI_DEBUG_POSTFIX False)
+  endif()
+else()
+  set(USE_STI_DEBUG_POSTFIX False)
+endif()
+
 
 if (USE_STI_DEBUG_POSTFIX)
-#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
-set(STI_LIB_POSTFIX "_d")
+  set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
-
+message("STI_LIB_POSTFIX:")
+message(STATUS "${STI_LIB_POSTFIX}")
 
 
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
@@ -31,9 +43,9 @@ find_package(Threads REQUIRED)
 
 #find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
 if (MSVC)
-add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
-add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
-endif (MSVC)
+  add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
+  add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+endif()
 
 
 
@@ -107,7 +119,7 @@ add_library(stinetwork SHARED
     TTriggerCallback_i.cpp
 )
 
-if (MSVC)
+if(MSVC)
 
     target_link_directories(stinetwork PUBLIC 
         "${OMNIORB_PATH}/lib/x86_win32"
@@ -119,7 +131,7 @@ if (MSVC)
     # set(STIDEVICE_LIB stidevice${CMAKE_DEBUG_POSTFIX})
     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
 
-endif (MSVC)
+endif()
 
 # if (MSVC)
 #     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
@@ -140,11 +152,13 @@ target_link_libraries(stinetwork
     # Ws2_32
 )
 
-if (MSVC)
-target_link_libraries(stinetwork 
-    stidevice${STI_LIB_POSTFIX}
-)
-endif (MSVC)
+
+
+if(MSVC)
+    target_link_libraries(stinetwork 
+        stidevice${STI_LIB_POSTFIX}
+    )
+endif()
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
 
@@ -168,13 +182,13 @@ set_target_properties(stinetwork PROPERTIES
 #    PUBLIC_HEADER api/mylib.h
 )
 
-if (USE_STI_DEBUG_POSTFIX) 
 
-    set_target_properties(stinetwork PROPERTIES
-        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
-    )
 
-endif (USE_STI_DEBUG_POSTFIX)
+#if (USE_STI_DEBUG_POSTFIX) 
+#    set_target_properties(stinetwork PROPERTIES
+#        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+#    )
+#endif (USE_STI_DEBUG_POSTFIX)
 
 
 message("OMNIORB_PATH:")
@@ -184,8 +198,40 @@ message(STATUS "${OMNIORB_PATH}")
 #file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "CONFIG is $<CONFIG>")
 message(STATUS "${CMAKE_CURRENT_BINARY_DIR}")
 #file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "MSVC_RUNTIME_LIBRARY is MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "OMNI_EXT is ${OMNI_EXT}")
+#file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "OMNI_EXT is ${OMNI_EXT}")
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.txt CONTENT "MSVC_TOOLSET_VERSION is ${MSVC_TOOLSET_VERSION}  MSVC_VERSION  is ${MSVC_VERSION}  CMAKE_CXX_COMPILER_VERSION  is ${CMAKE_CXX_COMPILER_VERSION}")
+#MSVC_TOOLSET_VERSION
+#omnithread${OMNI_EXT}.${CMAKE_SHARED_LIBRARY_SUFFIX}
 
+
+function(GET_OMNI_MSVC REQUIRED_ARG)
+  if(    "${MSVC_TOOLSET_VERSION}" STREQUAL "80")
+    set(${REQUIRED_ARG} "vc8" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "90")
+    set(${REQUIRED_ARG} "vc9" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "100")
+    set(${REQUIRED_ARG} "vc10" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "110")
+    set(${REQUIRED_ARG} "vc11" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "120")
+    set(${REQUIRED_ARG} "vc12" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "140")
+    set(${REQUIRED_ARG} "vc14" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "141")
+    set(${REQUIRED_ARG} "vc15" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "142")
+    set(${REQUIRED_ARG} "vc16" PARENT_SCOPE)
+  elseif("${MSVC_TOOLSET_VERSION}" STREQUAL "143")
+    set(${REQUIRED_ARG} "vc17" PARENT_SCOPE)
+  else()
+    set(${REQUIRED_ARG} "unknown" PARENT_SCOPE)
+  endif()
+endfunction()
+
+get_omni_msvc(OMNI_MSVC_VER)
+message("Output: ${OMNI_MSVC_VER}")
+
+message("Lib: omniORB4_${OMNI_MSVC_VER}${OMNI_EXT}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 target_include_directories(stinetwork PRIVATE 
     ${WORKING_DIRECTORY}
@@ -195,10 +241,20 @@ target_include_directories(stinetwork PRIVATE
     # ${WORKING_DIRECTORY}/utils
 )
 
-install(TARGETS stinetwork
+if(DEFINED SKBUILD)
+  message(">>>>>> STI Network: SKBUILD")
+  install(TARGETS stinetwork
+    RUNTIME DESTINATION src/stipy/bin
+  )
+else()
+  message(">>>>>> STI Network: regular CMake build")
+  install(TARGETS stinetwork
     #DESTINATION ${STI_BASE_DIR}/lib
     LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
+  )
+endif()
+
+
 
 # target_link_libraries(testDevice stidevice stinetwork)

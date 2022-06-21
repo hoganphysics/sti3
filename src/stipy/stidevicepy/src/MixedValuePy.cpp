@@ -18,11 +18,14 @@ MixedValuePy::MixedValuePy(const MixedValue& value)
 {
 }
 
-MixedValuePy::MixedValuePy(const MixedValuePy& value)
-: MixedValue(static_cast<MixedValue>(value))
-{
 
-}
+
+//MixedValuePy::MixedValuePy(const MixedValuePy& value)
+////: MixedValue(static_cast<MixedValue>(value))
+//: MixedValue(value)
+//{
+//
+//}
 
 MixedValuePy::MixedValuePy(const py::object& value)
 : MixedValue()

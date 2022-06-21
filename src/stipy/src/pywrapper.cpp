@@ -5,10 +5,10 @@
 namespace py = pybind11;
 
 
-void init_DeviceID(py::module &);
+//void init_DeviceID(py::module &);
 void init_stipy(py::module& m);
 
-void init_HubID(py::module& m);
+//void init_HubID(py::module& m);
 void init_STIPyDevice(py::module& m);
 void init_STIPyChannel(py::module& m);
 void init_STIPyShot(py::module& m);
@@ -19,7 +19,7 @@ void init_ResultTicket(py::module& m);
 
 PYBIND11_MODULE(stipy, m) {
 
-    py::module_::import("stidevicepy");
+    //py::module_::import("stidevicepy");
     //py::module_::import("stidevicepybase");
 
     m.doc() = "STIPy interface allows parsing and playing of timing files on the STI network"; // module docstring

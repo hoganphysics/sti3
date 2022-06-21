@@ -18,7 +18,7 @@ public:
 
     MixedValuePy();
     MixedValuePy(const MixedValue& value);
-    MixedValuePy(const MixedValuePy& value);
+ //   MixedValuePy(const MixedValuePy& value);
     MixedValuePy(const pybind11::object& value);
 
     pybind11::object getValue_py() const;

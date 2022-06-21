@@ -1,0 +1,9 @@
+
+Building wheel, from sti3 top directory:
+
+py -m build --wheel
+
+
+Uploading to testpypi:
+
+py -m twine upload --repository testpypi dist/stipy-3.0.1-cp39-cp39-win_amd64.whl
