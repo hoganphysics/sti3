@@ -42,7 +42,7 @@ jar {
 
 task copyJar(type: Copy) {
     from jar // here it automatically reads jar file produced from jar task
-    into '../../../../lib/'
+    into '../../../lib/'
 }
 
 build.dependsOn copyJar

@@ -15,7 +15,7 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(STI_BASE_DIR ../../../..)
+set(STI_BASE_DIR ../../..)
 
 include_directories(".")
 # include_directories("${STI_BASE_DIR}/src/device/src")

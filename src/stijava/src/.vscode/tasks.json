@@ -13,9 +13,9 @@
                 "-package", "edu.stanford.sti",
                 //"-debug-typedef",
                 //"-debug-classes",
-                "-I${workspaceFolder}/../../../device/src/",
-				"-I${workspaceFolder}/../../../device/src/utils/",
-                "-I${workspaceFolder}/../../../../include/",
+                "-I${workspaceFolder}/../../device/src/",
+				"-I${workspaceFolder}/../../device/src/utils/",
+                "-I${workspaceFolder}/../../../include/",
                 "-outdir",
                 "../stilib/src/main/java/edu/stanford/sti/",
                 "sti.i"
@@ -59,7 +59,7 @@
 			"options": {
                 "cwd": "${workspaceFolder}",
                 "env": {
-					"STI_BASE_DIR": "../../../.."
+					"STI_BASE_DIR": "../../.."
 				}
 			},
 			"problemMatcher": [
@@ -112,7 +112,7 @@
 			"options": {
 				"cwd": "${workspaceFolder}/build",
                 "env": {
-					"STI_BASE_DIR": "${workspaceFolder}/../../../.."
+					"STI_BASE_DIR": "${workspaceFolder}/../../.."
 				}
 			},
 			"problemMatcher": [
