@@ -24,28 +24,41 @@ from setuptools import find_packages
 
 OMNIORBBASE="C:/Users/Jason/Code/lib/omniORB-4.2.4.x64"
 
+def copyOmniORBlinux():
+    #glob.glob("/usr/local/lib/libomniORB*.so*")
+    slibPath = "/usr/local/lib/"
+    omniorbTargetLibs = ["libomniORB*.so*", "libomnithread.so*", "libomniDynamic*.so*"]
+    copyOmniORB(slibPath, omniorbTargetLibs)
 
-def copyOmniORB(omniorbBaseDir):
+def copyOmniORBwindows():
+    slibPath = OMNIORBBASE + "/bin/x86_win32/"
+    omniorbTargetLibs = ["omniORB*_rt.dll", "omnithread*_rt.dll", "omniDynamic*_rt.dll"]
+    copyOmniORB(slibPath, omniorbTargetLibs)
+
+def copyOmniORB(slibPath, omniorbTargetLibs):
 
     print("Moving OmniORB shared library to stipy/bin for python wheel...")
 
-    slibPath = "/bin/x86_win32/"
-    omniorbTargetLibs = ["omniORB*_rt.dll", "omnithread*_rt.dll", "omniDynamic*_rt.dll"]
+    #slibPath = "/bin/x86_win32/"
+    #omniorbTargetLibs = ["omniORB*_rt.dll", "omnithread*_rt.dll", "omniDynamic*_rt.dll"]
 
     #Find target shared libs
     sharedlibs=[]
     for x in omniorbTargetLibs:
-      matches = glob.glob(omniorbBaseDir + slibPath + x)
+      matches = glob.glob(slibPath + x)
       if matches:
-        sharedlibs.append(matches[0])
+        sharedlibs.extend(matches)
+        #sharedlibs.append(matches[0])
 
     #Destination directory
     stipybinDirectory = os.getcwd() + "/src/stipy/bin"
 
     #Copy
     for slib in sharedlibs:
-      print("Copying " + slib + " --> " + stipybinDirectory)
-      shutil.copy2(slib, stipybinDirectory)
+      print("Exists?" + str(slib) + " " + str(os.path.lexists(stipybinDirectory + "/" + os.path.basename(slib))))
+      if not os.path.lexists(stipybinDirectory + "/" + os.path.basename(slib)):
+        print("Copying " + slib + " --> " + stipybinDirectory)
+        shutil.copy2(slib, stipybinDirectory, follow_symlinks=False)
 
     #Check
     libsFound = 0
@@ -62,7 +75,11 @@ def copyOmniORB(omniorbBaseDir):
 
 
 #Put required omniORB shared libs in stipy/bin for distribution with wheel
-copyOmniORB(OMNIORBBASE)
+#copyOmniORB(OMNIORBBASE)
+if sys.platform == 'linux':
+    copyOmniORBlinux()
+else:
+    copyOmniORBwindows()
 
 
 setup(
@@ -84,7 +101,7 @@ setup(
     #data_files=[('bin', ['bin/stidevice.dll','bin/stinetwork.dll'])],
     #package_data={"stipy.bin": ["*.dll","*.pyd"]},
     #package_data={"stipy.bin": ["omniORB424_vc16_rt.dll"]},
-    package_data={"stipy.bin": ["*.dll"]},
+    package_data={"stipy.bin": ["*.dll", "*.so*"]},
     extras_require={}, #{"test": ["pytest"]},
     python_requires=">=3.6",
 )

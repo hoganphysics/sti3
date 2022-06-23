@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.10...3.20)
 
 #if(MSVC)
 #  cmake_policy(SET CMP0091 NEW)
@@ -91,6 +91,18 @@ target_include_directories(sticommonpy PRIVATE
     ${pybind11_INCLUDE_DIRS}
 )
 
+set_target_properties(sticommonpy PROPERTIES
+#    VERSION ${PROJECT_VERSION}
+    # DEBUG_POSTFIX "_d"
+    POSITION_INDEPENDENT_CODE TRUE
+    #WINDOWS_EXPORT_ALL_SYMBOLS ON
+    #CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
+    #BUILD_SHARED_LIBS TRUE
+    #MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+#    SOVERSION 1
+#    PUBLIC_HEADER api/mylib.h
+)
+
 
 if (USE_STI_DEBUG_POSTFIX) 
   set_target_properties(sticommonpy PROPERTIES
@@ -158,16 +170,16 @@ pybind11_add_module(stidevicepy
     ChannelManagerPy.cpp
     ChannelManager_wrap.cpp
     Channel_wrap.cpp
-	DeviceCollectionPy.cpp
+    DeviceCollectionPy.cpp
     DeviceCollection_wrap.cpp
     DeviceHub_wrap.cpp
     DeviceMessageDispatcher_wrap.cpp
     DeviceMessage_wrap.cpp
     DevicePy.cpp
-	EventEngineSchedulerPy.cpp
+    EventEngineSchedulerPy.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
-	LocalDevicePy.cpp
+    LocalDevicePy.cpp
     LocalDevice_wrap.cpp
     LocalShotPy.cpp
     PersistenceManagerPy.cpp

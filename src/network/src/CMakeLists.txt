@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.10...3.20)
 
 #if (MSVC)
 #  cmake_policy(SET CMP0091 NEW)
@@ -243,9 +243,15 @@ target_include_directories(stinetwork PRIVATE
 
 if(DEFINED SKBUILD)
   message(">>>>>> STI Network: SKBUILD")
-  install(TARGETS stinetwork
-    RUNTIME DESTINATION src/stipy/bin
-  )
+  if(MSVC)
+    install(TARGETS stinetwork
+      RUNTIME DESTINATION src/stipy/bin
+    )
+  else()
+    install(TARGETS stinetwork
+      LIBRARY DESTINATION src/stipy/bin
+    )
+  endif()
 else()
   message(">>>>>> STI Network: regular CMake build")
   install(TARGETS stinetwork

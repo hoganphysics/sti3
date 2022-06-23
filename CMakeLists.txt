@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 project(sti3)
 
 #set(STI_BASE_DIR ${WORKING_DIRECTORY})
-set(STI_BASE_DIR "C:/Users/Jason/Code/dev/sti3") #${sti3_SOURCE_DIR}
-#message("STI_BASE_DIR: ${STI_BASE_DIR}")
+set(STI_BASE_DIR ${sti3_SOURCE_DIR})
+#set(STI_BASE_DIR "C:/Users/Jason/Code/dev/sti3") #${sti3_SOURCE_DIR}
+message("STI_BASE_DIR: ${STI_BASE_DIR}")
 
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
+
 
 # Find pybind11 cmake directory
 execute_process(

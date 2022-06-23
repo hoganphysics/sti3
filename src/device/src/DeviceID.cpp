@@ -10,7 +10,6 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/string.hpp>
 
-//using namespace STI::Device;
 
 using STI::Device::DeviceID;
 using STI::Device::DeviceIDBase;
