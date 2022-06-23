@@ -4,8 +4,8 @@
 #include "PyResultTicket.h"
 #include "STIPySeq.h"
 #include "STIPyShot.h"
-#include "EventEngineScheduler.h"
-#include "ShotID.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/ShotID.h>
 
 #include "STIPyGlobal.h"
 

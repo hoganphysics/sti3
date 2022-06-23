@@ -2,7 +2,7 @@
 #define STI_ENGINE_LOCALSHOT_H
 
 #include "Shot.h"
-#include "ShotConfig.h"
+#include <sti/engine/ShotConfig.h>
 
 #include <vector>
 #include <memory>

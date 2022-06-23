@@ -1,8 +1,8 @@
 
-#include "LocalAttribute.h"
+#include <sti/device/LocalAttribute.h>
 #include "AttributeRefreshListener.h"
 
-#include "utils.h"
+#include <sti/utils/utils.h>
 
 #include <sstream>
 

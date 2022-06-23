@@ -1,7 +1,7 @@
 
 
 #include "Convert_DeviceTrace.h"
-#include "DeviceTrace.h"
+#include <sti/device/DeviceTrace.h>
 
 
 using STI::Device::DeviceTrace;

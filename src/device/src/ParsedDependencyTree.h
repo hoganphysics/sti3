@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_PARSEDDEPENDENCYTREE_H
 #define STI_ENGINE_PARSEDDEPENDENCYTREE_H
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <vector>
 #include <memory>

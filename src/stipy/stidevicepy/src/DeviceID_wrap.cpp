@@ -1,5 +1,5 @@
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>

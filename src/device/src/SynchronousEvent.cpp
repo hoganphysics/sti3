@@ -1,7 +1,7 @@
 
-#include "SynchronousEvent.h"
-#include "Measurement.h"
-#include "RawEvent.h"
+#include <sti/engine/SynchronousEvent.h>
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
 
 
 using STI::Engine::SynchronousEvent;

@@ -1,13 +1,13 @@
 #ifndef STI_ENGINE_LOCALEVENTENGINEJOB_H
 #define STI_ENGINE_LOCALEVENTENGINEJOB_H
 
-#include "EventEngineJob.h"
+#include <sti/engine/EventEngineJob.h>
 
-#include "EngineJobStatus.h"
-#include "EngineJobID.h"
-#include "DeviceID.h"
+#include <sti/engine/EngineJobStatus.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/device/DeviceID.h>
 #include "Shot.h"
-#include "EngineID.h"
+#include <sti/engine/EngineID.h>
 
 #include <set>
 #include <map>

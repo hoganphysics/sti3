@@ -10,7 +10,7 @@
 %ignore DeviceIDBase;
 
 // %{
-//     #include "DeviceID.h"
+//     #include <sti/device/DeviceID.h>
 // %}
 // %include "DeviceID.h"
 
@@ -21,13 +21,13 @@ class Dog
 
 %{
 
-    #include "DeviceID.h"
+    #include <sti/device/DeviceID.h>
 
-    #include "Collector.h"
-    #include "Collection.h"
-    #include "DeviceCollection.h"
-    //#include "Node.h"
-    //#include "Device.h"
+    #include <sti/utils/Collector.h>
+    #include <sti/utils/Collection.h>
+    #include <sti/device/DeviceCollection.h>
+    //#include <sti/network/Node.h>
+    //#include <sti/device/Device.h>
 %}
 %include "DeviceID.h"
 %include "Collector.h"
@@ -36,7 +36,7 @@ class Dog
 %template(DeviceCollector) STI::Utils::Collector< DeviceID,Dog >;
 %template(DeviceCollection) STI::Utils::Collection< DeviceID,Dog >;
 %include "Node.h"
-#include "Node.h"
+#include <sti/network/Node.h>
 %template(DeviceNodeX) STI::Network::Node< DeviceID,Dog >;
 //%rename(DeviceNodeX) STI::Network::Node< DeviceID,Device >;
 //typedef STI::Network::Node< DeviceID, Device > DeviceNode;
@@ -48,7 +48,7 @@ public:
 };
 
 
-#include "Device.h"
+#include <sti/device/Device.h>
 //%include "Device.h"
 
 

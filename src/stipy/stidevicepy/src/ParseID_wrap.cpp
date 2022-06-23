@@ -1,6 +1,6 @@
 
-#include "ParseID.h"
-#include "ShotConfig.h"
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ShotConfig.h>
 
 
 #include <pybind11/pybind11.h>

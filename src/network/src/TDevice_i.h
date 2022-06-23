@@ -3,7 +3,7 @@
 
 #include "deviceNet.h"
 
-#include "Device.h"
+#include <sti/device/Device.h>
 #include "TDeviceCollection_i.h"
 #include "TDeviceMessageDispatcher_i.h"
 #include "TEventEngineScheduler_i.h"

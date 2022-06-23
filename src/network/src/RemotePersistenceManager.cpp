@@ -6,7 +6,7 @@
 #include "Convert_ShotResult.h"
 #include "orbTypes.h"
 #include "NetworkResultsCollector.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 using STI::Network::NetworkResultsCollector;
 using STI::Network::RemotePersistenceManager;

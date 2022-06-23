@@ -1,5 +1,5 @@
 
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/string.hpp>

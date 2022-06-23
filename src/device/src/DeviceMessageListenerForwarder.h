@@ -1,10 +1,10 @@
 #ifndef STI_DEVICE_DEVICEMESSAGELISTENERFORWARDER_H
 #define STI_DEVICE_DEVICEMESSAGELISTENERFORWARDER_H
 
-#include "LocalDevice.h"
-#include "DeviceID.h"
-#include "DeviceMessageListener.h"
-#include "DeviceMessageReceiver.h"
+#include <sti/LocalDevice.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessageReceiver.h>
 
 #include <memory>
 

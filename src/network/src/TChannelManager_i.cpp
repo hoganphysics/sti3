@@ -1,7 +1,7 @@
 
 #include "TChannelManager_i.h"
 #include "ORBManager.h"
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 
 #include "Convert_Channel.h"
 //#include "NetworkConvert.h"

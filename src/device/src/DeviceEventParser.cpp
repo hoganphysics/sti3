@@ -1,8 +1,8 @@
 
-#include "DeviceEventParser.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/DeviceEventParser.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/device/DeviceID.h>
+#include <sti/engine/EngineParsingMessage.h>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::DeviceEventMap;

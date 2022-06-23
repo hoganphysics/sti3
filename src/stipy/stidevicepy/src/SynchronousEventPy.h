@@ -2,10 +2,10 @@
 #ifndef STI_PYTHON_SYNCHRONOUSEVENTPY_H
 #define STI_PYTHON_SYNCHRONOUSEVENTPY_H
 
-#include "SynchronousEvent.h"
+#include <sti/engine/SynchronousEvent.h>
 #include "SynchronousEventPyManager.h"
 
-#include "fwd/SynchronousEvent_fwd.h"
+#include <sti/fwd/SynchronousEvent_fwd.h>
 
 #include <pybind11/pybind11.h>
 

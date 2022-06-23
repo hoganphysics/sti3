@@ -1,7 +1,7 @@
 
 #include "JShot.h"
-#include "RawEvent.h"
-#include "ShotConfig.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotConfig.h>
 
 using STI::Engine::JShot;
 using STI::Engine::ShotConfig;

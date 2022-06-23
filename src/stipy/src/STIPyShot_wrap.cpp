@@ -1,7 +1,7 @@
 
 #include "STIPyShot.h"
 #include "STIPyChannel.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 #include <vector>
 #include <memory>

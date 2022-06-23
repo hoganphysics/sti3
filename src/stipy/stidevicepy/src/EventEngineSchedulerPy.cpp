@@ -1,10 +1,10 @@
 
 #include "EventEngineSchedulerPy.h"
-#include "ParseID.h"
-#include "ShotID.h"
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ShotID.h>
 #include "LocalShotPy.h"
-#include "RawEvent.h"
-#include "EngineJobID.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/EngineJobID.h>
 
 
 using STI::Python::EventEngineSchedulerPy;

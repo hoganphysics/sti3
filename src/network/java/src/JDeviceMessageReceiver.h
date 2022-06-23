@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_JDEVICEMESSAGERECEIVER_H
 #define STI_DEVICE_JDEVICEMESSAGERECEIVER_H
 
-#include "DeviceMessage.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageListener.h>
 
 #include <memory>
 

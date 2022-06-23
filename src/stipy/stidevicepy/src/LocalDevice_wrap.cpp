@@ -1,16 +1,16 @@
 
 
-#include "LocalDevice.h"
+#include <sti/LocalDevice.h>
 #include "DevicePy.h"
 #include "LocalDevicePy.h"
 #include "MixedValuePy.h"
 #include "ChannelManagerPy.h"
-#include "DeviceMessageDispatcher.h"
-#include "LocalAttribute.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/LocalAttribute.h>
 #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"
-#include "EngineID.h"
+#include <sti/engine/EngineID.h>
 #include "SynchronousEventPy.h"
 
 #include <memory>

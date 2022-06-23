@@ -3,7 +3,7 @@
 
 #include "Convert_Channel.h"
 #include "DeviceMessageListenerForwarder.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "RemoteChannel.h"
 #include "deviceNet.h"
 #include "NetworkConvert.h"

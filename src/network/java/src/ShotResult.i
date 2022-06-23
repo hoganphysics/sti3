@@ -1,12 +1,12 @@
 
 
 %{
-    #include "Measurement.h"
+    #include <sti/engine/Measurement.h>
     // using STI::Engine::Measurement;
     // using STI::Engine::MeasurementVector;
 
 
-    #include "ShotResultRecord.h"
+    #include <sti/engine/ShotResultRecord.h>
     using STI::Engine::ShotResultRecord;
 
     #include "ShotResult.h"
@@ -14,13 +14,13 @@
 
     #include "JPersistenceManager.h"
 
-    #include "RawEvent.h"
+    #include <sti/engine/RawEvent.h>
     using STI::Engine::RawEvent;
 
 
-    #include "DeviceID.h"
+    #include <sti/device/DeviceID.h>
 
-    #include "FileHolder.h"
+    #include <sti/utils/FileHolder.h>
     using STI::Utils::FileHolder;
 %}
 
@@ -38,7 +38,7 @@
 
 //FileHolder
 %template(FileHolderVector) std::vector< std::shared_ptr< STI::Utils::FileHolder > >;
-%include "FileHolder.h"
+%include "sti/utils/FileHolder.h"
 
 
 //RawEvent
@@ -47,12 +47,12 @@
 
 
 //ShotResultRecord
-%include "ShotResultRecord.h"
+%include "sti/engine/ShotResultRecord.h"
 
 
 //Measurement -- note that ordering of the %include here is very important
-%include "fwd/Measurement_fwd.h"
-%include "Measurement.h"
+%include "sti/fwd/Measurement_fwd.h"
+%include "sti/engine/Measurement.h"
 %template(MeasurementVector) std::vector< std::shared_ptr< STI::Engine::Measurement > >;
 %shared_ptr( std::vector< std::shared_ptr< STI::Engine::Measurement > > );
 

@@ -1,8 +1,8 @@
 #ifndef STI_ENGINE_REMOTEEVENTENGINESCHEDULER_H
 #define STI_ENGINE_REMOTEEVENTENGINESCHEDULER_H
 
-#include "EventEngineScheduler.h"
-#include "DeviceMessage.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/device/DeviceMessage.h>
 #include "deviceNet.h"
 
 #include "TReferenceHolder.h"

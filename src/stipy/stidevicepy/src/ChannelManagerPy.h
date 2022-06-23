@@ -2,9 +2,9 @@
 #ifndef STI_PYTHON_CHANNELMANAGERPY_H
 #define STI_PYTHON_CHANNELMANAGERPY_H
 
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 #include "MixedValuePy.h"
-#include "Channel.h"
+#include <sti/device/Channel.h>
 
 #include <memory>
 #include <vector>

@@ -3,7 +3,7 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
-#include "DeviceHub.h"
+#include <sti/network/DeviceHub.h>
 
 namespace STI
 {

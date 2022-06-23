@@ -2,7 +2,7 @@
 #ifndef STI_DEVICE_JPERSISTENCEMANAGER_H
 #define STI_DEVICE_JPERSISTENCEMANAGER_H
 
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 
 #include <memory>
 

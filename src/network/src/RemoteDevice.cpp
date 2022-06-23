@@ -4,7 +4,7 @@
 #include "RemoteDeviceMessageDispatcher.h"
 #include "NetworkConvert.h"
 #include "RemoteEventEngineScheduler.h"
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 #include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
 #include "RemotePersistenceManager.h"

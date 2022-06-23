@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_DEVICE_H
 #define STI_DEVICE_DEVICE_H
 
-#include "Node.h"
-#include "DeviceID.h"
+#include <sti/network/Node.h>
+#include <sti/device/DeviceID.h>
 
 namespace STI
 {

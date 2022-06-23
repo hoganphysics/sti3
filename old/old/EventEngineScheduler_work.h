@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_EVENTENGINESCHEDULER_H
 #define STI_ENGINE_EVENTENGINESCHEDULER_H
 
-#include "ParseID.h"
+#include <sti/engine/ParseID.h>
 #include "EventEngine.h"
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
 
 //#include <queue>
 

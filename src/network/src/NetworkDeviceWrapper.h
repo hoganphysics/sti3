@@ -1,16 +1,16 @@
 #ifndef STI_NETWORK_NETWORKDEVICEWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEWRAPPER_H
 
-#include "Device.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
 #include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkFileHolder.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 // #include "NetworkShotRepositoryWrapper.h"
 
 #include <memory>

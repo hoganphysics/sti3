@@ -2,7 +2,7 @@
 #define STI_ENGINE_EVENTENGINEDEPENDENCYTREE_H
 
 #include "utils/DependencyTree.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 namespace STI
 {

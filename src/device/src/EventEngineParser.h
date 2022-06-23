@@ -1,14 +1,14 @@
 #ifndef STI_ENGINE_EVENTENGINEPARSER_H
 #define STI_ENGINE_EVENTENGINEPARSER_H
 
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/Measurement_fwd.h"
-#include "fwd/SynchronousEvent_fwd.h"
-#include "DeviceID.h"
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
+#include <sti/fwd/SynchronousEvent_fwd.h>
+#include <sti/device/DeviceID.h>
 #include "fwd/ChannelManager_fwd.h"
-#include "DeviceEventParser.h"
-#include "utils/GraphPathLabel.h"
-#include "EngineID.h"
+#include <sti/engine/DeviceEventParser.h>
+#include <sti/utils/GraphPathLabel.h>
+#include <sti/engine/EngineID.h>
 
 #include <string>
 #include <sstream>

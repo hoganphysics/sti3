@@ -2,7 +2,7 @@
 #define STI_ENGINE_MASTERTRIGGER_H
 
 #include "TriggerCallback.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <mutex>

@@ -10,7 +10,7 @@
 %ignore DeviceIDBase;
 
 // %{
-//     #include "DeviceID.h"
+//     #include <sti/device/DeviceID.h>
 // %}
 // %include "DeviceID.h"
 
@@ -23,13 +23,13 @@
 
 %{
 
-    #include "DeviceID.h"
+    #include <sti/device/DeviceID.h>
 
-    #include "Collector.h"
-    #include "Collection.h"
-    #include "DeviceCollection.h"
-    //#include "Node.h"
-    //#include "Device.h"
+    #include <sti/utils/Collector.h>
+    #include <sti/utils/Collection.h>
+    #include <sti/device/DeviceCollection.h>
+    //#include <sti/network/Node.h>
+    //#include <sti/device/Device.h>
     using namespace STI::Device;
 %}
 
@@ -47,7 +47,7 @@ namespace Device {
 %template(DeviceCollector) STI::Utils::Collector< STI::Device::DeviceID,STI::Device::Device >;
 %template(DeviceCollection) STI::Utils::Collection< STI::Device::DeviceID,STI::Device::Device >;
 %include "Node.h"
-//#include "Node.h"
+//#include <sti/network/Node.h>
 //%template(DeviceNode) STI::Network::Node< STI::Device::DeviceID,STI::Device::Device >;
 //%rename(DeviceNodeX) STI::Network::Node< STI::Device::DeviceID,STI::Device::Device >;
 //typedef STI::Network::Node< STI::Device::DeviceID,STI::Device::Device > DeviceNode;
@@ -72,7 +72,7 @@ public:
 }
 }
 
-#include "Device.h"
+#include <sti/device/Device.h>
 %include "Device.h"
 
 

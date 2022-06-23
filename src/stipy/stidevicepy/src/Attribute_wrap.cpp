@@ -1,9 +1,9 @@
 
 
-#include "LocalAttribute.h"
-#include "Attribute.h"
+#include <sti/device/LocalAttribute.h>
+#include <sti/device/Attribute.h>
 #include "MixedValuePy.h"
-#include "utils.h"
+#include <sti/utils/utils.h>
 
 #include <string>
 #include <memory>

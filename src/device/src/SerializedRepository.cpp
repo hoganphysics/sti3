@@ -1,11 +1,11 @@
 
 #include "SerializedRepository.h"
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 #include "LocalResultsCollector.h"
-#include "Measurement.h"
-#include "RawEvent.h"
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
 #include "ShotResult.h"
-// #include "TimeStamp.h"
+// #include <sti/engine/TimeStamp.h>
 
 #include "CerealArchives.h"
 

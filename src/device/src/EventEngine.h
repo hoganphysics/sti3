@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_EVENTENGINE_H
 #define STI_ENGINE_EVENTENGINE_H
 
-#include "EngineState.h"
-#include "DeviceID.h"
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/Measurement_fwd.h"
+#include <sti/engine/EngineState.h>
+#include <sti/device/DeviceID.h>
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
 
 #include <memory>
 

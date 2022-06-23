@@ -1,7 +1,7 @@
 
 #include "RemoteDeviceMessageHandler.h"
 #include "NetworkConvert.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 
 #include "Convert_DeviceMessage.h"
 

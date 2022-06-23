@@ -1,10 +1,10 @@
 #ifndef STI_NETWORK_NETWORKDEVICEMESSAGEHANDLERWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEMESSAGEHANDLERWRAPPER_H
 
-#include "DeviceMessageHandler.h"
+#include <sti/device/DeviceMessageHandler.h>
 #include "LocalDeviceMessageHandler.h"
 #include "TDeviceMessageHandler_i.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 
 #include "orbTypes.h"
 

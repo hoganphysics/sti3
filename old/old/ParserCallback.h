@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_PARSERCALLBACK_H
 #define STI_ENGINE_PARSERCALLBACK_H
 
-#include "DeviceID.h"
-#include "EngineID.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/EngineID.h>
 
-#include "fwd/RawEvent_fwd.h"
+#include <sti/fwd/RawEvent_fwd.h>
 
 #include <string>
 #include <memory>

@@ -20,10 +20,10 @@
  *  along with the STI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RawEvent.h"
-#include "DeviceID.h"
-#include "MixedValue.h"
-#include "utils.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/device/DeviceID.h>
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/utils.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>

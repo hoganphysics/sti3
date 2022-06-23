@@ -2,7 +2,7 @@
 #define STI_NETWORK_CONVERT_DEVICEMESSAGE_H
 
 #include "NetworkConvert.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 
 #include "deviceNet.h"
 

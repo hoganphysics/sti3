@@ -4,7 +4,7 @@
     #include "JEventEngine.h"
     using STI::Engine::JEventEngine;
 
-    #include "EngineState.h"
+    #include <sti/engine/EngineState.h>
     using STI::Engine::EngineState;
 
 %}
@@ -15,4 +15,4 @@
 %ignore STI::Engine::JEventEngine::JEventEngine(const std::shared_ptr< EventEngine >& engine);
 %include "JEventEngine.h"
 
-%include "EngineState.h"
+%include "sti/engine/EngineState.h"

@@ -1,27 +1,27 @@
 #ifndef STI_ENGINE_LOCALEVENTENGINESCHEDULER_H
 #define STI_ENGINE_LOCALEVENTENGINESCHEDULER_H
 
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 
-#include "ParseID.h"
+#include <sti/engine/ParseID.h>
 #include "LocalEventEngine.h"
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
 
-#include "EngineJobID.h"
-#include "EngineJobStatus.h"
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineJobStatus.h>
 
-#include "DeviceMessage.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageListener.h>
 
 #include "Shot.h"
-#include "SynchronizedMap.h"
+#include <sti/utils/SynchronizedMap.h>
 #include "utils/OrderedBufferMap.h"
 
-#include "LocalDevice.h"
-#include "EngineID.h"
+#include <sti/LocalDevice.h>
+#include <sti/engine/EngineID.h>
 #include "EventEngineDependencyTree.h"
-#include "DeviceTrace.h"
+#include <sti/device/DeviceTrace.h>
 #include "MessageGenerator.h"
 
 #include <list>

@@ -1,7 +1,7 @@
 
 
-#include "DeviceMessage.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceID.h>
 
 using STI::Device::DeviceMessage;
 using STI::Device::DeviceMessageType;

@@ -2,7 +2,7 @@
 #ifndef STI_PYTHON_PERSISTENCEMANAGER_H
 #define STI_PYTHON_PERSISTENCEMANAGER_H
 
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 
 #include <memory>
 

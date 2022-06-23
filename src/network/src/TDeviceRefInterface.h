@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_TDEVICEREFINTERFACE_H
 #define STI_NETWORK_TDEVICEREFINTERFACE_H
 
-#include "Device.h"
+#include <sti/device/Device.h>
 #include "orbTypes.h"
 
 #include <memory>

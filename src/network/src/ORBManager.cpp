@@ -3,7 +3,7 @@
 
 #include <omniORB4/omniURI.h>
 
-#include "utils.h"
+#include <sti/utils/utils.h>
 #include "COSBindingNode.h"
 
 #include <iostream>

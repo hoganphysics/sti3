@@ -2,7 +2,7 @@
 #include "TShotEventsCallback_i.h"
 
 #include "ORBManager.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "Convert_EventEngine.h"
 
 #include "orbTypes.h"

@@ -21,8 +21,8 @@
  */
 
 
-#include "MixedValue.h"
-#include "utils.h"
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/utils.h>
 
 #include "CerealArchives.h"
 

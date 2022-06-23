@@ -3,9 +3,9 @@
 #ifndef STI_DEVICE_LOCALPERSISTENCEMANAGER_H
 #define STI_DEVICE_LOCALPERSISTENCEMANAGER_H
 
-#include "PersistenceManager.h"
-#include "SynchronizedMap.h"
-#include "DeviceCollection.h"
+#include <sti/device/PersistenceManager.h>
+#include <sti/utils/SynchronizedMap.h>
+#include <sti/device/DeviceCollection.h>
 #include "ShotRepository.h"
 
 #include "utils/OrderedBufferMap.h"

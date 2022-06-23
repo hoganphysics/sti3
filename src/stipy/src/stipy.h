@@ -3,8 +3,8 @@
 #define STI_PYTHON_STIPY_H
 
 
-#include "DeviceID.h"
-#include "HubID.h"
+#include <sti/device/DeviceID.h>
+#include <sti/network/HubID.h>
 
 #include <memory>
 #include <string>

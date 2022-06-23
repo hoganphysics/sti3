@@ -2,7 +2,7 @@
 #ifndef STI_DEVICE_JCHANNELMANAGER_H
 #define STI_DEVICE_JCHANNELMANAGER_H
 
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 
 #include <memory>
 

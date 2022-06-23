@@ -3,7 +3,7 @@
 
 #include "ORBManager.h"
 #include "NetworkConvert.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "TriggerCallback.h"
 
 using STI::TNetwork::TTriggerCallback_i;

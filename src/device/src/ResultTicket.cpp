@@ -1,7 +1,7 @@
-#include "ResultTicket.h"
+#include <sti/engine/ResultTicket.h>
 #include "ShotRepository.h"
-#include "PersistenceManager.h"
-#include "Measurement.h"
+#include <sti/device/PersistenceManager.h>
+#include <sti/engine/Measurement.h>
 
 using STI::Engine::ResultTicket;
 using STI::Engine::ShotRepository;

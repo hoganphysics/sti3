@@ -1,9 +1,8 @@
 #ifndef TESTDEVICE_H
 #define TESTDEVICE_H
 
-#include "LocalDevice.h"
-#include "SynchronousEvent.h"
-#include "RawEvent.h"
+#include <sti/LocalDevice.h>
+
 
 #include <string>
 

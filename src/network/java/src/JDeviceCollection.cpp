@@ -1,8 +1,8 @@
 
 #include "JDeviceCollection.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "JDevice.h"
-#include "Device.h"
+#include <sti/device/Device.h>
 
 #include <memory>
 

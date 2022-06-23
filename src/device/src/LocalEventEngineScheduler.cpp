@@ -1,25 +1,25 @@
 
 
 #include "LocalEventEngineScheduler.h"
-#include "DeviceID.h"
-#include "SynchronizedMap.h"
+#include <sti/device/DeviceID.h>
+#include <sti/utils/SynchronizedMap.h>
 #include "LocalEventEngineJob.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "EventEngineManager.h"
-#include "fwd/RawEvent_fwd.h"
-#include "ParseID.h"
-#include "EventEngineJob.h"
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/EventEngineJob.h>
 #include "Shot.h"
 #include "LocalEventEngineJob.h"
 #include "EventEngineFactory.h"
 #include "LocalEventEngineFactory.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/EngineParsingMessage.h>
 #include "LocalShot.h"
-#include "ShotID.h"
-#include "EngineJobID.h"
-#include "DeviceMessage.h"
-#include "ResultTicket.h"
-#include "ResultsCollector.h"
+#include <sti/engine/ShotID.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/device/DeviceMessage.h>
+#include <sti/engine/ResultTicket.h>
+#include <sti/engine/ResultsCollector.h>
 
 #include <set>
 #include <vector>

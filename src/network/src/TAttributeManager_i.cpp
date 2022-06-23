@@ -1,9 +1,9 @@
 
 #include "TAttributeManager_i.h"
 #include "ORBManager.h"
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 #include "Convert_Attribute.h"
-#include "Attribute.h"
+#include <sti/device/Attribute.h>
 
 using STI::TNetwork::TAttributeManager_i;
 

@@ -1,14 +1,18 @@
 #ifndef STI_NETWORK_REMOTECHANNELMANAGER_H
 #define STI_NETWORK_REMOTECHANNELMANAGER_H
 
-#include "ChannelManager.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceMessageListener.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "deviceNet.h"
 #include "TReferenceHolder.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <memory>
 #include <mutex>
+#include <map>
+
 
 namespace STI
 {

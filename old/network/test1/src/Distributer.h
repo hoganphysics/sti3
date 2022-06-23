@@ -1,11 +1,11 @@
 #ifndef STI_UTILS_DISTRIBUTER_H
 #define STI_UTILS_DISTRIBUTER_H
 
-#include "SynchronizedMap.h"
-#include "Collection.h"
-#include "LocalCollection.h"
-#include "Collector.h"
-#include "Node.h"
+#include <sti/utils/SynchronizedMap.h>
+#include <sti/utils/Collection.h>
+#include <sti/utils/LocalCollection.h>
+#include <sti/utils/Collector.h>
+#include <sti/network/Node.h>
 
 #include <memory>
 

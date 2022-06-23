@@ -2,7 +2,7 @@
 #define STI_DEVICE_JENGINEJOBUPDATEDEVICEMESSAGELISTENER_H
 
 #include "JEngineJobUpdateDeviceMessage.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/DeviceMessageListener.h>
 
 
 #include <memory>

@@ -1,11 +1,11 @@
 
 #include "STIPyShot.h"
-#include "RawEvent.h"
-#include "ParseTicket.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ParseTicket.h>
 #include "MixedValuePy.h"
 #include "STIPyChannel.h"
 
-#include "ParseID.h"
+#include <sti/engine/ParseID.h>
 
 
 using STI::Python::STIPyShot;

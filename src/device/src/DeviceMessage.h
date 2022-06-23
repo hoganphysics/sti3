@@ -1,18 +1,18 @@
 #ifndef STI_DEVICE_DEVICEMESSAGE_H
 #define STI_DEVICE_DEVICEMESSAGE_H
 
-#include "DeviceID.h"
-#include "fwd/EventEngine_fwd.h"
-#include "RawEvent.h"
-#include "EngineJobID.h"
-#include "GroupableMessage.h"
-#include "EngineParsingMessage.h"
-#include "EngineState.h"
-#include "DeviceTrace.h"
-#include "EngineID.h"
-#include "EngineParsingMessage.h"
+#include <sti/device/DeviceID.h>
+#include <sti/fwd/EventEngine_fwd.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/device/GroupableMessage.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EngineState.h>
+#include <sti/device/DeviceTrace.h>
+#include <sti/engine/EngineID.h>
 //#include "EventEngineDependencyTree.h"
-#include "EventEngineJob.h"
+#include <sti/engine/EventEngineJob.h>
+#include <sti/device/DeviceMessageType.h>
 
 #include <sstream>
 
@@ -22,16 +22,16 @@ namespace Device
 {
 
 
-enum class DeviceMessageType { 
-	Refresh, CollectionUpdate, 
-	ChannelUpdate, ChannelsRefresh, 
-	AttributeUpdate, AttributesRefresh, 
-	MonitorUpdate, 
-	EngineJobUpdate,
-	EngineScheduler, 
-	EngineParser,
-	EngineStatus,
-	Unknown };
+// enum class DeviceMessageType { 
+// 	Refresh, CollectionUpdate, 
+// 	ChannelUpdate, ChannelsRefresh, 
+// 	AttributeUpdate, AttributesRefresh, 
+// 	MonitorUpdate, 
+// 	EngineJobUpdate,
+// 	EngineScheduler, 
+// 	EngineParser,
+// 	EngineStatus,
+// 	Unknown };
 //DeviceMessage, 
 //DeviceMessageReceiver::addListener, ::removeListener, ::refreshListenerGroups, ::clearAllListenerGroups, 
 //and add a dedicated ListenerGroupMap instance

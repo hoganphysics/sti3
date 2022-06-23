@@ -1,7 +1,7 @@
 
 #include "NetworkConvert.h"
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include "orbTypes.h"
 

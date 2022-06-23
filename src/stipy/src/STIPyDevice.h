@@ -1,7 +1,7 @@
 #ifndef STI_PYTHON_STIPYDEVICE_H
 #define STI_PYTHON_STIPYDEVICE_H
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <string>
 

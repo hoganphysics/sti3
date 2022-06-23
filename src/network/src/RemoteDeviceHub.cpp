@@ -6,9 +6,9 @@
 #include "NetworkDeviceHubWrapper.h"
 #include "TDeviceRefInterface.h"
 
-#include "DeviceHub.h"
-#include "HubID.h"
-#include "HubTrace.h"
+#include <sti/network/DeviceHub.h>
+#include <sti/network/HubID.h>
+#include <sti/network/HubTrace.h>
 
 #include "orbTypes.h"
 

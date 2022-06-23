@@ -2,7 +2,7 @@
 #ifndef STI_PYTHON_EVENTENGINESCHEDULERPY_H
 #define STI_PYTHON_EVENTENGINESCHEDULERPY_H
 
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 
 #include <memory>
 

@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_JNODEWALKER_H
 #define STI_DEVICE_JNODEWALKER_H
 
-#include "LocalDeviceHub.h"
-#include "NodeWalker.h"
+#include <sti/LocalDeviceHub.h>
+#include <sti/network/NodeWalker.h>
 #include "JDevice.h"
 #include <memory>
 #include <vector>

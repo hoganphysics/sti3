@@ -1,9 +1,9 @@
 
 #include "ShotResult.h"
-#include "ShotID.h"
-#include "Measurement.h"
-#include "RawEvent.h"
-#include "utils/FileHolder.h"
+#include <sti/engine/ShotID.h>
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/utils/FileHolder.h>
 
 
 #include "CerealArchives.h"

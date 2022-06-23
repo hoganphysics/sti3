@@ -1,6 +1,6 @@
 
 
-#include "ShotResultRecord.h"
+#include <sti/engine/ShotResultRecord.h>
 
 #include "CerealArchives.h"
 

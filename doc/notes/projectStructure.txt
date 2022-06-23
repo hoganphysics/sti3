@@ -1,0 +1,16 @@
+
+
+Header #include style discussion:
+https://stackoverflow.com/questions/21593/what-is-the-difference-between-include-filename-and-include-filename?page=1&tab=scoredesc#tab-top
+https://stackoverflow.com/questions/53410038/which-type-of-include-or-when-writing-a-library-in-c-c
+https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rs-incform
+https://docs.microsoft.com/en-us/cpp/preprocessor/hash-include-directive-c-cpp?view=msvc-170&viewFallbackFrom=vs-2019
+
+
+Include folder structure:
+https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html
+https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5
+
+
+Project structure:
+https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1204r0.html

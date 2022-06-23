@@ -3,29 +3,29 @@
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
 
-#include "DeviceTrace.h"
+#include <sti/device/DeviceTrace.h>
 #include "EventEngineDependencyTree.h"
-#include "EngineJobID.h"
+#include <sti/engine/EngineJobID.h>
 
-#include "EngineID.h"
-#include "EventEngineJob.h"
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EventEngineJob.h>
 #include "LocalEventEngineJob.h"
-#include "RawEvent.h"
-#include "ParseID.h"
-#include "ShotID.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ShotID.h>
 #include "Shot.h"
 #include "NetworkShotWrapper.h"
 #include "RemoteShot.h"
-#include "utils/GraphPathLabel.h"
+#include <sti/utils/GraphPathLabel.h>
 #include "EventEngine.h"
-#include "TimeStamp.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/TimeStamp.h>
+#include <sti/engine/EngineParsingMessage.h>
 #include "ParsedDependencyTree.h"
-#include "Measurement.h"
+#include <sti/engine/Measurement.h>
 #include "NetworkEventEngine.h"
 #include "RemoteEventEngine.h"
-#include "ShotConfig.h"
-#include "ShotResultRecord.h"
+#include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotResultRecord.h>
 
 
 #include <map>

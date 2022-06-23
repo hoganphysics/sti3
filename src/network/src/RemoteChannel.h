@@ -1,9 +1,9 @@
 #ifndef STI_DEVICE_REMOTECHANNEL_H
 #define STI_DEVICE_REMOTECHANNEL_H
 
-#include "Channel.h"
-#include "MixedValue.h"
-#include "MetaData.h"
+#include <sti/device/Channel.h>
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/MetaData.h>
 
 #include <string>
 

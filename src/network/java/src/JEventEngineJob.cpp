@@ -1,6 +1,6 @@
 
 #include "JEventEngineJob.h"
-#include "EngineJobID.h"
+#include <sti/engine/EngineJobID.h>
 #include "JShot.h"
 #include "EventEngineDependencyTree.h"
 #include "JEventEngine.h"

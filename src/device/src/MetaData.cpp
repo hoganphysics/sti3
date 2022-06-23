@@ -1,6 +1,6 @@
 
-#include "MetaData.h"
-#include "MixedValue.h"
+#include <sti/utils/MetaData.h>
+#include <sti/utils/MixedValue.h>
 
 using STI::Utils::MetaData;
 using STI::Utils::MixedValue;

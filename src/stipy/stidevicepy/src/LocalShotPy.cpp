@@ -1,6 +1,6 @@
 
 #include "LocalShotPy.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 using STI::Python::LocalShotPy;
 

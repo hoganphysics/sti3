@@ -2,7 +2,7 @@
 #ifndef STI_UTILS_REMOTEFILEHOLDER_H
 #define STI_UTILS_REMOTEFILEHOLDER_H
 
-#include "utils/FileHolder.h"
+#include <sti/utils/FileHolder.h>
 #include "TReferenceHolder.h"
 #include "TFileHolderRefInterface.h"
 

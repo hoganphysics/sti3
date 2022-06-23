@@ -2,7 +2,7 @@
 #include "ServerDevice.h"
 
 
-#include "DeviceMessageReceiver.h"
+#include <sti/device/DeviceMessageReceiver.h>
 #include <iostream>
 
 using STI::Device::ServerDevice;

@@ -2,8 +2,8 @@
 #ifndef STI_PYTHON_DEVICECOLLECTIONPY_H
 #define STI_PYTHON_DEVICECOLLECTIONPY_H
 
-#include "DeviceCollection.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <vector>

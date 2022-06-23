@@ -2,7 +2,7 @@
 #ifndef STI_ENGINE_JEVENTENGINE_H
 #define STI_ENGINE_JEVENTENGINE_H
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 

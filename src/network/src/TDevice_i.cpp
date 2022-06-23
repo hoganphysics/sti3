@@ -1,7 +1,7 @@
 
 #include "TDevice_i.h"
 #include "ORBManager.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "NetworkConvert.h"
 
 using STI::TNetwork::TDevice_i;

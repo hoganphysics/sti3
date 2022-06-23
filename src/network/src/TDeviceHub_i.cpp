@@ -1,7 +1,7 @@
 
 #include "TDeviceHub_i.h"
-#include "HubID.h"
-#include "DeviceID.h"
+#include <sti/network/HubID.h>
+#include <sti/device/DeviceID.h>
 #include "RemoteDevice.h"
 #include "RemoteDeviceHub.h"
 

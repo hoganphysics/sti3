@@ -1,15 +1,15 @@
 
 #include "JDevice.h"
-#include "Device.h"
-#include "DeviceID.h"
-#include "LocalDevice.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
+#include <sti/LocalDevice.h>
 #include "JDeviceCollection.h"
 #include "JDeviceMessageDispatcher.h"
 #include "JEventEngineScheduler.h"
-#include "ChannelManager.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "JChannelManager.h"
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 #include "JAttributeManager.h"
 #include "JEventEngineScheduler.h"
 #include "JPersistenceManager.h"

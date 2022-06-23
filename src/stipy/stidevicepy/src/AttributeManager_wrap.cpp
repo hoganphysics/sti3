@@ -1,8 +1,8 @@
 
 #include "AttributeManagerPy.h"
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 
-#include "Attribute.h"
+#include <sti/device/Attribute.h>
 
 #include <string>
 #include <memory>

@@ -1,14 +1,14 @@
 
-#include "LocalDevice.h"
-#include "NetworkDeviceHub.h"
+#include <sti/LocalDevice.h>
+#include <sti/NetworkDeviceHub.h>
 //#include "STI_Network.h" "stinet.h"
 
-#include "LocalDeviceHub.h"
+#include <sti/LocalDeviceHub.h>
 //#include "LocalEventEngineScheduler.h"
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 #include "LocalShot.h"
-#include "SynchronousEvent.h"
-#include "Measurement.h"
+#include <sti/engine/SynchronousEvent.h>
+#include <sti/engine/Measurement.h>
 
 #include <string>
 #include <memory>

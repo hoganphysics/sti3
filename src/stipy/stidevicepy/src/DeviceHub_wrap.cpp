@@ -1,8 +1,8 @@
-#include "LocalDeviceHub.h"
+#include <sti/LocalDeviceHub.h>
 #include "DevicePy.h"
-#include "HubID.h"
+#include <sti/network/HubID.h>
 
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 
 #include <set>
 #include <sstream>

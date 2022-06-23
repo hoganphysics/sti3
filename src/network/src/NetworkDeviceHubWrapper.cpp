@@ -1,8 +1,8 @@
 
 #include "NetworkDeviceHubWrapper.h"
-#include "DeviceID.h"
-#include "HubID.h"
-#include "HubTrace.h"
+#include <sti/device/DeviceID.h>
+#include <sti/network/HubID.h>
+#include <sti/network/HubTrace.h>
 #include "NetworkDeviceWrapper.h"
 #include "orbTypes.h"
 

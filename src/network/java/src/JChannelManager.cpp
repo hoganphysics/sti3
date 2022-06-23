@@ -1,8 +1,8 @@
 
 #include "JChannelManager.h"
-#include "Channel.h"
-#include "MixedValue.h"
-#include "LocalChannel.h"
+#include <sti/device/Channel.h>
+#include <sti/utils/MixedValue.h>
+#include <sti/device/LocalChannel.h>
 
 
 using STI::Device::JChannelManager;

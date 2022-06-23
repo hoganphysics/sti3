@@ -1,12 +1,14 @@
 #ifndef STI_NETWORK_REMOTEATTRIBUTEMANAGER_H
 #define STI_NETWORK_REMOTEATTRIBUTEMANAGER_H
 
-#include "AttributeManager.h"
-#include "fwd/MixedValue_fwd.h"
+#include <sti/device/AttributeManager.h>
+#include <sti/fwd/MixedValue_fwd.h>
 #include "deviceNet.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessage.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "TReferenceHolder.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <string>

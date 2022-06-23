@@ -1,15 +1,15 @@
 
 
 #include "LocalEventEngineJob.h"
-#include "EventEngineJob.h"
+#include <sti/engine/EventEngineJob.h>
 #include "Shot.h"
 #include "EventEngineDependencyTree.h"
-#include "DeviceID.h"
-#include "ParseID.h"
-#include "EngineJobID.h"
-#include "EngineID.h"
-#include "EngineParsingMessage.h"
-#include "RawEvent.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
 
 #include <set>
 #include <memory>

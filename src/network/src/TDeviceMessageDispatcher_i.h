@@ -1,8 +1,8 @@
 #ifndef STI_TNETWORK_TDEVICEMESSAGEDISPATCHER_I_H
 #define STI_TNETWORK_TDEVICEMESSAGEDISPATCHER_I_H
 
-#include "Device.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 
 #include "deviceNet.h"
 

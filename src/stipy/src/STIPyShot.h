@@ -2,10 +2,10 @@
 #ifndef STI_PYTHON_STIPYSHOT_H
 #define STI_PYTHON_STIPYSHOT_H
 
-#include "fwd/RawEvent_fwd.h"
+#include <sti/fwd/RawEvent_fwd.h>
 
 #include "Shot.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include <pybind11/pybind11.h>
 
 #include <vector>

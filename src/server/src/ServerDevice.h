@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_SERVERDEVICE_H
 #define STI_NETWORK_SERVERDEVICE_H
 
-#include "LocalDevice.h"
+#include <sti/LocalDevice.h>
 
 
 namespace STI

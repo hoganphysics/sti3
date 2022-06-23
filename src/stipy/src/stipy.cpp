@@ -1,7 +1,7 @@
 
 #include "stipy.h"
 #include "STIPyServer.h"
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 #include "STIPyLibDevice.h"
 #include "STIPyShot.h"
 #include "STIPyGlobal.h"

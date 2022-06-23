@@ -1,7 +1,7 @@
 #ifndef STI_DEVICE_JDEVICECOLLECTION_H
 #define STI_DEVICE_JDEVICECOLLECTION_H
 
-#include "DeviceCollection.h"
+#include <sti/device/DeviceCollection.h>
 
 #include <memory>
 #include <set>

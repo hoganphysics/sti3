@@ -2,7 +2,7 @@
 
 #include "STIPyGlobal.h"
 #include "STIPyShot.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "STIPyDevice.h"
 
 #include <stdexcept>

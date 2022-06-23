@@ -2,8 +2,8 @@
 #ifndef STI_UTILS_LOCALFILEHOLDER_H
 #define STI_UTILS_LOCALFILEHOLDER_H
 
-#include "utils/FileHolder.h"
-#include "FileHolderFactory.h"
+#include <sti/utils/FileHolder.h>
+#include <sti/utils/FileHolderFactory.h>
 
 #include <string>
 #include <memory>

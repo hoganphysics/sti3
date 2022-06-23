@@ -3,7 +3,7 @@
 
 #include "deviceNet.h"
 
-#include "ShotConfig.h"
+#include <sti/engine/ShotConfig.h>
 #include "Shot.h"
 #include "TReferenceHolder.h"
 #include "TShotRefInterface.h"

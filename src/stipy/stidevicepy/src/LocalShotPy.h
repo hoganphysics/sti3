@@ -3,7 +3,7 @@
 #define STI_PYTHON_LOCALSHOTPY_H
 
 #include "LocalShot.h"
-#include "fwd/RawEvent_fwd.h"
+#include <sti/fwd/RawEvent_fwd.h>
 
 
 #include <vector>

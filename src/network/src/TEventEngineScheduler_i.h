@@ -1,8 +1,8 @@
 #ifndef STI_TNETWORK_TEVENTENGINESCHEDULER_I_H
 #define STI_TNETWORK_TEVENTENGINESCHEDULER_I_H
 
-#include "EventEngineScheduler.h"
-#include "Device.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/device/Device.h>
 
 #include "deviceNet.h"
 

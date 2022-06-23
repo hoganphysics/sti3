@@ -1,6 +1,6 @@
 
-#include "ConfigFile.h"
-#include "utils.h"
+#include <sti/device/ConfigFile.h>
+#include <sti/utils/utils.h>
 
 #include <fstream>
 #include <vector>

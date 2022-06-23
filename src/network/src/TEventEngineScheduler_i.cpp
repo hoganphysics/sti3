@@ -1,23 +1,23 @@
 
 #include "TEventEngineScheduler_i.h"
-#include "EventEngineScheduler.h"
-#include "Device.h"
-#include "DeviceTrace.h"
-#include "DeviceID.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/device/Device.h>
+#include <sti/device/DeviceTrace.h>
+#include <sti/device/DeviceID.h>
 #include "NetworkConvert.h"
 #include "ORBManager.h"
-#include "EngineJobID.h"
+#include <sti/engine/EngineJobID.h>
 #include "LocalEventEngineJob.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
 #include "Shot.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "RemoteResultsCollector.h"
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 
 #include "EventEngineDependencyTree.h"
 //#include "RemoteEventEngineJob.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/EngineParsingMessage.h>
 
 #include <memory>
 

@@ -3,7 +3,7 @@
 
 #include "ConvertList.h"
 #include "orbTypes.h"
-#include "fwd/MixedValue_fwd.h"
+#include <sti/fwd/MixedValue_fwd.h>
 
 #include <memory>
 #include <type_traits>

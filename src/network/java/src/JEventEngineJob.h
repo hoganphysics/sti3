@@ -2,8 +2,8 @@
 #define STI_DEVICE_JEVENTENGINEJOB_H
 
 
-#include "EventEngineJob.h"
-#include "EngineJobStatus.h"
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineJobStatus.h>
 
 #include <memory>
 

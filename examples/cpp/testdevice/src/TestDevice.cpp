@@ -2,8 +2,8 @@
 
 #include "TestDevice.h"
 
-#include "EngineState.h"
-#include "LocalAttribute.h"
+//#include <sti/engine/EngineState.h>
+//#include <sti/device/LocalAttribute.h>
 
 #include <iostream>
 #include <string>

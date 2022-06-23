@@ -1,7 +1,7 @@
 
 #include "PersistenceManagerPy.h"
 #include "ShotResult.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 
 using STI::Python::PersistenceManagerPy;

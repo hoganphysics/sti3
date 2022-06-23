@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_TRIGGERCALLBACK_H
 #define STI_ENGINE_TRIGGERCALLBACK_H
 
-#include "fwd/DeviceID_fwd.h"
+#include <sti/fwd/DeviceID_fwd.h>
 
 namespace STI
 {

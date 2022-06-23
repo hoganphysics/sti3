@@ -3,9 +3,9 @@
 #include "Convert_HubNodeWalker.h"
 #include "NetworkConvert.h"
 
-#include "Hub.h"
-#include "DeviceHub.h"
-#include "DeviceID.h"
+#include <sti/network/Hub.h>
+#include <sti/network/DeviceHub.h>
+#include <sti/device/DeviceID.h>
 #include "RemoteDevice.h"
 
 #include "orbTypes.h"

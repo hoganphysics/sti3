@@ -2,14 +2,14 @@
 #ifndef STI_ENGINE_SHOTRESULT_H
 #define STI_ENGINE_SHOTRESULT_H
 
-#include "DeviceID.h"
-#include "fwd/Measurement_fwd.h"
-#include "fwd/RawEvent_fwd.h"
-#include "ShotID.h"
-#include "utils/FileHolder.h"
-#include "Attribute.h"
-#include "ShotResultRecord.h"
-#include "Measurement.h"
+#include <sti/device/DeviceID.h>
+#include <sti/fwd/Measurement_fwd.h>
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/ShotID.h>
+#include <sti/utils/FileHolder.h>
+#include <sti/device/Attribute.h>
+#include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/Measurement.h>
 
 
 #include <vector>

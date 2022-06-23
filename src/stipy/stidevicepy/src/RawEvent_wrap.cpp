@@ -1,8 +1,8 @@
 
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
-#include "DeviceID.h"
-#include "MixedValue.h"
+#include <sti/device/DeviceID.h>
+#include <sti/utils/MixedValue.h>
 #include "MixedValuePy.h"
 
 #include <pybind11/stl.h>

@@ -1,11 +1,11 @@
 
 
 #include "LocalChannelManager.h"
-#include "LocalChannel.h"
-#include "LocalDevice.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/LocalChannel.h>
+#include <sti/LocalDevice.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 
 
 using STI::Device::LocalChannelManager;

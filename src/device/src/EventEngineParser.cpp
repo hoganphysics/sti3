@@ -1,20 +1,20 @@
 
 #include "EventEngineParser.h"
 
-#include "Channel.h"
+#include <sti/device/Channel.h>
 #include "EventConflictException.h"
 #include "EventParsingException.h"
 #include "LocalEventEngine.h"
-#include "RawEvent.h"
-#include "SynchronousEvent.h"
-#include "Measurement.h"
-#include "utils.h"
-#include "MixedValue.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/SynchronousEvent.h>
+#include <sti/engine/Measurement.h>
+#include <sti/utils/utils.h>
+#include <sti/utils/MixedValue.h>
 
 // #include "EngineParsingError.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/EngineParsingMessage.h>
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <set>
 

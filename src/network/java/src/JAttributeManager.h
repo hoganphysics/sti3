@@ -1,7 +1,7 @@
 #ifndef STI_DEVICE_JATTRIBUTEMANAGER_H
 #define STI_DEVICE_JATTRIBUTEMANAGER_H
 
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 
 #include <memory>
 

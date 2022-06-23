@@ -1,9 +1,9 @@
 
 
 #include "JDeviceMessageReceiver.h"
-#include "DeviceMessageReceiver.h"
-#include "DeviceMessageListener.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceMessageReceiver.h>
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceID.h>
 #include "JEngineJobUpdateDeviceMessage.h"
 #include "JEngineJobUpdateDeviceMessageListener.h"
 

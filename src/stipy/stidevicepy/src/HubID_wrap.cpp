@@ -1,5 +1,5 @@
 
-#include "HubID.h"
+#include <sti/network/HubID.h>
 
 #include <pybind11/pybind11.h>
 namespace py = pybind11;

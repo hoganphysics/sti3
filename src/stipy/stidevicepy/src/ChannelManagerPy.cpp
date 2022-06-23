@@ -1,7 +1,7 @@
 
 #include "ChannelManagerPy.h"
 #include "MixedValuePy.h"
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;

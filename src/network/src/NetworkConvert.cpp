@@ -2,7 +2,7 @@
 #include "NetworkConvert.h"
 
 #include "orbTypes.h"
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 #include "TFileHolderRefInterface.h"
 
 

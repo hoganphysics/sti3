@@ -1,7 +1,7 @@
 
 
 #include "AttributeManagerPy.h"
-#include "LocalAttribute.h"
+#include <sti/device/LocalAttribute.h>
 
 #include <pybind11/pybind11.h>
 

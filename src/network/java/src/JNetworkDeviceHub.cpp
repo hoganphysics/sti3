@@ -1,8 +1,8 @@
 
 #include "JNetworkDeviceHub.h"
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 #include "JNodeWalker.h"
-#include "LocalDeviceHub.h"
+#include <sti/LocalDeviceHub.h>
 
 using STI::Network::JNetworkDeviceHub;
 using STI::Network::JNodeWalker;

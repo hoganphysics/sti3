@@ -1,10 +1,10 @@
 #ifndef STI_DEVICE_JDEVICE_H
 #define STI_DEVICE_JDEVICE_H
 
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
 #include "JEventEngineScheduler.h"
-#include "FileHolderFactory.h"
+#include <sti/utils/FileHolderFactory.h>
 
 #include <memory>
 #include <string>

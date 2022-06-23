@@ -4,7 +4,7 @@ using std::cout;
 using std::endl;
 
 
-#include "Hub.h"
+#include <sti/network/Hub.h>
 using namespace STI::Utils;
 
 int main(int argc, char **argv)

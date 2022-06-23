@@ -3,7 +3,7 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
-// #include "Attribute.h"
+// #include <sti/device/Attribute.h>
 
 #include <memory>
 

@@ -1,6 +1,6 @@
 
 #include "RemoteEventEngineScheduler.h"
-#include "DeviceTrace.h"
+#include <sti/device/DeviceTrace.h>
 #include "EventEngineDependencyTree.h"
 #include "ParsedDependencyTree.h"
 #include "LocalEventEngineJob.h"
@@ -11,9 +11,9 @@
 #include "deviceNet.h"
 #include "orbTypes.h"
 #include "NetworkShotWrapper.h"
-#include "EngineJobID.h"
-#include "EngineParsingMessage.h"
-#include "RawEvent.h"
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
 #include "LocalShot.h"
 #include "NetworkResultsCollector.h"
 

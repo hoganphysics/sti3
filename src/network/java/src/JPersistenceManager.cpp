@@ -2,9 +2,9 @@
 
 #include "JPersistenceManager.h"
 #include "ShotResult.h"
-#include "ShotID.h"
-#include "Measurement.h"
-#include "RawEvent.h"
+#include <sti/engine/ShotID.h>
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
 
 #include <memory>
 

@@ -2,10 +2,10 @@
 #ifndef STI_PYTHON_DEVICEPY_H
 #define STI_PYTHON_DEVICEPY_H
 
-#include "Device.h"
-#include "DeviceID.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
 #include "ChannelManagerPy.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "DeviceCollectionPy.h"
 
 #include <memory>

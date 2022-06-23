@@ -2,9 +2,9 @@
 #define STI_DEVICE_JLOCALDEVICE_H
 
 #include "JDevice.h"
-#include "LocalDevice.h"
-#include "SynchronousEvent.h"
-#include "RawEvent.h"
+#include <sti/LocalDevice.h>
+#include <sti/engine/SynchronousEvent.h>
+#include <sti/engine/RawEvent.h>
 
 #include <memory>
 #include <string>

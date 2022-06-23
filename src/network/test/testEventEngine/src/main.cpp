@@ -1,29 +1,29 @@
 
 
-#include "NetworkDeviceHub.h"
-#include "LocalDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
+#include <sti/LocalDeviceHub.h>
 
-#include "LocalDevice.h"
+#include <sti/LocalDevice.h>
 
-#include "DeviceMessageDispatcher.h"
-#include "DeviceCollection.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceCollection.h>
 #include "LocalEventEngineScheduler.h"
 #include "LocalEventEngine.h"
-#include "EngineID.h"
-#include "Channel.h"
-#include "ParseID.h"
+#include <sti/engine/EngineID.h>
+#include <sti/device/Channel.h>
+#include <sti/engine/ParseID.h>
 #include "LocalShot.h"
-#include "RawEvent.h"
-#include "Channel.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/device/Channel.h>
 
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 
-#include "SynchronousEvent.h"
+#include <sti/engine/SynchronousEvent.h>
 
 #include "Convert_EventEngine.h"
 
-#include "DeviceMessageReceiver.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessageReceiver.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <iostream>
 #include <memory>

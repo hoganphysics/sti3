@@ -1,8 +1,8 @@
 
 #include "NetworkConvert.h"
 
-#include "HubTrace.h"
-#include "HubID.h"
+#include <sti/network/HubTrace.h>
+#include <sti/network/HubID.h>
 
 #include "orbTypes.h"
 

@@ -1,9 +1,9 @@
 
 #include "SynchronousEventPy.h"
-#include "fwd/SynchronousEvent_fwd.h"
-#include "utils.h"
-#include "RawEvent.h"
-#include "Measurement.h"
+#include <sti/fwd/SynchronousEvent_fwd.h>
+#include <sti/utils/utils.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/Measurement.h>
 
 #include <memory>
 

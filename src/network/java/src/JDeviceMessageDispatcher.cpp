@@ -1,7 +1,7 @@
 
 #include "JDeviceMessageDispatcher.h"
-#include "DeviceMessageDispatcher.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <memory>
 

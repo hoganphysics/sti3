@@ -2,7 +2,7 @@
 #include "DeviceCollectionPy.h"
 #include "DevicePy.h"
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 using STI::Python::DeviceCollectionPy;
 

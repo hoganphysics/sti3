@@ -1,7 +1,7 @@
 #ifndef STI_UTILS_ORDEREDBUFFERMAP_H
 #define STI_UTILS_ORDEREDBUFFERMAP_H
 
-#include "SynchronizedMap.h"
+#include <sti/utils/SynchronizedMap.h>
 
 #include <deque>
 #include <memory>

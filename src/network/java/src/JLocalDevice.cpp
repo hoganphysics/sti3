@@ -1,11 +1,11 @@
 
 #include "JLocalDevice.h"
-#include "LocalDevice.h"
-#include "DeviceMessageReceiver.h"
+#include <sti/LocalDevice.h>
+#include <sti/device/DeviceMessageReceiver.h>
 #include "JDeviceMessageReceiver.h"
 #include "JEventEngineScheduler.h"
-#include "EventEngineScheduler.h"
-#include "LocalChannel.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/device/LocalChannel.h>
 
 #include <memory>
 

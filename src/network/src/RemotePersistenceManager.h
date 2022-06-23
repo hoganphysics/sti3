@@ -2,7 +2,7 @@
 #define STI_NETWORK_REMOTEPERSISTENCECOLLECTOR_H
 
 #include "deviceNet.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 #include "TReferenceHolder.h"
 
 #include <memory>

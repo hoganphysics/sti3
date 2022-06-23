@@ -1,5 +1,5 @@
 
-#include "Configuration.h"
+#include <sti/device/Configuration.h>
 
 using STI::Device::Configuration;
 

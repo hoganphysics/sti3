@@ -2,10 +2,10 @@
 #include "LocalDevicePy.h"
 #include "DevicePy.h"
 #include "ChannelManagerPy.h"
-#include "DeviceMessageDispatcher.h"
-#include "MixedValue.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/utils/MixedValue.h>
 
-#include "SynchronousEvent.h"
+#include <sti/engine/SynchronousEvent.h>
 
 #include "SynchronousEventPy.h"
 

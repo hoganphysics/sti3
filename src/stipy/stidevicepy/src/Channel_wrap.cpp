@@ -1,9 +1,9 @@
 
 
-#include "Channel.h"
-#include "LocalChannel.h"
+#include <sti/device/Channel.h>
+#include <sti/device/LocalChannel.h>
 #include "MixedValuePy.h"
-#include "utils.h"
+#include <sti/utils/utils.h>
 
 #include <string>
 #include <memory>

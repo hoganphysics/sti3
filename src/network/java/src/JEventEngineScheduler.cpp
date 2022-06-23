@@ -2,9 +2,9 @@
 #include "JEventEngineScheduler.h"
 #include "JShot.h"
 
-#include "ParseID.h"
-#include "ShotID.h"
-#include "EngineJobID.h"
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/EngineJobID.h>
 
 
 using STI::Engine::JEventEngineScheduler;

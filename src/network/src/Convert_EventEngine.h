@@ -3,11 +3,11 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
-#include "EngineState.h"
-#include "EventEngineJob.h"
-#include "EngineJobID.h"
-#include "fwd/RawEvent_fwd.h"
-#include "EngineJobStatus.h"
+#include <sti/engine/EngineState.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/EngineJobStatus.h>
 
 #include <memory>
 

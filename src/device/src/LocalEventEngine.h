@@ -4,27 +4,27 @@
 #include "EventEngine.h"
 #include "MessageGenerator.h"
 
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "MessageGrouper.h"
-#include "DeviceCollection.h"
+#include <sti/device/DeviceCollection.h>
 #include "EventEngineParser.h"
 #include "EventEngineStateMachine.h"
-#include "ParseID.h"
-#include "ResultTicket.h"
-#include "ShotID.h"
-#include "TimeStamp.h"
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ResultTicket.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/TimeStamp.h>
 #include "EngineClock.h"
 
 #include "utils/OrderedBufferMap.h"
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 
-#include "fwd/Channel_fwd.h"
+#include <sti/fwd/Channel_fwd.h>
 #include "fwd/DeviceEventParser_fwd.h"
-#include "fwd/DeviceID_fwd.h"
-#include "fwd/Measurement_fwd.h"
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/SynchronousEvent_fwd.h"
-#include "PersistenceManager.h"
+#include <sti/fwd/DeviceID_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/SynchronousEvent_fwd.h>
+#include <sti/device/PersistenceManager.h>
 
 #include <memory>
 #include <mutex>

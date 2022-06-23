@@ -3,9 +3,9 @@
 #define STI_DEVICE_MESSAGEGROUPER_H
 
 
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceMessageDispatcher.h>
 
-#include "GroupableMessage.h"
+#include <sti/device/GroupableMessage.h>
 
 #include <memory>
 #include <condition_variable>

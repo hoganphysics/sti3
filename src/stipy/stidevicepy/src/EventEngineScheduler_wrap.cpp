@@ -1,13 +1,13 @@
 
 #include "EventEngineSchedulerPy.h"
 
-#include "ShotID.h"
-#include "ShotConfig.h"
+#include <sti/engine/ShotID.h>
+#include <sti/engine/ShotConfig.h>
 
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "LocalShotPy.h"
 
-#include "EngineJobID.h"
+#include <sti/engine/EngineJobID.h>
 
 #include <string>
 #include <memory>

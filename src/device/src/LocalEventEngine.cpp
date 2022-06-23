@@ -2,30 +2,30 @@
 
 #include "LocalEventEngine.h"
 
-#include "DeviceCollection.h"
-#include "DeviceID.h"
-#include "DeviceMessageDispatcher.h"
-#include "DeviceEventParser.h"
-#include "EngineState.h"
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/engine/DeviceEventParser.h>
+#include <sti/engine/EngineState.h>
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
 #include "EventEngineParser.h"
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 
-#include "SynchronousEvent.h"
+#include <sti/engine/SynchronousEvent.h>
 #include "LocalTriggerCallback.h"
-#include "Device.h"
+#include <sti/device/Device.h>
 #include "Shot.h"
 #include "LocalShot.h"
-#include "EventEngineJob.h"
-#include "EngineJobID.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
 #include "MasterTrigger.h"
-#include "Channel.h"
-#include "ResultsCollector.h"
+#include <sti/device/Channel.h>
+#include <sti/engine/ResultsCollector.h>
 #include "LocalPersistenceManager.h"
 #include "ParsedDependencyTree.h"
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 
 #include "ShotResult.h"
 

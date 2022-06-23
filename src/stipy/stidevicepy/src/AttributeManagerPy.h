@@ -2,8 +2,8 @@
 #ifndef STI_PYTHON_ATTRIBUTEMANAGERPY_H
 #define STI_PYTHON_ATTRIBUTEMANAGERPY_H
 
-#include "AttributeManager.h"
-#include "Attribute.h"
+#include <sti/device/AttributeManager.h>
+#include <sti/device/Attribute.h>
 
 #include <memory>
 #include <vector>

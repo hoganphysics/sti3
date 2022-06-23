@@ -1,8 +1,8 @@
 
-#include "Measurement.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
-#include "utils.h"
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/device/DeviceID.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 

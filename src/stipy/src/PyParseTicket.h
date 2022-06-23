@@ -3,7 +3,7 @@
 #define STI_PYTHON_PYPARSETICKET_H
 
 
-#include "ParseTicket.h"
+#include <sti/engine/ParseTicket.h>
 
 
 namespace STI

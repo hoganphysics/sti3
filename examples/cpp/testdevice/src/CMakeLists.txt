@@ -25,8 +25,6 @@ add_executable(testDevice main.cpp TestDevice.cpp)
 target_include_directories(testDevice PRIVATE 
     ${WORKING_DIRECTORY}
     ${STI_BASE_DIR}/include
-    ${STI_BASE_DIR}/src/device/src
-    #${STI_BASE_DIR}/src/network/src
 )
 
 target_link_libraries(testDevice stidevice${STI_LIB_POSTFIX} stinetwork${STI_LIB_POSTFIX})

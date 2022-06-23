@@ -1,7 +1,7 @@
 
 #include "Convert_Attribute.h"
 #include "RemoteAttribute.h"
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 
 #include "orbTypes.h"
 

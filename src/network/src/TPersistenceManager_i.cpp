@@ -4,8 +4,8 @@
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
 #include "Convert_ShotResult.h"
-#include "PersistenceManager.h"
-#include "ShotResultRecord.h"
+#include <sti/device/PersistenceManager.h>
+#include <sti/engine/ShotResultRecord.h>
 
 
 using STI::TNetwork::TPersistenceManager_i;

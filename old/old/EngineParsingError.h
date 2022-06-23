@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_ENGINEPARSINGERROR_H
 #define STI_ENGINE_ENGINEPARSINGERROR_H
 
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/DeviceID_fwd.h"
-#include "DeviceID.h"
-#include "utils.h"
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/DeviceID_fwd.h>
+#include <sti/device/DeviceID.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 #include <string>

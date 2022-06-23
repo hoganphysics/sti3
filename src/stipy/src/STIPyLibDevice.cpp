@@ -1,15 +1,15 @@
 
 #include "STIPyLibDevice.h"
-#include "DeviceID.h"
-#include "DeviceCollection.h"
-#include "ParseID.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/engine/ParseID.h>
 #include "PyParseTicketManager.h"
-#include "DeviceMessageReceiver.h"
+#include <sti/device/DeviceMessageReceiver.h>
 #include "PyParseTicket.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "PyResultTicket.h"
 #include "PyResultTicketManager.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 
 #include <memory>
 #include <iostream>

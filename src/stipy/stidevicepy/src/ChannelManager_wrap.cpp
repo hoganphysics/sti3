@@ -1,8 +1,8 @@
 
 #include "ChannelManagerPy.h"
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 
-#include "Channel.h"
+#include <sti/device/Channel.h>
 #include "MixedValuePy.h"
 
 #include <string>

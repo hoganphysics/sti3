@@ -1,10 +1,10 @@
 
 #include "LocalAttributeManager.h"
-#include "LocalAttribute.h"
+#include <sti/device/LocalAttribute.h>
 
-#include "DeviceID.h"
-#include "DeviceMessageDispatcher.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <set>
 

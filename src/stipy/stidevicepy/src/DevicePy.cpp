@@ -1,10 +1,10 @@
 
 #include "DevicePy.h"
-#include "DeviceID.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "ChannelManagerPy.h"
-#include "ChannelManager.h"
-#include "DeviceCollection.h"
+#include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceCollection.h>
 #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"

@@ -13,76 +13,77 @@
 
 
 %{
-    #include "DeviceID.h"
-    #include "Device.h"
+    #include <sti/device/DeviceID.h>
+    #include <sti/device/Device.h>
     #include "JDevice.h"
     #include "JLocalDevice.h"    
-    #include "DeviceMessage.h"
-    #include "DeviceCollection.h"
+    #include <sti/device/DeviceMessageType.h>
+    #include <sti/device/DeviceMessage.h>
+    #include <sti/device/DeviceCollection.h>
     #include "JDeviceCollection.h"
     #include "JNetworkDeviceHub.h"
     #include "JNodeWalker.h"
-    #include "HubID.h"
+    #include <sti/network/HubID.h>
 
-    #include "DeviceTrace.h"
+    #include <sti/device/DeviceTrace.h>
 
-    #include "DeviceMessageListener.h"
-    #include "DeviceMessageReceiver.h"
-    #include "DeviceMessageDispatcher.h"
+    #include <sti/device/DeviceMessageListener.h>
+    #include <sti/device/DeviceMessageReceiver.h>
+    #include <sti/device/DeviceMessageDispatcher.h>
     #include "JDeviceMessageReceiver.h"
     #include "JDeviceMessageDispatcher.h"
     #include "JEventEngineScheduler.h"
     using STI::Engine::JEventEngineScheduler;
 
-    #include "TimeStamp.h"
+    #include <sti/engine/TimeStamp.h>
     using STI::Engine::TimeStamp;
 
-    #include "EngineJobID.h"
-    #include "ParseID.h"
+    #include <sti/engine/EngineJobID.h>
+    #include <sti/engine/ParseID.h>
     using STI::Engine::ParseID;
-    #include "ShotID.h"
+    #include <sti/engine/ShotID.h>
     using STI::Engine::ShotID;
-    #include "EngineID.h"
+    #include <sti/engine/EngineID.h>
     using STI::Engine::EngineID;
 
-    #include "EngineState.h"
+    #include <sti/engine/EngineState.h>
     using STI::Engine::EngineState;
 
     #include "JEngineJobUpdateDeviceMessage.h"
     #include "JEngineJobUpdateDeviceMessageListener.h"
     
-    #include "EngineJobSourceID.h"
+    #include <sti/engine/EngineJobSourceID.h>
     using STI::Engine::EngineJobSourceID;
 
-    #include "ShotConfig.h"
+    #include <sti/engine/ShotConfig.h>
     using STI::Engine::ShotConfig;
 
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    #include "RawEvent.h"
+    #include <sti/engine/RawEvent.h>
     using STI::Engine::RawEventType;
-    #include "EventStackTrace.h"
+    #include <sti/engine/EventStackTrace.h>
     using STI::Engine::EventStackTrace;
-    #include "utils/GraphPathLabel.h"
+    #include <sti/utils/GraphPathLabel.h>
     using STI::Utils::GraphPathLabel;
 
-    #include "EngineParsingMessage.h"
+    #include <sti/engine/EngineParsingMessage.h>
     using STI::Engine::EngineParsingMessage;
 
-    #include "utils/FileHolder.h"
+    #include <sti/utils/FileHolder.h>
     using STI::Utils::FileHolder;
 
-    #include "MixedValue.h"
+    #include <sti/utils/MixedValue.h>
 
     using STI::Utils::MixedValue;
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
     #include "JChannelManager.h"
-    #include "fwd/Channel_fwd.h"
-    #include "Channel.h"
-    #include "LocalChannel.h"
+    #include <sti/fwd/Channel_fwd.h>
+    #include <sti/device/Channel.h>
+    #include <sti/device/LocalChannel.h>
     using STI::Device::LocalChannel;
 
     #include "ChannelRefreshListener.h"
@@ -164,22 +165,22 @@
 %rename(opNotEquals) operator!=;
 %rename(opEvaluate) operator();
 %ignore DeviceIDBase;
-%include "DeviceID.h"
+%include "sti/device/DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
 %template(DeviceIDvector) std::vector< STI::Device::DeviceID >;
 
-%include "DeviceTrace.h"
+%include "sti/device/DeviceTrace.h"
 
 //EngineID
-%include "EngineID.h"
+%include "sti/engine/EngineID.h"
 
 //RawEvent
-%include "fwd/RawEvent_fwd.h"
+%include "sti/fwd/RawEvent_fwd.h"
 %template(UIntVector) std::vector< unsigned >;
-%include "utils/GraphPathLabel.h"
+%include "sti/utils/GraphPathLabel.h"
 %rename(UIntVector) STI::Utils::GraphPathLabel;
-%include "EventStackTrace.h"
-%include "RawEvent.h"
+%include "sti/engine/EventStackTrace.h"
+%include "sti/engine/RawEvent.h"
 %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
 %shared_ptr( std::vector< STI::Engine::RawEvent > );
 
@@ -208,6 +209,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 
 //DeviceMessage
+
 // %ignore STI::Device::EngineJobUpdateDeviceMessage;
 %ignore STI::Device::EngineSchedulerMessage::setEngine(const std::shared_ptr< STI::Engine::EventEngine >& engine);
 %ignore STI::Device::EngineSchedulerMessage::getEngine() const;
@@ -215,9 +217,10 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %ignore STI::Device::EngineJobUpdateDeviceMessage::toRunningList(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
 %ignore STI::Device::EngineJobUpdateDeviceMessage::toCompleteList(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
 %ignore STI::Device::EngineJobUpdateDeviceMessage::getEngineJob() const;
-%include "DeviceMessage.h"
+%include "sti/device/DeviceMessageType.h"
+%include "sti/device/DeviceMessage.h"
 
-%include "DeviceMessageListener.h"
+%include "sti/device/DeviceMessageListener.h"
 
 %ignore STI::Device::DeviceMessageListener< STI::Device::EngineJobUpdateDeviceMessage >::handleMessage;
 
@@ -294,26 +297,26 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 
 //ChannelManager
-%include "fwd/Channel_fwd.h"
-%include "Channel.h"
+%include "sti/fwd/Channel_fwd.h"
+%include "sti/device/Channel.h"
 %template(ChannelVector) std::vector< std::shared_ptr < STI::Device::Channel > >;
 %ignore STI::Device::ChannelManager;
 %ignore STI::Device::JChannelManager::JChannelManager(std::shared_ptr< STI::Device::ChannelManager >& manager);
 %include "JChannelManager.h"
 
-%include "LocalChannel.h"
+%include "sti/device/LocalChannel.h"
 %include "ChannelRefreshListener.h"
 
 //EngineJobSourceID
-%include "EngineJobSourceID.h"
+%include "sti/engine/EngineJobSourceID.h"
 
 //ShotConfig
-%include "ShotConfig.h"
+%include "sti/engine/ShotConfig.h"
 
 
-%include "TimeStamp.h"
-%include "ParseID.h"
-%include "ShotID.h"
+%include "sti/engine/TimeStamp.h"
+%include "sti/engine/ParseID.h"
+%include "sti/engine/ShotID.h"
 
 //Attributes
 %template(StringMap) std::map< std::string, std::string >;
@@ -328,23 +331,23 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 //EngineJobID
 %template(EngineJobIDSet) std::set< STI::Engine::EngineJobID >;
-%include "EngineJobID.h"
+%include "sti/engine/EngineJobID.h"
 
 
 //FileHolder
 %ignore STI::Utils::FileHolder::write(const char* buffer, unsigned length);
 %ignore STI::Utils::FileHolder::openFile();
 %ignore STI::Utils::FileHolder::closeFile();
-%include "utils/FileHolder.h"
+%include "sti/utils/FileHolder.h"
 
 
 
 //MixedValue
 %warnfilter(516) STI::Utils::MixedValue::setValue;
-%include "fwd/MixedValue_fwd.h"
-%include "MixedValue.h"
+%include "sti/fwd/MixedValue_fwd.h"
+%include "sti/utils/MixedValue.h"
 %template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
-%include "MixedValue.h"
+%include "sti/utils/MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
 
@@ -368,7 +371,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "JEventEngineScheduler.h"
 
 //EngineParsingMessage
-%include "EngineParsingMessage.h"
+%include "sti/engine/EngineParsingMessage.h"
 %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
 
@@ -379,7 +382,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "JNetworkDeviceHub.h"
 
 //HubID
-%include "HubID.h"
+%include "sti/network/HubID.h"
 
 //JNodeWalker
 %ignore STI::Network::JNodeWalker::JNodeWalker(STI::Network::LocalDeviceHub::HubNodeWalker& root);

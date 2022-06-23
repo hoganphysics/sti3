@@ -1,7 +1,7 @@
 #ifndef STI_UTILS_NODE_H
 #define STI_UTILS_NODE_H
 
-#include "Collector.h"
+#include <sti/utils/Collector.h>
 
 namespace STI
 {

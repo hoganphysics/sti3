@@ -1,11 +1,11 @@
 #ifndef STI_DEVICE_LOCALDEVICEMESSAGEHANDLER_H
 #define STI_DEVICE_LOCALDEVICEMESSAGEHANDLER_H
 
-#include "DeviceMessageHandler.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessageHandler.h>
+#include <sti/device/DeviceMessage.h>
 
-#include "EventQueue.h"
-#include "SynchronizedMap.h"
+#include <sti/utils/EventQueue.h>
+#include <sti/utils/SynchronizedMap.h>
 
 #include <set>
 #include <memory>

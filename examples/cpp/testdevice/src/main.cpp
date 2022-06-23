@@ -1,8 +1,10 @@
 
 #include "TestDevice.h"
-#include "NetworkDeviceHub.h"
+//#include <sti/NetworkDeviceHub.h>
 //#include "STI_Network.h" "stinet.h"
-#include "ConfigFile.h"
+//#include "ConfigFile.h"
+
+#include <sti/sti.h>
 
 #include <string>
 #include <memory>

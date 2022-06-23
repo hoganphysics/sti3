@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_JNETWORKDEVICEHUB_H
 #define STI_NETWORK_JNETWORKDEVICEHUB_H
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "JDevice.h"
 
 #include <memory>

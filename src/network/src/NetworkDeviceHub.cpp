@@ -1,11 +1,11 @@
 
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 
 #include "NetworkDeviceHubWrapper.h"
-#include "LocalDeviceHub.h"
-#include "DeviceHub.h"
+#include <sti/LocalDeviceHub.h>
+#include <sti/network/DeviceHub.h>
 #include "RemoteDeviceHub.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include "ORBManager.h"
 

@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_EVENTENGINESTATEMACHINE_H
 #define STI_ENGINE_EVENTENGINESTATEMACHINE_H
 
-#include "EngineState.h"
+#include <sti/engine/EngineState.h>
 #include "utils/DependencyTree.h"
 
 #include <mutex>

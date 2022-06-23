@@ -1,7 +1,7 @@
 #ifndef STI_UTILS_COLLECTOR_H
 #define STI_UTILS_COLLECTOR_H
 
-#include "Collection.h"
+#include <sti/utils/Collection.h>
 
 #include <memory>
 

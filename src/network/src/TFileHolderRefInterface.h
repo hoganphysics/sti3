@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_TFILEHOLDERREFINTERFACE_H
 #define STI_NETWORK_TFILEHOLDERREFINTERFACE_H
 
-#include "utils/FileHolder.h"
+#include <sti/utils/FileHolder.h>
 #include "deviceNet.h"
 
 #include <memory>

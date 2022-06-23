@@ -57,11 +57,9 @@ target_include_directories(stijava PRIVATE
     ${WORKING_DIRECTORY}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
-    ${STI_BASE_DIR}/src/device/src/utils
-    ${STI_BASE_DIR}/src/network/src
+    #${STI_BASE_DIR}/src/device/src/utils
+    #${STI_BASE_DIR}/src/network/src
     ${JNI_INCLUDE_DIRS}
-    # ${WORKING_DIRECTORY}/fwd
-    # ${WORKING_DIRECTORY}/utils
 )
 
 install(TARGETS stijava

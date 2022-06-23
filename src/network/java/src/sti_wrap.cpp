@@ -767,76 +767,77 @@ namespace Swig {
   }
 }
 
-    #include "DeviceID.h"
-    #include "Device.h"
+    #include <sti/device/DeviceID.h>
+    #include <sti/device/Device.h>
     #include "JDevice.h"
     #include "JLocalDevice.h"    
-    #include "DeviceMessage.h"
-    #include "DeviceCollection.h"
+    #include <sti/device/DeviceMessageType.h>
+    #include <sti/device/DeviceMessage.h>
+    #include <sti/device/DeviceCollection.h>
     #include "JDeviceCollection.h"
     #include "JNetworkDeviceHub.h"
     #include "JNodeWalker.h"
-    #include "HubID.h"
+    #include <sti/network/HubID.h>
 
-    #include "DeviceTrace.h"
+    #include <sti/device/DeviceTrace.h>
 
-    #include "DeviceMessageListener.h"
-    #include "DeviceMessageReceiver.h"
-    #include "DeviceMessageDispatcher.h"
+    #include <sti/device/DeviceMessageListener.h>
+    #include <sti/device/DeviceMessageReceiver.h>
+    #include <sti/device/DeviceMessageDispatcher.h>
     #include "JDeviceMessageReceiver.h"
     #include "JDeviceMessageDispatcher.h"
     #include "JEventEngineScheduler.h"
     using STI::Engine::JEventEngineScheduler;
 
-    #include "TimeStamp.h"
+    #include <sti/engine/TimeStamp.h>
     using STI::Engine::TimeStamp;
 
-    #include "EngineJobID.h"
-    #include "ParseID.h"
+    #include <sti/engine/EngineJobID.h>
+    #include <sti/engine/ParseID.h>
     using STI::Engine::ParseID;
-    #include "ShotID.h"
+    #include <sti/engine/ShotID.h>
     using STI::Engine::ShotID;
-    #include "EngineID.h"
+    #include <sti/engine/EngineID.h>
     using STI::Engine::EngineID;
 
-    #include "EngineState.h"
+    #include <sti/engine/EngineState.h>
     using STI::Engine::EngineState;
 
     #include "JEngineJobUpdateDeviceMessage.h"
     #include "JEngineJobUpdateDeviceMessageListener.h"
     
-    #include "EngineJobSourceID.h"
+    #include <sti/engine/EngineJobSourceID.h>
     using STI::Engine::EngineJobSourceID;
 
-    #include "ShotConfig.h"
+    #include <sti/engine/ShotConfig.h>
     using STI::Engine::ShotConfig;
 
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    #include "RawEvent.h"
+    #include <sti/engine/RawEvent.h>
     using STI::Engine::RawEventType;
-    #include "EventStackTrace.h"
+    #include <sti/engine/EventStackTrace.h>
     using STI::Engine::EventStackTrace;
-    #include "utils/GraphPathLabel.h"
+    #include <sti/utils/GraphPathLabel.h>
     using STI::Utils::GraphPathLabel;
 
-    #include "EngineParsingMessage.h"
+    #include <sti/engine/EngineParsingMessage.h>
     using STI::Engine::EngineParsingMessage;
 
-    #include "utils/FileHolder.h"
+    #include <sti/utils/FileHolder.h>
     using STI::Utils::FileHolder;
 
-    #include "MixedValue.h"
+    #include <sti/utils/MixedValue.h>
 
     using STI::Utils::MixedValue;
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
     #include "JChannelManager.h"
-    #include "fwd/Channel_fwd.h"
-    #include "Channel.h"
-    #include "LocalChannel.h"
+    #include <sti/fwd/Channel_fwd.h>
+    #include <sti/device/Channel.h>
+    #include <sti/device/LocalChannel.h>
     using STI::Device::LocalChannel;
 
     #include "ChannelRefreshListener.h"
@@ -1530,12 +1531,12 @@ SWIGINTERN void std_vector_Sl_STI_Network_JDeviceGraphNode_Sg__doRemoveRange(std
         }
       }
 
-    #include "Measurement.h"
+    #include <sti/engine/Measurement.h>
     // using STI::Engine::Measurement;
     // using STI::Engine::MeasurementVector;
 
 
-    #include "ShotResultRecord.h"
+    #include <sti/engine/ShotResultRecord.h>
     using STI::Engine::ShotResultRecord;
 
     #include "ShotResult.h"
@@ -1543,13 +1544,13 @@ SWIGINTERN void std_vector_Sl_STI_Network_JDeviceGraphNode_Sg__doRemoveRange(std
 
     #include "JPersistenceManager.h"
 
-    #include "RawEvent.h"
+    #include <sti/engine/RawEvent.h>
     using STI::Engine::RawEvent;
 
 
-    #include "DeviceID.h"
+    #include <sti/device/DeviceID.h>
 
-    #include "FileHolder.h"
+    #include <sti/utils/FileHolder.h>
     using STI::Utils::FileHolder;
 
 SWIGINTERN std::vector< STI::Engine::ShotResultRecord > *new_std_vector_Sl_STI_Engine_ShotResultRecord_Sg___SWIG_2(jint count,STI::Engine::ShotResultRecord const &value){
@@ -1790,17 +1791,17 @@ SWIGINTERN int STI_Utils_DependencyTree_Sl_STI_Device_DeviceID_Sg__getDependentN
     #include "JEventEngine.h"
     using STI::Engine::JEventEngine;
 
-    #include "EngineState.h"
+    #include <sti/engine/EngineState.h>
     using STI::Engine::EngineState;
 
 
 
     #include "JEventEngineJob.h"
     using STI::Engine::JEventEngineJob;
-    #include "EventEngineJob.h"
+    #include <sti/engine/EventEngineJob.h>
     using STI::Engine::EventEngineJob;
 
-    #include "EngineJobStatus.h"
+    #include <sti/engine/EngineJobStatus.h>
     using STI::Engine::EngineJobStatus;
 
     // #include "JEventEngine.h"

@@ -1,9 +1,9 @@
 #ifndef STI_DEVICE_JEVENTENGINESCHEDULER_H
 #define STI_DEVICE_JEVENTENGINESCHEDULER_H
 
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 #include "Shot.h"
-#include "ParseID.h"
+#include <sti/engine/ParseID.h>
 
 #include <memory>
 #include <set>

@@ -4,8 +4,8 @@
 #include "NetworkResultsCollector.h"
 #include "NetworkFileHolder.h"
 #include "RemoteFileHolder.h"
-#include "DeviceID.h"
-#include "RawEvent.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/RawEvent.h>
 
 using STI::Network::convert;
 using STI::Engine::ResultsCollector;

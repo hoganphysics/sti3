@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_REMOTEATTRIBUTE_H
 #define STI_DEVICE_REMOTEATTRIBUTE_H
 
-#include "Attribute.h"
-#include "MetaData.h"
+#include <sti/device/Attribute.h>
+#include <sti/utils/MetaData.h>
 
 #include <string>
 #include <vector>

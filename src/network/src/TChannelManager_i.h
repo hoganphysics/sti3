@@ -3,7 +3,7 @@
 
 #include "fwd/ChannelManager_fwd.h"
 
-#include "Device.h"
+#include <sti/device/Device.h>
 #include "deviceNet.h"
 
 #include <memory>

@@ -1,12 +1,12 @@
 
 #include "LocalPersistenceManager.h"
 #include "LocalResultsCollector.h"
-#include "DeviceID.h"
-#include "EventEngineJob.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/EventEngineJob.h>
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
 #include "ResultsDocumenter.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "SerializedRepository.h"
 #include "ShotResult.h"
 #include "TransientRepository.h"

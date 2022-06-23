@@ -1,10 +1,10 @@
 
 #include "PersistenceManagerPy.h"
 
-#include "Measurement.h"
+#include <sti/engine/Measurement.h>
 #include "MixedValuePy.h"
 #include "ShotResult.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 #include <string>
 #include <memory>

@@ -1,10 +1,10 @@
 #ifndef STI_DEVICE_LOCALDEVICEMESSAGEDISPATCHER_H
 #define STI_DEVICE_LOCALDEVICEMESSAGEDISPATCHER_H
 
-#include "DeviceMessageDispatcher.h"
-#include "DeviceMessage.h"
-#include "EventQueue.h"
-#include "SynchronizedMap.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceMessage.h>
+#include <sti/utils/EventQueue.h>
+#include <sti/utils/SynchronizedMap.h>
 
 #include <memory>
 

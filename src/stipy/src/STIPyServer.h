@@ -3,9 +3,9 @@
 #define STI_PYTHON_STIPYSERVER_H
 
 #include "STIPyDevice.h"
-#include "ParseID.h"
+#include <sti/engine/ParseID.h>
 
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 #include "STIPyLibDevice.h"
 
 #include <functional>

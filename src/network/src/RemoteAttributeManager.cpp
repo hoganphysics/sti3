@@ -1,9 +1,9 @@
 
 #include "RemoteAttributeManager.h"
-#include "Attribute.h"
+#include <sti/device/Attribute.h>
 #include "RemoteAttribute.h"
 #include "DeviceMessageListenerForwarder.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 

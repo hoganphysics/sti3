@@ -3,7 +3,7 @@
 
 #include "fwd/PersistenceManager_fwd.h"
 #include "deviceNet.h"
-#include "Device.h"
+#include <sti/device/Device.h>
 
 #include <memory>
 

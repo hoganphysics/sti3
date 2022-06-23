@@ -1,13 +1,13 @@
 
 #include "LocalResultsCollector.h"
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 //#include "EventEngine.h"
 #include "ParsedDependencyTree.h"
-#include "Measurement.h"
-#include "RawEvent.h"
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
 #include "ShotResult.h"
-#include "utils.h"
-#include "ShotResultRecord.h"
+#include <sti/utils/utils.h>
+#include <sti/engine/ShotResultRecord.h>
 
 #include <filesystem>
 namespace fs = std::filesystem;

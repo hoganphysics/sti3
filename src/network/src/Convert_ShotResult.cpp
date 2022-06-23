@@ -5,7 +5,7 @@
 #include "Convert_ResultsCollector.h"
 
 #include "ShotResult.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 #include <memory>
 

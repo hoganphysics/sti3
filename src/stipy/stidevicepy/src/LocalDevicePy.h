@@ -2,9 +2,9 @@
 #ifndef STI_PYTHON_LOCALDEVICEPY_H
 #define STI_PYTHON_LOCALDEVICEPY_H
 
-#include "LocalDevice.h"
+#include <sti/LocalDevice.h>
 #include "DevicePy.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <pybind11/pybind11.h>

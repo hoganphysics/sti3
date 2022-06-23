@@ -68,6 +68,7 @@ add_library(stidevice SHARED
     DeviceMessageReceiver.cpp
     # EngineParsingError.cpp
     EngineClock.cpp
+    EngineID.cpp
     EngineParsingMessage.cpp
     EngineJobSourceID.cpp
     EventEngineDependencyTree.cpp
@@ -140,7 +141,7 @@ target_include_directories(stidevice PRIVATE
     ${WORKING_DIRECTORY}
     ${OPENSSL_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
-    ${STI_BASE_DIR}/include/extern
+    ${STI_BASE_DIR}/include/sti/extern
     ${WORKING_DIRECTORY}/fwd
     ${WORKING_DIRECTORY}/utils
 )

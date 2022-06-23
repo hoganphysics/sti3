@@ -2,12 +2,12 @@
 #include "TEventEngine_i.h"
 
 #include "ORBManager.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "Convert_EventEngine.h"
-#include "EngineState.h"
+#include <sti/engine/EngineState.h>
 #include "RemoteTriggerCallback.h"
 #include "LocalEventEngineJob.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "RemoteResultsCollector.h"
 
 

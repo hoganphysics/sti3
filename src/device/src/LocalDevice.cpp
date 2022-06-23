@@ -1,34 +1,34 @@
 
-#include "LocalDevice.h"
+#include <sti/LocalDevice.h>
 #include "LocalDeviceMessageDispatcher.h"
-#include "DeviceMessageReceiver.h"
+#include <sti/device/DeviceMessageReceiver.h>
 #include "LocalEventEngineScheduler.h"
-#include "DeviceMessageListener.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessage.h>
 #include "LocalEventEngineFactory.h"
 
 #include "LocalFileHolder.h"
 
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 #include "LocalChannelManager.h"
-#include "LocalChannel.h"
+#include <sti/device/LocalChannel.h>
 
-#include "LocalAttribute.h"
+#include <sti/device/LocalAttribute.h>
 #include "LocalAttributeManager.h"
 
 #include "DeviceMessageListenerForwarder.h"
 
-#include "ServerMessageRelayer.h"
+#include <sti/device/ServerMessageRelayer.h>
 #include "LocalPersistenceManager.h"
 //#include "SerializedRepository.h"
 
 #include "LocalShot.h"
-#include "ParseTicket.h"
+#include <sti/engine/ParseTicket.h>
 
 #include "ShotRepository.h"
 
-#include "Measurement.h"
-#include "Configuration.h"
+#include <sti/engine/Measurement.h>
+#include <sti/device/Configuration.h>
 
 #include <memory>
 #include <iostream>
@@ -107,12 +107,12 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	//EngineSchedulerMessage ListenerID
 	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
-	messageListenerIDs.push_back(schedulerMessageLID);
+//	messageListenerIDs.push_back(schedulerMessageLID);
 
-	//CollectionMessage ListenerID
-	collectionMessageLID.name = getID().getID() + "::DeviceCollection";
-	collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
-	messageListenerIDs.push_back(collectionMessageLID);
+	// //CollectionMessage ListenerID
+	// collectionMessageLID.name = getID().getID() + "::DeviceCollection";
+	// collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
+	// messageListenerIDs.push_back(collectionMessageLID);
 
 	serverMessageRelayer = std::make_shared<STI::Device::ServerMessageRelayer>(getID(), deviceMessageDispatcher);
 

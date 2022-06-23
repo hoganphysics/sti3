@@ -1,5 +1,5 @@
 
-#include "EventStackTrace.h"
+#include <sti/engine/EventStackTrace.h>
 
 #include <string>
 #include <sstream>

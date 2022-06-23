@@ -3,10 +3,10 @@
 
 #include "deviceNet.h"
 
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
 #include "TDeviceRefInterface.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "fwd/ChannelManager_fwd.h"
 
 #include "TReferenceHolder.h"

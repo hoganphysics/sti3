@@ -2,7 +2,7 @@
 #include "RemoteShot.h"
 
 #include "Convert_EventEngine.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 
 #include <memory>
 #include <vector>

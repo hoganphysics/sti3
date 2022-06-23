@@ -1,13 +1,13 @@
 
 //#include "NetworkConvert.h"
-#include "DeviceMessage.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceID.h>
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceMessage.h"
 #include "Convert_DeviceTrace.h"
 #include "NetworkEventEngine.h"
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 
 #include "orbTypes.h"
 

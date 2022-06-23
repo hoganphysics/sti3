@@ -2,13 +2,13 @@
 #include "TResultsCollector_i.h"
 
 #include "ORBManager.h"
-#include "ResultsCollector.h"
+#include <sti/engine/ResultsCollector.h>
 #include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
+#include <sti/engine/RawEvent.h>
+#include <sti/device/DeviceID.h>
 
 #include <vector>
 #include <memory>

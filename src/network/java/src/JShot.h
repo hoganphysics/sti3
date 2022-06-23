@@ -2,7 +2,7 @@
 #define STI_DEVICE_JSHOT_H
 
 #include "Shot.h"
-#include "fwd/RawEvent_fwd.h"
+#include <sti/fwd/RawEvent_fwd.h>
 
 #include <memory>
 

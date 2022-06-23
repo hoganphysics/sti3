@@ -1,6 +1,6 @@
 
 #include "RemoteResultsCollector.h"
-#include "ShotID.h"
+#include <sti/engine/ShotID.h>
 #include "EventEngineDependencyTree.h"
 #include "ParsedDependencyTree.h"
 

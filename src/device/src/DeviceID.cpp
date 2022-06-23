@@ -1,5 +1,5 @@
-#include "DeviceID.h"
-#include "utils.h"
+#include <sti/device/DeviceID.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 #include <memory>

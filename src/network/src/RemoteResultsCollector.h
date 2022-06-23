@@ -2,7 +2,7 @@
 #define STI_NETWORK_REMOTERESULTSCOLLECTOR_H
 
 #include "deviceNet.h"
-#include "ResultsCollector.h"
+#include <sti/engine/ResultsCollector.h>
 #include "TReferenceHolder.h"
 
 #include <memory>

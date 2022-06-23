@@ -1,9 +1,9 @@
 
 #include "EngineParsingError.h"
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "EventConflictException.h"
 #include "EventParsingException.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 using STI::Engine::EventConflictException; 
 using STI::Engine::EventParsingException;

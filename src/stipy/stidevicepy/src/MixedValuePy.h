@@ -2,7 +2,7 @@
 #ifndef STI_PYTHON_MIXEDVALUEPY_H
 #define STI_PYTHON_MIXEDVALUEPY_H
 
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 
 #include <pybind11/pybind11.h>
 

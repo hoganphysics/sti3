@@ -1,6 +1,6 @@
 
-#include "EngineParsingMessage.h"
-#include "RawEvent.h"
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
 
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
