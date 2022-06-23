@@ -18,7 +18,8 @@
                 "-I${workspaceFolder}/../../../include/",
                 "-outdir",
                 "../stilib/src/main/java/edu/stanford/sti/",
-                "sti.i"
+				"-outcurrentdir",
+                "swig/sti.i"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

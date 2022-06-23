@@ -3,7 +3,7 @@
 
 
 
-%include device3.i
+%include device.i
 
 %include ShotResult.i
 
