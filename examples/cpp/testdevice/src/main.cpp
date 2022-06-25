@@ -1,15 +1,12 @@
 
-#include "TestDevice.h"
-//#include <sti/NetworkDeviceHub.h>
-//#include "STI_Network.h" "stinet.h"
-//#include "ConfigFile.h"
-
 #include <sti/sti.h>
+#include "TestDevice.h"
+
 
 #include <string>
 #include <memory>
-
 #include <iostream>
+
 
 int main(int argc, char **argv)
 {
@@ -18,7 +15,6 @@ int main(int argc, char **argv)
 
 	STI::Device::ConfigFile config("config.ini");
 
-//	auto device = std::make_shared<TestDevice>("dev3", "localhost", 0, "localhost/0/STI Server");
 	auto device = std::make_shared<TestDevice>(config);
 
     std::string nameServiceAddr = "192.168.1.6:2809";   //Address of OmniORB NameService (to connect to other Hubs)

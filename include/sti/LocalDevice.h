@@ -107,19 +107,13 @@ public:
 		return addAttribute(key, STI::Utils::valueToString(initialValue), allowedValues);
 	}
 
-	void addPartner(const DeviceID& id)
-	{
-		partnerDevices.insert(id);
-		addEventTarget(id);
-	}
+	void addPartner(const DeviceID& id);
+	void addEventTarget(const DeviceID& id);
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
-	void getEventTargets(std::set<DeviceID>& targetIDs)
-	{
-		targetIDs = eventTargets;
-	}
+	void getEventTargets(std::set<DeviceID>& targetIDs);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
@@ -148,7 +142,7 @@ private:
 	// DeviceMessageListenerForwarder listenerForwarder;
 	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
 
-	void addEventTarget(const STI::Device::DeviceID& id);
+
 
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>

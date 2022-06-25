@@ -6,6 +6,7 @@
 
 namespace STI
 {
+/// Utils
 namespace Utils
 {
 

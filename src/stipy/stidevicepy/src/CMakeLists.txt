@@ -276,9 +276,15 @@ if(DEFINED SKBUILD)
     ARCHIVE DESTINATION src/stipy/bin
   )
 else()
-  install(TARGETS stipybase stidevicepy sticommonpy
+  install(TARGETS stipybase stidevicepy
     #DESTINATION ${STI_BASE_DIR}/lib
     LIBRARY DESTINATION ${STIDEVICEPY_INSTALL_DIR}
+    #LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
+    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+  install(TARGETS sticommonpy
+    #DESTINATION ${STI_BASE_DIR}/lib
+    ARCHIVE DESTINATION ${STIDEVICEPY_INSTALL_DIR}
     #LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )

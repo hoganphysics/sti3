@@ -1,5 +1,5 @@
 #! /bin/bash
 
-doxygen Doxyfile
+# doxygen Doxyfile
 
-sphinx-build -Dbreathe_projects.STI=doxygen/xml/ . sphinx
+sphinx-build -a -Dbreathe_projects.STI=build/doxygen/xml/ . build/sphinx

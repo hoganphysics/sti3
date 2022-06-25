@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'STI'
-copyright = '2021, Jason Hogan'
+copyright = '2022, Jason Hogan'
 author = 'Jason Hogan'
 
 # The full version, including alpha/beta/rc tags
@@ -32,7 +32,7 @@ release = '3.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.graphviz", "sphinx.ext.inheritance_diagram", "breathe" ]
+extensions = ["sphinx.ext.graphviz", "sphinx.ext.inheritance_diagram", "breathe", 'sphinx.ext.autosectionlabel' ]
 
 breathe_projects = {
 "STI": "doxygen/xml/",
@@ -61,6 +61,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+numfig = True
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

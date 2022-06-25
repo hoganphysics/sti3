@@ -22,6 +22,6 @@ Indices and tables
 Docs
 ====
 
-.. doxygenstruct:: Test
+.. doxygenclass:: Test
    :members:
 

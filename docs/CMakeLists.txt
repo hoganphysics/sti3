@@ -1,11 +1,12 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.20)
 
-project ("Test")
+# project ("stidocs")
+project(stidocs VERSION 3.0.0 DESCRIPTION "STI library docs")
 
 # Add the cmake folder so the FindSphinx module is found
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
-
-add_subdirectory ("test")
+set(STI_DIR "${PROJECT_SOURCE_DIR}/..")
+#add_subdirectory ("test")
 
 
 
@@ -14,16 +15,17 @@ find_package(Doxygen REQUIRED)
 find_package(Sphinx REQUIRED)
 
 # Find all the public headers
-get_target_property(TEST_PUBLIC_HEADER_DIR Test INTERFACE_INCLUDE_DIRECTORIES)
-file(GLOB_RECURSE TEST_PUBLIC_HEADERS ${TEST_PUBLIC_HEADER_DIR}/*.h)
+# get_target_property(TEST_PUBLIC_HEADER_DIR Test INTERFACE_INCLUDE_DIRECTORIES)
+set(STI_HEADER_DIR "${PROJECT_SOURCE_DIR}/../include")
+file(GLOB_RECURSE TEST_PUBLIC_HEADERS ${STI_HEADER_DIR}/sti/device/*.h)
 
-set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/test)
+set(DOXYGEN_INPUT_DIR ${STI_DIR}/include)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-
+set(DOXYGEN_QUIET YES)
 
 
 
@@ -52,17 +54,18 @@ add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
 set(DOXYGEN_INDEX_FILE ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html)
 
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   DEPENDS ${CAT_CUTIFIER_PUBLIC_HEADERS}
+                   DEPENDS ${TEST_PUBLIC_HEADERS}
                    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT} #Doxyfile
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                   MAIN_DEPENDENCY Doxyfile
+                #    MAIN_DEPENDENCY Doxyfile
+				   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
                    COMMENT "Generating docs")
 
                    
 
 message("TEST_PUBLIC_HEADERS: ")
 message(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   DEPENDS ${TEST_PUBLIC_HEADERS}asdfasdf
+                   DEPENDS ${TEST_PUBLIC_HEADERS}
                    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
@@ -86,7 +89,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 	COMMAND 
 		${SPHINX_EXECUTABLE} -b html
 		# Tell Breathe where to find the Doxygen output
-		-Dbreathe_projects.Test=${DOXYGEN_OUTPUT_DIR}/xml
+		-Dbreathe_projects.STI=${DOXYGEN_OUTPUT_DIR}/xml
 		${SPHINX_SOURCE} ${SPHINX_BUILD}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 	DEPENDS 

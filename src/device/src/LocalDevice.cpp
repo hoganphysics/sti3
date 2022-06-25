@@ -178,16 +178,32 @@ void LocalDevice::disable()
 	}
 }
 
-
-void LocalDevice::addEventTarget(const STI::Device::DeviceID& id)
+void LocalDevice::addEventTarget(const DeviceID& id)
 {
+	addPartner(id);	//an event target must be a partner
 	eventTargets.insert(id);
+}
+
+void LocalDevice::getEventTargets(std::set<DeviceID>& targetIDs)
+{
+	targetIDs = eventTargets;
 }
 
 bool LocalDevice::isEventTarget(const DeviceID& id)
 {
 	auto it = eventTargets.find(id);
 	return (it != eventTargets.end());
+}
+
+void LocalDevice::addPartner(const DeviceID& id)
+{
+	partnerDevices.insert(id);
+}
+
+bool LocalDevice::isPartnerDevice(const DeviceID& id)
+{
+	auto it = partnerDevices.find(id);
+	return it != partnerDevices.end();
 }
 
 //true if the LocalDevice is the target server of ID (i.e., this device is acting as a server)
@@ -477,13 +493,6 @@ bool LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& man
 {
 	manager = localPersistenceManager;
 	return manager != 0;
-}
-
-bool LocalDevice::isPartnerDevice(const DeviceID& id)
-{
-	auto it = partnerDevices.find(id);
-
-	return it != partnerDevices.end();
 }
 
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 

@@ -24,7 +24,7 @@ public class TestJDevice extends JLocalDevice {
         addChannel(1, ChannelType.Output, MixedValueType.Empty, MixedValueType.Double, "testch"); //.addMetaData(key, value);
 
         JEventEngineScheduler engineScheduler = getEngineScheduler();
-        engineScheduler.getId();
+        //engineScheduler.getId();
         
 
         JDeviceMessageReceiver messageReceiver = this.getMessageReceiver();
