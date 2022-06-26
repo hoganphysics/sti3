@@ -108,6 +108,15 @@ set_target_properties(stipy PROPERTIES
 #    PUBLIC_HEADER api/mylib.h
 )
 
+#https://github.com/pybind/cmake_example/issues/11
+if(UNIX AND NOT APPLE)
+    set_target_properties(stipy PROPERTIES INSTALL_RPATH "$ORIGIN")
+    message("Setting RPATH in UNIX")
+elseif(APPLE)
+    set_target_properties(stipy PROPERTIES INSTALL_RPATH "@loader_path")
+endif()
+
+
 target_include_directories(stipy PRIVATE 
     ${WORKING_DIRECTORY}
     #${WORKING_DIRECTORY}/stidevicepy/src

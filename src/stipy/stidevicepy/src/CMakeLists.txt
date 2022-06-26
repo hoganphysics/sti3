@@ -255,6 +255,18 @@ target_include_directories(stipybase PRIVATE
 )
 
 
+# SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:$ORIGIN/../xxx")
+
+#https://github.com/pybind/cmake_example/issues/11
+if(UNIX AND NOT APPLE)
+    # set_target_properties(stipybase PROPERTIES INSTALL_RPATH "$ORIGIN/relative/path/to/supporting/library_dir")
+    set_target_properties(stipybase PROPERTIES INSTALL_RPATH "$ORIGIN")
+    set_target_properties(stidevicepy PROPERTIES INSTALL_RPATH "$ORIGIN")
+    message("Setting RPATH in UNIX")
+elseif(APPLE)
+    set_target_properties(stipybase PROPERTIES INSTALL_RPATH "@loader_path")
+    set_target_properties(stidevicepy PROPERTIES INSTALL_RPATH "@loader_path")
+endif()
 
 
 if(MSVC)

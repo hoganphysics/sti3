@@ -144,10 +144,10 @@ target_link_libraries(stinetwork
     omnithread${OMNI_EXT}
     omniORB4${OMNI_EXT}
     omniDynamic4${OMNI_EXT}
-    omniCodeSets4${OMNI_EXT}
+    #omniCodeSets4${OMNI_EXT}
     # omnisslTP4   #if OpenSSL is available
-    COS4${OMNI_EXT}
-    COSDynamic4${OMNI_EXT}
+    #COS4${OMNI_EXT}
+    #COSDynamic4${OMNI_EXT}
     # stidevice${STI_LIB_POSTFIX}
     # Ws2_32
 )

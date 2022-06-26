@@ -4,11 +4,11 @@
 Device Network
 ==============
 
-The STI network is made up of a set of independent devices connected to together to
+The STI network is made up of a set of independent devices connected together to
 form a `directed graph <https://en.wikipedia.org/wiki/Directed_graph>`_.
 Typically, each device is an independent driver program responsible for controlling 
 a specific piece of hardware.
-Some device nodes in the graph act as a **server** for a subset of the other devices
+Some device nodes in the graph can act as a **server** for a subset of the other devices
 in the network, resulting in a hierarchical strucutre.  The distinction between a 
 `server` and a `device` is a semantic one; the STI library is symmetric, so any 
 device can play the role of a server.  Consider the following simple device network:
@@ -42,7 +42,8 @@ string:
   Any legal string is allowed. In particular, the <address> field does *not* have to resolve
   to an official IP address as it is not used for establishing any TCP/IP connection.
 * The <module> is a number that futher distinguishes the address. It may loosely be
-  thought of as a port number on a computer.
+  thought of as a port number on a computer, but once again it is not used to make 
+  a TCP/IP connection.
 * <name> is the name of the device. Any legal string is allowed.
 
 .. Note::
@@ -50,7 +51,7 @@ string:
     must avoid special characters including ( \\ / . _ ~ ! @ # $ % ^ & \* ? < > ).
 
 In the example above, the server is located at address `addr1`, module `0`, and 
-has device name `dev1`. We see that two of the devices (`dev2` and `dev3`) share 
+has device name `dev1`. Two of the devices (`dev2` and `dev3`) share 
 the same address `addr2`.  This indicates that the two devices are
 located on the same computer. The address field helps document where devices are 
 running, since the STI network topology is distinct from the physical network.
@@ -134,14 +135,14 @@ Devices can optionally generate timing events on their partner devices by declar
 partner an **event target**. This is done by specifying the partner's DeviceID using 
 ``addEventTarget(DeviceID)``. Unlike the case 
 of a target server, which is exclusive, a device can be a partner event target of multiple
-other devices. This allows a device to receive events from multiple sources, 
-allowing it to act as a shared resource. This can be useful when different pieces 
+other devices. This way a device can receive events from multiple sources, 
+allowing it to act as a shared resource. This may be useful in situations when different pieces 
 of hardware are tightly coupled, but should still logically be controlled by
 distinct device drivers.
 
 For example, consider a multi-channel digital output device that is used to 
 provide TTL triggers for a variety of other hardware with its different channels. 
-The devices drivers of the other pieces of hardware may each declare the 
+The device drivers of the other pieces of hardware may each declare the 
 digital device as an event target, allowing them to request trigger events from the 
 digital device as desired. This way the digital device driver remains self-contained, 
 but it is still available as a resource to the other hardware device drivers. 
@@ -178,19 +179,20 @@ The device connections described above define the logical structure of the STI n
 However, this is an abstract network that (typically) sits on top of a physical LAN,
 with communication between computer nodes over TCP/IP.
 In STI, the actual TCP/IP links between nodes are managed by **device hubs**. 
-Each STI device executable requires a device hub that one or more devices can then 
+Each STI device executable requires a device hub that one or more devices can 
 be attached to.  The hubs then connect to each other over TCP/IP and 
 automatically distribute the device references as needed to establish the device network.
 
 Hubs are each identified on the network with a unique HubID. A stringified HubID has a 
-similar form as a DeviceID:
+similar format as a DeviceID:
 
 .. code-block:: py
 
     <address>/<module>/<hub name>
 
-An example hub network shown in :numref:`hub-network-example` below.  The hubs (green circles) 
-run inside the same executable as the devices that are connected to them, and so they 
+An example hub network is shown in :numref:`hub-network-example` below, corresponding to the 
+device network in :numref:`simple-network-example`.  The hubs (green circles) 
+run inside the same executable as the devices that are attached to them, and so they 
 share the same computer address. Hubs on different computers connect to each other over the
 LAN. By default, a hub will adopt the name, address, and module of the first device that is attached
 to it, although this behavior can be overridden. 
@@ -203,14 +205,16 @@ In :numref:`hub-network-example`, the hubs have been given different names for c
 
     The associated hub network for the device network in 
     :numref:`simple-network-example`. One or more devices (gray) join the network 
-    by connecting to a hub (green). The hubs then connect together over TCP/IP 
+    by attaching (dashed lines) to a hub (green). The hubs then connect together over TCP/IP 
     (black edges) to establish the network communication and facilitate the distribution
     of device references. The device network connectivity of :numref:`simple-network-example`
     is shown in light gray for reference.
 
 
 As a more complicated example, the hub network associated with the device network in 
-:numref:`hierarchical-network-example` is shown below.
+:numref:`hierarchical-network-example` is shown below.  Here there are four hubs 
+(running in different executables, typically on different computers), corresponding 
+to the four computer addresses in this example network (`addr1`, `addr2`, `addr3`, `addr4`).
 
 .. figure:: ../figs/stihubnet2.png
     :scale: 100 %
@@ -228,8 +232,8 @@ with different target servers are connected to the same hub. In :numref:`complex
 `hub4` connects to `hub3` because `dev5` and `dev6` declared `dev4` as their target 
 server, and `dev4` is attached to `hub3`.   However, this connection strategy 
 is not required to establish the device network.  As long a hub is connected to at least 
-one hub (anywhere on the network) all its device references will be correctly exchanged via 
-the hub network to contribute to the device network.
+one other hub (anywhere on the network) all its device references will be correctly exchanged via 
+the hub network and will contribute to the device network.
 
 .. note:: 
     Care must be taken when overridding the default HubID. Other hubs by default assume the 
