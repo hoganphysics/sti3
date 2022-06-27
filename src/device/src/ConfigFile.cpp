@@ -1,11 +1,11 @@
 
-#include <sti/device/ConfigFile.h>
+#include <sti/utils/ConfigFile.h>
 #include <sti/utils/utils.h>
 
 #include <fstream>
 #include <vector>
 
-using STI::Device::ConfigFile;
+using STI::Utils::ConfigFile;
 
 
 ConfigFile::ConfigFile()

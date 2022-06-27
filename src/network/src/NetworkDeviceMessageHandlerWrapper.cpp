@@ -1,17 +1,21 @@
 
 #include "NetworkDeviceMessageHandlerWrapper.h"
 #include "LocalDeviceMessageHandler.h"
+#include "ORBManager.h"
 
 #include <memory>
+
 
 using STI::Network::NetworkDeviceMessageHandlerWrapper;
 using STI::Device::LocalDeviceMessageHandler;
 using STI::Device::DeviceMessageType;
 using STI::Device::DeviceMessage;
 
+
 NetworkDeviceMessageHandlerWrapper::NetworkDeviceMessageHandlerWrapper(const std::shared_ptr<LocalDeviceMessageHandler>& localHandler)
 	: localMessageHandler(localHandler), messageHandlerServant(localHandler)
 {
+	STI::Network::ORBManager::ORBManager::activateServant(messageHandlerServant);
 }
 
 NetworkDeviceMessageHandlerWrapper::~NetworkDeviceMessageHandlerWrapper()

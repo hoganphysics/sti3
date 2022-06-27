@@ -1,8 +1,8 @@
 
-#ifndef STI_DEVICE_CONFIGFILE_H
-#define STI_DEVICE_CONFIGFILE_H
+#ifndef STI_UTILS_CONFIGFILE_H
+#define STI_UTILS_CONFIGFILE_H
 
-#include <sti/device/Configuration.h>
+#include <sti/utils/Configuration.h>
 
 #include <map>
 #include <string>
@@ -13,7 +13,7 @@
 namespace STI
 {
 
-namespace Device
+namespace Utils
 {
 
 class ConfigFile : public Configuration
@@ -36,7 +36,7 @@ private:
 };
 
 
-} //Device
+} //Utils
 } //STI
 
 #endif

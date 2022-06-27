@@ -5,6 +5,7 @@
 #include <sti/network/HubTrace.h>
 #include "NetworkDeviceWrapper.h"
 #include "orbTypes.h"
+#include "ORBManager.h"
 
 #include <memory>
 
@@ -22,6 +23,8 @@ using STI::Network::NodeWalker;
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDeviceHub>& hub)
 	: localHub(hub), deviceHubServant(hub)
 {
+	STI::Network::ORBManager::ORBManager::activateServant(deviceHubServant);
+
 	//The LocalHub might have (local) nodes and hubs already attached that must be wrapped.
 	//For all hubs currently stored by localHub, replace with NetworkDeviceHubWrapper (this is recursive)
 

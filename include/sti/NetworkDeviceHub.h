@@ -5,6 +5,7 @@
 #include <sti/device/Device.h>
 #include <sti/network/DeviceHub.h>
 #include <sti/LocalDeviceHub.h>
+#include <sti/utils/Configuration.h>
 
 #include <memory>
 #include <set>
@@ -24,10 +25,14 @@ class ORBManager;
 class NetworkDeviceHub
 {
 public:
-
+	//NetworkDeviceHub("192.168.1.")
 	NetworkDeviceHub(const std::string& nameServiceAddress);
 	NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress);
-	NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
+	
+	NetworkDeviceHub(const STI::Utils::Configuration& config);
+	NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configuration& config);
+
+	// NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
 	~NetworkDeviceHub();
 	
 	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node);
@@ -35,7 +40,11 @@ public:
 
 	void getDeviceIDs(std::set<STI::Device::DeviceID>& ids) const;
 
+	void setTargetHubs(const std::vector<HubID>& hubIDs);
 	void setTargetHubs(const std::vector<std::string>& hubIDs);
+
+	void addTargetHub(const HubID& hubID);
+	void addTargetHub(const std::string& hubID);
 
 	//options
 	// void autoConnectToTargetServers(bool enabled) { _autoConnect = enabled; }
@@ -63,14 +72,16 @@ private:
 
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
 
+	void addTargetHub(const std::string& hubID, const std::string& namePrefix);
+
 	void connectToTargetHubs();
 	
 	bool registerHubContext();
 	bool unregisterHubContext();
 	void refreshHubContext();
 
-	std::string makeHubContextPath(const std::string& baseContext, const std::string& hubID);
-	std::string makeHubContext(const std::string& baseContext, const std::string& hubID);
+	std::string makeHubContextPath(const std::string& baseContext, const HubID& hubID);
+	std::string makeHubContext(const std::string& baseContext, const HubID& hubID);
 	
 	bool connectRemoteHub(const std::string& remoteHubContext);
 
@@ -79,11 +90,12 @@ private:
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;
 
-	std::set<std::string> targetHubs;	//std::set so they are unique (only one copy of each)
+	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
 
-	bool _autoConnect;
+	// bool _autoConnect;
 	std::string _nameServiceAddress;
 	bool _usingDefaultHubID;
+	bool useAutoTargetHubIDs;
 	
 	//makes sure default names are unique
 	static std::string nextHubName();
@@ -91,6 +103,7 @@ private:
 
 	std::string stiContext;
 	std::string hubObjectName;
+	std::string hubIDprefix;
 
 	std::string thisHubContext;
 	std::string hubContextPath;

@@ -47,8 +47,9 @@ void init_DeviceHub(py::module& m)
 
 
      py::class_<LocalDeviceHub, std::shared_ptr<LocalDeviceHub>>(m, "LocalDeviceHub")
-        .def(py::init<const std::string&, const std::string&, unsigned short>(), 
-                        py::arg("name"), py::arg("address"), py::arg("module") )
+        // .def(py::init<const std::string&, const std::string&, unsigned short>(), 
+        //                 py::arg("name"), py::arg("address"), py::arg("module") )
+        .def(py::init<const HubID&>(), py::arg("hubID") )
         .def("addDevice",
             [](LocalDeviceHub& self, const std::shared_ptr<STI::Python::DevicePy>& devicePy)->bool {
                 if (devicePy != 0) {
@@ -99,8 +100,8 @@ void init_DeviceHub(py::module& m)
     py::class_<NetworkDeviceHub, std::shared_ptr<NetworkDeviceHub>>(m, "NetworkDeviceHub")
         .def(py::init<const std::string&>(), py::arg("nameServiceAddress") )
         .def(py::init<const HubID&, const std::string&>(), py::arg("hubID"), py::arg("nameServiceAddress") )
-        .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
-                        py::arg("name"), py::arg("address"), py::arg("module"), py::arg("nameServiceAddress") )
+        // .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
+        //                 py::arg("name"), py::arg("address"), py::arg("module"), py::arg("nameServiceAddress") )
         .def("connect", &NetworkDeviceHub::connect)
         .def("addDevice", 
             [](NetworkDeviceHub& self, const std::shared_ptr<STI::Python::DevicePy>& devicepy) {

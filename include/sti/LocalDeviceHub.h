@@ -17,16 +17,22 @@ namespace Network
 class LocalDeviceHub : public STI::Network::LocalHub<STI::Device::DeviceID, STI::Device::Device>
 {
 public:
-	LocalDeviceHub(const std::string& name, const std::string& address = "localhost", unsigned short module = 0)
+	
+	LocalDeviceHub(const STI::Network::HubID& hubID)
+	: STI::Network::LocalHub<STI::Device::DeviceID, STI::Device::Device>(hubID)
 	{
-		STI::Network::HubID id;
-
-		id.name = name;
-		id.address = address;
-		id.module = module;
-
-		setID(id);
+		// setID(hubID)
 	}
+	// LocalDeviceHub(const std::string& name, const std::string& address = "localhost", unsigned short module = 0)
+	// {
+	// 	STI::Network::HubID id;
+
+	// 	id.name = name;
+	// 	id.address = address;
+	// 	id.module = module;
+
+	// 	setID(id);
+	// }
 
 	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
 	{

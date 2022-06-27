@@ -150,11 +150,21 @@ ORBManager::ORBManager(const std::string& nameServiceIP, const std::string& args
 		orb = CORBA::ORB_init(argc, argv, "", options);
 
 		CORBA::Object_var poa_obj = orb->resolve_initial_references("RootPOA");
-		poa = PortableServer::POA::_narrow(poa_obj);
+		root_poa = PortableServer::POA::_narrow(poa_obj);
+		//poa = PortableServer::POA::_narrow(poa_obj);
 
 		poa_manager = poa->the_POAManager();
-
 		poa_manager->activate();
+
+
+		//Create POA with a Bidirectional policy
+		CORBA::PolicyList policies;
+		policies.length(1);
+		CORBA::Any a;
+		a <<= BiDirPolicy::BOTH;
+		policies[0] = orb->create_policy(BiDirPolicy::BIDIRECTIONAL_POLICY_TYPE, a);
+
+		poa = root_poa->create_POA("bidir", poa_manager, policies);
 
 	}
 	catch (CORBA::SystemException& ex) {
@@ -182,6 +192,16 @@ ORBManager::~ORBManager()
 {
 	shutdown();
 }
+
+void ORBManager::activateServant(PortableServer::ServantBase& servant)
+{
+	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
+
+	if (orbManager != 0 && orbManager->running()) {
+		orbManager->poa->activate_object(&servant);	
+	}
+}
+
 
 void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 {

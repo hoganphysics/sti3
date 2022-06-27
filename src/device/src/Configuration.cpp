@@ -1,7 +1,7 @@
 
-#include <sti/device/Configuration.h>
+#include <sti/utils/Configuration.h>
 
-using STI::Device::Configuration;
+using STI::Utils::Configuration;
 
 
 
@@ -19,10 +19,16 @@ std::vector<std::string> Configuration::getSectionNames() const
 	return sections;
 }
 
-void Configuration::setStringValue(const std::string& section, const std::string& name, const std::string& value)
+Configuration& Configuration::setParameter(const std::string& section, const std::string& name, const std::string& value)
+{
+	return setStringValue(section, name, value);
+}
+
+Configuration& Configuration::setStringValue(const std::string& section, const std::string& name, const std::string& value)
 {
 	configData[section].section = section;
 	configData[section].parameters[STI::Utils::trim(name)] = STI::Utils::trim(value);
+	return (*this);
 }
 
 
@@ -44,7 +50,7 @@ bool Configuration::getStringValue(const std::string& section, const std::string
 	return true;
 }
 
-void Configuration::append(const Configuration& config)
+Configuration& Configuration::append(const Configuration& config)
 {
     auto newSections = config.getSectionNames();
 
@@ -61,4 +67,11 @@ void Configuration::append(const Configuration& config)
             configData[section] = config.configData.at(section);
         }
     }
+	return (*this);
+}
+
+Configuration& Configuration::operator+(const Configuration& config)
+{
+	append(config);
+	return (*this);
 }

@@ -11,6 +11,7 @@ using ::STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
 
+
 TTriggerCallback_i::TTriggerCallback_i(const std::shared_ptr<STI::Engine::TriggerCallback>& triggerCB)
 : _triggerCB(triggerCB)
 {

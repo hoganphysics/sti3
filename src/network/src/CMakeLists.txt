@@ -79,7 +79,12 @@ add_library(stinetwork SHARED
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
+    NetworkDeviceWrapper.cpp
     NetworkDeviceMessageHandlerWrapper.cpp
+    NetworkEventEngine.cpp
+    NetworkFileHolder.cpp
+    NetworkShotWrapper.cpp
+    NetworkResultsCollector.cpp
     #NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
     orbTypes.cpp

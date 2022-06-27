@@ -1,6 +1,6 @@
 
-#ifndef STI_DEVICE_CONFIGURATION_H
-#define STI_DEVICE_CONFIGURATION_H
+#ifndef STI_UTILS_CONFIGURATION_H
+#define STI_UTILS_CONFIGURATION_H
 
 #include <sti/utils/utils.h>
 
@@ -12,7 +12,7 @@
 namespace STI
 {
 
-namespace Device
+namespace Utils
 {
 /*
 {
@@ -76,6 +76,7 @@ private:
 //     value = svalue;
 // }
 
+class Configuration;
 
 class Configuration
 {
@@ -124,22 +125,20 @@ public:
     }
 
     template <class T>
-	void setParameter(const std::string& name, const T& value)
+	Configuration& setParameter(const std::string& name, const T& value)
     {
-        setParameter("", name, value);
+        return setParameter("", name, value);
     }
     template <class T>
-	void setParameter(const std::string& section, const std::string& name, const T& value)
+	Configuration& setParameter(const std::string& section, const std::string& name, const T& value)
     {
-        setStringValue(section, name, STI::Utils::valueToString(value));
+        return setStringValue(section, name, STI::Utils::valueToString(value));
     }
 
-	void setParameter(const std::string& section, const std::string& name, const std::string& value)
-    {
-        setStringValue(section, name, value);
-    }
+	Configuration& setParameter(const std::string& section, const std::string& name, const std::string& value);
+    Configuration& append(const Configuration& config);
 
-    void append(const Configuration& config);
+    Configuration& operator+(const Configuration& config);
 
 private:
 
@@ -154,7 +153,7 @@ private:
         }
 	};
 
-	void setStringValue(const std::string& section, const std::string& name, const std::string& value);
+	Configuration& setStringValue(const std::string& section, const std::string& name, const std::string& value);
 	bool getStringValue(const std::string& section, const std::string& name, std::string& value) const;
 
 	std::map<std::string, ConfigSection> configData;
@@ -162,7 +161,7 @@ private:
 };
 
 
-} //Device
+} //Utils
 } //STI
 
 #endif

@@ -28,7 +28,7 @@
 #include "ShotRepository.h"
 
 #include <sti/engine/Measurement.h>
-#include <sti/device/Configuration.h>
+#include <sti/utils/Configuration.h>
 
 #include <memory>
 #include <iostream>
@@ -54,7 +54,7 @@ using STI::Engine::LocalEventEngineFactory;
 //using STI::Engine::SerializedRepository;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
-using STI::Device::Configuration;
+using STI::Utils::Configuration;
 
 
 LocalDevice::LocalDevice(const Configuration& config, const std::string& section)

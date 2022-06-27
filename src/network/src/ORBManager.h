@@ -51,6 +51,7 @@ public:
 	bool unbindObjectReference(const std::string& objectFullPath);	
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
 
+	static void activateServant(PortableServer::ServantBase& servant);
 	static void deactivateServant(PortableServer::Servant p_servant);
 
 private:
@@ -65,6 +66,7 @@ private:
 
 	CORBA::ORB_var orb;
 	PortableServer::POAManager_var poa_manager;
+	PortableServer::POA_var root_poa;
 	PortableServer::POA_var poa;
 
 	bool _running;
