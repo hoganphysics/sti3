@@ -83,9 +83,15 @@ class Configuration
 public:
 
 	Configuration();
+    Configuration(const std::map<std::string, std::string>& parameters);   //a single, unnamed section
+    Configuration(const std::map<std::string, std::map<std::string, std::string>>& config); //full configuration data
 	virtual ~Configuration() {}
 
 	std::vector<std::string> getSectionNames() const;
+    std::map<std::string, std::string> getParameters(const std::string& section) const;
+
+    bool includes(const std::string& name) const;
+    bool includes(const std::string& section, const std::string& name) const;
 
 	template <class T>
 	bool getParameter(const std::string& name, T& value) const
@@ -125,20 +131,23 @@ public:
     }
 
     template <class T>
-	Configuration& setParameter(const std::string& name, const T& value)
+	Configuration& set(const std::string& name, const T& value)
     {
-        return setParameter("", name, value);
+        return set("", name, value);
     }
     template <class T>
-	Configuration& setParameter(const std::string& section, const std::string& name, const T& value)
+	Configuration& set(const std::string& section, const std::string& name, const T& value)
     {
         return setStringValue(section, name, STI::Utils::valueToString(value));
     }
 
-	Configuration& setParameter(const std::string& section, const std::string& name, const std::string& value);
+	Configuration& set(const std::string& section, const std::string& name, const std::string& value);
+
     Configuration& append(const Configuration& config);
+    Configuration& append(const std::map<std::string, std::map<std::string, std::string>>& config);
 
     Configuration& operator+(const Configuration& config);
+    Configuration& operator+(const std::map<std::string, std::map<std::string, std::string>>& config);
 
 private:
 

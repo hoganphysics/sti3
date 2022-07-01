@@ -21,30 +21,46 @@ using STI::Network::DeviceHub;
 
 unsigned NetworkDeviceHub::hubNumber = 0;
 
-NetworkDeviceHub::NetworkDeviceHub(const STI::Utils::Configuration& config)
-: NetworkDeviceHub(
-	HubID(NetworkDeviceHub::nextHubName(), "localhost", 0), config)
-{
-	_usingDefaultHubID = true;
-}
 
 NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress)
 : NetworkDeviceHub(
 	HubID(NetworkDeviceHub::nextHubName(), "localhost", 0),
-	STI::Utils::Configuration().setParameter("NetworkHub", "NameService", nameServiceAddress))
+	STI::Utils::Configuration().set("NetworkHub", "NameService", nameServiceAddress))
 {
 	_usingDefaultHubID = true;
 }
 
-// NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress)
-// : NetworkDeviceHub(hubID.name, hubID.address, hubID.module, nameServiceAddress)
-// {
-// }
+NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress, const STI::Utils::Configuration& config)
+: NetworkDeviceHub(
+	STI::Utils::Configuration().append(config)
+		.set("NetworkHub", "NameService", nameServiceAddress)
+		)
+{
+}
 
-// NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress)
+NetworkDeviceHub::NetworkDeviceHub(const STI::Utils::Configuration& config)
+: NetworkDeviceHub(
+	HubID(
+		config.get<std::string>("NetworkHub", "HubName", NetworkDeviceHub::nextHubName()),
+		config.get<std::string>("NetworkHub", "HubAddress", "localhost"),
+		config.get<unsigned short>("NetworkHub", "HubModule", 0)
+		),
+	config)
+{
+	_usingDefaultHubID = !(
+			config.includes("NetworkHub", "HubName") 
+			&& config.includes("NetworkHub", "HubAddress") 
+			&& config.includes("NetworkHub", "HubModule")
+		);
+}
 
 NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress)
-: NetworkDeviceHub(hubID, STI::Utils::Configuration().setParameter("NetworkHub", "NameService", nameServiceAddress))
+: NetworkDeviceHub(hubID, nameServiceAddress, STI::Utils::Configuration())
+{
+}
+
+NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress, const STI::Utils::Configuration& config)
+: NetworkDeviceHub(hubID, STI::Utils::Configuration().append(config).set("NetworkHub", "NameService", nameServiceAddress))
 {
 }
 
@@ -52,12 +68,10 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 {
 	// _autoConnect = true;
 	
-	_nameServiceAddress = config.get<std::string>("NetworkHub", "NameService", "localhost:2809");
+	_nameServiceAddress = config.get<std::string>("NetworkHub", "NameService", "localhost:2809" /*default*/ );
 	_usingDefaultHubID = false;
 	useAutoTargetHubIDs = true;		//attempt to auto connect to hubs with HubIDs derived from attached devices targetServerID
 
-	localHub = std::make_shared<LocalDeviceHub>(hubID);
-	deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
 	
 	stiContext = "STI";
 	hubObjectName = "TDeviceHub.Object";
@@ -65,6 +79,19 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 
 	persistence.bindToRootContext = true;
 	persistence.bindToTargetContexts = true;
+
+
+	STI::Utils::Configuration omniConfig(config.getParameters("omniORB"));
+	omniConfig.set("InitRef", "NameService=corbaname::" + _nameServiceAddress);
+
+	// std::string nameservice = "NameService=corbaname::" + _nameServiceAddress;
+
+	orbmanager = STI::Network::ORBManager::getInstance(omniConfig, "");
+
+	// STI::Network::ORBManager::setOptions(omniConfig);
+
+	localHub = std::make_shared<LocalDeviceHub>(hubID);
+	deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
 
 	refreshHubContext();
 }
@@ -92,11 +119,15 @@ std::string NetworkDeviceHub::printNetwork(const std::string& baseContext)
 }
 
 //static
-std::string NetworkDeviceHub::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
+std::string NetworkDeviceHub::printNetwork(const std::string& nameServiceAddress, const std::string& baseContext)
 {
-	auto orbmanager = STI::Network::ORBManager::getInstance(nameServerAddress, "");
+	// auto orbmanager = STI::Network::ORBManager::getInstance(nameServiceAddress, "");
 
-	return orbmanager->printNameTree(baseContext);
+	// if (orbmanager != 0) {
+	// 	return orbmanager->printNameTree(baseContext);
+	// }
+	
+	return "";
 }
 
 NetworkDeviceHub::PersistenceOptions& NetworkDeviceHub::getPersistenceOptions()
@@ -292,7 +323,7 @@ void NetworkDeviceHub::run(bool block)
 		return;
 	}
 	else {
-		orbmanager = ORBManager::getInstance(_nameServiceAddress, "");
+		orbmanager = ORBManager::getInstance();
 	}
 
 	if (orbmanager == 0) {

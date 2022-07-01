@@ -85,7 +85,7 @@ bool ConfigFile::assignStringValue(const std::string& section, std::string line)
 	if (valueStart == std::string::npos)
 		valueStart = equalsLoc + 1;
 
-	setParameter(section, line.substr(nameStart, nameEnd + 1), line.substr(valueStart));
+	set(section, line.substr(nameStart, nameEnd + 1), line.substr(valueStart));
 	return true;
 }
 

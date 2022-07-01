@@ -27,9 +27,11 @@ class NetworkDeviceHub
 public:
 	//NetworkDeviceHub("192.168.1.")
 	NetworkDeviceHub(const std::string& nameServiceAddress);
-	NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress);
-	
+	NetworkDeviceHub(const std::string& nameServiceAddress, const STI::Utils::Configuration& config);	
 	NetworkDeviceHub(const STI::Utils::Configuration& config);
+
+	NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress);
+	NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress, const STI::Utils::Configuration& config);
 	NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configuration& config);
 
 	// NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress);
@@ -58,7 +60,7 @@ public:
 	std::string printNetwork();
 	std::string printNetwork(const std::string& baseContext);
 	
-	static std::string printNetwork(const std::string& nameServerAddress, const std::string& baseContext);
+	static std::string printNetwork(const std::string& nameServiceAddress, const std::string& baseContext);
 
 	struct PersistenceOptions
 	{

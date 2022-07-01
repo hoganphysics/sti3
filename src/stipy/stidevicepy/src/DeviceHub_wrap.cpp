@@ -99,7 +99,14 @@ void init_DeviceHub(py::module& m)
 
     py::class_<NetworkDeviceHub, std::shared_ptr<NetworkDeviceHub>>(m, "NetworkDeviceHub")
         .def(py::init<const std::string&>(), py::arg("nameServiceAddress") )
+        .def(py::init<const std::string&, const STI::Utils::Configuration&>(), py::arg("nameServiceAddress"), py::arg("config") ) 
+        .def(py::init<const STI::Utils::Configuration&>(), py::arg("config") ) 
+
         .def(py::init<const HubID&, const std::string&>(), py::arg("hubID"), py::arg("nameServiceAddress") )
+        .def(py::init<const HubID&, const std::string&, const STI::Utils::Configuration&>(), 
+                    py::arg("hubID"), py::arg("nameServiceAddress"), py::arg("config") )
+        .def(py::init<const HubID&, const STI::Utils::Configuration&>(), py::arg("hubID"), py::arg("config") )
+
         // .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
         //                 py::arg("name"), py::arg("address"), py::arg("module"), py::arg("nameServiceAddress") )
         .def("connect", &NetworkDeviceHub::connect)

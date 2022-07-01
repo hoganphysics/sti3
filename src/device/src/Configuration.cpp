@@ -9,6 +9,20 @@ Configuration::Configuration()
 {
 }
 
+Configuration::Configuration(const std::map<std::string, std::string>& parameters)
+{
+	configData[""].section = "";
+	configData[""].parameters = parameters;
+}
+
+Configuration::Configuration(const std::map<std::string, std::map<std::string, std::string>>& config)
+{
+	for (auto& sec : config) {
+		configData[sec.first].section = sec.first;
+		configData[sec.first].parameters = sec.second;
+	}
+}
+
 std::vector<std::string> Configuration::getSectionNames() const
 {
 	std::vector<std::string> sections;
@@ -19,7 +33,30 @@ std::vector<std::string> Configuration::getSectionNames() const
 	return sections;
 }
 
-Configuration& Configuration::setParameter(const std::string& section, const std::string& name, const std::string& value)
+std::map<std::string, std::string> Configuration::getParameters(const std::string& section) const
+{
+	auto sectionData = configData.find(section);
+
+	if (sectionData != configData.end()) {
+		return sectionData->second.parameters;
+	}
+
+	std::map<std::string, std::string> parameters;
+	return parameters;
+}
+
+bool Configuration::includes(const std::string& name) const
+{
+	return includes("", name);
+}
+
+bool Configuration::includes(const std::string& section, const std::string& name) const
+{
+	std::string value;
+	return getStringValue(section, name, value);
+}
+
+Configuration& Configuration::set(const std::string& section, const std::string& name, const std::string& value)
 {
 	return setStringValue(section, name, value);
 }
@@ -70,8 +107,18 @@ Configuration& Configuration::append(const Configuration& config)
 	return (*this);
 }
 
+Configuration& Configuration::append(const std::map<std::string, std::map<std::string, std::string>>& config)
+{
+	Configuration newConfig(config);
+	return append(newConfig);
+}
+
 Configuration& Configuration::operator+(const Configuration& config)
 {
-	append(config);
-	return (*this);
+	return append(config);
+}
+
+Configuration& Configuration::operator+(const std::map<std::string, std::map<std::string, std::string>>& config)
+{
+	return append(config);
 }
