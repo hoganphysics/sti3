@@ -1,8 +1,9 @@
 
 #include <sti/utils/Configuration.h>
 
-using STI::Utils::Configuration;
+#include <sstream>
 
+using STI::Utils::Configuration;
 
 
 Configuration::Configuration()
@@ -85,6 +86,88 @@ bool Configuration::getStringValue(const std::string& section, const std::string
 
 	value = param->second;
 	return true;
+}
+
+bool Configuration::isList(const std::string& key) const
+{
+	return isList("", key);
+}
+
+bool Configuration::isList(const std::string& section, const std::string& key) const
+{
+	std::string value;
+
+	if (getStringValue(section, key, value)) {
+		return (value.front() == '[' && value.back() == ']');
+	}
+	return false;
+}
+
+std::vector<std::string> Configuration::getList(const std::string& key) const
+{
+	return getList("", key);
+}
+
+std::vector<std::string> Configuration::getList(const std::string& section, const std::string& key) const
+{
+	std::vector<std::string> listValue;
+	std::string value;
+
+	if (!getStringValue(section, key, value)) {		//key not found
+		return listValue;
+	}
+
+	if (!isList(section, key)) {	//key found, but not a list
+		listValue.push_back(value);
+		return listValue;
+	}
+
+	//is a list; parse value
+
+	std::size_t listStart, listEnd, delimiterPos;
+	std::string nextEntry;
+
+	listStart = value.find_first_of("[");
+	listEnd = value.find_last_of("]");
+
+	value = value.substr(listStart + 1, listEnd - listStart - 1);
+
+	do {
+		delimiterPos = value.find_first_of(",");
+		listValue.push_back( STI::Utils::trim( value.substr(0, delimiterPos) ) );	//trim whitespace and add next value
+		value = value.substr(
+					((delimiterPos == std::string::npos) ? 0 : delimiterPos + 1),
+					std::string::npos);
+	} 
+	while (delimiterPos != std::string::npos);
+
+	return listValue;
+}
+
+Configuration& Configuration::addToList(const std::string& section, const std::string& name, const std::string& value)
+{
+	auto values = getList(section, name);
+	values.push_back(value);
+
+	std::stringstream s;
+
+	//List format: [v1, v2, v3, ...]
+	s << "[";
+
+	bool isFirst = true;
+	for (auto v : values) {
+		if (!isFirst) {
+			s << ", ";
+		}
+		s << v;
+		isFirst = false;
+	}
+
+	s << "]";
+	
+	set(section, name, s.str());	//overwrite old value
+
+	return (*this);
 }
 
 Configuration& Configuration::append(const Configuration& config)

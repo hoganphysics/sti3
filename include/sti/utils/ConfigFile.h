@@ -33,6 +33,7 @@ private:
 
 	std::string filename_;
 	bool parsed;
+	std::string lastParsedName;
 };
 
 
