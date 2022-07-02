@@ -91,7 +91,10 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	// STI::Network::ORBManager::setOptions(omniConfig);
 
 	localHub = std::make_shared<LocalDeviceHub>(hubID);
-	deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
+	
+	if (orbmanager->initialized()) {
+		deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
+	}
 
 	refreshHubContext();
 }
@@ -214,7 +217,7 @@ bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_pt
 
 	bool success = false;
 
-	if (localHub != 0) {
+	if (localHub != 0 && deviceHubWrapper != 0) {
 		success = deviceHubWrapper->addNode(id, node);
 	}
 
@@ -313,7 +316,7 @@ void NetworkDeviceHub::shutdown()
 	}
 
 	if (orbmanager != 0 && orbmanager->running()) {
-		orbmanager->shutdown();
+		orbmanager->shutdown();		// fixes slow shutdown in windows
 	}
 }
 
@@ -322,8 +325,11 @@ void NetworkDeviceHub::run(bool block)
 	if (orbmanager != 0 && orbmanager->running()) {
 		return;
 	}
-	else {
+	else if (orbmanager != 0 && orbmanager->initialized()) {
 		orbmanager = ORBManager::getInstance();
+	}
+	else {
+		return;
 	}
 
 	if (orbmanager == 0) {
@@ -350,7 +356,7 @@ void NetworkDeviceHub::run(bool block)
 	//Start ORB (network servants go live)
 	orbmanager->run();	//doesn't block
 
-	if (block) {
+	if (block && orbmanager->running()) {
 		orbmanager->block();
 	}
 }

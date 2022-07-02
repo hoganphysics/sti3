@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
 	auto device = std::make_shared<TestDevice>(config);
 
-    std::string nameServiceAddr = "192.168.1.4:2809";   //Address of OmniORB NameService (to connect to other Hubs)
+    std::string nameServiceAddr = "192.168.1.6:2809";   //Address of OmniORB NameService (to connect to other Hubs)
 	
 
 	std::map<std::string, std::string> m = {{"Name", "TestDev"},{"Address", "localhost"}};
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	hub->addDevice(device);
 
 	hub->run(true);     //blocks until ctrl-c or Device terminates
-
+	hub->shutdown();
 	// int x;
 	// std::cin >> x;
 

@@ -124,7 +124,7 @@ std::shared_ptr<ORBManager> ORBManager::getInstance(const STI::Utils::Configurat
 
 		omniOptions = orbConfig;
 		instance = std::make_shared<STI::Network::Concrete_ORBManager>(args);
-		orb_initialized = true;
+		//orb_initialized = true;
 	}
 	return instance;
 }
@@ -142,50 +142,74 @@ std::shared_ptr<ORBManager> ORBManager::getInstance()
 ORBManager::ORBManager(const std::string& args)
 {
 	poa_is_active = false;
+	
+	auto params = omniOptions.getParameters("");
 
 	//Prepare ORB arguments
 	std::vector<std::string> arguments;
-	STI::Utils::splitString(args, " ", arguments);
+	//STI::Utils::splitString(args, " ", arguments);
+
+	std::string prefix = "-ORB";
+	for (auto p : params) {
+		arguments.push_back(prefix + p.first);
+		//arguments.push_back( prefix + p.first + " " + p.second);
+		arguments.push_back(p.second);
+	}
+
+	//Initialize argv
 	int argc = static_cast<int>(arguments.size());
-
 	char** argv = new char*[argc];
-
 	for (unsigned i = 0; i < arguments.size(); i++) {
 		argv[i] = new char[arguments[i].size() + 1];
-		//strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
+		strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
 	}
 
 	// std::string nameservice = "NameService=corbaname::" + nameServiceIP;
 
-	auto params = omniOptions.getParameters("");
 
-	// const char* options[][2] = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
 
-	char* options[params.size() + 1][2]; // = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
+	const char* options2[][2] = { { 0, 0 } };
+	//const char* options[][2] = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
 
+	//char* options[params.size() + 1][2]; // = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
+
+	//allocate the options array
+	char*** options = new char**[params.size() + 1];
+	//const char** options[2] = new char* [params.size() + 1];
+
+	//char*(*) op[2];
+
+	for (unsigned i = 0; i < (params.size()); ++i) {
+		options[i] = new char*[2];
+		options[i][0] = new char[50];
+		options[i][1] = new char[50];
+	}
+		
+	//assign parameters to the options array
 	unsigned i = 0;
 	for (auto option : params) {
 		// std::cout << "Loading " << i << ": " << option.first << std::endl;
-		options[i][0] = new char[50];
-		options[i][1] = new char[50];
+//		options[i][0] = new char[50];
+//		options[i][1] = new char[50];
 		strcpy(options[i][0], option.first.c_str());
 		strcpy(options[i][1], option.second.c_str());
 		i++;
 	}
 	//omniORB requires {0, 0} in last entry
+	options[i] = new char* [2];
 	options[i][0] = 0;
 	options[i][1] = 0;
 
-	// std::cout << "Options: " << params.size() << std::endl;
-	// for (unsigned j = 0; j < params.size(); ++j) {
-	// 	std::cout << j << ": "<< options[j][0] << std::endl;
-	// }
+	 std::cout << "Options: " << params.size() << std::endl;
+	 for (unsigned j = 0; j < params.size(); ++j) {
+	 	std::cout << j << ": " << options[j][0] << " = "  << options[j][1] << std::endl;
+	 }
 	
 	// const char* options2[params.size()][2] = options;
 
 	//Initialize ORB
 	try {
-		orb = CORBA::ORB_init(argc, argv, "", (const char* (*)[2]) options);
+		orb = CORBA::ORB_init(argc, argv, "", options2);	//(const char* (*)[2]) 
 	
 		CORBA::Object_var poa_obj = orb->resolve_initial_references("RootPOA");
 		
@@ -210,6 +234,8 @@ ORBManager::ORBManager(const std::string& args)
 
 		poa = root_poa->create_POA("bidir", poa_manager, policies);
 
+		orb_initialized = true;
+
 	}
 	catch (CORBA::SystemException& ex) {
 		std::cerr << "Caught CORBA::" << ex._name()
@@ -230,12 +256,16 @@ ORBManager::ORBManager(const std::string& args)
 	_running = false;
 	_blocking = false;
 
-	//free options
+	//free options array
+	delete[] options[i];
 	for (unsigned j = 0; j < params.size(); ++j) {
 		delete[] options[j][0];
 		delete[] options[j][1];
+		delete[] options[j];
 	}
+	delete[] options;
 }
+
 
 
 ORBManager::~ORBManager()
@@ -365,10 +395,22 @@ bool ORBManager::running()
 	return _running;
 }
 
+bool ORBManager::initialized()
+{
+	std::unique_lock<std::mutex> writeLock(orbMutex);
+	return orb_initialized;
+}
+
 void ORBManager::run()
 {
 	{
 		std::unique_lock<std::mutex> writeLock(orbMutex);
+		
+		if (!orb_initialized) {
+			std::cerr << "Error: ORB not initialized. Aborting ORBManager::run()" << std::endl;
+			return;
+		}
+
 		if (_running) {
 			return;
 		}
@@ -411,7 +453,7 @@ void ORBManager::unblock()
 void ORBManager::shutdown()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	if (_running)
+	if (_running && orb_initialized)
 	{
 		_running = false;
 		orb_initialized = false;

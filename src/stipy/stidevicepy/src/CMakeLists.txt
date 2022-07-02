@@ -110,7 +110,7 @@ if (USE_STI_DEBUG_POSTFIX)
   )
 endif()
 
-
+add_dependencies(sticommonpy stidevice)
 
 pybind11_add_module(stipybase MODULE
     Configuration_wrap.cpp
@@ -123,7 +123,8 @@ pybind11_add_module(stipybase MODULE
     ShotConfig_wrap.cpp
 )
 
-add_dependencies(stipybase sticommonpy stipybase)
+add_dependencies(stipybase sticommonpy stidevice stinetwork)
+
 
 #set_target_properties(stidevicepybase PROPERTIES 
 #        VERSION ${PROJECT_VERSION}
@@ -194,6 +195,7 @@ pybind11_add_module(stidevicepy
 add_dependencies(stidevicepy stipybase)
 add_dependencies(stidevicepy sticommonpy)
 
+
 # pybind11_add_module(stidevicepy 
 #     ChannelManager_wrap.cpp
 #     DeviceCollection_wrap.cpp
@@ -255,6 +257,29 @@ target_include_directories(stipybase PRIVATE
     ${STI_BASE_DIR}/src/device/src
 )
 
+
+
+if(MSVC)
+    target_link_directories(sticommonpy PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}/../../../device/src"
+    )
+endif()
+
+if(MSVC)
+    target_link_directories(stipybase PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../../device/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../../network/src"
+    )
+endif()
+
+if(MSVC)
+    target_link_directories(stidevicepy PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../../device/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../../network/src"
+    )
+endif()
 
 
 

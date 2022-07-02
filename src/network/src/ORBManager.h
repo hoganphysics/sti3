@@ -44,7 +44,8 @@ public:
 	// static void setOptions(const STI::Utils::Configuration& config);
 
 	bool running();
-	
+	bool initialized();
+
 	void run();
 	void shutdown();
 	void block();

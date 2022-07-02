@@ -159,6 +159,8 @@ void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device
 bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
 	STI::TNetwork::TDeviceHub_var& tDeviceHub)
 {
+	if (deviceHub == 0) return false;
+
 	bool success = false;
 	std::shared_ptr<NetworkDeviceHubWrapper> networkDeviceHubWrapper;
 	networkDeviceHubWrapper = std::dynamic_pointer_cast<NetworkDeviceHubWrapper>(deviceHub);

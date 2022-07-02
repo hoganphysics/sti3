@@ -38,7 +38,7 @@ endif()
 
 include_directories(".")
 
-link_directories(${STI_BASE_DIR}/lib)
+#link_directories(${STI_BASE_DIR}/lib)
 
 # pybind11 python extension model
 # python3 -m pybind11 --cmakedir
@@ -96,6 +96,14 @@ add_dependencies(stipy
                 sticommonpy stidevice stinetwork)
 
 #set_target_properties(stipy PROPERTIES VERSION ${PROJECT_VERSION})
+
+if(MSVC)
+    target_link_directories(stipy PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}/../stidevicepy/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../device/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../network/src"
+    )
+endif()
 
 set_target_properties(stipy PROPERTIES
     VERSION ${PROJECT_VERSION}
