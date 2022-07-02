@@ -159,10 +159,12 @@ ORBManager::ORBManager(const std::string& args)
 	//Initialize argv
 	int argc = static_cast<int>(arguments.size());
 	char** argv = new char*[argc];
-	for (unsigned i = 0; i < arguments.size(); i++) {
+	for (unsigned i = 0; i < argc; i++) {
 		argv[i] = new char[arguments[i].size() + 1];
-		strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
+		// strcpy_s(argv[i], arguments[i].size() + 1, arguments[i].c_str());
+		strcpy(argv[i], arguments[i].c_str());
 	}
+
 
 	// std::string nameservice = "NameService=corbaname::" + nameServiceIP;
 
@@ -264,6 +266,11 @@ ORBManager::ORBManager(const std::string& args)
 		delete[] options[j];
 	}
 	delete[] options;
+
+	for (unsigned i = 0; i < argc; i++) {
+		delete[] argv[i];
+	}
+	delete[] argv;
 }
 
 
