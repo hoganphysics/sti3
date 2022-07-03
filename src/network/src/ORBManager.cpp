@@ -115,7 +115,7 @@ std::shared_ptr<ORBManager> ORBManager::instance = 0;
 std::mutex ORBManager::orbInitMutex = std::mutex();
 STI::Utils::Configuration ORBManager::omniOptions = STI::Utils::Configuration();
 
-// std::shared_ptr<ORBManager> ORBManager::getInstance(const std::string& nameServiceIP, const std::string& args)
+
 std::shared_ptr<ORBManager> ORBManager::getInstance(const STI::Utils::Configuration& orbConfig, const std::string& args)
 {
 	std::unique_lock<std::mutex> writeLock(orbInitMutex);
@@ -134,26 +134,25 @@ std::shared_ptr<ORBManager> ORBManager::getInstance()
 	return getInstance(omniOptions, "");
 }
 
-// void ORBManager::setOptions(const STI::Utils::Configuration& config)
-// {
-// 	omniOptions = config;
-// }
 
 ORBManager::ORBManager(const std::string& args)
 {
 	poa_is_active = false;
 	
-	auto params = omniOptions.getParameters("");
-
+	auto paramsNames = omniOptions.getParameterNames();
+	
 	//Prepare ORB arguments
 	std::vector<std::string> arguments;
 	//STI::Utils::splitString(args, " ", arguments);
 
 	std::string prefix = "-ORB";
-	for (auto p : params) {
-		arguments.push_back(prefix + p.first);
-		//arguments.push_back( prefix + p.first + " " + p.second);
-		arguments.push_back(p.second);
+	for (auto& name : paramsNames) {
+		auto values = omniOptions.getList(name);	//possible multiple entries per name
+
+		for (auto& value : values) {
+			arguments.push_back(prefix + name);
+			arguments.push_back(value);
+		}
 	}
 
 	//Initialize argv
@@ -165,49 +164,7 @@ ORBManager::ORBManager(const std::string& args)
 		strcpy(argv[i], arguments[i].c_str());
 	}
 
-
-	// std::string nameservice = "NameService=corbaname::" + nameServiceIP;
-
-
-
 	const char* options2[][2] = { { 0, 0 } };
-	//const char* options[][2] = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
-
-	//char* options[params.size() + 1][2]; // = { { "InitRef", nameservice.c_str() }, { 0, 0 } };
-
-	//allocate the options array
-	char*** options = new char**[params.size() + 1];
-	//const char** options[2] = new char* [params.size() + 1];
-
-	//char*(*) op[2];
-
-	for (unsigned i = 0; i < (params.size()); ++i) {
-		options[i] = new char*[2];
-		options[i][0] = new char[50];
-		options[i][1] = new char[50];
-	}
-		
-	//assign parameters to the options array
-	unsigned i = 0;
-	for (auto option : params) {
-		// std::cout << "Loading " << i << ": " << option.first << std::endl;
-//		options[i][0] = new char[50];
-//		options[i][1] = new char[50];
-		strcpy(options[i][0], option.first.c_str());
-		strcpy(options[i][1], option.second.c_str());
-		i++;
-	}
-	//omniORB requires {0, 0} in last entry
-	options[i] = new char* [2];
-	options[i][0] = 0;
-	options[i][1] = 0;
-
-	 std::cout << "Options: " << params.size() << std::endl;
-	 for (unsigned j = 0; j < params.size(); ++j) {
-	 	std::cout << j << ": " << options[j][0] << " = "  << options[j][1] << std::endl;
-	 }
-	
-	// const char* options2[params.size()][2] = options;
 
 	//Initialize ORB
 	try {
@@ -258,15 +215,6 @@ ORBManager::ORBManager(const std::string& args)
 	_running = false;
 	_blocking = false;
 
-	//free options array
-	delete[] options[i];
-	for (unsigned j = 0; j < params.size(); ++j) {
-		delete[] options[j][0];
-		delete[] options[j][1];
-		delete[] options[j];
-	}
-	delete[] options;
-
 	for (unsigned i = 0; i < argc; i++) {
 		delete[] argv[i];
 	}
@@ -284,98 +232,15 @@ void ORBManager::activateServant(PortableServer::ServantBase& servant)
 {
 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
-	// std::cout << "ORBManager::activateServant: " << (orbManager != 0 ? "True" : "False") 
-	// 		<< " " << ( (CORBA::is_nil(orbManager->poa)) ? "True" : "False") 
-	// 		<< " " << ( orbManager->poa_is_active ? "True" : "False") << std::endl;
-
 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
 		
-		// std::cout << "activateServant address: " << std::hex << &servant << std::endl;
-
 		orbManager->poa->activate_object(&servant);
 	}
 }
 
-// void ORBManager::activateServant(PortableServer::Servant p_servant)
-// {
-// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-// 	std::cout << "ORBManager::activateServant: " << (orbManager != 0 ? "True" : "False") 
-// 			<< " " << ( (CORBA::is_nil(orbManager->poa)) ? "True" : "False") 
-// 			<< " " << ( orbManager->poa_is_active ? "True" : "False") << std::endl;
-
-// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-// 		std::cout << "activateServant address: " << std::hex << p_servant << std::endl;
-
-// 		orbManager->poa->activate_object(p_servant);
-// 	}
-// }
-
-// // void ORBManager::activateServant3(PortableServer::Servant p_servant)
-// void ORBManager::activateServant3(PortableServer::ServantBase& servant)
-// {
-// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-// 	std::cout << "ORBManager::activateServant3: " << (orbManager != 0 ? "True" : "False") 
-// 			<< " " << ( (CORBA::is_nil(orbManager->poa)) ? "True" : "False") 
-// 			<< " " << ( orbManager->poa_is_active ? "True" : "False") << std::endl;
-
-// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-// 		std::cout << "activateServant3 address: " << std::hex << &servant << std::endl;
-
-// 		orbManager->poa->activate_object(&servant);
-// 	}
-// }
-
-// void ORBManager::activateServant2(PortableServer::Servant p_servant)
-// {
-
-// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-// 	std::cout << "ORBManager::activateServant2: " << (orbManager != 0 ? "True" : "False") 
-// 			<< " " << ( (CORBA::is_nil(orbManager->poa)) ? "True" : "False") 
-// 			<< " " << ( orbManager->poa_is_active ? "True" : "False") << std::endl;
-
-// // orbManager->poa
-
-	
-// 	// PortableServer::
-// 	// poa_manager
-
-// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-// 		std::cout << "activateServant2 address: " << std::hex << p_servant << std::endl;
-
-// 		orbManager->poa->activate_object(p_servant);
-
-// 		// std::cout << " ...poa... " << std::endl;
-		
-// 		// auto objID = (orbManager->poa->servant_to_id(p_servant));
-
-// 		// if (objID != 0) {
-
-// 		// 	std::cout << "*****  ID: " << objID->NP_data() << " ID addr: " << objID << std::endl;
-
-// 		// 	orbManager->poa->activate_object_with_id(*objID, p_servant);
-// 		// }
-// 		// else {
-// 		// 	std::cout << " ID: null " << std::endl;
-// 		// }
-
-// 		// orbManager->poa->activate_object(&servant);	
-// 	}
-// }
-
-
 void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 {
 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-	// std::cout << "ORBManager::deactivateServant: " << (orbManager != 0 ? "True" : "False") 
-	// 		<< " " << ( (CORBA::is_nil(orbManager->poa)) ? "True" : "False") 
-	// 		<< " " << ( orbManager->poa_is_active ? "True" : "False") << std::endl;
 
 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
 
@@ -384,13 +249,10 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 
 			if (objref != 0) {
 
-				// std::cout << "deactivateServant address: " << std::hex << p_servant << " ID: " << objref->NP_data() << " ID addr: " << objref << std::endl;
-
 				orbManager->poa->deactivate_object(*objref);
 			}	
 		}
 		catch (PortableServer::POA::ServantNotActive& e) {
-			// std::cout << "deactivateServant servant not active: " << std::hex << p_servant << std::endl;
 		}
 
 	}
@@ -467,9 +329,6 @@ void ORBManager::shutdown()
 		poa_is_active = false;
 		std::cerr << "Shutting down ORB" << std::endl;
 
-		// poa_manager->deactivate(true, true);
-		// poa->destroy(true, true);
-		// root_poa->destroy(true, true);
 		orb->shutdown(true);
 		orb->destroy();
 
@@ -545,10 +404,9 @@ bool ORBManager::getRootContext(CosNaming::NamingContext_var& context) const
 	return success;
 }
 
-//CosNaming::NamingContext_ptr ORBManager::getNamingContext(const std::string& context) const
+
 bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingContext_var& contextBase) const
 {
-//	CosNaming::NamingContext_var contextBase;
 	CosNaming::NamingContext_var rootContext;
 
 	bool success = false;
@@ -573,7 +431,6 @@ bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingC
 		std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
 	}
 
-	//return contextBase._retn();
 	return success;
 }
 

@@ -81,14 +81,14 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	persistence.bindToTargetContexts = true;
 
 
-	STI::Utils::Configuration omniConfig(config.getParameters("omniORB"));
+	// STI::Utils::Configuration omniConfig(config.getParameters("omniORB"));
+	STI::Utils::Configuration omniConfig;
 	omniConfig.set("InitRef", "NameService=corbaname::" + _nameServiceAddress);
 
-	// std::string nameservice = "NameService=corbaname::" + _nameServiceAddress;
+	//Add parameters from config file (overwrites any duplicate entries)
+	omniConfig.append(STI::Utils::Configuration().append( config.getParameters("omniORB") ));
 
 	orbmanager = STI::Network::ORBManager::getInstance(omniConfig, "");
-
-	// STI::Network::ORBManager::setOptions(omniConfig);
 
 	localHub = std::make_shared<LocalDeviceHub>(hubID);
 	

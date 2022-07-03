@@ -34,6 +34,23 @@ std::vector<std::string> Configuration::getSectionNames() const
 	return sections;
 }
 
+std::vector<std::string> Configuration::getParameterNames() const
+{
+	return getParameterNames("");
+}
+
+std::vector<std::string> Configuration::getParameterNames(const std::string& section) const
+{
+	std::vector<std::string> names;
+
+	auto sectionData = getParameters(section);
+
+	for (auto& data : sectionData) {
+		names.push_back(data.first);
+	}
+	return names;	
+}
+
 std::map<std::string, std::string> Configuration::getParameters(const std::string& section) const
 {
 	auto sectionData = configData.find(section);
@@ -88,36 +105,36 @@ bool Configuration::getStringValue(const std::string& section, const std::string
 	return true;
 }
 
-bool Configuration::isList(const std::string& key) const
+bool Configuration::isList(const std::string& name) const
 {
-	return isList("", key);
+	return isList("", name);
 }
 
-bool Configuration::isList(const std::string& section, const std::string& key) const
+bool Configuration::isList(const std::string& section, const std::string& name) const
 {
 	std::string value;
 
-	if (getStringValue(section, key, value)) {
+	if (getStringValue(section, name, value)) {
 		return (value.front() == '[' && value.back() == ']');
 	}
 	return false;
 }
 
-std::vector<std::string> Configuration::getList(const std::string& key) const
+std::vector<std::string> Configuration::getList(const std::string& name) const
 {
-	return getList("", key);
+	return getList("", name);
 }
 
-std::vector<std::string> Configuration::getList(const std::string& section, const std::string& key) const
+std::vector<std::string> Configuration::getList(const std::string& section, const std::string& name) const
 {
 	std::vector<std::string> listValue;
 	std::string value;
 
-	if (!getStringValue(section, key, value)) {		//key not found
+	if (!getStringValue(section, name, value)) {		//key not found
 		return listValue;
 	}
 
-	if (!isList(section, key)) {	//key found, but not a list
+	if (!isList(section, name)) {	//key found, but not a list
 		listValue.push_back(value);
 		return listValue;
 	}

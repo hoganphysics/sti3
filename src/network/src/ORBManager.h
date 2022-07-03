@@ -39,9 +39,6 @@ public:
 	
 	static std::shared_ptr<ORBManager> getInstance();
 	static std::shared_ptr<ORBManager> getInstance(const STI::Utils::Configuration& orbConfig, const std::string& args);
-	// static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);
-	
-	// static void setOptions(const STI::Utils::Configuration& config);
 
 	bool running();
 	bool initialized();
@@ -59,12 +56,7 @@ public:
 	bool unbindObjectReference(const std::string& objectFullPath);	
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
 
-	// static void activateServant2(PortableServer::Servant p_servant);
-	// static void activateServant3(PortableServer::Servant p_servant);
-	// static void activateServant3(PortableServer::ServantBase& servant);
-
 	static void activateServant(PortableServer::ServantBase& servant);
-	// static void activateServant(PortableServer::Servant p_servant);
 	static void deactivateServant(PortableServer::Servant p_servant);
 
 private:
@@ -75,7 +67,6 @@ private:
 	static STI::Utils::Configuration omniOptions;
 
 	bool getRootContext(CosNaming::NamingContext_var& context) const;
-	//CosNaming::NamingContext_ptr getNamingContext(const std::string& context) const;
 	bool getNamingContext(const std::string& context, CosNaming::NamingContext_var& contextBase) const;
 
 	CORBA::ORB_var orb;

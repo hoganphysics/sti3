@@ -25,10 +25,21 @@ void init_Configuration(py::module& m)
         .def(py::init<const std::map<std::string, std::map<std::string, std::string>>&>(), 
                      py::arg("config") )
         .def("getSectionNames", &Configuration::getSectionNames)
+        .def("getParameterNames", py::overload_cast<>(&Configuration::getParameterNames, py::const_))
+        .def("getParameterNames", py::overload_cast<const std::string&>(&Configuration::getParameterNames, py::const_), py::arg("section"))
+
         .def("getParameters", &Configuration::getParameters, py::arg("section"))
         .def("includes", py::overload_cast<const std::string&>(&Configuration::includes, py::const_), py::arg("name"))
         .def("includes", py::overload_cast<const std::string&, const std::string&>(&Configuration::includes, py::const_), 
                         py::arg("section"), py::arg("name"))
+
+        .def("isList", py::overload_cast<const std::string&>(&Configuration::isList, py::const_), py::arg("name"))
+        .def("isList", py::overload_cast<const std::string&, const std::string&>(&Configuration::isList, py::const_), 
+                        py::arg("section"), py::arg("name"))
+        .def("getList", py::overload_cast<const std::string&>(&Configuration::getList, py::const_), py::arg("name"))
+        .def("getList", py::overload_cast<const std::string&, const std::string&>(&Configuration::getList, py::const_), 
+                        py::arg("section"), py::arg("name"))
+
         .def("get", [](Configuration& self, const std::string& name) 
             { 
                 std::string value;
@@ -49,12 +60,22 @@ void init_Configuration(py::module& m)
             py::arg("section"), py::arg("name") )
         .def("set", [](Configuration& self, const std::string& name, const std::string& value) 
             { 
-                self.set(name, value);
+                return self.set(name, value);
             }, 
             py::arg("name"), py::arg("value") )
         .def("set", [](Configuration& self, const std::string& section, const std::string& name, const std::string& value) 
             {
-                self.set(section, name, value);
+                return self.set(section, name, value);
+            }, 
+            py::arg("section"), py::arg("name"), py::arg("value") )
+        .def("addToList", [](Configuration& self, const std::string& name, const std::string& value) 
+            { 
+                return self.addToList(name, value);
+            }, 
+            py::arg("name"), py::arg("value") )
+        .def("addToList", [](Configuration& self, const std::string& section, const std::string& name, const std::string& value) 
+            {
+                return self.addToList(section, name, value);
             }, 
             py::arg("section"), py::arg("name"), py::arg("value") )
         .def("append", py::overload_cast<const Configuration&>(&Configuration::append), py::arg("config"))

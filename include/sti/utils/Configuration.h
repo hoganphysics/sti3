@@ -65,6 +65,9 @@ public:
 	virtual ~Configuration() {}
 
 	std::vector<std::string> getSectionNames() const;
+    std::vector<std::string> getParameterNames() const;
+    std::vector<std::string> getParameterNames(const std::string& section) const;
+
     std::map<std::string, std::string> getParameters(const std::string& section) const;
 
     bool includes(const std::string& name) const;
@@ -108,10 +111,10 @@ public:
     }
 
     //values of the form [...] can be interpreted as a list
-    bool isList(const std::string& key) const;
-    bool isList(const std::string& section, const std::string& key) const;
-    std::vector<std::string> getList(const std::string& key) const;
-    std::vector<std::string> getList(const std::string& section, const std::string& key) const;
+    bool isList(const std::string& name) const;
+    bool isList(const std::string& section, const std::string& name) const;
+    std::vector<std::string> getList(const std::string& name) const;
+    std::vector<std::string> getList(const std::string& section, const std::string& name) const;
 
     template <class T>
 	Configuration& set(const std::string& name, const T& value)
