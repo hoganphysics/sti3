@@ -23,7 +23,7 @@ public:
 	std::string name;
 };
 
-TestDevice::TestDevice(const STI::Device::Configuration& config)
+TestDevice::TestDevice(const STI::Utils::Configuration& config)
 : STI::Device::LocalDevice(config)
 {
     init();

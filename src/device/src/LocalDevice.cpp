@@ -28,9 +28,10 @@
 #include "ShotRepository.h"
 
 #include <sti/engine/Measurement.h>
-#include <sti/device/Configuration.h>
+#include <sti/utils/Configuration.h>
 
 #include <memory>
+#include <filesystem>
 #include <iostream>
 
 using STI::Device::Device;
@@ -54,8 +55,13 @@ using STI::Engine::LocalEventEngineFactory;
 //using STI::Engine::SerializedRepository;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
-using STI::Device::Configuration;
+using STI::Utils::Configuration;
 
+
+LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
+: LocalDevice( Configuration(config) )
+{
+}
 
 LocalDevice::LocalDevice(const Configuration& config, const std::string& section)
 : LocalDevice(
@@ -78,7 +84,11 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	localCollection->addListener(deviceCollectionListener);
 
-	auto basePath = LocalPersistenceManager::makeBasePath(".sti", getID());
+    // std::cout << "CWD: " << std::filesystem::current_path().c_str() << std::endl;
+	auto deviceRootPath = std::filesystem::current_path();	//cwd
+	deviceRootPath /= ".sti";
+
+	auto basePath = LocalPersistenceManager::makeBasePath(deviceRootPath.generic_string(), getID());
 
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);

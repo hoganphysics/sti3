@@ -23,30 +23,78 @@ unsigned NetworkDeviceHub::hubNumber = 0;
 
 
 NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress)
-: NetworkDeviceHub(NetworkDeviceHub::nextHubName(), "localhost", 0, nameServiceAddress)
+: NetworkDeviceHub(
+	HubID(NetworkDeviceHub::nextHubName(), "localhost", 0),
+	STI::Utils::Configuration().set("NetworkHub", "NameService", nameServiceAddress))
 {
 	_usingDefaultHubID = true;
 }
 
-NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress)
-: NetworkDeviceHub(hubID.name, hubID.address, hubID.module, nameServiceAddress)
+NetworkDeviceHub::NetworkDeviceHub(const std::string& nameServiceAddress, const STI::Utils::Configuration& config)
+: NetworkDeviceHub(
+	STI::Utils::Configuration().append(config)
+		.set("NetworkHub", "NameService", nameServiceAddress)
+		)
 {
 }
 
-NetworkDeviceHub::NetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress)
+NetworkDeviceHub::NetworkDeviceHub(const STI::Utils::Configuration& config)
+: NetworkDeviceHub(
+	HubID(
+		config.get<std::string>("NetworkHub", "HubName", NetworkDeviceHub::nextHubName()),
+		config.get<std::string>("NetworkHub", "HubAddress", "localhost"),
+		config.get<unsigned short>("NetworkHub", "HubModule", 0)
+		),
+	config)
 {
-	_autoConnect = true;
-	_nameServiceAddress = nameServiceAddress;
-	_usingDefaultHubID = false;
+	_usingDefaultHubID = !(
+			config.includes("NetworkHub", "HubName") 
+			&& config.includes("NetworkHub", "HubAddress") 
+			&& config.includes("NetworkHub", "HubModule")
+		);
+}
 
-	localHub = std::make_shared<LocalDeviceHub>(name, address, module);
-	deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
+NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress)
+: NetworkDeviceHub(hubID, nameServiceAddress, STI::Utils::Configuration())
+{
+}
+
+NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const std::string& nameServiceAddress, const STI::Utils::Configuration& config)
+: NetworkDeviceHub(hubID, STI::Utils::Configuration().append(config).set("NetworkHub", "NameService", nameServiceAddress))
+{
+}
+
+NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configuration& config)
+{
+	// _autoConnect = true;
+	
+	_nameServiceAddress = config.get<std::string>("NetworkHub", "NameService", "localhost:2809" /*default*/ );
+	_usingDefaultHubID = false;
+	useAutoTargetHubIDs = true;		//attempt to auto connect to hubs with HubIDs derived from attached devices targetServerID
+
 	
 	stiContext = "STI";
 	hubObjectName = "TDeviceHub.Object";
+	hubIDprefix = "Hub::";
 
 	persistence.bindToRootContext = true;
 	persistence.bindToTargetContexts = true;
+
+
+	// STI::Utils::Configuration omniConfig(config.getParameters("omniORB"));
+	STI::Utils::Configuration omniConfig;
+	omniConfig.set("InitRef", "NameService=corbaname::" + _nameServiceAddress);
+
+	//Add parameters from config file (overwrites any duplicate entries)
+	omniConfig.append(STI::Utils::Configuration().append( config.getParameters("omniORB") ));
+
+	orbmanager = STI::Network::ORBManager::getInstance(omniConfig, "");
+
+	localHub = std::make_shared<LocalDeviceHub>(hubID);
+	
+	if (orbmanager->initialized()) {
+		deviceHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(localHub);
+	}
 
 	refreshHubContext();
 }
@@ -74,11 +122,15 @@ std::string NetworkDeviceHub::printNetwork(const std::string& baseContext)
 }
 
 //static
-std::string NetworkDeviceHub::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
+std::string NetworkDeviceHub::printNetwork(const std::string& nameServiceAddress, const std::string& baseContext)
 {
-	auto orbmanager = STI::Network::ORBManager::getInstance(nameServerAddress, "");
+	// auto orbmanager = STI::Network::ORBManager::getInstance(nameServiceAddress, "");
 
-	return orbmanager->printNameTree(baseContext);
+	// if (orbmanager != 0) {
+	// 	return orbmanager->printNameTree(baseContext);
+	// }
+	
+	return "";
 }
 
 NetworkDeviceHub::PersistenceOptions& NetworkDeviceHub::getPersistenceOptions()
@@ -88,8 +140,8 @@ NetworkDeviceHub::PersistenceOptions& NetworkDeviceHub::getPersistenceOptions()
 
 void NetworkDeviceHub::refreshHubContext()
 {
-	thisHubContext = makeHubContext(stiContext, localHub->getID().getID());
-	hubContextPath = makeHubContextPath(stiContext, localHub->getID().getID());
+	thisHubContext = makeHubContext(stiContext, localHub->getID());
+	hubContextPath = makeHubContextPath(stiContext, localHub->getID());
 }
 
 std::string NetworkDeviceHub::nextHubName()
@@ -102,8 +154,41 @@ std::string NetworkDeviceHub::nextHubName()
 
 void NetworkDeviceHub::setTargetHubs(const std::vector<std::string>& hubIDs)
 { 
+	std::vector<HubID> hids;
+
+	HubID hid;
 	for (auto& id : hubIDs) {
-		targetHubs.insert(id);
+		if (HubID::stringToHubID(id, hid)) {
+			hids.push_back(hid);
+		}
+	}
+	
+	setTargetHubs(hids);
+}
+
+void NetworkDeviceHub::setTargetHubs(const std::vector<HubID>& hubIDs)
+{
+	if (hubIDs.size() == 0) return;		//must specify at least one target hub
+
+	targetHubs.clear();
+	useAutoTargetHubIDs = false;		//use specified hubs instead
+
+	for (auto& id : hubIDs) {
+		addTargetHub(id);
+	}
+}
+
+void NetworkDeviceHub::addTargetHub(const HubID& hubID)
+{
+	targetHubs.insert(hubID);
+}
+
+void NetworkDeviceHub::addTargetHub(const std::string& hubID)
+{
+	HubID hid;
+	
+	if (HubID::stringToHubID(hubID, hid)) {
+		addTargetHub(hid);
 	}
 }
 
@@ -120,26 +205,42 @@ bool NetworkDeviceHub::addNode(const DeviceID& id, const typename std::shared_pt
 {
 	if (_usingDefaultHubID && localHub != 0 && localHub->numberOfNodes() == 0) {
 		//First attached node, and the NetworkDeviceHub is configured with a default HubID
-		//By default, the HubID is set to match the DeviceID of the first added node.
-		HubID newHubID(id.getName(), id.getAddress(), id.getModule());
+		//By default, the HubID is set to derive from the DeviceID of the first added node,
+		//with the hubIDprefix prepended to the device name as follows:
+		// DeviceID = localhost/0/dev1
+		// HubID = localhost/0/Hub::dev1
+		
+		HubID newHubID(hubIDprefix + id.getName(), id.getAddress(), id.getModule());
 		localHub->setID(newHubID);
 		refreshHubContext();
 	}
 
 	bool success = false;
 
-	if (localHub != 0) {
+	if (localHub != 0 && deviceHubWrapper != 0) {
 		success = deviceHubWrapper->addNode(id, node);
 	}
 
 	std::string nodeTargetServerID = id.getTargetServerID();
-
-	if (success && _autoConnect && nodeTargetServerID.compare("root") != 0) {
+	
+	if (success && useAutoTargetHubIDs && nodeTargetServerID.compare("root") != 0) {
 		//add to list of hubs this hub will attempt to connect to
-		targetHubs.insert(nodeTargetServerID);
+		addTargetHub(nodeTargetServerID, hubIDprefix);
 	}
 
 	return success;
+}
+
+void NetworkDeviceHub::addTargetHub(const std::string& hubID, const std::string& namePrefix)
+{
+	HubID hid;
+
+	if (HubID::stringToHubID(hubID, hid)) {
+
+		hid.name = namePrefix + hid.name;	//Example: Hub::<name>
+
+		addTargetHub(hid);
+	}
 }
 
 void NetworkDeviceHub::getDeviceIDs(std::set<DeviceID>& ids) const
@@ -191,7 +292,7 @@ bool NetworkDeviceHub::registerHubContext()
 		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
 		if (persistence.bindToTargetContexts) {
 			success &= orbmanager->bindObjectReference(
-				makeHubContext(targetHubPath, localHub->getID().getID()),
+				makeHubContext(targetHubPath, localHub->getID()),
 				tDeviceHubLocal);
 		}
 		else {
@@ -215,7 +316,7 @@ void NetworkDeviceHub::shutdown()
 	}
 
 	if (orbmanager != 0 && orbmanager->running()) {
-		orbmanager->shutdown();
+		orbmanager->shutdown();		// fixes slow shutdown in windows
 	}
 }
 
@@ -224,8 +325,11 @@ void NetworkDeviceHub::run(bool block)
 	if (orbmanager != 0 && orbmanager->running()) {
 		return;
 	}
+	else if (orbmanager != 0 && orbmanager->initialized()) {
+		orbmanager = ORBManager::getInstance();
+	}
 	else {
-		orbmanager = ORBManager::getInstance(_nameServiceAddress, "");
+		return;
 	}
 
 	if (orbmanager == 0) {
@@ -252,35 +356,33 @@ void NetworkDeviceHub::run(bool block)
 	//Start ORB (network servants go live)
 	orbmanager->run();	//doesn't block
 
-	if (block) {
+	if (block && orbmanager->running()) {
 		orbmanager->block();
 	}
 }
 
 void NetworkDeviceHub::connectToTargetHubs()
 {
-	HubID hubID;
-
 	//Reconnect to target Hubs if they are live
 	for (auto& targetHubID : targetHubs) {
 
-		if (HubID::stringToHubID(targetHubID, hubID) && !localHub->containsHub(hubID)) {
+		if (!localHub->containsHub(targetHubID)) {
 			connectRemoteHub( makeHubContext(stiContext, targetHubID) );
 		}
 	}
 }
 
-std::string NetworkDeviceHub::makeHubContextPath(const std::string& baseContext, const std::string& hubID)
+std::string NetworkDeviceHub::makeHubContextPath(const std::string& baseContext, const HubID& hubID)
 {
 	std::stringstream hubContext;
 	
-	hubContext << baseContext << "/" << STI::Utils::replaceChars(hubID, ".", "_");
+	hubContext << baseContext << "/" << STI::Utils::replaceChars(hubID.getID(), ".", "_");
 
 	return hubContext.str();
 }
 
 
-std::string NetworkDeviceHub::makeHubContext(const std::string& baseContext, const std::string& hubID)
+std::string NetworkDeviceHub::makeHubContext(const std::string& baseContext, const HubID& hubID)
 {
 	std::stringstream hubContext;
 

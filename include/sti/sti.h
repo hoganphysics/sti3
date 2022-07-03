@@ -3,7 +3,7 @@
 
 #include <sti/LocalDevice.h>
 #include <sti/NetworkDeviceHub.h>
-#include <sti/device/ConfigFile.h>
+#include <sti/utils/ConfigFile.h>
 
 #include <memory>
 

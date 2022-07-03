@@ -11,6 +11,7 @@ void init_HubID(py::module& m);
 
 void init_ShotConfig(py::module& m);
 void init_ParseID(py::module& m);
+void init_Configuration(py::module& m);
 
 PYBIND11_MODULE(stipybase, m) {
     m.doc() = "STI base wrapper library";
@@ -24,6 +25,8 @@ PYBIND11_MODULE(stipybase, m) {
 
     init_ShotConfig(m);
     init_ParseID(m);
+    
+    init_Configuration(m);
 }
 
 int main(int argc, char* argv[])

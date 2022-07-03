@@ -10,7 +10,7 @@ class TestDevice : public STI::Device::LocalDevice
 {
 public:
 	
-	TestDevice(const STI::Device::Configuration& config);
+	TestDevice(const STI::Utils::Configuration& config);
     TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer);
 	~TestDevice();

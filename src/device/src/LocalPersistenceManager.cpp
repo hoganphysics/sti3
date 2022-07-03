@@ -12,6 +12,7 @@
 #include "TransientRepository.h"
 
 #include <filesystem>
+#include <iostream>
 
 using STI::Device::LocalPersistenceManager;
 using STI::Engine::ResultsCollector;

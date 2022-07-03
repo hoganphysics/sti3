@@ -2,7 +2,7 @@
 #include <omniORB4/omniURI.h>
 #include "COSBindingNode.h"
 
-//#include <iostream>
+// #include <iostream>
 #include <string>
 #include <sstream>
 #include <memory>
@@ -154,6 +154,14 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 
 			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
 		}
+		catch(CORBA::TIMEOUT&)
+		{
+			//This is a dead servant. 
+			deadServantFound = true;
+
+			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
+			//std::cerr << "COSBindingNode CORBA::TIMEOUT" << std::endl;
+		}
 
 		if( !deadServantFound )
 		{
@@ -173,6 +181,10 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 			catch(CORBA::INV_OBJREF&)
 			{
 			//	std::cerr << "Branch list exception: push_back" << std::endl;
+			}
+			catch(CORBA::TIMEOUT&)
+			{
+				// std::cerr << "COSBindingNode CORBA::TIMEOUT when calling addBranch" << std::endl;
 			}
 		}
 	}

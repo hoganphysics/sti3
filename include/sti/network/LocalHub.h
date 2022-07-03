@@ -31,7 +31,9 @@ template<class ID, class T>
 class LocalHub : public Hub<ID, T>
 {
 public:
-	LocalHub();
+
+	// LocalHub();
+	LocalHub(const STI::Network::HubID& hubID);
 	virtual ~LocalHub();
 
 	//local only
@@ -77,8 +79,8 @@ public:
 
 	void clear();
 
-	const HubID& getID() const { return id; }
-	void setID(const STI::Network::HubID hubID) { id = hubID; }
+	const HubID& getID() const { return hubID; }
+	void setID(const STI::Network::HubID& newHubID) { hubID = newHubID; }
 //	virtual const HubID& getID() const = 0;
 
 	void disconnect(const HubID& hid);
@@ -94,7 +96,7 @@ private:
 
 	STI::Utils::SynchronizedMap <HubID, std::shared_ptr<Hub<ID, T>>> hubs;
 
-	STI::Network::HubID id;
+	STI::Network::HubID hubID;
 
 	mutable std::mutex distributerMutex;
 
@@ -107,8 +109,14 @@ private:
 
 //Implementation
 
+// template<class ID, class T>
+// STI::Network::LocalHub<ID, T>::LocalHub()
+// {
+// }
+
 template<class ID, class T>
-STI::Network::LocalHub<ID, T>::LocalHub()
+STI::Network::LocalHub<ID, T>::LocalHub(const STI::Network::HubID& hubID)
+: hubID(hubID)
 {
 }
 

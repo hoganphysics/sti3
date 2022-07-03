@@ -24,7 +24,10 @@
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
 
+#include <sti/utils/Configuration.h>
+
 #include <string>
+#include <map>
 #include <set>
 #include <mutex>
 
@@ -44,27 +47,15 @@ class LocalAttributeManager;
 class DeviceMessageListenerID;
 class LocalPersistenceManager;
 class PersistenceManager;
-class Configuration;
-
-
-class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
-{
-public:
-	DeviceCollectionPolicy(LocalDevice* device) : device(device) {}
-	
-	bool include(const STI::Device::DeviceID& key) const;
-	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
-
-private:
-	LocalDevice* device;
-};
+class DeviceCollectionPolicy;
 
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser
 {
 public:
 	
-	LocalDevice(const Configuration& config, const std::string& section="");
+	LocalDevice(const std::map<std::string, std::string>& config);
+	LocalDevice(const STI::Utils::Configuration& config, const std::string& section="");
 	LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer);
 	virtual ~LocalDevice();
@@ -188,6 +179,19 @@ private:
 
 	mutable std::mutex deviceMutex;
 
+};
+
+
+class DeviceCollectionPolicy : public STI::Utils::LocalCollection<DeviceID, Device>::LocalCollectionPolicy
+{
+public:
+	DeviceCollectionPolicy(LocalDevice* device) : device(device) {}
+	
+	bool include(const STI::Device::DeviceID& key) const;
+	bool replace(const STI::Device::DeviceID& oldKey, const STI::Device::DeviceID& newKey) const { return (oldKey == newKey); }
+
+private:
+	LocalDevice* device;
 };
 
 } //Device

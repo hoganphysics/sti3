@@ -79,7 +79,12 @@ add_library(stinetwork SHARED
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
+    NetworkDeviceWrapper.cpp
     NetworkDeviceMessageHandlerWrapper.cpp
+    NetworkEventEngine.cpp
+    NetworkFileHolder.cpp
+    NetworkShotWrapper.cpp
+    NetworkResultsCollector.cpp
     #NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
     orbTypes.cpp
@@ -119,11 +124,16 @@ add_library(stinetwork SHARED
     TTriggerCallback_i.cpp
 )
 
+add_dependencies(stinetwork stidevice)
+
 if(MSVC)
 
     target_link_directories(stinetwork PUBLIC 
         "${OMNIORB_PATH}/lib/x86_win32"
-        "${STI_BASE_DIR}/lib"
+        #"${STI_BASE_DIR}/lib"
+        #"C:/Users/Jason/Code/dev/sti3/build/x64-Debug/src/device/src"
+        #"src/device/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/../../device/src"
     # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
     # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
     )
@@ -182,7 +192,11 @@ set_target_properties(stinetwork PROPERTIES
 #    PUBLIC_HEADER api/mylib.h
 )
 
-
+if(USE_STI_DEBUG_POSTFIX) 
+  set_target_properties(stinetwork PROPERTIES
+    DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
+  )
+endif()
 
 #if (USE_STI_DEBUG_POSTFIX) 
 #    set_target_properties(stinetwork PROPERTIES

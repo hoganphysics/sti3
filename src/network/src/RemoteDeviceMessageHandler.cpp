@@ -2,6 +2,7 @@
 #include "RemoteDeviceMessageHandler.h"
 #include "NetworkConvert.h"
 #include <sti/device/DeviceMessage.h>
+#include "ORBManager.h"
 
 #include "Convert_DeviceMessage.h"
 
@@ -19,6 +20,8 @@ RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceM
 : TReferenceHolder<TDeviceMessageHandler>(deviceHandler, handlerMutex)
 //	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
 {
+	STI::Network::ORBManager::ORBManager::activateServant(refreshIndicator);
+	
 	std::unique_lock<std::mutex> handlerLock(handlerMutex);
 
 //	STI::TNetwork::TDeviceEventHandler
