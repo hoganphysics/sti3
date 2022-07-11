@@ -25,6 +25,8 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
+#include "RawEventGroup.h"
+
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/vector.hpp>
@@ -37,22 +39,38 @@ using STI::Engine::RawEvent;
 using STI::Engine::RawEventType;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
+using STI::Engine::RawEventTarget;
 
-RawEvent::RawEvent(const STI::Device::DeviceID& targetDeviceID, 
-	double time, unsigned short channel, const MixedValue& value, 
-	const std::string& description, unsigned eventNumber, const RawEventType& eventType)
-	:
-	_time(time), _channel(channel), _value(value), _description(description), 
-	_eventType(eventType), targetDeviceID(targetDeviceID)//, _isScheduled(false)
+
+RawEvent::RawEvent()
+: _target("", "")
+{
+}
+
+// RawEvent::RawEvent(const STI::Device::DeviceID& targetDeviceID, 
+// 	double time, unsigned short channel, const MixedValue& value, 
+// 	const StackTrace& eventStackTrace, unsigned eventNumber, const RawEventType& eventType)
+
+RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
+	unsigned eventNumber, const RawEventType& eventType)
+: RawEvent(eventTarget, time, value, eventNumber, eventType, StackTrace(), RawEventGroup())
+{
+}
+
+RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
+		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, const RawEventGroup& group)
+: _target(eventTarget), _time(time), _value(value), stackTrace(eventStackTrace), _eventType(eventType) //, _isScheduled(false)
 {
 	isMeasurement = (eventType == RawEventType::Measurement);
 	eventGraphPath.push_back(eventNumber);
+
+	eventGroupIndex = group.getFullIndex();
 }
 
 RawEvent::RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber)
-	: _time(newEvent._time), _channel(newEvent._channel), _description(newEvent._description), 
-	_eventType(newEvent._eventType),
-	isMeasurement(newEvent.isMeasurement), targetDeviceID(newEvent.targetDeviceID)//, _isScheduled(false)
+: _time(newEvent._time), _target(newEvent.target()), _description(newEvent._description), 
+_eventType(newEvent._eventType), eventGroupIndex(referenceEvent.eventGroupIndex),
+isMeasurement(newEvent.isMeasurement) //, _isScheduled(false)
 {
 	//Creates a new RawEvent based on the data stored in newEvent and the eventGraphPath
 	//of the referenceEvent.  This is used for device-generated events to track their source.
@@ -92,7 +110,7 @@ double RawEvent::time() const
 
 unsigned short RawEvent::channel() const
 {
-	return _channel;
+	return _target.channel().channel();
 }
 
 const MixedValue& RawEvent::value() const
@@ -100,9 +118,29 @@ const MixedValue& RawEvent::value() const
 	return _value;
 }
 
-const STI::Device::DeviceID& RawEvent::targetDevice() const
+const RawEventTarget& RawEvent::target() const
 {
-	return targetDeviceID;
+	return _target;
+}
+
+RawEventTarget& RawEvent::getTarget()
+{
+	return _target;
+}
+
+STI::Device::DeviceID RawEvent::targetDevice() const
+{
+	return _target.device().deviceID();
+}
+
+const STI::Utils::GraphPathLabel& RawEvent::groupIndex()
+{
+	return eventGroupIndex;
+}
+
+void RawEvent::setGroupIndex(const STI::Utils::GraphPathLabel& index)
+{
+	eventGroupIndex = index;
 }
 
 template<class Archive>
@@ -110,14 +148,16 @@ void RawEvent::serialize(Archive& archive)
 {
 	archive(
 		cereal::make_nvp("time", _time), 
-		cereal::make_nvp("channel", _channel), 
-		cereal::make_nvp("targetDeviceID", targetDeviceID), 
+		cereal::make_nvp("target", _target), 
+		// cereal::make_nvp("channel", _channel), 
+		// cereal::make_nvp("targetDeviceID", targetDeviceID), 
 		cereal::make_nvp("value", _value),
 		cereal::make_nvp("description", _description),
 		cereal::make_nvp("eventType", _eventType),
-		cereal::make_nvp("stackTrace", trace),
+		cereal::make_nvp("stackTrace", stackTrace),
 		cereal::make_nvp("eventGraphPath", eventGraphPath), 
-		cereal::make_nvp("isMeasurement", isMeasurement)
+		cereal::make_nvp("isMeasurement", isMeasurement),
+		cereal::make_nvp("eventGroupIndex", eventGroupIndex)
 		);
 }
 

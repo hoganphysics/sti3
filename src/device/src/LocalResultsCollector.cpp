@@ -6,6 +6,9 @@
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
 #include "ShotResult.h"
+#include "ParseResult.h"
+#include "EngineParseResult.h"
+
 #include <sti/utils/utils.h>
 #include <sti/engine/ShotResultRecord.h>
 
@@ -65,7 +68,7 @@ void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
     if (shotResult == 0) return;
     
     // resultsTicket.events = parsedEvents;
-    shotResult->parsedEvents = std::move(parsedEvents);
+    shotResult->engineParseResult.parsedEvents = std::move(parsedEvents);
 }
 
 void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
@@ -79,7 +82,7 @@ void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI
         auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
 
         if (file->transferFile(localFileHandle)) {
-            shotResult->timingFiles.push_back(localFileHandle);
+            shotResult->parseResult.timingFiles.push_back(localFileHandle);
         }
     }
 }

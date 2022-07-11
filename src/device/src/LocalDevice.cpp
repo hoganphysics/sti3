@@ -381,7 +381,8 @@ bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValu
 {
 
 	double eventTime = 100;
-	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "writeChannelDefault", 0, STI::Engine::RawEventType::Play);
+	STI::Engine::RawEventTarget eventTarget(getID(), channel);
+	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Play);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
 
 	if (!playSingleEvent(evt0, resultTicket))
@@ -394,7 +395,8 @@ bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue
 {
 
 	double eventTime = 100;
-	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "readChannelDefault", 0, STI::Engine::RawEventType::Measurement);
+	STI::Engine::RawEventTarget eventTarget(getID(), channel);
+	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Measurement);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
 
 	if (!playSingleEvent(evt0, resultTicket))

@@ -85,6 +85,14 @@ namespace Utils
 		return false;		//either a != 0 and b == 0, implying a > b, or both are null
 	}
 
+	template<class T>
+	struct shared_ptr_Comparator {
+		bool operator()(const std::shared_ptr<T>& a, const std::shared_ptr<T>& b) const 
+		{
+			return compare_shared_ptr<T>(a, b);
+		}
+	};
+
 } //Utils
 } //STI
 

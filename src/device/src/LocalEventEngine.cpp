@@ -220,16 +220,13 @@ bool LocalEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, Devi
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
 
-	bool available = lastParseID == parseID && isState(EngineState::Parsed);
+	// bool available = lastParseID == parseID && isState(EngineState::Parsed);
+	bool available = lastParseID == parseID;
 
 	if (!available) return false;
 
-	// Todo: cache bool, mutex lock
-	//Should pipe through parseID to make sure the engine hasn't erased the relevant events (compare to lastParseID)
-	//bool LocalEventEngine::getParsedEvents(const ParseID& parseID, const DeviceEventMap& events)
-
 	if (!eventsByTargetCached) {
-		//sort local  events
+		//sort local events
 		for(auto& tuple : eventsByTarget) {
 
 			std::sort(tuple.second.begin(), tuple.second.end());

@@ -20,9 +20,11 @@ public:
     STIPyDevice(const STI::Device::DeviceID& id);
 
     bool isAbstract() const;
-    const std::string& abstractName() const;
+    std::string abstractName() const;
 
     STI::Device::DeviceID id() const;
+
+    std::string print() const;
 
 private:
 

@@ -103,18 +103,57 @@ module TNetwork
 	};
 	typedef sequence<TStringPair> TStringPairSeq;
 
+	struct TStackFrame
+	{
+		unsigned long file;
+		unsigned long line;
+		unsigned long func;
+	};
+	typedef sequence<TStackFrame> TStackFrameSeq;
+
+	struct TRawEventGroup
+	{
+	    double startTime;
+	    double endTime;
+		TGraphPathLabel groupIndex;
+		string name;
+	};
+	typedef sequence<TRawEventGroup> TRawEventGroupSeq;
+
+	struct TRawEventTargetDevice 
+	{
+		boolean isAbstract;
+		string name;
+		TDeviceID targetDeviceID;
+	};
+	
+	struct TRawEventTargetChannel 
+	{
+		boolean isAbstract;
+		string _name;
+		unsigned short channel;
+	};
+
+	struct TRawEventTarget 
+	{
+		TRawEventTargetDevice device;
+    	TRawEventTargetChannel channel;
+	};
 
 	struct TRawEvent
 	{
 		double time;
-		unsigned short channel;
+		TRawEventTarget target;
+		// unsigned short channel;
 		TMixedValue value;
 		string description;
+		TGraphPathLabel eventGroup;
+		TStackFrameSeq stackTrace;
 		//TEventStackTrace trace;
 		boolean isMeasurement;
 		TRawEventType rawEventType;
-		TDeviceID targetDeviceID;
-
+		// TDeviceID targetDeviceID;
+		
 		TGraphPathLabel eventGraphPath;
 	};
 	typedef sequence<TRawEvent> TRawEventSeq;
@@ -208,12 +247,57 @@ module TNetwork
 
 	struct TShot;
 
-	interface TShotEventsCallback;
+	interface TShotCallback;
+
+
+	struct TParsedVar
+	{
+		string name;
+		TMixedValue value;
+		TStackFrameSeq trace;
+		// TDeviceID targetServerID;
+		TRawEventGroup scope;
+	};
+	typedef sequence<TParsedVar> TParsedVarSeq;
+
+	struct TParsedTag
+	{
+		string name;
+		TStackFrameSeq trace;
+		// TDeviceID targetServerID;
+		TRawEventGroup scope;
+	};
+	typedef sequence<TParsedTag> TParsedTagSeq;
+
+	struct TParseResult
+	{
+		// TParseID parseID;
+
+		TFileHolderSeq timingFiles;
+		TStringSeq timingFileNames;
+
+		TStringSeq functionNames;	//function names indexed in StackTrace
+
+		TRawEventGroupSeq groups;
+		TParsedVarSeq parsedVars;
+		TParsedTagSeq parsedTags;
+
+	};
 
 	struct TShot
 	{
 		TShotConfig shotConfig;
-		TShotEventsCallback shotEventsCallback;		//getEvents()
+		// TParseResult parseResult;
+		// TFileHolderSeq timingFiles;
+		
+		// TStringSeq timingFileNames;
+		// TStringSeq functionNames;	//function names indexed in StackTrace
+
+		// TRawEventGroup groups;
+		// TParsedVarSeq parsedVars;
+		// TParsedTagSeq parsedTags;
+
+		TShotCallback shotCallback;		//getEvents(), getEngineParseResult()
 	};
 
 	struct TEventEngineJob
@@ -436,18 +520,30 @@ module TNetwork
 
 	struct TShotID;
 
+	struct TEngineParseResult
+	{
+		// TParseID parseID;
+
+		TEngineParsingMessageSeq messages;
+		TDeviceEventsSeq parsedEvents;
+		TEventEngineDependencyTree dependencies;
+	};
+
 	struct TShotResult
 	{
 		TShotID sid;
 		TTimeStamp playTime;
 
-		TDeviceEventsSeq parsedEvents;
-		TFileHolderSeq timingFiles;
+		TParseResult parseResult;
+		TEngineParseResult engineParseResult;
+		// TDeviceEventsSeq parsedEvents;
+		// TFileHolderSeq timingFiles;
 		TMeasurementSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
 
 		TShotResultRecord shotResultRecord;
 	};
+
 
 
 	// struct TEngineSchedulerParseMessage

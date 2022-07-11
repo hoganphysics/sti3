@@ -8,6 +8,7 @@
 #include "TDeviceRefInterface.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include "fwd/ChannelManager_fwd.h"
+#include <sti/utils/CachedValue.h>
 
 #include "TReferenceHolder.h"
 
@@ -73,6 +74,8 @@ private:
 	std::shared_ptr<RemoteChannelManager> remoteChannelManager;
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
+
+	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;
 
 	mutable std::mutex deviceMutex;
 

@@ -172,7 +172,7 @@ Configuration& Configuration::addToList(const std::string& section, const std::s
 	s << "[";
 
 	bool isFirst = true;
-	for (auto v : values) {
+	for (auto& v : values) {
 		if (!isFirst) {
 			s << ", ";
 		}

@@ -30,7 +30,7 @@ void init_MixedValue(py::module& m)
 
     py::class_<MixedValuePy>(m, "MixedValue")
         .def(py::init<>())
-        .def(py::init<const py::object&>())
+        .def(py::init<const py::object&>(), py::arg("value"))
         .def("getValue", &MixedValuePy::getValue_py)
         .def("setValue", py::overload_cast<const MixedValuePy&>(&MixedValuePy::setValue_py), py::arg("MixedValue"))    //, py::keep_alive<1, 2>()
         .def("setValue", py::overload_cast<const py::object&>(&MixedValuePy::setValue_py), py::arg("value"))

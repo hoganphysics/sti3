@@ -69,10 +69,13 @@ pybind11_add_module(stipy
     # HubID_wrap.cpp
     # ParseTicket.cpp
     ParseTicket_wrap.cpp
-    pywrapper.cpp
-    PyResultTicket.cpp
+    ParsedVarPy.cpp
+    ParsedVar_wrap.cpp
+    pywrapper.cpp    
     PyParseTicket.cpp
+    PyResultTicket.cpp
     # ResultTicket.cpp
+    RawEventGroup_wrap.cpp
     ResultTicket_wrap.cpp
     STIPyChannel.cpp
     STIPyChannel_wrap.cpp

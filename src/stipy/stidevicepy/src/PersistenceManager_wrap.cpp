@@ -95,7 +95,7 @@ void init_PersistenceManager(py::module& m)
         // .def("year", &ShotResult::year)
         .def_readonly("sid", &ShotResult::sid)
         .def_readonly("playTime", &ShotResult::playTime)
-        .def_readonly("parsedEvents", &ShotResult::parsedEvents)
+        // .def_readonly("parsedEvents", &ShotResult::parsedEvents)
         // .def_readonly("timingFiles", &ShotResult::timingFiles)
         .def("measurements", 
             [](const ShotResult& self) {

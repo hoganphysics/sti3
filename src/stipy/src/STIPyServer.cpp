@@ -8,6 +8,7 @@
 #include <sti/engine/ShotID.h>
 
 #include "STIPyGlobal.h"
+#include "LocalShot.h"
 
 #include <chrono>
 #include <iostream>
@@ -48,15 +49,22 @@ void STIPyServer::setChannels(const pybind11::dict& channels)
 std::shared_ptr<STIPyShot> STIPyServer::makeshot()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    std::shared_ptr<STI::Engine::Shot> shot;
     
     STI::Engine::ShotConfig shotConfig;
+    auto evts = std::make_shared<STI::Engine::RawEventVector>();
+
+    // auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
+    // if (shot != 0) {
+    //     shot->setEvents(evts);
+    // }
+    
+    std::shared_ptr<STI::Engine::Shot> shot;
 
     if (getScheduler(scheduler)) {
         auto evts = std::make_shared<STI::Engine::RawEventVector>();
         shot = scheduler->createShot(shotConfig, evts);
     }
-    auto pyShot = std::make_shared<STIPyShot>(shot, serverID);
+    auto pyShot = std::make_shared<STIPyShot>(shot, "");
     return pyShot;
 }
 

@@ -6,12 +6,14 @@ namespace py = pybind11;
 
 void init_DeviceID(pybind11::module&);
 void init_MixedValue(py::module& m);
+void init_StackTrace(py::module& m);
 void init_RawEvent(py::module& m);
 void init_HubID(py::module& m);
 
 void init_ShotConfig(py::module& m);
 void init_ParseID(py::module& m);
 void init_Configuration(py::module& m);
+
 
 PYBIND11_MODULE(stipybase, m) {
     m.doc() = "STI base wrapper library";
@@ -20,6 +22,7 @@ PYBIND11_MODULE(stipybase, m) {
 
     init_DeviceID(m);
     init_MixedValue(m);
+    init_StackTrace(m);
     init_RawEvent(m);
     init_HubID(m);
 

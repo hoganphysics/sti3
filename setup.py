@@ -95,7 +95,7 @@ setup(
     package_dir={"": "src"},
     cmake_install_dir="",
 	#cmake_args=['-DCMAKE_BUILD_TYPE=RelWithDebInfo', '-DOMNIORB_PATH=C:/Users/Jason/Code/lib/omniORB-4.2.4.x64'],
-  	cmake_args=['-DCMAKE_BUILD_TYPE=RelWithDebInfo', '-DOMNIORB_PATH=' + OMNIORBBASE],
+  	cmake_args=['-DCMAKE_BUILD_TYPE=RelWithDebInfo', '-DOMNIORB_PATH=' + OMNIORBBASE, '-DCMAKE_BUILD_PARALLEL_LEVEL=4', '-DCMAKE_JOB_POOL_COMPILE:STRING=compile', '-DCMAKE_JOB_POOL_LINK:STRING=link', '-DCMAKE_JOB_POOLS:STRING=compile=5;link=2'],
     include_package_data=True,
     exclude_package_data={"": ["*.lib","bin/*"]},
     #data_files=[('bin', ['bin/stidevice.dll','bin/stinetwork.dll'])],

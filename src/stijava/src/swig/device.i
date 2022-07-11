@@ -63,8 +63,8 @@
 
     #include <sti/engine/RawEvent.h>
     using STI::Engine::RawEventType;
-    #include <sti/engine/EventStackTrace.h>
-    using STI::Engine::EventStackTrace;
+    #include <sti/engine/StackTrace.h>
+    using STI::Engine::StackTrace;
     #include <sti/utils/GraphPathLabel.h>
     using STI::Utils::GraphPathLabel;
 
@@ -179,7 +179,7 @@
 %template(UIntVector) std::vector< unsigned >;
 %include "sti/utils/GraphPathLabel.h"
 %rename(UIntVector) STI::Utils::GraphPathLabel;
-%include "sti/engine/EventStackTrace.h"
+%include "sti/engine/StackTrace.h"
 %include "sti/engine/RawEvent.h"
 %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
 %shared_ptr( std::vector< STI::Engine::RawEvent > );

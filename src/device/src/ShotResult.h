@@ -4,13 +4,13 @@
 
 #include <sti/device/DeviceID.h>
 #include <sti/fwd/Measurement_fwd.h>
-#include <sti/fwd/RawEvent_fwd.h>
 #include <sti/engine/ShotID.h>
-#include <sti/utils/FileHolder.h>
 #include <sti/device/Attribute.h>
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/engine/Measurement.h>
 
+#include "ParseResult.h"
+#include "EngineParseResult.h"
 
 #include <vector>
 #include <memory>
@@ -35,8 +35,9 @@ public:
     ShotID sid; //contains a record of shot type (single, sequence, undocumented)
 	TimeStamp playTime;
     
-    DeviceEventMap parsedEvents;
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
+    ParseResult parseResult;
+    EngineParseResult engineParseResult;
+
     std::shared_ptr<STI::Engine::MeasurementVector> measurements;
     //std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;

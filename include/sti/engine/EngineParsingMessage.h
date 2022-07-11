@@ -22,6 +22,7 @@ class EngineParsingMessage
 {
 public:
 
+    EngineParsingMessage();
     EngineParsingMessage(const STI::Device::DeviceID& source, 
                             const ParsingMessageType& type, unsigned id, const std::string& name);
     ~EngineParsingMessage();
@@ -44,6 +45,9 @@ public:
 
     void setEvents(std::vector<RawEvent>& evts);
     std::vector<RawEvent>& getEventVector() { return events; }
+
+    template<class Archive>
+    void serialize(Archive& archive);
 
 private:
 

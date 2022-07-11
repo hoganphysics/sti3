@@ -4,7 +4,7 @@
 #include "Shot.h"
 #include "TShotRefInterface.h"
 
-#include "TShotEventsCallback_i.h"
+#include "TShotCallback_i.h"
 #include "deviceNet.h"
 #include <sti/engine/ShotConfig.h>
 
@@ -29,15 +29,26 @@ public:
     const STI::Engine::ShotConfig& getShotConfig() const;
 
     void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
+    void getParseResult(std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+    void setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+
+    std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
+
+    std::vector<std::string> getTimingFileNames() const;
+    std::vector<std::string> getFunctionNames() const;
+
+    std::vector<STI::Engine::RawEventGroup> getGroups();
+    std::vector<STI::Engine::ParsedVar> getParsedVars();
+    std::vector<STI::Engine::ParsedTag> getParsedTags();
 
 private:
 
-    bool getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback);
+    bool getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback);
 
     STI::Engine::ShotConfig shotConfig;
 
     std::shared_ptr<STI::Engine::Shot> localshot;
-    STI::TNetwork::TShotEventsCallback_i shotEventsCBServant;
+    STI::TNetwork::TShotCallback_i shotEventsCBServant;
 
 };
 

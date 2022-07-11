@@ -1,0 +1,57 @@
+#ifndef STI_ENGINE_RAWEVENTTARGET_H
+#define STI_ENGINE_RAWEVENTTARGET_H
+
+
+#include <sti/engine/RawEventTargetDevice.h>
+#include <sti/engine/RawEventTargetChannel.h>
+
+#include <sti/device/DeviceID.h>
+
+#include <string>
+
+
+namespace STI
+{
+namespace Engine
+{
+
+class RawEventTargetDevice;
+class RawEventTargetChannel;
+
+
+class RawEventTarget
+{
+public:
+
+    RawEventTarget(const RawEventTargetDevice& dev, const RawEventTargetChannel& ch);
+
+    RawEventTarget(const STI::Device::DeviceID& targetDevice, unsigned short channel);
+
+    RawEventTarget(const STI::Device::DeviceID& targetDevice, const std::string& channelName);
+    RawEventTarget(const std::string& deviceName, unsigned short channel);
+    RawEventTarget(const std::string& deviceName, const std::string& channelName);
+
+    RawEventTarget(const std::string& channelName);
+
+    bool isAbstract() const;
+
+    RawEventTargetDevice& getDevice();
+    const RawEventTargetDevice& device() const;
+
+    RawEventTargetChannel& getChannel();
+    const RawEventTargetChannel& channel() const;
+
+    template<class Archive>
+    void serialize(Archive& archive);
+
+private:
+
+    RawEventTargetDevice _device;
+    RawEventTargetChannel _channel;
+};
+
+
+} //Engine
+} //STI
+
+#endif

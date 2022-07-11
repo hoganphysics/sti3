@@ -4,8 +4,18 @@
 
 #include <algorithm>
 
-using STI::Engine::ParsedDependencyTree;
+#include "CerealArchives.h"
 
+#include <cereal/types/vector.hpp>
+
+
+using STI::Engine::ParsedDependencyTree;
+using STI::Engine::DeviceIDVertex;
+
+
+ParsedDependencyTree::ParsedDependencyTree()
+{
+}
 
 ParsedDependencyTree::ParsedDependencyTree(const std::shared_ptr<EventEngineDependencyTree>& tree)
 {
@@ -58,3 +68,27 @@ void ParsedDependencyTree::getDependedentNodes(const STI::Device::DeviceID& node
     }
 }
 
+
+template<class Archive>
+void DeviceIDVertex::serialize(Archive& archive)
+{
+    archive( 
+        cereal::make_nvp("id", id),
+        cereal::make_nvp("outConnections", outConnections)
+        );
+}
+
+template void DeviceIDVertex::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void DeviceIDVertex::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+
+
+template<class Archive>
+void ParsedDependencyTree::serialize(Archive& archive)
+{
+    archive( 
+        cereal::make_nvp("vertices", vertices)
+        );
+}
+
+template void ParsedDependencyTree::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void ParsedDependencyTree::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

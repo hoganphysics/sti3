@@ -762,7 +762,7 @@ void LocalEventEngineScheduler::assignJobs()
         if (freeEngines.size() > 0) {
             
             //First priority is to run a play event if a free engine is parsed for it, regardless of position in set.
-            for (auto jobID : queuedJobIDs) {
+            for (auto& jobID : queuedJobIDs) {
                 
                 if (jobID.type == EventEngineJobType::Play) {
                     
@@ -782,7 +782,7 @@ void LocalEventEngineScheduler::assignJobs()
             }
 
             //assign parse jobs
-            for (auto jobID : queuedJobIDs) {
+            for (auto& jobID : queuedJobIDs) {
                 if (jobID.type == EventEngineJobType::Parse) {
 
                     if (findOldestParsedEngine(freeEngines, engineID) && assignJob(jobID, engineID)) {

@@ -1,6 +1,7 @@
 
 #include "STIPyDevice.h"
 
+#include <sstream>
 
 using STI::Python::STIPyDevice;
 
@@ -25,7 +26,7 @@ bool STIPyDevice::isAbstract() const
     return abstract_;
 }
 
-const std::string& STIPyDevice::abstractName() const
+std::string STIPyDevice::abstractName() const
 {
     return abstractName_;
 }
@@ -35,3 +36,18 @@ STI::Device::DeviceID STIPyDevice::id() const
     return deviceID;
 }
 
+std::string STIPyDevice::print() const
+{
+    std::stringstream s;
+ 
+    s << "dev(";    
+    if (isAbstract()) {
+        s << abstractName();
+    }
+    else {
+        s << id().getID();
+    }
+    s << ")";
+
+    return s.str();
+}

@@ -201,7 +201,7 @@ private:
 		std::set<DeviceID> ids;
 		listenerGroupMap.getKeys(ids);
 
-		for (auto id : ids) {
+		for (auto& id : ids) {
 			if (listenerGroupMap.get(id, listenerGroup) && listenerGroup != 0) {
 				listenerGroup->clear();
 			}

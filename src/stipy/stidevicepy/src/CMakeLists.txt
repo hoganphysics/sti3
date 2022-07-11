@@ -82,6 +82,7 @@ find_package(pybind11 CONFIG REQUIRED)
 # Static lib needed by stipybase and stipy
 add_library(sticommonpy STATIC
     MixedValuePy.cpp
+    StackTracePy.cpp
 )
 
 target_include_directories(sticommonpy PRIVATE 
@@ -121,6 +122,7 @@ pybind11_add_module(stipybase MODULE
     ParseID_wrap.cpp
     RawEvent_wrap.cpp
     ShotConfig_wrap.cpp
+    StackTrace_wrap.cpp
 )
 
 add_dependencies(stipybase sticommonpy stidevice stinetwork)

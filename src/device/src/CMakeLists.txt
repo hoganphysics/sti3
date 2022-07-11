@@ -75,8 +75,8 @@ add_library(stidevice SHARED
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
-    EventStackTrace.cpp
-    EngineState.cpp
+    EngineParseResult.cpp
+    EngineState.cpp   
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -90,20 +90,30 @@ add_library(stidevice SHARED
     LocalFileHolder.cpp
     LocalPersistenceManager.cpp
     LocalResultsCollector.cpp
+    LocalShot.cpp
     MasterTrigger.cpp
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
     ParseID.cpp
     ParsedDependencyTree.cpp
+    ParsedTag.cpp
+    ParsedVar.cpp
+    ParseResult.cpp
     ParseTicket.cpp  
     RawEvent.cpp
+    RawEventGroup.cpp
+    RawEventGroupManager.cpp
+    RawEventTarget.cpp
+    RawEventTargetChannel.cpp
+    RawEventTargetDevice.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     ShotConfig.cpp
     ShotID.cpp
     ShotResult.cpp
     ShotResultRecord.cpp
+    StackTrace.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp
     Ticket.cpp

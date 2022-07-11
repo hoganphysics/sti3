@@ -100,11 +100,15 @@ module TNetwork
 		boolean ping();
 	};
 
-	interface TShotEventsCallback
+	interface TShotCallback
 	{
-		void getEvents(out TRawEventSeq events);
+		// void getGroups(out TRawEventGroup groups);
+		// void getVars(out TParsedVarSeq parsedVars);
+		// void getTags(out TParsedTagSeq parsedTags);
+		void getEvents(out TRawEventSeq events);	//initial events, e.g. from stipy
+		void getParseResult(out TParseResult parseResult);
+		// void getEngineParseResult(out TEngineParseResult parseResult);	//full record of parse, including partner events
 	};
-
 
 	interface TEventEngine;
 

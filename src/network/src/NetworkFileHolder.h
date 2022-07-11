@@ -26,6 +26,12 @@ public:
     NetworkFileHolder(const std::string& filename);
     virtual ~NetworkFileHolder();
 
+    static bool isNetworkFileHolder(const std::shared_ptr<STI::Utils::FileHolder>& fileHolder)
+    {
+        auto wrapper = std::dynamic_pointer_cast<NetworkFileHolder>(fileHolder);
+        return (wrapper != 0);
+    }
+
 private:
 
     bool getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder);

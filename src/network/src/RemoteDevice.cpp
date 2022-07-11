@@ -128,6 +128,8 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 {
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
+	if (cachedDeviceID.isCached()) return cachedDeviceID.get();
+
 	::STI::TNetwork::TDeviceID_var tDeviceID;
 
 	bool success = false;
@@ -150,6 +152,7 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 
 	if(success) {
 		deviceID = convert<::STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceID);
+		cachedDeviceID.set(deviceID);
 	}
 
 	return deviceID;

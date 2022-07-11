@@ -3,14 +3,19 @@
 #include "STIPyGlobal.h"
 #include "STIPyShot.h"
 #include <sti/device/DeviceID.h>
-#include "STIPyDevice.h"
+#include <sti/engine/RawEventTargetDevice.h>
+
+#include "StackTracePy.h"
 
 #include <stdexcept>
 // #include <iostream>
 
 using STI::Python::STIPyGlobal;
 using STI::Python::STIPyShot;
-using STI::Python::STIPyDevice;
+using STI::Engine::RawEventTargetDevice;
+using STI::Engine::RawEventGroup;
+using STI::Engine::StackTrace;
+using STI::Engine::RawEventTarget;
 
 
 STIPyGlobal::STIPyGlobal()
@@ -36,6 +41,11 @@ std::shared_ptr<STIPyGlobal> STIPyGlobal::getInstance()
 
 void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
 {
+    makeShot(shot, "", func);
+}
+
+void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func)
+{
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -59,7 +69,8 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
     }
 }
 
-void STIPyGlobal::event(const STIPyChannel& channel, double time, const pybind11::object& value)
+void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind11::object& value, 
+                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -70,11 +81,12 @@ void STIPyGlobal::event(const STIPyChannel& channel, double time, const pybind11
     }
 
     if (currentShot != 0) {
-        currentShot->event(channel, time, value);
+        currentShot->event(target, time, value, stackTrace, group);
     }
 }
 
-void STIPyGlobal::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
+void STIPyGlobal::meas(const RawEventTarget& target, double time, const pybind11::object& value,
+                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -85,11 +97,12 @@ void STIPyGlobal::meas(const STIPyChannel& channel, double time, const pybind11:
     }
 
     if (currentShot != 0) {
-        currentShot->meas(channel, time, value);
+        currentShot->meas(target, time, value, stackTrace, group);
     }
 }
 
-void STIPyGlobal::meas(const STIPyChannel& channel, double time)
+void STIPyGlobal::meas(const RawEventTarget& target, double time, const StackTracePy& stackTrace, 
+                        const STI::Engine::RawEventGroup& group)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -100,27 +113,27 @@ void STIPyGlobal::meas(const STIPyChannel& channel, double time)
     }
 
     if (currentShot != 0) {
-        currentShot->meas(channel, time);
+        currentShot->meas(target, time, stackTrace, group);
     }
 }
 
-std::shared_ptr<STIPyDevice> STIPyGlobal::dev(const std::string& name, const std::string& address, unsigned module)
-{
-    std::unique_lock<std::mutex> shotLock(shotMutex);
+// STI::Engine::RawEventTargetDevice STIPyGlobal::dev(const std::string& name, const std::string& address, unsigned module)
+// {
+//     std::unique_lock<std::mutex> shotLock(shotMutex);
 
-    std::shared_ptr<STIPyDevice> device;
+//     RawEventTargetDevice device(name, address, module);
 
-    if (currentShot != 0) {
-        device = std::make_shared<STIPyDevice>(name, address, module, currentShot->getServerID().getID());
-    }
-    else {
-        STI::Device::DeviceID id(name, address, module);
-//        std::string id = STI::Device::DeviceID::generateID(name, address, module);
-        device = std::make_shared<STIPyDevice>(id);
-    }
+// //     if (currentShot != 0) {
+// //         device = std::make_shared<RawEventTargetDevice>(name, address, module, currentShot->getServerID().getID());
+// //     }
+// //     else {
+// //         STI::Device::DeviceID id(name, address, module);
+// // //        std::string id = STI::Device::DeviceID::generateID(name, address, module);
+// //         device = std::make_shared<RawEventTargetDevice>(id);
+// //     }
 
-    return device;
-}
+//     return device;
+// }
 
 std::shared_ptr<STIPyGlobal> STIPyGlobal::instance = 0;
 bool STIPyGlobal::initialized = false;

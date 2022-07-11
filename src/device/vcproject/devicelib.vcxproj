@@ -180,7 +180,7 @@
     <ClInclude Include="..\src\EventEngineScheduler.h" />
     <ClInclude Include="..\src\EventEngineStateMachine.h" />
     <ClInclude Include="..\src\EventParsingException.h" />
-    <ClInclude Include="..\src\EventStackTrace.h" />
+    <ClInclude Include="..\src\StackTrace.h" />
     <ClInclude Include="..\src\fwd\Channel_fwd.h" />
     <ClInclude Include="..\src\fwd\DeviceEventParser_fwd.h" />
     <ClInclude Include="..\src\fwd\DeviceID_fwd.h" />

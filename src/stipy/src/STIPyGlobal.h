@@ -2,6 +2,9 @@
 #ifndef STI_PYTHON_STIPYGLOBAL_H
 #define STI_PYTHON_STIPYGLOBAL_H
 
+#include <sti/engine/StackTrace.h>
+#include "RawEventGroup.h"
+#include <sti/engine/RawEventTarget.h>
 
 #include <functional>
 #include <memory>
@@ -17,10 +20,9 @@ namespace Python
 
 
 class STIPyShot;
-class STIPyDevice;
-class STIPyChannel;
 class STIPyGlobal;
 struct Concrete_STIPyGlobal;
+class StackTracePy;
 
 
 class STIPyGlobal
@@ -32,16 +34,25 @@ public:
     static std::shared_ptr<STIPyGlobal> getInstance();
 
     void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func);
+    void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func);
 
-    void event(const STIPyChannel& channel, double time, const pybind11::object& value);
-    void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
-    void meas(const STIPyChannel& channel, double time);
+    // void event(const RawEventTarget& channel, double time, const pybind11::object& value, 
+    //             const STI::Engine::StackTrace& stackTrace, const STI::Engine::RawEventGroup& group);
 
-    std::shared_ptr<STIPyDevice> dev(const std::string& name, const std::string& address, unsigned module);
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group);
+    void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group);
+    void meas(const STI::Engine::RawEventTarget& target, double time, const StackTracePy& stackTrace, 
+                const STI::Engine::RawEventGroup& group);
+
+    // STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);
+
 
 private:
 
     STIPyGlobal();
+
     friend Concrete_STIPyGlobal;
 
     static std::shared_ptr<STIPyGlobal> instance;

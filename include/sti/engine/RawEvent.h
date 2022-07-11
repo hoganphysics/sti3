@@ -26,7 +26,8 @@
 #include <sti/fwd/RawEvent_fwd.h>
 
 #include <sti/utils/MixedValue.h>
-#include <sti/engine/EventStackTrace.h>
+#include <sti/engine/StackTrace.h>
+#include <sti/engine/RawEventTarget.h>
 #include <sti/device/DeviceID.h>
 //#include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/utils/GraphPathLabel.h>
@@ -42,6 +43,7 @@ namespace Engine
 {
 
 class SynchronousEvent;		//for confirming measurement scheduling
+class RawEventGroup;
 
 
 class RawEvent
@@ -52,12 +54,15 @@ public:
 	//	double time, unsigned short channel, const STI::Utils::MixedValue& value,
 	//	const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
 	
-	RawEvent() {}
+	RawEvent();
 
-	RawEvent(const STI::Device::DeviceID& targetDeviceID,
-		double time, unsigned short channel, const STI::Utils::MixedValue& value,
-		const std::string& description, unsigned eventNumber, const RawEventType& eventType);
-
+	// RawEvent(const STI::Device::DeviceID& targetDeviceID,
+	// 	double time, unsigned short channel, const STI::Utils::MixedValue& value,
+	// 	const StackTrace& eventStackTrace, unsigned eventNumber, const RawEventType& eventType);
+	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
+		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, const RawEventGroup& group);
+	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
+		unsigned eventNumber, const RawEventType& eventType);
 
 	//For device generated events
 	RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber);
@@ -71,6 +76,10 @@ public:
 	const STI::Utils::MixedValue& value() const;
 	std::string description() const { return _description; }
 
+	const RawEventTarget& target() const;
+	RawEventTarget& getTarget();
+	const STI::Utils::GraphPathLabel& groupIndex();
+	
 	//struct Command
 	//{
 	//	enum class CommandType { Play, Pause, Waveform, Jump };	//...
@@ -81,9 +90,9 @@ public:
 	//enum class EventType { Output, Measurement, Pause, Waveform, Jump };	//...
 	const RawEventType& type() const { return _eventType; }
 
-	const STI::Device::DeviceID& targetDevice() const;
+	STI::Device::DeviceID targetDevice() const;
 
-	const EventStackTrace& getStackTrace() const { return trace; }
+	const StackTrace& getStackTrace() const { return stackTrace; }
 
 	const std::vector<unsigned>& getEventGraphPath() const { return eventGraphPath; }
 
@@ -99,10 +108,10 @@ public:
 	bool operator==(const RawEvent& rhs) const { return eventGraphPath == rhs.eventGraphPath; }
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }
 
-
-	void setTargetID(const STI::Device::DeviceID& targetID) { targetDeviceID = targetID; }
+	void setTarget(const STI::Engine::RawEventTarget& target) { _target = target; }
+	// void setTargetID(const STI::Device::DeviceID& targetID) { _target.getDevice().setTargetDeviceID(targetID); }
 	void setTime(double time) { _time = time; }
-	void setChannel(unsigned short channel) { _channel = channel; }
+	// void setChannel(unsigned short channel) { _target.getChannel().setChannel(channel); }
 	void setValue(const STI::Utils::MixedValue& value) { _value = value; }
 	void setDescription(const std::string& description) { _description = description; }
 	void setEventGraphPath(const STI::Utils::GraphPathLabel& pathLabel) { eventGraphPath = pathLabel;}
@@ -111,20 +120,23 @@ public:
 		isMeasurement = (eventType == RawEventType::Measurement);
 		_eventType = eventType;
 	}
-
+	void setGroupIndex(const STI::Utils::GraphPathLabel& index);
+	
 	template<class Archive>
 	void serialize(Archive& archive);
 
 private:
 	
 	double _time;
-	unsigned short _channel;
+	// unsigned short _channel;
 	STI::Utils::MixedValue _value;
+	RawEventTarget _target;		//target device and channel
+	STI::Utils::GraphPathLabel eventGroupIndex;	//ordered list of (nested) event groups that this event belongs to
 	std::string _description;
-	EventStackTrace trace;
+	StackTrace stackTrace;
 	bool isMeasurement;
 	RawEventType _eventType;
-	STI::Device::DeviceID targetDeviceID;
+	// STI::Device::DeviceID targetDeviceID;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
 
