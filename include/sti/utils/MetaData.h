@@ -29,6 +29,10 @@ public:
     const STI::Utils::MixedValue& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
 
+    std::vector<std::string> keys() const;
+
+    void merge(const MetaData& data);
+
 private:
 
     static bool isTuple(const STI::Utils::MixedValue& tuple);

@@ -392,8 +392,13 @@ public:
 	// std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
 	// std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
 
-	std::vector<STI::Engine::RawEvent> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
-	std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+	// std::vector<STI::Engine::RawEvent> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
+	// std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+	std::shared_ptr<STI::Engine::RawEventGroup> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
+	std::shared_ptr<STI::Engine::RawEventGroup> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+	std::shared_ptr<STI::Engine::RawEventGroup> upstreamPartnerEvents;
 
 	std::vector<STI::Engine::EngineParsingMessage> messages;
 

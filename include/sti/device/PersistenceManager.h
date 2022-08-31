@@ -10,6 +10,9 @@
 //#include "ShotRepository.h"
 #include <sti/engine/ShotResultRecord.h>
 
+#include "FullShotResult.h"
+
+
 #include <memory>
 
 
@@ -19,14 +22,16 @@ namespace Device
 {
 
 
-class PersistenceManager
+class PersistenceManager : public STI::Utils::FileHolderFactory
 {
 public:
 
     virtual ~PersistenceManager() {}
 
-    virtual bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result) = 0;
-    virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner) = 0;
+    virtual bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult) = 0;
+
+    virtual bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result) = 0;
+    virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner) = 0;
 
     virtual STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector) = 0;
 
@@ -35,6 +40,9 @@ public:
     //virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
+
+    // virtual std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename) = 0;
+    
 
 //    virtual void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;
 //    virtual bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;

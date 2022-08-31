@@ -3,6 +3,9 @@
 #include "ShotResult.h"
 #include <sti/engine/RawEvent.h>
 #include <sti/utils/utils.h>
+#include <sti/engine/ParseID.h>
+#include "ParseResult.h"
+#include "FullShotResult.h"
 
 #include <filesystem>
 
@@ -11,6 +14,10 @@ using STI::Engine::ResultsPaths;
 using STI::Engine::ShotID;
 using STI::Engine::ShotResult;
 using STI::Engine::MeasurementVector;
+using STI::Engine::ParseID;
+using STI::Engine::ParseResult;
+using STI::Engine::FullShotResult;
+
 
 
 TransientRepository::TransientRepository(const std::string& tempBasePath)
@@ -42,26 +49,41 @@ TransientRepository::~TransientRepository()
     }
 }
 
-bool TransientRepository::findShot(const ShotID& sid)
+bool TransientRepository::findShotResult(const ShotID& sid)
 {
     return resultBuffer.contains(sid);
 }
 
-bool TransientRepository::getShot(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
+bool TransientRepository::findParseResult(const ParseID& sid)
 {
-    return resultBuffer.get(id, shotResult);
+    return false;
 }
 
-bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<ShotResult>& shotResult)
+bool TransientRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
 {
-    std::shared_ptr<ShotResult> expiredResult;  //the oldest result in the buffer; ready to delete
+    std::shared_ptr<FullShotResult> fullShotResult;
+    if (resultBuffer.get(id, fullShotResult) && fullShotResult != 0) {
+        shotResult = fullShotResult->shotResult;
+        return (shotResult != 0);
+    }
+    return false;
+}
+
+bool TransientRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult)
+{
+    return false;
+}
+
+bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult)
+{
+    std::shared_ptr<FullShotResult> expiredResult;  //the oldest result in the buffer; ready to delete
     
-    if (resultBuffer.addAndRemove(sid, shotResult, expiredResult) && expiredResult != 0) {
+    if (resultBuffer.addAndRemove(sid, fullShotResult, expiredResult) && expiredResult != 0) {
         //The buffer was full. Need to delete the old result;
-        ShotResult::deleteShotFiles(*expiredResult);
+        ShotResult::deleteShotFiles(*expiredResult->shotResult);
     }
 
-    return findShot(sid);
+    return findShotResult(sid);
 }
 
 ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
@@ -80,10 +102,11 @@ ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
 
 bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
-    std::shared_ptr<ShotResult> shotResult;
+    std::shared_ptr<FullShotResult> fullShotResult;
 
-    if (resultBuffer.get(sid, shotResult) && shotResult != 0 && shotResult->measurements != 0) {
-        measurements = shotResult->measurements;
+    if (resultBuffer.get(sid, fullShotResult) && fullShotResult != 0 
+        && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
+        measurements = fullShotResult->shotResult->measurements;
         return true;
     }
 

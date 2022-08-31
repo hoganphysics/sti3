@@ -134,9 +134,16 @@ std::shared_ptr<ORBManager> ORBManager::getInstance()
 	return getInstance(omniOptions, "");
 }
 
+bool ORBManager::orbInstanceInitializd()
+{
+	std::unique_lock<std::mutex> writeLock(orbInitMutex);
+	return orb_initialized;
+}
 
 ORBManager::ORBManager(const std::string& args)
 {
+	std::unique_lock<std::mutex> writeLock(orbInitMutex);
+
 	poa_is_active = false;
 	
 	auto paramsNames = omniOptions.getParameterNames();

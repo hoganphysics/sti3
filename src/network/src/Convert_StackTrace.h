@@ -18,6 +18,8 @@ namespace Engine
 
 class StackTrace;
 class StackFrame;
+class StackTraceResult;
+class StackTraceData;
 
 } //Engine
 
@@ -46,6 +48,25 @@ bool Network::convert<TNetwork::TStackFrameSeq, Engine::StackTrace>(
 template<>
 bool Network::convert<Engine::StackTrace, TNetwork::TStackFrameSeq>(
     const Engine::StackTrace& stackFrame, TNetwork::TStackFrameSeq& tStackFrameSeq);
+
+
+//StackTraceResult
+template<>
+bool Network::convert<TNetwork::TStackTraceResult, std::shared_ptr<Engine::StackTraceResult>>(
+    const TNetwork::TStackTraceResult& tStackTraceResult, std::shared_ptr<Engine::StackTraceResult>& stackTraceResult);
+template<>
+bool Network::convert<std::shared_ptr<Engine::StackTraceResult>, TNetwork::TStackTraceResult>(
+    const std::shared_ptr<Engine::StackTraceResult>& stackTraceResult, TNetwork::TStackTraceResult& tStackTraceResult);
+
+
+//StackTraceData
+template<>
+bool Network::convert<TNetwork::TStackTraceData, std::shared_ptr<Engine::StackTraceData>>(
+    const TNetwork::TStackTraceData& tStackTraceData, std::shared_ptr<Engine::StackTraceData>& stackTraceData);
+template<>
+bool Network::convert<std::shared_ptr<Engine::StackTraceData>, TNetwork::TStackTraceData>(
+    const std::shared_ptr<Engine::StackTraceData>& stackTraceData, TNetwork::TStackTraceData& tStackTraceData);
+
 
 
 

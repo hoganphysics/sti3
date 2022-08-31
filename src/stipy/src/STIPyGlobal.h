@@ -39,12 +39,15 @@ public:
     // void event(const RawEventTarget& channel, double time, const pybind11::object& value, 
     //             const STI::Engine::StackTrace& stackTrace, const STI::Engine::RawEventGroup& group);
 
+
     void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
-                const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group);
+                const STI::Engine::RawStackTrace& stackTrace);
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
     void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
-                const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group);
-    void meas(const STI::Engine::RawEventTarget& target, double time, const StackTracePy& stackTrace, 
-                const STI::Engine::RawEventGroup& group);
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void meas(const STI::Engine::RawEventTarget& target, double time, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
 
     // STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);
 

@@ -28,6 +28,7 @@ class ResultTicket;
 class ParsedDependencyTree;
 class EngineJobSourceID;
 class ShotConfig;
+class ParseResult;
 
 
 class EventEngineScheduler
@@ -63,13 +64,17 @@ public:
     virtual void getRunningJobs(std::set<EngineJobID>& jobIDs) const = 0;
     virtual void getCompletedJobs(std::set<EngineJobID>& jobIDs) const = 0;
 
-    virtual std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events) = 0;
+
+    // virtual std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig) = 0;
+    virtual std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup) = 0;
 
    	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 
-    virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const = 0;
-    virtual bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const = 0;
-    virtual bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const = 0;
+    // virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const = 0;
+    // virtual bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const = 0;
+    // virtual bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const = 0;
+    
+    virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
 
     // virtual bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;
     // virtual bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results) = 0;

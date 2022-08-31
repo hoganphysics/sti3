@@ -120,6 +120,8 @@ private:
 
 
     bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+    bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
+
 
     std::shared_ptr<STI::Network::NetworkDeviceHub> libDeviceHub;
     std::shared_ptr<STIPyLibDevice> libDevice;

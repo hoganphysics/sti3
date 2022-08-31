@@ -5,6 +5,7 @@
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
 #include "ShotResult.h"
+#include "FullShotResult.h"
 // #include <sti/engine/TimeStamp.h>
 
 #include "CerealArchives.h"
@@ -34,7 +35,7 @@ SerializedRepository::SerializedRepository(const std::string& baseDevicePath)
 }
 
 
-bool SerializedRepository::findShot(const ShotID& sid)
+bool SerializedRepository::findShotResult(const ShotID& sid)
 {
     //std::unique_lock<std::mutex> pathLock(pathMutex);
 
@@ -43,13 +44,24 @@ bool SerializedRepository::findShot(const ShotID& sid)
     return std::filesystem::exists(shotPath);
 }
 
+bool SerializedRepository::findParseResult(const ParseID& sid)
+{
+    return false;
+}
+
+
+bool SerializedRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult)
+{
+    return false;
+}
+
 bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
     //if (!findShot(sid)) return false;
 
     std::shared_ptr<ShotResult> shotResult;
     
-    if (getShot(sid, shotResult) && shotResult != 0 && shotResult->measurements != 0) {
+    if (getShotResult(sid, shotResult) && shotResult != 0 && shotResult->measurements != 0) {
         measurements = shotResult->measurements;
         return (measurements != 0);
     }
@@ -106,7 +118,7 @@ void SerializedRepository::makePathIfNew(const std::string& pathName)
 // tm timeinfo;
 
 
-bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult)
+bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult)
 //bool SerializedRepository::save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector)
 {
     // auto measurements = resultsCollector->getMeasurements();
@@ -133,7 +145,7 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
 
         //archive(id);
         //archive( results );
-        archive( shotResult );
+        archive( fullShotResult );
 
         // archive( 
         //     cereal::make_nvp("ShotID", results->sid),
@@ -172,10 +184,10 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
 
 
 
-bool SerializedRepository::getShot(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult)
+bool SerializedRepository::getShotResult(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult)
 //bool SerializedRepository::load(const ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult)
 {
-    if (!findShot(sid)) return false;
+    if (!findShotResult(sid)) return false;
 
     auto paths = preparePaths(sid);
 

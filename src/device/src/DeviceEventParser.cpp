@@ -3,6 +3,9 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/device/DeviceID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include "RawEventGroup.h"
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/RawEventTargetDevice.h>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::DeviceEventMap;
@@ -42,7 +45,11 @@ void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceE
 		//emplace_back appends to the raw event vector by calling the following constuctor:
 		//RawEvent(evt, referenceEvent, eventNumber).
 		//This avoids constructing a temp RawEvent and then deep copying to the vector.
-		(*_target)[evt.targetDevice()].emplace_back(evt, referenceEvent, eventNumber);
+
+
+		
+		// std::string subgroupName = referenceEvent.getGroupName();	//Todo: need to remove top group name...
+		(*_target)[evt.target().device().deviceID()]->addEvent(RawEvent(evt, referenceEvent, eventNumber));
 
 		eventNumber++;
 	}

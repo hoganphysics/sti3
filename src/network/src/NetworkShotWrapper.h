@@ -28,18 +28,21 @@ public:
 
     const STI::Engine::ShotConfig& getShotConfig() const;
 
-    void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
-    void getParseResult(std::shared_ptr<STI::Engine::ParseResult>& parseResult);
-    void setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+    void getBaseEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& baseGroup);
 
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
 
-    std::vector<std::string> getTimingFileNames() const;
-    std::vector<std::string> getFunctionNames() const;
+    // void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
+    // void getParseResult(std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+    // void setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& parseResult);
 
-    std::vector<STI::Engine::RawEventGroup> getGroups();
-    std::vector<STI::Engine::ParsedVar> getParsedVars();
-    std::vector<STI::Engine::ParsedTag> getParsedTags();
+    // std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
+
+    // std::vector<std::string> getTimingFileNames() const;
+    // std::vector<std::string> getFunctionNames() const;
+
+    // std::vector<STI::Engine::RawEventGroup> getGroups();
+    // std::vector<STI::Engine::ParsedVar> getParsedVars();
+    // std::vector<STI::Engine::ParsedTag> getParsedTags();
 
 private:
 

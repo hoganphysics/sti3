@@ -52,14 +52,17 @@ public:
     //                                           const STI::Device::DeviceID& owner, 
     //                                           const std::set<STI::Device::DeviceID>& missingTargets);
 
-    std::shared_ptr<STI::Engine::Shot> createShot(const STI::Engine::ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventVector>& events);
+    std::shared_ptr<STI::Engine::Shot> createShot(const STI::Engine::ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup);
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 
-    bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& events) const;
-    bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
-    bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParsedDependencyTree>& tree) const;
+    // bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& events) const;
+    // bool getParsingMessages(const STI::Engine::ParseID& parseID, std::vector<STI::Engine::EngineParsingMessage>& messages) const;
+    // bool getParsedTree(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParsedDependencyTree>& tree) const;
 	
+    bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
+
+
     bool ping() const;
 
 private:

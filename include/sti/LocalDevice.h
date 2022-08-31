@@ -119,6 +119,8 @@ public:
 	void addCollectionListener(const std::string& listenerName,
 		const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
 
+	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+
 private:
 
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);

@@ -9,6 +9,7 @@
 #include "LocalEventEngineJob.h"
 #include <sti/engine/RawEvent.h>
 #include "RemoteResultsCollector.h"
+#include "Convert_ShotResult.h"
 
 
 using STI::TNetwork::TEventEngine_i;
@@ -134,25 +135,25 @@ TEngineState TEventEngine_i::getState()
 }
 
 
-::CORBA::Boolean TEventEngine_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
-{
-	bool success = false;
+// ::CORBA::Boolean TEventEngine_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
+// {
+// 	bool success = false;
 
-    if (eventEngine != 0) {
+//     if (eventEngine != 0) {
 
-		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
-		STI::Engine::DeviceEventMap deviceEvents;
+// 		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
+// 		STI::Engine::DeviceEventMap deviceEvents;
 
-		success = eventEngine->getParsedEvents(convert<STI::TNetwork::TParseID, STI::Engine::ParseID>(parseID), deviceEvents);
+// 		success = eventEngine->getParsedEvents(convert<STI::TNetwork::TParseID, STI::Engine::ParseID>(parseID), deviceEvents);
 
-		success &= convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);	
+// 		success &= convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);	
 		
-		events = new STI::TNetwork::TDeviceEventsSeq();
-		(*events) = tDeviceEventsSeq_var;
-	}
+// 		events = new STI::TNetwork::TDeviceEventsSeq();
+// 		(*events) = tDeviceEventsSeq_var;
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 
 
 TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
@@ -165,6 +166,27 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 	}
 
 	return tEventEngineDependencyTree_var._retn();
+}
+
+
+::CORBA::Boolean TEventEngine_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult)
+{
+	bool success = false;
+
+    if (eventEngine != 0) {
+
+		STI::TNetwork::TParseResult_var tParseResult_var(new STI::TNetwork::TParseResult);
+		std::shared_ptr<STI::Engine::ParseResult> parseResult;
+
+		success = eventEngine->getParseResult(convert<STI::TNetwork::TParseID, STI::Engine::ParseID>(parseID), parseResult);
+
+		success &= convert<std::shared_ptr<STI::Engine::ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);	
+		
+		tParseResult = new STI::TNetwork::TParseResult();
+		(*tParseResult) = tParseResult_var;
+	}
+
+	return success;
 }
 
 // ::CORBA::Boolean TEventEngine_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)

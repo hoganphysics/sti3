@@ -7,10 +7,13 @@
 #include <sti/engine/RawEvent.h>
 #include "ShotResult.h"
 #include "ParseResult.h"
-#include "EngineParseResult.h"
+// #include "EngineParseResult.h"
+
+#include "FullShotResult.h"
 
 #include <sti/utils/utils.h>
 #include <sti/engine/ShotResultRecord.h>
+
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -22,6 +25,8 @@ using STI::Engine::Measurement;
 using STI::Engine::MeasurementVector;
 using STI::Engine::ShotResult;
 using STI::Engine::ShotResultRecord;
+using STI::Engine::ParseResult;
+
 
 
 LocalResultsCollector::LocalResultsCollector(const STI::Engine::ShotID& sid, 
@@ -31,14 +36,18 @@ LocalResultsCollector::LocalResultsCollector(const STI::Engine::ShotID& sid,
                     const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 : resultsPaths(paths), fileHolderFactory(factory)
 {
-    shotResult = std::make_shared<ShotResult>();
-    shotResult->sid = sid;
+    fullShotResult = std::make_shared<FullShotResult>();
+    fullShotResult->shotResult = std::make_shared<ShotResult>();
+    fullShotResult->shotResult->sid = sid;
+
+    // parseResult = std::make_shared<ParseResult>();
+    // parseResult->pid = sid.parseID;
 }
 
 
 ShotID LocalResultsCollector::getShotID() const
 {
-    return shotResult->sid;
+    return fullShotResult->shotResult->sid;
 }
 
 // std::shared_ptr<ParsedDependencyTree> LocalResultsCollector::getDependencies()
@@ -51,55 +60,62 @@ void LocalResultsCollector::setRecord(const ShotResultRecord& shotRecord)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (shotResult != 0) {
-        shotResult->shotResultRecord = shotRecord;
+    if (fullShotResult != 0 && fullShotResult->shotResult != 0) {
+        fullShotResult->shotResult->shotResultRecord = shotRecord;
     }
 }
 
 std::shared_ptr<ShotResult> LocalResultsCollector::getResults() const
 {
-    return shotResult;
+    return fullShotResult->shotResult;
 }
 
-void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
+std::shared_ptr<ParseResult> LocalResultsCollector::getParseResults() const
 {
-    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+    return fullShotResult->parseResult;
+}
 
-    if (shotResult == 0) return;
+// void LocalResultsCollector::addEvents(const DeviceEventMap& parsedEvents)
+// {
+//     std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+//     if (fullShotResult == 0 || fullShotResult->shotResult == 0) return;
     
-    // resultsTicket.events = parsedEvents;
-    shotResult->engineParseResult.parsedEvents = std::move(parsedEvents);
-}
+//     // resultsTicket.events = parsedEvents;
+//     fullShotResult->parseResult->baseEventGroup = parsedEvents; //need to convert to a group
+//     // shotResult->
+//     fullShotResult->shotResult->engineParseResult.parsedEvents = std::move(parsedEvents);
+// }
 
-void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
-{
-    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+// void LocalResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
+// {
+//     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (shotResult == 0) return;
+//     if (fullShotResult->shotResult == 0) return;
 
-    for (auto& file : files) {
-        std::string localPath = makeLocalPath(resultsPaths.timingPath, file->getFilename());
-        auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
+//     for (auto& file : files) {
+//         std::string localPath = makeLocalPath(resultsPaths.timingPath, file->getFilename());
+//         auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
 
-        if (file->transferFile(localFileHandle)) {
-            shotResult->parseResult.timingFiles.push_back(localFileHandle);
-        }
-    }
-}
+//         if (file->transferFile(localFileHandle)) {
+//             fullShotResult->parseResult->timingFiles.push_back(localFileHandle);
+//         }
+//     }
+// }
 
 
 bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVector>& measurements)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (shotResult == 0 || measurements == 0) return false;
+    if (fullShotResult == 0 || fullShotResult->shotResult == 0 || measurements == 0) return false;
 
-    if (shotResult->measurements == 0 || shotResult->measurements->size() == 0) {
-        shotResult->measurements = measurements;
+    if (fullShotResult->shotResult->measurements == 0 || fullShotResult->shotResult->measurements->size() == 0) {
+        fullShotResult->shotResult->measurements = measurements;
     }
     else {
         //vector contains shared_ptr so deep copy is inexpensive
-        shotResult->measurements->insert(shotResult->measurements->end(), measurements->begin(), measurements->end());
+        fullShotResult->shotResult->measurements->insert(fullShotResult->shotResult->measurements->end(), measurements->begin(), measurements->end());
     }
     
 
@@ -138,7 +154,7 @@ bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVec
 
 std::shared_ptr<MeasurementVector> LocalResultsCollector::getMeasurements()
 {
-    return shotResult->measurements;
+    return fullShotResult->shotResult->measurements;
 }
 
 std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)
@@ -157,8 +173,8 @@ bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID,
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (shotResult == 0) return false;
+    if (fullShotResult == 0 || fullShotResult->shotResult == 0) return false;
 
-    (shotResult->attributes)[deviceID] = attributes;
+    (fullShotResult->shotResult->attributes)[deviceID] = attributes;
     return true;
 }

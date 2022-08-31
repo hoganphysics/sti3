@@ -17,6 +17,7 @@ class RawEventTargetDevice
 {
 public:
 
+    RawEventTargetDevice();
     RawEventTargetDevice(const std::string& name);
     RawEventTargetDevice(const STI::Device::DeviceID& targetDevice);
     RawEventTargetDevice(const std::string& name, const std::string& address, unsigned short module);
@@ -26,6 +27,10 @@ public:
     STI::Device::DeviceID deviceID() const;
 
     void setTargetDeviceID(const STI::Device::DeviceID& targetDevice);
+
+    bool operator<(const RawEventTargetDevice& rhs) const;
+	bool operator==(const RawEventTargetDevice& rhs) const;
+	bool operator!=(const RawEventTargetDevice& rhs) const;
 
     template<class Archive>
     void serialize(Archive& archive);

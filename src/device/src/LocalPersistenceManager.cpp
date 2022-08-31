@@ -10,6 +10,9 @@
 #include "SerializedRepository.h"
 #include "ShotResult.h"
 #include "TransientRepository.h"
+#include "ParseResult.h"
+#include "FullShotResult.h"
+
 
 #include <filesystem>
 #include <iostream>
@@ -28,6 +31,8 @@ using STI::Engine::ShotResult;
 using STI::Engine::SerializedRepository;
 using STI::Engine::TransientRepository;
 using STI::Engine::ShotResultRecord;
+using STI::Engine::FullShotResult;
+
 
 
 LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const std::string& basePath, 
@@ -68,6 +73,15 @@ void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Ut
     fileHolderFactory = factory;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& filename)
+{
+    if (fileHolderFactory != 0) {
+        return fileHolderFactory->makeFileHolder(filename);
+    }
+
+    std::shared_ptr<STI::Utils::FileHolder> nullFile;
+    return nullFile;
+}
 
 void LocalPersistenceManager::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo)
 {
@@ -170,11 +184,13 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
 
 bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
-    if (resultBuffer.get(sid, result) ) {
+    std::shared_ptr<FullShotResult> fullResult;
+    if (resultBuffer.get(sid, fullResult) && fullResult != 0 ) {
+        result = fullResult->shotResult;
         return true;
     }
 
-    if (transientRepository->getShot(sid, result)) {
+    if (transientRepository->getShotResult(sid, result)) {
         return true;
     }
 
@@ -182,23 +198,28 @@ bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::
     std::shared_ptr<STI::Engine::ShotRepository> repo;
 
     if (getShotRepository(repo)) {
-        success = repo->getShot(sid, result);
+        success = repo->getShotResult(sid, result);
     }
 
     if (!success) {
-        success = defaultRepository->getShot(sid, result);
+        success = defaultRepository->getShotResult(sid, result);
     }
 
     return success;
 }
 
-bool LocalPersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
+bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult)
+{
+    return false;
+}
+
+bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
     if (hasDelegate) {
-        if(delegate->getShot(sid, result)) {
+        if(delegate->getShotResult(sid, result)) {
             return true;
         }
     }
@@ -209,33 +230,34 @@ bool LocalPersistenceManager::getShot(const STI::Engine::ShotID& sid, std::share
 bool LocalPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
 {
     std::shared_ptr<STI::Engine::ShotResult> shotResult;
-    if (getShot(sid, shotResult) && shotResult != 0) {
+    if (getShotResult(sid, shotResult) && shotResult != 0) {
         measurements = shotResult->measurements;
         return (measurements != 0);
     }
     return false;
 }
 
-bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<ShotResult>& shotResult)
+bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<FullShotResult>& fullShotResult)
 {
-    std::shared_ptr<ShotResult> bufferedResult;
+    std::shared_ptr<FullShotResult> bufferedResult;
     
-    if (resultBuffer.addAndRemove(shotResult->sid, shotResult, bufferedResult)) {
+    if (resultBuffer.addAndRemove(fullShotResult->shotResult->sid, fullShotResult, bufferedResult)) {
         //The buffer was full. Need to save old bufferedResult to disk;
 
-        return saveShotLocal(bufferedResult->sid, bufferedResult, false);
+        return saveShotLocal(bufferedResult->shotResult->sid, bufferedResult, false);
     }
 
     return false;
 }
 
-bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, 
+                                        const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
     if (hasDelegate && isOwner) {
-        if(delegate->saveShot(sid, shotResult, true)) {     //transfer ownership to delegate
+        if(delegate->saveShot(sid, fullShotResult, true)) {     //transfer ownership to delegate
             return true;
         }
         //if failed, save locally
@@ -247,10 +269,10 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std
         //     return addToBuffer(shotResult);
         // }
 
-        return saveShotLocal(sid, shotResult, isOwner);
+        return saveShotLocal(sid, fullShotResult, isOwner);
     }
     
-    return addToBuffer(shotResult);
+    return addToBuffer(fullShotResult);
         
 
 
@@ -297,7 +319,8 @@ bool isPartial(const std::shared_ptr<ShotResult>& shotResult)
 //replace resultsDocumenter with localDocumenter and make it a function argument.
 //allow engine to call saveShotLocal with a TransientResultsDocumenter which auto deletes itself
 //after going out of scope. Data is copied from this documenter into a MixedValue when read() is called.
-bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, 
+                                            const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
 
     //bool isShotOwner = sid.parseID.jobSourceID == localDeviceID;
@@ -315,16 +338,20 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     ResultsPaths resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
     auto collector = std::make_shared<LocalResultsCollector>(sid, resultsPaths, fileHolderFactory);
 
-    auto shotRecord = transferResults(collector, shotResult, isOwner);   //collector is passed on to all devices in shot
+    auto shotRecord = transferResults(collector, fullShotResult->shotResult, isOwner);   //collector is passed on to all devices in shot
     collector->setRecord(shotRecord);
 
-    bool success = repo->saveShot(sid, collector->getResults());
+    auto completeResult = std::make_shared<FullShotResult>();
+    completeResult->parseResult = fullShotResult->parseResult;
+    completeResult->shotResult = collector->getResults();
+
+    bool success = repo->saveShot(sid, completeResult);
 
     if (!success) {
-        success = defaultRepository->saveShot(sid, shotResult);
+        success = defaultRepository->saveShot(sid, completeResult);
     }
 
-    if (isOwner && isPartial(shotResult)) {
+    if (isOwner && isPartial(fullShotResult->shotResult)) {
         //add to list of partial shots; need to attempt to transfer this result again later
     }
 

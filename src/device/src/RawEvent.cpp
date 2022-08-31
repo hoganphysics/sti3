@@ -25,13 +25,18 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
-#include "RawEventGroup.h"
+// #include "RawEventGroup.h"
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/memory.hpp>
+
+#include "StackTraceData.h"
+#include "RawStackTrace.h"
+
 
 #include <sstream>
 
@@ -40,7 +45,9 @@ using STI::Engine::RawEventType;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 using STI::Engine::RawEventTarget;
-
+using STI::Engine::RawEventID;
+using STI::Engine::StackTraceData;
+using STI::Engine::RawStackTrace;
 
 RawEvent::RawEvent()
 : _target("", "")
@@ -53,24 +60,26 @@ RawEvent::RawEvent()
 
 RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
 	unsigned eventNumber, const RawEventType& eventType)
-: RawEvent(eventTarget, time, value, eventNumber, eventType, StackTrace(), RawEventGroup())
+: RawEvent(eventTarget, time, value, eventNumber, eventType, StackTrace(), 0)
 {
 }
 
 RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
-		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, const RawEventGroup& group)
-: _target(eventTarget), _time(time), _value(value), stackTrace(eventStackTrace), _eventType(eventType) //, _isScheduled(false)
+		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, 
+		const std::shared_ptr<StackTraceData>& stackTraceData)
+: _target(eventTarget), _time(time), _eventType(eventType), stackTrace(eventStackTrace), stackTraceData(stackTraceData)
+//, _isScheduled(false)
 {
+	parsedValue.value = value;
 	isMeasurement = (eventType == RawEventType::Measurement);
 	eventGraphPath.push_back(eventNumber);
 
-	eventGroupIndex = group.getFullIndex();
+	// eventGroupIndex = group.getFullIndex();
 }
 
 RawEvent::RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber)
 : _time(newEvent._time), _target(newEvent.target()), _description(newEvent._description), 
-_eventType(newEvent._eventType), eventGroupIndex(referenceEvent.eventGroupIndex),
-isMeasurement(newEvent.isMeasurement) //, _isScheduled(false)
+_eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) //, _isScheduled(false)
 {
 	//Creates a new RawEvent based on the data stored in newEvent and the eventGraphPath
 	//of the referenceEvent.  This is used for device-generated events to track their source.
@@ -79,8 +88,15 @@ isMeasurement(newEvent.isMeasurement) //, _isScheduled(false)
 	//eventNumber appended.
 	eventGraphPath = referenceEvent.eventGraphPath;
 	eventGraphPath.push_back(eventNumber);
+	fullGroupName = referenceEvent.getGroupName();
 
-	_value = std::move(newEvent._value);
+	// setGroupName(referenceEvent.groupName());
+	stackTrace = referenceEvent.getStackTrace();
+	stackTraceData = referenceEvent.stackTraceData;
+
+	parsedValue = std::move(newEvent.parsedValue);
+
+	// _value = std::move(newEvent._value);
 }
 
 
@@ -115,7 +131,7 @@ unsigned short RawEvent::channel() const
 
 const MixedValue& RawEvent::value() const
 {
-	return _value;
+	return parsedValue.value;
 }
 
 const RawEventTarget& RawEvent::target() const
@@ -128,20 +144,49 @@ RawEventTarget& RawEvent::getTarget()
 	return _target;
 }
 
-STI::Device::DeviceID RawEvent::targetDevice() const
+std::string RawEvent::getGroupName() const
 {
-	return _target.device().deviceID();
+	return fullGroupName;
 }
 
-const STI::Utils::GraphPathLabel& RawEvent::groupIndex()
+void RawEvent::setGroupName(const std::string& name)
 {
-	return eventGroupIndex;
+	fullGroupName = name;
 }
 
-void RawEvent::setGroupIndex(const STI::Utils::GraphPathLabel& index)
+RawEventID RawEvent::getEventID() const
 {
-	eventGroupIndex = index;
+	RawEventID eventID;
+	eventID.groupName = getGroupName();
+	eventID.eventGraphPath = getEventGraphPath();
+
+	return eventID;
 }
+
+RawStackTrace RawEvent::getRawStackTrace() const
+{
+	if (stackTraceData != 0) {
+		return stackTraceData->getStackTrace( getStackTrace() );
+	}
+	
+	RawStackTrace trace;
+	return trace;	
+}
+
+// STI::Device::DeviceID RawEvent::targetDevice() const
+// {
+// 	return _target.device().deviceID();
+// }
+
+// const STI::Utils::GraphPathLabel& RawEvent::groupIndex()
+// {
+// 	return eventGroupIndex;
+// }
+
+// void RawEvent::setGroupIndex(const STI::Utils::GraphPathLabel& index)
+// {
+// 	eventGroupIndex = index;
+// }
 
 template<class Archive>
 void RawEvent::serialize(Archive& archive)
@@ -151,13 +196,15 @@ void RawEvent::serialize(Archive& archive)
 		cereal::make_nvp("target", _target), 
 		// cereal::make_nvp("channel", _channel), 
 		// cereal::make_nvp("targetDeviceID", targetDeviceID), 
-		cereal::make_nvp("value", _value),
+		cereal::make_nvp("parsedValue", parsedValue),
 		cereal::make_nvp("description", _description),
 		cereal::make_nvp("eventType", _eventType),
 		cereal::make_nvp("stackTrace", stackTrace),
 		cereal::make_nvp("eventGraphPath", eventGraphPath), 
+		cereal::make_nvp("fullGroupName", fullGroupName), 
 		cereal::make_nvp("isMeasurement", isMeasurement),
-		cereal::make_nvp("eventGroupIndex", eventGroupIndex)
+		cereal::make_nvp("stackTraceData", stackTraceData)
+		// cereal::make_nvp("eventGroupIndex", eventGroupIndex)
 		);
 }
 

@@ -57,53 +57,53 @@ STI::Engine::ShotID RemoteResultsCollector::getShotID() const
     return sid;
 }
 
-void RemoteResultsCollector::addEvents(const STI::Engine::DeviceEventMap& parsedEvents)
-{
-	std::unique_lock<std::mutex> collectorLock(collectorMutex);
+// void RemoteResultsCollector::addEvents(const STI::Engine::DeviceEventMap& parsedEvents)
+// {
+// 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-	if (isDisabled()) return;
+// 	if (isDisabled()) return;
 
-    STI::TNetwork::TDeviceEventsSeq_var tEvents(new STI::TNetwork::TDeviceEventsSeq);
+//     STI::TNetwork::TDeviceEventsSeq_var tEvents(new STI::TNetwork::TDeviceEventsSeq);
 
-	try {
+// 	try {
 
-        convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(parsedEvents, tEvents);
+//         convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(parsedEvents, tEvents);
 
-		getTRef()->addEvents(tEvents);	//remote call
+// 		getTRef()->addEvents(tEvents);	//remote call
 
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// }
 
-void RemoteResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
-{
-	std::unique_lock<std::mutex> collectorLock(collectorMutex);
+// void RemoteResultsCollector::addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files)
+// {
+// 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-	if (isDisabled()) return;
+// 	if (isDisabled()) return;
 
-    STI::TNetwork::TFileHolderSeq_var tFiles(new STI::TNetwork::TFileHolderSeq);
+//     STI::TNetwork::TFileHolderSeq_var tFiles(new STI::TNetwork::TFileHolderSeq);
 
-	try {
+// 	try {
 
-		convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(files, tFiles);
+// 		convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(files, tFiles);
 
-		getTRef()->addTimingFiles(tFiles);	//remote call
+// 		getTRef()->addTimingFiles(tFiles);	//remote call
 
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// }
 
 bool RemoteResultsCollector::addMeasurements(const std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
 {

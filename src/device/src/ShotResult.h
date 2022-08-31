@@ -9,8 +9,8 @@
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/engine/Measurement.h>
 
-#include "ParseResult.h"
-#include "EngineParseResult.h"
+// #include "ParseResult.h"
+// #include "EngineParseResult.h"
 
 #include <vector>
 #include <memory>
@@ -32,15 +32,12 @@ public:
     ShotResult();
     ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs);
 
-    ShotID sid; //contains a record of shot type (single, sequence, undocumented)
+    ShotID sid;
 	TimeStamp playTime;
-    
-    ParseResult parseResult;
-    EngineParseResult engineParseResult;
 
     std::shared_ptr<STI::Engine::MeasurementVector> measurements;
-    //std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
+
 
     //The result is stored by the device in a repository. Initially, only the local device data is available.
     //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.

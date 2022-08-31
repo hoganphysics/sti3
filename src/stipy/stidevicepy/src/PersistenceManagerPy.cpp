@@ -20,7 +20,7 @@ std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShot(const STI
 {
     std::shared_ptr<STI::Engine::ShotResult> shotResult;
 
-    if (persistenceManager != 0 && persistenceManager->getShot(sid, shotResult)) {
+    if (persistenceManager != 0 && persistenceManager->getShotResult(sid, shotResult)) {
         return shotResult;
     }
 

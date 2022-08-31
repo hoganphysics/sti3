@@ -5,7 +5,7 @@
 #include <sti/engine/ShotConfig.h>
 
 #include <sti/engine/RawEvent.h>
-#include "LocalShotPy.h"
+#include "LocalShot.h"
 
 #include <sti/engine/EngineJobID.h>
 
@@ -23,24 +23,34 @@ using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::ParseID;
 using STI::Engine::TimeStamp;
 using STI::Engine::ShotConfig;
-
-using STI::Python::LocalShotPy;
+using STI::Engine::LocalShot;
+using STI::Engine::RawEvent;
+// using STI::Python::LocalShotPy;
 
 
 void init_EventEngineScheduler(py::module& m)
 {
 
-
-
-
-    py::class_<STI::Python::LocalShotPy, std::shared_ptr<LocalShotPy>>(m, "LocalShot")
-        .def(py::init<const ShotConfig&>(), py::arg("shotConfig"))
-        .def("getShotConfig", &LocalShotPy::getShotConfig)
-        .def("getEvents", py::overload_cast<>(&LocalShotPy::getEvents))
-        .def("addEvent", &LocalShotPy::addEvent, py::arg("event"))
-
+    py::class_<LocalShot, std::shared_ptr<LocalShot>>(m, "LocalShot")
+        // .def(py::init<>())
+        .def(py::init<const ShotConfig&, const std::shared_ptr<STI::Engine::RawEventGroup>&>(), py::arg("shotConfig"), py::arg("baseGroup"))
+        .def("getShotConfig", &LocalShot::getShotConfig)
+        .def("addEvent",
+            [](LocalShot& self, RawEvent& evt) {
+                std::shared_ptr<STI::Engine::RawEventGroup> baseGroup;
+                self.getBaseEventGroup(baseGroup);
+                if (baseGroup != 0) {
+                    baseGroup->addEvent(evt);
+                }
+            })
+        .def("getBaseEventGroup",
+            [](LocalShot& self) {
+                std::shared_ptr<STI::Engine::RawEventGroup> baseGroup;
+                self.getBaseEventGroup(baseGroup);
+                return baseGroup;
+            })
         .def("__repr__",
-            [](const LocalShotPy& self) {
+            [](const LocalShot& self) {
                 return self.getShotConfig().print();
             })
         ;

@@ -11,13 +11,13 @@ using STI::Engine::ParsedTag;
 
 bool ParsedTag::operator<(const ParsedTag& rhs) const 
 {
-    if (scope == rhs.scope) return name < rhs.name;
-    return scope < rhs.scope;
+    // if (scope == rhs.scope) return name < rhs.name;
+    return name < rhs.name;
 }
 
 bool ParsedTag::operator==(const ParsedTag& rhs) const 
 {
-	return (scope == rhs.scope) && (name == rhs.name);
+	return name == rhs.name;
 }
 
 bool ParsedTag::operator!=(const ParsedTag& rhs) const 
@@ -30,8 +30,8 @@ void ParsedTag::serialize(Archive& archive)
 {
 	archive(
 		cereal::make_nvp("name", name), 
-		cereal::make_nvp("trace", trace), 
-		cereal::make_nvp("scope", scope)
+		cereal::make_nvp("trace", trace) 
+		// cereal::make_nvp("scope", scope)
 		);
 }
 

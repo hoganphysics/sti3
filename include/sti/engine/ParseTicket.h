@@ -15,7 +15,7 @@ namespace STI
 namespace Engine
 {
 
-
+class ParseResult;
 class ResultTicket;
 class ParseTicket;
 
@@ -31,7 +31,7 @@ public:
     const STI::Engine::ParseID& getParseID() const;
 
     std::vector<STI::Engine::EngineParsingMessage> getMessages();
-    STI::Engine::DeviceEventMap& getEvents();
+    std::shared_ptr<RawEventGroup> getEvents();
     void getTree();
     void getTimingFiles();
 
@@ -39,14 +39,23 @@ private:
 
     virtual bool waitCheck() { return true; }
 
-    bool eventsBuffered;
-    STI::Engine::DeviceEventMap events;
+    bool parseResultBuffered;
 
-    bool messagesBuffered;
-    std::vector<STI::Engine::EngineParsingMessage> messages;
+    bool checkParseResultBuffered() const;   
+    std::shared_ptr<ParseResult> parseResult;
+
+    bool getParseResult();
+
+    
+    // bool eventsBuffered;
+    // STI::Engine::DeviceEventMap events;
+
+    // std::vector<STI::Engine::EngineParsingMessage> messages;
     STI::Engine::ParseID pid;
 //    std::shared_ptr<STI::Device::Device> server;
     std::shared_ptr<EventEngineScheduler> engineScheduler;
+
+
 
 };
 

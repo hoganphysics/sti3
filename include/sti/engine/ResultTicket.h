@@ -16,6 +16,7 @@ namespace Engine
 {
 
 class ShotResult;
+class ParseResult;
 
 // class ShotResult
 // {
@@ -69,6 +70,9 @@ private:
     bool measurements_loaded;
     std::shared_ptr<MeasurementVector> measurements_;
 
+    std::shared_ptr<ParseResult> parseResult;
+    std::shared_ptr<ShotResult> shotResult;
+    
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 
 };

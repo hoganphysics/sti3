@@ -59,6 +59,8 @@ public:
 	static void activateServant(PortableServer::ServantBase& servant);
 	static void deactivateServant(PortableServer::Servant p_servant);
 
+	static bool orbInstanceInitializd();
+
 private:
 
 	static bool orb_initialized;

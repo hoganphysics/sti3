@@ -5,16 +5,23 @@
 #include "STIPyLibDevice.h"
 #include "STIPyShot.h"
 #include "STIPyGlobal.h"
-//#include "ORBManager.h"
-#include "StackTracePy.h"
+#include "ORBManager.h"
+#include "RawStackTrace.h"
 #include "LocalShot.h"
 #include "NetworkShotWrapper.h"
 #include "STIPyShot.h"
-
+#include "StackTraceData.h"
+#include "NetworkFileHolder.h"
+#include <sti/utils/LocalFileHolder.h>
 #include <sti/engine/RawEventTarget.h>
+
+#include <sti/utils/LocalFileHolder.h>
+
+#include <pybind11/pybind11.h>
 
 #include <iostream>
 
+using STI::Network::ORBManager;
 
 using STI::Python::STIPyServer;
 using STI::Python::STIPyLibDevice;
@@ -24,6 +31,8 @@ using STI::Engine::RawEventGroup;
 using STI::Engine::RawEventTarget;
 using STI::Python::StackTracePy;
 using STI::Python::STIPyShot;
+
+using STI::Engine::RawStackTrace;
 
 // int add(int i, int j) {
 //     return i + j;
@@ -62,14 +71,31 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot()
 std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
 {
     STI::Engine::ShotConfig shotConfig;
-    auto events = std::make_shared<STI::Engine::RawEventVector>();
 
-    auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
-	shot->setEvents(events);
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
-    auto networkShot = std::make_shared<STI::Network::NetworkShotWrapper>(shot);
+    if (ORBManager::orbInstanceInitializd()) {
+        fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+    }
+    else {
+        fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    }
 
-    auto pyShot = std::make_shared<STIPyShot>(shot, name);
+    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>(fileFactory);
+    auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTrace);
+
+    std::shared_ptr<STI::Engine::Shot> shot;
+
+    auto localShot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
+
+    if (ORBManager::orbInstanceInitializd()) {
+        shot = std::make_shared<STI::Network::NetworkShotWrapper>(localShot);
+    }
+    else {
+        shot = localShot;
+    }
+
+    auto pyShot = std::make_shared<STIPyShot>(shot);
     return pyShot;
 }
 
@@ -122,32 +148,32 @@ std::string STI::Python::printNetwork(const std::string& nameServerAddress, cons
 
 
 void STI::Python::event(const RawEventTarget& target, double time, const pybind11::object& value, 
-                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
+                        const RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->event(target, time, value, stackTrace, group);
+        stipy->event(target, time, value, stackTrace, scope);
     }
 }
 
 void STI::Python::meas(const RawEventTarget& target, double time, const pybind11::object& value,
-                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
+                        const RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->meas(target, time, value, stackTrace, group);
+        stipy->meas(target, time, value, stackTrace, scope);
     }
 }
 
-void STI::Python::meas(const RawEventTarget& target, double time, const StackTracePy& stackTrace, 
-                        const STI::Engine::RawEventGroup& group)
+void STI::Python::meas(const RawEventTarget& target, double time, const RawStackTrace& stackTrace, 
+                        const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->meas(target, time, stackTrace, group);
+        stipy->meas(target, time, stackTrace, scope);
     }
 }
 

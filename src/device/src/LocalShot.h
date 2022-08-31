@@ -3,14 +3,14 @@
 
 #include "Shot.h"
 #include <sti/engine/ShotConfig.h>
-#include "ParseResult.h"
-#include <sti/utils/utils.h>
+// #include "ParseResult.h"
+// #include <sti/utils/utils.h>
 
-#include <vector>
+// #include <vector>
 #include <memory>
-#include <map>
+// #include <map>
 #include <string>
-#include <set>
+// #include <set>
 
 
 namespace STI
@@ -26,43 +26,46 @@ class LocalShot : public Shot
 {
 public:
 
-    LocalShot(const ShotConfig& config);
+    LocalShot(const ShotConfig& config, const std::shared_ptr<RawEventGroup>& baseGroup);
     virtual ~LocalShot();
 
     const ShotConfig& getShotConfig() const;
+    void getBaseEventGroup(std::shared_ptr<RawEventGroup>& baseGroup);
+    void setBaseEventGroup(const std::shared_ptr<RawEventGroup>& baseGroup);
 
-    void setEvents(const std::shared_ptr<std::vector<RawEvent>>& evts);
-    void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
+    // void setEvents(const std::shared_ptr<std::vector<RawEvent>>& evts);
+    // void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
 
-    void setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& pResult);
-    void getParseResult(std::shared_ptr<STI::Engine::ParseResult>& pResult);
+    // void setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& pResult);
+    // void getParseResult(std::shared_ptr<STI::Engine::ParseResult>& pResult);
 
-    void addEvent(const RawEvent& evt);
-    bool addVar(const ParsedVar& var);
-    bool addTag(const ParsedTag& tag);
+    // void addEvent(const RawEvent& evt);
+    // bool addVar(const ParsedVar& var);
+    // bool addTag(const ParsedTag& tag);
 
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
+    // std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
 
-    std::vector<std::string> getTimingFileNames() const;
-    std::vector<std::string> getFunctionNames() const;
-    std::vector<RawEventGroup> getGroups();
-    std::vector<ParsedVar> getParsedVars();
-    std::vector<ParsedTag> getParsedTags();
+    // std::vector<std::string> getTimingFileNames() const;
+    // std::vector<std::string> getFunctionNames() const;
+    // std::vector<RawEventGroup> getGroups();
+    // std::vector<ParsedVar> getParsedVars();
+    // std::vector<ParsedTag> getParsedTags();
 
 private:
 
     ShotConfig shotConfig;
+    std::shared_ptr<RawEventGroup> baseEventGroup;
 
-    std::shared_ptr<std::vector<RawEvent>> events;
-    std::shared_ptr<STI::Engine::ParseResult> parseResult;
+    // std::shared_ptr<std::vector<RawEvent>> events;
+    // std::shared_ptr<STI::Engine::ParseResult> parseResult;
 
-    std::map<std::shared_ptr<STI::Utils::FileHolder>, unsigned> timingFiles;
+    // std::map<std::shared_ptr<STI::Utils::FileHolder>, unsigned> timingFiles;
 
-    std::map<std::string, unsigned> functionNames;
-    std::map<STI::Engine::RawEventGroup, unsigned, STI::Utils::shared_ptr_Comparator<RawEventGroup>> eventGroups;
+    // std::map<std::string, unsigned> functionNames;
+    // std::map<STI::Engine::RawEventGroup, unsigned, STI::Utils::shared_ptr_Comparator<RawEventGroup>> eventGroups;
 
-    std::set<ParsedVar> vars;
-    std::set<ParsedTag> tags;
+    // std::set<ParsedVar> vars;
+    // std::set<ParsedTag> tags;
 
     // ParseResult parseResult;    //caching
 

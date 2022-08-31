@@ -32,9 +32,9 @@ public:
     void unpause(::CORBA::Boolean retrigger);
     TDeviceID* getDeviceID();
     TEngineState getState();
-    ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
+    // ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
     TEventEngineDependencyTree* getParsedTree();
-     
+    ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
 
 private:
 

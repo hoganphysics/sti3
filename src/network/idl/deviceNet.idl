@@ -105,8 +105,11 @@ module TNetwork
 		// void getGroups(out TRawEventGroup groups);
 		// void getVars(out TParsedVarSeq parsedVars);
 		// void getTags(out TParsedTagSeq parsedTags);
-		void getEvents(out TRawEventSeq events);	//initial events, e.g. from stipy
-		void getParseResult(out TParseResult parseResult);
+		// void getEvents(out TRawEventSeq events);	//initial events, e.g. from stipy
+		// void getParseResult(out TParseResult parseResult);
+		
+		void getBaseEventGroup(out TRawEventGroup baseGroup);
+
 		// void getEngineParseResult(out TEngineParseResult parseResult);	//full record of parse, including partner events
 	};
 
@@ -145,8 +148,8 @@ module TNetwork
 		TShotID getShotID();
 		//TEventEngineDependencyTree getDependencies();
 
-		void addEvents(in TDeviceEventsSeq parsedEvents);
-		void addTimingFiles(in TFileHolderSeq files);
+		// void addEvents(in TDeviceEventsSeq parsedEvents);
+		// void addTimingFiles(in TFileHolderSeq files);
 		boolean addMeasurements(in TMeasurementSeq measurements);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
 	};
@@ -166,8 +169,9 @@ module TNetwork
     	TDeviceID getDeviceID();
 		TEngineState getState();
 
-		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
+		// boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
 		TEventEngineDependencyTree getParsedTree();
+		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 
 		//boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
 		//boolean transferResults(in TResultsCollector resultsCollector);
@@ -198,9 +202,11 @@ module TNetwork
 	    void getRunningJobs(out TEngineJobIDSeq jobIDs);
     	void getCompletedJobs(out TEngineJobIDSeq jobIDs);
 
-		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
-    	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
-    	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
+		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
+
+		// boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
+    	// boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
+    	// boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
 		
 		//boolean transferResults(in TResultsCollector resultsCollector);
 		//boolean getResults(in TShotID shotID, out TResultTicket results);
@@ -241,8 +247,9 @@ module TNetwork
 
 	interface TPersistenceManager
 	{
-		boolean getShot(in TShotID sid, out TShotResult shotResult);
-		boolean saveShot(in TShotID sid, in TShotResult shotResult, in boolean isOwner);
+		boolean getParseResult(in TParseID pid, out TParseResult parseResult);
+		boolean getShotResult(in TShotID sid, out TShotResult shotResult);
+		boolean saveShot(in TShotID sid, in TFullShotResult fullShotResult, in boolean isOwner);
 		
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
 		//boolean getResultTicket(in TShotID sid, out TResultTicket ticket);

@@ -8,6 +8,10 @@
 
 using STI::Engine::RawEventTargetDevice;
 
+RawEventTargetDevice::RawEventTargetDevice()
+: RawEventTargetDevice("")
+{
+}
 
 RawEventTargetDevice::RawEventTargetDevice(const std::string& name)
 : _name(name), _isAbstract(true)
@@ -41,8 +45,43 @@ STI::Device::DeviceID RawEventTargetDevice::deviceID() const
 
 void RawEventTargetDevice::setTargetDeviceID(const STI::Device::DeviceID& targetDevice)
 {
+    _isAbstract = false;
     targetDeviceID = targetDevice;
 }
+
+
+bool RawEventTargetDevice::operator<(const RawEventTargetDevice& rhs) const
+{
+    if (isAbstract()) {
+        if (rhs.isAbstract()) {
+            return name() < rhs.name();
+        }
+        return true;
+    }
+
+    //neither abstract
+    return deviceID() < rhs.deviceID();
+}
+
+bool RawEventTargetDevice::operator==(const RawEventTargetDevice& rhs) const
+{
+    if (isAbstract()) {
+        if (rhs.isAbstract()) {
+            return name() == rhs.name();
+        }
+        return false;     
+    }
+
+    //neither abstract
+    return deviceID() == rhs.deviceID();
+
+}
+
+bool RawEventTargetDevice::operator!=(const RawEventTargetDevice& rhs) const
+{
+    return !((*this) == rhs);
+}
+
 
 template<class Archive>
 void RawEventTargetDevice::serialize(Archive& archive)

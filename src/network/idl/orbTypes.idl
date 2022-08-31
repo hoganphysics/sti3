@@ -111,14 +111,7 @@ module TNetwork
 	};
 	typedef sequence<TStackFrame> TStackFrameSeq;
 
-	struct TRawEventGroup
-	{
-	    double startTime;
-	    double endTime;
-		TGraphPathLabel groupIndex;
-		string name;
-	};
-	typedef sequence<TRawEventGroup> TRawEventGroupSeq;
+
 
 	struct TRawEventTargetDevice 
 	{
@@ -140,14 +133,28 @@ module TNetwork
     	TRawEventTargetChannel channel;
 	};
 
+
+	struct TParsedVar
+	{
+		string name;
+		string fullGroupName;
+		TMixedValue value;
+		TStackFrameSeq trace;
+		// TDeviceID targetServerID;
+		// TRawEventGroup scope;
+	};
+	typedef sequence<TParsedVar> TParsedVarSeq;
+
+
 	struct TRawEvent
 	{
 		double time;
 		TRawEventTarget target;
 		// unsigned short channel;
-		TMixedValue value;
+		// TMixedValue value;
+		TParsedVar parsedValue;
 		string description;
-		TGraphPathLabel eventGroup;
+		string fullGroupName;
 		TStackFrameSeq stackTrace;
 		//TEventStackTrace trace;
 		boolean isMeasurement;
@@ -158,12 +165,15 @@ module TNetwork
 	};
 	typedef sequence<TRawEvent> TRawEventSeq;
 
-	struct TDeviceEvents
-	{
-		TDeviceID targetDeviceID;
-		TRawEventSeq events;
-	};
-	typedef sequence<TDeviceEvents> TDeviceEventsSeq;
+
+
+
+	// struct TDeviceEvents
+	// {
+	// 	TDeviceID targetDeviceID;
+	// 	TRawEventSeq events;
+	// };
+	// typedef sequence<TDeviceEvents> TDeviceEventsSeq;
 
 	struct TMeasurement
 	{
@@ -172,6 +182,7 @@ module TNetwork
 		double time;
 		unsigned short channel;
 		TGraphPathLabel measurementGraphPath;
+		string fullGroupName;
 		TDeviceID device;
 	};
 	typedef sequence<TMeasurement> TMeasurementSeq;
@@ -245,44 +256,74 @@ module TNetwork
 	};
 	typedef sequence<TEngineJobID> TEngineJobIDSeq;
 
+
+
 	struct TShot;
 
 	interface TShotCallback;
 
-
-	struct TParsedVar
+	struct TStackTraceData
 	{
-		string name;
-		TMixedValue value;
-		TStackFrameSeq trace;
-		// TDeviceID targetServerID;
-		TRawEventGroup scope;
+		TFileHolderSeq timingFiles;
+		TStringSeq functionNames;
 	};
-	typedef sequence<TParsedVar> TParsedVarSeq;
+
+	struct TStackTraceResult
+	{
+		TParseID parseID;
+		TStackTraceData stackTraceData;
+	};
 
 	struct TParsedTag
 	{
 		string name;
 		TStackFrameSeq trace;
 		// TDeviceID targetServerID;
-		TRawEventGroup scope;
+		// TRawEventGroup scope;
 	};
 	typedef sequence<TParsedTag> TParsedTagSeq;
 
-	struct TParseResult
+
+	struct RefPointPair
 	{
-		// TParseID parseID;
-
-		TFileHolderSeq timingFiles;
-		TStringSeq timingFileNames;
-
-		TStringSeq functionNames;	//function names indexed in StackTrace
-
-		TRawEventGroupSeq groups;
-		TParsedVarSeq parsedVars;
-		TParsedTagSeq parsedTags;
-
+		string name;
+		double time;
 	};
+	typedef sequence<RefPointPair> RefPointPairSeq;
+
+	struct TRawEventGroup;
+	typedef sequence<TRawEventGroup> TRawEventGroupSeq;
+
+	struct TRawEventGroup
+	{
+		string name;
+		string parentName;
+	    double timeOffset;
+		RefPointPairSeq referencePoints;
+
+		TRawEventSeq events;
+		TStackTraceData stackTraceData;
+
+    // std::map<std::string, RawEventTarget> targets;   //replace abstract targets in event list
+    // std::map<std::string, RawEventTargetDevice> targetDevices;   //replace abstract devices in event list
+
+		TParsedVarSeq overwrittenVars;
+
+		TParsedVarSeq parsedVars;
+		TParsedTagSeq parsedTags; 
+
+		TRawEventGroupSeq subgroups;
+
+		TMixedValue metaData;
+	};
+
+
+
+
+
+
+
+
 
 	struct TShot
 	{
@@ -318,6 +359,10 @@ module TNetwork
 
 	interface TPersistenceManager;
 	
+
+
+
+
 	//enum TTicketStatus { TicketRunning, TicketComplete, TicketCanceled, TicketNotFound };
 
 	// struct TResultTicket
@@ -396,8 +441,10 @@ module TNetwork
 		//TDeviceID originalSource;	//device that generated the original message
 		TEventEngine engine;
 
-		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
-		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+		TRawEventGroup handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
+		TRawEventGroup unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+		TRawEventGroup upstreamPartnerEvents;
 
 		TEngineParsingMessageSeq messages;
 
@@ -520,22 +567,42 @@ module TNetwork
 
 	struct TShotID;
 
-	struct TEngineParseResult
-	{
-		// TParseID parseID;
+	// struct TEngineParseResult
+	// {
+	// 	// TParseID parseID;
 
+	// 	TEngineParsingMessageSeq messages;
+	// 	TDeviceEventsSeq parsedEvents;
+	// 	TEventEngineDependencyTree dependencies;
+	// };
+
+
+	struct TParseResult
+	{
+		TParseID parseID;
+
+		TRawEventGroup baseEventGroup;
+		TEventEngineDependencyTree parsedDevices;
 		TEngineParsingMessageSeq messages;
-		TDeviceEventsSeq parsedEvents;
-		TEventEngineDependencyTree dependencies;
+		TStackTraceResult stackTraceResult;
+
+		// TFileHolderSeq timingFiles;
+		// TStringSeq timingFileNames;
+
+		// TStringSeq functionNames;	//function names indexed in StackTrace
+
+		// TRawEventGroupSeq groups;
+		// TParsedVarSeq parsedVars;
+		// TParsedTagSeq parsedTags;
+
 	};
+
 
 	struct TShotResult
 	{
 		TShotID sid;
 		TTimeStamp playTime;
 
-		TParseResult parseResult;
-		TEngineParseResult engineParseResult;
 		// TDeviceEventsSeq parsedEvents;
 		// TFileHolderSeq timingFiles;
 		TMeasurementSeq measurements;
@@ -544,6 +611,11 @@ module TNetwork
 		TShotResultRecord shotResultRecord;
 	};
 
+	struct TFullShotResult
+	{
+		TParseResult parseResult;
+		TShotResult shotResult;
+	};
 
 
 	// struct TEngineSchedulerParseMessage

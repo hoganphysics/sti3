@@ -12,7 +12,7 @@ namespace STI
 namespace Python
 {
 
-class LocalShotPy;
+// class LocalShotPy;
 
 
 class EventEngineSchedulerPy
@@ -22,7 +22,7 @@ public:
     EventEngineSchedulerPy(const std::shared_ptr<STI::Engine::EventEngineScheduler>& engineScheduler);
     virtual ~EventEngineSchedulerPy();
 
-    STI::Engine::ParseID parse(const std::shared_ptr<LocalShotPy>& shot);
+    STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::Shot>& shot);
     STI::Engine::ShotID play(const STI::Engine::ParseID& parseID, const STI::Engine::EngineJobSourceID& source);
 
     STI::Engine::EngineJobStatus getStatus(const STI::Engine::ParseID& pid);

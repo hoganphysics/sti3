@@ -7,6 +7,7 @@
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/device/DeviceCollection.h>
 #include "ShotRepository.h"
+#include "FullShotResult.h"
 
 #include "utils/OrderedBufferMap.h"
 
@@ -30,14 +31,18 @@ public:
         const std::shared_ptr<STI::Device::DeviceCollection>& collection);
     ~LocalPersistenceManager();
 
-    bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
-    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner);
+    bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+
+    bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
+    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner);
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
 
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
+
+    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 
     //bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
     //std::shared_ptr<STI::Engine::ResultsCollector> createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
@@ -62,12 +67,12 @@ public:
 private:
 
     bool getShotLocal(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
-    bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner);
+    bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& shotResult, bool isOwner);
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector, 
                          const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool transferDependents);
 
-    bool addToBuffer(const std::shared_ptr<STI::Engine::ShotResult>& shotResult);
+    bool addToBuffer(const std::shared_ptr<STI::Engine::FullShotResult>& shotResult);
 
         //std::shared_ptr<STI::Engine::ResultsDocumenter> resultsDocumenter;
         
@@ -76,7 +81,7 @@ private:
     std::shared_ptr<STI::Engine::ShotRepository> transientRepository;
 
 //        std::shared_ptr<STI::Engine::ShotRepository> bufferRepository;  //for temporary storage
-    STI::Utils::OrderedBufferMap<STI::Engine::ShotID, std::shared_ptr<STI::Engine::ShotResult>> resultBuffer;     //for temporary storage, before serializing to default repo or saving
+    STI::Utils::OrderedBufferMap<STI::Engine::ShotID, std::shared_ptr<STI::Engine::FullShotResult>> resultBuffer;     //for temporary storage, before serializing to default repo or saving
 
     STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;
     STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<PersistenceManager>> delegates;

@@ -6,6 +6,7 @@
 #include "ParseResult.h"
 
 #include "Convert_ShotResult.h"
+#include "Convert_RawEventGroup.h"
 
 #include <memory>
 #include <vector>
@@ -63,25 +64,34 @@ const ShotConfig& RemoteShot::getShotConfig() const
 	return shotConfig;
 }
 
-void RemoteShot::getParseResult(std::shared_ptr<STI::Engine::ParseResult>& pResult)
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	pResult = parseResult;
-}
+// void RemoteShot::getParseResult(std::shared_ptr<STI::Engine::ParseResult>& pResult)
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	pResult = parseResult;
+// }
 
-void RemoteShot::setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& pResult)
-{
-	// To do: call to servant? Maybe do nothing.
-	// std::unique_lock<std::mutex> shotLock(shotMutex);
-	// parseResult = pResult;
-}
+// void RemoteShot::setParseResult(const std::shared_ptr<STI::Engine::ParseResult>& pResult)
+// {
+// 	// To do: call to servant? Maybe do nothing.
+// 	// std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	// parseResult = pResult;
+// }
 
-void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
+// void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
+// {
+// 	refresh();
+
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	events = storedEvents;
+// }
+
+
+void RemoteShot::getBaseEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& baseGroup)
 {
 	refresh();
 
 	std::unique_lock<std::mutex> shotLock(shotMutex);
-	events = storedEvents;
+	baseGroup = baseEventGroup;
 }
 
 void RemoteShot::refresh()
@@ -92,7 +102,7 @@ void RemoteShot::refresh()
 		bool success = true;
 		
 		success &= refreshEvents();
-		success &= refreshParseResult();
+		// success &= refreshParseResult();
 		// success &= refreshGroups();
 		// success &= refreshVars();
 		// success &= refreshTags();
@@ -113,20 +123,17 @@ bool RemoteShot::refreshEvents()
 
 	if (isDisabled()) return false;
 
-	storedEvents = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+	baseEventGroup = std::make_shared<STI::Engine::RawEventGroup>();
 
-	STI::TNetwork::TRawEventSeq_var tEvents;
+	STI::TNetwork::TRawEventGroup_var tEventGroup;
 
 	try {
 
-        getTRef()->getEvents(tEvents); 	//remote call
+        getTRef()->getBaseEventGroup(tEventGroup); 	//remote call
 
-		// refreshRequired = false;
 		success = true;
 
-		if (storedEvents != 0) {
-			convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *storedEvents);
-		}
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tEventGroup, baseEventGroup);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -139,102 +146,102 @@ bool RemoteShot::refreshEvents()
 	return success;
 }
 
-bool RemoteShot::refreshParseResult()
-{
-	//has lock
-	bool success = false;
+// bool RemoteShot::refreshParseResult()
+// {
+// 	//has lock
+// 	bool success = false;
 
-	if (isDisabled()) return false;
+// 	if (isDisabled()) return false;
 
-	parseResult = std::make_shared<STI::Engine::ParseResult>();
+// 	parseResult = std::make_shared<STI::Engine::ParseResult>();
 
-	STI::TNetwork::TParseResult_var tParseResult;
+// 	STI::TNetwork::TParseResult_var tParseResult;
 
-	try {
+// 	try {
 
-        getTRef()->getParseResult(tParseResult); 	//remote call
+//         getTRef()->getParseResult(tParseResult); 	//remote call
 
-		// refreshRequired = false;
-		success = true;
+// 		// refreshRequired = false;
+// 		success = true;
 
-		if (storedEvents != 0) {
-			convert<STI::TNetwork::TParseResult, STI::Engine::ParseResult>(tParseResult, *parseResult);
-		}
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
+// 		if (storedEvents != 0) {
+// 			convert<STI::TNetwork::TParseResult, STI::Engine::ParseResult>(tParseResult, *parseResult);
+// 		}
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 
-std::vector<std::shared_ptr<STI::Utils::FileHolder>> RemoteShot::getTimingFiles() const
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
+// std::vector<std::shared_ptr<STI::Utils::FileHolder>> RemoteShot::getTimingFiles() const
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
 	
-	if (parseResult != 0) {
-		return parseResult->timingFiles;
-	}
-	std::vector<std::shared_ptr<STI::Utils::FileHolder>> files;
-	return files;
-}
+// 	if (parseResult != 0) {
+// 		return parseResult->timingFiles;
+// 	}
+// 	std::vector<std::shared_ptr<STI::Utils::FileHolder>> files;
+// 	return files;
+// }
 
 
-std::vector<std::string> RemoteShot::getTimingFileNames() const
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	if (parseResult != 0) {
-		return parseResult->timingFileNames;
-	}
-	std::vector<std::string> filenames;
-	return filenames;
-}
+// std::vector<std::string> RemoteShot::getTimingFileNames() const
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	if (parseResult != 0) {
+// 		return parseResult->timingFileNames;
+// 	}
+// 	std::vector<std::string> filenames;
+// 	return filenames;
+// }
 
-std::vector<std::string> RemoteShot::getFunctionNames() const
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	if (parseResult != 0) {
-		return parseResult->functionNames;
-	}
-	std::vector<std::string> functions;
-	return functions;
-}
+// std::vector<std::string> RemoteShot::getFunctionNames() const
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	if (parseResult != 0) {
+// 		return parseResult->functionNames;
+// 	}
+// 	std::vector<std::string> functions;
+// 	return functions;
+// }
 
 
+// // std::vector<STI::Engine::RawEventGroup> RemoteShot::getGroups()
 // std::vector<STI::Engine::RawEventGroup> RemoteShot::getGroups()
-std::vector<STI::Engine::RawEventGroup> RemoteShot::getGroups()
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	if (parseResult != 0) {
-		return parseResult->eventGroups;
-	}
-	std::vector<STI::Engine::RawEventGroup> groups;
-	return groups;
-}
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	if (parseResult != 0) {
+// 		return parseResult->eventGroups;
+// 	}
+// 	std::vector<STI::Engine::RawEventGroup> groups;
+// 	return groups;
+// }
 
-std::vector<STI::Engine::ParsedVar> RemoteShot::getParsedVars()
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	if (parseResult != 0) {
-		return parseResult->parsedVars;
-	}
-	std::vector<STI::Engine::ParsedVar> vars;
-	return vars;
-}
+// std::vector<STI::Engine::ParsedVar> RemoteShot::getParsedVars()
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	if (parseResult != 0) {
+// 		return parseResult->parsedVars;
+// 	}
+// 	std::vector<STI::Engine::ParsedVar> vars;
+// 	return vars;
+// }
 
-std::vector<STI::Engine::ParsedTag> RemoteShot::getParsedTags()
-{
-	std::unique_lock<std::mutex> shotLock(shotMutex);
-	if (parseResult != 0) {
-		return parseResult->parsedTags;
-	}
-	std::vector<STI::Engine::ParsedTag> tags;
-	return tags;
-}
+// std::vector<STI::Engine::ParsedTag> RemoteShot::getParsedTags()
+// {
+// 	std::unique_lock<std::mutex> shotLock(shotMutex);
+// 	if (parseResult != 0) {
+// 		return parseResult->parsedTags;
+// 	}
+// 	std::vector<STI::Engine::ParsedTag> tags;
+// 	return tags;
+// }
 
 
 // bool RemoteShot::refreshGroups()

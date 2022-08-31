@@ -8,6 +8,7 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/engine/StackTraceResult.h>
 
 
 #include "CerealArchives.h"
@@ -32,11 +33,11 @@ template<class Archive>
 void ParseResult::serialize(Archive& archive)
 {
     archive( 
-        cereal::make_nvp("TimingFiles", timingFiles),
-        cereal::make_nvp("functionNames", functionNames), 
-        cereal::make_nvp("eventGroups", eventGroups),
-        cereal::make_nvp("parsedVars", parsedVars),
-        cereal::make_nvp("parsedTags", parsedTags)
+        cereal::make_nvp("pid", pid),
+        cereal::make_nvp("baseEventGroup", baseEventGroup), 
+        cereal::make_nvp("parsedDevices", parsedDevices),
+        cereal::make_nvp("messages", messages),
+        cereal::make_nvp("stackTraceResult", stackTraceResult)
         );
 }
 

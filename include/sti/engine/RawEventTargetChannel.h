@@ -25,6 +25,10 @@ public:
 
     void setChannel(unsigned short channel);
 
+    bool operator<(const RawEventTargetChannel& rhs) const;
+	bool operator==(const RawEventTargetChannel& rhs) const;
+	bool operator!=(const RawEventTargetChannel& rhs) const;
+
     template<class Archive>
     void serialize(Archive& archive);
 

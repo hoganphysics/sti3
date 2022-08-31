@@ -20,6 +20,8 @@ class EventEngine;
 struct ResultsPaths;
 class ShotResult;
 class ShotResultRecord;
+class ParseResult;
+class FullShotResult;
 
 
 class LocalResultsCollector : public ResultsCollector
@@ -37,8 +39,8 @@ public:
     //std::shared_ptr<ParsedDependencyTree> getDependencies();
     
 
-    void addEvents(const DeviceEventMap& parsedEvents);
-    void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
+    // void addEvents(const DeviceEventMap& parsedEvents);
+    // void addTimingFiles(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files);
     bool addMeasurements(const std::shared_ptr<MeasurementVector>& measurements);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
@@ -46,6 +48,8 @@ public:
 
     void setRecord(const ShotResultRecord& shotRecord);
     std::shared_ptr<ShotResult> getResults() const;
+
+    std::shared_ptr<ParseResult> getParseResults() const;
 
 private:
 
@@ -57,7 +61,10 @@ private:
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     ResultsPaths resultsPaths;
 
-    std::shared_ptr<ShotResult> shotResult;
+    // std::shared_ptr<ShotResult> shotResult;
+    // std::shared_ptr<ParseResult> parseResult;
+
+    std::shared_ptr<FullShotResult> fullShotResult;
 
 //    ShotID sid;
      

@@ -15,6 +15,8 @@ namespace Engine
 {
 
 class RawEvent;
+struct RawEventID;
+
 
 class Measurement
 {
@@ -23,7 +25,7 @@ public:
 	Measurement();	//for serialzation
 
 	Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
-							const STI::Utils::GraphPathLabel& measurementGraphPath);
+							const STI::Utils::GraphPathLabel& measurementGraphPath, const std::string& groupName);
 	Measurement(const RawEvent& sourceEvent);
 	Measurement(const Measurement& measurement);
 
@@ -38,7 +40,9 @@ public:
 
 	const STI::Device::DeviceID& device() const;
 
-	const std::vector<unsigned>& getMeasurementGraphPath() const { return measurementGraphPath; }
+	std::string groupName() const;
+	const STI::Utils::GraphPathLabel& getMeasurementGraphPath() const;
+	RawEventID getEventID() const;
 
 	std::string print() const;
 
@@ -63,6 +67,7 @@ private:
 	unsigned short _channel;
 
 	STI::Utils::GraphPathLabel measurementGraphPath;
+	std::string fullGroupName;
 
 	STI::Device::DeviceID _device;
 

@@ -21,8 +21,10 @@ public:
     // void getGroups(::STI::TNetwork::TRawEventGroup_out groups);
     // void getVars(::STI::TNetwork::TParsedVarSeq_out parsedVars);
     // void getTags(::STI::TNetwork::TParsedTagSeq_out parsedTags);
-    void getParseResult(::STI::TNetwork::TParseResult_out parseResult);
-    void getEvents(::STI::TNetwork::TRawEventSeq_out events);
+    // void getParseResult(::STI::TNetwork::TParseResult_out parseResult);
+    // void getEvents(::STI::TNetwork::TRawEventSeq_out events);
+
+    void getBaseEventGroup(::STI::TNetwork::TRawEventGroup_out baseGroup);
 
 private:
 

@@ -22,7 +22,7 @@ public:
     std::string name;
     STI::Engine::StackTrace trace;
     // STI::Device::DeviceID targetServerID;
-    RawEventGroup scope;
+    // RawEventGroup scope;
 
     bool operator<(const ParsedTag& rhs) const;
     bool operator==(const ParsedTag& rhs) const;

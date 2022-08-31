@@ -23,6 +23,8 @@ class RawEventTarget
 {
 public:
 
+    RawEventTarget();
+
     RawEventTarget(const RawEventTargetDevice& dev, const RawEventTargetChannel& ch);
 
     RawEventTarget(const STI::Device::DeviceID& targetDevice, unsigned short channel);
@@ -40,6 +42,10 @@ public:
 
     RawEventTargetChannel& getChannel();
     const RawEventTargetChannel& channel() const;
+
+    bool operator<(const RawEventTarget& rhs) const;
+	bool operator==(const RawEventTarget& rhs) const;
+	bool operator!=(const RawEventTarget& rhs) const;
 
     template<class Archive>
     void serialize(Archive& archive);

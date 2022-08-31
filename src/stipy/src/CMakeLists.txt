@@ -69,7 +69,7 @@ pybind11_add_module(stipy
     # HubID_wrap.cpp
     # ParseTicket.cpp
     ParseTicket_wrap.cpp
-    ParsedVarPy.cpp
+    # ParsedVarPy.cpp
     ParsedVar_wrap.cpp
     pywrapper.cpp    
     PyParseTicket.cpp

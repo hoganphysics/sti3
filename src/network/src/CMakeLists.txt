@@ -70,6 +70,7 @@ add_library(stinetwork SHARED
     Convert_HubNodeWalker.cpp
     Convert_HubTrace.cpp
     Convert_DeviceTrace.cpp
+    Convert_RawEventGroup.cpp
     Convert_ResultsCollector.cpp
     Convert_ShotResult.cpp
     Convert_StackTrace.cpp

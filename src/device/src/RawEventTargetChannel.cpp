@@ -37,7 +37,40 @@ unsigned short RawEventTargetChannel::channel() const
 
 void RawEventTargetChannel::setChannel(unsigned short channel)
 {
+    _isAbstract = false;
     _channel = channel;
+}
+
+bool RawEventTargetChannel::operator<(const RawEventTargetChannel& rhs) const
+{
+    if (isAbstract()) {
+        if (rhs.isAbstract()) {
+            return name() < rhs.name();
+        }
+        return true;
+    }
+
+    //neither abstract
+    return channel() < rhs.channel();
+}
+
+bool RawEventTargetChannel::operator==(const RawEventTargetChannel& rhs) const
+{
+    if (isAbstract()) {
+        if (rhs.isAbstract()) {
+            return name() == rhs.name();
+        }
+        return false;     
+    }
+
+    //neither abstract
+    return channel() == rhs.channel();
+
+}
+
+bool RawEventTargetChannel::operator!=(const RawEventTargetChannel& rhs) const
+{
+    return !((*this) == rhs);
 }
 
 template<class Archive>

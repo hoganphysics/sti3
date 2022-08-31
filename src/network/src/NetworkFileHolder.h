@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_NETWORKFILEHOLDER_H
 #define STI_ENGINE_NETWORKFILEHOLDER_H
 
-#include "LocalFileHolder.h"
+#include <sti/utils/LocalFileHolder.h>
 
 #include "TFileHolderRefInterface.h"
 
@@ -47,7 +47,8 @@ public:
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
     {
-        std::shared_ptr<NetworkFileHolder> holder(new NetworkFileHolder(filename));
+        // std::shared_ptr<NetworkFileHolder> holder(new NetworkFileHolder(filename));
+        auto holder = std::make_shared<NetworkFileHolder>(filename);
         return std::static_pointer_cast<STI::Utils::FileHolder>(holder);
     }
 

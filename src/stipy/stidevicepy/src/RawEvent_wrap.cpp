@@ -6,6 +6,7 @@
 #include <sti/utils/MixedValue.h>
 #include "MixedValuePy.h"
 #include "RawEventGroup.h"
+#include "RawStackTrace.h"
 
 #include <sstream>
 
@@ -164,8 +165,9 @@ void init_RawEvent(py::module& m)
             })
         .def("description", &STI::Engine::RawEvent::description)
         .def("type", &STI::Engine::RawEvent::type)
-        .def("targetDevice", &STI::Engine::RawEvent::targetDevice)
-    //    .def("getStackTrace", &STI::Engine::RawEvent::getStackTrace)
+        .def("target", &STI::Engine::RawEvent::target)
+        .def("getGroupName", &STI::Engine::RawEvent::getGroupName)
+        .def("getStackTrace", &STI::Engine::RawEvent::getRawStackTrace)
         .def("getEventGraphPath", &STI::Engine::RawEvent::getEventGraphPath)
         .def("__repr__",
             [](const STI::Engine::RawEvent& self) {

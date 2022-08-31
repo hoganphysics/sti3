@@ -2,10 +2,13 @@
 #include "ShotRepository.h"
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/Measurement.h>
+#include "ShotResult.h"
+
 
 using STI::Engine::ResultTicket;
 using STI::Engine::ShotRepository;
 using STI::Device::PersistenceManager;
+using STI::Engine::ShotResult;
 
 
 ResultTicket::ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<PersistenceManager>& persistenceManager)
@@ -68,6 +71,10 @@ void ResultTicket::loadMeasurements()
     if (measurements_loaded && measurements_ != 0) {
         return;
     }
+
+    // if (shotResult == 0) {
+    //     shotResult = std::make_shared<ShotResult>();
+    // }
     
     if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements_)) {
         measurements_loaded = true;

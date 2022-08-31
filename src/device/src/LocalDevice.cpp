@@ -7,7 +7,7 @@
 #include <sti/device/DeviceMessage.h>
 #include "LocalEventEngineFactory.h"
 
-#include "LocalFileHolder.h"
+#include <sti/utils/LocalFileHolder.h>
 
 #include <sti/utils/MixedValue.h>
 #include "LocalChannelManager.h"
@@ -26,6 +26,8 @@
 #include <sti/engine/ParseTicket.h>
 
 #include "ShotRepository.h"
+
+#include "RawEventGroup.h"
 
 #include <sti/engine/Measurement.h>
 #include <sti/utils/Configuration.h>
@@ -222,6 +224,17 @@ bool LocalDevice::isTargetServerOf(const DeviceID& id)
 	return id.getTargetServerID() == getID().getID();
 }
 
+
+std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& filename)
+{
+	std::shared_ptr<STI::Utils::FileHolder> file;
+
+	if (localPersistenceManager != 0) {
+		file = localPersistenceManager->makeFileHolder(filename);
+	}
+	return file;
+}
+
 void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
 	if (deviceMessageDispatcher != 0) {
@@ -338,11 +351,14 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	shotConfig.jobSourceID.user = "<async play>";
 	shotConfig.jobSourceID.machine = getID().getAddress();
 	
-	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
-	auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+	auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("SingleEvent", "");
+	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
+	// auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
 
-	events->push_back(event);
-	shot->setEvents(events);
+	eventGroup->addEvent(event);
+
+	// events->push_back(event);
+	// shot->setEvents(events);
 
 	auto parseID = eventEngineScheduler->parse(shot);
 

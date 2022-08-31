@@ -8,6 +8,9 @@
 #include "NetworkResultsCollector.h"
 #include <sti/engine/RawEvent.h>
 
+#include <sti/utils/LocalFileHolder.h>
+
+
 using STI::Network::NetworkResultsCollector;
 using STI::Network::RemotePersistenceManager;
 using STI::TNetwork::TReferenceHolder;
@@ -22,6 +25,11 @@ using STI::Engine::ShotResultRecord;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotResult;
 using STI::TNetwork::TShotResult;
+using STI::TNetwork::TParseResult;
+using STI::Engine::ParseResult;
+using STI::Engine::FullShotResult;
+using STI::TNetwork::TFullShotResult;
+
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
@@ -33,7 +41,36 @@ RemotePersistenceManager::~RemotePersistenceManager()
 {
 }
 
-bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
+
+bool RemotePersistenceManager::getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TParseResult_var tParseResult(new STI::TNetwork::TParseResult);
+
+    bool success = false;
+
+	try {
+
+		success = getTRef()->getParseResult(
+					convert<STI::Engine::ParseID, STI::TNetwork::TParseID>(pid), 
+					tParseResult);	//remote call
+
+		convert<TParseResult, std::shared_ptr<ParseResult>>(tParseResult, parseResult);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
+}
+
+bool RemotePersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
 
@@ -45,11 +82,11 @@ bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shar
 
 	try {
 
-		success = getTRef()->getShot(
+		success = getTRef()->getShotResult(
 					convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), 
 					tShotResult);	//remote call
 
-		convert<TShotResult, std::shared_ptr<ShotResult>>(tShotResult, result);
+		convert<TShotResult, std::shared_ptr<ShotResult>>(tShotResult, shotResult);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -62,23 +99,23 @@ bool RemotePersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shar
 }
 
 
-bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
 	
     if (isDisabled()) return false;
     
     bool success = false;
-   	STI::TNetwork::TShotResult tShotResult;
+   	STI::TNetwork::TFullShotResult tFullShotResult;
 
 	try {
 
-        success &= convert<std::shared_ptr<ShotResult>, TShotResult>(shotResult, tShotResult);
+        success &= convert<std::shared_ptr<FullShotResult>, TFullShotResult>(fullShotResult, tFullShotResult);
 
         if (success) {
     		success = getTRef()->saveShot(
 						convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(sid), 
-						tShotResult,
+						tFullShotResult,
 						static_cast<::CORBA::Boolean>(isOwner));	//remote call
         }
 
@@ -181,6 +218,14 @@ bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, s
 
 void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 {
+}
+
+
+
+std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
+{
+	auto factory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+	return factory->makeFileHolder(filename);
 }
 
 bool RemotePersistenceManager::ping() const

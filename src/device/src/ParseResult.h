@@ -7,8 +7,8 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include "ParsedDependencyTree.h"
 #include "RawEventGroup.h"
-#include "ParsedVar.h"
-#include "ParsedTag.h"
+// #include "ParsedVar.h"
+// #include "ParsedTag.h"
 #include <sti/fwd/RawEvent_fwd.h>
 
 #include <sti/utils/FileHolder.h>
@@ -27,6 +27,9 @@ namespace STI
 namespace Engine
 {
 
+class StackTraceResult;
+class RawEventGroup;
+
 
 class ParseResult
 {
@@ -35,16 +38,23 @@ public:
     ParseResult();
     virtual ~ParseResult();
 
-    // ParseID parseID;
+    ParseID pid;
 
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
-    std::vector<std::string> timingFileNames;
+    std::shared_ptr<RawEventGroup> baseEventGroup;
+    std::shared_ptr<ParsedDependencyTree> parsedDevices;
+    std::vector<EngineParsingMessage> messages;
+    std::shared_ptr<StackTraceResult> stackTraceResult;
+
+
+
+    // std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
+    // std::vector<std::string> timingFileNames;
     
-    std::vector<std::string> functionNames;
+    // std::vector<std::string> functionNames;
     
-    std::vector<STI::Engine::RawEventGroup> eventGroups;
-    std::vector<ParsedVar> parsedVars;
-    std::vector<ParsedTag> parsedTags;
+    // std::vector<STI::Engine::RawEventGroup> eventGroups;
+    // std::vector<ParsedVar> parsedVars;
+    // std::vector<ParsedTag> parsedTags;
 
     // EngineParseResult engineParseResult;
 

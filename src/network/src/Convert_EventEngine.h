@@ -181,11 +181,11 @@ template<>
 Engine::RawEvent Network::convert<TNetwork::TRawEvent, Engine::RawEvent>(const TNetwork::TRawEvent& tEvent);
 
 
-//STI::Engine::DeviceEventMap
-template<>
-bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
-template<>
-bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
+// //STI::Engine::DeviceEventMap
+// template<>
+// bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
+// template<>
+// bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
 
 
 

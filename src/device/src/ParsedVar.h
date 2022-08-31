@@ -16,23 +16,38 @@ namespace STI
 namespace Engine
 {
 
+class StackTraceData;
+
 
 class ParsedVar
 {
 public:
+
+    ParsedVar();
+    ParsedVar(const std::string& name, const std::string& groupName,
+            const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
+    ParsedVar(const std::string& name, const std::string& groupName, const STI::Utils::MixedValue& value, 
+            const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
     
     std::string name;
-    STI::Utils::MixedValue value;
+    std::string fullGroupName;
+    STI::Utils::MixedValue value;   //can be MixedValueType::Empty to indicate an unbound var
+    
     STI::Engine::StackTrace trace;
+    std::shared_ptr<StackTraceData> stackTraceData;
+
     // STI::Device::DeviceID targetServerID;
-    RawEventGroup scope;
+    // RawEventGroup scope;
+
+    bool isBound() const;
 
     bool operator<(const ParsedVar& rhs) const;
     bool operator==(const ParsedVar& rhs) const;
     bool operator!=(const ParsedVar& rhs) const;
+    
+    template<class Archive>
+    void serialize(Archive& archive);
 
-   	template<class Archive>
-	void serialize(Archive& archive);
 };
 
 

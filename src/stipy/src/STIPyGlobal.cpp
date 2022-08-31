@@ -5,7 +5,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/RawEventTargetDevice.h>
 
-#include "StackTracePy.h"
+#include "RawStackTrace.h"
 
 #include <stdexcept>
 // #include <iostream>
@@ -16,6 +16,7 @@ using STI::Engine::RawEventTargetDevice;
 using STI::Engine::RawEventGroup;
 using STI::Engine::StackTrace;
 using STI::Engine::RawEventTarget;
+using STI::Engine::RawStackTrace;
 
 
 STIPyGlobal::STIPyGlobal()
@@ -69,8 +70,8 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::st
     }
 }
 
-void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind11::object& value, 
-                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
+void STIPyGlobal::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+            const STI::Engine::RawStackTrace& stackTrace)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -81,12 +82,28 @@ void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind1
     }
 
     if (currentShot != 0) {
-        currentShot->event(target, time, value, stackTrace, group);
+        currentShot->event(target, time, value, stackTrace);
+    }
+}
+
+void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind11::object& value, 
+                        const RawStackTrace& stackTrace, const std::string& scope)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'event(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot != 0) {
+        currentShot->event(target, time, value, stackTrace, scope);
     }
 }
 
 void STIPyGlobal::meas(const RawEventTarget& target, double time, const pybind11::object& value,
-                        const StackTracePy& stackTrace, const STI::Engine::RawEventGroup& group)
+                        const RawStackTrace& stackTrace, const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -97,12 +114,12 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const pybind11
     }
 
     if (currentShot != 0) {
-        currentShot->meas(target, time, value, stackTrace, group);
+        currentShot->meas(target, time, value, stackTrace, scope);
     }
 }
 
-void STIPyGlobal::meas(const RawEventTarget& target, double time, const StackTracePy& stackTrace, 
-                        const STI::Engine::RawEventGroup& group)
+void STIPyGlobal::meas(const RawEventTarget& target, double time, const RawStackTrace& stackTrace, 
+                        const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -113,7 +130,7 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const StackTra
     }
 
     if (currentShot != 0) {
-        currentShot->meas(target, time, stackTrace, group);
+        currentShot->meas(target, time, stackTrace, scope);
     }
 }
 

@@ -7,6 +7,11 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/ShotID.h>
 
+#include "StackTraceData.h"
+#include "RawEventGroup.h"
+
+#include <sti/utils/LocalFileHolder.h>
+
 #include "STIPyGlobal.h"
 #include "LocalShot.h"
 
@@ -18,6 +23,7 @@ using STI::Python::STIPyShot;
 using STI::Python::STIPySeq;
 using STI::Python::PyParseTicket;
 using STI::Python::PyResultTicket;
+using STI::Engine::StackTraceData;
 
 
 // STIPyServer::STIPyServer()
@@ -49,22 +55,27 @@ void STIPyServer::setChannels(const pybind11::dict& channels)
 std::shared_ptr<STIPyShot> STIPyServer::makeshot()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    
-    STI::Engine::ShotConfig shotConfig;
-    auto evts = std::make_shared<STI::Engine::RawEventVector>();
+    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
-    // auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
-    // if (shot != 0) {
-    //     shot->setEvents(evts);
-    // }
+    STI::Engine::ShotConfig shotConfig;
+
+    if (getPersistenceManager(persistenceManager)) {
+        fileFactory = persistenceManager;
+    }
+    else {
+        fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    }
+
+    auto stackTraceData = std::make_shared<StackTraceData>(fileFactory);
+    auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTraceData);
     
     std::shared_ptr<STI::Engine::Shot> shot;
 
     if (getScheduler(scheduler)) {
-        auto evts = std::make_shared<STI::Engine::RawEventVector>();
-        shot = scheduler->createShot(shotConfig, evts);
+        shot = scheduler->createShot(shotConfig, eventGroup);
     }
-    auto pyShot = std::make_shared<STIPyShot>(shot, "");
+    auto pyShot = std::make_shared<STIPyShot>(shot);
     return pyShot;
 }
 
@@ -97,6 +108,17 @@ bool STIPyServer::getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler
     
     if (libDevice != 0 && libDevice->getServer(server)) {
         return server->getEngineScheduler(scheduler);
+    }
+
+    return false;
+}
+
+bool STIPyServer::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager)
+{
+    std::shared_ptr<STI::Device::Device> server;
+    
+    if (libDevice != 0 && libDevice->getServer(server)) {
+        return server->getPersistenceManager(persistenceManager);
     }
 
     return false;

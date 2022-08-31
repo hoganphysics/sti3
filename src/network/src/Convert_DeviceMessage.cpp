@@ -6,8 +6,12 @@
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceMessage.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_RawEventGroup.h"
+
 #include "NetworkEventEngine.h"
 #include <sti/utils/MixedValue.h>
+
+#include "Convert_ShotResult.h"
 
 #include "orbTypes.h"
 
@@ -460,8 +464,10 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		// 	deviceMessage->setEngine(engine);
 		// }
 		
-		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.handledEvents, deviceMessage->handledEvents);
-		convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tMessage.handledEvents, deviceMessage->handledEvents);
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tMessage.unhandledEvents, deviceMessage->unhandledEvents);
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tMessage.upstreamPartnerEvents, deviceMessage->upstreamPartnerEvents);
+
 		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
 		convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tMessage.engineState, deviceMessage->engineState);
 	}
@@ -487,8 +493,9 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	
 	//tMessage.originalSource = convert<DeviceID, TDeviceID>(deviceMessage->originalSource);
 	tMessage.jobID = convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(deviceMessage->jobID);
-	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->handledEvents, tMessage.handledEvents);
-	convert<STI::Engine::RawEvent, STI::TNetwork::TRawEvent>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
+	convert<std::shared_ptr<STI::Engine::RawEventGroup>, STI::TNetwork::TRawEventGroup>(deviceMessage->handledEvents, tMessage.handledEvents);
+	convert<std::shared_ptr<STI::Engine::RawEventGroup>, STI::TNetwork::TRawEventGroup>(deviceMessage->unhandledEvents, tMessage.unhandledEvents);
+	convert<std::shared_ptr<STI::Engine::RawEventGroup>, STI::TNetwork::TRawEventGroup>(deviceMessage->upstreamPartnerEvents, tMessage.upstreamPartnerEvents);
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
 	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
 	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);

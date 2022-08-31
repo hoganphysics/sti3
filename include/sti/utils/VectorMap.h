@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <mutex>
 
 
 namespace STI
@@ -35,6 +36,7 @@ public:
 
     VectorMap();
     VectorMap(std::vector<T>& wrappedVec);
+    virtual ~VectorMap();
 
     bool exists(const ID& name) const;
     
@@ -50,6 +52,8 @@ public:
 
     bool merge(VectorMap<ID, T>& other);
 
+    void clear();
+
     std::vector<T>& getVec();
     const std::vector<T>& vec() const;
 
@@ -58,10 +62,16 @@ public:
 
 private:
 
+    bool _exists(const ID& name) const;
+    bool _at(unsigned index, T& item) const;
+    unsigned _add(const ID& name, const T& item);
+
     std::map<ID, unsigned> indices;
     std::vector<T>& items;
 
     std::vector<T> items_l;
+
+    mutable std::mutex itemMutex;
 };
 
 
@@ -79,7 +89,6 @@ STI::Utils::VectorMap<ID, T>::VectorMap()
 }
 
 
-
 template<typename ID, typename T>
 STI::Utils::VectorMap<ID, T>::VectorMap(std::vector<T>& wrappedVec)
 : items(wrappedVec)
@@ -87,7 +96,21 @@ STI::Utils::VectorMap<ID, T>::VectorMap(std::vector<T>& wrappedVec)
 }
 
 template<typename ID, typename T>
+STI::Utils::VectorMap<ID, T>::~VectorMap() 
+{ 
+}
+
+
+template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::exists(const ID& name) const
+{
+    std::unique_lock itemLock(itemMutex);
+
+    return _exists(name);
+}
+
+template<typename ID, typename T>
+bool STI::Utils::VectorMap<ID, T>::_exists(const ID& name) const
 {
     auto it = indices.find(name);
     return it != indices.end();
@@ -96,6 +119,8 @@ bool STI::Utils::VectorMap<ID, T>::exists(const ID& name) const
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::getIndex(const ID& name, unsigned& index) const
 {
+    std::unique_lock itemLock(itemMutex);
+
     // if (!exists(name)) return false;
     auto it = indices.find(name);
     if (it == indices.end()) return false;
@@ -106,12 +131,14 @@ bool STI::Utils::VectorMap<ID, T>::getIndex(const ID& name, unsigned& index) con
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::get(const ID& name, T& item) const
 {
+    std::unique_lock itemLock(itemMutex);
+
     auto it = indices.find(name);
 
     if (it != indices.end()) {
         unsigned index = it->second;
 
-        return at(index, item);
+        return _at(index, item);
     }
     return false;
 }
@@ -119,9 +146,16 @@ bool STI::Utils::VectorMap<ID, T>::get(const ID& name, T& item) const
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::at(unsigned index, T& item) const
 {
+    std::unique_lock itemLock(itemMutex);
+    return _at(index, item);
+}
+
+template<typename ID, typename T>
+bool STI::Utils::VectorMap<ID, T>::_at(unsigned index, T& item) const
+{
     if (index < items.size()) {
-            item = items.at(index);
-            return true;
+        item = items.at(index);
+        return true;
     }
     return false;
 }
@@ -129,7 +163,9 @@ bool STI::Utils::VectorMap<ID, T>::at(unsigned index, T& item) const
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::prepend(const ID& name, const T& item)
 {
-    if (exists(name)) return;   //duplicate
+    std::unique_lock itemLock(itemMutex);
+
+    if (_exists(name)) return;   //duplicate
 
     //shift indices
     for(auto& n : indices) {
@@ -142,11 +178,13 @@ void STI::Utils::VectorMap<ID, T>::prepend(const ID& name, const T& item)
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::rename(const ID& name, const ID& newName)
 {
+    std::unique_lock itemLock(itemMutex);
+
     if (name == newName) return;
 
     auto it = indices.find(name);
     if (it == indices.end()) return;    //not found
-    if (exists(newName)) return;    //newName exists
+    if (_exists(newName)) return;    //newName exists
 
     indices[newName] = it->second;
     indices.erase(it);       
@@ -155,16 +193,25 @@ void STI::Utils::VectorMap<ID, T>::rename(const ID& name, const ID& newName)
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::replace(const ID& name, const T& item)
 {
-    if (exists(name)) {
+    std::unique_lock itemLock(itemMutex);
+
+    if (_exists(name)) {
         items.at(indices[name]) = item;
     }
     else {
-        add(name, item);
+        _add(name, item);
     }
 }
 
 template<typename ID, typename T>
 unsigned STI::Utils::VectorMap<ID, T>::add(const ID& name, const T& item)
+{
+    std::unique_lock itemLock(itemMutex);
+    return _add(name, item);
+}
+
+template<typename ID, typename T>
+unsigned STI::Utils::VectorMap<ID, T>::_add(const ID& name, const T& item)
 {
     auto it = indices.find(name);
     if (it != indices.end()) {
@@ -178,11 +225,14 @@ unsigned STI::Utils::VectorMap<ID, T>::add(const ID& name, const T& item)
     return newIndex;
 }
 
+
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::merge(VectorMap<ID, T>& other)
 {
+    std::unique_lock itemLock(itemMutex);
+
     for (auto& n : other.indices) {
-        if (exists(n.first)) return false;
+        if (_exists(n.first)) return false;
     }
 
     unsigned shift = indices.size();
@@ -220,6 +270,17 @@ const std::map<ID, unsigned>& STI::Utils::VectorMap<ID, T>::indexMap() const
 {
     return indices;
 }
+
+
+template<typename ID, typename T>
+void STI::Utils::VectorMap<ID, T>::clear()
+{
+    std::unique_lock itemLock(itemMutex);
+
+    indices.clear();
+    items.clear();
+}
+
 
 
 } //Utils

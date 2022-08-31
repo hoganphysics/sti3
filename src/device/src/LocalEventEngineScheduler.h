@@ -106,15 +106,17 @@ public:
     void getRunningJobs(std::set<EngineJobID>& jobIDs) const;
     void getCompletedJobs(std::set<EngineJobID>& jobIDs) const;
 
-    std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events);
+    // std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig);
+    std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
     void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser);
 
-    bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
-    bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
-    bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const;
+    // bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
+    bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
+    // bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
+    // bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const;
 
 //    bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
 //    bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);
@@ -146,6 +148,8 @@ public:
     //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
 
 private:
+
+    void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
                         std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 

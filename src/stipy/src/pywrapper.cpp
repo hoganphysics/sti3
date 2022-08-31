@@ -15,7 +15,7 @@ void init_STIPyShot(py::module& m);
 void init_STIPyServer(py::module& m);
 void init_ParseTicket(py::module& m);
 void init_ResultTicket(py::module& m);
-void init_ParsedVarPy(py::module& m);
+void init_ParsedVar(py::module& m);
 // void init_DeviceID(py::module& m);
 
 void init_RawEventGroup(py::module& m);
@@ -44,7 +44,7 @@ PYBIND11_MODULE(stipy, m) {
     init_ParseTicket(m);
     init_ResultTicket(m);
 
-    init_ParsedVarPy(m);
+    init_ParsedVar(m);
 
     //init_DeviceID(m);
 

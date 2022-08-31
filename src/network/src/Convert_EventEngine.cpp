@@ -70,8 +70,8 @@ using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
-using STI::Engine::DeviceEventMap;
-using STI::TNetwork::TDeviceEventsSeq;
+// using STI::Engine::DeviceEventMap;
+// using STI::TNetwork::TDeviceEventsSeq;
 using STI::Engine::ParseID; 
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
@@ -729,7 +729,7 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
     tEvent.time = static_cast<CORBA::Double>(evt.time());
     // tEvent.channel = static_cast<CORBA::UShort>(evt.channel());
     tEvent.target = convert<RawEventTarget, TRawEventTarget>(evt.target());
-    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.value);
+    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.parsedValue.value);
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
     //trace
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
@@ -747,7 +747,7 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
 	evt.setTime(static_cast<double>(tEvent.time));
 	// evt.setChannel(static_cast<unsigned short>(tEvent.channel));
     evt.setTarget(convert<TRawEventTarget, RawEventTarget>(tEvent.target));
-	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.value));
+	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.parsedValue.value));
 	evt.setDescription(convert<::CORBA::String_member, std::string>(tEvent.description));
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
 
@@ -779,39 +779,39 @@ RawEvent STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent)
 }
 
 
-//STI::Engine::DeviceEventMap
-template<>
-bool STI::Network::convert<DeviceEventMap, TDeviceEventsSeq>(const DeviceEventMap& deviceEvents, TDeviceEventsSeq& tDeviceEvents)
-{
-    tDeviceEvents.length(static_cast<CORBA::ULong>(deviceEvents.size()));
+// //STI::Engine::DeviceEventMap
+// template<>
+// bool STI::Network::convert<DeviceEventMap, TDeviceEventsSeq>(const DeviceEventMap& deviceEvents, TDeviceEventsSeq& tDeviceEvents)
+// {
+//     tDeviceEvents.length(static_cast<CORBA::ULong>(deviceEvents.size()));
 
-    unsigned i = 0;
+//     unsigned i = 0;
 
-    for (auto& targetEvents : deviceEvents) {
-        tDeviceEvents[i].targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(targetEvents.first);
+//     for (auto& targetEvents : deviceEvents) {
+//         tDeviceEvents[i].targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(targetEvents.first);
         
-        convert<RawEvent, TRawEvent>(targetEvents.second, tDeviceEvents[i].events);
+//         convert<RawEvent, TRawEvent>(targetEvents.second, tDeviceEvents[i].events);
 
-        i++;
-    }
-    return true;
-}
+//         i++;
+//     }
+//     return true;
+// }
 
 
-template<>
-bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEventsSeq& tDeviceEvents, DeviceEventMap& deviceEvents)
-{
-    deviceEvents.clear();
+// template<>
+// bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEventsSeq& tDeviceEvents, DeviceEventMap& deviceEvents)
+// {
+//     deviceEvents.clear();
 
-    for (unsigned i = 0; i < tDeviceEvents.length(); ++i) {
-        //get RawEventVector for this DeviceID
-        auto& evts = deviceEvents[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceEvents[i].targetDeviceID)];
+//     for (unsigned i = 0; i < tDeviceEvents.length(); ++i) {
+//         //get RawEventVector for this DeviceID
+//         auto& evts = deviceEvents[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceEvents[i].targetDeviceID)];
         
-        //populate vector with converted events
-        convert<TRawEvent, RawEvent>(tDeviceEvents[i].events, evts);
-    }
-    return true;
-}
+//         //populate vector with converted events
+//         convert<TRawEvent, RawEvent>(tDeviceEvents[i].events, evts);
+//     }
+//     return true;
+// }
 
 
 
@@ -1368,6 +1368,8 @@ bool STI::Network::convert<std::shared_ptr<Measurement>, TMeasurement>(
     STI::Network::convertEventGraphPath(measurement->getMeasurementGraphPath(), tMeasurement.measurementGraphPath);
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(measurement->device(), tMeasurement.device);
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(measurement->data(), tMeasurement.measurementResult);
+    tMeasurement.fullGroupName = convert<std::string, CORBA::String_member>(measurement->groupName());
+
     return true;
 }
 
@@ -1382,7 +1384,9 @@ bool STI::Network::convert<TMeasurement, std::shared_ptr<Measurement>>(
         static_cast<double>(tMeasurement.time),
         static_cast<unsigned short>(tMeasurement.channel),
         convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tMeasurement.device),
-        gpl);
+        gpl,
+        convert<CORBA::String_member, std::string>(tMeasurement.fullGroupName)
+        );
 
     auto data = convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tMeasurement.measurementResult);
     measurement->setMeasurementResult(data);

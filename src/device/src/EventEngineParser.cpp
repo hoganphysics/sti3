@@ -11,6 +11,9 @@
 #include <sti/utils/utils.h>
 #include <sti/utils/MixedValue.h>
 
+#include "RawEventGroup.h"
+#include <sti/engine/RawEventTarget.h>
+
 // #include "EngineParsingError.h"
 #include <sti/engine/EngineParsingMessage.h>
 
@@ -24,6 +27,7 @@ using STI::Engine::EventEngineParser;
 using STI::Engine::LocalEventEngine;
 using STI::Engine::RawEvent;
 using STI::Engine::RawEventType;
+using STI::Engine::RawEventGroup;
 using STI::Engine::Measurement;
 using STI::Engine::SynchronousEventVector;
 using STI::Utils::MixedValueType;
@@ -57,7 +61,7 @@ const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages()
 	return messages;
 }
 
-bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents)
+bool EventEngineParser::parse(const RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents)
 {
 	bool success = true;
 
@@ -66,7 +70,7 @@ bool EventEngineParser::parse(const STI::Engine::RawEventVector& events, Synchro
 
 	if (channelManager == 0) return false;
 
-	success = groupEventsByTime(events);
+	success = groupEventsByTime(eventGroup);
 
 	if (success) {
 		//All events were added successfully.  
@@ -100,7 +104,7 @@ void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetI
 	deviceParser->getEventTargets(targetIDs);
 }
 
-bool EventEngineParser::groupEventsByTime(const STI::Engine::RawEventVector& events)
+bool EventEngineParser::groupEventsByTime(const RawEventGroup& eventGroup)
 {
 	//reset
 	rawEvents.clear();
@@ -112,22 +116,41 @@ bool EventEngineParser::groupEventsByTime(const STI::Engine::RawEventVector& eve
 	unsigned errorCount = 0;	//limit the number of errors that are reported back during a single parse attempt
 	unsigned maxErrors = 10;
 
-	//This is only zero after resetting this device's parsed events.
-	//	unsigned initialEventNumber = rawEvents.size();
-	unsigned initialEventNumber = 0;
+	addEventGroup(eventGroup, "", errorCount, maxErrors, success);
 
-	//Move the events from TDeviceEventSeq 'events' (provided by server) to
-	//the raw event list 'rawEvents'.  Check for general event errors.
-	for(auto& evt : events)
-	{
-		success &= addRawEvent(evt, errorCount, maxErrors);
+	return success;
+}
 
-		if (maxErrorCheck(errorCount, maxErrors)) {
-			return false;
+bool EventEngineParser::addEventGroup(const RawEventGroup& eventGroup, const std::string& parentGroupName, unsigned& errorCount, unsigned maxErrors, bool& success)
+{
+	std::shared_ptr<RawEventVector> events;
+	events = eventGroup.getEvents();
+
+	auto groupName = parentGroupName + "/" + eventGroup.getName();
+
+	if (events != 0) {
+		for (auto& evt : *events) {
+
+			evt.setGroupName(groupName);
+			success &= addRawEvent(evt, errorCount, maxErrors);
+
+			if (maxErrorCheck(errorCount, maxErrors)) {
+				success = false;
+				return false;
+			}
 		}
 	}
 
-	return success;
+	for (auto& g : eventGroup.getSubgroups()) {
+		if (g != 0) {
+			
+			if(!addEventGroup(*g, groupName, errorCount, maxErrors, success)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name)
@@ -231,7 +254,7 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 
 		//Entries in map: {GraphPathLabel, MeasurementCounter}
 		measurementEventGraph.insert(
-		{ rawEvent.getEventGraphPath(), MeasurementCounter( &(rawEvents[eventTime].back()) ) }
+		{ rawEvent.getEventID(), MeasurementCounter( &(rawEvents[eventTime].back()) ) }
 		);
 	}
 
@@ -356,7 +379,15 @@ bool EventEngineParser::countMeasurementRefs(const std::vector<std::shared_ptr<M
 	//If found, remove from measurementEventGraph (remaining events are not scheduled).
 	for (auto& m : measurements) {
 
-		auto it = measurementEventGraph.find(m->getMeasurementGraphPath());
+		if (m == 0) {
+			addParsingError("Null Measurement")
+				<< "Found null Measurement in the list of measurements! "
+				<< "This occured in countMeasurementRefs(...). "
+				<< "This is likely an error in the STI library.";
+			return false;
+		}
+
+		auto it = measurementEventGraph.find(m->getEventID());
 
 		if (it != measurementEventGraph.end()) {
 			it->second.count++;		//Expect each RawEvent to be found once and only once
@@ -494,6 +525,8 @@ void EventEngineParser::defineErrorIDs()
 
 	errorIDs["Illegal Output Event"] 				= 42;
 	errorIDs["Illegal Input Event"] 				= 43;
+
+	errorIDs["Null Measurement"] 					= 44;	
 
 }
 

@@ -2,7 +2,7 @@
 #include "EventEngineSchedulerPy.h"
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotID.h>
-#include "LocalShotPy.h"
+// #include "LocalShotPy.h"
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/EngineJobID.h>
 
@@ -12,7 +12,7 @@ using STI::Engine::EventEngineScheduler;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
 using STI::Engine::EngineJobStatus;
-using STI::Python::LocalShotPy;
+// using STI::Python::LocalShotPy;
 
 
 
@@ -25,7 +25,7 @@ EventEngineSchedulerPy::~EventEngineSchedulerPy()
 {
 }
 
-ParseID EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Python::LocalShotPy>& shot)
+ParseID EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Engine::Shot>& shot)
 {
     ParseID pid;
 
