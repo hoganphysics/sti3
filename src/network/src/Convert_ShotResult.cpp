@@ -7,17 +7,17 @@
 #include "Convert_EventEngine.h"
 #include "Convert_RawEventGroup.h"
 
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 
 #include "RawEventGroup.h"
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 
-#include "ParseResult.h"
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/StackTraceResult.h>
 
-#include "FullShotResult.h"
+#include <sti/engine/FullShotResult.h>
 
 
 
@@ -322,7 +322,7 @@ template<>
 bool STI::Network::convert<TParsedVar, ParsedVar>(const TParsedVar& tParsedVar, ParsedVar& parsedVar)
 {
     parsedVar.name = convert<CORBA::String_member, std::string>(tParsedVar.name);
-    parsedVar.fullGroupName = convert<CORBA::String_member, std::string>(tParsedVar.fullGroupName);
+    // parsedVar.fullGroupName = convert<CORBA::String_member, std::string>(tParsedVar.fullGroupName);
     // convert<TDeviceID, DeviceID>(tParsedVar.targetServerID, parsedVar.targetServerID);
     convert<TStackFrameSeq, StackTrace>(tParsedVar.trace, parsedVar.trace);
     convert<TMixedValue, MixedValue>(tParsedVar.value, parsedVar.value);
@@ -335,7 +335,7 @@ template<>
 bool STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedVar, TParsedVar& tParsedVar)
 {
     convert<std::string, CORBA::String_member>(parsedVar.name, tParsedVar.name);
-    convert<std::string, CORBA::String_member>(parsedVar.fullGroupName, tParsedVar.fullGroupName);
+    // convert<std::string, CORBA::String_member>(parsedVar.fullGroupName, tParsedVar.fullGroupName);
     // convert<DeviceID, TDeviceID>(parsedVar.targetServerID, tParsedVar.targetServerID);
     convert<StackTrace, TStackFrameSeq>(parsedVar.trace, tParsedVar.trace);
     convert<MixedValue, TMixedValue>(parsedVar.value, tParsedVar.value);

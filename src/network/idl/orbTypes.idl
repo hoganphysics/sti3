@@ -137,7 +137,7 @@ module TNetwork
 	struct TParsedVar
 	{
 		string name;
-		string fullGroupName;
+		// string fullGroupName;
 		TMixedValue value;
 		TStackFrameSeq trace;
 		// TDeviceID targetServerID;
@@ -154,7 +154,7 @@ module TNetwork
 		// TMixedValue value;
 		TParsedVar parsedValue;
 		string description;
-		string fullGroupName;
+		// string fullGroupName;
 		TStackFrameSeq stackTrace;
 		//TEventStackTrace trace;
 		boolean isMeasurement;

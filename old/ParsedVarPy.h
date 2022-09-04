@@ -2,9 +2,9 @@
 #define STI_PYTHON_PARSEDVARPY_H
 
 
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "RawStackTrace.h"
-#include "ParseResult.h"
+#include <sti/engine/ParseResult.h>
 #include "RawEventGroup.h"
 
 #include <pybind11/pybind11.h>

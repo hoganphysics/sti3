@@ -54,6 +54,9 @@ void init_STIPyShot(py::module& m)
         //                 const STI::Engine::RawEventGroup&>(&STIPyShot::meas),
         //                 py::arg("channel"), py::arg("time"), py::arg("stackTrace"), py::arg("group"))
 
+        .def("group", py::overload_cast<>(&STIPyShot::group))
+        .def("group", py::overload_cast<const std::string&>(&STIPyShot::group), py::arg("fullName"))
+
         .def("getEvents", 
             [](STIPyShot& self) {
                 auto evts = self.getEvents();

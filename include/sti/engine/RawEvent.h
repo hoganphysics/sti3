@@ -31,7 +31,7 @@
 #include <sti/device/DeviceID.h>
 //#include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/utils/GraphPathLabel.h>
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 
 #include <string>
 #include <map>
@@ -44,9 +44,9 @@ namespace Engine
 {
 
 class SynchronousEvent;		//for confirming measurement scheduling
-// class RawEventGroup;
+class RawEventGroup;
 class StackTraceData;
-
+class RawStackTrace;
 
 struct RawEventID
 {
@@ -101,7 +101,7 @@ public:
 	RawEventTarget& getTarget();
 	// const STI::Utils::GraphPathLabel& groupIndex();
 	std::string getGroupName() const;
-	void setGroupName(const std::string& name);
+	void setParentGroup(const RawEventGroup* group);
 
 	RawEventID getEventID() const;
 
@@ -118,6 +118,9 @@ public:
 	// STI::Device::DeviceID targetDevice() const;
 
 	const StackTrace& getStackTrace() const { return stackTrace; }
+	StackTrace& getStackTrace() { return stackTrace; }
+	void setStackTrace(const StackTrace& eventStackTrace) { stackTrace = eventStackTrace; }
+	void setStackTraceData(const std::shared_ptr<StackTraceData>& traceData) { stackTraceData = traceData; }
 
 	RawStackTrace getRawStackTrace() const;
 
@@ -168,7 +171,8 @@ private:
 	bool isMeasurement;
 	RawEventType _eventType;
 	// STI::Device::DeviceID targetDeviceID;
-	std::string fullGroupName;
+	// std::string fullGroupName;
+	const RawEventGroup* parentGroup;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
 

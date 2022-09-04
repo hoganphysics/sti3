@@ -1,11 +1,11 @@
 
 #include "TransientRepository.h"
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/utils/utils.h>
 #include <sti/engine/ParseID.h>
-#include "ParseResult.h"
-#include "FullShotResult.h"
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/FullShotResult.h>
 
 #include <filesystem>
 

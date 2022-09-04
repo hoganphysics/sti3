@@ -7,8 +7,8 @@
 #include <sti/engine/StackTrace.h>
 #include "NetworkFileHolder.h"
 
-#include "ParseResult.h"
-#include "ParsedVar.h"
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 // #include "ParsedVarPy.h"
 

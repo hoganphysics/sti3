@@ -6,6 +6,7 @@
 
 #include <sti/engine/RawEvent.h>
 #include "LocalShot.h"
+#include "RawEventGroup.h"
 
 #include <sti/engine/EngineJobID.h>
 

@@ -48,7 +48,7 @@ public:
 private:
 
 	bool addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors);
-	bool addEventGroup(const RawEventGroup& eventGroup, const std::string& parentGroupName, unsigned& errorCount, unsigned maxErrors, bool& success);
+	bool addEventGroup(const RawEventGroup& eventGroup, unsigned& errorCount, unsigned maxErrors, bool& success);
 	bool groupEventsByTime(const RawEventGroup& eventGroup);
 	bool parseEvents(SynchronousEventVector& synchedEvents);
 	bool checkMeasurements(SynchronousEventVector& synchedEvents);

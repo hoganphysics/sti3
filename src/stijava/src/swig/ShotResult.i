@@ -9,7 +9,7 @@
     #include <sti/engine/ShotResultRecord.h>
     using STI::Engine::ShotResultRecord;
 
-    #include "ShotResult.h"
+    #include <sti/engine/ShotResult.h>
     using STI::Engine::ShotResult;
 
     #include "JPersistenceManager.h"

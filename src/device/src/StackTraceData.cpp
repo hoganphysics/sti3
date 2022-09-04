@@ -47,7 +47,7 @@ void StackTraceData::init()
 
 StackTrace StackTraceData::addStackTrace(const RawStackTrace& rawStackTrace)
 {
-    std::unique_lock<std::mutex> fileLock(stackDataMutex);
+    // std::unique_lock<std::mutex> fileLock(stackDataMutex);
 
     StackTrace stackTrace;
     

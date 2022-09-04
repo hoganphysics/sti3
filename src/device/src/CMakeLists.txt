@@ -69,14 +69,15 @@ add_library(stidevice SHARED
     # EngineParsingError.cpp
     EngineClock.cpp
     EngineID.cpp
-    EngineParsingMessage.cpp
     EngineJobSourceID.cpp
+    EngineParsingMessage.cpp
+    EngineState.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    FullShotResult.cpp
     # EngineParseResult.cpp
-    EngineState.cpp   
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -95,10 +96,10 @@ add_library(stidevice SHARED
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
-    ParseID.cpp
     ParsedDependencyTree.cpp
     ParsedTag.cpp
     ParsedVar.cpp
+    ParseID.cpp
     ParseResult.cpp
     ParseTicket.cpp  
     RawEvent.cpp
@@ -107,6 +108,7 @@ add_library(stidevice SHARED
     RawEventTarget.cpp
     RawEventTargetChannel.cpp
     RawEventTargetDevice.cpp
+    RawStackTrace.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     ShotConfig.cpp

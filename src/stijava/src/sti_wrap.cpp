@@ -845,7 +845,7 @@ namespace Swig {
 
     #include "JAttributeManager.h"
 
-    #include "ShotResult.h"
+    #include <sti/engine/ShotResult.h>
     
 
     // #include "JPersistenceManager.h"
@@ -1539,7 +1539,7 @@ SWIGINTERN void std_vector_Sl_STI_Network_JDeviceGraphNode_Sg__doRemoveRange(std
     #include <sti/engine/ShotResultRecord.h>
     using STI::Engine::ShotResultRecord;
 
-    #include "ShotResult.h"
+    #include <sti/engine/ShotResult.h>
     using STI::Engine::ShotResult;
 
     #include "JPersistenceManager.h"

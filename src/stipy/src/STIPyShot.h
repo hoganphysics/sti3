@@ -294,6 +294,7 @@ public:
 
 private:
 
+    
     // void addStackTrace(const StackTracePy& pyStackTrace, STI::Engine::StackTrace& stackTrace);
     // // void addFile(const std::string& filename);
     // unsigned addFile(const std::string& filename);

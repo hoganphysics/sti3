@@ -9,6 +9,8 @@
 
 
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+
 namespace py = pybind11;
 
 // using STI::Python::connect4;
@@ -37,6 +39,19 @@ void init_stipy(py::module& m)
     m.def("makeshot", py::overload_cast<>(&STI::Python::makeShot));
     m.def("makeshot", py::overload_cast<const std::string&>(&STI::Python::makeShot), 
                     py::arg("name"));
+    m.def("makeshot", py::overload_cast<const std::string&, const std::function<void(void)>&>(&STI::Python::makeShot), 
+                    py::arg("name"), py::arg("func"));
+
+    m.def("group", &STI::Python::group, 
+                    py::arg("name"));
+
+    m.def("var", &STI::Python::var, py::arg("fullVarName"), py::arg("stackTrace"));
+
+    m.def("setvar", &STI::Python::setvar, 
+                    py::arg("name"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
+    m.def("settag", &STI::Python::settag, 
+                    py::arg("name"), py::arg("stackTrace"), py::arg("scope"));
+
     m.def("event", &STI::Python::event, 
                     py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
     m.def("meas", py::overload_cast<const RawEventTarget&, double, const pybind11::object&,

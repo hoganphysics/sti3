@@ -2,7 +2,7 @@
 #include "ShotRepository.h"
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/Measurement.h>
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 
 
 using STI::Engine::ResultTicket;

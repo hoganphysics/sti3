@@ -2,7 +2,7 @@
 #include <sti/engine/ParseTicket.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/RawEvent.h>
-#include "ParseResult.h"
+#include <sti/engine/ParseResult.h>
 #include "RawEventGroup.h"
 
 #include <chrono>

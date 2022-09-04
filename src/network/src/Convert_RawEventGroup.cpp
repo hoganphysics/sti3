@@ -108,6 +108,12 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
 
     STI::Engine::RawEventVector events;
     convert<TRawEvent, RawEvent>(tRawEventGroup.events, events);
+
+    for (auto& e : events) {
+        e.setStackTraceData(rawEventGroup->getStackTraceData());
+        e.setParentGroup(rawEventGroup.get());
+    }
+
     rawEventGroup->addEvents(events);
     
     rawEventGroup->shiftStartTimeTo(static_cast<double>(tRawEventGroup.timeOffset));
@@ -122,6 +128,12 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
 
     std::vector<ParsedVar> vars;
     convert<TParsedVar, ParsedVar>(tRawEventGroup.parsedVars, vars);
+
+    for (auto& v : vars) {
+        v.parentGroup = rawEventGroup.get();
+        v.stackTraceData = rawEventGroup->getStackTraceData();
+    }
+
     rawEventGroup->setVars(vars);
 
     std::vector<ParsedTag> tags;

@@ -5,14 +5,12 @@
 
 #include <sti/engine/ParseID.h>
 #include <sti/engine/EngineParsingMessage.h>
-#include "ParsedDependencyTree.h"
-#include "RawEventGroup.h"
-// #include "ParsedVar.h"
+
+// #include <sti/engine/ParsedVar.h>
 // #include "ParsedTag.h"
 #include <sti/fwd/RawEvent_fwd.h>
 
 #include <sti/utils/FileHolder.h>
-
 
 
 
@@ -29,6 +27,7 @@ namespace Engine
 
 class StackTraceResult;
 class RawEventGroup;
+class ParsedDependencyTree;
 
 
 class ParseResult

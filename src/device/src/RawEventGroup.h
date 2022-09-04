@@ -8,7 +8,7 @@
 #include <sti/utils/MetaData.h>
 
 
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 
 #include <string>

@@ -10,7 +10,7 @@
 //#include "ShotRepository.h"
 #include <sti/engine/ShotResultRecord.h>
 
-#include "FullShotResult.h"
+#include <sti/engine/FullShotResult.h>
 
 
 #include <memory>

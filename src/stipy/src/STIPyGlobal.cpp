@@ -40,12 +40,13 @@ std::shared_ptr<STIPyGlobal> STIPyGlobal::getInstance()
     return instance;
 }
 
-void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
-{
-    makeShot(shot, "", func);
-}
+// void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
+// {
+//     makeShot(shot, "", func);
+// }
 
-void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func)
+void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
+// void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func)
 {
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);
@@ -68,6 +69,78 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::st
         std::unique_lock<std::mutex> shotLock(shotMutex);
         makingShot = false;
     }
+}
+
+
+STI::Engine::ParsedVar STIPyGlobal::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    STI::Engine::ParsedVar v;
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'setvar(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return v;
+    }
+
+    if (currentShot != 0) {
+        v = currentShot->var(fullVarName, stackTrace);
+    }
+    return v;
+}
+
+void STIPyGlobal::setvar(const std::string& name, const pybind11::object& value, 
+            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'setvar(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot != 0) {
+        currentShot->setvar(name, value, stackTrace, scope);
+    }
+}
+
+void STIPyGlobal::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'settag(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot != 0) {
+        currentShot->settag(name, stackTrace, scope);
+    }
+}
+
+std::shared_ptr<STI::Engine::RawEventGroup> STIPyGlobal::group(const std::string& name)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    std::shared_ptr<STI::Engine::RawEventGroup> g;
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'group(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return g;
+    }
+
+    if (currentShot != 0) {
+        g = currentShot->group(name);
+    }
+    else {
+        g = std::make_shared<STI::Engine::RawEventGroup>();
+    }
+
+    return g;
 }
 
 void STIPyGlobal::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
@@ -133,6 +206,7 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const RawStack
         currentShot->meas(target, time, stackTrace, scope);
     }
 }
+
 
 // STI::Engine::RawEventTargetDevice STIPyGlobal::dev(const std::string& name, const std::string& address, unsigned module)
 // {

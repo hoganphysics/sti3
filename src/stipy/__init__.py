@@ -24,6 +24,17 @@ from stipy.stipybase import *
 
 
 from stipy.bin.stipy import *
-from stipy.device import dev
-from stipy.event import event
-from stipy.var import setvar
+# from stipy.device import dev
+# from stipy.event import event
+# from stipy.var import setvar
+
+from stipy.python.stacktrace import makeStackTrace
+from stipy.python.group import RawEventGroup
+from stipy.python.shot import STIPyShot
+
+from stipy.python.stiglobal import *
+
+
+
+# from stipy.stipybase import *
+

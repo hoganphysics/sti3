@@ -56,6 +56,14 @@ std::string printNetwork(const std::string& nameServerAddress, const std::string
 
 std::shared_ptr<STIPyShot> makeShot();
 std::shared_ptr<STIPyShot> makeShot(const std::string& name);
+std::shared_ptr<STIPyShot> makeShot(const std::string& name, const std::function<void(void)>& func);
+
+STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
+
+std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);
+
+void setvar(const std::string& name, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+void settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
 
 void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
 void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);

@@ -99,6 +99,33 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
     return pyShot;
 }
 
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name, const std::function<void(void)>& func)
+{
+    auto shot = makeShot(name);
+
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->makeShot(shot, func);
+    }
+
+    return shot;
+}
+
+std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string& name)
+{
+    auto stipy = STIPyGlobal::getInstance();
+    std::shared_ptr<STI::Engine::RawEventGroup> g;
+
+    if (stipy != 0) {
+        g = stipy->group(name);
+    }
+    else {
+        g = std::make_shared<STI::Engine::RawEventGroup>();
+    }
+    return g;
+}
+
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
@@ -145,6 +172,36 @@ std::string STI::Python::printNetwork(const std::string& nameServerAddress, cons
     return STI::Network::NetworkDeviceHub::printNetwork(nameServerAddress, baseContext);
 }
 
+
+STI::Engine::ParsedVar STI::Python::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    STI::Engine::ParsedVar v;
+
+    if (stipy != 0) {
+        v = stipy->var(fullVarName, stackTrace);
+    }
+    return v;
+}
+
+void STI::Python::setvar(const std::string& name, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->setvar(name, value, stackTrace, scope);
+    }
+}
+
+void STI::Python::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->settag(name, stackTrace, scope);
+    }
+}
 
 
 void STI::Python::event(const RawEventTarget& target, double time, const pybind11::object& value, 

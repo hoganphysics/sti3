@@ -116,22 +116,22 @@ bool EventEngineParser::groupEventsByTime(const RawEventGroup& eventGroup)
 	unsigned errorCount = 0;	//limit the number of errors that are reported back during a single parse attempt
 	unsigned maxErrors = 10;
 
-	addEventGroup(eventGroup, "", errorCount, maxErrors, success);
+	addEventGroup(eventGroup, errorCount, maxErrors, success);
 
 	return success;
 }
 
-bool EventEngineParser::addEventGroup(const RawEventGroup& eventGroup, const std::string& parentGroupName, unsigned& errorCount, unsigned maxErrors, bool& success)
+bool EventEngineParser::addEventGroup(const RawEventGroup& eventGroup, unsigned& errorCount, unsigned maxErrors, bool& success)
 {
 	std::shared_ptr<RawEventVector> events;
 	events = eventGroup.getEvents();
 
-	auto groupName = parentGroupName + "/" + eventGroup.getName();
+	// auto groupName = parentGroupName + "/" + eventGroup.getName();
 
 	if (events != 0) {
 		for (auto& evt : *events) {
 
-			evt.setGroupName(groupName);
+			evt.setParentGroup(&eventGroup);
 			success &= addRawEvent(evt, errorCount, maxErrors);
 
 			if (maxErrorCheck(errorCount, maxErrors)) {
@@ -144,7 +144,7 @@ bool EventEngineParser::addEventGroup(const RawEventGroup& eventGroup, const std
 	for (auto& g : eventGroup.getSubgroups()) {
 		if (g != 0) {
 			
-			if(!addEventGroup(*g, groupName, errorCount, maxErrors, success)) {
+			if(!addEventGroup(*g, errorCount, maxErrors, success)) {
 				return false;
 			}
 		}

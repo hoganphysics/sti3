@@ -5,7 +5,7 @@
 #include <sti/engine/RawEventTargetDevice.h>
 #include <sti/utils/utils.h>
 
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 
 #include "StackTraceData.h"
@@ -75,7 +75,6 @@ std::string RawEventGroup::getName() const
 
 std::string RawEventGroup::getFullName() const
 {
-    std::unique_lock groupLock(groupMutex);
     return parentName + "/" + name;
 }
 
@@ -131,14 +130,19 @@ bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::Mix
         return (g != 0 && g->addvar(varName, value, stackTrace));
     }
 
-    if (varMap.exists(fullVarName)) {
+    //No group prefix found
+    groupName = getName();  //belongs to local group
+    varName = fullVarName;
+
+
+    if (varMap.exists(varName)) {
         //Error, var already defined
         return false;
     }
 
     auto trace = stackTraceData->addStackTrace(stackTrace);
 
-    ParsedVar var(varName, getFullName(), value, trace, stackTraceData);
+    ParsedVar var(varName, this, value, trace, stackTraceData);
 
     //Overwrite ParsedVar value if in overwrittenVars
     auto it = overwrittenVars.find(var);
@@ -146,9 +150,9 @@ bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::Mix
         var.value = it->value;
     }
 
-    varMap.add(fullVarName, var);
+    varMap.add(varName, var);
 
-    return varMap.exists(fullVarName);
+    return varMap.exists(varName);
 }
 
 
@@ -165,18 +169,22 @@ bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& 
         return (g != 0 && g->addtag(tagName, stackTrace));
     }
 
-    if (tagMap.exists(fullTagName)) {
+    //No group prefix found
+    groupName = getName();  //belongs to local group
+    tagName = fullTagName;
+
+    if (tagMap.exists(tagName)) {
         //Error, tag already defined
         return false;
     }
 
     ParsedTag tag;
-    tag.name = fullTagName;
+    tag.name = tagName;
     tag.trace = stackTraceData->addStackTrace(stackTrace);
 
-    tagMap.add(fullTagName, tag);
+    tagMap.add(tagName, tag);
 
-    return tagMap.exists(fullTagName);
+    return tagMap.exists(tagName);
 }
 
 
@@ -187,7 +195,7 @@ void RawEventGroup::addEvent(const RawEvent& evt)
     if (events == 0) return;
 
     events->push_back(evt);
-    events->back().setGroupName(getFullName());
+    events->back().setParentGroup(this);
 }
 
 void RawEventGroup::addEvent(const RawEvent& evt, const std::string& subgroupName)
@@ -208,7 +216,7 @@ void RawEventGroup::addEvent(const RawEventTarget& target, double time, const ST
     auto trace = stackTraceData->addStackTrace(stackTrace);
 
     events->emplace_back(target, time, value, eventNumber, type, trace, stackTraceData);
-    events->back().setGroupName(getFullName());
+    events->back().setParentGroup(this);
     eventNumber++;
 
     if (time < timeMin) {
@@ -251,6 +259,7 @@ ParsedVar RawEventGroup::var(const std::string& fullVarName, const RawStackTrace
 
     //create new unbound var
     var.name = fullVarName;
+    var.parentGroup = this;
     if (stackTraceData != 0) {
         var.trace = stackTraceData->addStackTrace(stackTrace);
         var.stackTraceData = stackTraceData;

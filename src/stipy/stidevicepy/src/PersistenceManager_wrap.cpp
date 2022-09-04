@@ -3,7 +3,7 @@
 
 #include <sti/engine/Measurement.h>
 #include "MixedValuePy.h"
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 
 #include <string>

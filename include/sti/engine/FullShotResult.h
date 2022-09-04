@@ -2,8 +2,8 @@
 #define STI_ENGINE_FULLSHOTRESULT_H
 
 
-#include "ParseResult.h"
-#include "ShotResult.h"
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/ShotResult.h>
 
 #include <memory>
 

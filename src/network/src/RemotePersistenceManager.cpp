@@ -222,7 +222,7 @@ void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::U
 
 
 
-std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& filename)
 {
 	auto factory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 	return factory->makeFileHolder(filename);

@@ -25,3 +25,9 @@ pip3 install wheel
 pip3 install scikit-build
 
 python3 -m build --wheel
+
+Jupyter notebook testing:
+
+To enable Jupyter to work in a python venv, install ipython in vevn and run:
+
+python3 -m ipykernel install --user --name=projectname

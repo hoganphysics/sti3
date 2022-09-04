@@ -16,7 +16,7 @@
 #include <sti/engine/RawEvent.h>
 #include "LocalShot.h"
 #include "NetworkResultsCollector.h"
-#include "ParseResult.h"
+#include <sti/engine/ParseResult.h>
 
 
 #include <memory>

@@ -5,11 +5,11 @@
 #include "ParsedDependencyTree.h"
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
-#include "ShotResult.h"
-#include "ParseResult.h"
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/ParseResult.h>
 // #include "EngineParseResult.h"
 
-#include "FullShotResult.h"
+#include <sti/engine/FullShotResult.h>
 
 #include <sti/utils/utils.h>
 #include <sti/engine/ShotResultRecord.h>

@@ -6,7 +6,7 @@
 #include "StackTraceData.h"
 
 
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 
 #include <sti/engine/RawEventTarget.h>
@@ -41,6 +41,9 @@ void init_RawEventGroup(py::module& m)
         .def(py::init<const std::string&, const std::string&>(), py::arg("name"), py::arg("parentName"))
         
         .def("getName", py::overload_cast<>(&RawEventGroup::getName, py::const_))
+        .def("getFullName", py::overload_cast<>(&RawEventGroup::getFullName, py::const_))
+        .def("setName", &RawEventGroup::setName)
+
         .def("startTime", py::overload_cast<>(&RawEventGroup::startTime, py::const_))
         .def("endTime", py::overload_cast<>(&RawEventGroup::endTime, py::const_))
 
@@ -62,11 +65,22 @@ void init_RawEventGroup(py::module& m)
                 self.getReferencePoint(refName, time);
                 return time;
             })
+        .def("addMetaData",
+            [](RawEventGroup& self, const std::string& key, const pybind11::object& data) {
+                MixedValuePy mixedValue;
+                mixedValue.setValue_py(data);
+                self.addMetaData(key, mixedValue);
+            })
+        .def("getMetaData",
+            [](RawEventGroup& self, const std::string& key) {
+                MixedValuePy val = self.getMetaData(key);
+                return val.getValue_py();                
+            })
 
         .def("var", &RawEventGroup::var, py::arg("fullVarName"), py::arg("stackTrace"))
 
         .def("addvar", [](RawEventGroup& self, const std::string& fullVarName, 
-                        const STI::Utils::MixedValue& value, const RawStackTrace& stackTrace) {
+                        const pybind11::object& value, const RawStackTrace& stackTrace) {
 
                 MixedValuePy mixedValue;
                 mixedValue.setValue_py(value);
@@ -94,7 +108,7 @@ void init_RawEventGroup(py::module& m)
                 self.addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
             }, py::arg("target"), py::arg("time"), py::arg("value"), py::arg("stackTrace"))
 
-        .def("group", &RawEventGroup::group, py::arg("groupName"))
+        .def("group", &RawEventGroup::group, py::arg("name"))
         .def("getSubgroups", &RawEventGroup::getSubgroups)
 
         // .def("getEvents", &RawEventGroup::getEvents, py::const_)
@@ -120,7 +134,7 @@ void init_RawEventGroup(py::module& m)
             [](const RawEventGroup& self) {
                 std::stringstream s;
                 s << "group('" << self.getName() 
-                << ", time=[" << STI::Utils::printTimeFormated(self.startTime())
+                << "', time=[" << STI::Utils::printTimeFormated(self.startTime())
                 << ", " << STI::Utils::printTimeFormated(self.endTime())
                 << "])";
                 return s.str();

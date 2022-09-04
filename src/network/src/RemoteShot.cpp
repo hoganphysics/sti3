@@ -3,10 +3,13 @@
 
 #include "Convert_EventEngine.h"
 #include <sti/engine/RawEvent.h>
-#include "ParseResult.h"
+#include <sti/engine/ParseResult.h>
 
 #include "Convert_ShotResult.h"
 #include "Convert_RawEventGroup.h"
+
+
+#include "RawEventGroup.h"
 
 #include <memory>
 #include <vector>

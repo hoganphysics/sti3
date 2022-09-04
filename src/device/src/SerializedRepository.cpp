@@ -4,8 +4,8 @@
 #include "LocalResultsCollector.h"
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
-#include "ShotResult.h"
-#include "FullShotResult.h"
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/FullShotResult.h>
 // #include <sti/engine/TimeStamp.h>
 
 #include "CerealArchives.h"

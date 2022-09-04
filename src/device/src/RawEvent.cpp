@@ -25,7 +25,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
-// #include "RawEventGroup.h"
+#include "RawEventGroup.h"
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -88,9 +88,9 @@ _eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) //, _isSc
 	//eventNumber appended.
 	eventGraphPath = referenceEvent.eventGraphPath;
 	eventGraphPath.push_back(eventNumber);
-	fullGroupName = referenceEvent.getGroupName();
+	// fullGroupName = referenceEvent.getGroupName();
 
-	// setGroupName(referenceEvent.groupName());
+	setParentGroup(referenceEvent.parentGroup);
 	stackTrace = referenceEvent.getStackTrace();
 	stackTraceData = referenceEvent.stackTraceData;
 
@@ -146,12 +146,15 @@ RawEventTarget& RawEvent::getTarget()
 
 std::string RawEvent::getGroupName() const
 {
-	return fullGroupName;
+	if (parentGroup != 0) {
+		return parentGroup->getFullName();
+	}
+	return "";
 }
 
-void RawEvent::setGroupName(const std::string& name)
+void RawEvent::setParentGroup(const RawEventGroup* group)
 {
-	fullGroupName = name;
+	parentGroup = group;
 }
 
 RawEventID RawEvent::getEventID() const
@@ -201,7 +204,7 @@ void RawEvent::serialize(Archive& archive)
 		cereal::make_nvp("eventType", _eventType),
 		cereal::make_nvp("stackTrace", stackTrace),
 		cereal::make_nvp("eventGraphPath", eventGraphPath), 
-		cereal::make_nvp("fullGroupName", fullGroupName), 
+		// cereal::make_nvp("parentGroup", parentGroup), 
 		cereal::make_nvp("isMeasurement", isMeasurement),
 		cereal::make_nvp("stackTraceData", stackTraceData)
 		// cereal::make_nvp("eventGroupIndex", eventGroupIndex)

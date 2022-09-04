@@ -27,8 +27,8 @@
 #include "ParsedDependencyTree.h"
 #include <sti/device/AttributeManager.h>
 #include "RawEventGroup.h"
-#include "ShotResult.h"
-#include "FullShotResult.h"
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/FullShotResult.h>
 
 
 #include <memory>

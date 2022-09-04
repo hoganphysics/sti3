@@ -7,7 +7,7 @@
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/device/DeviceCollection.h>
 #include "ShotRepository.h"
-#include "FullShotResult.h"
+#include <sti/engine/FullShotResult.h>
 
 #include "utils/OrderedBufferMap.h"
 

@@ -2,7 +2,7 @@
 #include "NetworkShotWrapper.h"
 #include "ORBManager.h"
 #include "RawEventGroup.h"
-#include "ParsedVar.h"
+#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
 #include <sti/utils/FileHolder.h>
 

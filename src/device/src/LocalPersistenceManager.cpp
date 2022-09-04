@@ -8,10 +8,10 @@
 #include "ResultsDocumenter.h"
 #include <sti/engine/RawEvent.h>
 #include "SerializedRepository.h"
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 #include "TransientRepository.h"
-#include "ParseResult.h"
-#include "FullShotResult.h"
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/FullShotResult.h>
 
 
 #include <filesystem>

@@ -2,6 +2,7 @@
 #include "NetworkConvert.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_StackTrace.h"
 
 #include <sti/device/DeviceTrace.h>
 #include "EventEngineDependencyTree.h"
@@ -731,7 +732,7 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
     tEvent.target = convert<RawEventTarget, TRawEventTarget>(evt.target());
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.parsedValue.value);
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
-    //trace
+    convert<STI::Engine::StackTrace, STI::TNetwork::TStackFrameSeq>(evt.getStackTrace(), tEvent.stackTrace);
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
     // convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice(), tEvent.targetDeviceID);
@@ -749,7 +750,11 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
     evt.setTarget(convert<TRawEventTarget, RawEventTarget>(tEvent.target));
 	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.parsedValue.value));
 	evt.setDescription(convert<::CORBA::String_member, std::string>(tEvent.description));
+    // evt.setStackTrace(, );
+    convert<STI::TNetwork::TStackFrameSeq, STI::Engine::StackTrace>(tEvent.stackTrace, evt.getStackTrace());
+
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
+
 
     STI::Utils::GraphPathLabel gpl;
     STI::Network::convertEventGraphPath(tEvent.eventGraphPath, gpl);

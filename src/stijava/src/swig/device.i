@@ -91,7 +91,7 @@
 
     #include "JAttributeManager.h"
 
-    #include "ShotResult.h"
+    #include <sti/engine/ShotResult.h>
     
 
     // #include "JPersistenceManager.h"

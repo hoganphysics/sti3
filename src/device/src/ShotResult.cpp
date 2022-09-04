@@ -1,5 +1,5 @@
 
-#include "ShotResult.h"
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
