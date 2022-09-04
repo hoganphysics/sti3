@@ -1,15 +1,13 @@
-
 #include "Convert_StackTrace.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
 
 #include <sti/engine/StackTrace.h>
-
 #include <sti/engine/StackTraceResult.h>
+
 #include "StackTraceData.h"
 
 using STI::Network::convert;
-
 using STI::TNetwork::TStackFrame;
 using STI::Engine::StackFrame;
 using STI::TNetwork::TStackFrameSeq;

@@ -1,33 +1,34 @@
-
 #include "NetworkConvert.h"
+
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
 #include "Convert_StackTrace.h"
 
 #include <sti/device/DeviceTrace.h>
-#include "EventEngineDependencyTree.h"
-#include <sti/engine/EngineJobID.h>
 
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineJob.h>
-#include "LocalEventEngineJob.h"
-#include <sti/engine/RawEvent.h>
-#include <sti/engine/ParseID.h>
-#include <sti/engine/ShotID.h>
-#include "Shot.h"
-#include "NetworkShotWrapper.h"
-#include "RemoteShot.h"
-#include <sti/utils/GraphPathLabel.h>
-#include "EventEngine.h"
-#include <sti/engine/TimeStamp.h>
-#include <sti/engine/EngineParsingMessage.h>
-#include "ParsedDependencyTree.h"
 #include <sti/engine/Measurement.h>
-#include "NetworkEventEngine.h"
-#include "RemoteEventEngine.h"
+#include <sti/engine/ParseID.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/TimeStamp.h>
 
+#include <sti/utils/GraphPathLabel.h>
+
+#include "EventEngine.h"
+#include "EventEngineDependencyTree.h"
+#include "LocalEventEngineJob.h"
+#include "NetworkEventEngine.h"
+#include "NetworkShotWrapper.h"
+#include "ParsedDependencyTree.h"
+#include "RemoteShot.h"
+#include "RemoteEventEngine.h"
+#include "Shot.h"
 
 #include <map>
 #include <memory>
@@ -71,8 +72,6 @@ using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
-// using STI::Engine::DeviceEventMap;
-// using STI::TNetwork::TDeviceEventsSeq;
 using STI::Engine::ParseID; 
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
@@ -82,14 +81,12 @@ using STI::Engine::Measurement;
 using STI::TNetwork::TShotType;
 using STI::Engine::ShotConfig; 
 using STI::TNetwork::TShotConfig;
-
 using STI::Engine::RecordStatus;
 using STI::TNetwork::TRecordStatus;
 using STI::Engine::ShotResultRecord;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotType;
 using STI::TNetwork::TShotType;
-
 using STI::TNetwork::TRawEventTarget;
 using STI::Engine::RawEventTarget;
 using STI::TNetwork::TRawEventTargetDevice;

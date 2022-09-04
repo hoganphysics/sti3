@@ -1,4 +1,3 @@
-
 #include "EventEngineStateMachine.h"
 
 #include <mutex>

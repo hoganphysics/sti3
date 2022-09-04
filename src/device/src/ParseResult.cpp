@@ -1,19 +1,14 @@
-
 #include <sti/engine/ParseResult.h>
-
-
-#include "RawEventGroup.h"
-#include "ParsedDependencyTree.h"
-// #include "RawEventGroup.h"
 
 #include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
-#include <sti/utils/FileHolder.h>
 #include <sti/engine/StackTraceResult.h>
+#include <sti/utils/FileHolder.h>
 
+#include "ParsedDependencyTree.h"
+#include "RawEventGroup.h"
 
 #include "CerealArchives.h"
-
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>

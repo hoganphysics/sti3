@@ -15,7 +15,6 @@ using STI::Device::DeviceID;
 using STI::Device::Device;
 using STI::Utils::LocalCollection;
 using STI::Device::DeviceMessageListenerID;
-//using STI::Device::LocalDeviceMessageHandler;
 
 
 DeviceMessageReceiver::DeviceMessageReceiver(const DeviceID& localID, 

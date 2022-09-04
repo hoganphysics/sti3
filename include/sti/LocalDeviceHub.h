@@ -2,8 +2,8 @@
 #define STI_NETWORK_LOCALDEVICEHUB_H
 
 #include <sti/device/Device.h>
-#include <sti/network/LocalHub.h>
 #include <sti/network/HubID.h>
+#include <sti/network/LocalHub.h>
 
 #include <string>
 
@@ -21,18 +21,7 @@ public:
 	LocalDeviceHub(const STI::Network::HubID& hubID)
 	: STI::Network::LocalHub<STI::Device::DeviceID, STI::Device::Device>(hubID)
 	{
-		// setID(hubID)
 	}
-	// LocalDeviceHub(const std::string& name, const std::string& address = "localhost", unsigned short module = 0)
-	// {
-	// 	STI::Network::HubID id;
-
-	// 	id.name = name;
-	// 	id.address = address;
-	// 	id.module = module;
-
-	// 	setID(id);
-	// }
 
 	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node)
 	{
@@ -46,10 +35,6 @@ public:
 		return removeNode(id);
 	}
 
-
-private:
-
-	
 };
 
 } //Network

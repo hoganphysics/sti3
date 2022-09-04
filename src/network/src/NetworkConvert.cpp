@@ -1,13 +1,12 @@
 
 #include "NetworkConvert.h"
 
-#include "orbTypes.h"
 #include <sti/utils/MixedValue.h>
+
+#include "orbTypes.h"
 #include "TFileHolderRefInterface.h"
 
-
 using STI::Network::convert;
-
 using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValueType;

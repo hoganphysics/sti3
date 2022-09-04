@@ -1,7 +1,6 @@
 #ifndef STI_ENGINE_RESULTSDOCUMENTER_H
 #define STI_ENGINE_RESULTSDOCUMENTER_H
 
-
 #include <string>
 #include <memory>
 
@@ -14,9 +13,6 @@ namespace Engine
 class ShotID;
 class LocalResultsCollector;
 class ShotResult;
-
-
-
 
 
 class ResultsDocumenter

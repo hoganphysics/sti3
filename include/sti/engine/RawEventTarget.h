@@ -2,10 +2,10 @@
 #define STI_ENGINE_RAWEVENTTARGET_H
 
 
-#include <sti/engine/RawEventTargetDevice.h>
-#include <sti/engine/RawEventTargetChannel.h>
-
 #include <sti/device/DeviceID.h>
+
+#include <sti/engine/RawEventTargetChannel.h>
+#include <sti/engine/RawEventTargetDevice.h>
 
 #include <string>
 
@@ -15,8 +15,8 @@ namespace STI
 namespace Engine
 {
 
-class RawEventTargetDevice;
 class RawEventTargetChannel;
+class RawEventTargetDevice;
 
 
 class RawEventTarget

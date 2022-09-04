@@ -1,13 +1,12 @@
-
 #include <sti/engine/RawEventTarget.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 
-
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventTargetDevice;
 using STI::Engine::RawEventTargetChannel;
+
 
 RawEventTarget::RawEventTarget()
 : _device(""), _channel("")

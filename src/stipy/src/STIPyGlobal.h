@@ -35,10 +35,6 @@ public:
     static std::shared_ptr<STIPyGlobal> getInstance();
 
     void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func);
-    // void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func);
-
-    // void event(const RawEventTarget& channel, double time, const pybind11::object& value, 
-    //             const STI::Engine::StackTrace& stackTrace, const STI::Engine::RawEventGroup& group);
 
     STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
 
@@ -56,9 +52,6 @@ public:
                 const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
 
     std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);
-
-    // STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);
-
 
 private:
 

@@ -3,17 +3,19 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
+
+#include <sti/fwd/RawEvent_fwd.h>
+
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EngineJobID.h>
-#include <sti/fwd/RawEvent_fwd.h>
 #include <sti/engine/EngineJobStatus.h>
-
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventTargetDevice.h>
 #include <sti/engine/RawEventTargetChannel.h>
 
 #include <memory>
+
 
 namespace STI
 {
@@ -36,12 +38,9 @@ class EventEngineJob;
 class LocalEventEngineJob;
 class EngineID;
 class EngineJobID;
-//class EventEngineJobType;
 class Measurement;
-
 class EngineParsingMessage;
 enum class ParsingMessageType;
-
 class ShotResultRecord;
 enum class ShotType;
 enum class RecordStatus;

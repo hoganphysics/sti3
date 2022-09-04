@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_STACKTRACEDATA_H
 #define STI_ENGINE_STACKTRACEDATA_H
 
-
-#include <sti/utils/VectorMap.h>
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/FileHolderFactory.h>
+#include <sti/utils/VectorMap.h>
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -61,7 +61,6 @@ private:
 
     mutable std::mutex stackDataMutex;
 };
-
 
 
 } //Engine

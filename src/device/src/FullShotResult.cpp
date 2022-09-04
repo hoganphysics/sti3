@@ -9,8 +9,6 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>
 
-
-
 using STI::Engine::FullShotResult;
 
 

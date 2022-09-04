@@ -11,20 +11,6 @@ namespace STI
 namespace Utils
 {
 
-// template<typename ID, typename T>
-// class VectorMap;
-
-
-// template<typename ID, typename T>
-// class VectorMap : public VectorMap<ID, T>
-// {
-// public:
-//     VectorMap();
-
-// private:
-//     std::vector<T> values;
-// };
-
 
 template<typename ID, typename T>
 class VectorMap
@@ -75,12 +61,6 @@ private:
 };
 
 
-
-// template<typename ID, typename T>
-// STI::Utils::VectorMap<ID, T>::VectorMap() 
-// : VectorMap<ID, T>(values)
-// { 
-// }
 
 template<typename ID, typename T>
 STI::Utils::VectorMap<ID, T>::VectorMap() 

@@ -1,4 +1,3 @@
-
 #include "TTriggerCallback_i.h"
 
 #include "ORBManager.h"

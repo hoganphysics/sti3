@@ -1,14 +1,12 @@
-
 #include "Convert_RawEventGroup.h"
-
 #include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_StackTrace.h"
 
-#include "RawEventGroup.h"
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 
+#include "RawEventGroup.h"
 
 using STI::Engine::RawEventGroup;
 using STI::TNetwork::TRawEventGroup;
@@ -22,7 +20,6 @@ using STI::TNetwork::TRawEvent;
 using STI::Engine::RawEvent;
 using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
-
 
 
 //RawEventGroup

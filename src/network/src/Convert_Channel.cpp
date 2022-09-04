@@ -1,11 +1,9 @@
-
 #include "Convert_Channel.h"
 #include "RemoteChannel.h"
 
 #include <sti/utils/MixedValue.h>
 
 #include "orbTypes.h"
-
 
 using STI::Network::convert;
 using STI::Device::Channel; 

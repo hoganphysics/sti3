@@ -11,20 +11,10 @@ namespace STI
 namespace Engine
 {
 
-/*
-Shot
-
-ShotConfiguration
-ShotInfo
-ShotSetup
-ShotDefinition
-ShotConfig
-
-*/
-
 enum class ShotType { Single, Sequence, SingleUndocumented };
 
 std::string printShotType(const ShotType& type);
+
 
 class ShotConfig
 {

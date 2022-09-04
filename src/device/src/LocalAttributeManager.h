@@ -2,10 +2,10 @@
 #define STI_DEVICE_LOCALATTRIBUTEMANAGER_H
 
 #include <sti/device/AttributeManager.h>
-#include "AttributeRefreshListener.h"
-
 #include <sti/device/DeviceID.h>
 #include <sti/utils/SynchronizedMap.h>
+
+#include "AttributeRefreshListener.h"
 #include "MessageGrouper.h"
 
 #include <map>

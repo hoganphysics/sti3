@@ -1,4 +1,3 @@
-
 #include <sti/device/LocalChannel.h>
 #include "ChannelRefreshListener.h"
 

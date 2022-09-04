@@ -2,13 +2,12 @@
 
 #include <sti/utils/LocalFileHolder.h>
 
+#include <openssl/md5.h> 
+
 #include <string>
 #include <fstream>
-
-#include <openssl/md5.h> 
 #include <sstream> 
 #include <iomanip> 
-
 #include <filesystem>
 
 #include "CerealArchives.h"
@@ -22,7 +21,6 @@ using STI::Utils::LocalFileHolder;
 //Serialization
 CEREAL_REGISTER_TYPE(LocalFileHolder);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(FileHolder, LocalFileHolder)
-
 
 
 

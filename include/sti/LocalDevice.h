@@ -1,35 +1,36 @@
 #ifndef STI_DEVICE_LOCALDEVICE_H
 #define STI_DEVICE_LOCALDEVICE_H
 
-#include <sti/device/Device.h>
-#include <sti/device/DeviceID.h>
-#include <sti/device/DeviceCollection.h>
-#include <sti/device/DeviceMessageListener.h>
-#include <sti/utils/LocalCollection.h>
-#include <sti/fwd/EventEngineScheduler_fwd.h>
-#include <sti/engine/DeviceEventParser.h>
-#include <sti/engine/EngineID.h>
+
 #include <sti/fwd/Channel_fwd.h>
-//#include "fwd/ChannelManager_fwd.h"
-#include <sti/utils/MixedValue.h>
-#include <sti/device/ServerMessageRelayer.h>
-#include <sti/engine/ParseTicketManager.h>
-#include <sti/engine/ResultTicketManager.h>
-#include <sti/engine/RawEvent.h>
-#include <sti/engine/SynchronousEvent.h>
+#include <sti/fwd/EventEngineScheduler_fwd.h>
 
 #include <sti/device/AttributeManager.h>
 #include <sti/device/ChannelManager.h>
-
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageListener.h>
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
+#include <sti/device/ServerMessageRelayer.h>
+
+#include <sti/engine/DeviceEventParser.h>
+#include <sti/engine/EngineID.h>
+#include <sti/engine/ParseTicketManager.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ResultTicketManager.h>
+#include <sti/engine/SynchronousEvent.h>
 
 #include <sti/utils/Configuration.h>
+#include <sti/utils/LocalCollection.h>
+#include <sti/utils/MixedValue.h>
 
-#include <string>
 #include <map>
-#include <set>
 #include <mutex>
+#include <set>
+#include <string>
+
 
 namespace STI
 {
@@ -134,8 +135,6 @@ private:
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device
 	// DeviceMessageListenerForwarder listenerForwarder;
 	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
-
-
 
 
 	class DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter<DeviceID>

@@ -1,24 +1,22 @@
-
 #include "SerializedRepository.h"
-#include <sti/engine/ShotID.h>
-#include "LocalResultsCollector.h"
+
+#include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
-#include <sti/engine/FullShotResult.h>
-// #include <sti/engine/TimeStamp.h>
 
-#include "CerealArchives.h"
-
-#include <cereal/types/map.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/vector.hpp>
-
+#include "LocalResultsCollector.h"
 
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+
+#include "CerealArchives.h"
+#include <cereal/types/map.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/vector.hpp>
 
 using STI::Engine::SerializedRepository;
 using STI::Engine::ResultsPaths;

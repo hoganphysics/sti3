@@ -1,23 +1,20 @@
-
 #include "STIPyShot.h"
-#include <sti/engine/RawEvent.h>
+
+#include <sti/engine/ParsedVar.h>
+#include <sti/engine/ParseID.h>
 #include <sti/engine/ParseTicket.h>
-#include "MixedValuePy.h"
+#include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/ShotConfig.h>
 #include <sti/engine/StackTrace.h>
-// #include "NetworkFileHolder.h"
 
 #include "LocalShot.h"
-#include <sti/engine/ParsedVar.h>
+#include "MixedValuePy.h"
 #include "ParsedTag.h"
 
-#include <sti/engine/ShotConfig.h>
-
-#include <sti/engine/ParseID.h>
+#include <iostream>
 
 #include <pybind11/pybind11.h>
-
-#include <iostream>
 
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
@@ -26,8 +23,6 @@ using STI::Engine::StackTrace;
 using STI::Engine::RawEventType;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventGroup;
-// using STI::Python::StackTracePy;
-// using STI::Engine::RawEventGroupManager;
 using STI::Engine::ParsedVar;
 using STI::Engine::ParsedTag;
 using STI::Engine::LocalShot;
@@ -59,8 +54,6 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value,
 void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
             const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
-    // auto g = baseEventGroup->group(scope);
-
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
     group(scope)->addvar(name, mixedValue, stackTrace);
@@ -80,7 +73,6 @@ void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace
 
 void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
-    // auto g = baseEventGroup->group(scope);
     group(scope)->addtag(name, stackTrace);
 }
 
@@ -95,17 +87,6 @@ void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, co
 void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
             const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
-    // std::shared_ptr<RawEventGroup> g;
-
-    // if (scope == "" || scope == "/") {
-    //     g = baseEventGroup;
-    // }
-    // else {
-    //     g = baseEventGroup->group(scope);
-    // }
-
-    // auto g = group(scope);
-
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
     group(scope)->addEvent(target, time, mixedValue, RawEventType::Play, stackTrace);
@@ -154,7 +135,6 @@ std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group()
 
 std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group(const std::string& fullName)
 {
-    // return baseEventGroup->group(fullName);
 
     std::shared_ptr<RawEventGroup> g;
 

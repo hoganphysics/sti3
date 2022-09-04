@@ -1,4 +1,3 @@
-
 #include "RawStackTrace.h"
 
 using STI::Engine::RawStackFrame;

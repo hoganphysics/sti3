@@ -1,18 +1,20 @@
-
-
 #include "LocalEventEngineJob.h"
-#include <sti/engine/EventEngineJob.h>
-#include "Shot.h"
-#include "EventEngineDependencyTree.h"
+
 #include <sti/device/DeviceID.h>
-#include <sti/engine/ParseID.h>
-#include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineID.h>
+#include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
+
+#include "EventEngineDependencyTree.h"
+#include "Shot.h"
 
 #include <set>
 #include <memory>
+
+using STI::Device::DeviceID;
 
 using STI::Engine::EventEngineJob;
 using STI::Engine::LocalEventEngineJob;
@@ -21,11 +23,11 @@ using STI::Engine::ParseID;
 using STI::Engine::Shot;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EventEngineJobType;
-using STI::Device::DeviceID;
 using STI::Engine::EngineID;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::Engine::EngineJobStatus;
+
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<Shot>& shot,

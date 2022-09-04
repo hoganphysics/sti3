@@ -1,9 +1,9 @@
 #ifndef STI_ENGINE_PARSEDTAG_H
 #define STI_ENGINE_PARSEDTAG_H
 
-
 #include <sti/engine/StackTrace.h>
 #include <sti/device/DeviceID.h>
+
 #include "RawEventGroup.h"
 
 #include <string>

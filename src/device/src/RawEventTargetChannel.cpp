@@ -1,13 +1,10 @@
-
 #include <sti/engine/RawEventTargetChannel.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/string.hpp>
 
-
 using STI::Engine::RawEventTargetChannel;
-
 
 
 RawEventTargetChannel::RawEventTargetChannel(const std::string& name)

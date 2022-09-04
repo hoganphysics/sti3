@@ -1,15 +1,14 @@
-
 #include "RawEventGroup.h"
+
+#include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventTargetDevice.h>
+
 #include <sti/utils/utils.h>
 
-#include <sti/engine/ParsedVar.h>
 #include "ParsedTag.h"
-
 #include "StackTraceData.h"
-
 
 #include <algorithm>
 #include <sstream>
@@ -20,7 +19,6 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
-
 
 using STI::Engine::RawEventGroup;
 using STI::Engine::RawEvent;

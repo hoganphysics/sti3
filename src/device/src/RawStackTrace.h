@@ -2,8 +2,6 @@
 #ifndef STI_PYTHON_RAWSTACKTRACE_H
 #define STI_PYTHON_RAWSTACKTRACE_H
 
-// #include <sti/engine/StackTrace.h>
-
 #include <string>
 #include <vector>
 
@@ -22,8 +20,6 @@ struct RawStackFrame
 	unsigned line;
 	std::string func;
 };
-
-
 
 
 class RawStackTrace

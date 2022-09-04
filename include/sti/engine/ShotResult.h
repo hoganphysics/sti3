@@ -1,4 +1,3 @@
-
 #ifndef STI_ENGINE_SHOTRESULT_H
 #define STI_ENGINE_SHOTRESULT_H
 
@@ -9,13 +8,8 @@
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/engine/Measurement.h>
 
-// #include <sti/engine/ParseResult.h>
-// #include "EngineParseResult.h"
-
-#include <vector>
 #include <memory>
 #include <map>
-#include <string>
 #include <set>
 
 

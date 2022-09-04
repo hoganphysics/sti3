@@ -2,7 +2,6 @@
 #define STI_ENGINE_RAWEVENTTARGETCHANNEL_H
 
 
-
 #include <string>
 
 

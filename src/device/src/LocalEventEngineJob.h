@@ -3,11 +3,12 @@
 
 #include <sti/engine/EventEngineJob.h>
 
-#include <sti/engine/EngineJobStatus.h>
-#include <sti/engine/EngineJobID.h>
 #include <sti/device/DeviceID.h>
-#include "Shot.h"
 #include <sti/engine/EngineID.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineJobStatus.h>
+
+#include "Shot.h"
 
 #include <set>
 #include <map>

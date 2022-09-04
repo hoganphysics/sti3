@@ -1,10 +1,8 @@
-
 #ifndef STI_DEVICE_MESSAGEGROUPER_H
 #define STI_DEVICE_MESSAGEGROUPER_H
 
 
 #include <sti/device/DeviceMessageDispatcher.h>
-
 #include <sti/device/GroupableMessage.h>
 
 #include <memory>
@@ -18,8 +16,6 @@ namespace STI
 {
 namespace Device
 {
-
-
 
 /*
 Messages added are queued.
@@ -45,47 +41,9 @@ continuously, the maximum rate is limited.
 Grouping considerations:
 1) If messages are "identical" they should conditionally overwrite, based on policy.
 
-
-
 */
 
 
-// class ChannelUpdateDeviceMessage : public DeviceMessage, 
-//                                    public GroupableMessage<ChannelUpdateDeviceMessage>
-// {
-// public:
-
-// 	ChannelUpdateDeviceMessage(const STI::Device::DeviceID& source) 
-//         : DeviceMessage(source, DeviceMessageType::ChannelUpdate) {}
-
-//     std::map<short, MixedValue> channelValues;
-    
-//     bool appendMessage(const ChannelUpdateDeviceMessage& mess)
-//     {
-//         for (auto& pair : mess.channelValues) {
-//             channelValues[pair->first] = pair->second;  //overwrite
-//         }
-
-// template<typename Message>
-// class GroupableMessage
-// {
-// //    virtual bool appendMessage(const GroupableMessage<Message>& mess) = 0;
-
-//     virtual bool appendMessage(const Message& mess) = 0;
-
-//     virtual Message& get() = 0;
-// };
-// 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::ChannelUpdate; }
-
-// };
-
-// class AbstractMessageGrouper
-// {
-// public:
-// };
-
-
-//States: Idle, Warming, Sending, Cooling
 
 template<typename Message>
 class MessageGrouper //MessageDelayer

@@ -207,24 +207,5 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const RawStack
     }
 }
 
-
-// STI::Engine::RawEventTargetDevice STIPyGlobal::dev(const std::string& name, const std::string& address, unsigned module)
-// {
-//     std::unique_lock<std::mutex> shotLock(shotMutex);
-
-//     RawEventTargetDevice device(name, address, module);
-
-// //     if (currentShot != 0) {
-// //         device = std::make_shared<RawEventTargetDevice>(name, address, module, currentShot->getServerID().getID());
-// //     }
-// //     else {
-// //         STI::Device::DeviceID id(name, address, module);
-// // //        std::string id = STI::Device::DeviceID::generateID(name, address, module);
-// //         device = std::make_shared<RawEventTargetDevice>(id);
-// //     }
-
-//     return device;
-// }
-
 std::shared_ptr<STIPyGlobal> STIPyGlobal::instance = 0;
 bool STIPyGlobal::initialized = false;

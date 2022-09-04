@@ -1,4 +1,3 @@
-
 #include <sti/engine/TimeStamp.h>
 
 #include <chrono>
@@ -8,8 +7,8 @@
 
 #include "CerealArchives.h"
 
-
 using STI::Engine::TimeStamp;
+
 
 TimeStamp::TimeStamp()
 {

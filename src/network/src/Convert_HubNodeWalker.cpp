@@ -1,11 +1,10 @@
-
-
 #include "Convert_HubNodeWalker.h"
 #include "NetworkConvert.h"
 
 #include <sti/network/Hub.h>
 #include <sti/network/DeviceHub.h>
 #include <sti/device/DeviceID.h>
+
 #include "RemoteDevice.h"
 
 #include "orbTypes.h"
@@ -14,12 +13,10 @@
 using STI::Network::convert;
 using STI::Network::DeviceHub;
 using STI::TNetwork::TNodeWalker;
-
 using STI::Network::DeviceDirectedGraphHub;
 using STI::TNetwork::THubNode;
 using STI::Network::HubID;
 using STI::TNetwork::TDeviceHubID;
-
 using STI::Network::DeviceDirectedGraphNode;
 using STI::TNetwork::TDeviceNode;
 using STI::TNetwork::TDeviceID;

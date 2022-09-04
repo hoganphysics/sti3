@@ -3,7 +3,6 @@
 #include <sti/engine/RawEvent.h>
 
 #include "CerealArchives.h"
-
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>

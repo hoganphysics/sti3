@@ -1,8 +1,9 @@
-
 #include "TDeviceMessageDispatcher_i.h"
+
+#include <sti/device/Device.h>
+
 #include "NetworkConvert.h"
 #include "RemoteDeviceMessageHandler.h"
-#include <sti/device/Device.h>
 #include "ORBManager.h"
 
 using STI::TNetwork::TDeviceMessageDispatcher_i;

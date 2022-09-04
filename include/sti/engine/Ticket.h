@@ -1,4 +1,3 @@
-
 #ifndef STI_ENGINE_TICKET_H
 #define STI_ENGINE_TICKET_H
 

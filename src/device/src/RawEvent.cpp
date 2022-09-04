@@ -21,11 +21,16 @@
  */
 
 #include <sti/engine/RawEvent.h>
+
 #include <sti/device/DeviceID.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
+#include "RawStackTrace.h"
 #include "RawEventGroup.h"
+#include "StackTraceData.h"
+
+#include <sstream>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -34,29 +39,20 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>
 
-#include "StackTraceData.h"
-#include "RawStackTrace.h"
-
-
-#include <sstream>
-
 using STI::Engine::RawEvent;
 using STI::Engine::RawEventType;
-using STI::Utils::MixedValue;
-using STI::Utils::MixedValueType;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventID;
 using STI::Engine::StackTraceData;
 using STI::Engine::RawStackTrace;
+using STI::Utils::MixedValue;
+using STI::Utils::MixedValueType;
+
 
 RawEvent::RawEvent()
 : _target("", "")
 {
 }
-
-// RawEvent::RawEvent(const STI::Device::DeviceID& targetDeviceID, 
-// 	double time, unsigned short channel, const MixedValue& value, 
-// 	const StackTrace& eventStackTrace, unsigned eventNumber, const RawEventType& eventType)
 
 RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
 	unsigned eventNumber, const RawEventType& eventType)
@@ -98,7 +94,6 @@ _eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) //, _isSc
 
 	// _value = std::move(newEvent._value);
 }
-
 
 RawEvent::~RawEvent()
 {
@@ -176,29 +171,12 @@ RawStackTrace RawEvent::getRawStackTrace() const
 	return trace;	
 }
 
-// STI::Device::DeviceID RawEvent::targetDevice() const
-// {
-// 	return _target.device().deviceID();
-// }
-
-// const STI::Utils::GraphPathLabel& RawEvent::groupIndex()
-// {
-// 	return eventGroupIndex;
-// }
-
-// void RawEvent::setGroupIndex(const STI::Utils::GraphPathLabel& index)
-// {
-// 	eventGroupIndex = index;
-// }
-
 template<class Archive>
 void RawEvent::serialize(Archive& archive)
 {
 	archive(
 		cereal::make_nvp("time", _time), 
 		cereal::make_nvp("target", _target), 
-		// cereal::make_nvp("channel", _channel), 
-		// cereal::make_nvp("targetDeviceID", targetDeviceID), 
 		cereal::make_nvp("parsedValue", parsedValue),
 		cereal::make_nvp("description", _description),
 		cereal::make_nvp("eventType", _eventType),
@@ -207,11 +185,8 @@ void RawEvent::serialize(Archive& archive)
 		// cereal::make_nvp("parentGroup", parentGroup), 
 		cereal::make_nvp("isMeasurement", isMeasurement),
 		cereal::make_nvp("stackTraceData", stackTraceData)
-		// cereal::make_nvp("eventGroupIndex", eventGroupIndex)
 		);
 }
 
-
 template void RawEvent::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void RawEvent::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
-

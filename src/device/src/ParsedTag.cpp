@@ -1,7 +1,6 @@
 
 #include "ParsedTag.h"
 
-
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/string.hpp>

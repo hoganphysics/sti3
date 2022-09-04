@@ -1,28 +1,27 @@
-
 #include "TEventEngineScheduler_i.h"
-#include <sti/engine/EventEngineScheduler.h>
+
 #include <sti/device/Device.h>
-#include <sti/device/DeviceTrace.h>
 #include <sti/device/DeviceID.h>
-#include "NetworkConvert.h"
-#include "ORBManager.h"
+#include <sti/device/DeviceTrace.h>
+
 #include <sti/engine/EngineJobID.h>
-#include "LocalEventEngineJob.h"
-#include "Convert_EventEngine.h"
-#include "Convert_DeviceTrace.h"
-#include "Shot.h"
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/RawEvent.h>
-#include "RemoteResultsCollector.h"
 #include <sti/engine/ShotID.h>
 
 #include "Convert_ShotResult.h"
+#include "Convert_EventEngine.h"
+#include "Convert_DeviceTrace.h"
 
 #include "EventEngineDependencyTree.h"
-//#include "RemoteEventEngineJob.h"
-#include <sti/engine/EngineParsingMessage.h>
+#include "LocalEventEngineJob.h"
+#include "NetworkConvert.h"
+#include "ORBManager.h"
+#include "RemoteResultsCollector.h"
+#include "Shot.h"
 
 #include <memory>
-
 
 using STI::TNetwork::TEventEngineScheduler_i;
 using ::STI::TNetwork::TDeviceIDSeq;
@@ -34,7 +33,6 @@ using STI::Engine::EventEngineScheduler;
 using ::STI::TNetwork::TEventEngineDependencyTree;
 using ::STI::Engine::EventEngineDependencyTree;
 using STI::Network::convert;
-//using STI::Network::RemoteEventEngineJob;
 using STI::Engine::EngineJobID;
 using ::STI::TNetwork::TEngineJobID;
 using STI::Engine::EventEngineJobType;
@@ -46,7 +44,6 @@ using ::STI::TNetwork::TShotID;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
 using STI::Engine::ParseResult;
-
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)

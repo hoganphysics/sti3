@@ -1,20 +1,15 @@
-
 #include "RawEventGroup.h"
-#include "MixedValuePy.h"
-#include "RawStackTrace.h"
 
-#include "StackTraceData.h"
-
-
-#include <sti/engine/ParsedVar.h>
-#include "ParsedTag.h"
-
-#include <sti/engine/RawEventTarget.h>
-
-#include <sti/utils/utils.h>
 #include <sti/fwd/RawEvent_fwd.h>
-
+#include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/utils/utils.h>
+
+#include "MixedValuePy.h"
+#include "ParsedTag.h"
+#include "RawStackTrace.h"
+#include "StackTraceData.h"
 
 #include <sstream>
 
@@ -24,13 +19,10 @@
 
 namespace py = pybind11;
 
-
-
 using STI::Python::MixedValuePy;
 using STI::Engine::RawEventGroup;
 using STI::Engine::RawEventType;
 using STI::Engine::RawStackTrace;
-
 
 
 void init_RawEventGroup(py::module& m)

@@ -2,15 +2,15 @@
 #define STI_ENGINE_FULLSHOTRESULT_H
 
 
-#include <sti/engine/ParseResult.h>
-#include <sti/engine/ShotResult.h>
-
 #include <memory>
 
 namespace STI
 {
 namespace Engine
 {
+
+class ParseResult;
+class ShotResult;
 
 
 class FullShotResult

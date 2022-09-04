@@ -1,62 +1,56 @@
-
 #include <sti/LocalDevice.h>
-#include "LocalDeviceMessageDispatcher.h"
-#include <sti/device/DeviceMessageReceiver.h>
-#include "LocalEventEngineScheduler.h"
-#include <sti/device/DeviceMessageListener.h>
+
 #include <sti/device/DeviceMessage.h>
-#include "LocalEventEngineFactory.h"
-
-#include <sti/utils/LocalFileHolder.h>
-
-#include <sti/utils/MixedValue.h>
-#include "LocalChannelManager.h"
-#include <sti/device/LocalChannel.h>
-
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessageReceiver.h>
 #include <sti/device/LocalAttribute.h>
-#include "LocalAttributeManager.h"
-
-#include "DeviceMessageListenerForwarder.h"
-
+#include <sti/device/LocalChannel.h>
 #include <sti/device/ServerMessageRelayer.h>
-#include "LocalPersistenceManager.h"
-//#include "SerializedRepository.h"
-
-#include "LocalShot.h"
-#include <sti/engine/ParseTicket.h>
-
-#include "ShotRepository.h"
-
-#include "RawEventGroup.h"
 
 #include <sti/engine/Measurement.h>
-#include <sti/utils/Configuration.h>
+#include <sti/engine/ParseTicket.h>
 
-#include <memory>
+#include <sti/utils/Configuration.h>
+#include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/MixedValue.h>
+
+#include "DeviceMessageListenerForwarder.h"
+#include "LocalAttributeManager.h"
+#include "LocalChannelManager.h"
+#include "LocalDeviceMessageDispatcher.h"
+#include "LocalEventEngineFactory.h"
+#include "LocalEventEngineScheduler.h"
+#include "LocalPersistenceManager.h"
+#include "LocalShot.h"
+#include "RawEventGroup.h"
+#include "ShotRepository.h"
+
 #include <filesystem>
+#include <memory>
 #include <iostream>
 
-using STI::Device::Device;
-using STI::Device::DeviceID;
-using STI::Device::LocalDevice;
-using STI::Device::DeviceMessageDispatcher;
-using STI::Device::LocalDeviceMessageDispatcher;
-using STI::Device::DeviceMessageReceiver;
-using STI::Engine::LocalEventEngineScheduler;
-using STI::Device::LocalChannelManager;
-using STI::Device::LocalChannel;
-using STI::Device::ChannelManager;
 using STI::Device::AttributeManager;
-using STI::Device::DeviceCollectionPolicy;
-using STI::Device::LocalAttribute;
-using STI::Device::DeviceMessageListener;
-using STI::Device::EngineSchedulerMessage;
-using STI::Device::DeviceMessageListenerID;
+using STI::Device::ChannelManager;
 using STI::Device::CollectionUpdateMessage;
+using STI::Device::Device;
+using STI::Device::DeviceCollectionPolicy;
+using STI::Device::DeviceID;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::DeviceMessageListener;
+using STI::Device::DeviceMessageListenerID;
+using STI::Device::DeviceMessageReceiver;
+using STI::Device::EngineSchedulerMessage;
+using STI::Device::LocalAttribute;
+using STI::Device::LocalChannel;
+using STI::Device::LocalChannelManager;
+using STI::Device::LocalDevice;
+using STI::Device::LocalDeviceMessageDispatcher;
+
 using STI::Engine::LocalEventEngineFactory;
-//using STI::Engine::SerializedRepository;
+using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
+
 using STI::Utils::Configuration;
 
 

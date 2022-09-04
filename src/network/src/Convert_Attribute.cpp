@@ -1,11 +1,10 @@
 
 #include "Convert_Attribute.h"
-#include "RemoteAttribute.h"
-#include <sti/utils/MixedValue.h>
-
 #include "orbTypes.h"
-
 #include "NetworkConvert.h"
+
+#include <sti/utils/MixedValue.h>
+#include "RemoteAttribute.h"
 
 #include <map>
 #include <string>

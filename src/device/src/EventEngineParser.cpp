@@ -1,27 +1,25 @@
-
 #include "EventEngineParser.h"
 
 #include <sti/device/Channel.h>
+#include <sti/device/DeviceID.h>
+
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/Measurement.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/SynchronousEvent.h>
+
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/utils.h>
+
 #include "EventConflictException.h"
 #include "EventParsingException.h"
 #include "LocalEventEngine.h"
-#include <sti/engine/RawEvent.h>
-#include <sti/engine/SynchronousEvent.h>
-#include <sti/engine/Measurement.h>
-#include <sti/utils/utils.h>
-#include <sti/utils/MixedValue.h>
-
 #include "RawEventGroup.h"
-#include <sti/engine/RawEventTarget.h>
-
-// #include "EngineParsingError.h"
-#include <sti/engine/EngineParsingMessage.h>
-
-#include <sti/device/DeviceID.h>
 
 #include <set>
 
-
+using STI::Device::Channel;
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EventEngineParser;
 using STI::Engine::LocalEventEngine;
@@ -30,11 +28,9 @@ using STI::Engine::RawEventType;
 using STI::Engine::RawEventGroup;
 using STI::Engine::Measurement;
 using STI::Engine::SynchronousEventVector;
+using STI::Engine::EngineParsingMessage;
 using STI::Utils::MixedValueType;
 using STI::Utils::MixedValue;
-using std::endl;
-using STI::Device::Channel;
-using STI::Engine::EngineParsingMessage;
 
 
 EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 

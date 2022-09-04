@@ -1,23 +1,25 @@
-
 #include "LocalPersistenceManager.h"
-#include "LocalResultsCollector.h"
+
 #include <sti/device/DeviceID.h>
+
 #include <sti/engine/EventEngineJob.h>
+#include <sti/engine/FullShotResult.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotResult.h>
+
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
+#include "LocalResultsCollector.h"
 #include "ResultsDocumenter.h"
-#include <sti/engine/RawEvent.h>
 #include "SerializedRepository.h"
-#include <sti/engine/ShotResult.h>
 #include "TransientRepository.h"
-#include <sti/engine/ParseResult.h>
-#include <sti/engine/FullShotResult.h>
-
 
 #include <filesystem>
 #include <iostream>
 
 using STI::Device::LocalPersistenceManager;
+
 using STI::Engine::ResultsCollector;
 using STI::Engine::LocalResultsCollector;
 using STI::Device::DeviceID;
@@ -32,7 +34,6 @@ using STI::Engine::SerializedRepository;
 using STI::Engine::TransientRepository;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::FullShotResult;
-
 
 
 LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const std::string& basePath, 

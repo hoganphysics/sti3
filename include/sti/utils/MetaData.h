@@ -3,9 +3,8 @@
 
 #include <sti/utils/MixedValue.h>
 
-
 #include <string>
-
+#include <vector>
 
 namespace STI
 {

@@ -9,6 +9,7 @@ using STI::Network::convert;
 using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
 
+
 template<>
 DeviceID STI::Network::convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID)
 {

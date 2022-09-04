@@ -6,8 +6,6 @@
 #include <sti/engine/StackTrace.h>
 #include <sti/device/DeviceID.h>
 
-// #include "RawEventGroup.h"
-
 #include <string>
 
 
@@ -39,9 +37,6 @@ public:
 
     const RawEventGroup* parentGroup;
 
-    // STI::Device::DeviceID targetServerID;
-    // RawEventGroup scope;
-
     std::string getGroupName() const;
     bool isBound() const;
 
@@ -49,8 +44,6 @@ public:
     bool operator==(const ParsedVar& rhs) const;
     bool operator!=(const ParsedVar& rhs) const;
     
-    
-
     template<class Archive>
     void serialize(Archive& archive);
 

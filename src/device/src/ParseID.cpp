@@ -1,4 +1,3 @@
-
 #include <sti/engine/ParseID.h>
 #include <sti/engine/EngineJobSourceID.h>
 
@@ -7,9 +6,9 @@
 #include "CerealArchives.h"
 #include <cereal/types/string.hpp>
 
-
 using STI::Engine::ParseID;
 using STI::Engine::EngineJobSourceID;
+
 
 ParseID::ParseID()
 {

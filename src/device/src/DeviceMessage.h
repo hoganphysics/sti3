@@ -1,18 +1,19 @@
 #ifndef STI_DEVICE_DEVICEMESSAGE_H
 #define STI_DEVICE_DEVICEMESSAGE_H
 
-#include <sti/device/DeviceID.h>
 #include <sti/fwd/EventEngine_fwd.h>
-#include <sti/engine/RawEvent.h>
-#include <sti/engine/EngineJobID.h>
+
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessageType.h>
+#include <sti/device/DeviceTrace.h>
 #include <sti/device/GroupableMessage.h>
+
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineState.h>
-#include <sti/device/DeviceTrace.h>
-#include <sti/engine/EngineID.h>
-//#include "EventEngineDependencyTree.h"
 #include <sti/engine/EventEngineJob.h>
-#include <sti/device/DeviceMessageType.h>
+#include <sti/engine/RawEvent.h>
 
 #include <sstream>
 

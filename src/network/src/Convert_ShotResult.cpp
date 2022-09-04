@@ -1,4 +1,3 @@
-
 #include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_Attribute.h"
@@ -7,19 +6,15 @@
 #include "Convert_EventEngine.h"
 #include "Convert_RawEventGroup.h"
 
-#include <sti/engine/ShotResult.h>
-#include <sti/engine/RawEvent.h>
-
-#include "RawEventGroup.h"
+#include <sti/engine/FullShotResult.h>
 #include <sti/engine/ParsedVar.h>
-#include "ParsedTag.h"
-
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/StackTraceResult.h>
 
-#include <sti/engine/FullShotResult.h>
-
-
+#include "ParsedTag.h"
+#include "RawEventGroup.h"
 
 #include <memory>
 

@@ -2,8 +2,9 @@
 #define STI_DEVICE_LOCALCHANNELMANAGER_H
 
 #include <sti/device/ChannelManager.h>
-#include "ChannelRefreshListener.h"
 #include <sti/utils/SynchronizedMap.h>
+
+#include "ChannelRefreshListener.h"
 #include "MessageGrouper.h"
 
 #include <memory>

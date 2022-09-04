@@ -1,12 +1,12 @@
-
 #include "TPersistenceManager_i.h"
-#include "ORBManager.h"
-#include "Convert_EventEngine.h"
-#include "Convert_ResultsCollector.h"
-#include "Convert_ShotResult.h"
+
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/ShotResultRecord.h>
 
+#include "Convert_EventEngine.h"
+#include "Convert_ResultsCollector.h"
+#include "Convert_ShotResult.h"
+#include "ORBManager.h"
 
 using STI::TNetwork::TPersistenceManager_i;
 using STI::Network::convert;

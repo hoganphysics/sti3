@@ -1,4 +1,3 @@
-
 #include "NetworkConvert.h"
 
 #include <sti/network/HubID.h>

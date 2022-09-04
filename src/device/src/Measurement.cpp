@@ -1,10 +1,9 @@
-
 #include <sti/engine/Measurement.h>
-#include <sti/engine/RawEvent.h>
-#include <sti/device/DeviceID.h>
-#include <sti/utils/utils.h>
 
+#include <sti/device/DeviceID.h>
+#include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 

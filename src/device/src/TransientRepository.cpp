@@ -1,11 +1,11 @@
-
 #include "TransientRepository.h"
-#include <sti/engine/ShotResult.h>
-#include <sti/engine/RawEvent.h>
-#include <sti/utils/utils.h>
+
+#include <sti/engine/FullShotResult.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ParseResult.h>
-#include <sti/engine/FullShotResult.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotResult.h>
+#include <sti/utils/utils.h>
 
 #include <filesystem>
 
@@ -17,7 +17,6 @@ using STI::Engine::MeasurementVector;
 using STI::Engine::ParseID;
 using STI::Engine::ParseResult;
 using STI::Engine::FullShotResult;
-
 
 
 TransientRepository::TransientRepository(const std::string& tempBasePath)

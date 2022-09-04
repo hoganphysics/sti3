@@ -1,4 +1,3 @@
-
 #include <sti/engine/StackTrace.h>
 
 #include <string>
@@ -9,9 +8,9 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
 
-
 using STI::Engine::StackTrace;
 using STI::Engine::StackFrame;
+
 
 StackFrame::StackFrame()
 {
@@ -49,16 +48,6 @@ std::vector<StackFrame> StackTrace::getFrames() const
 {
     return frames;
 }
-
-
-// std::string StackTrace::print(std::string indent) const
-// {
-//     //this is a temporary implementation to mock things up
-//     std::stringstream trace;
-//     trace << indent << ">>> " << file() << ", line " << line() << "." << std::endl;
-
-//     return trace.str();
-// }
 
 template<class Archive>
 void StackFrame::serialize(Archive& archive)

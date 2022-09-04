@@ -1,11 +1,12 @@
-
 #include "Convert_ResultsCollector.h"
-#include "RemoteResultsCollector.h"
-#include "NetworkResultsCollector.h"
-#include "NetworkFileHolder.h"
-#include "RemoteFileHolder.h"
+
 #include <sti/device/DeviceID.h>
 #include <sti/engine/RawEvent.h>
+
+#include "NetworkFileHolder.h"
+#include "NetworkResultsCollector.h"
+#include "RemoteFileHolder.h"
+#include "RemoteResultsCollector.h"
 
 using STI::Network::convert;
 using STI::Engine::ResultsCollector;

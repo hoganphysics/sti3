@@ -5,14 +5,13 @@
 #include <memory>
 #include <functional>
 
-
 #include "CerealArchives.h"
 #include <cereal/types/memory.hpp>
 #include <cereal/types/string.hpp>
 
-
 using STI::Device::DeviceID;
 using STI::Device::DeviceIDBase;
+
 
 DeviceID::DeviceID()
 {

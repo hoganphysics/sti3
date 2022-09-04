@@ -25,13 +25,14 @@
 
 #include <sti/fwd/RawEvent_fwd.h>
 
-#include <sti/utils/MixedValue.h>
-#include <sti/engine/StackTrace.h>
-#include <sti/engine/RawEventTarget.h>
 #include <sti/device/DeviceID.h>
-//#include <sti/fwd/SynchronousEvent_fwd.h>
-#include <sti/utils/GraphPathLabel.h>
+
 #include <sti/engine/ParsedVar.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/StackTrace.h>
+
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/GraphPathLabel.h>
 
 #include <string>
 #include <map>
@@ -70,15 +71,7 @@ class RawEvent
 {
 public:
 
-	//RawEvent(const STI::Device::DeviceID& targetDeviceID,
-	//	double time, unsigned short channel, const STI::Utils::MixedValue& value,
-	//	const std::string& description, unsigned eventNumber, bool isMeasurementEvent);
-	
 	RawEvent();
-
-	// RawEvent(const STI::Device::DeviceID& targetDeviceID,
-	// 	double time, unsigned short channel, const STI::Utils::MixedValue& value,
-	// 	const StackTrace& eventStackTrace, unsigned eventNumber, const RawEventType& eventType);
 	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
 		unsigned eventNumber, const RawEventType& eventType);
 	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
@@ -90,8 +83,6 @@ public:
 	
 	~RawEvent();
 
-	std::string print() const;
-
 	double time() const;		//time in nanoseconds
 	unsigned short channel() const;
 	const STI::Utils::MixedValue& value() const;
@@ -99,23 +90,13 @@ public:
 
 	const RawEventTarget& target() const;
 	RawEventTarget& getTarget();
-	// const STI::Utils::GraphPathLabel& groupIndex();
+
 	std::string getGroupName() const;
 	void setParentGroup(const RawEventGroup* group);
 
 	RawEventID getEventID() const;
-
-	//struct Command
-	//{
-	//	enum class CommandType { Play, Pause, Waveform, Jump };	//...
-	//	CommandType type;
-	//};
-	//const Command& command() const;
 	
-	//enum class EventType { Output, Measurement, Pause, Waveform, Jump };	//...
 	const RawEventType& type() const { return _eventType; }
-
-	// STI::Device::DeviceID targetDevice() const;
 
 	const StackTrace& getStackTrace() const { return stackTrace; }
 	StackTrace& getStackTrace() { return stackTrace; }
@@ -137,10 +118,8 @@ public:
 	bool operator==(const RawEvent& rhs) const { return eventGraphPath == rhs.eventGraphPath; }
 	bool operator!=(const RawEvent& rhs) const { return !((*this) == rhs); }
 
-	void setTarget(const STI::Engine::RawEventTarget& target) { _target = target; }
-	// void setTargetID(const STI::Device::DeviceID& targetID) { _target.getDevice().setTargetDeviceID(targetID); }
 	void setTime(double time) { _time = time; }
-	// void setChannel(unsigned short channel) { _target.getChannel().setChannel(channel); }
+	void setTarget(const STI::Engine::RawEventTarget& target) { _target = target; }
 	void setValue(const STI::Utils::MixedValue& value) { parsedValue.value = value; }
 	void setDescription(const std::string& description) { _description = description; }
 	void setEventGraphPath(const STI::Utils::GraphPathLabel& pathLabel) { eventGraphPath = pathLabel;}
@@ -149,20 +128,19 @@ public:
 		isMeasurement = (eventType == RawEventType::Measurement);
 		_eventType = eventType;
 	}
-	// void setGroupIndex(const STI::Utils::GraphPathLabel& index);
-	
+
+	std::string print() const;
+
 	template<class Archive>
 	void serialize(Archive& archive);
 
 private:
 	
 	double _time;
-	// unsigned short _channel;
+	RawEventTarget _target;		//target device and channel
 	// STI::Utils::MixedValue _value;
 	ParsedVar parsedValue;
 	
-	RawEventTarget _target;		//target device and channel
-	// STI::Utils::GraphPathLabel eventGroupIndex;	//ordered list of (nested) event groups that this event belongs to
 	std::string _description;
 	
 	StackTrace stackTrace;

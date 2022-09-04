@@ -5,10 +5,11 @@
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/device/DeviceID.h>
-#include "fwd/ChannelManager_fwd.h"
 #include <sti/engine/DeviceEventParser.h>
-#include <sti/utils/GraphPathLabel.h>
 #include <sti/engine/EngineID.h>
+#include <sti/utils/GraphPathLabel.h>
+
+#include "fwd/ChannelManager_fwd.h"
 
 #include <string>
 #include <sstream>
@@ -62,7 +63,6 @@ private:
 		unsigned count;		//number of SynchronousEvents that reference this rawEvent
 	};
 
-	// std::map<STI::Utils::GraphPathLabel, MeasurementCounter> measurementEventGraph;
 	std::map<RawEventID, MeasurementCounter> measurementEventGraph;
 
 	bool countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);

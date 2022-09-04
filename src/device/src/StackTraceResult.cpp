@@ -1,12 +1,9 @@
-
 #include <sti/engine/StackTraceResult.h>
 
 #include "StackTraceData.h"
 
 #include "CerealArchives.h"
-
 #include <cereal/types/memory.hpp>
-
 
 using STI::Engine::StackTraceResult;
 

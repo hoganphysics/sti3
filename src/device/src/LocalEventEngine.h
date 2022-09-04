@@ -4,31 +4,33 @@
 #include "EventEngine.h"
 #include "MessageGenerator.h"
 
-#include <sti/device/DeviceMessage.h>
-#include "MessageGrouper.h"
-#include <sti/device/DeviceCollection.h>
-#include "EventEngineParser.h"
-#include "EventEngineStateMachine.h"
-#include <sti/engine/ParseID.h>
-#include <sti/engine/ResultTicket.h>
-#include <sti/engine/ShotID.h>
-#include <sti/engine/TimeStamp.h>
-#include "EngineClock.h"
-
-#include "utils/OrderedBufferMap.h"
-#include <sti/device/ChannelManager.h>
-
 #include <sti/fwd/Channel_fwd.h>
-#include "fwd/DeviceEventParser_fwd.h"
 #include <sti/fwd/DeviceID_fwd.h>
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/fwd/SynchronousEvent_fwd.h>
+
+#include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/DeviceMessage.h>
 #include <sti/device/PersistenceManager.h>
+
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ResultTicket.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/TimeStamp.h>
+
+#include "fwd/DeviceEventParser_fwd.h"
+#include "EngineClock.h"
+#include "EventEngineParser.h"
+#include "EventEngineStateMachine.h"
+#include "MessageGrouper.h"
+#include "utils/OrderedBufferMap.h"
 
 #include <memory>
 #include <mutex>
 #include <condition_variable>
+
 
 namespace STI
 {
@@ -112,17 +114,10 @@ public:
 	const STI::Engine::ParseID& getLastParseID() const;
 	bool jobCancelled() const { return cancelled; }
 
-//	const DeviceEventMap& getParsedEvents(const STI::Engine::ParseID& parseID);
-	// bool getParsedEvents(const STI::Engine::ParseID& parseID, DeviceEventMap& parsedEvents);
 	bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
 	std::shared_ptr<ParsedDependencyTree> getParsedTree() const;
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
-
-	//bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
-	// bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
-
-	//bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
 
 private:
 
@@ -134,8 +129,7 @@ private:
 
 	void divideEvents(const std::shared_ptr<RawEventGroup>& events, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
 	void divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
-	// void divideEvents(const std::shared_ptr<RawEventVector>& events, const std::string& subgroupName);
-	// void addEvent(const STI::Device::DeviceID& deviceID, const RawEvent& evt, const std::string& subgroupName);
+
 	void addEvent(const RawEvent& evt, const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
 
 	RawEventGroup& getTargetEventGroup(const STI::Device::DeviceID& deviceTarget);
@@ -154,7 +148,6 @@ private:
 	void resetPlayThread();
 	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
 	void waitForPlayAll();
-	// void transferAllMeasurements(const ShotID& sid);
 
 	bool armTrigger(TriggerCallback& triggerCB);
 	void waitForTrigger() const;

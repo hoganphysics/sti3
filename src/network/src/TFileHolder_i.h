@@ -5,8 +5,6 @@
 
 #include <sti/utils/FileHolder.h>
 
-// #include <memory>
-
 
 namespace STI
 {

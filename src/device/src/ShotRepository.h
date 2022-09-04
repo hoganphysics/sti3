@@ -1,13 +1,11 @@
-
 #ifndef STI_ENGINE_SHOTREPOSITORY_H
 #define STI_ENGINE_SHOTREPOSITORY_H
 
 #include <sti/fwd/Measurement_fwd.h>
 
-//#include "ResultsDocumenter.h"
-
 #include <memory>
 #include <string>
+
 
 namespace STI
 {

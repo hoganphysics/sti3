@@ -1,8 +1,8 @@
 #ifndef STI_ENGINE_STACKTRACE_H
 #define STI_ENGINE_STACKTRACE_H
 
-#include <string>
 #include <vector>
+
 
 namespace STI
 {
@@ -31,14 +31,10 @@ public:
 	StackTrace();
 	~StackTrace();
 
-	// std::string file() const;
-	// long line() const;
 	void appendFrame(unsigned file, unsigned line, unsigned func);
 	void appendFrame(const StackFrame& frame);
 
 	std::vector<StackFrame> getFrames() const;
-
-	// std::string print(std::string indent = "       ") const;
 
 	template<class Archive>
 	void serialize(Archive& archive);

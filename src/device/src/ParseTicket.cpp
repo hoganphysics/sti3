@@ -1,18 +1,17 @@
-
 #include <sti/engine/ParseTicket.h>
+
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ParseResult.h>
+
 #include "RawEventGroup.h"
 
 #include <chrono>
-
 
 using STI::Engine::ParseTicket;
 using STI::Engine::ParseID;
 using STI::Engine::EventEngineScheduler;
 using STI::Engine::RawEventGroup;
-
 
 
 ParseTicket::ParseTicket(const ParseID& pid, const std::shared_ptr<EventEngineScheduler>& scheduler)

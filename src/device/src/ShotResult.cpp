@@ -1,13 +1,11 @@
-
 #include <sti/engine/ShotResult.h>
-#include <sti/engine/ShotID.h>
+
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotID.h>
 #include <sti/utils/FileHolder.h>
 
-
 #include "CerealArchives.h"
-
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>

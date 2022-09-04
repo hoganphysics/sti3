@@ -1,35 +1,33 @@
-
-
 #include "LocalEventEngine.h"
 
+#include <sti/device/AttributeManager.h>
+#include <sti/device/Channel.h>
+#include <sti/device/Device.h>
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessageDispatcher.h>
+
 #include <sti/engine/DeviceEventParser.h>
 #include <sti/engine/EngineState.h>
-#include "EventEngineDependencyTree.h"
-#include "LocalEventEngineJob.h"
-#include "EventEngineParser.h"
-#include <sti/engine/EventEngineScheduler.h>
-
-#include <sti/engine/SynchronousEvent.h>
-#include "LocalTriggerCallback.h"
-#include <sti/device/Device.h>
-#include "Shot.h"
-#include "LocalShot.h"
-#include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
-#include "MasterTrigger.h"
-#include <sti/device/Channel.h>
-#include <sti/engine/ResultsCollector.h>
-#include "LocalPersistenceManager.h"
-#include "ParsedDependencyTree.h"
-#include <sti/device/AttributeManager.h>
-#include "RawEventGroup.h"
-#include <sti/engine/ShotResult.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/ResultsCollector.h>
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/SynchronousEvent.h>
 
+#include "EventEngineDependencyTree.h"
+#include "EventEngineParser.h"
+#include "LocalEventEngineJob.h"
+#include "LocalPersistenceManager.h"
+#include "LocalShot.h"
+#include "LocalTriggerCallback.h"
+#include "MasterTrigger.h"
+#include "ParsedDependencyTree.h"
+#include "RawEventGroup.h"
 
 #include <memory>
 #include <thread>
@@ -37,6 +35,8 @@
 #include <vector>
 #include <functional>
 
+using STI::Device::DeviceID;
+using STI::Device::EngineSchedulerMessage;
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
@@ -44,8 +44,6 @@ using STI::Engine::LocalEventEngine;
 using STI::Engine::ParseID;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
-using STI::Device::DeviceID;
-using STI::Device::EngineSchedulerMessage;
 using STI::Engine::DeviceEventMap;
 using STI::Engine::TimeStamp;
 using STI::Engine::LocalEventEngineJob;
@@ -159,6 +157,15 @@ bool LocalEventEngine::isActingServerForDevice(const STI::Device::DeviceID& id)
 	return isTargetServerForDevice(id) || isPartnerServer;
 }
 
+void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, std::shared_ptr<RawEventGroup>& unhandledEventGroup)
+{
+	if (eventGroup == 0) return;
+
+	std::set<STI::Device::DeviceID> ownedIDs;
+	getOwnedDeviceIDs(ownedIDs);
+
+	divideEvents(eventGroup, "", ownedIDs, unhandledEventGroup);
+}
 
 void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, 
 									const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, 
@@ -198,12 +205,6 @@ void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventG
 
 }
 
-//should be full group name; take first name and used to construct new base groups. Use the rest (the relative group name) to addEvent on the base group
-// void LocalEventEngine::addEvent(const STI::Device::DeviceID& deviceID, const RawEvent& evt, const std::string& subgroupName)
-// {
-// 	getTargetEventGroup(deviceID).addEvent( std::move(evt), subgroupName );
-// }
-
 void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroupName, 
 								const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup)
 {
@@ -223,56 +224,6 @@ void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroup
 		//Event target not in this subgraph; these events will handled elsewhere
 		unhandledEventGroup->addEvent( std::move(evt), subgroupName );
 	}
-}
-
-
-void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, std::shared_ptr<RawEventGroup>& unhandledEventGroup)
-{
-	if (eventGroup == 0) return;
-
-	std::set<STI::Device::DeviceID> ownedIDs;
-	getOwnedDeviceIDs(ownedIDs);
-
-	divideEvents(eventGroup, "", ownedIDs, unhandledEventGroup);
-
-	// STI::Device::DeviceID branchID;
-
-	// for(auto& evt : *(eventGroup->getEvents())) {
-	// 	auto it = ownedIDs.find(evt.target().device().deviceID());
-
-	// 	if (localDeviceID == evt.target().device().deviceID() || it != ownedIDs.end()) {
-	// 		//Event target is this device or is directly owned by this device
-	// 		getTargetEventGroup( evt.target().device().deviceID() ).addEvent( std::move(evt) );
-	// 		// eventsByTarget[evt.targetDevice()].push_back(std::move(evt));
-	// 	}
-	// 	else if (dependencyTree->getBranchToTarget(localDeviceID, evt.target().device().deviceID(), branchID)) {
-	// 		//Event target is in the subgraph under branchID
-	// 		// eventsByTarget[branchID].push_back(std::move(evt));
-	// 		getTargetEventGroup(branchID).addEvent( std::move(evt) );
-	// 	}
-	// 	else {
-	// 		//Event target not in this subgraph; these events will be pushed upstream
-	// 		upstreamPartnerEvents.push_back(std::move(evt));
-	// 	}
-	// }
-
-
-	// for(auto& evt : events) {
-	// 	auto it = ownedIDs.find(evt.targetDevice());
-
-	// 	if (localDeviceID == evt.targetDevice() || it != ownedIDs.end()) {
-	// 		//Event target is this device or is directly owned by this device
-	// 		eventsByTarget[evt.targetDevice()].push_back(std::move(evt));
-	// 	}
-	// 	else if (dependencyTree->getBranchToTarget(localDeviceID, evt.targetDevice(), branchID)) {
-	// 		//Event target is in the subgraph under branchID
-	// 		eventsByTarget[branchID].push_back(std::move(evt));
-	// 	}
-	// 	else {
-	// 		//Event target not in this subgraph; these events will be pushed upstream
-	// 		upstreamPartnerEvents.push_back(std::move(evt));
-	// 	}
-	// }
 }
 
 RawEventGroup& LocalEventEngine::getTargetEventGroup(const STI::Device::DeviceID& deviceTarget)
@@ -304,7 +255,6 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 
 			//Deep copy to report partner events
 			handledPartnerEvents->copyEvents(*evtGroup);
-			// handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
 
 			getTargetEventGroup(id).merge(*evtGroup);
 		}
@@ -312,16 +262,13 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 			//Event target is in the subgraph under branchID
 
 			//Deep copy to report partner events
-			handledPartnerEvents->copyEvents(*evtGroup);
-			// handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
+			handledPartnerEvents->copyEvents(*evtGroup);;
 
 			getTargetEventGroup(branchID).merge(*evtGroup);
 		}
 		else {
 			//Event target not in this subgraph; these events will be pushed upstream
 			upstreamPartnerEvents->merge(*evtGroup);
-			// upstreamPartnerEvents.insert(upstreamPartnerEvents.end(), 
-			// 	std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
 		}
 
 		if (isJobOwner) {
@@ -337,49 +284,6 @@ void LocalEventEngine::addEventsToParseResult(const std::shared_ptr<RawEventGrou
 		lastParseResult->baseEventGroup->merge(*newEvents);
 	}
 }
-
-// void LocalEventEngine::mergeAllEvents(std::shared_ptr<RawEventGroup>& targetEventGroup)
-// {
-// 	targetEventGroup = std::make_shared<RawEventGroup>();
-// }
-
-// void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
-// {
-// 	std::set<STI::Device::DeviceID> ownedIDs;
-// 	getOwnedDeviceIDs(ownedIDs);
-
-// 	STI::Device::DeviceID branchID;
-
-// 	for (auto& evtGroup : eventMap) {
-		
-// 		auto& evts = evtGroup.second;
-// 		auto it = ownedIDs.find(evtGroup.first);
-
-// 		if (localDeviceID == evtGroup.first || it != ownedIDs.end()) {
-// 			//Event target is this device or is directly owned by this device
-
-// 			//Deep copy to report partner events
-// 			handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
-
-// 			eventsByTarget[evtGroup.first].insert(eventsByTarget[evtGroup.first].end(), 
-// 				std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
-// 		}
-// 		else if (dependencyTree->getBranchToTarget(localDeviceID, evtGroup.first, branchID)) {
-// 			//Event target is in the subgraph under branchID
-
-// 			//Deep copy to report partner events
-// 			handledPartnerEvents.insert(handledPartnerEvents.end(), evts.begin(), evts.end());
-
-// 			eventsByTarget[branchID].insert(eventsByTarget[branchID].end(), 
-// 				std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
-// 		}
-// 		else {
-// 			//Event target not in this subgraph; these events will be pushed upstream
-// 			upstreamPartnerEvents.insert(upstreamPartnerEvents.end(), 
-// 				std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
-// 		}
-// 	}
-// }
 
 const STI::Engine::ParseID& LocalEventEngine::getLastParseID() const 
 {
@@ -412,59 +316,8 @@ bool LocalEventEngine::getParseResult(const ParseID& parseID, std::shared_ptr<Pa
 	return false;
 }
 
-// //return a deep copy (rather than a reference) to ensure that the returned events are not modifed by a subsequent operation in LocalEventEngine
-// bool LocalEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, DeviceEventMap& parsedEvents)
-// {
-// 	std::unique_lock<std::mutex> parseLock(parseMutex);
-
-// 	// bool available = lastParseID == parseID && isState(EngineState::Parsed);
-// 	bool available = lastParseID == parseID;
-
-// 	if (!available) return false;
-
-// 	if (!eventsByTargetCached) {
-// 		bool success = true;
-
-// 		//get owned device events
-// 		for (auto& engine : engines) {
-// 			DeviceEventMap engineEventsByTarget;
-// 			success = engine.second->getParsedEvents(parseID, engineEventsByTarget);
-			
-// 			if (!success) return false;	//fails if any owned devices have overwritten parseID
-
-// 			for (auto& tuple : engineEventsByTarget) {
-// 				auto& evtGroup = tuple.second;
-// 				if (evtGroup != 0) {
-// 					getTargetEventGroup(tuple.first).merge(*evtGroup);
-// 				}
-// 				// eventsByTarget[tuple.first].insert(eventsByTarget[tuple.first].end(),
-// 				// 		std::make_move_iterator(evts.begin()), std::make_move_iterator(evts.end()));
-// 			}
-// 		}
-
-// 		//sort local events
-// 		for(auto& tuple : eventsByTarget) {
-
-// 			if (tuple.second != 0) {
-// 				tuple.second->sortEvents();
-// 			}
-// 			// std::sort(tuple.second.begin(), tuple.second.end());
-// 		}
-
-// 		eventsByTargetCached = true;
-// 	}
-
-// 	parsedEvents = eventsByTarget;	//deep copy
-// 	return true;
-// }
-
 std::shared_ptr<ParsedDependencyTree> LocalEventEngine::getParsedTree() const 
 {
-	// auto tree = std::make_shared<ParsedDependencyTree>(dependencyTree);
-	// return tree; 
-
-	// lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
-
 	return lastParseResult->parsedDevices;
 }
 
@@ -510,8 +363,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseResult->messages = localParsingMessages;
 	lastParseResult->stackTraceResult;
 //	dependencyTree = job.dependencies;
-
-	
 
 	std::shared_ptr<RawEventGroup> eventGroup;
 	shot->getBaseEventGroup(eventGroup);
@@ -977,10 +828,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 	
-	// if (isJobOwner || ownedTargets.size() > 0) {
-	// 	transferAllMeasurements(jobID.sid);	//need to get all measurements from owned devices
-	// }
-	
 	std::shared_ptr<FullShotResult> cachedShot;
 	if (resultBuffer.get(jobID.sid, cachedShot) && cachedShot != 0) {
 		if (persistenceManager != 0 && persistenceManager->saveShot(jobID.sid, cachedShot, isJobOwner)) {
@@ -989,36 +836,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 			resultBuffer.remove(jobID.sid);
 		}
 	}
-
-	// if (isJobOwner) {
-		
-	// 	std::shared_ptr<STI::Engine::EventEngine> localEngine;	//reference to this engine
-    //     job.getEngine(localEngine);
-
-	// 	//auto resultsCollector = persistenceManager->createResultsCollector(job.getJobID().sid, localEngine);
-		
-	// 	//resultsCollector->addEvents(...);
-	// 	//resultsCollector->addTimingFiles(...);
-	// 	// resultsCollector->addVars(...);
-	// 	// persistenceManager->saveShot(resultsCollector);
-	// 	bool success = (persistenceManager != 0) && persistenceManager->saveShot(job.getJobID().sid, localEngine);
-
-	// 	if (!success) {
-	// 		//stash? or leave in measurement buffer for now (eventually it will be stashed)
-	// 	}
-
-	// 	//transferMeasurements(job.getJobID().sid, resultsCollector);
-
-	// 	//get resultsCollector from persistence; should not point to a particular persistence manager
-	// 	//addEvents, addTimingFiles, addDeviceTree
-	// 	//addEngines;  uses engines if available to pull data; otherwise falls back to deviceID->persistenceManager on remote devices
-	// 	//persistenceManager could loop through devices in DeviceTree, calling on engine map by id, and falling back to remotePersistenceManager
-	// 	//persistenceManager->saveShot(resultsCollector);  
-	// 	// - Uses the first documentation target to setup directory
-	// 	// - calls transfer on all engines (or remotePersistenceManager), which sends a callback, which transfers files and then deletes local measurements
-	// }
-
-	// saveShot(job);	//job needs record of shot
 	
 	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
 								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
@@ -1037,133 +854,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 }
 
-
-// bool LocalEventEngine::transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector)
-// {
-// 	if (resultsCollector == 0) return false;
-
-// 	std::shared_ptr<ShotResult> cachedShot;
-
-// 	if (resultBuffer.get(resultsCollector->getShotID(), cachedShot) && cachedShot != 0) {
-
-// 		bool success = true;
-
-// 		if (isJobOwner) {
-// 			getParsedEvents(resultsCollector->getShotID().parseID, cachedShot->parsedEvents);
-// 			resultsCollector->addEvents(cachedShot->parsedEvents);
-// 	//		resultsCollector->addTimingFiles();
-// 	//		resultsCollector->addVariables();
-// 		}
-
-// 		//Attributes
-// 		success &= resultsCollector->addAttributes(localDeviceID, (cachedShot->attributes)[localDeviceID]);
-
-// 		//Measurements
-// 		success &= resultsCollector->addMeasurements(cachedShot->measurements);
-
-// 		if (success) {
-// 			resultBuffer.remove(resultsCollector->getShotID());
-// 		}
-// 	}
-
-// // 	std::shared_ptr<MeasurementVector> measurements;
-
-// // 	if (measurementBuffer.get(resultsCollector->getShotID(), measurements)) {
-// // 		//Measurements
-// // 		if (resultsCollector->addMeasurements(measurements)) {
-// // 			measurementBuffer.remove(resultsCollector->getShotID());
-// // 		}
-
-// // 		//Attributes
-// // 		std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
-// // 		if (attributeManager != 0) {
-// // 			attributeManager->getAttributes(attributes);
-// // 			resultsCollector->addAttributes(localDeviceID, attributes);
-// // 		}
-
-// // 	}
-
-// // 	if (isJobOwner) {
-// // //		resultsCollector->addTimingFiles();
-// // //		resultsCollector->addVariables();
-// // 		DeviceEventMap parsedEvents;
-// // 		getParsedEvents(resultsCollector->getShotID().parseID, parsedEvents);
-// // 		resultsCollector->addEvents(parsedEvents);
-// // 	}
-
-// 	//this device's attributes
-// //	resultsCollector->addAttributes(localDeviceID, attributes);
-
-// 	auto tree = resultsCollector->getDependencies();
-
-// 	// EventEngineDependencyTree subtree;
-// 	// tree->getSubtree(localDeviceID, subtree);
-
-//     std::vector<DeviceID> nodes;
-// 	if (tree != 0) {
-// 		tree->getDependedentNodes(localDeviceID, nodes);		
-// 	}
-
-// 	std::shared_ptr<STI::Device::Device> device;
-//     std::shared_ptr<EventEngineScheduler> scheduler;
-
-// 	bool success;
-
-// 	for (auto& id : nodes) {
-
-// 		if (isActingServerForDevice(id) 	//problem: only works if this shot is the most recently parsed shot
-// 			&& deviceCollection->get(id, device) && device != 0 
-// 			&& device->getEngineScheduler(scheduler)) 
-// 		{
-// 			success = scheduler->transferResults(resultsCollector);
-// 		}
-// 	}
-
-// 	return true;
-// }
-
-
-// void LocalEventEngine::transferAllMeasurements(const ShotID& sid)
-// {
-// 	std::shared_ptr<MeasurementVector> measurements;
-// 	std::shared_ptr<MeasurementVector> targetMeasurements;
-
-// 	measurementBuffer.get(sid, measurements);
-
-// 	for (auto& engine : engines) {
-// 		if (engine.second->transferMeasurements(sid, targetMeasurements)) {
-
-// 			measurements->insert(measurements->end(), 
-// 							std::make_move_iterator(targetMeasurements->begin()), 
-// 							std::make_move_iterator(targetMeasurements->end()));			
-// 		}
-// 	}
-// }
-
-
-
-// bool LocalEventEngine::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
-// {
-// 	std::shared_ptr<ShotResult> shot;
-
-// 	if (resultBuffer.get(sid, shot) && shot != 0) {
-// 		measurements = shot->measurements;
-// 		return (measurements != 0);
-// 	}
-// 	return false;
-// //	return measurementBuffer.get(sid, measurements) && (measurements != 0);
-// }
-
-
-// // bool LocalEventEngine::transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementCollector>& collector);
-// bool LocalEventEngine::transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
-// {
-// 	if (measurementBuffer.get(sid, measurements)) {
-// 		//ownership of measurements transfered to caller
-// 		return (measurements != 0) && measurementBuffer.remove(sid);
-// 	}
-// 	return false;
-// }
 
 void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLock)
 {

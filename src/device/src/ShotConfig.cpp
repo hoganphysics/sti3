@@ -1,4 +1,3 @@
-
 #include <sti/engine/ShotConfig.h>
 
 #include <sstream>

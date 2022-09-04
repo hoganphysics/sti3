@@ -1,16 +1,18 @@
 #ifndef STI_NETWORK_NETWORKDEVICEHUB_H
 #define STI_NETWORK_NETWORKDEVICEHUB_H
 
-#include <sti/device/DeviceID.h>
-#include <sti/device/Device.h>
-#include <sti/network/DeviceHub.h>
 #include <sti/LocalDeviceHub.h>
+
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
+#include <sti/network/DeviceHub.h>
 #include <sti/utils/Configuration.h>
 
+#include <condition_variable>
+#include <mutex>
 #include <memory>
 #include <set>
-#include <mutex>
-#include <condition_variable>
+
 
 namespace STI
 {

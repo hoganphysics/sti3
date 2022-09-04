@@ -1,15 +1,14 @@
-
 #include "stipy.h"
 
 #include <sti/engine/RawEventTarget.h>
-#include "STIPyServer.h"
 
-#include "STIPyShot.h"
 #include "RawStackTrace.h"
-
+#include "STIPyServer.h"
+#include "STIPyShot.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+
 
 namespace py = pybind11;
 

@@ -1,14 +1,12 @@
-
 #include "TShotCallback_i.h"
 
-#include "ORBManager.h"
-#include <sti/engine/RawEvent.h>
-#include "Convert_EventEngine.h"
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
 
+#include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
 #include "Convert_RawEventGroup.h"
-
+#include "ORBManager.h"
 #include "orbTypes.h"
 
 #include <vector>

@@ -3,9 +3,10 @@
 #define STI_ENGINE_SERIALIZEDREPOSITORY_H
 
 #include "ShotRepository.h"
-//#include "ResultsDocumenter.h"
+
 #include <sti/device/DeviceID.h>
 #include <sti/engine/ShotID.h>
+
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>

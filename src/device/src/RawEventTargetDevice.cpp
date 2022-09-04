@@ -1,12 +1,11 @@
-
 #include <sti/engine/RawEventTargetDevice.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/string.hpp>
 
-
 using STI::Engine::RawEventTargetDevice;
+
 
 RawEventTargetDevice::RawEventTargetDevice()
 : RawEventTargetDevice("")

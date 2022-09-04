@@ -1,10 +1,10 @@
-
 #include "StackTraceData.h"
-#include "RawStackTrace.h"
+
+#include <sti/engine/StackTrace.h>
+#include <sti/utils/FileHolder.h>
 #include <sti/utils/LocalFileHolder.h>
 
-#include <sti/utils/FileHolder.h>
-#include <sti/engine/StackTrace.h>
+#include "RawStackTrace.h"
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
