@@ -20,3 +20,6 @@ Putting some test code in doc/test/.  Adding CMakeList.txt file to build cpp cod
 Sphinx setup utility (run in doc)
 sphinx-quickstart
 
+
+#Temporary build command (run from sti3/docs)
+sphinx-build -a -Dbreathe_projects.STI=build/doxygen/xml/ . build/sphinx

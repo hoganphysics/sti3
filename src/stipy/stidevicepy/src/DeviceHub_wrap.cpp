@@ -11,6 +11,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 #include <pybind11/cast.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -18,6 +19,7 @@ using STI::Device::DeviceID;
 using STI::Network::HubID;
 using STI::Network::LocalDeviceHub;
 using STI::Network::NetworkDeviceHub;
+
 
 void init_DeviceHub(py::module& m) 
 {

@@ -4,6 +4,7 @@
 
 #include <sti/device/DeviceID.h>
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/utils.h>
 #include "MixedValuePy.h"
 #include "RawEventGroup.h"
 #include "RawStackTrace.h"
@@ -169,10 +170,14 @@ void init_RawEvent(py::module& m)
         .def("getGroupName", &STI::Engine::RawEvent::getGroupName)
         .def("getStackTrace", &STI::Engine::RawEvent::getRawStackTrace)
         .def("getEventGraphPath", &STI::Engine::RawEvent::getEventGraphPath)
-        .def("__repr__",
+        .def("printTime", 
             [](const STI::Engine::RawEvent& self) {
-                return self.print();
+                return STI::Utils::printTimeFormated(self.time());
             })
+        // .def("__repr__",
+        //     [](const STI::Engine::RawEvent& self) {
+        //         return self.print();
+        //     })
         .def("__eq__",  // operator ==
             [](const STI::Engine::RawEvent& self, const STI::Engine::RawEvent& other) {
                 return self == other;

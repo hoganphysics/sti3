@@ -11,7 +11,7 @@ namespace py = pybind11;
 void init_STIPyChannel(py::module& m) 
 {
 
-    py::class_<STI::Python::STIPyChannel, std::shared_ptr<STI::Python::STIPyChannel>>(m, "STIPyChannel")
+    py::class_<STI::Python::STIPyChannel, std::shared_ptr<STI::Python::STIPyChannel>>(m, "TargetChannel")
         .def(py::init<const std::string&>(), 
                         py::arg("name") )
         .def(py::init<const std::shared_ptr<STI::Python::STIPyDevice>&, const std::string&>(), 

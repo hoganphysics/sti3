@@ -106,7 +106,7 @@ bool RawEventGroup::splitFullGroupName(const std::string& fullName, std::string&
     if (pos != std::string::npos) {
         //fullName includes a group prefix
         groupName = fullName.substr(0, pos);
-        leafName = fullName.substr(pos, std::string::npos);
+        leafName = fullName.substr(pos + 1, std::string::npos);
 
         return true;
     }
@@ -117,6 +117,8 @@ bool RawEventGroup::splitFullGroupName(const std::string& fullName, std::string&
 bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::MixedValue& value, const RawStackTrace& stackTrace)
 {
     std::unique_lock groupLock(groupMutex);
+
+    if (fullVarName == "") return false;
 
     std::string groupName;
     std::string varName;

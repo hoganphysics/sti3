@@ -142,8 +142,6 @@ bool ORBManager::orbInstanceInitializd()
 
 ORBManager::ORBManager(const std::string& args)
 {
-	std::unique_lock<std::mutex> writeLock(orbInitMutex);
-
 	poa_is_active = false;
 	
 	auto paramsNames = omniOptions.getParameterNames();

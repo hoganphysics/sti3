@@ -32,7 +32,7 @@ release = '3.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.graphviz", "sphinx.ext.inheritance_diagram", "breathe", 'sphinx.ext.autosectionlabel' ]
+extensions = ["sphinx.ext.graphviz", "sphinx.ext.inheritance_diagram", "breathe", 'sphinx.ext.autosectionlabel', 'sphinx_tabs.tabs' ]
 
 breathe_projects = {
 "STI": "doxygen/xml/",
@@ -69,3 +69,6 @@ numfig = True
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = ['_static']
 html_static_path = []
+
+# Tabs
+sphinx_tabs_valid_builders = ['linkcheck']
