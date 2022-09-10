@@ -23,7 +23,7 @@ public:
     virtual ~Shot() {}
 
     virtual const ShotConfig& getShotConfig() const = 0;
-    virtual void getBaseEventGroup(std::shared_ptr<RawEventGroup>& baseGroup) = 0;
+    virtual void getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup) = 0;
 };
 
 

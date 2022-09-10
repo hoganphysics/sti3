@@ -35,6 +35,8 @@ public:
     std::vector<EngineParsingMessage> messages;
     std::shared_ptr<StackTraceResult> stackTraceResult;
 
+    static void deleteFiles(ParseResult& parsedResult);
+
     template<class Archive>
     void serialize(Archive& archive);
 

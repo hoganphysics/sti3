@@ -20,8 +20,8 @@
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineJob.h"
 #include "LocalShot.h"
-#include "RawEventGroup.h"
-#include "Shot.h"
+#include <sti/engine/RawEventGroup.h>
+#include <sti/engine/Shot.h>
 
 #include <set>
 #include <vector>
@@ -208,7 +208,7 @@ ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
     std::shared_ptr<STI::Engine::RawEventGroup> eventGroup;
 
     if (shot != 0) {
-        shot->getBaseEventGroup(eventGroup);
+        shot->getRootEventGroup(eventGroup);
         // shot->getEvents(events);  
         parseID.shotConfig = shot->getShotConfig();      
     }

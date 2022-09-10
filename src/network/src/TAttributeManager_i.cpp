@@ -34,7 +34,8 @@ char* TAttributeManager_i::getValue(const char* key)
 		value = attributeManager->getValue(convert<CORBA::String_member, std::string>(key));
 	}
 
-    return convert<std::string, CORBA::String_member>(value);
+    CORBA::String_var tValue = convert<std::string, CORBA::String_member>(value);
+	return tValue._retn();
 }
 
 ::CORBA::Boolean TAttributeManager_i::setValue(const char* key, const char* value)

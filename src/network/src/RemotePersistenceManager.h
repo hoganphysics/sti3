@@ -37,8 +37,9 @@ public:
 
 private:
 
-	mutable std::mutex persistenceMutex;
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
+	mutable std::mutex persistenceMutex;
 };
 
 

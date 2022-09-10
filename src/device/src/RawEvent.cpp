@@ -27,7 +27,7 @@
 #include <sti/utils/utils.h>
 
 #include "RawStackTrace.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "StackTraceData.h"
 
 #include <sstream>

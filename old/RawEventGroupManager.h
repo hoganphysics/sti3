@@ -4,7 +4,7 @@
 
 #include <sti/utils/VectorMap.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <string>
 #include <vector>

@@ -12,6 +12,8 @@ using STI::Network::convert;
 using STI::Engine::ResultsCollector;
 using STI::TNetwork::TResultsCollector_var;
 using STI::TNetwork::TFileHolder_var;
+using STI::TNetwork::TFileHolder_ptr;
+
 using STI::Utils::FileHolder;
 using STI::TNetwork::TFileHolderSeq;
 using STI::Network::NetworkResultsCollector;
@@ -41,8 +43,11 @@ template<>
 bool STI::Network::convert<TFileHolder_var, std::shared_ptr<FileHolder>>(
         const TFileHolder_var& tFileHolder, std::shared_ptr<FileHolder>& fileHolder)
 {
-    fileHolder = std::make_shared<RemoteFileHolder>(tFileHolder);
-    return (fileHolder != 0);
+    if (!CORBA::is_nil(tFileHolder)) {
+        fileHolder = std::make_shared<RemoteFileHolder>(tFileHolder);
+        return (fileHolder != 0);
+    }
+    return false;
 }
 
 template<>
@@ -61,8 +66,10 @@ bool STI::Network::convert<std::vector<std::shared_ptr<FileHolder>>, TFileHolder
 {
     tFiles.length(static_cast<CORBA::ULong>(files.size()));
 
+    TFileHolder_var tFileHolder;
+
     for(unsigned i = 0; i < files.size(); ++i) {
-        TFileHolder_var tFileHolder;
+
         auto& file = files.at(i);
 
         if (file != 0 && convert<std::shared_ptr<FileHolder>, TFileHolder_var>(file, tFileHolder)) {
@@ -76,9 +83,7 @@ template<>
 bool STI::Network::convert<TFileHolderSeq, std::vector<std::shared_ptr<FileHolder>>>(
         const TFileHolderSeq& tFiles, std::vector<std::shared_ptr<FileHolder>>& files)
 {
-    unsigned len = tFiles.length();
-
-    for(unsigned i = 0; i < len; ++i) {
+    for(unsigned i = 0; i < tFiles.length(); ++i) {
 
         std::shared_ptr<FileHolder> fileHolder;
 

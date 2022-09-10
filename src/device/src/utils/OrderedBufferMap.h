@@ -132,6 +132,8 @@ bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)
 {
 	std::unique_lock<std::mutex> writeLock(dequeMutex);
 
+	if (contains(key)) return false;
+
 	bool success;
 	buffer_keys.push_front(key);		//add new key to front
 	
@@ -150,6 +152,8 @@ template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::addAndRemove(const Key& key, T newItem, T& oldItem)
 {
 	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	if (contains(key)) return false;
 
 	bool oldItemValid = false;
 

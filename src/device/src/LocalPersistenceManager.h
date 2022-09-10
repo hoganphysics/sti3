@@ -1,5 +1,3 @@
-
-
 #ifndef STI_DEVICE_LOCALPERSISTENCEMANAGER_H
 #define STI_DEVICE_LOCALPERSISTENCEMANAGER_H
 
@@ -44,23 +42,11 @@ public:
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 
-    //bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket);
-    //std::shared_ptr<STI::Engine::ResultsCollector> createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine);
-
-    // void saveShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector);
-
-    // void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory) {}
-
-    // void saveShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector) {}
-    // void copyShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector) {}
-
     void addPersistenceDelegate(const DeviceID& id, const std::shared_ptr<PersistenceManager>& manager, unsigned priority);
     void removePersistenceDelegate(const DeviceID& id);
 
     void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
     bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
-
-    // std::string getBaseLocalPath();
 
     static std::string makeBasePath(const std::string& rootPath, const DeviceID& deviceID);
 
@@ -74,13 +60,13 @@ private:
 
     bool addToBuffer(const std::shared_ptr<STI::Engine::FullShotResult>& shotResult);
 
-        //std::shared_ptr<STI::Engine::ResultsDocumenter> resultsDocumenter;
-        
+    void transferParseResult(std::shared_ptr<STI::Engine::ParseResult> parseResult, const std::string& timingPath);
+
+
     std::shared_ptr<STI::Engine::ShotRepository> defaultRepository;
     std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
     std::shared_ptr<STI::Engine::ShotRepository> transientRepository;
 
-//        std::shared_ptr<STI::Engine::ShotRepository> bufferRepository;  //for temporary storage
     STI::Utils::OrderedBufferMap<STI::Engine::ShotID, std::shared_ptr<STI::Engine::FullShotResult>> resultBuffer;     //for temporary storage, before serializing to default repo or saving
 
     STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;

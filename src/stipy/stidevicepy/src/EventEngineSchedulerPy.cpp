@@ -2,10 +2,11 @@
 #include "EventEngineSchedulerPy.h"
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotID.h>
-// #include "LocalShotPy.h"
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/EngineJobID.h>
 
+#include <iostream>
+#include <sti/engine/Shot.h>
 
 using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::EventEngineScheduler;
@@ -30,6 +31,7 @@ ParseID EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Engine::Shot>& 
     ParseID pid;
 
     if (engineScheduler != 0) {
+        std::cout << "EventEngineSchedulerPy::parse " << shot->getShotConfig().print() << std::endl;
         pid = engineScheduler->parse(shot);
     }
     return pid;

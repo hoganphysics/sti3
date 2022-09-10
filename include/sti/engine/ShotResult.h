@@ -40,7 +40,7 @@ public:
     //std::vector<STI::Device::DeviceID> missingDependencies; 
     ShotResultRecord shotResultRecord;
 
-    static void deleteShotFiles(ShotResult& shot);
+    static void deleteFiles(ShotResult& shot);
 
     template<class Archive>
     void serialize(Archive& archive);

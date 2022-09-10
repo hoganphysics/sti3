@@ -3,7 +3,7 @@
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEvent.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "RawStackTrace.h"
 
 #include <vector>
@@ -48,21 +48,9 @@ void init_STIPyShot(py::module& m)
                         const RawStackTrace&, const std::string&>(&STIPyShot::meas), 
                         py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"))
 
-        .def("group", py::overload_cast<>(&STIPyShot::group))
+        .def("rootgroup", py::overload_cast<>(&STIPyShot::group))
         .def("group", py::overload_cast<const std::string&>(&STIPyShot::group), py::arg("fullName"))
 
-        .def("getEvents", 
-            [](STIPyShot& self) {
-                auto evts = self.getEvents();
-
-                if (evts != 0) {
-                    return *(evts);
-                }
-
-                STI::Engine::RawEventVector emptyEvents;
-                return emptyEvents;
-            }
-        )
         .def("getVars", &STI::Python::STIPyShot::getVars)
         ;
 

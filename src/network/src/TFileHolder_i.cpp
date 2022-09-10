@@ -26,7 +26,9 @@ char* TFileHolder_i::getFilename()
     if (localFileHolder != 0) {
 		result = localFileHolder->getFilename();
 	}
-    return convert<std::string, CORBA::String_member>(result);
+
+    CORBA::String_var tResult = convert<std::string, CORBA::String_member>(result);
+    return tResult._retn();
 }
 
 ::CORBA::Boolean TFileHolder_i::exists()
@@ -46,7 +48,9 @@ char* TFileHolder_i::md5Checksum()
     if (localFileHolder != 0) {
 		result = localFileHolder->md5Checksum();
 	}
-    return convert<std::string, CORBA::String_member>(result);
+
+    CORBA::String_var tResult = convert<std::string, CORBA::String_member>(result);
+    return tResult._retn();
 }
 
 ::CORBA::Boolean TFileHolder_i::transferFile(::STI::TNetwork::TFileHolder_ptr destination)

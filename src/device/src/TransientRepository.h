@@ -24,10 +24,10 @@ public:
     ResultsPaths preparePaths(const ShotID& sid);
 
     bool findShotResult(const ShotID& sid);
-    bool findParseResult(const ParseID& sid);
+    bool findParseResult(const ParseID& pid);
 
     bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);
-    bool getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult);
+    bool getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& parseResult);
     
     bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
 
@@ -36,6 +36,8 @@ public:
 private:
 
     std::string tempResultsPath;
+
+    STI::Utils::OrderedBufferMap<STI::Engine::ParseID, std::shared_ptr<STI::Engine::ParseResult>> parseBuffer;
     STI::Utils::OrderedBufferMap<STI::Engine::ShotID, std::shared_ptr<STI::Engine::FullShotResult>> resultBuffer;
 
 };

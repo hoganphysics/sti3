@@ -8,7 +8,7 @@
 #include <sti/engine/ShotID.h>
 
 #include "StackTraceData.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/utils/LocalFileHolder.h>
 
@@ -16,7 +16,6 @@
 #include "LocalShot.h"
 
 #include <chrono>
-#include <iostream>
 
 using STI::Python::STIPyServer;
 using STI::Python::STIPyShot;
@@ -26,25 +25,16 @@ using STI::Python::PyResultTicket;
 using STI::Engine::StackTraceData;
 
 
-// STIPyServer::STIPyServer()
-// {
-// }
 
 STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
                          const std::shared_ptr<STIPyLibDevice>& libDevice, 
                          const STI::Device::DeviceID& serverID)
 : libDeviceHub(libDeviceHub), libDevice(libDevice), serverID(serverID)
 {
-//    std::shared_ptr<STI::Device::Device> server;
-//    libDevice->getServer(server);
-
 }
 
-//temp
 STIPyServer::~STIPyServer()
 {
-    std::cout << "~STIPyServer()" << std::endl;
-//    std::cout << "STIPyServer: hub shutdown" << std::endl;
 //    libDeviceHub->shutdown();
 }
 
@@ -130,18 +120,12 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
     bool success = false;
     STI::Engine::ParseID pid;
 
-    std::cout << "parse" << std::endl;
-
     if (getScheduler(scheduler) && pyShot != 0) {
         pid = scheduler->parse(pyShot->getShot());
         success = true;
     }
-
-    std::cout << "parse = " << success << std::endl;
     
     auto ticket = libDevice->makeParseTicket(pid);
-
-    std::cout << "parse ticket " << (ticket->getStatus() == STI::Engine::Ticket::TicketStatus::Canceled) << std::endl;
 
     if (!success && ticket != 0) {
         ticket->cancel();
@@ -152,9 +136,7 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
 
 std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
 {
-    STI::Engine::ParseID pid;
-    // pid.parseTimestamp.timestamp = 1.1;
-    
+    STI::Engine::ParseID pid;    
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
 }
@@ -162,8 +144,6 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
 std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::vector<PyParseTicket>& tickets)
 {
     STI::Engine::ParseID pid;
-    // pid.parseTimestamp.timestamp = 1.1;
-    
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
 }

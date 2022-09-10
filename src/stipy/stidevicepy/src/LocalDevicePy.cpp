@@ -68,8 +68,6 @@ void LocalDevicePy::stopRW()
 //Can be overridden in python
 bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
 {
-    std::cout << "LocalDevicePy::writeChannel" << std::endl;
-
     bool result = false;
     auto mValue = MixedValuePy(value);
 

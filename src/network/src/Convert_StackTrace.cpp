@@ -73,12 +73,8 @@ bool STI::Network::convert<TStackFrameSeq, StackTrace>(const TStackFrameSeq& tSt
 template<>
 bool STI::Network::convert<StackTrace, TStackFrameSeq>(const StackTrace& stackFrame, TStackFrameSeq& tStackFrameSeq)
 {
-    convert<StackFrame, TStackFrame>(stackFrame.getFrames(), tStackFrameSeq);
-    
-    return true;
+    return convert<StackFrame, TStackFrame>(stackFrame.getFrames(), tStackFrameSeq);
 }
-
-
 
 
 //StackTraceResult
@@ -109,7 +105,6 @@ bool STI::Network::convert<std::shared_ptr<StackTraceResult>, TStackTraceResult>
 }
 
 
-
 //StackTraceData
 template<>
 bool STI::Network::convert<TStackTraceData, std::shared_ptr<StackTraceData>>(
@@ -136,8 +131,7 @@ bool STI::Network::convert<std::shared_ptr<StackTraceData>, TStackTraceData>(
         stackTraceData->getFunctionNames(), tStackTraceData.functionNames);
     convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(
         stackTraceData->getTimingFiles(), tStackTraceData.timingFiles);
-    
+
     return true;
 }
-
 

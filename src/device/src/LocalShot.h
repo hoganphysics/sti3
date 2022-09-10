@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_LOCALSHOT_H
 #define STI_ENGINE_LOCALSHOT_H
 
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include <sti/engine/ShotConfig.h>
 
 #include <memory>
@@ -25,13 +25,13 @@ public:
     virtual ~LocalShot();
 
     const ShotConfig& getShotConfig() const;
-    void getBaseEventGroup(std::shared_ptr<RawEventGroup>& baseGroup);
-    void setBaseEventGroup(const std::shared_ptr<RawEventGroup>& baseGroup);
+    void getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup);
+    void setRootEventGroup(const std::shared_ptr<RawEventGroup>& rootGroup);
 
 private:
 
     ShotConfig shotConfig;
-    std::shared_ptr<RawEventGroup> baseEventGroup;
+    std::shared_ptr<RawEventGroup> rootEventGroup;
 };
 
 

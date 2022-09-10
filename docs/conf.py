@@ -72,3 +72,4 @@ html_static_path = []
 
 # Tabs
 sphinx_tabs_valid_builders = ['linkcheck']
+sphinx_tabs_disable_tab_closing = True

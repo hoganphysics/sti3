@@ -1,7 +1,7 @@
 
 #include <sti/engine/ParsedVar.h>
 #include "StackTraceData.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>

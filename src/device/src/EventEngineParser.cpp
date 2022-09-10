@@ -15,7 +15,7 @@
 #include "EventConflictException.h"
 #include "EventParsingException.h"
 #include "LocalEventEngine.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <set>
 

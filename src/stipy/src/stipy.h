@@ -4,7 +4,7 @@
 
 #include <sti/engine/StackTrace.h>
 #include <sti/engine/RawEventTarget.h>
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/HubID.h>
 #include "RawStackTrace.h"

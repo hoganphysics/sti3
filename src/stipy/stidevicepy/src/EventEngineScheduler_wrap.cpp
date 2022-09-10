@@ -1,4 +1,3 @@
-
 #include "EventEngineSchedulerPy.h"
 
 #include <sti/engine/ShotID.h>
@@ -6,7 +5,7 @@
 
 #include <sti/engine/RawEvent.h>
 #include "LocalShot.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/engine/EngineJobID.h>
 
@@ -17,7 +16,6 @@
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 
-
 namespace py = pybind11;
 
 using STI::Python::EventEngineSchedulerPy;
@@ -26,7 +24,6 @@ using STI::Engine::TimeStamp;
 using STI::Engine::ShotConfig;
 using STI::Engine::LocalShot;
 using STI::Engine::RawEvent;
-// using STI::Python::LocalShotPy;
 
 
 void init_EventEngineScheduler(py::module& m)
@@ -38,17 +35,17 @@ void init_EventEngineScheduler(py::module& m)
         .def("getShotConfig", &LocalShot::getShotConfig)
         .def("addEvent",
             [](LocalShot& self, RawEvent& evt) {
-                std::shared_ptr<STI::Engine::RawEventGroup> baseGroup;
-                self.getBaseEventGroup(baseGroup);
-                if (baseGroup != 0) {
-                    baseGroup->addEvent(evt);
+                std::shared_ptr<STI::Engine::RawEventGroup> rootGroup;
+                self.getRootEventGroup(rootGroup);
+                if (rootGroup != 0) {
+                    rootGroup->addEvent(evt);
                 }
             })
-        .def("getBaseEventGroup",
+        .def("getRootEventGroup",
             [](LocalShot& self) {
-                std::shared_ptr<STI::Engine::RawEventGroup> baseGroup;
-                self.getBaseEventGroup(baseGroup);
-                return baseGroup;
+                std::shared_ptr<STI::Engine::RawEventGroup> rootGroup;
+                self.getRootEventGroup(rootGroup);
+                return rootGroup;
             })
         .def("__repr__",
             [](const LocalShot& self) {

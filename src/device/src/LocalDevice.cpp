@@ -22,7 +22,7 @@
 #include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
 #include "LocalShot.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "ShotRepository.h"
 
 #include <filesystem>

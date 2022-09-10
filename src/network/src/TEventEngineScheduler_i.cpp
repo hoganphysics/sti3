@@ -19,7 +19,7 @@
 #include "NetworkConvert.h"
 #include "ORBManager.h"
 #include "RemoteResultsCollector.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 
 #include <memory>
 

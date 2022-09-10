@@ -6,7 +6,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 #include "MixedValuePy.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "RawStackTrace.h"
 
 #include <sstream>

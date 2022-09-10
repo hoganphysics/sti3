@@ -20,7 +20,7 @@
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngine.h"
 #include "MessageGenerator.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include "utils/OrderedBufferMap.h"
 
 #include <list>

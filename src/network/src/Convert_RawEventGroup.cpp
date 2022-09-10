@@ -6,7 +6,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 using STI::Engine::RawEventGroup;
 using STI::TNetwork::TRawEventGroup;

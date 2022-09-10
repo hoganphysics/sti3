@@ -10,7 +10,7 @@
 #include <sti/utils/FileHolderFactory.h>
 
 #include "LocalShot.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "RawStackTrace.h"
 
 #include <vector>
@@ -69,7 +69,7 @@ public:
 
 private:
 
-    std::shared_ptr<STI::Engine::RawEventGroup> baseEventGroup;
+    std::shared_ptr<STI::Engine::RawEventGroup> rootEventGroup;
     std::shared_ptr<STI::Engine::Shot> shot;
 
 };

@@ -253,6 +253,7 @@ target_include_directories(stinetwork PRIVATE
     ${WORKING_DIRECTORY}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
+    ${STI_BASE_DIR}/include/sti/extern
     # ${WORKING_DIRECTORY}/fwd
     # ${WORKING_DIRECTORY}/utils
 )

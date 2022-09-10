@@ -25,7 +25,6 @@ public:
 
 private:
 
-//    ::STI::TNetwork::TTriggerCallback_var _tTrigger; //remote reference
 	mutable std::mutex cbMutex;
 };
 
@@ -33,6 +32,4 @@ private:
 } //Network
 } //STI
 
-
 #endif
-

@@ -9,7 +9,7 @@
 #include <sti/engine/RawEvent.h>
 
 #include "EventEngineDependencyTree.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 
 #include <set>
 #include <memory>

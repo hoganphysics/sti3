@@ -1,7 +1,7 @@
 #ifndef STI_DEVICE_JSHOT_H
 #define STI_DEVICE_JSHOT_H
 
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include <sti/fwd/RawEvent_fwd.h>
 
 #include <memory>

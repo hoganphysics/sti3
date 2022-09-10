@@ -4,11 +4,11 @@
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/fwd/MixedValue_fwd.h>
 #include <sti/device/DeviceID.h>
+#include <sti/engine/ParsedTag.h>
 #include <sti/engine/ParsedVar.h>
 #include <sti/utils/VectorMap.h>
 #include <sti/utils/MetaData.h>
 
-#include "ParsedTag.h"
 
 #include <string>
 #include <memory>
@@ -33,6 +33,15 @@ class RawStackTrace;
 class StackTraceData;
 
 
+struct RawEventGroupStats
+{
+    unsigned vars;
+    unsigned tags;
+    unsigned events;
+    unsigned subgroups;
+};
+
+
 class RawEventGroup
 {
 
@@ -47,6 +56,8 @@ public:
     std::string getParentGroupName() const;
     double startTime() const;
     double endTime() const;
+
+    RawEventGroupStats getStats() const;
 
     void setName(const std::string& newName);
 
@@ -65,6 +76,9 @@ public:
 
     void addEvent(const RawEventTarget& target, double time, const STI::Engine::ParsedVar& var, 
                     const RawEventType& type, const RawStackTrace& stackTrace);
+
+    void addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
+                    const RawEventType& type);
 
     void addEvents(const RawEventVector& newEvents);
 
@@ -124,6 +138,7 @@ public:
 
 private:
 
+    void _addEvent(RawEvent& evt);
     void refreshMinMax();
     
     std::string name;   //name of group relative to parent

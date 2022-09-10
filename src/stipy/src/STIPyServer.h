@@ -91,7 +91,6 @@ class STIPyServer
 {
 public:
 
-    // STIPyServer();//tmp
     STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
                 const std::shared_ptr<STIPyLibDevice>& libDevice, 
                 const STI::Device::DeviceID& serverID);

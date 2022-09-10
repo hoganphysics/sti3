@@ -23,7 +23,6 @@ CEREAL_REGISTER_TYPE(LocalFileHolder);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(FileHolder, LocalFileHolder)
 
 
-
 std::string digestToString(unsigned char (&digest)[MD5_DIGEST_LENGTH])
 {
     std::stringstream ss;

@@ -10,8 +10,6 @@
 
 #include <memory>
 
-#include <iostream>
-
 using STI::Network::NetworkDeviceWrapper;
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::Network::DeviceHub;
@@ -168,7 +166,6 @@ bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_
 
 	if (networkDeviceHubWrapper) {		//check dynamic_pointer_cast
 
-		//std::cout << "NetworkDeviceHubWrapper::getTDeviceHubReference()" << std::endl;
 		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
 		success = true;
 	}

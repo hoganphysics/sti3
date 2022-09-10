@@ -11,6 +11,7 @@
 #include <mutex>
 #include <set>
 
+
 namespace STI
 {
 namespace Network
@@ -59,7 +60,6 @@ private:
     mutable std::mutex schedulerMutex;
 
 };
-
 
 
 } //Network

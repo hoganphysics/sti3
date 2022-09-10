@@ -26,14 +26,8 @@ ShotResult::ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Devic
     }
 }
 
-void ShotResult::deleteShotFiles(ShotResult& shot)
+void ShotResult::deleteFiles(ShotResult& shot)
 {
-//     for (auto& file : shot.timingFiles) {
-//         if (file != 0) {
-//             file->deleteFile();
-//         }
-//     }
-
     if (shot.measurements != 0) {
         for (auto& meas : *(shot.measurements)) {
             if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
@@ -49,12 +43,8 @@ void ShotResult::serialize(Archive& archive)
     archive( 
         cereal::make_nvp("ShotID", sid),
         cereal::make_nvp("playTime", playTime),
-        // cereal::make_nvp("parseResult", parseResult),
-        // cereal::make_nvp("engineParseResult", engineParseResult),
         cereal::make_nvp("Attributes", attributes), 
         cereal::make_nvp("Measurements", measurements),
-        // cereal::make_nvp("TimingFiles", timingFiles),
-        // cereal::make_nvp("ParsedEvents", parsedEvents),
         cereal::make_nvp("ShotResultRecord", shotResultRecord)
         );
 }

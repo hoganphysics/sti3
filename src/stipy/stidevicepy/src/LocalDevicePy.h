@@ -1,4 +1,3 @@
-
 #ifndef STI_PYTHON_LOCALDEVICEPY_H
 #define STI_PYTHON_LOCALDEVICEPY_H
 
@@ -9,7 +8,7 @@
 #include <memory>
 #include <pybind11/pybind11.h>
 
-#include <iostream>
+
 
 namespace STI
 {
@@ -69,13 +68,7 @@ public:
     }
 
 
-    // void addAttribute(const std::string& key, const std::string& initialValue, const pybind11::list& allowedValues)
-    // {
-    //     device->addAttribute(key, initialValue);
-    // }
-
 private:
-
 
     class LocalDeviceDelegate : public STI::Device::LocalDevice
     {
@@ -90,11 +83,7 @@ private:
         {
             STI::Python::MixedValuePy valuePy(value);
 
-            //std::cout << "LocalDeviceDelegate::writeChannel" << std::endl;
-
             bool success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
-
-            //std::cout << "LocalDeviceDelegate::writeChannel after call" << std::endl;
 
             return success;
         }
@@ -136,14 +125,11 @@ public:
 
     bool writeChannel(short channel, const pybind11::object& value) override
     {
-        //pybind11::gil_scoped_acquire acquire;
         pybind11::gil_scoped_release release;
-        //std::cout << "LocalDevicePyTrampoline::writeChannel" << std::endl;
-//        return true;
 
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
-            LocalDevicePy,        /* Parent class */
+            LocalDevicePy,         /* Parent class */
             writeChannel,          /* Name of function in C++ (must match Python name) */
             channel, value         /* Argument(s) */
         );
@@ -155,7 +141,7 @@ public:
 
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
-            LocalDevicePy,       /* Parent class */
+            LocalDevicePy,        /* Parent class */
             readChannel,          /* Name of function in C++ (must match Python name) */
             channel, value        /* Argument(s) */
         );
@@ -166,10 +152,10 @@ public:
         pybind11::object dummy = pybind11::cast(synchedEvents, pybind11::return_value_policy::reference);
 
         PYBIND11_OVERRIDE(
-            void,     /* Return type */
-            LocalDevicePy,       /* Parent class */
-            parseEvents,          /* Name of function in C++ (must match Python name) */
-            events, synchedEvents        /* Argument(s) */
+            void,                   /* Return type */
+            LocalDevicePy,          /* Parent class */
+            parseEvents,            /* Name of function in C++ (must match Python name) */
+            events, synchedEvents   /* Argument(s) */
         );
     }
 
