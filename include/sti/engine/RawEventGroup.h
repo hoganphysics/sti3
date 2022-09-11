@@ -3,7 +3,6 @@
 
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/fwd/MixedValue_fwd.h>
-#include <sti/device/DeviceID.h>
 #include <sti/engine/ParsedTag.h>
 #include <sti/engine/ParsedVar.h>
 #include <sti/utils/VectorMap.h>

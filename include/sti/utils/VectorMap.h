@@ -84,7 +84,7 @@ STI::Utils::VectorMap<ID, T>::~VectorMap()
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::exists(const ID& name) const
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     return _exists(name);
 }
@@ -99,7 +99,7 @@ bool STI::Utils::VectorMap<ID, T>::_exists(const ID& name) const
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::getIndex(const ID& name, unsigned& index) const
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     // if (!exists(name)) return false;
     auto it = indices.find(name);
@@ -111,7 +111,7 @@ bool STI::Utils::VectorMap<ID, T>::getIndex(const ID& name, unsigned& index) con
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::get(const ID& name, T& item) const
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     auto it = indices.find(name);
 
@@ -126,7 +126,7 @@ bool STI::Utils::VectorMap<ID, T>::get(const ID& name, T& item) const
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::at(unsigned index, T& item) const
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
     return _at(index, item);
 }
 
@@ -143,7 +143,7 @@ bool STI::Utils::VectorMap<ID, T>::_at(unsigned index, T& item) const
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::prepend(const ID& name, const T& item)
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     if (_exists(name)) return;   //duplicate
 
@@ -158,7 +158,7 @@ void STI::Utils::VectorMap<ID, T>::prepend(const ID& name, const T& item)
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::rename(const ID& name, const ID& newName)
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     if (name == newName) return;
 
@@ -173,7 +173,7 @@ void STI::Utils::VectorMap<ID, T>::rename(const ID& name, const ID& newName)
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::replace(const ID& name, const T& item)
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     if (_exists(name)) {
         items.at(indices[name]) = item;
@@ -186,7 +186,7 @@ void STI::Utils::VectorMap<ID, T>::replace(const ID& name, const T& item)
 template<typename ID, typename T>
 unsigned STI::Utils::VectorMap<ID, T>::add(const ID& name, const T& item)
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
     return _add(name, item);
 }
 
@@ -209,7 +209,7 @@ unsigned STI::Utils::VectorMap<ID, T>::_add(const ID& name, const T& item)
 template<typename ID, typename T>
 bool STI::Utils::VectorMap<ID, T>::merge(VectorMap<ID, T>& other)
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     for (auto& n : other.indices) {
         if (_exists(n.first)) return false;
@@ -255,7 +255,7 @@ const std::map<ID, unsigned>& STI::Utils::VectorMap<ID, T>::indexMap() const
 template<typename ID, typename T>
 void STI::Utils::VectorMap<ID, T>::clear()
 {
-    std::unique_lock itemLock(itemMutex);
+    std::unique_lock<std::mutex> itemLock(itemMutex);
 
     indices.clear();
     items.clear();

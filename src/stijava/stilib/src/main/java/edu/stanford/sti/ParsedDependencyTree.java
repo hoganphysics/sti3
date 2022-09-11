@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class JShot {
+public class ParsedDependencyTree {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected JShot(long cPtr, boolean cMemoryOwn) {
+  protected ParsedDependencyTree(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(JShot obj) {
+  protected static long getCPtr(ParsedDependencyTree obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,19 +34,26 @@ public class JShot {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_JShot(swigCPtr);
+        stiJNI.delete_ParsedDependencyTree(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public ShotConfig getShotConfig() {
-    return new ShotConfig(stiJNI.JShot_getShotConfig(swigCPtr, this), false);
+  public ParsedDependencyTree() {
+    this(stiJNI.new_ParsedDependencyTree__SWIG_0(), true);
   }
 
-  public RawEventGroup getRootEventGroup() {
-    long cPtr = stiJNI.JShot_getRootEventGroup(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
+  public ParsedDependencyTree(EventEngineDependencyTree tree) {
+    this(stiJNI.new_ParsedDependencyTree__SWIG_1(EventEngineDependencyTree.getCPtr(tree), tree), true);
+  }
+
+  public void getNodes(DeviceIDvector nodes) {
+    stiJNI.ParsedDependencyTree_getNodes(swigCPtr, this, DeviceIDvector.getCPtr(nodes), nodes);
+  }
+
+  public void getDependedentNodes(DeviceID node, DeviceIDvector depNodes) {
+    stiJNI.ParsedDependencyTree_getDependedentNodes(swigCPtr, this, DeviceID.getCPtr(node), node, DeviceIDvector.getCPtr(depNodes), depNodes);
   }
 
 }

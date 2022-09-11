@@ -15,7 +15,8 @@ JNetworkDeviceHub::JNetworkDeviceHub(const std::string& nameServiceAddress)
 
 JNetworkDeviceHub::JNetworkDeviceHub(const std::string& name, const std::string& address, unsigned short module, const std::string& nameServiceAddress)
 {
-    networkHub = std::make_shared<NetworkDeviceHub>(name, address, module, nameServiceAddress);
+    HubID hubID(name, address, module);
+    networkHub = std::make_shared<NetworkDeviceHub>(hubID, nameServiceAddress);
 }
 
 JNetworkDeviceHub::~JNetworkDeviceHub()

@@ -44,8 +44,8 @@ public class Measurement {
     this(stiJNI.new_Measurement__SWIG_0(), true);
   }
 
-  public Measurement(double time, int channel, DeviceID device, UIntVector measurementGraphPath) {
-    this(stiJNI.new_Measurement__SWIG_1(time, channel, DeviceID.getCPtr(device), device, UIntVector.getCPtr(measurementGraphPath), measurementGraphPath), true);
+  public Measurement(double time, int channel, DeviceID device, UIntVector measurementGraphPath, String groupName) {
+    this(stiJNI.new_Measurement__SWIG_1(time, channel, DeviceID.getCPtr(device), device, UIntVector.getCPtr(measurementGraphPath), measurementGraphPath, groupName), true);
   }
 
   public Measurement(RawEvent sourceEvent) {
@@ -84,8 +84,16 @@ public class Measurement {
     return new DeviceID(stiJNI.Measurement_device(swigCPtr, this), false);
   }
 
+  public String groupName() {
+    return stiJNI.Measurement_groupName(swigCPtr, this);
+  }
+
   public UIntVector getMeasurementGraphPath() {
     return new UIntVector(stiJNI.Measurement_getMeasurementGraphPath(swigCPtr, this), false);
+  }
+
+  public RawEventID getEventID() {
+    return new RawEventID(stiJNI.Measurement_getEventID(swigCPtr, this), true);
   }
 
   public String print() {

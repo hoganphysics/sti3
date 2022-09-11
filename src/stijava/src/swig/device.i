@@ -61,24 +61,28 @@
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    #include <sti/engine/RawEvent.h>
-    using STI::Engine::RawEventType;
-    #include <sti/engine/StackTrace.h>
-    using STI::Engine::StackTrace;
-    #include <sti/utils/GraphPathLabel.h>
-    using STI::Utils::GraphPathLabel;
+    // #include <sti/engine/RawEventTargetChannel.h>
+    // using STI::Engine::RawEventTargetChannel;
+    // #include <sti/engine/RawEventTargetDevice.h>
+    // using STI::Engine::RawEventTargetDevice;
+    // #include <sti/engine/RawEventTarget.h>
+    // using STI::Engine::RawEventTarget;
+    // #include <sti/engine/RawEvent.h>
+    // using STI::Engine::RawEventType;
+    // #include <sti/utils/GraphPathLabel.h>
+    // using STI::Utils::GraphPathLabel;
 
-    #include <sti/engine/EngineParsingMessage.h>
-    using STI::Engine::EngineParsingMessage;
+    // #include <sti/engine/EngineParsingMessage.h>
+    // using STI::Engine::EngineParsingMessage;
 
-    #include <sti/utils/FileHolder.h>
-    using STI::Utils::FileHolder;
+    // #include <sti/utils/FileHolder.h>
+    // using STI::Utils::FileHolder;
 
-    #include <sti/utils/MixedValue.h>
+    // #include <sti/utils/MixedValue.h>
 
-    using STI::Utils::MixedValue;
-    using STI::Utils::MixedValueType;
-    using STI::Utils::MixedValueVector;
+    // using STI::Utils::MixedValue;
+    // using STI::Utils::MixedValueType;
+    // using STI::Utils::MixedValueVector;
 
     #include "JChannelManager.h"
     #include <sti/fwd/Channel_fwd.h>
@@ -153,17 +157,17 @@
 
 %shared_ptr(STI::Engine::JEventEngine);
 
-%shared_ptr(STI::Utils::FileHolder);
+// %shared_ptr(STI::Utils::FileHolder);
 
 ////////////////////////////////////
 
 
 
 //DeviceID
-%rename(opEquals) operator==;
-%rename(opLess) operator<;
-%rename(opNotEquals) operator!=;
-%rename(opEvaluate) operator();
+// %rename(opEquals) operator==;
+// %rename(opLess) operator<;
+// %rename(opNotEquals) operator!=;
+// %rename(opEvaluate) operator();
 %ignore DeviceIDBase;
 %include "sti/device/DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
@@ -174,15 +178,17 @@
 //EngineID
 %include "sti/engine/EngineID.h"
 
-//RawEvent
-%include "sti/fwd/RawEvent_fwd.h"
-%template(UIntVector) std::vector< unsigned >;
-%include "sti/utils/GraphPathLabel.h"
-%rename(UIntVector) STI::Utils::GraphPathLabel;
-%include "sti/engine/StackTrace.h"
-%include "sti/engine/RawEvent.h"
-%template(RawEventVector) std::vector< STI::Engine::RawEvent >;
-%shared_ptr( std::vector< STI::Engine::RawEvent > );
+// //RawEvent
+// %include "sti/fwd/RawEvent_fwd.h"
+// // %template(UIntVector) std::vector< unsigned >;
+// // %include "sti/utils/GraphPathLabel.h"
+// // %rename(UIntVector) STI::Utils::GraphPathLabel;
+// %include "sti/engine/RawEventTargetChannel.h"
+// %include "sti/engine/RawEventTargetDevice.h"
+// %include "sti/engine/RawEventTarget.h"
+// %include "sti/engine/RawEvent.h"
+// %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
+// %shared_ptr( std::vector< STI::Engine::RawEvent > );
 
 
 
@@ -334,21 +340,21 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/EngineJobID.h"
 
 
-//FileHolder
-%ignore STI::Utils::FileHolder::write(const char* buffer, unsigned length);
-%ignore STI::Utils::FileHolder::openFile();
-%ignore STI::Utils::FileHolder::closeFile();
-%include "sti/utils/FileHolder.h"
+// //FileHolder
+// %ignore STI::Utils::FileHolder::write(const char* buffer, unsigned length);
+// %ignore STI::Utils::FileHolder::openFile();
+// %ignore STI::Utils::FileHolder::closeFile();
+// %include "sti/utils/FileHolder.h"
 
 
 
-//MixedValue
-%warnfilter(516) STI::Utils::MixedValue::setValue;
-%include "sti/fwd/MixedValue_fwd.h"
-%include "sti/utils/MixedValue.h"
-%template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
-%include "sti/utils/MixedValue.h"
-%rename(MixedValueVec) STI::Utils::MixedValueVector;
+// //MixedValue
+// %warnfilter(516) STI::Utils::MixedValue::setValue;
+// %include "sti/fwd/MixedValue_fwd.h"
+// %include "sti/utils/MixedValue.h"
+// %template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
+// %include "sti/utils/MixedValue.h"
+// %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
 
 
@@ -370,9 +376,9 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %ignore STI::Engine::JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr< STI::Engine::EventEngineScheduler >& scheduler);
 %include "JEventEngineScheduler.h"
 
-//EngineParsingMessage
-%include "sti/engine/EngineParsingMessage.h"
-%template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
+// //EngineParsingMessage
+// %include "sti/engine/EngineParsingMessage.h"
+// %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
 
 //ChannelUpdateMessage

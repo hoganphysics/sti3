@@ -22,11 +22,11 @@ public:
 	~JShot();
 
     const ShotConfig& getShotConfig() const;
-    std::shared_ptr<std::vector<STI::Engine::RawEvent>> getEvents();
+    std::shared_ptr<RawEventGroup> getRootEventGroup();
 
 private:
 
-    void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
+    void getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup);
 
     const ShotConfig& shotConfig;
     std::shared_ptr<STI::Engine::Shot> shot_;

@@ -84,22 +84,31 @@ public class EngineSchedulerMessage extends DeviceMessage {
     return (cPtr == 0) ? null : new EngineJobID(cPtr, false);
   }
 
-  public void setHandledEvents(RawEventVector value) {
-    stiJNI.EngineSchedulerMessage_handledEvents_set(swigCPtr, this, RawEventVector.getCPtr(value), value);
+  public void setHandledEvents(RawEventGroup value) {
+    stiJNI.EngineSchedulerMessage_handledEvents_set(swigCPtr, this, RawEventGroup.getCPtr(value), value);
   }
 
-  public RawEventVector getHandledEvents() {
+  public RawEventGroup getHandledEvents() {
     long cPtr = stiJNI.EngineSchedulerMessage_handledEvents_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
+    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
   }
 
-  public void setUnhandledEvents(RawEventVector value) {
-    stiJNI.EngineSchedulerMessage_unhandledEvents_set(swigCPtr, this, RawEventVector.getCPtr(value), value);
+  public void setUnhandledEvents(RawEventGroup value) {
+    stiJNI.EngineSchedulerMessage_unhandledEvents_set(swigCPtr, this, RawEventGroup.getCPtr(value), value);
   }
 
-  public RawEventVector getUnhandledEvents() {
+  public RawEventGroup getUnhandledEvents() {
     long cPtr = stiJNI.EngineSchedulerMessage_unhandledEvents_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
+    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
+  }
+
+  public void setUpstreamPartnerEvents(RawEventGroup value) {
+    stiJNI.EngineSchedulerMessage_upstreamPartnerEvents_set(swigCPtr, this, RawEventGroup.getCPtr(value), value);
+  }
+
+  public RawEventGroup getUpstreamPartnerEvents() {
+    long cPtr = stiJNI.EngineSchedulerMessage_upstreamPartnerEvents_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
   }
 
   public void setMessages(EngineParserMessageVector value) {

@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class EventStackTrace {
+public class StackTrace {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  protected EventStackTrace(long cPtr, boolean cMemoryOwn) {
+  protected StackTrace(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(EventStackTrace obj) {
+  protected static long getCPtr(StackTrace obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -30,30 +30,26 @@ public class EventStackTrace {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_EventStackTrace(swigCPtr);
+        stiJNI.delete_StackTrace(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public String file() {
-    return stiJNI.EventStackTrace_file(swigCPtr, this);
+  public StackTrace() {
+    this(stiJNI.new_StackTrace(), true);
   }
 
-  public int line() {
-    return stiJNI.EventStackTrace_line(swigCPtr, this);
+  public void appendFrame(long file, long line, long func) {
+    stiJNI.StackTrace_appendFrame__SWIG_0(swigCPtr, this, file, line, func);
   }
 
-  public String print(String indent) {
-    return stiJNI.EventStackTrace_print__SWIG_0(swigCPtr, this, indent);
+  public void appendFrame(StackFrame frame) {
+    stiJNI.StackTrace_appendFrame__SWIG_1(swigCPtr, this, StackFrame.getCPtr(frame), frame);
   }
 
-  public String print() {
-    return stiJNI.EventStackTrace_print__SWIG_1(swigCPtr, this);
-  }
-
-  public EventStackTrace() {
-    this(stiJNI.new_EventStackTrace(), true);
+  public StackFrameVector getFrames() {
+    return new StackFrameVector(stiJNI.StackTrace_getFrames(swigCPtr, this), true);
   }
 
 }

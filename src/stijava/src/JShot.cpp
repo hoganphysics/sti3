@@ -1,10 +1,12 @@
-
 #include "JShot.h"
+
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ShotConfig.h>
 
 using STI::Engine::JShot;
 using STI::Engine::ShotConfig;
+using STI::Engine::RawEventGroup;
 
 
 JShot::JShot(std::shared_ptr<STI::Engine::Shot>& shot)
@@ -21,18 +23,25 @@ const ShotConfig& JShot::getShotConfig() const
     return shotConfig;
 }
 
-std::shared_ptr<std::vector<STI::Engine::RawEvent>> JShot::getEvents()
+std::shared_ptr<RawEventGroup> JShot::getRootEventGroup()
 {
     auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
 
-    if (shot_ != 0) {
-        shot_->getEvents(events);
+    std::shared_ptr<RawEventGroup> rootGroup;
+    getRootEventGroup(rootGroup);
+
+    if (rootGroup != 0) {
+        return rootGroup;
     }
-    return events;
+
+    rootGroup = std::make_shared<RawEventGroup>();
+    return rootGroup;
 }
 
-void JShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
+void JShot::getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup)
 {
-    evts = getEvents();
+    if (shot_ != 0) {
+        shot_->getRootEventGroup(rootGroup);
+    }
 }
 

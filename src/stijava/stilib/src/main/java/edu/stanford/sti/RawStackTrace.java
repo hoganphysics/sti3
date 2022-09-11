@@ -8,21 +8,17 @@
 
 package edu.stanford.sti;
 
-public class JShot {
+public class RawStackTrace {
   private transient long swigCPtr;
-  private transient boolean swigCMemOwn;
+  protected transient boolean swigCMemOwn;
 
-  protected JShot(long cPtr, boolean cMemoryOwn) {
+  protected RawStackTrace(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(JShot obj) {
+  protected static long getCPtr(RawStackTrace obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
-  }
-
-  protected void swigSetCMemOwn(boolean own) {
-    swigCMemOwn = own;
   }
 
   @SuppressWarnings("deprecation")
@@ -34,19 +30,26 @@ public class JShot {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_JShot(swigCPtr);
+        stiJNI.delete_RawStackTrace(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public ShotConfig getShotConfig() {
-    return new ShotConfig(stiJNI.JShot_getShotConfig(swigCPtr, this), false);
+  public RawStackTrace() {
+    this(stiJNI.new_RawStackTrace(), true);
   }
 
-  public RawEventGroup getRootEventGroup() {
-    long cPtr = stiJNI.JShot_getRootEventGroup(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
+  public void appendFrame(RawStackFrame frame) {
+    stiJNI.RawStackTrace_appendFrame__SWIG_0(swigCPtr, this, RawStackFrame.getCPtr(frame), frame);
+  }
+
+  public void appendFrame(String file, long line, String func) {
+    stiJNI.RawStackTrace_appendFrame__SWIG_1(swigCPtr, this, file, line, func);
+  }
+
+  public RawStackFrameVector getFrames() {
+    return new RawStackFrameVector(stiJNI.RawStackTrace_getFrames(swigCPtr, this), true);
   }
 
 }

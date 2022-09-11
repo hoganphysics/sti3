@@ -11,6 +11,31 @@
 #ifndef SWIG_sti_WRAP_H_
 #define SWIG_sti_WRAP_H_
 
+class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv);
+    SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv, std::set< STI::Device::DeviceID > const &nodes);
+    virtual ~SwigDirector_DeviceIDDependencyTree();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
+class SwigDirector_EventEngineDependencyTree : public STI::Engine::EventEngineDependencyTree, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_EventEngineDependencyTree(JNIEnv *jenv);
+    virtual ~SwigDirector_EventEngineDependencyTree();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
 class SwigDirector_JDevice : public STI::Device::JDevice, public Swig::Director {
 
 public:
@@ -365,62 +390,12 @@ protected:
     Swig::BoolArray<1> swig_override;
 };
 
-class SwigDirector_FileHolder : public STI::Utils::FileHolder, public Swig::Director {
+class SwigDirector_ParseResult : public STI::Engine::ParseResult, public Swig::Director {
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_FileHolder(JNIEnv *jenv);
-    virtual ~SwigDirector_FileHolder();
-    virtual std::string getFilename() const;
-    virtual bool exists() const;
-    virtual bool transferFile(std::shared_ptr< STI::Utils::FileHolder > const &destination);
-    virtual unsigned int maxBufferSize() const;
-    virtual bool deleteFile();
-    virtual std::string md5Checksum();
-    virtual bool write(char const *buffer, unsigned int length);
-    virtual bool openFile();
-    virtual void closeFile();
-public:
-    bool swig_overrides(int n) {
-      return (n < 6 ? swig_override[n] : false);
-    }
-protected:
-    Swig::BoolArray<6> swig_override;
-};
-
-class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
-
-public:
-    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_MixedValue(JNIEnv *jenv);
-    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
-    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValueType const &value);
-    virtual ~SwigDirector_MixedValue();
-public:
-    bool swig_overrides(int n) {
-      return false;
-    }
-};
-
-class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
-
-public:
-    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv);
-    SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv, std::set< STI::Device::DeviceID > const &nodes);
-    virtual ~SwigDirector_DeviceIDDependencyTree();
-public:
-    bool swig_overrides(int n) {
-      return false;
-    }
-};
-
-class SwigDirector_EventEngineDependencyTree : public STI::Engine::EventEngineDependencyTree, public Swig::Director {
-
-public:
-    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_EventEngineDependencyTree(JNIEnv *jenv);
-    virtual ~SwigDirector_EventEngineDependencyTree();
+    SwigDirector_ParseResult(JNIEnv *jenv);
+    virtual ~SwigDirector_ParseResult();
 public:
     bool swig_overrides(int n) {
       return false;
