@@ -19,7 +19,8 @@ using STI::Device::LocalChannel;
 using STI::Engine::EngineID;
 using STI::Device::ChannelType;
 using STI::Utils::MixedValueType;
-
+using STI::Device::LocalAttribute;
+using STI::Device::DeviceMessage;
 
 
 JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, unsigned short module,
@@ -42,23 +43,29 @@ JLocalDevice::JLocalDevice(const std::string& name, const std::string& address, 
         wrappedLocalDevice->getMessageReceiver(receiver);
 
         jReceiver = std::make_shared<JDeviceMessageReceiver>(receiver);
-
-
-        // std::shared_ptr<EventEngineScheduler> scheduler;
-        // wrappedLocalDevice->getEngineScheduler(scheduler);
-        // jScheduler = std::make_shared<JEventEngineScheduler>(scheduler);        
     }
-
 }
 
 JLocalDevice::~JLocalDevice()
 {
 }
 
-// void JLocalDevice::test()
-// {
-//     std::cout << "JLocalDevice::test()" << std::endl;
-// }
+LocalAttribute& JLocalDevice::addAttribute(const std::string& key, const std::string& initialValue)
+{
+    return wrappedLocalDevice->addAttribute(key, initialValue);
+}
+
+LocalAttribute& JLocalDevice::addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues)
+{
+    return wrappedLocalDevice->addAttribute(key, initialValue, allowedValues);
+}
+
+LocalAttribute& JLocalDevice::addAttribute(const std::string& key, const std::string& initialValue, const std::string& allowedValues)
+{
+    std::vector<std::string> allowedValuesVec;
+    STI::Utils::splitString(allowedValues, ",", allowedValuesVec);
+    return wrappedLocalDevice->addAttribute(key, initialValue, allowedValuesVec);
+}
 
 LocalChannel& JLocalDevice::addChannel(int channelNumber, ChannelType type,
 		MixedValueType inputType, MixedValueType outputType, const std::string& defaultName)
@@ -70,6 +77,13 @@ void JLocalDevice::addEventEngine(const EngineID& engineID)
 {
     if (wrappedLocalDevice != 0) {
         wrappedLocalDevice->addEventEngine(engineID);
+    }
+}
+
+void JLocalDevice::addEventTarget(const DeviceID& id)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addEventTarget(id);
     }
 }
 
@@ -85,43 +99,105 @@ std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getMessageRec
     return jReceiver;
 }
 
-// std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getEventReceiver2()
-// {
-//     return jReceiver;
-// }
-
-// std::shared_ptr<JEventEngineScheduler> JLocalDevice::getEngineScheduler()
-// {
-//     return jScheduler;
-// }
-
-
-
-//TEMP
-
-JLocalDevice::LocalDeviceProxy::TestEvent::TestEvent(const STI::Engine::RawEvent& evt) 
-: STI::Engine::SynchronousEventAdapter(evt.time()), evt(evt) 
+void JLocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->sendMessage(mess);
+    }
 }
+
+void JLocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addCollectionListener(listener);
+    }
+}
+
+bool JLocalDevice::write(int channel, const STI::Utils::MixedValue& value)
+{
+    if (wrappedLocalDevice != 0) {
+        return wrappedLocalDevice->write(static_cast<short>(channel), value);
+    }
+    return false;
+}
+
+//can be overridden in Java
+bool JLocalDevice::writeChannel(int channel, const STI::Utils::MixedValue& value)
+{
+    if (wrappedLocalDevice != 0) {
+        return wrappedLocalDevice->writeChannelDefault(static_cast<short>(channel), value);
+    }
+    return false;
+}
+
+
+STI::Utils::MixedValue JLocalDevice::read(int channel, const STI::Utils::MixedValue& value)
+{
+    if (wrappedLocalDevice != 0) {
+        STI::Utils::MixedValue data;
+        wrappedLocalDevice->read(static_cast<short>(channel), value, data);
+        return data;
+    }
+
+    STI::Utils::MixedValue empty;
+    return empty;
+}
+
+//can be overridden in Java
+STI::Utils::MixedValue JLocalDevice::readChannel(int channel, const STI::Utils::MixedValue& value)
+{
+    if (wrappedLocalDevice != 0) {
+        STI::Utils::MixedValue data;
+        wrappedLocalDevice->readChannelDefault(static_cast<short>(channel), value, data);
+        return data;
+    }
+
+    STI::Utils::MixedValue empty;
+    return empty;
+}
+
+
+void JLocalDevice::stopRW()
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->stopRW();
+    }
+}
+
+
+
+//////////// LocalDeviceProxy //////////////
 
 void JLocalDevice::LocalDeviceProxy::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 {
-    std::cout << "Parsing: " << getID().getName() << std::endl;
-    std::cout << "Event count: " << events.size() << std::endl;
-    
-    if (events.size() > 0) {
-        std::cout << events.begin()->second.at(0).print() << std::endl;
-        auto evt = std::make_unique<JLocalDevice::LocalDeviceProxy::TestEvent>(events.begin()->second.at(0));
-        synchedEvents.push_back(std::move(evt));
-    }
+    std::vector<std::shared_ptr<STI::Engine::SynchronousEventAdapter>> synchedEventAdapters;
 
     if (jLocalDevice != 0) {
-        jLocalDevice->parseEvents(0);	//temp
+
+        jLocalDevice->parseEvents(events, synchedEventAdapters);
+
+        synchedEvents.reserve(synchedEventAdapters.size());
+
+        synchedEvents.insert(synchedEvents.end(), 
+                             std::make_move_iterator(synchedEventAdapters.begin()), 
+                             std::make_move_iterator(synchedEventAdapters.end()));
+        synchedEventAdapters.erase(synchedEventAdapters.begin(), synchedEventAdapters.end());
     }
 }
 
 
-void JLocalDevice::LocalDeviceProxy::TestEvent::playEvent()
+bool JLocalDevice::LocalDeviceProxy::writeChannel(short channel, const STI::Utils::MixedValue& value)
 {
-	std::cout << "Play: " << evt.print() << std::endl;
+    if (jLocalDevice == 0) return false;
+
+    return jLocalDevice->writeChannel(static_cast<int>(channel), value);
+}
+
+bool JLocalDevice::LocalDeviceProxy::readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+{
+    if (jLocalDevice == 0) return false;
+
+    STI::Utils::MixedValue result = jLocalDevice->readChannel(static_cast<int>(channel), value);
+    data = result;
+    return true;
 }

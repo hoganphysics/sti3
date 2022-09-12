@@ -61,6 +61,9 @@ public class stiJNI {
   public final static native long FileHolder_maxBufferSize(long jarg1, FileHolder jarg1_);
   public final static native boolean FileHolder_deleteFile(long jarg1, FileHolder jarg1_);
   public final static native String FileHolder_md5Checksum(long jarg1, FileHolder jarg1_);
+  public final static native long new_FileHolder();
+  public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void FileHolder_change_ownership(FileHolder obj, long cptr, boolean take_or_release);
   public final static native long new_MixedValue__SWIG_0();
   public final static native long new_MixedValue__SWIG_2(long jarg1, MixedValue jarg1_);
   public final static native long new_MixedValue__SWIG_3(int jarg1);
@@ -87,6 +90,13 @@ public class stiJNI {
   public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_TypeToString(int jarg1);
+  public final static native long new_MixedValue__SWIG_4(String jarg1);
+  public final static native long new_MixedValue__SWIG_5(double jarg1);
+  public final static native long new_MixedValue__SWIG_6(int jarg1);
+  public final static native long new_MixedValue__SWIG_7(long jarg1, FileHolder jarg1_);
+  public final static native long new_MixedValue__SWIG_8(boolean jarg1);
+  public final static native void MixedValue_director_connect(MixedValue obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void MixedValue_change_ownership(MixedValue obj, long cptr, boolean take_or_release);
   public final static native long new_MixedValueVec__SWIG_0();
   public final static native long new_MixedValueVec__SWIG_1(long jarg1, MixedValueVec jarg1_);
   public final static native long MixedValueVec_capacity(long jarg1, MixedValueVec jarg1_);
@@ -314,6 +324,24 @@ public class stiJNI {
   public final static native long RawEventVector_doSet(long jarg1, RawEventVector jarg1_, int jarg2, long jarg3, RawEvent jarg3_);
   public final static native void RawEventVector_doRemoveRange(long jarg1, RawEventVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_RawEventVector(long jarg1);
+  public final static native long new_RawEventMap__SWIG_0();
+  public final static native long new_RawEventMap__SWIG_1(long jarg1, RawEventMap jarg1_);
+  public final static native long RawEventMap_Iterator_getNextUnchecked(long jarg1, RawEventMap.Iterator jarg1_);
+  public final static native boolean RawEventMap_Iterator_isNot(long jarg1, RawEventMap.Iterator jarg1_, long jarg2, RawEventMap.Iterator jarg2_);
+  public final static native double RawEventMap_Iterator_getKey(long jarg1, RawEventMap.Iterator jarg1_);
+  public final static native long RawEventMap_Iterator_getValue(long jarg1, RawEventMap.Iterator jarg1_);
+  public final static native void RawEventMap_Iterator_setValue(long jarg1, RawEventMap.Iterator jarg1_, long jarg2, RawEventVector jarg2_);
+  public final static native void delete_RawEventMap_Iterator(long jarg1);
+  public final static native boolean RawEventMap_isEmpty(long jarg1, RawEventMap jarg1_);
+  public final static native void RawEventMap_clear(long jarg1, RawEventMap jarg1_);
+  public final static native long RawEventMap_find(long jarg1, RawEventMap jarg1_, double jarg2);
+  public final static native long RawEventMap_begin(long jarg1, RawEventMap jarg1_);
+  public final static native long RawEventMap_end(long jarg1, RawEventMap jarg1_);
+  public final static native int RawEventMap_sizeImpl(long jarg1, RawEventMap jarg1_);
+  public final static native boolean RawEventMap_containsImpl(long jarg1, RawEventMap jarg1_, double jarg2);
+  public final static native void RawEventMap_putUnchecked(long jarg1, RawEventMap jarg1_, double jarg2, long jarg3, RawEventVector jarg3_);
+  public final static native void RawEventMap_removeUnchecked(long jarg1, RawEventMap jarg1_, long jarg2, RawEventMap.Iterator jarg2_);
+  public final static native void delete_RawEventMap(long jarg1);
   public final static native long new_ParsedTagVector__SWIG_0();
   public final static native long new_ParsedTagVector__SWIG_1(long jarg1, ParsedTagVector jarg1_);
   public final static native long ParsedTagVector_capacity(long jarg1, ParsedTagVector jarg1_);
@@ -947,16 +975,163 @@ public class stiJNI {
   public final static native void StringMap_putUnchecked(long jarg1, StringMap jarg1_, String jarg2, String jarg3);
   public final static native void StringMap_removeUnchecked(long jarg1, StringMap jarg1_, long jarg2, StringMap.Iterator jarg2_);
   public final static native void delete_StringMap(long jarg1);
+  public final static native long new_AttributeVector__SWIG_0();
+  public final static native long new_AttributeVector__SWIG_1(long jarg1, AttributeVector jarg1_);
+  public final static native long AttributeVector_capacity(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_reserve(long jarg1, AttributeVector jarg1_, long jarg2);
+  public final static native boolean AttributeVector_isEmpty(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_clear(long jarg1, AttributeVector jarg1_);
+  public final static native long new_AttributeVector__SWIG_2(int jarg1, long jarg2, Attribute jarg2_);
+  public final static native int AttributeVector_doSize(long jarg1, AttributeVector jarg1_);
+  public final static native void AttributeVector_doAdd__SWIG_0(long jarg1, AttributeVector jarg1_, long jarg2, Attribute jarg2_);
+  public final static native void AttributeVector_doAdd__SWIG_1(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native long AttributeVector_doRemove(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doGet(long jarg1, AttributeVector jarg1_, int jarg2);
+  public final static native long AttributeVector_doSet(long jarg1, AttributeVector jarg1_, int jarg2, long jarg3, Attribute jarg3_);
+  public final static native void AttributeVector_doRemoveRange(long jarg1, AttributeVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_AttributeVector(long jarg1);
+  public final static native void delete_Attribute(long jarg1);
+  public final static native String Attribute_getKey(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getValue(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getAllowedValues(long jarg1, Attribute jarg1_);
+  public final static native String Attribute_getGroup(long jarg1, Attribute jarg1_);
+  public final static native void Attribute_refreshValue(long jarg1, Attribute jarg1_);
+  public final static native boolean Attribute_setValue(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long Attribute_getMetaData__SWIG_0(long jarg1, Attribute jarg1_);
+  public final static native long Attribute_getMetaData__SWIG_1(long jarg1, Attribute jarg1_, String jarg2);
+  public final static native long new_Attribute();
+  public final static native void Attribute_director_connect(Attribute obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void Attribute_change_ownership(Attribute obj, long cptr, boolean take_or_release);
+  public final static native long new_AttributeRefresher();
+  public final static native void delete_AttributeRefresher(long jarg1);
+  public final static native String AttributeRefresher_refresh(long jarg1, AttributeRefresher jarg1_);
+  public final static native String AttributeRefresher_refreshSwigExplicitAttributeRefresher(long jarg1, AttributeRefresher jarg1_);
+  public final static native void AttributeRefresher_director_connect(AttributeRefresher obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void AttributeRefresher_change_ownership(AttributeRefresher obj, long cptr, boolean take_or_release);
+  public final static native long new_AttributeSetter();
+  public final static native void delete_AttributeSetter(long jarg1);
+  public final static native boolean AttributeSetter_set(long jarg1, AttributeSetter jarg1_, String jarg2);
+  public final static native boolean AttributeSetter_setSwigExplicitAttributeSetter(long jarg1, AttributeSetter jarg1_, String jarg2);
+  public final static native void AttributeSetter_director_connect(AttributeSetter obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void AttributeSetter_change_ownership(AttributeSetter obj, long cptr, boolean take_or_release);
+  public final static native long new_LocalAttribute__SWIG_0(String jarg1, String jarg2);
+  public final static native long new_LocalAttribute__SWIG_1(String jarg1, String jarg2, long jarg3, StringVector jarg3_);
+  public final static native void delete_LocalAttribute(long jarg1);
+  public final static native String LocalAttribute_getKey(long jarg1, LocalAttribute jarg1_);
+  public final static native String LocalAttribute_getKeySwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
+  public final static native String LocalAttribute_getValue(long jarg1, LocalAttribute jarg1_);
+  public final static native String LocalAttribute_getValueSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
+  public final static native long LocalAttribute_getAllowedValues(long jarg1, LocalAttribute jarg1_);
+  public final static native long LocalAttribute_getAllowedValuesSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
+  public final static native String LocalAttribute_getGroup(long jarg1, LocalAttribute jarg1_);
+  public final static native String LocalAttribute_getGroupSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
+  public final static native void LocalAttribute_refreshValue(long jarg1, LocalAttribute jarg1_);
+  public final static native void LocalAttribute_refreshValueSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
+  public final static native boolean LocalAttribute_setValue(long jarg1, LocalAttribute jarg1_, String jarg2);
+  public final static native boolean LocalAttribute_setValueSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_, String jarg2);
+  public final static native long LocalAttribute_addMetaData__SWIG_0(long jarg1, LocalAttribute jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long LocalAttribute_addMetaData__SWIG_1(long jarg1, LocalAttribute jarg1_, String jarg2, String jarg3);
+  public final static native long LocalAttribute_getMetaData__SWIG_0(long jarg1, LocalAttribute jarg1_);
+  public final static native long LocalAttribute_getMetaDataSwigExplicitLocalAttribute__SWIG_0(long jarg1, LocalAttribute jarg1_);
+  public final static native long LocalAttribute_getMetaData__SWIG_1(long jarg1, LocalAttribute jarg1_, String jarg2);
+  public final static native long LocalAttribute_getMetaDataSwigExplicitLocalAttribute__SWIG_1(long jarg1, LocalAttribute jarg1_, String jarg2);
+  public final static native void LocalAttribute_addRefreshListener(long jarg1, LocalAttribute jarg1_, long jarg2, AttributeRefreshListener jarg2_);
+  public final static native long LocalAttribute_setRefresher(long jarg1, LocalAttribute jarg1_, long jarg2, AttributeRefresher jarg2_);
+  public final static native long LocalAttribute_setSetter(long jarg1, LocalAttribute jarg1_, long jarg2, AttributeSetter jarg2_);
+  public final static native void LocalAttribute_director_connect(LocalAttribute obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void LocalAttribute_change_ownership(LocalAttribute obj, long cptr, boolean take_or_release);
+  public final static native void delete_AttributeRefreshListener(long jarg1);
+  public final static native void AttributeRefreshListener_handleAttributeRefreshEvent(long jarg1, AttributeRefreshListener jarg1_, String jarg2, String jarg3);
+  public final static native long new_AttributeRefreshListener();
+  public final static native void AttributeRefreshListener_director_connect(AttributeRefreshListener obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void AttributeRefreshListener_change_ownership(AttributeRefreshListener obj, long cptr, boolean take_or_release);
   public final static native void delete_JAttributeManager(long jarg1);
   public final static native String JAttributeManager_getValue(long jarg1, JAttributeManager jarg1_, String jarg2);
   public final static native boolean JAttributeManager_setValue(long jarg1, JAttributeManager jarg1_, String jarg2, String jarg3);
+  public final static native long JAttributeManager_getAttribute(long jarg1, JAttributeManager jarg1_, String jarg2);
+  public final static native long JAttributeManager_getAttributes(long jarg1, JAttributeManager jarg1_);
+  public final static native long JAttributeManager_getAttributeMap(long jarg1, JAttributeManager jarg1_);
+  public final static native void delete_SynchronousEvent(long jarg1);
+  public final static native double SynchronousEvent_getTime(long jarg1, SynchronousEvent jarg1_);
+  public final static native long SynchronousEvent_getMeasurements(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_addMeasurement(long jarg1, SynchronousEvent jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native void SynchronousEvent_load(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_play(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_collectData(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_stop(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_pause(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_unpause(long jarg1, SynchronousEvent jarg1_, boolean jarg2);
+  public final static native void SynchronousEvent_waitBeforePlay(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_waitBeforePlaySwigExplicitSynchronousEvent(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_waitBeforeCollectData(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_waitBeforeCollectDataSwigExplicitSynchronousEvent(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_reset(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_unload(long jarg1, SynchronousEvent jarg1_);
+  public final static native boolean SynchronousEvent_opLess(long jarg1, SynchronousEvent jarg1_, long jarg2, SynchronousEvent jarg2_);
+  public final static native void SynchronousEvent_director_connect(SynchronousEvent obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void SynchronousEvent_change_ownership(SynchronousEvent obj, long cptr, boolean take_or_release);
+  public final static native long new_SynchronousEventAdapter(double jarg1);
+  public final static native void delete_SynchronousEventAdapter(long jarg1);
+  public final static native void SynchronousEventAdapter_loadEvent(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_loadEventSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_playEvent(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_playEventSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_collectMeasurementData(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_collectMeasurementDataSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_stopEvent(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_stopEventSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_pauseEvent(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_pauseEventSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_);
+  public final static native void SynchronousEventAdapter_unpauseEvent(long jarg1, SynchronousEventAdapter jarg1_, boolean jarg2);
+  public final static native void SynchronousEventAdapter_unpauseEventSwigExplicitSynchronousEventAdapter(long jarg1, SynchronousEventAdapter jarg1_, boolean jarg2);
+  public final static native void SynchronousEventAdapter_director_connect(SynchronousEventAdapter obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void SynchronousEventAdapter_change_ownership(SynchronousEventAdapter obj, long cptr, boolean take_or_release);
+  public final static native long new_SynchronousEventVector__SWIG_0();
+  public final static native long new_SynchronousEventVector__SWIG_1(long jarg1, SynchronousEventVector jarg1_);
+  public final static native long SynchronousEventVector_capacity(long jarg1, SynchronousEventVector jarg1_);
+  public final static native void SynchronousEventVector_reserve(long jarg1, SynchronousEventVector jarg1_, long jarg2);
+  public final static native boolean SynchronousEventVector_isEmpty(long jarg1, SynchronousEventVector jarg1_);
+  public final static native void SynchronousEventVector_clear(long jarg1, SynchronousEventVector jarg1_);
+  public final static native long new_SynchronousEventVector__SWIG_2(int jarg1, long jarg2, SynchronousEventAdapter jarg2_);
+  public final static native int SynchronousEventVector_doSize(long jarg1, SynchronousEventVector jarg1_);
+  public final static native void SynchronousEventVector_doAdd__SWIG_0(long jarg1, SynchronousEventVector jarg1_, long jarg2, SynchronousEventAdapter jarg2_);
+  public final static native void SynchronousEventVector_doAdd__SWIG_1(long jarg1, SynchronousEventVector jarg1_, int jarg2, long jarg3, SynchronousEventAdapter jarg3_);
+  public final static native long SynchronousEventVector_doRemove(long jarg1, SynchronousEventVector jarg1_, int jarg2);
+  public final static native long SynchronousEventVector_doGet(long jarg1, SynchronousEventVector jarg1_, int jarg2);
+  public final static native long SynchronousEventVector_doSet(long jarg1, SynchronousEventVector jarg1_, int jarg2, long jarg3, SynchronousEventAdapter jarg3_);
+  public final static native void SynchronousEventVector_doRemoveRange(long jarg1, SynchronousEventVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_SynchronousEventVector(long jarg1);
+  public final static native void DeviceCollectionListener_add(long jarg1, DeviceCollectionListener jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void DeviceCollectionListener_addSwigExplicitDeviceCollectionListener(long jarg1, DeviceCollectionListener jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void DeviceCollectionListener_remove(long jarg1, DeviceCollectionListener jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void DeviceCollectionListener_removeSwigExplicitDeviceCollectionListener(long jarg1, DeviceCollectionListener jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void DeviceCollectionListener_refresh(long jarg1, DeviceCollectionListener jarg1_);
+  public final static native void DeviceCollectionListener_refreshSwigExplicitDeviceCollectionListener(long jarg1, DeviceCollectionListener jarg1_);
+  public final static native long new_DeviceCollectionListener();
+  public final static native void delete_DeviceCollectionListener(long jarg1);
+  public final static native void DeviceCollectionListener_director_connect(DeviceCollectionListener obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void DeviceCollectionListener_change_ownership(DeviceCollectionListener obj, long cptr, boolean take_or_release);
   public final static native long new_JLocalDevice(String jarg1, String jarg2, int jarg3, String jarg4);
   public final static native void delete_JLocalDevice(long jarg1);
   public final static native long JLocalDevice_getMessageReceiver(long jarg1, JLocalDevice jarg1_);
-  public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, int jarg2);
+  public final static native void JLocalDevice_parseEvents(long jarg1, JLocalDevice jarg1_, long jarg2, RawEventMap jarg2_, long jarg3, SynchronousEventVector jarg3_);
+  public final static native void JLocalDevice_parseEventsSwigExplicitJLocalDevice(long jarg1, JLocalDevice jarg1_, long jarg2, RawEventMap jarg2_, long jarg3, SynchronousEventVector jarg3_);
+  public final static native boolean JLocalDevice_writeChannel(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean JLocalDevice_writeChannelSwigExplicitJLocalDevice(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long JLocalDevice_readChannel(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long JLocalDevice_readChannelSwigExplicitJLocalDevice(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean JLocalDevice_write(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native long JLocalDevice_read(long jarg1, JLocalDevice jarg1_, int jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void JLocalDevice_stopRW(long jarg1, JLocalDevice jarg1_);
+  public final static native long JLocalDevice_addAttribute__SWIG_0(long jarg1, JLocalDevice jarg1_, String jarg2, String jarg3);
+  public final static native long JLocalDevice_addAttribute__SWIG_1(long jarg1, JLocalDevice jarg1_, String jarg2, String jarg3, long jarg4, StringVector jarg4_);
+  public final static native long JLocalDevice_addAttribute__SWIG_2(long jarg1, JLocalDevice jarg1_, String jarg2, String jarg3, String jarg4);
   public final static native long JLocalDevice_addChannel(long jarg1, JLocalDevice jarg1_, int jarg2, int jarg3, int jarg4, int jarg5, String jarg6);
   public final static native void JLocalDevice_addEventEngine(long jarg1, JLocalDevice jarg1_, long jarg2, EngineID jarg2_);
   public final static native void JLocalDevice_addPartner(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void JLocalDevice_addEventTarget(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void JLocalDevice_sendMessage(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceMessage jarg2_);
+  public final static native void JLocalDevice_addCollectionListener(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceCollectionListener jarg2_);
   public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native void EngineJobIDSet_Iterator_incrementUnchecked(long jarg1, EngineJobIDSet.Iterator jarg1_);
@@ -993,6 +1168,8 @@ public class stiJNI {
   public final static native void delete_JEventEngineScheduler(long jarg1);
   public final static native long JEventEngineScheduler_parse(long jarg1, JEventEngineScheduler jarg1_, long jarg2, JShot jarg2_);
   public final static native long JEventEngineScheduler_play(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_, long jarg3, EngineJobSourceID jarg3_);
+  public final static native int JEventEngineScheduler_getStatus__SWIG_0(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ParseID jarg2_);
+  public final static native int JEventEngineScheduler_getStatus__SWIG_1(long jarg1, JEventEngineScheduler jarg1_, long jarg2, ShotID jarg2_);
   public final static native void JEventEngineScheduler_cancelJob(long jarg1, JEventEngineScheduler jarg1_, long jarg2, EngineJobID jarg2_);
   public final static native void JEventEngineScheduler_cancelAll(long jarg1, JEventEngineScheduler jarg1_);
   public final static native long JEventEngineScheduler_getQueuedJobs(long jarg1, JEventEngineScheduler jarg1_);
@@ -1258,8 +1435,28 @@ public class stiJNI {
   public final static native long JEngineJobUpdateDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
   public final static native long JEngineJobUpdateDeviceMessageListener_SWIGSmartPtrUpcast(long jarg1);
   public final static native long LocalChannel_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long LocalAttribute_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long SynchronousEventAdapter_SWIGSmartPtrUpcast(long jarg1);
   public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
 
+  public static String SwigDirector_FileHolder_getFilename(FileHolder jself) {
+    return jself.getFilename();
+  }
+  public static boolean SwigDirector_FileHolder_exists(FileHolder jself) {
+    return jself.exists();
+  }
+  public static boolean SwigDirector_FileHolder_transferFile(FileHolder jself, long destination) {
+    return jself.transferFile((destination == 0) ? null : new FileHolder(destination, true));
+  }
+  public static long SwigDirector_FileHolder_maxBufferSize(FileHolder jself) {
+    return jself.maxBufferSize();
+  }
+  public static boolean SwigDirector_FileHolder_deleteFile(FileHolder jself) {
+    return jself.deleteFile();
+  }
+  public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
+    return jself.md5Checksum();
+  }
   public static void SwigDirector_RefreshDeviceMessageListener_handleMessage(RefreshDeviceMessageListener jself, long mess) {
     jself.handleMessage((mess == 0) ? null : new RefreshDeviceMessage(mess, true));
   }
@@ -1350,8 +1547,110 @@ public class stiJNI {
   public static void SwigDirector_ChannelRefreshListener_handleChannelNameRefreshEvent(ChannelRefreshListener jself, short channelNumber, String name) {
     jself.handleChannelNameRefreshEvent(channelNumber, name);
   }
-  public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, int temp) {
-    jself.parseEvents(temp);
+  public static String SwigDirector_Attribute_getKey(Attribute jself) {
+    return jself.getKey();
+  }
+  public static String SwigDirector_Attribute_getValue(Attribute jself) {
+    return jself.getValue();
+  }
+  public static long SwigDirector_Attribute_getAllowedValues(Attribute jself) {
+    return StringVector.getCPtr(jself.getAllowedValues());
+  }
+  public static String SwigDirector_Attribute_getGroup(Attribute jself) {
+    return jself.getGroup();
+  }
+  public static void SwigDirector_Attribute_refreshValue(Attribute jself) {
+    jself.refreshValue();
+  }
+  public static boolean SwigDirector_Attribute_setValue(Attribute jself, String value) {
+    return jself.setValue(value);
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_0(Attribute jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_Attribute_getMetaData__SWIG_1(Attribute jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
+  }
+  public static String SwigDirector_AttributeRefresher_refresh(AttributeRefresher jself) {
+    return jself.refresh();
+  }
+  public static boolean SwigDirector_AttributeSetter_set(AttributeSetter jself, String value) {
+    return jself.set(value);
+  }
+  public static String SwigDirector_LocalAttribute_getKey(LocalAttribute jself) {
+    return jself.getKey();
+  }
+  public static String SwigDirector_LocalAttribute_getValue(LocalAttribute jself) {
+    return jself.getValue();
+  }
+  public static long SwigDirector_LocalAttribute_getAllowedValues(LocalAttribute jself) {
+    return StringVector.getCPtr(jself.getAllowedValues());
+  }
+  public static String SwigDirector_LocalAttribute_getGroup(LocalAttribute jself) {
+    return jself.getGroup();
+  }
+  public static void SwigDirector_LocalAttribute_refreshValue(LocalAttribute jself) {
+    jself.refreshValue();
+  }
+  public static boolean SwigDirector_LocalAttribute_setValue(LocalAttribute jself, String value) {
+    return jself.setValue(value);
+  }
+  public static long SwigDirector_LocalAttribute_getMetaData__SWIG_0(LocalAttribute jself) {
+    return MixedValue.getCPtr(jself.getMetaData());
+  }
+  public static long SwigDirector_LocalAttribute_getMetaData__SWIG_1(LocalAttribute jself, String key) {
+    return MixedValue.getCPtr(jself.getMetaData(key));
+  }
+  public static void SwigDirector_AttributeRefreshListener_handleAttributeRefreshEvent(AttributeRefreshListener jself, String key, String value) {
+    jself.handleAttributeRefreshEvent(key, value);
+  }
+  public static void SwigDirector_SynchronousEvent_waitBeforePlay(SynchronousEvent jself) {
+    jself.waitBeforePlay();
+  }
+  public static void SwigDirector_SynchronousEvent_waitBeforeCollectData(SynchronousEvent jself) {
+    jself.waitBeforeCollectData();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_waitBeforePlay(SynchronousEventAdapter jself) {
+    jself.waitBeforePlay();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_waitBeforeCollectData(SynchronousEventAdapter jself) {
+    jself.waitBeforeCollectData();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_loadEvent(SynchronousEventAdapter jself) {
+    jself.loadEvent();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_playEvent(SynchronousEventAdapter jself) {
+    jself.playEvent();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_collectMeasurementData(SynchronousEventAdapter jself) {
+    jself.collectMeasurementData();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_stopEvent(SynchronousEventAdapter jself) {
+    jself.stopEvent();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_pauseEvent(SynchronousEventAdapter jself) {
+    jself.pauseEvent();
+  }
+  public static void SwigDirector_SynchronousEventAdapter_unpauseEvent(SynchronousEventAdapter jself, boolean retrigger) {
+    jself.unpauseEvent(retrigger);
+  }
+  public static void SwigDirector_DeviceCollectionListener_add(DeviceCollectionListener jself, long id) {
+    jself.add(new DeviceID(id, false));
+  }
+  public static void SwigDirector_DeviceCollectionListener_remove(DeviceCollectionListener jself, long id) {
+    jself.remove(new DeviceID(id, false));
+  }
+  public static void SwigDirector_DeviceCollectionListener_refresh(DeviceCollectionListener jself) {
+    jself.refresh();
+  }
+  public static void SwigDirector_JLocalDevice_parseEvents(JLocalDevice jself, long events, long synchedEvents) {
+    jself.parseEvents(new RawEventMap(events, false), new SynchronousEventVector(synchedEvents, false));
+  }
+  public static boolean SwigDirector_JLocalDevice_writeChannel(JLocalDevice jself, int channel, long value) {
+    return jself.writeChannel(channel, new MixedValue(value, false));
+  }
+  public static long SwigDirector_JLocalDevice_readChannel(JLocalDevice jself, int channel, long value) {
+    return MixedValue.getCPtr(jself.readChannel(channel, new MixedValue(value, false)));
   }
 
   private final static native void swig_module_init();

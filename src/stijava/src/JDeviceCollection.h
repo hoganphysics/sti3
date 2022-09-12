@@ -40,10 +40,8 @@ private:
 	bool get(const DeviceID& id, DeviceCollection::T_ptr& node) const;
 	void getIDs(std::set<DeviceID>& ids) const;
 
-
     std::shared_ptr<DeviceCollection> localDeviceCollection;
     std::set<DeviceID> ids; //local copy, so we can return by reference.
-
 };
 
 } //Device

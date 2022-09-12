@@ -40,6 +40,21 @@ public class FileHolder {
     }
   }
 
+  protected void swigDirectorDisconnect() {
+    swigSetCMemOwn(false);
+    delete();
+  }
+
+  public void swigReleaseOwnership() {
+    swigSetCMemOwn(false);
+    stiJNI.FileHolder_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigSetCMemOwn(true);
+    stiJNI.FileHolder_change_ownership(this, swigCPtr, true);
+  }
+
   public String getFilename() {
     return stiJNI.FileHolder_getFilename(swigCPtr, this);
   }
@@ -62,6 +77,11 @@ public class FileHolder {
 
   public String md5Checksum() {
     return stiJNI.FileHolder_md5Checksum(swigCPtr, this);
+  }
+
+  public FileHolder() {
+    this(stiJNI.new_FileHolder(), true);
+    stiJNI.FileHolder_director_connect(this, swigCPtr, true, true);
   }
 
 }

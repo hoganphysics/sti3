@@ -66,6 +66,7 @@ void init_LocalDevice(py::module& m)
             py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
             py::arg("channelNumber"), py::arg("type"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))
         .def("addPartner", &LocalDevicePy::addPartner, py::arg("deviceID"))
+        .def("addEventTarget", &LocalDevicePy::addEventTarget, py::arg("deviceID"))
         .def("addEventEngine", py::overload_cast<const STI::Engine::EngineID&>(&LocalDevicePy::addEventEngine), py::arg("engineID"))
 
         //  .def("addAttribute", &LocalDevicePy::addAttribute)

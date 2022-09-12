@@ -68,8 +68,40 @@ public class JLocalDevice extends JDevice {
     return (cPtr == 0) ? null : new JDeviceMessageReceiver(cPtr, true);
   }
 
-  public void parseEvents(int temp) {
-    stiJNI.JLocalDevice_parseEvents(swigCPtr, this, temp);
+  public void parseEvents(RawEventMap events, SynchronousEventVector synchedEvents) {
+    if (getClass() == JLocalDevice.class) stiJNI.JLocalDevice_parseEvents(swigCPtr, this, RawEventMap.getCPtr(events), events, SynchronousEventVector.getCPtr(synchedEvents), synchedEvents); else stiJNI.JLocalDevice_parseEventsSwigExplicitJLocalDevice(swigCPtr, this, RawEventMap.getCPtr(events), events, SynchronousEventVector.getCPtr(synchedEvents), synchedEvents);
+  }
+
+  public boolean writeChannel(int channel, MixedValue value) {
+    return (getClass() == JLocalDevice.class) ? stiJNI.JLocalDevice_writeChannel(swigCPtr, this, channel, MixedValue.getCPtr(value), value) : stiJNI.JLocalDevice_writeChannelSwigExplicitJLocalDevice(swigCPtr, this, channel, MixedValue.getCPtr(value), value);
+  }
+
+  public MixedValue readChannel(int channel, MixedValue value) {
+    return new MixedValue((getClass() == JLocalDevice.class) ? stiJNI.JLocalDevice_readChannel(swigCPtr, this, channel, MixedValue.getCPtr(value), value) : stiJNI.JLocalDevice_readChannelSwigExplicitJLocalDevice(swigCPtr, this, channel, MixedValue.getCPtr(value), value), true);
+  }
+
+  public boolean write(int channel, MixedValue value) {
+    return stiJNI.JLocalDevice_write(swigCPtr, this, channel, MixedValue.getCPtr(value), value);
+  }
+
+  public MixedValue read(int channel, MixedValue value) {
+    return new MixedValue(stiJNI.JLocalDevice_read(swigCPtr, this, channel, MixedValue.getCPtr(value), value), true);
+  }
+
+  public void stopRW() {
+    stiJNI.JLocalDevice_stopRW(swigCPtr, this);
+  }
+
+  public LocalAttribute addAttribute(String key, String initialValue) {
+    return new LocalAttribute(stiJNI.JLocalDevice_addAttribute__SWIG_0(swigCPtr, this, key, initialValue), true);
+  }
+
+  public LocalAttribute addAttribute(String key, String initialValue, StringVector allowedValues) {
+    return new LocalAttribute(stiJNI.JLocalDevice_addAttribute__SWIG_1(swigCPtr, this, key, initialValue, StringVector.getCPtr(allowedValues), allowedValues), true);
+  }
+
+  public LocalAttribute addAttribute(String key, String initialValue, String allowedValues) {
+    return new LocalAttribute(stiJNI.JLocalDevice_addAttribute__SWIG_2(swigCPtr, this, key, initialValue, allowedValues), true);
   }
 
   public LocalChannel addChannel(int channelNumber, ChannelType type, MixedValueType inputType, MixedValueType outputType, String defaultName) {
@@ -82,6 +114,18 @@ public class JLocalDevice extends JDevice {
 
   public void addPartner(DeviceID id) {
     stiJNI.JLocalDevice_addPartner(swigCPtr, this, DeviceID.getCPtr(id), id);
+  }
+
+  public void addEventTarget(DeviceID id) {
+    stiJNI.JLocalDevice_addEventTarget(swigCPtr, this, DeviceID.getCPtr(id), id);
+  }
+
+  public void sendMessage(DeviceMessage mess) {
+    stiJNI.JLocalDevice_sendMessage(swigCPtr, this, DeviceMessage.getCPtr(mess), mess);
+  }
+
+  public void addCollectionListener(DeviceCollectionListener listener) {
+    stiJNI.JLocalDevice_addCollectionListener(swigCPtr, this, DeviceCollectionListener.getCPtr(listener), listener);
   }
 
 }

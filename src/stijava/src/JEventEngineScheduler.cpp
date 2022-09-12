@@ -11,43 +11,17 @@ using STI::Engine::JEventEngineScheduler;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EngineJobID;
+using STI::Engine::EngineJobStatus;
 
 
 JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
     : localScheduler(scheduler)
 {
-
 }
 
 JEventEngineScheduler::~JEventEngineScheduler()
 {
 }
-
-
-// void JEventEngineScheduler::getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 
-//                             std::set<STI::Device::DeviceID>& missingTargets, const STI::Device::DeviceTrace& trace)
-// {
-//     if(localScheduler != 0) {
-//         localScheduler->getDependants(evtTargets, tree, missingTargets, trace);
-//     }
-// }
-
-
-// void JEventEngineScheduler::addDeviceEventTargets(STI::Engine::EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace)
-// {
-//     if(localScheduler != 0) {
-//         localScheduler->addDeviceEventTargets(tree, trace);
-//     }
-// }
-
-
-// void JEventEngineScheduler::addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob)
-// {
-//     if(localScheduler != 0) {
-//         localScheduler->addJob(newJob);
-//     }
-// }
-
 
 STI::Engine::ParseID JEventEngineScheduler::parse(const std::shared_ptr<STI::Engine::JShot>& jshot)
 {
@@ -68,6 +42,22 @@ STI::Engine::ShotID JEventEngineScheduler::play(const ParseID& parseID, const En
         sid = localScheduler->play(parseID, source);
     }
     return sid;
+}
+
+EngineJobStatus JEventEngineScheduler::getStatus(const ParseID& pid)
+{
+    if(localScheduler != 0) {
+        return localScheduler->getStatus(pid);
+    }
+    return EngineJobStatus::NotFound;
+}
+
+EngineJobStatus JEventEngineScheduler::getStatus(const ShotID& sid)
+{
+    if(localScheduler != 0) {
+        return localScheduler->getStatus(sid);
+    }
+    return EngineJobStatus::NotFound;
 }
 
 void JEventEngineScheduler::cancelJob(const STI::Engine::EngineJobID& jobID)

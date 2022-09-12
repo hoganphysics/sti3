@@ -64,6 +64,6 @@
 %include "sti/engine/ShotResult.h"
 
 //JPersistenceManager
-%ignore STI::Device::JPersistenceManager::JPersistenceManager(std::shared_ptr< STI::Device::PersistenceManager >& manager);
+%ignore STI::Device::JPersistenceManager::JPersistenceManager(const std::shared_ptr< STI::Device::PersistenceManager >& manager);
 %include "JPersistenceManager.h"
 

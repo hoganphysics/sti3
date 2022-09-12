@@ -36,16 +36,34 @@ public class MixedValue {
     }
   }
 
+  protected void swigDirectorDisconnect() {
+    swigCMemOwn = false;
+    delete();
+  }
+
+  public void swigReleaseOwnership() {
+    swigCMemOwn = false;
+    stiJNI.MixedValue_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigCMemOwn = true;
+    stiJNI.MixedValue_change_ownership(this, swigCPtr, true);
+  }
+
   public MixedValue() {
     this(stiJNI.new_MixedValue__SWIG_0(), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(MixedValue copy) {
     this(stiJNI.new_MixedValue__SWIG_2(MixedValue.getCPtr(copy), copy), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(MixedValueType value) {
     this(stiJNI.new_MixedValue__SWIG_3(value.swigValue()), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public boolean opEquals(MixedValue other) {
@@ -135,6 +153,31 @@ public class MixedValue {
 
   public static String TypeToString(MixedValueType type) {
     return stiJNI.MixedValue_TypeToString(type.swigValue());
+  }
+
+  public MixedValue(String value) {
+    this(stiJNI.new_MixedValue__SWIG_4(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(double value) {
+    this(stiJNI.new_MixedValue__SWIG_5(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(int value) {
+    this(stiJNI.new_MixedValue__SWIG_6(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(FileHolder value) {
+    this(stiJNI.new_MixedValue__SWIG_7(FileHolder.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(boolean value) {
+    this(stiJNI.new_MixedValue__SWIG_8(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
 }

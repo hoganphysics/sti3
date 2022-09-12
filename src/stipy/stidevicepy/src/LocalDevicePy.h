@@ -52,6 +52,11 @@ public:
     {
         device->addPartner(id);
     }
+    
+    void addEventTarget(const STI::Device::DeviceID& id)
+    {
+        device->addEventTarget(id);
+    }    
 
      std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
     {

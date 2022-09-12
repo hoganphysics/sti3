@@ -19,15 +19,15 @@ class JAttributeManager
 {
 public:
 	
-	JAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
+	JAttributeManager(const std::shared_ptr<STI::Device::AttributeManager>& manager);
 	~JAttributeManager();
-
 
     std::string getValue(const std::string& key);
     bool setValue(const std::string& key, const std::string& value);
 
-    // bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
-    // void getAttributes(std::vector<std::shared_ptr<Attribute>>& attributes);
+    std::shared_ptr<Attribute> getAttribute(const std::string& key);
+    std::vector<std::shared_ptr<Attribute>> getAttributes();
+    std::map<std::string, std::string> getAttributeMap();
 
 private:
 

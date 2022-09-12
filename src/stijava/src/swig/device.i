@@ -25,6 +25,13 @@
     #include "JNodeWalker.h"
     #include <sti/network/HubID.h>
 
+    #include <sti/utils/LocalCollection.h>
+    using STI::Utils::LocalCollection;
+
+    #include <sti/engine/SynchronousEvent.h>
+    using STI::Engine::SynchronousEvent;
+    using STI::Engine::SynchronousEventAdapter;
+
     #include <sti/device/DeviceTrace.h>
 
     #include <sti/device/DeviceMessageListener.h>
@@ -34,6 +41,9 @@
     #include "JDeviceMessageDispatcher.h"
     #include "JEventEngineScheduler.h"
     using STI::Engine::JEventEngineScheduler;
+
+    #include <sti/engine/EngineJobStatus.h>
+    using STI::Engine::EngineJobStatus;
 
     #include <sti/engine/TimeStamp.h>
     using STI::Engine::TimeStamp;
@@ -93,14 +103,28 @@
     #include "ChannelRefreshListener.h"
     using STI::Device::ChannelRefreshListener;
 
-    #include "JAttributeManager.h"
+    #include "AttributeRefresher.h"
+    using STI::Device::AttributeRefresher;
+    #include "AttributeSetter.h"
+    using STI::Device::AttributeSetter;
 
+    #include "JAttributeManager.h"
+    using STI::Device::JAttributeManager;
+    #include <sti/device/Attribute.h>
+    #include <sti/device/LocalAttribute.h>
+    using STI::Device::LocalAttribute;
+
+    #include "AttributeRefreshListener.h"
+    using STI::Device::AttributeRefreshListener;
+    
     #include <sti/engine/ShotResult.h>
     
 
     // #include "JPersistenceManager.h"
 
     #include "JEventEngine.h"
+
+    #include <functional>
 
 %}
 
@@ -122,6 +146,7 @@
 %shared_ptr(STI::Device::JDeviceMessageReceiver);
 %shared_ptr(STI::Device::JDeviceMessageDispatcher);
 %shared_ptr(STI::Engine::JEventEngineScheduler);
+// %shared_ptr(STI::Device::ChannelManager);
 %shared_ptr(STI::Device::JChannelManager);
 %shared_ptr(STI::Device::JAttributeManager);
 %shared_ptr(STI::Device::JPersistenceManager);
@@ -129,7 +154,17 @@
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
 
+%shared_ptr(STI::Device::Attribute);
+%shared_ptr(STI::Device::LocalAttribute);
+
+%shared_ptr(STI::Device::AttributeRefresher);
+%shared_ptr(STI::Device::AttributeSetter);
+
+
 %shared_ptr(STI::Engine::JShot);
+
+%shared_ptr(STI::Engine::SynchronousEvent);
+%shared_ptr(STI::Engine::SynchronousEventAdapter);
 
 //%shared_ptr(STI::Device::DeviceMessageReceiver);
 
@@ -164,10 +199,6 @@
 
 
 //DeviceID
-// %rename(opEquals) operator==;
-// %rename(opLess) operator<;
-// %rename(opNotEquals) operator!=;
-// %rename(opEvaluate) operator();
 %ignore DeviceIDBase;
 %include "sti/device/DeviceID.h"
 %template(DeviceIDset) std::set< STI::Device::DeviceID >;
@@ -177,19 +208,6 @@
 
 //EngineID
 %include "sti/engine/EngineID.h"
-
-// //RawEvent
-// %include "sti/fwd/RawEvent_fwd.h"
-// // %template(UIntVector) std::vector< unsigned >;
-// // %include "sti/utils/GraphPathLabel.h"
-// // %rename(UIntVector) STI::Utils::GraphPathLabel;
-// %include "sti/engine/RawEventTargetChannel.h"
-// %include "sti/engine/RawEventTargetDevice.h"
-// %include "sti/engine/RawEventTarget.h"
-// %include "sti/engine/RawEvent.h"
-// %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
-// %shared_ptr( std::vector< STI::Engine::RawEvent > );
-
 
 
 //JDeviceCollection
@@ -324,14 +342,58 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/ParseID.h"
 %include "sti/engine/ShotID.h"
 
+
+
 //Attributes
 %template(StringMap) std::map< std::string, std::string >;
+
+%template(AttributeVector) std::vector< std::shared_ptr < STI::Device::Attribute > >;
 %ignore STI::Device::AttributeManager;
-%ignore STI::Device::JAttributeManager::JAttributeManager(std::shared_ptr< STI::Device::AttributeManager >& manager);
+%ignore STI::Device::JAttributeManager::JAttributeManager(const std::shared_ptr< STI::Device::AttributeManager >& manager);
+%include "sti/device/Attribute.h"
+
+%include "AttributeRefresher.h"
+%include "AttributeSetter.h"
+
+%ignore STI::Device::LocalAttribute::setRefresher(const std::function< std::string( void ) >& refesher);
+%ignore STI::Device::LocalAttribute::setSetter(const std::function< bool( const std::string& ) >& setter);
+%include "sti/device/LocalAttribute.h"
+%extend STI::Device::LocalAttribute 
+{
+    STI::Device::LocalAttribute& STI::Device::LocalAttribute::setRefresher(const std::shared_ptr< STI::Device::AttributeRefresher >& refesher)
+    {
+        self->setRefresher(
+            [refesher]() { return refesher->refresh(); }
+        );
+        return (*self);
+    }
+    STI::Device::LocalAttribute& STI::Device::LocalAttribute::setSetter(const std::shared_ptr< STI::Device::AttributeSetter >& setter)
+    {
+        self->setSetter(
+            [setter](const std::string& value) { return setter->set(value); }
+        );
+        return (*self);
+    }
+}
+
+%include "AttributeRefreshListener.h"
 %include "JAttributeManager.h"
 
 
+//SynchronousEvent
+%include "sti/engine/SynchronousEvent.h"
+%template(SynchronousEventVector) std::vector< std::shared_ptr < STI::Engine::SynchronousEventAdapter > >;
 
+
+%include "sti/utils/LocalCollection.h"
+// %template(DeviceCollectionListener) STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >;
+
+
+%shared_ptr(STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >);
+%template(DeviceCollectionListener) STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >;
+
+
+// %typemap(jstype) char** "String[]"
 //JLocalDevice
 %include "JLocalDevice.h"
 
@@ -340,45 +402,18 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/EngineJobID.h"
 
 
-// //FileHolder
-// %ignore STI::Utils::FileHolder::write(const char* buffer, unsigned length);
-// %ignore STI::Utils::FileHolder::openFile();
-// %ignore STI::Utils::FileHolder::closeFile();
-// %include "sti/utils/FileHolder.h"
-
-
-
-// //MixedValue
-// %warnfilter(516) STI::Utils::MixedValue::setValue;
-// %include "sti/fwd/MixedValue_fwd.h"
-// %include "sti/utils/MixedValue.h"
-// %template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
-// %include "sti/utils/MixedValue.h"
-// %rename(MixedValueVec) STI::Utils::MixedValueVector;
-
-
-
-
-
 //JShot
 %ignore STI::Engine::JShot::JShot(std::shared_ptr< STI::Engine::Shot >& shot);
 %include "JShot.h"
 
 
-// %nspace STI::Engine::ParseID
-// %nspace STI::Engine::ShotID
-// %nspace STI::Engine::TimeStamp
 
-
+%include "sti/engine/EngineJobStatus.h"
 
 //JEventEngineScheduler
 %ignore STI::Engine::EventEngineScheduler;
 %ignore STI::Engine::JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr< STI::Engine::EventEngineScheduler >& scheduler);
 %include "JEventEngineScheduler.h"
-
-// //EngineParsingMessage
-// %include "sti/engine/EngineParsingMessage.h"
-// %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
 
 //ChannelUpdateMessage

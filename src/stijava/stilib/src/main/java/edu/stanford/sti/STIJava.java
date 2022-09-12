@@ -26,7 +26,7 @@ public class STIJava {
         try {
             System.out.print("Loading stijava...");
             System.loadLibrary("stijava");
-            System.out.println("done.");
+            System.out.println("success.");
             //Runtime.getRuntime().loadLibrary("stijava");  //seems to be the same as System.loadLibrary
             //System.out.println("Loaded stijava");
         } catch (UnsatisfiedLinkError e) {

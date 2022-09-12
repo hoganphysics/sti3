@@ -78,7 +78,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection, deviceMessageDispatcher);
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
-	localCollection->addListener(deviceCollectionListener);
+	addCollectionListener(deviceCollectionListener);
+	// localCollection->addListener(deviceCollectionListener);
 
     // std::cout << "CWD: " << std::filesystem::current_path().c_str() << std::endl;
 	auto deviceRootPath = std::filesystem::current_path();	//cwd
@@ -236,10 +237,11 @@ void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 	}
 }
 
-void LocalDevice::addCollectionListener(const std::string& listenerName,
-	const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)
+void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)
 {
-	localCollection->addListener(listener);
+	if (localCollection != 0) {
+		localCollection->addListener(listener);
+	}
 }
 
 //LocalDeviceCollection event handler
@@ -347,12 +349,8 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	
 	auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("SingleEvent", "");
 	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
-	// auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
 
 	eventGroup->addEvent(event);
-
-	// events->push_back(event);
-	// shot->setEvents(events);
 
 	auto parseID = eventEngineScheduler->parse(shot);
 

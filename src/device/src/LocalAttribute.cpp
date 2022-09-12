@@ -155,6 +155,14 @@ LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const STI::U
     return (*this);
 }
 
+LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const std::string& data)
+{
+    std::unique_lock<std::mutex> attributeLock(attMutex);
+
+    metaData.addMetaData(key, data);
+
+    return (*this);
+}
 
 const STI::Utils::MixedValue& LocalAttribute::getMetaData() const
 {

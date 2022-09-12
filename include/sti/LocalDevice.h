@@ -117,8 +117,7 @@ public:
 
 	virtual bool isEventTarget(const DeviceID& id);
 
-	void addCollectionListener(const std::string& listenerName,
-		const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
+	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
 
 	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 

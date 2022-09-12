@@ -48,4 +48,17 @@ public class JAttributeManager {
     return stiJNI.JAttributeManager_setValue(swigCPtr, this, key, value);
   }
 
+  public Attribute getAttribute(String key) {
+    long cPtr = stiJNI.JAttributeManager_getAttribute(swigCPtr, this, key);
+    return (cPtr == 0) ? null : new Attribute(cPtr, true);
+  }
+
+  public AttributeVector getAttributes() {
+    return new AttributeVector(stiJNI.JAttributeManager_getAttributes(swigCPtr, this), true);
+  }
+
+  public StringMap getAttributeMap() {
+    return new StringMap(stiJNI.JAttributeManager_getAttributeMap(swigCPtr, this), true);
+  }
+
 }

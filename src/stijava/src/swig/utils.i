@@ -42,7 +42,39 @@
 //MixedValue
 %warnfilter(516) STI::Utils::MixedValue::setValue;
 %include "sti/fwd/MixedValue_fwd.h"
+
+
+// %ignore STI::Utils::MixedValue::MixedValue;
 %include "sti/utils/MixedValue.h"
+%extend STI::Utils::MixedValue 
+{
+    MixedValue(const std::string& value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue(value);
+        return mixedVal;
+    }
+    MixedValue(double value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue(value);
+        return mixedVal;
+    }
+    MixedValue(int value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue(value);
+        return mixedVal;
+    }
+    MixedValue(const std::shared_ptr< STI::Utils::FileHolder >& value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue(value);
+        return mixedVal;
+    }
+    MixedValue(bool value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue(value);
+        return mixedVal;
+    }
+}
+
 %template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
 %include "sti/utils/MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;

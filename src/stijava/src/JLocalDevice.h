@@ -28,12 +28,19 @@ public:
 	virtual ~JLocalDevice();
 
 	std::shared_ptr<STI::Device::JDeviceMessageReceiver> getMessageReceiver();
-	// std::shared_ptr<STI::Engine::JEventEngineScheduler> getEngineScheduler();
 
-//	std::shared_ptr<STI::Device::JDeviceMessageReceiver> getEventReceiver2();
+	virtual void parseEvents(const STI::Engine::RawEventMap& events, std::vector<std::shared_ptr<STI::Engine::SynchronousEventAdapter>>& synchedEvents) {}
 
-//	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) = 0;
-	virtual void parseEvents(int temp) = 0;
+	virtual bool writeChannel(int channel, const STI::Utils::MixedValue& value);
+	virtual STI::Utils::MixedValue readChannel(int channel, const STI::Utils::MixedValue& value);
+	
+	bool write(int channel, const STI::Utils::MixedValue& value);
+	STI::Utils::MixedValue read(int channel, const STI::Utils::MixedValue& value);
+	void stopRW();
+
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
+	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, const std::string& allowedValues);
 
 	LocalChannel& addChannel(int channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
@@ -41,7 +48,12 @@ public:
 	void addEventEngine(const STI::Engine::EngineID& engineID);
 
 	void addPartner(const DeviceID& id);
-//	void test();
+	void addEventTarget(const DeviceID& id);
+
+	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
+
+	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
+
 private:
 
 	class LocalDeviceProxy : public STI::Device::LocalDevice
@@ -53,22 +65,12 @@ private:
 		
 		void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
-		class TestEvent;
+		bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+		bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
-		class TestEvent : public STI::Engine::SynchronousEventAdapter
-		{
-		public:
-
-			TestEvent(const STI::Engine::RawEvent& evt);
-			
-			void playEvent();
-
-			STI::Engine::RawEvent evt;
-		};
-	
 	private:
-		JLocalDevice* jLocalDevice;
 
+		JLocalDevice* jLocalDevice;
 	};
 
     std::shared_ptr<JDeviceMessageReceiver> jReceiver;

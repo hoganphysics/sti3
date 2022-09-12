@@ -23,7 +23,9 @@ include_directories(".")
 link_directories(${STI_BASE_DIR}/lib)
 
 # add the executable
-add_library(stijava SHARED 
+add_library(stijava SHARED
+    JAttributeManager.cpp
+    JChannelManager.cpp
     JDeviceCollection.cpp
     JDevice.cpp
     JDeviceMessageDispatcher.cpp

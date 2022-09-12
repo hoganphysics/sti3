@@ -11,7 +11,7 @@
 using STI::Device::JPersistenceManager;
 
 
-JPersistenceManager::JPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
+JPersistenceManager::JPersistenceManager(const std::shared_ptr<STI::Device::PersistenceManager>& manager)
 : persistenceManager(manager)
 {   
 }

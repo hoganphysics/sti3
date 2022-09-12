@@ -2,9 +2,6 @@
 package edu.stanford.testdevice;
 
 import edu.stanford.sti.*;
-import edu.stanford.sti.JEngineJobUpdateDeviceMessageListener;
-import edu.stanford.sti.EngineStateMessageListener;
-import edu.stanford.sti.EngineParsingMessage;
 
 
 public class TestJDevice extends JLocalDevice {
@@ -15,17 +12,41 @@ public class TestJDevice extends JLocalDevice {
 
     public TestJDevice(String name, String address, int module, String targetServer) {
         super(name, address, module, targetServer);
-      
-    //    test();
     
         edu.stanford.sti.DeviceID serverID = new edu.stanford.sti.DeviceID("STI Server", "localhost", 0);
         addPartner(serverID);
         
         addChannel(1, ChannelType.Output, MixedValueType.Empty, MixedValueType.Double, "testch"); //.addMetaData(key, value);
+        addChannel(2, ChannelType.Input, MixedValueType.Double, MixedValueType.Double, "testch2");
 
-        JEventEngineScheduler engineScheduler = getEngineScheduler();
-        //engineScheduler.getId();
+        addAttribute("testat", "5")
+        .setRefresher( new AttributeRefresher() {
+            public String refresh() {
+                System.out.println("*** refresh: " + getID().getID());
+                return "75";
+            }
+        })
+        .setSetter(new AttributeSetter() {
+            public boolean set(String value) {
+                System.out.println("*** set: " + value);
+                return true;
+            }
+        })
+        .addMetaData("color", "red");
         
+        // String[] vs= {"True", "False"};
+        // addAttribute("at2", "True", new StringVector(vs));
+        // addAttribute("at2", "True", new StringVector(new String[] {"True", "False"}));
+        addAttribute("at2", "True", "True,False");
+
+        addCollectionListener(new DeviceCollectionListener() {
+            public void add(DeviceID id) {
+                System.out.println("Collection listener add: " + id.getID());
+            }
+        });
+
+
+        JEventEngineScheduler engineScheduler = getEngineScheduler();      
 
         JDeviceMessageReceiver messageReceiver = this.getMessageReceiver();
 
@@ -78,8 +99,43 @@ public class TestJDevice extends JLocalDevice {
         addEventEngine(id);
     }
 
-    public void parseEvents(int temp)
+    // public boolean writeChannel(int channel, MixedValue value)
+    // {
+    //     System.out.println("java writeChannel " + channel);
+    //     return true;
+    // }
+
+    public MixedValue readChannel(int channel, MixedValue value)
     {
-        System.out.println("parsing in java");
+        System.out.println("java readChannel " + channel);
+        MixedValue data = new MixedValue();
+        data.setValue(104.8);
+        return data;
     }
+
+    public class TestJEvent extends SynchronousEventAdapter
+    {
+        public TestJEvent(double time)
+        {
+            super(time);
+        }
+
+        public void loadEvent()
+        {
+            System.out.println("--> java loadEvent " + getTime());
+        }
+        public void playEvent()
+        {
+            System.out.println("--> java playEvent ");
+        }
+    }
+
+    public void parseEvents(RawEventMap events, SynchronousEventVector synchedEvents)
+    {
+        System.out.println("java parseEvents " + events.entrySet().iterator().next().getKey());
+       
+
+        synchedEvents.add( new TestJEvent(34.6) );
+    }
+
 }

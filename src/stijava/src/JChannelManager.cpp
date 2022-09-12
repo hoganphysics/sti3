@@ -4,7 +4,6 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/device/LocalChannel.h>
 
-
 using STI::Device::JChannelManager;
 using STI::Device::Channel;
 

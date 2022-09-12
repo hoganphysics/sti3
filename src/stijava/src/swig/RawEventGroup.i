@@ -37,6 +37,7 @@
 %include "sti/fwd/RawEvent_fwd.h"
 %include "sti/engine/RawEvent.h"
 %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
+%template(RawEventMap) std::map< double, std::vector< STI::Engine::RawEvent > >;
 %shared_ptr( std::vector< STI::Engine::RawEvent > );
 
 %template(ParsedTagVector) std::vector< STI::Engine::ParsedTag >;

@@ -30,8 +30,11 @@ public:
 
     STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::JShot>& shot);
     STI::Engine::ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
-    void cancelJob(const STI::Engine::EngineJobID& jobID);
 
+    EngineJobStatus getStatus(const ParseID& pid);
+    EngineJobStatus getStatus(const ShotID& sid);
+
+    void cancelJob(const STI::Engine::EngineJobID& jobID);
     void cancelAll();
 
     std::set<EngineJobID> getQueuedJobs() const;

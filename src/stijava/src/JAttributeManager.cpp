@@ -1,11 +1,12 @@
-
 #include "JAttributeManager.h"
 
+#include <sti/device/Attribute.h>
+
 using STI::Device::JAttributeManager;
+using STI::Device::Attribute;
 
-JAttributeManager::
 
-JAttributeManager::JAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
+JAttributeManager::JAttributeManager(const std::shared_ptr<STI::Device::AttributeManager>& manager)
 : localManager(manager)
 {
 }
@@ -31,3 +32,32 @@ bool JAttributeManager::setValue(const std::string& key, const std::string& valu
     return false;
 }
 
+std::shared_ptr<Attribute> JAttributeManager::getAttribute(const std::string& key)
+{
+    std::shared_ptr<Attribute> attribute;
+
+    if (localManager != 0) {
+        localManager->getAttribute(key, attribute);
+    }
+    return attribute;
+}
+
+std::vector<std::shared_ptr<Attribute>> JAttributeManager::getAttributes()
+{
+    std::vector<std::shared_ptr<Attribute>> attributes;
+
+    if (localManager != 0) {
+        localManager->getAttributes(attributes);
+    }
+    return attributes;
+}
+
+std::map<std::string, std::string> JAttributeManager::getAttributeMap()
+{
+    std::map<std::string, std::string> attributes;
+
+    if (localManager != 0) {
+        localManager->getAttributes(attributes);
+    }
+    return attributes;
+}

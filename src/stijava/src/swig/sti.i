@@ -1,5 +1,5 @@
 %module(directors="1") sti
-//%feature("director");
+%feature("director");
 
 
 %rename(opEquals) operator==;

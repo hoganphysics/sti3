@@ -20,7 +20,7 @@ class JPersistenceManager
 {
 public:
 	
-	JPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
+	JPersistenceManager(const std::shared_ptr<STI::Device::PersistenceManager>& manager);
 	~JPersistenceManager();
 
     std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);

@@ -11,6 +11,43 @@
 #ifndef SWIG_sti_WRAP_H_
 #define SWIG_sti_WRAP_H_
 
+class SwigDirector_FileHolder : public STI::Utils::FileHolder, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_FileHolder(JNIEnv *jenv);
+    virtual ~SwigDirector_FileHolder();
+    virtual std::string getFilename() const;
+    virtual bool exists() const;
+    virtual bool transferFile(std::shared_ptr< STI::Utils::FileHolder > const &destination);
+    virtual unsigned int maxBufferSize() const;
+    virtual bool deleteFile();
+    virtual std::string md5Checksum();
+    virtual bool write(char const *buffer, unsigned int length);
+    virtual bool openFile();
+    virtual void closeFile();
+public:
+    bool swig_overrides(int n) {
+      return (n < 6 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<6> swig_override;
+};
+
+class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_MixedValue(JNIEnv *jenv);
+    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
+    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValueType const &value);
+    virtual ~SwigDirector_MixedValue();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
+};
+
 class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
 
 public:
@@ -375,19 +412,165 @@ protected:
     Swig::BoolArray<2> swig_override;
 };
 
-class SwigDirector_JLocalDevice : public STI::Device::JLocalDevice, public Swig::Director {
+class SwigDirector_Attribute : public STI::Device::Attribute, public Swig::Director {
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_JLocalDevice(JNIEnv *jenv, std::string const &name, std::string const &address, unsigned short module, std::string const &targetServer);
-    virtual ~SwigDirector_JLocalDevice();
-    virtual void parseEvents(int temp);
+    SwigDirector_Attribute(JNIEnv *jenv);
+    virtual ~SwigDirector_Attribute();
+    virtual std::string const &getKey() const;
+    virtual std::string const &getValue() const;
+    virtual std::vector< std::string > const &getAllowedValues() const;
+    virtual std::string const &getGroup() const;
+    virtual void refreshValue();
+    virtual bool setValue(std::string const &value);
+    virtual STI::Utils::MixedValue const &getMetaData() const;
+    virtual STI::Utils::MixedValue getMetaData(std::string const &key) const;
+public:
+    bool swig_overrides(int n) {
+      return (n < 8 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<8> swig_override;
+};
+
+class SwigDirector_AttributeRefresher : public STI::Device::AttributeRefresher, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_AttributeRefresher(JNIEnv *jenv);
+    virtual ~SwigDirector_AttributeRefresher();
+    virtual std::string refresh();
 public:
     bool swig_overrides(int n) {
       return (n < 1 ? swig_override[n] : false);
     }
 protected:
     Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_AttributeSetter : public STI::Device::AttributeSetter, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_AttributeSetter(JNIEnv *jenv);
+    virtual ~SwigDirector_AttributeSetter();
+    virtual bool set(std::string const &value);
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_LocalAttribute : public STI::Device::LocalAttribute, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_LocalAttribute(JNIEnv *jenv, std::string const &key, std::string const &initalValue);
+    SwigDirector_LocalAttribute(JNIEnv *jenv, std::string const &key, std::string const &initalValue, std::vector< std::string > const &allowedValues);
+    virtual ~SwigDirector_LocalAttribute();
+    virtual std::string const &getKey() const;
+    virtual std::string const &getValue() const;
+    virtual std::vector< std::string > const &getAllowedValues() const;
+    virtual std::string const &getGroup() const;
+    virtual void refreshValue();
+    virtual bool setValue(std::string const &value);
+    virtual STI::Utils::MixedValue const &getMetaData() const;
+    virtual STI::Utils::MixedValue getMetaData(std::string const &key) const;
+public:
+    bool swig_overrides(int n) {
+      return (n < 8 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<8> swig_override;
+};
+
+class SwigDirector_AttributeRefreshListener : public STI::Device::AttributeRefreshListener, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_AttributeRefreshListener(JNIEnv *jenv);
+    virtual ~SwigDirector_AttributeRefreshListener();
+    virtual void handleAttributeRefreshEvent(std::string const &key, std::string const &value);
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_SynchronousEvent : public STI::Engine::SynchronousEvent, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_SynchronousEvent(JNIEnv *jenv, double time);
+    virtual ~SwigDirector_SynchronousEvent();
+    virtual void waitBeforePlay();
+    virtual void waitBeforeCollectData();
+public:
+    bool swig_overrides(int n) {
+      return (n < 2 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<2> swig_override;
+};
+
+class SwigDirector_SynchronousEventAdapter : public STI::Engine::SynchronousEventAdapter, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_SynchronousEventAdapter(JNIEnv *jenv, double time);
+    virtual ~SwigDirector_SynchronousEventAdapter();
+    virtual void waitBeforePlay();
+    virtual void waitBeforeCollectData();
+    virtual void loadEvent();
+    virtual void playEvent();
+    virtual void collectMeasurementData();
+    virtual void stopEvent();
+    virtual void pauseEvent();
+    virtual void unpauseEvent(bool retrigger);
+public:
+    bool swig_overrides(int n) {
+      return (n < 8 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<8> swig_override;
+};
+
+class SwigDirector_DeviceCollectionListener : public STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_DeviceCollectionListener(JNIEnv *jenv);
+    virtual void add(STI::Device::DeviceID const &id);
+    virtual void remove(STI::Device::DeviceID const &id);
+    virtual void refresh();
+public:
+    bool swig_overrides(int n) {
+      return (n < 3 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<3> swig_override;
+};
+
+class SwigDirector_JLocalDevice : public STI::Device::JLocalDevice, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_JLocalDevice(JNIEnv *jenv, std::string const &name, std::string const &address, unsigned short module, std::string const &targetServer);
+    virtual ~SwigDirector_JLocalDevice();
+    virtual void parseEvents(STI::Engine::RawEventMap const &events, std::vector< std::shared_ptr< STI::Engine::SynchronousEventAdapter > > &synchedEvents);
+    virtual bool writeChannel(int channel, STI::Utils::MixedValue const &value);
+    virtual STI::Utils::MixedValue readChannel(int channel, STI::Utils::MixedValue const &value);
+public:
+    bool swig_overrides(int n) {
+      return (n < 3 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<3> swig_override;
 };
 
 class SwigDirector_ParseResult : public STI::Engine::ParseResult, public Swig::Director {

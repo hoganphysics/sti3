@@ -48,6 +48,14 @@ public class JEventEngineScheduler {
     return new ShotID(stiJNI.JEventEngineScheduler_play(swigCPtr, this, ParseID.getCPtr(parseID), parseID, EngineJobSourceID.getCPtr(source), source), true);
   }
 
+  public EngineJobStatus getStatus(ParseID pid) {
+    return EngineJobStatus.swigToEnum(stiJNI.JEventEngineScheduler_getStatus__SWIG_0(swigCPtr, this, ParseID.getCPtr(pid), pid));
+  }
+
+  public EngineJobStatus getStatus(ShotID sid) {
+    return EngineJobStatus.swigToEnum(stiJNI.JEventEngineScheduler_getStatus__SWIG_1(swigCPtr, this, ShotID.getCPtr(sid), sid));
+  }
+
   public void cancelJob(EngineJobID jobID) {
     stiJNI.JEventEngineScheduler_cancelJob(swigCPtr, this, EngineJobID.getCPtr(jobID), jobID);
   }
