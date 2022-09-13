@@ -1,32 +1,34 @@
-
 #include "NetworkConvert.h"
+
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_StackTrace.h"
 
-#include "DeviceTrace.h"
-#include "EventEngineDependencyTree.h"
-#include "EngineJobID.h"
+#include <sti/device/DeviceTrace.h>
 
-#include "EngineID.h"
-#include "EventEngineJob.h"
-#include "LocalEventEngineJob.h"
-#include "RawEvent.h"
-#include "ParseID.h"
-#include "ShotID.h"
-#include "Shot.h"
-#include "NetworkShotWrapper.h"
-#include "RemoteShot.h"
-#include "utils/GraphPathLabel.h"
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/Measurement.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/TimeStamp.h>
+
+#include <sti/utils/GraphPathLabel.h>
+
 #include "EventEngine.h"
-#include "TimeStamp.h"
-#include "EngineParsingMessage.h"
-#include "ParsedDependencyTree.h"
-#include "Measurement.h"
+#include "EventEngineDependencyTree.h"
+#include "LocalEventEngineJob.h"
 #include "NetworkEventEngine.h"
+#include "NetworkShotWrapper.h"
+#include "ParsedDependencyTree.h"
+#include "RemoteShot.h"
 #include "RemoteEventEngine.h"
-#include "ShotConfig.h"
-#include "ShotResultRecord.h"
-
+#include <sti/engine/Shot.h>
 
 #include <map>
 #include <memory>
@@ -70,8 +72,6 @@ using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
-using STI::Engine::DeviceEventMap;
-using STI::TNetwork::TDeviceEventsSeq;
 using STI::Engine::ParseID; 
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
@@ -87,13 +87,19 @@ using STI::Engine::ShotResultRecord;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotType;
 using STI::TNetwork::TShotType;
+using STI::TNetwork::TRawEventTarget;
+using STI::Engine::RawEventTarget;
+using STI::TNetwork::TRawEventTargetDevice;
+using STI::Engine::RawEventTargetDevice;
+using STI::TNetwork::TRawEventTargetChannel;
+using STI::Engine::RawEventTargetChannel;
+
 using STI::TNetwork::TEventEngineJobList;
 using STI::Engine::EventEngineJobList;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
 bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath);
-
 
 //EventEngine
 template<>
@@ -560,15 +566,15 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     std::shared_ptr<Shot> shot;
     STI::TNetwork::TShot tShot;
 
-    // ::STI::TNetwork::TShotEventsCallback_var tShotCallback(new STI::TNetwork::TShotEventsCallback());
-    ::STI::TNetwork::TShotEventsCallback_ptr tShotCallback;
+
+    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
     
     bool shotMissing = engineJob.getStatus() == EngineJobStatus::NotFound || 
                        engineJob.getStatus() == EngineJobStatus::Archived;
 
     if (!shotMissing && engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 
-        tShot.shotEventsCallback = tShotCallback;
+        tShot.shotCallback = tShotCallback;
 
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
     }
@@ -582,11 +588,6 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     }
 
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getMissingTargetIDs(), tEngineJob.missingTargetIDs);
-
-    // tEngineJob.eventEngine;
-    // std::shared_ptr<EventEngine> engine;
-    // if (engineJob->getEngine(engine)) {
-    // }
 
     return true;
 }
@@ -606,14 +607,16 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     {
     case EventEngineJobType::Parse:
         {
-        if (!CORBA::is_nil(tEngineJob.shot.shotEventsCallback)) {
+            convert<TShot, std::shared_ptr<Shot>>(tEngineJob.shot, parsedShot);
 
-            parsedShot = std::make_shared<STI::Network::RemoteShot>(
-                convert<TShotConfig, ShotConfig>(tEngineJob.shot.shotConfig), tEngineJob.shot.shotEventsCallback);
-        }
+            // if (!CORBA::is_nil(tEngineJob.shot.shotCallback)) {
 
-        tree = std::make_shared<EventEngineDependencyTree>();
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
+            //     parsedShot = std::make_shared<STI::Network::RemoteShot>(
+            //         convert<TShotConfig, ShotConfig>(tEngineJob.shot.shotConfig), tEngineJob.shot.shotCallback);
+            // }
+
+            tree = std::make_shared<EventEngineDependencyTree>();
+            convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
 		auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
 			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
@@ -647,6 +650,7 @@ TEventEngineJob STI::Network::convert<EventEngineJob, TEventEngineJob>(const Eve
     return tJob;
 }
 
+
 template<>
 TEventEngineJob STI::Network::convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(const std::shared_ptr<EventEngineJob>& engineJob)
 {
@@ -665,6 +669,92 @@ std::shared_ptr<EventEngineJob> STI::Network::convert<TEventEngineJob, std::shar
     convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tEngineJob, job);
 
     return job;
+}
+
+
+
+//RawEventTarget
+template<>
+TRawEventTarget STI::Network::convert<RawEventTarget, TRawEventTarget>(const RawEventTarget& target)
+{
+    TRawEventTarget tTarget;
+    convert<RawEventTargetDevice, TRawEventTargetDevice>(target.device(), tTarget.device);
+    convert<RawEventTargetChannel, TRawEventTargetChannel>(target.channel(), tTarget.channel);
+    return tTarget;
+}
+
+template<>
+RawEventTarget STI::Network::convert<TRawEventTarget, RawEventTarget>(const TRawEventTarget& tTarget)
+{
+    RawEventTarget target(
+        convert<TRawEventTargetDevice, RawEventTargetDevice>(tTarget.device),
+        convert<TRawEventTargetChannel, RawEventTargetChannel>(tTarget.channel)
+        );
+    return target;
+}
+
+//RawEventTargetDevice
+template<>
+bool STI::Network::convert<RawEventTargetDevice, TRawEventTargetDevice>(const RawEventTargetDevice& targetDevice, TRawEventTargetDevice& tTargetDevice)
+{
+    tTargetDevice.isAbstract = static_cast<CORBA::Boolean>(targetDevice.isAbstract());
+    
+    if (targetDevice.isAbstract()) {
+        convert<std::string, ::CORBA::String_member>(targetDevice.name(), tTargetDevice.name);
+    }
+    else {
+        convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(targetDevice.deviceID(), tTargetDevice.targetDeviceID);
+    }
+    return true;
+}
+
+template<>
+RawEventTargetDevice STI::Network::convert<TRawEventTargetDevice, RawEventTargetDevice>(const TRawEventTargetDevice& tTargetDevice)
+{
+    if (tTargetDevice.isAbstract) {
+        RawEventTargetDevice targetDevice(
+            convert<::CORBA::String_member, std::string>(tTargetDevice.name)
+            );
+        return targetDevice;
+    }
+    else {
+        RawEventTargetDevice targetDevice(
+            convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tTargetDevice.targetDeviceID)
+            );
+        return targetDevice;
+    }
+}
+
+//RawEventTargetChannel
+template<>
+bool STI::Network::convert<RawEventTargetChannel, TRawEventTargetChannel>(const RawEventTargetChannel& targetChannel, TRawEventTargetChannel& tTargetChannel)
+{
+    tTargetChannel.isAbstract = static_cast<CORBA::Boolean>(targetChannel.isAbstract());
+ 
+    if (targetChannel.isAbstract()) {
+        convert<std::string, ::CORBA::String_member>(targetChannel.name(), tTargetChannel.name);
+    }
+    else {
+        tTargetChannel.channel = static_cast<CORBA::UShort>(targetChannel.channel());
+    }
+    return true;
+}
+
+template<>
+RawEventTargetChannel STI::Network::convert<TRawEventTargetChannel, RawEventTargetChannel>(const TRawEventTargetChannel& tTargetChannel)
+{
+    if (tTargetChannel.isAbstract) {
+        RawEventTargetChannel targetChannel(
+            convert<::CORBA::String_member, std::string>(tTargetChannel.name)
+            );
+        return targetChannel;
+    }
+    else {
+        RawEventTargetChannel targetChannel(
+            static_cast<unsigned short>(tTargetChannel.channel)
+            );
+        return targetChannel;
+    }
 }
 
 
@@ -725,6 +815,7 @@ EventEngineJobList STI::Network::convert<TEventEngineJobList, EventEngineJobList
 }
 
 
+
 //GraphPathLabel
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath)
 {
@@ -745,36 +836,39 @@ bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, S
     return true;
 }
 
+
+
+
+
 //RawEvent
 template<>
 bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& tEvent)
 {
     tEvent.time = static_cast<CORBA::Double>(evt.time());
-    tEvent.channel = static_cast<CORBA::UShort>(evt.channel());
-    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.value);
+    tEvent.target = convert<RawEventTarget, TRawEventTarget>(evt.target());
+    convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.parsedValue.value);
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
-    //trace
+    convert<STI::Engine::StackTrace, STI::TNetwork::TStackFrameSeq>(evt.getStackTrace(), tEvent.stackTrace);
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
-    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(evt.targetDevice(), tEvent.targetDeviceID);
-    convertEventGraphPath(evt.getEventGraphPath(), tEvent.eventGraphPath);
+    STI::Network::convertEventGraphPath(evt.getEventGraphPath(), tEvent.eventGraphPath);
 
     return true;
 }
 
-
 template<>
 bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEvent& evt)
 {
-    evt.setTargetID(convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEvent.targetDeviceID));
 	evt.setTime(static_cast<double>(tEvent.time));
-	evt.setChannel(static_cast<unsigned short>(tEvent.channel));
-	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.value));
+    evt.setTarget(convert<TRawEventTarget, RawEventTarget>(tEvent.target));
+	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.parsedValue.value));
 	evt.setDescription(convert<::CORBA::String_member, std::string>(tEvent.description));
+    convert<STI::TNetwork::TStackFrameSeq, STI::Engine::StackTrace>(tEvent.stackTrace, evt.getStackTrace());
+
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
 
     STI::Utils::GraphPathLabel gpl;
-    convertEventGraphPath(tEvent.eventGraphPath, gpl);
+    STI::Network::convertEventGraphPath(tEvent.eventGraphPath, gpl);
 	evt.setEventGraphPath(gpl);
 
     return true;
@@ -799,42 +893,6 @@ RawEvent STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent)
 
     return evt;
 }
-
-
-//STI::Engine::DeviceEventMap
-template<>
-bool STI::Network::convert<DeviceEventMap, TDeviceEventsSeq>(const DeviceEventMap& deviceEvents, TDeviceEventsSeq& tDeviceEvents)
-{
-    tDeviceEvents.length(static_cast<CORBA::ULong>(deviceEvents.size()));
-
-    unsigned i = 0;
-
-    for (auto& targetEvents : deviceEvents) {
-        tDeviceEvents[i].targetDeviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(targetEvents.first);
-        
-        convert<RawEvent, TRawEvent>(targetEvents.second, tDeviceEvents[i].events);
-
-        i++;
-    }
-    return true;
-}
-
-
-template<>
-bool STI::Network::convert<TDeviceEventsSeq, DeviceEventMap>(const TDeviceEventsSeq& tDeviceEvents, DeviceEventMap& deviceEvents)
-{
-    deviceEvents.clear();
-
-    for (unsigned i = 0; i < tDeviceEvents.length(); ++i) {
-        //get RawEventVector for this DeviceID
-        auto& evts = deviceEvents[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceEvents[i].targetDeviceID)];
-        
-        //populate vector with converted events
-        convert<TRawEvent, RawEvent>(tDeviceEvents[i].events, evts);
-    }
-    return true;
-}
-
 
 
 
@@ -1073,13 +1131,6 @@ TShotID STI::Network::convert<ShotID, TShotID>(const ShotID& sid)
     TShotID tsid;
     convert<ShotID, TShotID>(sid, tsid);
 
-    // tShot.parseID = convert<ParseID, TParseID>(sid.parseID);
-
-    // tShot.submissionTime = convert<TimeStamp, TTimeStamp>(sid.submissionTime);
-    // tShot.playTime = convert<TimeStamp, TTimeStamp>(sid.playTime);
-    
-    // tShot.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(sid.jobSourceID);
-
     return tsid;
 }
 
@@ -1088,13 +1139,6 @@ ShotID STI::Network::convert<TShotID, ShotID>(const TShotID& tsid)
 {
     ShotID sid;
     convert<TShotID, ShotID>(tsid, sid);
-
-    // shot.parseID = convert<TParseID, ParseID>(tsid.parseID);
-
-    // shot.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
-    // shot.playTime = convert<TTimeStamp, TimeStamp>(tsid.playTime);
-    
-    // shot.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tsid.jobSourceID);
 
     return sid;
 }
@@ -1182,12 +1226,13 @@ bool STI::Network::convert<TShot, std::shared_ptr<Shot>>(const TShot& tShot, std
 {
     bool success = false;
 
-    if (!CORBA::is_nil(tShot.shotEventsCallback)) {
+    if (!CORBA::is_nil(tShot.shotCallback)) {
         
-        shot = std::make_shared<STI::Network::RemoteShot>(
+        auto remoteShot = std::make_shared<STI::Network::RemoteShot>(
                     convert<TShotConfig, ShotConfig>(tShot.shotConfig), 
-                    tShot.shotEventsCallback);
+                    tShot.shotCallback);
         
+        shot = remoteShot;
         success = (shot != 0);
     }
     return success;
@@ -1197,15 +1242,15 @@ bool STI::Network::convert<TShot, std::shared_ptr<Shot>>(const TShot& tShot, std
 template<>
 bool STI::Network::convert<std::shared_ptr<Shot>, TShot>(const std::shared_ptr<Shot>& shot, TShot& tShot)
 {
-    ::STI::TNetwork::TShotEventsCallback_ptr tShotCallback;
+    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
 
     if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 
-        tShot.shotEventsCallback = tShotCallback;
+        tShot.shotCallback = tShotCallback;
      
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
 
-        return !CORBA::is_nil(tShot.shotEventsCallback);
+        return !CORBA::is_nil(tShot.shotCallback);
     }
     return false;
 }
@@ -1285,8 +1330,6 @@ bool STI::Network::convert<EngineParsingMessage, TEngineParsingMessage>(const En
     convert<RawEvent, TRawEvent>(parsingMessage.getEvents(), tParsingMessage.events);
     return true;
 }
-
-
 
 template<>
 bool STI::Network::convert<TEngineParsingMessage, EngineParsingMessage>(const TEngineParsingMessage& tParsingMessage, EngineParsingMessage& parsingMessage)
@@ -1373,9 +1416,11 @@ bool STI::Network::convert<std::shared_ptr<Measurement>, TMeasurement>(
 
     tMeasurement.time = static_cast<CORBA::Double>(measurement->time());
     tMeasurement.channel = static_cast<CORBA::UShort>(measurement->channel());
-    convertEventGraphPath(measurement->getMeasurementGraphPath(), tMeasurement.measurementGraphPath);
+    STI::Network::convertEventGraphPath(measurement->getMeasurementGraphPath(), tMeasurement.measurementGraphPath);
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(measurement->device(), tMeasurement.device);
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(measurement->data(), tMeasurement.measurementResult);
+    tMeasurement.fullGroupName = convert<std::string, CORBA::String_member>(measurement->groupName());
+
     return true;
 }
 
@@ -1384,13 +1429,15 @@ bool STI::Network::convert<TMeasurement, std::shared_ptr<Measurement>>(
         const TMeasurement& tMeasurement, std::shared_ptr<Measurement>& measurement)
 {
     STI::Utils::GraphPathLabel gpl;
-    convertEventGraphPath(tMeasurement.measurementGraphPath, gpl);
+    STI::Network::convertEventGraphPath(tMeasurement.measurementGraphPath, gpl);
 
     measurement = std::make_shared<Measurement>(
         static_cast<double>(tMeasurement.time),
         static_cast<unsigned short>(tMeasurement.channel),
         convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tMeasurement.device),
-        gpl);
+        gpl,
+        convert<CORBA::String_member, std::string>(tMeasurement.fullGroupName)
+        );
 
     auto data = convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tMeasurement.measurementResult);
     measurement->setMeasurementResult(data);

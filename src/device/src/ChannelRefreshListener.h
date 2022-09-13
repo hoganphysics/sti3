@@ -1,7 +1,7 @@
 #ifndef STI_DEVICE_CHANNELREFRESHLISTENER_H
 #define STI_DEVICE_CHANNELREFRESHLISTENER_H
 
-#include "fwd/MixedValue_fwd.h"
+#include <sti/fwd/MixedValue_fwd.h>
 
 #include <string>
 

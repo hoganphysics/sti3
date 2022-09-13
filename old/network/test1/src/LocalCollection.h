@@ -1,8 +1,8 @@
 #ifndef STI_UTILS_LOCALCOLLECTION_H
 #define STI_UTILS_LOCALCOLLECTION_H
 
-#include "Collection.h"
-#include "SynchronizedMap.h"
+#include <sti/utils/Collection.h>
+#include <sti/utils/SynchronizedMap.h>
 
 #include <set>
 #include <memory>

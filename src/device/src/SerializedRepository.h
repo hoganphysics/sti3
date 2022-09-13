@@ -3,9 +3,10 @@
 #define STI_ENGINE_SERIALIZEDREPOSITORY_H
 
 #include "ShotRepository.h"
-//#include "ResultsDocumenter.h"
-#include "DeviceID.h"
-#include "ShotID.h"
+
+#include <sti/device/DeviceID.h>
+#include <sti/engine/ShotID.h>
+
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>
@@ -29,9 +30,13 @@ public:
 
 
     //ShotRepositroy
-    bool findShot(const ShotID& sid);
-    bool getShot(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);
-    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult);
+    bool findShotResult(const ShotID& sid);
+    bool findParseResult(const ParseID& sid);
+
+    bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);
+    bool getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult);
+
+    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
 
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
     // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
@@ -41,6 +46,11 @@ public:
     // bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
 
     // bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
+
+
+
+
+
 
 private:
 

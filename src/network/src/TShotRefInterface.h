@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_TSHOTREFINTERFACE_H
 #define STI_NETWORK_TSHOTREFINTERFACE_H
 
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include "deviceNet.h"
 
 #include <memory>
@@ -19,7 +19,7 @@ public:
 
 	static bool getTShotReference(
 			const typename std::shared_ptr<STI::Engine::Shot>& shot, 
-		    STI::TNetwork::TShotEventsCallback_ptr& tShotCallback)
+		    STI::TNetwork::TShotCallback_ptr& tShotCallback)
 	{
 		auto refInterface = std::dynamic_pointer_cast<TShotRefInterface>(shot);
 		if (refInterface) {
@@ -30,7 +30,7 @@ public:
 
 private:
 
-	virtual bool getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback) = 0;
+	virtual bool getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback) = 0;
 
 // 	static bool getTShotReference(const typename std::shared_ptr<STI::Engine::Shot>& shot, STI::TNetwork::TShot_ptr& tShot)
 // 	{

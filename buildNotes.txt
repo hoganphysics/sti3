@@ -1,0 +1,33 @@
+
+
+
+WINDOWS
+
+Building wheel, from sti3 top directory:
+
+py -m build --wheel
+
+
+Uploading to testpypi:
+
+py -m twine upload --repository testpypi dist/stipy-3.0.1-cp39-cp39-win_amd64.whl
+
+
+Linux
+
+* setup virtual environment
+* source env/bin/activate
+
+Setting up python build environment
+pip3 install setuptools
+pip3 install build
+pip3 install wheel
+pip3 install scikit-build
+
+python3 -m build --wheel
+
+Jupyter notebook testing:
+
+To enable Jupyter to work in a python venv, install ipython in vevn and run:
+
+python3 -m ipykernel install --user --name=projectname

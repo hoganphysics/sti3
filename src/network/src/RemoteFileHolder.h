@@ -1,10 +1,10 @@
-
 #ifndef STI_UTILS_REMOTEFILEHOLDER_H
 #define STI_UTILS_REMOTEFILEHOLDER_H
 
-#include "utils/FileHolder.h"
+#include <sti/utils/FileHolder.h>
 #include "TReferenceHolder.h"
 #include "TFileHolderRefInterface.h"
+#include <sti/utils/CachedValue.h>
 
 #include <string>
 #include <memory>
@@ -43,6 +43,12 @@ public:
 private:
 
     bool getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder);
+
+    //Cached data is mutable because it's the servant's data that's const, not this remote reference.
+    mutable STI::Utils::CachedValue<std::string> filename;
+    mutable STI::Utils::CachedValue<bool> fileExists;
+    mutable STI::Utils::CachedValue<unsigned> bufferSize;
+    mutable STI::Utils::CachedValue<std::string> checksum;
 
     mutable std::mutex fileMutex;
 

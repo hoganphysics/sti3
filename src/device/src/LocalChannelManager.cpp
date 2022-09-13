@@ -1,19 +1,16 @@
-
-
 #include "LocalChannelManager.h"
-#include "LocalChannel.h"
-#include "LocalDevice.h"
-#include "DeviceMessageDispatcher.h"
 
-#include "DeviceMessage.h"
+#include <sti/LocalDevice.h>
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/LocalChannel.h>
 
-
+using STI::Device::Channel;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::LocalChannel;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
-using STI::Device::Channel;
-using STI::Device::LocalChannel;
 using STI::Utils::MixedValue;
-using STI::Device::DeviceMessageDispatcher;
 
 
 LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)

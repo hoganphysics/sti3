@@ -1,6 +1,5 @@
-
-
 #include "STIPyServer.h"
+
 #include "STIPyShot.h"
 #include "PyParseTicket.h"
 #include "PyResultTicket.h"

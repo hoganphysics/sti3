@@ -1,6 +1,6 @@
 
-#include "Device.h"
-#include "LocalCollection.h"
+#include <sti/device/Device.h>
+#include <sti/utils/LocalCollection.h>
 
 #include <iostream>
 using std::cout;

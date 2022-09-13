@@ -1,10 +1,10 @@
 #ifndef STI_ENGINE_EVENTENGINE_H
 #define STI_ENGINE_EVENTENGINE_H
 
-#include "EngineState.h"
-#include "DeviceID.h"
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/Measurement_fwd.h"
+#include <sti/engine/EngineState.h>
+#include <sti/device/DeviceID.h>
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
 
 #include <memory>
 
@@ -20,6 +20,7 @@ class ParseID;
 class ShotID;
 class ResultsCollector;
 class ParsedDependencyTree;
+class ParseResult;
 
 
 class EventEngine
@@ -43,8 +44,9 @@ public:
 	virtual STI::Engine::EngineState getState() const = 0;
 
 	virtual std::shared_ptr<ParsedDependencyTree> getParsedTree() const = 0;
-	virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
+	// virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
 	// virtual const DeviceEventMap& getParsedEvents() = 0;
+	virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
 	
 	//virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
 	// virtual bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;

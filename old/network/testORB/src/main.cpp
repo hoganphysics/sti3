@@ -1,7 +1,7 @@
 
 #include "ORBManager.h"
 #include "TDeviceHub_i.h"
-#include "LocalDeviceHub.h"
+#include <sti/LocalDeviceHub.h>
 
 #include "TDeviceCollection_i.h"
 

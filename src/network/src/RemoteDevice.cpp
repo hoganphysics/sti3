@@ -4,7 +4,7 @@
 #include "RemoteDeviceMessageDispatcher.h"
 #include "NetworkConvert.h"
 #include "RemoteEventEngineScheduler.h"
-#include "ChannelManager.h"
+#include <sti/device/ChannelManager.h>
 #include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
 #include "RemotePersistenceManager.h"
@@ -23,34 +23,18 @@ using STI::TNetwork::TReferenceHolder;
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: TReferenceHolder<STI::TNetwork::TDevice>(device, deviceMutex)
-//	_tDevice(STI::TNetwork::TDevice::_duplicate(device))
 {
 	addDependent(remoteCollection);
 	addDependent(remoteDispatcher);
 	addDependent(remoteScheduler);
 	addDependent(remoteChannelManager);
 	addDependent(remoteAttributeManager);
-
-	loadDeviceID();
 }
 
 RemoteDevice::~RemoteDevice()
 {
-	std::cout << "~RemoteDevice() " << getID().getID() << std::endl;
 }
 
-// bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice)
-// {
-// 	STI::TNetwork::TDevice_var newDev;
-// 	newDev = _tDevice;		//implicit duplicate
-
-// 	tDevice = newDev.out();
-
-// 	//tDevice = STI::TNetwork::TDeviceHub::_duplicate();
-// 	//tDevice = _tDevice;
-// 	//tDevice = _tDevice->_duplicate(_tDevice);
-// 	return !CORBA::is_nil(tDevice);
-// }
 
 bool RemoteDevice::getTDeviceRef(STI::TNetwork::TDevice_var& tDevice)
 {
@@ -114,26 +98,13 @@ void RemoteDevice::kill()
 void RemoteDevice::disable()
 {
 	TReferenceHolder<STI::TNetwork::TDevice>::disable();
-	
-	// std::unique_lock<std::mutex> deviceLock(deviceMutex);
-
-	
-	// ::STI::TNetwork::TDevice_var nilDevice = ::STI::TNetwork::TDevice::_nil();
-	// _tDevice = nilDevice;	//release reference; reference is now nil
-
-	// if (remoteAttributeManager != 0) {
-	// 	remoteAttributeManager->disable();
-	// }
 }
 
 const STI::Device::DeviceID RemoteDevice::getID() const
 {
-	return deviceID;
-}
-
-void RemoteDevice::loadDeviceID()
-{
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (cachedDeviceID.isCached()) return cachedDeviceID.get();
 
 	::STI::TNetwork::TDeviceID_var tDeviceID;
 
@@ -153,13 +124,14 @@ void RemoteDevice::loadDeviceID()
 		}
 	}
 
-	// STI::Device::DeviceID deviceID;
+	STI::Device::DeviceID deviceID;
 
 	if(success) {
 		deviceID = convert<::STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tDeviceID);
+		cachedDeviceID.set(deviceID);
 	}
 
-	// return deviceID;
+	return deviceID;
 }
 
 
@@ -179,13 +151,10 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 
 	if (isDisabled()) return;
 	
-//	bool success = false;
-
 	::STI::TNetwork::TDeviceCollection_var tDeviceCollection;	//remote reference
 
 	try {
 		tDeviceCollection = getTRef()->getDeviceCollection();	//remote call
-//		success = true;
 
 		if (!CORBA::is_nil(tDeviceCollection)) {
 			remoteCollection = std::make_shared<RemoteDeviceCollection>(tDeviceCollection);
@@ -219,7 +188,6 @@ void RemoteDevice::getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessa
 	bool success = false;
 
 	::STI::TNetwork::TDeviceMessageDispatcher_var tMessageDispatcher;	//remote reference
-	// std::shared_ptr<RemoteDeviceMessageDispatcher> remoteDispatcher;		//wrapper
 
 	try {
 		tMessageDispatcher = getTRef()->getMessageDispatcher();	//remote call
@@ -258,7 +226,6 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 	bool success = false;
 
 	::STI::TNetwork::TEventEngineScheduler_var tEngineScheduler;	//remote reference
-	// std::shared_ptr<RemoteEventEngineScheduler> remoteScheduler;	//wrapper
 
 	try {
 		tEngineScheduler = getTRef()->getEngineScheduler();	//remote call
@@ -283,6 +250,8 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 
 void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager)
 {
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 	
 	if (isLive(remoteChannelManager)) {
@@ -306,7 +275,7 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 		tChannelManager = getTRef()->getChannelManager();	//remote call
 
 		if (!CORBA::is_nil(tChannelManager)) {
-			remoteChannelManager = std::make_shared<RemoteChannelManager>(tChannelManager, listenerForwarder, getID());
+			remoteChannelManager = std::make_shared<RemoteChannelManager>(tChannelManager, listenerForwarder, remoteID);
 			success = true;
 		}
 	}
@@ -327,6 +296,8 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
 {
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
 	if (isLive(remoteAttributeManager)) {
@@ -348,7 +319,7 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 		tAttributelManager = getTRef()->getAttributeManager();	//remote call
 
 		if (!CORBA::is_nil(tAttributelManager)) {
-			remoteAttributeManager = std::make_shared<RemoteAttributeManager>(tAttributelManager, listenerForwarder, getID());
+			remoteAttributeManager = std::make_shared<RemoteAttributeManager>(tAttributelManager, listenerForwarder, remoteID);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

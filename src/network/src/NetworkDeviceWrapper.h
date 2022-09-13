@@ -1,16 +1,16 @@
 #ifndef STI_NETWORK_NETWORKDEVICEWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEWRAPPER_H
 
-#include "Device.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
 #include "NetworkEventEngineFactory.h"
 #include "orbTypes.h"
-#include "EventEngineScheduler.h"
+#include <sti/engine/EventEngineScheduler.h>
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkFileHolder.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 // #include "NetworkShotRepositoryWrapper.h"
 
 #include <memory>
@@ -26,39 +26,8 @@ class NetworkDeviceWrapper : public STI::Device::Device,
 {
 public:
 
-	NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device)
-		: localDevice(device), deviceServant(device) 
-	{
-
-		std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
-		getMessageDispatcher(dispatcher);
-		std::shared_ptr<STI::Device::ChannelManager> channels;
-		getChannelManager(channels);
-		std::shared_ptr<STI::Device::AttributeManager> attributeManager;
-		getAttributeManager(attributeManager);
-		std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
-		getCollection(deviceCollection);
-		std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
-		getPersistenceManager(persistenceManager);
-
-		auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
-		persistenceManager->setFileHolderFactory(networkFileHolderFactory);
-
-		// std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
-		// persistenceManager->getShotRepository(shotRepo);
-		// auto networkShotRepository = std::make_shared<STI::Network::NetworkShotRepositoryWrapper>(shotRepo);
-		// persistenceManager->setShotRepository(shotRepo);
-
-		auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(
-				getID(), channels, attributeManager, dispatcher, deviceCollection, persistenceManager);
-		//localDevice->setEngineFactory(networkEngineFactory);
-
-		std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-		localDevice->getEngineScheduler(scheduler);
-		scheduler->setEngineFactory(networkEngineFactory);
-
-
-	}
+	NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device);
+	virtual ~NetworkDeviceWrapper() {}
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
 	{

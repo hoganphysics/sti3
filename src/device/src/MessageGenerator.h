@@ -2,7 +2,7 @@
 #ifndef STI_DEVICE_MESSAGEGENERATOR_H
 #define STI_DEVICE_MESSAGEGENERATOR_H
 
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceMessageDispatcher.h>
 
 
 namespace STI

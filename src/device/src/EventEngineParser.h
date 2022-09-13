@@ -1,14 +1,15 @@
 #ifndef STI_ENGINE_EVENTENGINEPARSER_H
 #define STI_ENGINE_EVENTENGINEPARSER_H
 
-#include "fwd/RawEvent_fwd.h"
-#include "fwd/Measurement_fwd.h"
-#include "fwd/SynchronousEvent_fwd.h"
-#include "DeviceID.h"
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
+#include <sti/fwd/SynchronousEvent_fwd.h>
+#include <sti/device/DeviceID.h>
+#include <sti/engine/DeviceEventParser.h>
+#include <sti/engine/EngineID.h>
+#include <sti/utils/GraphPathLabel.h>
+
 #include "fwd/ChannelManager_fwd.h"
-#include "DeviceEventParser.h"
-#include "utils/GraphPathLabel.h"
-#include "EngineID.h"
 
 #include <string>
 #include <sstream>
@@ -34,7 +35,7 @@ public:
 					  DeviceEventParser* deviceParser);
 	~EventEngineParser();
 
-	bool parse(const STI::Engine::RawEventVector& events, SynchronousEventVector& synchedEvents);
+	bool parse(const STI::Engine::RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents);
 	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);
 	void clear();
 
@@ -48,8 +49,8 @@ public:
 private:
 
 	bool addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors);
-
-	bool groupEventsByTime(const STI::Engine::RawEventVector& events);
+	bool addEventGroup(const RawEventGroup& eventGroup, unsigned& errorCount, unsigned maxErrors, bool& success);
+	bool groupEventsByTime(const RawEventGroup& eventGroup);
 	bool parseEvents(SynchronousEventVector& synchedEvents);
 	bool checkMeasurements(SynchronousEventVector& synchedEvents);
 
@@ -62,7 +63,7 @@ private:
 		unsigned count;		//number of SynchronousEvents that reference this rawEvent
 	};
 
-	std::map<STI::Utils::GraphPathLabel, MeasurementCounter> measurementEventGraph;
+	std::map<RawEventID, MeasurementCounter> measurementEventGraph;
 
 	bool countMeasurementRefs(const std::vector<std::shared_ptr<Measurement>>& measurements);
 	bool maxErrorCheck(unsigned errorCount, unsigned maxErrors);

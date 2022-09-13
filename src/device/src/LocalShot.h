@@ -1,11 +1,11 @@
 #ifndef STI_ENGINE_LOCALSHOT_H
 #define STI_ENGINE_LOCALSHOT_H
 
-#include "Shot.h"
-#include "ShotConfig.h"
+#include <sti/engine/Shot.h>
+#include <sti/engine/ShotConfig.h>
 
-#include <vector>
 #include <memory>
+#include <string>
 
 
 namespace STI
@@ -14,54 +14,24 @@ namespace Engine
 {
 
 class RawEvent;
+class RawEventGroup;
 
 
 class LocalShot : public Shot
 {
 public:
 
-    LocalShot(const ShotConfig& config)
-    : shotConfig(config)
-    {
-        events = std::make_shared<std::vector<RawEvent>>();
-    }
-    virtual ~LocalShot()
-    {
-    }
+    LocalShot(const ShotConfig& config, const std::shared_ptr<RawEventGroup>& baseGroup);
+    virtual ~LocalShot();
 
-    const ShotConfig& getShotConfig() const
-    {
-        return shotConfig;
-    }
-
-    void setEvents(const std::shared_ptr<std::vector<RawEvent>>& evts)
-    {
-        events = evts;
-    }
-
-    void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts)
-    {
-        evts = events;
-    }
-
-    void addEvent(const RawEvent& evt)
-    {
-        if (events != 0) {
-            events->push_back(evt);
-        }
-    }
+    const ShotConfig& getShotConfig() const;
+    void getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup);
+    void setRootEventGroup(const std::shared_ptr<RawEventGroup>& rootGroup);
 
 private:
 
     ShotConfig shotConfig;
-
-    std::shared_ptr<std::vector<RawEvent>> events;
-
-//    std::vector<AbstractEvent> abstractevents;
-    //files
-    //overwritten vars
-    //abstract channel resolution (?)
-
+    std::shared_ptr<RawEventGroup> rootEventGroup;
 };
 
 

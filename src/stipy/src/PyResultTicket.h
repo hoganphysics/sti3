@@ -1,10 +1,7 @@
-
-
-
 #ifndef STI_PYTHON_PYRESULTSTICKET_H
 #define STI_PYTHON_PYRESULTSTICKET_H
 
-#include "ResultTicket.h"
+#include <sti/engine/ResultTicket.h>
 
 
 namespace STI

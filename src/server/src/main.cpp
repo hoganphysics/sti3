@@ -1,5 +1,5 @@
 
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 #include "ServerDevice.h"
 
 #include <memory>

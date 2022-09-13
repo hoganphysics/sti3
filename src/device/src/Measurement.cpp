@@ -1,8 +1,9 @@
+#include <sti/engine/Measurement.h>
 
-#include "Measurement.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
-#include "utils.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 
@@ -17,6 +18,7 @@ using STI::Engine::RawEvent;
 using STI::Device::DeviceID;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
+using STI::Engine::RawEventID;
 
 
 Measurement::Measurement()
@@ -24,16 +26,19 @@ Measurement::Measurement()
 }
 
 Measurement::Measurement(double time, unsigned short channel, const STI::Device::DeviceID& device, 
-							const STI::Utils::GraphPathLabel& measurementGraphPath)
-: _time(time), _channel(channel),  _device(device), measurementGraphPath(measurementGraphPath), data_ready(false)
+							const STI::Utils::GraphPathLabel& measurementGraphPath, const std::string& groupName)
+: _time(time), _channel(channel),  _device(device), measurementGraphPath(measurementGraphPath), 
+data_ready(false), fullGroupName(groupName)
 {
 }
 
-Measurement::Measurement(const RawEvent& sourceEvent) : data_ready(false), _device(sourceEvent.targetDevice())
+Measurement::Measurement(const RawEvent& sourceEvent) 
+: data_ready(false), _device(sourceEvent.target().device().deviceID())
 {
 	_time = sourceEvent.time();
 	_channel = sourceEvent.channel();
 
+	fullGroupName = sourceEvent.getGroupName();
 	measurementGraphPath = sourceEvent.getEventGraphPath();
 }
 
@@ -46,6 +51,7 @@ Measurement::Measurement(const Measurement& measurement) : data_ready(false), _d
 	_time = measurement._time;
 	_channel = measurement._channel;
 
+	fullGroupName = measurement.groupName();
 	measurementGraphPath = measurement.getMeasurementGraphPath();
 }
 
@@ -84,6 +90,26 @@ const STI::Utils::MixedValue& Measurement::data() const
 const STI::Device::DeviceID& Measurement::device() const
 {
 	return _device;
+}
+
+std::string Measurement::groupName() const
+{
+	return fullGroupName;
+}
+
+
+const STI::Utils::GraphPathLabel& Measurement::getMeasurementGraphPath() const
+{
+	return measurementGraphPath;
+}
+
+RawEventID Measurement::getEventID() const
+{
+	RawEventID eventID;
+	eventID.groupName = groupName();
+	eventID.eventGraphPath = getMeasurementGraphPath();
+
+	return eventID;
 }
 
 std::string Measurement::print() const

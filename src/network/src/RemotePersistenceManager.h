@@ -2,7 +2,7 @@
 #define STI_NETWORK_REMOTEPERSISTENCECOLLECTOR_H
 
 #include "deviceNet.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 #include "TReferenceHolder.h"
 
 #include <memory>
@@ -22,21 +22,25 @@ public:
     ~RemotePersistenceManager();
 
     bool findShot(const STI::Engine::ShotID& sid);
-    bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
-    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool isOwner);
+    bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+    bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult);
+
+    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner);
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
 
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
+    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 
     bool ping() const;
 
 private:
 
-	mutable std::mutex persistenceMutex;
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
+	mutable std::mutex persistenceMutex;
 };
 
 

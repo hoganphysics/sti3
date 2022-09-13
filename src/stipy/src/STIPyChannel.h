@@ -24,11 +24,12 @@ public:
     STIPyChannel(const std::shared_ptr<STIPyDevice>& device, unsigned channel);
 
     bool isAbstract() const;
-    const std::string& abstractName() const;
+    std::string abstractName() const;
 
     std::shared_ptr<STIPyDevice> device() const;
     unsigned channel() const;
 
+    std::string print() const;
 
 private:
 
@@ -36,6 +37,7 @@ private:
     unsigned channel_;
 
     bool abstract_;
+    bool hasDevice_;
     std::string abstractName_;
 
 };

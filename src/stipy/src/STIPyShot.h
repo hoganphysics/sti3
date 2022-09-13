@@ -1,71 +1,76 @@
-
 #ifndef STI_PYTHON_STIPYSHOT_H
 #define STI_PYTHON_STIPYSHOT_H
 
-#include "fwd/RawEvent_fwd.h"
+#include <sti/fwd/RawEvent_fwd.h>
+#include <sti/device/DeviceID.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/StackTrace.h>
+#include <sti/utils/VectorMap.h>
+#include <sti/utils/FileHolder.h>
+#include <sti/utils/FileHolderFactory.h>
 
-#include "Shot.h"
-#include "DeviceID.h"
-#include <pybind11/pybind11.h>
+#include "LocalShot.h"
+#include <sti/engine/RawEventGroup.h>
+#include "RawStackTrace.h"
 
 #include <vector>
 #include <memory>
 #include <mutex>
 #include <map>
 
+#include <pybind11/pybind11.h>
+
 namespace STI
 {
 namespace Python
 {
 
-class STIPyChannel;
 class STIPyServer;
 class ParseTicket;
 class MixedValuePy;
+
 
 class STIPyShot
 {
 public:
 
-    STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Device::DeviceID& serverID);
+    STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot);
 
-    void setvar(const std::string& name, const pybind11::object& value);
-    void event(const STIPyChannel& channel, double time, const pybind11::object& value);
+    void setvar(const std::string& name, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace);
+
+    void setvar(const std::string& name, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
     
-    void meas(const STIPyChannel& channel, double time);
-    void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
+    STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
 
-//    void getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts);
+    void settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace);
+    void settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+  
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace);
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void meas(const STI::Engine::RawEventTarget& target, double time, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
 
-    std::vector<STI::Engine::RawEvent> getEvents();
+    std::shared_ptr<std::vector<STI::Engine::RawEvent>> getEvents();
+    std::vector<STI::Engine::ParsedVar> getVars();
 
-
-    //Not sure we need these; can be done using server->parse()
-    // ParseTicket parse();
-    // ParseTicket parse(const pybind11::dict& channels);
-    void append(pybind11::object func);     //treat current list of setvars as overwritten vars
+    void append(const pybind11::object& func);     //treat current list of setvars as overwritten vars
     void append(const STI::Engine::RawEvent& evt);
-
-    const STI::Device::DeviceID& getServerID() { return serverID; }
 
     std::shared_ptr<STI::Engine::Shot> getShot() { return shot; }
 
+    std::shared_ptr<STI::Engine::RawEventGroup> group();
+    std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& fullName);   //gets or makes if needed
+
 private:
 
-
-    void addEvent(const STIPyChannel& channel, double time, const MixedValuePy& valuepy, const STI::Engine::RawEventType& type);
-
-    void addEvent(const STIPyChannel& channel, double time, const pybind11::object& value, const STI::Engine::RawEventType& type);
-
+    std::shared_ptr<STI::Engine::RawEventGroup> rootEventGroup;
     std::shared_ptr<STI::Engine::Shot> shot;
-    
-    mutable std::mutex eventMutex;
-    unsigned eventNumber;
-    std::shared_ptr<std::vector<STI::Engine::RawEvent>> events;
-
-    std::shared_ptr<std::map<std::string, pybind11::object>> vars;
-
-    STI::Device::DeviceID serverID;
 
 };
 

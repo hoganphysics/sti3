@@ -1,14 +1,9 @@
-
-#include "Ticket.h"
+#include <sti/engine/Ticket.h>
 
 #include <chrono>
-// #include <pybind11/pybind11.h>
-
 
 using STI::Engine::Ticket;
 
-
-// namespace py = pybind11;
 
 Ticket::Ticket(const Ticket::TicketStatus& initalStatus)
 : status(initalStatus)
@@ -37,9 +32,6 @@ void Ticket::wait(const std::function<bool()>& waitChecker)
 
 bool Ticket::waitCheck()
 {
-    // if (PyErr_CheckSignals() != 0) 
-    //     throw py::error_already_set();
-    
     return true;
 }
 

@@ -1,7 +1,7 @@
 
 //#include "utils/Collection.h"
 #include "utils/SynchronizedMap.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <iostream>

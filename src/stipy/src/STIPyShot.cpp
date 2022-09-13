@@ -1,121 +1,123 @@
-
 #include "STIPyShot.h"
-#include "RawEvent.h"
-#include "ParseTicket.h"
+
+#include <sti/engine/ParsedVar.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ParseTicket.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/ShotConfig.h>
+#include <sti/engine/StackTrace.h>
+
+#include "LocalShot.h"
 #include "MixedValuePy.h"
-#include "STIPyChannel.h"
+#include <sti/engine/ParsedTag.h>
 
-#include "ParseID.h"
-
+#include <pybind11/pybind11.h>
 
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
 using STI::Engine::RawEvent;
+using STI::Engine::StackTrace;
 using STI::Engine::RawEventType;
-using STI::Python::STIPyChannel;
+using STI::Engine::RawEventTarget;
+using STI::Engine::RawEventGroup;
+using STI::Engine::ParsedVar;
+using STI::Engine::ParsedTag;
+using STI::Engine::LocalShot;
+using STI::Engine::ShotConfig;
+using STI::Python::MixedValuePy;
 
 
-STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Device::DeviceID& serverID)
-: shot(shot), serverID(serverID)
+STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
+: shot(shot)
 {
-    eventNumber = 0;
-//    events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
-
-    if (shot != 0) {
-        shot->getEvents(events);
+    if (shot == 0) {
+        ShotConfig shotConfig;
+        auto rootGroup = std::make_shared<RawEventGroup>();
+        this->shot = std::make_shared<LocalShot>(shotConfig, rootGroup);
     }
-
-    vars = std::make_shared<std::map<std::string, pybind11::object>>();
+    shot->getRootEventGroup(rootEventGroup);
 }
 
-// std::vector<STI::Engine::RawEvent> STIPyShot::getEvents()
-// {
-//     return (*events);
-// }
 
-// void STIPyShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
-// {
-//     evts = events;
-// }
-
-void STIPyShot::setvar(const std::string& name, const pybind11::object& value)
+void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
+            const STI::Engine::RawStackTrace& stackTrace)
 {
-    std::unique_lock<std::mutex> evtLock(eventMutex);
-
-    if (vars == 0) return;
-
-    auto it = vars->find(name);
-
-    if (it == vars->end()) {    //not found
-        (*vars)[name] = value;
-    }
-
-
+    MixedValuePy mixedValue;
+    mixedValue.setValue_py(value);
+    group()->addvar(name, mixedValue, stackTrace);
 }
 
-void STIPyShot::event(const STIPyChannel& channel, double time, const pybind11::object& value)
+
+void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
+            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
-    addEvent(channel, time, value, RawEventType::Play);
+    MixedValuePy mixedValue;
+    mixedValue.setValue_py(value);
+    group(scope)->addvar(name, mixedValue, stackTrace);
 }
 
-void STIPyShot::meas(const STIPyChannel& channel, double time)
+
+STI::Engine::ParsedVar STIPyShot::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
 {
-    STI::Python::MixedValuePy valuepy;  //empty
-    addEvent(channel, time, valuepy, RawEventType::Measurement);
+    return group()->var(fullVarName, stackTrace);
 }
 
-void STIPyShot::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
+
+void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace)
 {
-    addEvent(channel, time, value, RawEventType::Measurement);
+    group()->addtag(name, stackTrace);
 }
 
-void STIPyShot::addEvent(const STIPyChannel& channel, double time, const pybind11::object& value, const RawEventType& type)
+void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
-    STI::Python::MixedValuePy valuepy;
-    valuepy.setValue_py(value);
-
-    addEvent(channel, time, valuepy, type);
+    group(scope)->addtag(name, stackTrace);
 }
 
-void STIPyShot::addEvent(const STIPyChannel& channel, double time, const MixedValuePy& valuepy, const STI::Engine::RawEventType& type)
+void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace)
 {
-    std::unique_lock<std::mutex> evtLock(eventMutex);
-
-    std::string description = "";
-//    eventNumber++;
-
-    if (events != 0) {
-        events->push_back( RawEvent(channel.device()->id(), time, channel.channel(), 
-                                    valuepy, description, events->size(), type) );        
-    }
-
+    MixedValuePy mixedValue;
+    mixedValue.setValue_py(value);
+    group()->addEvent(target, time, mixedValue, RawEventType::Play, stackTrace);
 }
 
-// ParseTicket STIPyShot::parse()
-// {
-//     STI::Engine::ParseID pid;
-//     pid.parseTimestamp.timestamp = 1.1;
-    
-//  //   ParseTicket ticket(pid);
-//     ParseTicket ticket = libDevice->makeParseTicket(pid);
+void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    MixedValuePy mixedValue;
+    mixedValue.setValue_py(value);
+    group(scope)->addEvent(target, time, mixedValue, RawEventType::Play, stackTrace);
+}
 
-//  //   ParseTicket ticket;
-//     return ticket;
-// }
+void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, 
+            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    MixedValuePy mixedValue;
+    group(scope)->addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
+}
 
-// ParseTicket STIPyShot::parse(const pybind11::dict& channels)
-// {
-
-//     STI::Engine::ParseID pid;
-//     pid.parseTimestamp.timestamp = 1.1;
-    
-//     ParseTicket ticket(pid);
-// //    ParseTicket ticket;
-//     return ticket;
-// }
+void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
+            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+{
+    MixedValuePy mixedValue;
+    mixedValue.setValue_py(value);
+    group(scope)->addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
+}
 
 
-void STIPyShot::append(pybind11::object func)
+std::shared_ptr<std::vector<STI::Engine::RawEvent>> STIPyShot::getEvents()
+{
+    return rootEventGroup->getEvents();
+}
+
+std::vector<STI::Engine::ParsedVar> STIPyShot::getVars()
+{
+    return rootEventGroup->getVars();
+}
+
+
+void STIPyShot::append(const pybind11::object& func)
 {
 }
 
@@ -123,22 +125,22 @@ void STIPyShot::append(const STI::Engine::RawEvent& evt)
 {
 }
 
-std::vector<STI::Engine::RawEvent> STIPyShot::getEvents()
+
+std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group()
 {
-    if (events != 0) {
-        return *events;
-    }
-    else {
-        // auto nullEvts = std::make_shared<std::vector<STI::Engine::RawEvent>>();
-        // return *nullEvts;
-        std::vector<STI::Engine::RawEvent> nullEvts;
-        return nullEvts;
-    }
+    return rootEventGroup;
 }
 
+std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group(const std::string& fullName)
+{
+    std::shared_ptr<RawEventGroup> g;
 
-// void STIPyShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& evts)
-// {
-//     evts = events;
-// }
+    if (fullName == "" || fullName == "/") {
+        g = rootEventGroup;
+    }
+    else {
+        g = rootEventGroup->group(fullName);
+    }
+    return g;
+}
 

@@ -1,8 +1,8 @@
 
-#include "Hub.h"
-#include "Device.h"
-#include "LocalCollection.h"
-#include "Hub.h"
+#include <sti/network/Hub.h>
+#include <sti/device/Device.h>
+#include <sti/utils/LocalCollection.h>
+#include <sti/network/Hub.h>
 
 #include <iostream>
 #include <memory>

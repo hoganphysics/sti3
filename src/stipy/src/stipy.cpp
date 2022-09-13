@@ -1,21 +1,34 @@
-
 #include "stipy.h"
-#include "STIPyServer.h"
-#include "NetworkDeviceHub.h"
-#include "STIPyLibDevice.h"
-#include "STIPyShot.h"
-#include "STIPyGlobal.h"
-//#include "ORBManager.h"
 
-#include "STIPyChannel.h"
+#include <sti/NetworkDeviceHub.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/utils/LocalFileHolder.h>
+
+#include "LocalShot.h"
+#include "NetworkFileHolder.h"
+#include "NetworkShotWrapper.h"
+#include "ORBManager.h"
+#include "RawStackTrace.h"
+#include "StackTraceData.h"
+#include "STIPyGlobal.h"
+#include "STIPyLibDevice.h"
+#include "STIPyServer.h"
+#include "STIPyShot.h"
 
 #include <iostream>
 
+#include <pybind11/pybind11.h>
 
+using STI::Network::ORBManager;
 using STI::Python::STIPyServer;
 using STI::Python::STIPyLibDevice;
 using STI::Python::STIPyGlobal;
-
+using STI::Engine::StackTrace;
+using STI::Engine::RawEventGroup;
+using STI::Engine::RawEventTarget;
+using STI::Python::StackTracePy;
+using STI::Python::STIPyShot;
+using STI::Engine::RawStackTrace;
 
 // int add(int i, int j) {
 //     return i + j;
@@ -45,6 +58,70 @@ using STI::Python::STIPyGlobal;
 
 // }
 
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot()
+{
+    return makeShot("");
+}
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
+{
+    STI::Engine::ShotConfig shotConfig;
+
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
+
+    if (ORBManager::orbInstanceInitializd()) {
+        fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+    }
+    else {
+        fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    }
+
+    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>(fileFactory);
+    auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTrace);
+
+    std::shared_ptr<STI::Engine::Shot> shot;
+
+    auto localShot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
+
+    if (ORBManager::orbInstanceInitializd()) {
+        shot = std::make_shared<STI::Network::NetworkShotWrapper>(localShot);
+    }
+    else {
+        shot = localShot;
+    }
+
+    auto pyShot = std::make_shared<STIPyShot>(shot);
+    return pyShot;
+}
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name, const std::function<void(void)>& func)
+{
+    auto shot = makeShot(name);
+
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->makeShot(shot, func);
+    }
+
+    return shot;
+}
+
+std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string& name)
+{
+    auto stipy = STIPyGlobal::getInstance();
+    std::shared_ptr<STI::Engine::RawEventGroup> g;
+
+    if (stipy != 0) {
+        g = stipy->group(name);
+    }
+    else {
+        g = std::make_shared<STI::Engine::RawEventGroup>();
+    }
+    return g;
+}
+
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
@@ -52,7 +129,6 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 
     return connect(localIP, serverID, serverHubID, nameServerAddress);
 }
-
 
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
@@ -83,7 +159,6 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 
 void STI::Python::disconnect()
 {
-
 }
 
 std::string STI::Python::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
@@ -91,62 +166,98 @@ std::string STI::Python::printNetwork(const std::string& nameServerAddress, cons
     return STI::Network::NetworkDeviceHub::printNetwork(nameServerAddress, baseContext);
 }
 
+STI::Engine::ParsedVar STI::Python::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+{
+    auto stipy = STIPyGlobal::getInstance();
 
-void STI::Python::event(const STIPyChannel& channel, double time, const pybind11::object& value)
+    STI::Engine::ParsedVar v;
+
+    if (stipy != 0) {
+        v = stipy->var(fullVarName, stackTrace);
+    }
+    return v;
+}
+
+void STI::Python::setvar(const std::string& name, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->event(channel, time, value);
+        stipy->setvar(name, value, stackTrace, scope);
     }
 }
 
-void STI::Python::meas(const STIPyChannel& channel, double time, const pybind11::object& value)
+void STI::Python::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->meas(channel, time, value);
+        stipy->settag(name, stackTrace, scope);
     }
 }
 
-void STI::Python::meas(const STIPyChannel& channel, double time)
+void STI::Python::event(const RawEventTarget& target, double time, const pybind11::object& value, 
+                        const RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->meas(channel, time);
+        stipy->event(target, time, value, stackTrace, scope);
     }
 }
 
-std::shared_ptr<STI::Python::STIPyDevice> 
-STI::Python::dev(const std::string& name, const std::string& address, unsigned module)
+void STI::Python::meas(const RawEventTarget& target, double time, const pybind11::object& value,
+                        const RawStackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
-    std::shared_ptr<STI::Python::STIPyDevice> device;
+    if (stipy != 0) {
+        stipy->meas(target, time, value, stackTrace, scope);
+    }
+}
+
+void STI::Python::meas(const RawEventTarget& target, double time, const RawStackTrace& stackTrace, 
+                        const std::string& scope)
+{
+    auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        device = stipy->dev(name, address, module);
+        stipy->meas(target, time, stackTrace, scope);
     }
-    else {
-        STI::Device::DeviceID id(name, address, module);
-        device = std::make_shared<STI::Python::STIPyDevice>(id);
-    }
+}
+
+STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& channelName)
+{
+    STI::Engine::RawEventTargetDevice device(channelName);
     return device;
 }
 
-std::shared_ptr<STI::Python::STIPyDevice> 
-STI::Python::dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID)
+STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, const std::string& address, unsigned module)
 {
-    auto device = std::make_shared<STI::Python::STIPyDevice>(name, address, module, targetServerID);
+    STI::Engine::RawEventTargetDevice device(name, address, module);
     return device;
 }
 
-std::shared_ptr<STI::Python::STIPyChannel> 
-STI::Python::ch(const std::shared_ptr<STI::Python::STIPyDevice>& device, unsigned channel)
+// STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID)
+// {
+//     auto device = std::make_shared<STI::Engine::RawEventTargetDevice>(name, address, module, targetServerID);
+//     return device;
+// }
+
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Engine::RawEventTargetDevice& device, unsigned channel)
 {
-    auto pychannel = std::make_shared<STI::Python::STIPyChannel>(device, channel);
-    return pychannel;
+    STI::Engine::RawEventTarget target(device, channel);
+    return target;
 }
 
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Engine::RawEventTargetDevice& device, const std::string& channelName)
+{
+    STI::Engine::RawEventTarget target(device, channelName);
+    return target;
+}
+
+STI::Engine::RawEventTarget STI::Python::ch(const std::string& channelName)
+{
+    STI::Engine::RawEventTarget target(channelName);
+    return target;
+}

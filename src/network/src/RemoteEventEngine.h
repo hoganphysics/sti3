@@ -39,7 +39,9 @@ public:
 	STI::Engine::EngineState getState() const;
 
 	std::shared_ptr<STI::Engine::ParsedDependencyTree> getParsedTree() const;
-	bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents);
+	// bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents);
+
+	bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
 
 	//bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 	//bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);

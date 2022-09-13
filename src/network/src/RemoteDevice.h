@@ -3,11 +3,12 @@
 
 #include "deviceNet.h"
 
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
 #include "TDeviceRefInterface.h"
-#include "DeviceMessageDispatcher.h"
+#include <sti/device/DeviceMessageDispatcher.h>
 #include "fwd/ChannelManager_fwd.h"
+#include <sti/utils/CachedValue.h>
 
 #include "TReferenceHolder.h"
 
@@ -58,8 +59,6 @@ private:
 		return (remote != 0 && !remote->isDisabled() && remote->ping());
 	}
 
-	void loadDeviceID();	//remote call
-
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
 
 //	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
@@ -76,7 +75,7 @@ private:
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
 
-	STI::Device::DeviceID deviceID;
+	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;
 
 	mutable std::mutex deviceMutex;
 

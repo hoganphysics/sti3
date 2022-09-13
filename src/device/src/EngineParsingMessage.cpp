@@ -1,11 +1,21 @@
 
-#include "EngineParsingMessage.h"
-#include "RawEvent.h"
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
+
+#include "CerealArchives.h"
+#include <cereal/types/map.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/vector.hpp>
 
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::Engine::RawEvent;
 
+
+EngineParsingMessage::EngineParsingMessage()
+{
+}
 
 EngineParsingMessage::EngineParsingMessage(const STI::Device::DeviceID& source, 
                                             const ParsingMessageType& type, unsigned id, const std::string& name)
@@ -65,4 +75,21 @@ void EngineParsingMessage::setEvents(std::vector<RawEvent>& evts)
     events.clear();
     events = evts;
 }
+
+
+template<class Archive>
+void EngineParsingMessage::serialize(Archive& archive)
+{
+    archive( 
+        cereal::make_nvp("events", events),
+        cereal::make_nvp("sourceID", sourceID),
+        cereal::make_nvp("type", type),
+        cereal::make_nvp("id_code", id_code),
+        cereal::make_nvp("name", name),
+        cereal::make_nvp("message", message_)
+        );
+}
+
+template void EngineParsingMessage::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void EngineParsingMessage::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 

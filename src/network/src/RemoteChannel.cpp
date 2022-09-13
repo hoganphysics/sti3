@@ -20,6 +20,7 @@ metaData_(metaData)
     channelData->value = lastValue;
 }
 
+
 void RemoteChannel::attachManager(RemoteChannelManager* manager)
 {
     remoteManager = manager;
@@ -90,6 +91,7 @@ const STI::Utils::MixedValue RemoteChannel::getLastValue() const
 
     return lastValue;
 }
+
 
 const STI::Utils::MixedValue& RemoteChannel::getMetaData() const
 {

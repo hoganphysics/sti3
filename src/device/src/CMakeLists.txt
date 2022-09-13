@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10...3.20)
 
-if (MSVC)
-cmake_policy(SET CMP0091 NEW)
-endif (MSVC)
+#if(MSVC)
+#  cmake_policy(SET CMP0091 NEW)
+#endif()
 
 # set the project name
 project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
@@ -11,28 +11,43 @@ project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-#set(CMAKE_DEBUG_POSTFIX "_d")
-if (MSVC)
-set(USE_STI_DEBUG_POSTFIX True)
-endif (MSVC)
+if(MSVC)
+  if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Build type: Debug")
+    set(USE_STI_DEBUG_POSTFIX True)
+  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message("Build type: RelWithDebInfo")
+    set(USE_STI_DEBUG_POSTFIX False)
+  else()
+    message("Build type: Release")
+    set(USE_STI_DEBUG_POSTFIX False)
+  endif()
+else()
+  set(USE_STI_DEBUG_POSTFIX False)
+endif()
 
 
 #set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
 
-if (USE_STI_DEBUG_POSTFIX)
-#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
-set(STI_LIB_POSTFIX "_d")
+if(USE_STI_DEBUG_POSTFIX)
+  set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
 #set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )
 
 #add_compile_definitions(_DEBUG)
-if (MSVC)
-add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
-endif (MSVC)
+if(MSVC)
+  add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+endif()
 
+
+set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
+
+message("***** OpenSSL: ${OPENSSL_USE_STATIC_LIBS}")
+
+
 
 FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
 #INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
@@ -53,14 +68,16 @@ add_library(stidevice SHARED
     DeviceMessageReceiver.cpp
     # EngineParsingError.cpp
     EngineClock.cpp
-    EngineParsingMessage.cpp
+    EngineID.cpp
     EngineJobSourceID.cpp
+    EngineParsingMessage.cpp
+    EngineState.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
-    EventStackTrace.cpp
-    EngineState.cpp
+    FullShotResult.cpp
+    # EngineParseResult.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -74,20 +91,33 @@ add_library(stidevice SHARED
     LocalFileHolder.cpp
     LocalPersistenceManager.cpp
     LocalResultsCollector.cpp
+    LocalShot.cpp
     MasterTrigger.cpp
     Measurement.cpp
     MetaData.cpp
     MixedValue.cpp
-    ParseID.cpp
     ParsedDependencyTree.cpp
+    ParsedTag.cpp
+    ParsedVar.cpp
+    ParseID.cpp
+    ParseResult.cpp
     ParseTicket.cpp  
     RawEvent.cpp
+    RawEventGroup.cpp
+    # RawEventGroupManager.cpp
+    RawEventTarget.cpp
+    RawEventTargetChannel.cpp
+    RawEventTargetDevice.cpp
+    RawStackTrace.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     ShotConfig.cpp
     ShotID.cpp
     ShotResult.cpp
     ShotResultRecord.cpp
+    StackTrace.cpp
+    StackTraceData.cpp
+    StackTraceResult.cpp
     SynchronousEvent.cpp
     TimeStamp.cpp
     Ticket.cpp
@@ -115,19 +145,17 @@ set_target_properties(stidevice PROPERTIES
 #    PUBLIC_HEADER api/mylib.h
 )
 
-if (USE_STI_DEBUG_POSTFIX) 
-    set_target_properties(stidevice PROPERTIES
-    #DEBUG_POSTFIX "_d"
+if(USE_STI_DEBUG_POSTFIX) 
+  set_target_properties(stidevice PROPERTIES
     DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
-    #DEBUG_POSTFIX "$<$<CONFIG:Debug>:_d>"
-)
-endif (USE_STI_DEBUG_POSTFIX)
+  )
+endif()
 
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}
     ${OPENSSL_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
-    ${STI_BASE_DIR}/include/extern
+    ${STI_BASE_DIR}/include/sti/extern
     ${WORKING_DIRECTORY}/fwd
     ${WORKING_DIRECTORY}/utils
 )
@@ -136,10 +164,24 @@ target_link_libraries(stidevice
     ${OPENSSL_LIBRARIES}
 )
 
-install(TARGETS stidevice
-    #DESTINATION ${STI_BASE_DIR}/lib
-    LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
-    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
 
+
+if(DEFINED SKBUILD)
+  if(MSVC)
+    install(TARGETS stidevice
+      RUNTIME DESTINATION src/stipy/bin
+    )
+  else()
+    install(TARGETS stidevice
+      LIBRARY DESTINATION src/stipy/bin
+    )
+  endif()
+else()
+  install(TARGETS stidevice
+    #DESTINATION ${STI_BASE_DIR}/lib
+  LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
+    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+#    COMPONENT greetings
+  )
+endif()
 # target_link_libraries(testDevice stidevice stinetwork)

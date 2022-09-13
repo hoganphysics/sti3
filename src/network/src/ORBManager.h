@@ -11,6 +11,8 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <sti/utils/Configuration.h>
+
 namespace STI
 {
 namespace Network
@@ -27,17 +29,20 @@ class ORBManager
 private:
 
 	//This class is a singleton, so that only one instance of ORB is created.
-	ORBManager(const std::string& nameServiceIP, const std::string& args);
+	// ORBManager(const std::string& nameServiceIP, const std::string& args);
+	ORBManager(const std::string& args);
 	friend class Concrete_ORBManager;
 
 public:
 
 	virtual ~ORBManager();
 	
-	static std::shared_ptr<ORBManager> getInstance(const std::string& nameServiceIP, const std::string& args);
-	
+	static std::shared_ptr<ORBManager> getInstance();
+	static std::shared_ptr<ORBManager> getInstance(const STI::Utils::Configuration& orbConfig, const std::string& args);
+
 	bool running();
-	
+	bool initialized();
+
 	void run();
 	void shutdown();
 	void block();
@@ -51,24 +56,29 @@ public:
 	bool unbindObjectReference(const std::string& objectFullPath);	
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
 
+	static void activateServant(PortableServer::ServantBase& servant);
 	static void deactivateServant(PortableServer::Servant p_servant);
+
+	static bool orbInstanceInitializd();
 
 private:
 
 	static bool orb_initialized;
 	static std::mutex orbInitMutex;
 	static std::shared_ptr<ORBManager> instance;
+	static STI::Utils::Configuration omniOptions;
 
 	bool getRootContext(CosNaming::NamingContext_var& context) const;
-	//CosNaming::NamingContext_ptr getNamingContext(const std::string& context) const;
 	bool getNamingContext(const std::string& context, CosNaming::NamingContext_var& contextBase) const;
 
 	CORBA::ORB_var orb;
 	PortableServer::POAManager_var poa_manager;
+	PortableServer::POA_var root_poa;
 	PortableServer::POA_var poa;
 
 	bool _running;
 	bool _blocking;
+	bool poa_is_active;
 
 	mutable std::mutex orbMutex;
 	mutable std::condition_variable wakeCondition;

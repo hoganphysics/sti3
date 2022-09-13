@@ -2,9 +2,9 @@
 #define STI_NETWORK_REMOTEDEVICECOLLECTION_H
 
 #include "deviceNet.h"
-#include "DeviceCollection.h"
-#include "Device.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
 #include "TReferenceHolder.h"
 
 #include <memory>

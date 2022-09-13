@@ -1,8 +1,8 @@
 #ifndef STI_TNETWORK_TEVENTENGINESCHEDULER_I_H
 #define STI_TNETWORK_TEVENTENGINESCHEDULER_I_H
 
-#include "EventEngineScheduler.h"
-#include "Device.h"
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/device/Device.h>
 
 #include "deviceNet.h"
 
@@ -55,9 +55,11 @@ public:
     // void getRunningJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
     // void getCompletedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
 
-    ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
-    ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
-    ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);
+    // ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
+    // ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);
+    // ::CORBA::Boolean getParsedTree(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEventEngineDependencyTree_out tree);
+
+    ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
 
 //    ::CORBA::Boolean transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
 //    ::CORBA::Boolean getResults(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TResultTicket_out results);

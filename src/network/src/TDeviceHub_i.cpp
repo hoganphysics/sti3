@@ -1,15 +1,14 @@
-
 #include "TDeviceHub_i.h"
-#include "HubID.h"
-#include "DeviceID.h"
+
+#include <sti/network/HubID.h>
+#include <sti/device/DeviceID.h>
+
 #include "RemoteDevice.h"
 #include "RemoteDeviceHub.h"
-
 #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "Convert_HubNodeWalker.h"
 #include "orbTypes.h"
-
 
 using STI::Network::RemoteDeviceHub;
 using STI::Network::RemoteDevice;
@@ -18,6 +17,7 @@ using STI::TNetwork::TDeviceHubID;
 using STI::TNetwork::TDeviceHubTrace;
 using STI::TNetwork::TDeviceID;
 using STI::Network::convert;
+
 
 TDeviceHub_i::TDeviceHub_i(const std::shared_ptr<STI::Network::LocalDeviceHub>& hub)
 	: localHub(hub)

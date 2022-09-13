@@ -2,8 +2,8 @@
 #define STI_ENGINE_EVENTENGINEMANAGER_H
 
 #include "LocalEventEngine.h"
-#include "EngineID.h"
-#include "DeviceMessage.h"
+#include <sti/engine/EngineID.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <memory>
 #include <thread>

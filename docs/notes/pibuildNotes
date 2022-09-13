@@ -1,0 +1,42 @@
+Building STI3 on the Raspberry pi
+
+apt-get install omniorb
+
+apt-get install cmake
+
+* Could not download recent cmake release binary from kitware (package not available for arm)
+* Building cmake from source: https://cmake.org/install/
+* Installed version of cmake was too old to build cmake -- using ./bootstrap scrip from cmake.
+* Needed to install OpenSSL to build cmake
+    apt-get install openssl
+    apt-get install libssl-dev
+* Need to apt-get remove cmake before "make install" of the new cmake
+* hash -d cmake to clear the old cmake from bash's cache
+
+
+apt-get install libboost-all-dev
+
+----------------------
+
+Linux dist on pi was very old.  gcc was too old to build STI.
+Installing new image of bullseye and starting over.
+
+* Installing cmake 3.20 following kitware instructions: https://apt.kitware.com/
+
+
+apt install omniorb
+apt install libssl-dev
+apt install libboost-graph-dev
+
+pip3 install setuptools build wheel scikit-build
+
+* In sti3 directory,
+python3 -m build --wheel
+
+...takes a long time and fails on cmake find Boost
+
+apt install libboost-program-options-dev
+apt install omniidl
+apt install libomniorb4-dev
+
+pip3 install pybind11

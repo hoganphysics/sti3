@@ -3,9 +3,10 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
-#include "Channel.h"
+#include <sti/device/Channel.h>
 
 #include <memory>
+
 
 namespace STI
 {

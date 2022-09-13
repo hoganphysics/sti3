@@ -1,7 +1,7 @@
 
 #include "TDevice_i.h"
 #include "ORBManager.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "NetworkConvert.h"
 
 using STI::TNetwork::TDevice_i;
@@ -22,6 +22,12 @@ TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
 		eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device), 
 		persistenceManagerServant(device)
 {
+	STI::Network::ORBManager::ORBManager::activateServant(attributeManagerServant);
+	STI::Network::ORBManager::ORBManager::activateServant(channelManagerServant);
+	STI::Network::ORBManager::ORBManager::activateServant(deviceCollectionServant);
+	STI::Network::ORBManager::ORBManager::activateServant(messageDispatcherServant);
+	STI::Network::ORBManager::ORBManager::activateServant(eventSchedulerServant);
+	STI::Network::ORBManager::ORBManager::activateServant(persistenceManagerServant);
 }
 
 TDevice_i::~TDevice_i()

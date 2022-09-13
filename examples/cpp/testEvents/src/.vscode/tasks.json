@@ -1,0 +1,37 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "CMake configure",
+			"command": "cmake",
+			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}

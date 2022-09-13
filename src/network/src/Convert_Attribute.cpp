@@ -1,11 +1,10 @@
 
 #include "Convert_Attribute.h"
-#include "RemoteAttribute.h"
-#include "MixedValue.h"
-
 #include "orbTypes.h"
-
 #include "NetworkConvert.h"
+
+#include <sti/utils/MixedValue.h>
+#include "RemoteAttribute.h"
 
 #include <map>
 #include <string>
@@ -33,6 +32,8 @@ bool STI::Network::convert<std::shared_ptr<Attribute>, TAttribute>(const std::sh
         // STI::Network::convert<std::string, ::CORBA::String_member>(attribute->getAllowedValues(), tAttribute.allowedValues);
 
         STI::Network::convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(attribute->getAllowedValues(), tAttribute.allowedValues);
+
+        convert<MixedValue, TMixedValue>(attribute->getMetaData(), tAttribute.metaData);
     }
 
     return success;

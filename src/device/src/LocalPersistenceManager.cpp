@@ -1,19 +1,28 @@
-
 #include "LocalPersistenceManager.h"
-#include "LocalResultsCollector.h"
-#include "DeviceID.h"
-#include "EventEngineJob.h"
+
+#include <sti/device/DeviceID.h>
+
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/FullShotResult.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/StackTraceResult.h>
+
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
+#include "LocalResultsCollector.h"
 #include "ResultsDocumenter.h"
-#include "RawEvent.h"
 #include "SerializedRepository.h"
-#include "ShotResult.h"
+#include "StackTraceData.h"
 #include "TransientRepository.h"
 
 #include <filesystem>
+namespace fs = std::filesystem;
+
 
 using STI::Device::LocalPersistenceManager;
+
 using STI::Engine::ResultsCollector;
 using STI::Engine::LocalResultsCollector;
 using STI::Device::DeviceID;
@@ -27,6 +36,8 @@ using STI::Engine::ShotResult;
 using STI::Engine::SerializedRepository;
 using STI::Engine::TransientRepository;
 using STI::Engine::ShotResultRecord;
+using STI::Engine::FullShotResult;
+using STI::Engine::ParseResult;
 
 
 LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const std::string& basePath, 
@@ -34,8 +45,6 @@ LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const
         const std::shared_ptr<STI::Device::DeviceCollection>& collection)
 : localDeviceID(deviceID), fileHolderFactory(fileHolderFactory), resultBuffer(5), deviceCollection(collection)
 {
-    //documenter = std::make_shared<DefaultResultsDocumenter>();    //save to local .sti dir
-
     defaultRepository = std::make_shared<SerializedRepository>(basePath);
     transientRepository = std::make_shared<TransientRepository>(basePath);
 }
@@ -67,6 +76,15 @@ void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Ut
     fileHolderFactory = factory;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& filename)
+{
+    if (fileHolderFactory != 0) {
+        return fileHolderFactory->makeFileHolder(filename);
+    }
+
+    std::shared_ptr<STI::Utils::FileHolder> nullFile;
+    return nullFile;
+}
 
 void LocalPersistenceManager::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo)
 {
@@ -129,9 +147,6 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     success &= resultsCollector->addMeasurements(shotResult->measurements);
 
 
-// 	resultsCollector->addTimingFiles();
-//	resultsCollector->addVariables();   
-
     if (success) {
         //resultsCollector->markRecord(shotResult->);
         record.recordStatus = STI::Engine::RecordStatus::Complete;
@@ -173,7 +188,7 @@ bool LocalPersistenceManager::findShotLocal(const STI::Engine::ShotID& sid)
         return true;
     }
 
-    if (transientRepository->findShot(sid)) {
+    if (transientRepository->findShotResult(sid)) {
         return true;
     }
 
@@ -181,11 +196,11 @@ bool LocalPersistenceManager::findShotLocal(const STI::Engine::ShotID& sid)
     std::shared_ptr<STI::Engine::ShotRepository> repo;
 
     if (getShotRepository(repo)) {
-        success = repo->findShot(sid);
+        success = repo->findShotResult(sid);
     }
 
     if (!success) {
-        success = defaultRepository->findShot(sid);
+        success = defaultRepository->findShotResult(sid);
     }
 
     return success;
@@ -193,11 +208,13 @@ bool LocalPersistenceManager::findShotLocal(const STI::Engine::ShotID& sid)
 
 bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
-    if (resultBuffer.get(sid, result) ) {
+    std::shared_ptr<FullShotResult> fullResult;
+    if (resultBuffer.get(sid, fullResult) && fullResult != 0 ) {
+        result = fullResult->shotResult;
         return true;
     }
 
-    if (transientRepository->getShot(sid, result)) {
+    if (transientRepository->getShotResult(sid, result)) {
         return true;
     }
 
@@ -205,11 +222,11 @@ bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::
     std::shared_ptr<STI::Engine::ShotRepository> repo;
 
     if (getShotRepository(repo)) {
-        success = repo->getShot(sid, result);
+        success = repo->getShotResult(sid, result);
     }
 
     if (!success) {
-        success = defaultRepository->getShot(sid, result);
+        success = defaultRepository->getShotResult(sid, result);
     }
 
     return success;
@@ -229,13 +246,29 @@ bool LocalPersistenceManager::findShot(const STI::Engine::ShotID& sid)
     return findShotLocal(sid);
 }
 
-bool LocalPersistenceManager::getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
+
+bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult)
+{
+
+    std::shared_ptr<PersistenceManager> delegate;
+    bool hasDelegate = false;
+
+    if (hasDelegate) {
+        if(delegate->getParseResult(pid, parseResult)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result)
 {
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
     if (hasDelegate) {
-        if(delegate->getShot(sid, result)) {
+        if(delegate->getShotResult(sid, result)) {
             return true;
         }
     }
@@ -246,33 +279,34 @@ bool LocalPersistenceManager::getShot(const STI::Engine::ShotID& sid, std::share
 bool LocalPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
 {
     std::shared_ptr<STI::Engine::ShotResult> shotResult;
-    if (getShot(sid, shotResult) && shotResult != 0) {
+    if (getShotResult(sid, shotResult) && shotResult != 0) {
         measurements = shotResult->measurements;
         return (measurements != 0);
     }
     return false;
 }
 
-bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<ShotResult>& shotResult)
+bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<FullShotResult>& fullShotResult)
 {
-    std::shared_ptr<ShotResult> bufferedResult;
+    std::shared_ptr<FullShotResult> bufferedResult;
     
-    if (resultBuffer.addAndRemove(shotResult->sid, shotResult, bufferedResult)) {
+    if (resultBuffer.addAndRemove(fullShotResult->shotResult->sid, fullShotResult, bufferedResult)) {
         //The buffer was full. Need to save old bufferedResult to disk;
 
-        return saveShotLocal(bufferedResult->sid, bufferedResult, false);
+        return saveShotLocal(bufferedResult->shotResult->sid, bufferedResult, false);
     }
 
     return false;
 }
 
-bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, 
+                                        const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
-    if (hasDelegate && isOwner) {
-        if(delegate->saveShot(sid, shotResult, true)) {     //transfer ownership to delegate
+    if (hasDelegate && isOwner && delegate != 0) {
+        if(delegate->saveShot(sid, fullShotResult, true)) {     //transfer ownership to delegate
             return true;
         }
         //if failed, save locally
@@ -284,10 +318,10 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std
         //     return addToBuffer(shotResult);
         // }
 
-        return saveShotLocal(sid, shotResult, isOwner);
+        return saveShotLocal(sid, fullShotResult, isOwner);
     }
     
-    return addToBuffer(shotResult);
+    return addToBuffer(fullShotResult);
         
 
 
@@ -334,7 +368,8 @@ bool isPartial(const std::shared_ptr<ShotResult>& shotResult)
 //replace resultsDocumenter with localDocumenter and make it a function argument.
 //allow engine to call saveShotLocal with a TransientResultsDocumenter which auto deletes itself
 //after going out of scope. Data is copied from this documenter into a MixedValue when read() is called.
-bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult, bool isOwner)
+bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, 
+                                            const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
 
     //bool isShotOwner = sid.parseID.jobSourceID == localDeviceID;
@@ -352,16 +387,22 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     ResultsPaths resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
     auto collector = std::make_shared<LocalResultsCollector>(sid, resultsPaths, fileHolderFactory);
 
-    auto shotRecord = transferResults(collector, shotResult, isOwner);   //collector is passed on to all devices in shot
+    auto shotRecord = transferResults(collector, fullShotResult->shotResult, isOwner);   //collector is passed on to all devices in shot
     collector->setRecord(shotRecord);
 
-    bool success = repo->saveShot(sid, collector->getResults());
+    transferParseResult(fullShotResult->parseResult, resultsPaths.timingPath);
+
+    auto completeResult = std::make_shared<FullShotResult>();  
+    completeResult->parseResult = fullShotResult->parseResult;
+    completeResult->shotResult = collector->getResults();
+
+    bool success = repo->saveShot(sid, completeResult);
 
     if (!success) {
-        success = defaultRepository->saveShot(sid, shotResult);
+        success = defaultRepository->saveShot(sid, completeResult);
     }
 
-    if (isOwner && isPartial(shotResult)) {
+    if (isOwner && isPartial(fullShotResult->shotResult)) {
         //add to list of partial shots; need to attempt to transfer this result again later
     }
 
@@ -380,6 +421,31 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, cons
     // eventEngine->transferResults(collector);   //collector is passed on to all devices in shot
 
     // return resultsDocumenter->save(resultsPaths, collector);
+}
+
+
+
+void LocalPersistenceManager::transferParseResult(std::shared_ptr<ParseResult> parseResult, const std::string& timingPath)
+{
+    if (parseResult == 0 || parseResult->stackTraceResult == 0 || parseResult->stackTraceResult->stackTraceData == 0) return;
+
+    auto stackTraceData = parseResult->stackTraceResult->stackTraceData;
+    auto files = stackTraceData->getTimingFiles();
+
+    for (auto& file : files) {
+        if (file != 0) {
+            auto inputFilename = file->getFilename();
+            fs::path inputPath = inputFilename;
+
+            fs::path localPath = timingPath;
+            localPath /= inputPath.filename();
+
+            auto localFileHandle = fileHolderFactory->makeFileHolder( STI::Utils::makeUniquePath( localPath.string() ) );
+
+            file->transferFile(localFileHandle);    //transfer file to local
+            stackTraceData->replaceFile(inputFilename, localFileHandle);            
+        }
+    }
 }
 
 void LocalPersistenceManager::addPersistenceDelegate(const DeviceID& id, 
@@ -411,113 +477,4 @@ void LocalPersistenceManager::removePersistenceDelegate(const DeviceID& id)
         }
     }
 }
-
-
-// bool LocalPersistenceManager::getResultTicket(const ShotID& sid, std::shared_ptr<ResultTicket>& ticket)
-// {
-//     std::shared_ptr<ShotRepository> remoteRepo; 
-//     std::shared_ptr<PersistenceManager> delegate;
-
-//     std::set<unsigned> priorities;
-//     delegatePriorities.getKeys(priorities);
-
-//     // std::vector<std::shared_ptr<PersistenceManager>> orderedDelegates;
-
-//     bool found = false;
-
-//     for (auto& p : priorities) {
-//         DeviceID id;
-//         delegatePriorities.get(p, id);
-
-//         if (delegates.get(id, delegate) && delegate != 0 && delegate->getShotRepository(remoteRepo)) {
-//             if (remoteRepo->findShot(sid)) {
-//                 ticket = std::make_shared<ResultTicket>(sid, remoteRepo, ResultTicket::TicketStatus::Complete);
-//                 found = true;
-//                 break;
-//             }
-//         }
-//     }
-
-//     if (!found && shotRepository != 0 && shotRepository->findShot(sid)) {
-//         ticket = std::make_shared<ResultTicket>(sid, shotRepository, ResultTicket::TicketStatus::Complete);
-//         found = true;
-//     }
-
-//     //use LocalShotRepository
-//     //ticket = std::make_shared<>(shotRepository);
-
-//     return found && (ticket != 0);
-// }
-
-
-// std::shared_ptr<STI::Engine::ResultsCollector> LocalPersistenceManager::createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine)
-// {
-//     std::shared_ptr<ResultsCollector> collector;
-//     // collector = std::make_shared<LocalResultsCollector>(job.getJobID().sid);
-
-//     std::shared_ptr<PersistenceManager> delegate;
-
-//     std::set<unsigned> priorities;
-//     delegatePriorities.getKeys(priorities);
-
-//     std::vector<std::shared_ptr<STI::Engine::ResultsCollector>> collectors;
-
-//     for (auto& p : priorities) {
-//         DeviceID id;
-//         delegatePriorities.get(p, id);
-
-//         if (delegates.get(id, delegate) && delegate != 0) {
-            
-//             collector = delegate->createResultsCollector(sid, eventEngine);
-
-//             collectors.push_back(collector);
-//         }
-//     }
-
-//     if (collectors.size() == 0) {
-//         collector = std::shared_ptr<LocalResultsCollector>(sid, eventEngine, resultsDocumenter);
-// //        collector = std::shared_ptr<DefaultLocalResultsCollector>(this);    //saves to .sti
-//         collectors.push_back(collector);  
-//     }
-
-//     return collectors.front();
-// }
-
-// void LocalPersistenceManager::saveShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector)
-// {
-
-//     //get top delegate
-//     //  delegate->saveShot
-//     //in no top delegate
-//     //  saveShotLocally
-
-//     // if(collector->collectMeasurements()) {
-//     //     collector->save();
-//     // }
-
-//     std::shared_ptr<PersistenceManager> delegate;
-
-//     std::set<unsigned> priorities;
-//     delegatePriorities.getKeys(priorities);
-
-
-//     if (priorities.size() > 0) {
-//         DeviceID id;
-//         delegatePriorities.get(*(priorities.begin()), id);
-
-//         if (delegates.get(id, delegate) && delegate != 0) {
-//             delegate->saveShot(collector);
-//         }
-//     }
-//     else {
-//         //save locally
-//         auto engine = collector->getEngine();
-
-//         engine->transferMeasurements(collector);
-
-//         collector->save();
-
-//     }
-
-// }
 

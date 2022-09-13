@@ -32,7 +32,7 @@ const std::string& RemoteAttribute::getValue() const
     return value_;
 }
 
-std::string RemoteAttribute::getCurrentValue() const
+const std::string& RemoteAttribute::getStoredValue() const
 {
     return value_;
 }

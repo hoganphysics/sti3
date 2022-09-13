@@ -2,8 +2,8 @@
 #define STI_NETWORK_REMOTEDEVICEMESSAGEDISPATCHER_H
 
 
-#include "DeviceMessageDispatcher.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceID.h>
 
 #include "deviceNet.h"
 #include "TReferenceHolder.h"

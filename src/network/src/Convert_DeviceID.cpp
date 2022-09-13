@@ -1,13 +1,14 @@
 
 #include "NetworkConvert.h"
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include "orbTypes.h"
 
 using STI::Network::convert;
 using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
+
 
 template<>
 DeviceID STI::Network::convert<TDeviceID, DeviceID>(const TDeviceID& tDeviceID)

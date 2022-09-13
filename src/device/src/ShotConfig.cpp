@@ -1,5 +1,4 @@
-
-#include "ShotConfig.h"
+#include <sti/engine/ShotConfig.h>
 
 #include <sstream>
 

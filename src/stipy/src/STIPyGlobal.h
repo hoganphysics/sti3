@@ -2,6 +2,10 @@
 #ifndef STI_PYTHON_STIPYGLOBAL_H
 #define STI_PYTHON_STIPYGLOBAL_H
 
+#include <sti/engine/StackTrace.h>
+#include <sti/engine/RawEventGroup.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/ParsedVar.h>
 
 #include <functional>
 #include <memory>
@@ -17,10 +21,9 @@ namespace Python
 
 
 class STIPyShot;
-class STIPyDevice;
-class STIPyChannel;
 class STIPyGlobal;
 struct Concrete_STIPyGlobal;
+class StackTracePy;
 
 
 class STIPyGlobal
@@ -33,15 +36,27 @@ public:
 
     void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func);
 
-    void event(const STIPyChannel& channel, double time, const pybind11::object& value);
-    void meas(const STIPyChannel& channel, double time, const pybind11::object& value);
-    void meas(const STIPyChannel& channel, double time);
+    STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
 
-    std::shared_ptr<STIPyDevice> dev(const std::string& name, const std::string& address, unsigned module);
+    void setvar(const std::string& name, const pybind11::object& value, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const STI::Engine::RawStackTrace& stackTrace);
+    void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+    void meas(const STI::Engine::RawEventTarget& target, double time, 
+                const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+
+    std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);
 
 private:
 
     STIPyGlobal();
+
     friend Concrete_STIPyGlobal;
 
     static std::shared_ptr<STIPyGlobal> instance;

@@ -1,4 +1,3 @@
-
 #include "EventEngineStateMachine.h"
 
 #include <mutex>
@@ -48,7 +47,7 @@ EventEngineStateMachine::EventEngineStateMachine()
 	std::vector<EngineState> allStates = { EngineState::Idle, EngineState::Parsing, EngineState::Parsed, EngineState::PreparingPlay, EngineState::PlayReady, EngineState::WaitingForTrigger, EngineState::Playing };
 
 	//All states can transition to these states
-	for (auto s : allStates) {
+	for (auto& s : allStates) {
 		stateTree.addEdge(s, EngineState::Error);
 		stateTree.addEdge(s, EngineState::Unknown);
 	}

@@ -1,22 +1,55 @@
-
 #include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_Attribute.h"
 #include "Convert_ResultsCollector.h"
+#include "Convert_StackTrace.h"
+#include "Convert_EventEngine.h"
+#include "Convert_RawEventGroup.h"
 
-#include "ShotResult.h"
-#include "RawEvent.h"
+#include <sti/engine/FullShotResult.h>
+#include <sti/engine/ParsedVar.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotResult.h>
+#include <sti/engine/StackTraceResult.h>
+
+#include <sti/engine/ParsedTag.h>
+#include <sti/engine/RawEventGroup.h>
 
 #include <memory>
 
+
 using STI::Network::convert;
 
+using STI::Engine::ParseID;
 using STI::Engine::ShotResult;
 using STI::TNetwork::TShotResult;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::TimeStamp;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotResultRecord;
+using STI::Engine::ParseResult;
+using STI::TNetwork::TParseResult;
+using STI::Engine::RawEventGroup;
+using STI::TNetwork::TRawEventGroup;
+using STI::Engine::ParsedVar;
+using STI::TNetwork::TParsedVar;
+using STI::Engine::ParsedTag;
+using STI::TNetwork::TParsedTag;
+using STI::Device::DeviceID;
+using STI::TNetwork::TDeviceID;
+using STI::Engine::StackTrace;
+using STI::TNetwork::TStackFrameSeq;
+using STI::Utils::MixedValue;
+using STI::TNetwork::TMixedValue;
+using STI::TNetwork::TEventEngineDependencyTree;
+using STI::Engine::ParsedDependencyTree;
+using STI::TNetwork::TEngineParsingMessage;
+using STI::Engine::EngineParsingMessage;
+using STI::TNetwork::TStackTraceResult;
+using STI::Engine::StackTraceResult;
+using STI::TNetwork::TFullShotResult;
+using STI::Engine::FullShotResult;
 
 
 //ShotResult
@@ -28,9 +61,6 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
 
     shotResult->sid = convert<TNetwork::TShotID, Engine::ShotID>(tShotResult.sid);
     shotResult->playTime = convert<TTimeStamp, TimeStamp>(tShotResult.playTime);
-
-    convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tShotResult.parsedEvents, shotResult->parsedEvents);
-    convert<STI::TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<STI::Utils::FileHolder>>>(tShotResult.timingFiles, shotResult->timingFiles);
 
     shotResult->measurements = std::make_shared<STI::Engine::MeasurementVector>();
     convert<STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tShotResult.measurements, *(shotResult->measurements));
@@ -57,9 +87,6 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
     tShotResult.sid = convert<Engine::ShotID, TNetwork::TShotID>(shotResult->sid);
     tShotResult.playTime = convert<TimeStamp, TTimeStamp>(shotResult->playTime);
 
-    convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(shotResult->parsedEvents, tShotResult.parsedEvents);
-    convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(shotResult->timingFiles, tShotResult.timingFiles);
-
     if (shotResult->measurements != 0) {
         convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*(shotResult->measurements), tShotResult.measurements);        
     }
@@ -79,5 +106,154 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
     convert<ShotResultRecord, TShotResultRecord>(shotResult->shotResultRecord, tShotResult.shotResultRecord);
 
     return true;
+}
+
+
+
+//ParseResult
+template<>
+bool STI::Network::convert<TParseResult, ParseResult>(
+        const TParseResult& tParseResult, ParseResult& parseResult)
+{
+    convert<STI::TNetwork::TParseID, ParseID>(tParseResult.parseID, parseResult.pid);
+    convert<TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tParseResult.baseEventGroup, parseResult.baseEventGroup);
+    convert<TEventEngineDependencyTree, std::shared_ptr<ParsedDependencyTree>>(tParseResult.parsedDevices, parseResult.parsedDevices);
+    convert<TEngineParsingMessage, EngineParsingMessage>(tParseResult.messages, parseResult.messages);
+    convert<TStackTraceResult, std::shared_ptr<StackTraceResult>>(tParseResult.stackTraceResult, parseResult.stackTraceResult);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<ParseResult, TParseResult>(
+        const ParseResult& parseResult, TParseResult& tParseResult)
+{
+
+    convert<ParseID, STI::TNetwork::TParseID>(parseResult.pid, tParseResult.parseID);
+    convert<std::shared_ptr<STI::Engine::RawEventGroup>, TRawEventGroup>(parseResult.baseEventGroup, tParseResult.baseEventGroup);
+    convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDependencyTree>(parseResult.parsedDevices, tParseResult.parsedDevices);
+    convert<EngineParsingMessage, TEngineParsingMessage>(parseResult.messages, tParseResult.messages);
+    convert<std::shared_ptr<StackTraceResult>, TStackTraceResult>(parseResult.stackTraceResult, tParseResult.stackTraceResult);
+
+    return true;
+}
+
+
+template<>
+bool STI::Network::convert<TParseResult, std::shared_ptr<ParseResult>>(
+        const TParseResult& tParseResult, std::shared_ptr<ParseResult>& parseResult)
+{
+    parseResult = std::make_shared<ParseResult>();
+    return convert<TParseResult, ParseResult>(tParseResult, *parseResult);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<ParseResult>, TParseResult>(
+        const std::shared_ptr<ParseResult>& parseResult, TParseResult& tParseResult)
+{
+    if (parseResult == 0) return false;
+    return convert<ParseResult, TParseResult>(*parseResult, tParseResult);
+}
+
+
+//FullShotResult
+template<>
+bool STI::Network::convert<TFullShotResult, std::shared_ptr<FullShotResult>>(
+        const TFullShotResult& tFullShotResult, std::shared_ptr<FullShotResult>& fullShotResult)
+{
+    fullShotResult = std::make_shared<FullShotResult>();
+
+    convert<TParseResult, std::shared_ptr<ParseResult>>(tFullShotResult.parseResult, fullShotResult->parseResult);
+    convert<TShotResult, std::shared_ptr<ShotResult>>(tFullShotResult.shotResult, fullShotResult->shotResult);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<FullShotResult>, TFullShotResult>(
+        const std::shared_ptr<FullShotResult>& fullShotResult, TFullShotResult& tFullShotResult)
+{
+    if (fullShotResult == 0) return false;
+
+    convert<std::shared_ptr<ParseResult>, TParseResult>(fullShotResult->parseResult, tFullShotResult.parseResult);
+    convert<std::shared_ptr<ShotResult>, TShotResult>(fullShotResult->shotResult, tFullShotResult.shotResult);
+
+    return true;
+}
+
+
+
+//ParsedVar
+template<>
+bool STI::Network::convert<TParsedVar, ParsedVar>(const TParsedVar& tParsedVar, ParsedVar& parsedVar)
+{
+    parsedVar.name = convert<CORBA::String_member, std::string>(tParsedVar.name);
+    convert<TStackFrameSeq, StackTrace>(tParsedVar.trace, parsedVar.trace);
+    convert<TMixedValue, MixedValue>(tParsedVar.value, parsedVar.value);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedVar, TParsedVar& tParsedVar)
+{
+    convert<std::string, CORBA::String_member>(parsedVar.name, tParsedVar.name);
+    convert<StackTrace, TStackFrameSeq>(parsedVar.trace, tParsedVar.trace);
+    convert<MixedValue, TMixedValue>(parsedVar.value, tParsedVar.value);
+
+    return true;
+}
+
+template<>
+ParsedVar STI::Network::convert<TParsedVar, ParsedVar>(const TParsedVar& tParsedVar)
+{
+    ParsedVar parsedVar;
+    convert<TParsedVar, ParsedVar>(tParsedVar, parsedVar);
+    return parsedVar;
+}
+
+template<>
+TParsedVar STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedVar)
+{
+    TParsedVar tParsedVar;
+    convert<ParsedVar, TParsedVar>(parsedVar, tParsedVar);
+    return tParsedVar;
+}
+
+
+
+//ParsedTag
+template<>
+bool STI::Network::convert<TParsedTag, ParsedTag>(const TParsedTag& tParsedTag, ParsedTag& parsedTag)
+{
+    parsedTag.name = convert<CORBA::String_member, std::string>(tParsedTag.name);
+    convert<TStackFrameSeq, StackTrace>(tParsedTag.trace, parsedTag.trace);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<ParsedTag, TParsedTag>(const ParsedTag& parsedTag, TParsedTag& tParsedTag)
+{
+    convert<std::string, CORBA::String_member>(parsedTag.name, tParsedTag.name);
+    convert<StackTrace, TStackFrameSeq>(parsedTag.trace, tParsedTag.trace);
+
+    return true;
+}
+
+template<>
+ParsedTag STI::Network::convert<TParsedTag, ParsedTag>(const TParsedTag& tParsedTag)
+{
+    ParsedTag parsedTag;
+    convert<TParsedTag, ParsedTag>(tParsedTag, parsedTag);
+    return parsedTag;
+}
+
+template<>
+TParsedTag STI::Network::convert<ParsedTag, TParsedTag>(const ParsedTag& parsedTag)
+{
+    TParsedTag tParsedTag;
+    convert<ParsedTag, TParsedTag>(parsedTag, tParsedTag);
+    return tParsedTag;
 }
 

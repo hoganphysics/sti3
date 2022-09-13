@@ -21,11 +21,10 @@
  */
 
 
-#include "MixedValue.h"
-#include "utils.h"
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/utils.h>
 
 #include "CerealArchives.h"
-
 #include <cereal/types/common.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
@@ -37,6 +36,7 @@
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueVector;
 using STI::Utils::MixedValueType;
+
 
 MixedValue::MixedValue()
 {

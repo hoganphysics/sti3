@@ -1,11 +1,9 @@
-
 #include "Convert_Channel.h"
 #include "RemoteChannel.h"
 
-#include "MixedValue.h"
+#include <sti/utils/MixedValue.h>
 
 #include "orbTypes.h"
-
 
 using STI::Network::convert;
 using STI::Device::Channel; 
@@ -57,9 +55,7 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
     MixedValue metaData = convert<TMixedValue, MixedValue>(tChannel.metaData);
     // const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
 
-    MixedValue lastValue;
-    convert<TMixedValue, MixedValue>(tChannel.lastValue, lastValue);
-
+    MixedValue lastValue = convert<TMixedValue, MixedValue>(tChannel.lastValue);
 
     auto remoteChannel = std::make_shared<STI::Network::RemoteChannel>(
                             static_cast<short>(tChannel.channelNumber),
@@ -68,6 +64,17 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
                             convert<TMixedValueType, MixedValueType>(tChannel.outputType),
                             convert<::CORBA::String_member, std::string>(tChannel.channelName),
                             lastValue, metaData);
+
+
+
+    // for (auto& tuple : metaValues) {
+        
+    //     const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
+        
+    //     if (labeledData.size() == 2) {
+    //         localChannel->addMetaData(labeledData.at(0).getString(), labeledData.at(1));
+    //     }
+    // }
 
     return remoteChannel;
 }

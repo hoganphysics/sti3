@@ -1,39 +1,42 @@
-
-
 #include "LocalEventEngineScheduler.h"
-#include "DeviceID.h"
-#include "SynchronizedMap.h"
-#include "LocalEventEngineJob.h"
-#include "DeviceMessage.h"
-#include "EventEngineManager.h"
-#include "fwd/RawEvent_fwd.h"
-#include "ParseID.h"
-#include "EventEngineJob.h"
-#include "Shot.h"
-#include "LocalEventEngineJob.h"
+
+#include <sti/fwd/RawEvent_fwd.h>
+
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessage.h>
+
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/ResultsCollector.h>
+#include <sti/engine/ParseID.h>
+#include <sti/engine/ResultTicket.h>
+#include <sti/engine/ShotID.h>
+
+#include <sti/utils/SynchronizedMap.h>
+
 #include "EventEngineFactory.h"
+#include "EventEngineManager.h"
 #include "LocalEventEngineFactory.h"
-#include "EngineParsingMessage.h"
+#include "LocalEventEngineJob.h"
 #include "LocalShot.h"
-#include "ShotID.h"
-#include "EngineJobID.h"
-#include "DeviceMessage.h"
-#include "ResultTicket.h"
-#include "ResultsCollector.h"
+#include <sti/engine/RawEventGroup.h>
+#include <sti/engine/Shot.h>
 
 #include <set>
 #include <vector>
 #include <memory>
 #include <algorithm>
 
+using STI::Device::DeviceID;
+using STI::Device::DeviceTrace;
+using STI::Device::EngineSchedulerMessage;
+
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::EventEngineDependencyTree;
-using STI::Device::DeviceID;
-using STI::Device::EngineSchedulerMessage;
 using STI::Engine::EngineID;
 using STI::Engine::EventEngine;
-using STI::Device::DeviceTrace;
 using STI::Engine::LocalEventEngine;
 using STI::Engine::ParseID;
 using STI::Engine::EventEngineJob;
@@ -49,6 +52,26 @@ using STI::Engine::LocalShot;
 using STI::Engine::ResultTicket;
 using STI::Engine::ResultsCollector;
 using STI::Engine::EngineJobStatus;
+
+/*
+
+Need to refactor.
+
+* functions like: getDependants, loopDetected, addDeviceEventTargets, addToTargetsByServer, getPartnerDeviceDependants
+are not part of "scheduler" logic.  Should be in a separate class.
+
+Even most of parse() should be delegated. Need a class that provides
+
+EngineJob parse(shot);
+
+The missing class should handle job creation across the network.
+
+DistributedJobCreator
+
+
+* EventEngineManager seems unneeded.  Could replace list of EventMangers with list of EventEngines directly.
+
+*/
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
@@ -154,6 +177,25 @@ EngineJobStatus LocalEventEngineScheduler::getStatus(const ShotID& sid)
 }
 
 
+/// Recursively find all concrete event targets in event group
+void LocalEventEngineScheduler::findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<DeviceID>& eventTargets)
+{
+    if (eventGroup == 0) return;
+
+    if (eventGroup->getEvents() != 0) {
+        auto events = eventGroup->getEvents();
+        for(auto& evt : *events) {
+            if (!evt.target().isAbstract()) {
+                eventTargets.insert(evt.target().device().deviceID());
+            }
+        }
+    }
+
+    for (auto& g : eventGroup->getSubgroups()) {
+        findEventTargets(g, eventTargets);
+    }
+}
+
 // void LocalEventEngineScheduler::parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot)
 ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
@@ -163,17 +205,16 @@ ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
-    std::shared_ptr<STI::Engine::RawEventVector> events;
+    std::shared_ptr<STI::Engine::RawEventGroup> eventGroup;
 
     if (shot != 0) {
-        shot->getEvents(events);  
+        shot->getRootEventGroup(eventGroup);
+        // shot->getEvents(events);  
         parseID.shotConfig = shot->getShotConfig();      
     }
 
-    if (events != 0) {
-        for(auto& evt : *events) {
-            eventTargets.insert(evt.targetDevice());
-        }
+    if (eventGroup != 0) {
+        findEventTargets(eventGroup, eventTargets);
     }
 
     //Create dependency tree
@@ -758,11 +799,15 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
     jobCondition.notify_all();
 }
 
+// std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const ShotConfig& shotConfig)
+// {
+//     auto group = std::make_shared<RawEventGroup>(name, traceData);
+// }
 
-std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events)
+std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup)
 {
-    auto shot = std::make_shared<LocalShot>(shotConfig);
-    shot->setEvents(events);
+    auto shot = std::make_shared<LocalShot>(shotConfig, eventGroup);
+    // shot->setEvents(events);
     return shot;
 }
 
@@ -834,7 +879,7 @@ void LocalEventEngineScheduler::assignJobs()
         if (freeEngines.size() > 0) {
             
             //First priority is to run a play event if a free engine is parsed for it, regardless of position in set.
-            for (auto jobID : queuedJobIDs) {
+            for (auto& jobID : queuedJobIDs) {
                 
                 if (jobID.type == EventEngineJobType::Play) {
                     
@@ -854,7 +899,7 @@ void LocalEventEngineScheduler::assignJobs()
             }
 
             //assign parse jobs
-            for (auto jobID : queuedJobIDs) {
+            for (auto& jobID : queuedJobIDs) {
                 if (jobID.type == EventEngineJobType::Parse) {
 
                     if (findOldestParsedEngine(freeEngines, engineID) && assignJob(jobID, engineID)) {
@@ -1056,40 +1101,45 @@ bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::sha
     return false;
 }
 
-bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const
+// bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const
+bool LocalEventEngineScheduler::getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const
 {
     std::shared_ptr<LocalEventEngine> engine;
 
     if (getParsedEngine(parseID, engine)) {
-        return engine->getParsedEvents(parseID, events);
+        return engine->getParseResult(parseID, parseResult);
+    }
+    else {
+        //ParseResult is not in engine anymore; check for result in PersistenceManager
+        return persistenceManager != 0 && persistenceManager->getParseResult(parseID, parseResult);
     }
 
     return false;
 }
 
-bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const
-{
-    std::shared_ptr<EventEngineJob> job;
+// bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const
+// {
+//     std::shared_ptr<EventEngineJob> job;
 
-    if (findJob(parseID, job)) {
-        messages = job->getParsingMessages();
-        return true;
-    }
+//     if (findJob(parseID, job)) {
+//         messages = job->getParsingMessages();
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
-bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const
-{
-    std::shared_ptr<LocalEventEngine> engine;
+// bool LocalEventEngineScheduler::getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const
+// {
+//     std::shared_ptr<LocalEventEngine> engine;
 
-    if (getParsedEngine(parseID, engine)) {
-        tree = engine->getParsedTree();
-        return engine->getLastParseID() == parseID;
-    }
+//     if (getParsedEngine(parseID, engine)) {
+//         tree = engine->getParsedTree();
+//         return engine->getLastParseID() == parseID;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 
 bool LocalEventEngineScheduler::findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const

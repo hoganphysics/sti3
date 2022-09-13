@@ -1,61 +1,63 @@
+#include <sti/LocalDevice.h>
 
-#include "LocalDevice.h"
-#include "LocalDeviceMessageDispatcher.h"
-#include "DeviceMessageReceiver.h"
-#include "LocalEventEngineScheduler.h"
-#include "DeviceMessageListener.h"
-#include "DeviceMessage.h"
-#include "LocalEventEngineFactory.h"
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessageReceiver.h>
+#include <sti/device/LocalAttribute.h>
+#include <sti/device/LocalChannel.h>
+#include <sti/device/ServerMessageRelayer.h>
 
-#include "LocalFileHolder.h"
+#include <sti/engine/Measurement.h>
+#include <sti/engine/ParseTicket.h>
 
-#include "MixedValue.h"
-#include "LocalChannelManager.h"
-#include "LocalChannel.h"
-
-#include "LocalAttribute.h"
-#include "LocalAttributeManager.h"
+#include <sti/utils/Configuration.h>
+#include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/MixedValue.h>
 
 #include "DeviceMessageListenerForwarder.h"
-
-#include "ServerMessageRelayer.h"
+#include "LocalAttributeManager.h"
+#include "LocalChannelManager.h"
+#include "LocalDeviceMessageDispatcher.h"
+#include "LocalEventEngineFactory.h"
+#include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
-//#include "SerializedRepository.h"
-
 #include "LocalShot.h"
-#include "ParseTicket.h"
-
+#include <sti/engine/RawEventGroup.h>
 #include "ShotRepository.h"
 
-#include "Measurement.h"
-#include "Configuration.h"
-
+#include <filesystem>
 #include <memory>
 #include <iostream>
 
-using STI::Device::Device;
-using STI::Device::DeviceID;
-using STI::Device::LocalDevice;
-using STI::Device::DeviceMessageDispatcher;
-using STI::Device::LocalDeviceMessageDispatcher;
-using STI::Device::DeviceMessageReceiver;
-using STI::Engine::LocalEventEngineScheduler;
-using STI::Device::LocalChannelManager;
-using STI::Device::LocalChannel;
-using STI::Device::ChannelManager;
 using STI::Device::AttributeManager;
-using STI::Device::DeviceCollectionPolicy;
-using STI::Device::LocalAttribute;
-using STI::Device::DeviceMessageListener;
-using STI::Device::EngineSchedulerMessage;
-using STI::Device::DeviceMessageListenerID;
+using STI::Device::ChannelManager;
 using STI::Device::CollectionUpdateMessage;
+using STI::Device::Device;
+using STI::Device::DeviceCollectionPolicy;
+using STI::Device::DeviceID;
+using STI::Device::DeviceMessageDispatcher;
+using STI::Device::DeviceMessageListener;
+using STI::Device::DeviceMessageListenerID;
+using STI::Device::DeviceMessageReceiver;
+using STI::Device::EngineSchedulerMessage;
+using STI::Device::LocalAttribute;
+using STI::Device::LocalChannel;
+using STI::Device::LocalChannelManager;
+using STI::Device::LocalDevice;
+using STI::Device::LocalDeviceMessageDispatcher;
+
 using STI::Engine::LocalEventEngineFactory;
-//using STI::Engine::SerializedRepository;
+using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
-using STI::Device::Configuration;
 
+using STI::Utils::Configuration;
+
+
+LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
+: LocalDevice( Configuration(config) )
+{
+}
 
 LocalDevice::LocalDevice(const Configuration& config, const std::string& section)
 : LocalDevice(
@@ -76,9 +78,14 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	deviceMessageReceiver = std::make_shared<DeviceMessageReceiver>(id, localCollection, deviceMessageDispatcher);
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
-	localCollection->addListener(deviceCollectionListener);
+	addCollectionListener(deviceCollectionListener);
+	// localCollection->addListener(deviceCollectionListener);
 
-	auto basePath = LocalPersistenceManager::makeBasePath(".sti", getID());
+    // std::cout << "CWD: " << std::filesystem::current_path().c_str() << std::endl;
+	auto deviceRootPath = std::filesystem::current_path();	//cwd
+	deviceRootPath /= ".sti";
+
+	auto basePath = LocalPersistenceManager::makeBasePath(deviceRootPath.generic_string(), getID());
 
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
@@ -107,12 +114,12 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	//EngineSchedulerMessage ListenerID
 	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
-	messageListenerIDs.push_back(schedulerMessageLID);
+//	messageListenerIDs.push_back(schedulerMessageLID);
 
-	//CollectionMessage ListenerID
-	collectionMessageLID.name = getID().getID() + "::DeviceCollection";
-	collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
-	messageListenerIDs.push_back(collectionMessageLID);
+	// //CollectionMessage ListenerID
+	// collectionMessageLID.name = getID().getID() + "::DeviceCollection";
+	// collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
+	// messageListenerIDs.push_back(collectionMessageLID);
 
 	serverMessageRelayer = std::make_shared<STI::Device::ServerMessageRelayer>(getID(), deviceMessageDispatcher);
 
@@ -178,10 +185,15 @@ void LocalDevice::disable()
 	}
 }
 
-
-void LocalDevice::addEventTarget(const STI::Device::DeviceID& id)
+void LocalDevice::addEventTarget(const DeviceID& id)
 {
+	addPartner(id);	//an event target must be a partner
 	eventTargets.insert(id);
+}
+
+void LocalDevice::getEventTargets(std::set<DeviceID>& targetIDs)
+{
+	targetIDs = eventTargets;
 }
 
 bool LocalDevice::isEventTarget(const DeviceID& id)
@@ -190,16 +202,45 @@ bool LocalDevice::isEventTarget(const DeviceID& id)
 	return (it != eventTargets.end());
 }
 
+void LocalDevice::addPartner(const DeviceID& id)
+{
+	partnerDevices.insert(id);
+}
+
+bool LocalDevice::isPartnerDevice(const DeviceID& id)
+{
+	auto it = partnerDevices.find(id);
+	return it != partnerDevices.end();
+}
+
 //true if the LocalDevice is the target server of ID (i.e., this device is acting as a server)
 bool LocalDevice::isTargetServerOf(const DeviceID& id)
 {
 	return id.getTargetServerID() == getID().getID();
 }
 
+
+std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& filename)
+{
+	std::shared_ptr<STI::Utils::FileHolder> file;
+
+	if (localPersistenceManager != 0) {
+		file = localPersistenceManager->makeFileHolder(filename);
+	}
+	return file;
+}
+
 void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
 	if (deviceMessageDispatcher != 0) {
 		deviceMessageDispatcher->addMessage(mess);
+	}
+}
+
+void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)
+{
+	if (localCollection != 0) {
+		localCollection->addListener(listener);
 	}
 }
 
@@ -306,11 +347,10 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	shotConfig.jobSourceID.user = "<async play>";
 	shotConfig.jobSourceID.machine = getID().getAddress();
 	
-	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig);
-	auto events = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+	auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("SingleEvent", "");
+	auto shot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
 
-	events->push_back(event);
-	shot->setEvents(events);
+	eventGroup->addEvent(event);
 
 	auto parseID = eventEngineScheduler->parse(shot);
 
@@ -348,7 +388,8 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValue& value)
 {
 	double eventTime = 100;
-	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "writeChannelDefault", 0, STI::Engine::RawEventType::Play);
+	STI::Engine::RawEventTarget eventTarget(getID(), channel);
+	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Play);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
 
 	if (!playSingleEvent(evt0, resultTicket))
@@ -360,7 +401,8 @@ bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValu
 bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
 	double eventTime = 100;
-	STI::Engine::RawEvent evt0(getID(), eventTime, channel, value, "readChannelDefault", 0, STI::Engine::RawEventType::Measurement);
+	STI::Engine::RawEventTarget eventTarget(getID(), channel);
+	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Measurement);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
 
 	if (!playSingleEvent(evt0, resultTicket))
@@ -469,13 +511,6 @@ bool LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& man
 {
 	manager = localPersistenceManager;
 	return manager != 0;
-}
-
-bool LocalDevice::isPartnerDevice(const DeviceID& id)
-{
-	auto it = partnerDevices.find(id);
-
-	return it != partnerDevices.end();
 }
 
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 

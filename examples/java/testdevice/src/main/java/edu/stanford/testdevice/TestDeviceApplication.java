@@ -4,27 +4,42 @@
 package edu.stanford.testdevice;
 
 import edu.stanford.sti.STIJava;
-import edu.stanford.sti.JNetworkDeviceHub;
+import edu.stanford.sti.StringVector;
 
+import java.util.Vector;
+
+import edu.stanford.sti.JNetworkDeviceHub;
+import edu.stanford.sti.MixedValue;
 import edu.stanford.testdevice.TestJDevice;
 
 
 public class TestDeviceApplication {
 
 
+
     public static void main(String[] args) {
-        
-        System.out.println("Hello");
 
         STIJava.LoadLibrary();
 
-//        TestJDevice testDevice = new TestJDevice("Java Dev", "localhost", 0, "localhost/0/dev0");
         TestJDevice testDevice = new TestJDevice("devJava", "localhost", 0, "localhost/0/STI Server");    
-        
+
+        MixedValue val = new MixedValue();
+        val.setValue(55.8);
+        testDevice.write(1, val);
+
+        System.out.println("read result: " + testDevice.read(2, val).getDouble());
+
+        testDevice.getAttributeManager().getAttribute("testat").setValue("12");
+        System.out.println("Attribute: " + testDevice.getAttributeManager().getAttribute("testat").getValue() 
+        + " " + testDevice.getAttributeManager().getAttribute("testat").getMetaData("color").getString());
+
+        testDevice.getAttributeManager().setValue("at2", "False");
+        System.out.println("T/F attribute: " + testDevice.getAttributeManager().getValue("at2"));
+  
+
         JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.4:2809");
         hub.addNode(testDevice);
 
         hub.run();
-        
     }
 }

@@ -1,9 +1,9 @@
 #ifndef STI_TNETWORK_TATTRIBUTEMANAGER_I_H
 #define STI_TNETWORK_TATTRIBUTEMANAGER_I_H
 
-#include "AttributeManager.h"
+#include <sti/device/AttributeManager.h>
 
-#include "Device.h"
+#include <sti/device/Device.h>
 #include "deviceNet.h"
 
 #include <memory>

@@ -1,10 +1,11 @@
 #ifndef STI_NETWORK_TFILEHOLDERREFINTERFACE_H
 #define STI_NETWORK_TFILEHOLDERREFINTERFACE_H
 
-#include "utils/FileHolder.h"
+#include <sti/utils/FileHolder.h>
 #include "deviceNet.h"
 
 #include <memory>
+
 
 namespace STI
 {
@@ -27,20 +28,15 @@ public:
 			tFileHolderRefInterface->getTFileHolderRef(tFileHolder) &&	//polymorphic call
 			!CORBA::is_nil(tFileHolder)
 			);
-		
-		return true;
 	}
 
 private:
 
     virtual bool getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder) = 0;
-
 };
 
 
 } //Network
 } //STI
 
-
 #endif
-

@@ -1,7 +1,9 @@
-
 #include "PyParseTicket.h"
-#include "EngineParsingMessage.h"
-#include "RawEvent.h"
+
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
+
+#include <sti/engine/RawEventGroup.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -39,7 +41,7 @@ void init_ParseTicket(py::module& m)
         .def("wait", py::overload_cast<const std::function<bool()>&>(&STI::Python::PyParseTicket::wait))
         .def("cancel", &STI::Python::PyParseTicket::cancel)
         .def("getMessages", &STI::Python::PyParseTicket::getMessages)
-        .def("getEvents", &STI::Python::PyParseTicket::getEvents)
+        .def("rootgroup", &STI::Python::PyParseTicket::getEvents)
         .def("getStatus", &STI::Python::PyParseTicket::getStatus)
         ;
 

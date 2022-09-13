@@ -1,12 +1,14 @@
 #ifndef STI_NETWORK_REMOTEATTRIBUTEMANAGER_H
 #define STI_NETWORK_REMOTEATTRIBUTEMANAGER_H
 
-#include "AttributeManager.h"
-#include "fwd/MixedValue_fwd.h"
+#include <sti/device/AttributeManager.h>
+#include <sti/fwd/MixedValue_fwd.h>
 #include "deviceNet.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/DeviceMessageListener.h>
+#include <sti/device/DeviceMessage.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "TReferenceHolder.h"
+#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <string>
@@ -75,7 +77,7 @@ private:
     void handleMessage(const std::shared_ptr<STI::Device::AttributeUpdateMessage>& mess);
    
     std::string _getUpdatedValue(const std::string& key);
-    void setAttributeData(const std::shared_ptr<RemoteAttribute>& attribute);
+    void setAttributeData(const std::shared_ptr<STI::Network::RemoteAttribute>& attribute);
     std::map<std::string, std::string> attributeData;
 
     STI::Device::DeviceID remoteID;

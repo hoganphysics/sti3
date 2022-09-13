@@ -1,13 +1,12 @@
 
 #include "NetworkConvert.h"
 
+#include <sti/utils/MixedValue.h>
+
 #include "orbTypes.h"
-#include "MixedValue.h"
 #include "TFileHolderRefInterface.h"
 
-
 using STI::Network::convert;
-
 using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValueType;
@@ -343,4 +342,25 @@ MixedValueType STI::Network::convert<TMixedValueType, MixedValueType>(const TMix
 	}
 
 	return type;
+}
+
+
+//GraphPathLabel
+bool STI::Network::convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath)
+{
+    tGraphPath.length(static_cast<CORBA::ULong>(graphPath.size()));
+
+    for (unsigned i = 0; i < graphPath.size(); ++i) {
+        tGraphPath[i] = static_cast<CORBA::ULong>(graphPath.at(i));
+    }
+    return true;
+}
+
+bool STI::Network::convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath)
+{
+    for (unsigned i = 0; i < tGraphPath.length(); ++i) {
+         graphPath.push_back( static_cast<unsigned>(tGraphPath[i]) );
+    }
+
+    return true;
 }

@@ -1,5 +1,5 @@
 
-#include "utils.h"
+#include <sti/utils/utils.h>
 
 //#include <stdlib.h>
 //#include <ctype.h>
@@ -70,7 +70,7 @@ void splitString(const std::string& inString, const std::string& delimiter, std:
 	std::string::size_type tBegin = 0;
 	std::string::size_type tEnd = 0;
 
-	// splits the sting at every delimiter
+	// splits the string at every delimiter
 	while(tEnd != string::npos)
 	{
 		tBegin = inString.find_first_not_of(delimiter, tEnd);

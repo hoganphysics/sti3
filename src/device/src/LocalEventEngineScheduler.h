@@ -1,28 +1,27 @@
 #ifndef STI_ENGINE_LOCALEVENTENGINESCHEDULER_H
 #define STI_ENGINE_LOCALEVENTENGINESCHEDULER_H
 
-#include "EventEngineScheduler.h"
+#include <sti/LocalDevice.h>
 
-#include "ParseID.h"
-#include "LocalEventEngine.h"
-#include "Device.h"
-#include "DeviceCollection.h"
+#include <sti/device/Device.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/device/DeviceTrace.h>
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageListener.h>
 
-#include "EngineJobID.h"
-#include "EngineJobStatus.h"
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineJobStatus.h>
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/ParseID.h>
 
-#include "DeviceMessage.h"
-#include "DeviceMessageListener.h"
+#include <sti/utils/SynchronizedMap.h>
 
-#include "Shot.h"
-#include "SynchronizedMap.h"
-#include "utils/OrderedBufferMap.h"
-
-#include "LocalDevice.h"
-#include "EngineID.h"
 #include "EventEngineDependencyTree.h"
-#include "DeviceTrace.h"
+#include "LocalEventEngine.h"
 #include "MessageGenerator.h"
+#include <sti/engine/Shot.h>
+#include "utils/OrderedBufferMap.h"
 
 #include <list>
 #include <map>
@@ -57,14 +56,13 @@ namespace STI
 namespace Engine
 {
 
-class EventEngineManager;
-class EventEngineJob;
 class EngineJobID;
+class EventEngineFactory;
+class EventEngineJob;
+class EventEngineManager;
 class LocalEventEngine;
-
 class ParseID;
 class Shot;
-class EventEngineFactory;
 
 
 class LocalEventEngineScheduler : public EventEngineScheduler,
@@ -110,18 +108,14 @@ public:
     // void getRunningJobs(std::set<EngineJobID>& jobIDs) const;
     // void getCompletedJobs(std::set<EngineJobID>& jobIDs) const;
 
-    std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventVector>& events);
+    // std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig);
+    std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup);
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
     void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser);
 
-    bool getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const;
-    bool getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const;
-    bool getParsedTree(const ParseID& parseID, std::shared_ptr<ParsedDependencyTree>& tree) const;
-
-//    bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector);
-//    bool getResults(const ShotID& shotID, std::shared_ptr<ResultTicket>& results);
+    bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {
@@ -150,6 +144,8 @@ public:
     //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
 
 private:
+
+    void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
                         std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
@@ -183,15 +179,12 @@ private:
 
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
 
-
-
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
     bool findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const;
 
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
-    //bool getEngineByShot(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
 
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;
@@ -237,14 +230,7 @@ private:
 
     std::shared_ptr<EngineSchedulerMessageListenerDelegate> engineSchedulerMessageListenerDelegate;
 
-
-
-
-
 };
-
-
-
 
 } //Engine
 } //STI

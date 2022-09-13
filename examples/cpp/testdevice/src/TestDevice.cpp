@@ -2,8 +2,8 @@
 
 #include "TestDevice.h"
 
-#include "EngineState.h"
-
+//#include <sti/engine/EngineState.h>
+//#include <sti/device/LocalAttribute.h>
 
 #include <iostream>
 #include <string>
@@ -23,7 +23,7 @@ public:
 	std::string name;
 };
 
-TestDevice::TestDevice(const STI::Device::Configuration& config)
+TestDevice::TestDevice(const STI::Utils::Configuration& config)
 : STI::Device::LocalDevice(config)
 {
     init();
@@ -36,8 +36,17 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
     init();
 }
 
+
 void TestDevice::init()
 {
+    addAttribute("test", 33, { "33", "44", "55"})
+        .setSetter([this](const std::string& value) { return setTest(value); });
+
+    addAttribute("test2", 2)
+        //.setSetter(std::bind(&TestDevice::setTest, this, _1));
+        .setSetter(&TestDevice::setTest, this)
+        .setRefresher(&TestDevice::getTest, this);
+
     addChannel(1, 
                STI::Device::ChannelType::Output, 
                STI::Utils::MixedValueType::Double, 
@@ -91,6 +100,16 @@ void TestDevice::init()
 
 TestDevice::~TestDevice()
 {
+}
+
+bool TestDevice::setTest(const std::string& value)
+{
+    std::cout << "Change attribute: " << value  << std::endl;
+    return true;
+}
+std::string TestDevice::getTest()
+{
+    return "val";
 }
 
 void TestDevice::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) 

@@ -1,5 +1,4 @@
-
-#include "LocalChannel.h"
+#include <sti/device/LocalChannel.h>
 #include "ChannelRefreshListener.h"
 
 using STI::Device::LocalChannel;

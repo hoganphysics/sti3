@@ -1,14 +1,14 @@
-
 #include "NetworkDeviceHubWrapper.h"
-#include "DeviceID.h"
-#include "HubID.h"
-#include "HubTrace.h"
+
+#include <sti/device/DeviceID.h>
+#include <sti/network/HubID.h>
+#include <sti/network/HubTrace.h>
+
 #include "NetworkDeviceWrapper.h"
 #include "orbTypes.h"
+#include "ORBManager.h"
 
 #include <memory>
-
-#include <iostream>
 
 using STI::Network::NetworkDeviceWrapper;
 using STI::Network::NetworkDeviceHubWrapper;
@@ -22,6 +22,8 @@ using STI::Network::NodeWalker;
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDeviceHub>& hub)
 	: localHub(hub), deviceHubServant(hub)
 {
+	STI::Network::ORBManager::ORBManager::activateServant(deviceHubServant);
+
 	//The LocalHub might have (local) nodes and hubs already attached that must be wrapped.
 	//For all hubs currently stored by localHub, replace with NetworkDeviceHubWrapper (this is recursive)
 
@@ -156,13 +158,14 @@ void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device
 bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
 	STI::TNetwork::TDeviceHub_var& tDeviceHub)
 {
+	if (deviceHub == 0) return false;
+
 	bool success = false;
 	std::shared_ptr<NetworkDeviceHubWrapper> networkDeviceHubWrapper;
 	networkDeviceHubWrapper = std::dynamic_pointer_cast<NetworkDeviceHubWrapper>(deviceHub);
 
 	if (networkDeviceHubWrapper) {		//check dynamic_pointer_cast
 
-		//std::cout << "NetworkDeviceHubWrapper::getTDeviceHubReference()" << std::endl;
 		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
 		success = true;
 	}

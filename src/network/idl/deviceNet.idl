@@ -44,7 +44,6 @@ module TNetwork
 		boolean addHub(in TDeviceHubID hubID, in TDeviceHub hub);
 		boolean removeHub(in TDeviceHubID hubID);
 	
-//		boolean refresh();
 		boolean refreshNetwork(in TDeviceHubTrace trace);
 
 		boolean distribute(in TDeviceID devID, in TDevice node, in TDeviceHubTrace trace, in TDeviceHubID first);
@@ -82,7 +81,6 @@ module TNetwork
 	interface TDeviceMessageHandler
 	{
 		void addMessage(in TAnyMessage mess);
-		//boolean hasListeners(in TDeviceEvent evt);
 		void clearMessages();
 
 		readonly attribute TDeviceMessageTypeSeq listenersTypes;
@@ -95,39 +93,15 @@ module TNetwork
 		void addMessageHandler(in TDeviceID targetID, in TDeviceMessageHandler handler);
 		void removeMessageHandler(in TDeviceID targetID);
 
-		//void addEvent(in TDeviceEvent evt);
-
 		boolean ping();
 	};
 
-	interface TShotEventsCallback
+	interface TShotCallback
 	{
-		void getEvents(out TRawEventSeq events);
+		void getRootEventGroup(out TRawEventGroup rootGroup);
 	};
 
-
 	interface TEventEngine;
-
-	// interface TEventEngineJob
-	// {
-	// 	TEngineJobID getJobID();
-	// 	TDeviceID getJobOwner();
-	// 	TEngineJobStatus getStatus();
-
-	// 	void markRunning(in TEngineID id);
-	// 	void markComplete();
-	// 	void markCancelled();
-
-	// 	TEngineID getEngineID();
-	// 	boolean getEngine(out TEventEngine eventEngine);
-	// 	void setEventEngine(in TEventEngine eventEngine);
-
-	// 	boolean getParsedShot(out TShot shot);
-	// 	boolean getDependencies(out TEventEngineDependencyTree tree);
-
-	// 	TDeviceIDSeq getMissingTargetIDs();
-	// };
-
 
 	
 	interface TTriggerCallback
@@ -139,10 +113,7 @@ module TNetwork
 	interface TResultsCollector
 	{
 		TShotID getShotID();
-		//TEventEngineDependencyTree getDependencies();
 
-		void addEvents(in TDeviceEventsSeq parsedEvents);
-		void addTimingFiles(in TFileHolderSeq files);
 		boolean addMeasurements(in TMeasurementSeq measurements);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
 	};
@@ -162,11 +133,8 @@ module TNetwork
     	TDeviceID getDeviceID();
 		TEngineState getState();
 
-		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
 		TEventEngineDependencyTree getParsedTree();
-
-		//boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
-		//boolean transferResults(in TResultsCollector resultsCollector);
+		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 	};
 
 	interface TEventEngineScheduler
@@ -176,9 +144,6 @@ module TNetwork
 
     	TEngineJobStatus getStatusPID(in TParseID pid);
     	TEngineJobStatus getStatusSID(in TShotID sid);
-
-	    // void parse(in TParseID parseID, in TShot shot);
-	    // void play(in TShotID shotID);
 
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
                                 inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
@@ -198,12 +163,7 @@ module TNetwork
 	    // void getRunningJobs(out TEngineJobIDSeq jobIDs);
     	// void getCompletedJobs(out TEngineJobIDSeq jobIDs);
 
-		boolean getParsedEvents(in TParseID parseID, out TDeviceEventsSeq events);
-    	boolean getParsingMessages(in TParseID parseID, out TEngineParsingMessageSeq messages);
-    	boolean getParsedTree(in TParseID parseID, out TEventEngineDependencyTree tree);
-		
-		//boolean transferResults(in TResultsCollector resultsCollector);
-		//boolean getResults(in TShotID shotID, out TResultTicket results);
+		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 
 		boolean ping();
 	};
@@ -242,23 +202,17 @@ module TNetwork
 	interface TPersistenceManager
 	{
 		boolean findShot(in TShotID sid);
-		boolean getShot(in TShotID sid, out TShotResult shotResult);
-		boolean saveShot(in TShotID sid, in TShotResult shotResult, in boolean isOwner);
+		
+		boolean getParseResult(in TParseID pid, out TParseResult parseResult);
+		boolean getShotResult(in TShotID sid, out TShotResult shotResult);
+		boolean saveShot(in TShotID sid, in TFullShotResult fullShotResult, in boolean isOwner);
 		
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
-		//boolean getResultTicket(in TShotID sid, out TResultTicket ticket);
 
 		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
 
 		boolean ping();
 	};
-
-	// interface TShotRepository
-	// {
-	// 	boolean findShot(in TShotID sid);
-	// 	boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
-	// 	// TMeasurementSeq getMeasurements();
-	// };
 
 	interface TDevice
 	{

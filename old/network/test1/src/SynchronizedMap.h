@@ -20,7 +20,7 @@ EventEmittingSynchronizedMap
 
 */
 
-#include "EventQueue.h"
+#include <sti/utils/EventQueue.h>
 
 #include <vector>
 #include <memory>

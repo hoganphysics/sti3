@@ -1,9 +1,9 @@
 #ifndef STI_UTILS_HUB_H
 #define STI_UTILS_HUB_H
 
-#include "Collector.h"
-#include "Distributer.h"
-#include "Node.h"
+#include <sti/utils/Collector.h>
+#include <sti/utils/Distributer.h>
+#include <sti/network/Node.h>
 
 #include <memory>
 

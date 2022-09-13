@@ -1,12 +1,12 @@
 #ifndef STI_NETWORK_NETWORKDEVICEHUBWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEHUBWRAPPER_H
 
-#include "LocalDeviceHub.h"
+#include <sti/LocalDeviceHub.h>
 #include "TDeviceHub_i.h"
-#include "DeviceHub.h"
+#include <sti/network/DeviceHub.h>
 #include "orbTypes.h"
-#include "DeviceID.h"
-#include "Device.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/Device.h>
 
 #include <memory>
 

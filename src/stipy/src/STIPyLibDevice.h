@@ -1,9 +1,9 @@
 #ifndef STI_PYTHON_STIPYLIBDEVICE_H
 #define STI_PYTHON_STIPYLIBDEVICE_H
 
-#include "LocalDevice.h"
-#include "HubID.h"
-#include "ParseID.h"
+#include <sti/LocalDevice.h>
+#include <sti/network/HubID.h>
+#include <sti/engine/ParseID.h>
 
 #include <string>
 #include <memory>

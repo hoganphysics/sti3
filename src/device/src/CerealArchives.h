@@ -2,7 +2,7 @@
 #define STI_CEREALARCHIVES_H
 
 
-#include <cereal/archives/xml.hpp>
+#include <sti/extern/cereal/archives/xml.hpp>
 
 
 #endif

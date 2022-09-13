@@ -1,7 +1,6 @@
-
 #include "NetworkConvert.h"
 
-#include "HubID.h"
+#include <sti/network/HubID.h>
 
 #include "orbTypes.h"
 

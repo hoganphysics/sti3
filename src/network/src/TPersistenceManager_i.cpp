@@ -1,12 +1,12 @@
-
 #include "TPersistenceManager_i.h"
-#include "ORBManager.h"
+
+#include <sti/device/PersistenceManager.h>
+#include <sti/engine/ShotResultRecord.h>
+
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
 #include "Convert_ShotResult.h"
-#include "PersistenceManager.h"
-#include "ShotResultRecord.h"
-
+#include "ORBManager.h"
 
 using STI::TNetwork::TPersistenceManager_i;
 using STI::Network::convert;
@@ -16,6 +16,7 @@ using STI::Engine::ShotResult;
 using STI::Engine::ResultsCollector;
 using ::STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotResultRecord;
+using STI::Engine::FullShotResult;
 
 
 TPersistenceManager_i::TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -42,7 +43,28 @@ TPersistenceManager_i::~TPersistenceManager_i()
 	return success;
 }
 
-::CORBA::Boolean TPersistenceManager_i::getShot(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult)
+::CORBA::Boolean TPersistenceManager_i::getParseResult(const ::STI::TNetwork::TParseID& pid, ::STI::TNetwork::TParseResult_out tParseResult)
+{
+	bool success = false;
+
+    if (persistenceManager != 0) {
+
+		std::shared_ptr<STI::Engine::ParseResult> parseResult;
+		STI::TNetwork::TParseResult_var tParseResult_var(new STI::TNetwork::TParseResult);
+
+		success = persistenceManager->getParseResult(convert<TParseID, STI::Engine::ParseID>(pid), parseResult);
+
+		success &= convert<std::shared_ptr<STI::Engine::ParseResult>, TParseResult>(
+					parseResult, tParseResult_var);
+
+		tParseResult = new STI::TNetwork::TParseResult();
+		(*tParseResult) = tParseResult_var;
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TPersistenceManager_i::getShotResult(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult)
 {
 	bool success = false;
 
@@ -51,7 +73,7 @@ TPersistenceManager_i::~TPersistenceManager_i()
 		std::shared_ptr<STI::Engine::ShotResult> shotResult;
 		STI::TNetwork::TShotResult_var tShotResult_var(new STI::TNetwork::TShotResult);
 
-		success = persistenceManager->getShot(convert<TShotID, STI::Engine::ShotID>(sid), shotResult);
+		success = persistenceManager->getShotResult(convert<TShotID, STI::Engine::ShotID>(sid), shotResult);
 
 		success &= convert<std::shared_ptr<STI::Engine::ShotResult>, TShotResult>(
 					shotResult, tShotResult_var);
@@ -65,14 +87,14 @@ TPersistenceManager_i::~TPersistenceManager_i()
 
 
 ::CORBA::Boolean TPersistenceManager_i::saveShot(const ::STI::TNetwork::TShotID& sid, 
-												 const ::STI::TNetwork::TShotResult& tShotResult, ::CORBA::Boolean isOwner)
+											     const ::STI::TNetwork::TFullShotResult& tFullShotResult, ::CORBA::Boolean isOwner)
 {
-	std::shared_ptr<ShotResult> shotResult;
-	bool success = convert<::STI::TNetwork::TShotResult, std::shared_ptr<ShotResult>>(tShotResult, shotResult);
+	std::shared_ptr<FullShotResult> fullShotResult;
+	bool success = convert<::STI::TNetwork::TFullShotResult, std::shared_ptr<FullShotResult>>(tFullShotResult, fullShotResult);
     
 	if (persistenceManager != 0 && success) {
 
-		success &= persistenceManager->saveShot(convert<TShotID, ShotID>(sid), shotResult, isOwner);
+		success &= persistenceManager->saveShot(convert<TShotID, ShotID>(sid), fullShotResult, isOwner);
 	}
 	else {
 		success = false;

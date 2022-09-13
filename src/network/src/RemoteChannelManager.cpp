@@ -3,7 +3,7 @@
 
 #include "Convert_Channel.h"
 #include "DeviceMessageListenerForwarder.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "RemoteChannel.h"
 #include "deviceNet.h"
 #include "NetworkConvert.h"
@@ -48,7 +48,7 @@ RemoteChannelManager::~RemoteChannelManager()
 	}
 }
 
-void RemoteChannelManager::setChannelData(const std::shared_ptr<RemoteChannel>& channel)
+void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Network::RemoteChannel>& channel)
 {
 	if (channel != 0) {
 		auto channelNumber = channel->getChannelNumber();
@@ -93,8 +93,8 @@ void RemoteChannelManager::getChannels(std::vector<std::shared_ptr<STI::Device::
 				}
 			}
 
-			// channelData.clear();
-			// for(auto& ch : channels) {
+			
+			// for(auto& ch : remoteChannels) {
 			// 	setChannelData(ch);
 			// }
 		}

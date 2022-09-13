@@ -1,9 +1,9 @@
 
-#include "DeviceMessageReceiver.h"
-#include "DeviceID.h"
-#include "Device.h"
-#include "DeviceMessageDispatcher.h"
-#include "DeviceMessageHandler.h"
+#include <sti/device/DeviceMessageReceiver.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/Device.h>
+#include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/DeviceMessageHandler.h>
 
 #include <string>
 #include <set>
@@ -15,7 +15,6 @@ using STI::Device::DeviceID;
 using STI::Device::Device;
 using STI::Utils::LocalCollection;
 using STI::Device::DeviceMessageListenerID;
-using STI::Device::LocalDeviceMessageHandler;
 
 
 DeviceMessageReceiver::DeviceMessageReceiver(const DeviceID& localID, 

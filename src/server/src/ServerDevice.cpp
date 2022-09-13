@@ -1,9 +1,8 @@
 
 #include "ServerDevice.h"
 
-#include "AttributeManager.h"
-#include "ChannelManager.h"
-#include "DeviceMessageReceiver.h"
+
+#include <sti/device/DeviceMessageReceiver.h>
 #include <iostream>
 
 using STI::Device::ServerDevice;

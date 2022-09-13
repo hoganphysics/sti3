@@ -1,9 +1,13 @@
 
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
-#include "RawEvent.h"
+#include "Convert_ShotResult.h"
+
+#include <sti/engine/RawEvent.h>
 #include "ParsedDependencyTree.h"
 #include "NetworkResultsCollector.h"
+#include "ORBManager.h"
+
 
 using STI::Network::RemoteEventEngine;
 using STI::Engine::EventEngineJob;
@@ -56,6 +60,10 @@ void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::s
 	if (isDisabled()) return;
 
     triggerCallbackServant = std::make_shared<STI::TNetwork::TTriggerCallback_i>(triggerCB);
+
+	if (triggerCallbackServant != 0) {
+		STI::Network::ORBManager::ORBManager::activateServant(*triggerCallbackServant);
+	}
 
 	try {
 		if (triggerCallbackServant != 0) {
@@ -263,21 +271,21 @@ std::shared_ptr<STI::Engine::ParsedDependencyTree> RemoteEventEngine::getParsedT
 	return tree;
 }
 
-// const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
-bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
+
+bool RemoteEventEngine::getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const
 {
 	std::unique_lock<std::mutex> engineLock(engineMutex);
 
 	if (isDisabled()) return false;
 
-	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
+	STI::TNetwork::TParseResult_var tParseResult(new STI::TNetwork::TParseResult);
 
 	bool success = false;
 
 	try {
-		success = getTRef()->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
+		success = getTRef()->getParseResult(convert<ParseID, TParseID>(parseID), tParseResult);	//remote call
 
-		success &= convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
+		success &= convert<::STI::TNetwork::TParseResult, std::shared_ptr<STI::Engine::ParseResult>>(tParseResult, parseResult);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -288,6 +296,33 @@ bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI
 	}
 	return success;
 }
+
+
+// // const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
+// bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
+// {
+// 	std::unique_lock<std::mutex> engineLock(engineMutex);
+
+// 	if (isDisabled()) return false;
+
+// 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
+
+// 	bool success = false;
+
+// 	try {
+// 		success = getTRef()->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
+
+// 		success &= convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// 	return success;
+// }
 
 // bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
 // {

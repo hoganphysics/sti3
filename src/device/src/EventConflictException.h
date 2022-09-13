@@ -23,7 +23,7 @@
 #ifndef STI_ENGINE_EVENTCONFLICTEXCEPTION_H
 #define STI_ENGINE_EVENTCONFLICTEXCEPTION_H
 
-#include "RawEvent.h"
+#include <sti/engine/RawEvent.h>
 #include "STI_Exception.h"
 
 #include <string>

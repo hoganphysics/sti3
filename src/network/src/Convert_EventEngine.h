@@ -3,13 +3,19 @@
 
 #include "NetworkConvert.h"
 #include "deviceNet.h"
-#include "EngineState.h"
-#include "EventEngineJob.h"
-#include "EngineJobID.h"
-#include "fwd/RawEvent_fwd.h"
-#include "EngineJobStatus.h"
+
+#include <sti/fwd/RawEvent_fwd.h>
+
+#include <sti/engine/EngineState.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineJobStatus.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/RawEventTargetDevice.h>
+#include <sti/engine/RawEventTargetChannel.h>
 
 #include <memory>
+
 
 namespace STI
 {
@@ -32,12 +38,9 @@ class EventEngineJob;
 class LocalEventEngineJob;
 class EngineID;
 class EngineJobID;
-//class EventEngineJobType;
 class Measurement;
-
 class EngineParsingMessage;
 enum class ParsingMessageType;
-
 class ShotResultRecord;
 enum class ShotType;
 enum class RecordStatus;
@@ -160,6 +163,25 @@ Engine::EventEngineJobList Network::convert<TNetwork::TEventEngineJobList, Engin
 
 
 
+//RawEventTarget
+template<>
+TNetwork::TRawEventTarget Network::convert<Engine::RawEventTarget, TNetwork::TRawEventTarget>(const Engine::RawEventTarget& target);
+template<>
+Engine::RawEventTarget Network::convert<TNetwork::TRawEventTarget, Engine::RawEventTarget>(const TNetwork::TRawEventTarget& tTarget);
+
+//RawEventTargetDevice
+template<>
+bool Network::convert<Engine::RawEventTargetDevice, TNetwork::TRawEventTargetDevice>(const Engine::RawEventTargetDevice& targetDevice, TNetwork::TRawEventTargetDevice& tTargetDevice);
+template<>
+Engine::RawEventTargetDevice Network::convert<TNetwork::TRawEventTargetDevice, Engine::RawEventTargetDevice>(const TNetwork::TRawEventTargetDevice& tTargetDevice);
+
+//RawEventTargetChannel
+template<>
+bool Network::convert<Engine::RawEventTargetChannel, TNetwork::TRawEventTargetChannel>(const Engine::RawEventTargetChannel& targetChannel, TNetwork::TRawEventTargetChannel& tTargetChannel);
+template<>
+Engine::RawEventTargetChannel Network::convert<TNetwork::TRawEventTargetChannel, Engine::RawEventTargetChannel>(const TNetwork::TRawEventTargetChannel& tTargetChannel);
+
+
 //RawEvent
 template<>
 bool Network::convert<Engine::RawEvent, TNetwork::TRawEvent>(const Engine::RawEvent& evt, TNetwork::TRawEvent& tEvent);
@@ -172,11 +194,11 @@ template<>
 Engine::RawEvent Network::convert<TNetwork::TRawEvent, Engine::RawEvent>(const TNetwork::TRawEvent& tEvent);
 
 
-//STI::Engine::DeviceEventMap
-template<>
-bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
-template<>
-bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
+// //STI::Engine::DeviceEventMap
+// template<>
+// bool Network::convert<Engine::DeviceEventMap, TNetwork::TDeviceEventsSeq>(const Engine::DeviceEventMap& deviceEvents, TNetwork::TDeviceEventsSeq& tDeviceEvents);
+// template<>
+// bool Network::convert<TNetwork::TDeviceEventsSeq, Engine::DeviceEventMap>(const TNetwork::TDeviceEventsSeq& tDeviceEvents, Engine::DeviceEventMap& deviceEvents);
 
 
 

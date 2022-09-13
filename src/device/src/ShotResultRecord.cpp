@@ -1,14 +1,9 @@
-
-
-#include "ShotResultRecord.h"
+#include <sti/engine/ShotResultRecord.h>
 
 #include "CerealArchives.h"
-
 #include <cereal/types/vector.hpp>
 
-
 using STI::Engine::ShotResultRecord;
-
 
 
 ShotResultRecord::ShotResultRecord() 

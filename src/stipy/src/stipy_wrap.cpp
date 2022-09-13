@@ -1,17 +1,22 @@
-
 #include "stipy.h"
 
-#include "STIPyChannel.h"
+#include <sti/engine/RawEventTarget.h>
+
+#include "RawStackTrace.h"
 #include "STIPyServer.h"
-#include "STIPyChannel.h"
+#include "STIPyShot.h"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+
+
 namespace py = pybind11;
 
 // using STI::Python::connect4;
 
-using STI::Python::STIPyChannel;
-
+using STI::Engine::RawEventTarget;
+// using STI::Python::StackTracePy;
+using STI::Engine::RawStackTrace;
 
 
 void init_stipy(py::module& m) 
@@ -30,23 +35,49 @@ void init_stipy(py::module& m)
 
     m.def("printNetwork", &STI::Python::printNetwork, "Print the STI network tree");
 
-    m.def("event", &STI::Python::event);
-    m.def("meas", py::overload_cast<const STIPyChannel&, double, const pybind11::object&>(&STI::Python::meas));
-    m.def("meas", py::overload_cast<const STIPyChannel&, double>(&STI::Python::meas));
+    m.def("makeshot", py::overload_cast<>(&STI::Python::makeShot));
+    m.def("makeshot", py::overload_cast<const std::string&>(&STI::Python::makeShot), 
+                    py::arg("name"));
+    m.def("makeshot", py::overload_cast<const std::string&, const std::function<void(void)>&>(&STI::Python::makeShot), 
+                    py::arg("name"), py::arg("func"));
 
+    m.def("group", &STI::Python::group, 
+                    py::arg("name"));
 
+    m.def("var", &STI::Python::var, py::arg("fullVarName"), py::arg("stackTrace"));
 
+    m.def("setvar", &STI::Python::setvar, 
+                    py::arg("name"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
+    m.def("settag", &STI::Python::settag, 
+                    py::arg("name"), py::arg("stackTrace"), py::arg("scope"));
 
+    m.def("event", &STI::Python::event, 
+                    py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
+    m.def("meas", py::overload_cast<const RawEventTarget&, double, const pybind11::object&,
+                    const RawStackTrace&, const std::string&>(&STI::Python::meas),
+                    py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
+    m.def("meas", py::overload_cast<const RawEventTarget&, double,
+                    const RawStackTrace&, const std::string&>(&STI::Python::meas),
+                    py::arg("channel"), py::arg("time"), py::arg("stackTrace"), py::arg("group"));
 
+    // m.def("dev", 
+    //     py::overload_cast<const std::string&, const std::string&, unsigned, const std::string&>(
+    //         &STI::Python::dev), "Create STIPy device ID");
     m.def("dev", 
-        py::overload_cast<const std::string&, const std::string&, unsigned, const std::string&>(
-            &STI::Python::dev), "Create STIPy device ID");
+        py::overload_cast<const std::string&>(
+            &STI::Python::dev), py::arg("deviceName"), "Create abstract STIPy device ID");
     m.def("dev", 
         py::overload_cast<const std::string&, const std::string&, unsigned>(
-            &STI::Python::dev), "Create STIPy device ID");
+            &STI::Python::dev), py::arg("name"), py::arg("address"), py::arg("module"), "Create STIPy device ID");
     m.def("ch", 
-        py::overload_cast<const std::shared_ptr<STI::Python::STIPyDevice>&, unsigned>(
-            &STI::Python::ch), "Create STIPy channel ID");
+        py::overload_cast<const STI::Engine::RawEventTargetDevice&, unsigned>(
+            &STI::Python::ch), py::arg("device"), py::arg("channel"), "Create STIPy channel ID");
+    m.def("ch", 
+        py::overload_cast<const STI::Engine::RawEventTargetDevice&, const std::string&>(
+            &STI::Python::ch), py::arg("device"), py::arg("channelName"), "Create abstract STIPy channel ID");
+    m.def("ch", 
+        py::overload_cast<const std::string&>(
+            &STI::Python::ch), py::arg("channelName"), "Create abstract STIPy channel ID");
 
 
 }

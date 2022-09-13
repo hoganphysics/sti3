@@ -173,7 +173,7 @@
     <ClInclude Include="..\src\EventParsingException.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\EventStackTrace.h">
+    <ClInclude Include="..\src\StackTrace.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
     <ClInclude Include="..\include\RawEvent.h">

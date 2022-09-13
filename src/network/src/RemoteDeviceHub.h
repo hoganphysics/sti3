@@ -1,12 +1,12 @@
 #ifndef STI_NETWORK_REMOTEDEVICEHUB_H
 #define STI_NETWORK_REMOTEDEVICEHUB_H
 
-#include "Hub.h"
-#include "HubID.h"
-#include "Device.h"
-#include "DeviceID.h"
-#include "HubTrace.h"
-#include "DeviceHub.h"
+#include <sti/network/Hub.h>
+#include <sti/network/HubID.h>
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
+#include <sti/network/HubTrace.h>
+#include <sti/network/DeviceHub.h>
 #include "deviceNet.h"
 #include "TReferenceHolder.h"
 

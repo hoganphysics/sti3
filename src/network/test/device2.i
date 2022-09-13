@@ -3,14 +3,14 @@
 
 
 %{
-    #include "DeviceID.h"
+    #include <sti/device/DeviceID.h>
 
-    #include "Collector.h"
-    #include "Collection.h"
-    #include "DeviceCollection.h"
-    #include "Node.h"
-    #include "Device.h"
-    #include "LocalDevice.h"
+    #include <sti/utils/Collector.h>
+    #include <sti/utils/Collection.h>
+    #include <sti/device/DeviceCollection.h>
+    #include <sti/network/Node.h>
+    #include <sti/device/Device.h>
+    #include <sti/LocalDevice.h>
 	#include "DeviceEventDispatcher.h"
 
 // namespace STI 

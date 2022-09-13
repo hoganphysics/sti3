@@ -3,7 +3,7 @@
 
 #include "deviceNet.h"
 
-#include "DeviceCollection.h"
+#include <sti/device/DeviceCollection.h>
 
 #include <memory>
 

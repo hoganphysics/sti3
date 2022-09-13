@@ -1,21 +1,22 @@
-import stidevicepy
+import stipy
+import stipy.stidevicepy as stidevicepy
 
 
 class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, name, address, module, targetServer):
         stidevicepy.LocalDevice.__init__(self, name, address, module, targetServer)
 
-        self.addChannel(1, stidevicepy.ChannelType.Output, stidevicepy.MixedValueType.Empty, stidevicepy.MixedValueType.Double, "test")
-        self.addChannel(2, stidevicepy.ChannelType.Input, stidevicepy.MixedValueType.Double, stidevicepy.MixedValueType.Double, "test2")
+        self.addChannel(1, stidevicepy.ChannelType.Output, stipy.MixedValueType.Empty, stipy.MixedValueType.Double, "test")
+        self.addChannel(2, stidevicepy.ChannelType.Input, stipy.MixedValueType.Double, stipy.MixedValueType.Double, "test2")
 
         engineID = stidevicepy.EngineID(0)
         self.addEventEngine(engineID)
         return
     def __del__(self):
         print("&&&&&&&&& TestDevice del")
-    # def writeChannel(self, channel, value):
-    #     print("write: " + str(channel))
-    #     return True
+    def writeChannel(self, channel, value):
+         print("write: " + str(channel))
+         return True
 
 
     def parseEvents(self, eventsIn, synchedEvents):
@@ -49,7 +50,8 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
 
 
 
-dev1=TestDevice("TestDevice", "localhost", 0, "root")
+#dev1=TestDevice("TestDevice 2", "maximus", 1, "localhost/0/BridgeServer")
+dev1=TestDevice("TestDevice 2", "maximus", 1, "localhost/0/STI Server")
 
 hub=stidevicepy.NetworkDeviceHub("192.168.1.4:2809")
 

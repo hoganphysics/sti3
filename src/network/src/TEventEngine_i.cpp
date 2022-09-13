@@ -1,15 +1,16 @@
-
 #include "TEventEngine_i.h"
 
-#include "ORBManager.h"
-#include "DeviceID.h"
 #include "Convert_EventEngine.h"
-#include "EngineState.h"
-#include "RemoteTriggerCallback.h"
-#include "LocalEventEngineJob.h"
-#include "RawEvent.h"
-#include "RemoteResultsCollector.h"
+#include "Convert_ShotResult.h"
 
+#include <sti/device/DeviceID.h>
+#include <sti/engine/EngineState.h>
+#include <sti/engine/RawEvent.h>
+
+#include "LocalEventEngineJob.h"
+#include "ORBManager.h"
+#include "RemoteResultsCollector.h"
+#include "RemoteTriggerCallback.h"
 
 using STI::TNetwork::TEventEngine_i;
 using STI::Engine::EventEngine;
@@ -25,17 +26,11 @@ using STI::Engine::EngineJobID;
 using STI::TNetwork::TEventEngineJob;
 using ::STI::TNetwork::TEventEngineDependencyTree;
 
-//TEventEngine_i::TEventEngine_i(const std::shared_ptr<EventEngine>& engine)
-//: eventEngine(engine)
-//{
-//}
 
 TEventEngine_i::TEventEngine_i(STI::Engine::EventEngine* engine)
 : eventEngine(engine)
 {
 }
-
-
 
 TEventEngine_i::~TEventEngine_i()
 {
@@ -43,7 +38,6 @@ TEventEngine_i::~TEventEngine_i()
 }
 
 void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)
-//void TEventEngine_i::play(::STI::TNetwork::TEventEngineJob_ptr job)
 {
     std::shared_ptr<EventEngineJob> engineJob;
     convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(job, engineJob);
@@ -134,27 +128,6 @@ TEngineState TEventEngine_i::getState()
 }
 
 
-::CORBA::Boolean TEventEngine_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
-{
-	bool success = false;
-
-    if (eventEngine != 0) {
-
-		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
-		STI::Engine::DeviceEventMap deviceEvents;
-
-		success = eventEngine->getParsedEvents(convert<STI::TNetwork::TParseID, STI::Engine::ParseID>(parseID), deviceEvents);
-
-		success &= convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);	
-		
-		events = new STI::TNetwork::TDeviceEventsSeq();
-		(*events) = tDeviceEventsSeq_var;
-	}
-
-	return success;
-}
-
-
 TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 {
 	STI::TNetwork::TEventEngineDependencyTree_var tEventEngineDependencyTree_var(new STI::TNetwork::TEventEngineDependencyTree);
@@ -167,39 +140,24 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 	return tEventEngineDependencyTree_var._retn();
 }
 
-// ::CORBA::Boolean TEventEngine_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
-// {
-// 	bool success = false;
 
-//     if (eventEngine != 0) {
+::CORBA::Boolean TEventEngine_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult)
+{
+	bool success = false;
 
-// 		STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
-// 		auto localMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
+    if (eventEngine != 0) {
 
-// 		success = eventEngine->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
+		STI::TNetwork::TParseResult_var tParseResult_var(new STI::TNetwork::TParseResult);
+		std::shared_ptr<STI::Engine::ParseResult> parseResult;
 
-// 		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
-// 					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
+		success = eventEngine->getParseResult(convert<STI::TNetwork::TParseID, STI::Engine::ParseID>(parseID), parseResult);
 
-// 		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
+		success &= convert<std::shared_ptr<STI::Engine::ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);	
 		
-// 		measurements = new STI::TNetwork::TMeasurementSeq();
-// 		(*measurements) = tMeasurementSeq_var;
-// 	}
+		tParseResult = new STI::TNetwork::TParseResult();
+		(*tParseResult) = tParseResult_var;
+	}
 
-// 	return success;
-// }
-
-// ::CORBA::Boolean TEventEngine_i::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
-// {
-// 	bool success = false;
-
-// 	auto remoteCollector = std::make_shared<STI::Network::RemoteResultsCollector>(resultsCollector);
-
-// 	if (eventEngine != 0) {
-// 		success = eventEngine->transferResults(remoteCollector);
-// 	}
-
-// 	return success;
-// }
+	return success;
+}
 

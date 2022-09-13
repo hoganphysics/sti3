@@ -1,7 +1,7 @@
 
 #include "LocalDeviceMessageDispatcher.h"
 #include "LocalDeviceMessageHandler.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 
 #include <set>
 #include <memory>

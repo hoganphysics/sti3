@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_LOCALSERVER_H
 #define STI_DEVICE_LOCALSERVER_H
 
-#include "LocalDevice.h"
-#include "DeviceID.h"
+#include <sti/LocalDevice.h>
+#include <sti/device/DeviceID.h>
 
 
 namespace STI

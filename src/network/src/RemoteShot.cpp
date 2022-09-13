@@ -2,19 +2,23 @@
 #include "RemoteShot.h"
 
 #include "Convert_EventEngine.h"
-#include "RawEvent.h"
+#include "Convert_ShotResult.h"
+#include "Convert_RawEventGroup.h"
+
+#include <sti/engine/RawEventGroup.h>
+
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ParseResult.h>
 
 #include <memory>
 #include <vector>
-
-#include <iostream>
 
 using STI::Network::RemoteShot;
 using STI::Engine::ShotConfig;
 
 
-RemoteShot::RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotEventsCallback_ptr shotCallback)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotEventsCallback>(shotCallback, shotMutex), shotConfig(shotConfig)
+RemoteShot::RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotCallback_ptr shotCallback)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotCallback>(shotCallback, shotMutex), shotConfig(shotConfig)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -26,13 +30,13 @@ RemoteShot::~RemoteShot()
 	disable();
 }
 
-bool RemoteShot::getTShotReference(STI::TNetwork::TShotEventsCallback_ptr& tShotCallback)
+bool RemoteShot::getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
 	if (isDisabled()) return false;
 
-	tShotCallback = STI::TNetwork::TShotEventsCallback::_duplicate(getTRef());
+	tShotCallback = STI::TNetwork::TShotCallback::_duplicate(getTRef());
 
 	return !CORBA::is_nil(tShotCallback);
 }
@@ -42,41 +46,49 @@ const ShotConfig& RemoteShot::getShotConfig() const
 	return shotConfig;
 }
 
-void RemoteShot::getEvents(std::shared_ptr<std::vector<STI::Engine::RawEvent>>& events)
+void RemoteShot::getRootEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& rootGroup)
+{
+	refresh();
+
+	std::unique_lock<std::mutex> shotLock(shotMutex);
+	rootGroup = rootEventGroup;
+}
+
+void RemoteShot::refresh()
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
 	if (refreshRequired) {
-		_refreshEvents();
-
-		//once events have been received, release remote reference
-		if (!refreshRequired) {
-			disable(shotLock);
-		}
+		bool success = true;
+		
+		success &= refreshEvents();
+		refreshRequired = !success;		
 	}
 
-	events = storedEvents;
+	//once events have been received, release remote reference
+	if (!refreshRequired) {
+		disable(shotLock);
+	}
 }
 
-void RemoteShot::_refreshEvents()
+bool RemoteShot::refreshEvents()
 {
 	//has lock
+	bool success = false;
 
-	if (isDisabled()) return;
+	if (isDisabled()) return false;
 
-	storedEvents = std::make_shared<std::vector<STI::Engine::RawEvent>>();
+	rootEventGroup = std::make_shared<STI::Engine::RawEventGroup>();
 
-	STI::TNetwork::TRawEventSeq_var tEvents;
+	STI::TNetwork::TRawEventGroup_var tEventGroup;
 
 	try {
 
-        getTRef()->getEvents(tEvents); 	//remote call
+        getTRef()->getRootEventGroup(tEventGroup); 	//remote call
 
-		refreshRequired = false;
+		success = true;
 
-		if (storedEvents != 0) {
-			convert<STI::TNetwork::TRawEvent, STI::Engine::RawEvent>(tEvents, *storedEvents);
-		}
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tEventGroup, rootEventGroup);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -85,4 +97,6 @@ void RemoteShot::_refreshEvents()
 	catch (CORBA::Exception&)
 	{
 	}
+
+	return success;
 }

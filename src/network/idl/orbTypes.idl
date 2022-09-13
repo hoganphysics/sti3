@@ -55,7 +55,6 @@ module TNetwork
 	typedef sequence<TFileHolder> TFileHolderSeq;
 
 	union TMixedValue;
-	// struct TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
 	enum TMixedValueType { MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueEmpty, MixedValueFile, MixedValueImage, MixedValueAny};
 	
@@ -69,19 +68,6 @@ module TNetwork
 		case MixedValueFile: 	TFileHolder	value_file;
 		// case MixedValueImage:	TImage	value_image;
 	};
-
-	// struct TMixedValue
-	// {
-	// 	TMixedValueSeq values;
-
-	// 	TMixedValueType type;
-
-	// 	boolean value_b;
-	// 	long    value_i;
-	// 	double  value_d;
-	// 	string  value_s;
-	// };
-
 
 	typedef sequence<string> TStringSeq;
 
@@ -103,28 +89,60 @@ module TNetwork
 	};
 	typedef sequence<TStringPair> TStringPairSeq;
 
+	struct TStackFrame
+	{
+		unsigned long file;
+		unsigned long line;
+		unsigned long func;
+	};
+	typedef sequence<TStackFrame> TStackFrameSeq;
+
+	struct TRawEventTargetDevice 
+	{
+		boolean isAbstract;
+		string name;
+		TDeviceID targetDeviceID;
+	};
+	
+	struct TRawEventTargetChannel 
+	{
+		boolean isAbstract;
+		string _name;
+		unsigned short channel;
+	};
+
+	struct TRawEventTarget 
+	{
+		TRawEventTargetDevice device;
+    	TRawEventTargetChannel channel;
+	};
+
+
+	struct TParsedVar
+	{
+		string name;
+		TMixedValue value;
+		TStackFrameSeq trace;
+	};
+	typedef sequence<TParsedVar> TParsedVarSeq;
+
 
 	struct TRawEvent
 	{
 		double time;
-		unsigned short channel;
-		TMixedValue value;
+		TRawEventTarget target;
+		// TMixedValue value;
+		TParsedVar parsedValue;
 		string description;
-		//TEventStackTrace trace;
+		TStackFrameSeq stackTrace;
+
 		boolean isMeasurement;
 		TRawEventType rawEventType;
-		TDeviceID targetDeviceID;
 
 		TGraphPathLabel eventGraphPath;
 	};
 	typedef sequence<TRawEvent> TRawEventSeq;
 
-	struct TDeviceEvents
-	{
-		TDeviceID targetDeviceID;
-		TRawEventSeq events;
-	};
-	typedef sequence<TDeviceEvents> TDeviceEventsSeq;
 
 	struct TMeasurement
 	{
@@ -133,10 +151,10 @@ module TNetwork
 		double time;
 		unsigned short channel;
 		TGraphPathLabel measurementGraphPath;
+		string fullGroupName;
 		TDeviceID device;
 	};
 	typedef sequence<TMeasurement> TMeasurementSeq;
-
 
 
 	struct TEngineID
@@ -172,7 +190,6 @@ module TNetwork
 
 	struct TShotConfig
 	{
-
 		TShotType shotType;
 		
 		TEngineJobSourceID jobSourceID;
@@ -181,7 +198,6 @@ module TNetwork
 
 		string file;
 		string comment;
-
 	};
 
 	struct TParseID
@@ -206,14 +222,69 @@ module TNetwork
 	};
 	typedef sequence<TEngineJobID> TEngineJobIDSeq;
 
+
 	struct TShot;
 
-	interface TShotEventsCallback;
+	interface TShotCallback;
+
+	struct TStackTraceData
+	{
+		TFileHolderSeq timingFiles;
+		TStringSeq functionNames;
+	};
+
+	struct TStackTraceResult
+	{
+		TParseID parseID;
+		TStackTraceData stackTraceData;
+	};
+
+	struct TParsedTag
+	{
+		string name;
+		TStackFrameSeq trace;
+	};
+	typedef sequence<TParsedTag> TParsedTagSeq;
+
+
+	struct RefPointPair
+	{
+		string name;
+		double time;
+	};
+	typedef sequence<RefPointPair> RefPointPairSeq;
+
+	struct TRawEventGroup;
+	typedef sequence<TRawEventGroup> TRawEventGroupSeq;
+
+	struct TRawEventGroup
+	{
+		string name;
+		string parentName;
+	    double timeOffset;
+		RefPointPairSeq referencePoints;
+
+		TRawEventSeq events;
+		TStackTraceData stackTraceData;
+
+    // std::map<std::string, RawEventTarget> targets;   //replace abstract targets in event list
+    // std::map<std::string, RawEventTargetDevice> targetDevices;   //replace abstract devices in event list
+
+		TParsedVarSeq overwrittenVars;
+
+		TParsedVarSeq parsedVars;
+		TParsedTagSeq parsedTags; 
+
+		TRawEventGroupSeq subgroups;
+
+		TMixedValue metaData;
+	};
+
 
 	struct TShot
 	{
 		TShotConfig shotConfig;
-		TShotEventsCallback shotEventsCallback;		//getEvents()
+		TShotCallback shotCallback;
 	};
 
 	enum TEventEngineJobList { EngineJobListQueued, EngineJobListRunning, EngineJobListCompleted, EngineJobListArchived };
@@ -233,25 +304,9 @@ module TNetwork
 	};
 	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
 
-	//interface TShotRepository;
 
 	interface TPersistenceManager;
 	
-	//enum TTicketStatus { TicketRunning, TicketComplete, TicketCanceled, TicketNotFound };
-
-	// struct TResultTicket
-	// {
-	// 	TShotID sid;
-	// 	TTicketStatus status;
-
-	// 	TPersistenceManager persistenceManager;
-
-	// 	// string url;
-	// 	// boolean hasURL;
-
-	// 	//TShotRepository repo;
-	// 	//boolean hasRepo;
-	// };
 
 	//DeviceMessage *************************//
 
@@ -270,7 +325,6 @@ module TNetwork
 	{
 		TDeviceMessageType type;
 		TDeviceTrace sourceTrace;
-		//TDeviceID sourceID;
 	};
 
 	struct TRefreshDeviceMessage
@@ -315,8 +369,10 @@ module TNetwork
 		//TDeviceID originalSource;	//device that generated the original message
 		TEventEngine engine;
 
-		TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
-		TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+		TRawEventGroup handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
+		TRawEventGroup unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
+
+		TRawEventGroup upstreamPartnerEvents;
 
 		TEngineParsingMessageSeq messages;
 
@@ -343,7 +399,6 @@ module TNetwork
 	struct TAttributeUpdateMessage
 	{
 		TDeviceMessage base;	//base class data
-
 		TAttributeTupleSeq attributes;		//{key, value} pairs
 	};
 
@@ -380,10 +435,8 @@ module TNetwork
 	struct TEngineStateMessage
 	{
 		TDeviceMessage base;	//base class data
-
 		TEngineStateTupleSeq engineStates;	//{engineID, state} pairs
 	};
-
 
 
 	struct TEngineParserDeviceMessage
@@ -397,7 +450,6 @@ module TNetwork
 
 
 	enum TChannelType { TChannelOutput, TChannelInput };
-
 
 	struct TChannel
 	{
@@ -413,8 +465,6 @@ module TNetwork
 		TMixedValue metaData;
 	};
 	typedef sequence<TChannel> TChannelSeq;
-
-
 
 
 	enum TRecordStatus { TRecordUnqueried, TRecordComplete, TRecordMissingDevice, TRecordMissingResults, TRecordError };
@@ -439,41 +489,35 @@ module TNetwork
 
 	struct TShotID;
 
+
+	struct TParseResult
+	{
+		TParseID parseID;
+
+		TRawEventGroup baseEventGroup;
+		TEventEngineDependencyTree parsedDevices;
+		TEngineParsingMessageSeq messages;
+		TStackTraceResult stackTraceResult;
+	};
+
+
 	struct TShotResult
 	{
 		TShotID sid;
 		TTimeStamp playTime;
 
-		TDeviceEventsSeq parsedEvents;
-		TFileHolderSeq timingFiles;
 		TMeasurementSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
 
 		TShotResultRecord shotResultRecord;
 	};
 
+	struct TFullShotResult
+	{
+		TParseResult parseResult;
+		TShotResult shotResult;
+	};
 
-	// struct TEngineSchedulerParseMessage
-	// {
-	// 	TDeviceEvent base;	//base class data
-
-	// 	TEngineJobID jobID;
-	// 	TSchedulerMessageType type;
-
-	// 	TDeviceID originalSource;	//device that generated the original message
-
-	// 	TRawEventSeq handledEvents;		//:device generated events that are being sent upstream for documentation, but they have already been parsed
-	// 	TRawEventSeq unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
-	// };
-
-	// struct TEngineSchedulerTRawEventSeq
-	// 	TEngineJobID jobID;
-	// 	TSchedulerMessageType type;
-
-	// 	TDeviceID originalSource;	//device that generated the original message
-
-	// 	TEventEngine engine;
-	// };
 
 };	//TNetwork
 };	//STI

@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "gradle",
+			"id": "/home/hogan/code/dev/sti3/src/stijava/stilibbuildsti",
+			"script": "build",
+			"description": "Assembles and tests this project.",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"project": "sti",
+			"buildFile": "/home/hogan/code/dev/sti3/src/stijava/stilib/build.gradle",
+			"rootProject": "sti",
+			"projectFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
+			"workspaceFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: build"
+		}
+	]
+}

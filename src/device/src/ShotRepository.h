@@ -1,13 +1,11 @@
-
 #ifndef STI_ENGINE_SHOTREPOSITORY_H
 #define STI_ENGINE_SHOTREPOSITORY_H
 
-#include "fwd/Measurement_fwd.h"
-
-//#include "ResultsDocumenter.h"
+#include <sti/fwd/Measurement_fwd.h>
 
 #include <memory>
 #include <string>
+
 
 namespace STI
 {
@@ -17,7 +15,10 @@ namespace Engine
 class ShotID;
 class ParseTicket;
 class ShotResult;
+class ParseResult;
 class ResultsCollector;
+class FullShotResult;
+class ParseID;
 
 //should this be shot-specific, or general?
 struct ResultsPaths
@@ -40,10 +41,13 @@ public:
 
     virtual ResultsPaths preparePaths(const ShotID& sid) = 0;
 
-    virtual bool findShot(const ShotID& sid) = 0;
+    virtual bool findShotResult(const ShotID& sid) = 0;
+    virtual bool findParseResult(const ParseID& sid) = 0;
 
-    virtual bool getShot(const ShotID& id, std::shared_ptr<ShotResult>& shotResult) = 0;
-    virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<ShotResult>& shotResult) = 0;
+    virtual bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult) = 0;
+    virtual bool getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult) = 0;
+
+    virtual bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult) = 0;
 
 
     virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;

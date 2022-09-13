@@ -1,9 +1,9 @@
 
 #include "RemoteAttributeManager.h"
-#include "Attribute.h"
+#include <sti/device/Attribute.h>
 #include "RemoteAttribute.h"
 #include "DeviceMessageListenerForwarder.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 
@@ -51,11 +51,10 @@ RemoteAttributeManager::~RemoteAttributeManager()
 	}
 }
 
-void RemoteAttributeManager::setAttributeData(const std::shared_ptr<RemoteAttribute>& attribute)
+void RemoteAttributeManager::setAttributeData(const std::shared_ptr<STI::Network::RemoteAttribute>& attribute)
 {
 	if (attribute != 0) {
-		auto key = attribute->getKey();
-		attributeData[key] = attribute->getCurrentValue();
+		attributeData[attribute->getKey()] = attribute->getStoredValue();	
 	}
 }
 
@@ -148,7 +147,7 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
         if (success && remoteAttribute != 0) {
             // _attributes[key] = remoteAttribute;
             remoteAttribute->attachManager(this);
-			setAttributeData(remoteAttribute);
+			setAttributeData(remoteAttribute);	//use value stored in remoteAttribute
             attribute = remoteAttribute;
         }
         
@@ -187,7 +186,7 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 			for (auto& ra : remoteAttributes) {
 				if (ra != 0) {
 					ra->attachManager(this);
-					setAttributeData(ra);
+					setAttributeData(ra);	//use value stored in ra
 					attributes.push_back(ra);					
 				}
 			}

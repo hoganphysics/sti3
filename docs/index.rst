@@ -1,18 +1,35 @@
-.. STI documentation master file, created by
+.. _indexsti:
+
+.. STI Documentation master file, created by
    sphinx-quickstart on Mon Jan  4 18:25:08 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to STI's documentation!
-===============================
+
+
+
 
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
+   :caption: Features:
+   :maxdepth: 3
+
+   src/network
+   src/device
+   src/stipy
+
+.. toctree::
+   :hidden:
    :caption: Contents:
+   :maxdepth: 2
    
    src/setuptools
    src/subtable
+
+
+
+.. include :: src/readme.rst
 
 
 Indices and tables
@@ -28,14 +45,12 @@ Indices and tables
 .. ====
 
 
-.. .. graphviz::
-
 ..    digraph foo {
 ..       "bar" -> "baz";
 ..    }
 
 .. ..
-..    doxygenindex::
+   .. doxygenindex::
 
 .. .. inheritance-diagram:: sphinx.ext.inheritance_diagram.InheritanceDiagram
 ..    :parts: 1

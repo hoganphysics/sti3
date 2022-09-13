@@ -2,7 +2,7 @@
 #define STI_ENGINE_ENGINEJOBQUEUE_H
 
 #include "utils/JobQueue.h"
-#include "EngineJobID.h"
+#include <sti/engine/EngineJobID.h>
 
 #include <memory>
 #include <thread>

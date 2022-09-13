@@ -3,7 +3,7 @@
 
 #include "fwd/PersistenceManager_fwd.h"
 #include "deviceNet.h"
-#include "Device.h"
+#include <sti/device/Device.h>
 
 #include <memory>
 
@@ -20,10 +20,11 @@ public:
 
 	TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device);
 	~TPersistenceManager_i();
-
+    
     ::CORBA::Boolean findShot(const ::STI::TNetwork::TShotID& sid);
-    ::CORBA::Boolean getShot(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult);
-    ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TShotResult& tShotResult, ::CORBA::Boolean isOwner);
+    ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& pid, ::STI::TNetwork::TParseResult_out tParseResult);
+    ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult);
+    ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TFullShotResult& tFullShotResult, ::CORBA::Boolean isOwner);
     TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector);
     ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements);
 

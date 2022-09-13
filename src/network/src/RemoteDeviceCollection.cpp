@@ -4,7 +4,7 @@
 #include "TDeviceRefInterface.h"
 
 #include "RemoteDevice.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include "orbTypes.h"
 

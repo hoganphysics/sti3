@@ -1,15 +1,15 @@
-
 #include "TTriggerCallback_i.h"
 
 #include "ORBManager.h"
 #include "NetworkConvert.h"
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 #include "TriggerCallback.h"
 
 using STI::TNetwork::TTriggerCallback_i;
 using ::STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
+
 
 TTriggerCallback_i::TTriggerCallback_i(const std::shared_ptr<STI::Engine::TriggerCallback>& triggerCB)
 : _triggerCB(triggerCB)

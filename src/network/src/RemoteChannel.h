@@ -1,9 +1,9 @@
 #ifndef STI_DEVICE_REMOTECHANNEL_H
 #define STI_DEVICE_REMOTECHANNEL_H
 
-#include "Channel.h"
-#include "MixedValue.h"
-#include "MetaData.h"
+#include <sti/device/Channel.h>
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/MetaData.h>
 
 #include <string>
 #include <memory>
@@ -57,9 +57,9 @@ private:
 	STI::Utils::MixedValueType inputType_;
     STI::Utils::MixedValueType outputType_;
     // std::string channelName_;
-    STI::Utils::MetaData metaData_;  
+    STI::Utils::MetaData metaData_;
 
-	std::shared_ptr<ChannelDataTuple> channelData;
+    std::shared_ptr<ChannelDataTuple> channelData;
 
     RemoteChannelManager* remoteManager;
 

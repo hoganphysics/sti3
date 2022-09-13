@@ -1,8 +1,8 @@
 #ifndef STI_DEVICE_REMOTEATTRIBUTE_H
 #define STI_DEVICE_REMOTEATTRIBUTE_H
 
-#include "Attribute.h"
-#include "MetaData.h"
+#include <sti/device/Attribute.h>
+#include <sti/utils/MetaData.h>
 
 #include <string>
 #include <vector>
@@ -26,7 +26,8 @@ public:
     void attachManager(RemoteAttributeManager* manager);
 
 	const std::string& getKey() const;
-	const std::string& getValue() const;
+	const std::string& getValue() const;    //Calls RemoteAttributeManager to get updated value
+    const std::string& getStoredValue() const;  //Last value stored in this instance
     const std::vector<std::string>& getAllowedValues() const;
     const std::string& getGroup() const;
 

@@ -1,4 +1,3 @@
-
 #include "RemoteFileHolder.h"
 #include "NetworkConvert.h"
 #include "TFileHolderRefInterface.h"
@@ -34,12 +33,15 @@ std::string RemoteFileHolder::getFilename() const
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);
 
+	if (filename.isCached()) return filename.get();
+
 	if (isDisabled()) return "";
 
 	std::string result = "";
 
 	try {
 		result = getTRef()->getFilename();	//remote call
+		filename.set(result);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -55,12 +57,15 @@ bool RemoteFileHolder::exists() const
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);
 
+	if (fileExists.isCached()) return fileExists.get();
+
 	if (isDisabled()) return false;
 
 	bool success = false;
 
 	try {
 		success = getTRef()->exists();	//remote call
+		fileExists.set(success);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -105,12 +110,15 @@ unsigned RemoteFileHolder::maxBufferSize() const
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);
 
+	if (bufferSize.isCached()) return bufferSize.get();
+
 	if (isDisabled()) return false;
 
 	unsigned result = 32*1000;  //default
 
 	try {
 		result = getTRef()->maxBufferSize();	//remote call
+		bufferSize.set(result);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -149,12 +157,15 @@ std::string RemoteFileHolder::md5Checksum()
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);
 
+	if (checksum.isCached()) return checksum.get();
+
 	if (isDisabled()) return "";
 
 	std::string result = "";
 
 	try {
 		result = getTRef()->md5Checksum();	//remote call
+		checksum.set(result);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

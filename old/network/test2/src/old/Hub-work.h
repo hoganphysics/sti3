@@ -1,8 +1,8 @@
 #ifndef STI_UTILS_HUB_H
 #define STI_UTILS_HUB_H
 
-#include "Collector.h"
-#include "LocalCollection.h"
+#include <sti/utils/Collector.h>
+#include <sti/utils/LocalCollection.h>
 
 #include <memory>
 

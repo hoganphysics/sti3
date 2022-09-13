@@ -53,3 +53,11 @@ src/device/python/src/.vs/
 examples/cpp/testPartners/project/x64/
 examples/cpp/testPartners/project/.vs/
 src/server/test/log/
+examples/cpp/testdevice/src/out/build/
+examples/python/testDevice/project/.vs/
+examples/cpp/testdevice/src/.vs/
+__pycache__/
+_skbuild/
+.vs/
+log.txt
+stipy.egg-info/

@@ -1,14 +1,14 @@
+#include <sti/engine/ShotID.h>
 
-#include "ShotID.h"
+#include <sstream>
 
 #include "CerealArchives.h"
 #include <cereal/types/string.hpp>
 
-#include <sstream>
-
 using STI::Engine::ShotID;
 using STI::Engine::ParseID;
 using STI::Engine::TimeStamp;
+
 
 TimeStamp ShotID::lastSubmissionTime;
 std::mutex ShotID::IDmutex;

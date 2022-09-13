@@ -3,8 +3,8 @@
 
 #include "deviceNet.h"
 
-#include "Device.h"
-#include "LocalDeviceHub.h"
+#include <sti/device/Device.h>
+#include <sti/LocalDeviceHub.h>
 
 #include <memory>
 

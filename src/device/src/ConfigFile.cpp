@@ -1,11 +1,12 @@
 
-#include "ConfigFile.h"
-#include "utils.h"
+#include <sti/utils/ConfigFile.h>
+#include <sti/utils/utils.h>
 
 #include <fstream>
 #include <vector>
+#include <iostream>
 
-using STI::Device::ConfigFile;
+using STI::Utils::ConfigFile;
 
 
 ConfigFile::ConfigFile()
@@ -23,8 +24,7 @@ void ConfigFile::parse(const std::string& filename)
 {
 	std::fstream configFile(filename.c_str(), std::fstream::in);
 
-	if (!configFile.is_open())
-	{
+	if (!configFile.is_open()) {
 		parsed = false;
 		//std::cerr << "Error opening config file '" << filename_ << "'." << std::endl;
 		return;
@@ -32,17 +32,20 @@ void ConfigFile::parse(const std::string& filename)
 
 	std::string line;
 	bool success = true;
-	std::size_t commentLoc, sectionHeadStart, sectionHeadEnd;
+	std::size_t commentLoc, sectionHeadStart, sectionHeadEnd, equalsLoc;
 	std::string section = "";	//default section is blank
 	parsed = true;	//unless there's a problem
 
 	while (success && getline(configFile, line))
 	{
+		equalsLoc = line.find_first_of("=");
 		sectionHeadStart = line.find_first_of("[");
-		if (sectionHeadStart != std::string::npos) {
+
+		//Sections are written as [...] with no preceeding = sign
+		if (sectionHeadStart != std::string::npos && equalsLoc == std::string::npos) {
 			//new section found
 			sectionHeadEnd = line.find_first_of("]");
-			section = line.substr(sectionHeadStart + 1, sectionHeadEnd - 1);
+			section = line.substr(sectionHeadStart + 1, sectionHeadEnd - sectionHeadStart - 1);
 		}
 		else {
 			commentLoc = line.find_first_of("#");
@@ -51,10 +54,9 @@ void ConfigFile::parse(const std::string& filename)
 
 	}
 
-	if (!success)
-	{
-//		std::cerr << "Error parsing config file '" << filename_ << "' at line" << std::endl
-//			<< ">>> " << line << std::endl;
+	if (!success) {
+		std::cerr << "Error parsing config file '" << filename_ << "' at line" << std::endl
+			<< ">>> " << line << std::endl;
 	}
 
 	parsed = success;
@@ -67,25 +69,45 @@ bool ConfigFile::assignStringValue(const std::string& section, std::string line)
 	
 	std::size_t nameStart = line.find_first_not_of(" ");
 
-	if (line.length() == 0 || nameStart == std::string::npos)	//blank line
+	if (line.length() == 0 || nameStart == std::string::npos) {		//blank line
 		return true;
+	}
 
 	std::size_t equalsLoc = line.find_first_of("=");
 
-	if (equalsLoc < 1 || equalsLoc == std::string::npos || equalsLoc == nameStart)
+	if (equalsLoc == std::string::npos) {
+		//Missing equals sign
 		return false;
+	}
 
 	std::size_t nameEnd = line.find_last_not_of(" ", equalsLoc - 1);
 
-	if (equalsLoc == line.length() - 1)
+	if (equalsLoc == line.length() - 1) {
 		line.append("");
+	}
 
 	std::size_t valueStart = line.find_first_not_of(" ", equalsLoc + 1);
 
-	if (valueStart == std::string::npos)
+	if (valueStart == std::string::npos) {
 		valueStart = equalsLoc + 1;
+	}
 
-	setParameter(section, line.substr(nameStart, nameEnd + 1), line.substr(valueStart));
+	if (equalsLoc == nameStart) {
+		if (includes(section, lastParsedName)) {
+			//Found equals sign (with no key name) below another valid entry
+			//appending new value to previous entry as list
+			addToList(section, lastParsedName, line.substr(valueStart));			
+		}
+		else {
+			//can only addToList to an existing entry
+			return false;
+		}
+	}
+	else {
+		lastParsedName = STI::Utils::trim( line.substr(nameStart, nameEnd + 1) );
+		set(section, lastParsedName, line.substr(valueStart));		
+	}
+
 	return true;
 }
 

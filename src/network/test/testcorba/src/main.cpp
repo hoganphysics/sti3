@@ -1,10 +1,10 @@
 
-#include "NetworkDeviceHub.h"
+#include <sti/NetworkDeviceHub.h>
 
-#include "LocalCollection.h"
-#include "DeviceCollection.h"
-#include "LocalDeviceHub.h"
-#include "LocalDevice.h"
+#include <sti/utils/LocalCollection.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/LocalDeviceHub.h>
+#include <sti/LocalDevice.h>
 #include "DeviceEvent.h"
 #include "DeviceEventDispatcher.h"
 #include "DeviceEventReceiver.h"

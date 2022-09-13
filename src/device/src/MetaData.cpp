@@ -1,6 +1,6 @@
 
-#include "MetaData.h"
-#include "MixedValue.h"
+#include <sti/utils/MetaData.h>
+#include <sti/utils/MixedValue.h>
 
 using STI::Utils::MetaData;
 using STI::Utils::MixedValue;
@@ -122,6 +122,29 @@ STI::Utils::MixedValue MetaData::getMetaData(const std::string& key) const
 	return data;
 }
 
+std::vector<std::string> MetaData::keys() const
+{
+	std::vector<std::string> keylist;
+
+	for (auto& labeledData : metaData.getVector()) {
+		if (isTuple(labeledData)) {
+			keylist.push_back( labeledData.getVector().at(0).getString() );
+		}
+	}
+	return keylist;
+}
+
+void MetaData::merge(const MetaData& data)
+{
+	for (auto& labeledData : data.getMetaData().getVector()) {
+		if (isTuple(labeledData)) {
+			addMetaData(
+				labeledData.getVector().at(0).getString(),
+				labeledData.getVector().at(1)
+			);
+		}
+	}
+}
 
 bool MetaData::isTuple(const STI::Utils::MixedValue& tuple)
 {

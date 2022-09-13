@@ -2,7 +2,7 @@
 #ifndef STI_PYTHON_PYRESULTTICKETMANAGER_H
 #define STI_PYTHON_PYRESULTTICKETMANAGER_H
 
-#include "ResultTicketManager.h"
+#include <sti/engine/ResultTicketManager.h>
 #include "PyResultTicket.h"
 
 

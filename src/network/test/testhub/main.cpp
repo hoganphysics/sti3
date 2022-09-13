@@ -1,11 +1,11 @@
 
-//#include "Hub.h"
-#include "Device.h"
-#include "LocalCollection.h"
-//#include "LocalHub.h"
-#include "LocalDeviceHub.h"
+//#include <sti/network/Hub.h>
+#include <sti/device/Device.h>
+#include <sti/utils/LocalCollection.h>
+//#include <sti/network/LocalHub.h>
+#include <sti/LocalDeviceHub.h>
 
-#include "DeviceCollection.h"
+#include <sti/device/DeviceCollection.h>
 
 #include <iostream>
 #include <memory>

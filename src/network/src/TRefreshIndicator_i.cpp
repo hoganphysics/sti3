@@ -1,5 +1,3 @@
-
-
 #include "TRefreshIndicator_i.h"
 #include "ORBManager.h"
 

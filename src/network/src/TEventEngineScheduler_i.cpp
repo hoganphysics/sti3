@@ -1,26 +1,27 @@
-
 #include "TEventEngineScheduler_i.h"
-#include "EventEngineScheduler.h"
-#include "Device.h"
-#include "DeviceTrace.h"
-#include "DeviceID.h"
-#include "NetworkConvert.h"
-#include "ORBManager.h"
-#include "EngineJobID.h"
-#include "LocalEventEngineJob.h"
+
+#include <sti/device/Device.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceTrace.h>
+
+#include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/ShotID.h>
+
+#include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
-#include "Shot.h"
-#include "RawEvent.h"
-#include "RemoteResultsCollector.h"
-#include "ShotID.h"
 
 #include "EventEngineDependencyTree.h"
-//#include "RemoteEventEngineJob.h"
-#include "EngineParsingMessage.h"
+#include "LocalEventEngineJob.h"
+#include "NetworkConvert.h"
+#include "ORBManager.h"
+#include "RemoteResultsCollector.h"
+#include <sti/engine/Shot.h>
 
 #include <memory>
-
 
 using STI::TNetwork::TEventEngineScheduler_i;
 using ::STI::TNetwork::TDeviceIDSeq;
@@ -32,7 +33,6 @@ using STI::Engine::EventEngineScheduler;
 using ::STI::TNetwork::TEventEngineDependencyTree;
 using ::STI::Engine::EventEngineDependencyTree;
 using STI::Network::convert;
-//using STI::Network::RemoteEventEngineJob;
 using STI::Engine::EngineJobID;
 using ::STI::TNetwork::TEngineJobID;
 using STI::Engine::EventEngineJobType;
@@ -47,6 +47,7 @@ using ::STI::TNetwork::TEngineJobIDSeq;
 using ::STI::TNetwork::TEventEngineJobSeq;
 using ::STI::TNetwork::TEngineJobID;
 using ::STI::TNetwork::TEventEngineJob;
+using STI::Engine::ParseResult;
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -317,70 +318,97 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 // 	}
 // }
 
+// 	}
 
-::CORBA::Boolean TEventEngineScheduler_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
-{
-	bool success = false;
+// ::CORBA::Boolean TEventEngineScheduler_i::getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events)
+// {
+// 	bool success = false;
 
-    if (engineScheduler != 0) {
+//     if (engineScheduler != 0) {
 
-		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
-		STI::Engine::DeviceEventMap deviceEvents;
+// 		STI::TNetwork::TDeviceEventsSeq_var tDeviceEventsSeq_var(new STI::TNetwork::TDeviceEventsSeq);
+// 		STI::Engine::DeviceEventMap deviceEvents;
 
-		success = engineScheduler->getParsedEvents(
-			convert<TParseID, STI::Engine::ParseID>(parseID),
-			deviceEvents);
+// 		success = engineScheduler->getParsedEvents(
+// 			convert<TParseID, STI::Engine::ParseID>(parseID),
+// 			deviceEvents);
 
-		success = convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);
+// 		success = convert<STI::Engine::DeviceEventMap, ::STI::TNetwork::TDeviceEventsSeq>(deviceEvents, tDeviceEventsSeq_var);
 
-		events = new STI::TNetwork::TDeviceEventsSeq();
-		(*events) = tDeviceEventsSeq_var;
+// 		events = new STI::TNetwork::TDeviceEventsSeq();
+// 		(*events) = tDeviceEventsSeq_var;
 
-	}
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 
-::CORBA::Boolean TEventEngineScheduler_i::getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages)
-{
-	bool success = false;
+// ::CORBA::Boolean TEventEngineScheduler_i::getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages)
+// {
+// 	bool success = false;
 
-    if (engineScheduler != 0) {
+//     if (engineScheduler != 0) {
 
-		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
-		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
+// 		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
+// 		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
 
-		success = engineScheduler->getParsingMessages(
-					convert<TParseID, STI::Engine::ParseID>(parseID),
-					generatedMessages);
+// 		success = engineScheduler->getParsingMessages(
+// 					convert<TParseID, STI::Engine::ParseID>(parseID),
+// 					generatedMessages);
 
-		success = convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var);
+// 		success = convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
+// 			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var);
 		
-		messages = new STI::TNetwork::TEngineParsingMessageSeq();
-		(*messages) = tEngineParsingMessageSeq_var;
-	}
+// 		messages = new STI::TNetwork::TEngineParsingMessageSeq();
+// 		(*messages) = tEngineParsingMessageSeq_var;
+// 	}
 
-	return success;
-}
+// 	return success;
+// }
 
-::CORBA::Boolean TEventEngineScheduler_i::getParsedTree(const ::STI::TNetwork::TParseID& parseID, 
-															::STI::TNetwork::TEventEngineDependencyTree_out tree)
+// ::CORBA::Boolean TEventEngineScheduler_i::getParsedTree(const ::STI::TNetwork::TParseID& parseID, 
+// 															::STI::TNetwork::TEventEngineDependencyTree_out tree)
+// {
+// 	bool success = false;
+
+//     if (engineScheduler != 0) {
+
+// 		STI::TNetwork::TEventEngineDependencyTree_var tEventEngineDependencyTree_var(new STI::TNetwork::TEventEngineDependencyTree);
+// 		std::shared_ptr<STI::Engine::ParsedDependencyTree> depTree;
+
+// 		success = engineScheduler->getParsedTree(
+// 					convert<TParseID, STI::Engine::ParseID>(parseID),
+// 					depTree);
+// 		success &= convert<std::shared_ptr<STI::Engine::ParsedDependencyTree>, TEventEngineDependencyTree>(
+// 					depTree, tEventEngineDependencyTree_var);
+// 		tree = new STI::TNetwork::TEventEngineDependencyTree();
+// 		(*tree) = tEventEngineDependencyTree_var;		
+// 	}
+
+// 	return success;
+// }
+
+
+
+::CORBA::Boolean TEventEngineScheduler_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, 
+															::STI::TNetwork::TParseResult_out tParseResult)
 {
 	bool success = false;
 
     if (engineScheduler != 0) {
 
-		STI::TNetwork::TEventEngineDependencyTree_var tEventEngineDependencyTree_var(new STI::TNetwork::TEventEngineDependencyTree);
-		std::shared_ptr<STI::Engine::ParsedDependencyTree> depTree;
+		STI::TNetwork::TParseResult_var tParseResult_var(new STI::TNetwork::TParseResult);
+		std::shared_ptr<ParseResult> parseResult;
 
-		success = engineScheduler->getParsedTree(
-					convert<TParseID, STI::Engine::ParseID>(parseID),
-					depTree);
-		success &= convert<std::shared_ptr<STI::Engine::ParsedDependencyTree>, TEventEngineDependencyTree>(
-					depTree, tEventEngineDependencyTree_var);
-		tree = new STI::TNetwork::TEventEngineDependencyTree();
-		(*tree) = tEventEngineDependencyTree_var;		
+		success = engineScheduler->getParseResult(
+			convert<TParseID, STI::Engine::ParseID>(parseID),
+			parseResult);
+
+		success = convert<std::shared_ptr<ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);
+
+		tParseResult = new STI::TNetwork::TParseResult();
+		(*tParseResult) = tParseResult_var;
+
 	}
 
 	return success;

@@ -1,18 +1,18 @@
 
 #include "STIPyLibDevice.h"
-#include "DeviceID.h"
-#include "DeviceCollection.h"
-#include "ParseID.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceCollection.h>
+#include <sti/engine/ParseID.h>
 #include "PyParseTicketManager.h"
-#include "DeviceMessageReceiver.h"
+#include <sti/device/DeviceMessageReceiver.h>
 #include "PyParseTicket.h"
-#include "DeviceMessage.h"
+#include <sti/device/DeviceMessage.h>
 #include "PyResultTicket.h"
 #include "PyResultTicketManager.h"
-#include "PersistenceManager.h"
+#include <sti/device/PersistenceManager.h>
 
 #include <memory>
-#include <iostream>
+// #include <iostream>
 
 #include <pybind11/pybind11.h>
 
@@ -43,7 +43,7 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
         receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "localCollectionUpdateListener",
             [this](const std::shared_ptr<STI::Device::CollectionUpdateMessage>& message)
             {
-                std::cout << "Collection update message: " << message->sourceID().getID() << std::endl;
+                // std::cout << "Collection update message: " << message->sourceID().getID() << std::endl;
                 connectToServer();
             }
         );
@@ -53,8 +53,6 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
 STIPyLibDevice::~STIPyLibDevice()
 {
-    std::cout << "~STIPyLibDevice()" << std::endl;
-
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 

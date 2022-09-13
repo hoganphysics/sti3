@@ -1,14 +1,14 @@
-
 #include "TResultsCollector_i.h"
 
-#include "ORBManager.h"
-#include "ResultsCollector.h"
+#include <sti/device/DeviceID.h>
+#include <sti/engine/ResultsCollector.h>
+#include <sti/engine/RawEvent.h>
+
 #include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
+#include "ORBManager.h"
 
 #include <vector>
 #include <memory>
@@ -52,28 +52,28 @@ TShotID* TResultsCollector_i::getShotID()
 	return tShotID._retn();
 }
 
-void TResultsCollector_i::addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents)
-{
-    if (resultsCollector != 0) {
+// void TResultsCollector_i::addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents)
+// {
+//     if (resultsCollector != 0) {
 
-        STI::Engine::DeviceEventMap newEvents;
-        convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(parsedEvents, newEvents);
+//         STI::Engine::DeviceEventMap newEvents;
+//         convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(parsedEvents, newEvents);
 
-		resultsCollector->addEvents(newEvents);
-	}
-}
+// 		resultsCollector->addEvents(newEvents);
+// 	}
+// }
 
 
-void TResultsCollector_i::addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& files)
-{
-    if (resultsCollector != 0) {
+// void TResultsCollector_i::addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& files)
+// {
+//     if (resultsCollector != 0) {
 
-        std::vector<std::shared_ptr<FileHolder>> newFiles;
-        convert<TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<FileHolder>>>(files, newFiles);
+//         std::vector<std::shared_ptr<FileHolder>> newFiles;
+//         convert<TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<FileHolder>>>(files, newFiles);
 
-		resultsCollector->addTimingFiles(newFiles);
-	}
-}
+// 		resultsCollector->addTimingFiles(newFiles);
+// 	}
+// }
 
 ::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TMeasurementSeq& measurements)
 {

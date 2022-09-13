@@ -3,7 +3,7 @@
 #define STI_DEVICE_DEVICEIDINDEXEDGRAPH_H
 
 #include "utils/IndexedGraph.h"
-#include "Device.h"
+#include <sti/device/Device.h>
 
 namespace STI
 {

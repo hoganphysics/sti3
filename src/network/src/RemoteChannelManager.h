@@ -1,21 +1,24 @@
 #ifndef STI_NETWORK_REMOTECHANNELMANAGER_H
 #define STI_NETWORK_REMOTECHANNELMANAGER_H
 
-#include "ChannelManager.h"
-#include "DeviceMessageListener.h"
+#include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceMessageListener.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
 #include "deviceNet.h"
 #include "TReferenceHolder.h"
+#include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessage.h>
 
 #include <memory>
 #include <mutex>
+#include <map>
+
 
 namespace STI
 {
 namespace Network
 {
 
-class LocalDevice;
 class RemoteChannel;
 
 struct ChannelDataTuple
@@ -51,14 +54,18 @@ public:
 private:
 	
 
+    // struct ChannelDataTuple
+    // {
+    //     std::string name;
+    //     STI::Utils::MixedValue value;
+    // };
     // std::map<short, ChannelDataTuple> channelData;
     std::map<short, std::shared_ptr<ChannelDataTuple>> channelData;
 
     void setChannelData(const std::shared_ptr<RemoteChannel>& channel);
 
-	std::string _getChannelName(short channel) const;
-	STI::Utils::MixedValue _getLastValue(short channel) const;
-
+    STI::Utils::MixedValue _getLastValue(short channel) const;
+    std::string _getChannelName(short channel) const;
 
     friend class ChannelUpdater;
 

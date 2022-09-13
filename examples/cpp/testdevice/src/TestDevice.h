@@ -1,9 +1,8 @@
 #ifndef TESTDEVICE_H
 #define TESTDEVICE_H
 
-#include "LocalDevice.h"
-#include "SynchronousEvent.h"
-#include "RawEvent.h"
+#include <sti/LocalDevice.h>
+
 
 #include <string>
 
@@ -11,7 +10,7 @@ class TestDevice : public STI::Device::LocalDevice
 {
 public:
 	
-	TestDevice(const STI::Device::Configuration& config);
+	TestDevice(const STI::Utils::Configuration& config);
     TestDevice(const std::string& name, const std::string& address, unsigned short module,
 		const std::string& targetServer);
 	~TestDevice();
@@ -19,6 +18,11 @@ public:
 	void init();
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
+
+private:
+
+	bool setTest(const std::string& value);
+	std::string getTest();
 
 	STI::Device::DeviceMessageListenerID collectionMessageLID;
 

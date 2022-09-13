@@ -1,7 +1,7 @@
 #ifndef STI_PYTHON_PYPARSETICKETMANAGER_H
 #define STI_PYTHON_PYPARSETICKETMANAGER_H
 
-#include "ParseTicketManager.h"
+#include <sti/engine/ParseTicketManager.h>
 #include "PyParseTicket.h"
 
 namespace STI

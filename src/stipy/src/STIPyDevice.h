@@ -1,7 +1,7 @@
 #ifndef STI_PYTHON_STIPYDEVICE_H
 #define STI_PYTHON_STIPYDEVICE_H
 
-#include "DeviceID.h"
+#include <sti/device/DeviceID.h>
 
 #include <string>
 
@@ -20,9 +20,11 @@ public:
     STIPyDevice(const STI::Device::DeviceID& id);
 
     bool isAbstract() const;
-    const std::string& abstractName() const;
+    std::string abstractName() const;
 
     STI::Device::DeviceID id() const;
+
+    std::string print() const;
 
 private:
 

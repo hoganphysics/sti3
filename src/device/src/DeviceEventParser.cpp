@@ -1,8 +1,13 @@
 
-#include "DeviceEventParser.h"
-#include "RawEvent.h"
-#include "DeviceID.h"
-#include "EngineParsingMessage.h"
+#include <sti/engine/DeviceEventParser.h>
+
+#include <sti/device/DeviceID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/RawEventTargetDevice.h>
+
+#include <sti/engine/RawEventGroup.h>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::DeviceEventMap;
@@ -37,12 +42,7 @@ void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceE
 {
 	if (_target != nullptr) {
 		
-		//(*_target) is map<DeviceID, vector<RawEvent>>
-
-		//emplace_back appends to the raw event vector by calling the following constuctor:
-		//RawEvent(evt, referenceEvent, eventNumber).
-		//This avoids constructing a temp RawEvent and then deep copying to the vector.
-		(*_target)[evt.targetDevice()].emplace_back(evt, referenceEvent, eventNumber);
+		(*_target)[evt.target().device().deviceID()]->addEvent(RawEvent(evt, referenceEvent, eventNumber));
 
 		eventNumber++;
 	}

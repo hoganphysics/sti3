@@ -1,19 +1,17 @@
-#include "DeviceID.h"
-#include "utils.h"
+#include <sti/device/DeviceID.h>
+#include <sti/utils/utils.h>
 
 #include <sstream>
 #include <memory>
 #include <functional>
 
-
 #include "CerealArchives.h"
 #include <cereal/types/memory.hpp>
 #include <cereal/types/string.hpp>
 
-//using namespace STI::Device;
-
 using STI::Device::DeviceID;
 using STI::Device::DeviceIDBase;
+
 
 DeviceID::DeviceID()
 {
