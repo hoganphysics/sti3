@@ -122,6 +122,8 @@ void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets,
 						::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
                         const TDeviceTrace& trace)
 {
+	messages = new STI::TNetwork::TEngineParsingMessageSeq();
+
     if (engineScheduler != 0) {
 
 		//convert in values
@@ -148,7 +150,6 @@ void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets,
 		if (convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
 			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
 
-			messages = new STI::TNetwork::TEngineParsingMessageSeq();
 			(*messages) = tEngineParsingMessageSeq_var;
 		}
 	}
@@ -185,6 +186,7 @@ void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& 
 ::CORBA::Boolean TEventEngineScheduler_i::getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job)
 {
 	bool success = false;
+	job = new STI::TNetwork::TEventEngineJob();
 
 	if (engineScheduler != 0) {
 
@@ -194,8 +196,7 @@ void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& 
 
 			STI::TNetwork::TEventEngineJob_var tJob_var(new STI::TNetwork::TEventEngineJob);
 			convert<std::shared_ptr<EventEngineJob>, TNetwork::TEventEngineJob>(localJob, tJob_var);
-			
-			job = new STI::TNetwork::TEventEngineJob();
+
 			(*job) = tJob_var;
 			success = true;
 		}
@@ -394,6 +395,7 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 															::STI::TNetwork::TParseResult_out tParseResult)
 {
 	bool success = false;
+	tParseResult = new STI::TNetwork::TParseResult();
 
     if (engineScheduler != 0) {
 
@@ -406,7 +408,6 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 
 		success = convert<std::shared_ptr<ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);
 
-		tParseResult = new STI::TNetwork::TParseResult();
 		(*tParseResult) = tParseResult_var;
 
 	}

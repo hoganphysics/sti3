@@ -10,8 +10,11 @@ using STI::Engine::RawEventGroup;
 
 
 JShot::JShot(std::shared_ptr<STI::Engine::Shot>& shot)
-: shot_(shot), shotConfig(shot->getShotConfig())
+: shot_(shot)
 {
+    if (shot != 0) {
+        shotConfig = shot->getShotConfig();
+    }
 }
 
 JShot::~JShot()

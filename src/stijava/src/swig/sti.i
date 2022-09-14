@@ -10,6 +10,7 @@
 %include "std_pair.i"
 %include "typemaps.i"
 
+
 %rename(opEquals) operator==;
 %rename(opLess) operator<;
 %rename(opNotEquals) operator!=;

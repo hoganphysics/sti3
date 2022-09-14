@@ -42,15 +42,15 @@ TShotRepository_i::~TShotRepository_i()
     bool success = false;
 
 	STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
+	measurements = new STI::TNetwork::TMeasurementSeq();
 	
 	if (shotRepository != 0) {
         
         auto localMeasurements = std::make_shared<MeasurementVector>();
         success = shotRepository->getMeasurements(convert<TShotID, ShotID>(sid), localMeasurements);
 
-		success &= convert<std::shared_ptr<Engine::Measurement>, TMeasurement>(*localMeasurements, tMeasurementSeq_var);
-    
-   		measurements = new STI::TNetwork::TMeasurementSeq();
+		success &= convert<std::shared_ptr<Engine::Measurement>, TMeasurement>(*localMeasurements, tMeasurementSeq_var);   
+   		
 		(*measurements) = tMeasurementSeq_var;
 	}
 

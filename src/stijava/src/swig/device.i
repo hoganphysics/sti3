@@ -1,13 +1,5 @@
 %feature("director");
 
-//%feature(nspace);
-
-// %rename(Engine_ParseID) STI::Engine::ParseID;
-// %rename(Engine_ShotID) STI::Engine::ShotID;
-// %rename(Engine_TimeStamp) STI::Engine::TimeStamp;
-
-// %warnfilter(401) STI::Device::DeviceCollection;
-// %warnfilter(401) DeviceCollection;
 
 %warnfilter(401);   //Warning 401:  Nothing known about base class 'STI::Device::DeviceCollection' (also STI::Device::Device)
 
@@ -71,29 +63,6 @@
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    // #include <sti/engine/RawEventTargetChannel.h>
-    // using STI::Engine::RawEventTargetChannel;
-    // #include <sti/engine/RawEventTargetDevice.h>
-    // using STI::Engine::RawEventTargetDevice;
-    // #include <sti/engine/RawEventTarget.h>
-    // using STI::Engine::RawEventTarget;
-    // #include <sti/engine/RawEvent.h>
-    // using STI::Engine::RawEventType;
-    // #include <sti/utils/GraphPathLabel.h>
-    // using STI::Utils::GraphPathLabel;
-
-    // #include <sti/engine/EngineParsingMessage.h>
-    // using STI::Engine::EngineParsingMessage;
-
-    // #include <sti/utils/FileHolder.h>
-    // using STI::Utils::FileHolder;
-
-    // #include <sti/utils/MixedValue.h>
-
-    // using STI::Utils::MixedValue;
-    // using STI::Utils::MixedValueType;
-    // using STI::Utils::MixedValueVector;
-
     #include "JChannelManager.h"
     #include <sti/fwd/Channel_fwd.h>
     #include <sti/device/Channel.h>
@@ -103,12 +72,8 @@
     #include "ChannelRefreshListener.h"
     using STI::Device::ChannelRefreshListener;
 
-
     #include <sti/engine/ShotResult.h>
     
-
-    // #include "JPersistenceManager.h"
-
     #include "JEventEngine.h"
 
     #include <functional>
@@ -116,13 +81,7 @@
 %}
 
 
-%include "std_string.i"
-%include "std_shared_ptr.i"
-%include "std_set.i"
-%include "std_vector.i"
-%include "std_map.i"
-%include "std_pair.i"
-%include "typemaps.i"
+
 
 //***** Shared pointer definitions ********//
 
@@ -141,11 +100,7 @@
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
 
-%shared_ptr(STI::Device::Attribute);
-%shared_ptr(STI::Device::LocalAttribute);
 
-%shared_ptr(STI::Device::AttributeRefresher);
-%shared_ptr(STI::Device::AttributeSetter);
 
 
 %shared_ptr(STI::Engine::JShot);
@@ -155,7 +110,7 @@
 
 //%shared_ptr(STI::Device::DeviceMessageReceiver);
 
-//Events
+//Messages
 %shared_ptr(STI::Device::DeviceMessage);
 %shared_ptr(STI::Device::RefreshDeviceMessage);
 %shared_ptr(STI::Device::ChannelUpdateMessage);

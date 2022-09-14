@@ -46,6 +46,7 @@ TPersistenceManager_i::~TPersistenceManager_i()
 ::CORBA::Boolean TPersistenceManager_i::getParseResult(const ::STI::TNetwork::TParseID& pid, ::STI::TNetwork::TParseResult_out tParseResult)
 {
 	bool success = false;
+	tParseResult = new STI::TNetwork::TParseResult();
 
     if (persistenceManager != 0) {
 
@@ -57,7 +58,6 @@ TPersistenceManager_i::~TPersistenceManager_i()
 		success &= convert<std::shared_ptr<STI::Engine::ParseResult>, TParseResult>(
 					parseResult, tParseResult_var);
 
-		tParseResult = new STI::TNetwork::TParseResult();
 		(*tParseResult) = tParseResult_var;
 	}
 
@@ -67,6 +67,7 @@ TPersistenceManager_i::~TPersistenceManager_i()
 ::CORBA::Boolean TPersistenceManager_i::getShotResult(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out tShotResult)
 {
 	bool success = false;
+	tShotResult = new STI::TNetwork::TShotResult();
 
     if (persistenceManager != 0) {
 
@@ -78,7 +79,6 @@ TPersistenceManager_i::~TPersistenceManager_i()
 		success &= convert<std::shared_ptr<STI::Engine::ShotResult>, TShotResult>(
 					shotResult, tShotResult_var);
 
-		tShotResult = new STI::TNetwork::TShotResult();
 		(*tShotResult) = tShotResult_var;		
 	}
 
@@ -127,6 +127,7 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 ::CORBA::Boolean TPersistenceManager_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
 {
 	bool success = false;
+	measurements = new STI::TNetwork::TMeasurementSeq();
 
     if (persistenceManager != 0) {
 
@@ -140,7 +141,6 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 
 		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
 		
-		measurements = new STI::TNetwork::TMeasurementSeq();
 		(*measurements) = tMeasurementSeq_var;
 	}
 

@@ -23,6 +23,8 @@
 %shared_ptr(STI::Device::AttributeSetter);
 
 
+
+
 //Attributes
 %template(StringMap) std::map< std::string, std::string >;
 %template(AttributeVector) std::vector< std::shared_ptr < STI::Device::Attribute > >;

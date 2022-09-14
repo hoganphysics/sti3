@@ -69,6 +69,7 @@ void TAttributeManager_i::refreshValue(const char* key)
 ::CORBA::Boolean TAttributeManager_i::getAttribute(const char* key, ::STI::TNetwork::TAttribute_out attrib)
 {
 	bool success = false;
+	attrib = new STI::TNetwork::TAttribute();
 
     if (attributeManager != 0) {
 
@@ -78,8 +79,7 @@ void TAttributeManager_i::refreshValue(const char* key)
 		success = attributeManager->getAttribute(convert<CORBA::String_member, std::string>(key), localAttribute);
 
 		convert<std::shared_ptr<Attribute>, TAttribute>(localAttribute, tAttribute_var);
-
-		attrib = new STI::TNetwork::TAttribute();
+		
 		(*attrib) = tAttribute_var;
 	}
 	return success;
@@ -87,6 +87,8 @@ void TAttributeManager_i::refreshValue(const char* key)
 
 void TAttributeManager_i::getAttributes(::STI::TNetwork::TAttributeSeq_out attributes)
 {
+	attributes = new STI::TNetwork::TAttributeSeq();
+	
     if (attributeManager != 0) {
 
 		STI::TNetwork::TAttributeSeq_var tAttributeSeq_var(new STI::TNetwork::TAttributeSeq);
@@ -96,7 +98,6 @@ void TAttributeManager_i::getAttributes(::STI::TNetwork::TAttributeSeq_out attri
 
 		convert<std::shared_ptr<Attribute>, TAttribute>(localAttributes, tAttributeSeq_var);
 
-		attributes = new STI::TNetwork::TAttributeSeq();
 		(*attributes) = tAttributeSeq_var;
 	}
 }

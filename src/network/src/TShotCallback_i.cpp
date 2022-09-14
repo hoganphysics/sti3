@@ -28,13 +28,13 @@ TShotCallback_i::~TShotCallback_i()
 
 void TShotCallback_i::getRootEventGroup(::STI::TNetwork::TRawEventGroup_out rootGroup)
 {
+    rootGroup = new STI::TNetwork::TRawEventGroup();
+    
     if (localShot != 0) {
         std::shared_ptr<STI::Engine::RawEventGroup> pGroup;
         localShot->getRootEventGroup(pGroup);
 
         STI::TNetwork::TRawEventGroup_var tRawEventGroup_var(new STI::TNetwork::TRawEventGroup);
-
-        rootGroup = new STI::TNetwork::TRawEventGroup();
 
         if (pGroup != 0 && convert<std::shared_ptr<STI::Engine::RawEventGroup>, STI::TNetwork::TRawEventGroup>(pGroup, tRawEventGroup_var)) {
             //success

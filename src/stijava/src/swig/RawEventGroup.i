@@ -33,6 +33,9 @@
 //RawEvent
 %include "sti/engine/RawEventTargetChannel.h"
 %include "sti/engine/RawEventTargetDevice.h"
+
+%ignore STI::Engine::RawEventTarget::device() const;
+%ignore STI::Engine::RawEventTarget::channel() const;
 %include "sti/engine/RawEventTarget.h"
 %include "sti/fwd/RawEvent_fwd.h"
 %include "sti/engine/RawEvent.h"

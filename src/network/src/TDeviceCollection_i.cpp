@@ -68,6 +68,7 @@ TDeviceCollection_i::~TDeviceCollection_i()
 {
 	bool success = false;
 	std::shared_ptr<STI::Device::Device> localDevice;
+	device = STI::TNetwork::TDevice::_nil();
 
 	if (deviceCollection != 0) {
 		//get local device reference from Collection
@@ -99,6 +100,8 @@ TDeviceCollection_i::~TDeviceCollection_i()
 void TDeviceCollection_i::getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq)
 {
 	std::set<DeviceID> ids;
+	deviceIDseq = new STI::TNetwork::TDeviceIDSeq();
+	
 	if (deviceCollection != 0) {
 		deviceCollection->getIDs(ids);
 
@@ -109,7 +112,6 @@ void TDeviceCollection_i::getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq)
 
 		// deviceIDseq = tDeviceIDseq_var.out();
 
-		deviceIDseq = new STI::TNetwork::TDeviceIDSeq();
 		(*deviceIDseq) = tDeviceIDseq_var;
 	}
 }

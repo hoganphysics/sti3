@@ -264,9 +264,7 @@ public class stiJNI {
   public final static native long new_RawEventTarget__SWIG_6(String jarg1);
   public final static native boolean RawEventTarget_isAbstract(long jarg1, RawEventTarget jarg1_);
   public final static native long RawEventTarget_getDevice(long jarg1, RawEventTarget jarg1_);
-  public final static native long RawEventTarget_device(long jarg1, RawEventTarget jarg1_);
   public final static native long RawEventTarget_getChannel(long jarg1, RawEventTarget jarg1_);
-  public final static native long RawEventTarget_channel(long jarg1, RawEventTarget jarg1_);
   public final static native boolean RawEventTarget_opLess(long jarg1, RawEventTarget jarg1_, long jarg2, RawEventTarget jarg2_);
   public final static native boolean RawEventTarget_opEquals(long jarg1, RawEventTarget jarg1_, long jarg2, RawEventTarget jarg2_);
   public final static native boolean RawEventTarget_opNotEquals(long jarg1, RawEventTarget jarg1_, long jarg2, RawEventTarget jarg2_);

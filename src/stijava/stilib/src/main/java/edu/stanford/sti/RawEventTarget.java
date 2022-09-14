@@ -72,16 +72,8 @@ public class RawEventTarget {
     return new RawEventTargetDevice(stiJNI.RawEventTarget_getDevice(swigCPtr, this), false);
   }
 
-  public RawEventTargetDevice device() {
-    return new RawEventTargetDevice(stiJNI.RawEventTarget_device(swigCPtr, this), false);
-  }
-
   public RawEventTargetChannel getChannel() {
     return new RawEventTargetChannel(stiJNI.RawEventTarget_getChannel(swigCPtr, this), false);
-  }
-
-  public RawEventTargetChannel channel() {
-    return new RawEventTargetChannel(stiJNI.RawEventTarget_channel(swigCPtr, this), false);
   }
 
   public boolean opLess(RawEventTarget rhs) {

@@ -1899,29 +1899,6 @@ SWIGINTERN STI::Device::LocalAttribute &STI_Device_LocalAttribute_setSetter(STI:
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    // #include <sti/engine/RawEventTargetChannel.h>
-    // using STI::Engine::RawEventTargetChannel;
-    // #include <sti/engine/RawEventTargetDevice.h>
-    // using STI::Engine::RawEventTargetDevice;
-    // #include <sti/engine/RawEventTarget.h>
-    // using STI::Engine::RawEventTarget;
-    // #include <sti/engine/RawEvent.h>
-    // using STI::Engine::RawEventType;
-    // #include <sti/utils/GraphPathLabel.h>
-    // using STI::Utils::GraphPathLabel;
-
-    // #include <sti/engine/EngineParsingMessage.h>
-    // using STI::Engine::EngineParsingMessage;
-
-    // #include <sti/utils/FileHolder.h>
-    // using STI::Utils::FileHolder;
-
-    // #include <sti/utils/MixedValue.h>
-
-    // using STI::Utils::MixedValue;
-    // using STI::Utils::MixedValueType;
-    // using STI::Utils::MixedValueVector;
-
     #include "JChannelManager.h"
     #include <sti/fwd/Channel_fwd.h>
     #include <sti/device/Channel.h>
@@ -1931,12 +1908,8 @@ SWIGINTERN STI::Device::LocalAttribute &STI_Device_LocalAttribute_setSetter(STI:
     #include "ChannelRefreshListener.h"
     using STI::Device::ChannelRefreshListener;
 
-
     #include <sti/engine/ShotResult.h>
     
-
-    // #include "JPersistenceManager.h"
-
     #include "JEventEngine.h"
 
     #include <functional>
@@ -10853,21 +10826,6 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventTarget_1getDevice(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventTarget_1device(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
-  STI::Engine::RawEventTarget *arg1 = (STI::Engine::RawEventTarget *) 0 ;
-  STI::Engine::RawEventTargetDevice *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(STI::Engine::RawEventTarget **)&jarg1; 
-  result = (STI::Engine::RawEventTargetDevice *) &((STI::Engine::RawEventTarget const *)arg1)->device();
-  *(STI::Engine::RawEventTargetDevice **)&jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventTarget_1getChannel(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   STI::Engine::RawEventTarget *arg1 = (STI::Engine::RawEventTarget *) 0 ;
@@ -10878,21 +10836,6 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventTarget_1getChannel
   (void)jarg1_;
   arg1 = *(STI::Engine::RawEventTarget **)&jarg1; 
   result = (STI::Engine::RawEventTargetChannel *) &(arg1)->getChannel();
-  *(STI::Engine::RawEventTargetChannel **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventTarget_1channel(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
-  STI::Engine::RawEventTarget *arg1 = (STI::Engine::RawEventTarget *) 0 ;
-  STI::Engine::RawEventTargetChannel *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(STI::Engine::RawEventTarget **)&jarg1; 
-  result = (STI::Engine::RawEventTargetChannel *) &((STI::Engine::RawEventTarget const *)arg1)->channel();
   *(STI::Engine::RawEventTargetChannel **)&jresult = result; 
   return jresult;
 }
