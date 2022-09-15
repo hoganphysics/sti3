@@ -174,10 +174,9 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 	STI::TNetwork::TAttributeSeq_var tAttributes(new STI::TNetwork::TAttributeSeq);
 
     try {
-
+		
 		getTRef()->getAttributes(tAttributes);	//remote call
 
-		// convert<TAttribute, std::shared_ptr<Attribute>>(tAttributes, attributes);
 		if (convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttributes, remoteAttributes)) {
 			
 			attributes.clear();

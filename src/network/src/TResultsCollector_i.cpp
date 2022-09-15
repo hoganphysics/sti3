@@ -32,7 +32,6 @@ using STI::Engine::ParsedDependencyTree;
 TResultsCollector_i::TResultsCollector_i(STI::Engine::ResultsCollector* resultsCollector)
 : resultsCollector(resultsCollector)
 {
-
 }
 
 TResultsCollector_i::~TResultsCollector_i()
@@ -52,29 +51,6 @@ TShotID* TResultsCollector_i::getShotID()
 	return tShotID._retn();
 }
 
-// void TResultsCollector_i::addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents)
-// {
-//     if (resultsCollector != 0) {
-
-//         STI::Engine::DeviceEventMap newEvents;
-//         convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(parsedEvents, newEvents);
-
-// 		resultsCollector->addEvents(newEvents);
-// 	}
-// }
-
-
-// void TResultsCollector_i::addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& files)
-// {
-//     if (resultsCollector != 0) {
-
-//         std::vector<std::shared_ptr<FileHolder>> newFiles;
-//         convert<TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<FileHolder>>>(files, newFiles);
-
-// 		resultsCollector->addTimingFiles(newFiles);
-// 	}
-// }
-
 ::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TMeasurementSeq& measurements)
 {
     if (resultsCollector != 0) {
@@ -88,13 +64,11 @@ TShotID* TResultsCollector_i::getShotID()
 }
 
 ::CORBA::Boolean TResultsCollector_i::addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes)
-//::CORBA::Boolean TResultsCollector_i::addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TAttributeSeq& attributes)
 {
     if (resultsCollector != 0) {
 
 		std::map<std::string, std::string> remoteAttributes;
 
-//	    std::vector<std::shared_ptr<Attribute>> remoteAttributes;
 	    convert<::STI::TNetwork::TStringPairSeq, std::map<std::string, std::string>>(attributes, remoteAttributes);
 
 		return resultsCollector->addAttributes(convert<TDeviceID, DeviceID>(deviceID), remoteAttributes);

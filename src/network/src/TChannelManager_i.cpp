@@ -1,10 +1,8 @@
-
 #include "TChannelManager_i.h"
 #include "ORBManager.h"
 #include <sti/device/ChannelManager.h>
 
 #include "Convert_Channel.h"
-//#include "NetworkConvert.h"
 
 using STI::Network::convert;
 using STI::TNetwork::TChannelManager_i;
@@ -13,6 +11,7 @@ using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
 using STI::Device::Channel;
 using STI::TNetwork::TChannel;
+
 
 TChannelManager_i::TChannelManager_i(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -26,7 +25,6 @@ TChannelManager_i::~TChannelManager_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-// TChannelSeq* TChannelManager_i::getChannels()
 void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 {
     STI::TNetwork::TChannelSeq_var tChannelSeq_var( new TChannelSeq );

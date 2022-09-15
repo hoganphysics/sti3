@@ -93,7 +93,6 @@ bool RemoteFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinati
     }
 
 	try {
-
 		success = getTRef()->transferFile(tDestination);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {

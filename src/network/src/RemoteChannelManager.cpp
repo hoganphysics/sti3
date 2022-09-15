@@ -1,4 +1,3 @@
-
 #include "RemoteChannelManager.h"
 
 #include "Convert_Channel.h"
@@ -52,8 +51,6 @@ void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Network::Re
 {
 	if (channel != 0) {
 		auto channelNumber = channel->getChannelNumber();
-		// channelData[channel->getChannelNumber()].name = channel->getChannelName();
-		// channelData[channel->getChannelNumber()].value = channel->getLastValue();
 
 		//Don't call to channel->getChannelName() etc, to avoid deadlock (RemoteChannel points back to this class)
 		auto chData = channel->getChannelData();
@@ -63,8 +60,6 @@ void RemoteChannelManager::setChannelData(const std::shared_ptr<STI::Network::Re
 		else {
 			channelData[channelNumber] = std::make_shared<ChannelDataTuple>();
 		}
-		// channelData[channelNumber].name = channel->getStoredChannelName();
-		// channelData[channelNumber].value = channel->getStoredLastValue();
 	}
 }
 
@@ -92,11 +87,6 @@ void RemoteChannelManager::getChannels(std::vector<std::shared_ptr<STI::Device::
 					channels.push_back( std::static_pointer_cast<Channel>(rch) );					
 				}
 			}
-
-			
-			// for(auto& ch : remoteChannels) {
-			// 	setChannelData(ch);
-			// }
 		}
 	}
 	catch (CORBA::TRANSIENT&) {

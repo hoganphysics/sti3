@@ -1,4 +1,3 @@
-
 #include "RemoteEventEngineScheduler.h"
 #include <sti/device/DeviceTrace.h>
 #include "EventEngineDependencyTree.h"

@@ -357,17 +357,10 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	auto parseTicket = parseTicketManager->makeTicket(parseID);
 
 	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
-	//parseTicket->wait();
 	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
 
 	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
 		return false;
-	}
-
-	std::cout << "Parse messages:" << std::endl;
-	const auto& mess=parseTicket->getMessages();
-	for (auto& m : mess) {
-		std::cout << m.getName() <<std::endl;
 	}
 
 	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
@@ -375,7 +368,6 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	resultTicket = resultTicketManager->makeTicket(sid);
 
 	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
-	//resultTicket->wait();
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {

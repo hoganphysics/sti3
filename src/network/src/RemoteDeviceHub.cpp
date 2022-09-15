@@ -1,4 +1,3 @@
-
 #include "RemoteDeviceHub.h"
 #include "NetworkConvert.h"
 #include "Convert_HubNodeWalker.h"
@@ -11,7 +10,6 @@
 #include <sti/network/HubTrace.h>
 
 #include "orbTypes.h"
-
 
 using STI::Network::HubID;
 using STI::Network::DeviceHub;
@@ -27,47 +25,14 @@ using STI::Network::NodeWalker;
 
 RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
 : STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceHub>(deviceHub, hubMutex)
-//	: tDeviceHub(STI::TNetwork::TDeviceHub::_duplicate(deviceHub))
 {
 	_getHubID();	// network call to get HubID once and save locally
 }
 
-//void RemoteDeviceHub::getNodeIDs(std::set<STI::Device::DeviceID>& ids) const
-//{
-//	try {
-//		getTRef()->getNodeIDs(
-//			
-//		);	//remote call
-//	}
-//	catch (CORBA::TRANSIENT&) {
-//	}
-//	catch (CORBA::SystemException&) {
-//	}
-//	catch (CORBA::Exception&)
-//	{
-//	}
-//}
-//
-//void RemoteDeviceHub::getHubIDs(std::set<HubID>& ids) const
-//{
-//	try {
-//		getTRef()->getHubIDs(
-//
-//		);	//remote call
-//	}
-//	catch (CORBA::TRANSIENT&) {
-//	}
-//	catch (CORBA::SystemException&) {
-//	}
-//	catch (CORBA::Exception&)
-//	{
-//	}
-//}
 
 bool RemoteDeviceHub::addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub)
 {
 	std::unique_lock<std::mutex> hubLock(hubMutex);
-//	return false;
 
 	if (isDisabled()) return false;
 
@@ -173,17 +138,6 @@ bool RemoteDeviceHub::refresh(const HubTrace& trace)
 }
 
 
-//bool RemoteDeviceHub::getRemoteDevice(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice)
-//{
-//	std::shared_ptr<NetworkDeviceWrapper> networkDeviceWrapper;
-//	networkDeviceWrapper = std::dynamic_pointer_cast<NetworkDeviceWrapper>(device);
-//
-//	if (networkDeviceWrapper) {		//check dynamic_pointer_cast
-//	//	tDevice = networkDeviceWrapper->getTDeviceReference();
-//	}
-//	return (tDevice !=0 && !tDevice->_is_nil());
-//}
-
 bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 	const typename std::shared_ptr<STI::Device::Device>& node,
 	const HubTrace& trace, const HubID& first)
@@ -194,18 +148,11 @@ bool RemoteDeviceHub::distribute(const STI::Device::DeviceID& id,
 
 	bool success = false;
 
-	// STI::TNetwork::TDevice_ptr tDevice;
-
-	// if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
-	// 		return false;
-	// }
-
 	STI::TNetwork::TDevice_var tDevice;
 
 	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 			return false;
 	}
-
 
 	try {
 		success = getTRef()->distribute(
@@ -345,6 +292,4 @@ void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device
 		convert<STI::TNetwork::TNodeWalker, STI::Network::DeviceHub::HubNodeWalker>(tRoot, root);
 	}
 }
-
-
 

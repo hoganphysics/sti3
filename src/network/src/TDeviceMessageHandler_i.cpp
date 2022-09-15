@@ -1,9 +1,7 @@
-
 #include "TDeviceMessageHandler_i.h"
 
 #include "ORBManager.h"
 #include "NetworkConvert.h"
-
 #include "Convert_DeviceMessage.h"
 
 #include <set>
@@ -12,7 +10,6 @@ using STI::TNetwork::TDeviceMessageHandler_i;
 using STI::TNetwork::TDeviceMessageTypeSeq;
 using STI::Device::DeviceMessage;
 using STI::Network::convert;
-
 using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TRefreshIndicator;
 
@@ -76,10 +73,8 @@ void TDeviceMessageHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndic
 	std::unique_lock<std::mutex> handlerLock(refreshMutex);
 
 	tRefreshIndicatorHolder = std::make_unique<TReferenceHolder<TRefreshIndicator>>(refresher, refreshMutex);
-	//tRefreshIndicator = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
 
 	tRefreshIndicatorInstalled = tRefreshIndicatorHolder !=0 && !tRefreshIndicatorHolder->isDisabled();
-//	tRefreshIndicatorInstalled = !CORBA::is_nil(tRefreshIndicator);
 }
 
 void TDeviceMessageHandler_i::refresh()

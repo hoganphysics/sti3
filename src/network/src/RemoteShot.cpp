@@ -1,13 +1,11 @@
-
 #include "RemoteShot.h"
 
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
 #include "Convert_RawEventGroup.h"
 
-#include <sti/engine/RawEventGroup.h>
-
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ParseResult.h>
 
 #include <memory>

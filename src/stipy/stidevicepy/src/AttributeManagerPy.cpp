@@ -1,11 +1,7 @@
-
-
 #include "AttributeManagerPy.h"
 #include <sti/device/LocalAttribute.h>
 
 #include <pybind11/pybind11.h>
-
-#include <iostream>
 
 using STI::Python::AttributeManagerPy;
 
@@ -18,8 +14,6 @@ AttributeManagerPy::AttributeManagerPy(const std::shared_ptr<STI::Device::Attrib
 
 std::string AttributeManagerPy::getValue(const std::string& key)
 {
-    std::cout << "AttributeManagerPy::getValue" << std::endl;
-
     if (attributeManager != 0) {
         return attributeManager->getValue(key);
     }

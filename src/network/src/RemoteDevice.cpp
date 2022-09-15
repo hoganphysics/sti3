@@ -9,8 +9,6 @@
 #include "RemoteAttributeManager.h"
 #include "RemotePersistenceManager.h"
 
-#include <iostream>
-
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
 using STI::Network::RemoteDeviceMessageDispatcher;
@@ -265,8 +263,6 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 	if (isDisabled()) return;
 
-	// if (listenerForwarder == 0) return;
-
 	bool success = false;
 
 	::STI::TNetwork::TChannelManager_var tChannelManager;	//remote reference
@@ -290,8 +286,6 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 	if (success && isLive(remoteChannelManager)) {
 		manager = remoteChannelManager;
 	}
-
-
 }
 
 void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager)
@@ -310,8 +304,6 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 	}
 
 	if (isDisabled()) return;
-
-	// if (listenerForwarder == 0) return;
 
 	::STI::TNetwork::TAttributeManager_var tAttributelManager;	//remote reference
 	

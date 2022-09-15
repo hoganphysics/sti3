@@ -138,39 +138,12 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 
 		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
 					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
-
-		// success &= convert<STI::Engine::MeasurementVector, ::STI::TNetwork::TMeasurementSeq>(deviceEvents, tDeviceEventsSeq_var);	
-		
+	
 		(*measurements) = tMeasurementSeq_var;
 	}
 
 	return success;
 }
-
-
-
-// ::CORBA::Boolean TPersistenceManager_i::getResultTicket(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TResultTicket_out ticket)
-// {
-// 	bool success = false;
-
-//     if (persistenceManager != 0) {
-
-// 		STI::TNetwork::TResultTicket_var tResultsTicket_var(new STI::TNetwork::TResultTicket);
-// 		std::shared_ptr<STI::Engine::ResultTicket> resultsTicket;
-
-// 		success = persistenceManager->getResultTicket(convert<TShotID, ShotID>(sid), resultsTicket);
-
-//         if (success) {
-
-//             success = convert<std::shared_ptr<STI::Engine::ResultTicket>, STI::TNetwork::TResultTicket>(resultsTicket, tResultsTicket_var);
-
-//     		ticket = new STI::TNetwork::TResultTicket();
-// 	    	(*ticket) = tResultsTicket_var;
-//         }
-// 	}
-
-// 	return success;
-// }
 
 ::CORBA::Boolean TPersistenceManager_i::ping()
 {

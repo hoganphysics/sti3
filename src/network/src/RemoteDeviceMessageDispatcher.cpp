@@ -15,7 +15,6 @@ using STI::Network::convert;
 
 RemoteDeviceMessageDispatcher::RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_ptr messageDispatcher)
 : STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageDispatcher>(messageDispatcher, dispatcherMutex)
-//	: tMessageDispatcher(STI::TNetwork::TDeviceMessageDispatcher::_duplicate(messageDispatcher))
 {
 }
 
