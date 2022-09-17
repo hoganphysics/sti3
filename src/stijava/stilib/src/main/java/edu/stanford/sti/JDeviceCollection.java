@@ -50,7 +50,7 @@ public class JDeviceCollection {
   }
 
   public DeviceIDset getIDs() {
-    return new DeviceIDset(stiJNI.JDeviceCollection_getIDs(swigCPtr, this), false);
+    return new DeviceIDset(stiJNI.JDeviceCollection_getIDs(swigCPtr, this), true);
   }
 
   public boolean remove(DeviceID id) {

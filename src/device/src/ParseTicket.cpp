@@ -4,7 +4,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ParseResult.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <chrono>
 

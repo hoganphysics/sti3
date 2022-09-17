@@ -12,7 +12,7 @@
 #include <sti/device/PersistenceManager.h>
 
 #include <memory>
-#include <iostream>
+// #include <iostream>
 
 #include <pybind11/pybind11.h>
 
@@ -43,7 +43,7 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
         receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "localCollectionUpdateListener",
             [this](const std::shared_ptr<STI::Device::CollectionUpdateMessage>& message)
             {
-                std::cout << "Collection update message: " << message->sourceID().getID() << std::endl;
+                // std::cout << "Collection update message: " << message->sourceID().getID() << std::endl;
                 connectToServer();
             }
         );
@@ -53,8 +53,6 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
 STIPyLibDevice::~STIPyLibDevice()
 {
-    std::cout << "~STIPyLibDevice()" << std::endl;
-
     std::shared_ptr<DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 

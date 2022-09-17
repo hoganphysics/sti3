@@ -21,6 +21,12 @@ namespace Network
 
 class RemoteChannel;
 
+struct ChannelDataTuple
+{
+	std::string name;
+	STI::Utils::MixedValue value;
+};
+
 
 class RemoteChannelManager : public STI::Device::ChannelManager,
                              public STI::TNetwork::TReferenceHolder<STI::TNetwork::TChannelManager>	//mixin
@@ -47,14 +53,19 @@ public:
 
 private:
 	
-    struct ChannelDataTuple
-    {
-        std::string name;
-        STI::Utils::MixedValue value;
-    };
-    std::map<short, ChannelDataTuple> channelData;
+
+    // struct ChannelDataTuple
+    // {
+    //     std::string name;
+    //     STI::Utils::MixedValue value;
+    // };
+    // std::map<short, ChannelDataTuple> channelData;
+    std::map<short, std::shared_ptr<ChannelDataTuple>> channelData;
 
     void setChannelData(const std::shared_ptr<RemoteChannel>& channel);
+
+    STI::Utils::MixedValue _getLastValue(short channel) const;
+    std::string _getChannelName(short channel) const;
 
     friend class ChannelUpdater;
 

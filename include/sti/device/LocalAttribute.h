@@ -47,9 +47,11 @@ public:
 
 
     // LocalAttribute& setRefresher(const std::function<const std::string&(void)>& refesher);
-    LocalAttribute& setRefresher(const std::function<std::string(void)>& refesher);
+    LocalAttribute& setRefresher(const std::function<std::string(void)>& refresher);
     LocalAttribute& setSetter(const std::function<bool(const std::string&)>& setter);
+    
     LocalAttribute& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
+    LocalAttribute& addMetaData(const std::string& key, const std::string& data);
 
     template<typename T>
     LocalAttribute& setRefresher(std::string(T::* refresher)(void), T* self)

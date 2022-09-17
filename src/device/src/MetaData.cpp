@@ -8,10 +8,15 @@ using STI::Utils::MixedValueType;
 
 MetaData::MetaData()
 {
+	std::vector<MixedValue> vec;
+	metaData.setValue(vec);
 }
 
 MetaData::MetaData(const STI::Utils::MixedValue& data)
 {
+	std::vector<MixedValue> vec;
+	metaData.setValue(vec);
+	
 	if (!data.isType(MixedValueType::Vector)) {
 		return;
 	}

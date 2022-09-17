@@ -1,4 +1,3 @@
-
 #include "TAttributeManager_i.h"
 #include "ORBManager.h"
 #include <sti/device/AttributeManager.h>
@@ -6,7 +5,6 @@
 #include <sti/device/Attribute.h>
 
 using STI::TNetwork::TAttributeManager_i;
-
 using STI::Network::convert;
 using STI::TNetwork::TAttributeSeq;
 using STI::Device::Attribute;
@@ -34,7 +32,10 @@ char* TAttributeManager_i::getValue(const char* key)
 		value = attributeManager->getValue(convert<CORBA::String_member, std::string>(key));
 	}
 
-    return convert<std::string, CORBA::String_member>(value);
+	return CORBA::string_dup( convert<std::string, CORBA::String_member>(value) );
+
+    // CORBA::String_var tValue = convert<std::string, CORBA::String_member>(value);
+	// return tValue._retn();
 }
 
 ::CORBA::Boolean TAttributeManager_i::setValue(const char* key, const char* value)
@@ -66,6 +67,7 @@ void TAttributeManager_i::refreshValue(const char* key)
 ::CORBA::Boolean TAttributeManager_i::getAttribute(const char* key, ::STI::TNetwork::TAttribute_out attrib)
 {
 	bool success = false;
+	attrib = new STI::TNetwork::TAttribute();
 
     if (attributeManager != 0) {
 
@@ -75,8 +77,7 @@ void TAttributeManager_i::refreshValue(const char* key)
 		success = attributeManager->getAttribute(convert<CORBA::String_member, std::string>(key), localAttribute);
 
 		convert<std::shared_ptr<Attribute>, TAttribute>(localAttribute, tAttribute_var);
-
-		attrib = new STI::TNetwork::TAttribute();
+		
 		(*attrib) = tAttribute_var;
 	}
 	return success;
@@ -84,6 +85,8 @@ void TAttributeManager_i::refreshValue(const char* key)
 
 void TAttributeManager_i::getAttributes(::STI::TNetwork::TAttributeSeq_out attributes)
 {
+	attributes = new STI::TNetwork::TAttributeSeq();
+
     if (attributeManager != 0) {
 
 		STI::TNetwork::TAttributeSeq_var tAttributeSeq_var(new STI::TNetwork::TAttributeSeq);
@@ -93,7 +96,6 @@ void TAttributeManager_i::getAttributes(::STI::TNetwork::TAttributeSeq_out attri
 
 		convert<std::shared_ptr<Attribute>, TAttribute>(localAttributes, tAttributeSeq_var);
 
-		attributes = new STI::TNetwork::TAttributeSeq();
 		(*attributes) = tAttributeSeq_var;
 	}
 }

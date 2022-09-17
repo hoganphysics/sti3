@@ -2,11 +2,12 @@
 
 #include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/StackTraceResult.h>
 #include <sti/utils/FileHolder.h>
 
 #include "ParsedDependencyTree.h"
-#include "RawEventGroup.h"
+#include "StackTraceData.h"
 
 #include "CerealArchives.h"
 #include <cereal/types/map.hpp>
@@ -23,6 +24,13 @@ ParseResult::ParseResult()
 
 ParseResult::~ParseResult()
 {
+}
+
+void ParseResult::deleteFiles(ParseResult& parsedResult)
+{
+    if (parsedResult.stackTraceResult != 0 && parsedResult.stackTraceResult->stackTraceData != 0) {
+        parsedResult.stackTraceResult->stackTraceData->deleteFiles();        
+    }
 }
 
 template<class Archive>

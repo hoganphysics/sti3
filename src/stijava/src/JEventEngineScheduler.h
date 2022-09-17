@@ -2,7 +2,7 @@
 #define STI_DEVICE_JEVENTENGINESCHEDULER_H
 
 #include <sti/engine/EventEngineScheduler.h>
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include <sti/engine/ParseID.h>
 
 #include <memory>
@@ -14,6 +14,7 @@ namespace Engine
 {
 
 class JShot;
+class JEventEngineJob;
 
 
 //Java JEventEngineScheduler wrapper
@@ -30,13 +31,21 @@ public:
 
     STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::JShot>& shot);
     STI::Engine::ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
-    void cancelJob(const STI::Engine::EngineJobID& jobID);
 
+    EngineJobStatus getStatus(const ParseID& pid);
+    EngineJobStatus getStatus(const ShotID& sid);
+
+    std::shared_ptr<JEventEngineJob> getJob(const EngineJobID& id) const;
+
+    void cancelJob(const STI::Engine::EngineJobID& jobID);
     void cancelAll();
 
-    std::set<EngineJobID> getQueuedJobs() const;
-    std::set<EngineJobID> getRunningJobs() const;
-    std::set<EngineJobID> getCompletedJobs() const;
+    std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const;
+    std::vector<std::shared_ptr<JEventEngineJob>> getJobs(const EventEngineJobList& jobListType) const;
+
+    // std::set<EngineJobID> getQueuedJobs() const;
+    // std::set<EngineJobID> getRunningJobs() const;
+    // std::set<EngineJobID> getCompletedJobs() const;
 
 private:
 

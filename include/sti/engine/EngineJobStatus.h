@@ -8,7 +8,7 @@ namespace STI
 namespace Engine
 {
 
-enum class EngineJobStatus { New, Running, Completed, Canceled, NotFound };
+enum class EngineJobStatus { New, Running, Completed, Canceled, NotFound, Archived };
 
 } //Engine
 } //STI

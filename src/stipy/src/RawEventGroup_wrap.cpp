@@ -1,4 +1,4 @@
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/engine/ParsedVar.h>
@@ -7,7 +7,7 @@
 #include <sti/utils/utils.h>
 
 #include "MixedValuePy.h"
-#include "ParsedTag.h"
+#include <sti/engine/ParsedTag.h>
 #include "RawStackTrace.h"
 #include "StackTraceData.h"
 
@@ -125,10 +125,17 @@ void init_RawEventGroup(py::module& m)
         .def("__repr__",
             [](const RawEventGroup& self) {
                 std::stringstream s;
+                auto stats = self.getStats();
+
                 s << "group('" << self.getName() 
                 << "', time=[" << STI::Utils::printTimeFormated(self.startTime())
                 << ", " << STI::Utils::printTimeFormated(self.endTime())
-                << "])";
+                << "]"
+                << ", subgroups=" << stats.subgroups 
+                << ", events=" << stats.events 
+                << ", vars=" << stats.vars 
+                << ", tags=" << stats.tags 
+                << ")";
                 return s.str();
             })
         ;

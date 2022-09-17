@@ -144,6 +144,7 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 ::CORBA::Boolean TEventEngine_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult)
 {
 	bool success = false;
+	tParseResult = new STI::TNetwork::TParseResult();
 
     if (eventEngine != 0) {
 
@@ -154,7 +155,6 @@ TEventEngineDependencyTree* TEventEngine_i::getParsedTree()
 
 		success &= convert<std::shared_ptr<STI::Engine::ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);	
 		
-		tParseResult = new STI::TNetwork::TParseResult();
 		(*tParseResult) = tParseResult_var;
 	}
 

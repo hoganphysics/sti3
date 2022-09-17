@@ -48,6 +48,19 @@ public class JEventEngineScheduler {
     return new ShotID(stiJNI.JEventEngineScheduler_play(swigCPtr, this, ParseID.getCPtr(parseID), parseID, EngineJobSourceID.getCPtr(source), source), true);
   }
 
+  public EngineJobStatus getStatus(ParseID pid) {
+    return EngineJobStatus.swigToEnum(stiJNI.JEventEngineScheduler_getStatus__SWIG_0(swigCPtr, this, ParseID.getCPtr(pid), pid));
+  }
+
+  public EngineJobStatus getStatus(ShotID sid) {
+    return EngineJobStatus.swigToEnum(stiJNI.JEventEngineScheduler_getStatus__SWIG_1(swigCPtr, this, ShotID.getCPtr(sid), sid));
+  }
+
+  public JEventEngineJob getJob(EngineJobID id) {
+    long cPtr = stiJNI.JEventEngineScheduler_getJob(swigCPtr, this, EngineJobID.getCPtr(id), id);
+    return (cPtr == 0) ? null : new JEventEngineJob(cPtr, true);
+  }
+
   public void cancelJob(EngineJobID jobID) {
     stiJNI.JEventEngineScheduler_cancelJob(swigCPtr, this, EngineJobID.getCPtr(jobID), jobID);
   }
@@ -56,16 +69,12 @@ public class JEventEngineScheduler {
     stiJNI.JEventEngineScheduler_cancelAll(swigCPtr, this);
   }
 
-  public EngineJobIDSet getQueuedJobs() {
-    return new EngineJobIDSet(stiJNI.JEventEngineScheduler_getQueuedJobs(swigCPtr, this), true);
+  public EngineJobIDSet getJobIDs(EventEngineJobList jobListType) {
+    return new EngineJobIDSet(stiJNI.JEventEngineScheduler_getJobIDs(swigCPtr, this, jobListType.swigValue()), true);
   }
 
-  public EngineJobIDSet getRunningJobs() {
-    return new EngineJobIDSet(stiJNI.JEventEngineScheduler_getRunningJobs(swigCPtr, this), true);
-  }
-
-  public EngineJobIDSet getCompletedJobs() {
-    return new EngineJobIDSet(stiJNI.JEventEngineScheduler_getCompletedJobs(swigCPtr, this), true);
+  public JEventEngineJobVector getJobs(EventEngineJobList jobListType) {
+    return new JEventEngineJobVector(stiJNI.JEventEngineScheduler_getJobs(swigCPtr, this, jobListType.swigValue()), true);
   }
 
 }

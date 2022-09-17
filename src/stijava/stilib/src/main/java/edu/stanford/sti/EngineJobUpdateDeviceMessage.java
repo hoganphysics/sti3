@@ -59,12 +59,7 @@ public class EngineJobUpdateDeviceMessage extends DeviceMessage {
   }
 
   public EngineJobUpdateDeviceMessage(DeviceTrace trace) {
-    this(stiJNI.new_EngineJobUpdateDeviceMessage__SWIG_0(DeviceTrace.getCPtr(trace), trace), true);
-    stiJNI.EngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
-  }
-
-  public EngineJobUpdateDeviceMessage(DeviceTrace trace, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t job, EngineJobUpdateTarget targetList) {
-    this(stiJNI.new_EngineJobUpdateDeviceMessage__SWIG_1(DeviceTrace.getCPtr(trace), trace, SWIGTYPE_p_std__shared_ptrT_STI__Engine__EventEngineJob_t.getCPtr(job), targetList.swigValue()), true);
+    this(stiJNI.new_EngineJobUpdateDeviceMessage(DeviceTrace.getCPtr(trace), trace), true);
     stiJNI.EngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 
@@ -72,11 +67,11 @@ public class EngineJobUpdateDeviceMessage extends DeviceMessage {
     return DeviceMessageType.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_getMessageClassType());
   }
 
-  public EngineJobUpdateTarget getTargetList() {
-    return EngineJobUpdateTarget.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_getTargetList(swigCPtr, this));
+  public EventEngineJobList getTargetList() {
+    return EventEngineJobList.swigToEnum(stiJNI.EngineJobUpdateDeviceMessage_getTargetList(swigCPtr, this));
   }
 
-  public static String jobTargetToString(EngineJobUpdateTarget target) {
+  public static String jobTargetToString(EventEngineJobList target) {
     return stiJNI.EngineJobUpdateDeviceMessage_jobTargetToString(target.swigValue());
   }
 

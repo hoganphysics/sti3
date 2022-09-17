@@ -6,6 +6,7 @@
 
 #include <memory>
 
+
 namespace STI
 {
 namespace Network
@@ -27,20 +28,15 @@ public:
 			tFileHolderRefInterface->getTFileHolderRef(tFileHolder) &&	//polymorphic call
 			!CORBA::is_nil(tFileHolder)
 			);
-		
-		return true;
 	}
 
 private:
 
     virtual bool getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder) = 0;
-
 };
 
 
 } //Network
 } //STI
 
-
 #endif
-

@@ -63,8 +63,8 @@ public class JEngineJobUpdateDeviceMessage extends EngineJobUpdateDeviceMessage 
     stiJNI.JEngineJobUpdateDeviceMessage_director_connect(this, swigCPtr, true, true);
   }
 
-  public EngineJobUpdateTarget getTargetList() {
-    return EngineJobUpdateTarget.swigToEnum(stiJNI.JEngineJobUpdateDeviceMessage_getTargetList(swigCPtr, this));
+  public EventEngineJobList getTargetList() {
+    return EventEngineJobList.swigToEnum(stiJNI.JEngineJobUpdateDeviceMessage_getTargetList(swigCPtr, this));
   }
 
   public JEventEngineJob getJEngineJob() {

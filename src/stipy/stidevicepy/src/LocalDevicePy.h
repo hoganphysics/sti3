@@ -1,4 +1,3 @@
-
 #ifndef STI_PYTHON_LOCALDEVICEPY_H
 #define STI_PYTHON_LOCALDEVICEPY_H
 
@@ -53,6 +52,11 @@ public:
     {
         device->addPartner(id);
     }
+    
+    void addEventTarget(const STI::Device::DeviceID& id)
+    {
+        device->addEventTarget(id);
+    }    
 
      std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
     {
@@ -69,13 +73,7 @@ public:
     }
 
 
-    // void addAttribute(const std::string& key, const std::string& initialValue, const pybind11::list& allowedValues)
-    // {
-    //     device->addAttribute(key, initialValue);
-    // }
-
 private:
-
 
     class LocalDeviceDelegate : public STI::Device::LocalDevice
     {
@@ -90,27 +88,47 @@ private:
         {
             STI::Python::MixedValuePy valuePy(value);
 
-            //std::cout << "LocalDeviceDelegate::writeChannel" << std::endl;
+            // std::cout << "LocalDeviceDelegate::writeChannel: " << value.print() << std::endl;
 
-            bool success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
-
-            //std::cout << "LocalDeviceDelegate::writeChannel after call" << std::endl;
-
+            bool success = false;
+            {
+                pybind11::gil_scoped_release release;
+                success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
+            }
+            
             return success;
         }
 
 	    bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) 
         {
             STI::Python::MixedValuePy valuePy(value);
-            auto dataPyObj = localDevicePy->readChannel(channel, valuePy.getValue_py());
+            // valuePy.setValue(value);
+            // valuePy.addValue(33.0);
+            pybind11::object dataPyObj;
+            pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
+            
+            {
+                // std::cout << "----------- LocalDeviceDelegate::readChannel start " << value.print() << std::endl;
+
+                pybind11::gil_scoped_release release;
+                
+                dataPyObj = localDevicePy->readChannel(channel, valuePyObj);
+
+                // std::cout << "----------- LocalDeviceDelegate::readChannel done localDevicePy" << std::endl;
+            }           
+
+            
 
             //convert result
             STI::Python::MixedValuePy dataPy;
             dataPy.setValue_py(dataPyObj);
 
-            const STI::Utils::MixedValue& ref = dataPy;
+            // const STI::Utils::MixedValue& ref = dataPy;
+            // data.setValue(ref);
 
-            data.setValue(ref);
+            data.setValue(dataPy.getMixedValue());
+
+            // std::cout << "read channel: " << data.print() << std::endl;
 
             return true;
         }
@@ -135,15 +153,14 @@ public:
     using LocalDevicePy::LocalDevicePy;
 
     bool writeChannel(short channel, const pybind11::object& value) override
-    {
-        //pybind11::gil_scoped_acquire acquire;
-        pybind11::gil_scoped_release release;
-        //std::cout << "LocalDevicePyTrampoline::writeChannel" << std::endl;
-//        return true;
+    {   
+        pybind11::gil_scoped_acquire acquire;
+
+        // std::cout << "LocalDevicePyTrampoline::writeChannel"  << std::endl;
 
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
-            LocalDevicePy,        /* Parent class */
+            LocalDevicePy,         /* Parent class */
             writeChannel,          /* Name of function in C++ (must match Python name) */
             channel, value         /* Argument(s) */
         );
@@ -151,11 +168,13 @@ public:
 
     pybind11::object readChannel(short channel, const pybind11::object& value) override
     {
-        pybind11::gil_scoped_release release;
+        pybind11::gil_scoped_acquire acquire;
+        // pybind11::object dummy = value;
+        // pybind11::object value2;
 
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
-            LocalDevicePy,       /* Parent class */
+            LocalDevicePy,        /* Parent class */
             readChannel,          /* Name of function in C++ (must match Python name) */
             channel, value        /* Argument(s) */
         );
@@ -166,10 +185,10 @@ public:
         pybind11::object dummy = pybind11::cast(synchedEvents, pybind11::return_value_policy::reference);
 
         PYBIND11_OVERRIDE(
-            void,     /* Return type */
-            LocalDevicePy,       /* Parent class */
-            parseEvents,          /* Name of function in C++ (must match Python name) */
-            events, synchedEvents        /* Argument(s) */
+            void,                   /* Return type */
+            LocalDevicePy,          /* Parent class */
+            parseEvents,            /* Name of function in C++ (must match Python name) */
+            events, synchedEvents   /* Argument(s) */
         );
     }
 

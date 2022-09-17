@@ -40,16 +40,16 @@ public class RawEvent {
     this(stiJNI.new_RawEvent__SWIG_0(), true);
   }
 
-  public RawEvent(DeviceID targetDeviceID, double time, int channel, MixedValue value, String description, long eventNumber, RawEventType eventType) {
-    this(stiJNI.new_RawEvent__SWIG_1(DeviceID.getCPtr(targetDeviceID), targetDeviceID, time, channel, MixedValue.getCPtr(value), value, description, eventNumber, eventType.swigValue()), true);
+  public RawEvent(RawEventTarget eventTarget, double time, MixedValue value, long eventNumber, RawEventType eventType) {
+    this(stiJNI.new_RawEvent__SWIG_1(RawEventTarget.getCPtr(eventTarget), eventTarget, time, MixedValue.getCPtr(value), value, eventNumber, eventType.swigValue()), true);
+  }
+
+  public RawEvent(RawEventTarget eventTarget, double time, MixedValue value, long eventNumber, RawEventType eventType, StackTrace eventStackTrace, StackTraceData stackTraceData) {
+    this(stiJNI.new_RawEvent__SWIG_2(RawEventTarget.getCPtr(eventTarget), eventTarget, time, MixedValue.getCPtr(value), value, eventNumber, eventType.swigValue(), StackTrace.getCPtr(eventStackTrace), eventStackTrace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
   }
 
   public RawEvent(RawEvent newEvent, RawEvent referenceEvent, long eventNumber) {
-    this(stiJNI.new_RawEvent__SWIG_2(RawEvent.getCPtr(newEvent), newEvent, RawEvent.getCPtr(referenceEvent), referenceEvent, eventNumber), true);
-  }
-
-  public String print() {
-    return stiJNI.RawEvent_print(swigCPtr, this);
+    this(stiJNI.new_RawEvent__SWIG_3(RawEvent.getCPtr(newEvent), newEvent, RawEvent.getCPtr(referenceEvent), referenceEvent, eventNumber), true);
   }
 
   public double time() {
@@ -68,16 +68,44 @@ public class RawEvent {
     return stiJNI.RawEvent_description(swigCPtr, this);
   }
 
+  public RawEventTarget target() {
+    return new RawEventTarget(stiJNI.RawEvent_target(swigCPtr, this), false);
+  }
+
+  public RawEventTarget getTarget() {
+    return new RawEventTarget(stiJNI.RawEvent_getTarget(swigCPtr, this), false);
+  }
+
+  public String getGroupName() {
+    return stiJNI.RawEvent_getGroupName(swigCPtr, this);
+  }
+
+  public void setParentGroup(RawEventGroup group) {
+    stiJNI.RawEvent_setParentGroup(swigCPtr, this, RawEventGroup.getCPtr(group), group);
+  }
+
+  public RawEventID getEventID() {
+    return new RawEventID(stiJNI.RawEvent_getEventID(swigCPtr, this), true);
+  }
+
   public RawEventType type() {
     return RawEventType.swigToEnum(stiJNI.RawEvent_type(swigCPtr, this));
   }
 
-  public DeviceID targetDevice() {
-    return new DeviceID(stiJNI.RawEvent_targetDevice(swigCPtr, this), false);
+  public StackTrace getStackTrace() {
+    return new StackTrace(stiJNI.RawEvent_getStackTrace__SWIG_0(swigCPtr, this), false);
   }
 
-  public EventStackTrace getStackTrace() {
-    return new EventStackTrace(stiJNI.RawEvent_getStackTrace(swigCPtr, this), false);
+  public void setStackTrace(StackTrace eventStackTrace) {
+    stiJNI.RawEvent_setStackTrace(swigCPtr, this, StackTrace.getCPtr(eventStackTrace), eventStackTrace);
+  }
+
+  public void setStackTraceData(StackTraceData traceData) {
+    stiJNI.RawEvent_setStackTraceData(swigCPtr, this, StackTraceData.getCPtr(traceData), traceData);
+  }
+
+  public RawStackTrace getRawStackTrace() {
+    return new RawStackTrace(stiJNI.RawEvent_getRawStackTrace(swigCPtr, this), true);
   }
 
   public UIntVector getEventGraphPath() {
@@ -100,16 +128,12 @@ public class RawEvent {
     return stiJNI.RawEvent_opNotEquals(swigCPtr, this, RawEvent.getCPtr(rhs), rhs);
   }
 
-  public void setTargetID(DeviceID targetID) {
-    stiJNI.RawEvent_setTargetID(swigCPtr, this, DeviceID.getCPtr(targetID), targetID);
-  }
-
   public void setTime(double time) {
     stiJNI.RawEvent_setTime(swigCPtr, this, time);
   }
 
-  public void setChannel(int channel) {
-    stiJNI.RawEvent_setChannel(swigCPtr, this, channel);
+  public void setTarget(RawEventTarget target) {
+    stiJNI.RawEvent_setTarget(swigCPtr, this, RawEventTarget.getCPtr(target), target);
   }
 
   public void setValue(MixedValue value) {
@@ -126,6 +150,10 @@ public class RawEvent {
 
   public void setEventType(RawEventType eventType) {
     stiJNI.RawEvent_setEventType(swigCPtr, this, eventType.swigValue());
+  }
+
+  public String print() {
+    return stiJNI.RawEvent_print(swigCPtr, this);
   }
 
 }

@@ -1,4 +1,3 @@
-
 #include "RemoteDeviceCollection.h"
 #include "NetworkConvert.h"
 #include "TDeviceRefInterface.h"
@@ -7,7 +6,6 @@
 #include <sti/device/DeviceID.h>
 
 #include "orbTypes.h"
-
 
 using STI::Network::TDeviceRefInterface;
 using STI::Network::RemoteDevice;
@@ -21,7 +19,6 @@ using STI::TNetwork::TReferenceHolder;
 
 RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_ptr deviceCollection)
 : TReferenceHolder<TDeviceCollection>(deviceCollection, collectionMutex)
-//: tDeviceCollection(STI::TNetwork::TDeviceCollection::_duplicate(deviceCollection))
 {
 }
 
@@ -31,24 +28,13 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 
 	if (isDisabled()) return false;
 
-	// STI::TNetwork::TDevice_ptr tDevice;
-
-	// if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
-	// 	return false;
-	// }
-
 	STI::TNetwork::TDevice_var tDevice;
 
 	if (!TDeviceRefInterface::getTDeviceReference(node, tDevice)) {
 		return false;
 	}
 
-
-//	STI::TNetwork::TDevice_var tDevicevar = tDevice;
-
 	bool success = false;
-
-	//std::cout << "RemoteDeviceCollection::add( " << CORBA::is_nil(tDevice) << " )" << std::endl;
 
 	try {
 		success = getTRef()->add(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
@@ -60,8 +46,6 @@ bool RemoteDeviceCollection::add(const STI::Device::DeviceID& id, const std::sha
 	catch (CORBA::Exception&)
 	{
 	}
-
-	//std::cout << "after getTRef()->add" << std::endl;
 
 	return success;
 }
@@ -141,12 +125,12 @@ bool RemoteDeviceCollection::get(const STI::Device::DeviceID& id, std::shared_pt
 	bool success = false;
 
 	STI::TNetwork::TDevice_var tDevice;
-
+	
 	try {
 		success = getTRef()->get(convert<DeviceID, TDeviceID>(id), tDevice);	//remote call
 
 		if (success && tDevice != 0 && !tDevice->_is_nil()) {
-			//node = std::make_shared<RemoteDevice>( STI::TNetwork::TDevice::_duplicate(tDevice) );
+
 			node = std::make_shared<RemoteDevice>(tDevice);
 		}
 	}

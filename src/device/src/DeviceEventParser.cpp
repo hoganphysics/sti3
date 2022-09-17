@@ -7,7 +7,7 @@
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventTargetDevice.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 using STI::Engine::DeviceEventParser;
 using STI::Engine::DeviceEventMap;

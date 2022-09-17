@@ -1,8 +1,9 @@
 #ifndef STI_DEVICE_JSHOT_H
 #define STI_DEVICE_JSHOT_H
 
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/ShotConfig.h>
 
 #include <memory>
 
@@ -22,13 +23,13 @@ public:
 	~JShot();
 
     const ShotConfig& getShotConfig() const;
-    std::shared_ptr<std::vector<STI::Engine::RawEvent>> getEvents();
+    std::shared_ptr<RawEventGroup> getRootEventGroup();
 
 private:
 
-    void getEvents(std::shared_ptr<std::vector<RawEvent>>& evts);
+    void getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup);
 
-    const ShotConfig& shotConfig;
+    ShotConfig shotConfig;
     std::shared_ptr<STI::Engine::Shot> shot_;
 
 };

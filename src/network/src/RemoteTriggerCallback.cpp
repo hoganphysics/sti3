@@ -1,4 +1,3 @@
-
 #include "RemoteTriggerCallback.h"
 #include "NetworkConvert.h"
 
@@ -9,7 +8,6 @@ using STI::TNetwork::TTriggerCallback;
 
 RemoteTriggerCallback::RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_ptr trigger)
 : TReferenceHolder<TTriggerCallback>(trigger, cbMutex)
-//	: _tTrigger(STI::TNetwork::TTriggerCallback::_duplicate(trigger))
 {
 }
 

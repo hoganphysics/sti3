@@ -1,19 +1,11 @@
 %feature("director");
 
-//%feature(nspace);
-
-// %rename(Engine_ParseID) STI::Engine::ParseID;
-// %rename(Engine_ShotID) STI::Engine::ShotID;
-// %rename(Engine_TimeStamp) STI::Engine::TimeStamp;
-
-// %warnfilter(401) STI::Device::DeviceCollection;
-// %warnfilter(401) DeviceCollection;
 
 %warnfilter(401);   //Warning 401:  Nothing known about base class 'STI::Device::DeviceCollection' (also STI::Device::Device)
 
 
 %{
-    #include <sti/device/DeviceID.h>
+
     #include <sti/device/Device.h>
     #include "JDevice.h"
     #include "JLocalDevice.h"    
@@ -21,9 +13,14 @@
     #include <sti/device/DeviceMessage.h>
     #include <sti/device/DeviceCollection.h>
     #include "JDeviceCollection.h"
-    #include "JNetworkDeviceHub.h"
-    #include "JNodeWalker.h"
-    #include <sti/network/HubID.h>
+
+
+    #include <sti/utils/LocalCollection.h>
+    using STI::Utils::LocalCollection;
+
+    #include <sti/engine/SynchronousEvent.h>
+    using STI::Engine::SynchronousEvent;
+    using STI::Engine::SynchronousEventAdapter;
 
     #include <sti/device/DeviceTrace.h>
 
@@ -32,8 +29,13 @@
     #include <sti/device/DeviceMessageDispatcher.h>
     #include "JDeviceMessageReceiver.h"
     #include "JDeviceMessageDispatcher.h"
-    #include "JEventEngineScheduler.h"
-    using STI::Engine::JEventEngineScheduler;
+
+
+    #include <sti/engine/EventEngineJobList.h>
+    using STI::Engine::EventEngineJobList;
+
+    #include <sti/engine/EngineJobStatus.h>
+    using STI::Engine::EngineJobStatus;
 
     #include <sti/engine/TimeStamp.h>
     using STI::Engine::TimeStamp;
@@ -61,25 +63,6 @@
     #include "JShot.h"
     using STI::Engine::JShot;
 
-    #include <sti/engine/RawEvent.h>
-    using STI::Engine::RawEventType;
-    #include <sti/engine/StackTrace.h>
-    using STI::Engine::StackTrace;
-    #include <sti/utils/GraphPathLabel.h>
-    using STI::Utils::GraphPathLabel;
-
-    #include <sti/engine/EngineParsingMessage.h>
-    using STI::Engine::EngineParsingMessage;
-
-    #include <sti/utils/FileHolder.h>
-    using STI::Utils::FileHolder;
-
-    #include <sti/utils/MixedValue.h>
-
-    using STI::Utils::MixedValue;
-    using STI::Utils::MixedValueType;
-    using STI::Utils::MixedValueVector;
-
     #include "JChannelManager.h"
     #include <sti/fwd/Channel_fwd.h>
     #include <sti/device/Channel.h>
@@ -89,25 +72,16 @@
     #include "ChannelRefreshListener.h"
     using STI::Device::ChannelRefreshListener;
 
-    #include "JAttributeManager.h"
-
     #include <sti/engine/ShotResult.h>
     
-
-    // #include "JPersistenceManager.h"
-
     #include "JEventEngine.h"
+
+    #include <functional>
 
 %}
 
 
-%include "std_string.i"
-%include "std_shared_ptr.i"
-%include "std_set.i"
-%include "std_vector.i"
-%include "std_map.i"
-%include "std_pair.i"
-%include "typemaps.i"
+
 
 //***** Shared pointer definitions ********//
 
@@ -118,6 +92,7 @@
 %shared_ptr(STI::Device::JDeviceMessageReceiver);
 %shared_ptr(STI::Device::JDeviceMessageDispatcher);
 %shared_ptr(STI::Engine::JEventEngineScheduler);
+// %shared_ptr(STI::Device::ChannelManager);
 %shared_ptr(STI::Device::JChannelManager);
 %shared_ptr(STI::Device::JAttributeManager);
 %shared_ptr(STI::Device::JPersistenceManager);
@@ -125,11 +100,17 @@
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
 
+
+
+
 %shared_ptr(STI::Engine::JShot);
+
+%shared_ptr(STI::Engine::SynchronousEvent);
+%shared_ptr(STI::Engine::SynchronousEventAdapter);
 
 //%shared_ptr(STI::Device::DeviceMessageReceiver);
 
-//Events
+//Messages
 %shared_ptr(STI::Device::DeviceMessage);
 %shared_ptr(STI::Device::RefreshDeviceMessage);
 %shared_ptr(STI::Device::ChannelUpdateMessage);
@@ -153,42 +134,23 @@
 
 %shared_ptr(STI::Engine::JEventEngine);
 
-%shared_ptr(STI::Utils::FileHolder);
+// %shared_ptr(STI::Utils::FileHolder);
 
 ////////////////////////////////////
 
 
 
-//DeviceID
-%rename(opEquals) operator==;
-%rename(opLess) operator<;
-%rename(opNotEquals) operator!=;
-%rename(opEvaluate) operator();
-%ignore DeviceIDBase;
-%include "sti/device/DeviceID.h"
-%template(DeviceIDset) std::set< STI::Device::DeviceID >;
-%template(DeviceIDvector) std::vector< STI::Device::DeviceID >;
+
 
 %include "sti/device/DeviceTrace.h"
 
 //EngineID
 %include "sti/engine/EngineID.h"
 
-//RawEvent
-%include "sti/fwd/RawEvent_fwd.h"
-%template(UIntVector) std::vector< unsigned >;
-%include "sti/utils/GraphPathLabel.h"
-%rename(UIntVector) STI::Utils::GraphPathLabel;
-%include "sti/engine/StackTrace.h"
-%include "sti/engine/RawEvent.h"
-%template(RawEventVector) std::vector< STI::Engine::RawEvent >;
-%shared_ptr( std::vector< STI::Engine::RawEvent > );
-
-
 
 //JDeviceCollection
 %ignore STI::Device::DeviceCollection;
-%ignore STI::Device::JDeviceCollection::JDeviceCollection(std::shared_ptr< STI::Device::DeviceCollection >& collection);
+%ignore STI::Device::JDeviceCollection::JDeviceCollection(const std::shared_ptr< STI::Device::DeviceCollection >& collection);
 %include "JDeviceCollection.h"
 
 
@@ -211,11 +173,13 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 //DeviceMessage
 
 // %ignore STI::Device::EngineJobUpdateDeviceMessage;
+%ignore STI::Device::EngineJobUpdateDeviceMessage::EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, const std::shared_ptr< STI::Engine::EventEngineJob >& job, STI::Engine::EventEngineJobList targetList);
 %ignore STI::Device::EngineSchedulerMessage::setEngine(const std::shared_ptr< STI::Engine::EventEngine >& engine);
 %ignore STI::Device::EngineSchedulerMessage::getEngine() const;
 %ignore STI::Device::EngineJobUpdateDeviceMessage::toQueuedList(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
 %ignore STI::Device::EngineJobUpdateDeviceMessage::toRunningList(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
 %ignore STI::Device::EngineJobUpdateDeviceMessage::toCompleteList(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
+%ignore STI::Device::EngineJobUpdateDeviceMessage::toArchive(const std::shared_ptr< STI::Engine::EventEngineJob >& job);
 %ignore STI::Device::EngineJobUpdateDeviceMessage::getEngineJob() const;
 %include "sti/device/DeviceMessageType.h"
 %include "sti/device/DeviceMessage.h"
@@ -318,14 +282,24 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/ParseID.h"
 %include "sti/engine/ShotID.h"
 
-//Attributes
-%template(StringMap) std::map< std::string, std::string >;
-%ignore STI::Device::AttributeManager;
-%ignore STI::Device::JAttributeManager::JAttributeManager(std::shared_ptr< STI::Device::AttributeManager >& manager);
-%include "JAttributeManager.h"
 
 
 
+
+//SynchronousEvent
+%include "sti/engine/SynchronousEvent.h"
+%template(SynchronousEventVector) std::vector< std::shared_ptr < STI::Engine::SynchronousEventAdapter > >;
+
+
+%include "sti/utils/LocalCollection.h"
+// %template(DeviceCollectionListener) STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >;
+
+
+%shared_ptr(STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >);
+%template(DeviceCollectionListener) STI::Utils::LocalCollectionListenerAdapter< STI::Device::DeviceID >;
+
+
+// %typemap(jstype) char** "String[]"
 //JLocalDevice
 %include "JLocalDevice.h"
 
@@ -334,61 +308,15 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/EngineJobID.h"
 
 
-//FileHolder
-%ignore STI::Utils::FileHolder::write(const char* buffer, unsigned length);
-%ignore STI::Utils::FileHolder::openFile();
-%ignore STI::Utils::FileHolder::closeFile();
-%include "sti/utils/FileHolder.h"
-
-
-
-//MixedValue
-%warnfilter(516) STI::Utils::MixedValue::setValue;
-%include "sti/fwd/MixedValue_fwd.h"
-%include "sti/utils/MixedValue.h"
-%template(MixedValueVec) std::vector< STI::Utils::MixedValue >;
-%include "sti/utils/MixedValue.h"
-%rename(MixedValueVec) STI::Utils::MixedValueVector;
-
-
-
-
-
 //JShot
 %ignore STI::Engine::JShot::JShot(std::shared_ptr< STI::Engine::Shot >& shot);
 %include "JShot.h"
 
 
-// %nspace STI::Engine::ParseID
-// %nspace STI::Engine::ShotID
-// %nspace STI::Engine::TimeStamp
+%include "sti/engine/EventEngineJobList.h"
+%include "sti/engine/EngineJobStatus.h"
 
-
-
-//JEventEngineScheduler
-%ignore STI::Engine::EventEngineScheduler;
-%ignore STI::Engine::JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr< STI::Engine::EventEngineScheduler >& scheduler);
-%include "JEventEngineScheduler.h"
-
-//EngineParsingMessage
-%include "sti/engine/EngineParsingMessage.h"
-%template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
 
 //ChannelUpdateMessage
 %template(ChannelMixedValueMap) std::map< short, STI::Utils::MixedValue >;
-
-//JNetworkDeviceHub
-%include "JNetworkDeviceHub.h"
-
-//HubID
-%include "sti/network/HubID.h"
-
-//JNodeWalker
-%ignore STI::Network::JNodeWalker::JNodeWalker(STI::Network::LocalDeviceHub::HubNodeWalker& root);
-%ignore STI::Network::JHubGraphNode::JHubGraphNode(const STI::Network::DirectedGraphHub< STI::Device::DeviceID, STI::Device::Device >& hub);
-%ignore STI::Network::JDeviceGraphNode::JDeviceGraphNode(const STI::Network::DirectedGraphNode< STI::Device::DeviceID, STI::Device::Device >& deviceNode);
-%include "JNodeWalker.h"
-%template(JNodeWalkerVector) std::vector< STI::Network::JNodeWalker >;
-%template(JDeviceGraphNodeVector) std::vector< STI::Network::JDeviceGraphNode >;
-

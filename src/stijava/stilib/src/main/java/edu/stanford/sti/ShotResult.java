@@ -58,16 +58,6 @@ public class ShotResult {
     return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
   }
 
-  public RawEventMap getParsedEvents() {
-    long cPtr = stiJNI.ShotResult_parsedEvents_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventMap(cPtr, false);
-  }
-
-  public FileHolderVector getTimingFiles() {
-    long cPtr = stiJNI.ShotResult_timingFiles_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FileHolderVector(cPtr, false);
-  }
-
   public MeasurementVector getMeasurements() {
     long cPtr = stiJNI.ShotResult_measurements_get(swigCPtr, this);
     return (cPtr == 0) ? null : new MeasurementVector(cPtr, true);
@@ -83,8 +73,8 @@ public class ShotResult {
     return (cPtr == 0) ? null : new ShotResultRecord(cPtr, false);
   }
 
-  public static void deleteShotFiles(ShotResult shot) {
-    stiJNI.ShotResult_deleteShotFiles(ShotResult.getCPtr(shot), shot);
+  public static void deleteFiles(ShotResult shot) {
+    stiJNI.ShotResult_deleteFiles(ShotResult.getCPtr(shot), shot);
   }
 
 }

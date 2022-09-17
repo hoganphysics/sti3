@@ -44,6 +44,7 @@ enum class ParsingMessageType;
 class ShotResultRecord;
 enum class ShotType;
 enum class RecordStatus;
+enum class EventEngineJobList;
 
 } //Engine
 
@@ -147,6 +148,19 @@ template<>
 bool Network::convert<std::shared_ptr<Engine::EventEngineJob>, TNetwork::TEventEngineJob>(const std::shared_ptr<Engine::EventEngineJob>& engineJob, TNetwork::TEventEngineJob& tEngineJob);
 template<>
 bool Network::convert<TNetwork::TEventEngineJob, std::shared_ptr<Engine::EventEngineJob>>(const TNetwork::TEventEngineJob& tEngineJob, std::shared_ptr<Engine::EventEngineJob>& engineJob);
+
+template<>
+TNetwork::TEventEngineJob Network::convert<std::shared_ptr<Engine::EventEngineJob>, TNetwork::TEventEngineJob>(const std::shared_ptr<Engine::EventEngineJob>& engineJob);
+template<>
+std::shared_ptr<Engine::EventEngineJob> Network::convert<TNetwork::TEventEngineJob, std::shared_ptr<Engine::EventEngineJob>>(const TNetwork::TEventEngineJob& tEngineJob);
+
+
+//EventEngineJobList
+template<>
+TNetwork::TEventEngineJobList Network::convert<Engine::EventEngineJobList, TNetwork::TEventEngineJobList>(const Engine::EventEngineJobList& jobList);
+template<>
+Engine::EventEngineJobList Network::convert<TNetwork::TEventEngineJobList, Engine::EventEngineJobList>(const TNetwork::TEventEngineJobList& tJobList);
+
 
 
 //RawEventTarget

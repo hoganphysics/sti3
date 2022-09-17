@@ -8,7 +8,7 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineJobStatus.h>
 
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 
 #include <set>
 #include <map>
@@ -47,6 +47,7 @@ public:
     void markRunning(const EngineID& id);
     void markComplete();
     void markCancelled();
+    void markArchived();
 
     void attachSubjob(const std::shared_ptr<EventEngineJob>& job);
 

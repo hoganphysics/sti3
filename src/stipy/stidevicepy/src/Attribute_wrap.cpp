@@ -64,20 +64,31 @@ void init_Attribute(py::module& m)
                 {
                     return new STI::Device::LocalAttribute(key, initalValue, allowedValues);
                 } ), py::arg("key"), py::arg("value"), py::arg("allowedValues"))
-        .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refesher) {
-                auto gil_refresher = [refesher]() {
-                    pybind11::gil_scoped_release release;
-                    return refesher();
+        .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refresher) {
+                // Need to wrap python function reference in another lambda so we can release the GIL
+                // before calling back to python
+                auto gil_refresher = [refresher]() {
+                    std::string result = "";
+                    {
+                        pybind11::gil_scoped_release release;
+                        result = refresher();
+                    }
+                    return result;
                 };
+
                 self->setRefresher(gil_refresher);
-                //self->setRefresher(refesher);
                 return self;
             }, py::arg("refresherFunction"))
         .def("setSetter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
-                
+                // Need to wrap python function reference in another lambda so we can release the GIL
+                // before calling back to python
                 auto gil_setter = [setter](const std::string& value) {
-                    pybind11::gil_scoped_release release;
-                    return setter(value);
+                    bool result = false;
+                    {
+                        pybind11::gil_scoped_release release;
+                        result = setter(value);
+                    }
+                    return result;
                 };
                 self->setSetter(gil_setter);
                 //self->setSetter(setter);

@@ -19,6 +19,7 @@ class LocalCollectionListener : public SynchronizedMapListener<ID>
 public:
 	typedef std::shared_ptr<LocalCollectionListener<ID> > _ptr;
 	
+	virtual ~LocalCollectionListener() {}
 //	virtual void add(const ID& id) = 0;
 //	virtual void remove(const ID& id) = 0;
 //	virtual void refresh() = 0;
@@ -28,6 +29,9 @@ template<class ID>
 class LocalCollectionListenerAdapter : public LocalCollectionListener<ID>
 {
 public:
+
+	virtual ~LocalCollectionListenerAdapter() {}
+
 	virtual void add(const ID& id) {}
 	virtual void remove(const ID& id) {}
 	virtual void refresh() {}
@@ -41,6 +45,7 @@ class LocalCollectionListenerDelegate : public LocalCollectionListener<ID>
 public:
 
 	LocalCollectionListenerDelegate(LocalCollectionListener<ID>* target) : target(target) {}
+	virtual ~LocalCollectionListenerDelegate() {}
 
 	void add(const ID& id) { if( target != 0) target->add(id); }
 	void remove(const ID& id) { if( target != 0) target->remove(id); }
@@ -62,7 +67,7 @@ public:
 	LocalCollection() {}
 	LocalCollection(const LocalCollectionPolicy_ptr& policy) : nodes(policy) {}
 
-	~LocalCollection() 
+	virtual ~LocalCollection() 
 	{
 		clear();
 		clearListeners();
@@ -79,7 +84,7 @@ public:
 		return (tNode != 0) && nodes.add(id, tNode);
 	}
 
-	bool add(const ID& id, const typename Collection<ID, T>::T_ptr& node) { return nodes.add(id, node); }
+	bool add(const ID& id, const typename Collection<ID, T>::T_ptr& node) { return (node != 0 && nodes.add(id, node)); }
 	bool remove(const ID& id) { return nodes.remove(id); }
 
 	bool contains(const ID& id) const { return nodes.contains(id); }

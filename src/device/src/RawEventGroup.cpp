@@ -1,4 +1,4 @@
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEvent.h>
@@ -7,7 +7,7 @@
 
 #include <sti/utils/utils.h>
 
-#include "ParsedTag.h"
+#include <sti/engine/ParsedTag.h>
 #include "StackTraceData.h"
 
 #include <algorithm>
@@ -29,6 +29,7 @@ using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventType;
 using STI::Engine::RawStackTrace;
 using STI::Engine::StackTraceData;
+using STI::Engine::RawEventGroupStats;
 
 
 RawEventGroup::RawEventGroup()
@@ -89,15 +90,48 @@ void RawEventGroup::setName(const std::string& newName)
 double RawEventGroup::startTime() const
 {
     std::unique_lock groupLock(groupMutex);
-    return timeMin + timeOffset;
+    
+    double tStart = timeMin + timeOffset;
+
+    for (auto& g : subgroups) {
+        if (g != 0) {
+            unsigned subgroupTime = g->startTime();
+            
+            if (subgroupTime < tStart) {
+                tStart = subgroupTime;
+            }
+        }
+    }
+    return tStart;
 }
 
 double RawEventGroup::endTime() const
 {
     std::unique_lock groupLock(groupMutex);
-    return timeMax + timeOffset;
+    double tEnd = timeMax + timeOffset;
+
+    for (auto& g : subgroups) {
+        if (g != 0) {
+            unsigned subgroupTime = g->endTime();
+            
+            if (subgroupTime > tEnd) {
+                tEnd = subgroupTime;
+            }
+        }
+    }
+    return tEnd;
 }
 
+RawEventGroupStats RawEventGroup::getStats() const
+{
+    RawEventGroupStats stats;
+    stats.events = events != 0 ? events->size() : 0;
+    stats.subgroups = subgroups.size();
+    stats.tags = parsedTags.size();
+    stats.vars = parsedVars.size();
+
+    return stats;
+}
 
 bool RawEventGroup::splitFullGroupName(const std::string& fullName, std::string& groupName, std::string& leafName)
 {
@@ -195,15 +229,35 @@ void RawEventGroup::addEvent(const RawEvent& evt)
     if (events == 0) return;
 
     events->push_back(evt);
-    events->back().setParentGroup(this);
+
+    _addEvent(events->back());
+}
+
+void RawEventGroup::_addEvent(RawEvent& evt)
+{
+    evt.setParentGroup(this);
+
+    eventNumber++;
+
+    if (evt.time() < timeMin) {
+        timeMin = evt.time();
+    }
+    if (evt.time() > timeMax) {
+        timeMax = evt.time();
+    }
 }
 
 void RawEventGroup::addEvent(const RawEvent& evt, const std::string& subgroupName)
 {
-    std::unique_lock groupLock(groupMutex);
+    // std::unique_lock groupLock(groupMutex);
 
-    auto g = group(subgroupName);
-    g->addEvent(evt);
+    if (subgroupName == "") {
+        addEvent(evt);
+    }
+    else {
+        auto g = group(subgroupName);
+        g->addEvent(evt);
+    }
 }
 
 void RawEventGroup::addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
@@ -216,21 +270,27 @@ void RawEventGroup::addEvent(const RawEventTarget& target, double time, const ST
     auto trace = stackTraceData->addStackTrace(stackTrace);
 
     events->emplace_back(target, time, value, eventNumber, type, trace, stackTraceData);
-    events->back().setParentGroup(this);
-    eventNumber++;
 
-    if (time < timeMin) {
-        timeMin = time;
-    }
-    if (time > timeMax) {
-        timeMax = time;
-    }
+    _addEvent(events->back());
+}
+
+void RawEventGroup::addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
+                const RawEventType& type)
+{
+    std::unique_lock groupLock(groupMutex);
+
+    if (events == 0) return;
+
+    events->emplace_back(target, time, value, eventNumber, type);
+
+    _addEvent(events->back());
 }
 
 void RawEventGroup::addEvent(const RawEventTarget& target, double time, const STI::Engine::ParsedVar& var, 
                     const RawEventType& type, const RawStackTrace& stackTrace)
 {
-    std::unique_lock groupLock(groupMutex);
+    // std::unique_lock groupLock(groupMutex);
+    addEvent(target, time, var.value, type, stackTrace);
 
 }
 
@@ -590,7 +650,7 @@ void RawEventGroup::sortEvents()
 
 void RawEventGroup::refreshMinMax()
 {
-    if (events != 0) {
+    if (events != 0 && events->size() > 0) {
         std::sort(events->begin(), events->end());
 
         timeMin = events->front().time();

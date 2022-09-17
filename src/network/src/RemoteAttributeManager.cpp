@@ -86,6 +86,11 @@ std::string RemoteAttributeManager::getValue(const std::string& key)
 std::string RemoteAttributeManager::getUpdatedValue(const std::string& key)
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
+	return _getUpdatedValue(key);
+}
+
+std::string RemoteAttributeManager::_getUpdatedValue(const std::string& key)
+{
 	std::string value = "";
 
 	auto it = attributeData.find(key);
@@ -169,10 +174,9 @@ void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute
 	STI::TNetwork::TAttributeSeq_var tAttributes(new STI::TNetwork::TAttributeSeq);
 
     try {
-
+		
 		getTRef()->getAttributes(tAttributes);	//remote call
 
-		// convert<TAttribute, std::shared_ptr<Attribute>>(tAttributes, attributes);
 		if (convert<TAttribute, std::shared_ptr<RemoteAttribute>>(tAttributes, remoteAttributes)) {
 			
 			attributes.clear();

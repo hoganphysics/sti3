@@ -42,7 +42,7 @@ public:
 	void kill();
 	void disable();
 	
-	const STI::Device::DeviceID getID() const;
+	const STI::Device::DeviceID getID() const;	//use locally stored value
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);

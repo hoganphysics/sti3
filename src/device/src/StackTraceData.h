@@ -25,19 +25,18 @@ class StackTraceData
 public:
 
     StackTraceData();
-
     StackTraceData(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& timingFiles, const std::vector<std::string>& functionNames);
-
     StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
     
-    //needed mutex locks
-
     StackTrace addStackTrace(const RawStackTrace& stackTrace);
     RawStackTrace getStackTrace(const StackTrace& stackTrace) const;
 
     std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
     // std::vector<std::string> timingFileNames()
     std::vector<std::string> getFunctionNames() const;
+
+    void replaceFile(const std::string& oldFilename, const std::shared_ptr<STI::Utils::FileHolder>& newFile);
+    void deleteFiles();
 
     template<class Archive>
 	void serialize(Archive& archive);

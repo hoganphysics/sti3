@@ -63,7 +63,7 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
                             convert<TMixedValueType, MixedValueType>(tChannel.inputType),
                             convert<TMixedValueType, MixedValueType>(tChannel.outputType),
                             convert<::CORBA::String_member, std::string>(tChannel.channelName),
-                            metaData, lastValue);
+                            lastValue, metaData);
 
 
 

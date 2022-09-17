@@ -1,7 +1,7 @@
 
 #include <sti/device/LocalAttribute.h>
 #include "AttributeRefreshListener.h"
-
+#include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
 #include <sstream>
@@ -155,6 +155,17 @@ LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const STI::U
     return (*this);
 }
 
+LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const std::string& data)
+{
+    std::unique_lock<std::mutex> attributeLock(attMutex);
+
+    STI::Utils::MixedValue value;
+    value.setValue(data);
+
+    metaData.addMetaData(key, value);
+
+    return (*this);
+}
 
 const STI::Utils::MixedValue& LocalAttribute::getMetaData() const
 {

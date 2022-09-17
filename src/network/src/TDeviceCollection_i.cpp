@@ -1,9 +1,7 @@
-
 #include "TDeviceCollection_i.h"
 #include "RemoteDevice.h"
 #include "NetworkConvert.h"
 #include "TDeviceRefInterface.h"
-
 #include "ORBManager.h"
 
 using STI::Network::TDeviceRefInterface;
@@ -68,6 +66,7 @@ TDeviceCollection_i::~TDeviceCollection_i()
 {
 	bool success = false;
 	std::shared_ptr<STI::Device::Device> localDevice;
+	device = STI::TNetwork::TDevice::_nil();
 
 	if (deviceCollection != 0) {
 		//get local device reference from Collection
@@ -79,16 +78,11 @@ TDeviceCollection_i::~TDeviceCollection_i()
 		return false;
 	}
 
-	// STI::TNetwork::TDevice_ptr tDevice;
-	// success = TDeviceRefInterface::getTDeviceReference(localDevice, tDevice);
 	STI::TNetwork::TDevice_var tDevice;
 	success = TDeviceRefInterface::getTDeviceReference(localDevice, tDevice);
 
 	if (success) {
-		
-		// STI::TNetwork::TDevice_var tDeviceVar(tDevice);		//managed
-		// device = tDeviceVar.out();
-		device = tDevice.out();
+		device = STI::TNetwork::TDevice::_duplicate(tDevice);
 	}
 
 	return success;
@@ -97,19 +91,20 @@ TDeviceCollection_i::~TDeviceCollection_i()
 void TDeviceCollection_i::getIDs(::STI::TNetwork::TDeviceIDSeq_out deviceIDseq)
 {
 	std::set<DeviceID> ids;
+	deviceIDseq = new STI::TNetwork::TDeviceIDSeq();
+
 	if (deviceCollection != 0) {
 		deviceCollection->getIDs(ids);
 
 		STI::TNetwork::TDeviceIDSeq_var tDeviceIDseq_var(new STI::TNetwork::TDeviceIDSeq);
 
-		if (convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var)) {
+		convert<DeviceID, STI::TNetwork::TDeviceID>(ids,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TDeviceID>&) tDeviceIDseq_var);
 
-			deviceIDseq = tDeviceIDseq_var.out();
-		}
-
+		(*deviceIDseq) = tDeviceIDseq_var;
 	}
 }
+
 
 void TDeviceCollection_i::cleanup()
 {

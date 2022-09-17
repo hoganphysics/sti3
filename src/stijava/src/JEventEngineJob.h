@@ -4,6 +4,7 @@
 
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EngineJobStatus.h>
+#include "DeviceIDIndexedGraph.h"
 
 #include <memory>
 
@@ -32,6 +33,8 @@ public:
 
     std::shared_ptr<JShot> getShot() const;
     std::shared_ptr<EventEngineDependencyTree> getDependencies() const;
+    
+    STI::Device::DeviceIDIndexedGraph getDependenciesIndexed() const;
 
     std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
 

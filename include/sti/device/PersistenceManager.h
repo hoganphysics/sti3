@@ -1,17 +1,13 @@
 #ifndef STI_DEVICE_PERSISTENCEMANAGER_H
 #define STI_DEVICE_PERSISTENCEMANAGER_H
 
-#include <sti/engine/ShotID.h>
-#include <sti/engine/ResultTicket.h>
-#include <sti/engine/ResultsCollector.h>
 #include <sti/engine/EventEngineJob.h>
-// #include "ResultsCollectorFactory.h"
-#include <sti/utils/FileHolderFactory.h>
-//#include "ShotRepository.h"
-#include <sti/engine/ShotResultRecord.h>
-
 #include <sti/engine/FullShotResult.h>
-
+#include <sti/engine/ResultsCollector.h>
+#include <sti/engine/ResultTicket.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/ShotResultRecord.h>
+#include <sti/utils/FileHolderFactory.h>
 
 #include <memory>
 
@@ -27,6 +23,8 @@ class PersistenceManager : public STI::Utils::FileHolderFactory
 public:
 
     virtual ~PersistenceManager() {}
+
+    virtual bool findShot(const STI::Engine::ShotID& sid) = 0;
 
     virtual bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult) = 0;
 

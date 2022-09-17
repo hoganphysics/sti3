@@ -7,6 +7,7 @@
 
 #include <set>
 
+
 using STI::Device::LocalAttributeManager;
 using STI::Device::Attribute;
 using STI::Device::LocalAttribute;

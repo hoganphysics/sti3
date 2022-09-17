@@ -5,15 +5,21 @@
 
 using STI::Network::RemoteChannel;
 using STI::Network::RemoteChannelManager;
+using STI::Network::ChannelDataTuple;
 
 
 RemoteChannel::RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
-        const std::string& channelName, STI::Utils::MixedValue& metaData, const STI::Utils::MixedValue& storedValue)
+        const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
+        const STI::Utils::MixedValue& metaData)
 : channelNumber_(channelNumber), type_(type), inputType_(inputType), outputType_(outputType), 
-channelName_(channelName), metaData_(metaData), storedValue(storedValue)
+metaData_(metaData)
 {
+    channelData = std::make_shared<ChannelDataTuple>();
+    channelData->name = channelName;
+    channelData->value = lastValue;
 }
+
 
 void RemoteChannel::attachManager(RemoteChannelManager* manager)
 {
@@ -60,10 +66,11 @@ std::string RemoteChannel::getChannelName() const
     return name;
 }
 
-std::string RemoteChannel::getStoredChannelName() const
+std::shared_ptr<ChannelDataTuple> RemoteChannel::getChannelData() const
 {
-    return channelName_;
+    return channelData;
 }
+
 // void RemoteChannel::updateChannelName(const std::string& name)
 // {
 //     channelName_ = name;
@@ -85,11 +92,6 @@ const STI::Utils::MixedValue RemoteChannel::getLastValue() const
     return lastValue;
 }
 
-void RemoteChannel::moveStoredValue(STI::Utils::MixedValue& value)
-{
-    value = std::move(storedValue);
-    storedValue.clear();
-}
 
 const STI::Utils::MixedValue& RemoteChannel::getMetaData() const
 {

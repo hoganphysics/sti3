@@ -20,10 +20,12 @@ class JPersistenceManager
 {
 public:
 	
-	JPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
+	JPersistenceManager(const std::shared_ptr<STI::Device::PersistenceManager>& manager);
 	~JPersistenceManager();
 
-    std::shared_ptr<STI::Engine::ShotResult> getShot(const STI::Engine::ShotID& sid);
+    std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);
+    std::shared_ptr<STI::Engine::ShotResult> getShotResult(const STI::Engine::ShotID& sid);
+
     std::shared_ptr<STI::Engine::MeasurementVector> getMeasurements(const STI::Engine::ShotID& sid);
 
 private:

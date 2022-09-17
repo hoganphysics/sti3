@@ -1,4 +1,3 @@
-
 #include "RemoteDeviceMessageHandler.h"
 #include "NetworkConvert.h"
 #include <sti/device/DeviceMessage.h>
@@ -16,24 +15,18 @@ using STI::Network::convert;
 using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TDeviceMessageHandler;
 
+
 RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_ptr deviceHandler)
 : TReferenceHolder<TDeviceMessageHandler>(deviceHandler, handlerMutex)
-//	: tDeviceHandler(STI::TNetwork::TDeviceMessageHandler::_duplicate(deviceHandler))
 {
 	STI::Network::ORBManager::ORBManager::activateServant(refreshIndicator);
 	
 	std::unique_lock<std::mutex> handlerLock(handlerMutex);
 
-//	STI::TNetwork::TDeviceEventHandler
-//	CORBA::remove_ref(deviceHandler);
 	//install refresh indicator on the remote resource this object is wrapping
 	try {
-
-		//STI::TNetwork::TRefreshIndicator_var refreshIndicatorVar = refreshIndicator._this();
-		//getTRef()->setRefreshIndicator(refreshIndicatorVar);	//remote call
-		
+	
 		getTRef()->setRefreshIndicator(refreshIndicator._this());	//remote call
-
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -159,5 +152,4 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 	return success && listenersTypes.count(mess->getType()) > 0;
 	
 }
-
 

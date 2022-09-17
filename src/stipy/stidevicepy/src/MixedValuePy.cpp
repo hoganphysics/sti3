@@ -32,6 +32,10 @@ MixedValuePy::MixedValuePy(const py::object& value)
     setValue_py(value);
 }
 
+STI::Utils::MixedValue& MixedValuePy::getMixedValue()
+{
+    return (*this);
+}
 
 pybind11::object MixedValuePy::getValue_py() const
 {
@@ -79,18 +83,12 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 
 void MixedValuePy::setValue_py(const py::object& value)
 {
-//    pybind11::list;
-
-    if (setValueExtract<MixedValuePy, MixedValuePy>(value)) return;
+    if (setValueExtract<MixedValuePy, MixedValue>(value)) return;
 
     if (setValueExtract<py::float_, double>(value)) return;
     if (setValueExtract<py::int_, int>(value)) return;
     if (setValueExtract<py::str, std::string>(value)) return;
     if (setValueExtract<py::bool_, bool>(value)) return;
-
-    // if (pybind11::isinstance<pybind11::int_>(value)) {
-    //     MixedValue::setValue( value.cast<int>() );
-    // }
 
     if (value && py::isinstance<py::list>(value)) {
         const py::list& list_vals = value.cast<py::list>();
@@ -102,17 +100,31 @@ void MixedValuePy::setValue_py(const py::object& value)
 
 void MixedValuePy::addValue_py(const py::handle& value)
 {
+    if (addValueExtract<MixedValuePy, MixedValue>(value)) return;
+
     if (addValueExtract<py::float_, double>(value)) return;
     if (addValueExtract<py::int_, int>(value)) return;
     if (addValueExtract<py::str, std::string>(value)) return;
     if (addValueExtract<py::bool_, bool>(value)) return;
 
     if (value && py::isinstance<py::list>(value)) {
-        
+
         const py::list& list_vals = value.cast<py::list>();
-        
-        for (const py::handle& obj : list_vals) {
-            addValue_py(obj);
+
+        if (isType(MixedValueType::Empty)) {
+            //add list data to this level
+            for (const py::handle& obj : list_vals) {
+                addValue_py(obj);
+            }
+        }
+        else {
+            //Make and add new sublist
+            MixedValuePy newListVal;
+
+            for (const py::handle& obj : list_vals) {
+                newListVal.addValue_py(obj);
+            }
+            addValue_py(newListVal);
         }
     }
 }

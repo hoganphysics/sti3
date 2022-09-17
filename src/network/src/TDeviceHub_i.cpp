@@ -169,10 +169,7 @@ void TDeviceHub_i::walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwor
 		);
 		
 		//convert out values
-		//STI::TNetwork::TNodeWalker_var tNodeWalker(new STI::TNetwork::TNodeWalker);
 		convert<STI::Network::DeviceHub::HubNodeWalker, STI::TNetwork::TNodeWalker>(nodeWalker, root);
-
-	//	root = tNodeWalker.out();
 	}
 }
 

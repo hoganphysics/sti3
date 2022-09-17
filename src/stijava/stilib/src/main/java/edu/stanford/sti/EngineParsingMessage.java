@@ -36,8 +36,12 @@ public class EngineParsingMessage {
     }
   }
 
+  public EngineParsingMessage() {
+    this(stiJNI.new_EngineParsingMessage__SWIG_0(), true);
+  }
+
   public EngineParsingMessage(DeviceID source, ParsingMessageType type, long id, String name) {
-    this(stiJNI.new_EngineParsingMessage(DeviceID.getCPtr(source), source, type.swigValue(), id, name), true);
+    this(stiJNI.new_EngineParsingMessage__SWIG_1(DeviceID.getCPtr(source), source, type.swigValue(), id, name), true);
   }
 
   public ParsingMessageType getType() {

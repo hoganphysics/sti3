@@ -55,6 +55,8 @@ public:
 
 	bool get(const Key& key, T& item) const;
 	void getKeys(std::set<Key>& keys) const;
+	void getValues(std::vector<T>& values) const;
+	void getValues(const std::set<Key>& keys, std::vector<T>& values) const;
 	bool add(const Key& key, T item);
 	bool remove(const Key& key);
 	bool addAndRemove(const Key& key, T newItem, T& oldItem);
@@ -128,9 +130,23 @@ void STI::Utils::OrderedBufferMap<Key, T>::getKeys(std::set<Key>& keys) const
 }
 
 template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::getValues(std::vector<T>& values) const
+{
+	buffer.getValues(values);
+}
+
+template<class Key, class T>
+void STI::Utils::OrderedBufferMap<Key, T>::getValues(const std::set<Key>& keys, std::vector<T>& values) const
+{
+	buffer.getValues(keys, values);
+}
+
+template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::add(const Key& key, T item)
 {
 	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	if (contains(key)) return false;
 
 	bool success;
 	buffer_keys.push_front(key);		//add new key to front
@@ -150,6 +166,8 @@ template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::addAndRemove(const Key& key, T newItem, T& oldItem)
 {
 	std::unique_lock<std::mutex> writeLock(dequeMutex);
+
+	if (contains(key)) return false;
 
 	bool oldItemValid = false;
 

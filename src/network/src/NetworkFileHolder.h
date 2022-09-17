@@ -23,6 +23,8 @@ class NetworkFileHolder : public STI::Utils::LocalFileHolder,
 {
 public:
 
+    NetworkFileHolder();    //for serialization
+
     NetworkFileHolder(const std::string& filename);
     virtual ~NetworkFileHolder();
 
@@ -47,7 +49,6 @@ public:
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename)
     {
-        // std::shared_ptr<NetworkFileHolder> holder(new NetworkFileHolder(filename));
         auto holder = std::make_shared<NetworkFileHolder>(filename);
         return std::static_pointer_cast<STI::Utils::FileHolder>(holder);
     }

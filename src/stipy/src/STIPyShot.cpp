@@ -10,9 +10,7 @@
 
 #include "LocalShot.h"
 #include "MixedValuePy.h"
-#include "ParsedTag.h"
-
-#include <iostream>
+#include <sti/engine/ParsedTag.h>
 
 #include <pybind11/pybind11.h>
 
@@ -35,10 +33,10 @@ STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
 {
     if (shot == 0) {
         ShotConfig shotConfig;
-        auto baseGroup = std::make_shared<RawEventGroup>();
-        this->shot = std::make_shared<LocalShot>(shotConfig, baseGroup);
+        auto rootGroup = std::make_shared<RawEventGroup>();
+        this->shot = std::make_shared<LocalShot>(shotConfig, rootGroup);
     }
-    shot->getBaseEventGroup(baseEventGroup);
+    shot->getRootEventGroup(rootEventGroup);
 }
 
 
@@ -110,12 +108,12 @@ void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, con
 
 std::shared_ptr<std::vector<STI::Engine::RawEvent>> STIPyShot::getEvents()
 {
-    return baseEventGroup->getEvents();
+    return rootEventGroup->getEvents();
 }
 
 std::vector<STI::Engine::ParsedVar> STIPyShot::getVars()
 {
-    return baseEventGroup->getVars();
+    return rootEventGroup->getVars();
 }
 
 
@@ -130,19 +128,18 @@ void STIPyShot::append(const STI::Engine::RawEvent& evt)
 
 std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group()
 {
-    return baseEventGroup;
+    return rootEventGroup;
 }
 
 std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group(const std::string& fullName)
 {
-
     std::shared_ptr<RawEventGroup> g;
 
     if (fullName == "" || fullName == "/") {
-        g = baseEventGroup;
+        g = rootEventGroup;
     }
     else {
-        g = baseEventGroup->group(fullName);
+        g = rootEventGroup->group(fullName);
     }
     return g;
 }

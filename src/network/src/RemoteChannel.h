@@ -6,6 +6,8 @@
 #include <sti/utils/MetaData.h>
 
 #include <string>
+#include <memory>
+
 
 namespace STI
 {
@@ -13,6 +15,7 @@ namespace Network
 {
 
 class RemoteChannelManager;
+struct ChannelDataTuple;
 
 
 class RemoteChannel : public STI::Device::Channel
@@ -21,8 +24,8 @@ public:
 
 	RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
-        const std::string& channelName, STI::Utils::MixedValue& metaData, 
-		const STI::Utils::MixedValue& storedValue);
+        const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
+		const STI::Utils::MixedValue& metaData);
 
     void attachManager(RemoteChannelManager* manager);
 
@@ -34,11 +37,9 @@ public:
 
 	void setChannelName(const std::string& name);
 	std::string getChannelName() const;
-	std::string getStoredChannelName() const;
 
 	void saveLastValue(const STI::Utils::MixedValue& value);
 	const STI::Utils::MixedValue getLastValue() const;
-	void moveStoredValue(STI::Utils::MixedValue& value);
 
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
@@ -48,14 +49,17 @@ public:
 
 private:
 
+	friend RemoteChannelManager;
+	std::shared_ptr<ChannelDataTuple> getChannelData() const;
+
     unsigned short channelNumber_;
     STI::Device::ChannelType type_;
 	STI::Utils::MixedValueType inputType_;
     STI::Utils::MixedValueType outputType_;
-    std::string channelName_;
+    // std::string channelName_;
     STI::Utils::MetaData metaData_;
 
-    STI::Utils::MixedValue storedValue;
+    std::shared_ptr<ChannelDataTuple> channelData;
 
     RemoteChannelManager* remoteManager;
 

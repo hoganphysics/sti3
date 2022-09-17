@@ -54,6 +54,20 @@ const DeviceID JDevice::getID() const
     return DeviceID("","",0,"");
 }
 
+void JDevice::kill()
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->kill();
+    }
+}
+
+void JDevice::disable()
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->disable();
+    }
+}
+
 std::shared_ptr<STI::Device::JDeviceCollection> JDevice::getCollection()
 {
     std::shared_ptr<STI::Device::JDeviceCollection> jCollection;

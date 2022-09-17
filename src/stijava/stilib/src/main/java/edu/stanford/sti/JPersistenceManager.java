@@ -40,8 +40,13 @@ public class JPersistenceManager {
     }
   }
 
-  public ShotResult getShot(ShotID sid) {
-    long cPtr = stiJNI.JPersistenceManager_getShot(swigCPtr, this, ShotID.getCPtr(sid), sid);
+  public ParseResult getParseResult(ParseID pid) {
+    long cPtr = stiJNI.JPersistenceManager_getParseResult(swigCPtr, this, ParseID.getCPtr(pid), pid);
+    return (cPtr == 0) ? null : new ParseResult(cPtr, true);
+  }
+
+  public ShotResult getShotResult(ShotID sid) {
+    long cPtr = stiJNI.JPersistenceManager_getShotResult(swigCPtr, this, ShotID.getCPtr(sid), sid);
     return (cPtr == 0) ? null : new ShotResult(cPtr, true);
   }
 

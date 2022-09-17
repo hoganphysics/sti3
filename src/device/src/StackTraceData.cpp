@@ -28,10 +28,17 @@ StackTraceData::StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFacto
     init();
 }
 
-StackTraceData::StackTraceData(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& timingFiles, const std::vector<std::string>& functionNames)
-: timingFiles(timingFiles), functionNames(functionNames)
+StackTraceData::StackTraceData(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files, const std::vector<std::string>& funcNames)
 {
     init();
+
+    for (auto& file : files) {
+        fileMap->add(file->getFilename(), file);
+    }
+
+    for (auto& name : funcNames) {
+        functionMap->add(name, name);
+    }
 }
 
 void StackTraceData::init()
@@ -47,8 +54,6 @@ void StackTraceData::init()
 
 StackTrace StackTraceData::addStackTrace(const RawStackTrace& rawStackTrace)
 {
-    // std::unique_lock<std::mutex> fileLock(stackDataMutex);
-
     StackTrace stackTrace;
     
     for (auto& rawFrame : rawStackTrace.getFrames()) {
@@ -87,7 +92,6 @@ std::vector<std::shared_ptr<STI::Utils::FileHolder>> StackTraceData::getTimingFi
 }
 
 
-// std::vector<std::string> timingFileNames()
 std::vector<std::string> StackTraceData::getFunctionNames() const
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
@@ -108,6 +112,25 @@ unsigned StackTraceData::addFile(const std::string& filename)
     //new file
     auto file = fileHolderFactory->makeFileHolder(filename);
     return fileMap->add(filename, file);
+}
+
+void StackTraceData::replaceFile(const std::string& oldFilename, const std::shared_ptr<STI::Utils::FileHolder>& newFile)
+{
+    std::unique_lock<std::mutex> fileLock(stackDataMutex);
+
+    if (newFile == 0) return;
+
+    fileMap->rename(oldFilename, newFile->getFilename());
+    fileMap->replace(newFile->getFilename(), newFile);
+}
+
+void StackTraceData::deleteFiles()
+{
+    for (auto& file : timingFiles) {
+        if (file != 0) {
+            file->deleteFile();
+        }
+    }
 }
 
 template<class Archive>

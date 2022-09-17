@@ -20,7 +20,7 @@ using STI::Engine::FullShotResult;
 
 
 TransientRepository::TransientRepository(const std::string& tempBasePath)
-: resultBuffer(5)
+: parseBuffer(5), resultBuffer(5)
 {
     //Need a temporary directory to store any files (measurements, timing files, etc).
     //This directory is for temporary files that will be deleted when the shot expires.
@@ -53,9 +53,9 @@ bool TransientRepository::findShotResult(const ShotID& sid)
     return resultBuffer.contains(sid);
 }
 
-bool TransientRepository::findParseResult(const ParseID& sid)
+bool TransientRepository::findParseResult(const ParseID& pid)
 {
-    return false;
+    return parseBuffer.contains(pid);
 }
 
 bool TransientRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
@@ -68,18 +68,25 @@ bool TransientRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotRe
     return false;
 }
 
-bool TransientRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult)
+bool TransientRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& parseResult)
 {
-    return false;
+    return parseBuffer.get(id, parseResult);
 }
 
 bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult)
 {
+    if (fullShotResult == 0) return false;
+
     std::shared_ptr<FullShotResult> expiredResult;  //the oldest result in the buffer; ready to delete
-    
     if (resultBuffer.addAndRemove(sid, fullShotResult, expiredResult) && expiredResult != 0) {
         //The buffer was full. Need to delete the old result;
-        ShotResult::deleteShotFiles(*expiredResult->shotResult);
+        ShotResult::deleteFiles(*expiredResult->shotResult);
+    }
+
+    std::shared_ptr<ParseResult> expiredParseResult;  //the oldest result in the buffer; ready to delete
+    if (parseBuffer.addAndRemove(sid.parseID, fullShotResult->parseResult, expiredParseResult) && expiredParseResult != 0) {
+        //The buffer was full. Need to delete the old result;
+        ParseResult::deleteFiles(*expiredParseResult);
     }
 
     return findShotResult(sid);

@@ -6,6 +6,9 @@
 
 #include <pybind11/pybind11.h>
 
+
+#include <iostream>
+
 namespace STI
 {
 namespace Python
@@ -21,14 +24,14 @@ public:
  //   MixedValuePy(const MixedValuePy& value);
     MixedValuePy(const pybind11::object& value);
 
+    STI::Utils::MixedValue& getMixedValue();
     pybind11::object getValue_py() const;
+
     void setValue_py(const pybind11::object& value);
     void addValue_py(const pybind11::handle& value);
 
     void setValue_py(const MixedValuePy& value);
     void addValue_py(const MixedValuePy& value);
-
-    //void setValue(const MixedValuePy& value);
 
 private:
 
@@ -41,7 +44,8 @@ private:
 
         try {
             if (value && pybind11::isinstance<PyT>(value)) {
-                MixedValue::setValue( value.cast<T>() );
+                // MixedValue::setValue( value.cast<T>() );
+                MixedValue::setValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
             success = false;
@@ -60,7 +64,8 @@ private:
 
         try {
             if (value && pybind11::isinstance<PyT>(value)) {
-                MixedValue::addValue( value.cast<T>() );
+                // MixedValue::addValue( value.cast<T>() );
+                MixedValue::addValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
             success = false;
@@ -71,9 +76,7 @@ private:
 
         return success;
     }
-
-
-
+    
 };
 
 

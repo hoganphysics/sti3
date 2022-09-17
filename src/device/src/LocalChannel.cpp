@@ -71,12 +71,8 @@ const STI::Utils::MixedValue LocalChannel::getLastValue() const
 LocalChannel& LocalChannel::addMetaData(const std::string& key, const STI::Utils::MixedValue& value)
 {
     std::unique_lock<std::mutex> channelLock(chMutex);
-	
-	STI::Utils::MixedValue labeledData;
-	labeledData.addValue(key);
-	labeledData.addValue(value);
 
-	metaData.addValue(labeledData);
+	metaData.addMetaData(key, value);
 
 	return (*this);
 }
@@ -84,26 +80,13 @@ LocalChannel& LocalChannel::addMetaData(const std::string& key, const STI::Utils
 const STI::Utils::MixedValue& LocalChannel::getMetaData() const
 {
     std::unique_lock<std::mutex> channelLock(chMutex);
-	return metaData;
+	return metaData.getMetaData();
 }
 
 STI::Utils::MixedValue LocalChannel::getMetaData(const std::string& key) const
 {
     std::unique_lock<std::mutex> channelLock(chMutex);
-
-	STI::Utils::MixedValue data;	//empty
-
-	const STI::Utils::MixedValueVector& values = metaData.getVector();
-
-	for (auto& tuple : values) {
-		const STI::Utils::MixedValueVector& labeledData = tuple.getVector();
-		if (labeledData.size() == 2 && labeledData.at(0).getString().compare(key) == 0) {
-			data = labeledData.at(1);
-			break;
-		}
-	}
-
-	return data;
+	return metaData.getMetaData(key);
 }
 
 void LocalChannel::_fireRefreshChannelEvent()

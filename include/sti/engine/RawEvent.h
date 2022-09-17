@@ -49,6 +49,7 @@ class RawEventGroup;
 class StackTraceData;
 class RawStackTrace;
 
+
 struct RawEventID
 {
 	std::string groupName;
@@ -153,7 +154,6 @@ private:
 	const RawEventGroup* parentGroup;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
-
 
 	//Somewhat of a hack here. Allowing friend access so SynchronousEvent
 	//can confirm that this RawEvent has been scheduled when it is added as a Measurement.

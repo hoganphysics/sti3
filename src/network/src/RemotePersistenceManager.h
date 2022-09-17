@@ -21,6 +21,7 @@ public:
 	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager);
     ~RemotePersistenceManager();
 
+    bool findShot(const STI::Engine::ShotID& sid);
     bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult);
     bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult);
 
@@ -37,8 +38,9 @@ public:
 
 private:
 
-	mutable std::mutex persistenceMutex;
+    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
+	mutable std::mutex persistenceMutex;
 };
 
 

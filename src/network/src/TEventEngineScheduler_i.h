@@ -43,13 +43,17 @@ public:
 
 
     //void addJob(::STI::TNetwork::TEventEngineJob_ptr newJob);
+    ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job);
     void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
     void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
     void cancelAll();
 
-    void getQueuedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
-    void getRunningJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
-    void getCompletedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+    TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType);
+    TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType);
+
+    // void getQueuedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+    // void getRunningJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
+    // void getCompletedJobs(::STI::TNetwork::TEngineJobIDSeq_out jobIDs);
 
     // ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
     // ::CORBA::Boolean getParsingMessages(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TEngineParsingMessageSeq_out messages);

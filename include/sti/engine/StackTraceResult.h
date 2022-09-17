@@ -19,6 +19,7 @@ class StackTraceResult
 public:
 
     StackTraceResult();
+    StackTraceResult(const ParseID& pid);
 
     ParseID pid;
 

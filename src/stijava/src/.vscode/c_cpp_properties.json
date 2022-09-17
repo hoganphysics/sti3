@@ -4,9 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../../../../include/",
-                "${workspaceFolder}/../../../device/src/",
-                "${workspaceFolder}/../../src/"
+                "${workspaceFolder}/../../../include/",
+                "${workspaceFolder}/../../device/src/",
+                "${workspaceFolder}/../src/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

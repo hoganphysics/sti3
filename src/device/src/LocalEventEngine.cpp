@@ -18,6 +18,7 @@
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/SynchronousEvent.h>
+#include <sti/engine/StackTraceResult.h>
 
 #include "EventEngineDependencyTree.h"
 #include "EventEngineParser.h"
@@ -27,7 +28,7 @@
 #include "LocalTriggerCallback.h"
 #include "MasterTrigger.h"
 #include "ParsedDependencyTree.h"
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <memory>
 #include <thread>
@@ -361,11 +362,12 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseResult->pid = lastParseID;
 	lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
 	lastParseResult->messages = localParsingMessages;
-	lastParseResult->stackTraceResult;
+	lastParseResult->stackTraceResult = std::make_shared<StackTraceResult>(lastParseID);
+	
 //	dependencyTree = job.dependencies;
 
 	std::shared_ptr<RawEventGroup> eventGroup;
-	shot->getBaseEventGroup(eventGroup);
+	shot->getRootEventGroup(eventGroup);
 
 	if (eventGroup != 0) {
 		baseEventGroupName = eventGroup->getName();
@@ -374,6 +376,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		unhandledEvents = std::make_shared<RawEventGroup>(baseEventGroupName, ""); 
 
 		lastParseResult->baseEventGroup = eventGroup;
+		lastParseResult->stackTraceResult->stackTraceData = eventGroup->getStackTraceData();
 
 		divideEvents(eventGroup, unhandledEvents);
 	}
@@ -544,7 +547,7 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
     	std::shared_ptr<EventEngineScheduler> scheduler;
 
 		auto it = eventsByTarget.find(id);
-		if (it == eventsByTarget.end() || it->second->getEvents() == 0 || it->second->getEvents()->size() == 0) {
+		if (it == eventsByTarget.end() || it->second->eventsEmpty() ) {
 			//no events for this device; skip this id
 			return;
 		}

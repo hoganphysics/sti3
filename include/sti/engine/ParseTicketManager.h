@@ -74,6 +74,7 @@ std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID&
         removeTicket = true;
         break;
     case EngineJobStatus::NotFound:
+    case EngineJobStatus::Archived:
         ticket->cancel();
         removeTicket = true;
         break;

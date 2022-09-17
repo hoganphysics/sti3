@@ -1,4 +1,3 @@
-
 #include "RemoteFileHolder.h"
 #include "NetworkConvert.h"
 #include "TFileHolderRefInterface.h"
@@ -94,7 +93,6 @@ bool RemoteFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinati
     }
 
 	try {
-
 		success = getTRef()->transferFile(tDestination);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {

@@ -8,7 +8,7 @@
 
 package edu.stanford.sti;
 
-public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector> {
+public class RawEventMap extends java.util.AbstractMap<Double, RawEventVector> {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
@@ -42,19 +42,19 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
   }
 
   public boolean containsKey(java.lang.Object key) {
-    if (!(key instanceof DeviceID)) {
+    if (!(key instanceof Double)) {
       return false;
     }
 
-    return containsImpl((DeviceID)key);
+    return containsImpl((Double)key);
   }
 
   public RawEventVector get(java.lang.Object key) {
-    if (!(key instanceof DeviceID)) {
+    if (!(key instanceof Double)) {
       return null;
     }
 
-    Iterator itr = find((DeviceID) key);
+    Iterator itr = find((Double) key);
     if (itr.isNot(end())) {
       return itr.getValue();
     }
@@ -62,8 +62,8 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
     return null;
   }
 
-  public RawEventVector put(DeviceID key, RawEventVector value) {
-    Iterator itr = find((DeviceID) key);
+  public RawEventVector put(Double key, RawEventVector value) {
+    Iterator itr = find((Double) key);
     if (itr.isNot(end())) {
       RawEventVector oldValue = itr.getValue();
       itr.setValue(value);
@@ -75,11 +75,11 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
   }
 
   public RawEventVector remove(java.lang.Object key) {
-    if (!(key instanceof DeviceID)) {
+    if (!(key instanceof Double)) {
       return null;
     }
 
-    Iterator itr = find((DeviceID) key);
+    Iterator itr = find((Double) key);
     if (itr.isNot(end())) {
       RawEventVector oldValue = itr.getValue();
       removeUnchecked(itr);
@@ -89,22 +89,22 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
     }
   }
 
-  public java.util.Set<Entry<DeviceID, RawEventVector>> entrySet() {
-    java.util.Set<Entry<DeviceID, RawEventVector>> setToReturn =
-        new java.util.HashSet<Entry<DeviceID, RawEventVector>>();
+  public java.util.Set<Entry<Double, RawEventVector>> entrySet() {
+    java.util.Set<Entry<Double, RawEventVector>> setToReturn =
+        new java.util.HashSet<Entry<Double, RawEventVector>>();
 
     Iterator itr = begin();
     final Iterator end = end();
     while (itr.isNot(end)) {
-      setToReturn.add(new Entry<DeviceID, RawEventVector>() {
+      setToReturn.add(new Entry<Double, RawEventVector>() {
         private Iterator iterator;
 
-        private Entry<DeviceID, RawEventVector> init(Iterator iterator) {
+        private Entry<Double, RawEventVector> init(Iterator iterator) {
           this.iterator = iterator;
           return this;
         }
 
-        public DeviceID getKey() {
+        public Double getKey() {
           return iterator.getKey();
         }
 
@@ -168,8 +168,8 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
       return stiJNI.RawEventMap_Iterator_isNot(swigCPtr, this, RawEventMap.Iterator.getCPtr(other), other);
     }
   
-    private DeviceID getKey() {
-      return new DeviceID(stiJNI.RawEventMap_Iterator_getKey(swigCPtr, this), true);
+    private double getKey() {
+      return stiJNI.RawEventMap_Iterator_getKey(swigCPtr, this);
     }
   
     private RawEventVector getValue() {
@@ -190,8 +190,8 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
     stiJNI.RawEventMap_clear(swigCPtr, this);
   }
 
-  private RawEventMap.Iterator find(DeviceID key) {
-    return new RawEventMap.Iterator(stiJNI.RawEventMap_find(swigCPtr, this, DeviceID.getCPtr(key), key), true);
+  private RawEventMap.Iterator find(double key) {
+    return new RawEventMap.Iterator(stiJNI.RawEventMap_find(swigCPtr, this, key), true);
   }
 
   private RawEventMap.Iterator begin() {
@@ -206,12 +206,12 @@ public class RawEventMap extends java.util.AbstractMap<DeviceID, RawEventVector>
     return stiJNI.RawEventMap_sizeImpl(swigCPtr, this);
   }
 
-  private boolean containsImpl(DeviceID key) {
-    return stiJNI.RawEventMap_containsImpl(swigCPtr, this, DeviceID.getCPtr(key), key);
+  private boolean containsImpl(double key) {
+    return stiJNI.RawEventMap_containsImpl(swigCPtr, this, key);
   }
 
-  private void putUnchecked(DeviceID key, RawEventVector value) {
-    stiJNI.RawEventMap_putUnchecked(swigCPtr, this, DeviceID.getCPtr(key), key, RawEventVector.getCPtr(value), value);
+  private void putUnchecked(double key, RawEventVector value) {
+    stiJNI.RawEventMap_putUnchecked(swigCPtr, this, key, RawEventVector.getCPtr(value), value);
   }
 
   private void removeUnchecked(RawEventMap.Iterator itr) {

@@ -41,8 +41,8 @@ public:
 	virtual ~JDevice();
 
 	const DeviceID getID() const;
-	void kill() {}
-	void disable() {}
+	void kill();
+	void disable();
 
 	//Device
 	bool refresh();

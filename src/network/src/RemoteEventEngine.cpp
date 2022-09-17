@@ -1,4 +1,3 @@
-
 #include "RemoteEventEngine.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
@@ -25,7 +24,6 @@ using STI::Network::NetworkResultsCollector;
 
 RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
 : STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngine>(engine, engineMutex)
-//	: _tEngine(STI::TNetwork::TEventEngine::_duplicate(engine))
 {
 }
 
@@ -296,83 +294,4 @@ bool RemoteEventEngine::getParseResult(const STI::Engine::ParseID& parseID, std:
 	}
 	return success;
 }
-
-
-// // const STI::Engine::DeviceEventMap& RemoteEventEngine::getParsedEvents()
-// bool RemoteEventEngine::getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents)
-// {
-// 	std::unique_lock<std::mutex> engineLock(engineMutex);
-
-// 	if (isDisabled()) return false;
-
-// 	STI::TNetwork::TDeviceEventsSeq_var tEngineParsedEvents(new STI::TNetwork::TDeviceEventsSeq);
-
-// 	bool success = false;
-
-// 	try {
-// 		success = getTRef()->getParsedEvents(convert<ParseID, TParseID>(parseID), tEngineParsedEvents);	//remote call
-
-// 		success &= convert<::STI::TNetwork::TDeviceEventsSeq, STI::Engine::DeviceEventMap>(tEngineParsedEvents, parsedEvents);
-// 	}
-// 	catch (CORBA::TRANSIENT&) {
-// 	}
-// 	catch (CORBA::SystemException&) {
-// 	}
-// 	catch (CORBA::Exception&)
-// 	{
-// 	}
-// 	return success;
-// }
-
-// bool RemoteEventEngine::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
-// {
-// 	std::unique_lock<std::mutex> engineLock(engineMutex);
-
-// 	if (isDisabled()) return false;
-
-// 	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
-// 	measurements = std::make_shared<STI::Engine::MeasurementVector>();
-
-// 	bool success = false;
-
-// 	try {
-// 		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
-
-// 		//success &= convert<::STI::TNetwork::TMeasurementSeq, STI::Engine::MeasurementVector>(tMeasurements, *measurements); (_CORBA_Unbounded_Sequence<::STI::TNetwork::TMeasurement>) 
-// 		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
-// 	}
-// 	catch (CORBA::TRANSIENT&) {
-// 	}
-// 	catch (CORBA::SystemException&) {
-// 	}
-// 	catch (CORBA::Exception&)
-// 	{
-// 	}
-// 	return success;
-// }
-
-// bool RemoteEventEngine::transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector)
-// {
-// 	std::unique_lock<std::mutex> engineLock(engineMutex);
-
-// 	if (isDisabled()) return false;
-
-// 	STI::TNetwork::TResultsCollector_var tResultsCollector;
-
-// 	bool success = false;
-
-// 	try {
-
-// 		if (NetworkResultsCollector::getTResultsCollector(resultsCollector, tResultsCollector)) {
-// 			success = getTRef()->transferResults(tResultsCollector);	//remote call
-// 		}
-// 	}
-// 	catch (CORBA::TRANSIENT&) {
-// 	}
-// 	catch (CORBA::SystemException&) {
-// 	}
-// 	catch (CORBA::Exception&) {
-// 	}
-// 	return success;
-// }
 

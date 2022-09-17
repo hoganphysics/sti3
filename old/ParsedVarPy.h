@@ -5,7 +5,7 @@
 #include <sti/engine/ParsedVar.h>
 #include "RawStackTrace.h"
 #include <sti/engine/ParseResult.h>
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <pybind11/pybind11.h>
 

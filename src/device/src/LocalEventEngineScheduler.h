@@ -20,7 +20,7 @@
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngine.h"
 #include "MessageGenerator.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include "utils/OrderedBufferMap.h"
 
 #include <list>
@@ -92,7 +92,8 @@ public:
                         const STI::Device::DeviceTrace& trace);
     
     void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
-
+    
+    bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const;
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
     void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
@@ -100,9 +101,12 @@ public:
     void cancelAll();
     void stopAll();
 
-    void getQueuedJobs(std::set<EngineJobID>& jobIDs) const;
-    void getRunningJobs(std::set<EngineJobID>& jobIDs) const;
-    void getCompletedJobs(std::set<EngineJobID>& jobIDs) const;
+    std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const;
+    std::vector<std::shared_ptr<EventEngineJob>> getJobs(const EventEngineJobList& jobListType) const;
+
+    // void getQueuedJobs(std::set<EngineJobID>& jobIDs) const;
+    // void getRunningJobs(std::set<EngineJobID>& jobIDs) const;
+    // void getCompletedJobs(std::set<EngineJobID>& jobIDs) const;
 
     // std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig);
     std::shared_ptr<Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup);

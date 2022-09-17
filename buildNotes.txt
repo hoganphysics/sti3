@@ -26,6 +26,9 @@ pip3 install scikit-build
 
 python3 -m build --wheel
 
+To install in virtual environment from local wheel:
+python3 -m pip install -I ../sti3/dist/stipy-3.0.1-cp36-cp36m-linux_x86_64.whl
+
 Jupyter notebook testing:
 
 To enable Jupyter to work in a python venv, install ipython in vevn and run:

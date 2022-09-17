@@ -1,18 +1,15 @@
-
 #include "RemoteShot.h"
 
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
 #include "Convert_RawEventGroup.h"
 
-#include "RawEventGroup.h"
-
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ParseResult.h>
 
 #include <memory>
 #include <vector>
-// #include <iostream>
 
 using STI::Network::RemoteShot;
 using STI::Engine::ShotConfig;
@@ -47,12 +44,12 @@ const ShotConfig& RemoteShot::getShotConfig() const
 	return shotConfig;
 }
 
-void RemoteShot::getBaseEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& baseGroup)
+void RemoteShot::getRootEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& rootGroup)
 {
 	refresh();
 
 	std::unique_lock<std::mutex> shotLock(shotMutex);
-	baseGroup = baseEventGroup;
+	rootGroup = rootEventGroup;
 }
 
 void RemoteShot::refresh()
@@ -79,17 +76,17 @@ bool RemoteShot::refreshEvents()
 
 	if (isDisabled()) return false;
 
-	baseEventGroup = std::make_shared<STI::Engine::RawEventGroup>();
+	rootEventGroup = std::make_shared<STI::Engine::RawEventGroup>();
 
 	STI::TNetwork::TRawEventGroup_var tEventGroup;
 
 	try {
 
-        getTRef()->getBaseEventGroup(tEventGroup); 	//remote call
+        getTRef()->getRootEventGroup(tEventGroup); 	//remote call
 
 		success = true;
 
-		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tEventGroup, baseEventGroup);
+		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tEventGroup, rootEventGroup);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

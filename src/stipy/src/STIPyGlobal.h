@@ -3,7 +3,7 @@
 #define STI_PYTHON_STIPYGLOBAL_H
 
 #include <sti/engine/StackTrace.h>
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/ParsedVar.h>
 

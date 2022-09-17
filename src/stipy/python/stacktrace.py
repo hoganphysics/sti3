@@ -11,11 +11,13 @@ def makeStackTrace():
     trace = _StackTrace()
 
     rawFrames = stack()
-    for frame in rawFrames :
-        info = getframeinfo(frame[0])
-        trace.appendFrame(info.filename, info.lineno, info.function)
-        if not isFilename(info.filename) :
-            break
+
+    if len(rawFrames) > 2:
+        for i in range(2, len(rawFrames)) :
+            info = getframeinfo(rawFrames[i][0])
+            trace.appendFrame(info.filename, info.lineno, info.function)
+            if not isFilename(info.filename) :
+                break
 
     return trace
 

@@ -8,12 +8,13 @@
 #include <sti/device/GroupableMessage.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineState.h>
+#include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EventEngineJobList.h>
+#include <sti/device/DeviceMessageType.h>
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
 //#include "EventEngineDependencyTree.h"
-#include <sti/engine/EventEngineJob.h>
-#include <sti/device/DeviceMessageType.h>
 
 #include <sstream>
 
@@ -266,7 +267,7 @@ public:
 
 
 
-enum class EngineJobUpdateTarget { Queued, Running, Completed };
+// enum class EngineJobUpdateTarget { Queued, Running, Completed };
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage
 {
@@ -276,18 +277,21 @@ public:
 	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate) {}
 
 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, 
-		const std::shared_ptr<STI::Engine::EventEngineJob>& job, EngineJobUpdateTarget targetList) 
+		const std::shared_ptr<STI::Engine::EventEngineJob>& job, STI::Engine::EventEngineJobList targetList) 
 	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate)
 	{
 		switch (targetList) {
-			case EngineJobUpdateTarget::Queued:
+			case STI::Engine::EventEngineJobList::Queued:
 				toQueuedList(job);
 				break;
-			case EngineJobUpdateTarget::Running:
+			case STI::Engine::EventEngineJobList::Running:
 				toRunningList(job);
 				break;
-			case EngineJobUpdateTarget::Completed:
+			case STI::Engine::EventEngineJobList::Completed:
 				toCompleteList(job);
+				break;
+			case STI::Engine::EventEngineJobList::Archived:
+				toArchive(job);
 				break;
 			default:
 				toCompleteList(job);
@@ -298,21 +302,27 @@ public:
 
 	void toQueuedList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
-		targetList = EngineJobUpdateTarget::Queued;
+		targetList = STI::Engine::EventEngineJobList::Queued;
 		engineJob = job;
 	}
 	void toRunningList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
-		targetList = EngineJobUpdateTarget::Running;
+		targetList = STI::Engine::EventEngineJobList::Running;
 		engineJob = job;
 	}
 	void toCompleteList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
-		targetList = EngineJobUpdateTarget::Completed;
+		targetList = STI::Engine::EventEngineJobList::Completed;
 		engineJob = job;
 	}
+	void toArchive(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
+	{
+		targetList = STI::Engine::EventEngineJobList::Archived;
+		engineJob = job;
+	}
+	
 
-	EngineJobUpdateTarget getTargetList() const
+	STI::Engine::EventEngineJobList getTargetList() const
 	{
 		return targetList;
 	}
@@ -322,21 +332,24 @@ public:
 		return engineJob;
 	}
 
-	static std::string jobTargetToString(EngineJobUpdateTarget target) 
+	static std::string jobTargetToString(STI::Engine::EventEngineJobList target) 
 	{
 		std::string result;
 
 		switch (target)
 		{
-		case EngineJobUpdateTarget::Queued:
+		case STI::Engine::EventEngineJobList::Queued:
 			result = "Queued";
 			break;
-		case EngineJobUpdateTarget::Running:
+		case STI::Engine::EventEngineJobList::Running:
 			result = "Running";
 			break;
-		case EngineJobUpdateTarget::Completed:
+		case STI::Engine::EventEngineJobList::Completed:
 			result = "Completed";
 			break;
+		case STI::Engine::EventEngineJobList::Archived:
+			result = "Archived";
+			break;			
 		default:
 			result = "Unknown";
 			break;
@@ -347,10 +360,11 @@ public:
 
 private:
 
-	EngineJobUpdateTarget targetList;	//the list the job belongs in
+	STI::Engine::EventEngineJobList targetList;	//the list the job belongs in
 	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
 
 };
+
 
 /*
 

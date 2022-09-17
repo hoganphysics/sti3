@@ -9,7 +9,7 @@
 #include <sti/engine/RawEvent.h>
 
 #include "EventEngineDependencyTree.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 
 #include <set>
 #include <memory>
@@ -86,6 +86,12 @@ void LocalEventEngineJob::markCancelled()
 {
      std::unique_lock< std::mutex > writeLock(jobMutex);
      status = EngineJobStatus::Canceled;
+}
+
+void LocalEventEngineJob::markArchived()
+{
+     std::unique_lock< std::mutex > writeLock(jobMutex);
+     status = EngineJobStatus::Archived;
 }
 
 void LocalEventEngineJob::attachSubjob(const std::shared_ptr<EventEngineJob>& job)

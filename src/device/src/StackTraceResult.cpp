@@ -5,10 +5,16 @@
 #include "CerealArchives.h"
 #include <cereal/types/memory.hpp>
 
+using STI::Engine::ParseID;
 using STI::Engine::StackTraceResult;
 
 
 StackTraceResult::StackTraceResult()
+{
+}
+
+StackTraceResult::StackTraceResult(const ParseID& pid)
+: pid(pid)
 {
 }
 

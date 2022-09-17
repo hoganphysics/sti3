@@ -4,7 +4,7 @@
 #include <sti/engine/StackTrace.h>
 #include <sti/device/DeviceID.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 #include <string>
 

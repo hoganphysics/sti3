@@ -19,12 +19,12 @@ class JDeviceCollection : public STI::Device::DeviceCollection
 {
 public:
 	
-	JDeviceCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
+	JDeviceCollection(const std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	~JDeviceCollection();
 
     bool add(const DeviceID& id, const std::shared_ptr<JDevice>& node);
 	std::shared_ptr<JDevice> get(const DeviceID& id) const;
-	std::set<DeviceID>& getIDs();
+	std::set<DeviceID> getIDs();
 
     //Collection
 	bool remove(const DeviceID& id);
@@ -40,9 +40,8 @@ private:
 	bool get(const DeviceID& id, DeviceCollection::T_ptr& node) const;
 	void getIDs(std::set<DeviceID>& ids) const;
 
-
     std::shared_ptr<DeviceCollection> localDeviceCollection;
-    std::set<DeviceID> ids; //local copy, so we can return by reference.
+    // std::set<DeviceID> ids; //local copy, so we can return by reference.
 
 };
 

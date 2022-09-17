@@ -44,7 +44,7 @@ MixedValue::MixedValue()
 }
 MixedValue::MixedValue(const MixedValue& copy)
 {
-	setValue(copy);
+	setValueMixed(copy);
 }
 
 MixedValue::MixedValue(const MixedValueType& valueType)
@@ -53,7 +53,8 @@ MixedValue::MixedValue(const MixedValueType& valueType)
 		type = MixedValueType::Empty;
 	}
 	else {
-		setValue(valueType);	//error
+		type = valueType;
+		// setValue(valueType);	//error
 	}
 }
 
@@ -161,9 +162,11 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
 
 void MixedValue::setValue(const MixedValue& value)
 {
-	//clear();
-	//type = value.getType();
+	setValueMixed(value);
+}
 
+void MixedValue::setValueMixed(const MixedValue& value)
+{
 	switch( value.getType() )
 	{
 	case MixedValueType::Boolean:
@@ -393,7 +396,7 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 
 void MixedValue::printError()
 {
-	std::cout << "Error: Unsupported type was passed to the MixedValue template constructor." << std::endl;
+	std::cout << "Error: Unsupported type was passed to MixedValue." << std::endl;
 }
 
 

@@ -143,15 +143,15 @@ template<>
 bool Network::convert<std::shared_ptr<Device::EngineJobUpdateDeviceMessage>, TNetwork::TEngineJobUpdateDeviceMessage>(
 	const std::shared_ptr<Device::EngineJobUpdateDeviceMessage>& deviceMessage, TNetwork::TEngineJobUpdateDeviceMessage& tMessage);
 
-//EngineJobUpdateTarget
-template<>
-TNetwork::TEngineJobUpdateTarget Network::convert
-	<Device::EngineJobUpdateTarget, TNetwork::TEngineJobUpdateTarget>(
-		const Device::EngineJobUpdateTarget& type);
-template<>
-Device::EngineJobUpdateTarget Network::convert
-	<TNetwork::TEngineJobUpdateTarget, Device::EngineJobUpdateTarget>(
-		const TNetwork::TEngineJobUpdateTarget& tType);
+// //EngineJobUpdateTarget
+// template<>
+// TNetwork::TEngineJobUpdateTarget Network::convert
+// 	<Device::EngineJobUpdateTarget, TNetwork::TEngineJobUpdateTarget>(
+// 		const Device::EngineJobUpdateTarget& type);
+// template<>
+// Device::EngineJobUpdateTarget Network::convert
+// 	<TNetwork::TEngineJobUpdateTarget, Device::EngineJobUpdateTarget>(
+// 		const TNetwork::TEngineJobUpdateTarget& tType);
 
 
 } //STI

@@ -11,6 +11,7 @@
 #include <mutex>
 #include <set>
 
+
 namespace STI
 {
 namespace Network
@@ -37,14 +38,18 @@ public:
     void addDeviceEventTargets(STI::Engine::EventEngineDependencyTree& tree, 
                                 std::vector<STI::Engine::EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
     
+    bool getJob(const STI::Engine::EngineJobID& id, std::shared_ptr<STI::Engine::EventEngineJob>& job) const;
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
     void cancelJob(const STI::Engine::EngineJobID& jobID);
 
     void cancelAll();
 
-    void getQueuedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
-    void getRunningJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
-    void getCompletedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+    std::set<STI::Engine::EngineJobID> getJobIDs(const STI::Engine::EventEngineJobList& jobListType) const;
+    std::vector<std::shared_ptr<STI::Engine::EventEngineJob>> getJobs(const STI::Engine::EventEngineJobList& jobListType) const;
+
+    // void getQueuedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+    // void getRunningJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
+    // void getCompletedJobs(std::set<STI::Engine::EngineJobID>& jobIDs) const;
 
     std::shared_ptr<STI::Engine::Shot> createShot(const STI::Engine::ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup);
 
@@ -59,7 +64,6 @@ private:
     mutable std::mutex schedulerMutex;
 
 };
-
 
 
 } //Network

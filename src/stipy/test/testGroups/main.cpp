@@ -1,5 +1,5 @@
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include "RawEventGroupManager.h"
 
 #include <sti/utils/VectorMap.h>

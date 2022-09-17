@@ -44,6 +44,9 @@ public:
 
 private:
 
+    friend RemoteAttributeManager;
+    std::string getCurrentValue() const;
+
     std::string key_;
     mutable std::string value_;     //value is stored in RemoteAttributeManager, so value_ is just a copy. Mutable so we can return (and store) a reference
     std::string group_;

@@ -1,5 +1,5 @@
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/RawEvent.h>
 
 #include "CerealArchives.h"

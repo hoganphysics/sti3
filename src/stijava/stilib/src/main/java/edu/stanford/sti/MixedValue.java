@@ -57,12 +57,12 @@ public class MixedValue {
   }
 
   public MixedValue(MixedValue copy) {
-    this(stiJNI.new_MixedValue__SWIG_2(MixedValue.getCPtr(copy), copy), true);
+    this(stiJNI.new_MixedValue__SWIG_1(MixedValue.getCPtr(copy), copy), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(MixedValueType value) {
-    this(stiJNI.new_MixedValue__SWIG_3(value.swigValue()), true);
+    this(stiJNI.new_MixedValue__SWIG_2(value.swigValue()), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
@@ -153,6 +153,39 @@ public class MixedValue {
 
   public static String TypeToString(MixedValueType type) {
     return stiJNI.MixedValue_TypeToString(type.swigValue());
+  }
+
+  public MixedValue(String value) {
+    this(stiJNI.new_MixedValue__SWIG_3(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(double value) {
+    this(stiJNI.new_MixedValue__SWIG_4(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(int value) {
+    this(stiJNI.new_MixedValue__SWIG_5(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(FileHolder value) {
+    this(stiJNI.new_MixedValue__SWIG_6(FileHolder.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(boolean value) {
+    this(stiJNI.new_MixedValue__SWIG_7(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public void setValueVector(MixedValueVec value) {
+    stiJNI.MixedValue_setValueVector(swigCPtr, this, MixedValueVec.getCPtr(value), value);
+  }
+
+  public void addValue(MixedValue value) {
+    stiJNI.MixedValue_addValue(swigCPtr, this, MixedValue.getCPtr(value), value);
   }
 
 }

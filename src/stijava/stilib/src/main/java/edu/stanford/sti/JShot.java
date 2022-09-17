@@ -44,9 +44,9 @@ public class JShot {
     return new ShotConfig(stiJNI.JShot_getShotConfig(swigCPtr, this), false);
   }
 
-  public RawEventVector getEvents() {
-    long cPtr = stiJNI.JShot_getEvents(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
+  public RawEventGroup getRootEventGroup() {
+    long cPtr = stiJNI.JShot_getRootEventGroup(swigCPtr, this);
+    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
   }
 
 }

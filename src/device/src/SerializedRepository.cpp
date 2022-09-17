@@ -2,6 +2,7 @@
 
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
@@ -9,7 +10,7 @@
 #include "LocalResultsCollector.h"
 
 #include <filesystem>
-#include <iostream>
+// #include <iostream>
 #include <fstream>
 
 #include "CerealArchives.h"
@@ -127,9 +128,17 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
     //     }
     // }
 
+    if (fullShotResult == 0) return false;
+
+
     auto paths = preparePaths(sid);
 
     std::filesystem::path serializePath = paths.dataPath;
+
+    fullShotResult->parseResult->stackTraceResult;
+
+    paths.timingPath;
+
     serializePath /= archiveFilename;
 
     

@@ -1,5 +1,3 @@
-
-
 #include "AttributeManagerPy.h"
 #include <sti/device/LocalAttribute.h>
 

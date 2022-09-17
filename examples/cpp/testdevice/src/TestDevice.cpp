@@ -49,7 +49,7 @@ void TestDevice::init()
 
     addChannel(1, 
                STI::Device::ChannelType::Output, 
-               STI::Utils::MixedValueType::Empty, 
+               STI::Utils::MixedValueType::Double, 
                STI::Utils::MixedValueType::Double, 
                "test channel");
 

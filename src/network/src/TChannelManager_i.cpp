@@ -1,10 +1,8 @@
-
 #include "TChannelManager_i.h"
 #include "ORBManager.h"
 #include <sti/device/ChannelManager.h>
 
 #include "Convert_Channel.h"
-//#include "NetworkConvert.h"
 
 using STI::Network::convert;
 using STI::TNetwork::TChannelManager_i;
@@ -13,6 +11,7 @@ using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
 using STI::Device::Channel;
 using STI::TNetwork::TChannel;
+
 
 TChannelManager_i::TChannelManager_i(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -26,11 +25,11 @@ TChannelManager_i::~TChannelManager_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-// TChannelSeq* TChannelManager_i::getChannels()
 void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 {
     STI::TNetwork::TChannelSeq_var tChannelSeq_var( new TChannelSeq );
     std::vector<std::shared_ptr<STI::Device::Channel>> localChannels;
+    channels = new STI::TNetwork::TChannelSeq();
 
     if (channelManager != 0) {
 
@@ -38,7 +37,6 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 
         convert<std::shared_ptr<STI::Device::Channel>, TChannel>(localChannels, tChannelSeq_var);
 
-        channels = new STI::TNetwork::TChannelSeq();
 		(*channels) = tChannelSeq_var;
 	}
 }
@@ -48,6 +46,7 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
     bool success = false;
 
     std::shared_ptr<STI::Device::Channel> localChannel;
+    channel = new STI::TNetwork::TChannel();
 
     if (channelManager != 0) {
 
@@ -55,8 +54,7 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 	}
 
     if (success) {
-        channel = new STI::TNetwork::TChannel();
-        
+       
         success = convert<std::shared_ptr<STI::Device::Channel>, TChannel>(localChannel, (TChannel&)(*channel));
     }
 
@@ -96,6 +94,7 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 {
     bool success = false;
     MixedValue dataOut;
+    data = new STI::TNetwork::TMixedValue();
 
     if (channelManager != 0) {
 
@@ -104,7 +103,6 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 	}
 
     if (success) {
-        data = new STI::TNetwork::TMixedValue();
         
         (*data) = convert<MixedValue, TMixedValue>(dataOut);
     }

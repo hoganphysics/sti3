@@ -2,15 +2,15 @@
 
 #include <sti/engine/RawEvent.h>
 
-#include "RawEventGroup.h"
+#include <sti/engine/RawEventGroup.h>
 
 using STI::Engine::LocalShot;
 using STI::Engine::ShotConfig;
 using STI::Engine::RawEventGroup;
 
 
-LocalShot::LocalShot(const ShotConfig& config, const std::shared_ptr<RawEventGroup>& baseGroup)
-: shotConfig(config), baseEventGroup(baseGroup)
+LocalShot::LocalShot(const ShotConfig& config, const std::shared_ptr<RawEventGroup>& rootGroup)
+: shotConfig(config), rootEventGroup(rootGroup)
 {
 }
 
@@ -23,12 +23,12 @@ const ShotConfig& LocalShot::getShotConfig() const
     return shotConfig;
 }
 
-void LocalShot::getBaseEventGroup(std::shared_ptr<RawEventGroup>& baseGroup)
+void LocalShot::getRootEventGroup(std::shared_ptr<RawEventGroup>& rootGroup)
 {
-    baseGroup = baseEventGroup;
+    rootGroup = rootEventGroup;
 }
 
-void LocalShot::setBaseEventGroup(const std::shared_ptr<RawEventGroup>& baseGroup)
+void LocalShot::setRootEventGroup(const std::shared_ptr<RawEventGroup>& rootGroup)
 {
-    baseEventGroup = baseGroup;
+    rootEventGroup = rootGroup;
 }

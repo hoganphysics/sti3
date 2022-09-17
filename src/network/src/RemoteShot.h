@@ -2,7 +2,7 @@
 #define STI_NETWORK_REMOTESHOT_H
 
 #include "deviceNet.h"
-#include "Shot.h"
+#include <sti/engine/Shot.h>
 #include "TReferenceHolder.h"
 #include "TShotRefInterface.h"
 
@@ -30,7 +30,7 @@ public:
 
     const STI::Engine::ShotConfig& getShotConfig() const;
 
-    void getBaseEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& baseGroup);
+    void getRootEventGroup(std::shared_ptr<STI::Engine::RawEventGroup>& rootGroup);
 
 private:
 
@@ -42,7 +42,7 @@ private:
     bool refreshEvents();
 
     STI::Engine::ShotConfig shotConfig;
-    std::shared_ptr<STI::Engine::RawEventGroup> baseEventGroup;
+    std::shared_ptr<STI::Engine::RawEventGroup> rootEventGroup;
 
     mutable std::mutex shotMutex;
 };

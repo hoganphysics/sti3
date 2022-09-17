@@ -14,14 +14,7 @@
 
     #include "JPersistenceManager.h"
 
-    #include <sti/engine/RawEvent.h>
-    using STI::Engine::RawEvent;
-
-
     #include <sti/device/DeviceID.h>
-
-    #include <sti/utils/FileHolder.h>
-    using STI::Utils::FileHolder;
 %}
 
 %include "std_shared_ptr.i"
@@ -34,16 +27,6 @@
 %shared_ptr(STI::Engine::ShotResult);
 %shared_ptr(STI::Engine::Measurement);
 
-%shared_ptr(STI::Utils::FileHolder);
-
-//FileHolder
-%template(FileHolderVector) std::vector< std::shared_ptr< STI::Utils::FileHolder > >;
-%include "sti/utils/FileHolder.h"
-
-
-//RawEvent
-// %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
-%template(RawEventMap) std::map< STI::Device::DeviceID, std::vector< STI::Engine::RawEvent > >;
 
 
 //ShotResultRecord
@@ -62,15 +45,13 @@
 
 %immutable STI::Engine::ShotResult::sid;
 %immutable STI::Engine::ShotResult::playTime;
-%immutable STI::Engine::ShotResult::parsedEvents;
-%immutable STI::Engine::ShotResult::timingFiles;
 %immutable STI::Engine::ShotResult::measurements;
 %immutable STI::Engine::ShotResult::attributes;
 %immutable STI::Engine::ShotResult::shotResultRecord;
 
-%include "ShotResult.h"
+%include "sti/engine/ShotResult.h"
 
 //JPersistenceManager
-%ignore STI::Device::JPersistenceManager::JPersistenceManager(std::shared_ptr< STI::Device::PersistenceManager >& manager);
+%ignore STI::Device::JPersistenceManager::JPersistenceManager(const std::shared_ptr< STI::Device::PersistenceManager >& manager);
 %include "JPersistenceManager.h"
 
