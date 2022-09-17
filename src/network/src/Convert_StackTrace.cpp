@@ -7,6 +7,8 @@
 
 #include "StackTraceData.h"
 
+#include <vector>
+
 using STI::Network::convert;
 using STI::TNetwork::TStackFrame;
 using STI::Engine::StackFrame;
@@ -18,20 +20,32 @@ using STI::TNetwork::TParseID;
 using STI::Engine::ParseID;
 using STI::TNetwork::TStackTraceData;
 using STI::Engine::StackTraceData;
+using STI::Network::convert;
+
 
 
 //StackFrame
 template<>
 bool STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tStackFrame, StackFrame& stackFrame)
 {
-    stackFrame = convert<TStackFrame, StackFrame>(tStackFrame);
+//    stackFrame = convert<TStackFrame, StackFrame>(tStackFrame);
+
+    stackFrame.file = static_cast<unsigned>(tStackFrame.file);
+    stackFrame.func = static_cast<unsigned>(tStackFrame.func);
+    stackFrame.line = static_cast<unsigned>(tStackFrame.line);
+
     return true;
 }
 
 template<>
 bool STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& stackFrame, TStackFrame& tStackFrame)
 {
-    tStackFrame = convert<StackFrame, TStackFrame>(stackFrame);
+//    tStackFrame = convert<StackFrame, TStackFrame>(stackFrame);
+
+    tStackFrame.file = static_cast<CORBA::ULong>(stackFrame.file);
+    tStackFrame.func = static_cast<CORBA::ULong>(stackFrame.func);
+    tStackFrame.line = static_cast<CORBA::ULong>(stackFrame.line);
+
     return true;
 }
 
@@ -39,25 +53,33 @@ template<>
 StackFrame STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tStackFrame)
 {
     StackFrame frame;
-
-    frame.file = static_cast<unsigned>(tStackFrame.file);
-    frame.func = static_cast<unsigned>(tStackFrame.func);
-    frame.line = static_cast<unsigned>(tStackFrame.line);
-
+    convert<TStackFrame, StackFrame>(tStackFrame, frame);
     return frame;
 }
 
-template<>
-TStackFrame STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& stackFrame)
-{
-    TStackFrame tframe;
-
-    tframe.file = static_cast<CORBA::ULong>(stackFrame.file);
-    tframe.func = static_cast<CORBA::ULong>(stackFrame.func);
-    tframe.line = static_cast<CORBA::ULong>(stackFrame.line);
-    
-    return tframe;
-}
+//template<>
+//StackFrame STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tStackFrame)
+//{
+//    StackFrame frame;
+//
+//    frame.file = static_cast<unsigned>(tStackFrame.file);
+//    frame.func = static_cast<unsigned>(tStackFrame.func);
+//    frame.line = static_cast<unsigned>(tStackFrame.line);
+//
+//    return frame;
+//}
+//
+//template<>
+//TStackFrame STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& stackFrame)
+//{
+//    TStackFrame tframe;
+//
+//    tframe.file = static_cast<CORBA::ULong>(stackFrame.file);
+//    tframe.func = static_cast<CORBA::ULong>(stackFrame.func);
+//    tframe.line = static_cast<CORBA::ULong>(stackFrame.line);
+//    
+//    return tframe;
+//}
 
 
 //StackTrace
@@ -74,11 +96,8 @@ template<>
 bool STI::Network::convert<StackTrace, TStackFrameSeq>(const StackTrace& stackFrame, TStackFrameSeq& tStackFrameSeq)
 {
     convert<StackFrame, TStackFrame>(stackFrame.getFrames(), tStackFrameSeq);
-    
     return true;
 }
-
-
 
 
 //StackTraceResult
