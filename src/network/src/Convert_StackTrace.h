@@ -30,9 +30,9 @@ class StackTraceData;
 template<>
 Engine::StackFrame Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
     const TNetwork::TStackFrame& tStackFrame);
-//template<>
-//TNetwork::TStackFrame Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
-//    const Engine::StackFrame& stackFrame);
+template<>
+TNetwork::TStackFrame Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
+    const Engine::StackFrame& stackFrame);
 
 template<>
 bool Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
