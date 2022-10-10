@@ -41,7 +41,7 @@
 %include "sti/engine/RawEvent.h"
 %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
 %template(RawEventMap) std::map< double, std::vector< STI::Engine::RawEvent > >;
-%shared_ptr( std::vector< STI::Engine::RawEvent > );
+// %shared_ptr( std::vector< STI::Engine::RawEvent > );
 
 %template(ParsedTagVector) std::vector< STI::Engine::ParsedTag >;
 %template(ParsedVarVector) std::vector< STI::Engine::ParsedVar >;
@@ -55,8 +55,8 @@
 %template(RawEventTargetMap) std::map< std::string, STI::Engine::RawEventTarget >;
 %template(RawEventTargetDeviceMap) std::map< std::string, STI::Engine::RawEventTargetDevice >; 
 
-%ignore STI::Engine::RawEventGroup::getReferencePoint(const std::string& refName, double& time) const;
-%include "sti/engine/RawEventGroup.h"
+
+//Bug with shared_ptr< vector > : https://sourceforge.net/p/swig/bugs/1210/
 
 %extend STI::Engine::RawEventGroup 
 {
@@ -66,4 +66,20 @@
         self->getReferencePoint(refName, refTime);
         return refTime;
     }
+
+    std::vector< STI::Engine::RawEvent > STI::Engine::RawEventGroup::getEvents() const
+    {
+        std::shared_ptr< std::vector< STI::Engine::RawEvent > > eventsPtr = self->getEvents();
+
+        if (eventsPtr != 0) {
+            return *eventsPtr;
+        }
+
+        std::vector< STI::Engine::RawEvent > emptyEvents;
+        return emptyEvents;
+    }
 } 
+
+%ignore STI::Engine::RawEventGroup::getReferencePoint(const std::string& refName, double& time) const;
+%ignore STI::Engine::RawEventGroup::getEvents() const;
+%include "sti/engine/RawEventGroup.h"

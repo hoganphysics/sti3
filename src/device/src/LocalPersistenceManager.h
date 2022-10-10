@@ -5,6 +5,7 @@
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/utils/SynchronizedMap.h>
+#include <sti/engine/EventEngineScheduler.h>
 
 #include "ShotRepository.h"
 #include "utils/OrderedBufferMap.h"
@@ -50,6 +51,8 @@ public:
     void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
     bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
 
+    void attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+
     static std::string makeBasePath(const std::string& rootPath, const DeviceID& deviceID);
 
 private:
@@ -74,6 +77,8 @@ private:
 
     STI::Utils::SynchronizedMap<unsigned, DeviceID> delegatePriorities;
     STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<PersistenceManager>> delegates;
+
+    std::weak_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
 
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;

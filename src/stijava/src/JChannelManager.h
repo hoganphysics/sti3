@@ -29,6 +29,8 @@ public:
     bool writeChannel(short channel, const STI::Utils::MixedValue& value);
     STI::Utils::MixedValue readChannel(short channel, const STI::Utils::MixedValue& value);
 
+    void stop();
+
 private:
 
     std::shared_ptr<STI::Device::ChannelManager> localManager;

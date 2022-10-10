@@ -31,6 +31,28 @@
 %include "sti/engine/EngineParsingMessage.h"
 %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
+
+
+%extend STI::Engine::ParsedDependencyTree
+{
+    std::vector< STI::Device::DeviceID > getNodes() const
+    {
+        std::vector< STI::Device::DeviceID > nodes;
+        self->getNodes(nodes);
+        return nodes;
+    }
+
+    std::vector< STI::Device::DeviceID > getDependedentNodes(const STI::Device::DeviceID& node) const
+    {
+        std::vector< STI::Device::DeviceID > depNodes;
+        self->getDependedentNodes(node, depNodes);
+        return depNodes;
+    }
+}
+%ignore STI::Engine::ParsedDependencyTree::getNodes(std::vector< STI::Device::DeviceID >& nodes) const;
+%ignore STI::Engine::ParsedDependencyTree::getDependedentNodes(const STI::Device::DeviceID& node, std::vector< STI::Device::DeviceID >& depNodes) const;
+
+
 %include "ParsedDependencyTree.h"
 %include "sti/engine/StackTraceResult.h"
 

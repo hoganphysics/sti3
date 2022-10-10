@@ -65,7 +65,7 @@ void RemoteShot::refresh()
 
 	//once events have been received, release remote reference
 	if (!refreshRequired) {
-		disable(shotLock);
+		// disable(shotLock);
 	}
 }
 

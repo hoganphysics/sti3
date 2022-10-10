@@ -65,7 +65,7 @@ public class EngineParsingMessage {
   }
 
   public RawEventVector getEvents() {
-    return new RawEventVector(stiJNI.EngineParsingMessage_getEvents(swigCPtr, this), true);
+    return new RawEventVector(stiJNI.EngineParsingMessage_getEvents(swigCPtr, this), false);
   }
 
   public EngineParsingMessage addEvent(RawEvent evt) {
@@ -81,7 +81,7 @@ public class EngineParsingMessage {
   }
 
   public RawEventVector getEventVector() {
-    return new RawEventVector(stiJNI.EngineParsingMessage_getEventVector(swigCPtr, this), true);
+    return new RawEventVector(stiJNI.EngineParsingMessage_getEventVector(swigCPtr, this), false);
   }
 
 }

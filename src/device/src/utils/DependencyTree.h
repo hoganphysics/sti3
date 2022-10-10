@@ -43,7 +43,24 @@ public:
 			_addVertex(*it);
 		}
 	}
+
+	DependencyTree(const DependencyTree<T>& tree)
+	{
+		g = tree.g;
+		vertices = tree.vertices;
+		sortedDAG = tree.sortedDAG;
+	}
+
 	virtual ~DependencyTree() {}
+
+	DependencyTree<T>& operator=(const STI::Utils::DependencyTree<T>& tree)
+	{
+		g = tree.g;
+		vertices = tree.vertices;
+		sortedDAG = tree.sortedDAG;
+
+		return (*this);
+	}
 
 	void addTree(const DependencyTree<T>& tree)
 	{
@@ -210,6 +227,12 @@ public:
 		return _sortTree(orderedNodes);
 	}
 
+	bool isSorted() const
+	{
+		std::unique_lock< std::mutex > writeLock(graphMutex);
+		return sortedDAG;
+	}
+
 	//This should only be called if sortTree failed (because there is a cycle.
 	bool getCycle(std::vector<T>& cycle) const
 	{
@@ -224,6 +247,12 @@ public:
 		}
 
 		return cycleFound;
+	}
+
+	bool hasCycle() const
+	{
+		std::vector<T> cycle;
+		return getCycle(cycle);
 	}
 
 	unsigned vertexCount()

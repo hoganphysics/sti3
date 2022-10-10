@@ -74,7 +74,8 @@ public:
     // LocalEventEngineScheduler(const STI::Device::DeviceID& localDeviceID, const std::shared_ptr<STI::Device::DeviceCollection>& localCollection);
     LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                 const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
-                                const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
+                                const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
+                                const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
     ~LocalEventEngineScheduler();
 
     //local interface (called from python, for example)

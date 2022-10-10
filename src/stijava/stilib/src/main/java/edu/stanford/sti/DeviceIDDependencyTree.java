@@ -65,12 +65,17 @@ public class DeviceIDDependencyTree {
     stiJNI.DeviceIDDependencyTree_director_connect(this, swigCPtr, true, true);
   }
 
+  public DeviceIDDependencyTree(DeviceIDDependencyTree tree) {
+    this(stiJNI.new_DeviceIDDependencyTree__SWIG_2(DeviceIDDependencyTree.getCPtr(tree), tree), true);
+    stiJNI.DeviceIDDependencyTree_director_connect(this, swigCPtr, true, true);
+  }
+
   public void addTree(DeviceIDDependencyTree tree) {
     stiJNI.DeviceIDDependencyTree_addTree(swigCPtr, this, DeviceIDDependencyTree.getCPtr(tree), tree);
   }
 
   public boolean getSubtree(DeviceID vertex, DeviceIDDependencyTree tree) {
-    return stiJNI.DeviceIDDependencyTree_getSubtree(swigCPtr, this, DeviceID.getCPtr(vertex), vertex, DeviceIDDependencyTree.getCPtr(tree), tree);
+    return stiJNI.DeviceIDDependencyTree_getSubtree__SWIG_0(swigCPtr, this, DeviceID.getCPtr(vertex), vertex, DeviceIDDependencyTree.getCPtr(tree), tree);
   }
 
   public boolean hasVertex(DeviceID vertex) {
@@ -89,32 +94,16 @@ public class DeviceIDDependencyTree {
     return stiJNI.DeviceIDDependencyTree_removeNode(swigCPtr, this, DeviceID.getCPtr(node), node);
   }
 
-  public void getNodes(DeviceIDvector nodes) {
-    stiJNI.DeviceIDDependencyTree_getNodes__SWIG_0(swigCPtr, this, DeviceIDvector.getCPtr(nodes), nodes);
-  }
-
-  public void getNodes(DeviceIDset nodes) {
-    stiJNI.DeviceIDDependencyTree_getNodes__SWIG_1(swigCPtr, this, DeviceIDset.getCPtr(nodes), nodes);
-  }
-
-  public void getDependedentNodes(DeviceID node, DeviceIDvector depNodes) {
-    stiJNI.DeviceIDDependencyTree_getDependedentNodes(swigCPtr, this, DeviceID.getCPtr(node), node, DeviceIDvector.getCPtr(depNodes), depNodes);
-  }
-
-  public void getParentNodes(DeviceID node, DeviceIDvector parentNodes) {
-    stiJNI.DeviceIDDependencyTree_getParentNodes(swigCPtr, this, DeviceID.getCPtr(node), node, DeviceIDvector.getCPtr(parentNodes), parentNodes);
-  }
-
   public boolean isDependedentNode(DeviceID source, DeviceID target) {
     return stiJNI.DeviceIDDependencyTree_isDependedentNode(swigCPtr, this, DeviceID.getCPtr(source), source, DeviceID.getCPtr(target), target);
   }
 
-  public boolean sortTree(DeviceIDvector orderedNodes) {
-    return stiJNI.DeviceIDDependencyTree_sortTree(swigCPtr, this, DeviceIDvector.getCPtr(orderedNodes), orderedNodes);
+  public boolean isSorted() {
+    return stiJNI.DeviceIDDependencyTree_isSorted(swigCPtr, this);
   }
 
-  public boolean getCycle(DeviceIDvector cycle) {
-    return stiJNI.DeviceIDDependencyTree_getCycle(swigCPtr, this, DeviceIDvector.getCPtr(cycle), cycle);
+  public boolean hasCycle() {
+    return stiJNI.DeviceIDDependencyTree_hasCycle(swigCPtr, this);
   }
 
   public long vertexCount() {
@@ -127,6 +116,30 @@ public class DeviceIDDependencyTree {
 
   public int getDependentNodeCount(DeviceID node) {
     return stiJNI.DeviceIDDependencyTree_getDependentNodeCount(swigCPtr, this, DeviceID.getCPtr(node), node);
+  }
+
+  public DeviceIDvector getNodes() {
+    return new DeviceIDvector(stiJNI.DeviceIDDependencyTree_getNodes(swigCPtr, this), true);
+  }
+
+  public DeviceIDvector getDependedentNodes(DeviceID node) {
+    return new DeviceIDvector(stiJNI.DeviceIDDependencyTree_getDependedentNodes(swigCPtr, this, DeviceID.getCPtr(node), node), true);
+  }
+
+  public DeviceIDvector getParentNodes(DeviceID node) {
+    return new DeviceIDvector(stiJNI.DeviceIDDependencyTree_getParentNodes(swigCPtr, this, DeviceID.getCPtr(node), node), true);
+  }
+
+  public DeviceIDvector getCycle() {
+    return new DeviceIDvector(stiJNI.DeviceIDDependencyTree_getCycle(swigCPtr, this), true);
+  }
+
+  public DeviceIDvector sortTree() {
+    return new DeviceIDvector(stiJNI.DeviceIDDependencyTree_sortTree(swigCPtr, this), true);
+  }
+
+  public DeviceIDDependencyTree getSubtree(DeviceID vertex) {
+    return new DeviceIDDependencyTree(stiJNI.DeviceIDDependencyTree_getSubtree__SWIG_1(swigCPtr, this, DeviceID.getCPtr(vertex), vertex), true);
   }
 
 }

@@ -63,12 +63,12 @@ public class EventEngineDependencyTree extends DeviceIDDependencyTree {
     stiJNI.EventEngineDependencyTree_director_connect(this, swigCPtr, true, true);
   }
 
-  public boolean getBranchToTarget(DeviceID root, DeviceID target, DeviceID branch) {
-    return stiJNI.EventEngineDependencyTree_getBranchToTarget(swigCPtr, this, DeviceID.getCPtr(root), root, DeviceID.getCPtr(target), target, DeviceID.getCPtr(branch), branch);
-  }
-
   public boolean hasBranchToTarget(DeviceID root, DeviceID target) {
     return stiJNI.EventEngineDependencyTree_hasBranchToTarget(swigCPtr, this, DeviceID.getCPtr(root), root, DeviceID.getCPtr(target), target);
+  }
+
+  public DeviceID getBranchToTarget(DeviceID root, DeviceID target) {
+    return new DeviceID(stiJNI.EventEngineDependencyTree_getBranchToTarget(swigCPtr, this, DeviceID.getCPtr(root), root, DeviceID.getCPtr(target), target), true);
   }
 
 }

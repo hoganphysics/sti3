@@ -3,6 +3,7 @@
 #include <sti/device/DeviceID.h>
 
 #include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEvent.h>
@@ -52,6 +53,11 @@ LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const
 LocalPersistenceManager::~LocalPersistenceManager()
 {
     //serialize all shots in memory
+}
+
+void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+{
+    eventEngineScheduler = scheduler;   //weak_ptr to avoid circular reference...
 }
 
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const DeviceID& deviceID)
@@ -255,6 +261,18 @@ bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, st
 
     if (hasDelegate) {
         if(delegate->getParseResult(pid, parseResult)) {
+            return true;
+        }
+    }
+
+    // if (!eventEngineScheduler.expired()) {
+    //     if (eventEngineScheduler->getParseResult(pid, parseResult)) {
+    //         return true;
+    //     }
+    // }
+
+    if (auto observe = eventEngineScheduler.lock()) {
+        if (observe->getParseResult(pid, parseResult)) {
             return true;
         }
     }

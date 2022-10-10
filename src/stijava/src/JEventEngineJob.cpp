@@ -4,7 +4,9 @@
 #include "JShot.h"
 #include "EventEngineDependencyTree.h"
 #include "JEventEngine.h"
-
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/RawEvent.h>
 
 using STI::Engine::JEventEngineJob;
 using STI::Engine::EngineJobID;
@@ -19,11 +21,19 @@ using STI::Engine::JEventEngine;
 using STI::Engine::EngineJobStatus;
 
 
+JEventEngineJob::JEventEngineJob()
+: JEventEngineJob(0)
+{
+}
+
 JEventEngineJob::JEventEngineJob(const std::shared_ptr<EventEngineJob>& eventEngineJob)
 : eventEngineJob(eventEngineJob)
 {
     std::shared_ptr<Shot> shot;
-    eventEngineJob->getShot(shot);
+
+    if (eventEngineJob != 0) {
+        eventEngineJob->getShot(shot);
+    }
 
     jshot = std::make_shared<JShot>(shot);
 }
@@ -35,29 +45,49 @@ JEventEngineJob::~JEventEngineJob()
 
 EngineJobID JEventEngineJob::getJobID() const
 {
-    return eventEngineJob->getJobID();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getJobID();
+    }
+
+    EngineJobID missing;
+    return missing;
 }
 
 STI::Device::DeviceID JEventEngineJob::getJobOwner() const
 {
-    return eventEngineJob->getJobOwner();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getJobOwner();
+    }
+    STI::Device::DeviceID missing;
+    return missing;
 }
 
 EngineJobStatus JEventEngineJob::getStatus() const
 {
-    return eventEngineJob->getStatus();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getStatus();
+    }
+    EngineJobStatus missing = EngineJobStatus::NotFound;
+    return missing;
 }
 
 
-const EngineID& JEventEngineJob::getEngineID() const
+EngineID JEventEngineJob::getEngineID() const
 {
-    return eventEngineJob->getEngineID();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getEngineID();
+    }
+    EngineID missing;
+    return missing;
 }
 
 std::shared_ptr<JEventEngine> JEventEngineJob::getEngine() const
 {
     std::shared_ptr<EventEngine> eventEngine;
-    eventEngineJob->getEngine(eventEngine);
+
+    if (eventEngineJob != 0) {
+        eventEngineJob->getEngine(eventEngine);
+    }
 
     auto jEventEngine = std::make_shared<JEventEngine>(eventEngine);
 
@@ -68,7 +98,10 @@ std::shared_ptr<JEventEngine> JEventEngineJob::getEngine() const
 std::shared_ptr<JShot> JEventEngineJob::getShot() const
 {
     std::shared_ptr<STI::Engine::Shot> shot;
-    eventEngineJob->getShot(shot);
+
+    if (eventEngineJob != 0) {
+        eventEngineJob->getShot(shot);
+    }
 
     auto jshot = std::make_shared<JShot>(shot);
     return jshot;
@@ -78,7 +111,13 @@ std::shared_ptr<JShot> JEventEngineJob::getShot() const
 std::shared_ptr<EventEngineDependencyTree> JEventEngineJob::getDependencies() const
 {
     std::shared_ptr<EventEngineDependencyTree> tree;
-    eventEngineJob->getDependencies(tree);
+
+    if (eventEngineJob != 0) {
+        eventEngineJob->getDependencies(tree);
+    }
+    else {
+        tree = std::make_shared<EventEngineDependencyTree>();   //empty
+    }
 
     return tree;
 }
@@ -86,7 +125,11 @@ std::shared_ptr<EventEngineDependencyTree> JEventEngineJob::getDependencies() co
 STI::Device::DeviceIDIndexedGraph JEventEngineJob::getDependenciesIndexed() const
 {
     std::shared_ptr<EventEngineDependencyTree> tree;
-    eventEngineJob->getDependencies(tree);
+
+    if (eventEngineJob != 0) {
+        eventEngineJob->getDependencies(tree);
+    }
+
     if (tree != 0) {
         STI::Device::DeviceIDIndexedGraph graph(*tree);
         return graph;
@@ -97,12 +140,22 @@ STI::Device::DeviceIDIndexedGraph JEventEngineJob::getDependenciesIndexed() cons
 
 std::set<STI::Device::DeviceID> JEventEngineJob::getMissingTargetIDs() const
 {
-    return eventEngineJob->getMissingTargetIDs();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getMissingTargetIDs();
+    }
+
+    std::set<STI::Device::DeviceID> missing;
+    return missing;
 }
 
 
-const std::vector<EngineParsingMessage>& JEventEngineJob::getParsingMessages() const
+std::vector<EngineParsingMessage> JEventEngineJob::getParsingMessages() const
 {
-    return eventEngineJob->getParsingMessages();
+    if (eventEngineJob != 0) {
+        return eventEngineJob->getParsingMessages();
+    }
+
+    std::vector<EngineParsingMessage> missing;
+    return missing;
 }
 

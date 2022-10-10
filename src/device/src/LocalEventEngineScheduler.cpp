@@ -76,8 +76,9 @@ DistributedJobCreator
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
-                                                    const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
-: MessageGenerator(dispatcher), localDevice(localDevice), completedJobs(3)
+                                                    const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
+                                                    const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager)
+: MessageGenerator(dispatcher), localDevice(localDevice), completedJobs(3), persistenceManager(persistenceManager)
 {
     completedJobs.setMaxSize(3);
 

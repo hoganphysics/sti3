@@ -101,10 +101,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
 																	localCollection, localPersistenceManager);
-	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
-
-
-
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher, localPersistenceManager);
+	localPersistenceManager->attachEngineScheduler(eventEngineScheduler);
 
 
 	//setEngineFactory(engineFactory);
