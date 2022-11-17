@@ -27495,8 +27495,8 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1HubID_1_1SWIG_10(JNIE
 
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1HubID_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
   jlong jresult = 0 ;
-  std::string arg1 ;
-  std::string arg2 ;
+  std::string *arg1 = 0 ;
+  std::string *arg2 = 0 ;
   unsigned short arg3 ;
   STI::Network::HubID *result = 0 ;
   
@@ -27505,21 +27505,23 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1HubID_1_1SWIG_11(JNIE
   if(!jarg1) {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
     return 0;
-  } 
+  }
   const char *arg1_pstr = (const char *)jenv->GetStringUTFChars(jarg1, 0); 
   if (!arg1_pstr) return 0;
-  (&arg1)->assign(arg1_pstr);
+  std::string arg1_str(arg1_pstr);
+  arg1 = &arg1_str;
   jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
   if(!jarg2) {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
     return 0;
-  } 
+  }
   const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
   if (!arg2_pstr) return 0;
-  (&arg2)->assign(arg2_pstr);
+  std::string arg2_str(arg2_pstr);
+  arg2 = &arg2_str;
   jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
   arg3 = (unsigned short)jarg3; 
-  result = (STI::Network::HubID *)new STI::Network::HubID(arg1,arg2,arg3);
+  result = (STI::Network::HubID *)new STI::Network::HubID((std::string const &)*arg1,(std::string const &)*arg2,arg3);
   *(STI::Network::HubID **)&jresult = result; 
   return jresult;
 }
