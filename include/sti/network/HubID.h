@@ -15,9 +15,10 @@ namespace Network
 class HubID
 {
 public:
-	HubID() {}
 
-	HubID(std::string name, std::string address, unsigned short module) : name(name), address(address), module(module) {}
+	HubID() : HubID("", "", 0) {}
+	HubID(const std::string& name, const std::string& address, unsigned short module) 
+	: name(name), address(address), module(module) {}
 
 	bool operator<(const HubID& rhs) const { return getID().compare(rhs.getID()) < 0; }
 	bool operator==(const HubID& rhs) const { return getID().compare(rhs.getID()) == 0; }

@@ -47,6 +47,13 @@ void TestDevice::init()
         .setSetter(&TestDevice::setTest, this)
         .setRefresher(&TestDevice::getTest, this);
 
+    addAttribute("Laser::test", 500);
+    addAttribute("Laser::current", 7)
+        .addMetaData("color", "blue");
+
+    addAttribute("Chiller::temperature", 22);
+    addAttribute("Chiller::enabled", "false", {"false", "true"});
+
     addChannel(1, 
                STI::Device::ChannelType::Output, 
                STI::Utils::MixedValueType::Double, 
