@@ -76,6 +76,10 @@ public class RawEventGroup {
     return new RawEventGroupStats(stiJNI.RawEventGroup_getStats(swigCPtr, this), true);
   }
 
+  public RawEventGroupStats getTotalStats() {
+    return new RawEventGroupStats(stiJNI.RawEventGroup_getTotalStats(swigCPtr, this), true);
+  }
+
   public void setName(String newName) {
     stiJNI.RawEventGroup_setName(swigCPtr, this, newName);
   }

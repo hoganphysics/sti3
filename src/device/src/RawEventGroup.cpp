@@ -133,6 +133,17 @@ RawEventGroupStats RawEventGroup::getStats() const
     return stats;
 }
 
+//Stats including all subgroups
+RawEventGroupStats RawEventGroup::getTotalStats() const
+{
+    RawEventGroupStats stats;
+    for (auto& g : subgroups) {
+        stats += g->getTotalStats();
+    }
+    stats += getStats();
+    return stats;
+}
+
 bool RawEventGroup::splitFullGroupName(const std::string& fullName, std::string& groupName, std::string& leafName)
 {
     auto pos = fullName.find_last_of("/");

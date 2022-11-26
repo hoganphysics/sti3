@@ -492,6 +492,7 @@ public class stiJNI {
   public final static native double RawEventGroup_startTime(long jarg1, RawEventGroup jarg1_);
   public final static native double RawEventGroup_endTime(long jarg1, RawEventGroup jarg1_);
   public final static native long RawEventGroup_getStats(long jarg1, RawEventGroup jarg1_);
+  public final static native long RawEventGroup_getTotalStats(long jarg1, RawEventGroup jarg1_);
   public final static native void RawEventGroup_setName(long jarg1, RawEventGroup jarg1_, String jarg2);
   public final static native boolean RawEventGroup_opEquals(long jarg1, RawEventGroup jarg1_, long jarg2, RawEventGroup jarg2_);
   public final static native boolean RawEventGroup_opLess(long jarg1, RawEventGroup jarg1_, long jarg2, RawEventGroup jarg2_);

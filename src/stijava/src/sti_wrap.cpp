@@ -14895,6 +14895,24 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventGroup_1getStats(JN
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventGroup_1getTotalStats(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEventGroup *arg1 = (STI::Engine::RawEventGroup *) 0 ;
+  std::shared_ptr< STI::Engine::RawEventGroup const > *smartarg1 = 0 ;
+  STI::Engine::RawEventGroupStats result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Engine::RawEventGroup > **)&jarg1;
+  arg1 = (STI::Engine::RawEventGroup *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((STI::Engine::RawEventGroup const *)arg1)->getTotalStats();
+  *(STI::Engine::RawEventGroupStats **)&jresult = new STI::Engine::RawEventGroupStats((const STI::Engine::RawEventGroupStats &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_RawEventGroup_1setName(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   STI::Engine::RawEventGroup *arg1 = (STI::Engine::RawEventGroup *) 0 ;
   std::string *arg2 = 0 ;

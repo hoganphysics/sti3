@@ -70,7 +70,9 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "shared_mutex": "cpp",
+        "cfenv": "cpp"
     },
     "esbonio.sphinx.confDir": ""
 }

@@ -88,6 +88,8 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
     running = true;
     schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
 
+    searchingParseResult = false;
+
     setEngineFactory(engineFactory);
 
     engineSchedulerMessageListenerDelegate = std::make_shared<LocalEventEngineScheduler::EngineSchedulerMessageListenerDelegate>(this);
@@ -1105,17 +1107,25 @@ bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::sha
 // bool LocalEventEngineScheduler::getParsedEvents(const ParseID& parseID, DeviceEventMap& events) const
 bool LocalEventEngineScheduler::getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const
 {
+    if (searchingParseResult) return false;
+
+    std::unique_lock<std::mutex> resultLock(parseResultMutex);
+    searchingParseResult = true;
+
     std::shared_ptr<LocalEventEngine> engine;
 
+    bool success = false;
+
     if (getParsedEngine(parseID, engine)) {
-        return engine->getParseResult(parseID, parseResult);
+        success = engine->getParseResult(parseID, parseResult);
     }
     else {
         //ParseResult is not in engine anymore; check for result in PersistenceManager
-        return persistenceManager != 0 && persistenceManager->getParseResult(parseID, parseResult);
+        success = persistenceManager != 0 && persistenceManager->getParseResult(parseID, parseResult);
     }
 
-    return false;
+    searchingParseResult = false;
+    return success;
 }
 
 // bool LocalEventEngineScheduler::getParsingMessages(const ParseID& parseID, std::vector<EngineParsingMessage>& messages) const

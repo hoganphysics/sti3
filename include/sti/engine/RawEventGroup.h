@@ -38,6 +38,15 @@ struct RawEventGroupStats
     unsigned tags;
     unsigned events;
     unsigned subgroups;
+
+    RawEventGroupStats& operator+=(const RawEventGroupStats& rhs)
+    {
+        vars += rhs.vars;
+        tags += rhs.tags;
+        events += rhs.events;
+        subgroups += rhs.subgroups;
+        return (*this);
+    }
 };
 
 
@@ -57,6 +66,7 @@ public:
     double endTime() const;
 
     RawEventGroupStats getStats() const;
+    RawEventGroupStats getTotalStats() const;
 
     void setName(const std::string& newName);
 

@@ -212,6 +212,9 @@ private:
     mutable std::mutex jobMutex;
     mutable std::condition_variable jobCondition;
 
+    mutable std::mutex parseResultMutex;
+    mutable bool searchingParseResult;
+
 
     class EngineSchedulerMessageListenerDelegate : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
     {
