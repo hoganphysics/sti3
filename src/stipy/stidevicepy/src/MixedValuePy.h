@@ -48,7 +48,7 @@ private:
                 MixedValue::setValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
-            success = false;
+            // success = false;
         }
         catch(pybind11::cast_error&) {
             success = false;
@@ -68,7 +68,7 @@ private:
                 MixedValue::addValue( static_cast<T>(value.cast<PyT>()) );
                 success = true;
             }
-            success = false;
+            // success = false;
         }
         catch(pybind11::cast_error&) {
             success = false;

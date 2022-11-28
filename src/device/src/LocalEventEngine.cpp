@@ -361,7 +361,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseID = job.getJobID().pid;
 	lastParseResult->pid = lastParseID;
 	lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
-	lastParseResult->messages = localParsingMessages;
 	lastParseResult->stackTraceResult = std::make_shared<StackTraceResult>(lastParseID);
 	
 //	dependencyTree = job.dependencies;
@@ -443,6 +442,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	job.addMessages(localParsingMessages);
 	const std::vector<EngineParsingMessage>& jobMessages = job.getParsingMessages();
+	lastParseResult->messages = jobMessages;
 
 	//TODO:  Parse errors and warnings
 	//auto& localMessages = parser.getParsingMessages();
