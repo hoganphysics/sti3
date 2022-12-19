@@ -603,6 +603,8 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     std::shared_ptr<EventEngineDependencyTree> tree;
     std::set<STI::Device::DeviceID> missingTargets;     //empty
 
+    EngineJobStatus jobStatus = convert<TEngineJobStatus, EngineJobStatus>(tEngineJob.status);
+
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
@@ -618,25 +620,30 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
             tree = std::make_shared<EventEngineDependencyTree>();
             convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
-		auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
-			);
+            auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
+                convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
+                );
         
-        job->setDependencies(tree);
-        job->setMissingTargets(missingTargets);
-        engineJob = job;
-        success = true;
+            job->setDependencies(tree);
+            job->setMissingTargets(missingTargets);
+            job->setStatus(jobStatus);
+            engineJob = job;
+            success = true;
         }
         break;
 	case EventEngineJobType::Play:
-		engineJob = std::make_shared<LocalEventEngineJob>(jobID,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
-        success = true;
+        {
+            auto job = std::make_shared<LocalEventEngineJob>(jobID,
+                convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
+            job->setStatus(jobStatus);
+            engineJob = job;
+            success = true;
+        }
 		break;
     default:
         break;
     }
-    
+
     return success && (engineJob != 0);
 }
 

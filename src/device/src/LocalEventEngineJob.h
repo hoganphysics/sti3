@@ -44,6 +44,8 @@ public:
     STI::Device::DeviceID getJobOwner() const;
     EngineJobStatus getStatus() const;
 
+    void setStatus(const EngineJobStatus& jobStatus);
+
     void markRunning(const EngineID& id);
     void markComplete();
     void markCancelled();

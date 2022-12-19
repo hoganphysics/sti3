@@ -74,7 +74,7 @@ std::string RawEventGroup::getName() const
 
 std::string RawEventGroup::getFullName() const
 {
-    return parentName + "/" + name;
+    return ( (parentName != "") ? (parentName + "/") : "") + name;
 }
 
 std::string RawEventGroup::getParentGroupName() const
@@ -525,9 +525,18 @@ std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName
 
     splitGroupName(trimmedGroupName, baseName, subName);
 
+    std::string newParentName = getFullName();
+    std::string trimmedParentName = newParentName;
+    // if (newParentName.size() > 0 && newParentName.at(0) == '/') {
+    //     trimmedParentName = newParentName.substr(1, std::string::npos);
+    // }
+    // else {
+    //     trimmedParentName = newParentName;
+    // }
+
     if (!groupMap.get(baseName, g)) {
         //new subgroup
-        g = std::make_shared<RawEventGroup>(baseName, parentName, stackTraceData);
+        g = std::make_shared<RawEventGroup>(baseName, trimmedParentName, stackTraceData);
         groupMap.add(baseName, g);            
     }
 

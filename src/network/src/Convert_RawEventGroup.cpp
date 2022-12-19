@@ -143,8 +143,10 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
 
     auto& tSubgroups = tRawEventGroup.subgroups;
     for (unsigned i = 0; i < tSubgroups.length(); ++i) {
-        auto g =rawEventGroup->group(
+        auto g = rawEventGroup->group(
             convert<CORBA::String_member, std::string>(tSubgroups[i].name));
+
+            // tSubgroups[i].parentName
         
         convertGroup(tSubgroups[i], g);
     }

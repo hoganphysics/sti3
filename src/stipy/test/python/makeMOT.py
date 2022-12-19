@@ -26,4 +26,16 @@ def f():
     mv2.addValue("Hello")
     mv2.addValue(False)
 
-    event(c1, 1900, mv2)
+    event(c1, 23001900, mv2)
+
+    g=group("Imaging")
+    g.addEvent(c1, 2900, [4, "mot", True])
+    event(c1, 5900, "shutter on", "Make MOT")
+
+    g2=g.group("Shutter")
+    g2.addEvent(c1, 6002, True)
+
+    g3=g2.group("hello")
+    g3.addEvent(c1, 6007, False)
+
+
