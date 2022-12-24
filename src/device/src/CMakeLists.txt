@@ -86,6 +86,7 @@ add_library(stidevice SHARED
     LocalDeviceMessageDispatcher.cpp
     LocalDeviceMessageHandler.cpp
     LocalEventEngine.cpp
+    LocalEventEngineDependencyParser.cpp
     LocalEventEngineJob.cpp
     LocalEventEngineScheduler.cpp
     LocalFileHolder.cpp

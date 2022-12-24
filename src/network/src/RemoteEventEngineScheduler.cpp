@@ -1,32 +1,33 @@
 #include "RemoteEventEngineScheduler.h"
-#include <sti/device/DeviceTrace.h>
-#include "EventEngineDependencyTree.h"
-#include "ParsedDependencyTree.h"
-#include "LocalEventEngineJob.h"
-#include "Convert_EventEngine.h"
-#include "Convert_DeviceTrace.h"
-#include "Convert_ShotResult.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"
-#include "NetworkShotWrapper.h"
+
+#include <sti/device/DeviceTrace.h>
+
 #include <sti/engine/EngineJobID.h>
-#include <sti/engine/EngineParsingMessage.h>
-#include <sti/engine/RawEvent.h>
-#include "LocalShot.h"
-#include "NetworkResultsCollector.h"
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEvent.h>
+
+#include "Convert_DeviceTrace.h"
+#include "Convert_EventEngine.h"
+#include "Convert_ShotResult.h"
+
+#include "EventEngineDependencyTree.h"
+#include "LocalEventEngineJob.h"
+#include "LocalShot.h"
+#include "NetworkShotWrapper.h"
+#include "NetworkResultsCollector.h"
+#include "RemoteEventEngineDependencyParser.h"
 
 #include <memory>
+
 
 using STI::Network::RemoteEventEngineScheduler;
 using STI::Engine::EngineJobID;
 using STI::TNetwork::TEngineJobID;
 using STI::Network::convert;
 using STI::Engine::EventEngineJob;
-using STI::Engine::EventEngineDependencyTree;
-using STI::Engine::ParsedDependencyTree;
-using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Device::DeviceTrace;
 using STI::TNetwork::TDeviceTrace;
 using STI::Device::DeviceID;
@@ -37,7 +38,6 @@ using STI::Engine::Shot;
 using STI::TNetwork::TParseID;
 using STI::Engine::ParseID;
 using STI::TNetwork::TEngineParsingMessage;
-using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TReferenceHolder;
 using STI::Network::NetworkResultsCollector;
 using STI::TNetwork::TShotID;
@@ -49,11 +49,14 @@ using STI::Engine::EngineJobStatus;
 using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EventEngineJobList;
 using STI::TNetwork::TEventEngineJobList;
+using STI::Engine::EventEngineDependencyParser;
+using STI::Network::RemoteEventEngineDependencyParser;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
 	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler, schedulerMutex)
 {
+	addDependent(remoteDependencyParser);
 }
 
 RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
@@ -167,35 +170,30 @@ EngineJobStatus RemoteEventEngineScheduler::getStatus(const STI::Engine::ShotID&
 	return status;
 }
 
-void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::DeviceID>& evtTargets, 
-											   STI::Engine::EventEngineDependencyTree& tree, 
-                                			   std::set<STI::Device::DeviceID>& missingTargets, 
-											   std::vector<STI::Engine::EngineParsingMessage>& messages, 
-											   const STI::Device::DeviceTrace& trace)
+bool RemoteEventEngineScheduler::getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	if (isDisabled()) return;
+	// isLive already?
+	if (remoteDependencyParser != 0 && !remoteDependencyParser->isDisabled() && remoteDependencyParser->ping()) {
+		dependencyParser = remoteDependencyParser;
+		return (dependencyParser != 0);
+	}
+	else if (remoteDependencyParser != 0) {
+		//non-null but not live for some reason; disable
+		remoteDependencyParser->disable();
+	}
 
-	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
+	if (isDisabled()) return false;
 
-    try {
+	::STI::TNetwork::TEventEngineDependencyParser_var tDependencyParser;	//remote reference
+	
+	try {
+		tDependencyParser = getTRef()->getDependencyParser();	//remote call
 
-        STI::TNetwork::TDeviceIDSeq_var tEvtTargets(new STI::TNetwork::TDeviceIDSeq);
-        convert<DeviceID, TDeviceID>(evtTargets, tEvtTargets);
-
-        STI::TNetwork::TEventEngineDependencyTree tTree;
-        convert<EventEngineDependencyTree, TEventEngineDependencyTree>(tree, tTree);
-    
-        STI::TNetwork::TDeviceIDSeq_var tMissingTargets(new STI::TNetwork::TDeviceIDSeq);
-        convert<DeviceID, TDeviceID>(missingTargets, tMissingTargets);
-
-		getTRef()->getDependants(tEvtTargets, tTree, tMissingTargets, tEngineParsingMessages,
-                                             convert<DeviceTrace, TDeviceTrace>(trace));	//remote call
-
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, tree);
-        convert<TDeviceID, DeviceID>(tMissingTargets, missingTargets);
-		convert<TEngineParsingMessage, EngineParsingMessage>(tEngineParsingMessages, messages);
+		if (!CORBA::is_nil(tDependencyParser)) {
+			remoteDependencyParser = std::make_shared<RemoteEventEngineDependencyParser>(tDependencyParser);
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -204,36 +202,11 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
 	catch (CORBA::Exception&)
 	{
 	}
+
+	dependencyParser = remoteDependencyParser;
+	return (dependencyParser != 0);
 }
 
-void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, 
-													   std::vector<EngineParsingMessage>& messages, 
-													   const DeviceTrace& trace)
-{
-	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
-
-	if (isDisabled()) return;
-
-	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
-
-    try {
-        STI::TNetwork::TEventEngineDependencyTree tTree;
-        convert<EventEngineDependencyTree, TEventEngineDependencyTree>(tree, tTree);
-
-		getTRef()->addDeviceEventTargets(tTree, tEngineParsingMessages, 
-                                                     convert<DeviceTrace, TDeviceTrace>(trace));	//remote call
-
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, tree);
-		convert<TEngineParsingMessage, EngineParsingMessage>(tEngineParsingMessages, messages);
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
 
 bool RemoteEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const
 {

@@ -115,6 +115,9 @@ public:
 
     void cancelAll();
 
+    std::string printNetwork();
+    std::string printNetwork(const std::string& baseContext);
+
 private:
 
 

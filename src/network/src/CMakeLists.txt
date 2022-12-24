@@ -101,6 +101,7 @@ add_library(stinetwork SHARED
     RemoteDeviceMessageDispatcher.cpp
     RemoteDeviceMessageHandler.cpp
     RemoteEventEngine.cpp
+    RemoteEventEngineDependencyParser.cpp
     RemoteEventEngineScheduler.cpp
     RemoteFileHolder.cpp
     RemotePersistenceManager.cpp
@@ -116,6 +117,7 @@ add_library(stinetwork SHARED
     TDeviceMessageDispatcher_i.cpp
     TDeviceMessageHandler_i.cpp
     TEventEngine_i.cpp
+    TEventEngineDependencyParser_i.cpp
     TEventEngineScheduler_i.cpp
     TFileHolder_i.cpp
     TPersistenceManager_i.cpp

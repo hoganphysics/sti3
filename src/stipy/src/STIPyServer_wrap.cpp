@@ -23,6 +23,9 @@ void init_STIPyServer(py::module& m)
         .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse))
         .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play))
         .def("cancelAll", &STIPyServer::cancelAll)
+        
+        .def("printNetwork", py::overload_cast<>(&STIPyServer::printNetwork))
+        .def("printNetwork", py::overload_cast<const std::string&>(&STIPyServer::printNetwork))
         ;
 
 }

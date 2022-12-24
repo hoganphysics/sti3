@@ -137,6 +137,16 @@ module TNetwork
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 	};
 
+	interface TEventEngineDependencyParser
+	{
+		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
+                                inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
+    
+    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
+
+		boolean ping();
+	};
+
 	interface TEventEngineScheduler
 	{
 		TParseID parse(in TShot shot);
@@ -145,10 +155,7 @@ module TNetwork
     	TEngineJobStatus getStatusPID(in TParseID pid);
     	TEngineJobStatus getStatusSID(in TShotID sid);
 
-		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
-                                inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
-    
-    	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
+		TEventEngineDependencyParser getDependencyParser();
 
     	boolean getJob(in TEngineJobID id, out TEventEngineJob job);
     	void addJob(in TEventEngineJob newJob);

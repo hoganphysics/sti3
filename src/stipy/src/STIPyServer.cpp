@@ -206,3 +206,20 @@ void STIPyServer::cancelAll()
     }
 }
 
+std::string STIPyServer::printNetwork()
+{
+    std::string result;
+    if (libDeviceHub != 0) {
+        result = libDeviceHub->printNetwork();
+    }
+    return result;
+}
+
+std::string STIPyServer::printNetwork(const std::string& baseContext)
+{
+    std::string result;
+    if (libDeviceHub != 0) {
+        result = libDeviceHub->printNetwork(baseContext);
+    }
+    return result;
+}

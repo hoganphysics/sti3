@@ -17,6 +17,7 @@ namespace Engine
 {
 
 class EventEngineJob;
+class EventEngineDependencyParser;
 class EventEngineDependencyTree;
 class Shot;
 class ParseID;
@@ -48,13 +49,15 @@ public:
     virtual EngineJobStatus getStatus(const ParseID& pid) = 0;
     virtual EngineJobStatus getStatus(const ShotID& sid) = 0;
 
-    virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
-                                const STI::Device::DeviceTrace& trace) = 0;
+    virtual bool getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser) = 0;
+
+    // virtual void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
+    //                             std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+    //                             const STI::Device::DeviceTrace& trace) = 0;
     
-    virtual void addDeviceEventTargets(EventEngineDependencyTree& tree, 
-                                        std::vector<EngineParsingMessage>& messages, 
-                                        const STI::Device::DeviceTrace& trace) = 0;
+    // virtual void addDeviceEventTargets(EventEngineDependencyTree& tree, 
+    //                                     std::vector<EngineParsingMessage>& messages, 
+    //                                     const STI::Device::DeviceTrace& trace) = 0;
 
     virtual bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const = 0;    
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;

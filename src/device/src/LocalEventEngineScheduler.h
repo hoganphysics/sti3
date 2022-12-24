@@ -4,7 +4,6 @@
 #include <sti/LocalDevice.h>
 
 #include <sti/device/Device.h>
-#include <sti/device/DeviceCollection.h>
 #include <sti/device/DeviceTrace.h>
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/DeviceMessageListener.h>
@@ -57,6 +56,7 @@ namespace Engine
 {
 
 class EngineJobID;
+class LocalEventEngineDependencyParser;
 class EventEngineFactory;
 class EventEngineJob;
 class EventEngineManager;
@@ -88,11 +88,13 @@ public:
     EngineJobStatus getStatus(const ParseID& pid);
     EngineJobStatus getStatus(const ShotID& sid);
 
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
-                        const STI::Device::DeviceTrace& trace);
+    bool getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser);
+
+    // void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
+    //                     std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+    //                     const STI::Device::DeviceTrace& trace);
     
-    void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
+    // void addDeviceEventTargets(EventEngineDependencyTree& tree, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
     
     bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const;
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
@@ -148,26 +150,6 @@ private:
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
 
-    void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
-                        unsigned maxRecursions);
-
-    bool loopDetected(const STI::Device::DeviceTrace& trace, STI::Device::DeviceTrace& newTrace);
-
-    void getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs);
-    
-    bool getTargetScheduler(const STI::Device::DeviceID& id, std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
-
-    void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
-                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
-    
-    void getDownstreamIDs(const std::map<std::string, std::set<STI::Device::DeviceID>> targetsByServer, const EventEngineDependencyTree& tree, 
-                            std::set<STI::Device::DeviceID>& downstreamIDs);
-
-
-    void getPartnerDeviceDependants(const STI::Device::DeviceID& partnerID, const std::set<STI::Device::DeviceID>& targets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingIDs, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
-
     //void findMissingTarget(const std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     
     void assignJobs();
@@ -187,11 +169,13 @@ private:
 
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
 
-    STI::Device::LocalDevice* localDevice;
+    // STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;
-    std::shared_ptr<STI::Device::DeviceCollection> localCollection;
+    // std::shared_ptr<STI::Device::DeviceCollection> localCollection;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;
+
+    std::shared_ptr<LocalEventEngineDependencyParser> localDependencyParser;
 
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
 
