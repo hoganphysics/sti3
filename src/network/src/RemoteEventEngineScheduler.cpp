@@ -12,6 +12,7 @@
 #include "Convert_DeviceTrace.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
+#include "Convert_SequenceResult.h"
 
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
@@ -51,6 +52,12 @@ using STI::Engine::EventEngineJobList;
 using STI::TNetwork::TEventEngineJobList;
 using STI::Engine::EventEngineDependencyParser;
 using STI::Network::RemoteEventEngineDependencyParser;
+using STI::Engine::Sequence;
+using ::STI::TNetwork::TSequence;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::SequenceID;
+using ::STI::TNetwork::TSequenceID;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
@@ -120,6 +127,70 @@ ShotID RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobS
 	}
 
 	return sid;
+}
+
+SequenceID RemoteEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	SequenceID seqid;
+	STI::TNetwork::TSequence tSequence;
+
+	if (isDisabled()) return seqid;
+
+	if (!convert<std::shared_ptr<Sequence>, STI::TNetwork::TSequence>(sequence, tSequence)) {
+		return seqid;
+	}
+
+	try {
+		auto tSequenceID = getTRef()->addSequence(tSequence,
+				convert<EngineJobSourceID, TEngineJobSourceID>(source));	//remote call
+
+		if (tSequenceID != 0) {
+			seqid = convert<TSequenceID, SequenceID>(*tSequenceID);			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return seqid;
+}
+
+STI::Engine::ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	ParseID pid;
+	STI::TNetwork::TShot tShot;
+
+	if (isDisabled()) return pid;
+
+	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
+		return pid;
+	}
+
+	try {
+		auto tParseID = getTRef()->parseSeqEntry(tShot,
+				convert<SequenceEntryID, TSequenceEntryID>(sequenceEntryID));	//remote call
+
+		if (tParseID != 0) {
+			pid = convert<TParseID, ParseID>(*tParseID);			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return pid;
 }
 
 EngineJobStatus RemoteEventEngineScheduler::getStatus(const ParseID& pid)

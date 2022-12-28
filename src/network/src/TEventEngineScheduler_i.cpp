@@ -14,6 +14,7 @@
 #include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_SequenceResult.h"
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
@@ -48,6 +49,16 @@ using ::STI::TNetwork::TEventEngineJob;
 using STI::Engine::ParseResult;
 using ::STI::TNetwork::TEventEngineDependencyParser_ptr;
 using STI::Engine::EventEngineDependencyParser;
+using ::STI::TNetwork::TSequence;
+using STI::Engine::Sequence;
+using ::STI::TNetwork::TSequenceID;
+using STI::Engine::SequenceID;
+using ::STI::TNetwork::TShot;
+using STI::Engine::Shot;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TEngineJobSourceID;
+using STI::Engine::EngineJobSourceID;
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -95,6 +106,38 @@ TShotID* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJob
 	}
 
 	return tShotID._retn();
+}
+
+TSequenceID* TEventEngineScheduler_i::addSequence(const TSequence& tSequenceData, const TEngineJobSourceID& source)
+{
+	STI::TNetwork::TSequenceID_var tSequenceID(new STI::TNetwork::TSequenceID);
+
+	std::shared_ptr<Sequence> sequenceData;
+	bool success = convert<TSequence, std::shared_ptr<Sequence>>(tSequenceData, sequenceData);
+    
+	if (engineScheduler != 0) {
+		auto seqid = engineScheduler->addSequence(sequenceData, 
+												  convert<TEngineJobSourceID, EngineJobSourceID>(source));
+		convert<SequenceID, TSequenceID>(seqid, tSequenceID.inout());
+	}
+
+	return tSequenceID._retn();
+}
+
+TParseID* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const TSequenceEntryID& sequenceEntryID)
+{
+	STI::TNetwork::TParseID_var tParseID(new STI::TNetwork::TParseID);
+
+	std::shared_ptr<Shot> parsedShot;
+	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
+    
+	if (engineScheduler != 0) {
+		auto pid = engineScheduler->parse(parsedShot, 
+										  convert<TSequenceEntryID, SequenceEntryID>(sequenceEntryID));
+		convert<ParseID, TParseID>(pid, tParseID.inout());
+	}
+
+	return tParseID._retn();
 }
 
 

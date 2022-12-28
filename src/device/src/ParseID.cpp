@@ -28,7 +28,9 @@ template<class Archive>
 void ParseID::serialize(Archive& archive)
 {
     archive(cereal::make_nvp("parseTimestamp", parseTimestamp),
-            cereal::make_nvp("ShotConfig", shotConfig));
+            cereal::make_nvp("ShotConfig", shotConfig),
+            cereal::make_nvp("sequenceEntryID", sequenceEntryID)
+        );
 
 }
 

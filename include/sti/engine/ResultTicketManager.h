@@ -26,10 +26,11 @@ public:
                         const std::shared_ptr<EventEngineScheduler>& scheduler);
     virtual ~ResultTicketManager() {}
 
-    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID &id);
+    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID& id);
 
 private:
-    void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage> &mess);
+
+    void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     std::shared_ptr<EventEngineScheduler> eventEngineScheduler;

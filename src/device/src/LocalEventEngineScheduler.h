@@ -63,6 +63,7 @@ class EventEngineManager;
 class LocalEventEngine;
 class ParseID;
 class Shot;
+class LocalEventEngineJob;
 
 
 class LocalEventEngineScheduler : public EventEngineScheduler,
@@ -84,6 +85,10 @@ public:
 
     ParseID parse(const std::shared_ptr<Shot>& shot);        //local; add event to queue
     ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
+
+    SequenceID addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source);
+    ParseID parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
+    // ShotID play(const ParseID& parseID, const EngineJobSourceID& source, const SequenceEntryID& sequenceEntryID);
 
     EngineJobStatus getStatus(const ParseID& pid);
     EngineJobStatus getStatus(const ShotID& sid);
@@ -147,6 +152,9 @@ public:
     //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
 
 private:
+
+    ParseID parse(const std::shared_ptr<LocalEventEngineJob>& job);
+    ShotID play(const ShotID& shotID);
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
 

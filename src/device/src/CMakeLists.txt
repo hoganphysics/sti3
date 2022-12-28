@@ -112,6 +112,9 @@ add_library(stidevice SHARED
     RawStackTrace.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
+    Sequence.cpp
+    SequenceID.cpp
+    SequenceResult.cpp
     ShotConfig.cpp
     ShotID.cpp
     ShotResult.cpp

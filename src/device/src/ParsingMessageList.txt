@@ -1,8 +1,12 @@
 
 (ParsingMessageType::Error, 1, "Circular Dependency")
+(ParsingMessageType::Error, 10, "Invalid sequence entry")
 (ParsingMessageType::Error, 20, "Missing shot")
 (ParsingMessageType::Error, 21, "Missing dependency graph")
 (ParsingMessageType::Error, 22, "Null event vector")
+
+(ParsingMessageType::Error, 60, "Wrong device server")
+(ParsingMessageType::Error, 70, "Cannot Play Abstract Shot")
 
 (ParsingMessageType::Warning, 1000, "Missing Targets")
 (ParsingMessageType::Warning, 1001, "Event Target Device Missing")

@@ -37,6 +37,7 @@ namespace Device
 //DeviceMessage, 
 //DeviceMessageReceiver::addListener, ::removeListener, ::refreshListenerGroups, ::clearAllListenerGroups, 
 //and add a dedicated ListenerGroupMap instance
+//Message relayer
 
 class DeviceMessage
 {

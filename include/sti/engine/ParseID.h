@@ -4,6 +4,7 @@
 #include <sti/engine/TimeStamp.h>
 #include <sti/engine/EngineJobSourceID.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/SequenceID.h>
 
 #include <string>
 
@@ -22,6 +23,8 @@ public:
 
 	TimeStamp parseTimestamp;
 	ShotConfig shotConfig;
+
+	SequenceEntryID sequenceEntryID;
 
 	bool operator<(const ParseID& rhs) const { return parseTimestamp < rhs.parseTimestamp; }
 	bool operator==(const ParseID& rhs) const { return parseTimestamp == rhs.parseTimestamp; }

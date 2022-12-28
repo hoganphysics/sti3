@@ -22,8 +22,10 @@ public:
     ~RemotePersistenceManager();
 
     bool findShot(const STI::Engine::ShotID& sid);
+
     bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult);
     bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult);
+    bool getSequenceResult(const STI::Engine::SequenceID& id, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
 
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner);
 
@@ -33,6 +35,10 @@ public:
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+
+    void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
+    bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);
+    bool saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner);
 
     bool ping() const;
 

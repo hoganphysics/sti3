@@ -93,10 +93,18 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
+	//temp for localPersistenceManager; TODO: expose to constructor
+	Configuration configuration;
+	configuration.set<int>("PersistenceManager", "resultBufferSize", 5);
+	configuration.set<int>("PersistenceManager", "sequenceBufferSize", 5);
+	// configuration.set<std::string>("PersistenceManager", "basePath", basePath);
+
+
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), basePath, localFileHolderFactory, localCollection);
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), configuration, basePath, localFileHolderFactory, localCollection);
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
+
 
 
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 

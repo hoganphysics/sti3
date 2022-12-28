@@ -58,6 +58,15 @@ public class ParseID {
     return (cPtr == 0) ? null : new ShotConfig(cPtr, false);
   }
 
+  public void setSequenceEntryID(SequenceEntryID value) {
+    stiJNI.ParseID_sequenceEntryID_set(swigCPtr, this, SequenceEntryID.getCPtr(value), value);
+  }
+
+  public SequenceEntryID getSequenceEntryID() {
+    long cPtr = stiJNI.ParseID_sequenceEntryID_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new SequenceEntryID(cPtr, false);
+  }
+
   public boolean opLess(ParseID rhs) {
     return stiJNI.ParseID_opLess(swigCPtr, this, ParseID.getCPtr(rhs), rhs);
   }

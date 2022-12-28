@@ -4,6 +4,7 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/SequenceResult.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/utils/utils.h>
 
@@ -17,10 +18,15 @@ using STI::Engine::MeasurementVector;
 using STI::Engine::ParseID;
 using STI::Engine::ParseResult;
 using STI::Engine::FullShotResult;
+using STI::Engine::SequenceID;
+using STI::Engine::SequenceEntryID;
+using STI::Engine::EngineJobStatus;
+using STI::Engine::SequenceResult;
+
 
 
 TransientRepository::TransientRepository(const std::string& tempBasePath)
-: parseBuffer(5), resultBuffer(5)
+: parseBuffer(5), resultBuffer(5), sequenceBuffer(5)
 {
     //Need a temporary directory to store any files (measurements, timing files, etc).
     //This directory is for temporary files that will be deleted when the shot expires.
@@ -48,14 +54,24 @@ TransientRepository::~TransientRepository()
     }
 }
 
+bool TransientRepository::findParseResult(const ParseID& pid)
+{
+    return parseBuffer.contains(pid);
+}
+
 bool TransientRepository::findShotResult(const ShotID& sid)
 {
     return resultBuffer.contains(sid);
 }
 
-bool TransientRepository::findParseResult(const ParseID& pid)
+bool TransientRepository::findSequenceResult(const SequenceID& seqid)
 {
-    return parseBuffer.contains(pid);
+    return sequenceBuffer.contains(seqid);
+}
+
+bool TransientRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& parseResult)
+{
+    return parseBuffer.get(id, parseResult) && (parseResult != 0);
 }
 
 bool TransientRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
@@ -68,9 +84,9 @@ bool TransientRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotRe
     return false;
 }
 
-bool TransientRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& parseResult)
+bool TransientRepository::getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult)
 {
-    return parseBuffer.get(id, parseResult);
+    return sequenceBuffer.get(id, sequenceResult) && (sequenceResult != 0);
 }
 
 bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult)
@@ -94,6 +110,16 @@ bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<Full
 
 ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
 {
+    return preparePaths();
+}
+
+ResultsPaths TransientRepository::preparePaths(const SequenceID& seqid)
+{
+    return preparePaths();
+}
+
+ResultsPaths TransientRepository::preparePaths()
+{
     ResultsPaths paths;
 
     paths.basePath = tempResultsPath;
@@ -106,6 +132,7 @@ ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
     return paths;
 }
 
+
 bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
 {
     std::shared_ptr<FullShotResult> fullShotResult;
@@ -117,5 +144,27 @@ bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid
     }
 
     return false;
+}
+
+bool TransientRepository::updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus)
+{
+    std::shared_ptr<SequenceResult> sequenceResult;
+    bool success = false;
+    
+    if (getSequenceResult(id.seqID, sequenceResult)) {
+        success = sequenceResult->addShotResult(id.seqIndex, shotID, shotStatus);
+    }
+    return success;
+}
+
+bool TransientRepository::saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult)
+{
+    if (sequenceResult == 0) return false;
+
+    std::shared_ptr<SequenceResult> expiredResult;  //the oldest result in the buffer; ready to delete
+    if (sequenceBuffer.addAndRemove(seqid, sequenceResult, expiredResult) && expiredResult != 0) {
+        //expiredResult deleted
+    }
+    return findSequenceResult(seqid);
 }
 

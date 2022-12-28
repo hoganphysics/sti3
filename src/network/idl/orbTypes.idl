@@ -185,7 +185,24 @@ module TNetwork
 		string machine;
 	};
 
+
 	enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented };
+
+	struct TSequenceIndex
+	{
+		long index;
+		long repeat;
+	};
+	struct TSequenceID
+	{
+		TTimeStamp timestamp;
+		TEngineJobSourceID jobSourceID;
+	};
+	struct TSequenceEntryID
+	{
+		TSequenceID seqID;
+		TSequenceIndex seqIndex;
+	};
 
 
 	struct TShotConfig
@@ -200,10 +217,13 @@ module TNetwork
 		string comment;
 	};
 
+
 	struct TParseID
 	{
 		TTimeStamp parseTimestamp;
 		TShotConfig shotConfig;
+
+		TSequenceEntryID sequenceEntryID;
 	};
 
 	struct TShotID
@@ -303,6 +323,53 @@ module TNetwork
 		TDeviceIDSeq missingTargetIDs;
 	};
 	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
+
+
+	enum TSequenceType { SequenceTypeOpen, SequenceTypeClosed };
+
+	struct TSequenceEntry
+	{
+		long index;
+		TParsedVarSeq overwritten;
+	};
+
+	struct TSequenceEntryTuple
+	{
+		long index;
+		TSequenceEntry entry;
+	};
+	typedef sequence<TSequenceEntryTuple> TSequenceEntryTupleSeq;
+
+	struct TSequence
+	{
+		TSequenceEntryTupleSeq sequenceTable;
+		long repeats;
+		TSequenceType type;
+	};
+
+	struct TEngineJobStatusTuple
+	{
+		TSequenceIndex index;
+		TEngineJobStatus status;
+	};
+	typedef sequence<TEngineJobStatusTuple> TEngineJobStatusTupleSeq;
+
+	struct TShotIDTuple
+	{
+		TSequenceIndex index;
+		TShotID sid;
+	};
+	typedef sequence<TShotIDTuple> TShotIDTupleSeq;
+
+	struct TSequenceResult
+	{
+		TSequenceID seqid;
+		TSequence sequenceData;
+
+		TEngineJobStatusTupleSeq status;
+		TShotIDTupleSeq shots;
+	};
+
 
 
 	interface TPersistenceManager;

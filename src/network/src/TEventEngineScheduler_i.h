@@ -23,6 +23,8 @@ public:
 
     TParseID* parse(const ::STI::TNetwork::TShot& shot);
     TShotID* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
+    TSequenceID* addSequence(const ::STI::TNetwork::TSequence& tSequenceData, const ::STI::TNetwork::TEngineJobSourceID& source);
+    TParseID* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
     
     TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid);
     TEngineJobStatus getStatusSID(const ::STI::TNetwork::TShotID& sid);

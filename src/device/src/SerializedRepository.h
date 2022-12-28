@@ -30,36 +30,46 @@ public:
 
 
     //ShotRepositroy
+    bool findParseResult(const ParseID& pid);
     bool findShotResult(const ShotID& sid);
-    bool findParseResult(const ParseID& sid);
+    bool findSequenceResult(const SequenceID& seqid);
 
     bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);
     bool getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult);
+    bool getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult);
 
-    bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
+    bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
+
+    bool updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus);
+    bool saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult);
 
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
     // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter
     ResultsPaths preparePaths(const ShotID& sid);
+    ResultsPaths preparePaths(const SequenceID& seqid);
     // bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
 
     // bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
 
-
-
-
-
-
 private:
 
-    ResultsPaths makePaths(const ShotID& sid);
+    ResultsPaths preparePaths(const TimeStamp& timeStamp);
+
+    std::string makeParseFilename(const ParseID& pid);
+    std::string makeShotFilename(const ShotID& sid);
+    std::string makeSequenceFilename(const SequenceID& seqid);
+
+    // ResultsPaths makePaths(const ShotID& sid);
+    // ResultsPaths makePaths(const SequenceID& seqid);
+
+    ResultsPaths makePaths(const TimeStamp& sid);
     // std::string makeBaseDevicePath();
 
     void makePathIfNew(const std::string& pathName);
 
-    std::string getShotBasePath(const ShotID& sid);
+    std::string getShotBasePath(const TimeStamp& sid);
 
     // STI::Device::DeviceID deviceID;
     std::string rootPath;
@@ -67,7 +77,8 @@ private:
 
     std::string archiveFilename;
 
-    STI::Utils::OrderedBufferMap<ShotID, ResultsPaths> cachedPaths;
+    STI::Utils::OrderedBufferMap<TimeStamp, ResultsPaths> cachedPaths;
+    // STI::Utils::OrderedBufferMap<SequenceID, ResultsPaths> cachedSequencePaths;
 
     mutable std::mutex pathMutex;
 
