@@ -100,6 +100,15 @@ void init_RawEventGroup(py::module& m)
                 self.addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
             }, py::arg("target"), py::arg("time"), py::arg("value"), py::arg("stackTrace"))
 
+        .def("bindvar", [](RawEventGroup& self, const std::string& fullVarName, 
+                        const pybind11::object& value) {
+
+                MixedValuePy mixedValue;
+                mixedValue.setValue_py(value);
+
+                self.bindVar(fullVarName, mixedValue);
+            }, py::arg("fullVarName"), py::arg("value"))
+
         .def("group", &RawEventGroup::group, py::arg("name"))
         .def("getSubgroups", &RawEventGroup::getSubgroups)
 
@@ -121,7 +130,8 @@ void init_RawEventGroup(py::module& m)
 
         .def("getVars", &RawEventGroup::getVars)
         .def("getTags", &RawEventGroup::getTags)
-
+        .def("getOverwrittenVars", &RawEventGroup::getOverwrittenVars)
+        
         .def("__repr__",
             [](const RawEventGroup& self) {
                 std::stringstream s;

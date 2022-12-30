@@ -58,6 +58,7 @@ std::shared_ptr<STIPyShot> makeShot();
 std::shared_ptr<STIPyShot> makeShot(const std::string& name);
 std::shared_ptr<STIPyShot> makeShot(const std::string& name, const std::function<void(void)>& func);
 
+
 STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
 
 std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);

@@ -5,13 +5,19 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/ParseID.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ResultTicket.h>
+#include <sti/engine/Sequence.h>
+#include <sti/engine/SequenceID.h>
+#include <sti/engine/SequenceResult.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
 
@@ -23,10 +29,6 @@
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineJob.h"
 #include "LocalShot.h"
-
-#include <sti/engine/Sequence.h>
-#include <sti/engine/SequenceID.h>
-#include <sti/engine/SequenceResult.h>
 
 #include <set>
 #include <vector>
@@ -61,6 +63,10 @@ using STI::Engine::SequenceID;
 using STI::Engine::Sequence;
 using STI::Engine::SequenceEntryID;
 using STI::Engine::SequenceResult;
+using STI::Engine::ParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+
 
 /*
 
@@ -217,20 +223,24 @@ void LocalEventEngineScheduler::findEventTargets(const std::shared_ptr<STI::Engi
 }
 
 
-ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
+ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
-    ParseID parseID;
+    ParseJobStatus parseJobStatus;
+    parseJobStatus.status = EngineJobStatus::New;
+    // ParseID parseID;
     
     if (shot != 0) {
-        parseID.shotConfig = shot->getShotConfig();      
+        parseJobStatus.pid.shotConfig = shot->getShotConfig();      
     }
 
-    auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, localDeviceID);
+    auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 
-    return parse(job);
+    parse(job);
+
+    return parseJobStatus;
 }
 
-ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
+void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
 // ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
     // ParseID parseID;
@@ -318,12 +328,18 @@ ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJ
 
     addJob(job);
 
-    return job->getJobID().pid;
+    // return job->getJobID().pid;
 }
 
-ShotID LocalEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
+
+
+PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
 {
-    ShotID shotID(parseID, source);
+    PlayJobStatus playJobStatus;
+    playJobStatus.sid = ShotID::generateUniqueID(parseID, source);
+    playJobStatus.status = EngineJobStatus::New;
+
+    // ShotID shotID(parseID, source);
 
     std::shared_ptr<SequenceResult> sequenceResult;
     if (parseID.shotConfig.shotType == ShotType::Sequence &&
@@ -334,10 +350,12 @@ ShotID LocalEventEngineScheduler::play(const ParseID& parseID, const EngineJobSo
         // add sequence message
     }
 
-    return play(shotID);
+    play(playJobStatus.sid);
+
+    return playJobStatus;
 }
 
-ShotID LocalEventEngineScheduler::play(const ShotID& shotID)
+void LocalEventEngineScheduler::play(const ShotID& shotID)
 {
     //Make play job
     EngineJobID jobID;
@@ -347,36 +365,40 @@ ShotID LocalEventEngineScheduler::play(const ShotID& shotID)
     auto job = std::make_shared<LocalEventEngineJob>(jobID, localDeviceID);
 
     addJob(job);
-
-    return shotID;
 }
 
 
-SequenceID LocalEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
+AddSequenceStatus LocalEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
 {
-    auto seqid = SequenceID::generateUniqueID(source);
+    AddSequenceStatus addSequenceStatus;
+    addSequenceStatus.seqid = SequenceID::generateUniqueID(source);
+    addSequenceStatus.status = EngineJobStatus::New;
 
-    auto result = std::make_shared<SequenceResult>(seqid, sequence);
+    // auto seqid = SequenceID::generateUniqueID(source);
+
+    auto result = std::make_shared<SequenceResult>(addSequenceStatus.seqid, sequence);
 
     if (persistenceManager != 0) {
         persistenceManager->addSequence(result);
     }
 
-    return seqid;
+    return addSequenceStatus;
 }
 
-ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
+ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
 {
-    ParseID parseID;
+    ParseJobStatus parseJobStatus;
+    parseJobStatus.status = EngineJobStatus::New;
+    // ParseID parseID;
 
     if (shot != 0) {
-        parseID.shotConfig = shot->getShotConfig();
+        parseJobStatus.pid.shotConfig = shot->getShotConfig();
     }
 
-    parseID.shotConfig.shotType = ShotType::Sequence;
-    parseID.sequenceEntryID = sequenceEntryID;
+    parseJobStatus.pid.shotConfig.shotType = ShotType::Sequence;
+    parseJobStatus.pid.sequenceEntryID = sequenceEntryID;
 
-    auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, localDeviceID);
+    auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 
     std::shared_ptr<SequenceResult> sequenceResult;
     if (persistenceManager != 0 && persistenceManager->getSequenceResult(sequenceEntryID.seqID, sequenceResult)) {
@@ -389,18 +411,22 @@ ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, cons
             
             job->addMessage(ParsingMessageType::Error, 10, "Invalid sequence entry")
                 << "Tried to parse a sequence entry with invalid index: \n"
-                << "[index="
-                << sequenceEntryID.seqIndex.index
-                << ", repeat="
-                << sequenceEntryID.seqIndex.repeat
-                << "] \n"
+                << sequenceEntryID.seqIndex.print() << "\n"
                 << "This entry does not appear in the shot table for this sequence.\n";
         }
     }
+    else {
+        //sequence not found
+        job->addMessage(ParsingMessageType::Error, 11, "Sequence not found")
+            << "Attempted to add shot [" << parseJobStatus.pid.print() << "]"
+            << " with shot table index " << sequenceEntryID.seqIndex.print()
+            << " to sequence [" << sequenceEntryID.seqID.print() << "].\n"
+            << "This sequence does not exist.\n";
+    }
 
-    auto pid = parse(job);
+    parse(job);
 
-    return pid;
+    return parseJobStatus;
 }
 
 

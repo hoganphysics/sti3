@@ -13,6 +13,7 @@ void init_HubID(py::module& m);
 void init_ShotConfig(py::module& m);
 void init_ParseID(py::module& m);
 void init_Configuration(py::module& m);
+void init_Sequence(py::module& m);
 
 
 PYBIND11_MODULE(stipybase, m) {
@@ -28,7 +29,7 @@ PYBIND11_MODULE(stipybase, m) {
 
     init_ShotConfig(m);
     init_ParseID(m);
-    
+    init_Sequence(m);
     init_Configuration(m);
 }
 

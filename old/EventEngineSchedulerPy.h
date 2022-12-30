@@ -22,8 +22,11 @@ public:
     EventEngineSchedulerPy(const std::shared_ptr<STI::Engine::EventEngineScheduler>& engineScheduler);
     virtual ~EventEngineSchedulerPy();
 
-    STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::Shot>& shot);
-    STI::Engine::ShotID play(const STI::Engine::ParseID& parseID, const STI::Engine::EngineJobSourceID& source);
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot);
+    STI::Engine::PlayJobStatus play(const STI::Engine::ParseID& parseID, const STI::Engine::EngineJobSourceID& source);
+
+    STI::Engine::AddSequenceStatus addSequence(const std::shared_ptr<STI::Engine::Sequence>& sequence, const STI::Engine::EngineJobSourceID& source);
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Engine::SequenceEntryID& sequenceEntryID);
 
     STI::Engine::EngineJobStatus getStatus(const STI::Engine::ParseID& pid);
     STI::Engine::EngineJobStatus getStatus(const STI::Engine::ShotID& sid);

@@ -34,6 +34,9 @@ class ParseResult;
 class SequenceID;
 class Sequence;
 class SequenceEntryID;
+class ParseJobStatus;
+class PlayJobStatus;
+class AddSequenceStatus;
 
 
 class EventEngineScheduler
@@ -42,11 +45,11 @@ public:
 
     virtual ~EventEngineScheduler() {}
 
-    virtual ParseID parse(const std::shared_ptr<Shot>& shot) = 0;
-    virtual ShotID play(const ParseID& parseID, const EngineJobSourceID& source) = 0;
+    virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot) = 0;
+    virtual PlayJobStatus play(const ParseID& parseID, const EngineJobSourceID& source) = 0;
 
-    virtual SequenceID addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source) = 0;
-    virtual ParseID parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
+    virtual AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source) = 0;
+    virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
     // virtual ShotID play(const ParseID& parseID, const EngineJobSourceID& source, const SequenceEntryID& sequenceEntryID) = 0;
 
     virtual EngineJobStatus getStatus(const ParseID& pid) = 0;

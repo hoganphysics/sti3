@@ -149,11 +149,11 @@ module TNetwork
 
 	interface TEventEngineScheduler
 	{
-		TParseID parse(in TShot shot);
-		TShotID play(in TParseID parseID, in TEngineJobSourceID source);
+		TParseJobStatus parse(in TShot shot);
+		TPlayJobStatus play(in TParseID parseID, in TEngineJobSourceID source);
 
-		TSequenceID addSequence(in TSequence sequenceData, in TEngineJobSourceID source);
-		TParseID parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
+		TAddSequenceStatus addSequence(in TSequence sequenceData, in TEngineJobSourceID source);
+		TParseJobStatus parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
 
     	TEngineJobStatus getStatusPID(in TParseID pid);
     	TEngineJobStatus getStatusSID(in TShotID sid);

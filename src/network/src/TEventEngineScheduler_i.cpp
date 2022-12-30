@@ -4,9 +4,12 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceTrace.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EventEngineDependencyParser.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Shot.h>
@@ -59,6 +62,13 @@ using ::STI::TNetwork::TSequenceEntryID;
 using STI::Engine::SequenceEntryID;
 using ::STI::TNetwork::TEngineJobSourceID;
 using STI::Engine::EngineJobSourceID;
+using STI::Engine::ParseJobStatus;
+using STI::TNetwork::TParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::TNetwork::TPlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::TNetwork::TAddSequenceStatus;
+
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -79,65 +89,66 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-TParseID* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
+
+
+TParseJobStatus* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
 {
-	STI::TNetwork::TParseID_var tParseID(new STI::TNetwork::TParseID);
+	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
 
 	std::shared_ptr<Shot> parsedShot;
 	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
     
 	if (engineScheduler != 0) {
-		auto pid = engineScheduler->parse(parsedShot);
-		convert<ParseID, TParseID>(pid, tParseID.inout());
+		auto parseJobStatus = engineScheduler->parse(parsedShot);
+		convert<ParseJobStatus, TParseJobStatus>(parseJobStatus, tParseJobStatus.inout());
 	}
 
-	return tParseID._retn();
+	return tParseJobStatus._retn();
 }
 
-
-TShotID* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJobSourceID& source)
+TPlayJobStatus* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJobSourceID& source)
 {
-	STI::TNetwork::TShotID_var tShotID(new STI::TNetwork::TShotID);
+	STI::TNetwork::TPlayJobStatus_var tPlayJobStatus(new STI::TNetwork::TPlayJobStatus);
 
     if (engineScheduler != 0) {
-		auto sid = engineScheduler->play(convert<TParseID, STI::Engine::ParseID>(parseID), 
-										 convert<TEngineJobSourceID, STI::Engine::EngineJobSourceID>(source));
-		convert<ShotID, TShotID>(sid, tShotID.inout());
+		auto playJobStatus = engineScheduler->play(convert<TParseID, STI::Engine::ParseID>(parseID), 
+										 		   convert<TEngineJobSourceID, STI::Engine::EngineJobSourceID>(source));
+		convert<PlayJobStatus, TPlayJobStatus>(playJobStatus, tPlayJobStatus.inout());
 	}
 
-	return tShotID._retn();
+	return tPlayJobStatus._retn();
 }
 
-TSequenceID* TEventEngineScheduler_i::addSequence(const TSequence& tSequenceData, const TEngineJobSourceID& source)
+TAddSequenceStatus* TEventEngineScheduler_i::addSequence(const TSequence& tSequenceData, const TEngineJobSourceID& source)
 {
-	STI::TNetwork::TSequenceID_var tSequenceID(new STI::TNetwork::TSequenceID);
+	STI::TNetwork::TAddSequenceStatus_var tAddSequenceStatus(new STI::TNetwork::TAddSequenceStatus);
 
 	std::shared_ptr<Sequence> sequenceData;
 	bool success = convert<TSequence, std::shared_ptr<Sequence>>(tSequenceData, sequenceData);
     
 	if (engineScheduler != 0) {
-		auto seqid = engineScheduler->addSequence(sequenceData, 
+		auto addSequenceStatus = engineScheduler->addSequence(sequenceData, 
 												  convert<TEngineJobSourceID, EngineJobSourceID>(source));
-		convert<SequenceID, TSequenceID>(seqid, tSequenceID.inout());
+		convert<AddSequenceStatus, TAddSequenceStatus>(addSequenceStatus, tAddSequenceStatus.inout());
 	}
 
-	return tSequenceID._retn();
+	return tAddSequenceStatus._retn();
 }
 
-TParseID* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const TSequenceEntryID& sequenceEntryID)
+TParseJobStatus* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const TSequenceEntryID& sequenceEntryID)
 {
-	STI::TNetwork::TParseID_var tParseID(new STI::TNetwork::TParseID);
+	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
 
 	std::shared_ptr<Shot> parsedShot;
 	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
     
 	if (engineScheduler != 0) {
-		auto pid = engineScheduler->parse(parsedShot, 
+		auto parseJobStatus = engineScheduler->parse(parsedShot, 
 										  convert<TSequenceEntryID, SequenceEntryID>(sequenceEntryID));
-		convert<ParseID, TParseID>(pid, tParseID.inout());
+		convert<ParseJobStatus, TParseJobStatus>(parseJobStatus, tParseJobStatus.inout());
 	}
 
-	return tParseID._retn();
+	return tParseJobStatus._retn();
 }
 
 

@@ -38,7 +38,7 @@ public:
 	bool operator==(const ShotID& rhs) const { return parseID == rhs.parseID && submissionTime == rhs.submissionTime; }
 	bool operator!=(const ShotID& rhs) const { return !((*this) == rhs); }
 
-	static ShotID generateUniqueID(const ParseID& pid);
+	static ShotID generateUniqueID(const ParseID& pid, const EngineJobSourceID& jobSourceID);
 
 	std::string print() const;
 

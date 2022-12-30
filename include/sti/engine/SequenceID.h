@@ -20,6 +20,7 @@ class SequenceIndex
 public:
 
 	SequenceIndex();
+	SequenceIndex(int index, int repeat);
 
     int index;
     int repeat;
@@ -31,7 +32,9 @@ public:
 		}
 		return repeat < rhs.repeat;
 	}
-	
+
+	std::string print() const;
+
 	bool operator==(const SequenceIndex& rhs) const { return repeat == rhs.repeat && index == rhs.index; }
 	bool operator!=(const SequenceIndex& rhs) const { return !((*this) == rhs); }
 
@@ -75,6 +78,16 @@ public:
 
     SequenceID seqID;
     SequenceIndex seqIndex;
+
+	bool operator<(const SequenceEntryID& rhs) const  
+	{
+		if (seqID == rhs.seqID) {
+			return seqIndex < rhs.seqIndex;
+		}
+		return seqID < rhs.seqID;
+	}
+	bool operator==(const SequenceEntryID& rhs) const { return seqID == rhs.seqID && seqIndex == rhs.seqIndex; }
+	bool operator!=(const SequenceEntryID& rhs) const { return !((*this) == rhs); }
 
 	template<class Archive>
 	void serialize(Archive& archive);

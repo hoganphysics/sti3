@@ -4,6 +4,8 @@ from stipy.bin.stipy import settag as _settag
 from stipy.bin.stipy import event as _event
 from stipy.bin.stipy import meas as _meas
 from stipy.bin.stipy import group as _group
+# from stipy.bin.stipybase import Sequence
+from stipy.stipybase.python.sequence import STIPySequence
 
 from stipy.python.stacktrace import makeStackTrace
 
@@ -32,3 +34,8 @@ def meas(channel, time, value, group="") :
     return _meas(channel, time, value, makeStackTrace(), group)
 def meas(channel, time, group="") :
     return _meas(channel, time, makeStackTrace(), group)
+
+def makesequence(shotmaker, varsTable=None) :
+    return STIPySequence(shotmaker, varsTable)
+
+

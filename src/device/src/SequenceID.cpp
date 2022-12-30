@@ -41,8 +41,9 @@ std::string SequenceID::print() const
 {
 	std::stringstream seqid;
 
-    seqid << "Submission time: " << timestamp.print();
-    seqid << "Source: " << jobSourceID.print() << "\n";
+    // seqid:user@machine#timestamp
+
+    seqid << "seqid:" << jobSourceID.print() << "#" << timestamp.time_hh_mm_ss_mmmuuunnn();
 
     return seqid.str();
 }
@@ -57,9 +58,23 @@ void SequenceID::serialize(Archive& archive)
 }
 
 SequenceIndex::SequenceIndex()
+:SequenceIndex(-1, 0)
 {
-    index = -1;
-    repeat = 0;
+}
+
+SequenceIndex::SequenceIndex(int index, int repeat)
+: index(index), repeat(repeat)
+{
+}
+
+std::string SequenceIndex::print() const
+{
+    std::stringstream seqIndex;
+
+    seqIndex << "<index=" << index
+             << ", repeat=" << repeat << ">";
+
+    return seqIndex.str();
 }
 
 template<class Archive>

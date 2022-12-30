@@ -8,7 +8,10 @@
 #include <sti/device/ServerMessageRelayer.h>
 
 #include <sti/engine/Measurement.h>
+#include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseTicket.h>
+#include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/utils/Configuration.h>
 #include <sti/utils/LocalFileHolder.h>
@@ -22,7 +25,6 @@
 #include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
 #include "LocalShot.h"
-#include <sti/engine/RawEventGroup.h>
 #include "ShotRepository.h"
 
 #include <filesystem>
@@ -358,9 +360,9 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	eventGroup->addEvent(event);
 
-	auto parseID = eventEngineScheduler->parse(shot);
+	auto parseJobStatus = eventEngineScheduler->parse(shot);
 
-	auto parseTicket = parseTicketManager->makeTicket(parseID);
+	auto parseTicket = parseTicketManager->makeTicket(parseJobStatus.pid);
 
 	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
@@ -369,9 +371,9 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 		return false;
 	}
 
-	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
+	auto playJobStatus = eventEngineScheduler->play(parseJobStatus.pid, shotConfig.jobSourceID);
 
-	resultTicket = resultTicketManager->makeTicket(sid);
+	resultTicket = resultTicketManager->makeTicket(playJobStatus.sid);
 
 	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max

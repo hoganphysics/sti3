@@ -5,8 +5,11 @@
 
 #include <sti/device/DeviceTrace.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
+#include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 
 #include "Convert_DeviceTrace.h"
@@ -58,6 +61,12 @@ using STI::Engine::SequenceEntryID;
 using ::STI::TNetwork::TSequenceEntryID;
 using STI::Engine::SequenceID;
 using ::STI::TNetwork::TSequenceID;
+using STI::Engine::ParseJobStatus;
+using STI::TNetwork::TParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::TNetwork::TPlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::TNetwork::TAddSequenceStatus;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
@@ -70,24 +79,26 @@ RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 {
 }
 
-ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
+ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	ParseID pid;
+	ParseJobStatus parseJobStatus;
+	parseJobStatus.status = EngineJobStatus::NotFound;
+
 	STI::TNetwork::TShot tShot;
 
-	if (isDisabled()) return pid;
+	if (isDisabled()) return parseJobStatus;
 
 	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
-		return pid;
+		return parseJobStatus;
 	}
 
 	try {
-		auto tParseID = getTRef()->parse(tShot);	//remote call
+		auto tParseJobStatus = getTRef()->parse(tShot);	//remote call
 
-		if (tParseID != 0) {
-			pid = convert<TParseID, ParseID>(*tParseID);			
+		if (tParseJobStatus != 0) {
+			parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(*tParseJobStatus);			
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -98,24 +109,25 @@ ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 	{
 	}
 
-	return pid;
+	return parseJobStatus;
 }
 
-ShotID RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
+PlayJobStatus RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	ShotID sid;
+	PlayJobStatus playJobStatus;
+	playJobStatus.status = EngineJobStatus::NotFound;
 
-	if (isDisabled()) return sid;
+	if (isDisabled()) return playJobStatus;
 
 	try {
-		auto tShotID = getTRef()->play(
+		auto tPlayJobStatus = getTRef()->play(
 							convert<ParseID, TParseID>(parseID), 
 							convert<EngineJobSourceID, TEngineJobSourceID>(source));	//remote call
 
-		if (tShotID != 0) {
-			sid = convert<TShotID, ShotID>(*tShotID);
+		if (tPlayJobStatus != 0) {
+			playJobStatus = convert<TPlayJobStatus, PlayJobStatus>(*tPlayJobStatus);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -126,28 +138,30 @@ ShotID RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobS
 	{
 	}
 
-	return sid;
+	return playJobStatus;
 }
 
-SequenceID RemoteEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
+AddSequenceStatus RemoteEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	SequenceID seqid;
+	AddSequenceStatus addSequenceStatus;
+	addSequenceStatus.status = EngineJobStatus::NotFound;
+
 	STI::TNetwork::TSequence tSequence;
 
-	if (isDisabled()) return seqid;
+	if (isDisabled()) return addSequenceStatus;
 
 	if (!convert<std::shared_ptr<Sequence>, STI::TNetwork::TSequence>(sequence, tSequence)) {
-		return seqid;
+		return addSequenceStatus;
 	}
 
 	try {
-		auto tSequenceID = getTRef()->addSequence(tSequence,
+		auto tAddSequenceStatus = getTRef()->addSequence(tSequence,
 				convert<EngineJobSourceID, TEngineJobSourceID>(source));	//remote call
 
-		if (tSequenceID != 0) {
-			seqid = convert<TSequenceID, SequenceID>(*tSequenceID);			
+		if (tAddSequenceStatus != 0) {
+			addSequenceStatus = convert<TAddSequenceStatus, AddSequenceStatus>(*tAddSequenceStatus);			
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -158,28 +172,30 @@ SequenceID RemoteEventEngineScheduler::addSequence(const std::shared_ptr<Sequenc
 	{
 	}
 
-	return seqid;
+	return addSequenceStatus;
 }
 
-STI::Engine::ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
+ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	ParseID pid;
+	ParseJobStatus parseJobStatus;
+	parseJobStatus.status = EngineJobStatus::NotFound;
+
 	STI::TNetwork::TShot tShot;
 
-	if (isDisabled()) return pid;
+	if (isDisabled()) return parseJobStatus;
 
 	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
-		return pid;
+		return parseJobStatus;
 	}
 
 	try {
-		auto tParseID = getTRef()->parseSeqEntry(tShot,
+		auto tParseJobStatus = getTRef()->parseSeqEntry(tShot,
 				convert<SequenceEntryID, TSequenceEntryID>(sequenceEntryID));	//remote call
 
-		if (tParseID != 0) {
-			pid = convert<TParseID, ParseID>(*tParseID);			
+		if (tParseJobStatus != 0) {
+			parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(*tParseJobStatus);			
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -190,7 +206,7 @@ STI::Engine::ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Sho
 	{
 	}
 
-	return pid;
+	return parseJobStatus;
 }
 
 EngineJobStatus RemoteEventEngineScheduler::getStatus(const ParseID& pid)

@@ -347,32 +347,90 @@ ParsedVar RawEventGroup::var(const std::string& fullVarName, const RawStackTrace
     return var;
 }
 
+bool RawEventGroup::bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value)
+{
+    if (fullVarName == "") return false;
 
-bool RawEventGroup::bindVars(const std::vector<ParsedVar>& overwritten)
+    std::string groupName;
+    std::string varName;
+
+    if (splitFullGroupName(fullVarName, groupName, varName)) {
+        //fullVarName includes a group prefix
+        //need to check if it refers to this group
+        auto g = group(groupName);
+        return (g != 0 && g->bindVar(varName, value));
+    }
+
+    //No group prefix found
+    groupName = getName();  //belongs to local group
+    varName = fullVarName;
+
+    STI::Engine::StackTrace dummytrace;
+    ParsedVar var(varName, this, value, dummytrace, stackTraceData);
+
+    return bindVar(var);
+}
+
+bool RawEventGroup::bindVar(const ParsedVar& overwrittenVar)
+{
+    //fails if it attempts to overwrite any already bound var
+    //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
+    //It's not possible to bindVars after addEvent, since in general the added events can depend on the initial bound values
+    
+    std::unique_lock groupLock(groupMutex);     //protect from calls to addvar while modifying overwrittenVars
+
+    bool success = true;
+    ParsedVar var;
+        
+    if (varMap.get(overwrittenVar.name, var)) {
+        if (var.isBound()) {
+            success = false;
+        }
+        else {
+            var.value = overwrittenVar.value;
+            varMap.replace(overwrittenVar.name, var); //overwrite
+        }
+    }
+
+    if (success) {
+        //Replace with new var if already exists (use most recent value)
+        auto it = overwrittenVars.find(overwrittenVar);
+        if (it != overwrittenVars.end()) {
+            overwrittenVars.erase(it);
+        }
+        overwrittenVars.insert(overwrittenVar);
+    }
+
+    return success;
+}
+
+bool RawEventGroup::bindVars(const std::set<ParsedVar>& overwritten)
 {
 //fails if it attempts to overwrite any already bound var
 //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
 //It's not possible to bindVars after addEvent, since in general the added events can depend on the initial bound values
     
-    std::unique_lock groupLock(groupMutex);
+    // std::unique_lock groupLock(groupMutex);
 
     bool success = true;
 
     for (auto& ovar : overwritten) {
-        ParsedVar var;
+        success &= bindVar(ovar);
+
+        // ParsedVar var;
         
-        if (varMap.get(ovar.name, var)) {
-            if (var.isBound()) {
-                success = false;
-            }
-            else {
-                var.value = ovar.value;
-                varMap.replace(ovar.name, var); //overwrite
-            }
-        }
+        // if (varMap.get(ovar.name, var)) {
+        //     if (var.isBound()) {
+        //         success = false;
+        //     }
+        //     else {
+        //         var.value = ovar.value;
+        //         varMap.replace(ovar.name, var); //overwrite
+        //     }
+        // }
     }
 
-    overwrittenVars.insert(overwritten.begin(), overwritten.end());
+    // overwrittenVars.insert(overwritten.begin(), overwritten.end());
 
     return success;
 }

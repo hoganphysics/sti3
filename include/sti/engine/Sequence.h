@@ -3,7 +3,7 @@
 
 #include <set>
 #include <map>
-
+#include <mutex>
 
 namespace STI
 {
@@ -22,6 +22,12 @@ public:
     int index;
     std::set<ParsedVar> overwritten;
 
+	bool operator<(const SequenceEntry& rhs) const  { return index < rhs.index; }
+	bool operator==(const SequenceEntry& rhs) const { return index == rhs.index; }
+	bool operator!=(const SequenceEntry& rhs) const { return !((*this) == rhs); }
+
+    std::string print() const;
+
     template<class Archive>
 	void serialize(Archive& archive);
 };
@@ -36,6 +42,10 @@ public:
     Sequence();
     Sequence(const SequenceType& type);
 
+    void addEntry(const SequenceEntry& entry);
+    void addEntry(int index, const std::set<ParsedVar>& overwritten);
+    void append(const std::set<ParsedVar>& overwritten);
+
     std::map<unsigned, SequenceEntry> sequenceTable;
     unsigned repeats;
     SequenceType type;
@@ -44,6 +54,8 @@ public:
 
     template<class Archive>
 	void serialize(Archive& archive);
+
+    mutable std::mutex sequenceMutex;
 };
 
 

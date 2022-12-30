@@ -45,7 +45,7 @@ module TNetwork
 		TDeviceIDSeq ids;
 	};
 
-	enum TEngineJobStatus { JobNew, JobRunning, JobCompleted, JobCanceled, JobNotFound, JobArchived };
+	enum TEngineJobStatus { JobNew, JobRunning, JobCompleted, JobCanceled, JobNotFound, JobArchived, JobDeferred };
 	enum TRawEventType { RawEventPlay, RawEventMeasurement, RawEventWaveform, RawEventPause, RawEventJump };
 	typedef sequence<unsigned long> TGraphPathLabel;
 
@@ -226,6 +226,12 @@ module TNetwork
 		TSequenceEntryID sequenceEntryID;
 	};
 
+	struct TParseJobStatus
+	{
+		TEngineJobStatus status;
+		TParseID pid;
+	};
+
 	struct TShotID
 	{
 		TParseID parseID;
@@ -233,6 +239,19 @@ module TNetwork
 
 		TTimeStamp submissionTime;
 	};
+
+	struct TPlayJobStatus
+	{
+		TEngineJobStatus status;
+		TShotID sid;
+	};
+
+	struct TAddSequenceStatus
+	{
+		TEngineJobStatus status;
+		TSequenceID seqid;
+	};
+
 
 	struct TEngineJobID
 	{

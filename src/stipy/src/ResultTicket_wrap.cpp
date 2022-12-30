@@ -16,6 +16,7 @@ void init_ResultTicket(py::module& m)
         .def("wait", py::overload_cast<>(&STI::Python::PyResultTicket::wait))
         .def("wait", py::overload_cast<const std::function<bool()>&>(&STI::Python::PyResultTicket::wait))
         .def("cancel", &STI::Python::PyResultTicket::cancel)
+        .def("defer", &STI::Python::PyResultTicket::defer)
         .def("getStatus", &STI::Python::PyResultTicket::getStatus)
         ;
 

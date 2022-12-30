@@ -14,13 +14,11 @@ TimeStamp ShotID::lastSubmissionTime;
 std::mutex ShotID::IDmutex;
 
 
-ShotID ShotID::generateUniqueID(const ParseID& pid)
+ShotID ShotID::generateUniqueID(const ParseID& pid, const EngineJobSourceID& jobSourceID)
 {
     std::unique_lock<std::mutex> IDlock(IDmutex);
 
-    ShotID sid;
-
-    sid.parseID = pid;
+    ShotID sid(pid, jobSourceID);
 
     if (sid.submissionTime == lastSubmissionTime) {
         //error: increment TimeStamp to ensure ShotID is unique!
@@ -36,9 +34,11 @@ std::string ShotID::print() const
 {
 	std::stringstream sid;
 
-    sid << "ParseID: " << parseID.print() << "\n";
-    sid << "Source: " << jobSourceID.print() << "\n";
-    sid << "Submission time: " << submissionTime.print();
+    // sid << "ParseID: " << parseID.print() << "\n";
+    // sid << "Source: " << jobSourceID.print() << "\n";
+    // sid << "Submission time: " << submissionTime.print();
+
+    sid << "sid:" << jobSourceID.print() << "#" << submissionTime.time_hh_mm_ss_mmmuuunnn();
 
     return sid.str();
 }

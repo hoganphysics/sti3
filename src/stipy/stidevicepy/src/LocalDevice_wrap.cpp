@@ -7,7 +7,8 @@
 #include "ChannelManagerPy.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalAttribute.h>
-#include "EventEngineSchedulerPy.h"
+// #include "EventEngineSchedulerPy.h"
+#include <sti/engine/EventEngineScheduler.h>
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"
 #include <sti/engine/EngineID.h>

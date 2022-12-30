@@ -83,11 +83,11 @@ public:
     // void parse(const ParseID& parseID, const std::shared_ptr<Shot>& shot);
     // void play(const ShotID& shotID);
 
-    ParseID parse(const std::shared_ptr<Shot>& shot);        //local; add event to queue
-    ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
+    ParseJobStatus parse(const std::shared_ptr<Shot>& shot);        //local; add event to queue
+    PlayJobStatus play(const ParseID& parseID, const EngineJobSourceID& source);
 
-    SequenceID addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source);
-    ParseID parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
+    AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source);
+    ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
     // ShotID play(const ParseID& parseID, const EngineJobSourceID& source, const SequenceEntryID& sequenceEntryID);
 
     EngineJobStatus getStatus(const ParseID& pid);
@@ -153,8 +153,8 @@ public:
 
 private:
 
-    ParseID parse(const std::shared_ptr<LocalEventEngineJob>& job);
-    ShotID play(const ShotID& shotID);
+    void parse(const std::shared_ptr<LocalEventEngineJob>& job);
+    void play(const ShotID& shotID);
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
 
