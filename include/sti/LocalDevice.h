@@ -80,6 +80,8 @@ public:
 
 	LocalChannel& addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
+	void addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName, std::shared_ptr<STI::Device::LocalChannel>& channel);
 
 
 	void addAttribute(const std::string& key, const std::string& initialValue, std::shared_ptr<STI::Device::LocalAttribute>& attribute);

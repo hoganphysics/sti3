@@ -27,6 +27,7 @@ graph indicate that the server `holds a device reference` to each of the devices
 connected to it. The server can communicate and control the connected devices via 
 these references. Thus the arrow indicates the direction of control.
 
+.. _devicenetworkDeviceID:
 DeviceID
 --------
 
@@ -67,6 +68,7 @@ target device's DeviceID. For instance, devices use the server's DeviceID
 in order make their initial connection.
 
 
+.. _devicenetworkTargetServer:
 Target Server
 -------------
 

@@ -1,5 +1,7 @@
 
 #include "PersistenceManagerPy.h"
+
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 
@@ -16,7 +18,20 @@ PersistenceManagerPy::~PersistenceManagerPy()
 {
 }
 
-std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShot(const STI::Engine::ShotID& sid)
+std::shared_ptr<STI::Engine::ParseResult> PersistenceManagerPy::getParseResult(const STI::Engine::ParseID& pid)
+{
+    std::shared_ptr<STI::Engine::ParseResult> parseResult;
+
+    if (persistenceManager != 0 && persistenceManager->getParseResult(pid, parseResult)) {
+        return parseResult;
+    }
+
+    //not found
+    parseResult = std::make_shared<STI::Engine::ParseResult>();
+    return parseResult;
+}
+
+std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShotResult(const STI::Engine::ShotID& sid)
 {
     std::shared_ptr<STI::Engine::ShotResult> shotResult;
 

@@ -7,8 +7,11 @@
 
 
 
+.. toctree::
+   :hidden:
+   :maxdepth: 2
 
-
+   src/readme.rst
 
 .. toctree::
    :hidden:
@@ -18,6 +21,7 @@
    src/network
    src/device
    src/stipy
+   src/webconsole
 
 .. toctree::
    :hidden:

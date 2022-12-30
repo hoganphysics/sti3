@@ -91,7 +91,7 @@ setup(
     #packages=find_namespace_packages(where="src"),
     #packages=find_packages(where="src"),
     #package_dir={"": "src"},
-    packages=['stipy','stipy.stidevicepy','stipy.stipybase','stipy.bin', 'stipy.python'],
+    packages=['stipy','stipy.stidevicepy','stipy.stipybase','stipy.stipybase.python','stipy.bin', 'stipy.python'],
     package_dir={"": "src"},
     cmake_install_dir="",
 	#cmake_args=['-DCMAKE_BUILD_TYPE=RelWithDebInfo', '-DOMNIORB_PATH=C:/Users/Jason/Code/lib/omniORB-4.2.4.x64'],

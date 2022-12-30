@@ -37,10 +37,12 @@ public:
 
     virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
-    void addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+    std::shared_ptr<STI::Device::LocalChannel> addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
     {
-        device->addChannel(channelNumber, type, inputType, outputType, defaultName);
+        std::shared_ptr<STI::Device::LocalChannel> channel;
+        device->addChannel(channelNumber, type, inputType, outputType, defaultName, channel);
+        return channel;
     }
     
     void addEventEngine(const STI::Engine::EngineID& engineID)
@@ -58,7 +60,7 @@ public:
         device->addEventTarget(id);
     }    
 
-     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
+    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
     {
         std::shared_ptr<STI::Device::LocalAttribute> attribute;
         device->addAttribute(key, initialValue, attribute);

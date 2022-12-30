@@ -20,6 +20,9 @@ using STI::Engine::ParseResult;
 
 ParseResult::ParseResult()
 {
+    baseEventGroup = std::make_shared<RawEventGroup>();
+    parsedDevices = std::make_shared<ParsedDependencyTree>();
+    stackTraceResult = std::make_shared<StackTraceResult>();
 }
 
 ParseResult::~ParseResult()

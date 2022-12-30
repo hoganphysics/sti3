@@ -130,7 +130,8 @@ void init_PersistenceManager(py::module& m)
 
 
     py::class_<PersistenceManagerPy, std::shared_ptr<PersistenceManagerPy>>(m, "PersistenceManager")
-        .def("getShot", &PersistenceManagerPy::getShot, py::arg("shotID"))
+        // .def("getParseResult", &PersistenceManagerPy::getParseResult, py::arg("parseID"))
+        .def("getShotResult", &PersistenceManagerPy::getShotResult, py::arg("shotID"))
         .def("getMeasurements", &PersistenceManagerPy::getMeasurements, py::arg("shotID"))
         ;
 
