@@ -2,10 +2,12 @@
 
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/EngineJobStatus.h>
 
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
 #include "Convert_ShotResult.h"
+#include "Convert_SequenceResult.h"
 #include "ORBManager.h"
 
 using STI::TNetwork::TPersistenceManager_i;
@@ -17,6 +19,14 @@ using STI::Engine::ResultsCollector;
 using ::STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::FullShotResult;
+using ::STI::TNetwork::TSequenceID;
+using STI::Engine::SequenceID;
+using STI::TNetwork::TSequenceResult;
+using STI::Engine::SequenceResult;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TEngineJobStatus;
+using STI::Engine::EngineJobStatus;
 
 
 TPersistenceManager_i::TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -85,6 +95,26 @@ TPersistenceManager_i::~TPersistenceManager_i()
 	return success;
 }
 
+::CORBA::Boolean TPersistenceManager_i::getSequenceResult(const TSequenceID& seqid, ::STI::TNetwork::TSequenceResult_out tSequenceResult)
+{
+	bool success = false;
+	tSequenceResult = new TSequenceResult();
+
+    if (persistenceManager != 0) {
+
+		std::shared_ptr<SequenceResult> sequenceResult;
+		STI::TNetwork::TSequenceResult_var tSequenceResult_var(new TSequenceResult);
+
+		success = persistenceManager->getSequenceResult(convert<TSequenceID, SequenceID>(seqid), sequenceResult);
+
+		success &= convert<std::shared_ptr<SequenceResult>, TSequenceResult>(
+					sequenceResult, tSequenceResult_var);
+
+		(*tSequenceResult) = tSequenceResult_var;
+	}
+
+	return success;
+}
 
 ::CORBA::Boolean TPersistenceManager_i::saveShot(const ::STI::TNetwork::TShotID& sid, 
 											     const ::STI::TNetwork::TFullShotResult& tFullShotResult, ::CORBA::Boolean isOwner)
@@ -93,7 +123,6 @@ TPersistenceManager_i::~TPersistenceManager_i()
 	bool success = convert<::STI::TNetwork::TFullShotResult, std::shared_ptr<FullShotResult>>(tFullShotResult, fullShotResult);
     
 	if (persistenceManager != 0 && success) {
-
 		success &= persistenceManager->saveShot(convert<TShotID, ShotID>(sid), fullShotResult, isOwner);
 	}
 	else {
@@ -142,6 +171,47 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 		(*measurements) = tMeasurementSeq_var;
 	}
 
+	return success;
+}
+
+void TPersistenceManager_i::addSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult)
+{
+	std::shared_ptr<SequenceResult> sequenceResult;
+	bool success = convert<::STI::TNetwork::TSequenceResult, std::shared_ptr<SequenceResult>>(tSequenceResult, sequenceResult);
+    
+	if (persistenceManager != 0 && success) {
+		persistenceManager->addSequence(sequenceResult);
+	}
+}
+
+::CORBA::Boolean TPersistenceManager_i::updateSequence(const TSequenceEntryID& id, const TShotID& shotID, TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner)
+{
+	bool success;
+
+	if (persistenceManager != 0) {
+		success = persistenceManager->updateSequence( 
+			convert<TSequenceEntryID, SequenceEntryID>(id), 
+			convert<TShotID, ShotID>(shotID), 
+			convert<TEngineJobStatus, EngineJobStatus>(shotStatus), 
+			isOwner);
+	}
+	else {
+		success = false;
+	}
+	return success;
+}
+
+::CORBA::Boolean TPersistenceManager_i::saveSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult, ::CORBA::Boolean isOwner)
+{
+	std::shared_ptr<SequenceResult> sequenceResult;
+	bool success = convert<::STI::TNetwork::TSequenceResult, std::shared_ptr<SequenceResult>>(tSequenceResult, sequenceResult);
+    
+	if (persistenceManager != 0 && success) {
+		success &= persistenceManager->saveSequence(sequenceResult, isOwner);
+	}
+	else {
+		success = false;
+	}
 	return success;
 }
 

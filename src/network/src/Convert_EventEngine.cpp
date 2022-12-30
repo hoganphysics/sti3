@@ -3,6 +3,7 @@
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
 #include "Convert_StackTrace.h"
+#include "Convert_SequenceResult.h"
 
 #include <sti/device/DeviceTrace.h>
 
@@ -29,6 +30,10 @@
 #include "RemoteShot.h"
 #include "RemoteEventEngine.h"
 #include <sti/engine/Shot.h>
+
+#include <sti/engine/AddSequenceStatus.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 
 #include <map>
 #include <memory>
@@ -93,9 +98,16 @@ using STI::TNetwork::TRawEventTargetDevice;
 using STI::Engine::RawEventTargetDevice;
 using STI::TNetwork::TRawEventTargetChannel;
 using STI::Engine::RawEventTargetChannel;
-
 using STI::TNetwork::TEventEngineJobList;
 using STI::Engine::EventEngineJobList;
+using STI::Engine::ParseJobStatus;
+using STI::TNetwork::TParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::TNetwork::TPlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::TNetwork::TAddSequenceStatus;
+using STI::Engine::SequenceID;
+using STI::TNetwork::TSequenceID;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
@@ -480,7 +492,10 @@ bool STI::Network::convert<EngineJobStatus, TEngineJobStatus>(const EngineJobSta
         break;
     case EngineJobStatus::Archived:
         tJobStatus = TEngineJobStatus::JobArchived;
-        break;        
+        break;
+    case EngineJobStatus::Deferred:
+        tJobStatus = TEngineJobStatus::JobDeferred;
+        break;
     default:
         tJobStatus = TEngineJobStatus::JobNotFound;
         break;
@@ -511,6 +526,9 @@ bool STI::Network::convert<TEngineJobStatus, EngineJobStatus>(const TEngineJobSt
         break;
     case TEngineJobStatus::JobArchived:
         jobStatus = EngineJobStatus::Archived;
+        break;
+    case TEngineJobStatus::JobDeferred:
+        jobStatus = EngineJobStatus::Deferred;
         break;
     default:
         jobStatus = EngineJobStatus::NotFound;
@@ -603,6 +621,8 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     std::shared_ptr<EventEngineDependencyTree> tree;
     std::set<STI::Device::DeviceID> missingTargets;     //empty
 
+    EngineJobStatus jobStatus = convert<TEngineJobStatus, EngineJobStatus>(tEngineJob.status);
+
     switch (jobID.type)
     {
     case EventEngineJobType::Parse:
@@ -618,25 +638,30 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
             tree = std::make_shared<EventEngineDependencyTree>();
             convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tEngineJob.dependencies, *tree);
 
-		auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
-			);
+            auto job = std::make_shared<LocalEventEngineJob>(jobID.pid, parsedShot,
+                convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner)
+                );
         
-        job->setDependencies(tree);
-        job->setMissingTargets(missingTargets);
-        engineJob = job;
-        success = true;
+            job->setDependencies(tree);
+            job->setMissingTargets(missingTargets);
+            job->setStatus(jobStatus);
+            engineJob = job;
+            success = true;
         }
         break;
 	case EventEngineJobType::Play:
-		engineJob = std::make_shared<LocalEventEngineJob>(jobID,
-			convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
-        success = true;
+        {
+            auto job = std::make_shared<LocalEventEngineJob>(jobID,
+                convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
+            job->setStatus(jobStatus);
+            engineJob = job;
+            success = true;
+        }
 		break;
     default:
         break;
     }
-    
+
     return success && (engineJob != 0);
 }
 
@@ -1123,6 +1148,40 @@ bool STI::Network::convert<TParseID, ParseID>(const TParseID& tpid, ParseID& pid
     return true;
 }
 
+//ParseJobStatus
+template<>
+TParseJobStatus STI::Network::convert<ParseJobStatus, TParseJobStatus>(const ParseJobStatus& parseJobStatus)
+{
+    TParseJobStatus tParseJobStatus;
+    tParseJobStatus.pid = convert<ParseID, TParseID>(parseJobStatus.pid);
+    tParseJobStatus.status = convert<EngineJobStatus, TEngineJobStatus>(parseJobStatus.status);
+    return tParseJobStatus;
+}
+
+template<>
+ParseJobStatus STI::Network::convert<TParseJobStatus, ParseJobStatus>(const TParseJobStatus& tParseJobStatus)
+{
+    ParseJobStatus parseJobStatus;
+    parseJobStatus.pid = convert<TParseID, ParseID>(tParseJobStatus.pid);
+    parseJobStatus.status = convert<TEngineJobStatus, EngineJobStatus>(tParseJobStatus.status);
+    return parseJobStatus;
+}
+
+template<>
+bool STI::Network::convert<ParseJobStatus, TParseJobStatus>(const ParseJobStatus& parseJobStatus, TParseJobStatus& tParseJobStatus)
+{
+    tParseJobStatus = convert<ParseJobStatus, TParseJobStatus>(parseJobStatus);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TParseJobStatus, ParseJobStatus>(const TParseJobStatus& tParseJobStatus, ParseJobStatus& parseJobStatus)
+{
+    parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(tParseJobStatus);
+    return true;
+}
+
+
 
 //ShotID
 template<>
@@ -1162,6 +1221,79 @@ bool STI::Network::convert<TShotID, ShotID>(const TShotID& tsid, ShotID& sid)
 
     sid.submissionTime = convert<TTimeStamp, TimeStamp>(tsid.submissionTime);
 
+    return true;
+}
+
+
+
+//PlayJobStatus
+template<>
+TPlayJobStatus STI::Network::convert<PlayJobStatus, TPlayJobStatus>(const PlayJobStatus& playJobStatus)
+{
+    TPlayJobStatus tPlayJobStatus;
+    tPlayJobStatus.sid = convert<ShotID, TShotID>(playJobStatus.sid);
+    tPlayJobStatus.status = convert<EngineJobStatus, TEngineJobStatus>(playJobStatus.status);
+    return tPlayJobStatus;
+}
+
+template<>
+PlayJobStatus STI::Network::convert<TPlayJobStatus, PlayJobStatus>(const TPlayJobStatus& tPlayJobStatus)
+{
+    PlayJobStatus playJobStatus;
+    playJobStatus.sid = convert<TShotID, ShotID>(tPlayJobStatus.sid);
+    playJobStatus.status = convert<TEngineJobStatus, EngineJobStatus>(tPlayJobStatus.status);
+    return playJobStatus;
+}
+
+template<>
+bool STI::Network::convert<PlayJobStatus, TPlayJobStatus>(const PlayJobStatus& playJobStatus, TPlayJobStatus& tPlayJobStatus)
+{
+    tPlayJobStatus = convert<PlayJobStatus, TPlayJobStatus>(playJobStatus);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TPlayJobStatus, PlayJobStatus>(const TPlayJobStatus& tPlayJobStatus, PlayJobStatus& playJobStatus)
+{
+    playJobStatus = convert<TPlayJobStatus, PlayJobStatus>(tPlayJobStatus);
+    return true;
+}
+
+
+
+
+//AddSequenceStatus
+template<>
+TAddSequenceStatus STI::Network::convert<AddSequenceStatus, TAddSequenceStatus>(
+                const AddSequenceStatus& addSequenceStatus)
+{
+    TAddSequenceStatus tAddSequenceStatus;
+    tAddSequenceStatus.seqid = convert<SequenceID, TSequenceID>(addSequenceStatus.seqid);
+    tAddSequenceStatus.status = convert<EngineJobStatus, TEngineJobStatus>(addSequenceStatus.status);
+    return tAddSequenceStatus;
+}
+
+template<>
+AddSequenceStatus STI::Network::convert<TAddSequenceStatus, AddSequenceStatus>(
+                const TAddSequenceStatus& tAddSequenceStatus)
+{
+    AddSequenceStatus addSequenceStatus;
+    addSequenceStatus.seqid = convert<TSequenceID, SequenceID>(tAddSequenceStatus.seqid);
+    addSequenceStatus.status = convert<TEngineJobStatus, EngineJobStatus>(tAddSequenceStatus.status);
+    return addSequenceStatus;
+}
+
+template<>
+bool STI::Network::convert<AddSequenceStatus, TAddSequenceStatus>(const AddSequenceStatus& addSequenceStatus, TAddSequenceStatus& tAddSequenceStatus)
+{
+    tAddSequenceStatus = convert<AddSequenceStatus, TAddSequenceStatus>(addSequenceStatus);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TAddSequenceStatus, AddSequenceStatus>(const TAddSequenceStatus& tAddSequenceStatus, AddSequenceStatus& addSequenceStatus)
+{
+    addSequenceStatus = convert<TAddSequenceStatus, AddSequenceStatus>(tAddSequenceStatus);
     return true;
 }
 

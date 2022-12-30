@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <string>
+#include <set>
 
 #include <pybind11/pybind11.h>
 
@@ -100,12 +101,23 @@ public:
 
     std::shared_ptr<STIPyShot> makeshot();
     std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func);
-    std::shared_ptr<STIPyShot> makeshot(pybind11::object func, const pybind11::dict& vars);    //uses dictionary vars to override servars
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars);    //uses dictionary vars to override servars
 
-    std::shared_ptr<STIPySeq> makesequence();
-    std::shared_ptr<STIPySeq> makesequence(pybind11::object func);
+    // std::shared_ptr<PySequenceTicket> addsequence(const std::shared_ptr<Sequence>& sequence);
+
+    // addseq([{"x":5}, {"x":7}])
+    
+    
+    // std::shared_ptr<STI::Engine::Sequence> addsequence(const pybind11::list& varsTable);
+
+    std::shared_ptr<STI::Engine::Sequence> makesequence(const std::function<void(void)>& func);
+    std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::set& vars);
+    std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::dict& vars);
+    // std::shared_ptr<STI::Engine::Sequence> makesequence(pybind11::object func);
 
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
+    std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const STI::Engine::SequenceEntryID& sequenceEntryID);
+
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
     std::shared_ptr<PyParseTicket> parse(const std::vector<PyParseTicket>& tickets);  //combining multiple servers
 
@@ -113,7 +125,12 @@ public:
     std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket, unsigned repeats);
     std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID, unsigned repeats);
 
+    STI::Engine::SequenceID parse(const std::shared_ptr<STI::Engine::Sequence>& seq);
+
     void cancelAll();
+
+    std::string printNetwork();
+    std::string printNetwork(const std::string& baseContext);
 
 private:
 

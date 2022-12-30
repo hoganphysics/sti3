@@ -25,7 +25,7 @@ void JEventEngine::play(const std::shared_ptr<JEventEngineJob>& job)
             
     auto eej = job->eventEngineJob;
     
-    if (eej != 0) {
+    if (eej != 0 && engine != 0) {
         engine->play(*eej);
     }
 }

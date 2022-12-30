@@ -4,24 +4,28 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceTrace.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
-#include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EventEngineDependencyParser.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/Shot.h>
 
 #include "Convert_ShotResult.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
+#include "Convert_SequenceResult.h"
 
-#include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
 #include "ORBManager.h"
 #include "RemoteResultsCollector.h"
-#include <sti/engine/Shot.h>
 
 #include <memory>
+
 
 using STI::TNetwork::TEventEngineScheduler_i;
 using ::STI::TNetwork::TDeviceIDSeq;
@@ -30,8 +34,6 @@ using ::STI::TNetwork::TDeviceTrace;
 using STI::Device::DeviceTrace;
 using STI::Device::DeviceID;
 using STI::Engine::EventEngineScheduler;
-using ::STI::TNetwork::TEventEngineDependencyTree;
-using ::STI::Engine::EventEngineDependencyTree;
 using STI::Network::convert;
 using STI::Engine::EngineJobID;
 using ::STI::TNetwork::TEngineJobID;
@@ -48,12 +50,37 @@ using ::STI::TNetwork::TEventEngineJobSeq;
 using ::STI::TNetwork::TEngineJobID;
 using ::STI::TNetwork::TEventEngineJob;
 using STI::Engine::ParseResult;
+using ::STI::TNetwork::TEventEngineDependencyParser_ptr;
+using STI::Engine::EventEngineDependencyParser;
+using ::STI::TNetwork::TSequence;
+using STI::Engine::Sequence;
+using ::STI::TNetwork::TSequenceID;
+using STI::Engine::SequenceID;
+using ::STI::TNetwork::TShot;
+using STI::Engine::Shot;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TEngineJobSourceID;
+using STI::Engine::EngineJobSourceID;
+using STI::Engine::ParseJobStatus;
+using STI::TNetwork::TParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::TNetwork::TPlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::TNetwork::TAddSequenceStatus;
+
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
 {
-	if (device != 0) {
-        device->getEngineScheduler(engineScheduler);        
+	std::shared_ptr<EventEngineDependencyParser> dependencyParser;
+
+	if (device != 0 
+		&& device->getEngineScheduler(engineScheduler) 
+		&& engineScheduler->getDependencyParser(dependencyParser)) {
+		
+		dependencyParserServant = std::make_shared<TEventEngineDependencyParser_i>(dependencyParser);
+		STI::Network::ORBManager::ORBManager::activateServant(*dependencyParserServant);
     }
 }
 
@@ -62,33 +89,66 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-TParseID* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
+
+
+TParseJobStatus* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
 {
-	STI::TNetwork::TParseID_var tParseID(new STI::TNetwork::TParseID);
+	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
 
 	std::shared_ptr<Shot> parsedShot;
 	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
     
 	if (engineScheduler != 0) {
-		auto pid = engineScheduler->parse(parsedShot);
-		convert<ParseID, TParseID>(pid, tParseID.inout());
+		auto parseJobStatus = engineScheduler->parse(parsedShot);
+		convert<ParseJobStatus, TParseJobStatus>(parseJobStatus, tParseJobStatus.inout());
 	}
 
-	return tParseID._retn();
+	return tParseJobStatus._retn();
 }
 
-
-TShotID* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJobSourceID& source)
+TPlayJobStatus* TEventEngineScheduler_i::play(const TParseID& parseID, const TEngineJobSourceID& source)
 {
-	STI::TNetwork::TShotID_var tShotID(new STI::TNetwork::TShotID);
+	STI::TNetwork::TPlayJobStatus_var tPlayJobStatus(new STI::TNetwork::TPlayJobStatus);
 
     if (engineScheduler != 0) {
-		auto sid = engineScheduler->play(convert<TParseID, STI::Engine::ParseID>(parseID), 
-										 convert<TEngineJobSourceID, STI::Engine::EngineJobSourceID>(source));
-		convert<ShotID, TShotID>(sid, tShotID.inout());
+		auto playJobStatus = engineScheduler->play(convert<TParseID, STI::Engine::ParseID>(parseID), 
+										 		   convert<TEngineJobSourceID, STI::Engine::EngineJobSourceID>(source));
+		convert<PlayJobStatus, TPlayJobStatus>(playJobStatus, tPlayJobStatus.inout());
 	}
 
-	return tShotID._retn();
+	return tPlayJobStatus._retn();
+}
+
+TAddSequenceStatus* TEventEngineScheduler_i::addSequence(const TSequence& tSequenceData, const TEngineJobSourceID& source)
+{
+	STI::TNetwork::TAddSequenceStatus_var tAddSequenceStatus(new STI::TNetwork::TAddSequenceStatus);
+
+	std::shared_ptr<Sequence> sequenceData;
+	bool success = convert<TSequence, std::shared_ptr<Sequence>>(tSequenceData, sequenceData);
+    
+	if (engineScheduler != 0) {
+		auto addSequenceStatus = engineScheduler->addSequence(sequenceData, 
+												  convert<TEngineJobSourceID, EngineJobSourceID>(source));
+		convert<AddSequenceStatus, TAddSequenceStatus>(addSequenceStatus, tAddSequenceStatus.inout());
+	}
+
+	return tAddSequenceStatus._retn();
+}
+
+TParseJobStatus* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const TSequenceEntryID& sequenceEntryID)
+{
+	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
+
+	std::shared_ptr<Shot> parsedShot;
+	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
+    
+	if (engineScheduler != 0) {
+		auto parseJobStatus = engineScheduler->parse(parsedShot, 
+										  convert<TSequenceEntryID, SequenceEntryID>(sequenceEntryID));
+		convert<ParseJobStatus, TParseJobStatus>(parseJobStatus, tParseJobStatus.inout());
+	}
+
+	return tParseJobStatus._retn();
 }
 
 
@@ -115,71 +175,13 @@ TEngineJobStatus TEventEngineScheduler_i::getStatusSID(const ::STI::TNetwork::TS
 	return tStatus;
 }
 
-
-void TEventEngineScheduler_i::getDependants(const TDeviceIDSeq& evtTargets, 
-                        TEventEngineDependencyTree& tree, 
-                        TDeviceIDSeq& missingTargets, 
-						::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
-                        const TDeviceTrace& trace)
+TEventEngineDependencyParser_ptr TEventEngineScheduler_i::getDependencyParser()
 {
-	messages = new STI::TNetwork::TEngineParsingMessageSeq();
-
-    if (engineScheduler != 0) {
-
-		//convert in values
-		STI::Engine::EventEngineDependencyTree dependencyTree;
-		convert<TEventEngineDependencyTree, STI::Engine::EventEngineDependencyTree>(tree, dependencyTree);
-
-        std::set<DeviceID> missingIDs;
-        std::set<DeviceID> targetIDs;
-        convert<TDeviceID, DeviceID>(missingTargets, missingIDs);
-        convert<TDeviceID, DeviceID>(evtTargets, targetIDs);
-
-		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
-
-		engineScheduler->getDependants(targetIDs, dependencyTree, missingIDs, generatedMessages, convert<TDeviceTrace, DeviceTrace>(trace));
-
-		//convert out values
-		convert<STI::Engine::EventEngineDependencyTree, TEventEngineDependencyTree>(dependencyTree, tree);
-        convert<DeviceID, TDeviceID>(missingIDs, missingTargets);
-		
-		
-		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
-
-		if (convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
-
-			(*messages) = tEngineParsingMessageSeq_var;
-		}
+	if (dependencyParserServant == 0) {
+		return TEventEngineDependencyParser::_nil();
 	}
-}
 
-void TEventEngineScheduler_i::addDeviceEventTargets(TEventEngineDependencyTree& tree, 
-													::STI::TNetwork::TEngineParsingMessageSeq_out messages, 
-                                                    const TDeviceTrace& trace)
-{
-    if (engineScheduler != 0) {
-
-		//convert in values
-		STI::Engine::EventEngineDependencyTree dependencyTree;
-		convert<TEventEngineDependencyTree, STI::Engine::EventEngineDependencyTree>(tree, dependencyTree);
-
-		std::vector<STI::Engine::EngineParsingMessage> generatedMessages;
-
-		engineScheduler->addDeviceEventTargets(dependencyTree, generatedMessages, convert<TDeviceTrace, DeviceTrace>(trace));
-
-        //convert out values
-		convert<STI::Engine::EventEngineDependencyTree, TEventEngineDependencyTree>(dependencyTree, tree);
-
-		STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessageSeq_var(new STI::TNetwork::TEngineParsingMessageSeq);
-		
-		if (convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(generatedMessages,
-			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineParsingMessage>&) tEngineParsingMessageSeq_var)) {
-
-			messages = new STI::TNetwork::TEngineParsingMessageSeq();
-			(*messages) = tEngineParsingMessageSeq_var;
-		}
-	}
+	return dependencyParserServant->_this();
 }
 
 ::CORBA::Boolean TEventEngineScheduler_i::getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job)

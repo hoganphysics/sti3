@@ -20,7 +20,7 @@ std::string EngineJobSourceID::print() const
 {
     std::stringstream job;
 
-    job << "[ " << user << "@" << machine << " ]";
+    job << user << "@" << machine;
     return job.str();
 }
 

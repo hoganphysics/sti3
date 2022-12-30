@@ -8,6 +8,8 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/memory.hpp>
 
+#include <sstream>
+
 using STI::Engine::ParsedVar;
 using STI::Engine::RawEventGroup;
 

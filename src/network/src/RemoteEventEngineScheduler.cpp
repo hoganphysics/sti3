@@ -1,32 +1,37 @@
 #include "RemoteEventEngineScheduler.h"
-#include <sti/device/DeviceTrace.h>
-#include "EventEngineDependencyTree.h"
-#include "ParsedDependencyTree.h"
-#include "LocalEventEngineJob.h"
-#include "Convert_EventEngine.h"
-#include "Convert_DeviceTrace.h"
-#include "Convert_ShotResult.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"
-#include "NetworkShotWrapper.h"
+
+#include <sti/device/DeviceTrace.h>
+
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
-#include <sti/engine/EngineParsingMessage.h>
-#include <sti/engine/RawEvent.h>
-#include "LocalShot.h"
-#include "NetworkResultsCollector.h"
+#include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/RawEvent.h>
+
+#include "Convert_DeviceTrace.h"
+#include "Convert_EventEngine.h"
+#include "Convert_ShotResult.h"
+#include "Convert_SequenceResult.h"
+
+#include "EventEngineDependencyTree.h"
+#include "LocalEventEngineJob.h"
+#include "LocalShot.h"
+#include "NetworkShotWrapper.h"
+#include "NetworkResultsCollector.h"
+#include "RemoteEventEngineDependencyParser.h"
 
 #include <memory>
+
 
 using STI::Network::RemoteEventEngineScheduler;
 using STI::Engine::EngineJobID;
 using STI::TNetwork::TEngineJobID;
 using STI::Network::convert;
 using STI::Engine::EventEngineJob;
-using STI::Engine::EventEngineDependencyTree;
-using STI::Engine::ParsedDependencyTree;
-using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Device::DeviceTrace;
 using STI::TNetwork::TDeviceTrace;
 using STI::Device::DeviceID;
@@ -37,7 +42,6 @@ using STI::Engine::Shot;
 using STI::TNetwork::TParseID;
 using STI::Engine::ParseID;
 using STI::TNetwork::TEngineParsingMessage;
-using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TReferenceHolder;
 using STI::Network::NetworkResultsCollector;
 using STI::TNetwork::TShotID;
@@ -49,35 +53,52 @@ using STI::Engine::EngineJobStatus;
 using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EventEngineJobList;
 using STI::TNetwork::TEventEngineJobList;
+using STI::Engine::EventEngineDependencyParser;
+using STI::Network::RemoteEventEngineDependencyParser;
+using STI::Engine::Sequence;
+using ::STI::TNetwork::TSequence;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::SequenceID;
+using ::STI::TNetwork::TSequenceID;
+using STI::Engine::ParseJobStatus;
+using STI::TNetwork::TParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::TNetwork::TPlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::TNetwork::TAddSequenceStatus;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
 	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler, schedulerMutex)
 {
+	addDependent(remoteDependencyParser);
 }
 
 RemoteEventEngineScheduler::~RemoteEventEngineScheduler()
 {
 }
 
-ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
+ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	ParseID pid;
+	ParseJobStatus parseJobStatus;
+	parseJobStatus.status = EngineJobStatus::NotFound;
+
 	STI::TNetwork::TShot tShot;
 
-	if (isDisabled()) return pid;
+	if (isDisabled()) return parseJobStatus;
 
 	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
-		return pid;
+		return parseJobStatus;
 	}
 
 	try {
-		auto tParseID = getTRef()->parse(tShot);	//remote call
+		auto tParseJobStatus = getTRef()->parse(tShot);	//remote call
 
-		if (tParseID != 0) {
-			pid = convert<TParseID, ParseID>(*tParseID);			
+		if (tParseJobStatus != 0) {
+			parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(*tParseJobStatus);			
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -88,24 +109,25 @@ ParseID RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 	{
 	}
 
-	return pid;
+	return parseJobStatus;
 }
 
-ShotID RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
+PlayJobStatus RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	ShotID sid;
+	PlayJobStatus playJobStatus;
+	playJobStatus.status = EngineJobStatus::NotFound;
 
-	if (isDisabled()) return sid;
+	if (isDisabled()) return playJobStatus;
 
 	try {
-		auto tShotID = getTRef()->play(
+		auto tPlayJobStatus = getTRef()->play(
 							convert<ParseID, TParseID>(parseID), 
 							convert<EngineJobSourceID, TEngineJobSourceID>(source));	//remote call
 
-		if (tShotID != 0) {
-			sid = convert<TShotID, ShotID>(*tShotID);
+		if (tPlayJobStatus != 0) {
+			playJobStatus = convert<TPlayJobStatus, PlayJobStatus>(*tPlayJobStatus);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -116,7 +138,75 @@ ShotID RemoteEventEngineScheduler::play(const ParseID& parseID, const EngineJobS
 	{
 	}
 
-	return sid;
+	return playJobStatus;
+}
+
+AddSequenceStatus RemoteEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	AddSequenceStatus addSequenceStatus;
+	addSequenceStatus.status = EngineJobStatus::NotFound;
+
+	STI::TNetwork::TSequence tSequence;
+
+	if (isDisabled()) return addSequenceStatus;
+
+	if (!convert<std::shared_ptr<Sequence>, STI::TNetwork::TSequence>(sequence, tSequence)) {
+		return addSequenceStatus;
+	}
+
+	try {
+		auto tAddSequenceStatus = getTRef()->addSequence(tSequence,
+				convert<EngineJobSourceID, TEngineJobSourceID>(source));	//remote call
+
+		if (tAddSequenceStatus != 0) {
+			addSequenceStatus = convert<TAddSequenceStatus, AddSequenceStatus>(*tAddSequenceStatus);			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return addSequenceStatus;
+}
+
+ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	ParseJobStatus parseJobStatus;
+	parseJobStatus.status = EngineJobStatus::NotFound;
+
+	STI::TNetwork::TShot tShot;
+
+	if (isDisabled()) return parseJobStatus;
+
+	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
+		return parseJobStatus;
+	}
+
+	try {
+		auto tParseJobStatus = getTRef()->parseSeqEntry(tShot,
+				convert<SequenceEntryID, TSequenceEntryID>(sequenceEntryID));	//remote call
+
+		if (tParseJobStatus != 0) {
+			parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(*tParseJobStatus);			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return parseJobStatus;
 }
 
 EngineJobStatus RemoteEventEngineScheduler::getStatus(const ParseID& pid)
@@ -167,35 +257,30 @@ EngineJobStatus RemoteEventEngineScheduler::getStatus(const STI::Engine::ShotID&
 	return status;
 }
 
-void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::DeviceID>& evtTargets, 
-											   STI::Engine::EventEngineDependencyTree& tree, 
-                                			   std::set<STI::Device::DeviceID>& missingTargets, 
-											   std::vector<STI::Engine::EngineParsingMessage>& messages, 
-											   const STI::Device::DeviceTrace& trace)
+bool RemoteEventEngineScheduler::getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
 
-	if (isDisabled()) return;
+	// isLive already?
+	if (remoteDependencyParser != 0 && !remoteDependencyParser->isDisabled() && remoteDependencyParser->ping()) {
+		dependencyParser = remoteDependencyParser;
+		return (dependencyParser != 0);
+	}
+	else if (remoteDependencyParser != 0) {
+		//non-null but not live for some reason; disable
+		remoteDependencyParser->disable();
+	}
 
-	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
+	if (isDisabled()) return false;
 
-    try {
+	::STI::TNetwork::TEventEngineDependencyParser_var tDependencyParser;	//remote reference
+	
+	try {
+		tDependencyParser = getTRef()->getDependencyParser();	//remote call
 
-        STI::TNetwork::TDeviceIDSeq_var tEvtTargets(new STI::TNetwork::TDeviceIDSeq);
-        convert<DeviceID, TDeviceID>(evtTargets, tEvtTargets);
-
-        STI::TNetwork::TEventEngineDependencyTree tTree;
-        convert<EventEngineDependencyTree, TEventEngineDependencyTree>(tree, tTree);
-    
-        STI::TNetwork::TDeviceIDSeq_var tMissingTargets(new STI::TNetwork::TDeviceIDSeq);
-        convert<DeviceID, TDeviceID>(missingTargets, tMissingTargets);
-
-		getTRef()->getDependants(tEvtTargets, tTree, tMissingTargets, tEngineParsingMessages,
-                                             convert<DeviceTrace, TDeviceTrace>(trace));	//remote call
-
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, tree);
-        convert<TDeviceID, DeviceID>(tMissingTargets, missingTargets);
-		convert<TEngineParsingMessage, EngineParsingMessage>(tEngineParsingMessages, messages);
+		if (!CORBA::is_nil(tDependencyParser)) {
+			remoteDependencyParser = std::make_shared<RemoteEventEngineDependencyParser>(tDependencyParser);
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -204,36 +289,11 @@ void RemoteEventEngineScheduler::getDependants(const std::set<STI::Device::Devic
 	catch (CORBA::Exception&)
 	{
 	}
+
+	dependencyParser = remoteDependencyParser;
+	return (dependencyParser != 0);
 }
 
-void RemoteEventEngineScheduler::addDeviceEventTargets(EventEngineDependencyTree& tree, 
-													   std::vector<EngineParsingMessage>& messages, 
-													   const DeviceTrace& trace)
-{
-	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
-
-	if (isDisabled()) return;
-
-	STI::TNetwork::TEngineParsingMessageSeq_var tEngineParsingMessages;
-
-    try {
-        STI::TNetwork::TEventEngineDependencyTree tTree;
-        convert<EventEngineDependencyTree, TEventEngineDependencyTree>(tree, tTree);
-
-		getTRef()->addDeviceEventTargets(tTree, tEngineParsingMessages, 
-                                                     convert<DeviceTrace, TDeviceTrace>(trace));	//remote call
-
-        convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tTree, tree);
-		convert<TEngineParsingMessage, EngineParsingMessage>(tEngineParsingMessages, messages);
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-}
 
 bool RemoteEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const
 {

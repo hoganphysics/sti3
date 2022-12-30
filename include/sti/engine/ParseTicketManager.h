@@ -61,23 +61,27 @@ std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID&
     bool removeTicket = false;
     switch (eventEngineScheduler->getStatus(id))
     {
-    case EngineJobStatus::New:
-        break;
-    case EngineJobStatus::Running:
-        break;
-    case EngineJobStatus::Completed:
-        ticket->setComplete();
-        removeTicket = true;
-        break;
-    case EngineJobStatus::Canceled:
-        ticket->cancel();
-        removeTicket = true;
-        break;
-    case EngineJobStatus::NotFound:
-    case EngineJobStatus::Archived:
-        ticket->cancel();
-        removeTicket = true;
-        break;
+        case EngineJobStatus::New:
+            break;
+        case EngineJobStatus::Running:
+            break;
+        case EngineJobStatus::Completed:
+            ticket->setComplete();
+            removeTicket = true;
+            break;
+        case EngineJobStatus::Canceled:
+            ticket->cancel();
+            removeTicket = true;
+            break;
+        case EngineJobStatus::NotFound:
+        case EngineJobStatus::Archived:
+            ticket->cancel();
+            removeTicket = true;
+            break;
+        case EngineJobStatus::Deferred:
+            ticket->defer();
+            removeTicket = true;
+            break;
     }
 
     if (removeTicket) {

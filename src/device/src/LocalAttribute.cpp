@@ -89,7 +89,7 @@ bool LocalAttribute::setValue(const std::string& value)
         if (success) {
             value_ = value;         //store the successful value so default refresh will work
         } 
-        _refresh(oldValue);         //refresh to get actual _value
+        success &= _refresh(oldValue);   //refresh to get actual _value
     }
     return success;
 }
@@ -109,14 +109,18 @@ bool LocalAttribute::_isAllowed(const std::string& value)
     return false;
 }
 
-void LocalAttribute::_refresh(const std::string& oldValue)
+bool LocalAttribute::_refresh(const std::string& oldValue)
 {
+    bool changed = false;
+
     value_ = refreshValueCallback();
 
     //Fires refresh message if value_ has changed.
     if (value_.compare(oldValue) != 0) {
         _fireRefreshEvent();
+        changed = true;
     }
+    return changed;
 }
 
 void LocalAttribute::_fireRefreshEvent()

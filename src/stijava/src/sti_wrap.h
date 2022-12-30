@@ -54,6 +54,7 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv);
     SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv, std::set< STI::Device::DeviceID > const &nodes);
+    SwigDirector_DeviceIDDependencyTree(JNIEnv *jenv, STI::Utils::DependencyTree< STI::Device::DeviceID > const &tree);
     virtual ~SwigDirector_DeviceIDDependencyTree();
 public:
     bool swig_overrides(int n) {

@@ -23,6 +23,11 @@
 %include MixedValue.i
 %include MetaData.i
 
+%include TimeStamp.i
+
+%include EngineJobSourceID.i
+
+%include SequenceID.i
 
 %include EventEngineDependencyTree.i
 %include StackTraceData.i
@@ -34,6 +39,8 @@
 
 %include network.i
 
+
+
 %include ParseResult.i
 %include ShotResult.i
 
@@ -42,3 +49,4 @@
 %include JEventEngineJob.i
 %include JEventEngineScheduler.i
 
+%include Sequence.i

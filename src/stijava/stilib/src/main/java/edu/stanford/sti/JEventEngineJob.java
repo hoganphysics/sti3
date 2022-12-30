@@ -40,6 +40,10 @@ public class JEventEngineJob {
     }
   }
 
+  public JEventEngineJob() {
+    this(stiJNI.new_JEventEngineJob(), true);
+  }
+
   public EngineJobID getJobID() {
     return new EngineJobID(stiJNI.JEventEngineJob_getJobID(swigCPtr, this), true);
   }
@@ -53,7 +57,7 @@ public class JEventEngineJob {
   }
 
   public EngineID getEngineID() {
-    return new EngineID(stiJNI.JEventEngineJob_getEngineID(swigCPtr, this), false);
+    return new EngineID(stiJNI.JEventEngineJob_getEngineID(swigCPtr, this), true);
   }
 
   public JEventEngine getEngine() {
@@ -80,7 +84,7 @@ public class JEventEngineJob {
   }
 
   public EngineParserMessageVector getParsingMessages() {
-    return new EngineParserMessageVector(stiJNI.JEventEngineJob_getParsingMessages(swigCPtr, this), false);
+    return new EngineParserMessageVector(stiJNI.JEventEngineJob_getParsingMessages(swigCPtr, this), true);
   }
 
 }

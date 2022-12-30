@@ -10,8 +10,8 @@ _addEvent = RawEventGroup.addEvent
 _addMeas = RawEventGroup.addMeas
 
 
-def group(name, color="") :
-    g = _group(name)
+def group(self, name, color="") :
+    g = _group(self, name)
     if color != "" :
         g.setcolor(color)
     return g

@@ -84,7 +84,7 @@ pybind11_add_module(stipy
     STIPyDevice_wrap.cpp
     STIPyGlobal.cpp
     STIPyLibDevice.cpp
-    STIPySeq.cpp
+    # STIPySeq.cpp
     STIPyServer.cpp
     STIPyServer_wrap.cpp
     STIPyShot.cpp

@@ -98,6 +98,15 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
 			// }
 		});
 
+		DeviceID testID;
+		DeviceID::stringToDeviceID("localhost/0/TestDevice", testID);
+
+		receiver->addListener<STI::Device::AttributeUpdateMessage>(testID,"server attribute update listener",
+			[this](auto& message) {
+				std::cout << "AttributeUpdateMessage: " << message->toString() << std::endl;
+			}
+		);
+
 }
 
 ServerDevice::~ServerDevice()

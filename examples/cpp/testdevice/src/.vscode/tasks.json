@@ -60,6 +60,7 @@
 			"label": "CMake configure",
 			"command": "cmake",
 			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
 				".."
 			],
 			"options": {

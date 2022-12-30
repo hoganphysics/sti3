@@ -23,6 +23,7 @@ void init_PersistenceManager(py::module& m);
 void init_DeviceHub(py::module& m);
 
 
+
 PYBIND11_MODULE(stidevicepy, m) {
     m.doc() = "STI Device wrapper library";
 
@@ -39,12 +40,14 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_SynchronousEvent(m);
     init_LocalDevice(m);
 //    init_RawEvent(m);
+    
     init_EventEngineScheduler(m);
     init_Attribute(m);
     init_AttributeManager(m);
     init_PersistenceManager(m);
 //    init_HubID(m);
     init_DeviceHub(m);
+    
 }
 
 int main(int argc, char *argv[])

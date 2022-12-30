@@ -8,7 +8,10 @@
 #include <sti/device/ServerMessageRelayer.h>
 
 #include <sti/engine/Measurement.h>
+#include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseTicket.h>
+#include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/RawEventGroup.h>
 
 #include <sti/utils/Configuration.h>
 #include <sti/utils/LocalFileHolder.h>
@@ -22,7 +25,6 @@
 #include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
 #include "LocalShot.h"
-#include <sti/engine/RawEventGroup.h>
 #include "ShotRepository.h"
 
 #include <filesystem>
@@ -93,18 +95,24 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
+	//temp for localPersistenceManager; TODO: expose to constructor
+	Configuration configuration;
+	configuration.set<int>("PersistenceManager", "resultBufferSize", 5);
+	configuration.set<int>("PersistenceManager", "sequenceBufferSize", 5);
+	// configuration.set<std::string>("PersistenceManager", "basePath", basePath);
+
+
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), basePath, localFileHolderFactory, localCollection);
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), configuration, basePath, localFileHolderFactory, localCollection);
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
 
 
+
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
 																	localCollection, localPersistenceManager);
-	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher);
-
-
-
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher, localPersistenceManager);
+	localPersistenceManager->attachEngineScheduler(eventEngineScheduler);
 
 
 	//setEngineFactory(engineFactory);
@@ -352,9 +360,9 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	eventGroup->addEvent(event);
 
-	auto parseID = eventEngineScheduler->parse(shot);
+	auto parseJobStatus = eventEngineScheduler->parse(shot);
 
-	auto parseTicket = parseTicketManager->makeTicket(parseID);
+	auto parseTicket = parseTicketManager->makeTicket(parseJobStatus.pid);
 
 	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
@@ -363,9 +371,9 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 		return false;
 	}
 
-	auto sid = eventEngineScheduler->play(parseID, shotConfig.jobSourceID);
+	auto playJobStatus = eventEngineScheduler->play(parseJobStatus.pid, shotConfig.jobSourceID);
 
-	resultTicket = resultTicketManager->makeTicket(sid);
+	resultTicket = resultTicketManager->makeTicket(playJobStatus.sid);
 
 	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max

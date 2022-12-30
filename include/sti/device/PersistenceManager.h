@@ -5,6 +5,8 @@
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/ResultTicket.h>
+#include <sti/engine/SequenceID.h>
+#include <sti/engine/SequenceResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/utils/FileHolderFactory.h>
@@ -27,8 +29,9 @@ public:
     virtual bool findShot(const STI::Engine::ShotID& sid) = 0;
 
     virtual bool getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult) = 0;
-
     virtual bool getShotResult(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result) = 0;
+    virtual bool getSequenceResult(const STI::Engine::SequenceID& id, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
+
     virtual bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner) = 0;
 
     virtual STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector) = 0;
@@ -39,6 +42,10 @@ public:
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 
+    virtual void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
+    virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;
+    virtual bool saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner) = 0;
+    
     // virtual std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename) = 0;
     
 

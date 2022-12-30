@@ -28,6 +28,7 @@
 			"command": "cmake",
 			"args": [
 				"-DCMAKE_BUILD_TYPE=Debug",
+				"-Dpybind11_DIR=~/.local/lib/python3.6/site-packages/pybind11/share/cmake/pybind11",
 				".."
 			],
 			"options": {

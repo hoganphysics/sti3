@@ -121,6 +121,7 @@ pybind11_add_module(stipybase MODULE
     pybasewrapper.cpp
     ParseID_wrap.cpp
     RawEvent_wrap.cpp
+    Sequence_wrap.cpp
     ShotConfig_wrap.cpp
     StackTrace_wrap.cpp
 )
@@ -180,7 +181,7 @@ pybind11_add_module(stidevicepy
     DeviceMessageDispatcher_wrap.cpp
     DeviceMessage_wrap.cpp
     DevicePy.cpp
-    EventEngineSchedulerPy.cpp
+    # EventEngineSchedulerPy.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
     LocalDevicePy.cpp

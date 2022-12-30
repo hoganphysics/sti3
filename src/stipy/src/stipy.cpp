@@ -111,6 +111,7 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name, const 
     return shot;
 }
 
+
 std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string& name)
 {
     auto stipy = STIPyGlobal::getInstance();

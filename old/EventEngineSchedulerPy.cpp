@@ -1,21 +1,30 @@
 
 #include "EventEngineSchedulerPy.h"
+
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/EngineJobID.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/Sequence.h>
+#include <sti/engine/SequenceID.h>
+#include <sti/engine/Shot.h>
 
 #include <iostream>
-#include <sti/engine/Shot.h>
+
 
 using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::EventEngineScheduler;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
 using STI::Engine::EngineJobStatus;
-// using STI::Python::LocalShotPy;
-
-
+using STI::Engine::ParseJobStatus;
+using STI::Engine::PlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::Engine::Sequence;
+using STI::Engine::SequenceEntryID;
 
 EventEngineSchedulerPy::EventEngineSchedulerPy(const std::shared_ptr<EventEngineScheduler>& engineScheduler)
 : engineScheduler(engineScheduler)
@@ -26,26 +35,43 @@ EventEngineSchedulerPy::~EventEngineSchedulerPy()
 {
 }
 
-ParseID EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Engine::Shot>& shot)
+ParseJobStatus EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Engine::Shot>& shot)
 {
-    ParseID pid;
+    ParseJobStatus parseJobStatus;
 
     if (engineScheduler != 0) {
-        std::cout << "EventEngineSchedulerPy::parse " << shot->getShotConfig().print() << std::endl;
-        pid = engineScheduler->parse(shot);
+        // std::cout << "EventEngineSchedulerPy::parse " << shot->getShotConfig().print() << std::endl;
+        parseJobStatus = engineScheduler->parse(shot);
     }
-    return pid;
+    return parseJobStatus;
 }
 
-ShotID EventEngineSchedulerPy::play(const ParseID& parseID, const STI::Engine::EngineJobSourceID& source)
+PlayJobStatus EventEngineSchedulerPy::play(const ParseID& parseID, const STI::Engine::EngineJobSourceID& source)
 {
-    ShotID sid;
+    PlayJobStatus playJobStatus;
 
     if (engineScheduler != 0) {
-        sid = engineScheduler->play(parseID, source);
+        playJobStatus = engineScheduler->play(parseID, source);
     }
-    return sid;
+    return playJobStatus;
 }
+
+AddSequenceStatus EventEngineSchedulerPy::addSequence(const std::shared_ptr<Sequence>& sequence, const STI::Engine::EngineJobSourceID& source)
+{
+    AddSequenceStatus addSequenceStatus;
+    return addSequenceStatus;
+}
+
+ParseJobStatus EventEngineSchedulerPy::parse(const std::shared_ptr<STI::Engine::Shot>& shot, const SequenceEntryID& sequenceEntryID)
+{
+    ParseJobStatus parseJobStatus;
+
+    if (engineScheduler != 0) {
+        parseJobStatus = engineScheduler->parse(shot, sequenceEntryID);
+    }
+    return parseJobStatus;
+}
+
 
 
 EngineJobStatus EventEngineSchedulerPy::getStatus(const ParseID& pid)

@@ -178,7 +178,6 @@ bool STI::Utils::OrderedBufferMap<Key, T>::addAndRemove(const Key& key, T newIte
 
 		auto lastKey = buffer_keys.back();
 		oldItemValid = buffer.get(lastKey, oldItem);
-
 	}
 
 	trimToSize();

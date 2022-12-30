@@ -3,6 +3,7 @@
 #include "Convert_ResultsCollector.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
+#include "Convert_SequenceResult.h"
 #include "orbTypes.h"
 #include "NetworkFileHolder.h"
 #include "NetworkResultsCollector.h"
@@ -26,6 +27,15 @@ using STI::TNetwork::TParseResult;
 using STI::Engine::ParseResult;
 using STI::Engine::FullShotResult;
 using STI::TNetwork::TFullShotResult;
+using STI::Engine::SequenceID;
+using STI::Engine::SequenceResult;
+using STI::TNetwork::TSequenceResult;
+using STI::Engine::SequenceResult;
+using STI::Engine::SequenceEntryID;
+using ::STI::TNetwork::TSequenceEntryID;
+using STI::Engine::EngineJobStatus;
+using ::STI::TNetwork::TEngineJobStatus;
+
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
@@ -114,6 +124,34 @@ bool RemotePersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std
     return success && (shotResult != 0);
 }
 
+
+bool RemotePersistenceManager::getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TSequenceResult_var tSequenceResult(new STI::TNetwork::TSequenceResult);
+
+    bool success = false;
+
+	try {
+		success = getTRef()->getSequenceResult(
+					convert<STI::Engine::SequenceID, STI::TNetwork::TSequenceID>(id), 
+					tSequenceResult);	//remote call
+
+		convert<TSequenceResult, std::shared_ptr<SequenceResult>>(tSequenceResult, sequenceResult);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success && (sequenceResult != 0);
+}
+
 bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
@@ -124,7 +162,7 @@ bool RemotePersistenceManager::saveShot(const STI::Engine::ShotID& sid, const st
    	STI::TNetwork::TFullShotResult tFullShotResult;
 
 	try {
-        success &= convert<std::shared_ptr<FullShotResult>, TFullShotResult>(fullShotResult, tFullShotResult);
+        success = convert<std::shared_ptr<FullShotResult>, TFullShotResult>(fullShotResult, tFullShotResult);
 
         if (success) {
     		success = getTRef()->saveShot(
@@ -211,6 +249,90 @@ std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder
 {
 	return fileFactory->makeFileHolder(filename);
 }
+
+
+
+void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+	
+    if (isDisabled()) return;
+    
+    bool success = false;
+   	STI::TNetwork::TSequenceResult tSequenceResult;
+
+	try {
+        success = convert<std::shared_ptr<SequenceResult>, TSequenceResult>(sequenceResult, tSequenceResult);
+
+        if (success) {
+    		getTRef()->addSequence(tSequenceResult);	//remote call
+        }
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+}
+
+bool RemotePersistenceManager::updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus, bool isOwner)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+	
+    if (isDisabled()) return false;
+    
+    bool success = false;
+   	STI::TNetwork::TFullShotResult tFullShotResult;
+
+	try {
+        if (success) {
+    		success = getTRef()->updateSequence(
+						convert<SequenceEntryID, TSequenceEntryID>(id), 
+						convert<STI::Engine::ShotID, STI::TNetwork::TShotID>(shotID), 
+						convert<EngineJobStatus, TEngineJobStatus>(shotStatus), 
+						static_cast<::CORBA::Boolean>(isOwner));	//remote call
+        }
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
+}
+
+bool RemotePersistenceManager::saveSequence(const std::shared_ptr<SequenceResult>& sequenceResult, bool isOwner)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+	
+    if (isDisabled()) return false;
+    
+    bool success = false;
+   	STI::TNetwork::TSequenceResult tSequenceResult;
+
+	try {
+        success &= convert<std::shared_ptr<SequenceResult>, TSequenceResult>(sequenceResult, tSequenceResult);
+
+        if (success) {
+    		success = getTRef()->saveSequence(
+						tSequenceResult,
+						static_cast<::CORBA::Boolean>(isOwner));	//remote call
+        }
+
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
+}
+
 
 bool RemotePersistenceManager::ping() const
 {

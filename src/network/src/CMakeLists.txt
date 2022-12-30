@@ -72,6 +72,7 @@ add_library(stinetwork SHARED
     Convert_DeviceTrace.cpp
     Convert_RawEventGroup.cpp
     Convert_ResultsCollector.cpp
+    Convert_SequenceResult.cpp
     Convert_ShotResult.cpp
     Convert_StackTrace.cpp
     #Convert_ResultTicket.cpp
@@ -101,6 +102,7 @@ add_library(stinetwork SHARED
     RemoteDeviceMessageDispatcher.cpp
     RemoteDeviceMessageHandler.cpp
     RemoteEventEngine.cpp
+    RemoteEventEngineDependencyParser.cpp
     RemoteEventEngineScheduler.cpp
     RemoteFileHolder.cpp
     RemotePersistenceManager.cpp
@@ -116,6 +118,7 @@ add_library(stinetwork SHARED
     TDeviceMessageDispatcher_i.cpp
     TDeviceMessageHandler_i.cpp
     TEventEngine_i.cpp
+    TEventEngineDependencyParser_i.cpp
     TEventEngineScheduler_i.cpp
     TFileHolder_i.cpp
     TPersistenceManager_i.cpp

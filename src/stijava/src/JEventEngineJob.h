@@ -21,6 +21,7 @@ class JEventEngineJob
 {
 public:
 	
+    JEventEngineJob();
 	JEventEngineJob(const std::shared_ptr<EventEngineJob>& eventEngineJob);
     ~JEventEngineJob();
 
@@ -28,7 +29,7 @@ public:
     STI::Device::DeviceID getJobOwner() const;
     EngineJobStatus getStatus() const;
 
-    const EngineID& getEngineID() const;
+    EngineID getEngineID() const;
     std::shared_ptr<JEventEngine> getEngine() const;
 
     std::shared_ptr<JShot> getShot() const;
@@ -38,7 +39,7 @@ public:
 
     std::set<STI::Device::DeviceID> getMissingTargetIDs() const;
 
-    const std::vector<EngineParsingMessage>& getParsingMessages() const;
+    std::vector<EngineParsingMessage> getParsingMessages() const;
 
 private:
 

@@ -93,7 +93,9 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "*.idl": "cpp"
+        "*.idl": "cpp",
+        "shared_mutex": "cpp",
+        "cfenv": "cpp"
     },
     "esbonio.sphinx.confDir": ""
 }

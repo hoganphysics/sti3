@@ -74,7 +74,7 @@ public:
 
 private:
 
-    void _refresh(const std::string& oldValue);
+    bool _refresh(const std::string& oldValue);     //true if value changed
     void _fireRefreshEvent();
     bool _isAllowed(const std::string& value);
 

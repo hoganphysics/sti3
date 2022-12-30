@@ -76,6 +76,10 @@ public class RawEventGroup {
     return new RawEventGroupStats(stiJNI.RawEventGroup_getStats(swigCPtr, this), true);
   }
 
+  public RawEventGroupStats getTotalStats() {
+    return new RawEventGroupStats(stiJNI.RawEventGroup_getTotalStats(swigCPtr, this), true);
+  }
+
   public void setName(String newName) {
     stiJNI.RawEventGroup_setName(swigCPtr, this, newName);
   }
@@ -198,11 +202,6 @@ public class RawEventGroup {
     return (cPtr == 0) ? null : new StackTraceData(cPtr, true);
   }
 
-  public RawEventVector getEvents() {
-    long cPtr = stiJNI.RawEventGroup_getEvents(swigCPtr, this);
-    return (cPtr == 0) ? null : new RawEventVector(cPtr, true);
-  }
-
   public ParsedVarVector getVars() {
     return new ParsedVarVector(stiJNI.RawEventGroup_getVars(swigCPtr, this), true);
   }
@@ -245,6 +244,10 @@ public class RawEventGroup {
 
   public double getReferencePoint(String refName) {
     return stiJNI.RawEventGroup_getReferencePoint(swigCPtr, this, refName);
+  }
+
+  public RawEventVector getEvents() {
+    return new RawEventVector(stiJNI.RawEventGroup_getEvents(swigCPtr, this), true);
   }
 
 }

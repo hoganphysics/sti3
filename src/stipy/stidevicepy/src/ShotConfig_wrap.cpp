@@ -12,8 +12,8 @@ void init_ShotConfig(py::module& m)
 {
 
     py::enum_<ShotType>(m, "ShotType")
-        .value("Single", ShotType::Single)
-        .value("Sequence", ShotType::Sequence)
+        .value("SingleShot", ShotType::Single)
+        .value("SequenceShot", ShotType::Sequence)
         .value("SingleUndocumented", ShotType::SingleUndocumented)
         .export_values();
 

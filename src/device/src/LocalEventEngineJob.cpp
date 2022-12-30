@@ -68,6 +68,12 @@ EngineJobStatus LocalEventEngineJob::getStatus() const
     return status;
 }
 
+void LocalEventEngineJob::setStatus(const EngineJobStatus& jobStatus)
+{
+    std::unique_lock< std::mutex > writeLock(jobMutex);
+    status = jobStatus;
+}
+
 void LocalEventEngineJob::markRunning(const EngineID& id)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);

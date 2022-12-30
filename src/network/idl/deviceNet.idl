@@ -137,18 +137,28 @@ module TNetwork
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 	};
 
-	interface TEventEngineScheduler
+	interface TEventEngineDependencyParser
 	{
-		TParseID parse(in TShot shot);
-		TShotID play(in TParseID parseID, in TEngineJobSourceID source);
-
-    	TEngineJobStatus getStatusPID(in TParseID pid);
-    	TEngineJobStatus getStatusSID(in TShotID sid);
-
 		void getDependants(in TDeviceIDSeq evtTargets, inout TEventEngineDependencyTree tree, 
                                 inout TDeviceIDSeq missingTargets, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
     
     	void addDeviceEventTargets(inout TEventEngineDependencyTree tree, out TEngineParsingMessageSeq messages, in TDeviceTrace trace);
+
+		boolean ping();
+	};
+
+	interface TEventEngineScheduler
+	{
+		TParseJobStatus parse(in TShot shot);
+		TPlayJobStatus play(in TParseID parseID, in TEngineJobSourceID source);
+
+		TAddSequenceStatus addSequence(in TSequence sequenceData, in TEngineJobSourceID source);
+		TParseJobStatus parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
+
+    	TEngineJobStatus getStatusPID(in TParseID pid);
+    	TEngineJobStatus getStatusSID(in TShotID sid);
+
+		TEventEngineDependencyParser getDependencyParser();
 
     	boolean getJob(in TEngineJobID id, out TEventEngineJob job);
     	void addJob(in TEventEngineJob newJob);
@@ -205,12 +215,18 @@ module TNetwork
 		
 		boolean getParseResult(in TParseID pid, out TParseResult parseResult);
 		boolean getShotResult(in TShotID sid, out TShotResult shotResult);
+		boolean getSequenceResult(in TSequenceID seqid, out TSequenceResult sequenceResult);
+
 		boolean saveShot(in TShotID sid, in TFullShotResult fullShotResult, in boolean isOwner);
 		
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
 
 		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
 
+		void addSequence(in TSequenceResult sequenceResult);
+		boolean updateSequence(in TSequenceEntryID id, in TShotID shotID, in TEngineJobStatus shotStatus, in boolean isOwner);
+		boolean saveSequence(in TSequenceResult sequenceResult, in boolean isOwner);
+   
 		boolean ping();
 	};
 

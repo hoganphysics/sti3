@@ -67,7 +67,8 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+		"variant": "cpp"
     },
     "cmake.configureOnOpen": true
 }

@@ -745,7 +745,7 @@ bool STI::Network::convert<std::shared_ptr<AttributeUpdateMessage>, TAttributeUp
 	for (auto& attrib : deviceMessage->attributes) {
 		if (i < tMessage.attributes.length()) {
 			tMessage.attributes[i].key = convert<std::string, CORBA::String_member>(attrib.first);
-			tMessage.attributes[i].key = convert<std::string, CORBA::String_member>(attrib.second);
+			tMessage.attributes[i].value = convert<std::string, CORBA::String_member>(attrib.second);
 		}
 		++i;
 	}

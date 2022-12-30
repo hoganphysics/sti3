@@ -38,6 +38,15 @@ struct RawEventGroupStats
     unsigned tags;
     unsigned events;
     unsigned subgroups;
+
+    RawEventGroupStats& operator+=(const RawEventGroupStats& rhs)
+    {
+        vars += rhs.vars;
+        tags += rhs.tags;
+        events += rhs.events;
+        subgroups += rhs.subgroups;
+        return (*this);
+    }
 };
 
 
@@ -57,6 +66,7 @@ public:
     double endTime() const;
 
     RawEventGroupStats getStats() const;
+    RawEventGroupStats getTotalStats() const;
 
     void setName(const std::string& newName);
 
@@ -83,7 +93,10 @@ public:
 
     ParsedVar var(const std::string& fullVarName, const RawStackTrace& stackTrace);   //the value of the var, or an unbound var
 
-    bool bindVars(const std::vector<ParsedVar>& overwritten);   //fails if it attempts to overwrite any already bound var
+    //for overwritten vars
+    bool bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value);
+    bool bindVar(const ParsedVar& overwrittenVar);
+    bool bindVars(const std::set<ParsedVar>& overwritten);   //fails if it attempts to overwrite any already bound var
     //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
     //It's not possible to bindVars after addEvent, since in general the added events can depend on the initial bound values
 

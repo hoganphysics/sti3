@@ -5,7 +5,8 @@
 #include "ChannelManagerPy.h"
 #include <sti/device/ChannelManager.h>
 #include <sti/device/DeviceCollection.h>
-#include "EventEngineSchedulerPy.h"
+#include <sti/engine/EventEngineScheduler.h>
+// #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"
 
@@ -14,11 +15,12 @@ using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
 using STI::Python::DeviceCollectionPy;
-using STI::Python::EventEngineSchedulerPy;
+// using STI::Python::EventEngineSchedulerPy;
 using STI::Python::AttributeManagerPy;
 using STI::Device::AttributeManager;
 using STI::Python::PersistenceManagerPy;
 using STI::Device::PersistenceManager;
+using STI::Engine::EventEngineScheduler;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -84,20 +86,21 @@ std::shared_ptr<STI::Device::DeviceMessageDispatcher> DevicePy::getMessageDispat
     return dispatcher;
 }
 
-std::shared_ptr<EventEngineSchedulerPy> DevicePy::getEngineScheduler()
+std::shared_ptr<EventEngineScheduler> DevicePy::getEngineScheduler()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    std::shared_ptr<STI::Python::EventEngineSchedulerPy> wrapper;
+    // std::shared_ptr<STI::Python::EventEngineSchedulerPy> wrapper;
 
     if (device_ != 0) {
         device_->getEngineScheduler(scheduler);
     }
 
-    if (scheduler != 0) {
-        wrapper = std::make_shared<EventEngineSchedulerPy>(scheduler);
-    }
-
-    return wrapper;
+    // if (scheduler != 0) {
+    //     wrapper = std::make_shared<EventEngineSchedulerPy>(scheduler);
+    // }
+    // return wrapper;
+    
+    return scheduler;
 }
 
 std::shared_ptr<ChannelManagerPy> DevicePy::getChannelManager()

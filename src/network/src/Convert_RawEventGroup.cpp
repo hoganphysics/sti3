@@ -8,6 +8,8 @@
 
 #include <sti/engine/RawEventGroup.h>
 
+#include <set>
+
 using STI::Engine::RawEventGroup;
 using STI::TNetwork::TRawEventGroup;
 using STI::Engine::StackTraceData;
@@ -137,14 +139,16 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
     convert<TParsedTag, ParsedTag>(tRawEventGroup.parsedTags, tags);
     rawEventGroup->setTags(tags);
 
-    std::vector<ParsedVar> ovars;
+    std::set<ParsedVar> ovars;
     convert<TParsedVar, ParsedVar>(tRawEventGroup.overwrittenVars, ovars);
     rawEventGroup->bindVars(ovars);
 
     auto& tSubgroups = tRawEventGroup.subgroups;
     for (unsigned i = 0; i < tSubgroups.length(); ++i) {
-        auto g =rawEventGroup->group(
+        auto g = rawEventGroup->group(
             convert<CORBA::String_member, std::string>(tSubgroups[i].name));
+
+            // tSubgroups[i].parentName
         
         convertGroup(tSubgroups[i], g);
     }

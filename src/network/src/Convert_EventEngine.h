@@ -45,6 +45,9 @@ class ShotResultRecord;
 enum class ShotType;
 enum class RecordStatus;
 enum class EventEngineJobList;
+class ParseJobStatus;
+class PlayJobStatus;
+class AddSequenceStatus;
 
 } //Engine
 
@@ -245,6 +248,19 @@ bool Network::convert<Engine::ParseID, TNetwork::TParseID>(const Engine::ParseID
 template<>
 bool Network::convert<TNetwork::TParseID, Engine::ParseID>(const TNetwork::TParseID& tpid, Engine::ParseID& pid);
 
+
+//ParseJobStatus
+template<>
+TNetwork::TParseJobStatus Network::convert<Engine::ParseJobStatus, TNetwork::TParseJobStatus>(const Engine::ParseJobStatus& parseJobStatus);
+template<>
+Engine::ParseJobStatus Network::convert<TNetwork::TParseJobStatus, Engine::ParseJobStatus>(const TNetwork::TParseJobStatus& tParseJobStatus);
+template<>
+bool Network::convert<Engine::ParseJobStatus, TNetwork::TParseJobStatus>(const Engine::ParseJobStatus& parseJobStatus, TNetwork::TParseJobStatus& tParseJobStatus);
+template<>
+bool Network::convert<TNetwork::TParseJobStatus, Engine::ParseJobStatus>(const TNetwork::TParseJobStatus& tParseJobStatus, Engine::ParseJobStatus& parseJobStatus);
+
+
+
 //ShotID
 template<>
 TNetwork::TShotID Network::convert<Engine::ShotID, TNetwork::TShotID>(const Engine::ShotID& sid);
@@ -255,6 +271,31 @@ template<>
 bool Network::convert<Engine::ShotID, TNetwork::TShotID>(const Engine::ShotID& sid, TNetwork::TShotID& tsid);
 template<>
 bool Network::convert<TNetwork::TShotID, Engine::ShotID>(const TNetwork::TShotID& tsid, Engine::ShotID& sid);
+
+
+//PlayJobStatus
+template<>
+TNetwork::TPlayJobStatus Network::convert<Engine::PlayJobStatus, TNetwork::TPlayJobStatus>(const Engine::PlayJobStatus& playJobStatus);
+template<>
+Engine::PlayJobStatus Network::convert<TNetwork::TPlayJobStatus, Engine::PlayJobStatus>(const TNetwork::TPlayJobStatus& tPlayJobStatus);
+template<>
+bool Network::convert<Engine::PlayJobStatus, TNetwork::TPlayJobStatus>(const Engine::PlayJobStatus& playJobStatus, TNetwork::TPlayJobStatus& tPlayJobStatus);
+template<>
+bool Network::convert<TNetwork::TPlayJobStatus, Engine::PlayJobStatus>(const TNetwork::TPlayJobStatus& tPlayJobStatus, Engine::PlayJobStatus& playJobStatus);
+
+
+
+//AddSequenceStatus
+template<>
+TNetwork::TAddSequenceStatus Network::convert<Engine::AddSequenceStatus, TNetwork::TAddSequenceStatus>(
+                const Engine::AddSequenceStatus& addSequenceStatus);
+template<>
+Engine::AddSequenceStatus Network::convert<TNetwork::TAddSequenceStatus, Engine::AddSequenceStatus>(
+                const TNetwork::TAddSequenceStatus& tAddSequenceStatus);
+template<>
+bool Network::convert<Engine::AddSequenceStatus, TNetwork::TAddSequenceStatus>(const Engine::AddSequenceStatus& addSequenceStatus, TNetwork::TAddSequenceStatus& tAddSequenceStatus);
+template<>
+bool Network::convert<TNetwork::TAddSequenceStatus, Engine::AddSequenceStatus>(const TNetwork::TAddSequenceStatus& tAddSequenceStatus, Engine::AddSequenceStatus& addSequenceStatus);
 
 
 //Shot

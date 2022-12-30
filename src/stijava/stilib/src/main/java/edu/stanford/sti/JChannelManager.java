@@ -57,4 +57,8 @@ public class JChannelManager {
     return new MixedValue(stiJNI.JChannelManager_readChannel(swigCPtr, this, channel, MixedValue.getCPtr(value), value), true);
   }
 
+  public void stop() {
+    stiJNI.JChannelManager_stop(swigCPtr, this);
+  }
+
 }

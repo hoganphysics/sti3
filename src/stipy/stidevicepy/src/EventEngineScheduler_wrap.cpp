@@ -1,4 +1,5 @@
-#include "EventEngineSchedulerPy.h"
+// #include "EventEngineSchedulerPy.h"
+#include <sti/engine/EventEngineScheduler.h>
 
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
@@ -7,8 +8,13 @@
 #include "LocalShot.h"
 #include <sti/engine/RawEventGroup.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EventEngineJobList.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/Sequence.h>
+#include <sti/engine/SequenceID.h>
 
 #include <string>
 #include <memory>
@@ -19,13 +25,22 @@
 
 namespace py = pybind11;
 
-using STI::Python::EventEngineSchedulerPy;
+// using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::ParseID;
 using STI::Engine::TimeStamp;
 using STI::Engine::ShotConfig;
 using STI::Engine::LocalShot;
 using STI::Engine::RawEvent;
 using STI::Engine::EventEngineJobList;
+using STI::Engine::EngineJobStatus;
+using STI::Engine::ParseJobStatus;
+using STI::Engine::EventEngineScheduler;
+using STI::Engine::Shot;
+using STI::Engine::SequenceEntryID;
+using STI::Engine::PlayJobStatus;
+using STI::Engine::AddSequenceStatus;
+using STI::Engine::Sequence;
+using STI::Engine::EngineJobSourceID;
 
 
 void init_EventEngineScheduler(py::module& m)
@@ -55,6 +70,17 @@ void init_EventEngineScheduler(py::module& m)
             })
         ;
     
+    //EngineJobStatus { New, Running, Completed, Canceled, NotFound, Archived, Deferred };
+    py::enum_<EngineJobStatus>(m, "EngineJobStatus")
+        .value("New", EngineJobStatus::New)
+        .value("Running", EngineJobStatus::Running)
+        .value("Completed", EngineJobStatus::Completed)
+        .value("Canceled", EngineJobStatus::Canceled)
+        .value("NotFound", EngineJobStatus::NotFound)
+        .value("Archived", EngineJobStatus::Archived)
+        .value("Deferred", EngineJobStatus::Deferred)
+        .export_values();
+
     py::enum_<EventEngineJobList>(m, "EventEngineJobList")
         .value("Queued", EventEngineJobList::Queued)
         .value("Running", EventEngineJobList::Running)
@@ -63,13 +89,91 @@ void init_EventEngineScheduler(py::module& m)
         .export_values();
 
 
-    py::class_<EventEngineSchedulerPy, std::shared_ptr<EventEngineSchedulerPy>>(m, "EventEngineScheduler")
-        .def("parse", &EventEngineSchedulerPy::parse, py::arg("shot"))
-        .def("play", &EventEngineSchedulerPy::play, py::arg("parseID"), py::arg("source"))
-        .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineSchedulerPy::getStatus), py::arg("parseID"))
-        .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineSchedulerPy::getStatus), py::arg("shotID"))
-        .def("cancelAll", &EventEngineSchedulerPy::cancelAll)
-        .def("getJobIDs", &EventEngineSchedulerPy::getJobIDs)
+    py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")
+        .def(py::init<>())
+        .def_readonly("status", &ParseJobStatus::status)
+        .def_readonly("pid", &ParseJobStatus::pid)
+        .def("__repr__",
+            [](const STI::Engine::ParseJobStatus& self) {
+                return self.pid.print();
+            })
+        .def("__eq__",  // operator ==
+            [](const ParseJobStatus& self, const ParseJobStatus& other) {
+                return self.pid == other.pid && self.status == other.status;
+            })
+        .def("__lt__",  // operator <
+            [](const ParseJobStatus& self, const ParseJobStatus& other) {
+                if (self.pid == other.pid) {
+                    return self.status < other.status;
+                }
+                return self.pid < other.pid;
+            })
+        ;
+
+
+    py::class_<STI::Engine::PlayJobStatus>(m, "PlayJobStatus")
+        .def(py::init<>())
+        .def_readonly("status", &PlayJobStatus::status)
+        .def_readonly("sid", &PlayJobStatus::sid)
+        .def("__repr__",
+            [](const STI::Engine::PlayJobStatus& self) {
+                return self.sid.print();
+            })
+        .def("__eq__",  // operator ==
+            [](const PlayJobStatus& self, const PlayJobStatus& other) {
+                return self.sid == other.sid && self.status == other.status;
+            })
+        .def("__lt__",  // operator <
+            [](const PlayJobStatus& self, const PlayJobStatus& other) {
+                if (self.sid == other.sid) {
+                    return self.status < other.status;
+                }
+                return self.sid < other.sid;
+            })
+        ;
+
+    py::class_<STI::Engine::AddSequenceStatus>(m, "AddSequenceStatus")
+        .def(py::init<>())
+        .def_readonly("status", &AddSequenceStatus::status)
+        .def_readonly("seqid", &AddSequenceStatus::seqid)
+        .def("__repr__",
+            [](const STI::Engine::AddSequenceStatus& self) {
+                return self.seqid.print();
+            })
+        .def("__eq__",  // operator ==
+            [](const AddSequenceStatus& self, const AddSequenceStatus& other) {
+                return self.seqid == other.seqid && self.status == other.status;
+            })
+        .def("__lt__",  // operator <
+            [](const AddSequenceStatus& self, const AddSequenceStatus& other) {
+                if (self.seqid == other.seqid) {
+                    return self.status < other.status;
+                }
+                return self.seqid < other.seqid;
+            })
+        ;
+
+    // py::class_<EventEngineSchedulerPy, std::shared_ptr<EventEngineSchedulerPy>>(m, "EventEngineScheduler")
+    //     .def("parse", py::overload_cast<const std::shared_ptr<STI::Engine::Shot>&>(&EventEngineSchedulerPy::parse), py::arg("shot"))
+    //     .def("play", &EventEngineSchedulerPy::play, py::arg("parseID"), py::arg("source"))
+    //     .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineSchedulerPy::getStatus), py::arg("parseID"))
+    //     .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineSchedulerPy::getStatus), py::arg("shotID"))
+    //     .def("cancelAll", &EventEngineSchedulerPy::cancelAll)
+    //     .def("getJobIDs", &EventEngineSchedulerPy::getJobIDs)
+    //     ;
+
+
+
+    py::class_<EventEngineScheduler, std::shared_ptr<EventEngineScheduler>>(m, "EventEngineScheduler")
+        .def("parse", py::overload_cast<const std::shared_ptr<Shot>&>(&EventEngineScheduler::parse), py::arg("shot"))
+        .def("parse", py::overload_cast<const std::shared_ptr<Shot>&, const SequenceEntryID&>(&EventEngineScheduler::parse), py::arg("shot"), py::arg("sequenceEntryID"))
+        .def("play", &EventEngineScheduler::play, py::arg("parseID"), py::arg("source"))
+        .def("addSequence", py::overload_cast<const std::shared_ptr<Sequence>&, const EngineJobSourceID&>(&EventEngineScheduler::addSequence), py::arg("sequence"), py::arg("source"))
+        .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineScheduler::getStatus), py::arg("parseID"))
+        .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineScheduler::getStatus), py::arg("shotID"))
+        .def("cancelJob", &EventEngineScheduler::cancelJob)
+        .def("cancelAll", &EventEngineScheduler::cancelAll)
+        .def("getJobIDs", &EventEngineScheduler::getJobIDs)
         ;
 
 

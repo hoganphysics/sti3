@@ -48,12 +48,12 @@ public class ParsedDependencyTree {
     this(stiJNI.new_ParsedDependencyTree__SWIG_1(EventEngineDependencyTree.getCPtr(tree), tree), true);
   }
 
-  public void getNodes(DeviceIDvector nodes) {
-    stiJNI.ParsedDependencyTree_getNodes(swigCPtr, this, DeviceIDvector.getCPtr(nodes), nodes);
+  public DeviceIDvector getNodes() {
+    return new DeviceIDvector(stiJNI.ParsedDependencyTree_getNodes(swigCPtr, this), true);
   }
 
-  public void getDependedentNodes(DeviceID node, DeviceIDvector depNodes) {
-    stiJNI.ParsedDependencyTree_getDependedentNodes(swigCPtr, this, DeviceID.getCPtr(node), node, DeviceIDvector.getCPtr(depNodes), depNodes);
+  public DeviceIDvector getDependedentNodes(DeviceID node) {
+    return new DeviceIDvector(stiJNI.ParsedDependencyTree_getDependedentNodes(swigCPtr, this, DeviceID.getCPtr(node), node), true);
   }
 
 }

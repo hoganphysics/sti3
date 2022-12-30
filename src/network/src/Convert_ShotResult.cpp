@@ -50,6 +50,8 @@ using STI::TNetwork::TStackTraceResult;
 using STI::Engine::StackTraceResult;
 using STI::TNetwork::TFullShotResult;
 using STI::Engine::FullShotResult;
+using STI::Engine::ShotID;
+using STI::TNetwork::TShotID;
 
 
 //ShotResult
@@ -59,7 +61,7 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
 {
     shotResult = std::make_shared<ShotResult>();
 
-    shotResult->sid = convert<TNetwork::TShotID, Engine::ShotID>(tShotResult.sid);
+    shotResult->sid = convert<TShotID, ShotID>(tShotResult.sid);
     shotResult->playTime = convert<TTimeStamp, TimeStamp>(tShotResult.playTime);
 
     shotResult->measurements = std::make_shared<STI::Engine::MeasurementVector>();
@@ -84,7 +86,7 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
 {
     if (shotResult == 0) return false;
 
-    tShotResult.sid = convert<Engine::ShotID, TNetwork::TShotID>(shotResult->sid);
+    tShotResult.sid = convert<ShotID, TShotID>(shotResult->sid);
     tShotResult.playTime = convert<TimeStamp, TTimeStamp>(shotResult->playTime);
 
     if (shotResult->measurements != 0) {

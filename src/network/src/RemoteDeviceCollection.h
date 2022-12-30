@@ -41,8 +41,6 @@ private:
 
 	mutable std::mutex collectionMutex;
 
-	//::STI::TNetwork::TDeviceCollection_var tDeviceCollection;		//remote reference
-
 };
 
 

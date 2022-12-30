@@ -1,8 +1,10 @@
 #include "LocalPersistenceManager.h"
 
+#include <sti/utils/Configuration.h>
 #include <sti/device/DeviceID.h>
 
 #include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEvent.h>
@@ -38,12 +40,18 @@ using STI::Engine::TransientRepository;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::FullShotResult;
 using STI::Engine::ParseResult;
+using STI::Utils::Configuration;
+using STI::Engine::ShotType;
 
 
-LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const std::string& basePath, 
+LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const Configuration& config, const std::string& basePath, 
         const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
         const std::shared_ptr<STI::Device::DeviceCollection>& collection)
-: localDeviceID(deviceID), fileHolderFactory(fileHolderFactory), resultBuffer(5), deviceCollection(collection)
+: localDeviceID(deviceID), 
+fileHolderFactory(fileHolderFactory), 
+resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ), 
+sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ), 
+deviceCollection(collection)
 {
     defaultRepository = std::make_shared<SerializedRepository>(basePath);
     transientRepository = std::make_shared<TransientRepository>(basePath);
@@ -52,6 +60,11 @@ LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const
 LocalPersistenceManager::~LocalPersistenceManager()
 {
     //serialize all shots in memory
+}
+
+void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
+{
+    eventEngineScheduler = scheduler;   //weak_ptr to avoid circular reference...
 }
 
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const DeviceID& deviceID)
@@ -237,7 +250,7 @@ bool LocalPersistenceManager::findShot(const STI::Engine::ShotID& sid)
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
-    if (hasDelegate) {
+    if (hasDelegate && delegate != 0) {
         if(delegate->findShot(sid)) {
             return true;
         }
@@ -253,8 +266,20 @@ bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, st
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
-    if (hasDelegate) {
+    if (hasDelegate && delegate != 0) {
         if(delegate->getParseResult(pid, parseResult)) {
+            return true;
+        }
+    }
+
+    // if (!eventEngineScheduler.expired()) {
+    //     if (eventEngineScheduler->getParseResult(pid, parseResult)) {
+    //         return true;
+    //     }
+    // }
+
+    if (auto observe = eventEngineScheduler.lock()) {
+        if (observe->getParseResult(pid, parseResult)) {
             return true;
         }
     }
@@ -267,7 +292,7 @@ bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std:
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
-    if (hasDelegate) {
+    if (hasDelegate && delegate != 0) {
         if(delegate->getShotResult(sid, result)) {
             return true;
         }
@@ -288,16 +313,30 @@ bool LocalPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, st
 
 bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<FullShotResult>& fullShotResult)
 {
+    if (fullShotResult == 0) return false;
+    if (fullShotResult->shotResult == 0) return false;
+
     std::shared_ptr<FullShotResult> bufferedResult;
-    
     if (resultBuffer.addAndRemove(fullShotResult->shotResult->sid, fullShotResult, bufferedResult)) {
         //The buffer was full. Need to save old bufferedResult to disk;
-
         return saveShotLocal(bufferedResult->shotResult->sid, bufferedResult, false);
     }
 
-    return false;
+    return resultBuffer.contains(bufferedResult->shotResult->sid);;
 }
+
+bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)
+{
+    if (sequenceResult == 0) return false;
+
+    std::shared_ptr<STI::Engine::SequenceResult> bufferedResult;
+    if (sequenceBuffer.addAndRemove(sequenceResult->seqid, sequenceResult, bufferedResult)) {
+        //The buffer was full. Need to save old bufferedResult to disk;
+        return saveSequenceLocal(bufferedResult, false);
+    }
+    return sequenceBuffer.contains(sequenceResult->seqid);
+}
+
 
 bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid, 
                                         const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
@@ -310,6 +349,16 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
             return true;
         }
         //if failed, save locally
+    }
+
+    std::shared_ptr<STI::Engine::SequenceResult> sequenceResult;
+    if (sid.parseID.shotConfig.shotType == ShotType::Sequence && 
+        getSequenceResult(sid.parseID.sequenceEntryID.seqID, sequenceResult)) {
+        
+        if (!updateSequence(sid.parseID.sequenceEntryID, sid, STI::Engine::EngineJobStatus::Completed, isOwner)) {
+            saveSequence(sequenceResult, isOwner);
+        }
+        // sequenceResult->status[sid.parseID.sequenceEntryID.seqIndex] = STI::Engine::EngineJobStatus::Completed;
     }
 
     if (isOwner) {
@@ -358,6 +407,94 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
     // return false;
 }
 
+bool LocalPersistenceManager::updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, 
+                                             const STI::Engine::EngineJobStatus& shotStatus, bool isOwner)
+{
+    std::shared_ptr<PersistenceManager> delegate;
+    bool hasDelegate = false;
+
+    if (hasDelegate && isOwner && delegate != 0) {
+        if(delegate->updateSequence(id, shotID, shotStatus, true)) {     //transfer ownership to delegate
+            return true;
+        }
+        //if failed, save locally
+    }
+
+    return updateSequenceLocal(id, shotID, shotStatus, isOwner);
+}
+
+bool LocalPersistenceManager::updateSequenceLocal(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, 
+                                             const STI::Engine::EngineJobStatus& shotStatus, bool isOwner)
+{
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    //this should be called when the shot is saved
+    if (isOwner && repo->findSequenceResult(id.seqID)) {
+        return repo->updateSequence(id, shotID, shotStatus);
+    }
+
+    //update buffered result
+    std::shared_ptr<STI::Engine::SequenceResult> bufferedResult;
+    if (sequenceBuffer.get(id.seqID, bufferedResult)) {
+        bufferedResult->addShotResult(id.seqIndex, shotID, shotStatus);
+    }
+    return false;
+}
+
+bool LocalPersistenceManager::saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner)
+{
+    if (sequenceResult == 0) return false;
+
+    std::shared_ptr<PersistenceManager> delegate;
+    bool hasDelegate = false;
+
+    if (hasDelegate && isOwner && delegate != 0) {
+        if(delegate->saveSequence(sequenceResult, true)) {     //transfer ownership to delegate
+            return true;
+        }
+        //if failed, save locally
+    }
+    
+    if (!sequenceBuffer.contains(sequenceResult->seqid) ) {
+        addToBuffer(sequenceResult);
+    }
+
+    // sequenceBuffer.get()
+    //would help to have a way to update a sequence;  updateSequence(sequenceID, shotResult)
+
+
+    if (isOwner) {
+        return saveSequenceLocal(sequenceResult, isOwner);
+    }
+
+    return true;
+}
+
+bool LocalPersistenceManager::saveSequenceLocal(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner)
+{
+    if (sequenceResult == 0) return false;
+
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    // //this should be called when the shot is saved
+    // if (repo->findSequenceResult(sequenceResult->seqid)) {
+    //     repo->updateSequence();
+    // }
+
+    ResultsPaths resultsPaths = repo->preparePaths(sequenceResult->seqid);    //e.g., make directory sturcture
+
+    bool success = repo->saveSequence(sequenceResult->seqid, sequenceResult);
+
+    if (!success) {
+        success = defaultRepository->saveSequence(sequenceResult->seqid, sequenceResult);
+    }
+
+    return success;
+}
+
+
 bool isPartial(const std::shared_ptr<ShotResult>& shotResult)
 {
     return false;
@@ -371,13 +508,14 @@ bool isPartial(const std::shared_ptr<ShotResult>& shotResult)
 bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid, 
                                             const std::shared_ptr<FullShotResult>& fullShotResult, bool isOwner)
 {
+    if (fullShotResult == 0) return false;
 
     //bool isShotOwner = sid.parseID.jobSourceID == localDeviceID;
 
     std::shared_ptr<STI::Engine::ShotRepository> repo;
     if (!getShotRepository(repo)) return false;
 
-    if (sid.parseID.shotConfig.shotType == STI::Engine::ShotType::SingleUndocumented) {
+    if (sid.parseID.shotConfig.shotType == ShotType::SingleUndocumented) {
         repo = transientRepository;
     }
 
@@ -446,6 +584,66 @@ void LocalPersistenceManager::transferParseResult(std::shared_ptr<ParseResult> p
             stackTraceData->replaceFile(inputFilename, localFileHandle);            
         }
     }
+}
+
+void LocalPersistenceManager::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
+{
+    using STI::Device::EngineSchedulerMessage;
+
+    if (mess == 0) return;
+
+    if (mess->originalSourceID() != localDeviceID) return;
+
+
+    switch(mess->schedulerMessageType) {
+        case EngineSchedulerMessage::SchedulerMessageType::ParseComplete:
+            //change shot status in sequenceResult
+            break;
+        case EngineSchedulerMessage::SchedulerMessageType::PlayComplete:
+        
+            break;
+    }
+
+}
+
+void LocalPersistenceManager::addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)
+{
+    std::shared_ptr<PersistenceManager> delegate;
+    bool hasDelegate = false;
+
+    if (hasDelegate && delegate != 0) {
+        delegate->addSequence(sequenceResult);  //transfer ownership to delegate
+        return;
+    }
+    //if failed, save locally
+
+    addToBuffer(sequenceResult);
+}
+
+
+bool LocalPersistenceManager::getSequenceResult(const STI::Engine::SequenceID& id, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)
+{
+    if (sequenceBuffer.get(id, sequenceResult) && (sequenceResult != 0) ) {
+        return true;
+    }
+    //not found in buffer; check repository
+    return false;
+}
+
+bool LocalPersistenceManager::getSequenceLocal(const STI::Engine::SequenceID& seqid, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)
+{
+    bool success = false;
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+
+    if (getShotRepository(repo)) {
+        success = repo->getSequenceResult(seqid, sequenceResult);
+    }
+
+    if (!success) {
+        success = defaultRepository->getSequenceResult(seqid, sequenceResult);
+    }
+
+    return success;
 }
 
 void LocalPersistenceManager::addPersistenceDelegate(const DeviceID& id, 

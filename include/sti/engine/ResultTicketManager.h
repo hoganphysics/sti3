@@ -26,10 +26,11 @@ public:
                         const std::shared_ptr<EventEngineScheduler>& scheduler);
     virtual ~ResultTicketManager() {}
 
-    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID &id);
+    std::shared_ptr<T> makeTicket(const STI::Engine::ShotID& id);
 
 private:
-    void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage> &mess);
+
+    void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     std::shared_ptr<EventEngineScheduler> eventEngineScheduler;
@@ -62,30 +63,34 @@ std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID 
     bool removeTicket = false;
     switch (eventEngineScheduler->getStatus(id))
     {
-    case EngineJobStatus::New:
-        break;
-    case EngineJobStatus::Running:
-        break;
-    case EngineJobStatus::Completed:
-        ticket->setComplete();
-        removeTicket = true;
-        break;
-    case EngineJobStatus::Canceled:
-        ticket->cancel();
-        removeTicket = true;
-        break;
-    case EngineJobStatus::NotFound:
-    case EngineJobStatus::Archived:
-        //check if result is archived
-        if (persistenceManager->findShot(id)) {
+        case EngineJobStatus::New:
+            break;
+        case EngineJobStatus::Running:
+            break;
+        case EngineJobStatus::Completed:
             ticket->setComplete();
-        }
-        else {
-            //not found in results archive
+            removeTicket = true;
+            break;
+        case EngineJobStatus::Canceled:
             ticket->cancel();
-        }
-        removeTicket = true;    //i.e., don't wait for job events
-        break;
+            removeTicket = true;
+            break;
+        case EngineJobStatus::NotFound:
+        case EngineJobStatus::Archived:
+            //check if result is archived
+            if (persistenceManager->findShot(id)) {
+                ticket->setComplete();
+            }
+            else {
+                //not found in results archive
+                ticket->cancel();
+            }
+            removeTicket = true;    //i.e., don't wait for job events
+            break;
+        case EngineJobStatus::Deferred:
+            ticket->defer();
+            removeTicket = true;
+            break;
     }
 
     if (removeTicket) {
