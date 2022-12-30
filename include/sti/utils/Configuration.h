@@ -143,8 +143,12 @@ public:
     Configuration& append(const Configuration& config);
     Configuration& append(const std::map<std::string, std::map<std::string, std::string>>& config);
 
+    Configuration extract(const std::string& section) const;
+    Configuration extract(const std::vector<std::string>& sections) const;
+
     Configuration& operator+(const Configuration& config);
     Configuration& operator+(const std::map<std::string, std::map<std::string, std::string>>& config);
+
 
 private:
 
@@ -161,6 +165,7 @@ private:
 
 	Configuration& setStringValue(const std::string& section, const std::string& name, const std::string& value);
 	bool getStringValue(const std::string& section, const std::string& name, std::string& value) const;
+    static bool hasPrefix(const std::string& item, const std::string& prefix);
 
 	std::map<std::string, ConfigSection> configData;
 

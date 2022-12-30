@@ -25,5 +25,17 @@ int main(int argc, char **argv)
 		std::cout << v << std::endl;
 	}
 
+	auto partial = config.extract("Test");
+
+
+	std::cout << "From partial: " << partial.get<std::string>("Test", "p3", "failed").get() << std::endl;
+	std::cout << "From partial sub: " << partial.get<std::string>("Test.STI", "parser", "failed").get() << std::endl;
+
+	std::cout << "From subsection: " << config.get<std::string>("Test.STI", "parser", "failed").get() << std::endl;
+
+	auto partial2 = config.extract("Test.STI");
+
+	auto partial3 = config.extract("Numbers.STI");
+
 	return 0;
 }
