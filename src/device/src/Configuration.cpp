@@ -222,3 +222,52 @@ Configuration& Configuration::operator+(const std::map<std::string, std::map<std
 {
 	return append(config);
 }
+
+bool Configuration::hasPrefix(const std::string& item, const std::string& prefix)
+{
+    if (item.compare(prefix) == 0) return true;
+    
+    auto found = item.find(prefix);
+    if (found != std::string::npos && item.size() > prefix.size()) {
+
+        return item.substr(prefix.size(), 1).compare(".") == 0;
+    }
+    return false;
+}
+
+Configuration Configuration::extract(const std::string& section) const
+{
+	//could support subsections
+	//[Camera 1]
+	//[Camera 1.STI]
+	//[.Network]
+	//config.extract("Camera 1.*")
+	//config.extract(dev + ".*")
+
+	Configuration config;
+
+	auto it = configData.find(section);
+
+    //find all sections names with the prefix 'section'
+    while (it != configData.end()) {
+        if (hasPrefix(it->first, section)) {
+			config + Configuration({{it->first, getParameters(it->first)}});
+        }
+        ++it;
+    }
+
+	// return Configuration({{section, getParameters(section)}});
+
+	return config;
+}
+
+Configuration Configuration::extract(const std::vector<std::string>& sections) const
+{
+	Configuration config;
+
+	for (auto& section : sections) {
+		config + extract(section);
+	}
+	return config;
+}
+

@@ -45,7 +45,15 @@ void ConfigFile::parse(const std::string& filename)
 		if (sectionHeadStart != std::string::npos && equalsLoc == std::string::npos) {
 			//new section found
 			sectionHeadEnd = line.find_first_of("]");
-			section = line.substr(sectionHeadStart + 1, sectionHeadEnd - sectionHeadStart - 1);
+			auto nextSection = line.substr(sectionHeadStart + 1, sectionHeadEnd - sectionHeadStart - 1);
+
+			//check for relative subsection
+			auto found = nextSection.find_first_of(".");
+			if (found != std::string::npos && found == 0) {	//first character is a dot, like [.subsection]
+				nextSection = section + nextSection;	//convert to absolute subsection name
+			}
+
+			section = nextSection;
 		}
 		else {
 			commentLoc = line.find_first_of("#");
