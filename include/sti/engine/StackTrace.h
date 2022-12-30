@@ -10,8 +10,10 @@ namespace Engine
 {
 
 
-struct StackFrame
+class StackFrame
 {
+public:
+
 	StackFrame();
 	StackFrame(unsigned file, unsigned line, unsigned func);
 

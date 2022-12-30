@@ -261,6 +261,12 @@ target_include_directories(stinetwork PRIVATE
     # ${WORKING_DIRECTORY}/utils
 )
 
+if(MSVC)
+    target_include_directories(stinetwork PUBLIC 
+        ${OMNIORB_PATH}/include
+    )
+endif()
+
 if(DEFINED SKBUILD)
   message(">>>>>> STI Network: SKBUILD")
   if(MSVC)

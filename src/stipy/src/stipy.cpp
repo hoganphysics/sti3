@@ -5,9 +5,9 @@
 #include <sti/utils/LocalFileHolder.h>
 
 #include "LocalShot.h"
-#include "NetworkFileHolder.h"
-#include "NetworkShotWrapper.h"
-#include "ORBManager.h"
+//#include "NetworkFileHolder.h"
+//#include "NetworkShotWrapper.h"
+//#include "ORBManager.h"
 #include "RawStackTrace.h"
 #include "StackTraceData.h"
 #include "STIPyGlobal.h"
@@ -70,12 +70,14 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
 
     std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
-    if (ORBManager::orbInstanceInitializd()) {
-        fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
-    }
-    else {
-        fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-    }
+    //if (ORBManager::orbInstanceInitializd()) {
+    //    fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+    //}
+    //else {
+    //    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    //}
+
+    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 
     auto stackTrace = std::make_shared<STI::Engine::StackTraceData>(fileFactory);
     auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTrace);
@@ -84,12 +86,13 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
 
     auto localShot = std::make_shared<STI::Engine::LocalShot>(shotConfig, eventGroup);
 
-    if (ORBManager::orbInstanceInitializd()) {
-        shot = std::make_shared<STI::Network::NetworkShotWrapper>(localShot);
-    }
-    else {
-        shot = localShot;
-    }
+    //if (ORBManager::orbInstanceInitializd()) {
+    //    shot = std::make_shared<STI::Network::NetworkShotWrapper>(localShot);
+    //}
+    //else {
+    //    shot = localShot;
+    //}
+    shot = localShot;
 
     auto pyShot = std::make_shared<STIPyShot>(shot);
     return pyShot;

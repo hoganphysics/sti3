@@ -61,3 +61,5 @@ _skbuild/
 .vs/
 log.txt
 stipy.egg-info/
+env/
+doc/out/

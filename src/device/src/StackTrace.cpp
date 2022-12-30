@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>

@@ -28,17 +28,19 @@ class StackTraceData;
 
 //StackFrame
 template<>
+Engine::StackFrame Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
+    const TNetwork::TStackFrame& tStackFrame);
+template<>
+TNetwork::TStackFrame Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
+    const Engine::StackFrame& stackFrame);
+
+template<>
 bool Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
         const TNetwork::TStackFrame& tStackFrame, Engine::StackFrame& stackFrame);
 template<>
 bool Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
         const Engine::StackFrame& stackFrame, TNetwork::TStackFrame& tStackFrame);
-template<>
-Engine::StackFrame Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
-        const TNetwork::TStackFrame& tStackFrame);
-template<>
-TNetwork::TStackFrame Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
-        const Engine::StackFrame& stackFrame);
+
 
 
 //StackTrace
