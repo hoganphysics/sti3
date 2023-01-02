@@ -153,22 +153,25 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 	return tShotResultRecord._retn();
 }
 
-::CORBA::Boolean TPersistenceManager_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TMeasurementSeq_out measurements)
+::CORBA::Boolean TPersistenceManager_i::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements)
 {
 	bool success = false;
-	measurements = new STI::TNetwork::TMeasurementSeq();
+	measurements = new STI::TNetwork::TDeviceIDMeasurementsTupleSeq();
 
     if (persistenceManager != 0) {
 
-		STI::TNetwork::TMeasurementSeq_var tMeasurementSeq_var(new STI::TNetwork::TMeasurementSeq);
-		auto localMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
+		STI::TNetwork::TDeviceIDMeasurementsTupleSeq_var tDeviceIDMeasurementsTupleSeq_var(new STI::TNetwork::TDeviceIDMeasurementsTupleSeq);
+		auto localMeasurements = std::make_shared<STI::Engine::MeasurementMap>();
 
 		success = persistenceManager->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
 
-		success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
-					(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tMeasurementSeq_var);
+		// success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
+		// 			(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tDeviceIDMeasurementsTupleSeq_var);
+		
+		success &= convert<std::shared_ptr<STI::Engine::MeasurementMap>, STI::TNetwork::TDeviceIDMeasurementsTupleSeq>(
+			localMeasurements, tDeviceIDMeasurementsTupleSeq_var);
 	
-		(*measurements) = tMeasurementSeq_var;
+		(*measurements) = tDeviceIDMeasurementsTupleSeq_var;
 	}
 
 	return success;

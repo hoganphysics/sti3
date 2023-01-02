@@ -21,17 +21,27 @@ PersistenceManagerPy::~PersistenceManagerPy()
 // std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShot(const STI::Engine::ShotID& sid)
 
 
-STI::Engine::MeasurementVector PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
+std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
 {
-    std::shared_ptr<STI::Engine::MeasurementVector> measurements;
+    std::shared_ptr<STI::Engine::MeasurementMap> measurements;
+    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements; //need to copy map to remove shared_ptr
 
     if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements) && measurements != 0) {
-        return *measurements;
-    }
+        for (auto& tuple : *measurements) {
+            if (tuple.second != 0) {
+                auto& measVec = pyMeasurements[tuple.first];
 
-    //not found
-    STI::Engine::MeasurementVector missing;
-    return missing;
+                //deep copy is cheap because vector stores pointers
+                measVec.insert(measVec.end(), tuple.second->begin(), tuple.second->end());  
+            }
+         }
+        
+    }
+    return pyMeasurements;
+
+    // //not found
+    // STI::Engine::MeasurementMap missing;
+    // return missing;
 }
 
 bool PersistenceManagerPy::findShot(const STI::Engine::ShotID& sid)

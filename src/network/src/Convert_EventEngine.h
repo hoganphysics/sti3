@@ -5,6 +5,7 @@
 #include "deviceNet.h"
 
 #include <sti/fwd/RawEvent_fwd.h>
+#include <sti/fwd/Measurement_fwd.h>
 
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJob.h>
@@ -359,6 +360,18 @@ TNetwork::TMeasurement Network::convert<std::shared_ptr<Engine::Measurement>, TN
 template<>
 std::shared_ptr<Engine::Measurement> Network::convert<TNetwork::TMeasurement, std::shared_ptr<Engine::Measurement>>(
         const TNetwork::TMeasurement& tMeasurement);
+
+
+//MeasurementMap
+template<>
+bool Network::convert<TNetwork::TDeviceIDMeasurementsTupleSeq, std::shared_ptr<Engine::MeasurementMap>>(
+        const TNetwork::TDeviceIDMeasurementsTupleSeq& tMeasurements, std::shared_ptr<Engine::MeasurementMap>& measurements);
+
+template<>
+bool Network::convert<std::shared_ptr<Engine::MeasurementMap>, TNetwork::TDeviceIDMeasurementsTupleSeq>(
+        const std::shared_ptr<Engine::MeasurementMap>& measurements, TNetwork::TDeviceIDMeasurementsTupleSeq& tMeasurements);
+
+
 
 
 

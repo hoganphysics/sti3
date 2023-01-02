@@ -168,7 +168,16 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     }
 
     //Measurements
-    success &= resultsCollector->addMeasurements(shotResult->measurements);
+    // success &= resultsCollector->addMeasurements(shotResult->measurements);
+    if (shotResult->measurements != 0) {
+        for (auto& tuple : *shotResult->measurements) {  //tuple = {DeviceID, MeasurementVector}
+
+            if (tuple.second != 0 && tuple.second->size() >0) {
+                success &= resultsCollector->addMeasurements(tuple.first, tuple.second);
+            }
+        }        
+    }
+
 
 
     if (success) {
@@ -312,7 +321,7 @@ bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std:
     return getShotLocal(sid, result);
 }
 
-bool LocalPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
+bool LocalPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements)
 {
     std::shared_ptr<STI::Engine::ShotResult> shotResult;
     if (getShotResult(sid, shotResult) && shotResult != 0) {

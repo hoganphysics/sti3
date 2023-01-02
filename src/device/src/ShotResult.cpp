@@ -16,10 +16,13 @@ using STI::Engine::ShotResult;
 
 ShotResult::ShotResult()
 {
+    measurements = std::make_shared<STI::Engine::MeasurementMap>();
 }
 
 ShotResult::ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs)
 {
+    measurements = std::make_shared<STI::Engine::MeasurementMap>();
+
     shotResultRecord.deviceID = deviceID;
     for (auto& id : ownedIDs) {
         shotResultRecord.dependencies.push_back(id);    
@@ -28,12 +31,17 @@ ShotResult::ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Devic
 
 void ShotResult::deleteFiles(ShotResult& shot)
 {
-    if (shot.measurements != 0) {
-        for (auto& meas : *(shot.measurements)) {
-            if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
-                meas->data().getFile()->deleteFile();
+    if (shot.measurements == 0) return;
+
+    for (auto& tuple : *shot.measurements) {
+        if (tuple.second != 0) {
+            
+            for (auto& meas : *tuple.second) {
+                if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
+                    meas->data().getFile()->deleteFile();
+                }
             }
-        }           
+        }
     }
 }
 
@@ -43,9 +51,9 @@ void ShotResult::serialize(Archive& archive)
     archive( 
         cereal::make_nvp("ShotID", sid),
         cereal::make_nvp("playTime", playTime),
-        cereal::make_nvp("Attributes", attributes), 
-        cereal::make_nvp("Measurements", measurements),
-        cereal::make_nvp("ShotResultRecord", shotResultRecord)
+        cereal::make_nvp("attributes", attributes), 
+        cereal::make_nvp("measurements", measurements),
+        cereal::make_nvp("shotResultRecord", shotResultRecord)
         );
 }
 

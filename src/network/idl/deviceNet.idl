@@ -114,7 +114,7 @@ module TNetwork
 	{
 		TShotID getShotID();
 
-		boolean addMeasurements(in TMeasurementSeq measurements);
+		boolean addMeasurements(in TDeviceID deviceID, in TMeasurementSeq measurements);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
 	};
 
@@ -221,7 +221,7 @@ module TNetwork
 		
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
 
-		boolean getMeasurements(in TShotID sid, out TMeasurementSeq measurements);
+		boolean getMeasurements(in TShotID sid, out TDeviceIDMeasurementsTupleSeq measurements);
 
 		void addSequence(in TSequenceResult sequenceResult);
 		boolean updateSequence(in TSequenceEntryID id, in TShotID shotID, in TEngineJobStatus shotStatus, in boolean isOwner);

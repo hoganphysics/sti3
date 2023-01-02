@@ -50,9 +50,11 @@ public:
     std::shared_ptr<ParseResult> getParseResult();
     std::shared_ptr<ShotResult> getShotResult();
 
-    STI::Engine::MeasurementVector measurements();
+    STI::Engine::MeasurementMap measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);
     STI::Engine::MeasurementVector measurements(const std::string& id);
+
+    bool getMeasurements(std::shared_ptr<STI::Engine::MeasurementMap>& measurements);
 
 private:
 
@@ -77,7 +79,7 @@ private:
     // bool measurements_loaded;
     // std::shared_ptr<MeasurementVector> measurements_;
 
-    STI::Utils::CachedValue<std::shared_ptr<MeasurementVector>> cachedMeasurements;
+    STI::Utils::CachedValue<std::shared_ptr<MeasurementMap>> cachedMeasurements;
     STI::Utils::CachedValue<std::shared_ptr<ParseResult>> parseResult;
     STI::Utils::CachedValue<std::shared_ptr<ShotResult>> shotResult;
     

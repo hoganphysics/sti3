@@ -54,7 +54,7 @@ public:
     virtual bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult) = 0;
     virtual bool getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult) = 0;
 
-    virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
+    virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements) = 0;
 
     virtual bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult) = 0;
 

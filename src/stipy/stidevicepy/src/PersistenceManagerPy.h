@@ -21,7 +21,7 @@ public:
     ~PersistenceManagerPy();
 
     // std::shared_ptr<STI::Engine::ShotResult> getShot(const STI::Engine::ShotID& sid);
-    STI::Engine::MeasurementVector getMeasurements(const STI::Engine::ShotID& sid);
+    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> getMeasurements(const STI::Engine::ShotID& sid);
 
     bool findShot(const STI::Engine::ShotID& sid);
     std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);

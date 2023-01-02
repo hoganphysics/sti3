@@ -51,14 +51,14 @@ TShotID* TResultsCollector_i::getShotID()
 	return tShotID._retn();
 }
 
-::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TMeasurementSeq& measurements)
+::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements)
 {
     if (resultsCollector != 0) {
 
         auto newMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
 	    convert<TMeasurement, std::shared_ptr<Measurement>>(measurements, *newMeasurements);
 
-		return resultsCollector->addMeasurements(newMeasurements);
+		return resultsCollector->addMeasurements(convert<TDeviceID, DeviceID>(deviceID), newMeasurements);
 	}
     return false;
 }

@@ -110,6 +110,11 @@ using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
 using STI::Engine::SequenceID;
 using STI::TNetwork::TSequenceID;
+using STI::TNetwork::TDeviceIDMeasurementsTupleSeq;
+using STI::Engine::MeasurementMap;
+using STI::Engine::MeasurementVector;
+using STI::Device::DeviceID;
+using STI::TNetwork::TDeviceID;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
@@ -1611,4 +1616,45 @@ std::shared_ptr<Measurement> STI::Network::convert<TMeasurement, std::shared_ptr
     convert<TMeasurement, std::shared_ptr<Measurement>>(tMeasurement, measurement);
     return measurement;
 }
+
+//MeasurementMap
+template<>
+bool STI::Network::convert<TDeviceIDMeasurementsTupleSeq, std::shared_ptr<MeasurementMap>>(
+        const TDeviceIDMeasurementsTupleSeq& tMeasurements, std::shared_ptr<MeasurementMap>& measurements)
+{
+    measurements = std::make_shared<MeasurementMap>();
+
+    for (unsigned i = 0; i < tMeasurements.length(); ++i) {
+        auto newMeasurements = std::make_shared<MeasurementVector>();
+        (*measurements)[convert<TDeviceID, DeviceID>(tMeasurements[i].id)] = newMeasurements;
+
+        convert<TMeasurement, std::shared_ptr<Measurement>>(tMeasurements[i].measurements, *newMeasurements);
+    }
+    return true;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<MeasurementMap>, TDeviceIDMeasurementsTupleSeq>(
+        const std::shared_ptr<MeasurementMap>& measurements, TDeviceIDMeasurementsTupleSeq& tMeasurements)
+{
+    if (measurements == 0) {
+        tMeasurements.length(0);
+        return true;
+    }
+
+    tMeasurements.length( measurements->size() );
+    unsigned i = 0;
+    for (auto& tuple : *measurements) { //tuple: {DeviceID, shared_ptr<MeasurementVector>}
+        tMeasurements[i].id = convert<DeviceID, TDeviceID>(tuple.first);
+
+        if (tuple.second != 0) {
+            convert<std::shared_ptr<Measurement>, TMeasurement>(*(tuple.second), tMeasurements[i].measurements);
+        }
+        else {
+            tMeasurements[i].measurements.length(0);
+        }
+    }
+    return true;
+}
+
 

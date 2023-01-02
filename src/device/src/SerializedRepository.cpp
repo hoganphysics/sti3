@@ -83,7 +83,7 @@ bool SerializedRepository::findSequenceResult(const SequenceID& seqid)
     return std::filesystem::exists(seqPath);
 }
 
-bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
+bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements)
 {
     //if (!findShot(sid)) return false;
 

@@ -19,6 +19,7 @@ using STI::Engine::ShotID;
 using STI::Engine::ParsedDependencyTree;
 using STI::Engine::Measurement;
 using STI::Engine::MeasurementVector;
+using STI::Engine::MeasurementMap;
 using STI::Engine::ShotResult;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::ParseResult;
@@ -64,19 +65,41 @@ std::shared_ptr<ParseResult> LocalResultsCollector::getParseResults() const
     return fullShotResult->parseResult;
 }
 
-bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVector>& measurements)
+bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<MeasurementVector>& measurements)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
     if (fullShotResult == 0 || fullShotResult->shotResult == 0 || measurements == 0) return false;
 
-    if (fullShotResult->shotResult->measurements == 0 || fullShotResult->shotResult->measurements->size() == 0) {
-        fullShotResult->shotResult->measurements = measurements;
+    if (measurements->size() == 0) return true;
+
+    if (fullShotResult->shotResult->measurements == 0) {
+        fullShotResult->shotResult->measurements = std::make_shared<STI::Engine::MeasurementMap>();
+    }
+
+    if ((*fullShotResult->shotResult->measurements)[deviceID] == 0) {
+        (*fullShotResult->shotResult->measurements)[deviceID] = std::make_shared<STI::Engine::MeasurementVector>(); 
+    }
+
+    auto devMeasurements = (*fullShotResult->shotResult->measurements)[deviceID];
+
+    if (devMeasurements->size() == 0) {
+        (*fullShotResult->shotResult->measurements)[deviceID] = measurements;
     }
     else {
         //vector contains shared_ptr so deep copy is inexpensive
-        fullShotResult->shotResult->measurements->insert(fullShotResult->shotResult->measurements->end(), measurements->begin(), measurements->end());
+        devMeasurements->insert(devMeasurements->end(), measurements->begin(), measurements->end());
+
     }
+
+    // if (fullShotResult->shotResult->measurements == 0 || fullShotResult->shotResult->measurements->size() == 0) {
+
+    //     fullShotResult->shotResult->measurements = measurements;
+    // }
+    // else {
+    //     //vector contains shared_ptr so deep copy is inexpensive
+    //     fullShotResult->shotResult->measurements->insert(fullShotResult->shotResult->measurements->end(), measurements->begin(), measurements->end());
+    // }
     
 
     bool success = true;
@@ -112,14 +135,14 @@ bool LocalResultsCollector::addMeasurements(const std::shared_ptr<MeasurementVec
     return success;
 }
 
-std::shared_ptr<MeasurementVector> LocalResultsCollector::getMeasurements()
+std::shared_ptr<MeasurementMap> LocalResultsCollector::getMeasurements()
 {
     if (fullShotResult != 0 && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
         return fullShotResult->shotResult->measurements;
     }
 
-    auto emptyVec = std::make_shared<MeasurementVector>();
-    return emptyVec;
+    auto empty = std::make_shared<MeasurementMap>();
+    return empty;
 }
 
 std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)

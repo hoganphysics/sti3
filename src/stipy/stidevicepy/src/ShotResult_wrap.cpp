@@ -59,32 +59,34 @@ void init_ShotResult(py::module& m)
         .def_readonly("sid", &ShotResult::sid)
         .def_readonly("playTime", &ShotResult::playTime)
         .def_readonly("attributes", &ShotResult::attributes)
-        .def("getMeasurements",
-            [](ShotResult& self) -> STI::Engine::MeasurementVector {
-                if (self.measurements != 0) {
-                    return *self.measurements;
-                }
-                STI::Engine::MeasurementVector missing;
-                return missing;
-            })
-        .def("getMeasurements",
-            [](ShotResult& self, const STI::Device::DeviceID& deviceID) -> STI::Engine::MeasurementVector {
-                STI::Engine::MeasurementVector selected;
-                if (self.measurements != 0) {
-                    getMeasurements(*self.measurements, selected, deviceID);
-                }
-                return selected;
-            }, py::arg("deviceID"))
-        .def("getMeasurements",
-            [](ShotResult& self, const std::string& deviceID) -> STI::Engine::MeasurementVector {
-                STI::Device::DeviceID id(deviceID);
+        // .def_readonly("measurements", &ShotResult::measurements)
+
+        // .def("getMeasurements",
+        //     [](ShotResult& self) -> STI::Engine::MeasurementVector {
+        //         if (self.measurements != 0) {
+        //             return *self.measurements;
+        //         }
+        //         STI::Engine::MeasurementVector missing;
+        //         return missing;
+        //     })
+        // .def("getMeasurements",
+        //     [](ShotResult& self, const STI::Device::DeviceID& deviceID) -> STI::Engine::MeasurementVector {
+        //         STI::Engine::MeasurementVector selected;
+        //         if (self.measurements != 0) {
+        //             getMeasurements(*self.measurements, selected, deviceID);
+        //         }
+        //         return selected;
+        //     }, py::arg("deviceID"))
+        // .def("getMeasurements",
+        //     [](ShotResult& self, const std::string& deviceID) -> STI::Engine::MeasurementVector {
+        //         STI::Device::DeviceID id(deviceID);
                 
-                STI::Engine::MeasurementVector selected;
-                if (self.measurements != 0) {
-                    getMeasurements(*self.measurements, selected, id);
-                }
-                return selected;
-            }, py::arg("deviceID"))
+        //         STI::Engine::MeasurementVector selected;
+        //         if (self.measurements != 0) {
+        //             getMeasurements(*self.measurements, selected, id);
+        //         }
+        //         return selected;
+        //     }, py::arg("deviceID"))
         .def_readonly("shotResultRecord", &ShotResult::shotResultRecord)
         .def("__eq__",  // operator ==
             [](const ShotResult& self, const ShotResult& other) {

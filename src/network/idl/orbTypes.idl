@@ -156,6 +156,12 @@ module TNetwork
 	};
 	typedef sequence<TMeasurement> TMeasurementSeq;
 
+	struct TDeviceIDMeasurementsTuple
+	{
+		TDeviceID id;
+		TMeasurementSeq measurements;
+	};
+	typedef sequence<TDeviceIDMeasurementsTuple> TDeviceIDMeasurementsTupleSeq;
 
 	struct TEngineID
 	{
@@ -592,7 +598,8 @@ module TNetwork
 		TShotID sid;
 		TTimeStamp playTime;
 
-		TMeasurementSeq measurements;
+		// TMeasurementSeq measurements;
+		TDeviceIDMeasurementsTupleSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
 
 		TShotResultRecord shotResultRecord;

@@ -35,10 +35,10 @@ public:
 
     ShotID getShotID() const;
 
-    bool addMeasurements(const std::shared_ptr<MeasurementVector>& measurements);
+    bool addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<MeasurementVector>& measurements);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
-    std::shared_ptr<MeasurementVector> getMeasurements();
+    std::shared_ptr<MeasurementMap> getMeasurements();
 
     void setRecord(const ShotResultRecord& shotRecord);
     std::shared_ptr<ShotResult> getResults() const;

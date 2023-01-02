@@ -68,13 +68,21 @@ std::shared_ptr<ShotResult> ResultTicket::getShotResult()
     return missing;
 }
 
-STI::Engine::MeasurementVector ResultTicket::measurements()
+bool ResultTicket::getMeasurements(std::shared_ptr<STI::Engine::MeasurementMap>& measurements)
+{
+    if (ensureCachedMeasurements()) {
+        measurements = cachedMeasurements.get();
+    }
+    return (measurements != 0);
+}
+
+STI::Engine::MeasurementMap ResultTicket::measurements()
 {
     if (ensureCachedMeasurements()) {
         return *(cachedMeasurements.get());
     }
 
-    STI::Engine::MeasurementVector missing;
+    STI::Engine::MeasurementMap missing;
     return missing;
 }
 
@@ -83,10 +91,14 @@ STI::Engine::MeasurementVector ResultTicket::measurements(const STI::Device::Dev
     STI::Engine::MeasurementVector selected;
 
     if (ensureCachedMeasurements()) {
-        for (auto& m : *cachedMeasurements.get()) {
-            if (m != 0 && m->device() == id) {
-                selected.push_back(m);
-            }
+        // for (auto& m : *cachedMeasurements.get()) {
+        //     if (m != 0 && m->device() == id) {
+        //         selected.push_back(m);
+        //     }
+        // }
+        auto deviceMeas = (*cachedMeasurements.get())[id];
+        if (deviceMeas != 0) {
+            return *deviceMeas;
         }
     }
 
@@ -150,7 +162,7 @@ bool ResultTicket::ensureCachedMeasurements()
 
     if (!isQueryable()) return false;
 
-    std::shared_ptr<STI::Engine::MeasurementVector> measResults;
+    std::shared_ptr<STI::Engine::MeasurementMap> measResults;
     if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measResults) && measResults != 0) {
         cachedMeasurements.set(measResults);
         return (cachedMeasurements.get() != 0);
