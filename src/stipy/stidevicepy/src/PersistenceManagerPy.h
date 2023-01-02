@@ -20,8 +20,14 @@ public:
     PersistenceManagerPy(const std::shared_ptr<STI::Device::PersistenceManager>& manager);
     ~PersistenceManagerPy();
 
-    std::shared_ptr<STI::Engine::ShotResult> getShot(const STI::Engine::ShotID& sid);
+    // std::shared_ptr<STI::Engine::ShotResult> getShot(const STI::Engine::ShotID& sid);
     STI::Engine::MeasurementVector getMeasurements(const STI::Engine::ShotID& sid);
+
+    bool findShot(const STI::Engine::ShotID& sid);
+    std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);
+    std::shared_ptr<STI::Engine::ShotResult> getShotResult(const STI::Engine::ShotID& sid);
+    std::shared_ptr<STI::Engine::SequenceResult> getSequenceResult(const STI::Engine::SequenceID& id);
+
 
 private:
     // bool getShot(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);

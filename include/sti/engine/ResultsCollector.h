@@ -17,6 +17,7 @@ namespace Engine
 
 class ResultsTicket;
 class ParsedDependencyTree;
+class ResultsCollectorFactory;
 
 
 class ResultsCollector

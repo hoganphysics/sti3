@@ -30,6 +30,7 @@ public:
 	TimeStamp playTime;
 
     std::shared_ptr<STI::Engine::MeasurementVector> measurements;
+    // std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> measurements;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
 
 

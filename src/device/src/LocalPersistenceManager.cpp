@@ -18,6 +18,8 @@
 #include "SerializedRepository.h"
 #include "StackTraceData.h"
 #include "TransientRepository.h"
+// #include "ResultsCollectorFactory.h"
+#include "LocalResultsCollectorFactory.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -55,6 +57,9 @@ deviceCollection(collection)
 {
     defaultRepository = std::make_shared<SerializedRepository>(basePath);
     transientRepository = std::make_shared<TransientRepository>(basePath);
+
+    auto resultsCollectionFactory = std::make_shared<STI::Engine::LocalResultsCollectorFactory>();
+    setResultsCollectorFactory(resultsCollectionFactory);
 }
 
 LocalPersistenceManager::~LocalPersistenceManager()
@@ -87,6 +92,12 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
 void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 {
     fileHolderFactory = factory;
+}
+
+
+void LocalPersistenceManager::setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory)
+{
+    resultsCollectorFactory = factory;
 }
 
 std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& filename)
@@ -322,7 +333,7 @@ bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<FullShotResult>&
         return saveShotLocal(bufferedResult->shotResult->sid, bufferedResult, false);
     }
 
-    return resultBuffer.contains(bufferedResult->shotResult->sid);;
+    return resultBuffer.contains(fullShotResult->shotResult->sid);;
 }
 
 bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)
@@ -523,7 +534,8 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
 
     //happens on (remote) delegate, where data should be saved.
     ResultsPaths resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
-    auto collector = std::make_shared<LocalResultsCollector>(sid, resultsPaths, fileHolderFactory);
+    // auto collector = std::make_shared<LocalResultsCollector>(sid, resultsPaths, fileHolderFactory);
+    auto collector = resultsCollectorFactory->createResultsCollector(sid, resultsPaths, fileHolderFactory);
 
     auto shotRecord = transferResults(collector, fullShotResult->shotResult, isOwner);   //collector is passed on to all devices in shot
     collector->setRecord(shotRecord);

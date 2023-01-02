@@ -6,31 +6,31 @@ from stipy.bin.stipy import RawEventGroup
 
 # _makesequence = STIPyServer.makesequence
 
-def makesequence(varsTable=None):
-    seq = _makesequence()
-    seq.repeats = 0
+# def makesequence(varsTable=None):
+#     seq = _makesequence()
+#     seq.repeats = 0
 
-    if varsTable == None:
-        return seq
+#     if varsTable == None:
+#         return seq
     
-    if (not (type(varsTable) is list)):
-        raise ValueError("Sequence table must be a list.")
+#     if (not (type(varsTable) is list)):
+#         raise ValueError("Sequence table must be a list.")
     
-    seq.type = SequenceType.Closed
+#     seq.type = SequenceType.Closed
 
-    for entry in varsTable:
-        if (type(entry) is dict):
-            g = RawEventGroup()
-            for key in entry.keys():
-                g.setvar(key, entry[key])
-                # v = ParsedVar(key, entry[key])
-                # vars.add(v)
-            seq.append(set(g.getVars()))
-        elif (type(entry) is set):
-            seq.append(entry)
-        else:
-            raise ValueError("Sequence table entries must be a set or a dictionary.")
-    return seq
+#     for entry in varsTable:
+#         if (type(entry) is dict):
+#             g = RawEventGroup()
+#             for key in entry.keys():
+#                 g.setvar(key, entry[key])
+#                 # v = ParsedVar(key, entry[key])
+#                 # vars.add(v)
+#             seq.append(set(g.getVars()))
+#         elif (type(entry) is set):
+#             seq.append(entry)
+#         else:
+#             raise ValueError("Sequence table entries must be a set or a dictionary.")
+#     return seq
 
 # class SequenceTicket:
 #     def __init__(self):

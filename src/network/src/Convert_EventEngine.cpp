@@ -38,6 +38,8 @@
 #include <map>
 #include <memory>
 
+#include <iostream>
+
 using STI::TNetwork::TEventEngine_var;
 using STI::Engine::EventEngine;
 using STI::Engine::ParsedDependencyTree;
@@ -170,6 +172,8 @@ template<>
 bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree>(
             const TEventEngineDependencyTree& tTree, EventEngineDependencyTree& tree)
 {
+    std::cout << "convert<TEventEngineDependencyTree,EventEngineDependencyTree>" << std::endl;
+
     std::vector<STI::Device::DeviceID> nodes;
     
     for (unsigned i = 0; i < tTree.vertices.length(); ++i) {
@@ -183,7 +187,10 @@ bool STI::Network::convert<TEventEngineDependencyTree, EventEngineDependencyTree
 
         tree.addVertex(nodes.at(i));
 
+        std::cout << "** (T->sti) ** id: " << nodes.at(i).getID() << " outConnections.length() = " << tTree.vertices[i].outConnections.length() << std::endl;
+
         for (unsigned j = 0; j < tTree.vertices[i].outConnections.length(); ++j) {
+            std::cout << "**** (T->sti) addEdge: " << nodes.at(i).getID() << " -> " << nodes.at(tTree.vertices[i].outConnections[j]).getID() << std::endl;
             tree.addEdge(nodes.at(i), nodes.at(tTree.vertices[i].outConnections[j]));
         }
     }
@@ -196,6 +203,8 @@ template<>
 bool STI::Network::convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDependencyTree>(
                     const std::shared_ptr<ParsedDependencyTree>& tree, TEventEngineDependencyTree& tTree)
 {
+    std::cout << "convert<ParsedDependencyTree,TEventEngineDependencyTree>" << std::endl;
+
     if (tree == 0) return false;
 
     std::vector<STI::Device::DeviceID> nodes;
@@ -213,12 +222,20 @@ bool STI::Network::convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDe
 
     for (unsigned i = 0; i < nodes.size(); ++i) {
         convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(nodes.at(i), tTree.vertices[i].id);
-        
+
+        outNodes.clear();
         tree->getDependedentNodes(nodes.at(i), outNodes);
+
+        std::cout << "** (sti->T) ** id: " << nodes.at(i).getID() << " outNodes.size() = " << outNodes.size() << std::endl;
 
         tTree.vertices[i].outConnections.length(static_cast<CORBA::ULong>(outNodes.size()));
 
         for (unsigned j = 0; j < outNodes.size(); ++j) {
+
+            std::cout << "**** (sti->T) add out: (" << i << "->" << j << ") " 
+                    << nodes.at(i).getID() << " -> " << outNodes.at(j).getID() 
+                    << " # vertexMap[outNodes.at(j)] = " << vertexMap[outNodes.at(j)] << std::endl;
+
             tTree.vertices[i].outConnections[j] = vertexMap[outNodes.at(j)];
         }
     }

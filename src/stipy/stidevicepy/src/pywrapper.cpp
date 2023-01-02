@@ -1,4 +1,8 @@
 
+#include <sti/engine/Measurement.h>
+
+#include <vector>
+#include <memory>
 
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
@@ -22,6 +26,8 @@ void init_PersistenceManager(py::module& m);
 //void init_HubID(py::module& m);
 void init_DeviceHub(py::module& m);
 
+
+PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 
 
 PYBIND11_MODULE(stidevicepy, m) {

@@ -4,7 +4,7 @@
 #include <cereal/types/vector.hpp>
 
 using STI::Engine::ShotResultRecord;
-
+using STI::Engine::RecordStatus;
 
 ShotResultRecord::ShotResultRecord() 
 : recordStatus(RecordStatus::Unqueried)
@@ -29,6 +29,36 @@ bool ShotResultRecord::isPartialRecord()
         }
     }
     return isPartial;
+}
+
+std::string ShotResultRecord::statusToString(const RecordStatus& status)
+{
+    //{ Unqueried, Complete, MissingDevice, MissingResults, Error }
+
+    std::string result = "";
+
+    switch (status)
+    {
+    case RecordStatus::Unqueried:
+        result = "Running";
+        break;
+    case RecordStatus::Complete:
+        result = "Complete";
+        break;
+    case RecordStatus::MissingDevice:
+        result = "MissingDevice";
+        break;
+    case RecordStatus::MissingResults:
+        result = "MissingResults";
+        break;
+    case RecordStatus::Error:
+        result = "Error";
+        break;    
+    default:
+        break;
+    }
+
+    return result;
 }
 
 template<class Archive>

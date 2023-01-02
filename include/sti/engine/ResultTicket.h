@@ -8,6 +8,7 @@
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/fwd/DeviceID_fwd.h>
 
+#include <sti/utils/CachedValue.h>
 
 namespace STI
 {
@@ -43,34 +44,42 @@ public:
 
     virtual ~ResultTicket() {}
 
-    ShotID getShotID();
+    ShotID getShotID() const;
     //bool getShotRepository(std::shared_ptr<ShotRepository>& repo);
 
-    bool getShotResult(const STI::Engine::ShotID& id, std::shared_ptr<ShotResult>& result);
+    std::shared_ptr<ParseResult> getParseResult();
+    std::shared_ptr<ShotResult> getShotResult();
 
     STI::Engine::MeasurementVector measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);
+    STI::Engine::MeasurementVector measurements(const std::string& id);
 
 private:
 
-    virtual bool waitCheck() { return true; }
+    virtual bool waitCheck() const { return true; }
 
     STI::Engine::ShotID sid;
     // std::shared_ptr<STI::Device::Device> server;
 
-    bool loadResultsFromURL();
+    // bool loadResultsFromURL();
 
-    void loadMeasurements();
+    // void loadMeasurements();
+
+    bool isQueryable();
+    bool ensureCachedMeasurements();
+    bool ensureCachedParseResult();
+    bool ensureCachedShotResult();
 
 
-    std::string url;
-    bool hasURL;
+    // std::string url;
+    // bool hasURL;
 
-    bool measurements_loaded;
-    std::shared_ptr<MeasurementVector> measurements_;
+    // bool measurements_loaded;
+    // std::shared_ptr<MeasurementVector> measurements_;
 
-    std::shared_ptr<ParseResult> parseResult;
-    std::shared_ptr<ShotResult> shotResult;
+    STI::Utils::CachedValue<std::shared_ptr<MeasurementVector>> cachedMeasurements;
+    STI::Utils::CachedValue<std::shared_ptr<ParseResult>> parseResult;
+    STI::Utils::CachedValue<std::shared_ptr<ShotResult>> shotResult;
     
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 

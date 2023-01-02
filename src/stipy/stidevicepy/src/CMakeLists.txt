@@ -117,12 +117,17 @@ pybind11_add_module(stipybase MODULE
     Configuration_wrap.cpp
     DeviceID_wrap.cpp
 	  HubID_wrap.cpp
+    Measurement_wrap.cpp
     MixedValue_wrap.cpp
     pybasewrapper.cpp
     ParseID_wrap.cpp
+    ParsedDependencyTree_wrap.cpp
+    ParseResult_wrap.cpp
     RawEvent_wrap.cpp
     Sequence_wrap.cpp
+    SequenceResult_wrap.cpp
     ShotConfig_wrap.cpp
+    ShotResult_wrap.cpp
     StackTrace_wrap.cpp
 )
 

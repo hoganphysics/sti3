@@ -21,18 +21,20 @@ public:
     Ticket(const TicketStatus& initalState);
     virtual ~Ticket() {}
 
-    void wait();
-    void wait(const std::function<bool()>& waitChecker);
+    void wait() const;
+    void wait(const std::function<bool()>& waitChecker) const;
 
     void setComplete();
     void cancel();
     void defer();
 
-    TicketStatus getStatus();
+    TicketStatus getStatus() const;
+
+    static std::string statusToString(const TicketStatus& status);
 
 private:
 
-    virtual bool waitCheck();
+    virtual bool waitCheck() const;
 
     TicketStatus status;
 

@@ -5,9 +5,9 @@
 #include <sti/device/DeviceMessageListener.h>
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/PersistenceManager.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/utils/SynchronizedMap.h>
-#include <sti/engine/EventEngineScheduler.h>
 
 #include "ShotRepository.h"
 #include "utils/OrderedBufferMap.h"
@@ -47,6 +47,8 @@ public:
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
+
+    void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory);
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 
@@ -97,6 +99,7 @@ private:
 
     std::weak_ptr<STI::Engine::EventEngineScheduler> eventEngineScheduler;
 
+    std::shared_ptr<STI::Engine::ResultsCollectorFactory> resultsCollectorFactory;
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
     DeviceID localDeviceID;

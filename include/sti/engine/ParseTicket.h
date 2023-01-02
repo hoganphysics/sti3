@@ -7,6 +7,7 @@
 #include <sti/device/Device.h>
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/utils/CachedValue.h>
 
 
 namespace STI
@@ -31,19 +32,23 @@ public:
 
     std::vector<STI::Engine::EngineParsingMessage> getMessages();
     std::shared_ptr<RawEventGroup> getEvents();
-    void getTree();
-    void getTimingFiles();
+    // void getTree();
+    // void getTimingFiles();
+
+    std::shared_ptr<ParseResult> getParseResult();
 
 private:
 
-    virtual bool waitCheck() { return true; }
+    virtual bool waitCheck() const { return true; }
 
-    bool parseResultBuffered;
+    // bool parseResultBuffered;
 
-    bool checkParseResultBuffered() const;   
-    std::shared_ptr<ParseResult> parseResult;
+    // bool checkParseResultBuffered() const;   
+    // std::shared_ptr<ParseResult> parseResult;
 
-    bool getParseResult();
+    bool ensureCachedParseResult();
+
+    mutable STI::Utils::CachedValue<std::shared_ptr<ParseResult>> parseResult;
 
     
     // bool eventsBuffered;

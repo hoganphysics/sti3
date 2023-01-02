@@ -2,6 +2,11 @@
 
 #include <pybind11/pybind11.h>
 
+#include <sti/engine/Measurement.h>
+
+#include <vector>
+#include <memory>
+
 namespace py = pybind11;
 
 
@@ -9,8 +14,8 @@ namespace py = pybind11;
 void init_stipy(py::module& m);
 
 //void init_HubID(py::module& m);
-void init_STIPyDevice(py::module& m);
-void init_STIPyChannel(py::module& m);
+// void init_STIPyDevice(py::module& m);
+// void init_STIPyChannel(py::module& m);
 void init_STIPyShot(py::module& m);
 void init_STIPyServer(py::module& m);
 void init_ParseTicket(py::module& m);
@@ -19,6 +24,9 @@ void init_ParsedVar(py::module& m);
 // void init_DeviceID(py::module& m);
 
 void init_RawEventGroup(py::module& m);
+
+PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
+
 
 PYBIND11_MODULE(stipy, m) {
 
@@ -33,8 +41,8 @@ PYBIND11_MODULE(stipy, m) {
 
     init_stipy(m);
 
-    init_STIPyDevice(m);
-    init_STIPyChannel(m);
+    // init_STIPyDevice(m);
+    // init_STIPyChannel(m);
 
     init_RawEventGroup(m);
 
