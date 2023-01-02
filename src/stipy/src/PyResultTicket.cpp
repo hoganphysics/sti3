@@ -21,21 +21,21 @@ PyResultTicket::PyResultTicket(const ShotID& id,
 {
 }
 
-std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PyResultTicket::pyMeasurements()
-{
-    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements;
-    std::shared_ptr<STI::Engine::MeasurementMap> measurements;
+// std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PyResultTicket::pyMeasurements()
+// {
+//     std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements;
+//     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
     
-    if (getMeasurements(measurements)) {
-        for (auto& tuple : *measurements) {
-            if (tuple.second != 0) {
-                auto& mVec = pyMeasurements[tuple.first];
-                mVec.insert(mVec.end(), tuple.second->begin(), tuple.second->end());
-            }
-        }
-    }
-    return pyMeasurements;
-}
+//     if (getMeasurements(measurements)) {
+//         for (auto& tuple : *measurements) {
+//             if (tuple.second != 0) {
+//                 auto& mVec = pyMeasurements[tuple.first];
+//                 mVec.insert(mVec.end(), tuple.second->begin(), tuple.second->end());
+//             }
+//         }
+//     }
+//     return pyMeasurements;
+// }
 
 bool PyResultTicket::waitCheck()
 {

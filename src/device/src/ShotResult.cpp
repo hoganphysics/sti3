@@ -33,13 +33,10 @@ void ShotResult::deleteFiles(ShotResult& shot)
 {
     if (shot.measurements == 0) return;
 
-    for (auto& tuple : *shot.measurements) {
-        if (tuple.second != 0) {
-            
-            for (auto& meas : *tuple.second) {
-                if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
-                    meas->data().getFile()->deleteFile();
-                }
+    for (auto& tuple : *shot.measurements) {            
+        for (auto& meas : tuple.second) {
+            if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
+                meas->data().getFile()->deleteFile();
             }
         }
     }

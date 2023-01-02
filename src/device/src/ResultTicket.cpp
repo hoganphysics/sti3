@@ -88,21 +88,21 @@ STI::Engine::MeasurementMap ResultTicket::measurements()
 
 STI::Engine::MeasurementVector ResultTicket::measurements(const STI::Device::DeviceID& id)
 {
-    STI::Engine::MeasurementVector selected;
-
     if (ensureCachedMeasurements()) {
         // for (auto& m : *cachedMeasurements.get()) {
         //     if (m != 0 && m->device() == id) {
         //         selected.push_back(m);
         //     }
         // }
-        auto deviceMeas = (*cachedMeasurements.get())[id];
-        if (deviceMeas != 0) {
-            return *deviceMeas;
-        }
+        // auto& deviceMeas = (*cachedMeasurements.get())[id];
+        // if (deviceMeas != 0) {
+        //     return *deviceMeas;
+        // }
+        return (*cachedMeasurements.get())[id];
     }
 
-    return selected;
+    STI::Engine::MeasurementVector missing;
+    return missing;
 }
 
 STI::Engine::MeasurementVector ResultTicket::measurements(const std::string& id)

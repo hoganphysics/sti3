@@ -168,20 +168,16 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     }
 
     //Measurements
-    // success &= resultsCollector->addMeasurements(shotResult->measurements);
     if (shotResult->measurements != 0) {
         for (auto& tuple : *shotResult->measurements) {  //tuple = {DeviceID, MeasurementVector}
 
-            if (tuple.second != 0 && tuple.second->size() >0) {
+            if (tuple.second.size() > 0) {
                 success &= resultsCollector->addMeasurements(tuple.first, tuple.second);
             }
         }        
     }
 
-
-
     if (success) {
-        //resultsCollector->markRecord(shotResult->);
         record.recordStatus = STI::Engine::RecordStatus::Complete;
     }
     else {

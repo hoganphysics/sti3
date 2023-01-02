@@ -59,6 +59,15 @@ void init_ShotResult(py::module& m)
         .def_readonly("sid", &ShotResult::sid)
         .def_readonly("playTime", &ShotResult::playTime)
         .def_readonly("attributes", &ShotResult::attributes)
+        .def("getMeasurements",
+            [](ShotResult& self) -> STI::Engine::MeasurementMap {
+                if (self.measurements != 0) {
+                    return *self.measurements;
+                }
+                STI::Engine::MeasurementMap missing;
+                return missing;
+            })
+
         // .def_readonly("measurements", &ShotResult::measurements)
 
         // .def("getMeasurements",
