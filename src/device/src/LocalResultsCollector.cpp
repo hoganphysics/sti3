@@ -65,49 +65,29 @@ std::shared_ptr<ParseResult> LocalResultsCollector::getParseResults() const
     return fullShotResult->parseResult;
 }
 
-bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<MeasurementVector>& measurements)
+bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-    if (fullShotResult == 0 || fullShotResult->shotResult == 0 || measurements == 0) return false;
+    if (fullShotResult == 0 || fullShotResult->shotResult == 0) return false;
 
-    if (measurements->size() == 0) return true;
+    if (measurements.size() == 0) return true;
 
     if (fullShotResult->shotResult->measurements == 0) {
         fullShotResult->shotResult->measurements = std::make_shared<STI::Engine::MeasurementMap>();
     }
 
-    if ((*fullShotResult->shotResult->measurements)[deviceID] == 0) {
-        (*fullShotResult->shotResult->measurements)[deviceID] = std::make_shared<STI::Engine::MeasurementVector>(); 
-    }
+    auto& devMeasurements = (*fullShotResult->shotResult->measurements)[deviceID];
 
-    auto devMeasurements = (*fullShotResult->shotResult->measurements)[deviceID];
-
-    if (devMeasurements->size() == 0) {
-        (*fullShotResult->shotResult->measurements)[deviceID] = measurements;
-    }
-    else {
-        //vector contains shared_ptr so deep copy is inexpensive
-        devMeasurements->insert(devMeasurements->end(), measurements->begin(), measurements->end());
-
-    }
-
-    // if (fullShotResult->shotResult->measurements == 0 || fullShotResult->shotResult->measurements->size() == 0) {
-
-    //     fullShotResult->shotResult->measurements = measurements;
-    // }
-    // else {
-    //     //vector contains shared_ptr so deep copy is inexpensive
-    //     fullShotResult->shotResult->measurements->insert(fullShotResult->shotResult->measurements->end(), measurements->begin(), measurements->end());
-    // }
-    
+    //vector contains shared_ptr so deep copy is inexpensive
+    devMeasurements.insert(devMeasurements.end(), measurements.begin(), measurements.end());
 
     bool success = true;
 
     //on results destination
     STI::Utils::MixedValue filedata;
 
-    for (auto& meas : *measurements) {
+    for (auto& meas : measurements) {
         if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::File) {
             //possibly do this in 
             meas->extractMeasurementResult(filedata);

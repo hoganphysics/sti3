@@ -55,18 +55,18 @@ STI::Engine::ShotID RemoteResultsCollector::getShotID() const
     return sid;
 }
 
-bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
+bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const STI::Engine::MeasurementVector& measurements)
 {
 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
-	if (isDisabled() || measurements == 0) return false;
+	if (isDisabled()) return false;
     
     bool success = false;
 
     STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
 
 	try {
-		convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*measurements, tMeasurements);
+		convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(measurements, tMeasurements);
 
 		success = getTRef()->addMeasurements(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceID), tMeasurements);	//remote call
 	}

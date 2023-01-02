@@ -19,28 +19,42 @@ PersistenceManagerPy::~PersistenceManagerPy()
 }
 
 
-std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
+// std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
+// {
+//     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
+//     std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements; //need to copy map to remove shared_ptr
+
+//     if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements) && measurements != 0) {
+//         for (auto& tuple : *measurements) {
+//             if (tuple.second != 0) {
+//                 auto& measVec = pyMeasurements[tuple.first];
+
+//                 //deep copy is cheap because vector stores pointers
+//                 measVec.insert(measVec.end(), tuple.second->begin(), tuple.second->end());  
+//             }
+//          }
+        
+//     }
+//     return pyMeasurements;
+
+//     // //not found
+//     // STI::Engine::MeasurementMap missing;
+//     // return missing;
+// }
+
+
+STI::Engine::MeasurementMap PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
 {
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
-    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements; //need to copy map to remove shared_ptr
 
     if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements) && measurements != 0) {
-        for (auto& tuple : *measurements) {
-            if (tuple.second != 0) {
-                auto& measVec = pyMeasurements[tuple.first];
-
-                //deep copy is cheap because vector stores pointers
-                measVec.insert(measVec.end(), tuple.second->begin(), tuple.second->end());  
-            }
-         }
-        
+        return (*measurements);
     }
-    return pyMeasurements;
 
-    // //not found
-    // STI::Engine::MeasurementMap missing;
-    // return missing;
+    STI::Engine::MeasurementMap missing;
+    return missing;
 }
+
 
 bool PersistenceManagerPy::findShot(const STI::Engine::ShotID& sid)
 {

@@ -15,7 +15,7 @@ namespace Engine
 class Measurement;
 
 typedef std::vector<std::shared_ptr<Measurement>> MeasurementVector;
-typedef std::map<STI::Device::DeviceID, std::shared_ptr<MeasurementVector>> MeasurementMap;
+typedef std::map<STI::Device::DeviceID, MeasurementVector> MeasurementMap;
 
 } //Engine
 } //STI

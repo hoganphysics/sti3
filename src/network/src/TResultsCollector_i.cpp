@@ -55,8 +55,8 @@ TShotID* TResultsCollector_i::getShotID()
 {
     if (resultsCollector != 0) {
 
-        auto newMeasurements = std::make_shared<STI::Engine::MeasurementVector>();
-	    convert<TMeasurement, std::shared_ptr<Measurement>>(measurements, *newMeasurements);
+        auto newMeasurements = STI::Engine::MeasurementVector();
+	    convert<TMeasurement, std::shared_ptr<Measurement>>(measurements, newMeasurements);
 
 		return resultsCollector->addMeasurements(convert<TDeviceID, DeviceID>(deviceID), newMeasurements);
 	}

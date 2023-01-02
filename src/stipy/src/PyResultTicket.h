@@ -19,7 +19,7 @@ public:
     PyResultTicket(const STI::Engine::ShotID& id, 
                 const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, const TicketStatus& initialStatus);
 
-    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements();
+    // std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements();
 
 private:
 
