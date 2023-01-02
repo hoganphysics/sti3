@@ -1043,6 +1043,7 @@ bool STI::Network::convert<ShotResultRecord, TShotResultRecord>(const ShotResult
     tShotResultRecord.deviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(shotResultRecord.deviceID);
     tShotResultRecord.recordStatus = convert<RecordStatus, TRecordStatus>(shotResultRecord.recordStatus);
 
+    tShotResultRecord.dependencies.length(0);
     convert<ShotResultRecord, TShotResultRecord>(shotResultRecord.dependencies, tShotResultRecord.dependencies);
 
     return true;

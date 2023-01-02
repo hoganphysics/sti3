@@ -322,7 +322,7 @@ bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<FullShotResult>&
         return saveShotLocal(bufferedResult->shotResult->sid, bufferedResult, false);
     }
 
-    return resultBuffer.contains(bufferedResult->shotResult->sid);;
+    return resultBuffer.contains(fullShotResult->shotResult->sid);;
 }
 
 bool LocalPersistenceManager::addToBuffer(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult)

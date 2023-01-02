@@ -31,8 +31,8 @@ class FileHolder;
 
 //ResultsCollector
 template<>
-bool Network::convert<TNetwork::TResultsCollector_var, std::shared_ptr<Engine::ResultsCollector>>(
-        const TNetwork::TResultsCollector_var& tResultsCollector, std::shared_ptr<Engine::ResultsCollector>& resultsCollector);
+bool Network::convert<TNetwork::TResultsCollector_ptr, std::shared_ptr<Engine::ResultsCollector>>(
+        const TNetwork::TResultsCollector_ptr& tResultsCollector, std::shared_ptr<Engine::ResultsCollector>& resultsCollector);
 template<>
 bool Network::convert<std::shared_ptr<Engine::ResultsCollector>, TNetwork::TResultsCollector_var>(
         const std::shared_ptr<Engine::ResultsCollector>& resultsCollector, TNetwork::TResultsCollector_var& tResultsCollector);

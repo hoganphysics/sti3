@@ -38,6 +38,7 @@ private:
 		TestEvent(const STI::Engine::RawEvent& evt, TestDevice* dev);
 		
 		void playEvent();
+		void collectMeasurementData();
 
     private:
 		STI::Engine::RawEvent evt;

@@ -135,7 +135,7 @@ TPersistenceManager_i::~TPersistenceManager_i()
 TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector)
 {
 	std::shared_ptr<ResultsCollector> remoteCollector;
-	bool success = convert<::STI::TNetwork::TResultsCollector_var, std::shared_ptr<ResultsCollector>>(tResultsCollector, remoteCollector);
+	bool success = convert<::STI::TNetwork::TResultsCollector_ptr, std::shared_ptr<ResultsCollector>>(tResultsCollector, remoteCollector);
     
 	ShotResultRecord record;
 	STI::TNetwork::TShotResultRecord_var tShotResultRecord(new STI::TNetwork::TShotResultRecord);
