@@ -26,7 +26,7 @@ public:
 
     STI::Engine::ShotID getShotID() const;
 
-    bool addMeasurements(const std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
+    bool addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
 private:

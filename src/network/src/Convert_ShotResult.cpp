@@ -52,6 +52,11 @@ using STI::TNetwork::TFullShotResult;
 using STI::Engine::FullShotResult;
 using STI::Engine::ShotID;
 using STI::TNetwork::TShotID;
+using STI::TNetwork::TDeviceID;
+using STI::Device::DeviceID;
+using STI::Engine::MeasurementVector;
+using STI::Engine::MeasurementMap;
+using STI::Engine::Measurement;
 
 
 //ShotResult
@@ -64,14 +69,30 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
     shotResult->sid = convert<TShotID, ShotID>(tShotResult.sid);
     shotResult->playTime = convert<TTimeStamp, TimeStamp>(tShotResult.playTime);
 
-    shotResult->measurements = std::make_shared<STI::Engine::MeasurementVector>();
-    convert<STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tShotResult.measurements, *(shotResult->measurements));
+    // shotResult->measurements = std::make_shared<STI::Engine::MeasurementVector>();
+    // convert<STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tShotResult.measurements, *(shotResult->measurements));
+
+
+    // shotResult->measurements = std::make_shared<MeasurementMap>();
+    // for (unsigned i = 0; i < tShotResult.measurements.length(); ++i) {
+    //     // convert<::STI::TNetwork::TMeasurementSeq, std::shared_ptr<MeasurementVector>>
+    //     auto newMeasurements = std::make_shared<MeasurementVector>();
+    //     (*shotResult->measurements)[convert<TDeviceID, DeviceID>(tShotResult.measurements[i].id)] = newMeasurements;
+
+    //     convert<::STI::TNetwork::TMeasurement, std::shared_ptr<Measurement>>(
+    //             tShotResult.measurements[i].measurements,
+    //             *newMeasurements
+    //         );
+    // }
+
+    convert<::STI::TNetwork::TDeviceIDMeasurementsTupleSeq, std::shared_ptr<MeasurementMap>>(
+        tShotResult.measurements, shotResult->measurements);
 
     for (unsigned i = 0; i < tShotResult.attributes.length(); ++i) {
 
         convert<::STI::TNetwork::TAttributeTupleSeq, std::map<std::string, std::string>>(
                 tShotResult.attributes[i].attributes,
-                (shotResult->attributes)[convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tShotResult.attributes[i].id)]
+                (shotResult->attributes)[convert<TDeviceID, DeviceID>(tShotResult.attributes[i].id)]
             );
     }
 
@@ -89,15 +110,40 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
     tShotResult.sid = convert<ShotID, TShotID>(shotResult->sid);
     tShotResult.playTime = convert<TimeStamp, TTimeStamp>(shotResult->playTime);
 
-    if (shotResult->measurements != 0) {
-        convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*(shotResult->measurements), tShotResult.measurements);        
-    }
+    // if (shotResult->measurements != 0) {
+    //     convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*(shotResult->measurements), tShotResult.measurements);        
+    // }
+
+
+    // if (shotResult->measurements != 0) {
+    //     tShotResult.measurements.length( shotResult->measurements->size() );
+    //     unsigned i = 0;
+    //     for (auto& tuple : *shotResult->measurements) { //tuple: {DeviceID, shared_ptr<MeasurementVector>}
+    //         tShotResult.measurements[i].id = convert<DeviceID, TDeviceID>(tuple.first);
+
+    //         if (tuple.second != 0) {
+    //             convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*(tuple.second), tShotResult.measurements[i].measurements);
+    //         }
+    //         else {
+    //             tShotResult.measurements[i].measurements.length(0);
+    //         }
+    //     }
+    // }
+    // else {
+    //     tShotResult.measurements.length(0);
+    // }
+
+    convert<std::shared_ptr<MeasurementMap>, STI::TNetwork::TDeviceIDMeasurementsTupleSeq>(
+        shotResult->measurements, tShotResult.measurements);
+
+
+
 
     tShotResult.attributes.length( shotResult->attributes.size() );
     unsigned i = 0;
     for (auto& deviceAttributes : shotResult->attributes) {
         
-        tShotResult.attributes[i].id = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceAttributes.first);
+        tShotResult.attributes[i].id = convert<DeviceID, TDeviceID>(deviceAttributes.first);
 
         convert<std::map<std::string, std::string>, ::STI::TNetwork::TAttributeTupleSeq>(
                 deviceAttributes.second, 

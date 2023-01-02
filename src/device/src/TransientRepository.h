@@ -32,7 +32,7 @@ public:
     bool getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult);    
     bool getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult);
 
-    bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+    bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements);
 
     bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
 

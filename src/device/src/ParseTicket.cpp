@@ -12,12 +12,13 @@ using STI::Engine::ParseTicket;
 using STI::Engine::ParseID;
 using STI::Engine::EventEngineScheduler;
 using STI::Engine::RawEventGroup;
+using STI::Engine::ParseResult;
 
 
 ParseTicket::ParseTicket(const ParseID& pid, const std::shared_ptr<EventEngineScheduler>& scheduler)
 : Ticket(Ticket::TicketStatus::Running), pid(pid), engineScheduler(scheduler)
 {
-    parseResultBuffered = false;
+    // parseResultBuffered = false;
 }
 
 ParseTicket::~ParseTicket()
@@ -29,29 +30,55 @@ const STI::Engine::ParseID& ParseTicket::getParseID() const
     return pid;
 }
 
-bool ParseTicket::getParseResult()
+std::shared_ptr<ParseResult> ParseTicket::getParseResult()
 {
-    if (checkParseResultBuffered()) return (parseResult != 0);
-
-    parseResultBuffered = engineScheduler != 0 && engineScheduler->getParseResult(pid, parseResult);
-    return parseResultBuffered && (parseResult != 0);
-}
-
-bool ParseTicket::checkParseResultBuffered() const
-{
-    if (parseResultBuffered && parseResult != 0) {
-        //make sure the buffered value hasn't been overwritten
-        if (parseResult->pid == pid) {
-            return true;
-        }
+    if (ensureCachedParseResult()) {
+        return parseResult.get();
     }
-    return false;
+
+    auto missingResult = std::make_shared<ParseResult>();
+    return missingResult;
 }
+
+bool ParseTicket::ensureCachedParseResult()
+{
+    if (parseResult.isCached()) return (parseResult.get() != 0);
+    
+    //only tickets that are Complete or Canceled can be queryed for results
+    bool queryable = (getStatus() == Ticket::TicketStatus::Complete) || (getStatus() == Ticket::TicketStatus::Canceled);
+
+    if (!queryable) return false;
+
+    std::shared_ptr<ParseResult> result;
+
+    if (engineScheduler != 0 && engineScheduler->getParseResult(pid, result) && result != 0) {
+        parseResult.set(result);
+        return (parseResult.get() != 0);
+    }
+    
+    return false;
+
+    // if (checkParseResultBuffered()) return (parseResult != 0);
+
+    // parseResultBuffered = engineScheduler != 0 && engineScheduler->getParseResult(pid, parseResult);
+    // return parseResultBuffered && (parseResult != 0);
+}
+
+// bool ParseTicket::checkParseResultBuffered() const
+// {
+//     if (parseResultBuffered && parseResult != 0) {
+//         //make sure the buffered value hasn't been overwritten
+//         if (parseResult->pid == pid) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
 std::shared_ptr<RawEventGroup> ParseTicket::getEvents()
 {
-    if (getParseResult() && parseResult->baseEventGroup != 0) {
-        return parseResult->baseEventGroup;
+    if (ensureCachedParseResult() && parseResult.get()->baseEventGroup != 0) {
+        return parseResult.get()->baseEventGroup;
     }
 
     auto emptyGroup = std::make_shared<RawEventGroup>();
@@ -70,8 +97,9 @@ std::shared_ptr<RawEventGroup> ParseTicket::getEvents()
 
 std::vector<STI::Engine::EngineParsingMessage> ParseTicket::getMessages()
 {
-    if (getParseResult()) {
-        return parseResult->messages;
+    if (ensureCachedParseResult()) {
+        // return parseResult->messages;
+        return parseResult.get()->messages;
     }
 
     std::vector<STI::Engine::EngineParsingMessage> emptyMessages;

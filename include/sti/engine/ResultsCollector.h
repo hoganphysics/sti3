@@ -17,6 +17,7 @@ namespace Engine
 
 class ResultsTicket;
 class ParsedDependencyTree;
+class ResultsCollectorFactory;
 
 
 class ResultsCollector
@@ -27,7 +28,7 @@ public:
 
     virtual ShotID getShotID() const = 0;
 
-    virtual bool addMeasurements(const std::shared_ptr<MeasurementVector>& measurements) = 0;
+    virtual bool addMeasurements(const STI::Device::DeviceID& deviceID, const std::shared_ptr<MeasurementVector>& measurements) = 0;
     virtual bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes) = 0;
 };
 

@@ -92,10 +92,12 @@ private:
 
             // std::cout << "LocalDeviceDelegate::writeChannel: " << value.print() << std::endl;
 
+            pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
+
             bool success = false;
             {
                 pybind11::gil_scoped_release release;
-                success = localDevicePy->writeChannel(channel, valuePy.getValue_py());
+                success = localDevicePy->writeChannel(channel, valuePyObj);
             }
             
             return success;

@@ -2,9 +2,9 @@
 #include "PersistenceManagerPy.h"
 
 #include <sti/engine/ParseResult.h>
-#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
-
+#include <sti/engine/SequenceResult.h>
+#include <sti/engine/ShotResult.h>
 
 using STI::Python::PersistenceManagerPy;
 
@@ -16,6 +16,38 @@ PersistenceManagerPy::PersistenceManagerPy(const std::shared_ptr<STI::Device::Pe
 
 PersistenceManagerPy::~PersistenceManagerPy()
 {
+}
+
+
+std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
+{
+    std::shared_ptr<STI::Engine::MeasurementMap> measurements;
+    std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements; //need to copy map to remove shared_ptr
+
+    if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements) && measurements != 0) {
+        for (auto& tuple : *measurements) {
+            if (tuple.second != 0) {
+                auto& measVec = pyMeasurements[tuple.first];
+
+                //deep copy is cheap because vector stores pointers
+                measVec.insert(measVec.end(), tuple.second->begin(), tuple.second->end());  
+            }
+         }
+        
+    }
+    return pyMeasurements;
+
+    // //not found
+    // STI::Engine::MeasurementMap missing;
+    // return missing;
+}
+
+bool PersistenceManagerPy::findShot(const STI::Engine::ShotID& sid)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->findShot(sid);
+    }
+    return false;
 }
 
 std::shared_ptr<STI::Engine::ParseResult> PersistenceManagerPy::getParseResult(const STI::Engine::ParseID& pid)
@@ -45,16 +77,16 @@ std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShotResult(con
     return shotResult;
 }
 
-STI::Engine::MeasurementVector PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
+std::shared_ptr<STI::Engine::SequenceResult> PersistenceManagerPy::getSequenceResult(const STI::Engine::SequenceID& id)
 {
-    std::shared_ptr<STI::Engine::MeasurementVector> measurements;
+    std::shared_ptr<STI::Engine::SequenceResult> sequenceResult;
 
-    if (persistenceManager != 0 && persistenceManager->getMeasurements(sid, measurements) && measurements != 0) {
-        return *measurements;
+    if (persistenceManager != 0 && persistenceManager->getSequenceResult(id, sequenceResult)) {
+        return sequenceResult;
     }
 
     //not found
-    STI::Engine::MeasurementVector missing;
-    return missing;
+    sequenceResult = std::make_shared<STI::Engine::SequenceResult>();
+    return sequenceResult;
 }
 

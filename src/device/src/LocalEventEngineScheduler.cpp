@@ -263,6 +263,7 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
 
     //Create dependency tree
     auto tree = std::make_shared<EventEngineDependencyTree>();
+    tree->addVertex(localDeviceID);     //begin tree with parse job owner
     
     std::set<DeviceID> missingTargets;
     std::vector<EngineParsingMessage> messages;

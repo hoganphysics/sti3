@@ -108,6 +108,26 @@ void LocalEventEngineDependencyParser::addDeviceEventTargets(EventEngineDependen
     }
 }
 
+std::string LocalEventEngineDependencyParser::findTargetServerID(const STI::Device::DeviceID& deviceID)
+{
+    auto targetServerID = deviceID.getTargetServerID();
+
+    if (targetServerID.compare("") == 0) {
+        //no target server ID specified; attempt to lookup in local device collection
+
+        std::set<DeviceID> ids;
+        localCollection->getIDs(ids);
+
+        auto found_it = ids.find(deviceID);
+
+        if (found_it != ids.end()) {
+            targetServerID = found_it->getTargetServerID();     //replace with value from collection
+        }
+    }
+
+    return targetServerID;
+}
+
 void LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
 {
     //Sort (by server) all targets that are below this device in the graph.
@@ -118,7 +138,7 @@ void LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<Devic
     for (auto& id : targets) {
         if (id != localDeviceID && !tree.hasBranchToTarget(id, localDeviceID)) {
             //this id has no server path to the local device.
-            targetsByServer[id.getTargetServerID()].insert(id);
+            targetsByServer[findTargetServerID(id)].insert(id);
         }        
     }
 }

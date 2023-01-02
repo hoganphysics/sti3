@@ -214,21 +214,24 @@ STI::Engine::ShotResultRecord RemotePersistenceManager::transferResults(const st
     return record;
 }
 
-bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements)
+bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
 
 	if (isDisabled()) return false;
 
-	STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
-	measurements = std::make_shared<STI::Engine::MeasurementVector>();
+	STI::TNetwork::TDeviceIDMeasurementsTupleSeq_var tDeviceIDMeasurementsTupleSeq_var(new STI::TNetwork::TDeviceIDMeasurementsTupleSeq);
+
+	// STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
+	measurements = std::make_shared<STI::Engine::MeasurementMap>();
 
 	bool success = false;
 
 	try {
-		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tMeasurements);	//remote call
+		success = getTRef()->getMeasurements(convert<ShotID, TShotID>(sid), tDeviceIDMeasurementsTupleSeq_var);	//remote call
  
-		success &= convert<::STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tMeasurements, *measurements);
+		success &= convert<::STI::TNetwork::TDeviceIDMeasurementsTupleSeq, std::shared_ptr<STI::Engine::MeasurementMap>>(
+			tDeviceIDMeasurementsTupleSeq_var, measurements);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

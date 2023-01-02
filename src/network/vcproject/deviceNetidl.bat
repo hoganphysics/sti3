@@ -11,4 +11,4 @@ omniidl -bcxx -C.\..\src -Wbh=.h -Wbs=.cpp -Wba .\deviceNet.idl
 cd ..\src
 move deviceNetDynSK.cc deviceNetDynSK.cpp
 
-::pause
+pause

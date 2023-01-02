@@ -230,9 +230,9 @@ void STI::Python::meas(const RawEventTarget& target, double time, const RawStack
     }
 }
 
-STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& channelName)
+STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& deviceName)
 {
-    STI::Engine::RawEventTargetDevice device(channelName);
+    STI::Engine::RawEventTargetDevice device(deviceName);
     return device;
 }
 

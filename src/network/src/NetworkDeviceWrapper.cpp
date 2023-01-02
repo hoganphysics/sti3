@@ -1,5 +1,6 @@
 
 #include "NetworkDeviceWrapper.h"
+#include "NetworkResultsCollectorFactory.h"
 #include "ORBManager.h"
 
 using STI::Network::NetworkDeviceWrapper;
@@ -23,6 +24,9 @@ NetworkDeviceWrapper::NetworkDeviceWrapper(const std::shared_ptr<STI::Device::De
 
     auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
     persistenceManager->setFileHolderFactory(networkFileHolderFactory);
+
+    auto resultsCollectionFactory = std::make_shared<STI::Network::NetworkResultsCollectorFactory>();
+    persistenceManager->setResultsCollectorFactory(resultsCollectionFactory);
 
     // std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
     // persistenceManager->getShotRepository(shotRepo);

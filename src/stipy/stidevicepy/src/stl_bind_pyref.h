@@ -55,9 +55,10 @@ void vector_modifiers_pyref(pybind11::detail::enable_if_t<pybind11::detail::is_c
         auto v = std::unique_ptr<Vector>(new Vector());
         // pyref_holder::clearPyRefs();    //new vector; clear all old py reference in ref holder class
         v->reserve(pybind11::len_hint(it));
-        for (pybind11::handle h : it)
+        for (pybind11::handle h : it) {
            v->push_back(h.cast<T>());
            pyref_holder::addPyReference( v->back() );
+        }
         return v.release();
     }));
 

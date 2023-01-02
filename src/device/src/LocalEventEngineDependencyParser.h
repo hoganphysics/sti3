@@ -59,6 +59,8 @@ private:
                                 std::set<STI::Device::DeviceID>& missingIDs, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
 
 
+    std::string findTargetServerID(const STI::Device::DeviceID& deviceID);
+
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;
     std::shared_ptr<STI::Device::DeviceCollection> localCollection;

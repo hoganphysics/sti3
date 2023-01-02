@@ -7,7 +7,8 @@ class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, name, address, module, targetServer):
         stidevicepy.LocalDevice.__init__(self, name, address, module, targetServer)
 
-        self.addChannel(1, stidevicepy.ChannelType.Output, stipy.MixedValueType.Empty, stipy.MixedValueType.Double, "test")
+        # self.addChannel(1, stidevicepy.ChannelType.Output, stipy.MixedValueType.Empty, stipy.MixedValueType.Double, "test")
+        self.addChannel(1, stidevicepy.ChannelType.Output, stipy.MixedValueType.Double, stipy.MixedValueType.Double, "test")
         self.addChannel(2, stidevicepy.ChannelType.Input, stipy.MixedValueType.Vector, stipy.MixedValueType.Double, "test2")
         self.addChannel(3, stidevicepy.ChannelType.Input, stipy.MixedValueType.Vector, stipy.MixedValueType.Vector, "test3")
 
@@ -30,7 +31,6 @@ class TestDevice(stidevicepy.LocalDevice):
             return False
 
     def parseEvents(self, eventsIn, synchedEvents):
-        
         for key in eventsIn:
             for evt in eventsIn[key]:
                 print("value = " + str(evt.value()))
@@ -59,6 +59,9 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
         if (self.channel == 2):
             tmpMeas = self.getMeasurements()
             for m in tmpMeas:
+                print("++++++ collect 2")
+                print("--> " + str(type(m)) + " in " + str(type(tmpMeas)))
+                print(tmpMeas)
                 val=stipy.MixedValue([123, 8, "test",[43,"abc"], 99.4])
                 #val2=stidevicepy.MixedValue([43,"abc"])
 #                val.addValue([43,"abc"])
@@ -89,8 +92,8 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
 
 
 dev1=TestDevice("TestDevice", "localhost", 0, "localhost/0/STI Server")
-
 hub=stidevicepy.NetworkDeviceHub("192.168.1.4:2809")
+# time.sleep(1)
 dev1.write(1, 6.3)
 tmp=dev1.read(2, 3.4)
 print("result: "+str(tmp))

@@ -72,7 +72,7 @@ void meas(const STI::Engine::RawEventTarget& target, double time, const STI::Eng
 
 // STI::Engine::RawEventTargetDevice 
 // dev(const std::string& name);
-STI::Engine::RawEventTargetDevice dev(const std::string& channelName);  //abstract device
+STI::Engine::RawEventTargetDevice dev(const std::string& deviceName);  //abstract device
 STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);
 // STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID);
 

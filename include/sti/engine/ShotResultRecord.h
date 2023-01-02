@@ -29,6 +29,8 @@ public:
     RecordStatus recordStatus;
     std::vector<ShotResultRecord> dependencies;  //devices this device owns
 
+    static std::string statusToString(const RecordStatus& status);
+
     template<class Archive>
     void serialize(Archive& archive);
 };

@@ -15,6 +15,7 @@ using STI::Engine::ResultsPaths;
 using STI::Engine::ShotID;
 using STI::Engine::ShotResult;
 using STI::Engine::MeasurementVector;
+using STI::Engine::MeasurementMap;
 using STI::Engine::ParseID;
 using STI::Engine::ParseResult;
 using STI::Engine::FullShotResult;
@@ -133,14 +134,14 @@ ResultsPaths TransientRepository::preparePaths()
 }
 
 
-bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements)
+bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements)
 {
     std::shared_ptr<FullShotResult> fullShotResult;
 
     if (resultBuffer.get(sid, fullShotResult) && fullShotResult != 0 
         && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
         measurements = fullShotResult->shotResult->measurements;
-        return true;
+        return (measurements != 0);
     }
 
     return false;

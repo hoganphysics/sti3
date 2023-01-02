@@ -43,7 +43,7 @@ public:
     bool updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus);
     bool saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult);
 
-    bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements);
+    bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements);
     // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter

@@ -77,11 +77,11 @@ pybind11_add_module(stipy
     # ResultTicket.cpp
     RawEventGroup_wrap.cpp
     ResultTicket_wrap.cpp
-    STIPyChannel.cpp
-    STIPyChannel_wrap.cpp
+    # STIPyChannel.cpp
+    # STIPyChannel_wrap.cpp
     stipy.cpp
-    STIPyDevice.cpp
-    STIPyDevice_wrap.cpp
+    # STIPyDevice.cpp
+    # STIPyDevice_wrap.cpp
     STIPyGlobal.cpp
     STIPyLibDevice.cpp
     # STIPySeq.cpp
