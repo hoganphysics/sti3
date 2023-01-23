@@ -1,6 +1,7 @@
 
 
 #include "TestDevice.h"
+#include <sti/engine/Measurement.h>
 
 //#include <sti/engine/EngineState.h>
 //#include <sti/device/LocalAttribute.h>
@@ -59,6 +60,12 @@ void TestDevice::init()
                STI::Utils::MixedValueType::Double, 
                STI::Utils::MixedValueType::Double, 
                "test channel");
+
+    addChannel(2,
+        STI::Device::ChannelType::Input,
+        STI::Utils::MixedValueType::Double,
+        STI::Utils::MixedValueType::Empty,
+        "test channel");
 
     STI::Engine::EngineID id(0);
     addEventEngine(id);
@@ -124,6 +131,9 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine
     for(auto& evt : events) {
         
         auto synchEvt = std::make_unique<TestEvent>(evt.second.at(0), this);
+        if (evt.second[0].channel() == 2) {
+            synchEvt->addMeasurement(evt.second[0]);
+        }
         synchedEvents.push_back(std::move(synchEvt));
     }
 }
@@ -138,4 +148,15 @@ TestDevice::TestEvent::TestEvent(const STI::Engine::RawEvent& evt, TestDevice* d
 void TestDevice::TestEvent::playEvent()
 {
     std::cout << "Play: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
+}
+
+void TestDevice::TestEvent::collectMeasurementData()
+{
+    if (evt.channel() == 2) {
+        std::cout << "collectMeasurementData: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
+        STI::Utils::MixedValue result;
+        result.setValue(256);
+        getMeasurements().at(0)->setMeasurementResult(result);
+
+    }
 }

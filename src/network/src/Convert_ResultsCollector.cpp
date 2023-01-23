@@ -13,6 +13,7 @@ using STI::Engine::ResultsCollector;
 using STI::TNetwork::TResultsCollector_var;
 using STI::TNetwork::TFileHolder_var;
 using STI::TNetwork::TFileHolder_ptr;
+using STI::TNetwork::TResultsCollector_ptr;
 
 using STI::Utils::FileHolder;
 using STI::TNetwork::TFileHolderSeq;
@@ -23,8 +24,8 @@ using STI::Network::RemoteFileHolder;
 
 //ResultsCollector
 template<>
-bool STI::Network::convert<TResultsCollector_var, std::shared_ptr<ResultsCollector>>(
-        const TResultsCollector_var& tResultsCollector, std::shared_ptr<ResultsCollector>& resultsCollector)
+bool STI::Network::convert<TResultsCollector_ptr, std::shared_ptr<ResultsCollector>>(
+        const TResultsCollector_ptr& tResultsCollector, std::shared_ptr<ResultsCollector>& resultsCollector)
 {
     resultsCollector = std::make_shared<RemoteResultsCollector>(tResultsCollector);
     return (resultsCollector != 0);

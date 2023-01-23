@@ -11,10 +11,13 @@
 				"isDefault": true
 			},
 			"project": "sti",
-			"buildFile": "/home/hogan/code/dev/sti3/src/stijava/stilib/build.gradle",
+			// "buildFile": "/home/hogan/code/dev/sti3/src/stijava/stilib/build.gradle",
+			"buildFile": "${workspaceFolder}/build.gradle",
 			"rootProject": "sti",
-			"projectFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
-			"workspaceFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
+			// "projectFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
+			// "workspaceFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
+			"projectFolder": "${workspaceFolder}",
+			"workspaceFolder": "${workspaceFolder}",
 			"args": "",
 			"javaDebug": false,
 			"problemMatcher": [

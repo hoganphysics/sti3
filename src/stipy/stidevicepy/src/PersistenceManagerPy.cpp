@@ -18,8 +18,6 @@ PersistenceManagerPy::~PersistenceManagerPy()
 {
 }
 
-// std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShot(const STI::Engine::ShotID& sid)
-
 
 // std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PersistenceManagerPy::getMeasurements(const STI::Engine::ShotID& sid)
 // {

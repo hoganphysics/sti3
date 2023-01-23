@@ -74,6 +74,9 @@ private:
     bool getShotLocal(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& result);
     bool saveShotLocal(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& shotResult, bool isOwner);
 
+    bool getParseResultLocal(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult);
+    bool findBufferedParseResult(const STI::Engine::ParseID& pid, STI::Engine::ShotID& sid);
+
     bool getSequenceLocal(const STI::Engine::SequenceID& seqid, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequenceLocal(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);
     bool saveSequenceLocal(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner);

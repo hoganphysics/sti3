@@ -11,4 +11,4 @@ omniidl -bcxx -Wba -C.\..\src -Wbh=.h -Wbs=.cpp .\orbTypes.idl
 cd ..\src
 move orbTypesDynSK.cc orbTypesDynSK.cpp
 
-::pause
+pause

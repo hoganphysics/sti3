@@ -10,6 +10,7 @@ Installing Sphinx:
 Read the Docs Sphinx Theme: (for python3)
 
     pip3 install sphinx_rtd_theme
+    pip3 install sphinx-tabs
 
 Breathe: (for python3)
 

@@ -63,3 +63,4 @@ log.txt
 stipy.egg-info/
 env/
 doc/out/
+src/server/vcproject/.sti/

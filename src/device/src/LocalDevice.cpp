@@ -433,11 +433,16 @@ void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 LocalChannel& LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
 {
-	auto channel = std::make_shared<LocalChannel>(channelNumber, type, inputType, outputType, defaultName);
-	
-	localChannelManager->addChannel(channel);
-
+	std::shared_ptr<STI::Device::LocalChannel> channel;
+	addChannel(channelNumber, type, inputType, outputType, defaultName, channel);
 	return *channel;
+}
+
+void LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+	STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName, std::shared_ptr<STI::Device::LocalChannel>& channel)
+{
+	channel = std::make_shared<LocalChannel>(channelNumber, type, inputType, outputType, defaultName);
+	localChannelManager->addChannel(channel);
 }
 
 

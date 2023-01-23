@@ -30,7 +30,7 @@ Devices communicate with each other over TCP/IP using a hierarchical
 *Hard-timing:* :ref:`Hard-timing <hardtiming>` support is enabled by appropriate 
 hardware, such as with FPGA-controlled DAQ systems. The STI library provides the 
 software interface to configure a hardware- or firmware-based event table with 
-the desired timing sequence, which can be then be triggered. For non-timing-critical 
+the desired timing sequence, which can then be triggered. For non-timing-critical 
 applications, STI also allows for software control (soft timing) of hardware, which 
 may run in parallel with the hard-timing components.
 
