@@ -114,6 +114,8 @@ using STI::Engine::MeasurementMap;
 using STI::Engine::MeasurementVector;
 using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
+using STI::Engine::SequenceEntryID;
+using STI::TNetwork::TSequenceEntryID;
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
@@ -584,12 +586,11 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     tEngineJob.jobOwner = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getJobOwner());
     tEngineJob.status = convert<EngineJobStatus, TEngineJobStatus>(engineJob.getStatus());
     tEngineJob.engineID = convert<EngineID, TEngineID>(engineJob.getEngineID());
-    
+
     //Play events do not have a parsedShot or a EventEngineDependencyTree, so these will be null
 
     std::shared_ptr<Shot> shot;
     STI::TNetwork::TShot tShot;
-
 
     ::STI::TNetwork::TShotCallback_ptr tShotCallback;
     
@@ -602,14 +603,21 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
 
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
     }
+    else {
+        
+        tShot.shotConfig = convert<ShotConfig, TShotConfig>(engineJob.getJobID().pid.shotConfig);
+        tShot.shotCallback = STI::TNetwork::TShotCallback::_nil();
+    }
 
+    tEngineJob.shot.shotConfig;
     tEngineJob.shot = tShot;
 
     std::shared_ptr<EventEngineDependencyTree> tree;
-    
-    if (engineJob.getDependencies(tree)) {
-        convert<EventEngineDependencyTree, TEventEngineDependencyTree>(*tree, tEngineJob.dependencies);
+    if (!engineJob.getDependencies(tree)) {
+        tree = std::make_shared<EventEngineDependencyTree>();
     }
+
+    convert<EventEngineDependencyTree, TEventEngineDependencyTree>(*tree, tEngineJob.dependencies);
 
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getMissingTargetIDs(), tEngineJob.missingTargetIDs);
 
@@ -1117,6 +1125,8 @@ ShotType STI::Network::convert<TShotType, ShotType>(const TShotType& tShotType)
 }
 
 
+
+
 //ParseID
 template<>
 TParseID STI::Network::convert<ParseID, TParseID>(const ParseID& pid)
@@ -1125,6 +1135,10 @@ TParseID STI::Network::convert<ParseID, TParseID>(const ParseID& pid)
 
     tParseID.parseTimestamp = convert<TimeStamp, TTimeStamp>(pid.parseTimestamp);
     tParseID.shotConfig = convert<ShotConfig, TShotConfig>(pid.shotConfig);
+
+    if (pid.shotConfig.shotType == ShotType::Sequence) {
+        tParseID.sequenceEntryID = convert<SequenceEntryID, TSequenceEntryID>(pid.sequenceEntryID);
+    }
 
     return tParseID;
 }
@@ -1136,7 +1150,11 @@ ParseID STI::Network::convert<TParseID, ParseID>(const TParseID& tpid)
 
     parseID.parseTimestamp = convert<TTimeStamp, TimeStamp>(tpid.parseTimestamp);
     parseID.shotConfig = convert<TShotConfig, ShotConfig>(tpid.shotConfig);
-
+    
+    if (parseID.shotConfig.shotType == ShotType::Sequence) {
+        parseID.sequenceEntryID = convert<TSequenceEntryID, SequenceEntryID>(tpid.sequenceEntryID);
+    }
+    
     return parseID;
 }
 

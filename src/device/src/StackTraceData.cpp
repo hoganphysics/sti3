@@ -34,6 +34,7 @@ StackTraceData::StackTraceData(const std::vector<std::shared_ptr<STI::Utils::Fil
 
     for (auto& file : files) {
         fileMap->add(file->getFilename(), file);
+        timingFileNames.push_back(file->getFilename());
     }
 
     for (auto& name : funcNames) {
@@ -111,6 +112,7 @@ unsigned StackTraceData::addFile(const std::string& filename)
 
     //new file
     auto file = fileHolderFactory->makeFileHolder(filename);
+    timingFileNames.push_back(file->getFilename());
     return fileMap->add(filename, file);
 }
 
@@ -122,6 +124,12 @@ void StackTraceData::replaceFile(const std::string& oldFilename, const std::shar
 
     fileMap->rename(oldFilename, newFile->getFilename());
     fileMap->replace(newFile->getFilename(), newFile);
+
+    auto it = std::find(timingFileNames.begin(), timingFileNames.end(), oldFilename);
+    if (it != timingFileNames.end()) {
+        timingFileNames.erase(it);
+    }
+    timingFileNames.push_back(newFile->getFilename());
 }
 
 void StackTraceData::deleteFiles()
@@ -133,15 +141,60 @@ void StackTraceData::deleteFiles()
     }
 }
 
-template<class Archive>
-void StackTraceData::serialize(Archive& archive)
+void StackTraceData::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory)
 {
-    archive( 
-        cereal::make_nvp("timingFiles", timingFiles),
-        cereal::make_nvp("functionNames", functionNames)
-        );
+    if (fileFactory == 0) return;
+    fileHolderFactory = fileFactory;
+
+    //rebind all FileHolders using new factory
+    auto timingFilesCopy = timingFiles;
+
+    for (auto& file : timingFilesCopy) {
+        if (file != 0) {
+            auto newFile = fileHolderFactory->makeFileHolder(file->getFilename());
+            replaceFile(file->getFilename(), newFile);
+        }
+    }
 }
 
-template void StackTraceData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void StackTraceData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+//template<class Archive>
+//void StackTraceData::serialize(Archive& archive)
+//{
+//    archive( 
+//        cereal::make_nvp("timingFiles", timingFiles),
+//        cereal::make_nvp("functionNames", functionNames)
+//        );
+//}
+
+//template void StackTraceData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+//template void StackTraceData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+
+template<class Archive>
+void StackTraceData::save(Archive& archive) const
+{
+    archive(
+        cereal::make_nvp("timingFilesNames", timingFileNames),
+        cereal::make_nvp("functionNames", functionNames)
+    );
+}
+
+template void StackTraceData::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
+
+template<class Archive>
+void StackTraceData::load(Archive& archive)
+{
+    archive(
+        cereal::make_nvp("timingFileNames", timingFileNames),
+        cereal::make_nvp("functionNames", functionNames)
+    );
+
+    if (fileHolderFactory == 0) return;
+
+    for (auto& filename : timingFileNames) {
+        auto file = fileHolderFactory->makeFileHolder(filename);
+        timingFiles.push_back(file);
+    }
+}
+
+template void StackTraceData::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
 

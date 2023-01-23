@@ -14,12 +14,11 @@
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
 #include "LocalResultsCollector.h"
+#include "LocalResultsCollectorFactory.h"
 #include "ResultsDocumenter.h"
 #include "SerializedRepository.h"
 #include "StackTraceData.h"
 #include "TransientRepository.h"
-// #include "ResultsCollectorFactory.h"
-#include "LocalResultsCollectorFactory.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -261,6 +260,52 @@ bool LocalPersistenceManager::getShotLocal(const STI::Engine::ShotID& sid, std::
     return success;
 }
 
+bool LocalPersistenceManager::findBufferedParseResult(const STI::Engine::ParseID& pid, STI::Engine::ShotID& sid)
+{
+    std::set<STI::Engine::ShotID> shotIDs;
+    resultBuffer.getKeys(shotIDs);
+    bool found = false;
+
+    for (auto& shotID : shotIDs) {
+        if (shotID.parseID == pid) {
+            sid = shotID;
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
+
+bool LocalPersistenceManager::getParseResultLocal(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult)
+{
+    std::shared_ptr<FullShotResult> fullResult;
+    STI::Engine::ShotID sid;
+
+    //search in shot buffer (recent shots might be associated with parseResult)
+    if (findBufferedParseResult(pid, sid) && resultBuffer.get(sid, fullResult) && fullResult != 0) {
+        parseResult = fullResult->parseResult;
+        return true;
+    }
+
+    if (transientRepository->getParseResult(pid, parseResult)) {
+        return true;
+    }
+
+    bool success = false;
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+
+    if (getShotRepository(repo)) {
+        success = repo->getParseResult(pid, parseResult);
+    }
+
+    if (!success) {
+        success = defaultRepository->getParseResult(pid, parseResult);
+    }
+
+    return success;
+}
+
+
 bool LocalPersistenceManager::findShot(const STI::Engine::ShotID& sid)
 {
     std::shared_ptr<PersistenceManager> delegate;
@@ -275,10 +320,8 @@ bool LocalPersistenceManager::findShot(const STI::Engine::ShotID& sid)
     return findShotLocal(sid);
 }
 
-
 bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, std::shared_ptr<STI::Engine::ParseResult>& parseResult)
 {
-
     std::shared_ptr<PersistenceManager> delegate;
     bool hasDelegate = false;
 
@@ -288,16 +331,19 @@ bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, st
         }
     }
 
-    // if (!eventEngineScheduler.expired()) {
-    //     if (eventEngineScheduler->getParseResult(pid, parseResult)) {
-    //         return true;
-    //     }
-    // }
-
     if (auto observe = eventEngineScheduler.lock()) {
         if (observe->getParseResult(pid, parseResult)) {
             return true;
         }
+    }
+
+    if (getParseResultLocal(pid, parseResult) && parseResult != 0) {
+        //rebind FileHolders of retrieved ParseResult so they match the PersistenceManager
+        //(ensures that they will be served to the network properly)
+        if (parseResult->stackTraceResult != 0 && parseResult->stackTraceResult->stackTraceData != 0) {
+            parseResult->stackTraceResult->stackTraceData->setFileHolderFactory(fileHolderFactory);
+        }
+        return true;
     }
 
     return false;

@@ -35,11 +35,19 @@ public:
     // std::vector<std::string> timingFileNames()
     std::vector<std::string> getFunctionNames() const;
 
+    void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
+
     void replaceFile(const std::string& oldFilename, const std::shared_ptr<STI::Utils::FileHolder>& newFile);
     void deleteFiles();
 
+//    template<class Archive>
+//	void serialize(Archive& archive);
+
     template<class Archive>
-	void serialize(Archive& archive);
+    void save(Archive& archive) const;
+
+    template<class Archive>
+    void load(Archive& archive);
 
 private:
     
@@ -47,7 +55,7 @@ private:
     unsigned addFile(const std::string& filename);
 
     std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
-    // std::vector<std::string> timingFileNames; 
+    std::vector<std::string> timingFileNames;
     std::vector<std::string> functionNames;
 
     typedef STI::Utils::VectorMap<std::string, std::string> VectorMapString;

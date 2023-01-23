@@ -44,8 +44,17 @@ TimeStamp::TimeStamp(int year, int month, int day, int hour,
 
     std::time_t now_time = mktime(&timeinfo);
     
-    timeinfo = *localtime(&now_time);
-    //localtime_s(&timeinfo, &now_time);
+    //timeinfo = *localtime(&now_time);   //  1/2/2023
+    //localtime_s(&timeinfo, &now_time);      //this is working in windows 1/21/2023
+
+    //generate local time using timeinfo (retrieves dst information)
+    auto generatedLocalTime = localtime(&now_time);
+    
+    //null check here because localtime returns null when now_time=-1, which can indicate some
+    //illegal values in timeinfo (such as when TimeStamp is improperly initialized)
+    if (generatedLocalTime != 0) {
+        timeinfo = *generatedLocalTime;     //update timeinfo with validated info
+    }
 }
 
 int TimeStamp::year() const

@@ -34,3 +34,6 @@ Jupyter notebook testing:
 To enable Jupyter to work in a python venv, install ipython in vevn and run:
 
 python3 -m ipykernel install --user --name=projectname
+
+
+https://sourceforge.net/projects/stanfordtiminginterface/
