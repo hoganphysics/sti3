@@ -50,9 +50,9 @@ public class JPersistenceManager {
     return (cPtr == 0) ? null : new ShotResult(cPtr, true);
   }
 
-  public MeasurementVector getMeasurements(ShotID sid) {
+  public MeasurementMap getMeasurements(ShotID sid) {
     long cPtr = stiJNI.JPersistenceManager_getMeasurements(swigCPtr, this, ShotID.getCPtr(sid), sid);
-    return (cPtr == 0) ? null : new MeasurementVector(cPtr, true);
+    return (cPtr == 0) ? null : new MeasurementMap(cPtr, true);
   }
 
 }

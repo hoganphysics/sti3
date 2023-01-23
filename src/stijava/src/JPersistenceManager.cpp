@@ -44,9 +44,10 @@ std::shared_ptr<STI::Engine::ShotResult> JPersistenceManager::getShotResult(cons
     return shotResult;
 }
 
-std::shared_ptr<STI::Engine::MeasurementVector> JPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid)
+std::shared_ptr<STI::Engine::MeasurementMap> JPersistenceManager::getMeasurements(const STI::Engine::ShotID& sid)
 {
-    auto measurements = std::make_shared<STI::Engine::MeasurementVector>();
+    // auto measurements = std::make_shared<STI::Engine::MeasurementVector>();
+    auto measurements = std::make_shared<STI::Engine::MeasurementMap>();
 
     if (persistenceManager != 0) {
         persistenceManager->getMeasurements(sid, measurements);

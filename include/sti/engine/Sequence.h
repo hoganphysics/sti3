@@ -55,6 +55,8 @@ public:
     template<class Archive>
 	void serialize(Archive& archive);
 
+private:
+
     mutable std::mutex sequenceMutex;
 };
 

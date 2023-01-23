@@ -58,4 +58,16 @@ public class SequenceEntryID {
     return (cPtr == 0) ? null : new SequenceIndex(cPtr, false);
   }
 
+  public boolean opLess(SequenceEntryID rhs) {
+    return stiJNI.SequenceEntryID_opLess(swigCPtr, this, SequenceEntryID.getCPtr(rhs), rhs);
+  }
+
+  public boolean opEquals(SequenceEntryID rhs) {
+    return stiJNI.SequenceEntryID_opEquals(swigCPtr, this, SequenceEntryID.getCPtr(rhs), rhs);
+  }
+
+  public boolean opNotEquals(SequenceEntryID rhs) {
+    return stiJNI.SequenceEntryID_opNotEquals(swigCPtr, this, SequenceEntryID.getCPtr(rhs), rhs);
+  }
+
 }

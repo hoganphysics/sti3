@@ -74,4 +74,8 @@ public class ShotResultRecord {
     return (cPtr == 0) ? null : new ShotResultRecordVector(cPtr, false);
   }
 
+  public static String statusToString(RecordStatus status) {
+    return stiJNI.ShotResultRecord_statusToString(status.swigValue());
+  }
+
 }

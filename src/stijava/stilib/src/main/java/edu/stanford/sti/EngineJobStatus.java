@@ -15,6 +15,7 @@ public final class EngineJobStatus {
   public final static EngineJobStatus Canceled = new EngineJobStatus("Canceled");
   public final static EngineJobStatus NotFound = new EngineJobStatus("NotFound");
   public final static EngineJobStatus Archived = new EngineJobStatus("Archived");
+  public final static EngineJobStatus Deferred = new EngineJobStatus("Deferred");
 
   public final int swigValue() {
     return swigValue;
@@ -50,7 +51,7 @@ public final class EngineJobStatus {
     swigNext = this.swigValue+1;
   }
 
-  private static EngineJobStatus[] swigValues = { New, Running, Completed, Canceled, NotFound, Archived };
+  private static EngineJobStatus[] swigValues = { New, Running, Completed, Canceled, NotFound, Archived, Deferred };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

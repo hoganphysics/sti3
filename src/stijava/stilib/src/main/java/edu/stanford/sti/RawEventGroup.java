@@ -128,8 +128,16 @@ public class RawEventGroup {
     return new ParsedVar(stiJNI.RawEventGroup_var(swigCPtr, this, fullVarName, RawStackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
-  public boolean bindVars(ParsedVarVector overwritten) {
-    return stiJNI.RawEventGroup_bindVars(swigCPtr, this, ParsedVarVector.getCPtr(overwritten), overwritten);
+  public boolean bindVar(String fullVarName, MixedValue value) {
+    return stiJNI.RawEventGroup_bindVar__SWIG_0(swigCPtr, this, fullVarName, MixedValue.getCPtr(value), value);
+  }
+
+  public boolean bindVar(ParsedVar overwrittenVar) {
+    return stiJNI.RawEventGroup_bindVar__SWIG_1(swigCPtr, this, ParsedVar.getCPtr(overwrittenVar), overwrittenVar);
+  }
+
+  public boolean bindVars(ParsedVarSet overwritten) {
+    return stiJNI.RawEventGroup_bindVars(swigCPtr, this, ParsedVarSet.getCPtr(overwritten), overwritten);
   }
 
   public void bindTargets(RawEventTargetMap targetReplacements) {

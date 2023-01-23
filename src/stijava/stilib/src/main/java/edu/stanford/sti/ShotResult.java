@@ -58,9 +58,9 @@ public class ShotResult {
     return (cPtr == 0) ? null : new TimeStamp(cPtr, false);
   }
 
-  public MeasurementVector getMeasurements() {
+  public MeasurementMap getMeasurements() {
     long cPtr = stiJNI.ShotResult_measurements_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new MeasurementVector(cPtr, true);
+    return (cPtr == 0) ? null : new MeasurementMap(cPtr, true);
   }
 
   public DeviceAttributeMap getAttributes() {

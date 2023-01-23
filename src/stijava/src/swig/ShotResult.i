@@ -37,7 +37,11 @@
 %include "sti/fwd/Measurement_fwd.h"
 %include "sti/engine/Measurement.h"
 %template(MeasurementVector) std::vector< std::shared_ptr< STI::Engine::Measurement > >;
+%template(MeasurementMap) std::map< STI::Device::DeviceID, std::vector< std::shared_ptr< STI::Engine::Measurement > > >;
 %shared_ptr( std::vector< std::shared_ptr< STI::Engine::Measurement > > );
+
+%shared_ptr( std::map< STI::Device::DeviceID, std::vector< std::shared_ptr< STI::Engine::Measurement > > > );
+
 
 
 //ShotResult

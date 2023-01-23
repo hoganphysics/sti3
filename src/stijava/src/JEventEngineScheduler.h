@@ -2,6 +2,9 @@
 #define STI_DEVICE_JEVENTENGINESCHEDULER_H
 
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/AddSequenceStatus.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/ParseID.h>
 
@@ -29,8 +32,11 @@ public:
 
     // STI::Device::DeviceID id;
 
-    STI::Engine::ParseID parse(const std::shared_ptr<STI::Engine::JShot>& shot);
-    STI::Engine::ShotID play(const ParseID& parseID, const EngineJobSourceID& source);
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::JShot>& jshot);
+    STI::Engine::PlayJobStatus play(const ParseID& parseID, const STI::Engine::EngineJobSourceID& source);
+
+    STI::Engine::AddSequenceStatus addSequence(const std::shared_ptr<STI::Engine::Sequence>& sequence, const STI::Engine::EngineJobSourceID& source);
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::JShot>& jshot, const STI::Engine::SequenceEntryID& sequenceEntryID);
 
     EngineJobStatus getStatus(const ParseID& pid);
     EngineJobStatus getStatus(const ShotID& sid);

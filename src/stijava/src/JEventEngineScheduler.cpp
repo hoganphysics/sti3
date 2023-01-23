@@ -2,10 +2,15 @@
 #include "JEventEngineScheduler.h"
 #include "JShot.h"
 
+#include <sti/engine/AddSequenceStatus.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/EngineJobID.h>
 #include "JEventEngineJob.h"
+
+
 
 using STI::Engine::JEventEngineScheduler;
 using STI::Engine::EventEngineJob;
@@ -13,6 +18,8 @@ using STI::Engine::EventEngineDependencyTree;
 using STI::Engine::EngineJobID;
 using STI::Engine::EngineJobStatus;
 using STI::Engine::JEventEngineJob;
+using STI::Engine::EngineJobSourceID;
+using STI::Engine::ParseID;
 
 
 JEventEngineScheduler::JEventEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
@@ -24,26 +31,52 @@ JEventEngineScheduler::~JEventEngineScheduler()
 {
 }
 
-STI::Engine::ParseID JEventEngineScheduler::parse(const std::shared_ptr<STI::Engine::JShot>& jshot)
+STI::Engine::ParseJobStatus JEventEngineScheduler::parse(const std::shared_ptr<STI::Engine::JShot>& jshot)
 {
-    STI::Engine::ParseID pid;
+    STI::Engine::ParseJobStatus status;
+    status.status = EngineJobStatus::Canceled;
 
     if(localScheduler != 0) {
         std::shared_ptr<STI::Engine::Shot> shot = std::static_pointer_cast<STI::Engine::Shot>(jshot);
-        pid = localScheduler->parse(shot);
+        status = localScheduler->parse(shot);
     }
-    return pid;
+    return status;
 }
 
-STI::Engine::ShotID JEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
+STI::Engine::PlayJobStatus JEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
 {
-    STI::Engine::ShotID sid;
+    STI::Engine::PlayJobStatus status;
+    status.status = EngineJobStatus::Canceled;
 
     if(localScheduler != 0) {
-        sid = localScheduler->play(parseID, source);
+        status = localScheduler->play(parseID, source);
     }
-    return sid;
+    return status;
 }
+
+STI::Engine::AddSequenceStatus JEventEngineScheduler::addSequence(const std::shared_ptr<STI::Engine::Sequence>& sequence, const STI::Engine::EngineJobSourceID& source)
+{
+    STI::Engine::AddSequenceStatus status;
+    status.status = EngineJobStatus::Canceled;
+
+    if(localScheduler != 0) {
+        status = localScheduler->addSequence(sequence, source);
+    }
+    return status;
+}
+
+STI::Engine::ParseJobStatus JEventEngineScheduler::parse(const std::shared_ptr<STI::Engine::JShot>& jshot, const STI::Engine::SequenceEntryID& sequenceEntryID)
+{
+    STI::Engine::ParseJobStatus status;
+    status.status = EngineJobStatus::Canceled;
+
+    if(localScheduler != 0) {
+        std::shared_ptr<STI::Engine::Shot> shot = std::static_pointer_cast<STI::Engine::Shot>(jshot);
+        status = localScheduler->parse(shot, sequenceEntryID);
+    }
+    return status;
+}
+
 
 EngineJobStatus JEventEngineScheduler::getStatus(const ParseID& pid)
 {

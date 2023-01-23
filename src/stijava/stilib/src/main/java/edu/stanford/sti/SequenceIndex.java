@@ -37,7 +37,11 @@ public class SequenceIndex {
   }
 
   public SequenceIndex() {
-    this(stiJNI.new_SequenceIndex(), true);
+    this(stiJNI.new_SequenceIndex__SWIG_0(), true);
+  }
+
+  public SequenceIndex(int index, int repeat) {
+    this(stiJNI.new_SequenceIndex__SWIG_1(index, repeat), true);
   }
 
   public void setIndex(int value) {
@@ -58,6 +62,10 @@ public class SequenceIndex {
 
   public boolean opLess(SequenceIndex rhs) {
     return stiJNI.SequenceIndex_opLess(swigCPtr, this, SequenceIndex.getCPtr(rhs), rhs);
+  }
+
+  public String print() {
+    return stiJNI.SequenceIndex_print(swigCPtr, this);
   }
 
   public boolean opEquals(SequenceIndex rhs) {

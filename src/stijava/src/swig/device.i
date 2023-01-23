@@ -48,6 +48,13 @@
     #include <sti/engine/EngineID.h>
     using STI::Engine::EngineID;
 
+    #include <sti/engine/AddSequenceStatus.h>
+    using STI::Engine::AddSequenceStatus;
+    #include <sti/engine/ParseJobStatus.h>
+    using STI::Engine::ParseJobStatus;
+    #include <sti/engine/PlayJobStatus.h>
+    using STI::Engine::PlayJobStatus;
+
     #include <sti/engine/EngineState.h>
     using STI::Engine::EngineState;
 
@@ -282,8 +289,11 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/ParseID.h"
 %include "sti/engine/ShotID.h"
 
+%include "sti/engine/EngineJobStatus.h"
 
-
+%include "sti/engine/AddSequenceStatus.h"
+%include "sti/engine/ParseJobStatus.h"
+%include "sti/engine/PlayJobStatus.h"
 
 
 //SynchronousEvent
@@ -314,7 +324,6 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 
 
 %include "sti/engine/EventEngineJobList.h"
-%include "sti/engine/EngineJobStatus.h"
 
 
 

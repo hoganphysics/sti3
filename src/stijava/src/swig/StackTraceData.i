@@ -33,4 +33,7 @@
 %include "RawStackTrace.h"
 
 %ignore STI::Engine::StackTraceData::StackTraceData(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
+
+%ignore STI::Engine::StackTraceData::setFileHolderFactory(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
+
 %include "StackTraceData.h"

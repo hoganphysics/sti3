@@ -40,12 +40,20 @@ public class JEventEngineScheduler {
     }
   }
 
-  public ParseID parse(JShot shot) {
-    return new ParseID(stiJNI.JEventEngineScheduler_parse(swigCPtr, this, JShot.getCPtr(shot), shot), true);
+  public ParseJobStatus parse(JShot jshot) {
+    return new ParseJobStatus(stiJNI.JEventEngineScheduler_parse__SWIG_0(swigCPtr, this, JShot.getCPtr(jshot), jshot), true);
   }
 
-  public ShotID play(ParseID parseID, EngineJobSourceID source) {
-    return new ShotID(stiJNI.JEventEngineScheduler_play(swigCPtr, this, ParseID.getCPtr(parseID), parseID, EngineJobSourceID.getCPtr(source), source), true);
+  public PlayJobStatus play(ParseID parseID, EngineJobSourceID source) {
+    return new PlayJobStatus(stiJNI.JEventEngineScheduler_play(swigCPtr, this, ParseID.getCPtr(parseID), parseID, EngineJobSourceID.getCPtr(source), source), true);
+  }
+
+  public AddSequenceStatus addSequence(Sequence sequence, EngineJobSourceID source) {
+    return new AddSequenceStatus(stiJNI.JEventEngineScheduler_addSequence(swigCPtr, this, Sequence.getCPtr(sequence), sequence, EngineJobSourceID.getCPtr(source), source), true);
+  }
+
+  public ParseJobStatus parse(JShot jshot, SequenceEntryID sequenceEntryID) {
+    return new ParseJobStatus(stiJNI.JEventEngineScheduler_parse__SWIG_1(swigCPtr, this, JShot.getCPtr(jshot), jshot, SequenceEntryID.getCPtr(sequenceEntryID), sequenceEntryID), true);
   }
 
   public EngineJobStatus getStatus(ParseID pid) {

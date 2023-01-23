@@ -48,6 +48,18 @@ public class Sequence {
     this(stiJNI.new_Sequence__SWIG_1(type.swigValue()), true);
   }
 
+  public void addEntry(SequenceEntry entry) {
+    stiJNI.Sequence_addEntry__SWIG_0(swigCPtr, this, SequenceEntry.getCPtr(entry), entry);
+  }
+
+  public void addEntry(int index, ParsedVarSet overwritten) {
+    stiJNI.Sequence_addEntry__SWIG_1(swigCPtr, this, index, ParsedVarSet.getCPtr(overwritten), overwritten);
+  }
+
+  public void append(ParsedVarSet overwritten) {
+    stiJNI.Sequence_append(swigCPtr, this, ParsedVarSet.getCPtr(overwritten), overwritten);
+  }
+
   public void setSequenceTable(SequenceEntryMap value) {
     stiJNI.Sequence_sequenceTable_set(swigCPtr, this, SequenceEntryMap.getCPtr(value), value);
   }

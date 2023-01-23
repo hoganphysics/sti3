@@ -57,4 +57,20 @@ public class SequenceEntry {
     return (cPtr == 0) ? null : new ParsedVarSet(cPtr, false);
   }
 
+  public boolean opLess(SequenceEntry rhs) {
+    return stiJNI.SequenceEntry_opLess(swigCPtr, this, SequenceEntry.getCPtr(rhs), rhs);
+  }
+
+  public boolean opEquals(SequenceEntry rhs) {
+    return stiJNI.SequenceEntry_opEquals(swigCPtr, this, SequenceEntry.getCPtr(rhs), rhs);
+  }
+
+  public boolean opNotEquals(SequenceEntry rhs) {
+    return stiJNI.SequenceEntry_opNotEquals(swigCPtr, this, SequenceEntry.getCPtr(rhs), rhs);
+  }
+
+  public String print() {
+    return stiJNI.SequenceEntry_print(swigCPtr, this);
+  }
+
 }

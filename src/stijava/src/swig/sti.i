@@ -47,6 +47,8 @@
 %include JEventEngine.i
 %include DeviceIDIndexedGraph.i
 %include JEventEngineJob.i
-%include JEventEngineScheduler.i
 
 %include Sequence.i
+%include JEventEngineScheduler.i
+
+
