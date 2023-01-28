@@ -20,6 +20,7 @@
 #include <sti/engine/ParseTicketManager.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ResultTicketManager.h>
+#include <sti/engine/ShotRepository.h>
 #include <sti/engine/SynchronousEvent.h>
 
 #include <sti/utils/Configuration.h>
@@ -122,6 +123,8 @@ public:
 	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
 
 	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+
+	void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
 
 private:
 

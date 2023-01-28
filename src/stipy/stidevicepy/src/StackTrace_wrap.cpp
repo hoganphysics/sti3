@@ -1,7 +1,6 @@
-
-// #include <sti/engine/StackTrace.h>
 #include "RawStackTrace.h"
-#include "StackTraceData.h"
+
+#include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
 
 #include <sstream>

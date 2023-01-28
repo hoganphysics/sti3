@@ -3,7 +3,7 @@
     #include <sti/engine/ParseResult.h>
     using STI::Engine::ParseResult;
 
-    #include "ParsedDependencyTree.h"
+    #include <sti/engine/ParsedDependencyTree.h>
     using STI::Engine::ParsedDependencyTree; 
 
     #include <sti/engine/EngineParsingMessage.h>
@@ -53,7 +53,7 @@
 %ignore STI::Engine::ParsedDependencyTree::getDependedentNodes(const STI::Device::DeviceID& node, std::vector< STI::Device::DeviceID >& depNodes) const;
 
 
-%include "ParsedDependencyTree.h"
+%include <sti/engine/ParsedDependencyTree.h>
 %include "sti/engine/StackTraceResult.h"
 
 %immutable STI::Engine::ParseResult::pid;

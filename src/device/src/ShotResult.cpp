@@ -19,7 +19,7 @@ ShotResult::ShotResult()
     measurements = std::make_shared<STI::Engine::MeasurementMap>();
 }
 
-ShotResult::ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs)
+ShotResult::ShotResult(const STI::Device::DeviceID& deviceID, std::set<STI::Device::DeviceID>& ownedIDs)
 {
     measurements = std::make_shared<STI::Engine::MeasurementMap>();
 

@@ -3,9 +3,8 @@
 #include "Convert_ResultsCollector.h"
 
 #include <sti/engine/StackTrace.h>
+#include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
-
-#include "StackTraceData.h"
 
 using STI::Network::convert;
 using STI::TNetwork::TStackFrame;

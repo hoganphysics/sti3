@@ -24,7 +24,7 @@ class ShotResult
 public:
 
     ShotResult();
-    ShotResult(const STI::Device::DeviceID deviceID, std::set<STI::Device::DeviceID> ownedIDs);
+    ShotResult(const STI::Device::DeviceID& deviceID, std::set<STI::Device::DeviceID>& ownedIDs);
 
     ShotID sid;
 	TimeStamp playTime;

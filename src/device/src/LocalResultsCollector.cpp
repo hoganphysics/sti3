@@ -3,13 +3,12 @@
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/utils/utils.h>
-
-#include "ParsedDependencyTree.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;

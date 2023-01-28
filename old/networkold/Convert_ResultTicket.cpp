@@ -4,7 +4,7 @@
 
 #include <sti/engine/ResultTicket.h>
 #include "RemoteResultsCollector.h"
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 //#include "NetworkShotRepositoryWrapper.h"
 #include "RemoteShotRepository.h"
 

@@ -1,14 +1,13 @@
 #include <sti/engine/RawEventGroup.h>
 
 #include <sti/engine/ParsedVar.h>
+#include <sti/engine/ParsedTag.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventTargetDevice.h>
+#include <sti/engine/StackTraceData.h>
 
 #include <sti/utils/utils.h>
-
-#include <sti/engine/ParsedTag.h>
-#include "StackTraceData.h"
 
 #include <algorithm>
 #include <sstream>

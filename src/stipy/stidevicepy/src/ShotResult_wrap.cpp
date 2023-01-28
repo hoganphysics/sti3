@@ -2,16 +2,11 @@
 
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/ShotResultRecord.h>
-// #include <sti/engine/RawEventGroup.h>
-
-// #include "ParsedDependencyTree.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
-
-
 
 #include <sstream>
 
@@ -20,6 +15,7 @@ using STI::Engine::ShotResultRecord;
 using STI::Engine::RecordStatus;
 
 namespace py = pybind11;
+
 
 void getMeasurements(const STI::Engine::MeasurementVector& input, STI::Engine::MeasurementVector& output, const STI::Device::DeviceID& deviceID)
 {

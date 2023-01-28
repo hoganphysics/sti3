@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 
 
 class TempListener : public STI::Device::DeviceMessageListener<STI::Device::CollectionUpdateMessage>
@@ -66,6 +67,12 @@ void TestDevice::init()
         STI::Utils::MixedValueType::Double,
         STI::Utils::MixedValueType::Empty,
         "test channel");
+
+    addChannel(3,
+        STI::Device::ChannelType::Input,
+        STI::Utils::MixedValueType::File,
+        STI::Utils::MixedValueType::Empty,
+        "file measurement");
 
     STI::Engine::EngineID id(0);
     addEventEngine(id);
@@ -134,6 +141,9 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine
         if (evt.second[0].channel() == 2) {
             synchEvt->addMeasurement(evt.second[0]);
         }
+        if (evt.second[0].channel() == 3) {
+            synchEvt->addMeasurement(evt.second[0]);
+        }
         synchedEvents.push_back(std::move(synchEvt));
     }
 }
@@ -156,6 +166,24 @@ void TestDevice::TestEvent::collectMeasurementData()
         std::cout << "collectMeasurementData: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
         STI::Utils::MixedValue result;
         result.setValue(256);
+        getMeasurements().at(0)->setMeasurementResult(result);
+
+    }
+
+    if (evt.channel() == 3) {
+        std::cout << "collectMeasurementData: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
+        STI::Utils::MixedValue result;
+        
+        std::string filename = "testImage.txt";
+        // std::ifstream ifs(filename, std::ifstream::binary|std::ios::ate);
+
+        std::ofstream myfile;
+        myfile.open(filename);
+        myfile << "Testing image data.\n";
+        myfile.close();
+
+        auto file = localDevice->makeFileHolder(filename);
+        result.setValue(file);
         getMeasurements().at(0)->setMeasurementResult(result);
 
     }

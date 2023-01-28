@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_NETWORKSHOTREPOSITORYWRAPPER_H
 #define STI_NETWORK_NETWORKSHOTREPOSITORYWRAPPER_H
 
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 #include "TShotRepository_i.h"
 #include "deviceNet.h"
 

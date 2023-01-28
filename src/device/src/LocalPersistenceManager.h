@@ -9,7 +9,7 @@
 #include <sti/engine/FullShotResult.h>
 #include <sti/utils/SynchronizedMap.h>
 
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 #include "utils/OrderedBufferMap.h"
 #include <sti/utils/Configuration.h>
 
@@ -64,6 +64,8 @@ public:
 
     void attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 
+    std::string getBasePath() const;
+
     static std::string makeBasePath(const std::string& rootPath, const DeviceID& deviceID);
 
 private:
@@ -106,6 +108,7 @@ private:
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
     DeviceID localDeviceID;
+    std::string basePath;
 };
 
 

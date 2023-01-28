@@ -5,6 +5,8 @@
 
 #include "orbTypes.h"
 #include "TFileHolderRefInterface.h"
+#include "RemoteFileHolder.h"
+
 
 using STI::Network::convert;
 using STI::TNetwork::TMixedValue;
@@ -245,6 +247,10 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	case TMixedValueType::MixedValueEmpty:
 		break;
 	case TMixedValueType::MixedValueFile:
+		{
+			std::shared_ptr<STI::Utils::FileHolder> remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(tValue.value_file());
+			value.setValue(remoteFile);	
+		}
 		break;
 	case TMixedValueType::MixedValueImage:
 		break;

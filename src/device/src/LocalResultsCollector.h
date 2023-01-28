@@ -2,9 +2,8 @@
 #define STI_ENGINE_LOCALRESULTSCOLLECTOR_H
 
 #include <sti/engine/ResultsCollector.h>
+#include <sti/engine/ShotRepository.h>
 #include <sti/utils/FileHolderFactory.h>
-
-#include "ShotRepository.h"
 
 #include <memory>
 #include <string>

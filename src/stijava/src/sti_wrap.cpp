@@ -1232,7 +1232,7 @@ SWIGINTERN STI::Device::DeviceID STI_Engine_EventEngineDependencyTree_getBranchT
         return branch;
     }
 
-    #include "StackTraceData.h"
+    #include <sti/engine/StackTraceData.h>
     using STI::Engine::StackTraceData;
 
     #include <sti/engine/StackTrace.h>
@@ -2333,7 +2333,7 @@ SWIGINTERN void std_vector_Sl_STI_Network_JDeviceGraphNode_Sg__doRemoveRange(std
     #include <sti/engine/ParseResult.h>
     using STI::Engine::ParseResult;
 
-    #include "ParsedDependencyTree.h"
+    #include <sti/engine/ParsedDependencyTree.h>
     using STI::Engine::ParsedDependencyTree; 
 
     #include <sti/engine/EngineParsingMessage.h>

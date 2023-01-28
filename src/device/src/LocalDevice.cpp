@@ -12,6 +12,7 @@
 #include <sti/engine/ParseTicket.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEventGroup.h>
+#include <sti/engine/ShotRepository.h>
 
 #include <sti/utils/Configuration.h>
 #include <sti/utils/LocalFileHolder.h>
@@ -25,7 +26,6 @@
 #include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
 #include "LocalShot.h"
-#include "ShotRepository.h"
 
 #include <filesystem>
 #include <memory>
@@ -236,6 +236,13 @@ std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::s
 		file = localPersistenceManager->makeFileHolder(filename);
 	}
 	return file;
+}
+
+void LocalDevice::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo)
+{
+	if (localPersistenceManager != 0) {
+		localPersistenceManager->setShotRepository(repo);
+	}
 }
 
 void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)

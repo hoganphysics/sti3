@@ -6,7 +6,7 @@
 #include <sti/utils/SynchronizedMap.h>
 
 #include "AttributeRefreshListener.h"
-#include "MessageGrouper.h"
+#include "DeviceMessageGrouper.h"
 
 #include <map>
 #include <vector>
@@ -52,7 +52,7 @@ private:
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<LocalAttribute>> attributeMap;
 
-    STI::Device::MessageGrouper<AttributeUpdateMessage> messageGrouper;
+    STI::Device::DeviceMessageGrouper<AttributeUpdateMessage> messageGrouper;
 
 };
 

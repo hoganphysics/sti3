@@ -14,7 +14,9 @@
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/SynchronousEvent.h>
@@ -27,8 +29,6 @@
 #include "LocalShot.h"
 #include "LocalTriggerCallback.h"
 #include "MasterTrigger.h"
-#include "ParsedDependencyTree.h"
-#include <sti/engine/RawEventGroup.h>
 
 #include <memory>
 #include <thread>
@@ -831,6 +831,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
 	
+	//save shot result
 	std::shared_ptr<FullShotResult> cachedShot;
 	if (resultBuffer.get(jobID.sid, cachedShot) && cachedShot != 0) {
 		if (persistenceManager != 0 && persistenceManager->saveShot(jobID.sid, cachedShot, isJobOwner)) {

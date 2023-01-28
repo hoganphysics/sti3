@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_TRANSIENTREPOSITORY_H
 #define STI_ENGINE_TRANSIENTREPOSITORY_H
 
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 
 #include <sti/engine/ShotID.h>
 #include "utils/OrderedBufferMap.h"

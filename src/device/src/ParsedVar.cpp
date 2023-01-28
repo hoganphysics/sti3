@@ -1,6 +1,6 @@
 
 #include <sti/engine/ParsedVar.h>
-#include "StackTraceData.h"
+#include <sti/engine/StackTraceData.h>
 #include <sti/engine/RawEventGroup.h>
 
 #include "CerealArchives.h"

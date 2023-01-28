@@ -7,13 +7,18 @@
 
 #include <sti/device/DeviceTrace.h>
 
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/Measurement.h>
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ParseID.h>
+#include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/ShotResultRecord.h>
@@ -26,14 +31,9 @@
 #include "LocalEventEngineJob.h"
 #include "NetworkEventEngine.h"
 #include "NetworkShotWrapper.h"
-#include "ParsedDependencyTree.h"
+
 #include "RemoteShot.h"
 #include "RemoteEventEngine.h"
-#include <sti/engine/Shot.h>
-
-#include <sti/engine/AddSequenceStatus.h>
-#include <sti/engine/ParseJobStatus.h>
-#include <sti/engine/PlayJobStatus.h>
 
 #include <map>
 #include <memory>

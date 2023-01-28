@@ -1,4 +1,4 @@
-#include "StackTraceData.h"
+#include <sti/engine/StackTraceData.h>
 
 #include <sti/engine/StackTrace.h>
 #include <sti/utils/FileHolder.h>

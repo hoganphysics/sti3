@@ -2,7 +2,6 @@
 #define STI_ENGINE_LOCALEVENTENGINE_H
 
 #include "EventEngine.h"
-#include "MessageGenerator.h"
 
 #include <sti/fwd/Channel_fwd.h>
 #include <sti/fwd/DeviceID_fwd.h>
@@ -21,10 +20,11 @@
 #include <sti/engine/TimeStamp.h>
 
 #include "fwd/DeviceEventParser_fwd.h"
+#include "DeviceMessageGrouper.h"
 #include "EngineClock.h"
 #include "EventEngineParser.h"
 #include "EventEngineStateMachine.h"
-#include "MessageGrouper.h"
+#include "MessageGenerator.h"
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>
@@ -172,7 +172,7 @@ private:
 	void releasePlayLock();
 	void releaseTriggerLock();
 
-	STI::Device::MessageGrouper<STI::Device::EngineStateMessage> engineStateMessageGrouper;
+	STI::Device::DeviceMessageGrouper<STI::Device::EngineStateMessage> engineStateMessageGrouper;
 
 	EngineClock engineClock;
 

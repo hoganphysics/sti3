@@ -1,14 +1,16 @@
 #include "RemoteResultsCollector.h"
 
+#include <sti/engine/ParsedDependencyTree.h>
+#include <sti/engine/ShotID.h>
+
+#include "EventEngineDependencyTree.h"
+
 #include "NetworkConvert.h"
 #include "Convert_Attribute.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
 #include "orbTypes.h"
-#include "EventEngineDependencyTree.h"
-#include "ParsedDependencyTree.h"
 
-#include <sti/engine/ShotID.h>
 
 using STI::Network::RemoteResultsCollector;
 using STI::Network::convert;

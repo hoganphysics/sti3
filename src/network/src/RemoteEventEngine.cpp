@@ -3,7 +3,8 @@
 #include "Convert_ShotResult.h"
 
 #include <sti/engine/RawEvent.h>
-#include "ParsedDependencyTree.h"
+#include <sti/engine/ParsedDependencyTree.h>
+
 #include "NetworkResultsCollector.h"
 #include "ORBManager.h"
 

@@ -9,6 +9,7 @@
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotResult.h>
+#include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
 
 #include "EventEngine.h"
@@ -17,7 +18,6 @@
 #include "LocalResultsCollectorFactory.h"
 #include "ResultsDocumenter.h"
 #include "SerializedRepository.h"
-#include "StackTraceData.h"
 #include "TransientRepository.h"
 
 #include <filesystem>
@@ -52,7 +52,8 @@ LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const
 fileHolderFactory(fileHolderFactory), 
 resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ), 
 sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ), 
-deviceCollection(collection)
+deviceCollection(collection),
+basePath(basePath)
 {
     defaultRepository = std::make_shared<SerializedRepository>(basePath);
     transientRepository = std::make_shared<TransientRepository>(basePath);
@@ -86,6 +87,11 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
     }
 
     return devicePath.string();
+}
+
+std::string LocalPersistenceManager::getBasePath() const
+{
+    return basePath;
 }
 
 void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
@@ -679,8 +685,10 @@ void LocalPersistenceManager::addSequence(const std::shared_ptr<STI::Engine::Seq
         return;
     }
     //if failed, save locally
-
-    addToBuffer(sequenceResult);
+    
+    if (saveSequenceLocal(sequenceResult, true)) {
+        addToBuffer(sequenceResult);
+    }
 }
 
 

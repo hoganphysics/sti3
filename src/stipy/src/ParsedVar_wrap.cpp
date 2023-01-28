@@ -1,7 +1,8 @@
 
 
 #include <sti/engine/ParsedVar.h>
-#include "StackTraceData.h"
+#include <sti/engine/StackTraceData.h>
+
 #include "RawStackTrace.h"
 #include "MixedValuePy.h"
 

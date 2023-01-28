@@ -1,8 +1,6 @@
-
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/Sequence.h>
 #include <sti/engine/SequenceID.h>
-
 
 #include <string>
 #include <memory>
@@ -12,7 +10,6 @@
 #include <pybind11/cast.h>
 
 namespace py = pybind11;
-
 
 using STI::Engine::Sequence;
 using STI::Engine::SequenceID;
@@ -64,7 +61,7 @@ void init_Sequence(py::module& m)
 
     py::class_<SequenceEntryID>(m, "SequenceEntryID")
         .def(py::init<>())
-        .def_readonly("seqID", &SequenceEntryID::seqID)
+        .def_readwrite("seqID", &SequenceEntryID::seqID)
         .def_readwrite("seqIndex", &SequenceEntryID::seqIndex)
         .def("__repr__",
             [](const SequenceEntryID& self) {

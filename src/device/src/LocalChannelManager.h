@@ -5,7 +5,7 @@
 #include <sti/utils/SynchronizedMap.h>
 
 #include "ChannelRefreshListener.h"
-#include "MessageGrouper.h"
+#include "DeviceMessageGrouper.h"
 
 #include <memory>
 
@@ -48,7 +48,7 @@ private:
 
     STI::Utils::SynchronizedMap<short, std::shared_ptr<Channel>> channelMap;
 
-    STI::Device::MessageGrouper<ChannelUpdateMessage> messageGrouper;
+    STI::Device::DeviceMessageGrouper<ChannelUpdateMessage> messageGrouper;
 };
 
 

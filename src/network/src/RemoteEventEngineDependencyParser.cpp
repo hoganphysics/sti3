@@ -8,10 +8,9 @@
 #include "Convert_EventEngine.h"
 #include "Convert_ShotResult.h"
 
-#include "ParsedDependencyTree.h"
-
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/RawEvent.h>
 
 
@@ -28,7 +27,6 @@ using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TEventEngineDependencyParser;
-
 
 
 RemoteEventEngineDependencyParser::RemoteEventEngineDependencyParser(::STI::TNetwork::TEventEngineDependencyParser_ptr dependencyParser)

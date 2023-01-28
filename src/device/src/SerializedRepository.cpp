@@ -12,7 +12,6 @@
 #include "LocalResultsCollector.h"
 
 #include <filesystem>
-// #include <iostream>
 #include <fstream>
 
 #include "CerealArchives.h"
@@ -27,14 +26,12 @@ using STI::Engine::ShotID;
 using STI::Engine::LocalResultsCollector;
 using STI::Engine::SequenceID;
 using STI::Engine::SequenceResult;
+using STI::Engine::TimeStamp;
 
 
 SerializedRepository::SerializedRepository(const std::string& baseDevicePath)
 : cachedPaths(5), baseDevicePath(baseDevicePath)
 {
-    // baseDevicePath = makeBaseDevicePath();
-
-    archiveFilename = "out.xml";
 }
 
 std::string SerializedRepository::makeParseFilename(const ParseID& pid)
@@ -77,7 +74,7 @@ bool SerializedRepository::findSequenceResult(const SequenceID& seqid)
 {
     auto paths = makePaths(seqid.timestamp);
 
-    std::filesystem::path seqPath = paths.experimentPath;
+    std::filesystem::path seqPath = paths.sequencePath;
     seqPath /= makeSequenceFilename(seqid);
 
     return std::filesystem::exists(seqPath);
@@ -85,8 +82,6 @@ bool SerializedRepository::findSequenceResult(const SequenceID& seqid)
 
 bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements)
 {
-    //if (!findShot(sid)) return false;
-
     std::shared_ptr<ShotResult> shotResult;
     
     if (getShotResult(sid, shotResult) && shotResult != 0 && shotResult->measurements != 0) {
@@ -97,17 +92,18 @@ bool SerializedRepository::getMeasurements(const ShotID& sid, std::shared_ptr<Me
     return false;
 }
 
-// bool SerializedRepository::getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket)
-// {
-//     if (!findShot(sid)) return false;
-
-//     return false;
-// }
-
-
 ResultsPaths SerializedRepository::preparePaths(const ShotID& sid)
 {
     return preparePaths(sid.submissionTime);
+}
+
+ResultsPaths SerializedRepository::preparePaths(const SequenceID& seqid)
+{
+    ResultsPaths paths = makePaths(seqid.timestamp);
+
+    makePathIfNew(paths.sequencePath);
+
+    return paths;
 }
 
 ResultsPaths SerializedRepository::preparePaths(const TimeStamp& timeStamp)
@@ -123,47 +119,18 @@ ResultsPaths SerializedRepository::preparePaths(const TimeStamp& timeStamp)
     return paths;
 }
 
-ResultsPaths SerializedRepository::preparePaths(const SequenceID& seqid)
-{
-    ResultsPaths paths = makePaths(seqid.timestamp);
-
-    makePathIfNew(paths.sequencePath);
-
-    return paths;
-}
-
 void SerializedRepository::makePathIfNew(const std::string& pathName)
 {
     std::filesystem::path newPath = pathName;
     if (!std::filesystem::exists(newPath)) {
         std::filesystem::create_directories(newPath);
     }
-
 }
-
-// template<class Archive>
-// void serialize(Archive& archive, STI::Device::DeviceID& m)
-// {
-//   archive( m., m.y, m.z );
-// }
-
-// template<class Archive>
-// void serialize(Archive& archive, ShotID& shotID)
-// {
-//     archive( cereal::make_nvp("ParseID", shotID.parseID),
-//             cereal::make_nvp("SubmissionTime", shotID.submissionTime),
-//             cereal::make_nvp("PlayTime", shotID.playTime),
-//             cereal::make_nvp("JobSourceID", shotID.jobSourceID) );
-// }
-
-// tm timeinfo;
 
 
 bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult)
 {
     if (fullShotResult == 0) return false;
-    // if (fullShotResult->parseResult == 0) return false;
-    // if (fullShotResult->shotResult == 0) return false;
 
     auto parsePaths = preparePaths(sid.parseID.parseTimestamp);
     auto paths = preparePaths(sid);
@@ -171,12 +138,8 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
     std::filesystem::path serializeParsePath = parsePaths.experimentPath;
     std::filesystem::path serializeShotPath = paths.experimentPath;
 
-    // fullShotResult->parseResult->stackTraceResult;
-    // paths.timingPath;
-
     serializeParsePath /= makeParseFilename(sid.parseID);
     serializeShotPath /= makeShotFilename(sid);
-    // serializePath /= archiveFilename;
 
     if (!std::filesystem::exists(serializeParsePath)) {
         //only save ParseResult if not already saved
@@ -191,45 +154,8 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
         std::ofstream file( serializeShotPath.string() );
         cereal::XMLOutputArchive archive( file );
 
-        //auto results = resultsCollector->getResults();
-
-        // STI::Device::DeviceID id("test", "localhost", 2);
-
-        //archive(id);
-        //archive( results );
         archive( fullShotResult->shotResult );
-
-        // archive( 
-        //     cereal::make_nvp("ShotID", results->sid),
-        //     cereal::make_nvp("Attributes", results->attributes), 
-        //     cereal::make_nvp("Measurements", results->measurements),
-        //     cereal::make_nvp("timingFiles", results->timingFiles),
-        //      cereal::make_nvp("parsedEvents", results->parsedEvents)
-        //  );
-
-         
-
-        //During load(), need to call fileFactory to create new file references (wraps files in NetworkFile as needed)
-
-        //need to recurvisely re make all FileHolder in each MixedValue
-        // void replace(FileHolder&, FileHolderFactory&) {
-        //     if (vector) {
-        //         for each f {
-        //             repalce(f, factory);
-        //         }
-        //     }
-        // }
-
-        //archive( resultsCollector );
     }
-
-    //test
-
-    // std::shared_ptr<STI::Engine::ShotResult> testResult;
-
-    // getShot( resultsCollector->getShotID(), testResult);
-
-    // std::cout << "Test result: " << testResult->measurements->at(0)->data().print() << std::endl;
 
     return true;
 }
@@ -242,7 +168,7 @@ bool SerializedRepository::updateSequence(const SequenceEntryID& id, const ShotI
 
     //write to streaming xml
 
-    return false;
+    return true;
 }
 
 bool SerializedRepository::saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult)
@@ -253,7 +179,6 @@ bool SerializedRepository::saveSequence(const SequenceID& seqid, const std::shar
 
     std::filesystem::path serializePath = paths.sequencePath;
     serializePath /= makeSequenceFilename(seqid);
-
     {
         std::ofstream file( serializePath.string() );
         cereal::XMLOutputArchive archive( file );
@@ -287,14 +212,11 @@ bool SerializedRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
 
 
 bool SerializedRepository::getShotResult(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult)
-//bool SerializedRepository::load(const ShotID& sid, std::shared_ptr<STI::Engine::ShotResult>& shotResult)
 {
     if (!findShotResult(sid)) return false;
 
     auto paths = preparePaths(sid);
 
-    // std::filesystem::path serializePath = paths.dataPath;
-    // serializePath /= archiveFilename;
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeShotFilename(sid);
     {
@@ -318,7 +240,6 @@ bool SerializedRepository::getSequenceResult(const SequenceID& id, std::shared_p
 
     std::filesystem::path serializePath = paths.sequencePath;
     serializePath /= makeSequenceFilename(id);
-
     {
         std::ifstream file( serializePath.string() );
         cereal::XMLInputArchive archive( file );  
@@ -330,42 +251,6 @@ bool SerializedRepository::getSequenceResult(const SequenceID& id, std::shared_p
 
     return true;
 }
-
-
-
-// ResultsPaths SerializedRepository::makePaths(const ShotID& sid)
-// {
-//     std::unique_lock<std::mutex> pathLock(pathMutex);
-
-//     ResultsPaths paths;
-
-//     if (cachedPaths.get(sid, paths)) {
-//         return paths;
-//     }
-
-//     paths = makePaths(sid.submissionTime);
-//     cachedPaths.add(sid, paths);
-
-//     return paths;
-// }
-
-
-// ResultsPaths SerializedRepository::makePaths(const SequenceID& seqid)
-// {
-//     std::unique_lock<std::mutex> pathLock(pathMutex);
-
-//     ResultsPaths paths;
-
-//     if (cachedSequencePaths.get(seqid, paths)) {
-//         return paths;
-//     }
-
-//     paths = makePaths(seqid.timestamp);
-//     cachedSequencePaths.add(seqid, paths);
-
-//     return paths;
-// }
-
 
 ResultsPaths SerializedRepository::makePaths(const TimeStamp& timeStamp)
 {
@@ -404,10 +289,8 @@ ResultsPaths SerializedRepository::makePaths(const TimeStamp& timeStamp)
 }
 
 
-// std::string SerializedRepository::getShotBasePath(const ShotID& sid)
 std::string SerializedRepository::getShotBasePath(const TimeStamp& timeStamp)
 {
-//    std::unique_lock<std::mutex> pathLock(pathMutex);
 
     std::filesystem::path basePath(baseDevicePath);
     basePath /= "shot_cache";
@@ -417,20 +300,3 @@ std::string SerializedRepository::getShotBasePath(const TimeStamp& timeStamp)
 
     return basePath.string();
 }
-
-// std::string SerializedRepository::makeBaseDevicePath()
-// {
-//     std::filesystem::path root(rootPath);
-
-//     if (!std::filesystem::exists(root)) {
-//         std::filesystem::create_directory(root);
-//     }
-
-//     auto devicePath = root / deviceID.getID();
-
-//     if (!std::filesystem::exists(devicePath)) {
-//         std::filesystem::create_directories(devicePath);
-//     }
-
-//     return devicePath.string();
-// }

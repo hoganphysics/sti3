@@ -5,7 +5,7 @@ def f():
     # event(ch(server, 1), 500, 67.9)
     
     d1=dev("TestDevice", "localhost2", 0)
-    c2=ch(d1, 2)
+    c2=ch(d1, 3)
 
     meas(c2, 200)
 

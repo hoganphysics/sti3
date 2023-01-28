@@ -15,9 +15,8 @@
 #include "LocalShot.h"
 #include "PyParseTicket.h"
 #include "PyResultTicket.h"
-#include "StackTraceData.h"
+#include <sti/engine/StackTraceData.h>
 #include "STIPyGlobal.h"
-// #include "STIPySeq.h"
 #include "STIPyShot.h"
 
 #include <chrono>

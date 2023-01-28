@@ -5,7 +5,7 @@
 
 #include <sti/engine/ParseID.h>
 #include <sti/engine/EngineParsingMessage.h>
-#include "ParsedDependencyTree.h"
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/fwd/RawEvent_fwd.h>
 

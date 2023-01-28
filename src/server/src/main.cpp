@@ -1,6 +1,7 @@
 
 #include <sti/NetworkDeviceHub.h>
 #include "ServerDevice.h"
+#include "LegacyShotRepository.h"
 
 #include <memory>
 
@@ -13,6 +14,10 @@ int main(int argc, char **argv)
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
 
     auto server = std::make_shared<STI::Device::ServerDevice>("STI Server", "localhost", 0, "root");
+
+
+    auto legacyShotRepository = std::make_shared<STI::Engine::LegacyShotRepository>(".sti/server1");
+    server->setShotRepository(legacyShotRepository);
 
     hub->addDevice(server);
 

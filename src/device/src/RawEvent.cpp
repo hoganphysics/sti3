@@ -23,12 +23,12 @@
 #include <sti/engine/RawEvent.h>
 
 #include <sti/device/DeviceID.h>
+#include <sti/engine/RawEventGroup.h>
+#include <sti/engine/StackTraceData.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
 #include "RawStackTrace.h"
-#include <sti/engine/RawEventGroup.h>
-#include "StackTraceData.h"
 
 #include <sstream>
 

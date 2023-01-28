@@ -1,6 +1,6 @@
 
 %{
-    #include "StackTraceData.h"
+    #include <sti/engine/StackTraceData.h>
     using STI::Engine::StackTraceData;
 
     #include <sti/engine/StackTrace.h>
@@ -36,4 +36,4 @@
 
 %ignore STI::Engine::StackTraceData::setFileHolderFactory(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
 
-%include "StackTraceData.h"
+%include <sti/engine/StackTraceData.h>

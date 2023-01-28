@@ -1,15 +1,15 @@
 #include <sti/engine/RawEventGroup.h>
 
 #include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/ParsedTag.h>
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/StackTraceData.h>
 #include <sti/utils/utils.h>
 
 #include "MixedValuePy.h"
-#include <sti/engine/ParsedTag.h>
 #include "RawStackTrace.h"
-#include "StackTraceData.h"
 
 #include <sstream>
 

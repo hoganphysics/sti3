@@ -1,7 +1,7 @@
 #ifndef STI_TNETWORK_TSHOTREPOSITORY_I_H
 #define STI_TNETWORK_TSHOTREPOSITORY_I_H
 
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 #include "deviceNet.h"
 
 #include <memory>

@@ -44,7 +44,6 @@ Grouping considerations:
 */
 
 
-
 template<typename Message>
 class MessageGrouper //MessageDelayer
 {
@@ -52,8 +51,10 @@ public:
 
     enum class MessageGrouperState { Idle, Warming, Sending, Cooling };
 
-    MessageGrouper(const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher) 
-    : state(MessageGrouperState::Idle), messageDispatcher(dispatcher), running(false), messageCached(false) 
+    // MessageGrouper(const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher) 
+    // : state(MessageGrouperState::Idle), messageDispatcher(dispatcher), running(false), messageCached(false) 
+    MessageGrouper()
+    : state(MessageGrouperState::Idle), running(false), messageCached(false) 
     {
         setWarmup(100);     //ms
         setCooldown(500);  //ms
@@ -71,7 +72,8 @@ public:
 private:
 
     void sendMessage();
-    void appendMessage(const std::shared_ptr<GroupableMessage<Message>>& mess);
+    void appendMessage(const std::shared_ptr<GroupableMessage<Message>>& mess);   //static polymorphism using CRTP
+    virtual void dispatchMessage(const std::shared_ptr<Message>& mess) = 0;
 
     void messageHandlerLoop();
 
@@ -85,7 +87,7 @@ private:
     MessageGrouperState state;
     std::shared_ptr<Message> message;
 
-    std::shared_ptr<STI::Device::DeviceMessageDispatcher> messageDispatcher;
+    // std::shared_ptr<STI::Device::DeviceMessageDispatcher> messageDispatcher;
 
 	mutable std::mutex cacherMutex;
 	mutable std::condition_variable condition;
@@ -136,9 +138,7 @@ void STI::Device::MessageGrouper<Message>::addMessage(const std::shared_ptr<Mess
 
     //For non-groupable messages, just send immediately
     if (!mess->groupable()) {
-        if (messageDispatcher != 0) {
-            messageDispatcher->addMessage(mess);            
-        }
+        dispatchMessage(mess);
         return;
     }
 
@@ -169,8 +169,8 @@ void STI::Device::MessageGrouper<Message>::addMessage(const std::shared_ptr<Mess
 template<class Message>
 void STI::Device::MessageGrouper<Message>::sendMessage()
 {
-    if (messageDispatcher != 0 && state == MessageGrouperState::Sending && messageCached) {
-        messageDispatcher->addMessage(message);
+    if (state == MessageGrouperState::Sending && messageCached) {
+        dispatchMessage(message);
         messageCached = false;
     }
 }
@@ -182,6 +182,7 @@ void STI::Device::MessageGrouper<Message>::appendMessage(const std::shared_ptr<G
         message->appendMessage(mess->get());
     }
 }
+
 
 template<class Message>
 void STI::Device::MessageGrouper<Message>::messageHandlerLoop()

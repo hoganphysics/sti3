@@ -4,7 +4,7 @@
 
 #include "deviceNet.h"
 
-#include "ShotRepository.h"
+#include <sti/engine/ShotRepository.h>
 #include "TReferenceHolder.h"
 
 

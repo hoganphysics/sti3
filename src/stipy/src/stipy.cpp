@@ -2,14 +2,11 @@
 
 #include <sti/NetworkDeviceHub.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/StackTraceData.h>
 #include <sti/utils/LocalFileHolder.h>
 
 #include "LocalShot.h"
-//#include "NetworkFileHolder.h"
-//#include "NetworkShotWrapper.h"
-//#include "ORBManager.h"
 #include "RawStackTrace.h"
-#include "StackTraceData.h"
 #include "STIPyGlobal.h"
 #include "STIPyLibDevice.h"
 #include "STIPyServer.h"

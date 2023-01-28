@@ -1,12 +1,10 @@
-
 #include <sti/engine/ParseResult.h>
 
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/StackTraceResult.h>
-#include "StackTraceData.h"
-
-#include "ParsedDependencyTree.h"
+#include <sti/engine/StackTraceData.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>

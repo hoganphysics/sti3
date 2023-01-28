@@ -28,7 +28,11 @@ link_directories(${STI_BASE_DIR}/lib)
 # add the executable
 add_executable(STIServer 
     main.cpp 
+    LegacyExperimentXMLBuilder.cpp
+    LegacyShotRepository.cpp
+    LegacySequenceXMLBuilder.cpp
     ServerDevice.cpp
+    tinyxml/tinyxml2.cpp
 )
 set_property(TARGET STIServer 
     PROPERTY POSITION_INDEPENDENT_CODE ON
@@ -39,6 +43,7 @@ set_property(TARGET STIServer
 
 target_include_directories(STIServer PRIVATE 
     ${WORKING_DIRECTORY}
+    tinyxml
 #    ${Boost_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
