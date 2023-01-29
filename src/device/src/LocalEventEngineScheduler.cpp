@@ -785,7 +785,7 @@ bool LocalEventEngineScheduler::findParsedEngine(const STI::Engine::ParseID& par
 bool LocalEventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
-    STI::Engine::TimeStamp oldest;
+    STI::Utils::TimeStamp oldest;
 
     bool found = false;
 

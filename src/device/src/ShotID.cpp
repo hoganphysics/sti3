@@ -7,7 +7,7 @@
 
 using STI::Engine::ShotID;
 using STI::Engine::ParseID;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 
 
 TimeStamp ShotID::lastSubmissionTime;

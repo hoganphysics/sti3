@@ -141,7 +141,7 @@
     <ClInclude Include="..\src\NetworkConvert.h" />
     <ClInclude Include="..\src\NetworkDeviceEventHandlerWrapper.h" />
     <ClInclude Include="..\src\NetworkDeviceHubWrapper.h" />
-    <ClInclude Include="..\src\NetworkDeviceWrapper.h" />
+    <ClInclude Include="..\src\NetworkDevice.h" />
     <ClInclude Include="..\src\NetworkEventEngine.h" />
     <ClInclude Include="..\src\NetworkEventEngineFactory.h" />
     <ClInclude Include="..\src\NetworkParsedShotWrapper.h" />

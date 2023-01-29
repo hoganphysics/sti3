@@ -54,7 +54,7 @@ public:
 
 private:
 
-    ResultsPaths preparePaths(const TimeStamp& timeStamp);
+    ResultsPaths preparePaths(const STI::Utils::TimeStamp& timeStamp);
 
     std::string makeParseFilename(const ParseID& pid);
     std::string makeShotFilename(const ShotID& sid);
@@ -63,12 +63,12 @@ private:
     // ResultsPaths makePaths(const ShotID& sid);
     // ResultsPaths makePaths(const SequenceID& seqid);
 
-    ResultsPaths makePaths(const TimeStamp& timeStamp);
+    ResultsPaths makePaths(const STI::Utils::TimeStamp& timeStamp);
     // std::string makeBaseDevicePath();
 
     void makePathIfNew(const std::string& pathName);
 
-    std::string getShotBasePath(const TimeStamp& timeStamp);
+    std::string getShotBasePath(const STI::Utils::TimeStamp& timeStamp);
 
     // STI::Device::DeviceID deviceID;
     // std::string rootPath;
@@ -76,7 +76,7 @@ private:
 
     // std::string archiveFilename;
 
-    STI::Utils::OrderedBufferMap<TimeStamp, ResultsPaths> cachedPaths;
+    STI::Utils::OrderedBufferMap<STI::Utils::TimeStamp, ResultsPaths> cachedPaths;
     // STI::Utils::OrderedBufferMap<SequenceID, ResultsPaths> cachedSequencePaths;
 
     mutable std::mutex pathMutex;

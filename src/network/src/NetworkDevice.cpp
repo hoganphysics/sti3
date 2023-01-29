@@ -1,12 +1,12 @@
 
-#include "NetworkDeviceWrapper.h"
+#include "NetworkDevice.h"
 #include "NetworkResultsCollectorFactory.h"
 #include "ORBManager.h"
 
-using STI::Network::NetworkDeviceWrapper;
+using STI::Network::NetworkDevice;
 
 
-NetworkDeviceWrapper::NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device)
+NetworkDevice::NetworkDevice(const std::shared_ptr<STI::Device::Device>& device)
 : localDevice(device), deviceServant(device) 
 {
     STI::Network::ORBManager::ORBManager::activateServant(deviceServant);

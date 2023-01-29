@@ -17,7 +17,7 @@ using STI::Engine::ResultsPaths;
 using STI::Engine::ShotID;
 using STI::Engine::SequenceID;
 using STI::Engine::SequenceResult;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 
 
 LegacyShotRepository::LegacyShotRepository(const std::string& baseDevicePath)

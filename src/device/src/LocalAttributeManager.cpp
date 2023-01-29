@@ -5,7 +5,11 @@
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/LocalAttribute.h>
 
+#include <sti/utils/Configuration.h>
+#include <sti/utils/TimeStamp.h>
+
 #include <set>
+#include <sstream>
 
 
 using STI::Device::LocalAttributeManager;
@@ -14,10 +18,11 @@ using STI::Device::LocalAttribute;
 using STI::Device::Attribute;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageDispatcher;
+using STI::Utils::Configuration;
 
 
 LocalAttributeManager::LocalAttributeManager(const DeviceID& localID, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
- : localID(localID), messageGrouper(dispatcher)
+ : localID(localID), messageGrouper(dispatcher), loading(false)
 {
     messageGrouper.setWarmup(100);   //ms
     messageGrouper.setCooldown(500); //ms
@@ -100,7 +105,12 @@ bool LocalAttributeManager::addAttribute(const std::shared_ptr<LocalAttribute>& 
 {
     if (attribute != 0 && attributeMap.add(attribute->getKey(), attribute)) {
         attribute->addRefreshListener(this);
-        return true;      
+
+        //add any new keys to persistence
+        if (persistenceData != 0 && !persistenceData->includes("Attributes", attribute->getKey())) {           
+            persistenceData->set("Attributes", attribute->getKey(), attribute->getValue());
+        }
+        return true;
     }
     return false;
 }
@@ -109,6 +119,68 @@ bool LocalAttributeManager::addAttribute(const std::shared_ptr<LocalAttribute>& 
 void LocalAttributeManager::handleAttributeRefreshEvent(const std::string& key, const std::string& value)
 {
     auto message = std::make_shared<STI::Device::AttributeUpdateMessage>(localID, key, value);
-    messageGrouper.addMessage(message);    
+    messageGrouper.addMessage(message);
+
+    //persistence
+    if (persistenceData != 0 && !loading.load()) {
+        persistenceData->set("Attributes", key, value);
+
+        if (persistenceRefresher) {
+            persistenceRefresher();
+        }
+    }
 }
 
+
+//*********** PersistenceTarget ****************//
+
+std::string LocalAttributeManager::getFilenameStem()
+{
+    return "attributes";
+}
+
+std::string LocalAttributeManager::getHeader()
+{
+    std::stringstream header;
+    header << "Attributes for " << localID.getID() << std::endl;
+    header << "  Name: " << localID.getName() << std::endl;
+    header << "  Address: " << localID.getAddress() << std::endl;
+    header << "  Module: " << localID.getModule() << std::endl;
+
+    STI::Utils::TimeStamp timestamp;
+    header << "Last saved: " << timestamp.print() << std::endl;
+
+    return header.str();
+}
+
+void LocalAttributeManager::setPersistenceCallback(const std::function<void(void)>& refresher)
+{
+    persistenceRefresher = refresher;
+}
+
+void LocalAttributeManager::setPersistenceData(const std::shared_ptr<Configuration>& data)
+{
+    persistenceData = data;
+}
+
+bool LocalAttributeManager::save()
+{
+    return true;    //persistenceData is kept current with each refresh event
+}
+
+void LocalAttributeManager::load()
+{
+    loading = true;
+
+    if (persistenceData == 0) return;
+
+    auto storedKeys = persistenceData->getParameterNames("Attributes");
+
+    for (auto& key : storedKeys) {
+        std::string value;
+        if (persistenceData->getParameter("Attributes", key, value)) {
+            setValue(key, value);
+        }
+    }
+    loading = false;
+}

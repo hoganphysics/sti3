@@ -106,8 +106,11 @@ void init_Configuration(py::module& m)
     py::class_<ConfigFile>(m, "ConfigFile")
         .def(py::init<>())
         .def(py::init<const std::string&>(), py::arg("filename") )
-        .def("parse", &ConfigFile::parse, py::arg("filename"))
+        .def("save", &ConfigFile::save)
+        .def("load", py::overload_cast<>(&ConfigFile::load))
+        .def("load", py::overload_cast<const std::string&>(&ConfigFile::load), py::arg("filename"))
         .def("isParsed", &ConfigFile::isParsed)
+        .def("setHeader", &ConfigFile::setHeader)
         ;
 
 }

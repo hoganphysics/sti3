@@ -16,6 +16,8 @@
 #include "EventEngineDependencyTree.h"
 #include "LocalResultsCollector.h"
 #include "LocalResultsCollectorFactory.h"
+#include "PersistenceTarget.h"
+#include "PersistenceTargetHolder.h"
 #include "ResultsDocumenter.h"
 #include "SerializedRepository.h"
 #include "TransientRepository.h"
@@ -26,6 +28,8 @@ namespace fs = std::filesystem;
 
 using STI::Device::LocalPersistenceManager;
 
+using STI::Device::PersistenceTarget;
+using STI::Device::PersistenceTargetHolder;
 using STI::Engine::ResultsCollector;
 using STI::Engine::LocalResultsCollector;
 using STI::Device::DeviceID;
@@ -65,11 +69,38 @@ basePath(basePath)
 LocalPersistenceManager::~LocalPersistenceManager()
 {
     //serialize all shots in memory
+
+    //save all persistence targets
+    for (auto& target : persistenceTargetHolders) {
+        if (target != 0) {
+            target->save();
+        }
+    }
 }
 
 void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
 {
     eventEngineScheduler = scheduler;   //weak_ptr to avoid circular reference...
+}
+
+void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target)
+{
+    if (target != 0) {
+        std::filesystem::path filename(getBasePath());
+        filename /= (target->getFilenameStem() + ".ini");
+
+        auto holder = std::make_shared<PersistenceTargetHolder>(filename.string(), target);
+        persistenceTargetHolders.push_back(holder);
+    }
+}
+
+void LocalPersistenceManager::loadPersistenceTargets()
+{
+    for (auto& holder : persistenceTargetHolders) {
+        if (holder != 0) {
+            holder->load();
+        }
+    }
 }
 
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const DeviceID& deviceID)

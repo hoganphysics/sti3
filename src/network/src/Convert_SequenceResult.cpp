@@ -20,7 +20,7 @@ using STI::Engine::SequenceEntryID;
 using STI::TNetwork::TSequenceEntryID;
 using STI::Engine::Sequence;
 using STI::TNetwork::TSequence;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;

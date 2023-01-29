@@ -167,6 +167,8 @@ private:
 	bool getStringValue(const std::string& section, const std::string& name, std::string& value) const;
     static bool hasPrefix(const std::string& item, const std::string& prefix);
 
+protected:
+
 	std::map<std::string, ConfigSection> configData;
 
 };

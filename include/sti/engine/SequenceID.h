@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_SEQUENCEID_H
 #define STI_ENGINE_SEQUENCEID_H
 
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 #include <sti/engine/EngineJobSourceID.h>
 
 #include <string>
@@ -49,7 +49,7 @@ public:
 
 	SequenceID();
 
-	TimeStamp timestamp;
+	STI::Utils::TimeStamp timestamp;
     EngineJobSourceID jobSourceID;
 
 	bool operator<(const SequenceID& rhs) const  { return timestamp < rhs.timestamp; }
@@ -65,7 +65,7 @@ public:
 
 private:
 
-	static TimeStamp lastSubmissionTime;
+	static STI::Utils::TimeStamp lastSubmissionTime;
 	static std::mutex IDmutex;
 };
 

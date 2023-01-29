@@ -65,7 +65,8 @@ public:
 	const DeviceID getID() const;
 
 	bool refresh() { return true; }
-	void kill() {}
+	void kill();
+	void activate();
 	void disable();
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);

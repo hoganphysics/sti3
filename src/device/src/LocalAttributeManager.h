@@ -7,11 +7,14 @@
 
 #include "AttributeRefreshListener.h"
 #include "DeviceMessageGrouper.h"
+#include "PersistenceTarget.h"
 
 #include <map>
 #include <vector>
 #include <string>
 #include <memory>
+#include <atomic>
+#include <functional>
 
 
 namespace STI
@@ -27,7 +30,8 @@ class AttributeUpdateMessage;
 
 
 class LocalAttributeManager : public AttributeManager,
-                              public AttributeRefreshListener
+                              public AttributeRefreshListener,
+                              public PersistenceTarget
 {
 public:
 
@@ -46,6 +50,15 @@ public:
 
 private:
 
+    //PersistenceTarget
+    std::string getFilenameStem();
+    std::string getHeader();
+    void setPersistenceCallback(const std::function<void(void)>& refresher);
+    void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
+    bool save();
+    void load();
+
+    //AttributeRefreshListener
     void handleAttributeRefreshEvent(const std::string& key, const std::string& value);
 
     const DeviceID localID;		//this device's DeviceID
@@ -54,6 +67,9 @@ private:
 
     STI::Device::DeviceMessageGrouper<AttributeUpdateMessage> messageGrouper;
 
+    std::function<void(void)> persistenceRefresher;
+    std::shared_ptr<STI::Utils::Configuration> persistenceData;
+    std::atomic<bool> loading;
 };
 
 

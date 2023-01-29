@@ -102,7 +102,8 @@ add_library(stidevice SHARED
     ParsedVar.cpp
     ParseID.cpp
     ParseResult.cpp
-    ParseTicket.cpp  
+    ParseTicket.cpp
+    PersistenceTargetHolder.cpp
     RawEvent.cpp
     RawEventGroup.cpp
     # RawEventGroupManager.cpp

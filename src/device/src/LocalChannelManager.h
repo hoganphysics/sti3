@@ -6,8 +6,11 @@
 
 #include "ChannelRefreshListener.h"
 #include "DeviceMessageGrouper.h"
+#include "PersistenceTarget.h"
 
 #include <memory>
+#include <atomic>
+#include <functional>
 
 
 namespace STI
@@ -22,7 +25,8 @@ class LocalChannel;
 
 
 class LocalChannelManager : public ChannelManager,
-                            public ChannelRefreshListener
+                            public ChannelRefreshListener,
+                            public PersistenceTarget
 {
 public:
 
@@ -41,6 +45,15 @@ public:
 
 private:
 
+    //PersistenceTarget
+    std::string getFilenameStem();
+    std::string getHeader();
+    void setPersistenceCallback(const std::function<void(void)>& refresher);
+    void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
+    bool save();
+    void load();
+
+    //ChannelRefreshListener
     void handleChannelRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value);
     void handleChannelNameRefreshEvent(short channelNumber, const std::string& name);
 
@@ -49,6 +62,10 @@ private:
     STI::Utils::SynchronizedMap<short, std::shared_ptr<Channel>> channelMap;
 
     STI::Device::DeviceMessageGrouper<ChannelUpdateMessage> messageGrouper;
+
+    std::function<void(void)> persistenceRefresher;
+    std::shared_ptr<STI::Utils::Configuration> persistenceData;
+    std::atomic<bool> loading;
 };
 
 

@@ -1,4 +1,4 @@
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 
 #include <chrono>
 #include <sstream>
@@ -7,7 +7,7 @@
 
 #include "CerealArchives.h"
 
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 
 
 TimeStamp::TimeStamp()
@@ -288,5 +288,5 @@ void TimeStamp::serialize(Archive& archive)
 
 // Note that we need to instantiate for both loading and saving, even
 // if we use a single serialize function
-template void STI::Engine::TimeStamp::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void STI::Engine::TimeStamp::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+template void STI::Utils::TimeStamp::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void STI::Utils::TimeStamp::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

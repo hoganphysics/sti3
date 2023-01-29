@@ -1,7 +1,7 @@
 #ifndef STI_ENGINE_PARSEID_H
 #define STI_ENGINE_PARSEID_H
 
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 #include <sti/engine/EngineJobSourceID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/SequenceID.h>
@@ -21,7 +21,7 @@ public:
 
 	ParseID();
 
-	TimeStamp parseTimestamp;
+	STI::Utils::TimeStamp parseTimestamp;
 	ShotConfig shotConfig;
 
 	SequenceEntryID sequenceEntryID;

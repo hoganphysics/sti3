@@ -7,7 +7,7 @@
 #include <cereal/types/string.hpp>
 
 using STI::Engine::SequenceID;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::Engine::SequenceIndex;
 using STI::Engine::SequenceEntryID;
 

@@ -27,7 +27,7 @@ public:
     ShotResult(const STI::Device::DeviceID& deviceID, std::set<STI::Device::DeviceID>& ownedIDs);
 
     ShotID sid;
-	TimeStamp playTime;
+	STI::Utils::TimeStamp playTime;
 
     // std::shared_ptr<STI::Engine::MeasurementVector> measurements;
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;

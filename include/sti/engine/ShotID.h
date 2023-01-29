@@ -2,7 +2,7 @@
 #define STI_ENGINE_SHOTID_H
 
 #include <sti/engine/ParseID.h>
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 
 #include <string>
 #include <mutex>
@@ -23,7 +23,7 @@ public:
 	ParseID parseID;
 	EngineJobSourceID jobSourceID;
 	
-	TimeStamp submissionTime;	//when the shot was submitted (not when it was played)
+	STI::Utils::TimeStamp submissionTime;	//when the shot was submitted (not when it was played)
 
 	bool operator<(const ShotID& rhs) const 
 	{
@@ -47,7 +47,7 @@ public:
 
 private:
 
-	static TimeStamp lastSubmissionTime;
+	static STI::Utils::TimeStamp lastSubmissionTime;
 	static std::mutex IDmutex;
 
 };

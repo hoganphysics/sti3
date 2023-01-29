@@ -197,11 +197,15 @@ void STI::Network::LocalHub<ID, T>::walk(STI::Network::NodeWalker<ID, T>& root, 
 template<class ID, class T>
 bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::shared_ptr<T>& node)
 {
+	if (node == 0) return false;
+
 	bool success;
 	{
 		std::unique_lock<std::mutex> distributerLock(distributerMutex);
 		success = nodeDistributer.add(id, node);
 	}	//locked section
+
+	node->activate();
 
 	if (success) {
 		return distribute(id, node, HubTrace(), getID()); //includes redundant local distribute...

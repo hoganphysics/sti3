@@ -72,7 +72,7 @@
     <ClInclude Include="..\src\RemoteDevice.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\NetworkDeviceWrapper.h">
+    <ClInclude Include="..\src\NetworkDevice.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TDeviceHub_i.h">

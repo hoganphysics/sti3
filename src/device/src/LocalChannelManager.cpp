@@ -5,16 +5,22 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalChannel.h>
 
+#include <sti/utils/Configuration.h>
+#include <sti/utils/TimeStamp.h>
+
+#include <sstream>
+
 using STI::Device::Channel;
 using STI::Device::DeviceMessageDispatcher;
 using STI::Device::LocalChannel;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Utils::MixedValue;
+using STI::Utils::Configuration;
 
 
 LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
- : localDevice(localDevice), messageGrouper(dispatcher)
+ : localDevice(localDevice), messageGrouper(dispatcher), loading(false)
 {
     messageGrouper.setWarmup(100);   //ms
     messageGrouper.setCooldown(500); //ms
@@ -74,9 +80,14 @@ void LocalChannelManager::stop()
 
 void LocalChannelManager::addChannel(const std::shared_ptr<LocalChannel>& channel)
 {
-    if (channel != 0) {
-        channelMap.add(channel->getChannelNumber(), channel);
+    if (channel != 0 && channelMap.add(channel->getChannelNumber(), channel)) {
         channel->addRefreshListener(this);
+
+        //add any new keys to persistence
+        std::string ch = STI::Utils::valueToString(channel->getChannelNumber());
+        if (persistenceData != 0 && !persistenceData->includes("Channel names", ch)) {           
+            persistenceData->set("Channel names", ch, channel->getChannelName());
+        }
     }
 }
 
@@ -90,5 +101,76 @@ void LocalChannelManager::handleChannelNameRefreshEvent(short channelNumber, con
 {
     auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(localDevice->getID(), channelNumber, name);
     messageGrouper.addMessage(message);
+
+    //persistence
+    if (persistenceData != 0 && !loading.load()) {
+        std::string ch = STI::Utils::valueToString(channelNumber);
+        persistenceData->set("Channel names", ch, name);
+
+        if (persistenceRefresher) {
+            persistenceRefresher();
+        }
+    }
+}
+
+
+//*********** PersistenceTarget ****************//
+
+std::string LocalChannelManager::getFilenameStem()
+{
+    return "channels";
+}
+
+std::string LocalChannelManager::getHeader()
+{
+    auto localID = localDevice->getID();
+
+    std::stringstream header;
+    header << "Channel information for " << localID.getID() << std::endl;
+    header << "  Name: " << localID.getName() << std::endl;
+    header << "  Address: " << localID.getAddress() << std::endl;
+    header << "  Module: " << localID.getModule() << std::endl;
+
+    STI::Utils::TimeStamp timestamp;
+    header << "Last saved: " << timestamp.print() << std::endl;
+
+    return header.str();
+}
+
+void LocalChannelManager::setPersistenceCallback(const std::function<void(void)>& refresher)
+{
+    persistenceRefresher = refresher;
+}
+
+void LocalChannelManager::setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data)
+{
+    persistenceData = data;
+}
+
+bool LocalChannelManager::save()
+{
+    return true;    //persistenceData is kept current with each refresh event
+}
+
+void LocalChannelManager::load()
+{
+    loading = true;
+
+    if (persistenceData == 0) return;
+
+    auto storedKeys = persistenceData->getParameterNames("Channel names");
+
+    for (auto& key : storedKeys) {
+        std::string value;
+        if (persistenceData->getParameter("Channel names", key, value)) {
+            short channelNumber;
+            std::shared_ptr<Channel> channel;
+
+            if (STI::Utils::stringToValue(key, channelNumber) && getChannel(channelNumber, channel)) {
+                channel->setChannelName(value);
+            }
+        }
+    }
+    loading = false;
 }
 

@@ -27,7 +27,7 @@ namespace py = pybind11;
 
 // using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::ParseID;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::Engine::ShotConfig;
 using STI::Engine::LocalShot;
 using STI::Engine::RawEvent;

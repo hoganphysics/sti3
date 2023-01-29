@@ -136,7 +136,7 @@
     <ClInclude Include="..\src\corbatest\RemoteDevice.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\corbatest\NetworkDeviceWrapper.h">
+    <ClInclude Include="..\src\corbatest\NetworkDevice.h">
       <Filter>Header Files\Device</Filter>
     </ClInclude>
     <ClInclude Include="..\src\corbatest\NetworkDeviceHub.h">

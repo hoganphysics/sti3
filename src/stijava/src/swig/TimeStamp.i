@@ -1,11 +1,11 @@
 
 %{
 
-    #include <sti/engine/TimeStamp.h>
-    using STI::Engine::TimeStamp;
+    #include <sti/utils/TimeStamp.h>
+    using STI::Utils::TimeStamp;
 
 %}
 
 //TimeStamp
-%include "sti/engine/TimeStamp.h"
+%include "sti/utils/TimeStamp.h"
 

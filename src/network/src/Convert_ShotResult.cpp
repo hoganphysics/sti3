@@ -25,7 +25,7 @@ using STI::Engine::ParseID;
 using STI::Engine::ShotResult;
 using STI::TNetwork::TShotResult;
 using STI::TNetwork::TTimeStamp;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::TNetwork::TShotResultRecord;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::ParseResult;

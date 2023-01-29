@@ -46,7 +46,7 @@ using STI::Engine::ParseID;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
 using STI::Engine::DeviceEventMap;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::LocalShot;
 using STI::Engine::LocalTriggerCallback;

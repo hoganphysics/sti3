@@ -21,13 +21,13 @@ namespace Network
 {
 
 //Thin wrapper around a LocalDevice that also holds a TDevice_i servant of the same Device
-class NetworkDeviceWrapper : public STI::Device::Device,
+class NetworkDevice : public STI::Device::Device,
 							 public STI::Network::TDeviceRefInterface	//mixin
 {
 public:
 
-	NetworkDeviceWrapper(const std::shared_ptr<STI::Device::Device>& device);
-	virtual ~NetworkDeviceWrapper() {}
+	NetworkDevice(const std::shared_ptr<STI::Device::Device>& device);
+	virtual ~NetworkDevice() {}
 
 	void getCollection(std::shared_ptr<STI::Utils::Collection<STI::Device::DeviceID, STI::Device::Device>>& collection)
 	{
@@ -83,6 +83,13 @@ public:
 	{
 		if (localDevice != 0) {
 			localDevice->kill();
+		}
+	}
+
+	void activate()
+	{
+		if (localDevice != 0) {
+			localDevice->activate();
 		}
 	}
 

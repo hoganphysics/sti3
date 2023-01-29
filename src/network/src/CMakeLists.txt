@@ -82,7 +82,7 @@ add_library(stinetwork SHARED
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
-    NetworkDeviceWrapper.cpp
+    NetworkDevice.cpp
     NetworkDeviceMessageHandlerWrapper.cpp
     NetworkEventEngine.cpp
     NetworkFileHolder.cpp

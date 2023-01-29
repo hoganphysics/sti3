@@ -24,14 +24,20 @@ public:
 	ConfigFile(const std::string& filename);
 	~ConfigFile() {}
 
-	void parse(const std::string& filename);
+	void load();
+	void save();
+
+	void load(const std::string& filename);
 	bool isParsed() const { return parsed; }
+
+	void setHeader(const std::string& header);
 
 private:
 	
 	bool assignStringValue(const std::string& section, std::string line);
 
 	std::string filename_;
+	std::string headerComment;
 	bool parsed;
 	std::string lastParsedName;
 };

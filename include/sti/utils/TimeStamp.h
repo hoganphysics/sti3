@@ -6,7 +6,7 @@
 
 namespace STI
 {
-namespace Engine
+namespace Utils
 {
 
 
@@ -69,7 +69,7 @@ private:
 };
 
 
-} //Engine
+} //Utils
 } //STI
 
 #endif

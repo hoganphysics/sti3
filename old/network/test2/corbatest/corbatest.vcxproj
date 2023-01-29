@@ -59,7 +59,7 @@
     <ClInclude Include="..\src\corbatest\NetworkConvert.h" />
     <ClInclude Include="..\src\corbatest\NetworkDeviceHub.h" />
     <ClInclude Include="..\src\corbatest\NetworkDeviceHubWrapper.h" />
-    <ClInclude Include="..\src\corbatest\NetworkDeviceWrapper.h" />
+    <ClInclude Include="..\src\corbatest\NetworkDevice.h" />
     <ClInclude Include="..\src\corbatest\ORBManager.h" />
     <ClInclude Include="..\src\corbatest\orbTypes.h" />
     <ClInclude Include="..\src\corbatest\RemoteDevice.h" />

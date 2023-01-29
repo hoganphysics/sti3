@@ -178,15 +178,15 @@ void TDeviceHub_i::walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwor
 /*
 This is a bit of a compromise.  Dynamic downcasting here because we need access
 to the derived object's TDevice_i servant.  This is safe because any Device pointer
-stored by this Hub is guaranteed to be a NetworkDeviceWrapper (since it was added by
-the NetworkDeviceHub, which always wraps adds Nodes in a NetworkDeviceWrapper).
+stored by this Hub is guaranteed to be a NetworkDevice (since it was added by
+the NetworkDeviceHub, which always wraps adds Nodes in a NetworkDevice).
 
 An alternative would have been to store and maintain a separate list of TDevice_i servant 
 references somewhere (say in NetworkDeviceHub), indexed by the common DeviceID, and
 then retreive the TDevice_i we need when a distribute() call arrives.  This is much
 more fragile (lists must be synched...), and strains encapsulation.  Instead, we store each
-TDevice_i inside a NetworkDeviceWrapper that wraps the same Device being served by the 
-TDevice_i, and the NetworkDeviceWrapper is simply managed by the usual DeviceCollection.
+TDevice_i inside a NetworkDevice that wraps the same Device being served by the 
+TDevice_i, and the NetworkDevice is simply managed by the usual DeviceCollection.
 
 So we sacrifice some OOP purity for practicality.
 */

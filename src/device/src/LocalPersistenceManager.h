@@ -22,6 +22,8 @@ namespace Device
 {
 
 class DeviceID;
+class PersistenceTarget;
+class PersistenceTargetHolder;
 
 
 class LocalPersistenceManager : public PersistenceManager,
@@ -63,6 +65,8 @@ public:
     bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo);
 
     void attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
+    void addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target);
+    void loadPersistenceTargets();
 
     std::string getBasePath() const;
 
@@ -107,6 +111,9 @@ private:
     std::shared_ptr<STI::Engine::ResultsCollectorFactory> resultsCollectorFactory;
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
+
+    std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;
+
     DeviceID localDeviceID;
     std::string basePath;
 };

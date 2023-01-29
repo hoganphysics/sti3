@@ -7,13 +7,13 @@
 
 namespace py = pybind11;
 
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::Engine::ParseID;
 
 void init_ParseID(py::module& m)
 {
 
-    py::class_<STI::Engine::TimeStamp>(m, "TimeStamp")
+    py::class_<TimeStamp>(m, "TimeStamp")
         .def(py::init<>())
         .def("year", &TimeStamp::year)
         .def("month", &TimeStamp::month)

@@ -1120,7 +1120,7 @@ SWIGINTERN void std_vector_Sl_STI_Utils_MixedValue_Sg__doRemoveRange(std::vector
 
 
 
-    #include <sti/engine/TimeStamp.h>
+    #include <sti/utils/TimeStamp.h>
     using STI::Engine::TimeStamp;
 
 
@@ -1139,7 +1139,7 @@ SWIGINTERN void std_vector_Sl_STI_Utils_MixedValue_Sg__doRemoveRange(std::vector
     #include <sti/engine/EngineJobStatus.h>
     using STI::Engine::EngineJobStatus;
 
-    #include <sti/engine/TimeStamp.h>
+    #include <sti/utils/TimeStamp.h>
     using STI::Engine::TimeStamp;
 
 
@@ -1971,7 +1971,7 @@ SWIGINTERN STI::Device::LocalAttribute &STI_Device_LocalAttribute_setSetter(STI:
     #include <sti/engine/EngineJobStatus.h>
     using STI::Engine::EngineJobStatus;
 
-    #include <sti/engine/TimeStamp.h>
+    #include <sti/utils/TimeStamp.h>
     using STI::Engine::TimeStamp;
 
     #include <sti/engine/EngineJobID.h>

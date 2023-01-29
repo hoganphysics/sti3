@@ -316,9 +316,9 @@ Engine::RawEventType Network::convert<TNetwork::TRawEventType, Engine::RawEventT
 
 //TimeStamp
 template<>
-TNetwork::TTimeStamp Network::convert<Engine::TimeStamp, TNetwork::TTimeStamp>(const Engine::TimeStamp& timeStamp);
+TNetwork::TTimeStamp Network::convert<Utils::TimeStamp, TNetwork::TTimeStamp>(const Utils::TimeStamp& timeStamp);
 template<>
-Engine::TimeStamp Network::convert<TNetwork::TTimeStamp, Engine::TimeStamp>(const TNetwork::TTimeStamp& tTime);
+Utils::TimeStamp Network::convert<TNetwork::TTimeStamp, Utils::TimeStamp>(const TNetwork::TTimeStamp& tTime);
 
 
 //EngineJobSourceID

@@ -46,7 +46,7 @@ public:
 
 private:
     
-    ResultsPaths preparePaths(const TimeStamp& timeStamp);
+    ResultsPaths preparePaths(const STI::Utils::TimeStamp& timeStamp);
 
     std::string makeParseFilename(const ParseID& pid);
     std::string makeShotFilename(const ShotID& sid);
@@ -54,10 +54,10 @@ private:
 
     void makePathIfNew(const std::string& pathName);
     
-    ResultsPaths makePaths(const TimeStamp& timeStamp);
-    std::string getShotBasePath(const TimeStamp& timeStamp);
+    ResultsPaths makePaths(const STI::Utils::TimeStamp& timeStamp);
+    std::string getShotBasePath(const STI::Utils::TimeStamp& timeStamp);
 
-    STI::Utils::OrderedBufferMap<TimeStamp, ResultsPaths> cachedPaths;
+    STI::Utils::OrderedBufferMap<STI::Utils::TimeStamp, ResultsPaths> cachedPaths;
     STI::Utils::OrderedBufferMap<SequenceID, std::shared_ptr<LegacySequenceXMLBuilder>> cachedSequences;
     
     std::string baseDevicePath;

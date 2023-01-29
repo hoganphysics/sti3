@@ -22,7 +22,7 @@
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/ShotResultRecord.h>
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 
 #include <sti/utils/GraphPathLabel.h>
 
@@ -68,7 +68,7 @@ using STI::Engine::EventEngine;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::RawEventType;
 using STI::TNetwork::TRawEventType;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 using STI::TNetwork::TTimeStamp;
 using STI::Engine::EngineJobSourceID;
 using STI::TNetwork::TEngineJobSourceID;

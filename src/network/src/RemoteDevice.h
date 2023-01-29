@@ -40,6 +40,7 @@ public:
 
 	bool refresh();
 	void kill();
+	void activate();
 	void disable();
 	
 	const STI::Device::DeviceID getID() const;	//use locally stored value

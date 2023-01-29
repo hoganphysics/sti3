@@ -17,7 +17,7 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ResultTicket.h>
 #include <sti/engine/ShotID.h>
-#include <sti/engine/TimeStamp.h>
+#include <sti/utils/TimeStamp.h>
 
 #include "fwd/DeviceEventParser_fwd.h"
 #include "DeviceMessageGrouper.h"
@@ -162,7 +162,7 @@ private:
 	void unpauseOwnedDevices(bool retrigger);
 
 	bool waitUntil(std::unique_lock<std::mutex>& lock, double time);
-	TimeStamp getCurrentTimeStamp();
+	STI::Utils::TimeStamp getCurrentTimeStamp();
 
 	bool setState(EngineState target);
 	bool setState(EngineState target, EngineState fallback);

@@ -4,13 +4,13 @@
 #include <sti/network/HubID.h>
 #include <sti/network/HubTrace.h>
 
-#include "NetworkDeviceWrapper.h"
+#include "NetworkDevice.h"
 #include "orbTypes.h"
 #include "ORBManager.h"
 
 #include <memory>
 
-using STI::Network::NetworkDeviceWrapper;
+using STI::Network::NetworkDevice;
 using STI::Network::NetworkDeviceHubWrapper;
 using STI::Network::DeviceHub;
 using STI::Network::HubID;
@@ -48,7 +48,7 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDevi
 		}
 	}
 
-	//For all stored nodes, re-add (replace) with NetworkDeviceWrapper
+	//For all stored nodes, re-add (replace) with NetworkDevice
 
 	std::set<STI::Device::DeviceID> nodeIDs;
 	localHub->getNodeIDs(nodeIDs);
@@ -56,7 +56,7 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDevi
 
 	for (auto& id : nodeIDs) {
 		if (localHub->getNode(id, node) && node != 0) {
-			addNode(id, node);		//replaces with NetworkDeviceWrapper version
+			addNode(id, node);		//replaces with NetworkDevice version
 		}
 	}
 }
@@ -71,7 +71,7 @@ bool NetworkDeviceHubWrapper::addNode(const STI::Device::DeviceID& id, const typ
 {
 	if (localHub != 0) {
 
-		std::shared_ptr<NetworkDeviceWrapper> wrappedNode = std::make_shared<NetworkDeviceWrapper>(node);
+		std::shared_ptr<NetworkDevice> wrappedNode = std::make_shared<NetworkDevice>(node);
 		return localHub->addNode(id, wrappedNode);
 	}
 	return false;

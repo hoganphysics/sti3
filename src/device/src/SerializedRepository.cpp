@@ -26,7 +26,7 @@ using STI::Engine::ShotID;
 using STI::Engine::LocalResultsCollector;
 using STI::Engine::SequenceID;
 using STI::Engine::SequenceResult;
-using STI::Engine::TimeStamp;
+using STI::Utils::TimeStamp;
 
 
 SerializedRepository::SerializedRepository(const std::string& baseDevicePath)

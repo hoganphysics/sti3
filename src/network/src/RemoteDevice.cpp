@@ -93,6 +93,10 @@ void RemoteDevice::kill()
 	}
 }
 
+void RemoteDevice::activate()
+{
+}
+
 void RemoteDevice::disable()
 {
 	TReferenceHolder<STI::TNetwork::TDevice>::disable();

@@ -105,6 +105,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), configuration, basePath, localFileHolderFactory, localCollection);
 
+	localPersistenceManager->addPersistenceTarget(localAttributeManager);
+	localPersistenceManager->addPersistenceTarget(localChannelManager);
+
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
 
 
@@ -181,6 +184,12 @@ LocalDevice::~LocalDevice()
 	localCollection->clear();
 }
 
+void LocalDevice::activate()
+{
+	if (localPersistenceManager != 0) {
+		localPersistenceManager->loadPersistenceTargets();
+	}
+}
 
 void LocalDevice::disable()
 {
@@ -191,6 +200,11 @@ void LocalDevice::disable()
 	if (localCollection != 0) {
 		localCollection->clearListeners();
 	}
+}
+
+void LocalDevice::kill()
+{
+
 }
 
 void LocalDevice::addEventTarget(const DeviceID& id)

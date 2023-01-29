@@ -3,6 +3,7 @@
 #include <sti/utils/utils.h>
 
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <iostream>
 
@@ -17,12 +18,18 @@ ConfigFile::ConfigFile()
 ConfigFile::ConfigFile(const std::string& filename)
 : Configuration(), filename_(filename), parsed(false)
 {
-	parse(filename_);
+	load(filename_);
 }
 
-void ConfigFile::parse(const std::string& filename)
+void ConfigFile::load(const std::string& filename)
 {
-	std::fstream configFile(filename.c_str(), std::fstream::in);
+	filename_ = filename;
+	load();
+}
+
+void ConfigFile::load()
+{
+	std::fstream configFile(filename_.c_str(), std::fstream::in);
 
 	if (!configFile.is_open()) {
 		parsed = false;
@@ -119,3 +126,36 @@ bool ConfigFile::assignStringValue(const std::string& section, std::string line)
 	return true;
 }
 
+void ConfigFile::setHeader(const std::string& header)
+{
+	headerComment = header;
+}
+
+void ConfigFile::save()
+{
+	std::fstream configFile(filename_.c_str(), std::fstream::out);
+	
+	if (!configFile.is_open()) return;
+	
+	//write header in comment block
+	std::stringstream header(headerComment);
+	for (std::string line; getline(header, line, '\n');) {
+        configFile << "# " << line << std::endl;
+    }
+	configFile << std::endl;
+
+	//write parameters in all sections
+	for (auto& section : configData) {
+
+		if (section.first.compare("") != 0) {	//skip if no section name
+			configFile << "[" << section.first << "]" << std::endl;
+		}
+
+		for (auto& parameter : section.second.parameters) {
+			configFile << parameter.first << " = " << parameter.second << std::endl;
+		}
+		configFile << std::endl;
+	}
+
+	configFile.close();
+}

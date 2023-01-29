@@ -47,7 +47,7 @@ public:
         else {
             //different types
             
-            TimeStamp rhsTime;
+            STI::Utils::TimeStamp rhsTime;
             switch(rhs.type) {
                 case EventEngineJobType::Parse:
                     rhsTime = rhs.pid.parseTimestamp;
@@ -83,7 +83,7 @@ public:
     EventEngineJobType type;
     ParseID pid;
     ShotID sid;
-    TimeStamp runTime;  //time job was run
+    STI::Utils::TimeStamp runTime;  //time job was run
 
 };
 

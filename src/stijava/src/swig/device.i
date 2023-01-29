@@ -37,8 +37,8 @@
     #include <sti/engine/EngineJobStatus.h>
     using STI::Engine::EngineJobStatus;
 
-    #include <sti/engine/TimeStamp.h>
-    using STI::Engine::TimeStamp;
+    #include <sti/utils/TimeStamp.h>
+    using STI::Utils::TimeStamp;
 
     #include <sti/engine/EngineJobID.h>
     #include <sti/engine/ParseID.h>
@@ -285,7 +285,7 @@ typedef std::map< STI::Engine::EngineID, STI::Engine::EngineState, std::less< ST
 %include "sti/engine/ShotConfig.h"
 
 
-%include "sti/engine/TimeStamp.h"
+%include "sti/utils/TimeStamp.h"
 %include "sti/engine/ParseID.h"
 %include "sti/engine/ShotID.h"
 
