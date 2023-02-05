@@ -57,7 +57,9 @@
 			"command": "cmake",
 			"args": [
 				"--build",
-				"."
+				".",
+				"--parallel",
+				"4"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/build"

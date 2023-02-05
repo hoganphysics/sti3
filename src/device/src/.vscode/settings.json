@@ -68,6 +68,7 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "filesystem": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "variant": "cpp"
     }
 }

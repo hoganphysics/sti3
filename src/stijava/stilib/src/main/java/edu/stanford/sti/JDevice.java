@@ -68,6 +68,10 @@ public class JDevice {
     stiJNI.JDevice_kill(swigCPtr, this);
   }
 
+  public void activate() {
+    stiJNI.JDevice_activate(swigCPtr, this);
+  }
+
   public void disable() {
     stiJNI.JDevice_disable(swigCPtr, this);
   }

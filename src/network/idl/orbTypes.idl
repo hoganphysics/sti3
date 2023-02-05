@@ -56,15 +56,16 @@ module TNetwork
 
 	union TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
-	enum TMixedValueType { MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueEmpty, MixedValueFile, MixedValueImage, MixedValueAny};
+	enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueFile, MixedValueImage, MixedValueAny};
 	
 	union TMixedValue switch(TMixedValueType) {
+		case MixedValueEmpty: 	boolean empty;
 		case MixedValueBoolean: boolean value_b;
 		case MixedValueInt:		long    value_i;
 		case MixedValueDouble: 	double  value_d;
 		case MixedValueString:	string  value_s;
 		case MixedValueVector: 	TMixedValueSeq values;
-		case MixedValueEmpty: 	boolean empty;
+		case MixedValueVectorInt: sequence<long> valuesInt;
 		case MixedValueFile: 	TFileHolder	value_file;
 		// case MixedValueImage:	TImage	value_image;
 	};

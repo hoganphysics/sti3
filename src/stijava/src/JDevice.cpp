@@ -61,6 +61,13 @@ void JDevice::kill()
     }
 }
 
+void JDevice::activate()
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->activate();
+    } 
+}
+
 void JDevice::disable()
 {
     if(wrappedDevice != 0) {

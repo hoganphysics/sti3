@@ -42,6 +42,7 @@ public:
 
 	const DeviceID getID() const;
 	void kill();
+	void activate();
 	void disable();
 
 	//Device

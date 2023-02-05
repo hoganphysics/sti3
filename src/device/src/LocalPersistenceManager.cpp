@@ -634,6 +634,8 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
     completeResult->parseResult = fullShotResult->parseResult;
     completeResult->shotResult = collector->getResults();
 
+    // addToBuffer(completeResult);     //causes infinite recursion with call to saveShotLocal
+
     bool success = repo->saveShot(sid, completeResult);
 
     if (!success) {

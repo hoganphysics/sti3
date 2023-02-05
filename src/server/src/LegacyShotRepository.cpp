@@ -75,7 +75,7 @@ bool LegacyShotRepository::findSequenceResult(const SequenceID& seqid)
 }
 
 
-bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& shotResult)
+bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<ParseResult>& parseResult)
 {
     if (!findParseResult(id)) return false;
 
@@ -84,7 +84,7 @@ bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeParseFilename(id);
     {
-        std::ifstream file( serializePath.string() );
+        // std::ifstream file( serializePath.string() );
         // cereal::XMLInputArchive archive( file );  
         
         // parseResult = std::make_shared<STI::Engine::ParseResult>();
@@ -92,7 +92,7 @@ bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
         // archive(parseResult);
     }
 
-    return true;
+    return (parseResult != 0);
 }
 
 bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
@@ -106,7 +106,7 @@ bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotR
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeShotFilename(id);
     {
-        std::ifstream file( serializePath.string() );
+        // std::ifstream file( serializePath.string() );
         // cereal::XMLInputArchive archive( file );  
         
         // shotResult = std::make_shared<STI::Engine::ShotResult>();
@@ -114,7 +114,7 @@ bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotR
         // archive(shotResult);
     }
 
-    return true;
+    return (shotResult != 0);
 }
 
 bool LegacyShotRepository::getSequenceResult(const SequenceID& id, std::shared_ptr<SequenceResult>& sequenceResult)
@@ -127,7 +127,7 @@ bool LegacyShotRepository::getSequenceResult(const SequenceID& id, std::shared_p
     serializePath /= makeSequenceFilename(id);
 
     {
-        std::ifstream file( serializePath.string() );
+        // std::ifstream file( serializePath.string() );
         // cereal::XMLInputArchive archive( file );  
         
         // sequenceResult = std::make_shared<STI::Engine::SequenceResult>();
@@ -135,7 +135,7 @@ bool LegacyShotRepository::getSequenceResult(const SequenceID& id, std::shared_p
         // archive(sequenceResult);
     }
 
-    return true;
+    return (sequenceResult != 0);
 }
 
 

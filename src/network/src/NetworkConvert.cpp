@@ -7,6 +7,7 @@
 #include "TFileHolderRefInterface.h"
 #include "RemoteFileHolder.h"
 
+#include <vector>
 
 using STI::Network::convert;
 using STI::TNetwork::TMixedValue;
@@ -155,6 +156,9 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 
 	switch (value.getType())
 	{
+	case MixedValueType::Empty:
+		tValue.empty();
+		break;
 	case MixedValueType::Boolean:
 		tValue.value_b( static_cast<CORBA::Boolean>(value.getBoolean()) );
 		break;
@@ -179,8 +183,24 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 		// }
 
 		break;
-	case MixedValueType::Empty:
-		tValue.empty();
+	case MixedValueType::VectorInt:
+		{
+			const std::vector<int>* values;
+			if (!value.getFlatVector(values)) return false;
+
+			tValue.valuesInt(STI::TNetwork::TMixedValue::_valuesInt_seq());
+			auto& valuesIntRef = tValue.valuesInt();
+
+			//Hack here. Striping const qualifer away from input value to get access to vector raw data.
+			//The TMixedValue type is given a reference to the memory location of the input vector (requires non const).
+			//This is potentially dangerous if the TMixedValue is later modifed. However, we know that convert<> is only being
+			//called in order to marshal and then transmit the data over the network.
+			//So we avoid an unnecessary deep copy by sharing a raw pointer to the data.
+			//Here replace() sets the pointer in the underlying corba sequence to raw data. We use release_=false when
+			//calling replace() to ensure that the corba sequence will not attempt to free this memory, which would
+			//cause a double free.
+			valuesIntRef.replace(values->size(), values->size(), const_cast<std::vector<int>*>(values)->data(), false);		//no release
+		}
 		break;
 	case MixedValueType::File:
 		{
@@ -225,6 +245,9 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 
 	switch (tValue._d())
 	{
+	case TMixedValueType::MixedValueEmpty:
+		value.clear();
+		break;
 	case TMixedValueType::MixedValueBoolean:
 		value = static_cast<bool>(tValue.value_b());
 		break;
@@ -244,7 +267,31 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 		}
 
 		break;
-	case TMixedValueType::MixedValueEmpty:
+	case TMixedValueType::MixedValueVectorInt:
+		{
+			std::vector<int> newVec;
+			value.setValue(newVec);		//convert to VectorInt
+
+			const std::vector<int>* values;
+			if (value.getFlatVector(values)) {
+				// std::vector<int> newVec2;
+				std::vector<int>* pValues = const_cast<std::vector<int>*>(values);
+
+				//For now, do this the slow way (deep copy)
+				pValues->resize(tValue.valuesInt().length());
+				auto& tValues = tValue.valuesInt();
+				for (unsigned i = 0; i < tValues.length() && i < pValues->size(); ++i) {
+					(*pValues)[i] = tValues[i];
+				}
+				// const_cast<std::vector<int>*>(values)->data() = (newVec2.data());
+			}
+
+			//Ideas for a more efficient way, avoiding copies:
+			// bool release = tValue.valuesInt().release();
+			// int* buffer = const_cast<TMixedValue&>(tValue).valuesInt().get_buffer( release );	//orphan if release = true
+			//The data stored in buffer is no longer managed, so we must delete it ourselves (or hand to a vector which will delete...)
+			//Conceptually we now want:   values->data() = buffer;	but this is not possible in portable way...
+		}
 		break;
 	case TMixedValueType::MixedValueFile:
 		{
@@ -272,6 +319,9 @@ TMixedValueType STI::Network::convert<MixedValueType, TMixedValueType>(const Mix
 
 	switch (type)
 	{
+	case MixedValueType::Empty:
+		tType = TMixedValueType::MixedValueEmpty;
+		break;
 	case MixedValueType::Boolean:
 		tType = TMixedValueType::MixedValueBoolean;
 		break;
@@ -287,8 +337,8 @@ TMixedValueType STI::Network::convert<MixedValueType, TMixedValueType>(const Mix
 	case MixedValueType::Vector:
 		tType = TMixedValueType::MixedValueVector;
 		break;
-	case MixedValueType::Empty:
-		tType = TMixedValueType::MixedValueEmpty;
+	case MixedValueType::VectorInt:
+		tType = TMixedValueType::MixedValueVectorInt;
 		break;
 	case MixedValueType::File:
 		tType = TMixedValueType::MixedValueFile;
@@ -315,6 +365,9 @@ MixedValueType STI::Network::convert<TMixedValueType, MixedValueType>(const TMix
 
 	switch (tType)
 	{
+	case TMixedValueType::MixedValueEmpty:
+		type = MixedValueType::Empty;
+		break;
 	case TMixedValueType::MixedValueBoolean:
 		type = MixedValueType::Boolean;
 		break;
@@ -330,8 +383,8 @@ MixedValueType STI::Network::convert<TMixedValueType, MixedValueType>(const TMix
 	case TMixedValueType::MixedValueVector:
 		type = MixedValueType::Vector;
 		break;
-	case TMixedValueType::MixedValueEmpty:
-		type = MixedValueType::Empty;
+	case TMixedValueType::MixedValueVectorInt:
+		type = MixedValueType::VectorInt;
 		break;
 	case TMixedValueType::MixedValueFile:
 		type = MixedValueType::File;

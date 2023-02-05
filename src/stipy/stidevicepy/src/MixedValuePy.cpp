@@ -50,6 +50,9 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 
     switch (value.getType())
     {
+    case MixedValueType::Empty:
+        obj = py::none();
+        break;
     case MixedValueType::Boolean:
         obj = py::cast( value.getBoolean() );
         break;
@@ -72,6 +75,14 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
             }
 
             obj = pyList;
+        }
+        break;
+    case MixedValueType::VectorInt:
+        {
+            const std::vector<int>* values;
+            if (value.getFlatVector(values)) {
+                obj = py::cast(*values);
+            }
         }
         break;
     default:

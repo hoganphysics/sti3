@@ -110,6 +110,14 @@ public class MixedValue {
     stiJNI.MixedValue_clear(swigCPtr, this);
   }
 
+  public void addValue(MixedValue value) {
+    stiJNI.MixedValue_addValue__SWIG_1(swigCPtr, this, MixedValue.getCPtr(value), value);
+  }
+
+  public void addValue(int value) {
+    stiJNI.MixedValue_addValue__SWIG_2(swigCPtr, this, value);
+  }
+
   public MixedValueType getType() {
     return MixedValueType.swigToEnum(stiJNI.MixedValue_getType(swigCPtr, this));
   }
@@ -155,6 +163,10 @@ public class MixedValue {
     return stiJNI.MixedValue_TypeToString(type.swigValue());
   }
 
+  public void swap(MixedValue value) {
+    stiJNI.MixedValue_swap(swigCPtr, this, MixedValue.getCPtr(value), value);
+  }
+
   public MixedValue(String value) {
     this(stiJNI.new_MixedValue__SWIG_3(value), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
@@ -184,8 +196,8 @@ public class MixedValue {
     stiJNI.MixedValue_setValueVector(swigCPtr, this, MixedValueVec.getCPtr(value), value);
   }
 
-  public void addValue(MixedValue value) {
-    stiJNI.MixedValue_addValue(swigCPtr, this, MixedValue.getCPtr(value), value);
+  public VectorInt getVectorInt() {
+    return new VectorInt(stiJNI.MixedValue_getVectorInt(swigCPtr, this), true);
   }
 
 }

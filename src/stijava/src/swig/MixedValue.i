@@ -18,6 +18,8 @@
 %include "sti/utils/MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
+%template(VectorInt) std::vector< int >;
+
 %extend STI::Utils::MixedValue
 {
     MixedValue(const std::string& value)
@@ -58,6 +60,17 @@
     void STI::Utils::MixedValue::addValue(const STI::Utils::MixedValue& value)
     {
         self->addValue< STI::Utils::MixedValue >(value);
+    }
+
+    const std::vector< int > STI::Utils::MixedValue::getVectorInt()
+    {
+        const std::vector< int >* values;
+        if (self->getFlatVector< int >(values)) {
+            return *values;
+        }
+
+        std::vector< int > empty;
+        return empty;
     }
 } 
 

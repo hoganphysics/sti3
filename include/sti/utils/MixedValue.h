@@ -30,6 +30,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <variant>
 
 
 namespace STI
@@ -63,7 +64,6 @@ public:
 		return (*this);
 	}
 
-
 	template<typename T> bool operator==(const T& other) const
 	{
 		return (*this) == MixedValue(other);
@@ -72,7 +72,6 @@ public:
 	{
 		return (*this) != MixedValue(other);
 	}
-
 
 	bool operator==(const MixedValue& other) const;
 	bool operator!=(const MixedValue& other) const;
@@ -83,16 +82,17 @@ public:
 		printError();	//temp; push error message
 	}
 
-	template<typename T> void setValue(const std::vector<T>& value)
+	template<typename T> 
+	void setValue(const std::vector<T>& value)
 	{
 		clear();
-		type = MixedValueType::Vector;
+		convertToVector<T>();
 
-		for (unsigned i = 0; i < value.size(); i++)
-		{
-			addValue(value.at(i));
+		for (auto& v : value) {
+			addValue(v);
 		}
 	}
+
 	void setValue(bool value);
 	void setValue(int value);
 	void setValue(double value);
@@ -109,15 +109,22 @@ public:
 
 	void clear();
 
-	template<typename T> void addValue(const T& value)
+	template<typename T> 
+	void addValue(const T& value)
 	{
-		if (type != MixedValueType::Vector) {
-			convertToVector();
+		convertToVector<MixedValue>();
+		
+		try {
+			auto& values = std::get<MixedValueVector>(value_v);
+			values.push_back(MixedValue());		//empty
+			values.back().setValue(value);
 		}
-
-		values.push_back(MixedValue());		//empty
-		values.back().setValue(value);
+		catch (const std::bad_variant_access& ex) {
+		}
 	}
+
+	void addValue(const MixedValue& value);
+	void addValue(const int& value);
 
 	MixedValueType getType() const;
 	bool isType(const MixedValueType& mixedValueType) const;
@@ -130,9 +137,24 @@ public:
 	const MixedValueVector& getVector() const;
 	std::shared_ptr<STI::Utils::FileHolder> getFile() const;
 
+	template<typename T> 
+	bool getFlatVector(const std::vector<T>*& flatVector) const
+	{
+		try {
+			auto& vec = std::get<std::vector<T>>(value_v);
+			flatVector = &vec;
+			return (flatVector != 0);
+		}
+		catch (const std::bad_variant_access& ex) {
+		}
+		return false;
+	}
+
 	std::string print() const;
 
 	static std::string TypeToString(const MixedValueType& type);
+
+	void swap(MixedValue& value);
 
 	template<class Archive>
 	void serialize(Archive& archive);
@@ -143,18 +165,105 @@ private:
 
 	void printError();
 
-	void convertToVector();
+	template<typename T> 
+	bool isVectorType()
+	{
+		return (type == MixedValueType::Vector) 
+			|| (type == MixedValueType::VectorInt && std::is_same<int, T>());
+	}
 
-	MixedValueVector values;
+	template<typename T> 
+	void convertToVector()
+	{
+		if (isVectorType<T>()) return;
+		
+		// MixedValueType oldType = type;
+		MixedValue oldValue;	//initally empty
+		swap(oldValue);
+
+		clear();
+
+		//attempt to make homogeneous vector
+		if (std::is_same<int, T>() && 
+			(oldValue.isType(MixedValueType::Int) || oldValue.isType(MixedValueType::Empty))) 
+		{
+			type = MixedValueType::VectorInt;
+			std::vector<int> newValues;
+			value_v = newValues;
+		}
+		else {
+			//fall back to heterogeneous vector
+			type = MixedValueType::Vector;
+			MixedValueVector newValues;
+			value_v = newValues;
+		}
+
+		if (oldValue.isType(MixedValueType::Empty)) return;
+
+		//add old value as the first element of the vector
+		try {
+			if (type == MixedValueType::VectorInt) {
+				auto& values = std::get<std::vector<int>>(value_v);
+
+				auto& value = std::get<int>(oldValue.value_v);
+				values.push_back(value);
+			}
+			else {
+				auto& values = std::get<MixedValueVector>(value_v);
+				wrapThenAppend(oldValue, values);
+				// values.push_back(MixedValue());		//empty
+				// values.back().swap(oldValue);
+			}
+		}
+		catch (const std::bad_variant_access& ex) {
+			// swap(oldValue);		//error; reset value
+		}
+
+		// if (isVariantMember<std::vector<T>, VariantType>()) {
+		// 	std::vector<T> newValues;
+		// 	value_v = newValues;
+		// }
+		// else {
+		// 	type = MixedValueType::Vector;
+		// 	MixedValueVector newValues;
+		// 	value_v = newValues;			
+		// }		
+	}
+
+	void wrapThenAppend(const MixedValue& source, MixedValueVector& target);
+
+	// template<typename T, typename VARIANT_T>
+	// struct isVariantMember;
+
+	// template<typename T, typename... ALL_T>
+	// struct isVariantMember<T, std::variant<ALL_T...>> : public std::disjunction<std::is_same<T, ALL_T>...> {};
+
+
+	// MixedValueVector values;
 
 	MixedValueType type;
 
-	bool        value_b;
-	int         value_i;
-	double      value_d;
-	std::string value_s;
+	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any}
+	typedef std::variant<std::monostate, 
+						bool, 
+						int, 
+						double, 
+						std::string, 
+						MixedValueVector, 
+						std::vector<int>,
+						std::shared_ptr<STI::Utils::FileHolder>
+						> VariantType;
 
-	std::shared_ptr<STI::Utils::FileHolder> value_file;
+	VariantType value_v;
+
+	MixedValueVector empty;	//needed to return reference (when value_v doesn't hold a vector)
+
+	// bool        value_b;
+	// int         value_i;
+	// double      value_d;
+	// std::string value_s;
+
+	// std::shared_ptr<STI::Utils::FileHolder> value_file;
 
 };
 

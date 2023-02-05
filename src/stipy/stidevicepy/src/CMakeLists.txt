@@ -126,6 +126,7 @@ pybind11_add_module(stipybase MODULE
     RawEvent_wrap.cpp
     Sequence_wrap.cpp
     SequenceResult_wrap.cpp
+    ShotID_wrap.cpp
     ShotConfig_wrap.cpp
     ShotResult_wrap.cpp
     StackTrace_wrap.cpp

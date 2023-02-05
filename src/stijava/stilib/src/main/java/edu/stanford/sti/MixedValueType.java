@@ -9,12 +9,13 @@
 package edu.stanford.sti;
 
 public final class MixedValueType {
+  public final static MixedValueType Empty = new MixedValueType("Empty");
   public final static MixedValueType Boolean = new MixedValueType("Boolean");
   public final static MixedValueType Int = new MixedValueType("Int");
   public final static MixedValueType Double = new MixedValueType("Double");
   public final static MixedValueType String = new MixedValueType("String");
   public final static MixedValueType Vector = new MixedValueType("Vector");
-  public final static MixedValueType Empty = new MixedValueType("Empty");
+  public final static MixedValueType VectorInt = new MixedValueType("VectorInt");
   public final static MixedValueType File = new MixedValueType("File");
   public final static MixedValueType Image = new MixedValueType("Image");
   public final static MixedValueType Any = new MixedValueType("Any");
@@ -53,7 +54,7 @@ public final class MixedValueType {
     swigNext = this.swigValue+1;
   }
 
-  private static MixedValueType[] swigValues = { Boolean, Int, Double, String, Vector, Empty, File, Image, Any };
+  private static MixedValueType[] swigValues = { Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

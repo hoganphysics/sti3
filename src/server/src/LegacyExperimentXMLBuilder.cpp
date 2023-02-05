@@ -13,6 +13,8 @@
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
+#include <sstream>
+#include <iterator>
 
 
 using STI::Engine::LegacyExperimentXMLBuilder;
@@ -54,6 +56,25 @@ void addAttributes(tinyxml2::XMLElement* attributes, const std::map<std::string,
         attribute->SetAttribute("key", attrib.first.c_str());
         attribute->SetAttribute("value", attrib.second.c_str());
     }
+}
+
+template<class T>
+void addDimlimitedVector(tinyxml2::XMLElement* base, const std::vector<T>* values, const std::string& delimiter, const std::string& type)
+{
+    if (values == 0) return;
+
+    auto vec = base->InsertNewChildElement("delimitedvector");
+    vec->SetAttribute("delimiter", delimiter.c_str());
+    vec->SetAttribute("length", STI::Utils::valueToString(values->size()).c_str());
+    vec->SetAttribute("type", type.c_str());
+
+    std::ostringstream out;
+    if (!values->empty())
+    {
+        std::copy(std::begin(*values), std::end(*values) - 1, std::ostream_iterator<T>(out, delimiter.c_str()));
+        out << values->back();
+    }
+    vec->SetText(out.str().c_str());
 }
 
 void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI::Utils::MixedValue& value)
@@ -98,6 +119,30 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
                 for (auto& v : value.getVector()) {
                     addValue(vec, v);
                 }                
+            }
+            break;
+        case MixedValueType::VectorInt:
+            {
+                const std::vector<int>* values;
+                if (value.getFlatVector(values)) {
+
+                    addDimlimitedVector(base, values, ",", "Int");
+
+                    // std::string delimiter = ",";
+
+                    // auto vec = base->InsertNewChildElement("delimitedvector");
+                    // vec->SetAttribute("delimiter", delimiter.c_str());
+                    // vec->SetAttribute("length", STI::Utils::valueToString(values->size()).c_str());
+                    // vec->SetAttribute("type", "Int");
+
+                    // std::ostringstream out;
+                    // if (!values->empty())
+                    // {
+                    //     std::copy(std::begin(*values), std::end(*values) - 1, std::ostream_iterator<int>(out, delimiter.c_str()));
+                    //     out << values->back();
+                    // }
+                    // vec->SetText(out.str().c_str());
+                }
             }
             break;
     }
