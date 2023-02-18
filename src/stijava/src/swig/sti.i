@@ -15,11 +15,14 @@
 %rename(opLess) operator<;
 %rename(opNotEquals) operator!=;
 %rename(opEvaluate) operator();
+%rename(opAddAssign) operator+=;
+%rename(opAssign) operator=;
 
 
 //Utils
 %include utils.i
 %include FileHolder.i
+%include BinaryData.i
 %include MixedValue.i
 %include MetaData.i
 

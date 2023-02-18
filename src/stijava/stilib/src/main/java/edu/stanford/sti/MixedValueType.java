@@ -16,6 +16,7 @@ public final class MixedValueType {
   public final static MixedValueType String = new MixedValueType("String");
   public final static MixedValueType Vector = new MixedValueType("Vector");
   public final static MixedValueType VectorInt = new MixedValueType("VectorInt");
+  public final static MixedValueType Binary = new MixedValueType("Binary");
   public final static MixedValueType File = new MixedValueType("File");
   public final static MixedValueType Image = new MixedValueType("Image");
   public final static MixedValueType Any = new MixedValueType("Any");
@@ -54,7 +55,7 @@ public final class MixedValueType {
     swigNext = this.swigValue+1;
   }
 
-  private static MixedValueType[] swigValues = { Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any };
+  private static MixedValueType[] swigValues = { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any };
   private static int swigNext = 0;
   private final int swigValue;
   private final String swigName;

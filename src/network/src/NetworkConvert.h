@@ -226,6 +226,7 @@ namespace Utils
 {
 
 class MixedValue;
+class BinaryData;
 
 } //Utils
 
@@ -245,6 +246,12 @@ template<>
 TNetwork::TMixedValueType Network::convert<Utils::MixedValueType, TNetwork::TMixedValueType>(const Utils::MixedValueType& type);
 template<>
 Utils::MixedValueType Network::convert<TNetwork::TMixedValueType, Utils::MixedValueType>(const TNetwork::TMixedValueType& tType);
+
+
+template<>
+bool Network::convert<Utils::BinaryData, TNetwork::TBinaryData>(const Utils::BinaryData& bin, TNetwork::TBinaryData& tBin);
+template<>
+bool Network::convert<TNetwork::TBinaryData, Utils::BinaryData>(const TNetwork::TBinaryData& tBin, Utils::BinaryData& bin);
 
 
 

@@ -25,6 +25,7 @@
 
 #include <sti/fwd/MixedValue_fwd.h>
 
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/FileHolder.h>
 
 #include <vector>
@@ -39,6 +40,7 @@ namespace Utils
 {
 
 class MixedValue;
+
 
 class MixedValue
 {
@@ -96,6 +98,7 @@ public:
 	void setValue(bool value);
 	void setValue(int value);
 	void setValue(double value);
+	void setValue(const std::shared_ptr<STI::Utils::BinaryData>& value);
 	void setValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
 	void setValue(const std::string& value);
 	void setValue(const MixedValue& value);
@@ -135,6 +138,7 @@ public:
 	double getNumber() const;
 	std::string getString() const;
 	const MixedValueVector& getVector() const;
+	std::shared_ptr<STI::Utils::BinaryData> getBinary() const;
 	std::shared_ptr<STI::Utils::FileHolder> getFile() const;
 
 	template<typename T> 
@@ -243,7 +247,7 @@ private:
 
 	MixedValueType type;
 
-	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any}
+	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
 	typedef std::variant<std::monostate, 
 						bool, 
 						int, 
@@ -251,6 +255,7 @@ private:
 						std::string, 
 						MixedValueVector, 
 						std::vector<int>,
+						std::shared_ptr<STI::Utils::BinaryData>,
 						std::shared_ptr<STI::Utils::FileHolder>
 						> VariantType;
 

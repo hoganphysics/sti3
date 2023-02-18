@@ -40,6 +40,12 @@
         mixedVal->setValue(value);
         return mixedVal;
     }
+    MixedValue(const std::shared_ptr< STI::Utils::BinaryData >& value)
+    {
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+        mixedVal->setValue(value);
+        return mixedVal;
+    }
     MixedValue(const std::shared_ptr< STI::Utils::FileHolder >& value)
     {
         STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();

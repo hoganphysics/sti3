@@ -14,7 +14,7 @@ class MixedValue;
 
 typedef std::vector<MixedValue> MixedValueVector;
 
-enum class MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any};
+enum class MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any};
 
 
 } //Utils

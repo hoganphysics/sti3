@@ -70,6 +70,10 @@ public class DeviceIDDependencyTree {
     stiJNI.DeviceIDDependencyTree_director_connect(this, swigCPtr, true, true);
   }
 
+  public DeviceIDDependencyTree opAssign(DeviceIDDependencyTree tree) {
+    return new DeviceIDDependencyTree(stiJNI.DeviceIDDependencyTree_opAssign(swigCPtr, this, DeviceIDDependencyTree.getCPtr(tree), tree), true);
+  }
+
   public void addTree(DeviceIDDependencyTree tree) {
     stiJNI.DeviceIDDependencyTree_addTree(swigCPtr, this, DeviceIDDependencyTree.getCPtr(tree), tree);
   }

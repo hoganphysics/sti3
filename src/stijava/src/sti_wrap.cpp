@@ -1023,6 +1023,71 @@ struct SWIG_null_deleter {
 #define SWIG_NO_NULL_DELETER_SWIG_POINTER_OWN
 
 
+    #include <sti/utils/BinaryData.h>
+
+
+SWIGINTERN signed char *STI_Utils_BinaryData_get(STI::Utils::BinaryData *self){
+        signed char* data;
+        if (self->get<signed char>(data)) {
+            return data;
+        }
+
+        return data;
+    }
+SWIGINTERN unsigned char *STI_Utils_BinaryData_getBytes(STI::Utils::BinaryData *self){
+        unsigned char* uData;
+        char* cData;
+
+        if (self->get<unsigned char>(uData)) {
+            return uData;
+        }
+        else if (self->get<char>(cData)) {
+            return reinterpret_cast<unsigned char*>(cData);
+        }
+
+        return uData;
+    }
+SWIGINTERN int *STI_Utils_BinaryData_getInts(STI::Utils::BinaryData *self){
+        int* data;
+        unsigned int* uData;
+        if (self->get<int>(data)) {
+            return data;
+        }
+        else if (self->get<unsigned int>(uData)) {
+            return reinterpret_cast<int*>(uData);
+        }
+
+        return data;
+    }
+SWIGINTERN short *STI_Utils_BinaryData_getShorts(STI::Utils::BinaryData *self){
+        short* data;
+        unsigned short* uData;
+        if (self->get<short>(data)) {
+            return data;
+        }
+        else if (self->get<unsigned short>(uData)) {
+            return reinterpret_cast<short*>(uData);
+        }
+
+        return data;
+    }
+SWIGINTERN double *STI_Utils_BinaryData_getDoubles(STI::Utils::BinaryData *self){
+        double* data;
+        if (self->get<double>(data)) {
+            return data;
+        }
+
+        return data;
+    }
+SWIGINTERN float *STI_Utils_BinaryData_getFloats(STI::Utils::BinaryData *self){
+        float* data;
+        if (self->get<float>(data)) {
+            return data;
+        }
+
+        return data;
+    }
+
     #include <sti/utils/MixedValue.h>
 
     using STI::Utils::MixedValue;
@@ -1044,12 +1109,17 @@ SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_5(int value){
         mixedVal->setValue(value);
         return mixedVal;
     }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_6(std::shared_ptr< STI::Utils::FileHolder > const &value){
+SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_6(std::shared_ptr< STI::Utils::BinaryData > const &value){
         STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
         mixedVal->setValue(value);
         return mixedVal;
     }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_7(bool value){
+SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_7(std::shared_ptr< STI::Utils::FileHolder > const &value){
+        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+        mixedVal->setValue(value);
+        return mixedVal;
+    }
+SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_8(bool value){
         STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
         mixedVal->setValue(value);
         return mixedVal;
@@ -7452,6 +7522,405 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_FileHolder_1change_1ownersh
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1BinaryData(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  STI::Utils::BinaryData *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (STI::Utils::BinaryData *)new STI::Utils::BinaryData();
+  
+  *(std::shared_ptr<  STI::Utils::BinaryData > **)&jresult = result ? new std::shared_ptr<  STI::Utils::BinaryData >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1BinaryData(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1opEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  STI::Utils::BinaryData *arg2 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData const > *smartarg1 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  
+  arg2 = (STI::Utils::BinaryData *)((*(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg2) ? (*(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg2)->get() : 0);
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::BinaryData const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Utils::BinaryData const *)arg1)->operator ==((STI::Utils::BinaryData const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1opNotEquals(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jboolean jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  STI::Utils::BinaryData *arg2 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData const > *smartarg1 = 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  
+  arg2 = (STI::Utils::BinaryData *)((*(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg2) ? (*(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg2)->get() : 0);
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::BinaryData const & reference is null");
+    return 0;
+  } 
+  result = (bool)((STI::Utils::BinaryData const *)arg1)->operator !=((STI::Utils::BinaryData const &)*arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->clear();
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1length(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData const > *smartarg1 = 0 ;
+  size_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((STI::Utils::BinaryData const *)arg1)->length();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1bytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData const > *smartarg1 = 0 ;
+  size_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((STI::Utils::BinaryData const *)arg1)->bytes();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1wordsize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData const > *smartarg1 = 0 ;
+  size_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr< const STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = ((STI::Utils::BinaryData const *)arg1)->wordsize();
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1swap(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  STI::Utils::BinaryData *arg2 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  
+  arg2 = (STI::Utils::BinaryData *)((*(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg2) ? (*(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg2)->get() : 0);
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::BinaryData & reference is null");
+    return ;
+  } 
+  (arg1)->swap(*arg2);
+}
+
+
+SWIGEXPORT jbyteArray JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jbyteArray jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  signed char *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (signed char *)STI_Utils_BinaryData_get(arg1);
+  {
+    size_t length = 0;
+    if (arg1 != 0) {
+      //arg1 is this, BinaryData*
+      length = arg1->length();
+    }
+    
+    jresult = jenv->NewByteArray(length);
+    jenv->SetByteArrayRegion(jresult, 0, length, result);
+    
+    //test
+    // void* DataPointer;
+    // jresult = JCALL2(NewDirectByteBuffer, jenv, DataPointer, length);
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT jobject JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1getBytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jobject jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  unsigned char *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (unsigned char *)STI_Utils_BinaryData_getBytes(arg1);
+  {
+    size_t length = 0;
+    unsigned char* dataTest;
+    if (arg1 != 0 && arg1->get<unsigned char>(dataTest)) {
+      //arg1 is this, BinaryData*
+      //calling get to ensure that BinaryData holds the correct type (length will stay zero if not)
+      length = arg1->length();
+    }
+    void* dataPtr = static_cast<void*>(result);
+    jresult = jenv->NewDirectByteBuffer(dataPtr, length);
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT jobject JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1getInts(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jobject jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  int *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (int *)STI_Utils_BinaryData_getInts(arg1);
+  {
+    size_t length = 0;
+    int* dataTest;
+    if (arg1 != 0 && arg1->get<int>(dataTest)) {
+      //arg1 is this, BinaryData*
+      //calling get to ensure that BinaryData holds the correct type (length will stay zero if not)
+      length = arg1->length();
+    }
+    void* dataPtr = static_cast<void*>(result);
+    jobject byteBuf = jenv->NewDirectByteBuffer(dataPtr, length);
+    
+    
+    jclass ByteBufferClass = jenv->FindClass("java/nio/ByteBuffer");
+    jclass ByteOrderClass = jenv->FindClass("java/nio/ByteOrder");
+    jclass IntBufferClass = jenv->FindClass("java/nio/IntBuffer");
+    
+    jmethodID asIntBuffer_methodID = jenv->GetMethodID(ByteBufferClass, "asIntBuffer", "()Ljava/nio/IntBuffer;");
+    jmethodID order_methodID = jenv->GetMethodID(ByteBufferClass, "order", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+    jmethodID nativeOrder_methodID = jenv->GetStaticMethodID(ByteOrderClass, "nativeOrder", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteOrder;");
+    
+    jobject endian = jenv->CallStaticObjectMethod(ByteOrderClass, nativeOrder_methodID);
+    
+    jenv->CallObjectMethod(byteBuf, order_methodID, endian);
+    jresult = jenv->CallObjectMethod(byteBuf, asIntBuffer_methodID);
+    
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT jobject JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1getShorts(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jobject jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  short *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (short *)STI_Utils_BinaryData_getShorts(arg1);
+  {
+    size_t length = 0;
+    short* dataTest;
+    if (arg1 != 0 && arg1->get<short>(dataTest)) {
+      //arg1 is this, BinaryData*
+      //calling get to ensure that BinaryData holds the correct type (length will stay zero if not)
+      length = arg1->length();
+    }
+    void* dataPtr = static_cast<void*>(result);
+    jobject byteBuf = jenv->NewDirectByteBuffer(dataPtr, length);
+    
+    jclass ByteBufferClass = jenv->FindClass("java/nio/ByteBuffer");
+    jclass ByteOrderClass = jenv->FindClass("java/nio/ByteOrder");
+    jclass ShortBufferClass = jenv->FindClass("java/nio/ShortBuffer");
+    
+    jmethodID asShortBuffer_methodID = jenv->GetMethodID(ByteBufferClass, "asShortBuffer", "()Ljava/nio/ShortBuffer;");
+    jmethodID order_methodID = jenv->GetMethodID(ByteBufferClass, "order", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+    jmethodID nativeOrder_methodID = jenv->GetStaticMethodID(ByteOrderClass, "nativeOrder", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteOrder;");
+    
+    jobject endian = jenv->CallStaticObjectMethod(ByteOrderClass, nativeOrder_methodID);
+    
+    jenv->CallObjectMethod(byteBuf, order_methodID, endian);
+    jresult = jenv->CallObjectMethod(byteBuf, asShortBuffer_methodID);
+    
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT jobject JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1getDoubles(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jobject jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  double *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (double *)STI_Utils_BinaryData_getDoubles(arg1);
+  {
+    size_t length = 0;
+    double* dataTest;
+    if (arg1 != 0 && arg1->get<double>(dataTest)) {
+      //arg1 is this, BinaryData*
+      //calling get to ensure that BinaryData holds the correct type (length will stay zero if not)
+      length = arg1->length();
+    }
+    void* dataPtr = static_cast<void*>(result);
+    jobject byteBuf = jenv->NewDirectByteBuffer(dataPtr, length);
+    
+    
+    jclass ByteBufferClass = jenv->FindClass("java/nio/ByteBuffer");
+    jclass ByteOrderClass = jenv->FindClass("java/nio/ByteOrder");
+    jclass DoubleBufferClass = jenv->FindClass("java/nio/DoubleBuffer");
+    
+    jmethodID asDoubleBuffer_methodID = jenv->GetMethodID(ByteBufferClass, "asDoubleBuffer", "()Ljava/nio/DoubleBuffer;");
+    jmethodID order_methodID = jenv->GetMethodID(ByteBufferClass, "order", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+    jmethodID nativeOrder_methodID = jenv->GetStaticMethodID(ByteOrderClass, "nativeOrder", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteOrder;");
+    
+    jobject endian = jenv->CallStaticObjectMethod(ByteOrderClass, nativeOrder_methodID);
+    
+    jenv->CallObjectMethod(byteBuf, order_methodID, endian);
+    jresult = jenv->CallObjectMethod(byteBuf, asDoubleBuffer_methodID);
+    
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT jobject JNICALL Java_edu_stanford_sti_stiJNI_BinaryData_1getFloats(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jobject jresult = 0 ;
+  STI::Utils::BinaryData *arg1 = (STI::Utils::BinaryData *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *smartarg1 = 0 ;
+  float *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::BinaryData > **)&jarg1;
+  arg1 = (STI::Utils::BinaryData *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float *)STI_Utils_BinaryData_getFloats(arg1);
+  {
+    size_t length = 0;
+    float* dataTest;
+    if (arg1 != 0 && arg1->get<float>(dataTest)) {
+      //arg1 is this, BinaryData*
+      //calling get to ensure that BinaryData holds the correct type (length will stay zero if not)
+      length = arg1->length();
+    }
+    void* dataPtr = static_cast<void*>(result);
+    jobject byteBuf = jenv->NewDirectByteBuffer(dataPtr, length);
+    
+    
+    jclass ByteBufferClass = jenv->FindClass("java/nio/ByteBuffer");
+    jclass ByteOrderClass = jenv->FindClass("java/nio/ByteOrder");
+    jclass FloatBufferClass = jenv->FindClass("java/nio/FloatBuffer");
+    
+    jmethodID asFloatBuffer_methodID = jenv->GetMethodID(ByteBufferClass, "asFloatBuffer", "()Ljava/nio/FloatBuffer;");
+    jmethodID order_methodID = jenv->GetMethodID(ByteBufferClass, "order", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+    jmethodID nativeOrder_methodID = jenv->GetStaticMethodID(ByteOrderClass, "nativeOrder", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteOrder;");
+    
+    jobject endian = jenv->CallStaticObjectMethod(ByteOrderClass, nativeOrder_methodID);
+    
+    jenv->CallObjectMethod(byteBuf, order_methodID, endian);
+    jresult = jenv->CallObjectMethod(byteBuf, asFloatBuffer_methodID);
+    
+  }
+  return jresult;
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   STI::Utils::MixedValue *result = 0 ;
@@ -7594,6 +8063,21 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWI
 
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *arg2 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > tempnull2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  arg2 = jarg2 ? *(std::shared_ptr< STI::Utils::BinaryData > **)&jarg2 : &tempnull2; 
+  (arg1)->setValue((std::shared_ptr< STI::Utils::BinaryData > const &)*arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   std::shared_ptr< STI::Utils::FileHolder > *arg2 = 0 ;
   std::shared_ptr< STI::Utils::FileHolder > tempnull2 ;
   
@@ -7607,7 +8091,7 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWI
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   std::string *arg2 = 0 ;
   
@@ -7628,7 +8112,7 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWI
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   STI::Utils::MixedValue *arg2 = 0 ;
   
@@ -7646,7 +8130,7 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWI
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   
   (void)jenv;
@@ -7657,7 +8141,7 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWI
 }
 
 
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1setValue_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   short arg2 ;
   
@@ -7838,6 +8322,21 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getVector(JNIE
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getBinary(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(STI::Utils::MixedValue **)&jarg1; 
+  result = ((STI::Utils::MixedValue const *)arg1)->getBinary();
+  *(std::shared_ptr< STI::Utils::BinaryData > **)&jresult = result ? new std::shared_ptr< STI::Utils::BinaryData >(result) : 0; 
+  return jresult;
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1getFile(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
@@ -7954,6 +8453,22 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_15
 
 SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *arg1 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > tempnull1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::BinaryData > **)&jarg1 : &tempnull1; 
+  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_6((std::shared_ptr< STI::Utils::BinaryData > const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
   std::shared_ptr< STI::Utils::FileHolder > *arg1 = 0 ;
   std::shared_ptr< STI::Utils::FileHolder > tempnull1 ;
   STI::Utils::MixedValue *result = 0 ;
@@ -7962,13 +8477,13 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_16
   (void)jcls;
   (void)jarg1_;
   arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::FileHolder > **)&jarg1 : &tempnull1; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_6((std::shared_ptr< STI::Utils::FileHolder > const &)*arg1);
+  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_7((std::shared_ptr< STI::Utils::FileHolder > const &)*arg1);
   *(STI::Utils::MixedValue **)&jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jboolean jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jboolean jarg1) {
   jlong jresult = 0 ;
   bool arg1 ;
   STI::Utils::MixedValue *result = 0 ;
@@ -7976,7 +8491,7 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_17
   (void)jenv;
   (void)jcls;
   arg1 = jarg1 ? true : false; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_7(arg1);
+  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_8(arg1);
   *(STI::Utils::MixedValue **)&jresult = result; 
   return jresult;
 }
@@ -10114,6 +10629,32 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1DeviceIDDependencyT
   smartarg1 = *(std::shared_ptr<  STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg1;
   arg1 = (STI::Utils::DependencyTree< STI::Device::DeviceID > *)(smartarg1 ? smartarg1->get() : 0); 
   (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_DeviceIDDependencyTree_1opAssign(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  STI::Utils::DependencyTree< STI::Device::DeviceID > *arg1 = (STI::Utils::DependencyTree< STI::Device::DeviceID > *) 0 ;
+  STI::Utils::DependencyTree< STI::Device::DeviceID > *arg2 = 0 ;
+  std::shared_ptr< STI::Utils::DependencyTree< STI::Device::DeviceID > > *smartarg1 = 0 ;
+  STI::Utils::DependencyTree< STI::Device::DeviceID > *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg1;
+  arg1 = (STI::Utils::DependencyTree< STI::Device::DeviceID > *)(smartarg1 ? smartarg1->get() : 0); 
+  
+  arg2 = (STI::Utils::DependencyTree< STI::Device::DeviceID > *)((*(std::shared_ptr< const STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg2) ? (*(std::shared_ptr< const STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jarg2)->get() : 0);
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Utils::DependencyTree< STI::Device::DeviceID > const & reference is null");
+    return 0;
+  } 
+  result = (STI::Utils::DependencyTree< STI::Device::DeviceID > *) &(arg1)->operator =((STI::Utils::DependencyTree< STI::Device::DeviceID > const &)*arg2);
+  *(std::shared_ptr<  STI::Utils::DependencyTree< STI::Device::DeviceID > > **)&jresult = new std::shared_ptr<  STI::Utils::DependencyTree< STI::Device::DeviceID > >(result SWIG_NO_NULL_DELETER_0); 
+  return jresult;
 }
 
 
@@ -16472,6 +17013,28 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventGroupStats_1subgro
   arg1 = *(STI::Engine::RawEventGroupStats **)&jarg1; 
   result = (unsigned int) ((arg1)->subgroups);
   jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_RawEventGroupStats_1opAddAssign(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  STI::Engine::RawEventGroupStats *arg1 = (STI::Engine::RawEventGroupStats *) 0 ;
+  STI::Engine::RawEventGroupStats *arg2 = 0 ;
+  STI::Engine::RawEventGroupStats *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(STI::Engine::RawEventGroupStats **)&jarg1; 
+  arg2 = *(STI::Engine::RawEventGroupStats **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "STI::Engine::RawEventGroupStats const & reference is null");
+    return 0;
+  } 
+  result = (STI::Engine::RawEventGroupStats *) &(arg1)->operator +=((STI::Engine::RawEventGroupStats const &)*arg2);
+  *(STI::Engine::RawEventGroupStats **)&jresult = result; 
   return jresult;
 }
 

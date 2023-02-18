@@ -54,19 +54,42 @@ module TNetwork
 	interface TFileHolder;
 	typedef sequence<TFileHolder> TFileHolderSeq;
 
+	enum TBinaryType { BinaryChar, BinaryUChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble };
+
+	union TMixedBinaryData switch(TBinaryType)
+	{
+		case BinaryUChar: 	sequence<char> 				data_uchar;
+		case BinaryChar: 	sequence<char> 				data_char;
+		case BinaryUShort: 	sequence<unsigned short> 	data_ushort;
+		case BinaryShort: 	sequence<short> 			data_short; 
+		case BinaryULong: 	sequence<unsigned long> 	data_ulong;
+		case BinaryLong: 	sequence<long> 				data_long;
+		case BinaryFloat: 	sequence<float> 			data_float;
+		case BinaryDouble: 	sequence<double> 			data_double;
+	};
+
+	struct TBinaryData
+	{
+		short wordsize;
+		TMixedBinaryData data;
+	};
+	
+
 	union TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
-	enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueFile, MixedValueImage, MixedValueAny};
+	enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueBinary, MixedValueFile, MixedValueImage, MixedValueAny};
 	
-	union TMixedValue switch(TMixedValueType) {
-		case MixedValueEmpty: 	boolean empty;
-		case MixedValueBoolean: boolean value_b;
-		case MixedValueInt:		long    value_i;
-		case MixedValueDouble: 	double  value_d;
-		case MixedValueString:	string  value_s;
-		case MixedValueVector: 	TMixedValueSeq values;
-		case MixedValueVectorInt: sequence<long> valuesInt;
-		case MixedValueFile: 	TFileHolder	value_file;
+	union TMixedValue switch(TMixedValueType) 
+	{
+		case MixedValueEmpty: 		boolean 		empty;
+		case MixedValueBoolean: 	boolean 		value_b;
+		case MixedValueInt:			long    		value_i;
+		case MixedValueDouble: 		double  		value_d;
+		case MixedValueString:		string  		value_s;
+		case MixedValueVector: 		TMixedValueSeq 	values;
+		case MixedValueVectorInt: 	sequence<long> 	valuesInt;
+		case MixedValueBinary: 		TBinaryData 	valueBin;
+		case MixedValueFile: 		TFileHolder		value_file;
 		// case MixedValueImage:	TImage	value_image;
 	};
 

@@ -86,24 +86,28 @@ public class MixedValue {
     stiJNI.MixedValue_setValue__SWIG_4(swigCPtr, this, value);
   }
 
+  public void setValue(BinaryData value) {
+    stiJNI.MixedValue_setValue__SWIG_5(swigCPtr, this, BinaryData.getCPtr(value), value);
+  }
+
   public void setValue(FileHolder value) {
-    stiJNI.MixedValue_setValue__SWIG_5(swigCPtr, this, FileHolder.getCPtr(value), value);
+    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, FileHolder.getCPtr(value), value);
   }
 
   public void setValue(String value) {
-    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, value);
+    stiJNI.MixedValue_setValue__SWIG_7(swigCPtr, this, value);
   }
 
   public void setValue(MixedValue value) {
-    stiJNI.MixedValue_setValue__SWIG_7(swigCPtr, this, MixedValue.getCPtr(value), value);
+    stiJNI.MixedValue_setValue__SWIG_8(swigCPtr, this, MixedValue.getCPtr(value), value);
   }
 
   public void setValue() {
-    stiJNI.MixedValue_setValue__SWIG_8(swigCPtr, this);
+    stiJNI.MixedValue_setValue__SWIG_9(swigCPtr, this);
   }
 
   public void setValue(short value) {
-    stiJNI.MixedValue_setValue__SWIG_11(swigCPtr, this, value);
+    stiJNI.MixedValue_setValue__SWIG_12(swigCPtr, this, value);
   }
 
   public void clear() {
@@ -150,6 +154,11 @@ public class MixedValue {
     return new MixedValueVec(stiJNI.MixedValue_getVector(swigCPtr, this), false);
   }
 
+  public BinaryData getBinary() {
+    long cPtr = stiJNI.MixedValue_getBinary(swigCPtr, this);
+    return (cPtr == 0) ? null : new BinaryData(cPtr, true);
+  }
+
   public FileHolder getFile() {
     long cPtr = stiJNI.MixedValue_getFile(swigCPtr, this);
     return (cPtr == 0) ? null : new FileHolder(cPtr, true);
@@ -182,13 +191,18 @@ public class MixedValue {
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
+  public MixedValue(BinaryData value) {
+    this(stiJNI.new_MixedValue__SWIG_6(BinaryData.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
   public MixedValue(FileHolder value) {
-    this(stiJNI.new_MixedValue__SWIG_6(FileHolder.getCPtr(value), value), true);
+    this(stiJNI.new_MixedValue__SWIG_7(FileHolder.getCPtr(value), value), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public MixedValue(boolean value) {
-    this(stiJNI.new_MixedValue__SWIG_7(value), true);
+    this(stiJNI.new_MixedValue__SWIG_8(value), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 

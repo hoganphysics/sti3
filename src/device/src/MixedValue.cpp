@@ -118,6 +118,16 @@ bool MixedValue::operator==(const MixedValue& other) const
 			}
 		}
 		break;
+	case MixedValueType::Binary:
+		{
+			auto bin = getBinary();
+			auto otherBin = other.getBinary();
+
+			if (bin != 0 && otherBin != 0) {
+				result = (*bin) == (*otherBin);
+			}
+		}
+		break;
 
 	default:
 		//this should never happen
@@ -172,6 +182,14 @@ void MixedValue::setValue(const std::string& value)
 	type = MixedValueType::String;
 }
 
+void MixedValue::setValue(const std::shared_ptr<STI::Utils::BinaryData>& value)
+{
+	clear();
+
+	value_v = value;
+	type = MixedValueType::Binary;
+}
+
 void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
 {
 	clear();
@@ -187,7 +205,7 @@ void MixedValue::setValue(const MixedValue& value)
 
 void MixedValue::setValueMixed(const MixedValue& value)
 {
-	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any}
+	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
 
 	switch( value.getType() )
 	{
@@ -217,6 +235,9 @@ void MixedValue::setValueMixed(const MixedValue& value)
 			}
 		}
 		// setValue( value.getVector() );
+		break;
+	case MixedValueType::Binary:
+		setValue( value.getBinary() );
 		break;
 	case MixedValueType::File:
 		setValue( value.getFile() );
@@ -405,6 +426,19 @@ const MixedValueVector& MixedValue::getVector() const
 	return empty;
 }
 
+std::shared_ptr<STI::Utils::BinaryData> MixedValue::getBinary() const
+{
+	try {
+		auto& result = std::get<std::shared_ptr<STI::Utils::BinaryData>>(value_v);
+		return result;
+	}
+	catch (const std::bad_variant_access& ex) {
+	}
+
+	std::shared_ptr<STI::Utils::BinaryData> value_bin;
+	return value_bin;
+}
+
 std::shared_ptr<STI::Utils::FileHolder> MixedValue::getFile() const
 {
 	try {
@@ -423,7 +457,7 @@ std::string MixedValue::print() const
 {
 	std::stringstream result;
 	
-	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, File, Image, Any}
+	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
 
 	switch(type)
 	{
@@ -474,7 +508,20 @@ std::string MixedValue::print() const
 			}
 		}
 		break;
-
+	case MixedValueType::Binary:
+		{
+			auto bin = getBinary();
+			result << "BinaryData(";
+			if (!bin) {
+				result << "size=";
+				result << bin->bytes();
+			}
+			else {
+				result << "null";
+			}
+			result << ")";
+		}
+		break;
 	default:
 		//this should never happen
 		break;
@@ -511,6 +558,9 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 		break;
 	case MixedValueType::VectorInt:
 		result = "VectorInt";
+		break;
+	case MixedValueType::Binary:
+		result = "Binary";
 		break;
 	case MixedValueType::File:
 		result = "File";

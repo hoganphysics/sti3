@@ -68,6 +68,10 @@ public class RawEventGroupStats {
     return stiJNI.RawEventGroupStats_subgroups_get(swigCPtr, this);
   }
 
+  public RawEventGroupStats opAddAssign(RawEventGroupStats rhs) {
+    return new RawEventGroupStats(stiJNI.RawEventGroupStats_opAddAssign(swigCPtr, this, RawEventGroupStats.getCPtr(rhs), rhs), false);
+  }
+
   public RawEventGroupStats() {
     this(stiJNI.new_RawEventGroupStats(), true);
   }

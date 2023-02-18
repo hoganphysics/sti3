@@ -15,6 +15,8 @@ using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValueType;
 using STI::Utils::MixedValueType;
 using STI::TNetwork::TStringPairSeq;
+using STI::Utils::BinaryData;
+using STI::TNetwork::TBinaryData;
 
 
 template<>
@@ -202,6 +204,28 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 			valuesIntRef.replace(values->size(), values->size(), const_cast<std::vector<int>*>(values)->data(), false);		//no release
 		}
 		break;
+	case MixedValueType::Binary:
+		{
+			auto bin = value.getBinary();
+
+			if (bin != 0 ) {
+				convert<BinaryData, TBinaryData>(*bin, tValue.valueBin());
+
+				// valueBinRef.wordsize = static_cast<CORBA::Short>(bin->wordsize());
+
+				// unsigned char* data;
+				// int* dataInt;
+
+				// if (bin->isType<unsigned char>() && bin->get(data)) {
+				// 	valueBinRef.data.data_char().replace(bin->bytes(), bin->bytes(), data, false );	//no release
+				// }
+				// else if (bin->isType<int>() && bin->get(dataInt)) {
+				// 	// data = reinterpret_cast<unsigned char*>(dataInt);
+				// 	valueBinRef.data.data_long().replace(bin->bytes(), bin->bytes(), dataInt, false );	//no release
+				// }
+			}
+		}
+		break;
 	case MixedValueType::File:
 		{
 			STI::TNetwork::TFileHolder_var tFileHolder;
@@ -293,6 +317,16 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 			//Conceptually we now want:   values->data() = buffer;	but this is not possible in portable way...
 		}
 		break;
+	case TMixedValueType::MixedValueBinary:
+		{
+			auto bin = std::make_shared<BinaryData>();
+			value.setValue(bin);
+
+			if (bin != 0 ) {
+				convert<TBinaryData, BinaryData>(tValue.valueBin(), *bin);
+			}
+		}
+		break;
 	case TMixedValueType::MixedValueFile:
 		{
 			std::shared_ptr<STI::Utils::FileHolder> remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(tValue.value_file());
@@ -302,6 +336,152 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	case TMixedValueType::MixedValueImage:
 		break;
 	case TMixedValueType::MixedValueAny:
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
+
+
+template<>
+bool STI::Network::convert<BinaryData, TBinaryData>(const BinaryData& bin, TBinaryData& tBin)
+{
+	tBin.wordsize = static_cast<CORBA::Short>(bin.wordsize());
+
+	//Here replace() sets the pointer in the underlying corba sequence to raw data. We use release_=false when
+	//calling replace() to ensure that the corba sequence will not attempt to free this memory,
+	//since BinaryData is the owner.
+
+	if (bin.isType<unsigned char>()) {
+		unsigned char* data;
+		if (bin.get(data)) {
+			tBin.data.data_uchar().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<signed char>()) {
+		signed char* data;
+		if (bin.get(data)) {
+			unsigned char* dataUC = reinterpret_cast<unsigned char*>(data);
+			tBin.data.data_char().replace(bin.length(), bin.length(), dataUC, false );	//no release
+		}
+	}
+	else if (bin.isType<char>()) {
+		char* data;
+		if (bin.get(data)) {
+			unsigned char* dataUC = reinterpret_cast<unsigned char*>(data);
+			tBin.data.data_char().replace(bin.length(), bin.length(), dataUC, false );	//no release
+		}
+	}
+	else if (bin.isType<unsigned short>()) {
+		unsigned short* data;
+		if (bin.get(data)) {
+			tBin.data.data_ushort().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<short>()) {
+		short* data;
+		if (bin.get(data)) {
+			tBin.data.data_short().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<unsigned int>()) {
+		unsigned int* data;
+		if (bin.get(data)) {
+			tBin.data.data_ulong().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<int>()) {
+		int* data;
+		if (bin.get(data)) {
+			tBin.data.data_long().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<float>()) {
+		float* data;
+		if (bin.get(data)) {
+			tBin.data.data_float().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	else if (bin.isType<double>()) {
+		double* data;
+		if (bin.get(data)) {
+			tBin.data.data_double().replace(bin.length(), bin.length(), data, false );	//no release
+		}
+	}
+	return true;
+}
+
+template<>
+bool STI::Network::convert<TBinaryData, BinaryData>(const TBinaryData& tBin, BinaryData& bin)
+{
+	//TBinaryType { BinaryUChar, BinaryChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble };
+	using STI::TNetwork::TBinaryType;
+
+	bin.clear();
+	bool release;
+
+	switch (tBin.data._d())
+	{
+	case TBinaryType::BinaryUChar:
+		{
+			release = tBin.data.data_uchar().release();
+			unsigned char* data = const_cast<TBinaryData&>(tBin).data.data_uchar().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_char().length());
+		}
+		break;
+	case TBinaryType::BinaryChar:
+		{
+			release = tBin.data.data_char().release();
+			unsigned char* data = const_cast<TBinaryData&>(tBin).data.data_char().get_buffer(release);	//orphan if release = true
+			char* dataChar = reinterpret_cast<char*>(data);
+			bin.assign(dataChar, tBin.data.data_char().length());
+		}
+		break;
+	case TBinaryType::BinaryUShort:
+		{
+			release = tBin.data.data_ushort().release();
+			unsigned short* data = const_cast<TBinaryData&>(tBin).data.data_ushort().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_ushort().length());
+		}
+		break;
+	case TBinaryType::BinaryShort:
+		{
+			release = tBin.data.data_short().release();
+			short* data = const_cast<TBinaryData&>(tBin).data.data_short().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_short().length());
+		}
+		break;
+	case TBinaryType::BinaryULong:
+		{
+			CORBA::ULong x;
+			release = tBin.data.data_ulong().release();
+			unsigned int* data = const_cast<TBinaryData&>(tBin).data.data_ulong().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_ulong().length());
+		}
+		break;
+	case TBinaryType::BinaryLong:
+		{
+			release = tBin.data.data_long().release();
+			int* data = const_cast<TBinaryData&>(tBin).data.data_long().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_long().length());
+		}
+		break;
+	case TBinaryType::BinaryFloat:
+		{
+			release = tBin.data.data_float().release();
+			float* data = const_cast<TBinaryData&>(tBin).data.data_float().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_float().length());
+		}
+		break;
+	case TBinaryType::BinaryDouble:
+		{
+			release = tBin.data.data_double().release();
+			double* data = const_cast<TBinaryData&>(tBin).data.data_double().get_buffer(release);	//orphan if release = true
+			bin.assign(data, tBin.data.data_double().length());
+		}
 		break;
 	default:
 		break;
