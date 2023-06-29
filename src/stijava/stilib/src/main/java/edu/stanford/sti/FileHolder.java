@@ -55,6 +55,14 @@ public class FileHolder {
     stiJNI.FileHolder_change_ownership(this, swigCPtr, true);
   }
 
+  public boolean opEquals(FileHolder other) {
+    return stiJNI.FileHolder_opEquals(swigCPtr, this, FileHolder.getCPtr(other), other);
+  }
+
+  public boolean opNotEquals(FileHolder other) {
+    return stiJNI.FileHolder_opNotEquals(swigCPtr, this, FileHolder.getCPtr(other), other);
+  }
+
   public String getFilename() {
     return stiJNI.FileHolder_getFilename(swigCPtr, this);
   }

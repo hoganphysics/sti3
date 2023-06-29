@@ -22,9 +22,20 @@ public:
 
     bool contains(const std::string& key) const;
 
+    template<typename T>
+    void addMetaData(const std::string& key, const T& value)
+    {
+        MixedValue mixedValue;
+        mixedValue.setValue(value);
+        addMetaData(key, value);
+    }
+
     void addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
     bool resetMetaDataEntry(const std::string& key, const STI::Utils::MixedValue& newValue);
     
+    void removeMetaData(const std::string& key);
+    void clear();
+
     const STI::Utils::MixedValue& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
 
@@ -36,6 +47,7 @@ private:
 
     static bool isTuple(const STI::Utils::MixedValue& tuple);
     static bool tupleMatch(const STI::Utils::MixedValue& tuple, const std::string& key);
+    bool resetMetaDataEntry(const std::string& key, const STI::Utils::MixedValue& newValue, bool removeKey);
 
 private:
 

@@ -22,7 +22,9 @@
 
 
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/Image.h>
 #include <sti/utils/utils.h>
+
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -129,6 +131,27 @@ bool MixedValue::operator==(const MixedValue& other) const
 		}
 		break;
 
+	case MixedValueType::File:
+		{
+			auto file = getFile();
+			auto otherFile = other.getFile();
+
+			if (file != 0 && otherFile != 0) {
+				result = (*file) == (*otherFile);
+			}
+		}
+		break;
+	case MixedValueType::Image:
+		{
+			auto image = getImage();
+			auto otherImage = other.getImage();
+
+			if (image != 0 && otherImage != 0) {
+				result = (*image) == (*otherImage);
+			}
+		}
+		break;
+
 	default:
 		//this should never happen
 		result = false;
@@ -198,6 +221,14 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
 	type = MixedValueType::File;
 }
 
+void MixedValue::setValue(const std::shared_ptr<STI::Utils::Image>& value)
+{
+	clear();
+
+	value_v = value;
+	type = MixedValueType::Image;
+}
+
 void MixedValue::setValue(const MixedValue& value)
 {
 	setValueMixed(value);
@@ -241,6 +272,9 @@ void MixedValue::setValueMixed(const MixedValue& value)
 		break;
 	case MixedValueType::File:
 		setValue( value.getFile() );
+		break;
+	case MixedValueType::Image:
+		setValue( value.getImage() );
 		break;
 	default:
 		//this should never happen
@@ -452,6 +486,18 @@ std::shared_ptr<STI::Utils::FileHolder> MixedValue::getFile() const
 	return value_file;
 }
 
+std::shared_ptr<STI::Utils::Image> MixedValue::getImage() const
+{
+	try {
+		auto& result = std::get<std::shared_ptr<STI::Utils::Image>>(value_v);
+		return result;
+	}
+	catch (const std::bad_variant_access& ex) {
+	}
+
+	std::shared_ptr<STI::Utils::Image> value_image;
+	return value_image;
+}
 
 std::string MixedValue::print() const
 {
@@ -522,6 +568,36 @@ std::string MixedValue::print() const
 			result << ")";
 		}
 		break;
+	case MixedValueType::File:
+		{
+			auto file = getFile();
+			result << "File(";
+			if (!file) {
+				result << file->getFilename();
+			}
+			else {
+				result << "null";
+			}
+			result << ")";
+		}
+		break;
+	case MixedValueType::Image:
+		{
+			auto image = getImage();
+			result << "Image(";
+			if (!image) {
+				result << image->getFilename();
+				result << ".";
+				result << image->getExtension();
+				result << ", height=" << image->getHeight();
+				result << ", width=" << image->getWidth();
+			}
+			else {
+				result << "null";
+			}
+			result << ")";
+		}
+		break;
 	default:
 		//this should never happen
 		break;
@@ -564,6 +640,9 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 		break;
 	case MixedValueType::File:
 		result = "File";
+		break;
+	case MixedValueType::Image:
+		result = "Image";
 		break;
 	case MixedValueType::Any:
 		result = "Any";

@@ -95,7 +95,8 @@
         "xutility": "cpp",
         "*.idl": "cpp",
         "shared_mutex": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "*.ipp": "cpp"
     },
     "esbonio.sphinx.confDir": ""
 }

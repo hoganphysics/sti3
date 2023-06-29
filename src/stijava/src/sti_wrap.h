@@ -48,6 +48,22 @@ public:
     }
 };
 
+class SwigDirector_ImageWriter : public STI::Utils::ImageWriter, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_ImageWriter(JNIEnv *jenv);
+    virtual void clear();
+    virtual void addImage(STI::Utils::Image *image);
+    virtual bool write(std::string const &targetDirectory, std::shared_ptr< STI::Utils::FileHolder > &fileHolder);
+public:
+    bool swig_overrides(int n) {
+      return (n < 3 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<3> swig_override;
+};
+
 class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
 
 public:

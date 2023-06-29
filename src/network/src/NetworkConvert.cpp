@@ -2,10 +2,12 @@
 #include "NetworkConvert.h"
 
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/Image.h>
 
 #include "orbTypes.h"
 #include "TFileHolderRefInterface.h"
 #include "RemoteFileHolder.h"
+#include "RemoteImageWriter.h"
 
 #include <vector>
 
@@ -17,6 +19,10 @@ using STI::Utils::MixedValueType;
 using STI::TNetwork::TStringPairSeq;
 using STI::Utils::BinaryData;
 using STI::TNetwork::TBinaryData;
+using STI::Utils::Image;
+using STI::TNetwork::TImage;
+using STI::TNetwork::TImageDataType;
+using STI::Utils::FileHolder;
 
 
 template<>
@@ -230,10 +236,19 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 		{
 			STI::TNetwork::TFileHolder_var tFileHolder;
 			TFileHolderRefInterface::getTFileHolderReference(value.getFile(), tFileHolder);
-			tValue.value_file(tFileHolder);			
+			tValue.value_file(tFileHolder);
 		}
 		break;
 	case MixedValueType::Image:
+		{
+			STI::TNetwork::TImage tImage;
+
+			if (value.getImage() != 0) {
+				convert<Image, TImage>(*(value.getImage()), tImage);
+			}
+			
+			tValue.value_image(tImage);
+		}
 		break;
 	case MixedValueType::Any:
 		break;
@@ -334,6 +349,11 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 		}
 		break;
 	case TMixedValueType::MixedValueImage:
+		{
+			auto image = std::make_shared<Image>();
+			convert<TImage, Image>(tValue.value_image(), *image);
+			value.setValue(image);
+		}
 		break;
 	case TMixedValueType::MixedValueAny:
 		break;
@@ -490,6 +510,139 @@ bool STI::Network::convert<TBinaryData, BinaryData>(const TBinaryData& tBin, Bin
 	return true;
 }
 
+
+
+template<>
+bool STI::Network::convert<Image, TImage>(const Image& image, TImage& tImage)
+{
+	tImage.filename = convert<std::string, ::CORBA::String_member>(image.getFilename());
+	tImage.extension = convert<std::string, ::CORBA::String_member>(image.getExtension());
+
+	tImage.height = static_cast<CORBA::Long>(image.getHeight());
+	tImage.width = static_cast<CORBA::Long>(image.getWidth());
+	
+	convert<std::shared_ptr<Image>, TImage>(image.getChildren(), tImage.children);
+	tImage.isChild = static_cast<CORBA::Boolean>(image.isChild());
+
+	//convert meta data to list of string tuples
+	auto metaData = image.metaData.getMetaData();
+	tImage.metaData.length(metaData.getVector().size());
+
+	unsigned i = 0;
+	for (auto& tuple : metaData.getVector()) {
+		auto key = tuple.getVector().at(0).getString();
+		auto value = tuple.getVector().at(1).print();
+
+		tImage.metaData[i].key = convert<std::string, ::CORBA::String_member>(key);
+		tImage.metaData[i].value = convert<std::string, ::CORBA::String_member>(value);
+
+		i++;
+	}
+
+	if (!image.isChild()) {
+		
+		//if has file, send file; else if has binary send binary; else send empty binary.
+
+		std::shared_ptr<STI::Utils::FileHolder> fileHolder;
+		std::shared_ptr<BinaryData> bin;
+
+		if (image.getFile(fileHolder)) {
+			STI::TNetwork::TFileHolder_var tFileHolder;
+			TFileHolderRefInterface::getTFileHolderReference(fileHolder, tFileHolder);
+			tImage.imageData.file(tFileHolder);		
+		}
+		else if (image.getData(bin)) {
+			convert<BinaryData, TBinaryData>(*bin, tImage.imageData.binary());	//no deep copy
+		}
+		else {
+			//bin is null
+			bin = std::make_shared<BinaryData>();
+			convert<BinaryData, TBinaryData>(*bin, tImage.imageData.binary());
+		}	
+	}
+
+	return true;
+}
+
+
+template<>
+bool STI::Network::convert<std::shared_ptr<Image>, TImage>(const std::shared_ptr<Image>& image, TImage& tImage)
+{
+	if (image == 0) return false;
+	return convert<Image, TImage>(*image, tImage);
+}
+
+template<>
+TImage STI::Network::convert<std::shared_ptr<Image>, TImage>(const std::shared_ptr<Image>& image)
+{
+	TImage tImage;
+	convert<std::shared_ptr<Image>, TImage>(image, tImage);
+	return tImage;
+}
+
+
+template<>
+bool STI::Network::convert<TImage, Image>(const TImage& tImage, Image& image)
+{
+	image.setFilename(
+		convert<::CORBA::String_member, std::string>(tImage.filename) +
+		"." +
+		convert<::CORBA::String_member, std::string>(tImage.extension)
+		);
+
+	image.setHeight( static_cast<unsigned>(tImage.height) );
+	image.setWidth( static_cast<unsigned>(tImage.width) );
+
+	std::shared_ptr<Image> child;
+	for (unsigned i = 0; i < tImage.children.length(); ++i) {
+		child = image.makeChildImage();
+		convert<TImage, Image>(tImage.children[i], *child);
+	}
+
+	//meta data
+	for (unsigned i = 0; i < tImage.metaData.length(); ++i) {
+		auto key = convert<::CORBA::String_member, std::string>(tImage.metaData[i].key);
+		auto value = convert<::CORBA::String_member, std::string>(tImage.metaData[i].value);
+
+		// MixedValue mixedValue;
+        // mixedValue.setValue(value);
+		// image.metaData.addMetaData(key, mixedValue);
+
+		image.metaData.addMetaData(key, value);
+	}
+	
+	
+	if (!tImage.isChild) {
+		//not a child; copy data
+
+		switch (tImage.imageData._d())
+		{
+		case TImageDataType::ImageDataBinary:
+			{
+				auto bin = std::make_shared<BinaryData>();
+				image.setImageData(bin);
+
+				if (bin != 0 ) {
+					convert<TBinaryData, BinaryData>(tImage.imageData.binary(), *bin);
+				}
+			}
+			break;
+		case TImageDataType::ImageDataFile:
+			{
+				std::shared_ptr<FileHolder> remoteFile = std::make_shared<RemoteFileHolder>(tImage.imageData.file());
+				auto writer = std::make_shared<STI::Network::RemoteImageWriter>(remoteFile);
+				image.writeToFile(writer, "");	//writer -> remoteFile	
+			}
+			break;
+		};
+	}
+	else {
+		//child; this image is stored by parent
+	}
+
+	// std::shared_ptr<STI::Utils::FileHolder> remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(tValue.value_file());
+	return true;
+}
 
 
 template<>

@@ -63,6 +63,7 @@ add_library(stidevice SHARED
     BinaryData.cpp
     ConfigFile.cpp
     Configuration.cpp
+    DefaultImageWriter.cpp
     DeviceEventParser.cpp
     DeviceID.cpp
     DeviceMessage.cpp
@@ -79,6 +80,7 @@ add_library(stidevice SHARED
     EventEngineStateMachine.cpp
     FullShotResult.cpp
     # EngineParseResult.cpp
+    Image.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp

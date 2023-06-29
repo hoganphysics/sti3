@@ -56,6 +56,14 @@ public class MetaData {
     return stiJNI.MetaData_resetMetaDataEntry(swigCPtr, this, key, MixedValue.getCPtr(newValue), newValue);
   }
 
+  public void removeMetaData(String key) {
+    stiJNI.MetaData_removeMetaData(swigCPtr, this, key);
+  }
+
+  public void clear() {
+    stiJNI.MetaData_clear(swigCPtr, this);
+  }
+
   public MixedValue getMetaData() {
     return new MixedValue(stiJNI.MetaData_getMetaData__SWIG_0(swigCPtr, this), false);
   }

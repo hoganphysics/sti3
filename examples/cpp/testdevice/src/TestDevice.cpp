@@ -184,7 +184,8 @@ void TestDevice::TestEvent::collectMeasurementData()
 
         auto file = localDevice->makeFileHolder(filename);
         result.setValue(file);
-        getMeasurements().at(0)->setMeasurementResult(result);
+        // getMeasurements().at(0)->setMeasurementResult(result);
+        setMeasurementResult(result);
 
     }
 }

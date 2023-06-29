@@ -74,6 +74,40 @@ module TNetwork
 		TMixedBinaryData data;
 	};
 	
+	struct TImage;
+	typedef sequence<TImage> TImageSeq;
+
+	enum TImageDataType { ImageDataBinary, ImageDataFile };
+
+	union TImageData switch(TImageDataType) 
+	{
+		case ImageDataBinary: 	TBinaryData 	binary;
+		case ImageDataFile: 	TFileHolder 	file;
+	};
+
+	struct TStringPair
+	{
+		string key;
+		string value;
+	};
+	typedef sequence<TStringPair> TStringPairSeq;
+
+
+	struct TImage
+	{
+	    TImageData imageData;
+		TStringPairSeq metaData;
+
+		string filename;
+		string extension;
+
+		long height;
+		long width;
+
+		boolean isChild;
+		TImageSeq children;
+	};
+
 
 	union TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
@@ -90,7 +124,7 @@ module TNetwork
 		case MixedValueVectorInt: 	sequence<long> 	valuesInt;
 		case MixedValueBinary: 		TBinaryData 	valueBin;
 		case MixedValueFile: 		TFileHolder		value_file;
-		// case MixedValueImage:	TImage	value_image;
+		case MixedValueImage:		TImage			value_image;
 	};
 
 	typedef sequence<string> TStringSeq;
@@ -105,13 +139,6 @@ module TNetwork
 	};
 	typedef sequence<TAttribute> TAttributeSeq;
 
-
-	struct TStringPair
-	{
-		string key;
-		string value;
-	};
-	typedef sequence<TStringPair> TStringPairSeq;
 
 	struct TStackFrame
 	{

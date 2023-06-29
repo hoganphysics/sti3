@@ -14,7 +14,7 @@ using STI::Python::MixedValuePy;
 
 void init_MixedValue(py::module& m) 
 {
-    //MixedValueType { Boolean, Int, Double, String, Vector, Empty, File, Image, Any}
+    //MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
 
     py::enum_<MixedValueType>(m, "MixedValueType")
         .value("Empty", MixedValueType::Empty)
@@ -24,6 +24,7 @@ void init_MixedValue(py::module& m)
         .value("String", MixedValueType::String)
         .value("Vector", MixedValueType::Vector)
         .value("VectorInt", MixedValueType::VectorInt)
+        .value("Binary", MixedValueType::Binary)
         .value("File", MixedValueType::File)
         .value("Image", MixedValueType::Image)
         .value("Any", MixedValueType::Any)

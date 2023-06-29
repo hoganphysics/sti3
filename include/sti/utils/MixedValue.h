@@ -40,6 +40,7 @@ namespace Utils
 {
 
 class MixedValue;
+class Image;
 
 
 class MixedValue
@@ -100,6 +101,7 @@ public:
 	void setValue(double value);
 	void setValue(const std::shared_ptr<STI::Utils::BinaryData>& value);
 	void setValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
+	void setValue(const std::shared_ptr<STI::Utils::Image>& value);
 	void setValue(const std::string& value);
 	void setValue(const MixedValue& value);
 	void setValue();	//Empty
@@ -140,6 +142,7 @@ public:
 	const MixedValueVector& getVector() const;
 	std::shared_ptr<STI::Utils::BinaryData> getBinary() const;
 	std::shared_ptr<STI::Utils::FileHolder> getFile() const;
+	std::shared_ptr<STI::Utils::Image> getImage() const;
 
 	template<typename T> 
 	bool getFlatVector(const std::vector<T>*& flatVector) const
@@ -256,7 +259,8 @@ private:
 						MixedValueVector, 
 						std::vector<int>,
 						std::shared_ptr<STI::Utils::BinaryData>,
-						std::shared_ptr<STI::Utils::FileHolder>
+						std::shared_ptr<STI::Utils::FileHolder>,
+						std::shared_ptr<STI::Utils::Image>
 						> VariantType;
 
 	VariantType value_v;

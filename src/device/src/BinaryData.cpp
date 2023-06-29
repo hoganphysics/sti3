@@ -62,6 +62,25 @@ void BinaryData::swap(BinaryData& other)
     std::swap(getType, other.getType);
 }
 
+bool BinaryData::getBytes(char*& data) const
+{
+    data = static_cast<char*>(data_);
+    return (data != 0);
+}
+
+bool BinaryData::getBytes(char*& data, bool orphan)
+{
+    //release if orphan=true
+    
+    if (getBytes(data)) {
+        if (orphan) {
+            isOwner = false;
+        }
+        return true;
+    }
+    return false;
+}
+
 
 template<class Archive>
 void BinaryData::serialize(Archive& archive)

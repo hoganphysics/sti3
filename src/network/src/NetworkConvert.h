@@ -227,6 +227,7 @@ namespace Utils
 
 class MixedValue;
 class BinaryData;
+class Image;
 
 } //Utils
 
@@ -252,6 +253,16 @@ template<>
 bool Network::convert<Utils::BinaryData, TNetwork::TBinaryData>(const Utils::BinaryData& bin, TNetwork::TBinaryData& tBin);
 template<>
 bool Network::convert<TNetwork::TBinaryData, Utils::BinaryData>(const TNetwork::TBinaryData& tBin, Utils::BinaryData& bin);
+
+template<>
+bool Network::convert<Utils::Image, TNetwork::TImage>(const Utils::Image& image, TNetwork::TImage& tImage);
+template<>
+bool Network::convert<TNetwork::TImage, Utils::Image>(const TNetwork::TImage& tImage, Utils::Image& image);
+
+template<>
+bool Network::convert<std::shared_ptr<Utils::Image>, TNetwork::TImage>(const std::shared_ptr<Utils::Image>& image, TNetwork::TImage& tImage);
+template<>
+TNetwork::TImage Network::convert<std::shared_ptr<Utils::Image>, TNetwork::TImage>(const std::shared_ptr<Utils::Image>& image);
 
 
 

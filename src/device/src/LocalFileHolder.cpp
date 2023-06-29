@@ -49,6 +49,15 @@ LocalFileHolder::~LocalFileHolder()
 {
 }
 
+bool LocalFileHolder::operator==(const LocalFileHolder& other) const
+{
+    return other.getFilename() == getFilename();
+}
+
+bool LocalFileHolder::operator!=(const LocalFileHolder& other) const
+{
+    return !((*this) == other);
+}
 
 std::string LocalFileHolder::getFilename() const
 {

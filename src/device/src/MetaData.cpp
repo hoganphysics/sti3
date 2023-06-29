@@ -68,7 +68,23 @@ void MetaData::addMetaData(const std::string& key, const STI::Utils::MixedValue&
 	metaData.addValue(labeledData);
 }
 
+void MetaData::removeMetaData(const std::string& key)
+{
+	STI::Utils::MixedValue dummy;
+	resetMetaDataEntry(key, dummy, true);
+}
+
+void MetaData::clear()
+{
+	metaData.clear();
+}
+
 bool MetaData::resetMetaDataEntry(const std::string& key, const STI::Utils::MixedValue& newValue)
+{
+	return resetMetaDataEntry(key, newValue, false);
+}
+
+bool MetaData::resetMetaDataEntry(const std::string& key, const STI::Utils::MixedValue& newValue, bool removeKey)
 {
     bool success = false;
 
@@ -80,10 +96,12 @@ bool MetaData::resetMetaDataEntry(const std::string& key, const STI::Utils::Mixe
 		labeledData.clear();
 	
 		if (tupleMatch(tuple, key)) {
-			labeledData.addValue( key ); 		//key
-			labeledData.addValue( newValue );	//value
+			if (!removeKey) {
+				labeledData.addValue( key ); 		//key
+				labeledData.addValue( newValue );	//value
 
-			newMetaData.addValue(labeledData);
+				newMetaData.addValue(labeledData);				
+			}
 			success = true;
 		}
 		else if (isTuple(tuple)) {

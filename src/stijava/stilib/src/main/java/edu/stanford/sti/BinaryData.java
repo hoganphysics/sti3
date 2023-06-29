@@ -68,6 +68,14 @@ public class BinaryData {
     return stiJNI.BinaryData_wordsize(swigCPtr, this);
   }
 
+  public boolean getBytes(String data) {
+    return stiJNI.BinaryData_getBytes__SWIG_0(swigCPtr, this, data);
+  }
+
+  public boolean getBytes(String data, boolean orphan) {
+    return stiJNI.BinaryData_getBytes__SWIG_1(swigCPtr, this, data, orphan);
+  }
+
   public void swap(BinaryData other) {
     stiJNI.BinaryData_swap(swigCPtr, this, BinaryData.getCPtr(other), other);
   }
@@ -77,7 +85,7 @@ public class BinaryData {
 }
 
   public java.nio.ByteBuffer getBytes() {
-  return stiJNI.BinaryData_getBytes(swigCPtr, this);
+  return stiJNI.BinaryData_getBytes__SWIG_2(swigCPtr, this);
 }
 
   public java.nio.IntBuffer getInts() {

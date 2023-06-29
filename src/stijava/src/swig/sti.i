@@ -25,6 +25,7 @@
 %include BinaryData.i
 %include MixedValue.i
 %include MetaData.i
+%include Image.i
 
 %include TimeStamp.i
 

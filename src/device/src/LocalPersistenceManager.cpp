@@ -12,6 +12,8 @@
 #include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
 
+#include <sti/utils/Image.h>
+
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
 #include "LocalResultsCollector.h"
@@ -468,11 +470,26 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
 
         return saveShotLocal(sid, fullShotResult, isOwner);
     }
+
+    //not owner; save Images with custom ImageWritter
+    ResultsPaths resultsPaths;
+    getResultsPaths(sid, resultsPaths);
+    resultsPaths.dataPath;
+
+    //if any measurements are Images with a custom writter, write to disk now before transferring
+    std::shared_ptr<STI::Utils::ImageWriter> dummyWriter;     //hack; use null writter so only Images with a custom writter will be written
+
+    if (fullShotResult != 0 && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
+        for (auto& tuple : *(fullShotResult->shotResult->measurements)) {
+            for (auto& m : tuple.second) {
+                if (m != 0 && m->data().isType(STI::Utils::MixedValueType::Image)) {
+                    m->data().getImage()->writeToFile(dummyWriter, resultsPaths.dataPath);
+                }
+            }
+        }        
+    }
     
     return addToBuffer(fullShotResult);
-        
-
-
 
     // std::shared_ptr<ResultsCollector> collector;
 
@@ -600,6 +617,22 @@ bool isPartial(const std::shared_ptr<ShotResult>& shotResult)
 }
 
 
+bool LocalPersistenceManager::getResultsPaths(const STI::Engine::ShotID& sid, ResultsPaths& resultsPaths)
+{
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    if (sid.parseID.shotConfig.shotType == ShotType::SingleUndocumented) {
+        repo = transientRepository;
+    }
+
+    // std::shared_ptr<ShotResult> finalShotResult = shotResult;
+
+    //happens on (remote) delegate, where data should be saved.
+    resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
+
+    return true;
+}
 
 //replace resultsDocumenter with localDocumenter and make it a function argument.
 //allow engine to call saveShotLocal with a TransientResultsDocumenter which auto deletes itself

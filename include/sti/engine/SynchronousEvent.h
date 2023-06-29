@@ -1,6 +1,8 @@
 #ifndef STI_ENGINE_SYNCHRONOUSEVENT_H
 #define STI_ENGINE_SYNCHRONOUSEVENT_H
 
+#include <sti/fwd/MixedValue_fwd.h>
+
 #include <vector>
 #include <memory>
 #include <mutex>
@@ -24,8 +26,11 @@ public:
 	virtual ~SynchronousEvent();
 
 	double getTime() const { return _time; }
+
 	const std::vector<std::shared_ptr<Measurement>>& getMeasurements() const { return measurements; }
 	void addMeasurement(const RawEvent& sourceEvent);
+	bool setMeasurementResult(const STI::Utils::MixedValue& result);
+	bool setMeasurementResult(unsigned index, const STI::Utils::MixedValue& result);
 
 	void load();
 	void play();

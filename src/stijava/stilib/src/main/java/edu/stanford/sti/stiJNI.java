@@ -55,6 +55,8 @@ public class stiJNI {
   public final static native void FileHolderVector_doRemoveRange(long jarg1, FileHolderVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_FileHolderVector(long jarg1);
   public final static native void delete_FileHolder(long jarg1);
+  public final static native boolean FileHolder_opEquals(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native boolean FileHolder_opNotEquals(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
   public final static native String FileHolder_getFilename(long jarg1, FileHolder jarg1_);
   public final static native boolean FileHolder_exists(long jarg1, FileHolder jarg1_);
   public final static native boolean FileHolder_transferFile(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
@@ -72,9 +74,11 @@ public class stiJNI {
   public final static native long BinaryData_length(long jarg1, BinaryData jarg1_);
   public final static native long BinaryData_bytes(long jarg1, BinaryData jarg1_);
   public final static native long BinaryData_wordsize(long jarg1, BinaryData jarg1_);
+  public final static native boolean BinaryData_getBytes__SWIG_0(long jarg1, BinaryData jarg1_, String jarg2);
+  public final static native boolean BinaryData_getBytes__SWIG_1(long jarg1, BinaryData jarg1_, String jarg2, boolean jarg3);
   public final static native void BinaryData_swap(long jarg1, BinaryData jarg1_, long jarg2, BinaryData jarg2_);
   public final static native byte[] BinaryData_get(long jarg1, BinaryData jarg1_);
-  public final static native java.nio.ByteBuffer BinaryData_getBytes(long jarg1, BinaryData jarg1_);
+  public final static native java.nio.ByteBuffer BinaryData_getBytes__SWIG_2(long jarg1, BinaryData jarg1_);
   public final static native java.nio.IntBuffer BinaryData_getInts(long jarg1, BinaryData jarg1_);
   public final static native java.nio.ShortBuffer BinaryData_getShorts(long jarg1, BinaryData jarg1_);
   public final static native java.nio.DoubleBuffer BinaryData_getDoubles(long jarg1, BinaryData jarg1_);
@@ -90,10 +94,11 @@ public class stiJNI {
   public final static native void MixedValue_setValue__SWIG_4(long jarg1, MixedValue jarg1_, double jarg2);
   public final static native void MixedValue_setValue__SWIG_5(long jarg1, MixedValue jarg1_, long jarg2, BinaryData jarg2_);
   public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, long jarg2, FileHolder jarg2_);
-  public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_, String jarg2);
-  public final static native void MixedValue_setValue__SWIG_8(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
-  public final static native void MixedValue_setValue__SWIG_9(long jarg1, MixedValue jarg1_);
-  public final static native void MixedValue_setValue__SWIG_12(long jarg1, MixedValue jarg1_, short jarg2);
+  public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_, long jarg2, Image jarg2_);
+  public final static native void MixedValue_setValue__SWIG_8(long jarg1, MixedValue jarg1_, String jarg2);
+  public final static native void MixedValue_setValue__SWIG_9(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native void MixedValue_setValue__SWIG_10(long jarg1, MixedValue jarg1_);
+  public final static native void MixedValue_setValue__SWIG_13(long jarg1, MixedValue jarg1_, short jarg2);
   public final static native void MixedValue_clear(long jarg1, MixedValue jarg1_);
   public final static native void MixedValue_addValue__SWIG_1(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
   public final static native void MixedValue_addValue__SWIG_2(long jarg1, MixedValue jarg1_, int jarg2);
@@ -107,6 +112,7 @@ public class stiJNI {
   public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getBinary(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getImage(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_TypeToString(int jarg1);
   public final static native void MixedValue_swap(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
@@ -156,10 +162,59 @@ public class stiJNI {
   public final static native boolean MetaData_contains(long jarg1, MetaData jarg1_, String jarg2);
   public final static native void MetaData_addMetaData(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
   public final static native boolean MetaData_resetMetaDataEntry(long jarg1, MetaData jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void MetaData_removeMetaData(long jarg1, MetaData jarg1_, String jarg2);
+  public final static native void MetaData_clear(long jarg1, MetaData jarg1_);
   public final static native long MetaData_getMetaData__SWIG_0(long jarg1, MetaData jarg1_);
   public final static native long MetaData_getMetaData__SWIG_1(long jarg1, MetaData jarg1_, String jarg2);
   public final static native long MetaData_keys(long jarg1, MetaData jarg1_);
   public final static native void MetaData_merge(long jarg1, MetaData jarg1_, long jarg2, MetaData jarg2_);
+  public final static native void ImageWriter_clear(long jarg1, ImageWriter jarg1_);
+  public final static native void ImageWriter_addImage(long jarg1, ImageWriter jarg1_, long jarg2, Image jarg2_);
+  public final static native boolean ImageWriter_write(long jarg1, ImageWriter jarg1_, String jarg2, long jarg3, FileHolder jarg3_);
+  public final static native long new_ImageWriter();
+  public final static native void delete_ImageWriter(long jarg1);
+  public final static native void ImageWriter_director_connect(ImageWriter obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void ImageWriter_change_ownership(ImageWriter obj, long cptr, boolean take_or_release);
+  public final static native long new_ImageVector__SWIG_0();
+  public final static native long new_ImageVector__SWIG_1(long jarg1, ImageVector jarg1_);
+  public final static native long ImageVector_capacity(long jarg1, ImageVector jarg1_);
+  public final static native void ImageVector_reserve(long jarg1, ImageVector jarg1_, long jarg2);
+  public final static native boolean ImageVector_isEmpty(long jarg1, ImageVector jarg1_);
+  public final static native void ImageVector_clear(long jarg1, ImageVector jarg1_);
+  public final static native long new_ImageVector__SWIG_2(int jarg1, long jarg2, Image jarg2_);
+  public final static native int ImageVector_doSize(long jarg1, ImageVector jarg1_);
+  public final static native void ImageVector_doAdd__SWIG_0(long jarg1, ImageVector jarg1_, long jarg2, Image jarg2_);
+  public final static native void ImageVector_doAdd__SWIG_1(long jarg1, ImageVector jarg1_, int jarg2, long jarg3, Image jarg3_);
+  public final static native long ImageVector_doRemove(long jarg1, ImageVector jarg1_, int jarg2);
+  public final static native long ImageVector_doGet(long jarg1, ImageVector jarg1_, int jarg2);
+  public final static native long ImageVector_doSet(long jarg1, ImageVector jarg1_, int jarg2, long jarg3, Image jarg3_);
+  public final static native void ImageVector_doRemoveRange(long jarg1, ImageVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_ImageVector(long jarg1);
+  public final static native long new_Image__SWIG_0();
+  public final static native long new_Image__SWIG_1(String jarg1);
+  public final static native long new_Image__SWIG_2(String jarg1, long jarg2, ImageWriter jarg2_);
+  public final static native void delete_Image(long jarg1);
+  public final static native long Image_makeChildImage(long jarg1, Image jarg1_);
+  public final static native long Image_setFilename(long jarg1, Image jarg1_, String jarg2);
+  public final static native long Image_setHeight(long jarg1, Image jarg1_, long jarg2);
+  public final static native long Image_setWidth(long jarg1, Image jarg1_, long jarg2);
+  public final static native long Image_setMetaData(long jarg1, Image jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native void Image_setWriter(long jarg1, Image jarg1_, long jarg2, ImageWriter jarg2_);
+  public final static native void Image_setImageData__SWIG_0(long jarg1, Image jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native void Image_setImageData__SWIG_1(long jarg1, Image jarg1_, long jarg2, BinaryData jarg2_);
+  public final static native void Image_metaData_set(long jarg1, Image jarg1_, long jarg2, MetaData jarg2_);
+  public final static native long Image_metaData_get(long jarg1, Image jarg1_);
+  public final static native void Image_writeToFile(long jarg1, Image jarg1_, long jarg2, ImageWriter jarg2_, String jarg3);
+  public final static native boolean Image_getData(long jarg1, Image jarg1_, long jarg2, BinaryData jarg2_);
+  public final static native boolean Image_getFile(long jarg1, Image jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native String Image_getFilename(long jarg1, Image jarg1_);
+  public final static native String Image_getExtension(long jarg1, Image jarg1_);
+  public final static native long Image_getHeight(long jarg1, Image jarg1_);
+  public final static native long Image_getWidth(long jarg1, Image jarg1_);
+  public final static native boolean Image_isChild(long jarg1, Image jarg1_);
+  public final static native long Image_getChildren(long jarg1, Image jarg1_);
+  public final static native boolean Image_opEquals(long jarg1, Image jarg1_, long jarg2, Image jarg2_);
+  public final static native boolean Image_opNotEquals(long jarg1, Image jarg1_, long jarg2, Image jarg2_);
   public final static native long new_TimeStamp__SWIG_0();
   public final static native long new_TimeStamp__SWIG_1(int jarg1, int jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7, int jarg8, int jarg9);
   public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
@@ -1169,6 +1224,8 @@ public class stiJNI {
   public final static native double SynchronousEvent_getTime(long jarg1, SynchronousEvent jarg1_);
   public final static native long SynchronousEvent_getMeasurements(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_addMeasurement(long jarg1, SynchronousEvent jarg1_, long jarg2, RawEvent jarg2_);
+  public final static native boolean SynchronousEvent_setMeasurementResult__SWIG_0(long jarg1, SynchronousEvent jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native boolean SynchronousEvent_setMeasurementResult__SWIG_1(long jarg1, SynchronousEvent jarg1_, long jarg2, long jarg3, MixedValue jarg3_);
   public final static native void SynchronousEvent_load(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_play(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_collectData(long jarg1, SynchronousEvent jarg1_);
@@ -1702,6 +1759,15 @@ public class stiJNI {
   }
   public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
     return jself.md5Checksum();
+  }
+  public static void SwigDirector_ImageWriter_clear(ImageWriter jself) {
+    jself.clear();
+  }
+  public static void SwigDirector_ImageWriter_addImage(ImageWriter jself, long image) {
+    jself.addImage((image == 0) ? null : new Image(image, true));
+  }
+  public static boolean SwigDirector_ImageWriter_write(ImageWriter jself, String targetDirectory, long fileHolder) {
+    return jself.write(targetDirectory, (fileHolder == 0) ? null : new FileHolder(fileHolder, true));
   }
   public static String SwigDirector_Attribute_getKey(Attribute jself) {
     return jself.getKey();

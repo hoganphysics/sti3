@@ -67,6 +67,14 @@ public class SynchronousEvent {
     stiJNI.SynchronousEvent_addMeasurement(swigCPtr, this, RawEvent.getCPtr(sourceEvent), sourceEvent);
   }
 
+  public boolean setMeasurementResult(MixedValue result) {
+    return stiJNI.SynchronousEvent_setMeasurementResult__SWIG_0(swigCPtr, this, MixedValue.getCPtr(result), result);
+  }
+
+  public boolean setMeasurementResult(long index, MixedValue result) {
+    return stiJNI.SynchronousEvent_setMeasurementResult__SWIG_1(swigCPtr, this, index, MixedValue.getCPtr(result), result);
+  }
+
   public void load() {
     stiJNI.SynchronousEvent_load(swigCPtr, this);
   }

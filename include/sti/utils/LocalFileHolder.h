@@ -23,6 +23,9 @@ public:
 
     virtual ~LocalFileHolder();
 
+    bool operator==(const LocalFileHolder& other) const;
+	bool operator!=(const LocalFileHolder& other) const;
+
     std::string getFilename() const;
 
     bool exists() const;

@@ -7,6 +7,7 @@
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/StackTraceResult.h>
 #include <sti/engine/StackTraceData.h>
+#include <sti/utils/Image.h>
 
 #include <map>
 #include <string>
@@ -104,6 +105,15 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
             }
             break;
         case MixedValueType::Image:
+            {
+                auto file = base->InsertNewChildElement("file");
+
+                std::shared_ptr<STI::Utils::FileHolder> fileHolder;
+                if (value.getImage() != 0 && value.getImage()->getFile(fileHolder)) {
+                    file->InsertNewChildElement("filename")->SetText(fileHolder->getFilename().c_str());
+                    file->InsertNewChildElement("md5hash")->SetText(fileHolder->md5Checksum().c_str());
+                }
+            }
             break;
         case MixedValueType::Int:
             base->InsertNewChildElement("int")

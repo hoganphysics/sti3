@@ -46,7 +46,7 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 {
     py::object obj = py::none();
     
-    //Boolean, Int, Double, String, Vector, Empty, File, Image, Any
+    //Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any
 
     switch (value.getType())
     {
@@ -83,6 +83,26 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
             if (value.getFlatVector(values)) {
                 obj = py::cast(*values);
             }
+        }
+        break;
+    case MixedValueType::Binary:
+        {
+            auto binaryData = value.getBinary();
+            
+            char* rawData;      //python bytes always uses char
+            if (binaryData != 0 && binaryData->getBytes(rawData)) {
+                obj = py::bytes(rawData, binaryData->bytes());  // Return the data without transcoding
+            }
+        }
+        break;
+    case MixedValueType::File:
+        {
+            
+        }
+        break;
+    case MixedValueType::Image:
+        {
+            
         }
         break;
     default:

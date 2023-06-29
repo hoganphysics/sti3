@@ -8,6 +8,7 @@
     using STI::Utils::MixedValueVector;
 %}
 
+%shared_ptr(STI::Utils::Image);
 
 //MixedValue
 %warnfilter(516) STI::Utils::MixedValue::setValue;

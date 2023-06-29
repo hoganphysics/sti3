@@ -2,6 +2,7 @@
 
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/utils/MixedValue.h>
 
 using STI::Engine::SynchronousEvent;
 using STI::Engine::RawEvent;
@@ -25,6 +26,20 @@ void SynchronousEvent::addMeasurement(const RawEvent& measurementEvent)
 	//Accepts any RawEvent, even if not a measurement.
 	//However if it's not a measurement event, it will cause an error during parsing.
 	measurements.push_back(std::make_shared<Measurement>(measurementEvent));
+}
+
+bool SynchronousEvent::setMeasurementResult(const STI::Utils::MixedValue& result)
+{
+	return setMeasurementResult(0, result);
+}
+
+bool SynchronousEvent::setMeasurementResult(unsigned index, const STI::Utils::MixedValue& result)
+{
+	if (measurements.size() > index) {
+		measurements.at(index)->setMeasurementResult(result);
+		return true;
+	}
+	return false;
 }
 
 void SynchronousEvent::load()

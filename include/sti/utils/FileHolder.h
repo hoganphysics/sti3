@@ -17,6 +17,15 @@ public:
 
     virtual ~FileHolder() {}
 
+    bool operator==(const FileHolder& other) const
+    {
+        return other.getFilename() == getFilename(); // && other.md5Checksum() == md5Checksum();
+    }
+    bool operator!=(const FileHolder& other) const
+    {
+        return !((*this) == other);
+    }
+
     virtual std::string getFilename() const = 0;
 
     virtual bool exists() const = 0;

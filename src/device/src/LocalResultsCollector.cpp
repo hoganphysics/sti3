@@ -1,4 +1,5 @@
 #include "LocalResultsCollector.h"
+#include "DefaultImageWriter.h"
 
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
@@ -8,6 +9,8 @@
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/ShotResultRecord.h>
+
+#include <sti/utils/Image.h>
 #include <sti/utils/utils.h>
 
 #include <filesystem>
@@ -108,6 +111,28 @@ bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceI
             else {
                 success = false;
             }
+        }
+        else if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::Image) {
+            STI::Utils::MixedValue imagedata;
+            meas->extractMeasurementResult(imagedata);
+            
+            auto imageWritter = std::make_shared<STI::Utils::DefaultImageWriter>(fileHolderFactory);
+
+            auto imageHandle = filedata.getImage();
+            imageHandle->writeToFile(imageWritter, resultsPaths.dataPath);
+
+            std::shared_ptr<STI::Utils::FileHolder> fileHandle;
+            
+            // //transfer file to local
+            // if (imageHandle->getFile(fileHandle) && fileHandle->transferFile(localFileHandle)) {
+            //     //sucess; delete remote?
+            //     success &= true;
+            //     filedata.setValue(localFileHandle);
+            //     meas->setMeasurementResult(filedata);
+            // }
+            // else {
+            //     success = false;
+            // }
         }
 
     }

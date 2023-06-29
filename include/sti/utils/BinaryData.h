@@ -42,8 +42,11 @@ public:
     template<typename T>
     bool get(T*& data) const;
 
+    bool getBytes(char*& data) const;
+    bool getBytes(char*& data, bool orphan);    //release if orphan=true
+
     template<typename T>
-    void assign(T*& data, size_t length);
+    void assign(T*& data, size_t length, bool takeOwnership=true);
 
     template<typename T>
     T* allocate(size_t length);
@@ -105,9 +108,9 @@ bool STI::Utils::BinaryData::get(T*& data) const
 }
 
 template<typename T>
-void STI::Utils::BinaryData::assign(T*& data, size_t length)
+void STI::Utils::BinaryData::assign(T*& data, size_t length, bool takeOwnership)
 {
-    isOwner = true;
+    isOwner = takeOwnership;
     data_ = static_cast<void*>(data);
     wordSize_ = sizeof(T);
     length_ = length;

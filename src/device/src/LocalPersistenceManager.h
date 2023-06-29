@@ -95,6 +95,8 @@ private:
 
     void transferParseResult(std::shared_ptr<STI::Engine::ParseResult> parseResult, const std::string& timingPath);
 
+    bool getResultsPaths(const STI::Engine::ShotID& sid, STI::Engine::ResultsPaths& resultsPaths);
+
 
     std::shared_ptr<STI::Engine::ShotRepository> defaultRepository;
     std::shared_ptr<STI::Engine::ShotRepository> shotRepository;
