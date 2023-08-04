@@ -16,13 +16,19 @@ using STI::Engine::RawEvent;
 using STI::Engine::SynchronousEventVector;
 using STI::Engine::EngineParsingMessage;
 
+DeviceEventParser::DeviceEventParser()
+{
+	parsing = false;
+}
 
 void DeviceEventParser::parseEvents(const RawEventMap& events, 
 					SynchronousEventVector& synchedEvents, STI::Device::DeviceID deviceID, const STI::Engine::EngineID& engineID, DeviceEventMap* target)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
-	
+	parsing = true;
+
 	clearEventNumber();
+	parsingMessages.clear();
 
 	setPartnerEventTarget(target);
 
@@ -30,6 +36,8 @@ void DeviceEventParser::parseEvents(const RawEventMap& events,
 	localDeviceID = deviceID;
 
 	parseEvents(events, synchedEvents);		//call pure virtual
+
+	parsing = false;
 }
 
 
@@ -40,7 +48,7 @@ void DeviceEventParser::setPartnerEventTarget(DeviceEventMap* target)
 
 void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceEvent)
 {
-	if (_target != nullptr) {
+	if (parsing && _target != nullptr) {
 		
 		(*_target)[evt.target().device().deviceID()]->addEvent(RawEvent(evt, referenceEvent, eventNumber));
 
