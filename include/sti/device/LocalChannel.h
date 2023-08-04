@@ -42,6 +42,15 @@ public:
 
 	void setChannelName(const std::string& name);
 	void saveLastValue(const STI::Utils::MixedValue& value);
+	
+	template<typename T>
+	void saveLastValue(const T& value)
+	{
+		STI::Utils::MixedValue mixedVal;
+		mixedVal.setValue(value);
+		saveLastValue(mixedVal);
+	}
+
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
 
 	void addRefreshListener(ChannelRefreshListener* listener);

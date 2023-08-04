@@ -22,7 +22,7 @@ sys.argv.append('--build-type=RelWithDebInfo')
 from setuptools import find_packages
 #from setuptools import find_namespace_packages
 
-OMNIORBBASE="C:/Users/Jason/Code/lib/omniORB-4.2.4.x64"
+OMNIORBBASE = os.environ.get("OMNIORB_ROOT_DIR", "").replace(os.sep, '/')
 
 def copyOmniORBlinux():
     #glob.glob("/usr/local/lib/libomniORB*.so*")

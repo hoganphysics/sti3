@@ -7,9 +7,12 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\build\\${name}",
       "installRoot": "${projectDir}",
-      "cmakeCommandArgs": "-DOMNIORB_PATH=C:/Users/Jason/Code/lib/omniORB-4.2.4.x64", //-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+      "cmakeCommandArgs": "",
       "buildCommandArgs": "install",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "",
+      "variables": [
+        
+      ]
     },
     {
       "name": "x64-Release",
@@ -18,7 +21,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\build\\${name}",
       "installRoot": "${projectDir}",
-      "cmakeCommandArgs": "-DOMNIORB_PATH=C:/Users/Jason/Code/lib/omniORB-4.2.4.x64",
+      "cmakeCommandArgs": "",
       "buildCommandArgs": "install",
       "ctestCommandArgs": ""
     }

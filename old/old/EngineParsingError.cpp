@@ -1,8 +1,8 @@
 
 #include "EngineParsingError.h"
 #include <sti/engine/RawEvent.h>
-#include "EventConflictException.h"
-#include "EventParsingException.h"
+#include <sti/engine/EventConflictException.h>
+#include <sti/engine/EventParsingException.h>
 #include <sti/device/DeviceID.h>
 
 using STI::Engine::EventConflictException; 
