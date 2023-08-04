@@ -103,6 +103,7 @@ add_library(stidevice SHARED
     ParseID.cpp
     ParseResult.cpp
     ParseTicket.cpp  
+    PartnerDevice.cpp
     RawEvent.cpp
     RawEventGroup.cpp
     # RawEventGroupManager.cpp
@@ -127,7 +128,7 @@ add_library(stidevice SHARED
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
-)
+ "PartnerDevice.cpp")
 
 set_target_properties(stidevice PROPERTIES 
     VERSION ${PROJECT_VERSION}
