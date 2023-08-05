@@ -1094,36 +1094,6 @@ SWIGINTERN float *STI_Utils_BinaryData_getFloats(STI::Utils::BinaryData *self){
     using STI::Utils::MixedValueType;
     using STI::Utils::MixedValueVector;
 
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_3(std::string const &value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_4(double value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_5(int value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_6(std::shared_ptr< STI::Utils::BinaryData > const &value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_7(std::shared_ptr< STI::Utils::FileHolder > const &value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-SWIGINTERN STI::Utils::MixedValue *new_STI_Utils_MixedValue__SWIG_8(bool value){
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
 SWIGINTERN void STI_Utils_MixedValue_setValueVector(STI::Utils::MixedValue *self,std::vector< STI::Utils::MixedValue > const &value){
         self->setValue< STI::Utils::MixedValue >(value);
     }
@@ -3265,6 +3235,30 @@ SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::Mixed
 SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValueType const &value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
 }
 
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, bool value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, int value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, double value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::BinaryData > const &value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::FileHolder > const &value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::Image > const &value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, std::string const &value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
+SwigDirector_MixedValue::SwigDirector_MixedValue(JNIEnv *jenv, char const *value) : STI::Utils::MixedValue(value), Swig::Director(jenv) {
+}
+
 SwigDirector_MixedValue::~SwigDirector_MixedValue() {
   swig_disconnect_director_self("swigDirectorDisconnect");
 }
@@ -3285,6 +3279,11 @@ void SwigDirector_MixedValue::swig_connect_director(JNIEnv *jenv, jobject jself,
 
 SwigDirector_ImageWriter::SwigDirector_ImageWriter(JNIEnv *jenv) : STI::Utils::ImageWriter(), Swig::Director(jenv) {
 }
+
+SwigDirector_ImageWriter::~SwigDirector_ImageWriter() {
+  swig_disconnect_director_self("swigDirectorDisconnect");
+}
+
 
 void SwigDirector_ImageWriter::clear() {
   JNIEnvWrapper swigjnienv(this) ;
@@ -3470,19 +3469,16 @@ SwigDirector_Attribute::~SwigDirector_Attribute() {
 }
 
 
-std::string const &SwigDirector_Attribute::getKey() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_Attribute::getKey() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[0]) {
     SWIG_JavaThrowException(JNIEnvWrapper(this).getJNIEnv(), SWIG_JavaDirectorPureVirtual, "Attempted to invoke pure virtual method STI::Device::Attribute::getKey.");
-    return (std::string const &)*c_result;
+    return c_result;
   }
   swigjobj = swig_get_self(jenv);
   if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
@@ -3493,36 +3489,32 @@ std::string const &SwigDirector_Attribute::getKey() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::Attribute::getKey ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
-std::string const &SwigDirector_Attribute::getValue() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_Attribute::getValue() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[1]) {
     SWIG_JavaThrowException(JNIEnvWrapper(this).getJNIEnv(), SWIG_JavaDirectorPureVirtual, "Attempted to invoke pure virtual method STI::Device::Attribute::getValue.");
-    return (std::string const &)*c_result;
+    return c_result;
   }
   swigjobj = swig_get_self(jenv);
   if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
@@ -3533,21 +3525,20 @@ std::string const &SwigDirector_Attribute::getValue() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::Attribute::getValue ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
 std::vector< std::string > const &SwigDirector_Attribute::getAllowedValues() const {
@@ -3584,19 +3575,16 @@ std::vector< std::string > const &SwigDirector_Attribute::getAllowedValues() con
   return (std::vector< std::string > const &)*c_result;
 }
 
-std::string const &SwigDirector_Attribute::getGroup() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_Attribute::getGroup() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[3]) {
     SWIG_JavaThrowException(JNIEnvWrapper(this).getJNIEnv(), SWIG_JavaDirectorPureVirtual, "Attempted to invoke pure virtual method STI::Device::Attribute::getGroup.");
-    return (std::string const &)*c_result;
+    return c_result;
   }
   swigjobj = swig_get_self(jenv);
   if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
@@ -3607,21 +3595,20 @@ std::string const &SwigDirector_Attribute::getGroup() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::Attribute::getGroup ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
 void SwigDirector_Attribute::refreshValue() {
@@ -3967,16 +3954,13 @@ SwigDirector_LocalAttribute::~SwigDirector_LocalAttribute() {
 }
 
 
-std::string const &SwigDirector_LocalAttribute::getKey() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_LocalAttribute::getKey() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[0]) {
     return STI::Device::LocalAttribute::getKey();
   }
@@ -3989,33 +3973,29 @@ std::string const &SwigDirector_LocalAttribute::getKey() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::LocalAttribute::getKey ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
-std::string const &SwigDirector_LocalAttribute::getValue() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_LocalAttribute::getValue() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[1]) {
     return STI::Device::LocalAttribute::getValue();
   }
@@ -4028,21 +4008,20 @@ std::string const &SwigDirector_LocalAttribute::getValue() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::LocalAttribute::getValue ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
 std::vector< std::string > const &SwigDirector_LocalAttribute::getAllowedValues() const {
@@ -4078,16 +4057,13 @@ std::vector< std::string > const &SwigDirector_LocalAttribute::getAllowedValues(
   return (std::vector< std::string > const &)*c_result;
 }
 
-std::string const &SwigDirector_LocalAttribute::getGroup() const {
-  static std::string result_default ;
-  std::string * c_result ;
+std::string SwigDirector_LocalAttribute::getGroup() const {
+  std::string c_result ;
   jstring jresult = 0 ;
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
   
-  result_default = SwigValueInit< std::string >();
-  c_result = &result_default;
   if (!swig_override[3]) {
     return STI::Device::LocalAttribute::getGroup();
   }
@@ -4100,21 +4076,20 @@ std::string const &SwigDirector_LocalAttribute::getGroup() const {
     }
     
     if(!jresult) {
-      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-      return (std::string const &)*c_result;
-    }
+      if (!jenv->ExceptionCheck()) {
+        SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+      }
+      return c_result;
+    } 
     const char *c_result_pstr = (const char *)jenv->GetStringUTFChars(jresult, 0); 
-    if (!c_result_pstr) return (std::string const &)*c_result;
-    /* possible thread/reentrant code problem */
-    static std::string c_result_str;
-    c_result_str = c_result_pstr;
-    c_result = &c_result_str;
+    if (!c_result_pstr) return c_result;
+    c_result.assign(c_result_pstr);
     jenv->ReleaseStringUTFChars(jresult, c_result_pstr); 
   } else {
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in STI::Device::LocalAttribute::getGroup ");
   }
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-  return (std::string const &)*c_result;
+  return c_result;
 }
 
 void SwigDirector_LocalAttribute::refreshValue() {
@@ -8268,6 +8243,118 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_12
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jboolean jarg1) {
+  jlong jresult = 0 ;
+  bool arg1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = jarg1 ? true : false; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jlong jresult = 0 ;
+  int arg1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+  jlong jresult = 0 ;
+  double arg1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (double)jarg1; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > *arg1 = 0 ;
+  std::shared_ptr< STI::Utils::BinaryData > tempnull1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::BinaryData > **)&jarg1 : &tempnull1; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,(std::shared_ptr< STI::Utils::BinaryData > const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::shared_ptr< STI::Utils::FileHolder > *arg1 = 0 ;
+  std::shared_ptr< STI::Utils::FileHolder > tempnull1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::FileHolder > **)&jarg1 : &tempnull1; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,(std::shared_ptr< STI::Utils::FileHolder > const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::shared_ptr< STI::Utils::Image > *arg1 = 0 ;
+  std::shared_ptr< STI::Utils::Image > tempnull1 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::Image > **)&jarg1 : &tempnull1; 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,(std::shared_ptr< STI::Utils::Image > const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+  jlong jresult = 0 ;
+  std::string *arg1 = 0 ;
+  STI::Utils::MixedValue *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  if(!jarg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  }
+  const char *arg1_pstr = (const char *)jenv->GetStringUTFChars(jarg1, 0); 
+  if (!arg1_pstr) return 0;
+  std::string arg1_str(arg1_pstr);
+  arg1 = &arg1_str;
+  jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
+  result = (STI::Utils::MixedValue *)new SwigDirector_MixedValue(jenv,(std::string const &)*arg1);
+  *(STI::Utils::MixedValue **)&jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1MixedValue(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   STI::Utils::MixedValue *arg1 = (STI::Utils::MixedValue *) 0 ;
   
@@ -8728,102 +8815,6 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MixedValue_1swap(JNIEnv *je
     return ;
   } 
   (arg1)->swap(*arg2);
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1) {
-  jlong jresult = 0 ;
-  std::string *arg1 = 0 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  if(!jarg1) {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-    return 0;
-  }
-  const char *arg1_pstr = (const char *)jenv->GetStringUTFChars(jarg1, 0); 
-  if (!arg1_pstr) return 0;
-  std::string arg1_str(arg1_pstr);
-  arg1 = &arg1_str;
-  jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_3((std::string const &)*arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
-  jlong jresult = 0 ;
-  double arg1 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = (double)jarg1; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_4(arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jint jarg1) {
-  jlong jresult = 0 ;
-  int arg1 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = (int)jarg1; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_5(arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
-  std::shared_ptr< STI::Utils::BinaryData > *arg1 = 0 ;
-  std::shared_ptr< STI::Utils::BinaryData > tempnull1 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::BinaryData > **)&jarg1 : &tempnull1; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_6((std::shared_ptr< STI::Utils::BinaryData > const &)*arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
-  std::shared_ptr< STI::Utils::FileHolder > *arg1 = 0 ;
-  std::shared_ptr< STI::Utils::FileHolder > tempnull1 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = jarg1 ? *(std::shared_ptr< STI::Utils::FileHolder > **)&jarg1 : &tempnull1; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_7((std::shared_ptr< STI::Utils::FileHolder > const &)*arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1MixedValue_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jboolean jarg1) {
-  jlong jresult = 0 ;
-  bool arg1 ;
-  STI::Utils::MixedValue *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = jarg1 ? true : false; 
-  result = (STI::Utils::MixedValue *)new_STI_Utils_MixedValue__SWIG_8(arg1);
-  *(STI::Utils::MixedValue **)&jresult = result; 
-  return jresult;
 }
 
 
@@ -9661,6 +9652,19 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_MetaData_1merge(JNIEnv *jen
 }
 
 
+SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1ImageWriter(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  STI::Utils::ImageWriter *arg1 = (STI::Utils::ImageWriter *) 0 ;
+  std::shared_ptr< STI::Utils::ImageWriter > *smartarg1 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  
+  smartarg1 = *(std::shared_ptr<  STI::Utils::ImageWriter > **)&jarg1;
+  arg1 = (STI::Utils::ImageWriter *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_ImageWriter_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   STI::Utils::ImageWriter *arg1 = (STI::Utils::ImageWriter *) 0 ;
   std::shared_ptr< STI::Utils::ImageWriter > *smartarg1 = 0 ;
@@ -9738,19 +9742,6 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_new_1ImageWriter(JNIEnv *j
   *(std::shared_ptr<  STI::Utils::ImageWriter > **)&jresult = result ? new std::shared_ptr<  STI::Utils::ImageWriter >(result SWIG_NO_NULL_DELETER_1) : 0;
   
   return jresult;
-}
-
-
-SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1ImageWriter(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  STI::Utils::ImageWriter *arg1 = (STI::Utils::ImageWriter *) 0 ;
-  std::shared_ptr< STI::Utils::ImageWriter > *smartarg1 = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  
-  smartarg1 = *(std::shared_ptr<  STI::Utils::ImageWriter > **)&jarg1;
-  arg1 = (STI::Utils::ImageWriter *)(smartarg1 ? smartarg1->get() : 0); 
-  (void)arg1; delete smartarg1;
 }
 
 
@@ -21131,7 +21122,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getKey(JNIEnv
   jstring jresult = 0 ;
   STI::Device::Attribute *arg1 = (STI::Device::Attribute *) 0 ;
   std::shared_ptr< STI::Device::Attribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21139,8 +21130,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getKey(JNIEnv
   
   smartarg1 = *(std::shared_ptr< const STI::Device::Attribute > **)&jarg1;
   arg1 = (STI::Device::Attribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::Attribute const *)arg1)->getKey();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::Attribute const *)arg1)->getKey();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21149,7 +21140,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getValue(JNIE
   jstring jresult = 0 ;
   STI::Device::Attribute *arg1 = (STI::Device::Attribute *) 0 ;
   std::shared_ptr< STI::Device::Attribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21157,8 +21148,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getValue(JNIE
   
   smartarg1 = *(std::shared_ptr< const STI::Device::Attribute > **)&jarg1;
   arg1 = (STI::Device::Attribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::Attribute const *)arg1)->getValue();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::Attribute const *)arg1)->getValue();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21185,7 +21176,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getGroup(JNIE
   jstring jresult = 0 ;
   STI::Device::Attribute *arg1 = (STI::Device::Attribute *) 0 ;
   std::shared_ptr< STI::Device::Attribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21193,8 +21184,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_Attribute_1getGroup(JNIE
   
   smartarg1 = *(std::shared_ptr< const STI::Device::Attribute > **)&jarg1;
   arg1 = (STI::Device::Attribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::Attribute const *)arg1)->getGroup();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::Attribute const *)arg1)->getGroup();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21605,7 +21596,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getKey(J
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21613,8 +21604,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getKey(J
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->getKey();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->getKey();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21623,7 +21614,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getKeySw
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21631,8 +21622,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getKeySw
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getKey();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getKey();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21641,7 +21632,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getValue
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21649,8 +21640,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getValue
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->getValue();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->getValue();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21659,7 +21650,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getValue
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21667,8 +21658,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getValue
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getValue();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getValue();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21713,7 +21704,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getGroup
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21721,8 +21712,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getGroup
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->getGroup();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->getGroup();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 
@@ -21731,7 +21722,7 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getGroup
   jstring jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::shared_ptr< STI::Device::LocalAttribute const > *smartarg1 = 0 ;
-  std::string *result = 0 ;
+  std::string result;
   
   (void)jenv;
   (void)jcls;
@@ -21739,8 +21730,8 @@ SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1getGroup
   
   smartarg1 = *(std::shared_ptr< const STI::Device::LocalAttribute > **)&jarg1;
   arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  result = (std::string *) &((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getGroup();
-  jresult = jenv->NewStringUTF(result->c_str()); 
+  result = ((STI::Device::LocalAttribute const *)arg1)->STI::Device::LocalAttribute::getGroup();
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
   return jresult;
 }
 

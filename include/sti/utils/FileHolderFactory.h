@@ -16,7 +16,8 @@ class FileHolder;
 class FileHolderFactory
 {
 public:
-
+    virtual ~FileHolderFactory() {}
+    
     virtual std::shared_ptr<FileHolder> makeFileHolder(const std::string& filename) = 0;
 
 };

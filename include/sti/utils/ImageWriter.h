@@ -18,6 +18,7 @@ class Image;
 class ImageWriter
 {
 public:
+    virtual ~ImageWriter() {}
 
     virtual void clear() = 0;
     virtual void addImage(Image* image) = 0;

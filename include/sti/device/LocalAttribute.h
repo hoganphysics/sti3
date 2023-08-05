@@ -31,10 +31,10 @@ public:
               const std::vector<std::string>& allowedValues);
 	~LocalAttribute();
 
-	const std::string& getKey() const;
-	const std::string& getValue() const;
+	std::string getKey() const;
+	std::string getValue() const;
     const std::vector<std::string>& getAllowedValues() const;
-    const std::string& getGroup() const;
+    std::string getGroup() const;
 
     void refreshValue();
 

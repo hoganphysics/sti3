@@ -63,7 +63,9 @@ public:
 	MixedValue(bool value);
 	MixedValue(int value);
 	MixedValue(double value);
+	MixedValue(const std::shared_ptr<STI::Utils::BinaryData>& value);
 	MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
+	MixedValue(const std::shared_ptr<STI::Utils::Image>& value);
 	MixedValue(const std::string& value);
 	MixedValue(const char* value);
 

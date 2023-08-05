@@ -41,6 +41,14 @@ public:
     SwigDirector_MixedValue(JNIEnv *jenv);
     SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValue const &copy);
     SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::MixedValueType const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, bool value);
+    SwigDirector_MixedValue(JNIEnv *jenv, int value);
+    SwigDirector_MixedValue(JNIEnv *jenv, double value);
+    SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::BinaryData > const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::FileHolder > const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::Image > const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, std::string const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, char const *value);
     virtual ~SwigDirector_MixedValue();
 public:
     bool swig_overrides(int n) {
@@ -53,6 +61,7 @@ class SwigDirector_ImageWriter : public STI::Utils::ImageWriter, public Swig::Di
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_ImageWriter(JNIEnv *jenv);
+    virtual ~SwigDirector_ImageWriter();
     virtual void clear();
     virtual void addImage(STI::Utils::Image *image);
     virtual bool write(std::string const &targetDirectory, std::shared_ptr< STI::Utils::FileHolder > &fileHolder);
@@ -96,10 +105,10 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_Attribute(JNIEnv *jenv);
     virtual ~SwigDirector_Attribute();
-    virtual std::string const &getKey() const;
-    virtual std::string const &getValue() const;
+    virtual std::string getKey() const;
+    virtual std::string getValue() const;
     virtual std::vector< std::string > const &getAllowedValues() const;
-    virtual std::string const &getGroup() const;
+    virtual std::string getGroup() const;
     virtual void refreshValue();
     virtual bool setValue(std::string const &value);
     virtual STI::Utils::MixedValue const &getMetaData() const;
@@ -149,10 +158,10 @@ public:
     SwigDirector_LocalAttribute(JNIEnv *jenv, std::string const &key, std::string const &initalValue);
     SwigDirector_LocalAttribute(JNIEnv *jenv, std::string const &key, std::string const &initalValue, std::vector< std::string > const &allowedValues);
     virtual ~SwigDirector_LocalAttribute();
-    virtual std::string const &getKey() const;
-    virtual std::string const &getValue() const;
+    virtual std::string getKey() const;
+    virtual std::string getValue() const;
     virtual std::vector< std::string > const &getAllowedValues() const;
-    virtual std::string const &getGroup() const;
+    virtual std::string getGroup() const;
     virtual void refreshValue();
     virtual bool setValue(std::string const &value);
     virtual STI::Utils::MixedValue const &getMetaData() const;

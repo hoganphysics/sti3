@@ -66,6 +66,41 @@ public class MixedValue {
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
+  public MixedValue(boolean value) {
+    this(stiJNI.new_MixedValue__SWIG_3(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(int value) {
+    this(stiJNI.new_MixedValue__SWIG_4(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(double value) {
+    this(stiJNI.new_MixedValue__SWIG_5(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(BinaryData value) {
+    this(stiJNI.new_MixedValue__SWIG_6(BinaryData.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(FileHolder value) {
+    this(stiJNI.new_MixedValue__SWIG_7(FileHolder.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(Image value) {
+    this(stiJNI.new_MixedValue__SWIG_8(Image.getCPtr(value), value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
+  public MixedValue(String value) {
+    this(stiJNI.new_MixedValue__SWIG_9(value), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
   public boolean opEquals(MixedValue other) {
     return stiJNI.MixedValue_opEquals(swigCPtr, this, MixedValue.getCPtr(other), other);
   }
@@ -183,36 +218,6 @@ public class MixedValue {
 
   public void swap(MixedValue value) {
     stiJNI.MixedValue_swap(swigCPtr, this, MixedValue.getCPtr(value), value);
-  }
-
-  public MixedValue(String value) {
-    this(stiJNI.new_MixedValue__SWIG_3(value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
-  }
-
-  public MixedValue(double value) {
-    this(stiJNI.new_MixedValue__SWIG_4(value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
-  }
-
-  public MixedValue(int value) {
-    this(stiJNI.new_MixedValue__SWIG_5(value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
-  }
-
-  public MixedValue(BinaryData value) {
-    this(stiJNI.new_MixedValue__SWIG_6(BinaryData.getCPtr(value), value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
-  }
-
-  public MixedValue(FileHolder value) {
-    this(stiJNI.new_MixedValue__SWIG_7(FileHolder.getCPtr(value), value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
-  }
-
-  public MixedValue(boolean value) {
-    this(stiJNI.new_MixedValue__SWIG_8(value), true);
-    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
   public void setValueVector(MixedValueVec value) {

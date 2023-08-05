@@ -19,12 +19,12 @@ void RemoteAttribute::attachManager(RemoteAttributeManager* manager)
     remoteManager = manager;
 }
 
-const std::string& RemoteAttribute::getKey() const
+std::string RemoteAttribute::getKey() const
 {
     return key_;
 }
 
-const std::string& RemoteAttribute::getValue() const
+std::string RemoteAttribute::getValue() const
 {
     if (remoteManager != 0) {
         value_ = remoteManager->getUpdatedValue(key_);
@@ -42,7 +42,7 @@ const std::vector<std::string>& RemoteAttribute::getAllowedValues() const
     return allowedValues_;
 }
 
-const std::string& RemoteAttribute::getGroup() const
+std::string RemoteAttribute::getGroup() const
 {
     return group_;
 }

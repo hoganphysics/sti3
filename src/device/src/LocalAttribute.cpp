@@ -45,12 +45,12 @@ LocalAttribute::~LocalAttribute()
 }
 
 
-const std::string& LocalAttribute::getKey() const
+std::string LocalAttribute::getKey() const
 {
     return key_;
 }
 
-const std::string& LocalAttribute::getValue() const
+std::string LocalAttribute::getValue() const
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
 
@@ -62,7 +62,7 @@ const std::vector<std::string>& LocalAttribute::getAllowedValues() const
     return allowedValues_;
 }
 
-const std::string& LocalAttribute::getGroup() const
+std::string LocalAttribute::getGroup() const
 {
     return group_;
 }

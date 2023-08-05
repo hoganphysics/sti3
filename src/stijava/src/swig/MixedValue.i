@@ -23,42 +23,42 @@
 
 %extend STI::Utils::MixedValue
 {
-    MixedValue(const std::string& value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-    MixedValue(double value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-    MixedValue(int value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-    MixedValue(const std::shared_ptr< STI::Utils::BinaryData >& value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-    MixedValue(const std::shared_ptr< STI::Utils::FileHolder >& value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
-    MixedValue(bool value)
-    {
-        STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
-        mixedVal->setValue(value);
-        return mixedVal;
-    }
+    // MixedValue(const std::string& value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
+    // MixedValue(double value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
+    // MixedValue(int value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
+    // MixedValue(const std::shared_ptr< STI::Utils::BinaryData >& value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
+    // MixedValue(const std::shared_ptr< STI::Utils::FileHolder >& value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
+    // MixedValue(bool value)
+    // {
+    //     STI::Utils::MixedValue* mixedVal = new STI::Utils::MixedValue();
+    //     mixedVal->setValue(value);
+    //     return mixedVal;
+    // }
 
     void STI::Utils::MixedValue::setValueVector(const std::vector< STI::Utils::MixedValue >& value)
     {

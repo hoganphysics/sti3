@@ -77,7 +77,17 @@ MixedValue::MixedValue(double value)
 	setValue(value);
 }
 
+MixedValue::MixedValue(const std::shared_ptr<STI::Utils::BinaryData>& value)
+{
+	setValue(value);
+}
+
 MixedValue::MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(const std::shared_ptr<STI::Utils::Image>& value)
 {
 	setValue(value);
 }
