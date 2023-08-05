@@ -207,7 +207,11 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 			//Here replace() sets the pointer in the underlying corba sequence to raw data. We use release_=false when
 			//calling replace() to ensure that the corba sequence will not attempt to free this memory, which would
 			//cause a double free.
-			valuesIntRef.replace(values->size(), values->size(), const_cast<std::vector<int>*>(values)->data(), false);		//no release
+			//valuesIntRef.replace(values->size(), values->size(), const_cast<std::vector<int>*>(values)->data(), false);		//no release
+			
+			valuesIntRef.replace(values->size(), values->size(), 
+				reinterpret_cast<CORBA::Long*>( const_cast<std::vector<int>*>(values)->data() )
+				, false);		//no release
 		}
 		break;
 	case MixedValueType::Binary:
@@ -410,13 +414,13 @@ bool STI::Network::convert<BinaryData, TBinaryData>(const BinaryData& bin, TBina
 	else if (bin.isType<unsigned int>()) {
 		unsigned int* data;
 		if (bin.get(data)) {
-			tBin.data.data_ulong().replace(bin.length(), bin.length(), data, false );	//no release
+			tBin.data.data_ulong().replace(bin.length(), bin.length(), reinterpret_cast<CORBA::ULong*>(data), false );	//no release
 		}
 	}
 	else if (bin.isType<int>()) {
 		int* data;
 		if (bin.get(data)) {
-			tBin.data.data_long().replace(bin.length(), bin.length(), data, false );	//no release
+			tBin.data.data_long().replace(bin.length(), bin.length(), reinterpret_cast<CORBA::Long*>(data), false );	//no release
 		}
 	}
 	else if (bin.isType<float>()) {
@@ -478,14 +482,18 @@ bool STI::Network::convert<TBinaryData, BinaryData>(const TBinaryData& tBin, Bin
 		{
 			CORBA::ULong x;
 			release = tBin.data.data_ulong().release();
-			unsigned int* data = const_cast<TBinaryData&>(tBin).data.data_ulong().get_buffer(release);	//orphan if release = true
+			unsigned int* data = reinterpret_cast<unsigned int*>(
+				const_cast<TBinaryData&>(tBin).data.data_ulong().get_buffer(release)	//orphan if release = true
+				);
 			bin.assign(data, tBin.data.data_ulong().length());
 		}
 		break;
 	case TBinaryType::BinaryLong:
 		{
 			release = tBin.data.data_long().release();
-			int* data = const_cast<TBinaryData&>(tBin).data.data_long().get_buffer(release);	//orphan if release = true
+			int* data = reinterpret_cast<int*>(
+				const_cast<TBinaryData&>(tBin).data.data_long().get_buffer(release)		//orphan if release = true
+				);
 			bin.assign(data, tBin.data.data_long().length());
 		}
 		break;
