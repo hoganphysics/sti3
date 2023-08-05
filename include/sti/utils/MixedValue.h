@@ -55,6 +55,14 @@ public:
 	MixedValue(const MixedValue& copy);
 	MixedValue(const MixedValueType& value);
 
+	//Template constructor can cause infinite recursion; work around with selection of specific helper constuctors
+	MixedValue(bool value);
+	MixedValue(int value);
+	MixedValue(double value);
+	MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
+	MixedValue(const std::string& value);
+	MixedValue(const char* value);
+
 	virtual ~MixedValue();
 
 	template<typename T> MixedValue& operator= (const T& other)

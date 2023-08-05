@@ -275,7 +275,9 @@ class EngineJobUpdateDeviceMessage : public DeviceMessage
 public:
 
 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace) 
-	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate) {}
+	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate), targetList(STI::Engine::EventEngineJobList::Completed)
+	{
+	}
 
 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, 
 		const std::shared_ptr<STI::Engine::EventEngineJob>& job, STI::Engine::EventEngineJobList targetList) 
@@ -385,6 +387,7 @@ public:
 	EngineSchedulerMessage(const STI::Device::DeviceTrace& trace, const SchedulerMessageType& type) 	//STI::Device::DeviceID originalSource,
 	: DeviceMessage(trace, DeviceMessageType::EngineScheduler), schedulerMessageType(type)	//, originalSource(originalSource) 
 	{
+		engineState = STI::Engine::EngineState::Unknown;
 	}
 	
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineScheduler; }

@@ -21,7 +21,7 @@ class LocalChannel	: public Channel //: public EventEmitter<ChannelEvent>
 {
 public:
 
-	LocalChannel() {}
+	LocalChannel();
 	LocalChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 	~LocalChannel();

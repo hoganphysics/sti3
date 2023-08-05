@@ -5,6 +5,11 @@ using STI::Device::LocalChannel;
 using STI::Device::ChannelRefreshListener;
 
 
+LocalChannel::LocalChannel()
+: LocalChannel(0, ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Empty, "")
+{
+}
+
 LocalChannel::LocalChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 	STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
 	: channelNumber(channelNumber), type(type), inputType(inputType), outputType(outputType), channelName(defaultName)
