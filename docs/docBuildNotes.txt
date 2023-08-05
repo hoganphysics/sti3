@@ -24,3 +24,24 @@ sphinx-quickstart
 
 #Temporary build command (run from sti3/docs)
 sphinx-build -a -Dbreathe_projects.STI=build/doxygen/xml/ . build/sphinx
+
+
+## Bug with docutils package.  Environments won't end (e.g., Note environment includes everything below then).
+# https://github.com/sphinx-doc/sphinx/issues/9923
+# https://github.com/sphinx-doc/sphinx/issues/10121
+Problem is with version 0.18 of docutils package (not compatible with version 4.4 of Sphinx). 
+Currently using Sphinx version 4.3 and it also doesn't work.  Try downgrading to docutils 0.17.1
+
+pip3 install --force-reinstall -v "docutils==0.17.1"
+Actually, better to just downgrade this package, which is what needed docutils version 0.18
+pip3 install --force-reinstall -v "sphinx-tabs==3.2.0"
+
+Note sphinx_tabs 3.3.0 also builds, but has some issues with dark theme.
+
+
+
+Temporary Doxygen from command line:
+
+* Run from docs/build directory
+* doxygen ../Doxyfile.in 
+* Output is in docs/build/@DOXYGEN_OUTPUT_DIR@

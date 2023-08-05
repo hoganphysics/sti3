@@ -166,6 +166,7 @@ your device is then implemented by overriding function hooks provided by LocalDe
 .. Note::
     Several examples of device drivers may be found in the *examples/* subdirectory in the 
     STI source distribution.
+    
 
 Creating a simple device can be done in a few lines of code.  In the example below, a minimal STI 
 device called **SimpleDevice** is defined:
