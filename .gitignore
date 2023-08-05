@@ -31,10 +31,6 @@ src/device/test/testEvents/vcproject/x64/
 src/device/test/testEngine/testEngine
 src/network/test/testcorbaclient/src/testClient
 src/network/test/testNodeWalker/x64/
-src/network/src/deviceNet.*
-src/network/src/deviceNetDynSK.*
-src/network/src/orbTypes.*
-src/network/src/orbTypesDynSK.*
 doc/~$heduler.docx
 doc/~$vice tree.docx
 /src/device/test/testDependencyTree/main
@@ -64,3 +60,5 @@ stipy.egg-info/
 env/
 doc/out/
 src/server/vcproject/.sti/
+build_env/
+env1/

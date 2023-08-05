@@ -18,7 +18,8 @@ class DeviceMessageListenerID
 {
 public:
 	
-	DeviceMessageListenerID() {}
+	DeviceMessageListenerID()
+	: DeviceMessageListenerID(DeviceMessageType::Unknown, "") {}
 
 	DeviceMessageListenerID(const DeviceMessageType& type, const std::string& name) 
 	: type(type), name(name) {}

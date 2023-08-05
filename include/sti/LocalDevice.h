@@ -13,6 +13,7 @@
 #include <sti/device/DeviceMessageListener.h>
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
+#include <sti/device/PartnerDevice.h>
 #include <sti/device/ServerMessageRelayer.h>
 
 #include <sti/engine/DeviceEventParser.h>
@@ -104,7 +105,10 @@ public:
 	}
 
 	void addPartner(const DeviceID& id);
+	void addPartner(const DeviceID& id, const std::string& alias);
 	void addEventTarget(const DeviceID& id);
+	PartnerDevice partner(const DeviceID& id);
+	PartnerDevice partner(const std::string& alias);
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
@@ -182,6 +186,7 @@ private:
 	//std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
 
 	std::set<DeviceID> partnerDevices;
+	std::map<std::string, DeviceID> partnerAliases;
 
 	mutable std::mutex deviceMutex;
 

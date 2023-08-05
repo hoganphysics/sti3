@@ -21,7 +21,7 @@ class LocalChannel	: public Channel //: public EventEmitter<ChannelEvent>
 {
 public:
 
-	LocalChannel() {}
+	LocalChannel();
 	LocalChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 	~LocalChannel();
@@ -42,6 +42,15 @@ public:
 
 	void setChannelName(const std::string& name);
 	void saveLastValue(const STI::Utils::MixedValue& value);
+	
+	template<typename T>
+	void saveLastValue(const T& value)
+	{
+		STI::Utils::MixedValue mixedVal;
+		mixedVal.setValue(value);
+		saveLastValue(mixedVal);
+	}
+
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
 
 	void addRefreshListener(ChannelRefreshListener* listener);

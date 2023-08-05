@@ -62,6 +62,36 @@ MixedValue::MixedValue(const MixedValueType& valueType)
 	}
 }
 
+MixedValue::MixedValue(bool value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(int value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(double value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(const std::string& value)
+{
+	setValue(value);
+}
+
+MixedValue::MixedValue(const char* value)
+{
+	setValue(value);
+}
+
 MixedValue::~MixedValue()
 {
 }

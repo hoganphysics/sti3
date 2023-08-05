@@ -29,6 +29,7 @@ class DeviceEventParser
 {
 public:
 
+	DeviceEventParser();
 	virtual ~DeviceEventParser() {}
 	
 	virtual bool isEventTarget(const STI::Device::DeviceID& id) = 0;
@@ -63,6 +64,8 @@ private:
 	unsigned eventNumber;
 
 	std::vector<EngineParsingMessage> parsingMessages;
+
+	bool parsing;
 
 	mutable std::mutex parseMutex;
 };

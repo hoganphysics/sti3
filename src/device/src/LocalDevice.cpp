@@ -47,6 +47,7 @@ using STI::Device::LocalChannel;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::LocalDeviceMessageDispatcher;
+using STI::Device::PartnerDevice;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -71,7 +72,8 @@ LocalDevice::LocalDevice(const Configuration& config, const std::string& section
 }
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
-	const std::string& targetServer) : id(name, address, module, targetServer)
+	const std::string& targetServer) 
+: STI::Engine::DeviceEventParser(), id(name, address, module, targetServer)
 {
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
@@ -222,6 +224,44 @@ bool LocalDevice::isEventTarget(const DeviceID& id)
 {
 	auto it = eventTargets.find(id);
 	return (it != eventTargets.end());
+}
+
+PartnerDevice LocalDevice::partner(const DeviceID& id)
+{
+	std::shared_ptr<STI::Device::Device> device;
+
+	auto it = partnerDevices.find(id);
+	if (it != partnerDevices.end()) {
+		localCollection->get(id, device);
+	}
+	PartnerDevice partner(this, device);
+	return partner;
+}
+
+PartnerDevice LocalDevice::partner(const std::string& alias)
+{
+	auto it = partnerAliases.find(alias);
+	
+	if (it != partnerAliases.end()) {
+		return partner(it->second);
+	}
+
+	//not found
+	DeviceID id;	//null
+	return partner(id);
+}
+
+void LocalDevice::addPartner(const DeviceID& id, const std::string& alias)
+{
+	auto it = partnerAliases.find(alias);
+
+	if (it != partnerAliases.end()) {
+		//duplicate alias
+		//error
+	}
+	else {
+		partnerAliases[alias] = id;
+	}
 }
 
 void LocalDevice::addPartner(const DeviceID& id)

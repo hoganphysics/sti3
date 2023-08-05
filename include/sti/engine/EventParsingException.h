@@ -1,6 +1,6 @@
-/*! \file EventConflictException.h
+/*! \file EventParsingException.h
  *  \author Jason Michael Hogan
- *  \brief Include-file for the class EventConflictException
+ *  \brief Include-file for the class EventParsingException
  *  \section license License
  *
  *  Copyright (C) 2008 Jason Hogan <hogan@stanford.edu>\n
@@ -20,44 +20,34 @@
  *  along with the STI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STI_ENGINE_EVENTCONFLICTEXCEPTION_H
-#define STI_ENGINE_EVENTCONFLICTEXCEPTION_H
+#ifndef STI_ENGINE_EVENTPARSINGEXCEPTION_H
+#define STI_ENGINE_EVENTPARSINGEXCEPTION_H
 
 #include <sti/engine/RawEvent.h>
-#include "STI_Exception.h"
+#include <sti/engine/STI_Exception.h>
 
 #include <string>
+
 
 namespace STI
 {
 namespace Engine
 {
 
-class EventConflictException : public STI_Exception
+
+class EventParsingException : public STI_Exception
 {
 public:
 
-	EventConflictException(const STI::Engine::RawEvent& evt, const std::string& message)
-		: STI_Exception(message), _event1(evt), _event2(evt) {}
-	EventConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message)
-		: STI_Exception(message), _event1(event1), _event2(event2) {}
-	~EventConflictException() throw() {}
+	EventParsingException(const STI::Engine::RawEvent& evt, const std::string& message)
+		: STI_Exception(message), _evt(evt) {}
+	~EventParsingException() throw() {}
 
-	double lastTime() const
-	{
-		if (_event1.time() > _event2.time())
-			return _event1.time();
-		else
-			return _event2.time();
-	}
-
-	const STI::Engine::RawEvent& getEvent1() const { return _event1; }
-	const STI::Engine::RawEvent& getEvent2() const { return _event2; }
+	const STI::Engine::RawEvent& getEvent() const { return _evt; };
 
 private:
 
-	STI::Engine::RawEvent _event1;
-	STI::Engine::RawEvent _event2;
+	const STI::Engine::RawEvent _evt;
 
 };
 
@@ -67,4 +57,3 @@ private:
 
 
 #endif
-

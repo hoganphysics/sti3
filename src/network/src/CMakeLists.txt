@@ -35,31 +35,33 @@ message("STI_LIB_POSTFIX:")
 message(STATUS "${STI_LIB_POSTFIX}")
 
 
-#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
-
-FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
+find_package(Boost 1.64 REQUIRED)
 find_package(Threads REQUIRED)
-
 #find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
+
 if (MSVC)
   add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
   add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
 
+if (DEFINED ENV{OMNIORB_ROOT_DIR})
+    message("Enviromental var defined!!")
+    set(OMNIORB_PATH $ENV{OMNIORB_ROOT_DIR})
+else()
+    message("Enviromental NOT defined")
+    set(OMNIORB_PATH "")
+endif()
 
 set(STI_BASE_DIR ../../..)
 
-# include_directories("." ${OMNIORB4_INCLUDE_DIR})
-#include_directories("." "C:\Users\Jason\Code\lib\omniORB-4.2.1.x64\include")
 include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 
 # include_directories("${STI_BASE_DIR}/src/device/src")
 
 #link_directories(${STI_BASE_DIR}/lib)
 
-# add the executable
+
 add_library(stinetwork SHARED 
     Convert_Attribute.cpp
     Convert_Channel.cpp
@@ -136,21 +138,10 @@ if(MSVC)
     target_link_directories(stinetwork PUBLIC 
         "${OMNIORB_PATH}/lib/x86_win32"
         #"${STI_BASE_DIR}/lib"
-        #"C:/Users/Jason/Code/dev/sti3/build/x64-Debug/src/device/src"
-        #"src/device/src"
         "${CMAKE_CURRENT_BINARY_DIR}/../../device/src"
-    # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Debug/lib"
-    # "C:/Users/Jason/Code/dev/sti3/src/device/src/build/install/x64-Release/lib"
     )
-
-    # set(STIDEVICE_LIB stidevice${CMAKE_DEBUG_POSTFIX})
     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
-
 endif()
-
-# if (MSVC)
-#     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
-# endif (MSVC)
 
 
 target_link_libraries(stinetwork 
@@ -164,9 +155,7 @@ target_link_libraries(stinetwork
     #COS4${OMNI_EXT}
     #COSDynamic4${OMNI_EXT}
     # stidevice${STI_LIB_POSTFIX}
-    # Ws2_32
 )
-
 
 
 if(MSVC)
@@ -181,9 +170,6 @@ endif()
 #https://stackoverflow.com/questions/33062728/cmake-link-shared-library-on-windows
 
 
-
-
-
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
 #    DEBUG_POSTFIX "$<IF:$<CONFIG:Debug>,${STI_LIB_POSTFIX},"">"
@@ -194,7 +180,6 @@ set_target_properties(stinetwork PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
     #MSVC_RUNTIME_LIBRARY "MultiThreadedDebug>"
 #    SOVERSION 1
-#    PUBLIC_HEADER api/mylib.h
 )
 
 if(USE_STI_DEBUG_POSTFIX) 
@@ -202,12 +187,6 @@ if(USE_STI_DEBUG_POSTFIX)
     DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
   )
 endif()
-
-#if (USE_STI_DEBUG_POSTFIX) 
-#    set_target_properties(stinetwork PROPERTIES
-#        DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
-#    )
-#endif (USE_STI_DEBUG_POSTFIX)
 
 
 message("OMNIORB_PATH:")
@@ -247,6 +226,7 @@ function(GET_OMNI_MSVC REQUIRED_ARG)
   endif()
 endfunction()
 
+# Lookup MSVC version code for omniORB
 get_omni_msvc(OMNI_MSVC_VER)
 message("Output: ${OMNI_MSVC_VER}")
 
@@ -257,8 +237,6 @@ target_include_directories(stinetwork PRIVATE
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
     ${STI_BASE_DIR}/include/sti/extern
-    # ${WORKING_DIRECTORY}/fwd
-    # ${WORKING_DIRECTORY}/utils
 )
 
 if(MSVC)

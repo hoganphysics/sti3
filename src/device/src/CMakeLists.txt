@@ -27,8 +27,6 @@ else()
 endif()
 
 
-#set(STI_LIB_POSTFIX "$<$<CONFIG:Debug>:_d>")
-
 if(USE_STI_DEBUG_POSTFIX)
   set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
@@ -45,12 +43,7 @@ endif()
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
-message("***** OpenSSL: ${OPENSSL_USE_STATIC_LIBS}")
-
-
-
-FIND_PACKAGE( Boost 1.64 COMPONENTS program_options REQUIRED )
-#INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+find_package(Boost 1.64 REQUIRED)
 
 set(STI_BASE_DIR ../../..)
 
@@ -58,7 +51,6 @@ include_directories("." ${Boost_INCLUDE_DIR})
 
 #link_directories(${STI_BASE_DIR}/lib)
 
-# add the executable
 add_library(stidevice SHARED 
     BinaryData.cpp
     ConfigFile.cpp
@@ -105,7 +97,8 @@ add_library(stidevice SHARED
     ParsedVar.cpp
     ParseID.cpp
     ParseResult.cpp
-    ParseTicket.cpp
+    ParseTicket.cpp  
+    PartnerDevice.cpp
     PersistenceTargetHolder.cpp
     RawEvent.cpp
     RawEventGroup.cpp
@@ -131,7 +124,7 @@ add_library(stidevice SHARED
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
-)
+ "PartnerDevice.cpp")
 
 set_target_properties(stidevice PROPERTIES 
     VERSION ${PROJECT_VERSION}
@@ -150,7 +143,6 @@ set_target_properties(stidevice PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 #    DEBUG_POSTFIX ${STI_LIB_POSTFIX}
 #    SOVERSION 1
-#    PUBLIC_HEADER api/mylib.h
 )
 
 if(USE_STI_DEBUG_POSTFIX) 
@@ -172,8 +164,6 @@ target_link_libraries(stidevice
     ${OPENSSL_LIBRARIES}
 )
 
-
-
 if(DEFINED SKBUILD)
   if(MSVC)
     install(TARGETS stidevice
@@ -189,7 +179,6 @@ else()
     #DESTINATION ${STI_BASE_DIR}/lib
   LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#    COMPONENT greetings
   )
 endif()
 # target_link_libraries(testDevice stidevice stinetwork)
