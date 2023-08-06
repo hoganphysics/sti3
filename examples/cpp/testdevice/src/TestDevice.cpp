@@ -41,6 +41,8 @@ TestDevice::TestDevice(const std::string& name, const std::string& address, unsi
 
 void TestDevice::init()
 {
+    tmp = 0;
+
     addAttribute("test", 33, { "33", "44", "55"})
         .setSetter([this](const std::string& value) { return setTest(value); });
 
@@ -165,7 +167,8 @@ void TestDevice::TestEvent::collectMeasurementData()
     if (evt.channel() == 2) {
         std::cout << "collectMeasurementData: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
         STI::Utils::MixedValue result;
-        result.setValue(256);
+        result.setValue(256 + localDevice->tmp);
+        (localDevice->tmp)++;
         getMeasurements().at(0)->setMeasurementResult(result);
 
     }

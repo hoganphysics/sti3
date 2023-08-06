@@ -19,6 +19,8 @@ public:
 
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
+	int tmp;
+	
 private:
 
 	bool setTest(const std::string& value);
@@ -42,7 +44,7 @@ private:
 
     private:
 		STI::Engine::RawEvent evt;
-		STI::Device::LocalDevice* localDevice;
+		TestDevice* localDevice;
 	};
 
 
