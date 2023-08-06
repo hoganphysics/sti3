@@ -21820,7 +21820,7 @@ SWIGEXPORT jboolean JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1setValu
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1addMetaData_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1addMetaData(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jobject jarg3_) {
   jlong jresult = 0 ;
   STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
   std::string *arg2 = 0 ;
@@ -21850,44 +21850,6 @@ SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1addMetaDat
     return 0;
   } 
   result = (STI::Device::LocalAttribute *) &(arg1)->addMetaData((std::string const &)*arg2,(STI::Utils::MixedValue const &)*arg3);
-  *(std::shared_ptr<  STI::Device::LocalAttribute > **)&jresult = new std::shared_ptr<  STI::Device::LocalAttribute >(result SWIG_NO_NULL_DELETER_0); 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_edu_stanford_sti_stiJNI_LocalAttribute_1addMetaData_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
-  jlong jresult = 0 ;
-  STI::Device::LocalAttribute *arg1 = (STI::Device::LocalAttribute *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  std::shared_ptr< STI::Device::LocalAttribute > *smartarg1 = 0 ;
-  STI::Device::LocalAttribute *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  
-  smartarg1 = *(std::shared_ptr<  STI::Device::LocalAttribute > **)&jarg1;
-  arg1 = (STI::Device::LocalAttribute *)(smartarg1 ? smartarg1->get() : 0); 
-  if(!jarg2) {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-    return 0;
-  }
-  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
-  if (!arg2_pstr) return 0;
-  std::string arg2_str(arg2_pstr);
-  arg2 = &arg2_str;
-  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
-  if(!jarg3) {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
-    return 0;
-  }
-  const char *arg3_pstr = (const char *)jenv->GetStringUTFChars(jarg3, 0); 
-  if (!arg3_pstr) return 0;
-  std::string arg3_str(arg3_pstr);
-  arg3 = &arg3_str;
-  jenv->ReleaseStringUTFChars(jarg3, arg3_pstr); 
-  result = (STI::Device::LocalAttribute *) &(arg1)->addMetaData((std::string const &)*arg2,(std::string const &)*arg3);
   *(std::shared_ptr<  STI::Device::LocalAttribute > **)&jresult = new std::shared_ptr<  STI::Device::LocalAttribute >(result SWIG_NO_NULL_DELETER_0); 
   return jresult;
 }

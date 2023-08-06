@@ -76,6 +76,12 @@ void TestDevice::init()
         STI::Utils::MixedValueType::Empty,
         "file measurement");
 
+    addChannel(4,
+        STI::Device::ChannelType::Input,
+        STI::Utils::MixedValueType::Double,
+        STI::Utils::MixedValueType::Vector,
+        "vector input");
+
     STI::Engine::EngineID id(0);
     addEventEngine(id);
     
@@ -146,6 +152,15 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine
         if (evt.second[0].channel() == 3) {
             synchEvt->addMeasurement(evt.second[0]);
         }
+        if (evt.second[0].channel() == 4) {
+            synchEvt->addMeasurement(evt.second[0]);
+            if (evt.second[0].value().getVector().size() > 1) {
+                synchEvt->value = evt.second[0].value().getVector().at(1).getDouble();
+            }
+            else {
+                synchEvt->value = 0;
+            }
+        }
         synchedEvents.push_back(std::move(synchEvt));
     }
 }
@@ -169,6 +184,16 @@ void TestDevice::TestEvent::collectMeasurementData()
         STI::Utils::MixedValue result;
         result.setValue(256 + localDevice->tmp);
         (localDevice->tmp)++;
+        getMeasurements().at(0)->setMeasurementResult(result);
+
+    }
+
+    if (evt.channel() == 4) {
+        std::cout << "collectMeasurementData: " << localDevice->getID().getName() << " " << evt.print() << std::endl;
+        STI::Utils::MixedValue result;
+        result.setValue(value);
+        // this->getMeasurements().at(0)->
+
         getMeasurements().at(0)->setMeasurementResult(result);
 
     }

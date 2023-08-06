@@ -93,11 +93,7 @@ public class LocalAttribute extends Attribute {
   }
 
   public LocalAttribute addMetaData(String key, MixedValue data) {
-    return new LocalAttribute(stiJNI.LocalAttribute_addMetaData__SWIG_0(swigCPtr, this, key, MixedValue.getCPtr(data), data), true);
-  }
-
-  public LocalAttribute addMetaData(String key, String data) {
-    return new LocalAttribute(stiJNI.LocalAttribute_addMetaData__SWIG_1(swigCPtr, this, key, data), true);
+    return new LocalAttribute(stiJNI.LocalAttribute_addMetaData(swigCPtr, this, key, MixedValue.getCPtr(data), data), true);
   }
 
   public MixedValue getMetaData() {

@@ -27,6 +27,14 @@ namespace STI
 namespace Utils
 {
 
+bool stringToValue(const std::string& inString, std::string& outValue)
+{
+	//Overloaded passthrough to avoid stringstream issue with string extraction.
+	//When the input string has spaces, the >> operator only extracts the first word.
+	outValue = inString;
+	return true;
+}
+
 std::string valueToString(const std::string& inValue)
 {
 	return inValue;

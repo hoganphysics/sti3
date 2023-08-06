@@ -20,7 +20,7 @@ public:
 	void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
 	int tmp;
-	
+
 private:
 
 	bool setTest(const std::string& value);
@@ -41,6 +41,8 @@ private:
 		
 		void playEvent();
 		void collectMeasurementData();
+
+		double value;
 
     private:
 		STI::Engine::RawEvent evt;

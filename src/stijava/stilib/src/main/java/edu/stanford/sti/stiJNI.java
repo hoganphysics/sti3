@@ -829,8 +829,7 @@ public class stiJNI {
   public final static native void LocalAttribute_refreshValueSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_);
   public final static native boolean LocalAttribute_setValue(long jarg1, LocalAttribute jarg1_, String jarg2);
   public final static native boolean LocalAttribute_setValueSwigExplicitLocalAttribute(long jarg1, LocalAttribute jarg1_, String jarg2);
-  public final static native long LocalAttribute_addMetaData__SWIG_0(long jarg1, LocalAttribute jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
-  public final static native long LocalAttribute_addMetaData__SWIG_1(long jarg1, LocalAttribute jarg1_, String jarg2, String jarg3);
+  public final static native long LocalAttribute_addMetaData(long jarg1, LocalAttribute jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
   public final static native long LocalAttribute_getMetaData__SWIG_0(long jarg1, LocalAttribute jarg1_);
   public final static native long LocalAttribute_getMetaDataSwigExplicitLocalAttribute__SWIG_0(long jarg1, LocalAttribute jarg1_);
   public final static native long LocalAttribute_getMetaData__SWIG_1(long jarg1, LocalAttribute jarg1_, String jarg2);

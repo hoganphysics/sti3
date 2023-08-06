@@ -28,6 +28,8 @@ namespace Utils
 
 	std::string trim(const std::string& input, std::string white = " \n\r\t");
 
+	
+
 	template<typename T> 
 	bool stringToValue(const std::string& inString, T& outValue, std::ios::fmtflags numBase=std::ios::dec, std::streamsize precision=9)
 	{
@@ -59,6 +61,8 @@ namespace Utils
 			return Default;
 	}
 
+	//pass throughs for std::string
+	bool stringToValue(const std::string& inString, std::string& outValue);
 	std::string valueToString(const std::string& inValue);
 
 	template<class T>
