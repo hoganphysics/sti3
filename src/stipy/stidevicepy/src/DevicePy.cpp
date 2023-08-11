@@ -1,15 +1,20 @@
 
 #include "DevicePy.h"
+
+#include <sti/device/Attribute.h>
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessageDispatcher.h>
 #include "ChannelManagerPy.h"
 #include <sti/device/ChannelManager.h>
 #include <sti/device/DeviceCollection.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/utils/MixedValue.h>
 // #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
 #include "PersistenceManagerPy.h"
 
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
@@ -21,6 +26,7 @@ using STI::Device::AttributeManager;
 using STI::Python::PersistenceManagerPy;
 using STI::Device::PersistenceManager;
 using STI::Engine::EventEngineScheduler;
+using STI::Utils::MixedValue;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -28,9 +34,9 @@ DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
 {
 }
 
-DevicePy::~DevicePy()
-{
-}
+//DevicePy::~DevicePy()
+//{
+//}
 
 void DevicePy::setDevice(const std::shared_ptr<STI::Device::Device>& device)
 {
@@ -151,4 +157,60 @@ std::shared_ptr<PersistenceManagerPy> DevicePy::getPersistenceManager()
 
     return wrapper;
 }
+
+
+
+
+bool DevicePy::write(short channel, const pybind11::object& value)
+{
+    MixedValuePy valuepy(value);
+    return (device_ != 0) && device_->write(channel, valuepy.getMixedValue());
+}
+
+pybind11::object DevicePy::read(short channel, const pybind11::object& value)
+{
+    MixedValue data;
+    MixedValuePy valuepy(value);
+
+    bool success = (device_ != 0) && device_->read(channel, valuepy.getMixedValue(), data);
+
+    if (success) {
+        pybind11::gil_scoped_acquire acquire;
+        MixedValuePy pydata(data);
+        return pydata.getValue_py();
+    }
+    return py::none();
+}
+
+void DevicePy::stopRW()
+{
+    if (device_ != 0) {
+        device_->stopRW();
+    }
+}
+
+std::string DevicePy::getAttribute(const std::string& key)
+{
+    if (device_ != 0) {
+        return device_->getAttribute(key);
+    }
+    return "";
+}
+
+bool DevicePy::getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute)
+{
+    if (device_ != 0) {
+        return device_->getAttribute(key, attribute);
+    }
+    return false;
+}
+
+bool DevicePy::setAttribute(const std::string& key, const std::string& value)
+{
+    if (device_ != 0) {
+        return device_->setAttribute(key, value);
+    }
+    return false;
+}
+
 

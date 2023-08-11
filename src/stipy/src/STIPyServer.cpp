@@ -39,6 +39,11 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
                          const STI::Device::DeviceID& serverID)
 : libDeviceHub(libDeviceHub), libDevice(libDevice), serverID(serverID)
 {
+    std::shared_ptr<STI::Device::Device> server;
+
+    if (libDevice != 0 && libDevice->getServer(server)) {
+        this->setDevice(server);
+    }
 }
 
 STIPyServer::~STIPyServer()

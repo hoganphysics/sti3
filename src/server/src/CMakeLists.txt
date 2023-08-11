@@ -9,8 +9,27 @@ project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
 
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+if(MSVC)
+  if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Build type: Debug")
+    set(USE_STI_DEBUG_POSTFIX True)
+  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message("Build type: RelWithDebInfo")
+    set(USE_STI_DEBUG_POSTFIX False)
+  else()
+    message("Build type: Release")
+    set(USE_STI_DEBUG_POSTFIX False)
+  endif()
+else()
+  set(USE_STI_DEBUG_POSTFIX False)
+endif()
+
+if(USE_STI_DEBUG_POSTFIX)
+  set(STI_LIB_POSTFIX "_d")
+endif (USE_STI_DEBUG_POSTFIX)
 
 if (MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
@@ -47,7 +66,7 @@ target_include_directories(STIServer PRIVATE
 #    ${Boost_INCLUDE_DIR}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
-    ${STI_BASE_DIR}/src/network/src
+#    ${STI_BASE_DIR}/src/network/src
 )
 
 # target_link_directories(STIServer PUBLIC 
@@ -56,8 +75,9 @@ target_include_directories(STIServer PRIVATE
 # )
 
 target_link_libraries(STIServer 
-stidevice 
-stinetwork)
+stidevice${STI_LIB_POSTFIX} 
+stinetwork${STI_LIB_POSTFIX}
+)
 
 install(TARGETS STIServer
     #DESTINATION ${STI_BASE_DIR}/lib

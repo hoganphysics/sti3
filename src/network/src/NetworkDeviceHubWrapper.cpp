@@ -148,6 +148,10 @@ const HubID& NetworkDeviceHubWrapper::getID() const
 	return localHub->getID();
 }
 
+bool NetworkDeviceHubWrapper::hasNodeID(const STI::Device::DeviceID& id) const
+{
+	return localHub->hasNodeID(id);
+}
 
 void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
 {

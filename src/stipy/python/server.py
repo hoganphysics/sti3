@@ -2,7 +2,7 @@ from stipy.bin.stipy import STIPyServer
 from stipy.bin.stipybase import Sequence
 from stipy.bin.stipybase import SequenceType
 from stipy.bin.stipy import ParsedVar
-from stipy.bin.stipy import RawEventGroup
+from stipy.bin.stipybase import RawEventGroup
 
 # _makesequence = STIPyServer.makesequence
 

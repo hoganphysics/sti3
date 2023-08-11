@@ -22,6 +22,7 @@ namespace Network
 class LocalDeviceHub;
 class NetworkDeviceHubWrapper;
 class ORBManager;
+class RemoteDeviceHub;
 
 
 class NetworkDeviceHub
@@ -49,6 +50,9 @@ public:
 
 	void addTargetHub(const HubID& hubID);
 	void addTargetHub(const std::string& hubID);
+
+	//Find the hubID that deviceID is attached to
+	bool findHub(const STI::Device::DeviceID& deviceID, HubID& hubID);
 
 	//options
 	// void autoConnectToTargetServers(bool enabled) { _autoConnect = enabled; }
@@ -87,6 +91,7 @@ private:
 	std::string makeHubContextPath(const std::string& baseContext, const HubID& hubID);
 	std::string makeHubContext(const std::string& baseContext, const HubID& hubID);
 	
+	bool getRemoteHub(const std::string& remoteHubContext, std::shared_ptr<RemoteDeviceHub>& remoteHub);
 	bool connectRemoteHub(const std::string& remoteHubContext);
 
 	PersistenceOptions persistence;

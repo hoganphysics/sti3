@@ -81,7 +81,12 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
         {
             const std::vector<int>* values;
             if (value.getFlatVector(values)) {
-                obj = py::cast(*values);
+                // obj = py::cast(*values);
+                py::list pyList;
+                for (auto& v : (*values)) {
+                    pyList.append( py::cast(v) );
+                }
+                obj = pyList;
             }
         }
         break;

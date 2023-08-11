@@ -155,6 +155,18 @@ TDeviceHubID* TDeviceHub_i::deviceHubID()
 	return tDeviceHub._retn();
 }
 
+::CORBA::Boolean TDeviceHub_i::hasNodeID(const ::STI::TNetwork::TDeviceID& devID)
+{
+	bool found = false;
+	if (localHub != 0) {
+
+		found = localHub->hasNodeID(
+			convert<TDeviceID, STI::Device::DeviceID>(devID)
+		);
+	}
+	return found;
+}
+
 void TDeviceHub_i::walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace)
 {
 	if (localHub != 0) {

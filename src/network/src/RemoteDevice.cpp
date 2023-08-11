@@ -365,3 +365,69 @@ bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 	return (manager != 0);
 }
 
+bool RemoteDevice::write(short channel, const STI::Utils::MixedValue& value)
+{
+	std::shared_ptr<ChannelManager> manager;
+	getChannelManager(manager);
+
+	if (manager != 0) {
+		return manager->writeChannel(channel, value);
+	}
+	return false;
+}
+
+bool RemoteDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+{
+	std::shared_ptr<ChannelManager> manager;
+	getChannelManager(manager);
+
+	if (manager != 0) {
+		return manager->readChannel(channel, value, data);
+	}
+	return false;
+}
+
+void RemoteDevice::stopRW()
+{
+	std::shared_ptr<ChannelManager> manager;
+	getChannelManager(manager);
+
+	if (manager != 0) {
+		manager->stop();
+	}
+}
+
+std::string RemoteDevice::getAttribute(const std::string& key)
+{
+	std::shared_ptr<STI::Device::AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->getValue(key);
+	}
+	return "";
+}
+
+
+bool RemoteDevice::setAttribute(const std::string& key, const std::string& value)
+{
+	std::shared_ptr<STI::Device::AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->setValue(key, value);
+	}
+	return false;
+}
+
+bool RemoteDevice::getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute)
+{
+	std::shared_ptr<STI::Device::AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->getAttribute(key, attribute);
+	}
+	return false;
+}
+

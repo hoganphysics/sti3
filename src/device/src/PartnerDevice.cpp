@@ -142,7 +142,7 @@ void PartnerDevice::stopRW()
 	}
 }
 
-std::string PartnerDevice::getAttributeValue(const std::string& key)
+std::string PartnerDevice::getAttribute(const std::string& key)
 {
 	std::shared_ptr<AttributeManager> manager;
 	getAttributeManager(manager);
@@ -153,7 +153,7 @@ std::string PartnerDevice::getAttributeValue(const std::string& key)
 	return "";
 }
 
-bool PartnerDevice::setAttributeValue(const std::string& key, const std::string& value)
+bool PartnerDevice::setAttribute(const std::string& key, const std::string& value)
 {
 	std::shared_ptr<AttributeManager> manager;
 	getAttributeManager(manager);

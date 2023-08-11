@@ -479,6 +479,39 @@ bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue
 	return false;
 }
 
+std::string LocalDevice::getAttribute(const std::string& key)
+{
+	std::shared_ptr<AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->getValue(key);
+	}
+	return "";
+}
+
+bool LocalDevice::setAttribute(const std::string& key, const std::string& value)
+{
+	std::shared_ptr<AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->setValue(key, value);
+	}
+	return false;
+}
+
+bool LocalDevice::getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute)
+{
+	std::shared_ptr<AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->getAttribute(key, attribute);
+	}
+	return false;
+}
+
 
 void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 {

@@ -100,6 +100,48 @@ public:
 		}
 	}
 
+	bool write(short channel, const STI::Utils::MixedValue& value)
+	{
+		if (localDevice != 0) {
+			return localDevice->write(channel, value);
+		}
+		return false;
+	}
+	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+	{
+		if (localDevice != 0) {
+			return localDevice->read(channel, value, data);
+		}
+		return false;
+	}
+	void stopRW()
+	{
+		if (localDevice != 0) {
+			localDevice->stopRW();
+		}
+	}
+	std::string getAttribute(const std::string& key)
+	{
+		if (localDevice != 0) {
+			return localDevice->getAttribute(key);
+		}
+		return "";
+	}
+	bool setAttribute(const std::string& key, const std::string& value)
+	{
+		if (localDevice != 0) {
+			return localDevice->setAttribute(key, value);
+		}
+		return false;
+	}
+	bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute)
+	{
+		if (localDevice != 0) {
+			return localDevice->getAttribute(key, attribute);
+		}
+		return false;
+	}
+
 private:
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)

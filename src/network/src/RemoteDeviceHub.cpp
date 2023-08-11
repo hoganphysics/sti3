@@ -256,6 +256,30 @@ void RemoteDeviceHub::_getHubID()
 	}
 }
 
+bool RemoteDeviceHub::hasNodeID(const STI::Device::DeviceID& id) const
+{
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
+	bool found = false;
+
+	try {
+		found = getTRef()->hasNodeID(
+			convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(id)
+		);	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return found;
+}
+
 void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
 {
 	std::unique_lock<std::mutex> hubLock(hubMutex);

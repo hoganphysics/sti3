@@ -81,7 +81,12 @@ find_package(pybind11 CONFIG REQUIRED)
 
 # Static lib needed by stipybase and stipy
 add_library(sticommonpy STATIC
+    AttributeManagerPy.cpp
+    ChannelManagerPy.cpp
+    DeviceCollectionPy.cpp
+    DevicePy.cpp
     MixedValuePy.cpp
+    PersistenceManagerPy.cpp
     # StackTracePy.cpp
 )
 
@@ -109,14 +114,18 @@ if (USE_STI_DEBUG_POSTFIX)
   set_target_properties(sticommonpy PROPERTIES
       DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
   )
+
 endif()
 
 add_dependencies(sticommonpy stidevice)
 
 pybind11_add_module(stipybase MODULE
+    AttributeManager_wrap.cpp
+    Attribute_wrap.cpp
     Configuration_wrap.cpp
+    Device_wrap.cpp
     DeviceID_wrap.cpp
-	  HubID_wrap.cpp
+    HubID_wrap.cpp
     Measurement_wrap.cpp
     MixedValue_wrap.cpp
     pybasewrapper.cpp
@@ -124,6 +133,7 @@ pybind11_add_module(stipybase MODULE
     ParsedDependencyTree_wrap.cpp
     ParseResult_wrap.cpp
     RawEvent_wrap.cpp
+    RawEventGroup_wrap.cpp
     Sequence_wrap.cpp
     SequenceResult_wrap.cpp
     ShotID_wrap.cpp
@@ -175,25 +185,21 @@ endif()
 
 
 pybind11_add_module(stidevicepy 
-    AttributeManager_wrap.cpp
-    Attribute_wrap.cpp
-    AttributeManagerPy.cpp
-    ChannelManagerPy.cpp
+    
+    
     ChannelManager_wrap.cpp
     Channel_wrap.cpp
-    DeviceCollectionPy.cpp
     DeviceCollection_wrap.cpp
     DeviceHub_wrap.cpp
     DeviceMessageDispatcher_wrap.cpp
     DeviceMessage_wrap.cpp
-    DevicePy.cpp
     # EventEngineSchedulerPy.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
     # LocalShotPy.cpp
-    PersistenceManagerPy.cpp
+    
     PersistenceManager_wrap.cpp
     pywrapper.cpp
     SynchronousEvent_wrap.cpp

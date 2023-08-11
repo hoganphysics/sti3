@@ -32,6 +32,7 @@ public:
 	
 //	virtual void getNodeIDs(std::set<ID>& ids) const = 0;
 //	virtual void getHubIDs(std::set<HubID>& ids) const = 0;
+	virtual bool hasNodeID(const ID& id) const = 0;
 
 	//local and remote; trail tracked
 //	virtual bool refresh() = 0;		//for initiating a refresh

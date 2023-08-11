@@ -4,6 +4,7 @@
 #include <sti/network/Node.h>
 #include <sti/device/DeviceID.h>
 #include <sti/fwd/EventEngineScheduler_fwd.h>
+#include <sti/utils/MixedValue.h>
 
 #include <memory>
 
@@ -18,6 +19,7 @@ class ChannelManager;
 class AttributeManager;
 class PersistenceManager;
 class Device;
+class Attribute;
 
 
 class Device : public STI::Network::Node<DeviceID, Device>
@@ -37,6 +39,14 @@ public:
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
+
+	//convenience functions
+	virtual bool write(short channel, const STI::Utils::MixedValue& value) = 0;
+	virtual bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) = 0;
+	virtual void stopRW() = 0;
+	virtual std::string getAttribute(const std::string& key) = 0;
+	virtual bool setAttribute(const std::string& key, const std::string& value) = 0;
+	virtual bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute) = 0;
 
 };
 

@@ -52,6 +52,13 @@ public:
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 
+	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+	void stopRW();
+	std::string getAttribute(const std::string& key);
+	bool setAttribute(const std::string& key, const std::string& value);
+	bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute);
+
 private:
 
 	template<typename T>

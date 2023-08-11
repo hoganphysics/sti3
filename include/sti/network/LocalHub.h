@@ -49,6 +49,7 @@ public:
 	///Get node IDs stored by this Hub.
 	void getNodeIDs(std::set<ID>& ids) const;
 	unsigned numberOfNodes() const { return nodeDistributer.numberOfNodes(); }
+	bool hasNodeID(const ID& id) const;
 
 	void getHubIDs(std::set<HubID>& ids) const { hubs.getKeys(ids); }
 	bool containsHub(const HubID& hubID) const { return hubs.contains(hubID); }
@@ -230,6 +231,12 @@ template<class ID, class T>
 void STI::Network::LocalHub<ID, T>::getNodeIDs(std::set<ID>& ids) const
 {
 	nodeDistributer.getIDs(ids);
+}
+
+template<class ID, class T>
+bool STI::Network::LocalHub<ID, T>::hasNodeID(const ID& id) const
+{
+	return nodeDistributer.contains(id);
 }
 
 //template<class ID, class T>

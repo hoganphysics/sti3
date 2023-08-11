@@ -494,6 +494,7 @@ _CORBA_MODULE_BEG
       ::CORBA::Boolean redistributeNodes(const ::STI::TNetwork::TDeviceHubTrace& trace);
       ::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace);
       TDeviceHubID* deviceHubID();
+      ::CORBA::Boolean hasNodeID(const ::STI::TNetwork::TDeviceID& devID);
       void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace);
 
       // Constructors
@@ -537,6 +538,7 @@ _CORBA_MODULE_BEG
       virtual ::CORBA::Boolean redistributeNodes(const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       virtual ::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       virtual TDeviceHubID* deviceHubID() = 0;
+      virtual ::CORBA::Boolean hasNodeID(const ::STI::TNetwork::TDeviceID& devID) = 0;
       virtual void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace) = 0;
       
     public:  // Really protected, workaround for xlC

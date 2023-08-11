@@ -53,6 +53,8 @@ module TNetwork
 
 		readonly attribute TDeviceHubID deviceHubID;		//getID()
 
+		boolean hasNodeID(in TDeviceID devID);
+
 		void walk(inout TNodeWalker root, in TDeviceHubTrace trace);
 	};
 

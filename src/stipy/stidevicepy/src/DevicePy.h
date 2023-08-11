@@ -28,7 +28,7 @@ class DevicePy
 public:
     DevicePy() {}
     DevicePy(const std::shared_ptr<STI::Device::Device>& device);
-    virtual ~DevicePy();
+    virtual ~DevicePy() {}
 
     void setDevice(const std::shared_ptr<STI::Device::Device>& device);
     std::shared_ptr<STI::Device::Device> getDevice();
@@ -43,6 +43,13 @@ public:
     std::shared_ptr<AttributeManagerPy> getAttributeManager();
     std::shared_ptr<PersistenceManagerPy> getPersistenceManager();
 
+    bool write(short channel, const pybind11::object& value);
+    pybind11::object read(short channel, const pybind11::object& value);
+    void stopRW();
+
+    std::string getAttribute(const std::string& key);
+    bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute);
+    bool setAttribute(const std::string& key, const std::string& value);
 
 private:
 

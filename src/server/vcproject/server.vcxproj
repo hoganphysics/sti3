@@ -119,8 +119,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(ProjectDir)..\src\tinyxml;$(ProjectDir)..\..\..\src\device\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,10 +149,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\LegacyExperimentXMLBuilder.cpp" />
+    <ClCompile Include="..\src\LegacySequenceXMLBuilder.cpp" />
+    <ClCompile Include="..\src\LegacyShotRepository.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\ServerDevice.cpp" />
+    <ClCompile Include="..\src\tinyxml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\LegacyExperimentXMLBuilder.h" />
+    <ClInclude Include="..\src\LegacySequenceXMLBuilder.h" />
+    <ClInclude Include="..\src\LegacyShotRepository.h" />
     <ClInclude Include="..\src\ServerDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

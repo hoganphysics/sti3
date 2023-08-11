@@ -14,11 +14,13 @@ namespace py = pybind11;
 using STI::Python::STIPyServer;
 using STI::Python::STIPyShot;
 using STI::Python::PyParseTicket;
+using STI::Python::DevicePy;
+
 
 void init_STIPyServer(py::module& m) 
 {
 
-    py::class_<STIPyServer, std::shared_ptr<STIPyServer>>(m, "STIPyServer")
+    py::class_<STIPyServer, DevicePy, std::shared_ptr<STIPyServer>>(m, "STIPyServer")
 
         .def("makeshot", py::overload_cast<>(&STIPyServer::makeshot))
         .def("makeshot", py::overload_cast<const std::function<void(void)>&>(&STIPyServer::makeshot))

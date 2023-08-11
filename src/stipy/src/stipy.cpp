@@ -125,17 +125,29 @@ std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string
 
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
+    std::cout << "connect!!" << std::endl;
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
-    STI::Network::HubID serverHubID(serverID.getName(), serverID.getAddress(), serverID.getModule());
+    STI::Network::HubID serverHubID("Hub::" + serverID.getName(), serverID.getAddress(), serverID.getModule());
 
     return connect(localIP, serverID, serverHubID, nameServerAddress);
 }
 
+//Treat serverHubID as a guess. Check if it is live and hosts serverID
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
+    std::cout << "connect!" << std::endl;
+
     auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress);
 //    hub->getPersistenceOptions().bindToRootContext = false;
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
+
+    STI::Network::HubID verifiedServerHubID = serverHubID;  //guess
+
+    if (!hub->findHub(serverID, verifiedServerHubID)) {
+        // not found
+        std::shared_ptr<STIPyServer> missing;
+        return missing;
+    }
 
     //Need to ensure that the DeviceID is unique.  Could have:
     //multiple computers connecting, multiple connections from each computer
@@ -146,14 +158,17 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 
     std::string uniqueName = "STIPy";   //Add timestamp?  STIPy::<timestamp>
 
-    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName, localIP, 0, serverID, serverHubID);
+    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName, localIP, 0, serverID, verifiedServerHubID);
 
     hub->addDevice(stipydev);
     hub->run(false);
 
-    stipydev->waitForConnection();
+    //stipydev->waitForConnection();
 
     auto server = std::make_shared<STIPyServer>(hub, stipydev, serverID);
+
+    std::cout << "getAttribute: " << server->getAttribute("test") << std::endl;
+
     return server;
 }
 

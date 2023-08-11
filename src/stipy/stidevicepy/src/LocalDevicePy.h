@@ -31,10 +31,6 @@ public:
     virtual bool writeChannel(short channel, const pybind11::object& value);
     virtual pybind11::object readChannel(short channel, const pybind11::object& value);
 
-	bool write(short channel, const pybind11::object& value);
-	pybind11::object read(short channel, const pybind11::object& value);
-	void stopRW();
-
     virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
     std::shared_ptr<STI::Device::LocalChannel> addChannel(unsigned short channelNumber, STI::Device::ChannelType type,

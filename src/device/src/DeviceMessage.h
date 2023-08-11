@@ -44,7 +44,6 @@ public:
 	DeviceMessage() : _type(DeviceMessageType::Unknown) {}
 	DeviceMessage(const STI::Device::DeviceID& source, DeviceMessageType type);
 	DeviceMessage(const STI::Device::DeviceTrace& trace, DeviceMessageType type);
-//	DeviceMessage(const STI::Device::DeviceID& relayingID, const DeviceMessage& message);
 	virtual ~DeviceMessage();
 
 	const STI::Device::DeviceID sourceID() const;
@@ -80,7 +79,6 @@ public:
 private:
 
 	DeviceMessageType _type;
-	//STI::Device::DeviceID _source;
 	STI::Device::DeviceTrace _trace;
 };
 

@@ -17,12 +17,6 @@ DeviceMessage::DeviceMessage(const STI::Device::DeviceTrace& trace, DeviceMessag
 {
 }
 
-// DeviceMessage::DeviceMessage(const STI::Device::DeviceID& relayingID, const DeviceMessage& message)
-// : _trace(message._trace), _type(message._type)
-// {
-// 	_trace.addID(relayingID);
-// }
-
 DeviceMessage::~DeviceMessage()
 {
 }

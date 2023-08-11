@@ -42,6 +42,7 @@ public:
 	bool redistributeNodes(const HubTrace& trace);
 
 	const HubID& getID() const;
+	bool hasNodeID(const STI::Device::DeviceID& id) const;
 
 	void walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const;
 

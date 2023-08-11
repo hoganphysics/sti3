@@ -1,4 +1,6 @@
+
 from stipy.stipybase import *
+from stipy.bin.stidevicepy import *
 from stipy.bin.stipy import *
 
 from stipy.python.stacktrace import makeStackTrace

@@ -49,17 +49,23 @@ void init_LocalDevice(py::module& m)
         .def("getChannelManager", &DevicePy::getChannelManager)
         .def("getAttributeManager", &DevicePy::getAttributeManager)
         .def("getPersistenceManager", &DevicePy::getPersistenceManager)
+
+        .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
+        .def("read", &DevicePy::read, py::arg("channelNumber"), py::arg("value"))
+        .def("stopRW", &DevicePy::stopRW)
+
+        .def("getAttribute",
+            py::overload_cast<const std::string&>(&DevicePy::getAttribute), py::arg("key"))
+         .def("setAttribute", &DevicePy::setAttribute, py::arg("key"), py::arg("value"))
         ;
 
     py::class_<LocalDevicePy, DevicePy, LocalDevicePyTrampoline, std::shared_ptr<LocalDevicePy>>(m, "LocalDevice") 
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                      py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )
 
-        .def("write", &LocalDevicePy::write, py::arg("channelNumber"), py::arg("value"))
-        .def("read", &LocalDevicePy::read, py::arg("channelNumber"), py::arg("value"))
+
         .def("writeChannel", &LocalDevicePy::writeChannel, py::arg("channelNumber"), py::arg("value"))
         .def("readChannel", &LocalDevicePy::readChannel, py::arg("channelNumber"), py::arg("value"))
-        .def("stopRW", &LocalDevicePy::stopRW)
         
         .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
 

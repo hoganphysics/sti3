@@ -62,3 +62,4 @@ doc/out/
 src/server/vcproject/.sti/
 build_env/
 env1/
+examples/python/testDevice/.sti/

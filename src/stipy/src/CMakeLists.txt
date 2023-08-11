@@ -75,7 +75,7 @@ pybind11_add_module(stipy
     PyParseTicket.cpp
     PyResultTicket.cpp
     # ResultTicket.cpp
-    RawEventGroup_wrap.cpp
+    
     ResultTicket_wrap.cpp
     # STIPyChannel.cpp
     # STIPyChannel_wrap.cpp

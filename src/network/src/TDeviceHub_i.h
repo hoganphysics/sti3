@@ -29,6 +29,7 @@ public:
 	::CORBA::Boolean redistributeNodes(const ::STI::TNetwork::TDeviceHubTrace& trace);
 	::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace);
 	TDeviceHubID* deviceHubID();
+	::CORBA::Boolean hasNodeID(const ::STI::TNetwork::TDeviceID& devID);
 //	void walk(::STI::TNetwork::TNodeWalker_out root, const ::STI::TNetwork::TDeviceHubTrace& trace);
 	void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace);
 

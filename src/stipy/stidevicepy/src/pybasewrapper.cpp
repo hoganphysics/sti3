@@ -1,4 +1,9 @@
 
+#include <sti/engine/Measurement.h>
+
+#include <vector>
+#include <memory>
+
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
@@ -10,6 +15,10 @@ void init_RawEvent(py::module& m);
 void init_HubID(py::module& m);
 void init_Measurement(py::module& m);
 
+void init_Attribute(py::module& m);
+//void init_RawEvent(py::module& m);
+void init_AttributeManager(py::module& m);
+
 void init_ShotConfig(py::module& m);
 void init_ParseID(py::module& m);
 void init_ShotID(py::module& m);
@@ -19,6 +28,13 @@ void init_ParsedDependencyTree(py::module& m);
 void init_ParseResult(py::module& m);
 void init_ShotResult(py::module& m);
 void init_SequenceResult(py::module& m);
+
+void init_Device(py::module& m);
+
+void init_RawEventGroup(py::module& m);
+
+PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
+
 
 // PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 
@@ -32,8 +48,12 @@ PYBIND11_MODULE(stipybase, m) {
     init_MixedValue(m);
     init_StackTrace(m);
     init_RawEvent(m);
+    init_RawEventGroup(m);
     init_HubID(m);
     init_Measurement(m);
+
+    init_Attribute(m);
+    init_AttributeManager(m);
 
     init_ShotConfig(m);
     init_ParseID(m);

@@ -1,6 +1,6 @@
 from stipy.bin.stipybase import Sequence
 from stipy.bin.stipybase import SequenceType
-from stipy.bin.stipy import RawEventGroup
+from stipy.bin.stipybase import RawEventGroup
 
 
 # _sequence__init__ = Sequence.__init__

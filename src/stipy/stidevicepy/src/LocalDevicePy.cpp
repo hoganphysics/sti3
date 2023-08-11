@@ -35,36 +35,6 @@ LocalDevicePy::~LocalDevicePy()
 {
 }
 
-
-bool LocalDevicePy::write(short channel, const pybind11::object& value)
-{  
-    MixedValuePy valuepy(value);
-    return (device != 0) && device->write(channel, valuepy.getMixedValue());
-}
-
-pybind11::object LocalDevicePy::read(short channel, const pybind11::object& value)
-{
-    MixedValue data;
-    MixedValuePy valuepy(value);
-   
-    bool success = (device != 0) && device->read(channel, valuepy.getMixedValue(), data);
-
-    if (success) {
-        pybind11::gil_scoped_acquire acquire;
-        MixedValuePy pydata(data);
-        return pydata.getValue_py();
-    }
-    return py::none();
-}
-
-void LocalDevicePy::stopRW()
-{
-    if (device != 0) {
-        device->stopRW();
-    }
-}
-
-
 //Can be overridden in python
 bool LocalDevicePy::writeChannel(short channel, const pybind11::object& value)
 {

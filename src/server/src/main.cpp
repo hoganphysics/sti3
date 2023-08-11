@@ -9,11 +9,15 @@
 
 int main(int argc, char **argv)
 {
-	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
+	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.14:2809");
 //    hub->getPersistenceOptions().bindToRootContext = false;
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
 
-    auto server = std::make_shared<STI::Device::ServerDevice>("STI Server", "localhost", 0, "root");
+    std::string testName = "STI Server";
+
+    STI::Device::DeviceID id(testName, "localhost", 0, "root");
+
+    auto server = std::make_shared<STI::Device::ServerDevice>(testName, "localhost", 0, "root");
 
 
     auto legacyShotRepository = std::make_shared<STI::Engine::LegacyShotRepository>(".sti/server1");
@@ -22,6 +26,18 @@ int main(int argc, char **argv)
     hub->addDevice(server);
 
     hub->run(true);
+
+    //auto hub2 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.14:2809");
+
+    //STI::Network::HubID hubID;
+    //
+    //hub2->run(false);
+
+
+    //hub2->findHub(id, hubID);
+
+
+    
 
     // int x;
     // std::cin >> x;

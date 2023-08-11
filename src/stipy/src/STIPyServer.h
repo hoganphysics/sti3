@@ -7,6 +7,7 @@
 
 #include <sti/NetworkDeviceHub.h>
 #include "STIPyLibDevice.h"
+#include "DevicePy.h"
 
 #include <functional>
 #include <string>
@@ -88,14 +89,14 @@ s2 = makeshot("Frame 1", s, devs1)
 */
 
 
-class STIPyServer
+class STIPyServer : public DevicePy
 {
 public:
 
     STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& libDeviceHub, 
                 const std::shared_ptr<STIPyLibDevice>& libDevice, 
                 const STI::Device::DeviceID& serverID);
-    ~STIPyServer();
+    virtual ~STIPyServer();
 
     void setChannels(const pybind11::dict& channels);
 

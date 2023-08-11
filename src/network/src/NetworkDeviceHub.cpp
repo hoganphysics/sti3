@@ -9,6 +9,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 using STI::Network::NetworkDeviceHub;
 using STI::Device::DeviceID;
@@ -241,6 +242,51 @@ void NetworkDeviceHub::addTargetHub(const std::string& hubID, const std::string&
 	}
 }
 
+bool NetworkDeviceHub::findHub(const STI::Device::DeviceID& deviceID, HubID& hubID)
+{
+	bool found = false;
+	std::shared_ptr<RemoteDeviceHub> remoteHub;
+
+	//try hint HubID first, if it is live
+	auto inputHubID = makeHubContext(stiContext, hubID);
+
+	if (getRemoteHub(inputHubID, remoteHub) && remoteHub->hasNodeID(deviceID)) {
+		hubID = remoteHub->getID();
+		return true;
+	}
+
+	std::vector<std::string> liveHubs;
+	orbmanager->getAllLiveObjectContexts(stiContext, hubObjectName, liveHubs);
+
+
+
+	//If found, rotate vector so inputHubID is first.
+	auto pivot = std::find_if(liveHubs.begin(), liveHubs.end(), 
+		[&inputHubID](const std::string& id) -> bool {
+			return id == inputHubID;
+		});
+
+	if (pivot != liveHubs.end()) {
+		std::rotate(liveHubs.begin(), pivot, pivot + 1);
+	}
+	else {
+		std::cout << "Hub not found! " << inputHubID << std::endl;
+	}
+
+	for (auto& hubContext : liveHubs) {
+		std::cout << "Live Hub: " << hubContext << std::endl;
+		
+		if (getRemoteHub(hubContext, remoteHub) && remoteHub->hasNodeID(deviceID)) {
+			hubID = remoteHub->getID();
+			found = true;
+			break;
+		}
+	}
+
+
+	return found;
+}
+
 void NetworkDeviceHub::getDeviceIDs(std::set<DeviceID>& ids) const
 {
 	localHub->getNodeIDs(ids);
@@ -389,11 +435,24 @@ std::string NetworkDeviceHub::makeHubContext(const std::string& baseContext, con
 	return hubContext.str();
 }
 
+
+
 bool NetworkDeviceHub::connectRemoteHub(const std::string& remoteHubContext)
 {
 	bool success = false;
 
 	std::shared_ptr<RemoteDeviceHub> remoteHub;
+	if (getRemoteHub(remoteHubContext, remoteHub)) {
+		success = LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
+	}
+
+	return success;
+}
+
+bool NetworkDeviceHub::getRemoteHub(const std::string& remoteHubContext, std::shared_ptr<RemoteDeviceHub>& remoteHub)
+{
+	bool success = false;
+
 	STI::TNetwork::TDeviceHub_ptr tDeviceHubRemote; // = STI::TNetwork::TDeviceHub::_nil();
 	CORBA::Object_ptr obj;
 
@@ -403,13 +462,12 @@ bool NetworkDeviceHub::connectRemoteHub(const std::string& remoteHubContext)
 		tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
 
 		if (!CORBA::is_nil(tDeviceHubRemote)) {
+			success = true;
 			remoteHub = std::make_shared<RemoteDeviceHub>(tDeviceHubRemote);
-
-			success = LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
 		}
 	}
 
-	return success;
+	return success && remoteHub != 0;
 }
 
 void NetworkDeviceHub::walk(LocalDeviceHub::HubNodeWalker& root) const

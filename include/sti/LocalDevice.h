@@ -119,6 +119,7 @@ public:
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	void stopRW();
 
+
 	bool writeChannelDefault(short channel, const STI::Utils::MixedValue& value);
 	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
@@ -130,6 +131,11 @@ public:
 	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
 
 	void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
+
+	std::string getAttribute(const std::string& key);
+	bool setAttribute(const std::string& key, const std::string& value);
+	bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
+
 
 private:
 
