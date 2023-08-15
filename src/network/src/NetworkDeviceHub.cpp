@@ -366,19 +366,21 @@ void NetworkDeviceHub::shutdown()
 
 void NetworkDeviceHub::run(bool block)
 {
-	if (orbmanager != 0 && orbmanager->running()) {
-		return;
-	}
-	else if (orbmanager != 0 && orbmanager->initialized()) {
-		orbmanager = ORBManager::getInstance();
-	}
-	else {
-		return;
-	}
+	//if (orbmanager != 0 && orbmanager->running()) {
+	//	return;
+	//}
+	//else if (orbmanager != 0 && orbmanager->initialized()) {
+	//	orbmanager = ORBManager::getInstance();
+	//}
+	//else {
+	//	return;
+	//}
 
 	if (orbmanager == 0) {
-		return;
+		orbmanager = ORBManager::getInstance();
 	}
+
+	if (orbmanager == 0) return;
 
 	if (!registerHubContext()) {
 		return;
@@ -398,9 +400,11 @@ void NetworkDeviceHub::run(bool block)
 	connectToTargetHubs();
 
 	//Start ORB (network servants go live)
-	orbmanager->run();	//doesn't block
+	if (!orbmanager->running()) {
+		orbmanager->run();	//doesn't block
+	}
 
-	if (block && orbmanager->running()) {
+	if (block && orbmanager->running() && !orbmanager->blocking()) {
 		orbmanager->block();
 	}
 }

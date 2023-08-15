@@ -103,7 +103,7 @@ void LocalEventEngineDependencyParser::addDeviceEventTargets(EventEngineDependen
             messages.back() 
                 << "Device '" << localDeviceID.getID() << "' may generate events for target device '"
                 << targetID.getID() << "', but the target device's EventEngineScheduler could not be found " 
-                << "(device is likely missing from the network). Parsed shot may be forced to become abstract.";
+                << "(device is likely missing from the network). Parsed shot may be forced to be abstract.";
         }
     }
 }
@@ -128,19 +128,29 @@ std::string LocalEventEngineDependencyParser::findTargetServerID(const STI::Devi
     return targetServerID;
 }
 
-void LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<DeviceID>& targets, const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer)
+bool LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<DeviceID>& targets, 
+    const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer, std::set<DeviceID>& upstreamTargets)
 {
+    bool changes = false;
     //Sort (by server) all targets that are below this device in the graph.
     //That is, ignore targets that have a server path to the localDevice, since the localDevice
     //is not responsible for those targets.
 
     //Note: if the id is not in the tree, it will be trivially added to set
     for (auto& id : targets) {
-        if (id != localDeviceID && !tree.hasBranchToTarget(id, localDeviceID)) {
-            //this id has no server path to the local device.
+        if (id == localDeviceID) continue;
+
+        if (tree.hasBranchToTarget(id, localDeviceID)) {    //Found path: id -> ... -> ... -> localDevicID
+            //this id has no path to the localDeviceID (it is not above localDeviceID in the tree).
+            upstreamTargets.insert(id);
+        }
+        else if (!tree.hasBranchToTarget(DeviceID(id.getTargetServerID()), id)) {    //Query path: id.targetServerID -> ... -> ... -> id
+            //id's targretServerID is not in the tree, or is not connected to id
             targetsByServer[findTargetServerID(id)].insert(id);
-        }        
+            changes = true;
+        }
     }
+    return changes;
 }
 
 void LocalEventEngineDependencyParser::getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs)
@@ -160,8 +170,8 @@ void LocalEventEngineDependencyParser::getServerChainIDs(std::set<STI::Device::D
     }
 }
 
-void LocalEventEngineDependencyParser::getPartnerDeviceDependants(const DeviceID& partnerID, const std::set<DeviceID>& targets, 
-                                                    EventEngineDependencyTree& tree, std::set<DeviceID>& missingIDs, 
+void LocalEventEngineDependencyParser::getDeviceDependants(const DeviceID& deviceID, const std::set<DeviceID>& targets, 
+                                                    EventEngineDependencyTree& tree, std::set<DeviceID>& unownedTargets,
                                                     std::vector<EngineParsingMessage>& messages, const DeviceTrace& trace)
 {
     if (targets.size() == 0) {
@@ -172,27 +182,27 @@ void LocalEventEngineDependencyParser::getPartnerDeviceDependants(const DeviceID
 
     EventEngineDependencyTree subtree;
 
-    if (getTargetDependencyParser(partnerID, dependencyParser)) {
+    if (getTargetDependencyParser(deviceID, dependencyParser)) {
         
         subtree.clear();
-        dependencyParser->getDependants(targets, subtree, missingIDs, messages, trace);
+        dependencyParser->getDependants(targets, subtree, unownedTargets, messages, trace);
            
         //Add found subtree to the tree.
         //Uses greater than 1 because the subtree always contains the server id, but we only add if there are also others.
         //(Unless the partnerID is in the target list)
-        if (subtree.vertexCount() > 1 || targets.find(partnerID) != targets.end()) {
+        if (subtree.vertexCount() > 1 || targets.find(deviceID) != targets.end()) {
             tree.addTree(subtree);
-            tree.addEdge(localDeviceID, partnerID);                
+            tree.addEdge(localDeviceID, deviceID);
         }
     }
     else {
         //Could not contact the device; these targets cannot be reached
-        missingIDs.insert(targets.begin(), targets.end());
+        unownedTargets.insert(targets.begin(), targets.end());
     }
 }
 
 void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                                            std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                                            std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages,
                                             unsigned maxRecursions)
 {
     unsigned passes = 0;
@@ -206,15 +216,15 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
 
         getDependants(targets, tree, missingTargets, messages, STI::Device::DeviceTrace());
 
-        //Remove direct partners from missingTargets, since the localDevice will act as their server
-        for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
-            if (localDevice->isEventTarget(*it)) {
-                it = missingTargets.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
+        ////Remove direct partners from missingTargets, since the localDevice will act as their server
+        //for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
+        //    if (localDevice->isEventTarget(*it)) {
+        //        it = missingTargets.erase(it);
+        //    }
+        //    else {
+        //        ++it;
+        //    }
+        //}
 
         // If there are still missingTargets, they may be found on another pass.
         // Make sure the new missingTarget list is not the same as the last targets list, 
@@ -228,6 +238,7 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
 }
 
 
+
 /// Generates a graph of the network that contains all devices needed to parse the events.
 /// Does this in three steps:  (1) Local device, (2) Direct device decendents, (3) Full depth recursive search of graph.
 void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
@@ -239,93 +250,117 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
         return;     //avoid infinite recursion if the network graph has a loop
     }
 
-    EventEngineDependencyTree subtree;
-
     //*** (1) Check for events targeting the local device ***//
 
-    //If there are local events, add local ID *and* this device's event targets (partners), since the local
-    //device can generate events on its event targets.
-    auto local_it = evtTargets.find(localDeviceID);
-
-    if (local_it != evtTargets.end()) {
+    //If there are local events, add this device's event targets (partners)
+    if (evtTargets.contains(localDeviceID)) {
+        EventEngineDependencyTree subtree;
         addDeviceEventTargets(subtree, messages, STI::Device::DeviceTrace());
         tree.addTree(subtree);
     }
 
     //Now all partners for local device are added; but there are two issues:
-    // 1) There are event targets in evtTargets that have not been found via a server chain
-    // 2) There are targets in the current tree that don't have their server chain added 
-    //    (partners can generally have some other server)
+    // 1) There are event targets in evtTargets that have not been found via a server chain (which server owns them?)
+    // 2) There are targets in the current tree that don't have their server chain added (partners owned by a different device than localDeviceID)
 
 
     //*** (2) Sort event targets by server ***//
 
-    std::map<std::string, std::set<DeviceID>> targetsByServer;   // ["server", {devices}]
-    addToTargetsByServer(evtTargets, tree, targetsByServer);   
+    std::set<DeviceID> upstreamTargets;
 
-    std::set<DeviceID> localTargets;    //for targets originating from addDeviceEventTargets above
+    std::map<std::string, std::set<DeviceID>> targetsByServer;   // ["server", {devices}]
+    addToTargetsByServer(evtTargets, tree, targetsByServer, upstreamTargets);
+
+    std::set<DeviceID> localTargets;    //for targets originating from addDeviceEventTargets above that may have a different targetServerID
     tree.getNodes(localTargets);
-    addToTargetsByServer(localTargets, tree, targetsByServer);
+    addToTargetsByServer(localTargets, tree, targetsByServer, upstreamTargets);
 
    
-    //*** (3) Pass targets down the server chain ***//
+    //*** (3) Pass targets down the server chain, including localDeviceID if it is a targetServer ***//
 
-    //searchServerChain(serverChainIDs, targetsByServer, tree, missingTargets);
-
-    //Server chain: get all connected devices that declare the local device as server.
-    std::set<STI::Device::DeviceID> serverChainIDs;
+    //Server chain: get all connected devices that declare the local device as server (first link in chain)
+    std::set<DeviceID> serverChainIDs;
     getServerChainIDs(serverChainIDs);
     
-    std::set<STI::Device::DeviceID> missingIDs;
-
+    std::set<DeviceID> unownedIDs;
+    std::set<DeviceID> targetsForLocal;
+    
     //Pass all targetsByServer['ID'] target lists to any 'ID' found in serverChainIDs.
     for (auto it = targetsByServer.begin(); it != targetsByServer.end(); ) {
+        unownedIDs.clear();
 
         // Check if it=targetsByServer['ID'] is in serverChainIDs:
-        auto found_it = std::find_if(serverChainIDs.begin(), serverChainIDs.end(),
+        auto subServerID = std::find_if(serverChainIDs.begin(), serverChainIDs.end(),
                         [&](const DeviceID& id) { return (it->first == id.getID()); });
         
-        if (found_it != serverChainIDs.end()) {
+        if (it->first == localDeviceID.getID()) {
+            //Targets were found that need localDeviceID as server
+            tree.addVertex(localDeviceID);   //in case not already added
 
+            for (auto& id : it->second) {
+                targetsForLocal.clear();
+                targetsForLocal.insert(id);
+                
+                if (tree.hasVertex(id)) {
+                    tree.addEdge(localDeviceID, id);
+                }
+                else {
+                    //call as getDeviceDependants(id, {id}, ...) to just add this id (and its partners...)
+                    getDeviceDependants(id, targetsForLocal, tree, unownedIDs, messages, newTrace);
+                }
+            }
+            it = targetsByServer.erase(it);     //remove after attempt to transfer
+        }
+        else if (subServerID != serverChainIDs.end()) {
+            //Found targets for a subserver connected to localDeviceID
             //Pass targetsByServer['ID'] target list to the locally connected server
-            getPartnerDeviceDependants(*found_it, it->second, tree, missingIDs, messages, newTrace);  //it->second = target list
-            //missingTargets.insert(missingIDs.begin(), missingIDs.end());
+            getDeviceDependants(*subServerID, it->second, tree, unownedIDs, messages, newTrace);  //it->second = target list
 
             it = targetsByServer.erase(it);     //remove after attempt to transfer
         }
         else {
             ++it;
         }
+
+        if (unownedIDs.size() != 0) {
+            //Any unownedIDs may be new and might require another pass
+            if (addToTargetsByServer(unownedIDs, tree, targetsByServer, upstreamTargets)) {
+                //Tree has changed => new server found; start over
+                it = targetsByServer.begin();
+            }
+        }
+
+        //if (!parsing) break;    //abort
     }
 
-    addToTargetsByServer(missingIDs, tree, targetsByServer);    //sort any new missing ids by their server
-    missingIDs.clear();
+    //addToTargetsByServer(unownedIDs, tree, targetsByServer, upstreamTargets);    //sort any new missing ids by their server
+    //unownedIDs.clear();
 
     //*** (4) Add targets that declare the local device as server ***//
 
-    std::set<DeviceID> targetsForLocal;    
+    //std::set<DeviceID> targetsForLocal;    
 
-    //Add any targets that declare this as their server
-    auto it = targetsByServer.find(localDeviceID.getID());
-    if (it != targetsByServer.end()) {
+    ////Add any targets that declare this as their server
+    //auto it = targetsByServer.find(localDeviceID.getID());
+    //if (it != targetsByServer.end()) {
 
-        //Targets found that need this device as server
-        tree.addVertex(localDeviceID);   //add if not already added
+    //    //Targets found that need this device as server
+    //    tree.addVertex(localDeviceID);   //add if not already added
 
-        for (auto& id : it->second) {
-            targetsForLocal.clear();
-            targetsForLocal.insert(id);     //call as getPartnerDeviceDependants(id, {id}, ...) to just add this id (and it's partners...)
+    //    for (auto& id : it->second) {
+    //        targetsForLocal.clear();
+    //        targetsForLocal.insert(id);     //call as getDeviceDependants(id, {id}, ...) to just add this id (and its partners...)
 
-            getPartnerDeviceDependants(id, targetsForLocal, tree, missingIDs, messages, newTrace);
-        }
-        targetsByServer.erase(it);
-    }
+    //        getDeviceDependants(id, targetsForLocal, tree, missingIDs, messages, newTrace);
+    //    }
+    //    addToTargetsByServer(missingIDs, tree, targetsByServer, upstreamTargets);
+    //    missingIDs.clear();
 
-    addToTargetsByServer(missingIDs, tree, targetsByServer);
-    missingIDs.clear();
+    //    targetsByServer.erase(it);  //any missingIDs that were added to targetsByServer[localDeviceID] are already in the tree -> delete from map
+    //}
+ 
 
-
-    //*** (5) Search the full graph for any missing targets, following server chain ***//
+    //*** (4) Search the full graph for any missing targets, following server chain ***//
 
     //Any targets in targetsByServer could not be found by the local device.  Pass them downstream to the 
     //network, following the server chain.
@@ -341,11 +376,21 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
         return;
     }
 
+    //Todo: filter serverChainIDs to get rid of STIpy, etc
+    
     for (auto& id : serverChainIDs) {    // Follow server chain through the graph
-        missingIDs.clear();
-        getPartnerDeviceDependants(id, downstreamIDs, tree, missingIDs, messages, newTrace);
-        downstreamIDs.swap(missingIDs);
+        if (id.getTargetServerID() == localDeviceID.getTargetServerID()) {
+            //obvious shortcircuit to save time
+            continue;
+        }
+        unownedIDs.clear();
+        getDeviceDependants(id, downstreamIDs, tree, unownedIDs, messages, newTrace);
+        downstreamIDs.swap(unownedIDs);
+
+        if (downstreamIDs.size() == 0) break;
     }
+
+    missingTargets.insert(upstreamTargets.begin(), upstreamTargets.end());
 
     //Anything left is missing; may be reachable with another pass.
     missingTargets.insert(downstreamIDs.begin(), downstreamIDs.end());
@@ -362,16 +407,17 @@ void LocalEventEngineDependencyParser::getDownstreamIDs(const std::map<std::stri
     }
     //targetsByServer.clear(); 
 
-    //Check for any target in the tree that is still not connected via a server chain
-    std::set<STI::Device::DeviceID> allTreeIDs;
-    tree.getNodes(allTreeIDs);
+    //This is a problem for devices acting as a server for their partners
+    ////Check for any target in the tree that is still not connected via a server chain
+    //std::set<STI::Device::DeviceID> allTreeIDs;
+    //tree.getNodes(allTreeIDs);
 
-    //Add any targets in the tree that are not connected via the server chain
-    for(auto& id : allTreeIDs) {
-        if (id != localDeviceID && !tree.hasBranchToTarget(localDeviceID, id)) {
-            downstreamIDs.insert(id);
-        }
-    }
+    ////Add any targets in the tree that are not connected via the server chain
+    //for(auto& id : allTreeIDs) {
+    //    if (id != localDeviceID && !tree.hasBranchToTarget(localDeviceID, id)) {
+    //        downstreamIDs.insert(id);
+    //    }
+    //}
 
 }
 

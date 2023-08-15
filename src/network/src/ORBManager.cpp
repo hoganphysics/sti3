@@ -217,8 +217,8 @@ ORBManager::ORBManager(const std::string& args)
 		std::cerr << "  mesg: " << fe.errmsg() << std::endl;
 	}
 
-	_running = false;
-	_blocking = false;
+	running_ = false;
+	blocking_ = false;
 
 	for (unsigned i = 0; i < argc; i++) {
 		delete[] argv[i];
@@ -266,7 +266,7 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 bool ORBManager::running()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	return _running;
+	return running_;
 }
 
 bool ORBManager::initialized()
@@ -285,24 +285,33 @@ void ORBManager::run()
 			return;
 		}
 
-		if (_running) {
+		if (running_) {
 			return;
 		}
-		_running = true;
+		running_ = true;
 	}
 
 	orb->perform_work();
 //	orb->run();
 }
 
+bool ORBManager::blocking()
+{
+	std::unique_lock<std::mutex> writeLock(orbMutex);
+	return blocking_;
+}
+
 void ORBManager::block()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	_blocking = true;
+
+	if (blocking_) return;
+
+	blocking_ = true;
 
 	signal(SIGINT, ORBManager::signal_callback_handler);
 
-	while (_blocking) {
+	while (blocking_) {
 		wakeCondition.wait(writeLock);
 	}
 }
@@ -319,7 +328,7 @@ void ORBManager::signal_callback_handler(int signum)
 void ORBManager::unblock()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	_blocking = false;
+	blocking_ = false;
 	wakeCondition.notify_all();
 }
 
@@ -327,9 +336,9 @@ void ORBManager::unblock()
 void ORBManager::shutdown()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	if (_running && orb_initialized)
+	if (running_ && orb_initialized)
 	{
-		_running = false;
+		running_ = false;
 		orb_initialized = false;
 		poa_is_active = false;
 		std::cerr << "Shutting down ORB" << std::endl;

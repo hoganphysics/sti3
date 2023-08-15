@@ -125,7 +125,7 @@ std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string
 
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
-    std::cout << "connect!!" << std::endl;
+    //std::cout << "connect!!" << std::endl;
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
     STI::Network::HubID serverHubID("Hub::" + serverID.getName(), serverID.getAddress(), serverID.getModule());
 
@@ -135,7 +135,7 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 //Treat serverHubID as a guess. Check if it is live and hosts serverID
 std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
-    std::cout << "connect!" << std::endl;
+    //std::cout << "connect!" << std::endl;
 
     auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress);
 //    hub->getPersistenceOptions().bindToRootContext = false;
@@ -167,7 +167,7 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
 
     auto server = std::make_shared<STIPyServer>(hub, stipydev, serverID);
 
-    std::cout << "getAttribute: " << server->getAttribute("test") << std::endl;
+    //std::cout << "getAttribute: " << server->getAttribute("test") << std::endl;
 
     return server;
 }

@@ -1,5 +1,6 @@
 
 from stipy.stipybase import *
+from stipy.stidevicepy import *
 from stipy.bin.stidevicepy import *
 from stipy.bin.stipy import *
 

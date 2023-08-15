@@ -107,6 +107,8 @@ public:
 	void addPartner(const DeviceID& id);
 	void addPartner(const DeviceID& id, const std::string& alias);
 	void addEventTarget(const DeviceID& id);
+	void addEventTarget(const DeviceID& id, const std::string& alias);
+
 	PartnerDevice partner(const DeviceID& id);
 	PartnerDevice partner(const std::string& alias);
 

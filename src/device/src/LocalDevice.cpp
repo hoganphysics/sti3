@@ -209,11 +209,18 @@ void LocalDevice::kill()
 
 }
 
+void LocalDevice::addEventTarget(const DeviceID& id, const std::string& alias)
+{
+	addPartner(id, alias);	//an event target must be a partner
+	addEventTarget(id);
+}
+
 void LocalDevice::addEventTarget(const DeviceID& id)
 {
 	addPartner(id);	//an event target must be a partner
 	eventTargets.insert(id);
 }
+
 
 void LocalDevice::getEventTargets(std::set<DeviceID>& targetIDs)
 {
@@ -262,6 +269,7 @@ void LocalDevice::addPartner(const DeviceID& id, const std::string& alias)
 	else {
 		partnerAliases[alias] = id;
 	}
+	addPartner(id);
 }
 
 void LocalDevice::addPartner(const DeviceID& id)

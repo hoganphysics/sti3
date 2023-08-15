@@ -572,8 +572,17 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
     std::shared_ptr<EventEngineManager> manager;
 
     if (runningJobs.get(jobID, job) && job != 0) {
+
+        if (getManager(jobID, manager)) {
+            manager->abortJob();
+        }
+
         runningJobs.remove(jobID);
         job->markCancelled();
+
+        //if (job->getJobOwner() == localDeviceID) {
+        //    //job->getDependencies();
+        //}
         
         archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
@@ -603,9 +612,9 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         sendMessage(message2);
     }
 
-    if (getManager(jobID, manager) && manager != 0) {
-        manager->abortJob();
-    }
+    //if (getManager(jobID, manager) && manager != 0) {
+    //    manager->abortJob();
+    //}
 
     jobCondition.notify_all();
 }

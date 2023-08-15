@@ -60,7 +60,7 @@ private:
 
 	STI::Device::DeviceID localDeviceID;
 	EngineID currentEngineID;
-	DeviceEventMap* _target;
+	DeviceEventMap* partnerEventTarget;
 	unsigned eventNumber;
 
 	std::vector<EngineParsingMessage> parsingMessages;

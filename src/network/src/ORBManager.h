@@ -42,6 +42,7 @@ public:
 
 	bool running();
 	bool initialized();
+	bool blocking();
 
 	void run();
 	void shutdown();
@@ -76,8 +77,8 @@ private:
 	PortableServer::POA_var root_poa;
 	PortableServer::POA_var poa;
 
-	bool _running;
-	bool _blocking;
+	bool running_;
+	bool blocking_;
 	bool poa_is_active;
 
 	mutable std::mutex orbMutex;

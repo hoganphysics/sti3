@@ -1,6 +1,6 @@
 import stipy
 import stipy.stidevicepy as stidevicepy
-
+import time
 
 class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, name, address, module, targetServer):
@@ -12,15 +12,19 @@ class TestDevice(stidevicepy.LocalDevice):
         engineID = stidevicepy.EngineID(0)
         self.addEventEngine(engineID)
 
-        self.addAttribute("x", "77").setSetter(self.setTest)
+        self.addAttribute("x", "77").setSetter(self.setX)
+        self.addAttribute("clock time", "0").setRefresher(self.refreshClockTime)
         return
-    def __del__(self):
-        print("&&&&&&&&& TestDevice del")
+    # def __del__(self):
+    #     print("del TestDevice")
 
-    def setTest(self, value):
+    def setX(self, value):
         print(value)
         self.x = value
         return True
+    def refreshClockTime(self):
+        self.clockTime = time.localtime().tm_sec
+        return str(self.clockTime)
     def writeChannel(self, channel, value):
          print("write: " + str(channel))
          return True
