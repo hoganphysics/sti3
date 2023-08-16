@@ -43,6 +43,6 @@ setattr(RawEventGroup, 'setcolor', setcolor)
 setattr(RawEventGroup, 'var', var)
 setattr(RawEventGroup, 'setvar', setvar)
 setattr(RawEventGroup, 'settag', settag)
-setattr(RawEventGroup, 'addEvent', addEvent)
-setattr(RawEventGroup, 'addMeas', addMeas)
+setattr(RawEventGroup, 'event', addEvent)
+setattr(RawEventGroup, 'meas', addMeas)
 

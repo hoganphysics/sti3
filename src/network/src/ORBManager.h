@@ -13,6 +13,8 @@
 
 #include <sti/utils/Configuration.h>
 
+#include <iosfwd>
+
 namespace STI
 {
 namespace Network
@@ -54,8 +56,12 @@ public:
 	void getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, std::vector<std::string>& objContexts);
 
 	bool bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref);
+	bool bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref, std::ostream& errorBuf);
+
 	bool unbindObjectReference(const std::string& objectFullPath);	
+
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
+	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref, std::ostream& errorBuf);
 
 	static void activateServant(PortableServer::ServantBase& servant);
 	static void deactivateServant(PortableServer::Servant p_servant);

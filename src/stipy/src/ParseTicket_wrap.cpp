@@ -33,7 +33,7 @@ void init_ParseTicket(py::module& m)
 
     py::class_<STI::Engine::EngineParsingMessage>(m, "EngineParsingMessage")
         .def("getMessage", &STI::Engine::EngineParsingMessage::getMessage)
-        .def("getEvents", &STI::Engine::EngineParsingMessage::getEvents)
+        .def("events", &STI::Engine::EngineParsingMessage::getEvents)
         .def("__repr__",
             [](const STI::Engine::EngineParsingMessage& message) {
                 return "<" + message.getName() + "|" + message.getMessage() + ">";
@@ -48,9 +48,9 @@ void init_ParseTicket(py::module& m)
         .def("wait", py::overload_cast<const std::function<bool()>&>(&STI::Python::PyParseTicket::wait, py::const_))
         .def("cancel", &STI::Python::PyParseTicket::cancel)
         .def("defer", &STI::Python::PyParseTicket::defer)
-        .def("getMessages", &STI::Python::PyParseTicket::getMessages)
+        .def("messages", &STI::Python::PyParseTicket::getMessages)
         .def("rootgroup", &STI::Python::PyParseTicket::getEvents)
-        .def("getStatus", &STI::Python::PyParseTicket::getStatus)
+        .def("status", &STI::Python::PyParseTicket::getStatus)
         .def("getParseResult", &STI::Python::PyParseTicket::getParseResult)
         .def("__repr__",
             [](const PyParseTicket& self) {

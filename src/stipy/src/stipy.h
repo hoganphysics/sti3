@@ -42,8 +42,8 @@ class STIPyShot;
 // void connect3(const std::string& localIP, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
 // void connect4(unsigned localIP, unsigned nameServerAddress);
 
-std::shared_ptr<STIPyServer> connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
-std::shared_ptr<STIPyServer> connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
 
 void disconnect();
 

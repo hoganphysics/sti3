@@ -113,7 +113,8 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
         std::filesystem::create_directory(root);
     }
 
-    auto devicePath = root / deviceID.getID();
+    std::string forbidden = "<>:\"\\|?*";
+    auto devicePath = root / STI::Utils::replaceChars(deviceID.getID(), forbidden, "_");
 
     if (!std::filesystem::exists(devicePath)) {
         std::filesystem::create_directories(devicePath);
