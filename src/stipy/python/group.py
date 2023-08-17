@@ -30,9 +30,9 @@ def setvar(self, fullVarName, value):
     return _addvar(self, fullVarName, value, makeStackTrace())
 def settag(self, fullVarName) :
     return _addtag(self, fullVarName, makeStackTrace())
-def addEvent(self, target, time, value) :
+def event(self, target, time, value) :
     return _addEvent(self, target, time, value, makeStackTrace())
-def addMeas(self, target, time, value) :
+def meas(self, target, time, value) :
     return _addMeas(self, target, time, value, makeStackTrace())
 
 
@@ -43,6 +43,6 @@ setattr(RawEventGroup, 'setcolor', setcolor)
 setattr(RawEventGroup, 'var', var)
 setattr(RawEventGroup, 'setvar', setvar)
 setattr(RawEventGroup, 'settag', settag)
-setattr(RawEventGroup, 'event', addEvent)
-setattr(RawEventGroup, 'meas', addMeas)
+setattr(RawEventGroup, 'event', event)
+setattr(RawEventGroup, 'meas', meas)
 

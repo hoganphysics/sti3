@@ -51,7 +51,7 @@ void init_STIPyShot(py::module& m)
         .def("rootgroup", py::overload_cast<>(&STIPyShot::group))
         .def("group", py::overload_cast<const std::string&>(&STIPyShot::group), py::arg("fullName"))
 
-        .def("getVars", &STI::Python::STIPyShot::getVars)
+        .def("vars", &STI::Python::STIPyShot::getVars)
         ;
 
 }

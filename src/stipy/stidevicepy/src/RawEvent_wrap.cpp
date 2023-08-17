@@ -83,8 +83,8 @@ void init_RawEvent(py::module& m)
         .def(py::init<const std::string&>(), py::arg("channelName"))
 
         .def("isAbstract", &RawEventTarget::isAbstract)
-        .def("getDevice", &RawEventTarget::getDevice)
-        .def("getChannel", &RawEventTarget::getChannel)
+        .def("device", &RawEventTarget::getDevice)
+        .def("channel", &RawEventTarget::getChannel)
         .def("__repr__",
             [](const STI::Engine::RawEventTarget& self) {
                 std::stringstream s;

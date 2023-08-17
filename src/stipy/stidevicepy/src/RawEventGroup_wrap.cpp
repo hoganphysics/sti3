@@ -57,13 +57,13 @@ void init_RawEventGroup(py::module& m)
                 self.getReferencePoint(refName, time);
                 return time;
             })
-        .def("addMetaData",
+        .def("addMetadata",
             [](RawEventGroup& self, const std::string& key, const pybind11::object& data) {
                 MixedValuePy mixedValue;
                 mixedValue.setValue_py(data);
                 self.addMetaData(key, mixedValue);
             })
-        .def("getMetaData",
+        .def("metadata",
             [](RawEventGroup& self, const std::string& key) {
                 MixedValuePy val = self.getMetaData(key);
                 return val.getValue_py();                
@@ -71,7 +71,8 @@ void init_RawEventGroup(py::module& m)
 
         .def("var", &RawEventGroup::var, py::arg("fullVarName"), py::arg("stackTrace"))
 
-        .def("addvar", [](RawEventGroup& self, const std::string& fullVarName, 
+        .def("addvar", //name overriden to 'setvar' in python
+            [](RawEventGroup& self, const std::string& fullVarName, 
                         const pybind11::object& value, const RawStackTrace& stackTrace) {
 
                 MixedValuePy mixedValue;
@@ -79,8 +80,9 @@ void init_RawEventGroup(py::module& m)
 
                 self.addvar(fullVarName, mixedValue, stackTrace);
             }, py::arg("fullVarName"), py::arg("value"), py::arg("stackTrace"))
-        .def("addtag", &RawEventGroup::addtag, py::arg("fullTagName"), py::arg("stackTrace"))
-        .def("addEvent",
+        .def("addtag", //name overriden to 'settag' in python
+            &RawEventGroup::addtag, py::arg("fullTagName"), py::arg("stackTrace"))
+        .def("addEvent",    //name overriden to 'event' in python
             [](RawEventGroup& self, const STI::Engine::RawEventTarget& target, 
                 double time, const pybind11::object& value,
                 const STI::Engine::RawStackTrace& stackTrace) {
@@ -90,7 +92,8 @@ void init_RawEventGroup(py::module& m)
 
                 self.addEvent(target, time, mixedValue, RawEventType::Play, stackTrace);
             })
-        .def("addMeas", [](RawEventGroup& self, const STI::Engine::RawEventTarget& target, 
+        .def("addMeas", //name overriden to 'meas' in python
+                [](RawEventGroup& self, const STI::Engine::RawEventTarget& target, 
                         double time, const pybind11::object& value,
                         const STI::Engine::RawStackTrace& stackTrace) {
 
@@ -110,10 +113,10 @@ void init_RawEventGroup(py::module& m)
             }, py::arg("fullVarName"), py::arg("value"))
 
         .def("group", &RawEventGroup::group, py::arg("name"))
-        .def("getSubgroups", &RawEventGroup::getSubgroups)
+        .def("subgroups", &RawEventGroup::getSubgroups)
 
         // .def("getEvents", &RawEventGroup::getEvents, py::const_)
-        .def("getEvents", 
+        .def("events", 
             [](const RawEventGroup& self) {
                 auto evts = self.getEvents();
 
@@ -128,9 +131,9 @@ void init_RawEventGroup(py::module& m)
         // .def("getVars", &RawEventGroup::getVars, py::const_)
         // .def("getTags", &RawEventGroup::getTags, py::const_)
 
-        .def("getVars", &RawEventGroup::getVars)
-        .def("getTags", &RawEventGroup::getTags)
-        .def("getOverwrittenVars", &RawEventGroup::getOverwrittenVars)
+        .def("vars", &RawEventGroup::getVars)
+        .def("tags", &RawEventGroup::getTags)
+        .def("overwrittenVars", &RawEventGroup::getOverwrittenVars)
         
         .def("__repr__",
             [](const RawEventGroup& self) {

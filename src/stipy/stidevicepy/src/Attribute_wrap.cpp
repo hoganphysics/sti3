@@ -32,7 +32,7 @@ void init_Attribute(py::module& m)
         .def("getAllowedValues", &Attribute::getAllowedValues)
         .def("group", &Attribute::getGroup)
         .def("refresh", &Attribute::refreshValue)
-        .def("set_value", &Attribute::setValue, py::arg("value"))
+        .def("setValue", &Attribute::setValue, py::arg("value"))
         // .def("setValue", py::overload_cast<const std::string&>(&Attribute::setValue))
         // .def("setValue", [](Attribute& self, const std::string& value) {
         //         // return self.setValue(value);
@@ -64,7 +64,7 @@ void init_Attribute(py::module& m)
                 {
                     return new STI::Device::LocalAttribute(key, initalValue, allowedValues);
                 } ), py::arg("key"), py::arg("value"), py::arg("allowedValues"))
-        .def("set_refresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refresher) {
+        .def("setRefresher", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<std::string(void)>& refresher) {
                 // Need to wrap python function reference in another lambda so we can release the GIL
                 // before calling back to python
                 auto gil_refresher = [refresher]() {
@@ -79,7 +79,7 @@ void init_Attribute(py::module& m)
                 self->setRefresher(gil_refresher);
                 return self;
             }, py::arg("refresherFunction"))
-        .def("set_setter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
+        .def("setSetter", [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::function<bool(const std::string&)>& setter) {
                 // Need to wrap python function reference in another lambda so we can release the GIL
                 // before calling back to python
                 auto gil_setter = [setter](const std::string& value) {
@@ -112,7 +112,7 @@ void init_Attribute(py::module& m)
         //         self.addMetaData(key, v);
         //         return;
         //     } ) //, py::return_value_policy::reference)
-        .def("add_metadata", 
+        .def("addMetadata", 
             [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::string& key, const MixedValuePy& value) {
                 const MixedValue& v = static_cast<const MixedValue&>(value);
                 //LocalChannel& ch = self.addMetaData(key, v);

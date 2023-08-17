@@ -5,12 +5,11 @@ from stipy.bin.stipy import event as _event
 from stipy.bin.stipy import meas as _meas
 from stipy.bin.stipy import group as _group
 from stipy.bin.stipy import connect as _connect
-#from stipy.bin.stipy import ch as _ch
 from stipy.bin.stipy import STIPyServer
 # from stipy.bin.stipybase import Sequence
 from stipy.stipybase.python.sequence import STIPySequence
-
 from stipy.python.stacktrace import makeStackTrace
+
 
 from socket import gethostname
 from getpass import getuser
@@ -26,7 +25,7 @@ def connect(serverID, nameServerAddress, serverHubID=None):
         server = _connect(localAddress, serverID, serverHubID, nameServerAddress)
 
     if server != None and type(server) == STIPyServer:
-        server.set_username(username)
+        server.setUsername(username)
 
     return server
 

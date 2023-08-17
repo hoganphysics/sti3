@@ -31,13 +31,13 @@ void init_STIPyServer(py::module& m)
         .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play))
         .def("parse", py::overload_cast<const std::shared_ptr<STI::Engine::Sequence>&>(&STIPyServer::parse))    //sequences
 
-        .def("cancel_all", &STIPyServer::cancelAll)
+        .def("cancelAll", &STIPyServer::cancelAll)
         
-        .def("set_username", &STIPyServer::setUserName)
+        .def("setUsername", &STIPyServer::setUserName)
         .def("username", &STIPyServer::getUserName)
         
-        .def("print_network", py::overload_cast<>(&STIPyServer::printNetwork))
-        .def("print_network", py::overload_cast<const std::string&>(&STIPyServer::printNetwork))
+        .def("printNetwork", py::overload_cast<>(&STIPyServer::printNetwork))
+        .def("printNetwork", py::overload_cast<const std::string&>(&STIPyServer::printNetwork))
         ;
 
 }

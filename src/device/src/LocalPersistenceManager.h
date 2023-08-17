@@ -70,7 +70,7 @@ public:
 
     std::string getBasePath() const;
 
-    static std::string makeBasePath(const std::string& rootPath, const DeviceID& deviceID);
+    static std::string makeBasePath(const std::string& rootPath, const std::string& deviceID);
 
 private:
 

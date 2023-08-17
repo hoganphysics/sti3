@@ -16,9 +16,9 @@ void init_DeviceID(py::module& m)
                         py::arg("name"), py::arg("address"), py::arg("module") )
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                         py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )
-        .def("getName", &STI::Device::DeviceID::getName)
-        .def("getAddress", &STI::Device::DeviceID::getAddress)
-        .def("getModule", &STI::Device::DeviceID::getModule)
+        .def("name", &STI::Device::DeviceID::getName)
+        .def("address", &STI::Device::DeviceID::getAddress)
+        .def("module", &STI::Device::DeviceID::getModule)
         .def("getID", &STI::Device::DeviceID::getID)
         .def("getTargetServerID", &STI::Device::DeviceID::getTargetServerID)
         .def("__repr__",

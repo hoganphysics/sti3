@@ -216,7 +216,7 @@ void init_EventEngineScheduler(py::module& m)
         .def("cancelJob", &EventEngineScheduler::cancelJob)
         .def("cancelAll", &EventEngineScheduler::cancelAll)
         // .def("getJobIDs", &EventEngineScheduler::getJobIDs)
-        .def("getJobIDs",
+        .def("jobIDs",
             [](EventEngineScheduler& self, const EventEngineJobList& jobListType) {
 
                 std::set<EngineJobID> jobIDset = self.getJobIDs(jobListType);

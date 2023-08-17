@@ -34,9 +34,9 @@ void init_Channel(py::module& m)
     py::class_<Channel, std::shared_ptr<Channel>>(m, "Channel")
         .def("number", &Channel::getChannelNumber)
         .def("type", &Channel::getType)
-        .def("input_type", &Channel::getInputType)
-        .def("output_type", &Channel::getOutputType)
-        .def("set_name", &Channel::setChannelName)
+        .def("inputType", &Channel::getInputType)
+        .def("outputType", &Channel::getOutputType)
+        .def("setName", &Channel::setChannelName)
         .def("name", &Channel::getChannelName)
         .def("getLastValue", [](Channel& self) {
                 MixedValuePy value(self.getLastValue());
@@ -66,7 +66,7 @@ void init_Channel(py::module& m)
     py::class_<LocalChannel, Channel, std::shared_ptr<LocalChannel>>(m, "LocalChannel")
         .def(py::init<>())
 //        .def("addMetaData", &LocalChannel::addMetaData, py::return_value_policy::reference)
-        .def("add_metadata", 
+        .def("addMetadata", 
             [](LocalChannel& self, const std::string& key, const MixedValuePy& value) {
                 const MixedValue& v = static_cast<const MixedValue&>(value);
                 //LocalChannel& ch = self.addMetaData(key, v);

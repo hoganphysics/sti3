@@ -33,7 +33,7 @@ void init_DeviceMessage(py::module& m)
 
     py::class_<DeviceMessage, std::shared_ptr<DeviceMessage>>(m, "DeviceMessage")
         .def("sourceID", &DeviceMessage::sourceID)
-        .def("getType", &DeviceMessage::getType)
+        .def("type", &DeviceMessage::getType)
         .def("__repr__",
             [](const DeviceMessage& mess) {
                 return "<DeviceMessage | type=" 

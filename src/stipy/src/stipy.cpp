@@ -156,10 +156,15 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddres
     STI::Utils::TimeStamp connectTime;
        
     uniqueName << "STIPy";   //STIPy:localAddress:<data>:<time>
-    //uniqueName << ":" << localAddress;
-    //uniqueName << ":" << connectTime.date_YYYY_MM_DD("-") << ":" << connectTime.time_hh_mm_ss_mmmuuunnn();
+    uniqueName << ":" << localAddress;
+    uniqueName << ":" << connectTime.date_YYYY_MM_DD("-") << ":" << connectTime.time_hh_mm_ss_mmmuuunnn();
 
-    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName.str(), localAddress, 0, serverID, verifiedServerHubID);
+    //Use a non-unique form of DeviceID to set STIPyLibDevice path structure (to avoid unwanted persistence directories).
+    STI::Device::DeviceID subdirID("STIPy", localAddress, 0);
+    STI::Utils::Configuration config;
+    config.set<std::string>("PersistenceManager", "device subdirectory", subdirID.getID());
+
+    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName.str(), localAddress, 0, serverID, verifiedServerHubID, config);
 
     hub->addDevice(stipydev, verifiedServerHubID);
     hub->run(false);    //don't block
@@ -253,6 +258,12 @@ STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, cons
     return device;
 }
 
+STI::Engine::RawEventTargetDevice STI::Python::dev(const STI::Device::DeviceID& deviceID)
+{
+    STI::Engine::RawEventTargetDevice device(deviceID);
+    return device;
+}
+
 // STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID)
 // {
 //     auto device = std::make_shared<STI::Engine::RawEventTargetDevice>(name, address, module, targetServerID);
@@ -269,6 +280,16 @@ STI::Engine::RawEventTarget STI::Python::ch(const STI::Engine::RawEventTargetDev
 {
     STI::Engine::RawEventTarget target(device, channelName);
     return target;
+}
+
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Device::DeviceID& deviceID, unsigned channel)
+{
+    return ch(STI::Engine::RawEventTargetDevice(deviceID), channel);
+}
+
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Device::DeviceID& deviceID, const std::string& channelName)
+{
+    return ch(STI::Engine::RawEventTargetDevice(deviceID), channelName);
 }
 
 STI::Engine::RawEventTarget STI::Python::ch(const std::string& channelName)

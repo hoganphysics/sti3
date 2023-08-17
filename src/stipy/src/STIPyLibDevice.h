@@ -28,7 +28,7 @@ class STIPyLibDevice : public STI::Device::LocalDevice
 public:
     
     STIPyLibDevice(const std::string& name, const std::string& address, unsigned short module,
-		                const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID);
+		                const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const STI::Utils::Configuration& config);
     ~STIPyLibDevice();
 
     bool addto(const STI::Network::HubID& target);
