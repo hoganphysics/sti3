@@ -377,8 +377,16 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
     }
 
     //Todo: filter serverChainIDs to get rid of STIpy, etc
+
+    std::set<DeviceID> filteredServerChainIDs;
     
-    for (auto& id : serverChainIDs) {    // Follow server chain through the graph
+    std::copy_if(serverChainIDs.begin(), serverChainIDs.end(), std::inserter(filteredServerChainIDs, filteredServerChainIDs.end()),
+        [](const DeviceID& id)->bool {
+            std::size_t prefixPos = id.getName().find("STIPy:");
+            return (prefixPos != 0);
+        });
+    
+    for (auto& id : filteredServerChainIDs) {    // Follow server chain through the graph
         if (id.getTargetServerID() == localDeviceID.getTargetServerID()) {
             //obvious shortcircuit to save time
             continue;

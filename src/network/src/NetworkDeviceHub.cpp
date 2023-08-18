@@ -3,6 +3,9 @@
 #include <sti/device/DeviceID.h>
 #include <sti/network/DeviceHub.h>
 
+#include <sti/utils/TaskScheduler.h>
+#include <sti/utils/IntervalTask.h>
+
 #include "NetworkDeviceHubWrapper.h"
 #include "ORBManager.h"
 #include "RemoteDeviceHub.h"
@@ -94,12 +97,26 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	}
 
 	refreshHubContext();
+
+	// Refresh local hub periodically to remove dead references
+	int refreshTime = 5;	//seconds
+	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>(0, refreshTime,
+		[this]() {
+			localHub->refresh();
+		});
+	
+	refreshScheduler = std::make_shared<STI::Utils::TaskScheduler>();
+	refreshScheduler->start();
+	refreshScheduler->addTask(refreshTask);
 }
 
 NetworkDeviceHub::~NetworkDeviceHub()
 {
 	if (localHub != 0) {
 		localHub->clear();
+	}
+	if (refreshScheduler != 0) {
+		refreshScheduler->stop();
 	}
 }
 

@@ -7,6 +7,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/network/DeviceHub.h>
 #include <sti/utils/Configuration.h>
+#include <sti/fwd/TaskScheduler_fwd.h>
 
 #include <condition_variable>
 #include <mutex>
@@ -102,6 +103,8 @@ private:
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;
+
+	std::shared_ptr<STI::Utils::TaskScheduler> refreshScheduler;
 
 	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
 

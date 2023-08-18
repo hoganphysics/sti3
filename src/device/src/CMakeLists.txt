@@ -52,6 +52,7 @@ include_directories("." ${Boost_INCLUDE_DIR})
 #link_directories(${STI_BASE_DIR}/lib)
 
 add_library(stidevice SHARED 
+    AppointmentTask.cpp
     BinaryData.cpp
     ConfigFile.cpp
     Configuration.cpp
@@ -73,6 +74,7 @@ add_library(stidevice SHARED
     FullShotResult.cpp
     # EngineParseResult.cpp
     Image.cpp
+    IntervalTask.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -120,11 +122,13 @@ add_library(stidevice SHARED
     StackTraceData.cpp
     StackTraceResult.cpp
     SynchronousEvent.cpp
+    Task.cpp
+    TaskScheduler.cpp
     TimeStamp.cpp
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
- "PartnerDevice.cpp")
+)
 
 set_target_properties(stidevice PROPERTIES 
     VERSION ${PROJECT_VERSION}
