@@ -598,7 +598,7 @@ std::string MixedValue::print() const
 		{
 			auto bin = getBinary();
 			result << "BinaryData(";
-			if (!bin) {
+			if (bin != 0) {
 				result << "size=";
 				result << bin->bytes();
 			}
@@ -612,7 +612,7 @@ std::string MixedValue::print() const
 		{
 			auto file = getFile();
 			result << "File(";
-			if (!file) {
+			if (file != 0) {
 				result << file->getFilename();
 			}
 			else {
@@ -625,7 +625,7 @@ std::string MixedValue::print() const
 		{
 			auto image = getImage();
 			result << "Image(";
-			if (!image) {
+			if (image != 0) {
 				result << image->getFilename();
 				result << ".";
 				result << image->getExtension();

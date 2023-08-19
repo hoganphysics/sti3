@@ -43,6 +43,8 @@ void DeviceEventParser::parseEvents(const RawEventMap& events,
 
 void DeviceEventParser::setPartnerEventTarget(DeviceEventMap* target)
 {
+	//Sets which event engine to target for partner events.
+	//During parseEvents, the parsing engine has exclusive control of calls to DeviceEventParser::addEvent
 	_target = target;
 }
 
