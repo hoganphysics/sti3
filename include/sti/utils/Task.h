@@ -27,7 +27,7 @@ public:
 	TaskStatus getStatus() const;
 	void setStatus(const TaskStatus& newStatus);
 
-	virtual bool isReadyToRun();
+	virtual bool isReadyToRun();		//allows for unscheduled task abort
 
 	virtual double secondsToNextRun() const = 0;
 	virtual void run() = 0;

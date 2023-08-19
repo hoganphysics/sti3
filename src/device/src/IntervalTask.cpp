@@ -1,7 +1,7 @@
 
 #include <sti/utils/IntervalTask.h>
 
-#include <iostream>
+//#include <iostream>
 
 using STI::Utils::IntervalTask;
 
@@ -21,11 +21,13 @@ IntervalTask::~IntervalTask()
 
 double IntervalTask::secondsToNextRun() const
 {
+	using namespace std::chrono;
+
 	auto now = std::chrono::system_clock::now();
 
-	auto wait = (lastRunTime + std::chrono::seconds(static_cast<int>(waitInterval))) - now;
+	auto wait = (lastRunTime + seconds( static_cast<int>(waitInterval) )) - now;
 
-	auto wait_ms = std::chrono::duration_cast<std::chrono::milliseconds>(wait);
+	auto wait_ms = duration_cast<milliseconds>(wait);
 
 	double wait_s = static_cast<double>(wait_ms.count()) / 1000;
 
@@ -35,12 +37,9 @@ double IntervalTask::secondsToNextRun() const
 
 void IntervalTask::run()
 {
-	auto tmpnow = std::chrono::system_clock::now();
-	auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(tmpnow - lastRunTime);
-	//std::cout << "Interval: " << static_cast<double>(delta.count()) / 1000 << std::endl;
+	runFunc();
 
 	lastRunTime = std::chrono::system_clock::now();
-	runFunc();
 }
 
 void IntervalTask::skipTask()
