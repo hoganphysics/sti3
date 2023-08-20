@@ -175,8 +175,6 @@ if(USE_STI_DEBUG_POSTFIX)
   )
 endif()
 
-target_compile_options(stidevice PRIVATE -std=c++20)
-
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}
     ${OPENSSL_INCLUDE_DIR}
