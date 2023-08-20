@@ -60,7 +60,8 @@ public:
 	LocalDevice(const std::map<std::string, std::string>& config);
 	LocalDevice(const STI::Utils::Configuration& config, const std::string& section="");
 	LocalDevice(const std::string& name, const std::string& address, unsigned short module,
-		const std::string& targetServer);
+		const std::string& targetServer, 
+		const STI::Utils::Configuration& config=STI::Utils::Configuration());
 	virtual ~LocalDevice();
 
 	const DeviceID getID() const;
@@ -107,6 +108,8 @@ public:
 	void addPartner(const DeviceID& id);
 	void addPartner(const DeviceID& id, const std::string& alias);
 	void addEventTarget(const DeviceID& id);
+	void addEventTarget(const DeviceID& id, const std::string& alias);
+
 	PartnerDevice partner(const DeviceID& id);
 	PartnerDevice partner(const std::string& alias);
 

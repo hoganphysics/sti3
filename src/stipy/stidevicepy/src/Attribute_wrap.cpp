@@ -27,22 +27,22 @@ void init_Attribute(py::module& m)
 
 
     py::class_<Attribute, std::shared_ptr<Attribute>>(m, "Attribute")
-        .def("getKey", &Attribute::getKey)
-        .def("getValue", &Attribute::getValue)
+        .def("key", &Attribute::getKey)
+        .def("value", &Attribute::getValue)
         .def("getAllowedValues", &Attribute::getAllowedValues)
-        .def("getGroup", &Attribute::getGroup)
-        .def("refreshValue", &Attribute::refreshValue)
+        .def("group", &Attribute::getGroup)
+        .def("refresh", &Attribute::refreshValue)
         .def("setValue", &Attribute::setValue, py::arg("value"))
         // .def("setValue", py::overload_cast<const std::string&>(&Attribute::setValue))
         // .def("setValue", [](Attribute& self, const std::string& value) {
         //         // return self.setValue(value);
         //         return true;
         //     })
-        .def("getMetaData", [](Attribute& self) {
+        .def("metadata", [](Attribute& self) {
                 MixedValuePy value(self.getMetaData());
                 return value.getValue_py();
             })
-        .def("getMetaData", [](Attribute& self, const std::string& key) {
+        .def("metadata", [](Attribute& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));
                 return value.getValue_py();
             }, py::arg("key"))
@@ -112,7 +112,7 @@ void init_Attribute(py::module& m)
         //         self.addMetaData(key, v);
         //         return;
         //     } ) //, py::return_value_policy::reference)
-        .def("addMetaData", 
+        .def("addMetadata", 
             [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::string& key, const MixedValuePy& value) {
                 const MixedValue& v = static_cast<const MixedValue&>(value);
                 //LocalChannel& ch = self.addMetaData(key, v);

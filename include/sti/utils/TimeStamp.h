@@ -26,6 +26,7 @@ public:
 
 	std::string date() const;
 	std::string date_YYYY_MM_DD() const;
+	std::string date_YYYY_MM_DD(const std::string& separator) const;
 	std::string time() const;
 	std::string time_hh_mm_ss() const;
 	std::string time_hh_mm_ss_mmmuuunnn() const;

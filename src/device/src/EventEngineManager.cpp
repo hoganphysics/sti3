@@ -124,8 +124,11 @@ void EventEngineManager::runJob()
         break;
     }
 
-    std::unique_lock<std::mutex> writeLock(jobMutex);
-    running = false;
+    {
+        //Avoid deadlock with scheduler->cancelJob below, which calls abortJob
+        std::unique_lock<std::mutex> writeLock(jobMutex);
+        running = false;
+    }
     
     if (engine->jobCancelled()) {
         scheduler->cancelJob(currentJob->getJobID());

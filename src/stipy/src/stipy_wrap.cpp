@@ -27,8 +27,14 @@ void init_stipy(py::module& m)
     m.def("connect", 
         py::overload_cast<const std::string&, 
                         const STI::Device::DeviceID&, 
-                        const std::string&>(&STI::Python::connect), "Connect to the STI server");
+                        const std::string&>(&STI::Python::connect), "Connect to an STI server");
     
+    m.def("connect",
+        py::overload_cast<const std::string&,
+        const STI::Device::DeviceID&,
+        const STI::Network::HubID&,
+        const std::string&>(&STI::Python::connect), "Connect to an STI server that is located on a specified HubID");
+
     // m.def("add", &add, "A function which adds two numbers");
 
     m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
@@ -59,13 +65,12 @@ void init_stipy(py::module& m)
     m.def("meas", py::overload_cast<const RawEventTarget&, double,
                     const RawStackTrace&, const std::string&>(&STI::Python::meas),
                     py::arg("channel"), py::arg("time"), py::arg("stackTrace"), py::arg("group"));
-
-    // m.def("dev", 
-    //     py::overload_cast<const std::string&, const std::string&, unsigned, const std::string&>(
-    //         &STI::Python::dev), "Create STIPy device ID");
     m.def("dev", 
         py::overload_cast<const std::string&>(
             &STI::Python::dev), py::arg("deviceName"), "Create abstract STIPy device ID");
+    m.def("dev", 
+        py::overload_cast<const STI::Device::DeviceID&>(
+            &STI::Python::dev), py::arg("deviceID"), "Create STIPy device ID");
     m.def("dev", 
         py::overload_cast<const std::string&, const std::string&, unsigned>(
             &STI::Python::dev), py::arg("name"), py::arg("address"), py::arg("module"), "Create STIPy device ID");
@@ -75,6 +80,12 @@ void init_stipy(py::module& m)
     m.def("ch", 
         py::overload_cast<const STI::Engine::RawEventTargetDevice&, const std::string&>(
             &STI::Python::ch), py::arg("device"), py::arg("channelName"), "Create abstract STIPy channel ID");
+    m.def("ch", 
+        py::overload_cast<const STI::Device::DeviceID&, unsigned>(
+            &STI::Python::ch), py::arg("deviceID"), py::arg("channel"), "Create STIPy channel ID");
+    m.def("ch", 
+        py::overload_cast<const STI::Device::DeviceID&, const std::string&>(
+            &STI::Python::ch), py::arg("deviceID"), py::arg("channelName"), "Create abstract STIPy channel ID");
     m.def("ch", 
         py::overload_cast<const std::string&>(
             &STI::Python::ch), py::arg("channelName"), "Create abstract STIPy channel ID");

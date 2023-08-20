@@ -133,13 +133,15 @@ public:
     std::string printNetwork();
     std::string printNetwork(const std::string& baseContext);
 
-private:
+    void setUserName(const std::string& name);
+    std::string getUserName() const;
 
+private:
 
     bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
     bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
 
-
+    std::string username;   //name of user that created this server instance
     std::shared_ptr<STI::Network::NetworkDeviceHub> libDeviceHub;
     std::shared_ptr<STIPyLibDevice> libDevice;
     STI::Device::DeviceID serverID;

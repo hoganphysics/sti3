@@ -18,7 +18,7 @@ public:
 
 	HubID() : HubID("", "", 0) {}
 	HubID(const std::string& name, const std::string& address, unsigned short module) 
-	: name(name), address(address), module(module) {}
+	: name(ensurePrefix(name)), address(address), module(module) {}
 
 	bool operator<(const HubID& rhs) const { return getID().compare(rhs.getID()) < 0; }
 	bool operator==(const HubID& rhs) const { return getID().compare(rhs.getID()) == 0; }
@@ -29,13 +29,19 @@ public:
 	std::string address;
 	unsigned short module;
 
+	bool isValid() const
+	{
+		return (address != "") && (removePrefix(name) != "");
+	}
+
 	std::string getID() const
 	{
+		
 		std::stringstream hubid;
 
 		auto clean = std::bind(STI::Utils::replaceChars, std::placeholders::_1, "./", "_");// STI::Utils::replaceChars(address, "./", "_")
 
-		hubid << clean(address) << "/" << module << "/" << clean(name);
+		hubid << clean(address) << "/" << module << "/" << clean(ensurePrefix(name));
 		return hubid.str();
 
 	}
@@ -47,13 +53,39 @@ public:
 
 		unsigned short module;
 
-		if (tokens.size() == 3 && STI::Utils::stringToValue(tokens.at(1), module)) {
+		if (tokens.size() == 3 && STI::Utils::stringToValue(tokens.at(1), module) &&
+			tokens.at(0) != "" && tokens.at(2) != "") {
 			hubID.address = tokens.at(0);
 			hubID.module = module;
-			hubID.name = tokens.at(2);
+			hubID.name = ensurePrefix(tokens.at(2));
+
 			return true;
 		}
 		return false;
+	}
+
+private:
+
+	static std::string ensurePrefix(const std::string& name)
+	{
+		std::string prefix = "Hub::";
+
+		std::size_t prefixPos = name.find(prefix);
+
+		if (prefixPos != 0) {
+			return prefix + name;
+		}
+		return name;
+	}
+	static std::string removePrefix(const std::string& name)
+	{
+		std::string prefix = "Hub::";
+		std::size_t prefixPos = name.find(prefix);
+		
+		if (prefixPos != 0 || prefixPos == std::string::npos) {
+			return name;
+		}
+		return name.substr(prefixPos + prefix.length());
 	}
 };
 

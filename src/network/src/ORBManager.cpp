@@ -217,8 +217,8 @@ ORBManager::ORBManager(const std::string& args)
 		std::cerr << "  mesg: " << fe.errmsg() << std::endl;
 	}
 
-	_running = false;
-	_blocking = false;
+	running_ = false;
+	blocking_ = false;
 
 	for (unsigned i = 0; i < argc; i++) {
 		delete[] argv[i];
@@ -266,7 +266,7 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 bool ORBManager::running()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	return _running;
+	return running_;
 }
 
 bool ORBManager::initialized()
@@ -285,24 +285,33 @@ void ORBManager::run()
 			return;
 		}
 
-		if (_running) {
+		if (running_) {
 			return;
 		}
-		_running = true;
+		running_ = true;
 	}
 
 	orb->perform_work();
 //	orb->run();
 }
 
+bool ORBManager::blocking()
+{
+	std::unique_lock<std::mutex> writeLock(orbMutex);
+	return blocking_;
+}
+
 void ORBManager::block()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	_blocking = true;
+
+	if (blocking_) return;
+
+	blocking_ = true;
 
 	signal(SIGINT, ORBManager::signal_callback_handler);
 
-	while (_blocking) {
+	while (blocking_) {
 		wakeCondition.wait(writeLock);
 	}
 }
@@ -319,7 +328,7 @@ void ORBManager::signal_callback_handler(int signum)
 void ORBManager::unblock()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	_blocking = false;
+	blocking_ = false;
 	wakeCondition.notify_all();
 }
 
@@ -327,9 +336,9 @@ void ORBManager::unblock()
 void ORBManager::shutdown()
 {
 	std::unique_lock<std::mutex> writeLock(orbMutex);
-	if (_running && orb_initialized)
+	if (running_ && orb_initialized)
 	{
-		_running = false;
+		running_ = false;
 		orb_initialized = false;
 		poa_is_active = false;
 		std::cerr << "Shutting down ORB" << std::endl;
@@ -421,7 +430,8 @@ bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingC
 
 		contextName = omni::omniURI::stringToName(context.c_str());
 
-		getRootContext(rootContext);
+		if (!getRootContext(rootContext)) return false;
+
 		contextBase = CosNaming::NamingContext::_narrow(rootContext->resolve(contextName));
 
 		success = true;
@@ -429,11 +439,11 @@ bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingC
 	catch (CORBA::Exception&)
 	{
 		success = false;
-		std::cerr << "NamingContext exception." << std::endl;
+		//std::cerr << "NamingContext exception." << std::endl;
 	}
 	catch (...) {
 		success = false;
-		std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
+		//std::cerr << "Unspecified exception caught when attempting getNamingContext(" << context << ")" << std::endl;
 	}
 
 	return success;
@@ -441,6 +451,11 @@ bool ORBManager::getNamingContext(const std::string& context, CosNaming::NamingC
 
 
 bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref)
+{
+	return bindObjectReference(objectFullPath, objref, std::cerr);
+}
+
+bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref, std::ostream& errorBuf)
 {
 	CORBA::Object_var obj;
 	CosNaming::NamingContext_var context;
@@ -476,7 +491,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 
 				if (CORBA::is_nil(context))
 				{
-					std::cerr << "Failed to narrow naming context." << std::endl;
+					errorBuf << "Error: ORBManager::bindObjectReference failed to narrow naming context." << std::endl;
 					return false;
 				}
 			}
@@ -498,7 +513,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 	}
 	catch (CORBA::TRANSIENT& ex)
 	{
-		std::cerr << "Caught system exception CORBA::"
+		errorBuf << "Caught system exception CORBA::"
 			<< ex._name() << " -- unable to contact the "
 			<< "naming service." << std::endl
 			<< "Make sure the naming server is running and that omniORB is "
@@ -508,7 +523,7 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 	}
 	catch (CORBA::SystemException& ex)
 	{
-		std::cerr << "Caught a CORBA::" << ex._name()
+		errorBuf << "Caught a CORBA::" << ex._name()
 			<< " while using the naming service." << std::endl;
 		return false;
 	}
@@ -525,13 +540,23 @@ bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
 	return false;
 }
 
-
 bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref)
+{
+	return getObjectReference(objectFullPath, objref, std::cerr);
+}
+
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref, std::ostream& errorBuf)
 {
 	bool success = false;
 
+	std::size_t nullPos = objectFullPath.find("//");	//look for any null contexts in path (empty string betweeen '/' separators)
+
+	if (nullPos != std::string::npos) {
+		return false;
+	}
+
 	CosNaming::NamingContext_var rootContext;
-	getRootContext(rootContext);
+	if (!getRootContext(rootContext)) return false;
 
 	CosNaming::Name_var objectName =
 		omni::omniURI::stringToName(objectFullPath.c_str());
@@ -544,17 +569,17 @@ bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Ob
 	catch (CosNaming::NamingContext::NotFound& ex) {
 		// This exception is thrown if any of the components of the
 		// path [contexts or the object] aren't found:
-		std::cerr << "Error: Caught CORBA::" << ex._name()
+		errorBuf << "Error: Caught CORBA::" << ex._name()
 			<< " when trying to resolve Object '" << objectFullPath << "'." << std::endl 
 			<< "The Object and/or Context was not found." << std::endl;
 	}
 	catch (CORBA::TRANSIENT& ex) {
-		std::cerr << "Caught system exception CORBA::" << ex._name() 
+		errorBuf << "Caught system exception CORBA::" << ex._name()
 			<< " -- unable to contact the naming service." << std::endl
 			<< "Make sure the naming server is running and that omniORB is configured correctly." << std::endl;
 	}
 	catch (CORBA::SystemException& ex) {
-		std::cerr << "Caught a CORBA::" << ex._name()
+		errorBuf << "Caught a CORBA::" << ex._name()
 			<< " while using the naming service." << std::endl;
 	}
 

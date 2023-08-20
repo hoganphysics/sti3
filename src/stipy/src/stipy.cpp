@@ -123,29 +123,27 @@ std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string
     return g;
 }
 
-std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
-    std::cout << "connect!!" << std::endl;
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
-    STI::Network::HubID serverHubID("Hub::" + serverID.getName(), serverID.getAddress(), serverID.getModule());
+    STI::Network::HubID serverHubID(serverID.getName(), serverID.getAddress(), serverID.getModule());
 
-    return connect(localIP, serverID, serverHubID, nameServerAddress);
+    return connect(localAddress, serverID, serverHubID, nameServerAddress);
 }
 
 //Treat serverHubID as a guess. Check if it is live and hosts serverID
-std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
-    std::cout << "connect!" << std::endl;
-
     auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress);
-//    hub->getPersistenceOptions().bindToRootContext = false;
-//    hub->getPersistenceOptions().bindToTargetContexts = false;
+    hub->getPersistenceOptions().bindToRootContext = false;
+    hub->getPersistenceOptions().bindToTargetContexts = false;
 
     STI::Network::HubID verifiedServerHubID = serverHubID;  //guess
 
     if (!hub->findHub(serverID, verifiedServerHubID)) {
         // not found
         std::shared_ptr<STIPyServer> missing;
+        std::cout << "Connect: Failed to find Hub for deviceID '" << serverID.getID() << "'" << std::endl;
         return missing;
     }
 
@@ -154,20 +152,26 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localIP, co
     //Use local IP address.  Generate Name that is unique using time?
     //Could also generate a module this way, or could query the server to get list of connections
     
-    // std::cout << "Test global: " << globalTest << " : " << globalLib->get() << std::endl;
+    std::stringstream uniqueName;
+    STI::Utils::TimeStamp connectTime;
+       
+    uniqueName << "STIPy";   //STIPy:localAddress:<data>:<time>
+    uniqueName << ":" << localAddress;
+    uniqueName << ":" << connectTime.date_YYYY_MM_DD("-") << ":" << connectTime.time_hh_mm_ss_mmmuuunnn();
 
-    std::string uniqueName = "STIPy";   //Add timestamp?  STIPy::<timestamp>
+    //Use a non-unique form of DeviceID to set STIPyLibDevice path structure (to avoid unwanted persistence directories).
+    STI::Device::DeviceID subdirID("STIPy", localAddress, 0);
+    STI::Utils::Configuration config;
+    config.set<std::string>("PersistenceManager", "device subdirectory", subdirID.getID());
 
-    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName, localIP, 0, serverID, verifiedServerHubID);
+    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName.str(), localAddress, 0, serverID, verifiedServerHubID, config);
 
-    hub->addDevice(stipydev);
-    hub->run(false);
+    hub->addDevice(stipydev, verifiedServerHubID);
+    hub->run(false);    //don't block
 
     //stipydev->waitForConnection();
 
     auto server = std::make_shared<STIPyServer>(hub, stipydev, serverID);
-
-    std::cout << "getAttribute: " << server->getAttribute("test") << std::endl;
 
     return server;
 }
@@ -254,6 +258,12 @@ STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, cons
     return device;
 }
 
+STI::Engine::RawEventTargetDevice STI::Python::dev(const STI::Device::DeviceID& deviceID)
+{
+    STI::Engine::RawEventTargetDevice device(deviceID);
+    return device;
+}
+
 // STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID)
 // {
 //     auto device = std::make_shared<STI::Engine::RawEventTargetDevice>(name, address, module, targetServerID);
@@ -270,6 +280,16 @@ STI::Engine::RawEventTarget STI::Python::ch(const STI::Engine::RawEventTargetDev
 {
     STI::Engine::RawEventTarget target(device, channelName);
     return target;
+}
+
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Device::DeviceID& deviceID, unsigned channel)
+{
+    return ch(STI::Engine::RawEventTargetDevice(deviceID), channel);
+}
+
+STI::Engine::RawEventTarget STI::Python::ch(const STI::Device::DeviceID& deviceID, const std::string& channelName)
+{
+    return ch(STI::Engine::RawEventTargetDevice(deviceID), channelName);
 }
 
 STI::Engine::RawEventTarget STI::Python::ch(const std::string& channelName)

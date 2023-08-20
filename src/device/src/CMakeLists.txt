@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10...3.20)
+cmake_minimum_required(VERSION 3.14...3.20)
 
 #if(MSVC)
 #  cmake_policy(SET CMP0091 NEW)
@@ -10,6 +10,8 @@ project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+
 
 if(MSVC)
   if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -45,6 +47,8 @@ find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
 find_package(Boost 1.64 REQUIRED)
 
+
+
 set(STI_BASE_DIR ../../..)
 
 include_directories("." ${Boost_INCLUDE_DIR})
@@ -52,6 +56,7 @@ include_directories("." ${Boost_INCLUDE_DIR})
 #link_directories(${STI_BASE_DIR}/lib)
 
 add_library(stidevice SHARED 
+    AppointmentTask.cpp
     BinaryData.cpp
     ConfigFile.cpp
     Configuration.cpp
@@ -73,6 +78,7 @@ add_library(stidevice SHARED
     FullShotResult.cpp
     # EngineParseResult.cpp
     Image.cpp
+    IntervalTask.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
     LocalChannel.cpp
@@ -120,11 +126,29 @@ add_library(stidevice SHARED
     StackTraceData.cpp
     StackTraceResult.cpp
     SynchronousEvent.cpp
+    Task.cpp
+    TaskScheduler.cpp
     TimeStamp.cpp
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
 )
+
+#set_property(TARGET tgt PROPERTY CXX_STANDARD 11)
+#set_target_properties(stidevice PROPERTIES CXX_STANDARD 23)
+
+if(MSVC)
+else()
+  message("Using date.h")
+  message("STI_BASE_DIR: ${STI_BASE_DIR}")
+  # versions of gcc < 13 do not support std::chrono features required by AppointmentTask.cpp
+  # using date.h instead
+  find_package(CURL REQUIRED)
+  target_sources(stidevice PRIVATE ${STI_BASE_DIR}/src/device/src/extern/date/tz.cpp)
+  target_compile_definitions(stidevice PRIVATE USE_DATE_LIB=1)
+  target_link_libraries(stidevice ${CURL_LIBRARY})
+  message("CURL_LIBRARY: ${CURL_LIBRARY}")
+endif()
 
 set_target_properties(stidevice PROPERTIES 
     VERSION ${PROJECT_VERSION}
@@ -150,6 +174,8 @@ if(USE_STI_DEBUG_POSTFIX)
     DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
   )
 endif()
+
+target_compile_options(stidevice PRIVATE -std=c++20)
 
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}

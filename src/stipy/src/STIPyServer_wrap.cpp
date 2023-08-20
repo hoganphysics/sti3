@@ -33,6 +33,9 @@ void init_STIPyServer(py::module& m)
 
         .def("cancelAll", &STIPyServer::cancelAll)
         
+        .def("setUsername", &STIPyServer::setUserName)
+        .def("username", &STIPyServer::getUserName)
+        
         .def("printNetwork", py::overload_cast<>(&STIPyServer::printNetwork))
         .def("printNetwork", py::overload_cast<const std::string&>(&STIPyServer::printNetwork))
         ;

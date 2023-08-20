@@ -30,8 +30,8 @@ using STI::Device::DeviceMessageListenerID;
 
 
 STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& address, unsigned short module,
-		const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID)
-: LocalDevice(name, address, module, serverID.getID()), serverID(serverID), serverHubID(serverHubID), connected(false)
+		const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const STI::Utils::Configuration& config)
+: LocalDevice(name, address, module, serverID.getID(), config), serverID(serverID), serverHubID(serverHubID), connected(false)
 {
     addPartner(serverID);
 
@@ -43,7 +43,6 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
         receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "localCollectionUpdateListener",
             [this](const std::shared_ptr<STI::Device::CollectionUpdateMessage>& message)
             {
-                // std::cout << "Collection update message: " << message->sourceID().getID() << std::endl;
                 connectToServer();
             }
         );

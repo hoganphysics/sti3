@@ -96,7 +96,9 @@
         "*.idl": "cpp",
         "shared_mutex": "cpp",
         "cfenv": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "ranges": "cpp",
+        "span": "cpp"
     },
     "esbonio.sphinx.confDir": ""
 }

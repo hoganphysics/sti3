@@ -67,12 +67,13 @@ LocalDevice::LocalDevice(const Configuration& config, const std::string& section
 	config.get<std::string>(section, "Device Name", ""), 
 	config.get<std::string>(section, "IP Address", ""), 
 	config.get<unsigned short>(section, "Module", 0),
-	config.get<std::string>(section, "Target Server", ""))
+	config.get<std::string>(section, "Target Server", ""),
+	config)
 {
 }
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
-	const std::string& targetServer) 
+	const std::string& targetServer, const STI::Utils::Configuration& config)
 : STI::Engine::DeviceEventParser(), id(name, address, module, targetServer)
 {
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
@@ -89,7 +90,14 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	auto deviceRootPath = std::filesystem::current_path();	//cwd
 	deviceRootPath /= ".sti";
 
-	auto basePath = LocalPersistenceManager::makeBasePath(deviceRootPath.generic_string(), getID());
+	// configuration.set<std::string>("PersistenceManager", "basePath", basePath);
+	
+	auto basePath = LocalPersistenceManager::makeBasePath(
+		config.get<std::string>("PersistenceManager", "root path", deviceRootPath.generic_string()),
+		config.get<std::string>("PersistenceManager", "device subdirectory", getID().getID())
+	);
+
+	//auto basePath = LocalPersistenceManager::makeBasePath(deviceRootPath.generic_string(), getID());
 
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
@@ -98,14 +106,14 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
 	//temp for localPersistenceManager; TODO: expose to constructor
-	Configuration configuration;
-	configuration.set<int>("PersistenceManager", "resultBufferSize", 5);
-	configuration.set<int>("PersistenceManager", "sequenceBufferSize", 5);
-	// configuration.set<std::string>("PersistenceManager", "basePath", basePath);
+	//Configuration configuration;
+	//configuration.set<int>("PersistenceManager", "resultBufferSize", 5);
+	//configuration.set<int>("PersistenceManager", "sequenceBufferSize", 5);
+	
 
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), configuration, basePath, localFileHolderFactory, localCollection);
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
@@ -209,11 +217,18 @@ void LocalDevice::kill()
 
 }
 
+void LocalDevice::addEventTarget(const DeviceID& id, const std::string& alias)
+{
+	addPartner(id, alias);	//an event target must be a partner
+	addEventTarget(id);
+}
+
 void LocalDevice::addEventTarget(const DeviceID& id)
 {
 	addPartner(id);	//an event target must be a partner
 	eventTargets.insert(id);
 }
+
 
 void LocalDevice::getEventTargets(std::set<DeviceID>& targetIDs)
 {
@@ -262,6 +277,7 @@ void LocalDevice::addPartner(const DeviceID& id, const std::string& alias)
 	else {
 		partnerAliases[alias] = id;
 	}
+	addPartner(id);
 }
 
 void LocalDevice::addPartner(const DeviceID& id)

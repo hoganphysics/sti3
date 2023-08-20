@@ -155,6 +155,18 @@ bool LocalEventEngine::isActingServerForDevice(const STI::Device::DeviceID& id)
 	//The local device will act as the server for any of its partner devices *if* it is the job owner.
 	//A partner device will return return true for isEventTarget(id).
 	bool isPartnerServer = isJobOwner && deviceParser->isEventTarget(id);
+
+	// Check for partner server
+	std::set<DeviceID> ids;
+	dependencyTree->getNodes(ids);
+
+	auto it = ids.find(DeviceID(id.getTargetServerID()));
+	if (it == ids.end()) {
+		// The target server for this id is not in the tree
+		// if id is an eventTarget of this device, this device will act as the server.
+		isPartnerServer |= deviceParser->isEventTarget(id);
+	}
+
 	return isTargetServerForDevice(id) || isPartnerServer;
 }
 
@@ -469,6 +481,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		setState(EngineState::Error);
 		job.markCancelled();
 		cancelled = true;
+		cancelParse(job.getJobID());
 	}
 
 	if (isJobOwner) {
@@ -520,6 +533,19 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 }
 
+void LocalEventEngine::cancelParse(const EngineJobID& jobID)
+{
+	std::shared_ptr<STI::Device::Device> device;
+	std::shared_ptr<EventEngineScheduler> scheduler;
+
+	// ownedTargets contains all deviceIDs that this device sent a parse job
+	for (auto& id : ownedTargets) {
+		if (deviceCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
+			scheduler->cancelJob(jobID);
+		}
+	}	
+}
+
 void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job)
 {
 	if (id == localDeviceID) {
@@ -558,13 +584,16 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 				// auto evts = std::make_shared<RawEventVector>();
 				// (*evts) = std::move(eventsByTarget[id]);
 
+				//if is jobOwner and id is partner and id.targetServer is not in tree,
+				//then takeOwnershipOfPartners = true;
+
 				auto shot = scheduler->createShot(job.getJobID().pid.shotConfig, it->second);
 				
 				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
 				newJob->setDependencies(dependencyTree);
 				newJob->setMissingTargets(job.getMissingTargetIDs());
 				
-				job.attachSubjob(newJob);
+				job.attachSubjob(newJob);	//needed to keep shot reference alive
 
 				scheduler->addJob(newJob);
 				ownedTargets.push_back(id);
@@ -578,20 +607,27 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	}
 	else {
 		//The localDevice is not acting as the server for this id
+		//Remove id from local dependency tree
 
-		auto it = eventsByTarget.find(id);
-		
-		if (it == eventsByTarget.end() || (it->second != 0 && it->second->eventsEmpty())) {
-			//no events for this device; skip this id
-			return;
-		}
-
-		job.addMessage(ParsingMessageType::Error, 60, "Wrong device server")
-			<< "Attempted to parse device '" << id.getID()
-			<< "' from server'" << localDeviceID.getID()
-			<< "'. This is not the correct acting server for '" << id.getID()
-			<< "'.";
+		localSubtree->removeNode(id);
+		parseCondition.notify_all();	//wake up event transfer loop
 	}
+	//else {
+	//	//The localDevice is not acting as the server for this id
+
+	//	job.addMessage(ParsingMessageType::Error, 60, "Wrong device server")
+	//		<< "Attempted to parse device '" << id.getID()
+	//		<< "' from server'" << localDeviceID.getID()
+	//		<< "'. This is not the correct acting server for '" << id.getID()
+	//		<< "'.";
+
+	//	auto it = eventsByTarget.find(id);
+	//	
+	//	if (it == eventsByTarget.end() || (it->second != 0 && it->second->eventsEmpty())) {
+	//		//no events for this device; skip this id
+	//		return;
+	//	}
+	//}
 }
 
 void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& message)

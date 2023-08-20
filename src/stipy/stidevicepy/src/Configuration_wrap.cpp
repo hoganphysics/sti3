@@ -94,8 +94,8 @@ void init_Configuration(py::module& m)
                 std::stringstream repr;
                 repr << "| ";
 
-                auto secondNames = self.getSectionNames();
-                for (auto& section : secondNames) {
+                auto sectionNames = self.getSectionNames();
+                for (auto& section : sectionNames) {
                     repr << section << " | ";
                 }
                 return repr.str();

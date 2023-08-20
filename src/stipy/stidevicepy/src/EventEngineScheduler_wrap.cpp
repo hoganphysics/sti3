@@ -18,10 +18,14 @@
 
 #include <string>
 #include <memory>
+#include <sstream>
+#include <set>
+#include <vector>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
+#include <pybind11/stl_bind.h>
 
 namespace py = pybind11;
 
@@ -41,6 +45,8 @@ using STI::Engine::PlayJobStatus;
 using STI::Engine::AddSequenceStatus;
 using STI::Engine::Sequence;
 using STI::Engine::EngineJobSourceID;
+using STI::Engine::EventEngineJobType;
+using STI::Engine::EngineJobID;
 
 
 void init_EventEngineScheduler(py::module& m)
@@ -88,6 +94,42 @@ void init_EventEngineScheduler(py::module& m)
         .value("Archived", EventEngineJobList::Archived)
         .export_values();
 
+    py::enum_<EventEngineJobType>(m, "EventEngineJobType")
+        .value("Parse", EventEngineJobType::Parse)
+        .value("Play", EventEngineJobType::Play)
+        .export_values();
+
+
+    py::class_<STI::Engine::EngineJobID>(m, "EngineJobID")
+        .def(py::init<>())
+        .def_readonly("type", &EngineJobID::type)
+        .def_readonly("pid", &EngineJobID::pid)
+        .def_readonly("sid", &EngineJobID::sid)
+        .def_readonly("runTime", &EngineJobID::runTime)
+        .def("__repr__",
+            [](const EngineJobID& self) {
+                std::stringstream buffer;
+                buffer << "<EngineJobID | Type: ";
+                if (self.type == EventEngineJobType::Parse) {
+                    buffer << "Parse" << " | ";
+                    buffer << self.pid.print();
+                }
+                if (self.type == EventEngineJobType::Play) {
+                    buffer << "Play" << " | ";
+                    buffer << self.sid.print();
+                }
+                buffer << ">";
+                return buffer.str();
+            })
+        .def("__eq__",  // operator ==
+            [](const EngineJobID& self, const EngineJobID& other) {
+                return self == other;
+            })
+        .def("__lt__",  // operator <
+            [](const EngineJobID& self, const EngineJobID& other) {
+                return self < other;
+            })
+        ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")
         .def(py::init<>())
@@ -173,7 +215,19 @@ void init_EventEngineScheduler(py::module& m)
         .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineScheduler::getStatus), py::arg("shotID"))
         .def("cancelJob", &EventEngineScheduler::cancelJob)
         .def("cancelAll", &EventEngineScheduler::cancelAll)
-        .def("getJobIDs", &EventEngineScheduler::getJobIDs)
+        // .def("getJobIDs", &EventEngineScheduler::getJobIDs)
+        .def("jobIDs",
+            [](EventEngineScheduler& self, const EventEngineJobList& jobListType) {
+
+                std::set<EngineJobID> jobIDset = self.getJobIDs(jobListType);
+                std::vector<EngineJobID> jobIDvec;
+
+                for(auto& id : jobIDset) {
+                    jobIDvec.push_back(id);
+                }
+
+                return jobIDvec;
+            })
         ;
 
 

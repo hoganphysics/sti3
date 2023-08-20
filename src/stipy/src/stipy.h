@@ -42,8 +42,8 @@ class STIPyShot;
 // void connect3(const std::string& localIP, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
 // void connect4(unsigned localIP, unsigned nameServerAddress);
 
-std::shared_ptr<STIPyServer> connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
-std::shared_ptr<STIPyServer> connect(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
 
 void disconnect();
 
@@ -74,6 +74,7 @@ void meas(const STI::Engine::RawEventTarget& target, double time, const STI::Eng
 // dev(const std::string& name);
 STI::Engine::RawEventTargetDevice dev(const std::string& deviceName);  //abstract device
 STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);
+STI::Engine::RawEventTargetDevice dev(const STI::Device::DeviceID& deviceID);
 // STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module, const std::string& targetServerID);
 
 // std::shared_ptr<RawEventTarget> 
@@ -81,6 +82,9 @@ STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string
 
 STI::Engine::RawEventTarget ch(const STI::Engine::RawEventTargetDevice& device, unsigned channel);
 STI::Engine::RawEventTarget ch(const STI::Engine::RawEventTargetDevice& device, const std::string& channelName);    //abstract channel
+STI::Engine::RawEventTarget ch(const STI::Device::DeviceID& deviceID, unsigned channel);
+STI::Engine::RawEventTarget ch(const STI::Device::DeviceID& deviceID, const std::string& channelName);    //abstract channel
+
 STI::Engine::RawEventTarget ch(const std::string& channelName);    //abstract channel
 
 

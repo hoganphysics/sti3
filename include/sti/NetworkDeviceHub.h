@@ -7,11 +7,13 @@
 #include <sti/device/DeviceID.h>
 #include <sti/network/DeviceHub.h>
 #include <sti/utils/Configuration.h>
+#include <sti/fwd/TaskScheduler_fwd.h>
 
 #include <condition_variable>
 #include <mutex>
 #include <memory>
 #include <set>
+#include <iosfwd>
 
 
 namespace STI
@@ -41,6 +43,9 @@ public:
 	~NetworkDeviceHub();
 	
 	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node);
+	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node, const HubID& hubID);
+	bool addDevice(const typename std::shared_ptr<STI::Device::Device>& node, const std::string& serverHubID);
+	
 	bool connect(const std::shared_ptr<LocalDeviceHub>& hub);
 
 	void getDeviceIDs(std::set<STI::Device::DeviceID>& ids) const;
@@ -80,7 +85,7 @@ private:
 
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
 
-	void addTargetHub(const std::string& hubID, const std::string& namePrefix);
+	//void addTargetHub(const std::string& hubID, const std::string& namePrefix);
 
 	void connectToTargetHubs();
 	
@@ -91,13 +96,15 @@ private:
 	std::string makeHubContextPath(const std::string& baseContext, const HubID& hubID);
 	std::string makeHubContext(const std::string& baseContext, const HubID& hubID);
 	
-	bool getRemoteHub(const std::string& remoteHubContext, std::shared_ptr<RemoteDeviceHub>& remoteHub);
+	bool getRemoteHub(const std::string& remoteHubContext, std::shared_ptr<RemoteDeviceHub>& remoteHub, std::ostream& errorBuf);
 	bool connectRemoteHub(const std::string& remoteHubContext);
 
 	PersistenceOptions persistence;
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	std::shared_ptr<NetworkDeviceHubWrapper> deviceHubWrapper;
+
+	std::shared_ptr<STI::Utils::TaskScheduler> refreshScheduler;
 
 	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
 

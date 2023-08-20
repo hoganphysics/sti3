@@ -4,6 +4,8 @@ project(sti3)
 set(STI_BASE_DIR ${sti3_SOURCE_DIR})
 message("STI_BASE_DIR: ${STI_BASE_DIR}")
 
+set(CMAKE_CXX_STANDARD 20)
+
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
 # Find pybind11 cmake directory

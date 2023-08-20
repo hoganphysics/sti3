@@ -65,7 +65,6 @@ std::shared_ptr<STI::Python::DevicePy> DeviceCollectionPy::get(const STI::Device
 
 std::vector<STI::Device::DeviceID> DeviceCollectionPy::getIDs() const
 {
-
     std::vector<STI::Device::DeviceID> idsVec;
 
     std::set<STI::Device::DeviceID> ids;

@@ -27,11 +27,11 @@ public:
     ~LocalEventEngineDependencyParser();
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                        std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages,
                         unsigned maxRecursions);
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages, 
+                                std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages,
                                 const STI::Device::DeviceTrace& trace);
     
     void addDeviceEventTargets(EventEngineDependencyTree& tree, 
@@ -48,15 +48,15 @@ private:
     void getServerChainIDs(std::set<STI::Device::DeviceID>& serverIDs);
 
 
-    void addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
-                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer);
+    bool addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
+                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer, std::set<STI::Device::DeviceID>& upstreamTargets);
     
     void getDownstreamIDs(const std::map<std::string, std::set<STI::Device::DeviceID>> targetsByServer, const EventEngineDependencyTree& tree, 
                             std::set<STI::Device::DeviceID>& downstreamIDs);
 
 
-    void getPartnerDeviceDependants(const STI::Device::DeviceID& partnerID, const std::set<STI::Device::DeviceID>& targets, EventEngineDependencyTree& tree, 
-                                std::set<STI::Device::DeviceID>& missingIDs, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
+    void getDeviceDependants(const STI::Device::DeviceID& deviceID, const std::set<STI::Device::DeviceID>& targets, EventEngineDependencyTree& tree,
+                                std::set<STI::Device::DeviceID>& unownedTargets, std::vector<EngineParsingMessage>& messages, const STI::Device::DeviceTrace& trace);
 
 
     std::string findTargetServerID(const STI::Device::DeviceID& deviceID);

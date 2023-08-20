@@ -128,12 +128,17 @@ std::string TimeStamp::date() const
 
 std::string TimeStamp::date_YYYY_MM_DD() const
 {
+    return date_YYYY_MM_DD("/");
+}
+
+std::string TimeStamp::date_YYYY_MM_DD(const std::string& separator) const
+{
     std::stringstream ts;
     
     ts << year();
-    ts << "/";
+    ts << separator;
     ts << std::setfill('0') << std::setw(2) << month();
-    ts << "/"; 
+    ts << separator;
     ts << std::setfill('0') << std::setw(2) << day();
 
     return ts.str();

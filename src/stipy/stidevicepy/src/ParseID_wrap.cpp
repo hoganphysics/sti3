@@ -26,7 +26,7 @@ void init_ParseID(py::module& m)
         .def("nanos", &TimeStamp::nanos)
 
         .def("date", &TimeStamp::date)
-        .def("date_YYYY_MM_DD", &TimeStamp::date_YYYY_MM_DD)
+        .def("date_YYYY_MM_DD", py::overload_cast<>(&TimeStamp::date_YYYY_MM_DD, py::const_))
         .def("time", &TimeStamp::time)
         .def("time_hh_mm_ss", &TimeStamp::time_hh_mm_ss)
         .def("time_hh_mm_ss_mmmuuunnn", &TimeStamp::time_hh_mm_ss_mmmuuunnn)

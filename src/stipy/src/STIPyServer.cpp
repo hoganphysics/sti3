@@ -48,7 +48,7 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
 
 STIPyServer::~STIPyServer()
 {
-//    libDeviceHub->shutdown();
+    //libDeviceHub->shutdown();
 }
 
 void STIPyServer::setChannels(const pybind11::dict& channels)
@@ -62,6 +62,11 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
     std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
     STI::Engine::ShotConfig shotConfig;
+    if (libDevice != 0) {
+        shotConfig.jobSourceID.machine = libDevice->getID().getAddress();
+        shotConfig.jobSourceID.user = getUserName();
+    }
+    
 
     if (getPersistenceManager(persistenceManager)) {
         fileFactory = persistenceManager;
@@ -155,6 +160,8 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
         success = true;
     }
     
+    if (libDevice == 0) return 0;
+
     auto ticket = libDevice->makeParseTicket(parseJobStatus.pid);
 
     if (ticket == 0) return ticket;
@@ -180,6 +187,8 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
         success = true;
     }
     
+    if (libDevice == 0) return 0;
+
     auto ticket = libDevice->makeParseTicket(parseJobStatus.pid);
 
     if (ticket == 0) return ticket;
@@ -197,6 +206,8 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
 
 std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels)
 {
+    if (libDevice == 0) return 0;
+
     STI::Engine::ParseID pid;    
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
@@ -204,6 +215,8 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
 
 std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::vector<PyParseTicket>& tickets)
 {
+    if (libDevice == 0) return 0;
+
     STI::Engine::ParseID pid;
     auto ticket = libDevice->makeParseTicket(pid);
     return ticket;
@@ -225,7 +238,13 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseT
             resultTicket = play(ticket->getParseID(), repeats);            
         }
         else {
+            if (libDevice == 0) return 0;
+
             STI::Engine::EngineJobSourceID source;
+            
+            source.machine = libDevice->getID().getAddress();
+            source.user = username = getUserName();
+
             auto shotID = STI::Engine::ShotID::generateUniqueID(ticket->getParseID(), source);
             resultTicket = libDevice->makeResultTicket(shotID);
             resultTicket->cancel();
@@ -245,9 +264,16 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& pa
     if (getScheduler(scheduler)) {
 
         STI::Engine::EngineJobSourceID source;
+        if (libDevice != 0) {
+            source.machine = libDevice->getID().getAddress();
+            source.user = username = getUserName();
+        }
+        
         playJobStatus = scheduler->play(parseID, source);
         success = true;
     }
+
+    if (libDevice == 0) return 0;
 
     auto ticket = libDevice->makeResultTicket(playJobStatus.sid);
 
@@ -289,6 +315,16 @@ void STIPyServer::cancelAll()
     if (getScheduler(scheduler)) {
         scheduler->cancelAll();
     }
+}
+
+void STIPyServer::setUserName(const std::string& name)
+{
+    username = name;
+}
+
+std::string STIPyServer::getUserName() const
+{
+    return username;
 }
 
 std::string STIPyServer::printNetwork()

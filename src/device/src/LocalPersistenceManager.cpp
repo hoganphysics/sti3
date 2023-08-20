@@ -105,7 +105,7 @@ void LocalPersistenceManager::loadPersistenceTargets()
     }
 }
 
-std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const DeviceID& deviceID)
+std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID)
 {
     std::filesystem::path root(rootPath);
 
@@ -113,7 +113,8 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
         std::filesystem::create_directory(root);
     }
 
-    auto devicePath = root / deviceID.getID();
+    std::string forbidden = "<>:\"\\|?*";
+    auto devicePath = root / STI::Utils::replaceChars(deviceID, forbidden, "_");
 
     if (!std::filesystem::exists(devicePath)) {
         std::filesystem::create_directories(devicePath);
