@@ -3,6 +3,7 @@
 
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/engine/EngineJobStatus.h>
+#include <sti/utils/TimeStamp.h>
 
 #include <memory>
 #include <string>
@@ -43,6 +44,7 @@ public:
 
     virtual ~ShotRepository() {}
 
+    virtual std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate) = 0;
     virtual ResultsPaths preparePaths(const ShotID& sid) = 0;
     virtual ResultsPaths preparePaths(const SequenceID& seqid) = 0;
 

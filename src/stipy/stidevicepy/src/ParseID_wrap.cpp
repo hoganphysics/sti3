@@ -28,7 +28,7 @@ void init_ParseID(py::module& m)
         .def("date", &TimeStamp::date)
         .def("date_YYYY_MM_DD", py::overload_cast<>(&TimeStamp::date_YYYY_MM_DD, py::const_))
         .def("time", &TimeStamp::time)
-        .def("time_hh_mm_ss", &TimeStamp::time_hh_mm_ss)
+        .def("time_hh_mm_ss", py::overload_cast<>(&TimeStamp::time_hh_mm_ss, py::const_))
         .def("time_hh_mm_ss_mmmuuunnn", &TimeStamp::time_hh_mm_ss_mmmuuunnn)
 
         .def("__repr__",

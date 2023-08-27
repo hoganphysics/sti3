@@ -52,6 +52,21 @@ void TaskScheduler::refresh()
 
 }
 
+void TaskScheduler::getIDs(std::set<std::string>& ids) const
+{
+	tasks.getKeys(ids);
+}
+
+bool TaskScheduler::getTask(const std::string& taskID, std::shared_ptr<Task>& task) const
+{
+	return tasks.get(taskID, task) && task != 0;
+}
+
+void TaskScheduler::getTasks(std::vector<std::shared_ptr<Task>>& allTasks) const
+{
+	tasks.getValues(allTasks);
+}
+
 void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 {
 	if (task == 0) return;
@@ -72,7 +87,7 @@ void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 }
 
 
-std::vector<std::shared_ptr<Task>>::iterator TaskScheduler::findActiveTask(int id)
+std::vector<std::shared_ptr<Task>>::iterator TaskScheduler::findActiveTask(const std::string& id)
 {
 	auto it = find_if(activeTasks.begin(), activeTasks.end(), [&id](const std::shared_ptr<Task>& t) { return t->getID() == id; });
 	return it;
@@ -83,13 +98,13 @@ void TaskScheduler::sortActiveTasks()
 	std::sort(activeTasks.begin(), activeTasks.end(), STI::Utils::compare_shared_ptr<Task>);
 }
 
-void TaskScheduler::removeTask(int taskID)
+void TaskScheduler::removeTask(const std::string& taskID)
 {
 	std::unique_lock<std::mutex> writeLock(schedulerMutex);
 	removeTask_(taskID);
 }
 
-void TaskScheduler::removeTask_(int taskID)
+void TaskScheduler::removeTask_(const std::string& taskID)
 {
 	tasks.remove(taskID);
 	auto it = findActiveTask(taskID);
@@ -111,7 +126,7 @@ void TaskScheduler::clear()
 	schedulerCondition.notify_all();
 }
 
-void TaskScheduler::activateTask(int taskID)
+void TaskScheduler::activateTask(const std::string& taskID)
 {
 	std::unique_lock<std::mutex> writeLock(schedulerMutex);
 	
@@ -133,13 +148,13 @@ void TaskScheduler::activateTask(int taskID)
 	}
 }
 
-void TaskScheduler::deactivateTask(int taskID)
+void TaskScheduler::deactivateTask(const std::string& taskID)
 {
 	std::unique_lock<std::mutex> writeLock(schedulerMutex);
 	deactivateTask_(taskID);
 }
 
-void TaskScheduler::deactivateTask_(int taskID)
+void TaskScheduler::deactivateTask_(const std::string& taskID)
 {
 	std::shared_ptr<Task> task;
 	auto it = findActiveTask(taskID);
@@ -209,14 +224,16 @@ void TaskScheduler::taskLoop()
 		if (nextSleep > coarseSleep) {
 			//coarse sleep
 			//std::cout << "coarse sleep: " << nextSleep << std::endl;
-			schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ),
-				[this]() { return false; });
+			// schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ),
+			// 	[this]() { return false; });
+			schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ));
 		}
 		else {
 			//fine sleep
 			//std::cout << "fine sleep: " << nextSleep << std::endl;
-			schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)),
-				[this]() { return false; });
+			// schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)),
+			// 	[this]() { return false; });
+			schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)));
 		}		
 
 	}

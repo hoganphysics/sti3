@@ -100,7 +100,7 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 
 	// Refresh local hub periodically to remove dead references
 	int refreshTime = 5;	//seconds
-	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>(0, refreshTime,
+	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>("refresh", refreshTime,
 		[this]() {
 			localHub->refresh();
 		});

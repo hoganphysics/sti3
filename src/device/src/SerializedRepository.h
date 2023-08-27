@@ -46,6 +46,7 @@ public:
     // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter
+    std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
     // bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
@@ -69,6 +70,7 @@ private:
     void makePathIfNew(const std::string& pathName);
 
     std::string getShotBasePath(const STI::Utils::TimeStamp& timeStamp);
+    std::string getLogBasePath(const STI::Utils::TimeStamp& timeStamp);
 
     // STI::Device::DeviceID deviceID;
     // std::string rootPath;

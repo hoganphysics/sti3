@@ -45,7 +45,7 @@ namespace Utils
 	}
 
 	template<typename T> 
-	std::string valueToString(T inValue, std::string Default="", std::ios::fmtflags numBase=std::ios::dec, std::streamsize precision=9)
+	std::string valueToString(T inValue, std::string defaultString="", std::ios::fmtflags numBase=std::ios::dec, std::streamsize precision=9)
 	{
 		std::string outString;
 		std::stringstream tempStream;
@@ -55,10 +55,12 @@ namespace Utils
 		tempStream << inValue;
 		outString = tempStream.str();
 
-		if( !tempStream.fail() )
+		if( !tempStream.fail() ) {
 			return outString;
-		else
-			return Default;
+		}
+		else {
+			return defaultString;
+		}	
 	}
 
 	//pass throughs for std::string

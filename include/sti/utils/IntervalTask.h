@@ -18,7 +18,8 @@ class IntervalTask : public Task
 {
 public:
 
-	IntervalTask(int id, double wait_seconds, const std::function<void(void)>& runFunc);
+	IntervalTask(const std::string& id, double wait_seconds, const std::function<void(void)>& runFunc);
+	IntervalTask(const std::string& id, const std::string& wait_time, const std::function<void(void)>& runFunc);	//format: hh:mm:ss
 	~IntervalTask();
 
 	double secondsToNextRun() const;

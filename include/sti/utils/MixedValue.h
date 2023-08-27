@@ -32,6 +32,7 @@
 #include <string>
 #include <memory>
 #include <variant>
+#include <ostream>
 
 
 namespace STI
@@ -88,6 +89,8 @@ public:
 
 	bool operator==(const MixedValue& other) const;
 	bool operator!=(const MixedValue& other) const;
+
+	std::ostream& operator<<(std::ostream& os);
 
 	template<typename T> void setValue(T value)
 	{

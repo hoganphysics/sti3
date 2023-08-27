@@ -94,6 +94,11 @@ add_library(stidevice SHARED
     LocalPersistenceManager.cpp
     LocalResultsCollector.cpp
     LocalShot.cpp
+    LocalLogManager.cpp
+    LocalTaskManager.cpp
+    Logger.cpp
+    LogRecord.cpp
+    LogRecordFile.cpp
     MasterTrigger.cpp
     Measurement.cpp
     MetaData.cpp

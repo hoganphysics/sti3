@@ -16,13 +16,13 @@ class Task
 {
 public:
 	
-	Task(int id);
+	Task(const std::string& id);
 	virtual ~Task() {}
 
 	bool operator<(const Task& rhs) const;
 	bool operator==(const Task& rhs) const;
 
-	int getID() const;
+	std::string getID() const;
 	bool isActive() const;
 	TaskStatus getStatus() const;
 	void setStatus(const TaskStatus& newStatus);
@@ -36,7 +36,7 @@ public:
 
 private:
 	
-	int taskID;
+	std::string taskID;
 	TaskStatus status;
 
 	mutable std::mutex taskMutex;

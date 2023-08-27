@@ -32,17 +32,18 @@ int main(int argc, char **argv)
 
 	STI::Utils::TaskScheduler scheduler;
 	int x = 0;
-	auto task1 = std::make_shared<STI::Utils::IntervalTask>(0, 2, 
+	auto task1 = std::make_shared<STI::Utils::IntervalTask>("0", "00:00:02", //"00:00:02"
 	[&x](){
 		std::cout << "Task " << (++x) << std::endl; 
 	});
-	auto task2 = std::make_shared<STI::Utils::AppointmentTask>(1, "17:57:10", 
+	auto task2 = std::make_shared<STI::Utils::AppointmentTask>("1", "17:57:10", 
 	[&x](){
 		std::cout << "*** Task 2 ****" << std::endl; 
 	});
+	// scheduler.start();
 	// scheduler.addTask(task1);
 	// scheduler.addTask(task2);
-	scheduler.start();
+	// scheduler.start();
 
 
 	hub->run(true);     //blocks until ctrl-c or Device terminates

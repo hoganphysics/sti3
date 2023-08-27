@@ -1,12 +1,15 @@
 #ifndef STI_DEVICE_LOCALCHANNELMANAGER_H
 #define STI_DEVICE_LOCALCHANNELMANAGER_H
 
+
 #include <sti/device/ChannelManager.h>
 #include <sti/utils/SynchronizedMap.h>
+#include <sti/fwd/ConfigFile_fwd.h>
 
 #include "ChannelRefreshListener.h"
 #include "DeviceMessageGrouper.h"
 #include "PersistenceTarget.h"
+#include "DeviceMessage.h"
 
 #include <memory>
 #include <atomic>
@@ -46,12 +49,13 @@ public:
 private:
 
     //PersistenceTarget
-    std::string getFilenameStem();
+    std::string getFilename();
+    // void setLoadFilename(const std::string& filename);
     std::string getHeader();
     void setPersistenceCallback(const std::function<void(void)>& refresher);
-    void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
-    bool save();
-    void load();
+    // void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
+    bool save(const std::string& filename);
+    void load(const std::string& filename);
 
     //ChannelRefreshListener
     void handleChannelRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value);
@@ -64,6 +68,7 @@ private:
     STI::Device::DeviceMessageGrouper<ChannelUpdateMessage> messageGrouper;
 
     std::function<void(void)> persistenceRefresher;
+    std::shared_ptr<STI::Utils::ConfigFile> file;
     std::shared_ptr<STI::Utils::Configuration> persistenceData;
     std::atomic<bool> loading;
 };

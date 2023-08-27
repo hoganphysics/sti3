@@ -17,13 +17,15 @@ class PersistenceTarget
 {
 public:
 
-    virtual std::string getFilenameStem() = 0;
-    virtual std::string getHeader() = 0;
+    virtual std::string getFilename() = 0;
+    // virtual void setLoadFilename(const std::string& filename) = 0;
+    // virtual std::string getHeader() = 0;
 
     virtual void setPersistenceCallback(const std::function<void(void)>& refresher) = 0;
-    virtual void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data) = 0;
-    virtual bool save() = 0;
-    virtual void load() = 0;
+    // virtual void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data) = 0;
+    
+    virtual bool save(const std::string& filename) = 0;
+    virtual void load(const std::string& filename) = 0;
 };
 
 

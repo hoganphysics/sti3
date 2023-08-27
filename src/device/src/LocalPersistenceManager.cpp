@@ -73,9 +73,9 @@ LocalPersistenceManager::~LocalPersistenceManager()
     //serialize all shots in memory
 
     //save all persistence targets
-    for (auto& target : persistenceTargetHolders) {
-        if (target != 0) {
-            target->save();
+    for (auto& holder : persistenceTargetHolders) {
+        if (holder != 0) {
+            holder->save();
         }
     }
 }
@@ -88,10 +88,10 @@ void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::E
 void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target)
 {
     if (target != 0) {
-        std::filesystem::path filename(getBasePath());
-        filename /= (target->getFilenameStem() + ".ini");
+        // std::filesystem::path filename(getBasePath());
+        // filename /= (target->getFilenameStem() + ".ini");
 
-        auto holder = std::make_shared<PersistenceTargetHolder>(filename.string(), target);
+        auto holder = std::make_shared<PersistenceTargetHolder>(target);
         persistenceTargetHolders.push_back(holder);
     }
 }
@@ -100,23 +100,24 @@ void LocalPersistenceManager::loadPersistenceTargets()
 {
     for (auto& holder : persistenceTargetHolders) {
         if (holder != 0) {
-            holder->load();
+            holder->load(getBasePath());
         }
     }
 }
 
-std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID)
+std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate)
 {
     std::filesystem::path root(rootPath);
 
-    if (!std::filesystem::exists(root)) {
+    if (!std::filesystem::exists(root) && autocreate) {
         std::filesystem::create_directory(root);
+
     }
 
     std::string forbidden = "<>:\"\\|?*";
     auto devicePath = root / STI::Utils::replaceChars(deviceID, forbidden, "_");
 
-    if (!std::filesystem::exists(devicePath)) {
+    if (!std::filesystem::exists(devicePath) && autocreate) {
         std::filesystem::create_directories(devicePath);
     }
 
@@ -125,7 +126,49 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
 
 std::string LocalPersistenceManager::getBasePath() const
 {
+    //basePath = .sti/address/module/name
     return basePath;
+}
+
+bool LocalPersistenceManager::getLogBasePath(const STI::Utils::TimeStamp& timestamp, std::string& logBasePath)
+{
+    //for date in timestamp
+
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    logBasePath = repo->prepareLogPath(timestamp, false);   //don't make path if it doesn't exist
+    return true;
+}
+
+bool LocalPersistenceManager::getLogBasePath(const STI::Utils::TimeStamp& timestamp, const DeviceID& deviceID, std::string& logBasePath)
+{
+    //for date in timestamp
+    std::string todaysLogPath;
+    if (!getLogBasePath(timestamp, todaysLogPath)) return false;
+
+    logBasePath = makeBasePath(todaysLogPath, deviceID.getID(), false);   //don't make path if it doesn't exist
+
+    return false;
+}
+
+bool LocalPersistenceManager::makeLogPath(const STI::Utils::TimeStamp& timestamp, std::string& logPath)
+{
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    // basePath/logs/year/month/day/
+    logPath = repo->prepareLogPath(timestamp, true);    //make directory sturcture
+    return true;
+}
+
+bool LocalPersistenceManager::makeLogPath(const STI::Utils::TimeStamp& timestamp, const DeviceID& deviceID, std::string& logPath)
+{
+    std::string todaysLogPath;  // basePath/logs/year/month/day/
+    if (!makeLogPath(timestamp, todaysLogPath)) return false;
+
+    logPath = makeBasePath(todaysLogPath, deviceID.getID());     // todaysLogPath/device_id
+    return true;
 }
 
 void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)

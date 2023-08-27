@@ -149,6 +149,7 @@ public:
     Configuration& operator+(const Configuration& config);
     Configuration& operator+(const std::map<std::string, std::map<std::string, std::string>>& config);
 
+    void clear();
 
 private:
 

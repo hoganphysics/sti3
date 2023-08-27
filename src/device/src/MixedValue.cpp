@@ -206,6 +206,11 @@ bool MixedValue::operator!=(const MixedValue& other) const
 	return !( (*this) == other );
 }
 
+std::ostream& MixedValue::operator<<(std::ostream& os)
+{
+	return os << print();
+}
+
 void MixedValue::swap(MixedValue& other)
 {
 	std::swap(type, other.type);

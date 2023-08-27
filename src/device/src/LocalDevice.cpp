@@ -24,7 +24,9 @@
 #include "LocalDeviceMessageDispatcher.h"
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineScheduler.h"
+#include "LocalLogManager.h"
 #include "LocalPersistenceManager.h"
+#include "LocalTaskManager.h"
 #include "LocalShot.h"
 
 #include <filesystem>
@@ -48,6 +50,10 @@ using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::LocalDeviceMessageDispatcher;
 using STI::Device::PartnerDevice;
+using STI::Device::TaskManager;
+using STI::Device::LocalTaskManager;
+using STI::Device::LogManager;
+using STI::Device::LocalLogManager;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -185,7 +191,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
 
-
+	localTaskManager = std::make_shared<LocalTaskManager>();
+	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
 
 }
 
@@ -297,6 +304,15 @@ bool LocalDevice::isTargetServerOf(const DeviceID& id)
 	return id.getTargetServerID() == getID().getID();
 }
 
+STI::Device::Logger& LocalDevice::log()
+{
+	return localLogManager->log();
+}
+
+STI::Device::Logger& LocalDevice::log(const std::string& name)
+{
+	return localLogManager->log(name);
+}
 
 std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& filename)
 {
@@ -319,6 +335,13 @@ void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
 	if (deviceMessageDispatcher != 0) {
 		deviceMessageDispatcher->addMessage(mess);
+	}
+}
+
+void LocalDevice::addTask(const std::shared_ptr<STI::Utils::Task>& task)
+{
+	if (localTaskManager != 0) {
+		localTaskManager->addTask(task);
 	}
 }
 
@@ -625,6 +648,18 @@ void LocalDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager
 bool LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
 {
 	manager = localPersistenceManager;
+	return manager != 0;
+}
+
+bool LocalDevice::getTaskManager(std::shared_ptr<TaskManager>& manager)
+{
+	manager = localTaskManager;
+	return manager != 0;
+}
+
+bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
+{
+	manager = localLogManager;
 	return manager != 0;
 }
 

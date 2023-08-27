@@ -22,8 +22,8 @@ public:
 
 	enum class AppointmentRepeatType { Once, Everyday, Weekdays };
 
-	AppointmentTask(int id, const std::string& timeOfDay, const std::function<void(void)>& runFunc);
-	AppointmentTask(int id, const std::string& timeOfDay, const AppointmentRepeatType& repeatType, const std::function<void(void)>& runFunc);
+	AppointmentTask(const std::string& id, const std::string& timeOfDay, const std::function<void(void)>& runFunc);
+	AppointmentTask(const std::string& id, const std::string& timeOfDay, const AppointmentRepeatType& repeatType, const std::function<void(void)>& runFunc);
 	~AppointmentTask();
 
 	double secondsToNextRun() const;

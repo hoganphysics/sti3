@@ -70,7 +70,13 @@ public:
 
     std::string getBasePath() const;
 
-    static std::string makeBasePath(const std::string& rootPath, const std::string& deviceID);
+    static std::string makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate = true);
+
+    //log files
+    bool getLogBasePath(const STI::Utils::TimeStamp& timestamp, std::string& logBasePath);  //for date in timestamp
+    bool getLogBasePath(const STI::Utils::TimeStamp& timestamp, const DeviceID& deviceID, std::string& logBasePath);  //for date in timestamp
+    bool makeLogPath(const STI::Utils::TimeStamp& timestamp, std::string& logPath);
+    bool makeLogPath(const STI::Utils::TimeStamp& timestamp, const DeviceID& deviceID, std::string& logPath);
 
 private:
 

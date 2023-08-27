@@ -38,7 +38,8 @@ template<class Message>
 void STI::Device::DeviceMessageGrouper<Message>::dispatchMessage(const std::shared_ptr<Message>& mess)
 {
     if (messageDispatcher != 0) {
-        messageDispatcher->addMessage(mess);            
+        
+        messageDispatcher->addMessage(std::static_pointer_cast<STI::Device::DeviceMessage>(mess));            
     }
 }
 

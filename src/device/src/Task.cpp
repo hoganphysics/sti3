@@ -6,7 +6,7 @@
 using STI::Utils::Task;
 using STI::Utils::TaskStatus;
 
-Task::Task(int id)
+Task::Task(const std::string& id)
 : taskID(id), status(TaskStatus::Active)
 {
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
@@ -22,7 +22,7 @@ bool Task::operator==(const Task& rhs) const
 	return secondsToNextRun() == rhs.secondsToNextRun();
 }
 
-int Task::getID() const
+std::string Task::getID() const
 {
 	return taskID;
 }

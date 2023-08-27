@@ -4,10 +4,12 @@
 #include <sti/device/AttributeManager.h>
 #include <sti/device/DeviceID.h>
 #include <sti/utils/SynchronizedMap.h>
+#include <sti/fwd/ConfigFile_fwd.h>
 
 #include "AttributeRefreshListener.h"
 #include "DeviceMessageGrouper.h"
 #include "PersistenceTarget.h"
+#include "DeviceMessage.h"
 
 #include <map>
 #include <vector>
@@ -51,12 +53,13 @@ public:
 private:
 
     //PersistenceTarget
-    std::string getFilenameStem();
+    std::string getFilename();
+    // void setLoadFilename(const std::string& filename);
     std::string getHeader();
     void setPersistenceCallback(const std::function<void(void)>& refresher);
-    void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
-    bool save();
-    void load();
+    // void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
+    bool save(const std::string& filename);
+    void load(const std::string& filename);
 
     //AttributeRefreshListener
     void handleAttributeRefreshEvent(const std::string& key, const std::string& value);
@@ -68,6 +71,7 @@ private:
     STI::Device::DeviceMessageGrouper<AttributeUpdateMessage> messageGrouper;
 
     std::function<void(void)> persistenceRefresher;
+    std::shared_ptr<STI::Utils::ConfigFile> file;
     std::shared_ptr<STI::Utils::Configuration> persistenceData;
     std::atomic<bool> loading;
 };

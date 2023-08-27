@@ -1,5 +1,7 @@
 #include <sti/utils/TimeStamp.h>
 
+#include <sti/utils/utils.h>
+
 #include <chrono>
 #include <sstream>
 #include <iomanip>
@@ -148,11 +150,7 @@ std::string TimeStamp::time() const
 {
     std::stringstream ts;
 
-    ts << std::setfill('0') << std::setw(2) << hour();
-    ts << ":";
-    ts << std::setfill('0') << std::setw(2) << minute();
-    ts << ":";
-    ts << std::setfill('0') << std::setw(2) << sec();
+    ts << time_hh_mm_ss(":");
     ts << ".";
 
     ts << std::setfill('0') << std::setw(3) << millis();
@@ -166,16 +164,36 @@ std::string TimeStamp::time() const
 
 std::string TimeStamp::time_hh_mm_ss() const
 {
+    return time_hh_mm_ss("_");
+}
+
+std::string TimeStamp::time_hh_mm_ss(const std::string& separator) const
+{
     std::stringstream ts;
 
     ts << std::setfill('0') << std::setw(2) << hour();
-    ts << "_";
+    ts << separator;
     ts << std::setfill('0') << std::setw(2) << minute();
-    ts << "_";
+    ts << separator;
     ts << std::setfill('0') << std::setw(2) << sec();
 
     return ts.str();
 }
+
+
+std::string TimeStamp::time_mmmuuunnn(const std::string& separator) const
+{
+    std::stringstream ts;
+
+    ts << std::setfill('0') << std::setw(3) << millis();
+    ts << separator;
+    ts << std::setfill('0') << std::setw(3) << micros();
+    ts << separator;
+    ts << std::setfill('0') << std::setw(3) << nanos();
+
+    return ts.str();
+}
+
 
 std::string TimeStamp::time_hh_mm_ss_mmmuuunnn() const
 {
@@ -183,9 +201,10 @@ std::string TimeStamp::time_hh_mm_ss_mmmuuunnn() const
     
     ts << time_hh_mm_ss();
     ts << "_";
-    ts << std::setfill('0') << std::setw(3) << millis();
-    ts << std::setfill('0') << std::setw(3) << micros();
-    ts << std::setfill('0') << std::setw(3) << nanos();
+    ts << time_mmmuuunnn("");
+    // ts << std::setfill('0') << std::setw(3) << millis();
+    // ts << std::setfill('0') << std::setw(3) << micros();
+    // ts << std::setfill('0') << std::setw(3) << nanos();
 
     return ts.str();
 }
@@ -201,6 +220,96 @@ std::string TimeStamp::print() const
     ts << time();
 
     return ts.str();
+}
+
+std::string TimeStamp::toString() const
+{
+    std::stringstream ts;
+
+    //2023/09/15|11:45:09.235.567.129
+
+    ts << date_YYYY_MM_DD("/") << "|" << time_hh_mm_ss(":") << "." << time_mmmuuunnn(".");
+
+    return ts.str();
+}
+
+TimeStamp TimeStamp::fromString(const std::string& timeStamp)
+{
+    using STI::Utils::stringToValue;
+
+    std::vector<std::string> tokens;
+    STI::Utils::splitString(timeStamp, "|", tokens);    // date, time
+
+    if (tokens.size() == 0 || tokens.size() > 2) return TimeStamp();
+
+    std::string date;
+    std::string time;
+
+    if (tokens.size() >= 1) {
+        //assume date
+        date = tokens.at(0);
+    }
+    if (tokens.size() == 2) {
+        //time
+        time = tokens.at(1);
+    }
+
+    int year = 0;
+    int month = 0;
+    int day = 0;
+
+    STI::Utils::splitString(date, "/", tokens);     //YYYY, MM, DD
+    if (tokens.size() != 3) return TimeStamp();     //invalid date
+    
+    bool success = 
+        stringToValue(tokens.at(0), year) && 
+        stringToValue(tokens.at(1), month) && 
+        stringToValue(tokens.at(2), day);
+
+    if (!success) return TimeStamp();   //invalid date
+
+    STI::Utils::splitString(time, ".", tokens); // hh:mm::ss, mmm, uuu, nnn
+    if (tokens.size() == 0 || tokens.size() > 4) return TimeStamp(year, month, day, 0, 0, 0, 0, 0, 0);   //missing valid time
+
+    std::string hhmmss, mmm, uuu, nnn;
+
+    if (tokens.size() > 0) {
+        hhmmss = tokens.at(0);
+    }
+    if (tokens.size() > 1) {
+        mmm = tokens.at(1);
+    }
+    if (tokens.size() > 2) {
+        uuu = tokens.at(2);
+    }
+    if (tokens.size() == 4) {
+        nnn = tokens.at(3);
+    }
+
+    int ms = 0;
+    int us = 0;
+    int ns = 0;
+
+    if (!stringToValue(mmm, ms)) { ms = 0; }
+    if (!stringToValue(uuu, us)) { us = 0; }
+    if (!stringToValue(nnn, ns)) { ns = 0; }
+
+    STI::Utils::splitString(hhmmss, ":", tokens);     // hh, mm, ss
+    if (tokens.size() != 3) return TimeStamp(year, month, day, 0, 0, 0, 0, 0, 0);   //invalid time
+
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+
+    success = 
+        stringToValue(tokens.at(0), hour) && 
+        stringToValue(tokens.at(1), minute) && 
+        stringToValue(tokens.at(2), second);
+
+    if (!success) return TimeStamp(year, month, day, 0, 0, 0, 0, 0, 0);   //invalid time
+
+    TimeStamp ts(year, month, day, hour, minute, second, ms, us, ns);
+    return ts;
 }
 
 bool TimeStamp::operator<(const TimeStamp& rhs) const
@@ -266,6 +375,12 @@ bool TimeStamp::operator!=(const TimeStamp& rhs) const
     return !((*this) == rhs);
 }
 
+bool TimeStamp::isSameDate(const TimeStamp& rhs) const
+{
+    return day() == rhs.day() &&
+           month() == rhs.month() &&
+           year() == rhs.year();
+}
 
 template<class Archive>
 void serialize(Archive& archive, tm& timeinfo)

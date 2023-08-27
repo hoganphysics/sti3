@@ -30,13 +30,13 @@ struct LocalTimePoint
 }
 }
 
-AppointmentTask::AppointmentTask(int id, const std::string& timeOfDay, const std::function<void(void)>& runFunc)
+AppointmentTask::AppointmentTask(const std::string& id, const std::string& timeOfDay, const std::function<void(void)>& runFunc)
 : AppointmentTask(id, timeOfDay, AppointmentTask::AppointmentRepeatType::Once, runFunc)
 {
 }
 
 
-AppointmentTask::AppointmentTask(int id, const std::string& timeOfDay, const AppointmentTask::AppointmentRepeatType& repeatType,
+AppointmentTask::AppointmentTask(const std::string& id, const std::string& timeOfDay, const AppointmentTask::AppointmentRepeatType& repeatType,
 	const std::function<void(void)>& runFunc)
 : Task(id), runFunc(runFunc), timeOfDay(timeOfDay), repeatType(repeatType)
 {

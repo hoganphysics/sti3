@@ -29,11 +29,18 @@ public:
 	std::string date_YYYY_MM_DD(const std::string& separator) const;
 	std::string time() const;
 	std::string time_hh_mm_ss() const;
+	std::string time_hh_mm_ss(const std::string& separator) const;
 	std::string time_hh_mm_ss_mmmuuunnn() const;
+	std::string time_mmmuuunnn(const std::string& separator) const;
 
 	bool operator<(const TimeStamp& rhs) const;
 	bool operator==(const TimeStamp& rhs) const;
 	bool operator!=(const TimeStamp& rhs) const;
+
+	bool isSameDate(const TimeStamp& rhs) const;
+
+	std::string toString() const;
+	static TimeStamp fromString(const std::string& timeStamp);
 
     int year() const;
     int month() const;

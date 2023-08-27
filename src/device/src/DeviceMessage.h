@@ -13,8 +13,8 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/RawEvent.h>
-#include "EventEngineJobList.h"
 
 #include <sstream>
 

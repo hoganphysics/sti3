@@ -15,6 +15,9 @@
 #include <sti/device/LocalChannel.h>
 #include <sti/device/PartnerDevice.h>
 #include <sti/device/ServerMessageRelayer.h>
+#include <sti/device/TaskManager.h>
+#include <sti/device/LogManager.h>
+#include <sti/device/Logger.h>
 
 #include <sti/engine/DeviceEventParser.h>
 #include <sti/engine/EngineID.h>
@@ -51,6 +54,8 @@ class DeviceMessageListenerID;
 class LocalPersistenceManager;
 class PersistenceManager;
 class DeviceCollectionPolicy;
+class LocalTaskManager;
+class LocalLogManager;
 
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser
@@ -77,6 +82,8 @@ public:
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
+	bool getLogManager(std::shared_ptr<LogManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -112,6 +119,11 @@ public:
 
 	PartnerDevice partner(const DeviceID& id);
 	PartnerDevice partner(const std::string& alias);
+
+	Logger& log();
+    Logger& log(const std::string& name);
+
+	void addTask(const std::shared_ptr<STI::Utils::Task>& task);
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
@@ -189,7 +201,9 @@ private:
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 	std::shared_ptr<LocalAttributeManager> localAttributeManager;
 	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
-	
+	std::shared_ptr<LocalTaskManager> localTaskManager;
+	std::shared_ptr<LocalLogManager> localLogManager;
+
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
 	//std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;

@@ -5,6 +5,7 @@
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/LocalAttribute.h>
 
+#include <sti/utils/ConfigFile.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/TimeStamp.h>
 
@@ -18,6 +19,7 @@ using STI::Device::LocalAttribute;
 using STI::Device::Attribute;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageDispatcher;
+using STI::Utils::ConfigFile;
 using STI::Utils::Configuration;
 
 
@@ -28,6 +30,8 @@ LocalAttributeManager::LocalAttributeManager(const DeviceID& localID, const std:
     messageGrouper.setCooldown(500); //ms
 
     messageGrouper.start();
+
+    file = std::make_shared<ConfigFile>();
 }
 
 LocalAttributeManager::~LocalAttributeManager()
@@ -134,9 +138,9 @@ void LocalAttributeManager::handleAttributeRefreshEvent(const std::string& key, 
 
 //*********** PersistenceTarget ****************//
 
-std::string LocalAttributeManager::getFilenameStem()
+std::string LocalAttributeManager::getFilename()
 {
-    return "attributes";
+    return "attributes.ini";
 }
 
 std::string LocalAttributeManager::getHeader()
@@ -158,18 +162,43 @@ void LocalAttributeManager::setPersistenceCallback(const std::function<void(void
     persistenceRefresher = refresher;
 }
 
-void LocalAttributeManager::setPersistenceData(const std::shared_ptr<Configuration>& data)
+// void LocalAttributeManager::setPersistenceData(const std::shared_ptr<Configuration>& data)
+// {
+//     persistenceData = data;
+// }
+
+// void LocalAttributeManager::setLoadFilename(const std::string& filename)
+// {
+//     if (file != 0) {
+//         file->load(filename);
+//     }
+//     else {
+//         file = std::make_shared<ConfigFile>(filename);
+//     }
+//     persistenceData = file;
+// }
+
+bool LocalAttributeManager::save(const std::string& filename)
 {
-    persistenceData = data;
+    if (file == 0 || !file->isParsed()) return false;
+
+    file->setHeader(getHeader());
+    file->save();   //persistenceData is kept current with each refresh event
+
+    return true;
 }
 
-bool LocalAttributeManager::save()
+void LocalAttributeManager::load(const std::string& filename)
 {
-    return true;    //persistenceData is kept current with each refresh event
-}
+    if (file != 0 && !file->isParsed()) {
+        
+        file->load(filename);
+    }
+    else {
+        file = std::make_shared<ConfigFile>(filename);
+    }
+    persistenceData = file;
 
-void LocalAttributeManager::load()
-{
     loading = true;
 
     if (persistenceData == 0) return;

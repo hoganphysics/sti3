@@ -75,6 +75,8 @@ void convertArgs(int argc, char** argvInput, std::vector<std::string>& argvOutpu
 
 void splitString(const std::string& inString, const std::string& delimiter, std::vector<std::string>& outVector)
 {
+	outVector.clear();
+	
 	std::string::size_type tBegin = 0;
 	std::string::size_type tEnd = 0;
 

@@ -110,6 +110,12 @@ bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<Full
     return findShotResult(sid);
 }
 
+std::string TransientRepository::prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate)
+{
+    auto paths = preparePaths();
+    return paths.basePath;
+}
+
 ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
 {
     return preparePaths();

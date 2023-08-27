@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <memory>
 #include <condition_variable>
 #include <mutex>
@@ -29,25 +30,29 @@ public:
 	void stop();
 
 	void addTask(const std::shared_ptr<Task>& task);
-	void removeTask(int taskID);
+	void removeTask(const std::string& taskID);
 	void clear();
 
-	void activateTask(int taskID);
-	void deactivateTask(int taskID);
+	void activateTask(const std::string& taskID);
+	void deactivateTask(const std::string& taskID);
 
 	void refresh();
 
+	void getIDs(std::set<std::string>& ids) const;
+	bool getTask(const std::string& taskID, std::shared_ptr<Task>& task) const;
+	void getTasks(std::vector<std::shared_ptr<Task>>& tasks) const;
+
 private:
 
-	void removeTask_(int taskID);
-	void deactivateTask_(int taskID);
+	void removeTask_(const std::string& taskID);
+	void deactivateTask_(const std::string& taskID);
 
 	void taskLoop();
 	
 	void sortActiveTasks();
-	std::vector<std::shared_ptr<Task>>::iterator findActiveTask(int id);
+	std::vector<std::shared_ptr<Task>>::iterator findActiveTask(const std::string& id);
 
-	STI::Utils::SynchronizedMap<int, std::shared_ptr<Task>> tasks;
+	STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Task>> tasks;
 	std::vector<std::shared_ptr<Task>> activeTasks;
 
 	std::thread taskThread;

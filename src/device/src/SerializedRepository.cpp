@@ -106,6 +106,18 @@ ResultsPaths SerializedRepository::preparePaths(const SequenceID& seqid)
     return paths;
 }
 
+std::string SerializedRepository::prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate)
+{
+    auto logPath = getLogBasePath(timeStamp);
+
+    if(autocreate) {
+        makePathIfNew(logPath);
+    }
+
+    return logPath;
+}
+
+
 ResultsPaths SerializedRepository::preparePaths(const TimeStamp& timeStamp)
 {
     ResultsPaths paths = makePaths(timeStamp);
@@ -283,6 +295,9 @@ ResultsPaths SerializedRepository::makePaths(const TimeStamp& timeStamp)
     auto sequencePath = uniqueBasePath / "sequences" / time;
     paths.sequencePath = sequencePath.string();
 
+    // auto logPath = uniqueBasePath / "logs";
+    // paths.logPath = logPath.string();
+
     cachedPaths.add(timeStamp, paths);
 
     return paths;
@@ -297,6 +312,15 @@ std::string SerializedRepository::getShotBasePath(const TimeStamp& timeStamp)
     basePath /= timeStamp.date_YYYY_MM_DD();
     // basePath /= sid.submissionTime.time_hh_mm_ss_mmmuuunnn();       //shots stored by timestamp
     //auto uniqueBasePath = basePath / sid.playTime.time_hh_mm_ss_mmmuuunnn();
+
+    return basePath.string();
+}
+
+std::string SerializedRepository::getLogBasePath(const TimeStamp& timeStamp)
+{
+    std::filesystem::path basePath(baseDevicePath);
+    basePath /= "logs";
+    basePath /= timeStamp.date_YYYY_MM_DD("/");
 
     return basePath.string();
 }

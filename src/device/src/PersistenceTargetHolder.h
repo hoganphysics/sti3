@@ -20,16 +20,16 @@ class PersistenceTargetHolder
 {
 public:
 
-    PersistenceTargetHolder(const std::string& filename, const std::shared_ptr<PersistenceTarget>& target);
+    PersistenceTargetHolder(const std::shared_ptr<PersistenceTarget>& target);
     virtual ~PersistenceTargetHolder();
 
-    void load();
+    void load(const std::string& basePath);
     void save();
 
 private:
 
     std::shared_ptr<PersistenceTarget> target;
-    std::shared_ptr<STI::Utils::ConfigFile> file;
+    // std::shared_ptr<STI::Utils::ConfigFile> file;
 
     //Group refresh events to limit rate of writing to file
     class SaveMessage : public STI::Device::GroupableMessage<SaveMessage>

@@ -271,3 +271,7 @@ Configuration Configuration::extract(const std::vector<std::string>& sections) c
 	return config;
 }
 
+void Configuration::clear()
+{
+	configData.clear();
+}

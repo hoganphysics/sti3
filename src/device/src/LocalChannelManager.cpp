@@ -5,6 +5,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalChannel.h>
 
+#include <sti/utils/ConfigFile.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/TimeStamp.h>
 
@@ -16,8 +17,8 @@ using STI::Device::LocalChannel;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Utils::MixedValue;
+using STI::Utils::ConfigFile;
 using STI::Utils::Configuration;
-
 
 LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
  : localDevice(localDevice), messageGrouper(dispatcher), loading(false)
@@ -26,6 +27,8 @@ LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::sh
     messageGrouper.setCooldown(500); //ms
 
     messageGrouper.start();
+
+    file = std::make_shared<ConfigFile>();
 }
 
 
@@ -116,9 +119,9 @@ void LocalChannelManager::handleChannelNameRefreshEvent(short channelNumber, con
 
 //*********** PersistenceTarget ****************//
 
-std::string LocalChannelManager::getFilenameStem()
+std::string LocalChannelManager::getFilename()
 {
-    return "channels";
+    return "channels.ini";
 }
 
 std::string LocalChannelManager::getHeader()
@@ -142,18 +145,43 @@ void LocalChannelManager::setPersistenceCallback(const std::function<void(void)>
     persistenceRefresher = refresher;
 }
 
-void LocalChannelManager::setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data)
+// void LocalChannelManager::setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data)
+// {
+//     persistenceData = data;
+// }
+
+// void LocalChannelManager::setLoadFilename(const std::string& filename)
+// {
+//     if (file != 0) {
+//         file->load(filename);
+//     }
+//     else {
+//         file = std::make_shared<ConfigFile>(filename);
+//     }
+//     persistenceData = file;
+// }
+
+bool LocalChannelManager::save(const std::string& filename)
 {
-    persistenceData = data;
+    if (file == 0 || !file->isParsed()) return false;
+
+    file->setHeader(getHeader());
+    file->save();   //persistenceData is kept current with each refresh event
+
+    return true;
 }
 
-bool LocalChannelManager::save()
+void LocalChannelManager::load(const std::string& filename)
 {
-    return true;    //persistenceData is kept current with each refresh event
-}
+    if (file != 0 && !file->isParsed()) {
+        
+        file->load(filename);
+    }
+    else {
+        file = std::make_shared<ConfigFile>(filename);
+    }
+    persistenceData = file;
 
-void LocalChannelManager::load()
-{
     loading = true;
 
     if (persistenceData == 0) return;

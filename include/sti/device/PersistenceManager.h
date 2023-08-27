@@ -48,6 +48,8 @@ public:
     virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;
     virtual bool saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner) = 0;
     
+    // virtual bool getLogDirectory(std::string& logDirectory) = 0;
+
     // virtual std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename) = 0;
     
 

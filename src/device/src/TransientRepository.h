@@ -21,6 +21,7 @@ public:
     TransientRepository(const std::string& tempBasePath);
     ~TransientRepository();
 
+    std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
 
