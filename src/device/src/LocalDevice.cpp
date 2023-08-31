@@ -25,6 +25,7 @@
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineScheduler.h"
 #include "LocalPersistenceManager.h"
+#include "LocalProfileManager.h"
 #include "LocalShot.h"
 
 #include <filesystem>
@@ -48,6 +49,7 @@ using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::LocalDeviceMessageDispatcher;
 using STI::Device::PartnerDevice;
+using STI::Device::LocalProfileManager;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -102,6 +104,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 	
+	localProfileManager = std::make_shared<LocalProfileManager>();
+	localProfileManager->addProfileTarget(localAttributeManager);
+	localProfileManager->addProfileTarget(localChannelManager);
 	
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
@@ -625,6 +630,12 @@ void LocalDevice::getAttributeManager(std::shared_ptr<AttributeManager>& manager
 bool LocalDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager)
 {
 	manager = localPersistenceManager;
+	return manager != 0;
+}
+
+bool LocalDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
+{
+	manager = localProfileManager;
 	return manager != 0;
 }
 

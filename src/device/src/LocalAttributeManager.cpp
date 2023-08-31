@@ -19,6 +19,7 @@ using STI::Device::Attribute;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageDispatcher;
 using STI::Utils::Configuration;
+using STI::Device::Profile;
 
 
 LocalAttributeManager::LocalAttributeManager(const DeviceID& localID, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
@@ -129,6 +130,34 @@ void LocalAttributeManager::handleAttributeRefreshEvent(const std::string& key, 
             persistenceRefresher();
         }
     }
+}
+
+
+bool LocalAttributeManager::loadProfile(const std::shared_ptr<Profile>& profile)
+{
+    if (profile == 0) return false;
+
+    if (profile->type != ProfileType::All && profile->type != ProfileType::Attribute) return true;
+
+    bool success = true;
+
+    for (auto& attribute : profile->attributeData) {
+
+        success &= setValue(attribute.first, attribute.second);
+    }
+    return success;
+
+}
+
+bool LocalAttributeManager::saveProfile(const std::shared_ptr<Profile>& profile)
+{
+    if (profile == 0) return false;
+
+    if (profile->type != ProfileType::All && profile->type != ProfileType::Attribute) return true;
+
+    getAttributes(profile->attributeData);
+
+    return true;
 }
 
 

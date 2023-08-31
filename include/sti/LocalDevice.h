@@ -14,6 +14,7 @@
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
 #include <sti/device/PartnerDevice.h>
+#include <sti/device/ProfileManager.h>
 #include <sti/device/ServerMessageRelayer.h>
 
 #include <sti/engine/DeviceEventParser.h>
@@ -49,6 +50,7 @@ class LocalAttribute;
 class LocalAttributeManager;
 class DeviceMessageListenerID;
 class LocalPersistenceManager;
+class LocalProfileManager;
 class PersistenceManager;
 class DeviceCollectionPolicy;
 
@@ -77,6 +79,7 @@ public:
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
@@ -189,7 +192,8 @@ private:
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 	std::shared_ptr<LocalAttributeManager> localAttributeManager;
 	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
-	
+	std::shared_ptr<LocalProfileManager> localProfileManager;
+
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 
 	//std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
