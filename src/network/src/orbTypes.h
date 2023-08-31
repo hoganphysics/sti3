@@ -6392,6 +6392,35 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFullShotResult;
 
+    enum TProfileType { ProfileAttribute, ProfileChannel, ProfileAll /*, __max_TProfileType=0xffffffff */ };
+    typedef TProfileType& TProfileType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TProfileType;
+
+    struct TProfile {
+      typedef _CORBA_ConstrType_Variable_Var<TProfile> _var_type;
+
+      
+      ::CORBA::String_member name;
+
+      TProfileType type;
+
+      TAttributeTupleSeq attributeData;
+
+      TChannelUpdateTupleSeq channelData;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TProfile::_var_type TProfile_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TProfile,TProfile_var > TProfile_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TProfile;
+
   _CORBA_MODULE_END
 
 _CORBA_MODULE_END
@@ -7244,6 +7273,30 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFullShotResult& 
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFullShotResult* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFullShotResult*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TFullShotResult*& _sp);
+
+inline void operator >>=(STI::TNetwork::TProfileType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TProfileType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ProfileAll) {
+    _e = (STI::TNetwork::TProfileType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfileType& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TProfile& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfile* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfile*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TProfile*& _sp);
 
 
 

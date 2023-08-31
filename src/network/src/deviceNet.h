@@ -2226,6 +2226,133 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPersistenceManager;
 
+#ifndef __STI_mTNetwork_mTProfileManager__
+#define __STI_mTNetwork_mTProfileManager__
+    class TProfileManager;
+    class _objref_TProfileManager;
+    class _impl_TProfileManager;
+    
+    typedef _objref_TProfileManager* TProfileManager_ptr;
+    typedef TProfileManager_ptr TProfileManagerRef;
+
+    class TProfileManager_Helper {
+    public:
+      typedef TProfileManager_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TProfileManager, TProfileManager_Helper> TProfileManager_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TProfileManager,TProfileManager_Helper > TProfileManager_out;
+
+#endif
+
+    // interface TProfileManager
+    class TProfileManager {
+    public:
+      // Declarations for this interface type.
+      typedef TProfileManager_ptr _ptr_type;
+      typedef TProfileManager_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TProfileManager :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void getProfiles(::STI::TNetwork::TStringSeq_out names);
+      ::CORBA::Boolean getProfile(const char* name, ::STI::TNetwork::TProfile_out profile);
+      ::CORBA::Boolean saveProfile(const ::STI::TNetwork::TProfile& profile);
+      ::CORBA::Boolean loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices);
+      ::CORBA::Boolean saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices);
+      ::CORBA::Boolean ping();
+
+      // Constructors
+      inline _objref_TProfileManager()  { _PR_setobj(0); }  // nil
+      _objref_TProfileManager(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TProfileManager();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TProfileManager(const _objref_TProfileManager&);
+      _objref_TProfileManager& operator = (const _objref_TProfileManager&);
+      // not implemented
+
+      friend class TProfileManager;
+    };
+
+    class _pof_TProfileManager : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TProfileManager() : _OMNI_NS(proxyObjectFactory)(TProfileManager::_PD_repoId) {}
+      virtual ~_pof_TProfileManager();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TProfileManager :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TProfileManager();
+
+      virtual void getProfiles(::STI::TNetwork::TStringSeq_out names) = 0;
+      virtual ::CORBA::Boolean getProfile(const char* name, ::STI::TNetwork::TProfile_out profile) = 0;
+      virtual ::CORBA::Boolean saveProfile(const ::STI::TNetwork::TProfile& profile) = 0;
+      virtual ::CORBA::Boolean loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices) = 0;
+      virtual ::CORBA::Boolean saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices) = 0;
+      virtual ::CORBA::Boolean ping() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TProfileManager;
+
 #ifndef __STI_mTNetwork_mTDevice__
 #define __STI_mTNetwork_mTDevice__
     class TDevice;
@@ -2304,6 +2431,7 @@ _CORBA_MODULE_BEG
       TChannelManager_ptr getChannelManager();
       TAttributeManager_ptr getAttributeManager();
       TPersistenceManager_ptr getPersistenceManager();
+      TProfileManager_ptr getProfileManager();
 
       // Constructors
       inline _objref_TDevice()  { _PR_setobj(0); }  // nil
@@ -2348,6 +2476,7 @@ _CORBA_MODULE_BEG
       virtual TChannelManager_ptr getChannelManager() = 0;
       virtual TAttributeManager_ptr getAttributeManager() = 0;
       virtual TPersistenceManager_ptr getPersistenceManager() = 0;
+      virtual TProfileManager_ptr getProfileManager() = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);
@@ -2674,6 +2803,18 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TProfileManager :
+      public virtual STI::TNetwork::_impl_TProfileManager,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TProfileManager();
+
+      inline ::STI::TNetwork::TProfileManager_ptr _this() {
+        return (::STI::TNetwork::TProfileManager_ptr) _do_this(::STI::TNetwork::TProfileManager::_PD_repoId);
+      }
+    };
+
     class TDevice :
       public virtual STI::TNetwork::_impl_TDevice,
       public virtual ::PortableServer::ServantBase
@@ -2802,6 +2943,10 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr& _s);
+
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDevice_ptr& _s);
@@ -2879,6 +3024,11 @@ STI::TNetwork::TAttributeManager::_marshalObjRef(::STI::TNetwork::TAttributeMana
 
 inline void
 STI::TNetwork::TPersistenceManager::_marshalObjRef(::STI::TNetwork::TPersistenceManager_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TProfileManager::_marshalObjRef(::STI::TNetwork::TProfileManager_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

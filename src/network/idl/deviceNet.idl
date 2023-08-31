@@ -232,6 +232,18 @@ module TNetwork
 		boolean ping();
 	};
 
+	interface TProfileManager
+	{
+		void getProfiles(out TStringSeq names);
+		boolean getProfile(in string name, out TProfile profile);
+		boolean saveProfile(in TProfile profile);
+
+		boolean loadProfile(in string name, in TProfileType type, in boolean loadDependentDevices);
+		boolean saveCurrentProfile(in string name, in TProfileType type, in boolean saveDependentDevices);
+
+		boolean ping();
+	};
+
 	interface TDevice
 	{
 		//Node interface
@@ -254,6 +266,7 @@ module TNetwork
 		TChannelManager getChannelManager();
 		TAttributeManager getAttributeManager();
 		TPersistenceManager getPersistenceManager();
+		TProfileManager getProfileManager();
 	};
 
 

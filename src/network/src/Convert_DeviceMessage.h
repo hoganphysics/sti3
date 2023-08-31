@@ -7,6 +7,8 @@
 #include "deviceNet.h"
 
 #include <memory>
+#include <map>
+
 
 namespace STI
 {
@@ -99,6 +101,14 @@ template<>
 bool Network::convert<std::shared_ptr<Device::EngineParserDeviceMessage>, TNetwork::TEngineParserDeviceMessage>(
 	const std::shared_ptr<Device::EngineParserDeviceMessage>& deviceMessage, TNetwork::TEngineParserDeviceMessage& tMessage);
 
+
+//TChannelUpdateTupleSeq
+template<>
+bool Network::convert<std::map<short, Utils::MixedValue>, TNetwork::TChannelUpdateTupleSeq>(
+	const std::map<short, Utils::MixedValue>& channelUpdateMap, TNetwork::TChannelUpdateTupleSeq& tChannelUpdateTupleSeq);
+template<>
+bool Network::convert<TNetwork::TChannelUpdateTupleSeq, std::map<short, Utils::MixedValue>>(
+	const TNetwork::TChannelUpdateTupleSeq& tChannelUpdateTupleSeq, std::map<short, Utils::MixedValue>& channelUpdateMap);
 
 
 //ChannelUpdateMessage

@@ -104,7 +104,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
 	
-	localProfileManager = std::make_shared<LocalProfileManager>();
+	localProfileManager = std::make_shared<LocalProfileManager>(getID(), localCollection);
 	localProfileManager->addProfileTarget(localAttributeManager);
 	localProfileManager->addProfileTarget(localChannelManager);
 	

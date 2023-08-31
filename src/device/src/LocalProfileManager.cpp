@@ -1,13 +1,18 @@
 #include "LocalProfileManager.h"
 #include "ProfileTarget.h"
 
+#include <sti/device/DeviceID.h>
+#include <sti/device/Device.h>
+
 using STI::Device::LocalProfileManager;
 using STI::Device::Profile;
 using STI::Device::ProfileType;
 using STI::Device::ProfileTarget;
+using STI::Device::DeviceID;
 
 
-LocalProfileManager::LocalProfileManager()
+LocalProfileManager::LocalProfileManager(const STI::Device::DeviceID& deviceID, const std::shared_ptr<STI::Device::DeviceCollection>& collection)
+: deviceID(deviceID), deviceCollection(collection)
 {
 }
 
@@ -32,7 +37,7 @@ bool LocalProfileManager::getProfile(const std::string& name, std::shared_ptr<Pr
 	return profileMap.get(name, profile);
 }
 
-bool LocalProfileManager::saveProfile(std::shared_ptr<Profile>& profile)
+bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)
 {
 	if (profile == 0) return false;
 
@@ -86,6 +91,24 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 	}
 
 	//save to disk
+
+	if (saveDependentDevices && deviceCollection != 0) {
+		std::set<DeviceID> ids;
+		std::shared_ptr<STI::Device::Device> device;
+		std::shared_ptr <STI::Device::ProfileManager> manager;
+
+		deviceCollection->getIDs(ids);
+
+		for (auto& id : ids) {
+			//skip unless the device declares this device as server
+			if (id.getTargetServerID() != deviceID.getID()) continue;
+
+			if (deviceCollection->get(id, device) && device != 0 
+				&& device->getProfileManager(manager) && manager != 0) {
+				success &= manager->saveCurrentProfile(name, type, true);
+			}
+		}
+	}
 
 	return success;
 

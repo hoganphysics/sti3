@@ -27,6 +27,7 @@ class RemoteEventEngineScheduler;
 class RemoteChannelManager;
 class RemoteAttributeManager;
 class RemotePersistenceManager;
+class RemoteProfileManager;
 
 
 class RemoteDevice : public STI::Device::Device, 
@@ -51,6 +52,7 @@ public:
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
+	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
@@ -82,6 +84,7 @@ private:
 	std::shared_ptr<RemoteChannelManager> remoteChannelManager;
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
+	std::shared_ptr<RemoteProfileManager> remoteProfileManager;
 
 	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;
 
