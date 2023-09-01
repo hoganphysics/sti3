@@ -4,6 +4,8 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/Device.h>
 
+#include <iostream>
+
 using STI::Device::LocalProfileManager;
 using STI::Device::Profile;
 using STI::Device::ProfileType;
@@ -27,14 +29,14 @@ void LocalProfileManager::addProfileTarget(const std::shared_ptr<ProfileTarget>&
 	targets.push_back(target);
 }
 
-void LocalProfileManager::getProfiles(std::set<std::string>& names)
+void LocalProfileManager::getProfiles(std::set<std::string>& names) const
 {
 	profileMap.getKeys(names);
 }
 
-bool LocalProfileManager::getProfile(const std::string& name, std::shared_ptr<Profile>& profile)
+bool LocalProfileManager::getProfile(const std::string& name, std::shared_ptr<Profile>& profile) const
 {
-	return profileMap.get(name, profile);
+	return profileMap.get(name, profile) && profile != 0;
 }
 
 bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)

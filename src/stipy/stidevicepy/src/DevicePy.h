@@ -6,6 +6,7 @@
 #include <sti/device/DeviceID.h>
 #include "ChannelManagerPy.h"
 #include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/ProfileManager.h>
 #include "DeviceCollectionPy.h"
 
 #include <memory>
@@ -21,6 +22,7 @@ class ChannelManagerPy;
 // class EventEngineSchedulerPy;
 class AttributeManagerPy;
 class PersistenceManagerPy;
+
 
 
 class DevicePy
@@ -42,6 +44,7 @@ public:
     std::shared_ptr<ChannelManagerPy> getChannelManager();
     std::shared_ptr<AttributeManagerPy> getAttributeManager();
     std::shared_ptr<PersistenceManagerPy> getPersistenceManager();
+    std::shared_ptr<STI::Device::ProfileManager> getProfileManager();
 
     bool write(short channel, const pybind11::object& value);
     pybind11::object read(short channel, const pybind11::object& value);

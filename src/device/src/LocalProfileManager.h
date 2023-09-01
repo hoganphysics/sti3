@@ -27,8 +27,8 @@ public:
 
     void addProfileTarget(const std::shared_ptr<ProfileTarget>& target);
 
-    void getProfiles(std::set<std::string>& names);
-    bool getProfile(const std::string& name, std::shared_ptr<Profile>& profile);
+    void getProfiles(std::set<std::string>& names) const;
+    bool getProfile(const std::string& name, std::shared_ptr<Profile>& profile) const;
     bool saveProfile(const std::shared_ptr<Profile>& profile);
 
     bool loadProfile(const std::string& name, const ProfileType& type, bool loadDependentDevices);

@@ -87,6 +87,7 @@ add_library(sticommonpy STATIC
     DevicePy.cpp
     MixedValuePy.cpp
     PersistenceManagerPy.cpp
+    ProfilePy.cpp
     # StackTracePy.cpp
 )
 
@@ -123,7 +124,6 @@ pybind11_add_module(stipybase MODULE
     AttributeManager_wrap.cpp
     Attribute_wrap.cpp
     Configuration_wrap.cpp
-    Device_wrap.cpp
     DeviceID_wrap.cpp
     HubID_wrap.cpp
     Measurement_wrap.cpp
@@ -132,6 +132,7 @@ pybind11_add_module(stipybase MODULE
     ParseID_wrap.cpp
     ParsedDependencyTree_wrap.cpp
     ParseResult_wrap.cpp
+    Profile_wrap.cpp
     RawEvent_wrap.cpp
     RawEventGroup_wrap.cpp
     Sequence_wrap.cpp
@@ -189,6 +190,7 @@ pybind11_add_module(stidevicepy
     
     ChannelManager_wrap.cpp
     Channel_wrap.cpp
+    Device_wrap.cpp
     DeviceCollection_wrap.cpp
     DeviceHub_wrap.cpp
     DeviceMessageDispatcher_wrap.cpp
@@ -201,6 +203,7 @@ pybind11_add_module(stidevicepy
     # LocalShotPy.cpp
     
     PersistenceManager_wrap.cpp
+    ProfileManager_wrap.cpp
     pywrapper.cpp
     SynchronousEvent_wrap.cpp
     SynchronousEventPy.cpp

@@ -28,7 +28,8 @@ void init_MixedValue(py::module& m)
         .value("File", MixedValueType::File)
         .value("Image", MixedValueType::Image)
         .value("Any", MixedValueType::Any)
-        .export_values();
+        ;
+        //.export_values();
 
     py::class_<MixedValuePy>(m, "MixedValue")
         .def(py::init<>())

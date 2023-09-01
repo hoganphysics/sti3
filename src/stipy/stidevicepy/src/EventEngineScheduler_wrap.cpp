@@ -85,19 +85,22 @@ void init_EventEngineScheduler(py::module& m)
         .value("NotFound", EngineJobStatus::NotFound)
         .value("Archived", EngineJobStatus::Archived)
         .value("Deferred", EngineJobStatus::Deferred)
-        .export_values();
+        ;
+        //.export_values();
 
     py::enum_<EventEngineJobList>(m, "EventEngineJobList")
         .value("Queued", EventEngineJobList::Queued)
         .value("Running", EventEngineJobList::Running)
         .value("Completed", EventEngineJobList::Completed)
         .value("Archived", EventEngineJobList::Archived)
-        .export_values();
+        ;
+        //.export_values();
 
     py::enum_<EventEngineJobType>(m, "EventEngineJobType")
         .value("Parse", EventEngineJobType::Parse)
         .value("Play", EventEngineJobType::Play)
-        .export_values();
+        ;
+        //.export_values();
 
 
     py::class_<STI::Engine::EngineJobID>(m, "EngineJobID")

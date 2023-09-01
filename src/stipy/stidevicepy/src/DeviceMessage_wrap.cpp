@@ -28,7 +28,8 @@ void init_DeviceMessage(py::module& m)
         .value("EngineParser", DeviceMessageType::EngineParser)
         .value("EngineStatus", DeviceMessageType::EngineStatus)
         .value("Unknown", DeviceMessageType::Unknown)
-        .export_values();
+        ;
+        //.export_values();
 
 
     py::class_<DeviceMessage, std::shared_ptr<DeviceMessage>>(m, "DeviceMessage")

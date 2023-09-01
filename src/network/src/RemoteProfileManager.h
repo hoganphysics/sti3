@@ -24,8 +24,8 @@ public:
     RemoteProfileManager(::STI::TNetwork::TProfileManager_ptr manager);
     ~RemoteProfileManager();
 
-    void getProfiles(std::set<std::string>& names);
-    bool getProfile(const std::string& name, std::shared_ptr<STI::Device::Profile>& profile);
+    void getProfiles(std::set<std::string>& names) const;
+    bool getProfile(const std::string& name, std::shared_ptr<STI::Device::Profile>& profile) const;
     bool saveProfile(const std::shared_ptr<STI::Device::Profile>& profile);
 
     bool loadProfile(const std::string& name, const STI::Device::ProfileType& type, bool loadDependentDevices);

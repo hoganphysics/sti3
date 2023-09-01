@@ -116,11 +116,11 @@ void init_RawEvent(py::module& m)
 
     py::enum_<RawEventType>(m, "RawEventType")
         .value("Play", RawEventType::Play)
-        .value("MeasurementEvent", RawEventType::Measurement)
+        .value("Measurement", RawEventType::Measurement)
         .value("Waveform", RawEventType::Waveform)
         .value("Pause", RawEventType::Pause)
         .value("Jump", RawEventType::Jump)
-        .export_values()
+        //.export_values()
         ;
 
 

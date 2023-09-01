@@ -21,7 +21,7 @@ RemoteProfileManager::~RemoteProfileManager()
 {
 }
 
-void RemoteProfileManager::getProfiles(std::set<std::string>& names)
+void RemoteProfileManager::getProfiles(std::set<std::string>& names) const
 {
 	std::unique_lock<std::mutex> profileLock(profileMutex);
 
@@ -47,7 +47,7 @@ void RemoteProfileManager::getProfiles(std::set<std::string>& names)
 	}
 }
 
-bool RemoteProfileManager::getProfile(const std::string& name, std::shared_ptr<Profile>& profile)
+bool RemoteProfileManager::getProfile(const std::string& name, std::shared_ptr<Profile>& profile) const
 {
 	std::unique_lock<std::mutex> profileLock(profileMutex);
 

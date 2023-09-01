@@ -1,6 +1,8 @@
 
 #include <sti/engine/Measurement.h>
 
+#include "MixedValuePy.h"
+
 #include <vector>
 #include <memory>
 
@@ -28,13 +30,16 @@ void init_ParsedDependencyTree(py::module& m);
 void init_ParseResult(py::module& m);
 void init_ShotResult(py::module& m);
 void init_SequenceResult(py::module& m);
+void init_Profile(py::module& m);
 
-void init_Device(py::module& m);
+
 
 void init_RawEventGroup(py::module& m);
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
-
+PYBIND11_MAKE_OPAQUE(std::map<std::string, std::string>);
+//PYBIND11_MAKE_OPAQUE(std::map<short, STI::Utils::MixedValue>);
+PYBIND11_MAKE_OPAQUE(std::map<short, STI::Python::MixedValuePy>);
 
 // PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 
@@ -64,7 +69,8 @@ PYBIND11_MODULE(stipybase, m) {
     init_ParseResult(m);
     init_ShotResult(m);
     init_SequenceResult(m);
-         
+    init_Profile(m);
+
 }
 
 int main(int argc, char* argv[])
