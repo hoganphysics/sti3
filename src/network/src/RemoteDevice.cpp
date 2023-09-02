@@ -8,6 +8,7 @@
 #include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
 #include "RemotePersistenceManager.h"
+#include "RemoteProfileManager.h"
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -18,6 +19,8 @@ using STI::Device::ChannelManager;
 using STI::Network::RemoteChannelManager;
 using STI::Network::RemoteAttributeManager;
 using STI::TNetwork::TReferenceHolder;
+using STI::TNetwork::TProfileManager;
+
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: TReferenceHolder<STI::TNetwork::TDevice>(device, deviceMutex)
@@ -27,6 +30,8 @@ RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	addDependent(remoteScheduler);
 	addDependent(remoteChannelManager);
 	addDependent(remoteAttributeManager);
+	addDependent(remotePersistenceManager);
+	addDependent(remoteProfileManager);
 }
 
 RemoteDevice::~RemoteDevice()
@@ -362,6 +367,42 @@ bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 	}
 
 	manager = remotePersistenceManager;
+	return (manager != 0);
+}
+
+bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager)
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remoteProfileManager)) {
+		manager = remoteProfileManager;
+		return (manager != 0);
+	}
+	else if (remoteProfileManager != 0) {
+		//non-null but not live for some reason; disable
+		remoteProfileManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TProfileManager_var tProfileManager;	//remote reference
+
+	try {
+		tProfileManager = getTRef()->getProfileManager();	//remote call
+
+		if (!CORBA::is_nil(tProfileManager)) {
+			remoteProfileManager = std::make_shared<RemoteProfileManager>(tProfileManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remoteProfileManager;
 	return (manager != 0);
 }
 

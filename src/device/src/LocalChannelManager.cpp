@@ -117,6 +117,42 @@ void LocalChannelManager::handleChannelNameRefreshEvent(short channelNumber, con
 }
 
 
+bool LocalChannelManager::loadProfile(const std::shared_ptr<Profile>& profile)
+{
+    if (profile == 0) return false;
+
+    if (profile->type != ProfileType::All && profile->type != ProfileType::Channel) return true;
+
+    bool success = true;
+
+    for (auto& channel : profile->channelData) {
+        success &= writeChannel(channel.first, channel.second);
+    }
+
+    return success;
+}
+
+bool LocalChannelManager::saveProfile(const std::shared_ptr<Profile>& profile)
+{
+    if (profile == 0) return false;
+
+    if (profile->type != ProfileType::All && profile->type != ProfileType::Channel) return true;
+
+    std::vector<std::shared_ptr<Channel>> channels;
+    getChannels(channels);
+
+    profile->channelData.clear();
+
+    for (auto& ch : channels) {
+        if (ch->getType() == ChannelType::Output) {
+            profile->channelData[ch->getChannelNumber()] = ch->getLastValue();
+        }
+    }
+
+    return true;
+}
+
+
 //*********** PersistenceTarget ****************//
 
 std::string LocalChannelManager::getFilename()
@@ -201,4 +237,3 @@ void LocalChannelManager::load(const std::string& filename)
     }
     loading = false;
 }
-

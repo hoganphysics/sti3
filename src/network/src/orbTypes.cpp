@@ -1877,3 +1877,23 @@ STI::TNetwork::TFullShotResult::operator<<= (cdrStream &_n)
 
 }
 
+void
+STI::TNetwork::TProfile::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(name,0);
+  type >>= _n;
+  (const TAttributeTupleSeq&) attributeData >>= _n;
+  (const TChannelUpdateTupleSeq&) channelData >>= _n;
+
+}
+
+void
+STI::TNetwork::TProfile::operator<<= (cdrStream &_n)
+{
+  name = _n.unmarshalString(0);
+  (TProfileType&)type <<= _n;
+  (TAttributeTupleSeq&)attributeData <<= _n;
+  (TChannelUpdateTupleSeq&)channelData <<= _n;
+
+}
+

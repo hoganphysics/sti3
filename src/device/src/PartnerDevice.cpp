@@ -2,6 +2,7 @@
 #include <sti/device/PartnerDevice.h>
 #include <sti/LocalDevice.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/device/ProfileManager.h>
 
 using STI::Device::PartnerDevice;
 using STI::Device::LocalDevice;
@@ -12,6 +13,9 @@ using STI::Device::DeviceMessageDispatcher;
 using STI::Device::AttributeManager;
 using STI::Device::ChannelManager;
 using STI::Device::PersistenceManager;
+using STI::Device::ProfileManager;
+
+
 
 PartnerDevice::PartnerDevice(LocalDevice* localDevice, const std::shared_ptr<Device>& device)
 : localDevice(localDevice), device(device)
@@ -81,6 +85,14 @@ bool PartnerDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& m
 {
 	if (device != 0) {
 		return device->getPersistenceManager(manager);
+	}
+	return false;
+}
+
+bool PartnerDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
+{
+	if (device != 0) {
+		return device->getProfileManager(manager);
 	}
 	return false;
 }

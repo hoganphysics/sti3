@@ -9,6 +9,7 @@
 #include "ChannelRefreshListener.h"
 #include "DeviceMessageGrouper.h"
 #include "PersistenceTarget.h"
+#include "ProfileTarget.h"
 #include "DeviceMessage.h"
 
 #include <memory>
@@ -29,7 +30,8 @@ class LocalChannel;
 
 class LocalChannelManager : public ChannelManager,
                             public ChannelRefreshListener,
-                            public PersistenceTarget
+                            public PersistenceTarget,
+                            public ProfileTarget
 {
 public:
 
@@ -45,6 +47,8 @@ public:
 
     void addChannel(const std::shared_ptr<LocalChannel>& channel);
 
+    bool loadProfile(const std::shared_ptr<Profile>& profile);
+    bool saveProfile(const std::shared_ptr<Profile>& profile);
 
 private:
 

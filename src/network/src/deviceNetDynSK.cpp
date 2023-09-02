@@ -283,6 +283,15 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TPersistenceManager = CORBA::Type
 #if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TProfileManager = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TProfileManager:1.0", "TProfileManager", &_0RL_tcTrack);
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TProfileManager = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TProfileManager:1.0", "TProfileManager", &_0RL_tcTrack);
+#endif
+
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDevice = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TDevice:1.0", "TDevice", &_0RL_tcTrack);
 } } 
 #else
@@ -1276,6 +1285,58 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr* _op)
       _o = (STI::TNetwork::TPersistenceManager_ptr)_r->_ptrToObjRef(STI::TNetwork::TPersistenceManager::_PD_repoId);
     else
       _o = STI::TNetwork::TPersistenceManager::_nil();
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTProfileManager_marshal_fn(cdrStream& _s, void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  omniObjRef::_marshal(_o, _s);
+}
+static void _0RL_STI_mTNetwork_mTProfileManager_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  omniObjRef* _o = omniObjRef::_unMarshal(STI::TNetwork::TProfileManager::_PD_repoId, _s);
+  _v = _o;
+}
+static void _0RL_STI_mTNetwork_mTProfileManager_destructor_fn(void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  if (_o)
+    omni::releaseObjRef(_o);
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr _o)
+{
+  STI::TNetwork::TProfileManager_ptr _no = STI::TNetwork::TProfileManager::_duplicate(_o);
+  _a.PR_insert(STI::TNetwork::_tc_TProfileManager,
+               _0RL_STI_mTNetwork_mTProfileManager_marshal_fn,
+               _0RL_STI_mTNetwork_mTProfileManager_destructor_fn,
+               _no->_PR_getobj());
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr* _op)
+{
+  _a.PR_insert(STI::TNetwork::_tc_TProfileManager,
+               _0RL_STI_mTNetwork_mTProfileManager_marshal_fn,
+               _0RL_STI_mTNetwork_mTProfileManager_destructor_fn,
+               (*_op)->_PR_getobj());
+  *_op = STI::TNetwork::TProfileManager::_nil();
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr& _o)
+{
+  void* _v;
+  if (_a.PR_extract(STI::TNetwork::_tc_TProfileManager,
+                    _0RL_STI_mTNetwork_mTProfileManager_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTProfileManager_marshal_fn,
+                    _0RL_STI_mTNetwork_mTProfileManager_destructor_fn,
+                    _v)) {
+    omniObjRef* _r = (omniObjRef*)_v;
+    if (_r)
+      _o = (STI::TNetwork::TProfileManager_ptr)_r->_ptrToObjRef(STI::TNetwork::TProfileManager::_PD_repoId);
+    else
+      _o = STI::TNetwork::TProfileManager::_nil();
     return 1;
   }
   return 0;

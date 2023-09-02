@@ -27,7 +27,8 @@ void init_Channel(py::module& m)
     py::enum_<ChannelType>(m, "ChannelType")
         .value("Output", ChannelType::Output)
         .value("Input", ChannelType::Input)
-        .export_values();
+        ;
+        //.export_values();
 
 
 

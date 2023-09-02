@@ -22,7 +22,7 @@ namespace Network
 
 //Thin wrapper around a LocalDevice that also holds a TDevice_i servant of the same Device
 class NetworkDevice : public STI::Device::Device,
-							 public STI::Network::TDeviceRefInterface	//mixin
+					  public STI::Network::TDeviceRefInterface	//mixin
 {
 public:
 
@@ -65,6 +65,11 @@ public:
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 	{
 		return localDevice != 0 && localDevice->getPersistenceManager(manager);
+	}
+
+	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager)
+	{
+		return localDevice != 0 && localDevice->getProfileManager(manager);
 	}
 
 	const STI::Device::DeviceID getID() const 

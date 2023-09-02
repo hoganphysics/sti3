@@ -43,6 +43,7 @@ void init_Device(py::module& m)
         .def("getChannelManager", &DevicePy::getChannelManager)
         .def("getAttributeManager", &DevicePy::getAttributeManager)
         .def("getPersistenceManager", &DevicePy::getPersistenceManager)
+        .def("getProfileManager", &DevicePy::getProfileManager)
 
         .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
         .def("read", &DevicePy::read, py::arg("channelNumber"), py::arg("value"))

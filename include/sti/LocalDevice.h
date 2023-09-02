@@ -14,6 +14,7 @@
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
 #include <sti/device/PartnerDevice.h>
+#include <sti/device/ProfileManager.h>
 #include <sti/device/ServerMessageRelayer.h>
 #include <sti/device/TaskManager.h>
 #include <sti/device/LogManager.h>
@@ -52,6 +53,7 @@ class LocalAttribute;
 class LocalAttributeManager;
 class DeviceMessageListenerID;
 class LocalPersistenceManager;
+class LocalProfileManager;
 class PersistenceManager;
 class DeviceCollectionPolicy;
 class LocalTaskManager;
@@ -82,6 +84,7 @@ public:
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
 
@@ -201,6 +204,7 @@ private:
 	std::shared_ptr<LocalChannelManager> localChannelManager;
 	std::shared_ptr<LocalAttributeManager> localAttributeManager;
 	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
+	std::shared_ptr<LocalProfileManager> localProfileManager;
 	std::shared_ptr<LocalTaskManager> localTaskManager;
 	std::shared_ptr<LocalLogManager> localLogManager;
 

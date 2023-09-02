@@ -10,6 +10,7 @@
 #include "TChannelManager_i.h"
 #include "TAttributeManager_i.h"
 #include "TPersistenceManager_i.h"
+#include "TProfileManager_i.h"
 
 #include <memory>
 
@@ -35,6 +36,7 @@ public:
 	TChannelManager_ptr getChannelManager();
 	TAttributeManager_ptr getAttributeManager();
 	TPersistenceManager_ptr getPersistenceManager();
+	TProfileManager_ptr getProfileManager();
 	TDeviceID* getID();
 
 
@@ -46,6 +48,7 @@ private:
 	TChannelManager_i channelManagerServant;
 	TAttributeManager_i attributeManagerServant;
 	TPersistenceManager_i persistenceManagerServant;
+	TProfileManager_i profileManagerServant;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };
