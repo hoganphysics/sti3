@@ -662,6 +662,15 @@ module TNetwork
 		TShotResult shotResult;
 	};
 
+	enum TProfileType { ProfileAttribute, ProfileChannel, ProfileAll };
+
+	struct TProfile
+	{
+		string name;
+		TProfileType type;
+		TAttributeTupleSeq attributeData;
+		TChannelUpdateTupleSeq channelData;
+	};
 
 };	//TNetwork
 };	//STI

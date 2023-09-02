@@ -8,16 +8,15 @@ from stipy.bin.stipy import connect as _connect
 from stipy.bin.stipy import STIPyServer
 # from stipy.bin.stipybase import Sequence
 from stipy.stipybase.python.sequence import STIPySequence
-from stipy.python.stacktrace import makeStackTrace
+from stipy.python.stacktrace import makeStackTrace as _makeStackTrace
 
-
-from socket import gethostname
-from getpass import getuser
+from socket import gethostname as _gethostname
+from getpass import getuser as _getuser
 
 
 def connect(serverID, nameServerAddress, serverHubID=None):
-    localAddress = gethostname()
-    username = getuser()
+    localAddress = _gethostname()
+    username = _getuser()
 
     if serverHubID == None:
         server = _connect(localAddress, serverID, nameServerAddress)
@@ -37,7 +36,7 @@ def group(name, color="") :
     return g
 
 def var(name) :
-    v = _var(name, makeStackTrace())
+    v = _var(name, _makeStackTrace())
     if v.isBound():
         return v.value().getValue()
     else:
@@ -46,16 +45,16 @@ def var(name) :
 
 
 def setvar(name, value, group="") :
-    return _setvar(name, value, makeStackTrace(), group)
+    return _setvar(name, value, _makeStackTrace(), group)
 def settag(name, group="") :
-    return _settag(name, makeStackTrace(), group)
+    return _settag(name, _makeStackTrace(), group)
 
 def event(channel, time, value, group="") :
-    return _event(channel, time, value, makeStackTrace(), group)
+    return _event(channel, time, value, _makeStackTrace(), group)
 def meas(channel, time, value, group="") :
-    return _meas(channel, time, value, makeStackTrace(), group)
+    return _meas(channel, time, value, _makeStackTrace(), group)
 def meas(channel, time, group="") :
-    return _meas(channel, time, makeStackTrace(), group)
+    return _meas(channel, time, _makeStackTrace(), group)
 
 def makesequence(shotmaker, varsTable=None) :
     return STIPySequence(shotmaker, varsTable)

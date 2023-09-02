@@ -29,7 +29,8 @@ void init_ParseTicket(py::module& m)
         .value("Canceled", Ticket::TicketStatus::Canceled)
         .value("NotFound", Ticket::TicketStatus::NotFound)
         .value("Deferred", Ticket::TicketStatus::Deferred)
-        .export_values();
+        ;
+        //.export_values();
 
     py::class_<STI::Engine::EngineParsingMessage>(m, "EngineParsingMessage")
         .def("getMessage", &STI::Engine::EngineParsingMessage::getMessage)

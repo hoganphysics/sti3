@@ -8,6 +8,7 @@
 #include "AttributeRefreshListener.h"
 #include "DeviceMessageGrouper.h"
 #include "PersistenceTarget.h"
+#include "ProfileTarget.h"
 
 #include <map>
 #include <vector>
@@ -31,7 +32,8 @@ class AttributeUpdateMessage;
 
 class LocalAttributeManager : public AttributeManager,
                               public AttributeRefreshListener,
-                              public PersistenceTarget
+                              public PersistenceTarget,
+                              public ProfileTarget
 {
 public:
 
@@ -47,6 +49,9 @@ public:
     void getAttributes(std::map<std::string, std::string>& attributes);
 
     bool addAttribute(const std::shared_ptr<LocalAttribute>& attribute);
+
+    bool loadProfile(const std::shared_ptr<Profile>& profile);
+    bool saveProfile(const std::shared_ptr<Profile>& profile);
 
 private:
 

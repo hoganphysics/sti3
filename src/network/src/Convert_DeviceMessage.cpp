@@ -62,6 +62,8 @@ using STI::Engine::EventEngineJobList;
 
 using STI::Engine::EventEngine;
 using STI::TNetwork::TEventEngine_var;
+using STI::TNetwork::TChannelUpdateTupleSeq;
+using STI::Utils::MixedValue;
 
 
 template<>
@@ -606,6 +608,42 @@ bool STI::Network::convert<std::shared_ptr<EngineParserDeviceMessage>, TEnginePa
 
 
 
+//TChannelUpdateTupleSeq
+template<>
+bool STI::Network::convert<std::map<short, MixedValue>, TChannelUpdateTupleSeq>(
+	const std::map<short, MixedValue>& channelUpdateMap, TChannelUpdateTupleSeq& tChannelUpdateTupleSeq)
+{
+	tChannelUpdateTupleSeq.length(static_cast<unsigned>(channelUpdateMap.size()));
+
+	unsigned i = 0;
+	for (auto& ch : channelUpdateMap) {
+		if (i < tChannelUpdateTupleSeq.length()) {
+			tChannelUpdateTupleSeq[i].channelNumber = static_cast<CORBA::Short>(ch.first);
+			tChannelUpdateTupleSeq[i].value = convert<MixedValue, TMixedValue>(ch.second);
+		}
+		++i;
+	}
+	return true;
+}
+
+template<>
+bool STI::Network::convert<TChannelUpdateTupleSeq, std::map<short, MixedValue>>(
+	const TChannelUpdateTupleSeq& tChannelUpdateTupleSeq, std::map<short, MixedValue>& channelUpdateMap)
+{
+	channelUpdateMap.clear();
+
+	for (unsigned i = 0; i < tChannelUpdateTupleSeq.length(); ++i) {
+
+		channelUpdateMap.insert(
+			std::pair<short, MixedValue>(
+				static_cast<short>(tChannelUpdateTupleSeq[i].channelNumber),
+				convert<TMixedValue, MixedValue>(tChannelUpdateTupleSeq[i].value)
+			));
+	}
+	return true;
+}
+
+
 //ChannelUpdateMessage
 template<>
 bool STI::Network::convert<TChannelUpdateMessage, std::shared_ptr<ChannelUpdateMessage>>(
@@ -620,14 +658,17 @@ bool STI::Network::convert<TChannelUpdateMessage, std::shared_ptr<ChannelUpdateM
 
 	if (deviceMessage->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue) {
 		//channel value message
-		for(unsigned i = 0; i < tMessage.channelValues.length(); ++i) {
+
+/*		for(unsigned i = 0; i < tMessage.channelValues.length(); ++i) {
 
 			deviceMessage->channelValues.insert(
 				std::pair<short, MixedValue>(
 					static_cast<short>(tMessage.channelValues[i].channelNumber),
 					convert<TMixedValue, MixedValue>(tMessage.channelValues[i].value)
 				));
-		}		
+		}	*/
+
+		convert<TChannelUpdateTupleSeq, std::map<short, MixedValue>>(tMessage.channelValues, deviceMessage->channelValues);
 	}
 	else {
 		//channel name message
@@ -637,6 +678,10 @@ bool STI::Network::convert<TChannelUpdateMessage, std::shared_ptr<ChannelUpdateM
 
 	return (deviceMessage != 0);
 }
+
+
+
+
 
 template<>
 bool STI::Network::convert<std::shared_ptr<ChannelUpdateMessage>, TChannelUpdateMessage>(
@@ -648,16 +693,18 @@ bool STI::Network::convert<std::shared_ptr<ChannelUpdateMessage>, TChannelUpdate
 
 	tMessage.channelUpdateType = convert<ChannelUpdateMessage::ChannelUpdateMessageType, TChannelUpdateMessageType>(deviceMessage->channelUpdateType);
 
-	tMessage.channelValues.length( static_cast<unsigned>(deviceMessage->channelValues.size()) );
+	//tMessage.channelValues.length( static_cast<unsigned>(deviceMessage->channelValues.size()) );
 
-	unsigned i = 0;
-	for (auto& ch : deviceMessage->channelValues) {
-		if (i < tMessage.channelValues.length()) {
-			tMessage.channelValues[i].channelNumber = static_cast<CORBA::Short>(ch.first);
-			tMessage.channelValues[i].value = convert<MixedValue, TMixedValue>(ch.second);
-		}
-		++i;
-	}
+	//unsigned i = 0;
+	//for (auto& ch : deviceMessage->channelValues) {
+	//	if (i < tMessage.channelValues.length()) {
+	//		tMessage.channelValues[i].channelNumber = static_cast<CORBA::Short>(ch.first);
+	//		tMessage.channelValues[i].value = convert<MixedValue, TMixedValue>(ch.second);
+	//	}
+	//	++i;
+	//}
+
+	convert<std::map<short, MixedValue>, TChannelUpdateTupleSeq>(deviceMessage->channelValues, tMessage.channelValues);
 
 	tMessage.channelNumber = static_cast<CORBA::Short>(deviceMessage->channelNumber);
 	tMessage.channelName = convert<std::string, CORBA::String_member>(deviceMessage->channelName);

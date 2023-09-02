@@ -99,7 +99,8 @@ void init_Sequence(py::module& m)
     py::enum_<SequenceType>(m, "SequenceType")
         .value("Open", SequenceType::Open)
         .value("Closed", SequenceType::Closed)
-        .export_values();
+        ;
+        //.export_values();
     
 
     py::class_<Sequence, std::shared_ptr<Sequence>>(m, "Sequence")

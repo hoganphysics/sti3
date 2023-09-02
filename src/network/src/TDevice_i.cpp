@@ -10,6 +10,7 @@ using STI::TNetwork::TEventEngineScheduler_ptr;
 using STI::TNetwork::TChannelManager_ptr;
 using STI::TNetwork::TAttributeManager_ptr;
 using STI::TNetwork::TPersistenceManager_ptr;
+using STI::TNetwork::TProfileManager_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
@@ -19,7 +20,7 @@ using STI::Network::convert;
 TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
 	: localDevice(device), deviceCollectionServant(device), messageDispatcherServant(device), 
 		eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device), 
-		persistenceManagerServant(device)
+		persistenceManagerServant(device), profileManagerServant(device)
 {
 	STI::Network::ORBManager::ORBManager::activateServant(attributeManagerServant);
 	STI::Network::ORBManager::ORBManager::activateServant(channelManagerServant);
@@ -27,6 +28,7 @@ TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
 	STI::Network::ORBManager::ORBManager::activateServant(messageDispatcherServant);
 	STI::Network::ORBManager::ORBManager::activateServant(eventSchedulerServant);
 	STI::Network::ORBManager::ORBManager::activateServant(persistenceManagerServant);
+	STI::Network::ORBManager::ORBManager::activateServant(profileManagerServant);
 }
 
 TDevice_i::~TDevice_i()
@@ -77,6 +79,11 @@ TAttributeManager_ptr TDevice_i::getAttributeManager()
 TPersistenceManager_ptr TDevice_i::getPersistenceManager()
 {
 	return persistenceManagerServant._this();
+}
+
+TProfileManager_ptr TDevice_i::getProfileManager()
+{
+	return profileManagerServant._this();
 }
 
 TDeviceID* TDevice_i::getID()

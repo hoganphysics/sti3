@@ -27,12 +27,13 @@ void init_ShotResult(py::module& m)
 {
     //RecordStatus { Unqueried, Complete, MissingDevice, MissingResults, Error };
     py::enum_<RecordStatus>(m, "RecordStatus")
-        .value("RecordUnqueried", RecordStatus::Unqueried)
-        .value("RecordComplete", RecordStatus::Complete)
-        .value("RecordMissingDevice", RecordStatus::MissingDevice)
-        .value("RecordMissingResults", RecordStatus::MissingResults)
-        .value("RecordError", RecordStatus::Error)
-        .export_values();
+        .value("Unqueried", RecordStatus::Unqueried)
+        .value("Complete", RecordStatus::Complete)
+        .value("MissingDevice", RecordStatus::MissingDevice)
+        .value("MissingResults", RecordStatus::MissingResults)
+        .value("Error", RecordStatus::Error)
+        ;
+        //.export_values();
 
 
     py::class_<ShotResultRecord>(m, "ShotResultRecord")

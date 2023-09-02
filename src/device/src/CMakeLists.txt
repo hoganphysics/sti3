@@ -106,6 +106,7 @@ add_library(stidevice SHARED
     ParseTicket.cpp  
     PartnerDevice.cpp
     PersistenceTargetHolder.cpp
+    LocalProfileManager.cpp
     RawEvent.cpp
     RawEventGroup.cpp
     # RawEventGroupManager.cpp
@@ -174,6 +175,7 @@ if(USE_STI_DEBUG_POSTFIX)
     DEBUG_POSTFIX ${STI_LIB_POSTFIX} 
   )
 endif()
+
 
 target_include_directories(stidevice PRIVATE 
     ${WORKING_DIRECTORY}

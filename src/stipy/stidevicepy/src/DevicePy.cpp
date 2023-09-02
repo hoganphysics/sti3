@@ -7,6 +7,7 @@
 #include "ChannelManagerPy.h"
 #include <sti/device/ChannelManager.h>
 #include <sti/device/DeviceCollection.h>
+#include <sti/device/ProfileManager.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/utils/MixedValue.h>
 // #include "EventEngineSchedulerPy.h"
@@ -27,6 +28,7 @@ using STI::Python::PersistenceManagerPy;
 using STI::Device::PersistenceManager;
 using STI::Engine::EventEngineScheduler;
 using STI::Utils::MixedValue;
+using STI::Device::ProfileManager;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -95,16 +97,10 @@ std::shared_ptr<STI::Device::DeviceMessageDispatcher> DevicePy::getMessageDispat
 std::shared_ptr<EventEngineScheduler> DevicePy::getEngineScheduler()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    // std::shared_ptr<STI::Python::EventEngineSchedulerPy> wrapper;
 
     if (device_ != 0) {
         device_->getEngineScheduler(scheduler);
     }
-
-    // if (scheduler != 0) {
-    //     wrapper = std::make_shared<EventEngineSchedulerPy>(scheduler);
-    // }
-    // return wrapper;
     
     return scheduler;
 }
@@ -158,7 +154,16 @@ std::shared_ptr<PersistenceManagerPy> DevicePy::getPersistenceManager()
     return wrapper;
 }
 
+std::shared_ptr<ProfileManager> DevicePy::getProfileManager()
+{
+    std::shared_ptr<ProfileManager> manager;
 
+    if (device_ != 0) {
+        device_->getProfileManager(manager);
+    }
+
+    return manager;
+}
 
 
 bool DevicePy::write(short channel, const pybind11::object& value)

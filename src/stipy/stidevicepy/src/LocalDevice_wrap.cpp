@@ -39,25 +39,26 @@ using STI::Device::ChannelType;
 void init_LocalDevice(py::module& m) 
 {
 
-    py::class_<DevicePy, std::shared_ptr<DevicePy>>(m, "Device")
-        .def(py::init<>())
-        .def("getID", &DevicePy::getID)
-        .def("kill", &DevicePy::kill)
-        .def("getDeviceCollection", &DevicePy::getDeviceCollection)
-        .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)      
-        .def("getEngineScheduler", &DevicePy::getEngineScheduler)
-        .def("getChannelManager", &DevicePy::getChannelManager)
-        .def("getAttributeManager", &DevicePy::getAttributeManager)
-        .def("getPersistenceManager", &DevicePy::getPersistenceManager)
+    //py::class_<DevicePy, std::shared_ptr<DevicePy>>(m, "Device")
+    //    .def(py::init<>())
+    //    .def("getID", &DevicePy::getID)
+    //    .def("kill", &DevicePy::kill)
+    //    .def("getDeviceCollection", &DevicePy::getDeviceCollection)
+    //    .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)      
+    //    .def("getEngineScheduler", &DevicePy::getEngineScheduler)
+    //    .def("getChannelManager", &DevicePy::getChannelManager)
+    //    .def("getAttributeManager", &DevicePy::getAttributeManager)
+    //    .def("getPersistenceManager", &DevicePy::getPersistenceManager)
+    //    .def("getProfileManager", &DevicePy::getProfileManager)
 
-        .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
-        .def("read", &DevicePy::read, py::arg("channelNumber"), py::arg("value"))
-        .def("stopRW", &DevicePy::stopRW)
+    //    .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
+    //    .def("read", &DevicePy::read, py::arg("channelNumber"), py::arg("value"))
+    //    .def("stopRW", &DevicePy::stopRW)
 
-        .def("getAttribute",
-            py::overload_cast<const std::string&>(&DevicePy::getAttribute), py::arg("key"))
-         .def("setAttribute", &DevicePy::setAttribute, py::arg("key"), py::arg("value"))
-        ;
+    //    .def("getAttribute",
+    //        py::overload_cast<const std::string&>(&DevicePy::getAttribute), py::arg("key"))
+    //     .def("setAttribute", &DevicePy::setAttribute, py::arg("key"), py::arg("value"))
+    //    ;
 
     py::class_<LocalDevicePy, DevicePy, LocalDevicePyTrampoline, std::shared_ptr<LocalDevicePy>>(m, "LocalDevice") 
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
