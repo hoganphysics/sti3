@@ -6,6 +6,7 @@
 //and the Device interface.
 
 #include "orbTypes.idl"
+#include "logsNet.idl"
 
 module STI
 {
@@ -244,6 +245,26 @@ module TNetwork
 		boolean ping();
 	};
 
+
+	interface TLogManager
+	{
+		void getLogNames(out TStringSeq names);
+
+		long getLogCount(in TDeviceID deviceID, in TLogFileFilter filter);
+		void getLogIDs(in TLogFileFilter filter, out TLogIDSeq ids);
+		void getDeviceLogIDs(in TDeviceID deviceID, in TLogFileFilter filter, out TLogIDSeq ids);
+
+		boolean getLog(in TLogID logID, out TLogFile logFile);
+		//boolean getLog(in string name, in string date, in long index, out TLogFile logFile);
+
+		boolean getLogs(in TLogFileFilter filter, out TLogFileSeq files);
+		boolean getDeviceLogs(in TDeviceID deviceID, in TLogFileFilter filter, out TLogFileSeq files);
+
+		boolean getLogRecord(in string date, out TLogRecord record);
+
+		boolean ping();
+	};
+
 	interface TDevice
 	{
 		//Node interface
@@ -267,6 +288,7 @@ module TNetwork
 		TAttributeManager getAttributeManager();
 		TPersistenceManager getPersistenceManager();
 		TProfileManager getProfileManager();
+		TLogManager getLogManager();
 	};
 
 

@@ -1,0 +1,65 @@
+#ifndef STI_TNETWORK_LOGSNET_IDL
+#define STI_TNETWORK_LOGSNET_IDL
+
+//IDL for STI logging
+
+#include "orbTypes.idl"
+
+module STI
+{
+module TNetwork
+{
+
+    struct TLogFileFilter
+    {
+        string logName;
+        string startDate;
+        string endDate;
+        long startIndex;
+        long endIndex;
+    };
+
+    enum TLogRecordStatus { LogRecordUnqueried, LogRecordLogsPresent, LogRecordNoLogs, LogRecordError };
+
+    struct TDeviceLogRecord
+    {
+        string deviceID;
+        TLogRecordStatus status;
+        TStringSeq logNames;
+    };
+    typedef sequence<TDeviceLogRecord> TDeviceLogRecordSeq;
+
+    struct TLogRecord
+    {
+        TTimeStamp timeStamp;
+        TDeviceLogRecordSeq deviceLogRecords;
+    };
+
+	struct TLogID
+	{
+        TDeviceID deviceID;
+        string date;
+        string logName;
+        long index;
+	};
+    typedef sequence<TLogID> TLogIDSeq;
+
+    enum TLogFileType { LogFileURL, LogFileFileHolder, LogFileString };
+
+    interface TFileHolder;
+    struct TLogFile
+    {
+        TLogID logID;
+        TLogFileType type;
+        string url;
+        TFileHolder fileHolder;
+        string logString;
+    };
+    typedef sequence<TLogFile> TLogFileSeq;
+
+
+};	//TNetwork
+};	//STI
+
+#endif
+

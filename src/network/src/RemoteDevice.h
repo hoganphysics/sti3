@@ -28,6 +28,7 @@ class RemoteChannelManager;
 class RemoteAttributeManager;
 class RemotePersistenceManager;
 class RemoteProfileManager;
+class RemoteLogManager;
 
 
 class RemoteDevice : public STI::Device::Device, 
@@ -86,6 +87,7 @@ private:
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
 	std::shared_ptr<RemoteProfileManager> remoteProfileManager;
+	std::shared_ptr<RemoteLogManager> remoteLogManager;
 
 	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;
 

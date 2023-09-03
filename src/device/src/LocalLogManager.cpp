@@ -347,9 +347,12 @@ bool LocalLogManager::getLog(const LogID& id, LogFile& logFile)
 
     std::string logFilename = makeLogFilename(id.logName, id.index);
 
+    fs::path logPath = logDevicePath;
+    logPath /= logFilename;
+
     logFile.id = id;
     logFile.type = LogFile::LogFileType::FileHolder;
-    logFile.fileHolder = localDevice->makeFileHolder(logFilename);
+    logFile.fileHolder = localDevice->makeFileHolder(logPath.string());
     
     return logFile.fileHolder != 0 && logFile.fileHolder->exists();
 }

@@ -9,6 +9,8 @@
 #include "RemoteAttributeManager.h"
 #include "RemotePersistenceManager.h"
 #include "RemoteProfileManager.h"
+#include "RemoteLogManager.h"
+
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -20,18 +22,19 @@ using STI::Network::RemoteChannelManager;
 using STI::Network::RemoteAttributeManager;
 using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TProfileManager;
+using STI::Network::RemoteLogManager;
 
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: TReferenceHolder<STI::TNetwork::TDevice>(device, deviceMutex)
 {
-	addDependent(remoteCollection);
-	addDependent(remoteDispatcher);
-	addDependent(remoteScheduler);
-	addDependent(remoteChannelManager);
-	addDependent(remoteAttributeManager);
-	addDependent(remotePersistenceManager);
-	addDependent(remoteProfileManager);
+	// addDependent(remoteCollection);
+	// addDependent(remoteDispatcher);
+	// addDependent(remoteScheduler);
+	// addDependent(remoteChannelManager);
+	// addDependent(remoteAttributeManager);
+	// addDependent(remotePersistenceManager);
+	// addDependent(remoteProfileManager);
 }
 
 RemoteDevice::~RemoteDevice()
@@ -154,6 +157,7 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 	else if (remoteCollection != 0) {
 		//non-null but not live for some reason; disable
 		remoteCollection->disable();
+		clean();
 	}
 
 	if (isDisabled()) return;
@@ -166,6 +170,7 @@ void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>&
 		if (!CORBA::is_nil(tDeviceCollection)) {
 			remoteCollection = std::make_shared<RemoteDeviceCollection>(tDeviceCollection);
 			collection = remoteCollection;
+			addDependent(remoteCollection);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -203,7 +208,7 @@ void RemoteDevice::getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessa
 		if (success && !CORBA::is_nil(tMessageDispatcher)) {
 			remoteDispatcher = std::make_shared<RemoteDeviceMessageDispatcher>(tMessageDispatcher);
 			dispatcher = remoteDispatcher;
-			success = (dispatcher != 0);
+			addDependent(remoteDispatcher);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -241,6 +246,7 @@ bool RemoteDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineSc
 		if (success && !CORBA::is_nil(tEngineScheduler)) {
 			remoteScheduler = std::make_shared<RemoteEventEngineScheduler>(tEngineScheduler);
 			scheduler = remoteScheduler;
+			addDependent(remoteScheduler);
 			success = (scheduler != 0);
 		}
 	}
@@ -281,6 +287,7 @@ void RemoteDevice::getChannelManager(std::shared_ptr<STI::Device::ChannelManager
 
 		if (!CORBA::is_nil(tChannelManager)) {
 			remoteChannelManager = std::make_shared<RemoteChannelManager>(tChannelManager, listenerForwarder, remoteID);
+			addDependent(remoteChannelManager);
 			success = true;
 		}
 	}
@@ -321,6 +328,7 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 
 		if (!CORBA::is_nil(tAttributelManager)) {
 			remoteAttributeManager = std::make_shared<RemoteAttributeManager>(tAttributelManager, listenerForwarder, remoteID);
+			addDependent(remoteAttributeManager);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -356,6 +364,7 @@ bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 
 		if (!CORBA::is_nil(tPersistenceManager)) {
 			remotePersistenceManager = std::make_shared<RemotePersistenceManager>(tPersistenceManager);
+			addDependent(remotePersistenceManager);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -392,6 +401,7 @@ bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager
 
 		if (!CORBA::is_nil(tProfileManager)) {
 			remoteProfileManager = std::make_shared<RemoteProfileManager>(tProfileManager);
+			addDependent(remoteProfileManager);
 		}
 	}
 	catch (CORBA::TRANSIENT&) {
@@ -408,7 +418,39 @@ bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager
 
 bool RemoteDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
 {
-	return false;
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remoteLogManager)) {
+		manager = remoteLogManager;
+		return (manager != 0);
+	}
+	else if (remoteLogManager != 0) {
+		//non-null but not live for some reason; disable
+		remoteLogManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TLogManager_var tLogManager;	//remote reference
+
+	try {
+		tLogManager = getTRef()->getLogManager();	//remote call
+
+		if (!CORBA::is_nil(tLogManager)) {
+			remoteLogManager = std::make_shared<RemoteLogManager>(tLogManager, getID());
+			addDependent(remoteLogManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remoteLogManager;
+	return (manager != 0);
 }
 
 bool RemoteDevice::write(short channel, const STI::Utils::MixedValue& value)

@@ -30,7 +30,6 @@ RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
 
 RemoteEventEngine::~RemoteEventEngine()
 {
-	disable();
 }
 
 

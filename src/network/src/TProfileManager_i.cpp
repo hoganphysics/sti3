@@ -2,6 +2,7 @@
 #include "TProfileManager_i.h"
 
 #include <sti/device/ProfileManager.h>
+#include "ORBManager.h"
 #include "convert/Convert_Profile.h"
 
 using STI::Network::convert;
@@ -21,6 +22,7 @@ TProfileManager_i::TProfileManager_i(const std::shared_ptr<STI::Device::Device>&
 
 TProfileManager_i::~TProfileManager_i()
 {
+    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -36,7 +38,7 @@ void TProfileManager_i::getProfiles(::STI::TNetwork::TStringSeq_out names)
         profileManager->getProfiles(localNames);
 
         std::vector<std::string> namesVec;
-        for (auto name : localNames) {
+        for (auto& name : localNames) {
             namesVec.push_back(name);      //deep copy, but names localNames is short
         }
         convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(namesVec, tStringSeq_var);

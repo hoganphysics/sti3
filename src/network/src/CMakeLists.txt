@@ -63,6 +63,7 @@ include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 
 
 add_library(stinetwork SHARED 
+    convert/Convert_Log.cpp
     convert/Convert_Profile.cpp
     Convert_Attribute.cpp
     Convert_Channel.cpp
@@ -108,6 +109,7 @@ add_library(stinetwork SHARED
     RemoteEventEngineDependencyParser.cpp
     RemoteEventEngineScheduler.cpp
     RemoteFileHolder.cpp
+    RemoteLogManager.cpp
     RemotePersistenceManager.cpp
     RemoteProfileManager.cpp
     RemoteResultsCollector.cpp
@@ -125,6 +127,7 @@ add_library(stinetwork SHARED
     TEventEngineDependencyParser_i.cpp
     TEventEngineScheduler_i.cpp
     TFileHolder_i.cpp
+    TLogManager_i.cpp
     TPersistenceManager_i.cpp
     TProfileManager_i.cpp
     TRefreshIndicator_i.cpp

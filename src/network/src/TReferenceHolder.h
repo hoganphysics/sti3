@@ -44,6 +44,18 @@ public:
 		holders.push_back(holder);
 	}
 
+	void clean()
+	{
+		for(auto it = holders.begin(); it != holders.end();) {
+			if ((*it) != 0 && (*it)->isDisabled()) {
+				it = holders.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+
 	bool isDisabled() const
 	{
 		return CORBA::is_nil(tReference);
@@ -66,6 +78,7 @@ public:
 				holder->disable();
 			}
 		}
+		clean();
 	}
 
 	typename T::_var_type& getTRef()

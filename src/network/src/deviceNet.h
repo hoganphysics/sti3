@@ -22,6 +22,10 @@
 #define __orbTypes_hh_EXTERNAL_GUARD__
 #include <orbTypes.h>
 #endif
+#ifndef __logsNet_hh_EXTERNAL_GUARD__
+#define __logsNet_hh_EXTERNAL_GUARD__
+#include <logsNet.h>
+#endif
 
 
 
@@ -2353,6 +2357,139 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TProfileManager;
 
+#ifndef __STI_mTNetwork_mTLogManager__
+#define __STI_mTNetwork_mTLogManager__
+    class TLogManager;
+    class _objref_TLogManager;
+    class _impl_TLogManager;
+    
+    typedef _objref_TLogManager* TLogManager_ptr;
+    typedef TLogManager_ptr TLogManagerRef;
+
+    class TLogManager_Helper {
+    public:
+      typedef TLogManager_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TLogManager, TLogManager_Helper> TLogManager_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TLogManager,TLogManager_Helper > TLogManager_out;
+
+#endif
+
+    // interface TLogManager
+    class TLogManager {
+    public:
+      // Declarations for this interface type.
+      typedef TLogManager_ptr _ptr_type;
+      typedef TLogManager_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TLogManager :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void getLogNames(::STI::TNetwork::TStringSeq_out names);
+      ::CORBA::Long getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter);
+      void getLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids);
+      void getDeviceLogIDs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids);
+      ::CORBA::Boolean getLog(const ::STI::TNetwork::TLogID& logID, ::STI::TNetwork::TLogFile_out logFile);
+      ::CORBA::Boolean getLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files);
+      ::CORBA::Boolean getDeviceLogs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files);
+      ::CORBA::Boolean getLogRecord(const char* date, ::STI::TNetwork::TLogRecord_out record);
+      ::CORBA::Boolean ping();
+
+      // Constructors
+      inline _objref_TLogManager()  { _PR_setobj(0); }  // nil
+      _objref_TLogManager(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TLogManager();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TLogManager(const _objref_TLogManager&);
+      _objref_TLogManager& operator = (const _objref_TLogManager&);
+      // not implemented
+
+      friend class TLogManager;
+    };
+
+    class _pof_TLogManager : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TLogManager() : _OMNI_NS(proxyObjectFactory)(TLogManager::_PD_repoId) {}
+      virtual ~_pof_TLogManager();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TLogManager :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TLogManager();
+
+      virtual void getLogNames(::STI::TNetwork::TStringSeq_out names) = 0;
+      virtual ::CORBA::Long getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter) = 0;
+      virtual void getLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids) = 0;
+      virtual void getDeviceLogIDs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids) = 0;
+      virtual ::CORBA::Boolean getLog(const ::STI::TNetwork::TLogID& logID, ::STI::TNetwork::TLogFile_out logFile) = 0;
+      virtual ::CORBA::Boolean getLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files) = 0;
+      virtual ::CORBA::Boolean getDeviceLogs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files) = 0;
+      virtual ::CORBA::Boolean getLogRecord(const char* date, ::STI::TNetwork::TLogRecord_out record) = 0;
+      virtual ::CORBA::Boolean ping() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogManager;
+
 #ifndef __STI_mTNetwork_mTDevice__
 #define __STI_mTNetwork_mTDevice__
     class TDevice;
@@ -2432,6 +2569,7 @@ _CORBA_MODULE_BEG
       TAttributeManager_ptr getAttributeManager();
       TPersistenceManager_ptr getPersistenceManager();
       TProfileManager_ptr getProfileManager();
+      TLogManager_ptr getLogManager();
 
       // Constructors
       inline _objref_TDevice()  { _PR_setobj(0); }  // nil
@@ -2477,6 +2615,7 @@ _CORBA_MODULE_BEG
       virtual TAttributeManager_ptr getAttributeManager() = 0;
       virtual TPersistenceManager_ptr getPersistenceManager() = 0;
       virtual TProfileManager_ptr getProfileManager() = 0;
+      virtual TLogManager_ptr getLogManager() = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);
@@ -2815,6 +2954,18 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TLogManager :
+      public virtual STI::TNetwork::_impl_TLogManager,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TLogManager();
+
+      inline ::STI::TNetwork::TLogManager_ptr _this() {
+        return (::STI::TNetwork::TLogManager_ptr) _do_this(::STI::TNetwork::TLogManager::_PD_repoId);
+      }
+    };
+
     class TDevice :
       public virtual STI::TNetwork::_impl_TDevice,
       public virtual ::PortableServer::ServantBase
@@ -2947,6 +3098,10 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogManager_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogManager_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogManager_ptr& _s);
+
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDevice_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDevice_ptr& _s);
@@ -3029,6 +3184,11 @@ STI::TNetwork::TPersistenceManager::_marshalObjRef(::STI::TNetwork::TPersistence
 
 inline void
 STI::TNetwork::TProfileManager::_marshalObjRef(::STI::TNetwork::TProfileManager_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TLogManager::_marshalObjRef(::STI::TNetwork::TLogManager_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 
