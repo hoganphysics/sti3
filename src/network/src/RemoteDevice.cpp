@@ -406,6 +406,11 @@ bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager
 	return (manager != 0);
 }
 
+bool RemoteDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
+{
+	return false;
+}
+
 bool RemoteDevice::write(short channel, const STI::Utils::MixedValue& value)
 {
 	std::shared_ptr<ChannelManager> manager;

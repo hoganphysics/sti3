@@ -405,17 +405,25 @@ std::string Logger::getNextLogFilename(const std::string& targetDirectory)
     fs::path nextLogFilename;
     fs::path newLogFilenamePath = targetDirectory;
 
-    std::string extension = "log";
+    // std::string logbasename = "sti";
+    // std::string extension = "log";
     bool fileCheck = false;
     unsigned i = 0;
-    std::stringstream filename;
+    // std::stringstream filename;
     int maxFileSize = 10000;    //bytes
 
     do {
-        filename.str("");
-        filename.clear();
-        filename << name << "_" << STI::Utils::valueToString(i) << "." << extension;
-        nextLogFilename = newLogFilenamePath / filename.str();
+        // filename.str("");
+        // filename.clear();
+        // filename << logbasename;
+        // if (name != "") {
+        //     filename << "_" << name;
+        // }
+        // filename << "_" << STI::Utils::valueToString(i) << "." << extension;
+
+        auto filename = manager->makeLogFilename(name, i);
+
+        nextLogFilename = newLogFilenamePath / filename;
 
         if (fs::exists(nextLogFilename)) {
             //make sure file doesn't exceed max size
@@ -453,11 +461,6 @@ bool Logger::save(const std::string& targetDirectory)
 
     return true;
 
-
-    // std::shared_ptr<PersistenceManager> persistenceManager;
-    // manager->localDevice->getPersistenceManager(persistenceManager);
-    // manager->localPersistenceManager->
-    // persistenceManager->
     if (manager == 0) return false;
     if (manager->localPersistenceManager == 0) return false;
     

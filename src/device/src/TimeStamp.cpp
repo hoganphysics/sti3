@@ -375,6 +375,11 @@ bool TimeStamp::operator!=(const TimeStamp& rhs) const
     return !((*this) == rhs);
 }
 
+bool TimeStamp::operator<=(const TimeStamp& rhs) const
+{
+    return (*this) < rhs || (*this) == rhs;
+}
+
 bool TimeStamp::isSameDate(const TimeStamp& rhs) const
 {
     return day() == rhs.day() &&

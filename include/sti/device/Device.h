@@ -21,6 +21,7 @@ class PersistenceManager;
 class ProfileManager;
 class Device;
 class Attribute;
+class LogManager;
 
 
 class Device : public STI::Network::Node<DeviceID, Device>
@@ -38,6 +39,7 @@ public:
 	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
 	virtual bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) = 0;
 	virtual bool getProfileManager(std::shared_ptr<ProfileManager>& manager) = 0;
+	virtual bool getLogManager(std::shared_ptr<LogManager>& manager) = 0;
 
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 

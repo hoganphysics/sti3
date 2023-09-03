@@ -23,7 +23,7 @@ public:
     ~LogRecordFile();
 
     bool exists() const;
-    void setLogStatus(const DeviceID& id, LogRecordStatus status);
+    void setLogStatus(const DeviceID& id, const std::string& logName);
     bool copyRecord(LogRecord& record);
 
     LogRecord& getRecord();

@@ -36,11 +36,12 @@ public:
 
     void getLogNames(std::set<std::string>& names);
 
+    int getLogCount(const DeviceID& deviceID, const LogFileFilter& filter);
     void getLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids);
     void getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids);
     
     bool getLog(const LogID& id, LogFile& logFile);
-    bool getLog(const std::string& name, const std::string& date, LogFile& logFile);
+    bool getLog(const std::string& name, const std::string& date, unsigned index, LogFile& logFile);
 
     bool getLogs(const LogFileFilter& filter, std::vector<LogFile>& files);
     bool getLogs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogFile>& files);
@@ -48,14 +49,22 @@ public:
     bool getLogRecord(const std::string& date, LogRecord& record);
 
     void createLogger(const std::string& name);
-    void save();
     
     Logger& log();
     Logger& log(const std::string& name);
 
 private:
 
+    bool getLogRecordFile(const STI::Utils::TimeStamp& timestamp, std::shared_ptr<LogRecordFile>& recordFile, bool autocreate=false);
+
+    // int getLogCount(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName);
+    bool getLogCounts(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, std::map<std::string, int>& counts);
+    void getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids);
+
     void writeLog(const std::string& logName);      //save to disk
+
+    std::string makeLogFilename(const std::string& logName, int index);
+    bool getLogName(const std::string& filenameStem, std::string& logName, int& index) const;
 
     class LogWriteMessage : public STI::Device::GroupableMessage<LogWriteMessage>
     {
@@ -116,8 +125,6 @@ private:
 
 
 
-
-    bool getLogRecordFile(const STI::Utils::TimeStamp& timestamp, std::shared_ptr<LogRecordFile>& recordFile, bool autocreate=false);
 
     friend class Logger;
 

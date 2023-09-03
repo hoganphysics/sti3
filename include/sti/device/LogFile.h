@@ -16,12 +16,13 @@ namespace Device
 
 struct LogFile
 {
-    enum class LogFileType { URL, LocalFile };
+    enum class LogFileType { URL, FileHolder, String };
 
     LogID id;
     LogFileType type;
     std::string url;
     std::shared_ptr<STI::Utils::FileHolder> fileHolder;
+    std::string logString;
 };
 
 

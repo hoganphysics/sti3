@@ -27,17 +27,24 @@ LogRecordFile::~LogRecordFile()
 }
 
 
-void LogRecordFile::setLogStatus(const DeviceID& id, LogRecordStatus status)
+void LogRecordFile::setLogStatus(const DeviceID& id, const std::string& logName)
 {
-    auto& ids = logRecord.loggedIDs;
-    auto it = ids.find(id.getID());
+    auto& records = logRecord.deviceLogRecords;
 
-    if (it != ids.end() && it->second == status) {
-        //no change
-        return;
+    auto record = records.find(id.getID());
+
+    if (record == records.end()) {
+        //new
+        auto& newRecord = records[id.getID()];
+        newRecord.deviceID = id.getID();
+        newRecord.logNames.insert(logName);
+        newRecord.status = LogRecordStatus::LogsPresent;
     }
-
-    ids[id.getID()] = status;
+    else {
+        record->second.status = LogRecordStatus::LogsPresent;
+        record->second.logNames.insert(logName);
+    }
+    
     save();
 }
 

@@ -72,6 +72,11 @@ public:
 		return localDevice != 0 && localDevice->getProfileManager(manager);
 	}
 
+	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
+	{
+		return localDevice != 0 && localDevice->getLogManager(manager);
+	}
+
 	const STI::Device::DeviceID getID() const 
 	{
 		if (localDevice != 0) {

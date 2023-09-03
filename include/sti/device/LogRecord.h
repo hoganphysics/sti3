@@ -6,6 +6,8 @@
 #include <sti/utils/TimeStamp.h>
 
 #include <map>
+#include <set>
+#include <string>
 
 
 namespace STI
@@ -15,6 +17,17 @@ namespace Device
 
 enum class LogRecordStatus { Unqueried, LogsPresent, NoLogs, Error };
 
+struct DeviceLogRecord
+{
+    std::string deviceID;
+    LogRecordStatus status;
+    std::set<std::string> logNames;
+
+    template<class Archive>
+	void serialize(Archive& archive);
+};
+
+
 class LogRecord
 {
 public:
@@ -23,7 +36,7 @@ public:
     ~LogRecord();
 
     STI::Utils::TimeStamp timeStamp;
-    std::map<std::string, LogRecordStatus> loggedIDs;
+    std::map<std::string, DeviceLogRecord> deviceLogRecords;    // {DeviceID, record}
 
 	template<class Archive>
 	void serialize(Archive& archive);

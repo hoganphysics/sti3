@@ -36,6 +36,7 @@ public:
 	bool operator<(const TimeStamp& rhs) const;
 	bool operator==(const TimeStamp& rhs) const;
 	bool operator!=(const TimeStamp& rhs) const;
+	bool operator<=(const TimeStamp& rhs) const;
 
 	bool isSameDate(const TimeStamp& rhs) const;
 
@@ -51,6 +52,11 @@ public:
     int millis() const;
     int micros() const;
     int nanos() const;
+
+	void add_day(int days = 0)
+	{
+		timeinfo.tm_mday += days;
+	}
 
 	void add_ns(int ns)
 	{

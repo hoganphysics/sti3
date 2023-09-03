@@ -40,6 +40,7 @@ public:
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 	bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
+	bool getLogManager(std::shared_ptr<LogManager>& manager);
 
 	void addEvent(const STI::Engine::RawEvent& evt, const STI::Engine::RawEvent& referenceEvent);
 	void addEvent(double time, const STI::Engine::RawEventTargetChannel& channel, const STI::Utils::MixedValue& value, const STI::Engine::RawEvent& referenceEvent);

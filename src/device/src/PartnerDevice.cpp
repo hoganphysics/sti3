@@ -97,6 +97,13 @@ bool PartnerDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
 	return false;
 }
 
+bool PartnerDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
+{
+	if (device != 0) {
+		return device->getLogManager(manager);
+	}
+	return false;
+}
 
 void PartnerDevice::addEvent(const STI::Engine::RawEvent& evt, const STI::Engine::RawEvent& referenceEvent)
 {

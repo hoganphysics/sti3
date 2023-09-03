@@ -15,6 +15,11 @@ struct LogFileFilter
     std::string logName;
     std::string startDate;
     std::string endDate;
+
+    //Index range of 'logName' log for a given day.
+    //Negative values allowed, measured from end (-1 is last)
+    int startIndex;
+    int endIndex;
 };
 
 

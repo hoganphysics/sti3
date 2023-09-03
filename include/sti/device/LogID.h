@@ -16,6 +16,7 @@ struct LogID
     DeviceID deviceID;
     std::string date;
     std::string logName;
+    unsigned index;    //There can be multiple log files for 'logName' on the same day if the files are large.
 };
 
 
