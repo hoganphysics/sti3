@@ -29,6 +29,7 @@ using STI::Device::PersistenceManager;
 using STI::Engine::EventEngineScheduler;
 using STI::Utils::MixedValue;
 using STI::Device::ProfileManager;
+using STI::Device::LogManager;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -165,6 +166,16 @@ std::shared_ptr<ProfileManager> DevicePy::getProfileManager()
     return manager;
 }
 
+std::shared_ptr<STI::Device::LogManager> DevicePy::getLogManager()
+{
+    std::shared_ptr<LogManager> manager;
+
+    if (device_ != 0) {
+        device_->getLogManager(manager);
+    }
+
+    return manager;
+}
 
 bool DevicePy::write(short channel, const pybind11::object& value)
 {

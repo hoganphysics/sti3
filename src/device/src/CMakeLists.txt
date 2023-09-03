@@ -97,6 +97,7 @@ add_library(stidevice SHARED
     LocalLogManager.cpp
     LocalTaskManager.cpp
     Logger.cpp
+    LogID.cpp
     LogRecord.cpp
     LogRecordFile.cpp
     MasterTrigger.cpp

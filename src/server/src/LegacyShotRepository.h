@@ -26,6 +26,7 @@ public:
     LegacyShotRepository(const std::string& baseDevicePath);
     ~LegacyShotRepository();
 
+    std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
 
@@ -46,6 +47,7 @@ public:
 
 private:
     
+    std::string getLogBasePath(const STI::Utils::TimeStamp& timeStamp);
     ResultsPaths preparePaths(const STI::Utils::TimeStamp& timeStamp);
 
     std::string makeParseFilename(const ParseID& pid);

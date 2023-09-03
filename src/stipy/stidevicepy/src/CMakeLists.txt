@@ -126,6 +126,8 @@ pybind11_add_module(stipybase MODULE
     Configuration_wrap.cpp
     DeviceID_wrap.cpp
     HubID_wrap.cpp
+    LogID_wrap.cpp
+    LogRecord_wrap.cpp
     Measurement_wrap.cpp
     MixedValue_wrap.cpp
     pybasewrapper.cpp
@@ -200,6 +202,8 @@ pybind11_add_module(stidevicepy
     EngineID_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
+    
+    LogManager_wrap.cpp
     # LocalShotPy.cpp
     
     PersistenceManager_wrap.cpp

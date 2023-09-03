@@ -3,13 +3,15 @@
 #include "ServerDevice.h"
 #include "LegacyShotRepository.h"
 
+#include <sti/device/LogFileFilter.h>
+
 #include <memory>
 
 #include <iostream>
 
 int main(int argc, char **argv)
 {
-	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.14:2809");
+	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 //    hub->getPersistenceOptions().bindToRootContext = false;
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
 
@@ -26,6 +28,41 @@ int main(int argc, char **argv)
     hub->addDevice(server);
 
     hub->run(true);
+
+    //test logs
+    if (false) {
+        int x;
+        std::cin >> x;
+
+        std::shared_ptr<STI::Device::LogManager> lm;
+        std::shared_ptr<STI::Device::DeviceCollection> collection;
+        std::shared_ptr<STI::Device::Device> dev;
+
+        server->getCollection(collection);
+        auto testID = STI::Device::DeviceID("TestDevice", "localhost2", 0);
+        collection->get(testID, dev);
+        dev->getLogManager(lm);
+        STI::Device::LogFileFilter filter;
+        filter.startDate = "2023/09/02";
+        filter.endDate = "2023/09/02";
+        filter.logName = "ch1";
+        filter.startIndex= 0;
+        filter.endIndex = 2;
+        auto count = lm->getLogCount(testID, filter);
+
+        STI::Device::LogID logID;
+        STI::Device::LogFile logFile;
+        logID.date = "2023/09/02";
+        logID.deviceID = testID;
+        logID.logName = "ch1";
+        logID.index = 0;
+
+        auto success = lm->getLog(logID, logFile);
+
+        auto logFilename = logFile.fileHolder->getFilename();
+    }
+
+    hub->shutdown();
 
     //auto hub2 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.14:2809");
 

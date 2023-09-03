@@ -83,6 +83,7 @@ add_library(stinetwork SHARED
     COSBindingNode.cpp
     deviceNet.cpp
     deviceNetDynSK.cpp
+    logsNet.cpp
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp

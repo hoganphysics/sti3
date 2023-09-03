@@ -25,6 +25,21 @@ struct DeviceLogRecord
 
     template<class Archive>
 	void serialize(Archive& archive);
+
+    static std::string logRecordStatusToString(const LogRecordStatus& status)
+    {
+        switch(status) {
+            case LogRecordStatus::Unqueried:
+                return "Unqueried";
+            case LogRecordStatus::LogsPresent:
+                return "LogsPresent";
+            case LogRecordStatus::NoLogs:
+                return "NoLogs";
+            case LogRecordStatus::Error:
+                return "Error";
+        }
+        return "Error";
+    }
 };
 
 

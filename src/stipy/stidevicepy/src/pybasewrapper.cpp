@@ -32,6 +32,8 @@ void init_ShotResult(py::module& m);
 void init_SequenceResult(py::module& m);
 void init_Profile(py::module& m);
 
+void init_LogID(py::module& m);
+void init_LogRecord(py::module& m);
 
 
 void init_RawEventGroup(py::module& m);
@@ -71,6 +73,8 @@ PYBIND11_MODULE(stipybase, m) {
     init_SequenceResult(m);
     init_Profile(m);
 
+    init_LogID(m);
+    init_LogRecord(m);
 }
 
 int main(int argc, char* argv[])

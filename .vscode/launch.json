@@ -9,7 +9,7 @@
             "type": "pythoncpp",
             "request": "launch",
             "pythonConfig": "default",
-            "cppConfig": "default (win) Attach"
+            "cppConfig": "default (gdb) Attach"
 
         },
         {

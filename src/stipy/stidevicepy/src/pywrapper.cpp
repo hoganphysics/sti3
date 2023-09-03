@@ -29,6 +29,7 @@ void init_EventEngineScheduler(py::module& m);
 
 void init_PersistenceManager(py::module& m);
 void init_ProfileManager(py::module& m);
+void init_LogManager(py::module& m);
 //void init_HubID(py::module& m);
 void init_DeviceHub(py::module& m);
 
@@ -59,6 +60,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     
     init_PersistenceManager(m);
     init_ProfileManager(m);
+    init_LogManager(m);
 //    init_HubID(m);
     init_DeviceHub(m);
     

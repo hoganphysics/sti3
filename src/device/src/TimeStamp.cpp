@@ -259,7 +259,9 @@ TimeStamp TimeStamp::fromString(const std::string& timeStamp)
     int day = 0;
 
     STI::Utils::splitString(date, "/", tokens);     //YYYY, MM, DD
-    if (tokens.size() != 3) return TimeStamp();     //invalid date
+    bool validDate = (tokens.size() == 3) ||
+        (tokens.size() == 4 && tokens.at(3) == "");
+    if (!validDate) return TimeStamp();     //invalid date
     
     bool success = 
         stringToValue(tokens.at(0), year) && 

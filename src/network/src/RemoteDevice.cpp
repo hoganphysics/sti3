@@ -418,6 +418,8 @@ bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager
 
 bool RemoteDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
 {
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
 	if (isLive(remoteLogManager)) {
@@ -437,7 +439,7 @@ bool RemoteDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manag
 		tLogManager = getTRef()->getLogManager();	//remote call
 
 		if (!CORBA::is_nil(tLogManager)) {
-			remoteLogManager = std::make_shared<RemoteLogManager>(tLogManager, getID());
+			remoteLogManager = std::make_shared<RemoteLogManager>(tLogManager, remoteID);
 			addDependent(remoteLogManager);
 		}
 	}

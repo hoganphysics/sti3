@@ -311,6 +311,9 @@ void ORBManager::block()
 
 	signal(SIGINT, ORBManager::signal_callback_handler);
 
+	signal(SIGPIPE, SIG_IGN);	//ignore SIGPIPE signals
+	// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
+
 	while (blocking_) {
 		wakeCondition.wait(writeLock);
 	}
@@ -344,8 +347,18 @@ void ORBManager::shutdown()
 		std::cerr << "Shutting down ORB" << std::endl;
 
 		orb->shutdown(true);
-		orb->destroy();
 
+		signal(SIGPIPE, SIG_IGN);	//ignore SIGPIPE signals
+		// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
+
+		// orb->destroy() causes error
+		// try {
+		// 	orb->destroy();
+		// }
+		// catch(...) {
+		// 	std::cerr << "Caught exception on orb->destroy()" << std::endl;
+		// }
+		
 	}
 }
 

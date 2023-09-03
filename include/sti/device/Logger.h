@@ -178,6 +178,8 @@ private:
     std::unique_ptr<std::ofstream> logFile;
     std::string logFilename;    //today's log file
 
+    std::vector<std::string> taskIDs;
+    
     LogMessageGrouper messageGrouper;
 
     LocalLogManager* manager;

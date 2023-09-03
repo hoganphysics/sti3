@@ -13,6 +13,13 @@ namespace Device
 
 struct LogID
 {
+    LogID();
+    LogID(const DeviceID& deviceID, const std::string& date, const std::string& logName, unsigned index);
+
+	bool operator<(const LogID& rhs) const;
+	bool operator==(const LogID& rhs) const;
+	bool operator!=(const LogID& rhs) const;
+
     DeviceID deviceID;
     std::string date;
     std::string logName;

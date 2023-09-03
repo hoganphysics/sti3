@@ -29,6 +29,28 @@ LegacyShotRepository::~LegacyShotRepository()
 {   
 }
 
+std::string LegacyShotRepository::prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate)
+{
+    auto logPath = getLogBasePath(timeStamp);
+
+    if(autocreate) {
+        makePathIfNew(logPath);
+    }
+
+    return logPath;
+}
+
+
+std::string LegacyShotRepository::getLogBasePath(const TimeStamp& timeStamp)
+{
+    std::filesystem::path basePath(baseDevicePath);
+    basePath /= "logs";
+    basePath /= timeStamp.date_YYYY_MM_DD("/");
+
+    return basePath.string();
+}
+
+
 ResultsPaths LegacyShotRepository::preparePaths(const ShotID& sid)
 {
     return preparePaths(sid.submissionTime);
@@ -260,8 +282,8 @@ ResultsPaths LegacyShotRepository::makePaths(const TimeStamp& timeStamp)
     auto sequencePath = uniqueBasePath / "sequences";
     paths.sequencePath = sequencePath.string();
 
-    auto logPath = uniqueBasePath / "logs";
-    paths.logPath = logPath.string();
+    // auto logPath = uniqueBasePath / "logs";
+    // paths.logPath = logPath.string();
 
     cachedPaths.add(timeStamp, paths);
 

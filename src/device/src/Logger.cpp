@@ -36,7 +36,16 @@ Logger::Logger(const std::string& name, LocalLogManager* manager)
 
 Logger::~Logger()
 {
+    std::shared_ptr<STI::Device::TaskManager> taskManager;
+
+    if (manager != 0 && manager->localDevice != 0 && manager->localDevice->getTaskManager(taskManager)) {
+        for (auto& id : taskIDs) {
+            taskManager->removeTask(id);
+        }
+    }
+    
     messageGrouper.stop();
+
 }
 
 

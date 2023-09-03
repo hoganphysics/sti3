@@ -149,7 +149,7 @@ int LocalLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& 
         date.add_day();
     } while (!date.isSameDate(endDate));
 
-    if (counts.contains(filter.logName)) {
+    if (counts.find(filter.logName) != counts.end()) {
         return counts[filter.logName];
     }
 
@@ -194,15 +194,16 @@ bool LocalLogManager::getLogCounts(const STI::Utils::TimeStamp& date, const Devi
     fs::path searchPath = logDevicePath;
     for(auto& p : fs::directory_iterator(searchPath)) {
         //check that the file has extension .log
-        if (p.path().has_extension() && p.path().extension().string() == "log") {
+        if (p.path().has_extension() && p.path().extension().string() == ".log") {
             auto filename = p.path().stem().string();    //filename, no path, no extension
             
             std::string logName;
             int index;
             if (getLogName(filename, logName, index)) {
 
-                if (!counts.contains(logName)) {
-                    counts[logName] = 0;   
+                if (counts.find(logName) == counts.end()) {
+                    //not found
+                    counts[logName] = 0;
                 }
                 counts[logName]++;
             }

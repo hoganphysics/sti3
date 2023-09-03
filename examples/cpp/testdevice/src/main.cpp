@@ -47,6 +47,17 @@ int main(int argc, char **argv)
 
 
 	hub->run(true);     //blocks until ctrl-c or Device terminates
+
+	if (false) {
+		std::cin >> x;
+		std::shared_ptr<STI::Device::LogManager> lm;
+		device->getLogManager(lm);
+		STI::Device::LogFileFilter filter;
+		filter.startDate = "2023/09/03";
+		filter.endDate = "2023/09/03";
+		auto count = lm->getLogCount(device->getID(), filter);
+	}
+
 	hub->shutdown();
 	// int x;
 	// std::cin >> x;
