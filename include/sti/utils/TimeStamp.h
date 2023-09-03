@@ -53,7 +53,7 @@ public:
     int micros() const;
     int nanos() const;
 
-	void add_day(int days = 0)
+	void add_day(int days = 1)
 	{
 		timeinfo.tm_mday += days;
 	}

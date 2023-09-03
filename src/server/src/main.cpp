@@ -27,10 +27,10 @@ int main(int argc, char **argv)
 
     hub->addDevice(server);
 
-    hub->run(true);
+    hub->run(false);
 
     //test logs
-    if (false) {
+    if (true) {
         int x;
         std::cin >> x;
 
@@ -49,6 +49,10 @@ int main(int argc, char **argv)
         filter.startIndex= 0;
         filter.endIndex = 2;
         auto count = lm->getLogCount(testID, filter);
+
+
+        std::vector<STI::Device::LogID> ids;
+        lm->getLogIDs(filter, ids);
 
         STI::Device::LogID logID;
         STI::Device::LogFile logFile;

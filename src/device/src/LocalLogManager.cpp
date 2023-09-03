@@ -147,7 +147,8 @@ int LocalLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& 
     do {
         getLogCounts(date, deviceID, counts);
         date.add_day();
-    } while (!date.isSameDate(endDate));
+    } while (date <= endDate);
+    // } while (!date.isSameDate(endDate));
 
     if (counts.find(filter.logName) != counts.end()) {
         return counts[filter.logName];
@@ -295,7 +296,7 @@ void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceI
     fs::path searchPath = logDevicePath;
     for(auto& p : fs::directory_iterator(searchPath)) {
         //ensure that the file has extension .log
-        if (!( p.path().has_extension() && p.path().extension().string() == "log" )) continue;
+        if (!( p.path().has_extension() && p.path().extension().string() == ".log" )) continue;
         
         auto filename = p.path().stem().string();    //filename, no path, no extension
         std::string name;
@@ -323,13 +324,19 @@ void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceI
     if (iEnd < 0) iEnd = 0;
     if (iEnd >= len) iEnd = len - 1;
 
-    for (auto it = indices.begin() + iStart; it != indices.begin() + iEnd; ++it) {
+    if (iStart > iEnd) {
+        std::swap(iStart, iEnd);
+    }
+
+    for (unsigned i = iStart; i <= iEnd; ++i) {
+    // for (auto it = indices.begin() + iStart; it != indices.begin() + iEnd; ++it) {
         
         LogID logID;
-        logID.date = date.date_YYYY_MM_DD(":");
+        logID.date = date.date_YYYY_MM_DD("/");
         logID.deviceID = deviceID;
         logID.logName = logName;
-        logID.index = *it;
+        // logID.index = *it;
+        logID.index = indices.at(i);
 
         ids.push_back(logID);
     }
