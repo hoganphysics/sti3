@@ -3,7 +3,7 @@
 
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/device/DeviceMessage.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include "TReferenceHolder.h"
 

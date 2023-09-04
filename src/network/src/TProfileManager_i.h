@@ -3,7 +3,7 @@
 
 #include <sti/device/ProfileManager.h>
 #include <sti/device/Device.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

@@ -5,7 +5,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/DeviceID.h>
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include "TReferenceHolder.h"
 
 #include <memory>

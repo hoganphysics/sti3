@@ -1,7 +1,7 @@
 #ifndef STI_TNETWORK_TREFRESHINDICATOR_I_H
 #define STI_TNETWORK_TREFRESHINDICATOR_I_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <mutex>
 
 namespace STI

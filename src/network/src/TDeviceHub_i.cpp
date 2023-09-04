@@ -8,7 +8,7 @@
 #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "convert/Convert_HubNodeWalker.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 using STI::Network::RemoteDeviceHub;
 using STI::Network::RemoteDevice;

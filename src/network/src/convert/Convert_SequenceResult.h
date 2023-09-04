@@ -3,8 +3,8 @@
 #define STI_NETWORK_CONVERT_SEQUENCERESULT_H
 
 #include "NetworkConvert.h"
-#include "deviceNet.h"
-#include "orbTypes.h"
+#include "generated/deviceNet.h"
+#include "generated/orbTypes.h"
 
 #include <sti/engine/Sequence.h>
 

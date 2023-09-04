@@ -5,8 +5,8 @@
 
 #include "convert/Convert_DeviceMessage.h"
 
-#include "deviceNet.h"
-#include "orbTypes.h"
+#include "generated/deviceNet.h"
+#include "generated/orbTypes.h"
 
 #include <set>
 

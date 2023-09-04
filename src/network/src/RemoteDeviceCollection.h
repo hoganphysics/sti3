@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEDEVICECOLLECTION_H
 #define STI_NETWORK_REMOTEDEVICECOLLECTION_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/Device.h>
 #include <sti/device/DeviceID.h>

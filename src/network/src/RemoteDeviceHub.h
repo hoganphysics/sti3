@@ -7,7 +7,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/network/HubTrace.h>
 #include <sti/network/DeviceHub.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include "TReferenceHolder.h"
 
 #include <memory>

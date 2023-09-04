@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEEVENTENGINEDEPENDENCYPARSER_H
 #define STI_NETWORK_REMOTEEVENTENGINEDEPENDENCYPARSER_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include "TReferenceHolder.h"
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceTrace.h>

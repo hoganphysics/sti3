@@ -1,7 +1,7 @@
 #include "RemoteEventEngineScheduler.h"
 
-#include "deviceNet.h"
-#include "orbTypes.h"
+#include "generated/deviceNet.h"
+#include "generated/orbTypes.h"
 
 #include <sti/device/DeviceTrace.h>
 

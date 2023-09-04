@@ -1,8 +1,8 @@
 
 #include "RemoteEventEngineDependencyParser.h"
 
-#include "deviceNet.h"
-#include "orbTypes.h"
+#include "generated/deviceNet.h"
+#include "generated/orbTypes.h"
 
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_EventEngine.h"

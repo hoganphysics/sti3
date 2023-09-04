@@ -2,7 +2,7 @@
 #define STI_TNETWORK_TSHOTCALLBACK_I_H
 
 #include <sti/engine/Shot.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTETRIGGERCALLBACK_H
 #define STI_NETWORK_REMOTETRIGGERCALLBACK_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include "TriggerCallback.h"
 #include "TReferenceHolder.h"

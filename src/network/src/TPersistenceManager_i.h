@@ -2,7 +2,7 @@
 #define STI_TNETWORK_TPERSISTENCEMANAGER_I_H
 
 #include "fwd/PersistenceManager_fwd.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/Device.h>
 
 #include <memory>

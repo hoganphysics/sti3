@@ -6,7 +6,7 @@
 #include "TDeviceMessageHandler_i.h"
 #include <sti/device/DeviceMessage.h>
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 #include <memory>
 

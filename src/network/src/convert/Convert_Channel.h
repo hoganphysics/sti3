@@ -2,7 +2,7 @@
 #define STI_NETWORK_CONVERT_CHANNEL_H
 
 #include "NetworkConvert.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/Channel.h>
 
 #include <memory>

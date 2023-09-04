@@ -5,7 +5,7 @@
 #include <sti/network/HubTrace.h>
 
 #include "NetworkDevice.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include "ORBManager.h"
 
 #include <memory>

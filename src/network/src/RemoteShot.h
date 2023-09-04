@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTESHOT_H
 #define STI_NETWORK_REMOTESHOT_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/engine/Shot.h>
 #include "TReferenceHolder.h"
 #include "TShotRefInterface.h"

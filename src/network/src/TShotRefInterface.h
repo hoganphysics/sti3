@@ -2,7 +2,7 @@
 #define STI_NETWORK_TSHOTREFINTERFACE_H
 
 #include <sti/engine/Shot.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

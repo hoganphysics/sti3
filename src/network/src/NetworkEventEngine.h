@@ -3,7 +3,7 @@
 
 #include "LocalEventEngine.h"
 #include "TEventEngine_i.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

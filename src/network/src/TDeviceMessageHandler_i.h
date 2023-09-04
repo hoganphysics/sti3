@@ -3,8 +3,8 @@
 
 #include "LocalDeviceMessageHandler.h"
 
-#include "deviceNet.h"
-#include "orbTypes.h"
+#include "generated/deviceNet.h"
+#include "generated/orbTypes.h"
 #include "TReferenceHolder.h"
 
 #include <memory>

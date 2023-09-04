@@ -1,6 +1,6 @@
 
 #include "Convert_Attribute.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include "NetworkConvert.h"
 
 #include <sti/utils/MixedValue.h>

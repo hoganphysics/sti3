@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEDEVICEMESSAGEHANDLER_H
 #define STI_NETWORK_REMOTEDEVICEMESSAGEHANDLER_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/DeviceMessageHandler.h>
 #include "TRefreshIndicator_i.h"
 #include "TReferenceHolder.h"

@@ -857,6 +857,7 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = ../../old \
+                         ../../src/network/src/generated \
                          ../../src/network/src/deviceNet.h \
                          ../../src/network/src/deviceNet.cpp \
                          ../../src/network/src/orbTypes.h \

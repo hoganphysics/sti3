@@ -2,7 +2,7 @@
 #define STI_NETWORK_CONVERT_HUBNODEWALKER_H
 
 #include "NetworkConvert.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/network/DeviceHub.h>
 
 namespace STI

@@ -11,7 +11,7 @@
 #include "NetworkEventEngine.h"
 #include "RemoteEventEngine.h"
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 #include <memory>
 

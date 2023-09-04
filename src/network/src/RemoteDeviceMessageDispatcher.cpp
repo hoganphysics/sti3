@@ -5,7 +5,7 @@
 #include "NetworkDeviceMessageHandlerWrapper.h"
 
 #include "NetworkConvert.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 using STI::Network::RemoteDeviceMessageDispatcher;
 using STI::Device::DeviceID;

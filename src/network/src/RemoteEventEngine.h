@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEEVENTENGINE_H
 #define STI_NETWORK_REMOTEEVENTENGINE_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include "EventEngine.h"
 #include "TTriggerCallback_i.h"

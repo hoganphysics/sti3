@@ -2,7 +2,7 @@
 #define STI_NETWORK_CONVERT_EVENTENGINE_H
 
 #include "NetworkConvert.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/fwd/Measurement_fwd.h>

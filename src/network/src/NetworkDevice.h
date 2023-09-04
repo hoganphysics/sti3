@@ -6,7 +6,7 @@
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
 #include "NetworkEventEngineFactory.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include <sti/engine/EventEngineScheduler.h>
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkFileHolder.h"

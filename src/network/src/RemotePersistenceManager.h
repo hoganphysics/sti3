@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEPERSISTENCEMANAGER_H
 #define STI_NETWORK_REMOTEPERSISTENCEMANAGER_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/PersistenceManager.h>
 #include "TReferenceHolder.h"
 

@@ -3,7 +3,7 @@
 
 #include <sti/device/AttributeManager.h>
 #include <sti/fwd/MixedValue_fwd.h>
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/DeviceMessageListener.h>
 #include <sti/device/DeviceMessage.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"

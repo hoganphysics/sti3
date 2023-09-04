@@ -1,7 +1,7 @@
 
 #include "RemoteLogManager.h"
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include "convert/Convert_Log.h"
 
 using STI::Network::convert;

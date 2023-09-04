@@ -4,7 +4,7 @@
 #include <sti/device/Device.h>
 #include <sti/device/DeviceMessageDispatcher.h>
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

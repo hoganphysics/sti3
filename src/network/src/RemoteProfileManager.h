@@ -1,7 +1,7 @@
 #ifndef STI_NETWORK_REMOTEPROFILEMANAGER_H
 #define STI_NETWORK_REMOTEPROFILEMANAGER_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/device/ProfileManager.h>
 #include "TReferenceHolder.h"
 

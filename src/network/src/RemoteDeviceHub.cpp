@@ -9,7 +9,7 @@
 #include <sti/network/HubID.h>
 #include <sti/network/HubTrace.h>
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 using STI::Network::HubID;
 using STI::Network::DeviceHub;

@@ -79,11 +79,15 @@ add_library(stinetwork SHARED
     convert/Convert_SequenceResult.cpp
     convert/Convert_ShotResult.cpp
     convert/Convert_StackTrace.cpp
-    #Convert_ResultTicket.cpp
+
+    generated/deviceNet.cpp
+    generated/deviceNetDynSK.cpp
+    generated/logsNet.cpp
+    generated/logsNetDynSK.cpp
+    generated/orbTypes.cpp
+    generated/orbTypesDynSK.cpp
+
     COSBindingNode.cpp
-    deviceNet.cpp
-    deviceNetDynSK.cpp
-    logsNet.cpp
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
@@ -95,8 +99,7 @@ add_library(stinetwork SHARED
     NetworkResultsCollector.cpp
     #NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
-    orbTypes.cpp
-    orbTypesDynSK.cpp
+
     RemoteAttribute.cpp
     RemoteAttributeManager.cpp
     RemoteChannel.cpp
@@ -243,6 +246,7 @@ target_include_directories(stinetwork PRIVATE
     ${WORKING_DIRECTORY}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
+    ${STI_BASE_DIR}/src/network/src/generated
     ${STI_BASE_DIR}/include/sti/extern
 )
 

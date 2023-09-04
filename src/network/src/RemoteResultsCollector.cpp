@@ -9,7 +9,7 @@
 #include "convert/Convert_Attribute.h"
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ResultsCollector.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 
 using STI::Network::RemoteResultsCollector;

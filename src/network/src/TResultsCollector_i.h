@@ -2,7 +2,7 @@
 #define STI_TNETWORK_TRESULTSCOLLECTOR_I_H
 
 #include "fwd/ResultsCollector_fwd.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

@@ -5,7 +5,7 @@
 #include "TShotRefInterface.h"
 
 #include "TShotCallback_i.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include <sti/engine/ShotConfig.h>
 
 #include <vector>

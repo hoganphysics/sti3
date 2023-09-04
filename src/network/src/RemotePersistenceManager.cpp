@@ -4,7 +4,7 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include "NetworkFileHolder.h"
 #include "NetworkResultsCollector.h"
 #include <sti/engine/RawEvent.h>

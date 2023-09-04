@@ -7,7 +7,7 @@
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_RawEventGroup.h"
 #include "ORBManager.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 #include <vector>
 #include <memory>

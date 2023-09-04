@@ -7,8 +7,8 @@
 
 #include "RemoteDevice.h"
 
-#include "orbTypes.h"
-#include "deviceNet.h"
+#include "generated/orbTypes.h"
+#include "generated/deviceNet.h"
 
 using STI::Network::convert;
 using STI::Network::DeviceHub;

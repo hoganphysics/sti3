@@ -4,7 +4,7 @@
 
 #include "LocalResultsCollector.h"
 #include "TResultsCollector_i.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

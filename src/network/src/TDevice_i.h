@@ -1,7 +1,7 @@
 #ifndef STI_TNETWORK_TDEVICE_I_H
 #define STI_TNETWORK_TDEVICE_I_H
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <sti/device/Device.h>
 #include "TDeviceCollection_i.h"

@@ -2,7 +2,7 @@
 #define STI_NETWORK_NETWORKCONVERT_H
 
 #include "ConvertList.h"
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include <sti/fwd/MixedValue_fwd.h>
 #include <sti/utils/GraphPathLabel.h>
 

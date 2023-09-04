@@ -4,7 +4,7 @@
 #include "NetworkConvert.h"
 #include <sti/device/DeviceMessage.h>
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 #include <map>

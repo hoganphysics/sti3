@@ -7,7 +7,7 @@
 #include "NetworkConvert.h"
 #include "convert/Convert_Attribute.h"
 
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 
 using STI::Network::RemoteAttributeManager;

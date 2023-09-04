@@ -4,7 +4,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Image.h>
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include "TFileHolderRefInterface.h"
 #include "RemoteFileHolder.h"
 #include "RemoteImageWriter.h"

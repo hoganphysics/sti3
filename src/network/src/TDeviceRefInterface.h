@@ -2,7 +2,7 @@
 #define STI_NETWORK_TDEVICEREFINTERFACE_H
 
 #include <sti/device/Device.h>
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 #include <memory>
 

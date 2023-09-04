@@ -4,7 +4,7 @@
 #include <sti/LocalDeviceHub.h>
 #include "TDeviceHub_i.h"
 #include <sti/network/DeviceHub.h>
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 #include <sti/device/DeviceID.h>
 #include <sti/device/Device.h>
 

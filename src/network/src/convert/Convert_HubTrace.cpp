@@ -4,7 +4,7 @@
 #include <sti/network/HubTrace.h>
 #include <sti/network/HubID.h>
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 using STI::Network::convert;
 using STI::Network::HubTrace;

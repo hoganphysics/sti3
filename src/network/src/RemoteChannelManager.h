@@ -4,7 +4,7 @@
 #include <sti/device/ChannelManager.h>
 #include <sti/device/DeviceMessageListener.h>
 #include "fwd/DeviceMessageListenerForwarder_fwd.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include "TReferenceHolder.h"
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>

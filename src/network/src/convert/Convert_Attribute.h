@@ -2,7 +2,7 @@
 #define STI_NETWORK_CONVERT_ATTRIBUTE_H
 
 #include "NetworkConvert.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

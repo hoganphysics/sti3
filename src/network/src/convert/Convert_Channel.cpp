@@ -3,7 +3,7 @@
 
 #include <sti/utils/MixedValue.h>
 
-#include "orbTypes.h"
+#include "generated/orbTypes.h"
 
 using STI::Network::convert;
 using STI::Device::Channel; 

@@ -6,7 +6,7 @@
 #include "TFileHolderRefInterface.h"
 
 #include "TFileHolder_i.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 
 #include <vector>
 #include <memory>

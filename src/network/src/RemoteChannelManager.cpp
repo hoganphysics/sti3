@@ -4,7 +4,7 @@
 #include "DeviceMessageListenerForwarder.h"
 #include <sti/device/DeviceMessage.h>
 #include "RemoteChannel.h"
-#include "deviceNet.h"
+#include "generated/deviceNet.h"
 #include "NetworkConvert.h"
 
 using STI::Network::RemoteChannelManager;
