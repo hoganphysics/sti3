@@ -1,8 +1,8 @@
 
 #include "TEventEngineDependencyParser_i.h"
 
-#include "Convert_EventEngine.h"
-#include "Convert_DeviceTrace.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_DeviceTrace.h"
 
 #include "NetworkConvert.h"
 #include "ORBManager.h"

@@ -5,7 +5,7 @@
 #include "DeviceMessageListenerForwarder.h"
 #include <sti/device/DeviceMessage.h>
 #include "NetworkConvert.h"
-#include "Convert_Attribute.h"
+#include "convert/Convert_Attribute.h"
 
 #include "deviceNet.h"
 

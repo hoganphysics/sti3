@@ -6,9 +6,9 @@
 #include "EventEngineDependencyTree.h"
 
 #include "NetworkConvert.h"
-#include "Convert_Attribute.h"
-#include "Convert_EventEngine.h"
-#include "Convert_ResultsCollector.h"
+#include "convert/Convert_Attribute.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_ResultsCollector.h"
 #include "orbTypes.h"
 
 

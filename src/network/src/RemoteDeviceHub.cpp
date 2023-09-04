@@ -1,6 +1,6 @@
 #include "RemoteDeviceHub.h"
 #include "NetworkConvert.h"
-#include "Convert_HubNodeWalker.h"
+#include "convert/Convert_HubNodeWalker.h"
 
 #include "NetworkDeviceHubWrapper.h"
 #include "TDeviceRefInterface.h"

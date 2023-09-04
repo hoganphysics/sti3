@@ -1,7 +1,7 @@
 #include "TEventEngine_i.h"
 
-#include "Convert_EventEngine.h"
-#include "Convert_ShotResult.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_ShotResult.h"
 
 #include <sti/device/DeviceID.h>
 #include <sti/engine/EngineState.h>

@@ -14,10 +14,10 @@
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Shot.h>
 
-#include "Convert_ShotResult.h"
-#include "Convert_EventEngine.h"
-#include "Convert_DeviceTrace.h"
-#include "Convert_SequenceResult.h"
+#include "convert/Convert_ShotResult.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_DeviceTrace.h"
+#include "convert/Convert_SequenceResult.h"
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"

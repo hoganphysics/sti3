@@ -20,7 +20,7 @@
 
 #include <sti/engine/SynchronousEvent.h>
 
-#include "Convert_EventEngine.h"
+#include "convert/Convert_EventEngine.h"
 
 #include <sti/device/DeviceMessageReceiver.h>
 #include <sti/device/DeviceMessage.h>

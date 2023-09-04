@@ -65,20 +65,20 @@ include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 add_library(stinetwork SHARED 
     convert/Convert_Log.cpp
     convert/Convert_Profile.cpp
-    Convert_Attribute.cpp
-    Convert_Channel.cpp
-    Convert_DeviceID.cpp
-    Convert_DeviceMessage.cpp
-    Convert_EventEngine.cpp
-    Convert_HubID.cpp
-    Convert_HubNodeWalker.cpp
-    Convert_HubTrace.cpp
-    Convert_DeviceTrace.cpp
-    Convert_RawEventGroup.cpp
-    Convert_ResultsCollector.cpp
-    Convert_SequenceResult.cpp
-    Convert_ShotResult.cpp
-    Convert_StackTrace.cpp
+    convert/Convert_Attribute.cpp
+    convert/Convert_Channel.cpp
+    convert/Convert_DeviceID.cpp
+    convert/Convert_DeviceMessage.cpp
+    convert/Convert_EventEngine.cpp
+    convert/Convert_HubID.cpp
+    convert/Convert_HubNodeWalker.cpp
+    convert/Convert_HubTrace.cpp
+    convert/Convert_DeviceTrace.cpp
+    convert/Convert_RawEventGroup.cpp
+    convert/Convert_ResultsCollector.cpp
+    convert/Convert_SequenceResult.cpp
+    convert/Convert_ShotResult.cpp
+    convert/Convert_StackTrace.cpp
     #Convert_ResultTicket.cpp
     COSBindingNode.cpp
     deviceNet.cpp

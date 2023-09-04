@@ -12,10 +12,10 @@
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 
-#include "Convert_DeviceTrace.h"
-#include "Convert_EventEngine.h"
-#include "Convert_ShotResult.h"
-#include "Convert_SequenceResult.h"
+#include "convert/Convert_DeviceTrace.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_ShotResult.h"
+#include "convert/Convert_SequenceResult.h"
 
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"

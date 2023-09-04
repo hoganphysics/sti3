@@ -2,7 +2,7 @@
 #include "ORBManager.h"
 #include <sti/device/ChannelManager.h>
 
-#include "Convert_Channel.h"
+#include "convert/Convert_Channel.h"
 
 using STI::Network::convert;
 using STI::TNetwork::TChannelManager_i;

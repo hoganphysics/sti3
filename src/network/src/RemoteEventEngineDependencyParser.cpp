@@ -4,9 +4,9 @@
 #include "deviceNet.h"
 #include "orbTypes.h"
 
-#include "Convert_DeviceTrace.h"
-#include "Convert_EventEngine.h"
-#include "Convert_ShotResult.h"
+#include "convert/Convert_DeviceTrace.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_ShotResult.h"
 
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineParsingMessage.h>

@@ -3,7 +3,7 @@
 #include <sti/device/DeviceMessage.h>
 #include "ORBManager.h"
 
-#include "Convert_DeviceMessage.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include "deviceNet.h"
 #include "orbTypes.h"

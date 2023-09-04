@@ -5,10 +5,10 @@
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/Measurement.h>
 
-#include "Convert_EventEngine.h"
-#include "Convert_ResultsCollector.h"
-#include "Convert_ShotResult.h"
-#include "Convert_SequenceResult.h"
+#include "convert/Convert_EventEngine.h"
+#include "convert/Convert_ResultsCollector.h"
+#include "convert/Convert_ShotResult.h"
+#include "convert/Convert_SequenceResult.h"
 #include "ORBManager.h"
 
 using STI::TNetwork::TPersistenceManager_i;

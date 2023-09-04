@@ -2,7 +2,7 @@
 
 #include "ORBManager.h"
 #include "NetworkConvert.h"
-#include "Convert_DeviceMessage.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include <set>
 
