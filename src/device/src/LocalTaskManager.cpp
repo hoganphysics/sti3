@@ -37,12 +37,12 @@ LocalTaskManager::~LocalTaskManager()
     clear();
 }
 
-void LocalTaskManager::getTaskIDs(std::set<std::string>& ids)
+void LocalTaskManager::getTaskIDs(std::set<std::string>& ids) const
 {
     taskScheduler.getIDs(ids);
 }
 
-TaskStatus LocalTaskManager::getTaskStatus(const std::string& taskID)
+TaskStatus LocalTaskManager::getTaskStatus(const std::string& taskID) const
 {
     std::shared_ptr<Task> task;
     if (getTask(taskID, task)) {
@@ -51,12 +51,12 @@ TaskStatus LocalTaskManager::getTaskStatus(const std::string& taskID)
     return TaskStatus::Missing;
 }
 
-bool LocalTaskManager::getTask(const std::string& taskID, std::shared_ptr<Task>& task)
+bool LocalTaskManager::getTask(const std::string& taskID, std::shared_ptr<Task>& task) const
 {
     return taskScheduler.getTask(taskID, task);
 }
 
-void LocalTaskManager::getTasks(std::vector<std::shared_ptr<Task>>& tasks)
+void LocalTaskManager::getTasks(std::vector<std::shared_ptr<Task>>& tasks) const
 {
     taskScheduler.getTasks(tasks);
 }

@@ -8,6 +8,7 @@
 #include <sti/device/ChannelManager.h>
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/ProfileManager.h>
+#include <sti/device/TaskManager.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/utils/MixedValue.h>
 // #include "EventEngineSchedulerPy.h"
@@ -161,6 +162,17 @@ std::shared_ptr<ProfileManager> DevicePy::getProfileManager()
 
     if (device_ != 0) {
         device_->getProfileManager(manager);
+    }
+
+    return manager;
+}
+
+std::shared_ptr<STI::Device::TaskManager> DevicePy::getTaskManager()
+{
+    std::shared_ptr<STI::Device::TaskManager> manager;
+
+    if (device_ != 0) {
+        device_->getTaskManager(manager);
     }
 
     return manager;

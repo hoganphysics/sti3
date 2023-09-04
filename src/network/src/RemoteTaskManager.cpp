@@ -25,7 +25,7 @@ RemoteTaskManager::~RemoteTaskManager()
 }
 
 
-void RemoteTaskManager::getTaskIDs(std::set<std::string>& ids)
+void RemoteTaskManager::getTaskIDs(std::set<std::string>& ids) const
 {
 	std::unique_lock<std::mutex> taskLock(taskMutex);
 
@@ -51,7 +51,7 @@ void RemoteTaskManager::getTaskIDs(std::set<std::string>& ids)
 	}
 }
 
-TaskStatus RemoteTaskManager::getTaskStatus(const std::string& taskID)
+TaskStatus RemoteTaskManager::getTaskStatus(const std::string& taskID) const
 {
 	std::unique_lock<std::mutex> taskLock(taskMutex);
 
@@ -93,7 +93,7 @@ void RemoteTaskManager::setStatus(const std::string& taskID, const STI::Utils::T
 }
 
 
-bool RemoteTaskManager::getTask(const std::string& id, std::shared_ptr<Task>& task)
+bool RemoteTaskManager::getTask(const std::string& id, std::shared_ptr<Task>& task) const
 {
 	std::unique_lock<std::mutex> taskLock(taskMutex);
 
@@ -111,7 +111,7 @@ bool RemoteTaskManager::getTask(const std::string& id, std::shared_ptr<Task>& ta
         if (success) {
             auto remoteTask = std::dynamic_pointer_cast<RemoteTask>(task);
             if (remoteTask) {
-                remoteTask->attachManager(this);
+                remoteTask->attachManager(const_cast<RemoteTaskManager*>(this)); //because function is const, but RemoteTask needs a link
             }
         }
 
@@ -126,7 +126,7 @@ bool RemoteTaskManager::getTask(const std::string& id, std::shared_ptr<Task>& ta
 	return success && (task != 0);
 }
 
-void RemoteTaskManager::getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks)
+void RemoteTaskManager::getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const
 {
 	std::unique_lock<std::mutex> taskLock(taskMutex);
 
@@ -142,7 +142,7 @@ void RemoteTaskManager::getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>&
         for (auto& task : tasks) {
             auto remoteTask = std::dynamic_pointer_cast<RemoteTask>(task);
             if (remoteTask) {
-                remoteTask->attachManager(this);
+                remoteTask->attachManager(const_cast<RemoteTaskManager*>(this));	//because function is const, but RemoteTask needs a link
             }
         }
 	}

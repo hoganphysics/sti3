@@ -24,12 +24,12 @@ public:
     RemoteTaskManager(::STI::TNetwork::TTaskManager_ptr manager);
     ~RemoteTaskManager();
 
-    void getTaskIDs(std::set<std::string>& ids);
+    void getTaskIDs(std::set<std::string>& ids) const;
 
-    STI::Utils::TaskStatus getTaskStatus(const std::string& taskID);
+    STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const;
 
-    bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task);
-    void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks);
+    bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task) const;
+    void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const;
 
 	void removeTask(const std::string& taskID);
 	void clear();

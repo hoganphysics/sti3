@@ -21,12 +21,12 @@ public:
 
     virtual ~TaskManager() {}
 
-    virtual void getTaskIDs(std::set<std::string>& ids) = 0;
+    virtual void getTaskIDs(std::set<std::string>& ids) const = 0;
     
-    virtual STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) = 0;
+    virtual STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const= 0;
 
-    virtual bool getTask(const std::string& taskID, std::shared_ptr<STI::Utils::Task>& task) = 0;
-    virtual void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) = 0;
+    virtual bool getTask(const std::string& taskID, std::shared_ptr<STI::Utils::Task>& task) const= 0;
+    virtual void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const = 0;
 
 	virtual void removeTask(const std::string& taskID) = 0;
 	virtual void clear() = 0;

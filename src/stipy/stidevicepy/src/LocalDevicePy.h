@@ -70,6 +70,11 @@ public:
         return attribute;
     }
 
+    void addTask(const std::shared_ptr<STI::Utils::Task>& task)
+    {
+        device->addTask(task);
+    }
+
 
 private:
 

@@ -143,6 +143,7 @@ pybind11_add_module(stipybase MODULE
     ShotConfig_wrap.cpp
     ShotResult_wrap.cpp
     StackTrace_wrap.cpp
+    Task_wrap.cpp
 )
 
 add_dependencies(stipybase sticommonpy stidevice stinetwork)
@@ -212,6 +213,7 @@ pybind11_add_module(stidevicepy
     SynchronousEvent_wrap.cpp
     SynchronousEventPy.cpp
     SynchronousEventPyManager.cpp
+    TaskManager_wrap.cpp
 )	
 
 add_dependencies(stidevicepy stipybase)

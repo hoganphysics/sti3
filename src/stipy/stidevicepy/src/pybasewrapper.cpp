@@ -35,6 +35,7 @@ void init_Profile(py::module& m);
 void init_LogID(py::module& m);
 void init_LogRecord(py::module& m);
 
+void init_Task(py::module& m);
 
 void init_RawEventGroup(py::module& m);
 
@@ -75,6 +76,8 @@ PYBIND11_MODULE(stipybase, m) {
 
     init_LogID(m);
     init_LogRecord(m);
+
+    init_Task(m);
 }
 
 int main(int argc, char* argv[])

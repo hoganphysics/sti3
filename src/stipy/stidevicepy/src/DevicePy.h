@@ -46,6 +46,7 @@ public:
     std::shared_ptr<AttributeManagerPy> getAttributeManager();
     std::shared_ptr<PersistenceManagerPy> getPersistenceManager();
     std::shared_ptr<STI::Device::ProfileManager> getProfileManager();
+    std::shared_ptr<STI::Device::TaskManager> getTaskManager();
     std::shared_ptr<STI::Device::LogManager> getLogManager();
 
     bool write(short channel, const pybind11::object& value);

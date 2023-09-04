@@ -13,6 +13,7 @@
 #include "PersistenceManagerPy.h"
 #include <sti/engine/EngineID.h>
 #include "SynchronousEventPy.h"
+#include <sti/device/TaskManager.h>
 
 #include <memory>
 
@@ -44,6 +45,7 @@ void init_Device(py::module& m)
         .def("getAttributeManager", &DevicePy::getAttributeManager)
         .def("getPersistenceManager", &DevicePy::getPersistenceManager)
         .def("getProfileManager", &DevicePy::getProfileManager)
+        .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
 
         .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
