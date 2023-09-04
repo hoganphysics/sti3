@@ -235,3 +235,7 @@ void LocalFileHolder::serialize(Archive& archive)
 template void LocalFileHolder::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void LocalFileHolder::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
+template void LocalFileHolder::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
+template void LocalFileHolder::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+
+

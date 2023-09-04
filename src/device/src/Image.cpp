@@ -221,6 +221,10 @@ void Image::save(Archive& archive) const
 
 template void Image::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
 
+template void Image::save<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& ) const;
+
+
+
 template<class Archive>
 void Image::load(Archive& archive)
 {
@@ -240,4 +244,6 @@ void Image::load(Archive& archive)
 }
 
 template void Image::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
+
+template void Image::load<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
 

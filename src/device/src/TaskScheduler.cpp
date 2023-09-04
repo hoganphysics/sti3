@@ -120,6 +120,15 @@ void TaskScheduler::clear()
 {
 	std::unique_lock<std::mutex> writeLock(schedulerMutex);
 
+	std::vector<std::shared_ptr<Task>> allTasks;
+	tasks.getValues(allTasks);
+	
+	for (auto& task : allTasks) {
+		if (task != 0) {
+			task->setStatus(TaskStatus::Inactive);
+		}
+	}
+
 	tasks.clear();
 	activeTasks.clear();
 

@@ -23,6 +23,16 @@ public:
     std::map<std::string, std::string> attributeData;
     std::map<short, STI::Utils::MixedValue> channelData;
 
+    template<class Archive>
+	void serialize(Archive& archive);
+};
+
+struct Profiles
+{
+    std::vector<std::shared_ptr<Profile>> profiles;
+
+    template<class Archive>
+	void serialize(Archive& archive);
 };
 
 } //Device

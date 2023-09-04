@@ -5,10 +5,13 @@
 #include <sti/device/ProfileManager.h>
 #include <sti/utils/SynchronizedMap.h>
 
+#include "PersistenceTarget.h"
+
 #include <vector>
 #include <string>
 #include <set>
 #include <memory>
+#include <functional>
 
 
 namespace STI
@@ -18,7 +21,8 @@ namespace Device
 
 class ProfileTarget;
 
-class LocalProfileManager : public ProfileManager
+class LocalProfileManager : public ProfileManager,
+                            public PersistenceTarget
 {
 public:
 
@@ -35,6 +39,14 @@ public:
     bool saveCurrentProfile(const std::string& name, const ProfileType& type, bool saveDependentDevices);
 
 private:
+
+    //PersistenceTarget
+    std::string getFilename();
+    void setPersistenceCallback(const std::function<void(void)>& refresher);
+    bool save(const std::string& filename);
+    void load(const std::string& filename);
+
+    std::function<void(void)> persistenceRefresher;
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Profile>> profileMap;
 

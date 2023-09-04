@@ -725,3 +725,6 @@ void MixedValue::serialize(Archive& archive)
 template void MixedValue::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void MixedValue::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
+template void MixedValue::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
+template void MixedValue::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+

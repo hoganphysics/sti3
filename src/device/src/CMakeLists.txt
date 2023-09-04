@@ -112,6 +112,7 @@ add_library(stidevice SHARED
     ParseTicket.cpp  
     PartnerDevice.cpp
     PersistenceTargetHolder.cpp
+    Profile.cpp
     LocalProfileManager.cpp
     RawEvent.cpp
     RawEventGroup.cpp

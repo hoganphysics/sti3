@@ -3,6 +3,6 @@
 
 
 #include <sti/extern/cereal/archives/xml.hpp>
-
+#include <sti/extern/cereal/archives/json.hpp>
 
 #endif

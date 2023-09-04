@@ -95,3 +95,6 @@ void BinaryData::serialize(Archive& archive)
 
 template void BinaryData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void BinaryData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+
+template void BinaryData::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
+template void BinaryData::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );

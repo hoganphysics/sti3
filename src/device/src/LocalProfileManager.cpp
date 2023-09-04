@@ -6,6 +6,16 @@
 
 #include <iostream>
 
+#include "CerealArchives.h"
+#include <cereal/types/common.hpp>
+#include <cereal/types/vector.hpp>
+
+#include <algorithm>
+#include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
+
+
 using STI::Device::LocalProfileManager;
 using STI::Device::Profile;
 using STI::Device::ProfileType;
@@ -46,6 +56,7 @@ bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)
 	if (!profileMap.add(profile->name, profile)) return false;	// failed to add
 
 	//save to disk
+	persistenceRefresher();
 
 	return true;
 }
@@ -93,6 +104,7 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 	}
 
 	//save to disk
+	persistenceRefresher();
 
 	if (saveDependentDevices && deviceCollection != 0) {
 		std::set<DeviceID> ids;
@@ -114,5 +126,50 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 
 	return success;
 
+}
+
+
+std::string LocalProfileManager::getFilename()
+{
+	return "profiles.json";
+}
+
+void LocalProfileManager::setPersistenceCallback(const std::function<void(void)>& refresher)
+{
+	persistenceRefresher = refresher;
+}
+
+bool LocalProfileManager::save(const std::string& filename)
+{
+	std::ofstream file( filename );
+    // cereal::XMLOutputArchive archive( file );
+	cereal::JSONOutputArchive archive( file );
+
+	STI::Device::Profiles profiles;
+	profileMap.getValues(profiles.profiles);
+
+    archive(profiles);
+
+	return true;
+}
+
+
+void LocalProfileManager::load(const std::string& filename)
+{
+	fs::path profilePath = filename;
+	if (!fs::exists(profilePath)) return;
+
+	std::ifstream file( filename );
+    // cereal::XMLOutputArchive archive( file );
+	cereal::JSONInputArchive archive( file );
+
+	STI::Device::Profiles profiles;
+    archive(profiles);
+
+	for (auto& profile : profiles.profiles) {
+		if (profile != 0) {
+			profileMap.add(profile->name, profile);
+		}
+	}
 }
 

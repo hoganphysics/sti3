@@ -128,6 +128,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
+	localPersistenceManager->addPersistenceTarget(localProfileManager);
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
 

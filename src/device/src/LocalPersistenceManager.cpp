@@ -91,7 +91,7 @@ void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<Persist
         // std::filesystem::path filename(getBasePath());
         // filename /= (target->getFilenameStem() + ".ini");
 
-        auto holder = std::make_shared<PersistenceTargetHolder>(target);
+        auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
         persistenceTargetHolders.push_back(holder);
     }
 }
@@ -100,7 +100,7 @@ void LocalPersistenceManager::loadPersistenceTargets()
 {
     for (auto& holder : persistenceTargetHolders) {
         if (holder != 0) {
-            holder->load(getBasePath());
+            holder->load();
         }
     }
 }
