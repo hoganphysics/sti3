@@ -59,6 +59,10 @@ void RemoteLogManager::getLogNames(std::set<std::string>& names)
 	}
 }
 
+int RemoteLogManager::getLogCount(const LogFileFilter& filter)
+{
+	return getLogCount(remoteDeviceID, filter);
+}
 
 int RemoteLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& filter)
 {

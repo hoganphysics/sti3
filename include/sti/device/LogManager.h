@@ -28,6 +28,7 @@ public:
 
     virtual void getLogNames(std::set<std::string>& names) = 0;
 
+    virtual int getLogCount(const LogFileFilter& filter) = 0;
     virtual int getLogCount(const DeviceID& deviceID, const LogFileFilter& filter) = 0;
     virtual void getLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids) = 0;
     virtual void getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids) = 0;

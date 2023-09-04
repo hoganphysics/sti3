@@ -16,7 +16,7 @@ using STI::Device::LogFileFilter;
 using STI::Device::LogID;
 using STI::Device::LogFile;
 using STI::Device::LogRecord;
-
+using STI::Device::DeviceID;
 
 
 void init_LogManager(py::module& m)
@@ -59,7 +59,10 @@ void init_LogManager(py::module& m)
                 self.getLogNames(names);
                 return names;
             })
-        .def("getLogCount", &LogManager::getLogCount, py::arg("deviceID"), py::arg("filter"))
+        .def("getLogCount", py::overload_cast<const LogFileFilter&>(&LogManager::getLogCount), 
+                py::arg("filter"))
+        .def("getLogCount", py::overload_cast<const DeviceID&, const LogFileFilter&>(&LogManager::getLogCount), 
+                py::arg("deviceID"), py::arg("filter"))
         .def("getLogIDs", 
             [](LogManager& self, const LogFileFilter& filter) {
                 std::vector<LogID> ids;

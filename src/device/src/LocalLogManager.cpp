@@ -136,6 +136,11 @@ void LocalLogManager::getLogNames(std::set<std::string>& names)
     loggers.getKeys(names);
 }
 
+int LocalLogManager::getLogCount(const LogFileFilter& filter)
+{
+    return getLogCount(localDevice->getID(), filter);
+}
+
 int LocalLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& filter)
 {
     auto date = TimeStamp::fromString(filter.startDate);
@@ -148,7 +153,15 @@ int LocalLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& 
         getLogCounts(date, deviceID, counts);
         date.add_day();
     } while (date <= endDate);
-    // } while (!date.isSameDate(endDate));
+
+    if (filter.logName == "*") {
+        //match any
+        int total = 0;
+        for (auto& m : counts) {
+            total += m.second;
+        }
+        return total;
+    }
 
     if (counts.find(filter.logName) != counts.end()) {
         return counts[filter.logName];
@@ -260,15 +273,27 @@ void LocalLogManager::getLogIDs(const DeviceID& deviceID, const LogFileFilter& f
     auto date = TimeStamp::fromString(filter.startDate);
     auto endDate = TimeStamp::fromString(filter.endDate);
 
+    std::set<std::string> logNames;
+    if (filter.logName == "*") {
+        //match all logNames
+        loggers.getKeys(logNames);
+    }
+    else {
+        logNames.insert(filter.logName);
+    }
+
     do {
-        getLogIDs(date, deviceID, filter.logName, filter.startIndex, filter.endIndex, ids);
+        for (auto& logName : logNames) {
+            getLogIDs(date, deviceID, logName, filter.startIndex, filter.endIndex, ids);
+        }
         date.add_day();
-    } while (!date.isSameDate(endDate));
+    } while (date <= endDate);
+    // } while (!date.isSameDate(endDate));
 }
 
 void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids)
 {
-    ids.clear();
+    // ids.clear();
 
     std::shared_ptr<LogRecordFile> recordFile;
     

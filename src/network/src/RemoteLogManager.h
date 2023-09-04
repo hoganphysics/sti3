@@ -24,6 +24,7 @@ public:
 
     void getLogNames(std::set<std::string>& names);
 
+    int getLogCount(const STI::Device::LogFileFilter& filter);
     int getLogCount(const STI::Device::DeviceID& deviceID, const STI::Device::LogFileFilter& filter);
     void getLogIDs(const STI::Device::LogFileFilter& filter, std::vector<STI::Device::LogID>& ids);
     void getLogIDs(const STI::Device::DeviceID& deviceID, const STI::Device::LogFileFilter& filter, std::vector<STI::Device::LogID>& ids);

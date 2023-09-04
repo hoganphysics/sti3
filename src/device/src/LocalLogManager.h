@@ -36,6 +36,7 @@ public:
 
     void getLogNames(std::set<std::string>& names);
 
+    int getLogCount(const LogFileFilter& filter);
     int getLogCount(const DeviceID& deviceID, const LogFileFilter& filter);
     void getLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids);
     void getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids);
