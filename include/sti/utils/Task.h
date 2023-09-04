@@ -1,6 +1,9 @@
 #ifndef STI_UTILS_TASK_H
 #define STI_UTILS_TASK_H
 
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/MetaData.h>
+
 #include <mutex>
 
 
@@ -9,23 +12,29 @@ namespace STI
 namespace Utils
 {
 
-enum class TaskStatus { Active, Inactive };
+enum class TaskStatus { Active, Inactive, Missing };
 
+class Task;
 
 class Task
 {
 public:
 	
 	Task(const std::string& id);
+	Task(const std::string& id, const STI::Utils::MixedValue& metaData);
 	virtual ~Task() {}
 
 	bool operator<(const Task& rhs) const;
 	bool operator==(const Task& rhs) const;
 
 	std::string getID() const;
-	bool isActive() const;
-	TaskStatus getStatus() const;
-	void setStatus(const TaskStatus& newStatus);
+	virtual bool isActive() const;
+	virtual TaskStatus getStatus() const;
+	virtual void setStatus(const TaskStatus& newStatus);
+
+	const STI::Utils::MixedValue& getMetaData() const;
+	STI::Utils::MixedValue getMetaData(const std::string& key) const;
+	Task& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
 
 	virtual bool isReadyToRun();		//allows for unscheduled task abort
 
@@ -38,6 +47,7 @@ private:
 	
 	std::string taskID;
 	TaskStatus status;
+	STI::Utils::MetaData metaData;
 
 	mutable std::mutex taskMutex;
 };

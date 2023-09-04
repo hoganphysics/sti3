@@ -25,7 +25,6 @@ TProfileManager_i::~TProfileManager_i()
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
-
 void TProfileManager_i::getProfiles(::STI::TNetwork::TStringSeq_out names)
 {
     STI::TNetwork::TStringSeq_var tStringSeq_var(new STI::TNetwork::TStringSeq);

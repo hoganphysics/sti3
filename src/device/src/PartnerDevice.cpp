@@ -3,6 +3,7 @@
 #include <sti/LocalDevice.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/device/ProfileManager.h>
+#include <sti/device/TaskManager.h>
 
 using STI::Device::PartnerDevice;
 using STI::Device::LocalDevice;
@@ -93,6 +94,14 @@ bool PartnerDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
 {
 	if (device != 0) {
 		return device->getProfileManager(manager);
+	}
+	return false;
+}
+
+bool PartnerDevice::getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager)
+{
+	if (device != 0) {
+		return device->getTaskManager(manager);
 	}
 	return false;
 }

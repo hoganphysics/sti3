@@ -10,6 +10,7 @@
 #include "RemotePersistenceManager.h"
 #include "RemoteProfileManager.h"
 #include "RemoteLogManager.h"
+#include "RemoteTaskManager.h"
 
 
 using STI::Network::RemoteDevice;
@@ -413,6 +414,43 @@ bool RemoteDevice::getProfileManager(std::shared_ptr<STI::Device::ProfileManager
 	}
 
 	manager = remoteProfileManager;
+	return (manager != 0);
+}
+
+bool RemoteDevice::getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager)
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remoteTaskManager)) {
+		manager = remoteTaskManager;
+		return (manager != 0);
+	}
+	else if (remoteTaskManager != 0) {
+		//non-null but not live for some reason; disable
+		remoteTaskManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TTaskManager_var tTaskManager;	//remote reference
+
+	try {
+		tTaskManager = getTRef()->getTaskManager();	//remote call
+
+		if (!CORBA::is_nil(tTaskManager)) {
+			remoteTaskManager = std::make_shared<RemoteTaskManager>(tTaskManager);
+			addDependent(remoteTaskManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remoteTaskManager;
 	return (manager != 0);
 }
 

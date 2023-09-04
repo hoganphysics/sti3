@@ -28,6 +28,7 @@ class RemoteChannelManager;
 class RemoteAttributeManager;
 class RemotePersistenceManager;
 class RemoteProfileManager;
+class RemoteTaskManager;
 class RemoteLogManager;
 
 
@@ -54,6 +55,7 @@ public:
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager);
+	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
@@ -87,6 +89,7 @@ private:
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
 	std::shared_ptr<RemoteProfileManager> remoteProfileManager;
+	std::shared_ptr<RemoteTaskManager> remoteTaskManager;
 	std::shared_ptr<RemoteLogManager> remoteLogManager;
 
 	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;

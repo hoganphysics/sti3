@@ -12,6 +12,7 @@
 #include "TPersistenceManager_i.h"
 #include "TProfileManager_i.h"
 #include "TLogManager_i.h"
+#include "TTaskManager_i.h"
 
 #include <memory>
 
@@ -38,6 +39,7 @@ public:
 	TAttributeManager_ptr getAttributeManager();
 	TPersistenceManager_ptr getPersistenceManager();
 	TProfileManager_ptr getProfileManager();
+	TTaskManager_ptr getTaskManager();
 	TLogManager_ptr getLogManager();
 	TDeviceID* getID();
 
@@ -51,6 +53,7 @@ private:
 	TAttributeManager_i attributeManagerServant;
 	TPersistenceManager_i persistenceManagerServant;
 	TProfileManager_i profileManagerServant;
+	TTaskManager_i taskManagerServant;
 	TLogManager_i logManagerServant;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.

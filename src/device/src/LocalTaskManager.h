@@ -10,6 +10,7 @@
 #include <string>
 #include <set>
 #include <memory>
+#include <functional>
 
 
 namespace STI
@@ -27,6 +28,8 @@ public:
     ~LocalTaskManager();
 
     void getTaskIDs(std::set<std::string>& ids);
+    STI::Utils::TaskStatus getTaskStatus(const std::string& taskID);
+
     bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task);
     void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks);
 
@@ -37,7 +40,11 @@ public:
 	void activateTask(const std::string& taskID);
 	void deactivateTask(const std::string& taskID);
 
+    void runTask(const std::string& taskID);
+
 private:
+
+    STI::Utils::TaskScheduler taskScheduler;
 
     //PersistenceTarget
     std::string getFilename();
@@ -46,7 +53,25 @@ private:
     bool save(const std::string& filename);
     void load(const std::string& filename);
 
-	STI::Utils::TaskScheduler taskScheduler;
+    std::function<void(void)> persistenceRefresher;
+
+    //Persistence
+    struct StoredTask
+    {
+        std::string taskID;
+        STI::Utils::TaskStatus status;
+
+        template<class Archive>
+	    void serialize(Archive& archive);
+    };
+
+    struct StoredTasks
+    {
+        std::vector<StoredTask> tasks;
+
+        template<class Archive>
+        void serialize(Archive& archive);
+    };
 
 };
 

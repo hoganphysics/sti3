@@ -72,6 +72,11 @@ public:
 		return localDevice != 0 && localDevice->getProfileManager(manager);
 	}
 
+	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager)
+	{
+		return localDevice != 0 && localDevice->getTaskManager(manager);
+	}
+	
 	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager)
 	{
 		return localDevice != 0 && localDevice->getLogManager(manager);

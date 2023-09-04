@@ -90,7 +90,6 @@ TEventEngineScheduler_i::~TEventEngineScheduler_i()
 }
 
 
-
 TParseJobStatus* TEventEngineScheduler_i::parse(const ::STI::TNetwork::TShot& shot)
 {
 	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);

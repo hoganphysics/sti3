@@ -7,6 +7,7 @@
 
 #include "orbTypes.idl"
 #include "logsNet.idl"
+#include "tasks.idl"
 
 module STI
 {
@@ -246,6 +247,8 @@ module TNetwork
 	};
 
 
+	interface TTaskManager;
+
 	interface TLogManager
 	{
 		void getLogNames(out TStringSeq names);
@@ -288,6 +291,7 @@ module TNetwork
 		TAttributeManager getAttributeManager();
 		TPersistenceManager getPersistenceManager();
 		TProfileManager getProfileManager();
+		TTaskManager getTaskManager();
 		TLogManager getLogManager();
 	};
 

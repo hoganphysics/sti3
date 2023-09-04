@@ -2,7 +2,7 @@
 
 cd idl/
 
-files="deviceNet.idl logsNet.idl orbTypes.idl"
+files="deviceNet.idl logsNet.idl tasks.idl orbTypes.idl"
 
 # echo ${files}
 

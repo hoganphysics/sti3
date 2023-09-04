@@ -79,6 +79,7 @@ add_library(stinetwork SHARED
     convert/Convert_SequenceResult.cpp
     convert/Convert_ShotResult.cpp
     convert/Convert_StackTrace.cpp
+    convert/Convert_Task.cpp
 
     generated/deviceNet.cpp
     generated/deviceNetDynSK.cpp
@@ -86,6 +87,8 @@ add_library(stinetwork SHARED
     generated/logsNetDynSK.cpp
     generated/orbTypes.cpp
     generated/orbTypesDynSK.cpp
+    generated/tasks.cpp
+    generated/tasksDynSK.cpp
 
     COSBindingNode.cpp
     NetworkConvert.cpp
@@ -117,6 +120,8 @@ add_library(stinetwork SHARED
     RemotePersistenceManager.cpp
     RemoteProfileManager.cpp
     RemoteResultsCollector.cpp
+    RemoteTask.cpp
+    RemoteTaskManager.cpp
     RemoteShot.cpp
     #RemoteShotRepository.cpp
     RemoteTriggerCallback.cpp
@@ -137,6 +142,7 @@ add_library(stinetwork SHARED
     TRefreshIndicator_i.cpp
     TResultsCollector_i.cpp
     TShotCallback_i.cpp
+    TTaskManager_i.cpp
     #TShotRepository_i.cpp
     TTriggerCallback_i.cpp
 )

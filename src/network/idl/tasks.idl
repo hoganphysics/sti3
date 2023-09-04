@@ -1,0 +1,49 @@
+#ifndef STI_TNETWORK_TASKS_IDL
+#define STI_TNETWORK_TASKS_IDL
+
+//IDL for STI asynchronous tasks
+
+#include "orbTypes.idl"
+
+module STI
+{
+module TNetwork
+{
+    enum TTaskStatus { TaskActive, TaskInactive, TaskMissing };
+
+    struct TTask
+    {
+        string taskID;
+        TTaskStatus status;
+        TMixedValue metaData;
+    };
+    typedef sequence<TTask> TTaskSeq;
+
+
+    interface TTaskManager
+    {
+        void getTaskIDs(out TStringSeq ids);
+
+        TTaskStatus getTaskStatus(in string taskID);
+
+        void setStatus(in string taskID, in TTaskStatus newStatus);
+
+        boolean getTask(in string taskID, out TTask task);
+        void getTasks(out TTaskSeq tasks);
+
+        void removeTask(in string taskID);
+        void clear();
+
+        void activateTask(in string taskID);
+        void deactivateTask(in string taskID);
+
+        void runTask(in string taskID);
+
+        boolean ping();
+    };
+
+};	//TNetwork
+};	//STI
+
+#endif
+

@@ -106,14 +106,8 @@ void TaskScheduler::removeTask(const std::string& taskID)
 
 void TaskScheduler::removeTask_(const std::string& taskID)
 {
+	deactivateTask_(taskID);
 	tasks.remove(taskID);
-	auto it = findActiveTask(taskID);
-
-	if (it != activeTasks.end()) {
-		activeTasks.erase(it);
-	}
-
-	schedulerCondition.notify_all();
 }
 
 void TaskScheduler::clear()
@@ -175,8 +169,37 @@ void TaskScheduler::deactivateTask_(const std::string& taskID)
 	if (it != activeTasks.end()) {
 		activeTasks.erase(it);
 	}
+
+	schedulerCondition.notify_all();
 }
 
+void TaskScheduler::runNow(const std::string& taskID)
+{
+	std::unique_lock<std::mutex> taskLock(schedulerMutex);
+
+	std::shared_ptr<Task> task;
+	
+	if (getTask(taskID, task)) {
+		run(task);
+		schedulerCondition.notify_all();
+	}
+}
+
+void TaskScheduler::run(std::shared_ptr<Task>& task)
+{
+	if (task == 0) return;
+
+	if (task->isReadyToRun()) {
+		task->run();
+	}
+	else {
+		task->skipTask();
+	}
+
+	if (!task->repeat()) {
+		deactivateTask_(task->getID());
+	}
+}
 
 void TaskScheduler::taskLoop()
 {
@@ -194,17 +217,8 @@ void TaskScheduler::taskLoop()
 		//run tasks
 		for (auto& task : activeTasks) {
 			if (task != 0 && task->secondsToNextRun() <= 0) {
-				
-				if (task->isReadyToRun()) {
-					task->run();
-				}
-				else {
-					task->skipTask();
-				}
 
-				if (!task->repeat()) {
-					removeTask_(task->getID());
-				}
+				run(task);
 			}
 			else {
 				break;	//the rest of the tasks have positive waits

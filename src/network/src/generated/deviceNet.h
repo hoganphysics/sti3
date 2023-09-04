@@ -26,6 +26,10 @@
 #define __logsNet_hh_EXTERNAL_GUARD__
 #include <logsNet.h>
 #endif
+#ifndef __tasks_hh_EXTERNAL_GUARD__
+#define __tasks_hh_EXTERNAL_GUARD__
+#include <tasks.h>
+#endif
 
 
 
@@ -2357,6 +2361,32 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TProfileManager;
 
+#ifndef __STI_mTNetwork_mTTaskManager__
+#define __STI_mTNetwork_mTTaskManager__
+    class TTaskManager;
+    class _objref_TTaskManager;
+    class _impl_TTaskManager;
+    
+    typedef _objref_TTaskManager* TTaskManager_ptr;
+    typedef TTaskManager_ptr TTaskManagerRef;
+
+    class TTaskManager_Helper {
+    public:
+      typedef TTaskManager_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TTaskManager, TTaskManager_Helper> TTaskManager_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TTaskManager,TTaskManager_Helper > TTaskManager_out;
+
+#endif
+
 #ifndef __STI_mTNetwork_mTLogManager__
 #define __STI_mTNetwork_mTLogManager__
     class TLogManager;
@@ -2569,6 +2599,7 @@ _CORBA_MODULE_BEG
       TAttributeManager_ptr getAttributeManager();
       TPersistenceManager_ptr getPersistenceManager();
       TProfileManager_ptr getProfileManager();
+      TTaskManager_ptr getTaskManager();
       TLogManager_ptr getLogManager();
 
       // Constructors
@@ -2615,6 +2646,7 @@ _CORBA_MODULE_BEG
       virtual TAttributeManager_ptr getAttributeManager() = 0;
       virtual TPersistenceManager_ptr getPersistenceManager() = 0;
       virtual TProfileManager_ptr getProfileManager() = 0;
+      virtual TTaskManager_ptr getTaskManager() = 0;
       virtual TLogManager_ptr getLogManager() = 0;
       
     public:  // Really protected, workaround for xlC

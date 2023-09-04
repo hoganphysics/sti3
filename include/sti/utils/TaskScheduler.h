@@ -42,8 +42,12 @@ public:
 	bool getTask(const std::string& taskID, std::shared_ptr<Task>& task) const;
 	void getTasks(std::vector<std::shared_ptr<Task>>& tasks) const;
 
-private:
+	void runNow(const std::string& taskID);
 
+private:
+	
+	void run(std::shared_ptr<Task>& task);
+	
 	void removeTask_(const std::string& taskID);
 	void deactivateTask_(const std::string& taskID);
 
