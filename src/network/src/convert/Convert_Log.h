@@ -7,6 +7,7 @@
 #include "generated/orbTypes.h"
 
 #include <sti/device/LogFile.h>
+#include <sti/device/LogFileFilter.h>
 #include <sti/device/LogRecord.h>
 
 #include <memory>

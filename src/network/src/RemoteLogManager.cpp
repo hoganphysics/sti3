@@ -76,7 +76,7 @@ int RemoteLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter&
 		auto result = getTRef()->getLogCount(
                 convert<DeviceID, TDeviceID>(deviceID), 
                 convert<LogFileFilter, TLogFileFilter>(filter));	//remote call
-
+		
         count = static_cast<int>(result);
 	}
 	catch (CORBA::TRANSIENT&) {

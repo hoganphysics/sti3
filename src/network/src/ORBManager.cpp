@@ -311,7 +311,8 @@ void ORBManager::block()
 
 	signal(SIGINT, ORBManager::signal_callback_handler);
 
-	signal(SIGPIPE, SIG_IGN);	//ignore SIGPIPE signals
+	//ignore SIGPIPE signals
+	signal(13, SIG_IGN);	//Note SIGPIPE=13 in linux; not defined in windows
 	// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
 
 	while (blocking_) {
@@ -348,7 +349,8 @@ void ORBManager::shutdown()
 
 		orb->shutdown(true);
 
-		signal(SIGPIPE, SIG_IGN);	//ignore SIGPIPE signals
+		//ignore SIGPIPE signals
+		signal(13, SIG_IGN);	//Note SIGPIPE=13 in linux; not defined in windows
 		// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
 
 		// orb->destroy() causes error
