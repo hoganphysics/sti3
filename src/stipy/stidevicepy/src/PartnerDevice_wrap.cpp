@@ -24,7 +24,7 @@ using STI::Engine::RawEventTargetChannel;
 void init_PartnerDevice(py::module& m) 
 {
 
-    py::class_<PartnerDevicePy, DevicePy>(m, "PartnerDevice") 
+    py::class_<PartnerDevicePy, DevicePy, std::shared_ptr<PartnerDevicePy>>(m, "PartnerDevice") 
 
         .def("addEvent", 
             py::overload_cast<const RawEvent&, const RawEvent&>(&PartnerDevicePy::addEvent), 
@@ -37,7 +37,7 @@ void init_PartnerDevice(py::module& m)
             py::overload_cast<double, const RawEventTargetChannel&, const pybind11::object&, const STI::Engine::RawEventType&, const RawEvent&>
                 (&PartnerDevicePy::addEvent), 
             py::arg("time"), py::arg("channel"), py::arg("value"), py::arg("eventType"), py::arg("referenceEvent"))
-            
+
         ;
 
 }
