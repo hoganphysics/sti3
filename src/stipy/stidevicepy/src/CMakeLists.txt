@@ -86,6 +86,7 @@ add_library(sticommonpy STATIC
     DeviceCollectionPy.cpp
     DevicePy.cpp
     MixedValuePy.cpp
+    PartnerDevicePy.cpp
     PersistenceManagerPy.cpp
     ProfilePy.cpp
     # StackTracePy.cpp
@@ -206,7 +207,7 @@ pybind11_add_module(stidevicepy
     
     LogManager_wrap.cpp
     # LocalShotPy.cpp
-    
+    PartnerDevice_wrap.cpp
     PersistenceManager_wrap.cpp
     ProfileManager_wrap.cpp
     pywrapper.cpp

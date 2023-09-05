@@ -73,7 +73,10 @@ void init_LocalDevice(py::module& m)
         .def("addChannel", 
             py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
             py::arg("channelNumber"), py::arg("type"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))
-        .def("addPartner", &LocalDevicePy::addPartner, py::arg("deviceID"))
+        .def("addPartner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::addPartner), 
+                py::arg("deviceID"))
+        .def("addPartner", py::overload_cast<const STI::Device::DeviceID&, const std::string&>(&LocalDevicePy::addPartner), 
+                py::arg("deviceID"), py::arg("alias"))
         .def("addEventTarget", &LocalDevicePy::addEventTarget, py::arg("deviceID"))
         .def("addEventEngine", py::overload_cast<const STI::Engine::EngineID&>(&LocalDevicePy::addEventEngine), py::arg("engineID"))
 
@@ -91,6 +94,9 @@ void init_LocalDevice(py::module& m)
         .def("log", py::overload_cast<>(&LocalDevicePy::log))
         .def("log", py::overload_cast<const std::string&>(&LocalDevicePy::log), py::arg("name"))
         
+        .def("partner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::partner), py::arg("deviceID"))
+        .def("partner", py::overload_cast<const std::string&>(&LocalDevicePy::partner), py::arg("alias"))
+
         ;
 
 }

@@ -24,6 +24,7 @@ void init_SynchronousEvent(py::module& m);
 
 void init_Device(py::module& m);
 void init_LocalDevice(py::module& m);
+void init_PartnerDevice(py::module& m);
 void init_DeviceCollection(py::module& m);
 void init_EventEngineScheduler(py::module& m);
 
@@ -55,6 +56,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_DeviceCollection(m);
     init_SynchronousEvent(m);
     init_Device(m);
+    init_PartnerDevice(m);
     init_LocalDevice(m);
 //    init_RawEvent(m);
     

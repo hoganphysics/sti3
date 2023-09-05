@@ -3,6 +3,7 @@
 
 #include <sti/LocalDevice.h>
 #include "DevicePy.h"
+#include "PartnerDevicePy.h"
 #include <sti/device/DeviceID.h>
 
 #include <memory>
@@ -51,6 +52,11 @@ public:
         device->addPartner(id);
     }
     
+    void addPartner(const STI::Device::DeviceID& id, const std::string& alias)
+    {
+        device->addPartner(id, alias);
+    }
+
     void addEventTarget(const STI::Device::DeviceID& id)
     {
         device->addEventTarget(id);
@@ -79,12 +85,23 @@ public:
     {
         return device->log();
     }
-    
+
     STI::Device::Logger& log(const std::string& name)
     {
         return device->log(name);
     }
 
+	PartnerDevicePy partner(const STI::Device::DeviceID& id)
+    {
+        PartnerDevicePy partner(device->partner(id));
+        return partner;
+    }
+
+	PartnerDevicePy partner(const std::string& alias)
+    {
+        PartnerDevicePy partner(device->partner(alias));
+        return partner;
+    }
 
 private:
 
