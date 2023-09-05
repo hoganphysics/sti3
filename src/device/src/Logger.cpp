@@ -48,6 +48,10 @@ Logger::~Logger()
 
 }
 
+std::string Logger::getName() const
+{
+    return name;
+}
 
 void Logger::addLogTask(const std::string& timeInterval, const std::function<std::string(void)>& runFunc)
 {

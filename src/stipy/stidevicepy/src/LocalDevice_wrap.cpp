@@ -87,6 +87,9 @@ void init_LocalDevice(py::module& m)
                 py::return_value_policy::reference, py::arg("key"), py::arg("initialValue"), py::arg("allowedValues"))
 
         .def("addTask", &LocalDevicePy::addTask, py::arg("task"))
+
+        .def("log", py::overload_cast<>(&LocalDevicePy::log))
+        .def("log", py::overload_cast<const std::string&>(&LocalDevicePy::log), py::arg("name"))
         
         ;
 

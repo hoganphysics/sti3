@@ -35,6 +35,8 @@ public:
     Logger(const std::string& name, LocalLogManager* manager);
     ~Logger();
 
+    std::string getName() const;
+
     void addLogTask(const std::string& timeInterval, const std::function<std::string(void)>& runFunc);
     void addReadLogTask(short channel, const std::string& timeInterval);
 

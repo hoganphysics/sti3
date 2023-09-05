@@ -75,6 +75,16 @@ public:
         device->addTask(task);
     }
 
+    STI::Device::Logger& log()
+    {
+        return device->log();
+    }
+    
+    STI::Device::Logger& log(const std::string& name)
+    {
+        return device->log(name);
+    }
+
 
 private:
 

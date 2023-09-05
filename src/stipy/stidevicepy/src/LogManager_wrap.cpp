@@ -2,6 +2,7 @@
 #include <sti/device/LogManager.h>
 #include <sti/device/LogFile.h>
 #include <sti/device/LogRecord.h>
+#include <sti/device/Logger.h>
 
 
 #include <sstream>
@@ -17,6 +18,7 @@ using STI::Device::LogID;
 using STI::Device::LogFile;
 using STI::Device::LogRecord;
 using STI::Device::DeviceID;
+using STI::Device::Logger;
 
 
 void init_LogManager(py::module& m)
@@ -42,15 +44,73 @@ void init_LogManager(py::module& m)
         ;
 
 
+    py::class_<Logger, std::shared_ptr<Logger>>(m, "Logger")
+        .def("name", &Logger::getName)
+        .def("addLogTask", 
+            [](std::shared_ptr<Logger>& self, const std::string& timeInterval, const std::function<std::string(void)>& runFunc) {
+                // Need to wrap python function reference in another lambda so we can release the GIL
+                // before calling back to python
+                auto gil_runFunc = [runFunc]() {
+                    std::string result = "";
+                    {
+                        pybind11::gil_scoped_release release;
+                        result = runFunc();
+                    }
+                    return result;
+                };
 
-    // virtual void getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids) = 0;
-    
-    // virtual bool getLog(const LogID& id, LogFile& logFile) = 0;
-    // virtual bool getLog(const std::string& name, const std::string& date, unsigned index, LogFile& logFile) = 0;
+                self->addLogTask(timeInterval, gil_runFunc);
 
-    // virtual bool getLogs(const LogFileFilter& filter, std::vector<LogFile>& files) = 0;
-    // virtual bool getLogs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogFile>& files) = 0;
+            }, py::arg("timeInterval"), py::arg("runFunc"))
+        .def("addReadLogTask", py::overload_cast<short, const std::string&>(&Logger::addReadLogTask), 
+                py::arg("channel"), py::arg("timeInterval"))
+        .def("addReadLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addReadLogTask), 
+                py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
+        
+        // .def("addReadLogTask",py::overload_cast<Logger&, short, const std::string&, const std::function<STI::Utils::MixedValue(void)>&>(
+        .def("addReadLogTask", (
+            [](std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<STI::Utils::MixedValue(void)>& runFunc) {
+                // Need to wrap python function reference in another lambda so we can release the GIL
+                // before calling back to python
+                auto gil_runFunc = [runFunc]() -> STI::Utils::MixedValue {
+                    STI::Utils::MixedValue result;
+                    {
+                        pybind11::gil_scoped_release release;
+                        result = runFunc();
+                    }
+                    return result;
+                };
 
+                self->addReadLogTask(channel, timeInterval, gil_runFunc);
+
+            }), py::arg("channel"), py::arg("timeInterval"), py::arg("runFunc"))
+
+
+        .def("addWriteLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addWriteLogTask), 
+                py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
+        .def("addWriteLogTask", (
+            [](std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<STI::Utils::MixedValue(void)>& runFunc) {
+                // Need to wrap python function reference in another lambda so we can release the GIL
+                // before calling back to python
+                auto gil_runFunc = [runFunc]() -> STI::Utils::MixedValue {
+                    STI::Utils::MixedValue result;
+                    {
+                        pybind11::gil_scoped_release release;
+                        result = runFunc();
+                    }
+                    return result;
+                };
+
+                self->addWriteLogTask(channel, timeInterval, gil_runFunc);
+
+            }), py::arg("channel"), py::arg("timeInterval"), py::arg("runFunc"))
+        .def("addAttributeLogTask", &Logger::addAttributeLogTask, py::arg("key"), py::arg("timeInterval"))
+        .def("append", 
+            [](std::shared_ptr<Logger>& self, const std::string& message) {
+                (*self) << message;
+                return self;
+            })
+        ;
 
     py::class_<LogManager, std::shared_ptr<LogManager>>(m, "LogManager")
         .def("getLogNames", 
