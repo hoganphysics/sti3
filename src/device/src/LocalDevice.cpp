@@ -114,6 +114,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localProfileManager->addProfileTarget(localAttributeManager);
 	localProfileManager->addProfileTarget(localChannelManager);
 	
+	localTaskManager = std::make_shared<LocalTaskManager>();
+
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
 	//temp for localPersistenceManager; TODO: expose to constructor
@@ -129,9 +131,10 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
 	localPersistenceManager->addPersistenceTarget(localProfileManager);
+	localPersistenceManager->addPersistenceTarget(localTaskManager);
+
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
-
 
 
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
@@ -196,8 +199,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
-
-	localTaskManager = std::make_shared<LocalTaskManager>();
+	
 	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
 
 }

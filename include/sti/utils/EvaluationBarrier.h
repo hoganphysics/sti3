@@ -27,7 +27,10 @@ public:
     // EvaluationBarrier
 
     EvaluationBarrier() : waiting(false) {}
-    ~EvaluationBarrier() {}
+    ~EvaluationBarrier() 
+    {
+        join();
+    }
     
     void wait(int waitTime_ms, const std::function<void(void)>& action)
     {
@@ -51,7 +54,7 @@ public:
 
             action();
         };
-
+        join();
         waitingThread = std::thread(delayedAction);
     }
 

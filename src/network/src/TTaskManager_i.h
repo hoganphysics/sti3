@@ -31,6 +31,7 @@ public:
     void activateTask(const char* taskID);
     void deactivateTask(const char* taskID);
     void runTask(const char* taskID);
+    ::CORBA::Float secondsToNextRun(const char* taskID);
     ::CORBA::Boolean ping();
 
 private:

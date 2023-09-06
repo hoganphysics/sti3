@@ -283,6 +283,7 @@ _CORBA_MODULE_BEG
       void activateTask(const char* taskID);
       void deactivateTask(const char* taskID);
       void runTask(const char* taskID);
+      ::CORBA::Float secondsToNextRun(const char* taskID);
       ::CORBA::Boolean ping();
 
       // Constructors
@@ -328,6 +329,7 @@ _CORBA_MODULE_BEG
       virtual void activateTask(const char* taskID) = 0;
       virtual void deactivateTask(const char* taskID) = 0;
       virtual void runTask(const char* taskID) = 0;
+      virtual ::CORBA::Float secondsToNextRun(const char* taskID) = 0;
       virtual ::CORBA::Boolean ping() = 0;
       
     public:  // Really protected, workaround for xlC

@@ -30,7 +30,9 @@ public:
     ~LocalTaskManager();
 
     void getTaskIDs(std::set<std::string>& ids) const;
+
     STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const;
+    void setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus);
 
     bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task) const;
     void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const;

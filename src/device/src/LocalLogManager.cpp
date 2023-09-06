@@ -201,8 +201,8 @@ bool LocalLogManager::getLogCounts(const STI::Utils::TimeStamp& date, const Devi
     std::string logBasePath;
     std::string logDevicePath;
 
-    if (!localPersistenceManager->makeLogPath(date, logBasePath)) return false;
-    if (!localPersistenceManager->makeLogPath(date, deviceID.getID(), logDevicePath)) return false;
+    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return false;
+    if (!localPersistenceManager->getLogBasePath(date, deviceID.getID(), logDevicePath)) return false;
 
     //count all log files in path, grouping by logName
     fs::path searchPath = logDevicePath;
@@ -312,8 +312,8 @@ void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceI
     std::string logBasePath;
     std::string logDevicePath;
 
-    if (!localPersistenceManager->makeLogPath(date, logBasePath)) return;
-    if (!localPersistenceManager->makeLogPath(date, deviceID.getID(), logDevicePath)) return;
+    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return;
+    if (!localPersistenceManager->getLogBasePath(date, deviceID.getID(), logDevicePath)) return;
 
     std::vector<int> indices;
 
@@ -375,8 +375,8 @@ bool LocalLogManager::getLog(const LogID& id, LogFile& logFile)
     std::string logBasePath;
     std::string logDevicePath;
 
-    if (!localPersistenceManager->makeLogPath(date, logBasePath)) return false;
-    if (!localPersistenceManager->makeLogPath(date, localDevice->getID().getID(), logDevicePath)) return false;
+    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return false;
+    if (!localPersistenceManager->getLogBasePath(date, localDevice->getID().getID(), logDevicePath)) return false;
 
     std::string logFilename = makeLogFilename(id.logName, id.index);
 

@@ -131,7 +131,8 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 
 std::string LocalProfileManager::getFilename()
 {
-	return "profiles.json";
+	// return "profiles.json";
+	return "profiles";
 }
 
 void LocalProfileManager::setPersistenceCallback(const std::function<void(void)>& refresher)
@@ -139,16 +140,42 @@ void LocalProfileManager::setPersistenceCallback(const std::function<void(void)>
 	persistenceRefresher = refresher;
 }
 
+std::string getProfileFilename(const std::string& profileName)
+{
+	std::stringstream s;
+
+	std::string forbidden = "<>:\"\\|?*";
+    s << STI::Utils::replaceChars(profileName, forbidden, "_");
+	s << ".json";
+	
+	return s.str();
+}
+
 bool LocalProfileManager::save(const std::string& filename)
 {
-	std::ofstream file( filename );
-    // cereal::XMLOutputArchive archive( file );
-	cereal::JSONOutputArchive archive( file );
+	// std::ofstream file( filename );
+    // // cereal::XMLOutputArchive archive( file );
+	// cereal::JSONOutputArchive archive( file );
 
 	STI::Device::Profiles profiles;
 	profileMap.getValues(profiles.profiles);
 
-    archive(profiles);
+    // archive(profiles);
+
+	fs::path baseProfilePath = filename;	//.sti/deviceID/profiles/
+    if (!fs::exists(baseProfilePath)) {
+        fs::create_directories(baseProfilePath);
+    }
+
+	for (auto& profile : profiles.profiles) {
+		if (profile == 0) continue;
+		fs::path profileFilename = baseProfilePath;
+		profileFilename /= getProfileFilename(profile->name);
+
+		std::ofstream file( profileFilename.string() );
+		cereal::JSONOutputArchive archive( file );
+		archive(*profile);		//save to disk
+	}
 
 	return true;
 }
@@ -156,20 +183,39 @@ bool LocalProfileManager::save(const std::string& filename)
 
 void LocalProfileManager::load(const std::string& filename)
 {
-	fs::path profilePath = filename;
-	if (!fs::exists(profilePath)) return;
+	// fs::path profilePath = filename;
+	// if (!fs::exists(profilePath)) return;
 
-	std::ifstream file( filename );
-    // cereal::XMLOutputArchive archive( file );
-	cereal::JSONInputArchive archive( file );
+	// std::ifstream file( filename );
+	// cereal::JSONInputArchive archive( file );
 
-	STI::Device::Profiles profiles;
-    archive(profiles);
+	// STI::Device::Profiles profiles;
+    // archive(profiles);
 
-	for (auto& profile : profiles.profiles) {
-		if (profile != 0) {
+	// for (auto& profile : profiles.profiles) {
+	// 	if (profile != 0) {
+	// 		profileMap.add(profile->name, profile);
+	// 	}
+	// }
+
+    fs::path searchPath = filename;
+	if (!fs::exists(searchPath)) return;
+
+
+    for(auto& p : fs::directory_iterator(searchPath)) {
+		if (!fs::exists(p)) continue;
+        //check that the file has extension .json
+        if (p.path().has_extension() && p.path().extension().string() == ".json") {
+
+			std::ifstream file( p.path().string() );
+			cereal::JSONInputArchive archive( file );
+
+			auto profile = std::make_shared<STI::Device::Profile>();
+			archive(*profile);
+
 			profileMap.add(profile->name, profile);
-		}
-	}
+
+        }
+    }
 }
 

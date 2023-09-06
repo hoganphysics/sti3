@@ -43,7 +43,7 @@ void init_Task(py::module& m)
         .def("getID", &Task::getID)
         .def("isActive", &Task::isActive)
         .def("getStatus", &Task::getStatus)
-        .def("setStatus", &Task::setStatus, py::arg("newStatus"))
+        // .def("setStatus", &Task::setStatus, py::arg("newStatus"))
         .def("getMetaData", py::overload_cast<>(&Task::getMetaData, py::const_))
         .def("getMetaData", py::overload_cast<const std::string&>(&Task::getMetaData, py::const_), py::arg("key"))
         .def("addMetadata", 

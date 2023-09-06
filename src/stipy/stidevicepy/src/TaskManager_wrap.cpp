@@ -26,6 +26,7 @@ void init_TaskManager(py::module& m)
                 return ids;
             })
         .def("getTaskStatus", &TaskManager::getTaskStatus, py::arg("taskID"))
+        .def("setStatus", &TaskManager::setStatus, py::arg("taskID"), py::arg("newStatus"))
 
         .def("getTask",
             [](const TaskManager& self, const std::string& taskID) {

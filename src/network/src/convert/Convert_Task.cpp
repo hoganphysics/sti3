@@ -37,7 +37,7 @@ bool STI::Network::convert<TTask, std::shared_ptr<Task>>(const TTask& tTask, std
     auto status = convert<TTaskStatus, TaskStatus>(tTask.status);
 
     task = std::make_shared<RemoteTask>(convert<::CORBA::String_member, std::string>(tTask.taskID), metaData);
-    task->setStatus(status);
+    // task->setStatus(status);
     return true;
 }
 

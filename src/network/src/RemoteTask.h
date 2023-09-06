@@ -26,11 +26,10 @@ public:
 	
     bool isActive() const;
 	STI::Utils::TaskStatus getStatus() const;
-	void setStatus(const STI::Utils::TaskStatus& newStatus);
 
 private:
 
-	double secondsToNextRun() const { return 0; }
+	double secondsToNextRun() const;
 	void run();
 	void skipTask() {}
 	bool repeat() { return false; }
