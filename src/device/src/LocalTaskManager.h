@@ -3,6 +3,7 @@
 
 #include <sti/device/TaskManager.h>
 #include <sti/utils/TaskScheduler.h>
+#include <sti/utils/EvaluationBarrier.h>
 
 #include "PersistenceTarget.h"
 
@@ -20,7 +21,8 @@ namespace Device
 
 
 class LocalTaskManager : public TaskManager,
-						 public PersistenceTarget
+						 public PersistenceTarget,
+                         public STI::Utils::TaskSchedulerListener
 {
 public:
 
@@ -44,6 +46,9 @@ public:
 
 private:
 
+    void handleEvent(const STI::Utils::TaskSchedulerEvent& evt);
+    
+    STI::Utils::EvaluationBarrier barrier;
     STI::Utils::TaskScheduler taskScheduler;
 
     //PersistenceTarget

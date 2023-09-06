@@ -151,6 +151,32 @@ void LocalTaskManager::load(const std::string& filename)
 	}
 }
 
+void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
+{
+    using STI::Utils::TaskSchedulerEventType;
+    
+    auto taskID = evt.taskID;
+
+    switch (evt.type)
+    {
+    case TaskSchedulerEventType::Add:
+        break;
+    case TaskSchedulerEventType::Remove:
+        break;
+    case TaskSchedulerEventType::Activate:
+        break;
+    case TaskSchedulerEventType::Deactivate:
+        break;
+    case TaskSchedulerEventType::Refresh:
+        break;
+    default:
+        break;
+    }
+
+    //Catch sequential calls and call once at the end of the wait period
+    barrier.wait(std::chrono::milliseconds(1000), persistenceRefresher);
+
+}
 
 //******** Persistence ***********//
 // Store taskID and task status so tasks can be put in correct state on restart.
