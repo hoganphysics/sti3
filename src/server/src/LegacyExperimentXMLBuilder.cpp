@@ -8,6 +8,7 @@
 #include <sti/engine/StackTraceResult.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/utils/Image.h>
+#include <sti/utils/FileID.h>
 
 #include <map>
 #include <string>
@@ -98,10 +99,11 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
         case MixedValueType::File:
             {
                 auto file = base->InsertNewChildElement("file");
-                if (value.getFile() != 0) {
-                    file->InsertNewChildElement("filename")->SetText(value.getFile()->getFilename().c_str());
-                    file->InsertNewChildElement("md5hash")->SetText(value.getFile()->md5Checksum().c_str());
-                }
+                // if (value.getFileID() != 0) {
+
+                // }
+                file->InsertNewChildElement("filename")->SetText(value.getFileID().filename.c_str());
+                // file->InsertNewChildElement("md5hash")->SetText(value.getFile()->md5Checksum().c_str());
             }
             break;
         case MixedValueType::Image:
@@ -203,14 +205,12 @@ void addVars(tinyxml2::XMLElement* timing, const std::shared_ptr<STI::Engine::Ra
 
 }
 
-void addFiles(tinyxml2::XMLElement* timing, const std::filesystem::path& shotPath, const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& fileHolders)
+void addFiles(tinyxml2::XMLElement* timing, const std::filesystem::path& shotPath, const std::vector<STI::Utils::FileID>& fileIDs)
 {  
-    for (auto& file : fileHolders) {
-        if (file != 0) {
-            std::filesystem::path absFilePath = file->getFilename();
-            auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
-            timing->InsertNewChildElement("file")->SetText(relativeFilePath.string().c_str());
-        }
+    for (auto& fileID : fileIDs) {
+        std::filesystem::path absFilePath = fileID.getFullFilename();
+        auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+        timing->InsertNewChildElement("file")->SetText(relativeFilePath.string().c_str());
     }
 }
 

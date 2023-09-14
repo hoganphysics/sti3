@@ -8,6 +8,7 @@
 #include <sti/engine/DeviceEventParser.h>
 #include <sti/engine/EngineID.h>
 #include <sti/utils/GraphPathLabel.h>
+#include <sti/utils/VirtualFileServer.h>
 
 #include "fwd/ChannelManager_fwd.h"
 
@@ -48,7 +49,7 @@ public:
 
 private:
 
-	bool addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors);
+	bool addRawEvent(RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors);
 	bool addEventGroup(const RawEventGroup& eventGroup, unsigned& errorCount, unsigned maxErrors, bool& success);
 	bool groupEventsByTime(const RawEventGroup& eventGroup);
 	bool parseEvents(SynchronousEventVector& synchedEvents);
@@ -78,6 +79,8 @@ private:
 	EngineID engineID;
 	STI::Device::DeviceID localDeviceID;
 	std::shared_ptr<STI::Device::ChannelManager> channelManager;
+
+	std::shared_ptr<STI::Utils::VirtualFileServer> fileServer;
 
 	std::map<std::string, unsigned> errorIDs;
 };

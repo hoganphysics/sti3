@@ -171,6 +171,17 @@ RawStackTrace RawEvent::getRawStackTrace() const
 	return trace;	
 }
 
+void RawEvent::attachFileServer(const std::shared_ptr<STI::Utils::VirtualFileServer>& server)
+{
+	fileServer = server;
+}
+
+bool RawEvent::getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const
+{
+	server = fileServer;
+	return server != 0;
+}
+
 template<class Archive>
 void RawEvent::serialize(Archive& archive)
 {

@@ -34,7 +34,7 @@ public:
 
     ShotID getShotID() const;
 
-    bool addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements);
+    bool addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
 
     std::shared_ptr<MeasurementMap> getMeasurements();
@@ -46,7 +46,7 @@ public:
 
 private:
 
-    virtual std::string makeLocalPath(const std::string& basePath, const std::string& remoteFilename);
+    std::shared_ptr<STI::Utils::FileHolder> makeLocalFileHandle(const std::string& basePath, const STI::Utils::FileID& remoteFileID);
 
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     ResultsPaths resultsPaths;

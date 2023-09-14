@@ -101,7 +101,7 @@ bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
 {
     if (!findParseResult(id)) return false;
 
-    auto paths = preparePaths(id.parseTimestamp);
+    auto paths = makePaths(id.parseTimestamp);
 
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeParseFilename(id);
@@ -121,7 +121,7 @@ bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotR
 {
     if (!findShotResult(id)) return false;
 
-    auto paths = preparePaths(id);
+    auto paths = makePaths(id.submissionTime);
 
     // std::filesystem::path serializePath = paths.dataPath;
     // serializePath /= archiveFilename;
@@ -143,7 +143,7 @@ bool LegacyShotRepository::getSequenceResult(const SequenceID& id, std::shared_p
 {
     if (!findSequenceResult(id)) return false;
 
-    auto paths = preparePaths(id);
+    auto paths = makePaths(id.timestamp);
 
     std::filesystem::path serializePath = paths.sequencePath;
     serializePath /= makeSequenceFilename(id);

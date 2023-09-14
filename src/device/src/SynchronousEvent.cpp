@@ -42,6 +42,14 @@ bool SynchronousEvent::setMeasurementResult(unsigned index, const STI::Utils::Mi
 	return false;
 }
 
+bool SynchronousEvent::attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file)
+{
+	if (measurements.size() == 0) return false;
+
+	return measurements.at(0)->attachFile(file);	//can attach to any of the measurements (attaches to common VirtualFileServer)
+}
+
+
 void SynchronousEvent::load()
 {
 	std::unique_lock<std::mutex> loadLock(evtMutex);

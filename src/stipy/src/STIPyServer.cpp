@@ -59,7 +59,7 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
-    std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
 
     STI::Engine::ShotConfig shotConfig;
     if (libDevice != 0) {
@@ -68,14 +68,27 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
     }
     
 
-    if (getPersistenceManager(persistenceManager)) {
-        fileFactory = persistenceManager;
-    }
-    else {
-        fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-    }
+    // if (getPersistenceManager(persistenceManager)) {
+    //     fileFactory = persistenceManager;
+    // }
+    // else {
+    //     fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    // }
 
-    auto stackTraceData = std::make_shared<StackTraceData>(fileFactory);
+
+    // if (getPersistenceManager(persistenceManager)) {
+    //     persistenceManager->getFileServer(fileServer);
+    // }
+    // else {
+    //     // fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    // }
+
+    bool success = libDevice->getFileServer(fileServer);
+    // if (libDevice->getPersistenceManager(persistenceManager)) {
+    //     bool success = persistenceManager->getFileServer(fileServer);
+    // }
+
+    auto stackTraceData = std::make_shared<StackTraceData>(libDevice->getID(), fileServer);
     auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTraceData);
     
     std::shared_ptr<STI::Engine::Shot> shot;

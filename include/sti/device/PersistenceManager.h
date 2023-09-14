@@ -44,6 +44,9 @@ public:
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
 
+    virtual void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) = 0;
+    virtual bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) = 0;
+
     virtual void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
     virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;
     virtual bool saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner) = 0;

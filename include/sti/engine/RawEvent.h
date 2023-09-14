@@ -33,6 +33,7 @@
 
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/GraphPathLabel.h>
+#include <sti/utils/VirtualFileServer.h>
 
 #include <string>
 #include <map>
@@ -130,6 +131,9 @@ public:
 		_eventType = eventType;
 	}
 
+	void attachFileServer(const std::shared_ptr<STI::Utils::VirtualFileServer>& server);
+	bool getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const;
+
 	std::string print() const;
 
 	template<class Archive>
@@ -146,6 +150,8 @@ private:
 	
 	StackTrace stackTrace;
 	std::shared_ptr<StackTraceData> stackTraceData;
+
+	std::shared_ptr<STI::Utils::VirtualFileServer> fileServer;	//for measurement events that attach files
 	
 	bool isMeasurement;
 	RawEventType _eventType;

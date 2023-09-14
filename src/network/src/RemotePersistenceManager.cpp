@@ -41,7 +41,7 @@ using ::STI::TNetwork::TEngineJobStatus;
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
 : TReferenceHolder<TPersistenceManager>(manager, persistenceMutex)
 {
-	fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+	// fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
 }
 
 RemotePersistenceManager::~RemotePersistenceManager()
@@ -248,12 +248,18 @@ void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::U
 	//not allowed (FilHolderFactory can only be set locally)
 }
 
-std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& filename)
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
 {
-	return fileFactory->makeFileHolder(filename);
+	// return fileFactory->makeFileHolder(filename);
+	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
+	return fileHolder;
 }
 
-
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
+{
+	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
+	return fileHolder;
+}
 
 void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)
 {

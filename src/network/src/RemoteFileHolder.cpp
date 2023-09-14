@@ -1,6 +1,8 @@
 #include "RemoteFileHolder.h"
 #include "NetworkConvert.h"
 #include "TFileHolderRefInterface.h"
+#include "convert/Convert_File.h"
+
 
 using STI::Network::RemoteFileHolder;
 using ::STI::TNetwork::TFileHolder_ptr;
@@ -29,6 +31,36 @@ bool RemoteFileHolder::getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHo
 	return !CORBA::is_nil(tFileHolder);
 }
 
+STI::Utils::FileID RemoteFileHolder::getID() const
+{
+	std::unique_lock<std::mutex> fileLock(fileMutex);
+
+	::STI::TNetwork::TFileID_var tFileID;
+	bool success = false;
+
+	if (!isDisabled()) {
+		try {
+			tFileID = getTRef()->getID();
+			success = true;
+		}
+		catch (CORBA::TRANSIENT&) {
+		}
+		catch (CORBA::SystemException&) {
+		}
+		catch (CORBA::Exception&)
+		{
+		}
+	}
+
+	STI::Utils::FileID fileID;
+
+	if(success) {
+		fileID = convert<::STI::TNetwork::TFileID, STI::Utils::FileID>(tFileID);
+	}
+
+	return fileID;
+}
+
 std::string RemoteFileHolder::getFilename() const
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);
@@ -51,6 +83,11 @@ std::string RemoteFileHolder::getFilename() const
 	{
 	}
 	return result;
+}
+
+unsigned RemoteFileHolder::getFileSize() const
+{
+	return 0;
 }
 
 bool RemoteFileHolder::exists() const
@@ -130,26 +167,26 @@ unsigned RemoteFileHolder::maxBufferSize() const
 }
 
 
-bool RemoteFileHolder::deleteFile()
-{
-	std::unique_lock<std::mutex> fileLock(fileMutex);
+// bool RemoteFileHolder::deleteFile()
+// {
+// 	std::unique_lock<std::mutex> fileLock(fileMutex);
 
-	if (isDisabled()) return false;
+// 	if (isDisabled()) return false;
 
-	bool success = false;
+// 	bool success = false;
 
-	try {
-		success = getTRef()->deleteFile();	//remote call
-	}
-	catch (CORBA::TRANSIENT&) {
-	}
-	catch (CORBA::SystemException&) {
-	}
-	catch (CORBA::Exception&)
-	{
-	}
-	return success;
-}
+// 	try {
+// 		success = getTRef()->deleteFile();	//remote call
+// 	}
+// 	catch (CORBA::TRANSIENT&) {
+// 	}
+// 	catch (CORBA::SystemException&) {
+// 	}
+// 	catch (CORBA::Exception&)
+// 	{
+// 	}
+// 	return success;
+// }
 
 
 std::string RemoteFileHolder::md5Checksum()

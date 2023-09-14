@@ -39,7 +39,7 @@ module TNetwork
 
         void runTask(in string taskID);
 
-        float secondsToNextRun(in string taskID);
+        double secondsToNextRun(in string taskID);
 
         boolean ping();
     };

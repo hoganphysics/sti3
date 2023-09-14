@@ -701,7 +701,7 @@ void STI::TNetwork::_objref_TTaskManager::runTask(const char* taskID)
 // Code for STI::TNetwork::TTaskManager::secondsToNextRun
 
 // Proxy call descriptor class. Mangled signature:
-//  _cfloat_i_cstring
+//  _cdouble_i_cstring
 class _0RL_cd_77713145924548a8_11000000
   : public omniCallDescriptor
 {
@@ -723,7 +723,7 @@ public:
 
   ::CORBA::String_var arg_0_;
   const char* arg_0;
-  ::CORBA::Float result;
+  ::CORBA::Double result;
 };
 
 void _0RL_cd_77713145924548a8_11000000::marshalArguments(cdrStream& _n)
@@ -747,7 +747,7 @@ void _0RL_cd_77713145924548a8_11000000::marshalReturnedValues(cdrStream& _n)
 
 void _0RL_cd_77713145924548a8_11000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  (::CORBA::Float&)result <<= _n;
+  (::CORBA::Double&)result <<= _n;
 
 }
 
@@ -766,7 +766,7 @@ _0RL_lcfn_77713145924548a8_21000000(omniCallDescriptor* cd, omniServant* svnt)
 
 }
 
-::CORBA::Float STI::TNetwork::_objref_TTaskManager::secondsToNextRun(const char* taskID)
+::CORBA::Double STI::TNetwork::_objref_TTaskManager::secondsToNextRun(const char* taskID)
 {
   _0RL_cd_77713145924548a8_11000000 _call_desc(_0RL_lcfn_77713145924548a8_21000000, "secondsToNextRun", 17);
   _call_desc.arg_0 = taskID;

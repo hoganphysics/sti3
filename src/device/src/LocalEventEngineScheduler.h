@@ -21,6 +21,7 @@
 #include "MessageGenerator.h"
 #include <sti/engine/Shot.h>
 #include "utils/OrderedBufferMap.h"
+#include <sti/utils/VirtualFileServer.h>
 
 #include <list>
 #include <map>
@@ -157,6 +158,8 @@ private:
     void play(const ShotID& shotID);
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
+
+    void transferTimingFiles(StackTraceData& stackTraceData, STI::Utils::FileServer& remoteFileSever, STI::Utils::VirtualFileServer& targetFileServer);
 
     //void findMissingTarget(const std::set<STI::Device::DeviceID>& missingTargets, EventEngineDependencyTree& tree, const STI::Device::DeviceTrace& trace);
     

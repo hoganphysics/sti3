@@ -75,6 +75,7 @@ add_library(stidevice SHARED
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    FileID.cpp
     FullShotResult.cpp
     # EngineParseResult.cpp
     Image.cpp
@@ -91,6 +92,7 @@ add_library(stidevice SHARED
     LocalEventEngineJob.cpp
     LocalEventEngineScheduler.cpp
     LocalFileHolder.cpp
+    LocalFileServer.cpp
     LocalPersistenceManager.cpp
     LocalResultsCollector.cpp
     LocalShot.cpp
@@ -140,6 +142,8 @@ add_library(stidevice SHARED
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
+    VirtualFileHolder.cpp
+    VirtualFileServer.cpp
 )
 
 #set_property(TARGET tgt PROPERTY CXX_STANDARD 11)

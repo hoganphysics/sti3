@@ -5,6 +5,7 @@
 (ParsingMessageType::Error, 20, "Missing shot")
 (ParsingMessageType::Error, 21, "Missing dependency graph")
 (ParsingMessageType::Error, 22, "Null event vector")
+(ParsingMessageType::Error, 23, "Dependency count failed")
 
 (ParsingMessageType::Error, 60, "Wrong device server")
 (ParsingMessageType::Error, 70, "Cannot Play Abstract Shot")

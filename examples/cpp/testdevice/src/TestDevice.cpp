@@ -126,12 +126,12 @@ void TestDevice::init()
             std::cout << "State message: " << STI::Engine::print((message->engineStates.begin()->second)) << std::endl;
         } );
     
-    log().addReadLogTask(2, "00:00:02");
+    // log().addReadLogTask(2, "00:00:02");
     log() << "test log" << std::endl;
     log().addLogTask("00:00:10", [](){ 
         return "test task"; 
         });
-    log("ch1").addWriteLogTask(1, "00:00:05", 2.5);
+    // log("ch1").addWriteLogTask(1, "00:00:05", 2.5);
 }
 
 TestDevice::~TestDevice()
@@ -217,7 +217,7 @@ void TestDevice::TestEvent::collectMeasurementData()
         myfile << "Testing image data.\n";
         myfile.close();
 
-        auto file = localDevice->makeFileHolder(filename);
+        auto file = localDevice->makeFileHolder("", filename);
         result.setValue(file);
         // getMeasurements().at(0)->setMeasurementResult(result);
         setMeasurementResult(result);

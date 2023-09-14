@@ -4,6 +4,8 @@
 #include <sti/engine/ShotRepository.h>
 
 #include <sti/engine/ShotID.h>
+
+#include <sti/utils/FileServer.h>
 #include "utils/OrderedBufferMap.h"
 
 #include <memory>
@@ -18,7 +20,7 @@ class TransientRepository : public ShotRepository
 {
 public:
 
-    TransientRepository(const std::string& tempBasePath);
+    TransientRepository(const std::string& tempBasePath, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
     ~TransientRepository();
 
     std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
@@ -45,6 +47,8 @@ private:
     ResultsPaths preparePaths();
 
     std::string tempResultsPath;
+
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
 
     STI::Utils::OrderedBufferMap<STI::Engine::ParseID, std::shared_ptr<STI::Engine::ParseResult>> parseBuffer;
     STI::Utils::OrderedBufferMap<STI::Engine::ShotID, std::shared_ptr<STI::Engine::FullShotResult>> resultBuffer;

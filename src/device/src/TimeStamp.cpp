@@ -417,3 +417,6 @@ void TimeStamp::serialize(Archive& archive)
 // if we use a single serialize function
 template void STI::Utils::TimeStamp::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void STI::Utils::TimeStamp::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+
+template void STI::Utils::TimeStamp::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
+template void STI::Utils::TimeStamp::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );

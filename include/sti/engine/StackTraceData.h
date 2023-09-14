@@ -1,9 +1,10 @@
 #ifndef STI_ENGINE_STACKTRACEDATA_H
 #define STI_ENGINE_STACKTRACEDATA_H
 
-#include <sti/utils/FileHolder.h>
-#include <sti/utils/FileHolderFactory.h>
+#include <sti/utils/FileID.h>
+#include <sti/utils/FileServer.h>
 #include <sti/utils/VectorMap.h>
+#include <sti/device/DeviceID.h>
 
 #include <string>
 #include <vector>
@@ -25,46 +26,53 @@ class StackTraceData
 public:
 
     StackTraceData();
-    StackTraceData(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& timingFiles, const std::vector<std::string>& functionNames);
-    StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
+    StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
+    StackTraceData(const std::vector<STI::Utils::FileID>& timingFiles, const std::vector<std::string>& functionNames);
+    // StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
     
     StackTrace addStackTrace(const RawStackTrace& stackTrace);
     RawStackTrace getStackTrace(const StackTrace& stackTrace) const;
 
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> getTimingFiles() const;
+    const std::vector<STI::Utils::FileID>& getTimingFiles() const;
     // std::vector<std::string> timingFileNames()
-    std::vector<std::string> getFunctionNames() const;
+    const std::vector<std::string>& getFunctionNames() const;
 
-    void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
+    // void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
 
-    void replaceFile(const std::string& oldFilename, const std::shared_ptr<STI::Utils::FileHolder>& newFile);
-    void deleteFiles();
+    void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server);
+    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
 
-//    template<class Archive>
-//	void serialize(Archive& archive);
+    void replaceFile(const std::string& oldFilename, const STI::Utils::FileID& newFile);
+    // void deleteFiles();
 
-    template<class Archive>
-    void save(Archive& archive) const;
+   template<class Archive>
+	void serialize(Archive& archive);
 
-    template<class Archive>
-    void load(Archive& archive);
+    // template<class Archive>
+    // void save(Archive& archive) const;
+
+    // template<class Archive>
+    // void load(Archive& archive);
 
 private:
     
     void init();
     unsigned addFile(const std::string& filename);
 
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
+    std::vector<STI::Utils::FileID> timingFiles;
     std::vector<std::string> timingFileNames;
     std::vector<std::string> functionNames;
 
     typedef STI::Utils::VectorMap<std::string, std::string> VectorMapString;
     std::shared_ptr<VectorMapString> functionMap;
 
-    typedef STI::Utils::VectorMap<std::string, std::shared_ptr<STI::Utils::FileHolder>> VectorMapFileHolder;
-    std::shared_ptr<VectorMapFileHolder> fileMap;
+    typedef STI::Utils::VectorMap<std::string, STI::Utils::FileID> VectorMapFileID;
+    std::shared_ptr<VectorMapFileID> fileMap;
 
-    std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+    // std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
+
+    STI::Device::DeviceID localID;
 
     mutable std::mutex stackDataMutex;
 };

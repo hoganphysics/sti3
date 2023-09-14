@@ -40,6 +40,7 @@
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueVector;
 using STI::Utils::MixedValueType;
+using STI::Utils::FileID;
 
 
 MixedValue::MixedValue()
@@ -82,7 +83,7 @@ MixedValue::MixedValue(const std::shared_ptr<STI::Utils::BinaryData>& value)
 	setValue(value);
 }
 
-MixedValue::MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
+MixedValue::MixedValue(const FileID& value)
 {
 	setValue(value);
 }
@@ -173,12 +174,11 @@ bool MixedValue::operator==(const MixedValue& other) const
 
 	case MixedValueType::File:
 		{
-			auto file = getFile();
-			auto otherFile = other.getFile();
+			auto fileID = getFileID();
+			auto otherFileID = other.getFileID();
 
-			if (file != 0 && otherFile != 0) {
-				result = (*file) == (*otherFile);
-			}
+			result = fileID == otherFileID;
+
 		}
 		break;
 	case MixedValueType::Image:
@@ -258,7 +258,7 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::BinaryData>& value)
 	type = MixedValueType::Binary;
 }
 
-void MixedValue::setValue(const std::shared_ptr<STI::Utils::FileHolder>& value)
+void MixedValue::setValue(const FileID& value)
 {
 	clear();
 
@@ -316,7 +316,7 @@ void MixedValue::setValueMixed(const MixedValue& value)
 		setValue( value.getBinary() );
 		break;
 	case MixedValueType::File:
-		setValue( value.getFile() );
+		setValue( value.getFileID() );
 		break;
 	case MixedValueType::Image:
 		setValue( value.getImage() );
@@ -518,16 +518,16 @@ std::shared_ptr<STI::Utils::BinaryData> MixedValue::getBinary() const
 	return value_bin;
 }
 
-std::shared_ptr<STI::Utils::FileHolder> MixedValue::getFile() const
+FileID MixedValue::getFileID() const
 {
 	try {
-		auto& result = std::get<std::shared_ptr<STI::Utils::FileHolder>>(value_v);
+		auto result = std::get<FileID>(value_v);
 		return result;
 	}
 	catch (const std::bad_variant_access& ex) {
 	}
 
-	std::shared_ptr<STI::Utils::FileHolder> value_file;
+	FileID value_file;
 	return value_file;
 }
 
@@ -615,14 +615,11 @@ std::string MixedValue::print() const
 		break;
 	case MixedValueType::File:
 		{
-			auto file = getFile();
+			auto file = getFileID();
 			result << "File(";
-			if (file != 0) {
-				result << file->getFilename();
-			}
-			else {
-				result << "null";
-			}
+
+			result << file.filename;
+
 			result << ")";
 		}
 		break;

@@ -136,7 +136,7 @@ void TTaskManager_i::runTask(const char* taskID)
     }
 }
 
-::CORBA::Float TTaskManager_i::secondsToNextRun(const char* taskID)
+::CORBA::Double TTaskManager_i::secondsToNextRun(const char* taskID)
 {
     std::shared_ptr<Task> task;
     double result = 0;
@@ -144,7 +144,7 @@ void TTaskManager_i::runTask(const char* taskID)
     if (taskManager != 0 && taskManager->getTask(taskID, task) && task != 0) {
         result = task->secondsToNextRun();
     }
-    return static_cast<::CORBA::Float>(result);
+    return static_cast<::CORBA::Double>(result);
 }
 
 ::CORBA::Boolean TTaskManager_i::ping()

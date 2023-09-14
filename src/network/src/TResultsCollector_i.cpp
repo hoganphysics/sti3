@@ -10,6 +10,8 @@
 #include "convert/Convert_ResultsCollector.h"
 #include "ORBManager.h"
 
+#include "RemoteFileServer.h"
+
 #include <vector>
 #include <memory>
 
@@ -51,14 +53,18 @@ TShotID* TResultsCollector_i::getShotID()
 	return tShotID._retn();
 }
 
-::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements)
+::CORBA::Boolean TResultsCollector_i::addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, 
+													  const ::STI::TNetwork::TMeasurementSeq& measurements,
+													  ::STI::TNetwork::TFileServer_ptr sourceFileServer)
 {
     if (resultsCollector != 0) {
 
         auto newMeasurements = STI::Engine::MeasurementVector();
 	    convert<TMeasurement, std::shared_ptr<Measurement>>(measurements, newMeasurements);
 
-		return resultsCollector->addMeasurements(convert<TDeviceID, DeviceID>(deviceID), newMeasurements);
+		auto remoteFileServer = std::make_shared<STI::Network::RemoteFileServer>(sourceFileServer);
+
+		return resultsCollector->addMeasurements(convert<TDeviceID, DeviceID>(deviceID), newMeasurements, remoteFileServer);
 	}
     return false;
 }

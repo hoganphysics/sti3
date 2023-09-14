@@ -5,6 +5,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/fwd/EventEngineScheduler_fwd.h>
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/FileServer.h>
 
 #include <memory>
 

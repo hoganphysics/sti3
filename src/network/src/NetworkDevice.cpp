@@ -1,5 +1,6 @@
 
 #include "NetworkDevice.h"
+#include "NetworkFileServer.h"
 #include "NetworkResultsCollectorFactory.h"
 #include "ORBManager.h"
 
@@ -22,11 +23,14 @@ NetworkDevice::NetworkDevice(const std::shared_ptr<STI::Device::Device>& device)
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     getPersistenceManager(persistenceManager);
 
-    auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
+    auto networkFileHolderFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>(getID().getID());
     persistenceManager->setFileHolderFactory(networkFileHolderFactory);
 
     auto resultsCollectionFactory = std::make_shared<STI::Network::NetworkResultsCollectorFactory>();
     persistenceManager->setResultsCollectorFactory(resultsCollectionFactory);
+
+    auto fileServer = std::make_shared<STI::Network::NetworkFileServer>(getID());
+    persistenceManager->setFileServer(fileServer);
 
     // std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
     // persistenceManager->getShotRepository(shotRepo);

@@ -17,6 +17,8 @@
 #include "LocalEventEngine.h"
 #include <sti/engine/RawEventGroup.h>
 
+#include <sti/utils/VirtualFileServer.h>
+
 #include <set>
 
 using STI::Device::Channel;
@@ -34,7 +36,6 @@ using STI::Utils::MixedValue;
 
 
 
-
 EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
 					const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
 					DeviceEventParser* deviceParser)
@@ -42,6 +43,7 @@ EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device
 {
 	defineErrorIDs();
 	hasErrors = false;
+	clear();
 }
 
 EventEngineParser::~EventEngineParser()
@@ -50,8 +52,14 @@ EventEngineParser::~EventEngineParser()
 
 void EventEngineParser::clear()
 {
+	hasErrors = false;
+
+	messages.clear();
 	rawEvents.clear();
 	partnerEvents.clear();
+	measurementEventGraph.clear();
+
+	fileServer = std::make_shared<STI::Utils::VirtualFileServer>();	//make new instead of clear, in case Measurement from previous shot have a reference.
 }
 
 const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages() const
@@ -63,8 +71,7 @@ bool EventEngineParser::parse(const RawEventGroup& eventGroup, SynchronousEventV
 {
 	bool success = true;
 
-	messages.clear();
-	hasErrors = false;
+	clear();
 
 	if (channelManager == 0) return false;
 
@@ -104,10 +111,10 @@ void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetI
 
 bool EventEngineParser::groupEventsByTime(const RawEventGroup& eventGroup)
 {
-	//reset
-	rawEvents.clear();
-	partnerEvents.clear();
-	measurementEventGraph.clear();
+	// //reset
+	// rawEvents.clear();
+	// partnerEvents.clear();
+	// measurementEventGraph.clear();
 
 	bool success = true;
 
@@ -167,7 +174,7 @@ EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name
 	return messages.back();
 }
 
-bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
+bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
 {
 	bool success = true;
 
@@ -254,6 +261,8 @@ bool EventEngineParser::addRawEvent(const RawEvent& rawEvent, unsigned& errorCou
 		measurementEventGraph.insert(
 		{ rawEvent.getEventID(), MeasurementCounter( &(rawEvents[eventTime].back()) ) }
 		);
+
+		rawEvent.attachFileServer(fileServer);
 	}
 
 	auto& eventVec = rawEvents[eventTime];

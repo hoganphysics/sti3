@@ -2,6 +2,7 @@
 
 #include <sti/utils/BinaryData.h>
 #include <sti/utils/ImageWriter.h>
+#include <sti/utils/FileHolder.h>
 
 #include <algorithm>
 #include <filesystem>
@@ -215,6 +216,7 @@ void Image::save(Archive& archive) const
         cereal::make_nvp("children", children),
         cereal::make_nvp("isChild", isChild_),
         cereal::make_nvp("imageData", imageData.get())
+        // cereal::make_nvp("fileID", fileHolder->getID())
         // cereal::make_nvp("fileHolder", fileHolder.get())
 	);
 }
@@ -229,6 +231,7 @@ template<class Archive>
 void Image::load(Archive& archive)
 {
     std::shared_ptr<BinaryData> bin;
+    // STI::Utils::FileID fileID;
 
     archive(
 		cereal::make_nvp("filename", filename_),
@@ -238,6 +241,7 @@ void Image::load(Archive& archive)
         cereal::make_nvp("children", children),
         cereal::make_nvp("isChild", isChild_),
         cereal::make_nvp("imageData", bin)
+        // cereal::make_nvp("fileID", fileID)
         // cereal::make_nvp("fileHolder", fileHolder)
 	);
     imageData.set(bin);

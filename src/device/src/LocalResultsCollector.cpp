@@ -25,6 +25,8 @@ using STI::Engine::MeasurementMap;
 using STI::Engine::ShotResult;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::ParseResult;
+using STI::Utils::FileServer;
+using STI::Device::DeviceID;
 
 
 LocalResultsCollector::LocalResultsCollector(const STI::Engine::ShotID& sid, 
@@ -67,7 +69,7 @@ std::shared_ptr<ParseResult> LocalResultsCollector::getParseResults() const
     return fullShotResult->parseResult;
 }
 
-bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements)
+bool LocalResultsCollector::addMeasurements(const DeviceID& deviceID, const MeasurementVector& measurements, const std::shared_ptr<FileServer>& sourceFileServer)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
@@ -93,24 +95,29 @@ bool LocalResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceI
         if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::File) {
             //possibly do this in 
             meas->extractMeasurementResult(filedata);
-            auto fileHandle = filedata.getFile();
+            auto remoteFileID = filedata.getFileID();     //remote file, to be transfered
+
+            
 
             // std::string localPath = resultsDocumenter->makeLocalPath(sid, fileHandle->getFilename());
             
-            std::string localPath = makeLocalPath(resultsPaths.dataPath, fileHandle->getFilename());
+            auto localFileHandle = makeLocalFileHandle(resultsPaths.dataPath, remoteFileID);
             
-            auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
+            // auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
             
             //transfer file to local
-            if (fileHandle->transferFile(localFileHandle)) {
+            if (sourceFileServer != 0 && 
+                sourceFileServer->transferFile(remoteFileID, localFileHandle, STI::Utils::FileTransferType::Binary)) 
+            {
                 //sucess; delete remote?
                 success &= true;
-                filedata.setValue(localFileHandle);
+                filedata.setValue(localFileHandle->getID());
                 meas->setMeasurementResult(filedata);
             }
             else {
                 success = false;
             }
+
         }
         else if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::Image) {
             STI::Utils::MixedValue imagedata;
@@ -149,14 +156,20 @@ std::shared_ptr<MeasurementMap> LocalResultsCollector::getMeasurements()
     return empty;
 }
 
-std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)
+// std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)
+std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalFileHandle(const std::string& basePath, const STI::Utils::FileID& remoteFileID)
 {
-    fs::path remotePath = remoteFilename;
+    fs::path remotePath = remoteFileID.filename;
     fs::path localPath = basePath;
 
     localPath /= remotePath.filename();
 
-    return STI::Utils::makeUniquePath( localPath.string() );
+    auto uniqueLocalFilename = STI::Utils::makeUniquePath( localPath.string() );
+    fs::path uniqueLocalPath = uniqueLocalFilename;
+
+    auto localFileHandle = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path(), uniqueLocalPath.filename());
+
+    return localFileHandle;
 }
 
 

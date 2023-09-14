@@ -8,6 +8,7 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/utils/SynchronizedMap.h>
+#include <sti/utils/FileServer.h>
 
 #include <sti/engine/ShotRepository.h>
 #include "utils/OrderedBufferMap.h"
@@ -49,10 +50,13 @@ public:
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
-
     void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory);
+    
+    void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server);
+    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
 
-    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
 
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);
@@ -118,6 +122,7 @@ private:
 
     std::shared_ptr<STI::Engine::ResultsCollectorFactory> resultsCollectorFactory;
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 
     std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;

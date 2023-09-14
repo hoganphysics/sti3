@@ -74,9 +74,9 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
     //    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
     //}
 
-    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    // fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 
-    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>(fileFactory);
+    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>();  //temp, needs to point to a local fileserver
     auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTrace);
 
     std::shared_ptr<STI::Engine::Shot> shot;

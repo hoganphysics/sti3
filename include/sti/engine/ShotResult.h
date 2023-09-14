@@ -7,6 +7,7 @@
 #include <sti/device/Attribute.h>
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/engine/Measurement.h>
+#include <sti/utils/FileServer.h>
 
 #include <memory>
 #include <map>
@@ -42,7 +43,7 @@ public:
     //std::vector<STI::Device::DeviceID> missingDependencies; 
     ShotResultRecord shotResultRecord;
 
-    static void deleteFiles(ShotResult& shot);
+    static void deleteFiles(ShotResult& shot, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
     template<class Archive>
     void serialize(Archive& archive);

@@ -487,6 +487,40 @@ _CORBA_MODULE_BEG
       TDeviceIDVertexSeq_out& operator=(const TDeviceIDVertexSeq_var&);
     };
 
+    struct TTimeStamp {
+      typedef _CORBA_ConstrType_Fix_Var<TTimeStamp> _var_type;
+
+      
+      ::CORBA::Long year;
+
+      ::CORBA::Long month;
+
+      ::CORBA::Long day;
+
+      ::CORBA::Long hour;
+
+      ::CORBA::Long min;
+
+      ::CORBA::Long sec;
+
+      ::CORBA::Long millis;
+
+      ::CORBA::Long micros;
+
+      ::CORBA::Long nanos;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TTimeStamp::_var_type TTimeStamp_var;
+
+    typedef TTimeStamp& TTimeStamp_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTimeStamp;
+
     struct TEventEngineDependencyTree {
       typedef _CORBA_ConstrType_Variable_Var<TEventEngineDependencyTree> _var_type;
 
@@ -759,6 +793,151 @@ _CORBA_MODULE_BEG
     private:
       OctetSeq_out();
       OctetSeq_out& operator=(const OctetSeq_var&);
+    };
+
+    enum TFileTransferType { FileTransferBinary, FileTransferString /*, __max_TFileTransferType=0xffffffff */ };
+    typedef TFileTransferType& TFileTransferType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileTransferType;
+
+    struct TFileID {
+      typedef _CORBA_ConstrType_Variable_Var<TFileID> _var_type;
+
+      
+      ::CORBA::String_member filename;
+
+      ::CORBA::String_member path;
+
+      ::CORBA::String_member origin;
+
+      ::CORBA::String_member persistenceLocation;
+
+      TTimeStamp creationTime;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TFileID::_var_type TFileID_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TFileID,TFileID_var > TFileID_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileID;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileIDSeq;
+
+    class TFileIDSeq_var;
+
+    class TFileIDSeq : public _CORBA_Unbounded_Sequence< TFileID >  {
+    public:
+      typedef TFileIDSeq_var _var_type;
+      inline TFileIDSeq() {}
+      inline TFileIDSeq(const TFileIDSeq& _s)
+        : _CORBA_Unbounded_Sequence< TFileID > (_s) {}
+
+      inline TFileIDSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TFileID > (_max) {}
+      inline TFileIDSeq(_CORBA_ULong _max, _CORBA_ULong _len, TFileID* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TFileID > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TFileIDSeq& operator = (const TFileIDSeq& _s) {
+        _CORBA_Unbounded_Sequence< TFileID > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TFileIDSeq_out;
+
+    class TFileIDSeq_var {
+    public:
+      inline TFileIDSeq_var() : _pd_seq(0) {}
+      inline TFileIDSeq_var(TFileIDSeq* _s) : _pd_seq(_s) {}
+      inline TFileIDSeq_var(const TFileIDSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TFileIDSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TFileIDSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TFileIDSeq_var& operator = (TFileIDSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TFileIDSeq_var& operator = (const TFileIDSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TFileIDSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TFileID& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TFileIDSeq* operator -> () { return _pd_seq; }
+      inline const TFileIDSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TFileIDSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TFileIDSeq& () const { return *_pd_seq; }
+      inline operator TFileIDSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TFileIDSeq& in() const { return *_pd_seq; }
+      inline TFileIDSeq&       inout()    { return *_pd_seq; }
+      inline TFileIDSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TFileIDSeq* _retn() { TFileIDSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TFileIDSeq_out;
+      
+    private:
+      TFileIDSeq* _pd_seq;
+    };
+
+    class TFileIDSeq_out {
+    public:
+      inline TFileIDSeq_out(TFileIDSeq*& _s) : _data(_s) { _data = 0; }
+      inline TFileIDSeq_out(TFileIDSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TFileIDSeq*) 0; }
+      inline TFileIDSeq_out(const TFileIDSeq_out& _s) : _data(_s._data) {}
+      inline TFileIDSeq_out& operator = (const TFileIDSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TFileIDSeq_out& operator = (TFileIDSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TFileIDSeq*&()  { return _data; }
+      inline TFileIDSeq*& ptr()       { return _data; }
+      inline TFileIDSeq* operator->() { return _data; }
+
+      inline TFileID& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TFileIDSeq*& _data;
+
+    private:
+      TFileIDSeq_out();
+      TFileIDSeq_out& operator=(const TFileIDSeq_var&);
     };
 
 #ifndef __STI_mTNetwork_mTFileHolder__
@@ -1535,31 +1714,25 @@ _CORBA_MODULE_BEG
       }
 #endif
 
-      TFileHolder_ptr file () const { return _pd_file; }
-      void file(TFileHolder_ptr _value) {
-         _release_member();
-        _pd__initialised = 1;
-        _pd__d = ImageDataFile;
-        _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
-        _pd_file = _value;
-      }
-      void file(const _CORBA_ObjRef_Member< _objref_TFileHolder, TFileHolder_Helper> & _value) {
+      const TFileID &file () const { return *_pd_file; }
+      TFileID &file () { return *_pd_file; }
+      void file (const TFileID& _value) {
         _release_member();
         _pd__initialised = 1;
         _pd__d = ImageDataFile;
         _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
-        _pd_file = _value;
+        _pd_file = new TFileID(_value);
       }
-      void file(const TFileHolder_var&  _value) {
-         _release_member();
+#ifdef OMNIORB_EXTENDED_UNION_MAPPING
+      void file (TFileID* _value) {
+        // Non-standard method, consumes _value
+        _release_member();
         _pd__initialised = 1;
         _pd__d = ImageDataFile;
         _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
         _pd_file = _value;
       }
+#endif
 
     
       
@@ -1573,7 +1746,7 @@ _CORBA_MODULE_BEG
 
       union {
         TBinaryData* _pd_binary;
-        TFileHolder_ptr _pd_file;
+        TFileID* _pd_file;
     
       };
       void _release_member () {
@@ -1590,7 +1763,7 @@ _CORBA_MODULE_BEG
 
           case ImageDataFile:
 
-            TFileHolder_Helper::release(_pd_file);
+            delete _pd_file;
 
 
             break;
@@ -2194,31 +2367,25 @@ _CORBA_MODULE_BEG
       }
 #endif
 
-      TFileHolder_ptr value_file () const { return _pd_value_file; }
-      void value_file(TFileHolder_ptr _value) {
-         _release_member();
-        _pd__initialised = 1;
-        _pd__d = MixedValueFile;
-        _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
-        _pd_value_file = _value;
-      }
-      void value_file(const _CORBA_ObjRef_Member< _objref_TFileHolder, TFileHolder_Helper> & _value) {
+      const TFileID &value_file () const { return *_pd_value_file; }
+      TFileID &value_file () { return *_pd_value_file; }
+      void value_file (const TFileID& _value) {
         _release_member();
         _pd__initialised = 1;
         _pd__d = MixedValueFile;
         _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
-        _pd_value_file = _value;
+        _pd_value_file = new TFileID(_value);
       }
-      void value_file(const TFileHolder_var&  _value) {
-         _release_member();
+#ifdef OMNIORB_EXTENDED_UNION_MAPPING
+      void value_file (TFileID* _value) {
+        // Non-standard method, consumes _value
+        _release_member();
         _pd__initialised = 1;
         _pd__d = MixedValueFile;
         _pd__default = 0;
-        TFileHolder_Helper::duplicate(_value);
         _pd_value_file = _value;
       }
+#endif
 
       const TImage &value_image () const { return *_pd_value_image; }
       TImage &value_image () { return *_pd_value_image; }
@@ -2263,7 +2430,7 @@ _CORBA_MODULE_BEG
         TMixedValueSeq* _pd_values;
         _valuesInt_seq* _pd_valuesInt;
         TBinaryData* _pd_valueBin;
-        TFileHolder_ptr _pd_value_file;
+        TFileID* _pd_value_file;
         TImage* _pd_value_image;
     
       };
@@ -2322,7 +2489,7 @@ _CORBA_MODULE_BEG
 
           case MixedValueFile:
 
-            TFileHolder_Helper::release(_pd_value_file);
+            delete _pd_value_file;
 
 
             break;
@@ -3392,40 +3559,6 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJobType;
 
-    struct TTimeStamp {
-      typedef _CORBA_ConstrType_Fix_Var<TTimeStamp> _var_type;
-
-      
-      ::CORBA::Long year;
-
-      ::CORBA::Long month;
-
-      ::CORBA::Long day;
-
-      ::CORBA::Long hour;
-
-      ::CORBA::Long min;
-
-      ::CORBA::Long sec;
-
-      ::CORBA::Long millis;
-
-      ::CORBA::Long micros;
-
-      ::CORBA::Long nanos;
-
-    
-
-      void operator>>= (cdrStream &) const;
-      void operator<<= (cdrStream &);
-    };
-
-    typedef TTimeStamp::_var_type TTimeStamp_var;
-
-    typedef TTimeStamp& TTimeStamp_out;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTimeStamp;
-
     struct TEngineJobSourceID {
       typedef _CORBA_ConstrType_Variable_Var<TEngineJobSourceID> _var_type;
 
@@ -3805,13 +3938,41 @@ _CORBA_MODULE_BEG
 
 #endif
 
+#ifndef __STI_mTNetwork_mTFileServer__
+#define __STI_mTNetwork_mTFileServer__
+    class TFileServer;
+    class _objref_TFileServer;
+    class _impl_TFileServer;
+    
+    typedef _objref_TFileServer* TFileServer_ptr;
+    typedef TFileServer_ptr TFileServerRef;
+
+    class TFileServer_Helper {
+    public:
+      typedef TFileServer_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TFileServer, TFileServer_Helper> TFileServer_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TFileServer,TFileServer_Helper > TFileServer_out;
+
+#endif
+
     struct TStackTraceData {
       typedef _CORBA_ConstrType_Variable_Var<TStackTraceData> _var_type;
 
       
-      TFileHolderSeq timingFiles;
+      TFileIDSeq timingFiles;
 
       TStringSeq functionNames;
+
+      _CORBA_ObjRef_Member< _objref_TFileServer, TFileServer_Helper>  fileServer;
 
     
 
@@ -6491,6 +6652,11 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceIDVertexSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceIDVertexSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceIDVertexSeq*& _sp);
 
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TTimeStamp& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTimeStamp* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTimeStamp*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TTimeStamp*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineDependencyTree& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineDependencyTree* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineDependencyTree*& _sp);
@@ -6548,6 +6714,35 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::OctetSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::OctetSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::OctetSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::OctetSeq*& _sp);
+
+inline void operator >>=(STI::TNetwork::TFileTransferType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TFileTransferType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::FileTransferString) {
+    _e = (STI::TNetwork::TFileTransferType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileTransferType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileTransferType& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileID& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileID* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileID*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TFileID*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileIDSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileIDSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileIDSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TFileIDSeq*& _sp);
 
 void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileHolderSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolderSeq* _sp);
@@ -6778,11 +6973,6 @@ inline void operator <<= (STI::TNetwork::TEventEngineJobType& _e, cdrStream& s) 
 
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobType _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobType& _s);
-
-extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TTimeStamp& _s);
-extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTimeStamp* _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTimeStamp*& _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TTimeStamp*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineJobSourceID& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineJobSourceID* _sp);

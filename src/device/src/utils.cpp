@@ -139,6 +139,18 @@ std::string makeUniquePath(const std::string& filename)
     return trialPath.string();
 }
 
+fs::path findCommonBase(const fs::path& p1, const fs::path& p2)
+{
+    fs::path commonBase;
+
+    fs::path::iterator it1, it2;
+    for (it1 = p1.begin(), it2 = p2.begin(); it1 != p1.end() && it2 != p2.end(); ++it1, ++it2) {
+        if ((*it1) == (*it2)) {
+            commonBase /= (*it1);
+        }
+    }
+    return commonBase;
+}
 
 //
 //std::string generateTimeBasedFileName(const std::string& basefilename, const std::string& extension)

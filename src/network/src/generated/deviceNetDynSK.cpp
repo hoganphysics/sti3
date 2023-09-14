@@ -316,6 +316,15 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileHolder = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileHolder:1.0", "TFileHolder", &_0RL_tcTrack);
 #endif
 
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TFileServer = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileServer:1.0", "TFileServer", &_0RL_tcTrack);
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileServer = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileServer:1.0", "TFileServer", &_0RL_tcTrack);
+#endif
+
 static void _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn(cdrStream& _s, void* _v)
 {
   STI::TNetwork::TDeviceNode* _p = (STI::TNetwork::TDeviceNode*)_v;
@@ -1502,6 +1511,58 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolder_ptr* _op)
       _o = (STI::TNetwork::TFileHolder_ptr)_r->_ptrToObjRef(STI::TNetwork::TFileHolder::_PD_repoId);
     else
       _o = STI::TNetwork::TFileHolder::_nil();
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTFileServer_marshal_fn(cdrStream& _s, void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  omniObjRef::_marshal(_o, _s);
+}
+static void _0RL_STI_mTNetwork_mTFileServer_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  omniObjRef* _o = omniObjRef::_unMarshal(STI::TNetwork::TFileServer::_PD_repoId, _s);
+  _v = _o;
+}
+static void _0RL_STI_mTNetwork_mTFileServer_destructor_fn(void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  if (_o)
+    omni::releaseObjRef(_o);
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr _o)
+{
+  STI::TNetwork::TFileServer_ptr _no = STI::TNetwork::TFileServer::_duplicate(_o);
+  _a.PR_insert(STI::TNetwork::_tc_TFileServer,
+               _0RL_STI_mTNetwork_mTFileServer_marshal_fn,
+               _0RL_STI_mTNetwork_mTFileServer_destructor_fn,
+               _no->_PR_getobj());
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr* _op)
+{
+  _a.PR_insert(STI::TNetwork::_tc_TFileServer,
+               _0RL_STI_mTNetwork_mTFileServer_marshal_fn,
+               _0RL_STI_mTNetwork_mTFileServer_destructor_fn,
+               (*_op)->_PR_getobj());
+  *_op = STI::TNetwork::TFileServer::_nil();
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr& _o)
+{
+  void* _v;
+  if (_a.PR_extract(STI::TNetwork::_tc_TFileServer,
+                    _0RL_STI_mTNetwork_mTFileServer_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTFileServer_marshal_fn,
+                    _0RL_STI_mTNetwork_mTFileServer_destructor_fn,
+                    _v)) {
+    omniObjRef* _r = (omniObjRef*)_v;
+    if (_r)
+      _o = (STI::TNetwork::TFileServer_ptr)_r->_ptrToObjRef(STI::TNetwork::TFileServer::_PD_repoId);
+    else
+      _o = STI::TNetwork::TFileServer::_nil();
     return 1;
   }
   return 0;

@@ -35,6 +35,21 @@ module TNetwork
 	};
 	typedef sequence<TDeviceIDVertex> TDeviceIDVertexSeq;
 
+
+	struct TTimeStamp
+	{
+		long year;
+		long month;
+		long day;
+		long hour;
+		long min;
+		long sec;
+		long millis;
+		long micros;
+		long nanos;
+	};
+
+
 	struct TEventEngineDependencyTree
 	{
 		TDeviceIDVertexSeq vertices;
@@ -50,6 +65,27 @@ module TNetwork
 	typedef sequence<unsigned long> TGraphPathLabel;
 
 	typedef sequence<octet> OctetSeq;
+
+	enum TFileTransferType { FileTransferBinary, FileTransferString };
+
+
+
+	struct TFileID
+	{
+		string filename;
+		string path;
+		string origin;	//where file was created
+		string persistenceLocation;
+		TTimeStamp creationTime;
+	};
+	typedef sequence<TFileID> TFileIDSeq;
+
+	// struct TFileHolder
+	// {
+	// 	TFileID fileID;
+	// 	TFileServer fileServer;
+	// };
+	
 
 	interface TFileHolder;
 	typedef sequence<TFileHolder> TFileHolderSeq;
@@ -82,7 +118,7 @@ module TNetwork
 	union TImageData switch(TImageDataType) 
 	{
 		case ImageDataBinary: 	TBinaryData 	binary;
-		case ImageDataFile: 	TFileHolder 	file;
+		case ImageDataFile: 	TFileID 		file;
 	};
 
 	struct TStringPair
@@ -123,7 +159,7 @@ module TNetwork
 		case MixedValueVector: 		TMixedValueSeq 	values;
 		case MixedValueVectorInt: 	sequence<long> 	valuesInt;
 		case MixedValueBinary: 		TBinaryData 	valueBin;
-		case MixedValueFile: 		TFileHolder		value_file;
+		case MixedValueFile: 		TFileID			value_file;
 		case MixedValueImage:		TImage			value_image;
 	};
 
@@ -223,19 +259,6 @@ module TNetwork
 
 	enum TEventEngineJobType { EngineJobParse, EngineJobPlay };
 	
-	struct TTimeStamp
-	{
-		long year;
-		long month;
-		long day;
-		long hour;
-		long min;
-		long sec;
-		long millis;
-		long micros;
-		long nanos;
-	};
-
 	struct TEngineJobSourceID
 	{
 		string user;
@@ -323,10 +346,13 @@ module TNetwork
 
 	interface TShotCallback;
 
+	interface TFileServer;
+
 	struct TStackTraceData
 	{
-		TFileHolderSeq timingFiles;
+		TFileIDSeq timingFiles;
 		TStringSeq functionNames;
+		TFileServer fileServer;
 	};
 
 	struct TStackTraceResult

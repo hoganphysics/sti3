@@ -29,6 +29,7 @@
 #include "LocalProfileManager.h"
 #include "LocalTaskManager.h"
 #include "LocalShot.h"
+// #include "LocalFileServer.h"
 
 #include <filesystem>
 #include <memory>
@@ -125,7 +126,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 
 
-	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
@@ -322,12 +323,12 @@ STI::Device::Logger& LocalDevice::log(const std::string& name)
 	return localLogManager->log(name);
 }
 
-std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& filename)
+std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& path, const std::string& filename)
 {
 	std::shared_ptr<STI::Utils::FileHolder> file;
 
 	if (localPersistenceManager != 0) {
-		file = localPersistenceManager->makeFileHolder(filename);
+		file = localPersistenceManager->makeFileHolder(path, filename);
 	}
 	return file;
 }
@@ -675,6 +676,13 @@ bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
 {
 	manager = localLogManager;
 	return manager != 0;
+}
+
+bool LocalDevice::getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer)
+{
+	if (localPersistenceManager == 0) return false;
+
+	return localPersistenceManager->getFileServer(fileServer);
 }
 
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 

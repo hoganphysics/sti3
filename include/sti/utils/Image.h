@@ -4,6 +4,7 @@
 #include <sti/utils/BinaryData.h>
 #include <sti/utils/CachedValue.h>
 #include <sti/utils/MetaData.h>
+#include <sti/utils/FileHolder.h>
 
 #include <string>
 #include <memory>

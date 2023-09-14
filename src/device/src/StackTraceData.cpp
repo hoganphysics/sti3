@@ -2,7 +2,7 @@
 
 #include <sti/engine/StackTrace.h>
 #include <sti/utils/FileHolder.h>
-#include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/FileID.h>
 
 #include "RawStackTrace.h"
 
@@ -12,29 +12,39 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/memory.hpp>
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 using STI::Engine::StackTraceData;
 using STI::Engine::StackTrace;
 using STI::Engine::RawStackTrace;
 
-
 StackTraceData::StackTraceData()
-: StackTraceData(0)
-{
-}
-
-StackTraceData::StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory)
-: fileHolderFactory(fileFactory)
 {
     init();
 }
 
-StackTraceData::StackTraceData(const std::vector<std::shared_ptr<STI::Utils::FileHolder>>& files, const std::vector<std::string>& funcNames)
+
+StackTraceData::StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Utils::FileServer>& fileServer)
+: localID(localID), fileServer(fileServer)
+// : StackTraceData(0)
+{
+    init();
+}
+
+// StackTraceData::StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory)
+// : fileHolderFactory(fileFactory)
+// {
+//     init();
+// }
+
+StackTraceData::StackTraceData(const std::vector<STI::Utils::FileID>& files, const std::vector<std::string>& funcNames)
 {
     init();
 
-    for (auto& file : files) {
-        fileMap->add(file->getFilename(), file);
-        timingFileNames.push_back(file->getFilename());
+    for (auto& fileID : files) {
+        fileMap->add(fileID.getFullFilename(), fileID);
+        timingFileNames.push_back(fileID.getFullFilename());
     }
 
     for (auto& name : funcNames) {
@@ -44,11 +54,11 @@ StackTraceData::StackTraceData(const std::vector<std::shared_ptr<STI::Utils::Fil
 
 void StackTraceData::init()
 {
-    if (fileHolderFactory == 0) {
-        fileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-    }
+    // if (fileHolderFactory == 0) {
+    //     fileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>("");
+    // }
 
-    fileMap = std::make_shared<VectorMapFileHolder>(timingFiles);
+    fileMap = std::make_shared<VectorMapFileID>(timingFiles);
     functionMap = std::make_shared<VectorMapString>(functionNames);
 }
 
@@ -71,33 +81,33 @@ RawStackTrace StackTraceData::getStackTrace(const StackTrace& stackTrace) const
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
 
-    std::shared_ptr<STI::Utils::FileHolder> file;
+    STI::Utils::FileID fileID;
     std::string func;
 
     RawStackTrace rawTrace;
 
     for (auto& frame : stackTrace.getFrames()) {
 
-        if (fileMap->at(frame.file, file) && file != 0 && functionMap->at(frame.func, func)) {
-            rawTrace.appendFrame(file->getFilename(), frame.line, func);
+        if (fileMap->at(frame.file, fileID) && functionMap->at(frame.func, func)) {
+            rawTrace.appendFrame(fileID.getFullFilename(), frame.line, func);
         }        
     }
     return rawTrace;
 }
 
 
-std::vector<std::shared_ptr<STI::Utils::FileHolder>> StackTraceData::getTimingFiles() const
+const std::vector<STI::Utils::FileID>& StackTraceData::getTimingFiles() const
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
-    return fileMap->getVec();
+    return fileMap->vec();
 }
 
 
-std::vector<std::string> StackTraceData::getFunctionNames() const
+const std::vector<std::string>& StackTraceData::getFunctionNames() const
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
 
-    return functionMap->getVec();
+    return functionMap->vec();
 }
 
 unsigned StackTraceData::addFile(const std::string& filename)
@@ -111,90 +121,109 @@ unsigned StackTraceData::addFile(const std::string& filename)
     }
 
     //new file
-    auto file = fileHolderFactory->makeFileHolder(filename);
-    timingFileNames.push_back(file->getFilename());
-    return fileMap->add(filename, file);
+    // auto file = fileHolderFactory->makeFileHolder(filename);
+    STI::Utils::FileID fileID;
+
+    fs::path filepath = filename;
+    
+    fileID.filename = filepath.filename();
+    fileID.path = filepath.parent_path();
+    fileID.origin = localID.getID();
+    fileID.persistenceLocation = localID.getID();
+
+    timingFileNames.push_back(filename);
+    return fileMap->add(filename, fileID);
 }
 
-void StackTraceData::replaceFile(const std::string& oldFilename, const std::shared_ptr<STI::Utils::FileHolder>& newFile)
+void StackTraceData::replaceFile(const std::string& oldFilename, const STI::Utils::FileID& newFile)
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
 
-    if (newFile == 0) return;
-
-    fileMap->rename(oldFilename, newFile->getFilename());
-    fileMap->replace(newFile->getFilename(), newFile);
+    fileMap->rename(oldFilename, newFile.getFullFilename());
+    fileMap->replace(newFile.getFullFilename(), newFile);
 
     auto it = std::find(timingFileNames.begin(), timingFileNames.end(), oldFilename);
     if (it != timingFileNames.end()) {
         timingFileNames.erase(it);
     }
-    timingFileNames.push_back(newFile->getFilename());
+    timingFileNames.push_back(newFile.getFullFilename());
 }
 
-void StackTraceData::deleteFiles()
+// void StackTraceData::deleteFiles()
+// {
+//     for (auto& file : timingFiles) {
+//         if (file != 0) {
+//             file->deleteFile();
+//         }
+//     }
+// }
+
+// void StackTraceData::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory)
+// {
+//     if (fileFactory == 0) return;
+//     fileHolderFactory = fileFactory;
+
+//     //rebind all FileHolders using new factory
+//     auto timingFilesCopy = timingFiles;
+
+//     for (auto& file : timingFilesCopy) {
+//         if (file != 0) {
+//             auto newFile = fileHolderFactory->makeFileHolder(file->getFilename());
+//             replaceFile(file->getFilename(), newFile);
+//         }
+//     }
+// }
+
+bool StackTraceData::getFileServer(std::shared_ptr<STI::Utils::FileServer>& server)
 {
-    for (auto& file : timingFiles) {
-        if (file != 0) {
-            file->deleteFile();
-        }
-    }
+    server = fileServer;
+    return (server != 0);
 }
 
-void StackTraceData::setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory)
+void StackTraceData::setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server)
 {
-    if (fileFactory == 0) return;
-    fileHolderFactory = fileFactory;
-
-    //rebind all FileHolders using new factory
-    auto timingFilesCopy = timingFiles;
-
-    for (auto& file : timingFilesCopy) {
-        if (file != 0) {
-            auto newFile = fileHolderFactory->makeFileHolder(file->getFilename());
-            replaceFile(file->getFilename(), newFile);
-        }
-    }
+    fileServer = server;
 }
-
-//template<class Archive>
-//void StackTraceData::serialize(Archive& archive)
-//{
-//    archive( 
-//        cereal::make_nvp("timingFiles", timingFiles),
-//        cereal::make_nvp("functionNames", functionNames)
-//        );
-//}
-
-//template void StackTraceData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-//template void StackTraceData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
 template<class Archive>
-void StackTraceData::save(Archive& archive) const
+void StackTraceData::serialize(Archive& archive)
 {
-    archive(
-        cereal::make_nvp("timingFilesNames", timingFileNames),
-        cereal::make_nvp("functionNames", functionNames)
-    );
+   archive( 
+       cereal::make_nvp("localID", localID),
+       cereal::make_nvp("timingFiles", timingFiles),
+       cereal::make_nvp("functionNames", functionNames)
+       );
 }
 
-template void StackTraceData::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
+template void StackTraceData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+template void StackTraceData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
-template<class Archive>
-void StackTraceData::load(Archive& archive)
-{
-    archive(
-        cereal::make_nvp("timingFileNames", timingFileNames),
-        cereal::make_nvp("functionNames", functionNames)
-    );
+// template<class Archive>
+// void StackTraceData::save(Archive& archive) const
+// {
+//     archive(
+//         cereal::make_nvp("timingFilesNames", timingFileNames),
+//         cereal::make_nvp("functionNames", functionNames)
+//     );
+// }
 
-    if (fileHolderFactory == 0) return;
+// template void StackTraceData::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
 
-    for (auto& filename : timingFileNames) {
-        auto file = fileHolderFactory->makeFileHolder(filename);
-        timingFiles.push_back(file);
-    }
-}
+// template<class Archive>
+// void StackTraceData::load(Archive& archive)
+// {
+//     archive(
+//         cereal::make_nvp("timingFileNames", timingFileNames),
+//         cereal::make_nvp("functionNames", functionNames)
+//     );
 
-template void StackTraceData::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
+//     // if (fileHolderFactory == 0) return;
+
+//     // for (auto& filename : timingFileNames) {
+//     //     auto file = fileHolderFactory->makeFileHolder(filename);
+//     //     timingFiles.push_back(file);
+//     // }
+// }
+
+// template void StackTraceData::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
 

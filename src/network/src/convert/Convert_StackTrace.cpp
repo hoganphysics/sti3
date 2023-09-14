@@ -1,6 +1,8 @@
 #include "Convert_StackTrace.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
+#include "Convert_File.h"
+#include "TFileServerRefInterface.h"
 
 #include <sti/engine/StackTrace.h>
 #include <sti/engine/StackTraceData.h>
@@ -109,13 +111,18 @@ template<>
 bool STI::Network::convert<TStackTraceData, std::shared_ptr<StackTraceData>>(
     const TStackTraceData& tStackTraceData, std::shared_ptr<StackTraceData>& stackTraceData)
 {
-    std::vector<std::shared_ptr<STI::Utils::FileHolder>> timingFiles;
+    std::vector<STI::Utils::FileID> timingFiles;
     std::vector<std::string> functionNames;
     
     convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(tStackTraceData.functionNames, functionNames);
-    convert<STI::TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<STI::Utils::FileHolder>>>(tStackTraceData.timingFiles, timingFiles);
+    // convert<STI::TNetwork::TFileHolderSeq, std::vector<std::shared_ptr<STI::Utils::FileHolder>>>(tStackTraceData.timingFiles, timingFiles);
+    convert<STI::TNetwork::TFileID, STI::Utils::FileID>(tStackTraceData.timingFiles, timingFiles);
 
     stackTraceData = std::make_shared<StackTraceData>(timingFiles, functionNames);
+
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+    convert<STI::TNetwork::TFileServer_var, std::shared_ptr<STI::Utils::FileServer>>(tStackTraceData.fileServer, fileServer);
+    stackTraceData->setFileServer(fileServer);
 
     return (stackTraceData != 0);
 }
@@ -128,8 +135,19 @@ bool STI::Network::convert<std::shared_ptr<StackTraceData>, TStackTraceData>(
 
     convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(
         stackTraceData->getFunctionNames(), tStackTraceData.functionNames);
-    convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(
-        stackTraceData->getTimingFiles(), tStackTraceData.timingFiles);
+
+    convert<STI::Utils::FileID, STI::TNetwork::TFileID>(stackTraceData->getTimingFiles(), tStackTraceData.timingFiles);
+
+    STI::TNetwork::TFileServer_var tFileServer;
+
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+    if (stackTraceData->getFileServer(fileServer) 
+            && STI::Network::TFileServerRefInterface::getTFileServerReference(fileServer, tFileServer)) {
+        tStackTraceData.fileServer = tFileServer;
+    }
+
+    // convert<std::vector<std::shared_ptr<STI::Utils::FileHolder>>, STI::TNetwork::TFileHolderSeq>(
+    //     stackTraceData->getTimingFiles(), tStackTraceData.timingFiles);
 
     return true;
 }
