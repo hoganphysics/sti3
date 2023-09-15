@@ -6,8 +6,10 @@
 #include "convert/Convert_SequenceResult.h"
 #include "generated/orbTypes.h"
 #include "NetworkFileHolder.h"
+#include "NetworkFileServer.h"
 #include "NetworkResultsCollector.h"
 #include <sti/engine/RawEvent.h>
+
 
 using STI::Network::NetworkResultsCollector;
 using STI::Network::RemotePersistenceManager;
@@ -257,8 +259,14 @@ std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder
 
 std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
 {
-	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
+	std::shared_ptr<STI::Utils::FileHolder> fileHolder; //null
 	return fileHolder;
+}
+
+std::shared_ptr<STI::Utils::VirtualFileServer> RemotePersistenceManager::makeVirtualFileServer()
+{
+	auto fileServer = std::shared_ptr<STI::Network::NetworkVirtualFileServer>();
+	return fileServer;
 }
 
 void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)

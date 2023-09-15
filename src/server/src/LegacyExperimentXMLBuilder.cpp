@@ -79,7 +79,7 @@ void addDimlimitedVector(tinyxml2::XMLElement* base, const std::vector<T>* value
     vec->SetText(out.str().c_str());
 }
 
-void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI::Utils::MixedValue& value)
+void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI::Utils::MixedValue& value, const std::string& shotFilename)
 {
     using STI::Utils::MixedValueType;
 
@@ -99,10 +99,17 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
         case MixedValueType::File:
             {
                 auto file = base->InsertNewChildElement("file");
+
+                std::filesystem::path shotPath = shotFilename;
+                std::filesystem::path absFilePath = value.getFileID().getFullFilename();
+                auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+                file->InsertNewChildElement("filename")->SetText(relativeFilePath.string().c_str());
+        // timing->InsertNewChildElement("file")->SetText(relativeFilePath.string().c_str());
+
                 // if (value.getFileID() != 0) {
 
                 // }
-                file->InsertNewChildElement("filename")->SetText(value.getFileID().filename.c_str());
+                // file->InsertNewChildElement("filename")->SetText(value.getFileID().filename.c_str());
                 // file->InsertNewChildElement("md5hash")->SetText(value.getFile()->md5Checksum().c_str());
             }
             break;
@@ -129,7 +136,7 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
             {
                 auto vec = base->InsertNewChildElement("vector");
                 for (auto& v : value.getVector()) {
-                    addValue(vec, v);
+                    addValue(vec, v, shotFilename);
                 }                
             }
             break;
@@ -160,7 +167,7 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
     }
 }
 
-void addMeasurements(tinyxml2::XMLElement* measurements, const STI::Engine::MeasurementVector& measurementVector)
+void addMeasurements(tinyxml2::XMLElement* measurements, const STI::Engine::MeasurementVector& measurementVector, const std::string& shotFilename)
 {
     for (auto& meas : measurementVector) {
         //meas
@@ -169,12 +176,12 @@ void addMeasurements(tinyxml2::XMLElement* measurements, const STI::Engine::Meas
             measurement->SetAttribute("time", meas->time());
             measurement->SetAttribute("channel", meas->channel());
             measurement->SetAttribute("group", meas->groupName().c_str());
-            LegacyExperimentXMLBuilder::addValue(measurement, meas->data());
+            LegacyExperimentXMLBuilder::addValue(measurement, meas->data(), shotFilename);
         }
     }
 }
 
-void addVars(tinyxml2::XMLElement* timing, const std::shared_ptr<STI::Engine::RawEventGroup>& group)
+void addVars(tinyxml2::XMLElement* timing, const std::shared_ptr<STI::Engine::RawEventGroup>& group, const std::string& shotFilename)
 {
     if (group == 0) return;
 
@@ -187,7 +194,7 @@ void addVars(tinyxml2::XMLElement* timing, const std::shared_ptr<STI::Engine::Ra
         auto it = std::find_if(ovars.begin(), ovars.end(), [&var](auto& ovar) { return ovar.name.compare(var.name) == 0; });
         varElement->SetAttribute("overwritten", it != ovars.end());
 
-        LegacyExperimentXMLBuilder::addValue(varElement, var.value);
+        LegacyExperimentXMLBuilder::addValue(varElement, var.value, shotFilename);
     }
 
     
@@ -200,7 +207,7 @@ void addVars(tinyxml2::XMLElement* timing, const std::shared_ptr<STI::Engine::Ra
 
     auto groups = group->getSubgroups();
     for (auto& g : groups) {
-        addVars(timing, g);
+        addVars(timing, g, shotFilename);
     }
 
 }
@@ -255,7 +262,7 @@ void LegacyExperimentXMLBuilder::build()
             auto files = parseResult->stackTraceResult->stackTraceData->getTimingFiles();
             addFiles(timing, shotPath, files);
         }       
-        addVars(timing, parseResult->baseEventGroup);
+        addVars(timing, parseResult->baseEventGroup, filename);
     }
 
     auto devices = e->InsertNewChildElement("devices");
@@ -290,7 +297,7 @@ void LegacyExperimentXMLBuilder::build()
             auto measurementsIt = shotResult->measurements->find(id);
 
             if (measurementsIt != shotResult->measurements->end()) {
-                addMeasurements(measurements, measurementsIt->second);
+                addMeasurements(measurements, measurementsIt->second, filename);
             }
         }
 

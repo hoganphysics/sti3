@@ -32,7 +32,7 @@ public:
 
     // void buildXML(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
     
-    static void addValue(tinyxml2::XMLElement* base, const STI::Utils::MixedValue& value);
+    static void addValue(tinyxml2::XMLElement* base, const STI::Utils::MixedValue& value, const std::string& shotFilename);
 
 private:
 

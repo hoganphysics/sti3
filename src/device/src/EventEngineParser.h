@@ -11,6 +11,7 @@
 #include <sti/utils/VirtualFileServer.h>
 
 #include "fwd/ChannelManager_fwd.h"
+#include "fwd/PersistenceManager_fwd.h"
 
 #include <string>
 #include <sstream>
@@ -33,6 +34,7 @@ public:
 
 	EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
 					  const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
+					  const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager,
 					  DeviceEventParser* deviceParser);
 	~EventEngineParser();
 
@@ -79,6 +81,7 @@ private:
 	EngineID engineID;
 	STI::Device::DeviceID localDeviceID;
 	std::shared_ptr<STI::Device::ChannelManager> channelManager;
+	std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 
 	std::shared_ptr<STI::Utils::VirtualFileServer> fileServer;
 

@@ -73,7 +73,7 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 								   const std::shared_ptr<STI::Device::PersistenceManager>& persistence) 
   : MessageGenerator(dispatcher),
   	engineID(engineID),
-	parser(engineID, localID, channels, deviceParser), 
+	parser(engineID, localID, channels, persistence, deviceParser), 
 	deviceParser(deviceParser),
 	resultBuffer(3),
 	localDeviceID(localID),

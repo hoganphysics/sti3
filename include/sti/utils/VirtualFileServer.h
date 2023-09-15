@@ -40,6 +40,28 @@ private:
 };
 
 
+
+class VirtualFileServerFactory
+{
+public:
+
+	~VirtualFileServerFactory() {}
+
+	virtual std::shared_ptr<VirtualFileServer> makeVirtualFileServer() = 0;
+};
+
+class LocalVirtualFileServerFactory : public VirtualFileServerFactory
+{
+public:
+
+	std::shared_ptr<VirtualFileServer> makeVirtualFileServer()
+	{
+		auto fileServer = std::make_shared<VirtualFileServer>();
+		return fileServer;
+	}
+};
+
+
 } //Utils
 } //STI
 

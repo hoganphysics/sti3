@@ -10,6 +10,7 @@
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/utils/FileHolderFactory.h>
+#include <sti/utils/VirtualFileServer.h>
 
 #include <memory>
 
@@ -43,9 +44,11 @@ public:
     //virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
+    virtual void setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory) = 0;
 
     virtual void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) = 0;
     virtual bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) = 0;
+    virtual std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer() = 0;
 
     virtual void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
     virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;

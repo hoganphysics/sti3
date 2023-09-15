@@ -50,10 +50,14 @@ public:
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
+    void setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory);
+
     void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory);
     
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server);
     bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
+
+    std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
@@ -126,6 +130,8 @@ private:
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 
     std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;
+
+    std::shared_ptr<STI::Utils::VirtualFileServerFactory> virtualFileServerFactory;
 
     DeviceID localDeviceID;
     std::string basePath;

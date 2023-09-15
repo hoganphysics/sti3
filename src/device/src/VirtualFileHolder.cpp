@@ -49,3 +49,21 @@ void VirtualFileHolder::closeFile()
     std::cout << "File: " << data->str() << std::endl;
 }
 
+VirtualFileHolder& VirtualFileHolder::operator<<(manip1 fp)
+{
+    (*data) << fp;
+    return *this;
+}
+
+VirtualFileHolder& VirtualFileHolder::operator<<(manip2 fp)
+{
+    (*data) << fp;
+    return *this;
+}
+
+VirtualFileHolder& VirtualFileHolder::operator<<(manip3 fp)
+{
+    (*data) << fp;
+    return *this;
+}
+

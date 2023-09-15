@@ -31,6 +31,23 @@ public:
     bool openFile();
     void closeFile();
 
+    template<typename T>
+    VirtualFileHolder& operator<<(const T& input)
+    {
+        (*data) << input;
+        return *this;
+    }
+
+    // overloads for manipulators
+    typedef std::ostream& (*manip1)(std::ostream&);
+    typedef std::basic_ios<std::ostream::char_type, std::ostream::traits_type> ios_type;
+    typedef ios_type& (*manip2)(ios_type&);
+    typedef std::ios_base& (*manip3)(std::ios_base&);
+
+    VirtualFileHolder& operator<<(manip1 fp);
+    VirtualFileHolder& operator<<(manip2 fp);
+    VirtualFileHolder& operator<<(manip3 fp);
+
 private:
 
     FileID fileID;
@@ -40,7 +57,6 @@ private:
 
     mutable std::mutex fileMutex;
 };
-
 
 
 } //Utils

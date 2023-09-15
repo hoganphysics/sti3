@@ -4,6 +4,9 @@
 #include "NetworkResultsCollectorFactory.h"
 #include "ORBManager.h"
 
+#include <sti/utils/FileServer.h>
+#include "LocalFileServer.h"
+
 using STI::Network::NetworkDevice;
 
 
@@ -29,8 +32,18 @@ NetworkDevice::NetworkDevice(const std::shared_ptr<STI::Device::Device>& device)
     auto resultsCollectionFactory = std::make_shared<STI::Network::NetworkResultsCollectorFactory>();
     persistenceManager->setResultsCollectorFactory(resultsCollectionFactory);
 
-    auto fileServer = std::make_shared<STI::Network::NetworkFileServer>(getID());
-    persistenceManager->setFileServer(fileServer);
+    // std::shared_ptr<STI::Utils::FileServer> fileServer;
+    // bool isNetworkFileServer = persistenceManager->getFileServer(fileServer) && STI::Network::NetworkFileServer::isNetworkFileServer(fileServer);
+    
+    // if (!isNetworkFileServer) {
+    //     fileServer = std::make_shared<STI::Utils::LocalFileServer>(getID());
+    // }
+    
+    auto networkFileServer = std::make_shared<STI::Network::NetworkFileServer>(getID());
+    persistenceManager->setFileServer(networkFileServer);
+
+    auto virtualFileServerFactory = std::make_shared<STI::Network::NetworkVirtualFileServerFactory>();
+    persistenceManager->setVirtualFileServerFactory(virtualFileServerFactory);
 
     // std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
     // persistenceManager->getShotRepository(shotRepo);

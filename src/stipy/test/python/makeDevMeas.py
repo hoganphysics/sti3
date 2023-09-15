@@ -11,6 +11,8 @@ def f():
 
     meas(c2, 200)
 
+    meas(ch(d1, 3), 500)    #file meas
+
     g(c2)
 
     c1=ch(d1, 1)

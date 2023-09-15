@@ -73,6 +73,7 @@ basePath(basePath)
     auto resultsCollectionFactory = std::make_shared<STI::Engine::LocalResultsCollectorFactory>();
     setResultsCollectorFactory(resultsCollectionFactory);
 
+    virtualFileServerFactory = std::make_shared<STI::Utils::LocalVirtualFileServerFactory>();
 }
 
 LocalPersistenceManager::~LocalPersistenceManager()
@@ -183,6 +184,10 @@ void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Ut
     fileHolderFactory = factory;
 }
 
+void LocalPersistenceManager::setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory)
+{
+    virtualFileServerFactory = factory;
+}
 
 void LocalPersistenceManager::setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory)
 {
@@ -198,6 +203,15 @@ bool LocalPersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileServ
 void LocalPersistenceManager::setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server)
 {
     fileServer = server;
+}
+
+std::shared_ptr<STI::Utils::VirtualFileServer> LocalPersistenceManager::makeVirtualFileServer()
+{
+    if (virtualFileServerFactory == 0) {
+        std::shared_ptr<STI::Utils::VirtualFileServer> empty = std::make_shared<STI::Utils::VirtualFileServer>();
+        return empty;
+    }
+    return virtualFileServerFactory->makeVirtualFileServer();
 }
 
 std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
@@ -278,12 +292,22 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
         success &= resultsCollector->addAttributes(attribs.first, attribs.second);
     }
 
+    std::shared_ptr<STI::Utils::FileServer> fs;
+    std::shared_ptr<STI::Utils::VirtualFileServer> measurementFileServer;
+
     //Measurements
     if (shotResult->measurements != 0) {
         for (auto& tuple : *shotResult->measurements) {  //tuple = {DeviceID, MeasurementVector}
 
             if (tuple.second.size() > 0) {
-                success &= resultsCollector->addMeasurements(tuple.first, tuple.second, fileServer);
+
+                if (tuple.second.front() != 0 && tuple.second.front()->getFileServer(measurementFileServer)) {
+                    fs = measurementFileServer;
+                }
+                else {
+                    fs = fileServer;    //default in case Measurement is missing VirtualFileServer
+                }
+                success &= resultsCollector->addMeasurements(tuple.first, tuple.second, fs);
             }
         }        
     }

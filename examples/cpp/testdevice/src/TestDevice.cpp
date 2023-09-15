@@ -128,9 +128,9 @@ void TestDevice::init()
     
     // log().addReadLogTask(2, "00:00:02");
     log() << "test log" << std::endl;
-    log().addLogTask("00:00:10", [](){ 
-        return "test task"; 
-        });
+    // log().addLogTask("00:00:10", [](){ 
+    //     return "test task"; 
+    //     });
     // log("ch1").addWriteLogTask(1, "00:00:05", 2.5);
 }
 
@@ -217,10 +217,12 @@ void TestDevice::TestEvent::collectMeasurementData()
         myfile << "Testing image data.\n";
         myfile.close();
 
+
         auto file = localDevice->makeFileHolder("", filename);
-        result.setValue(file);
+        result.setValue(file->getID());
         // getMeasurements().at(0)->setMeasurementResult(result);
         setMeasurementResult(result);
+        attachFile(file);
 
     }
 }

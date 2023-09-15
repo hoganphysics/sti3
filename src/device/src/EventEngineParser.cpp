@@ -2,6 +2,7 @@
 
 #include <sti/device/Channel.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/PersistenceManager.h>
 
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/Measurement.h>
@@ -35,11 +36,12 @@ using STI::Utils::MixedValueType;
 using STI::Utils::MixedValue;
 
 
-
 EventEngineParser::EventEngineParser(const EngineID& engineID, const STI::Device::DeviceID& localDeviceID, 
-					const std::shared_ptr<STI::Device::ChannelManager>& channelManager, 
+					const std::shared_ptr<STI::Device::ChannelManager>& channelManager,
+					const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, 
 					DeviceEventParser* deviceParser)
-: engineID(engineID), localDeviceID(localDeviceID), channelManager(channelManager), deviceParser(deviceParser)
+: engineID(engineID), localDeviceID(localDeviceID), channelManager(channelManager), 
+persistenceManager(persistenceManager), deviceParser(deviceParser)
 {
 	defineErrorIDs();
 	hasErrors = false;
@@ -59,7 +61,9 @@ void EventEngineParser::clear()
 	partnerEvents.clear();
 	measurementEventGraph.clear();
 
-	fileServer = std::make_shared<STI::Utils::VirtualFileServer>();	//make new instead of clear, in case Measurement from previous shot have a reference.
+	// fileServer = std::make_shared<STI::Utils::VirtualFileServer>();	//make new instead of clear, in case Measurement from previous shot have a reference.
+
+	fileServer = persistenceManager->makeVirtualFileServer();	//make new instead of clear, in case Measurement from previous shot have a reference.
 }
 
 const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages() const
