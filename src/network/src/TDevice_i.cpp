@@ -20,9 +20,10 @@ using STI::Network::convert;
 
 //Device is a DeviceCollector, so we can simply pass the device pointer to both
 TDevice_i::TDevice_i(const std::shared_ptr<STI::Device::Device>& device)
-	: localDevice(device), deviceCollectionServant(device), messageDispatcherServant(device), 
-		eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device), 
-		persistenceManagerServant(device), profileManagerServant(device), taskManagerServant(device), logManagerServant(device)
+: localDevice(device), deviceCollectionServant(device), messageDispatcherServant(device), 
+eventSchedulerServant(device), channelManagerServant(device), attributeManagerServant(device), 
+persistenceManagerServant(device), profileManagerServant(device), taskManagerServant(device), 
+logManagerServant(device)
 {
 	STI::Network::ORBManager::ORBManager::activateServant(attributeManagerServant);
 	STI::Network::ORBManager::ORBManager::activateServant(channelManagerServant);

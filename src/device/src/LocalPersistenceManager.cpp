@@ -26,13 +26,10 @@
 #include "TransientRepository.h"
 #include "LocalFileServer.h"
 
-
 #include <filesystem>
 namespace fs = std::filesystem;
 
-
 using STI::Device::LocalPersistenceManager;
-
 using STI::Device::PersistenceTarget;
 using STI::Device::PersistenceTargetHolder;
 using STI::Engine::ResultsCollector;
@@ -96,9 +93,6 @@ void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::E
 void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target)
 {
     if (target != 0) {
-        // std::filesystem::path filename(getBasePath());
-        // filename /= (target->getFilenameStem() + ".ini");
-
         auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
         persistenceTargetHolders.push_back(holder);
     }

@@ -61,8 +61,6 @@ void EventEngineParser::clear()
 	partnerEvents.clear();
 	measurementEventGraph.clear();
 
-	// fileServer = std::make_shared<STI::Utils::VirtualFileServer>();	//make new instead of clear, in case Measurement from previous shot have a reference.
-
 	fileServer = persistenceManager->makeVirtualFileServer();	//make new instead of clear, in case Measurement from previous shot have a reference.
 }
 
@@ -115,11 +113,6 @@ void EventEngineParser::getEventTargets(std::set<STI::Device::DeviceID>& targetI
 
 bool EventEngineParser::groupEventsByTime(const RawEventGroup& eventGroup)
 {
-	// //reset
-	// rawEvents.clear();
-	// partnerEvents.clear();
-	// measurementEventGraph.clear();
-
 	bool success = true;
 
 	unsigned errorCount = 0;	//limit the number of errors that are reported back during a single parse attempt

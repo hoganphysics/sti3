@@ -2,14 +2,14 @@
 #define STI_PYTHON_LOCALDEVICEPY_H
 
 #include <sti/LocalDevice.h>
+#include <sti/device/DeviceID.h>
+
 #include "DevicePy.h"
 #include "PartnerDevicePy.h"
-#include <sti/device/DeviceID.h>
 
 #include <memory>
 #include <pybind11/pybind11.h>
 
-#include <iostream>
 
 namespace STI
 {
@@ -112,14 +112,10 @@ private:
         LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
 		    const std::string& targetServer)
             : STI::Device::LocalDevice(name, address, module, targetServer), localDevicePy(localDevicePy) {}
-        
 
         bool writeChannel(short channel, const STI::Utils::MixedValue& value)
         {
             STI::Python::MixedValuePy valuePy(value);
-
-            // std::cout << "LocalDeviceDelegate::writeChannel: " << value.print() << std::endl;
-
             pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
 
             bool success = false;
@@ -134,33 +130,18 @@ private:
 	    bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) 
         {
             STI::Python::MixedValuePy valuePy(value);
-            // valuePy.setValue(value);
-            // valuePy.addValue(33.0);
             pybind11::object dataPyObj;
             pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
             
             {
-                // std::cout << "----------- LocalDeviceDelegate::readChannel start " << value.print() << std::endl;
-
                 pybind11::gil_scoped_release release;
-                
                 dataPyObj = localDevicePy->readChannel(channel, valuePyObj);
-
-                // std::cout << "----------- LocalDeviceDelegate::readChannel done localDevicePy" << std::endl;
             }           
-
-            
 
             //convert result
             STI::Python::MixedValuePy dataPy;
             dataPy.setValue_py(dataPyObj);
-
-            // const STI::Utils::MixedValue& ref = dataPy;
-            // data.setValue(ref);
-
             data.setValue(dataPy.getMixedValue());
-
-            // std::cout << "read channel: " << data.print() << std::endl;
 
             return true;
         }
@@ -188,8 +169,6 @@ public:
     {   
         pybind11::gil_scoped_acquire acquire;
 
-        // std::cout << "LocalDevicePyTrampoline::writeChannel"  << std::endl;
-
         PYBIND11_OVERRIDE(
             bool,                  /* Return type */
             LocalDevicePy,         /* Parent class */
@@ -201,8 +180,6 @@ public:
     pybind11::object readChannel(short channel, const pybind11::object& value) override
     {
         pybind11::gil_scoped_acquire acquire;
-        // pybind11::object dummy = value;
-        // pybind11::object value2;
 
         PYBIND11_OVERRIDE(
             pybind11::object,     /* Return type */
@@ -223,7 +200,6 @@ public:
             events, synchedEvents   /* Argument(s) */
         );
     }
-
 
 };
 

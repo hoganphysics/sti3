@@ -1,13 +1,7 @@
-
 #include <sti/engine/Measurement.h>
-
-
-#include "MixedValuePy.h"
-// #include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 
-// #include <sti/engine/ParseResult.h>
-// #include <sti/engine/SequenceResult.h>
+#include "MixedValuePy.h"
 
 #include <string>
 #include <memory>
@@ -16,17 +10,11 @@
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
-
+namespace py = pybind11;
 
 // PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 
-
-
-namespace py = pybind11;
-
-// using STI::Python::PersistenceManagerPy;
 using STI::Python::MixedValuePy;
-
 
 
 void init_Measurement(py::module& m)

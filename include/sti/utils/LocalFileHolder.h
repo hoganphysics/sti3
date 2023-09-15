@@ -38,11 +38,8 @@ public:
 
     unsigned maxBufferSize() const;
 
-    // bool deleteFile();
-
     std::string md5Checksum();
 
-	
 	// bool openFileType(FileTransferType type, unsigned offset, unsigned& maxBufferSize);
     virtual bool openFile();
 
@@ -51,9 +48,6 @@ public:
     virtual void closeFile();
     
     static bool makeMD5hash(std::istream& ifs, std::string& md5string, unsigned bufferSize);
-
-   	// template<class Archive>
-	// void serialize(Archive& archive);
 
 protected:
     

@@ -5,7 +5,6 @@
 
 #include "TFileHolderRefInterface.h"
 #include "VirtualFileHolder.h"
-
 #include "TFileHolder_i.h"
 #include "generated/deviceNet.h"
 
@@ -23,8 +22,6 @@ class NetworkFileHolder : public STI::Utils::FileHolder,
                           public STI::Network::TFileHolderRefInterface	//mixin
 {
 public:
-
-    // NetworkFileHolder();    //for serialization
 
     NetworkFileHolder(const STI::Utils::FileID& fileID, const std::shared_ptr<STI::Utils::FileHolder>& fileHolder);
     virtual ~NetworkFileHolder();

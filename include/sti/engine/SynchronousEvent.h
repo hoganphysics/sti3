@@ -27,6 +27,7 @@ public:
 	virtual ~SynchronousEvent();
 
 	double getTime() const { return _time; }
+	void setTime(double time) { _time = time; }
 
 	const std::vector<std::shared_ptr<Measurement>>& getMeasurements() const { return measurements; }
 	void addMeasurement(const RawEvent& sourceEvent);

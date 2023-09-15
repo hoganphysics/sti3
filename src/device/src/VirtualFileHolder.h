@@ -51,7 +51,6 @@ public:
 private:
 
     FileID fileID;
-    // unsigned size;
 
     std::shared_ptr<std::stringstream> data;
 

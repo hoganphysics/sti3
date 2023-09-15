@@ -75,10 +75,7 @@ private:
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
 
-//	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
 	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice);
-
-//	::STI::TNetwork::TDevice_var _tDevice;		//remote reference
 
 	std::shared_ptr<STI::Device::DeviceMessageListenerForwarder> listenerForwarder;
 

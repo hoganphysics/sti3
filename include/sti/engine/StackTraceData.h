@@ -28,7 +28,6 @@ public:
     StackTraceData();
     StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
     StackTraceData(const std::vector<STI::Utils::FileID>& timingFiles, const std::vector<std::string>& functionNames);
-    // StackTraceData(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
     
     StackTrace addStackTrace(const RawStackTrace& stackTrace);
     RawStackTrace getStackTrace(const StackTrace& stackTrace) const;
@@ -37,22 +36,13 @@ public:
     // std::vector<std::string> timingFileNames()
     const std::vector<std::string>& getFunctionNames() const;
 
-    // void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& fileFactory);
-
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server);
     bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
 
     void replaceFile(const std::string& oldFilename, const STI::Utils::FileID& newFile);
-    // void deleteFiles();
 
    template<class Archive>
 	void serialize(Archive& archive);
-
-    // template<class Archive>
-    // void save(Archive& archive) const;
-
-    // template<class Archive>
-    // void load(Archive& archive);
 
 private:
     

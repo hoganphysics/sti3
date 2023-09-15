@@ -11,12 +11,12 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
-
 namespace py = pybind11;
 
 using STI::Device::Channel;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
+
 
 void init_ChannelManager(py::module& m) 
 {

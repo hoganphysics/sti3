@@ -43,7 +43,6 @@ using ::STI::TNetwork::TEngineJobStatus;
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
 : TReferenceHolder<TPersistenceManager>(manager, persistenceMutex)
 {
-	// fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
 }
 
 RemotePersistenceManager::~RemotePersistenceManager()
@@ -224,7 +223,6 @@ bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, s
 
 	STI::TNetwork::TDeviceIDMeasurementsTupleSeq_var tDeviceIDMeasurementsTupleSeq_var(new STI::TNetwork::TDeviceIDMeasurementsTupleSeq);
 
-	// STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
 	measurements = std::make_shared<STI::Engine::MeasurementMap>();
 
 	bool success = false;
@@ -252,7 +250,6 @@ void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::U
 
 std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
 {
-	// return fileFactory->makeFileHolder(filename);
 	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
 	return fileHolder;
 }

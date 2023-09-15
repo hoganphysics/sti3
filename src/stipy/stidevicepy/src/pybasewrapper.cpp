@@ -9,18 +9,14 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-
 void init_DeviceID(pybind11::module&);
 void init_MixedValue(py::module& m);
 void init_StackTrace(py::module& m);
 void init_RawEvent(py::module& m);
 void init_HubID(py::module& m);
 void init_Measurement(py::module& m);
-
 void init_Attribute(py::module& m);
-//void init_RawEvent(py::module& m);
 void init_AttributeManager(py::module& m);
-
 void init_ShotConfig(py::module& m);
 void init_ParseID(py::module& m);
 void init_ShotID(py::module& m);
@@ -31,12 +27,9 @@ void init_ParseResult(py::module& m);
 void init_ShotResult(py::module& m);
 void init_SequenceResult(py::module& m);
 void init_Profile(py::module& m);
-
 void init_LogID(py::module& m);
 void init_LogRecord(py::module& m);
-
 void init_Task(py::module& m);
-
 void init_RawEventGroup(py::module& m);
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
@@ -59,24 +52,19 @@ PYBIND11_MODULE(stipybase, m) {
     init_RawEventGroup(m);
     init_HubID(m);
     init_Measurement(m);
-
     init_Attribute(m);
     init_AttributeManager(m);
-
     init_ShotConfig(m);
     init_ParseID(m);
     init_ShotID(m);
     init_Sequence(m);
     init_Configuration(m);
-
     init_ParseResult(m);
     init_ShotResult(m);
     init_SequenceResult(m);
     init_Profile(m);
-
     init_LogID(m);
     init_LogRecord(m);
-
     init_Task(m);
 }
 

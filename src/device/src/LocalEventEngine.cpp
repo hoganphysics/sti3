@@ -340,12 +340,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	clear();
 
-	// std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
 	isJobOwner = (job.getJobOwner() == localDeviceID);
-
-	// job.addMessage(ParsingMessageType::Warning, 100, "Test message")
-    //         << "This is a test.";
 
 	if (!setState(EngineState::Parsing)) {
 		setState(EngineState::Error);
@@ -374,8 +369,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseResult->pid = lastParseID;
 	lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
 	lastParseResult->stackTraceResult = std::make_shared<StackTraceResult>(lastParseID);
-	
-//	dependencyTree = job.dependencies;
 
 	std::shared_ptr<RawEventGroup> eventGroup;
 	shot->getRootEventGroup(eventGroup);
@@ -581,9 +574,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 
-				// auto evts = std::make_shared<RawEventVector>();
-				// (*evts) = std::move(eventsByTarget[id]);
-
 				//if is jobOwner and id is partner and id.targetServer is not in tree,
 				//then takeOwnershipOfPartners = true;
 
@@ -781,9 +771,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	playReadyOwnedTargets.clear();
 	playedOwnedTargets.clear();
-	// engines.clear();
 
-	//TimeStamp playTime;
 	EngineJobID jobID = job.getJobID();
 	
 	isJobOwner = (job.getJobOwner() == localDeviceID);
@@ -792,12 +780,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 		//playTime = getCurrentTimeStamp();
 		jobID.runTime = getCurrentTimeStamp();
 	}
-// 	else {
-// 		jobID.runTime = jobID.runTime;
-// //		playTime = jobID.sid.playTime;
-// 	}
-	//jobID.runTime =
-	//jobID.sid.playTime = playTime;
 
 	scheduleAllPlayJobs(jobID, job.getJobOwner());
 
@@ -883,9 +865,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playCompleteMessage->jobID.sid = job.getJobID().sid;
 	playCompleteMessage->jobID.type = job.getJobID().type;
 	playCompleteMessage->engineState = getState();
-	// playCompleteMessage->messages
 	sendMessage(playCompleteMessage);
-
 
 	//After play completes (without error or abort), the engine should be in the Parsed state
 	if (!isState(EngineState::Parsed)) {
@@ -1128,8 +1108,6 @@ bool LocalEventEngine::playDeviceEvents()
 		if (!isState(EngineState::Playing))
 			break;
 
-		//switch(waitUntil(evt->getTime())),  cases for play, pause, stop ?
-
 		if (evt != 0 && waitUntil(playLock, evt->getTime())) {	//success if not interrupted
 			evt->waitBeforePlay();
 			evt->play();
@@ -1172,7 +1150,6 @@ void LocalEventEngine::updateChannelValues(const RawEventVector& rawEvents)
 
 	std::shared_ptr<STI::Device::Channel> channel;
 
-//	for (const auto& evt : rawEvents) {
 	for (unsigned i = 0; i < rawEvents.size(); ++i) {
 		if (localChannels->getChannel(rawEvents.at(i).channel(), channel)) {
 			channel->saveLastValue(rawEvents.at(i).value());

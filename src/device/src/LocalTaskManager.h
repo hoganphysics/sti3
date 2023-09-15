@@ -55,7 +55,6 @@ private:
 
     //PersistenceTarget
     std::string getFilename();
-    // void setLoadFilename(const std::string& filename);
     void setPersistenceCallback(const std::function<void(void)>& refresher);
     bool save(const std::string& filename);
     void load(const std::string& filename);

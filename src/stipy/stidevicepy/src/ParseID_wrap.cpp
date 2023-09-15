@@ -1,14 +1,12 @@
-
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotConfig.h>
 
-
 #include <pybind11/pybind11.h>
-
 namespace py = pybind11;
 
 using STI::Utils::TimeStamp;
 using STI::Engine::ParseID;
+
 
 void init_ParseID(py::module& m)
 {
@@ -24,13 +22,11 @@ void init_ParseID(py::module& m)
         .def("millis", &TimeStamp::millis)
         .def("micros", &TimeStamp::micros)
         .def("nanos", &TimeStamp::nanos)
-
         .def("date", &TimeStamp::date)
         .def("date_YYYY_MM_DD", py::overload_cast<>(&TimeStamp::date_YYYY_MM_DD, py::const_))
         .def("time", &TimeStamp::time)
         .def("time_hh_mm_ss", py::overload_cast<>(&TimeStamp::time_hh_mm_ss, py::const_))
         .def("time_hh_mm_ss_mmmuuunnn", &TimeStamp::time_hh_mm_ss_mmmuuunnn)
-
         .def("__repr__",
             [](const TimeStamp& self) {
                 return self.print();

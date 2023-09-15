@@ -24,7 +24,6 @@ public:
     char* md5Checksum();
     ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination);
     ::CORBA::Long maxBufferSize();
-    // ::CORBA::Boolean deleteFile();
     ::CORBA::Boolean write(const ::STI::TNetwork::OctetSeq& buffer);
     ::CORBA::Boolean openFile();
     void closeFile();

@@ -89,16 +89,6 @@ char* TFileHolder_i::md5Checksum()
     return static_cast<::CORBA::Long>(result);
 }
 
-// ::CORBA::Boolean TFileHolder_i::deleteFile()
-// {
-//     bool result = false;
-
-//     if (localFileHolder != 0) {
-// 		result = localFileHolder->deleteFile();
-// 	}
-//     return static_cast<::CORBA::Boolean>(result);
-// }
-
 ::CORBA::Boolean TFileHolder_i::write(const ::STI::TNetwork::OctetSeq& buffer)
 {
     bool result = false;

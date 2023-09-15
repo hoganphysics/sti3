@@ -28,9 +28,6 @@ public:
     bool writeChannelPy(short channel, const pybind11::object& value);
     pybind11::object readChannelPy(short channel, const pybind11::object& value);
 
-    // bool writeChannelPy(short channel, const STI::Python::MixedValuePy& value);
-    // pybind11::object readChannelPy(short channel, const STI::Python::MixedValuePy& value);
-
     void stop();
 
 private:

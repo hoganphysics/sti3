@@ -10,6 +10,7 @@
 #include <set>
 #include <mutex>
 
+
 namespace STI
 {
 namespace Network
@@ -35,14 +36,10 @@ private:
 	void addListenerGroup(const STI::Device::DeviceMessageType& type, std::shared_ptr<STI::Device::AbstractMessageListenerGroup>& listenerGroup);
 	void removeListenerGroup(const STI::Device::DeviceMessageType& type);
 
-	//::STI::TNetwork::TDeviceMessageHandler_var tDeviceHandler;		//remote reference
-
 	::STI::TNetwork::TRefreshIndicator_i refreshIndicator;		//records if the remote resource refreshed
-
 	std::set<STI::Device::DeviceMessageType> listenersTypes;		//set of all event types this handler responds to
 
 	mutable std::mutex handlerMutex;
-
 };
 
 

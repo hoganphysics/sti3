@@ -31,28 +31,15 @@ NetworkDevice::NetworkDevice(const std::shared_ptr<STI::Device::Device>& device)
 
     auto resultsCollectionFactory = std::make_shared<STI::Network::NetworkResultsCollectorFactory>();
     persistenceManager->setResultsCollectorFactory(resultsCollectionFactory);
-
-    // std::shared_ptr<STI::Utils::FileServer> fileServer;
-    // bool isNetworkFileServer = persistenceManager->getFileServer(fileServer) && STI::Network::NetworkFileServer::isNetworkFileServer(fileServer);
-    
-    // if (!isNetworkFileServer) {
-    //     fileServer = std::make_shared<STI::Utils::LocalFileServer>(getID());
-    // }
-    
+  
     auto networkFileServer = std::make_shared<STI::Network::NetworkFileServer>(getID());
     persistenceManager->setFileServer(networkFileServer);
 
     auto virtualFileServerFactory = std::make_shared<STI::Network::NetworkVirtualFileServerFactory>();
     persistenceManager->setVirtualFileServerFactory(virtualFileServerFactory);
 
-    // std::shared_ptr<STI::Engine::ShotRepository> shotRepo;
-    // persistenceManager->getShotRepository(shotRepo);
-    // auto networkShotRepository = std::make_shared<STI::Network::NetworkShotRepositoryWrapper>(shotRepo);
-    // persistenceManager->setShotRepository(shotRepo);
-
     auto networkEngineFactory = std::make_shared<STI::Network::NetworkEventEngineFactory>(
             getID(), channels, attributeManager, dispatcher, deviceCollection, persistenceManager);
-    //localDevice->setEngineFactory(networkEngineFactory);
 
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     localDevice->getEngineScheduler(scheduler);

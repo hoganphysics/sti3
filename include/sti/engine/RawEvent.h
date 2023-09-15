@@ -1,36 +1,12 @@
-/*! \file RawEvent.h
- *  \author Jason Michael Hogan
- *  \brief Include-file for the class RawEvent
- *  \section license License
- *
- *  Copyright (C) 2008 Jason Hogan <hogan@stanford.edu>\n
- *  This file is part of the Stanford Timing Interface (STI).
- *
- *  The STI is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The STI is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with the STI.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef STI_ENGINE_RAWEVENT_H
 #define STI_ENGINE_RAWEVENT_H
 
 #include <sti/fwd/RawEvent_fwd.h>
 
 #include <sti/device/DeviceID.h>
-
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/StackTrace.h>
-
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/GraphPathLabel.h>
 #include <sti/utils/VirtualFileServer.h>
@@ -45,7 +21,6 @@ namespace STI
 namespace Engine
 {
 
-class SynchronousEvent;		//for confirming measurement scheduling
 class RawEventGroup;
 class StackTraceData;
 class RawStackTrace;
@@ -110,7 +85,6 @@ public:
 	const STI::Utils::GraphPathLabel& getEventGraphPath() const { return eventGraphPath; }
 
 	bool isMeasurementEvent() const { return isMeasurement; }
-	//bool isScheduled() const { return _isScheduled; }
 
 	bool operator<(const RawEvent& rhs) const { 
 		return time() < rhs.time() ||
@@ -155,18 +129,9 @@ private:
 	
 	bool isMeasurement;
 	RawEventType _eventType;
-	// STI::Device::DeviceID targetDeviceID;
-	// std::string fullGroupName;
 	const RawEventGroup* parentGroup;
 
 	STI::Utils::GraphPathLabel eventGraphPath;	//ordered list of event numbers; records the path leading to this event
-
-	//Somewhat of a hack here. Allowing friend access so SynchronousEvent
-	//can confirm that this RawEvent has been scheduled when it is added as a Measurement.
-	//Keeping private so only SynchronousEvent can access.
-	//friend STI::Engine::SynchronousEvent;	
-	//void setScheduled() { _isScheduled = true; }
-	//bool _isScheduled;		//tracks if the RawEvent was associated with a SynchronousEvent during parse
 
 };
 

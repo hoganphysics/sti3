@@ -267,12 +267,8 @@ void LocalEventEngineScheduler::transferTimingFiles(StackTraceData& stackTraceDa
 }
 
 void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
-// ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
     if (job == 0) return;
-    // ParseID parseID;
-    
-    // auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, localDeviceID);
 
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
@@ -281,7 +277,6 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
     std::shared_ptr<Shot> shot;
     if (job->getShot(shot)) {
         shot->getRootEventGroup(eventGroup);
-        // parseID.shotConfig = shot->getShotConfig();      
     }
 
     if (eventGroup != 0) {
@@ -289,13 +284,12 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
 
         auto stackTraceData = eventGroup->getStackTraceData();
         std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
-        auto virtualFileServer = std::make_shared<VirtualFileServer>();
+        // auto virtualFileServer = std::make_shared<VirtualFileServer>();
+        auto virtualFileServer = persistenceManager->makeVirtualFileServer();
         
         if (stackTraceData != 0 && stackTraceData->getFileServer(remoteFileServer)) {
             transferTimingFiles(*stackTraceData, *remoteFileServer, *virtualFileServer);
-            
-            // std::shared_ptr<STI::Utils::FileServer> localFileServer;
-            // persistenceManager->getFileServer(localFileServer);
+
             stackTraceData->setFileServer(virtualFileServer);
         }
     }

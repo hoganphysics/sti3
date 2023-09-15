@@ -27,9 +27,6 @@ public:
 
 	RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub);
 
-//	void getNodeIDs(std::set<STI::Device::DeviceID>& ids) const;
-//	void getHubIDs(std::set<HubID>& ids) const;
-
 	bool addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub);
 	bool removeHub(const HubID& id);
 
@@ -38,11 +35,9 @@ public:
 
 	bool distribute(const STI::Device::DeviceID& id, 
 		const typename std::shared_ptr<STI::Device::Device>& node,
-		const HubTrace& trace, const HubID& first);	//remote add (called by other hubs offering a reference); trail tracked
-	bool distributeNodes(const HubID& targetHub); //, const HubTrace& trace);		//distribute all local nodes to target hub
-
-															  //Force redistribution of all Nodes owned by this Hub to all connected Hubs.
-	bool redistributeNodes(const HubTrace& trace);		//distribute all owned Nodes to all connected Hubs
+		const HubTrace& trace, const HubID& first);	
+	bool distributeNodes(const HubID& targetHub);
+	bool redistributeNodes(const HubTrace& trace);
 
 	const HubID& getID() const;
 	bool hasNodeID(const STI::Device::DeviceID& id) const;
@@ -53,21 +48,14 @@ private:
 
 	void _getHubID();
 
-	//bool getRemoteDevice(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice);
-
-	//::STI::TNetwork::TDeviceHub_var tDeviceHub;		//remote reference
-	
 	mutable std::mutex hubMutex;
 
 	mutable HubID hubID;
-
-
 };
 
 
 } //Network
 } //STI
-
 
 #endif
 

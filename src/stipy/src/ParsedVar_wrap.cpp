@@ -24,11 +24,7 @@ using STI::Python::MixedValuePy;
 void init_ParsedVar(py::module& m) 
 {
 
-//    m.def("add", [](int a, int b) { return a + b; });
-
     py::class_<ParsedVar>(m, "ParsedVar")
-
-        
         .def_readonly("name", &ParsedVar::name)
         // .def_readonly("fullGroupName", &ParsedVar::fullGroupName)
         // .def_readonly("value", &ParsedVar::value)

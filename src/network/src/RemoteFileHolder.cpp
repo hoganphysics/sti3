@@ -166,29 +166,6 @@ unsigned RemoteFileHolder::maxBufferSize() const
 	return result;
 }
 
-
-// bool RemoteFileHolder::deleteFile()
-// {
-// 	std::unique_lock<std::mutex> fileLock(fileMutex);
-
-// 	if (isDisabled()) return false;
-
-// 	bool success = false;
-
-// 	try {
-// 		success = getTRef()->deleteFile();	//remote call
-// 	}
-// 	catch (CORBA::TRANSIENT&) {
-// 	}
-// 	catch (CORBA::SystemException&) {
-// 	}
-// 	catch (CORBA::Exception&)
-// 	{
-// 	}
-// 	return success;
-// }
-
-
 std::string RemoteFileHolder::md5Checksum()
 {
 	std::unique_lock<std::mutex> fileLock(fileMutex);

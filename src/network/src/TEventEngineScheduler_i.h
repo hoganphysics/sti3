@@ -46,7 +46,6 @@ public:
 private:
 
     std::shared_ptr<TEventEngineDependencyParser_i> dependencyParserServant;
-
     std::shared_ptr<STI::Engine::EventEngineScheduler> engineScheduler;
 };
 

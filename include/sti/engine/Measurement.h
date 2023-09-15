@@ -3,13 +3,14 @@
 
 #include <sti/fwd/Measurement_fwd.h>
 
-#include <sti/utils/MixedValue.h>
 #include <sti/device/DeviceID.h>
 #include <sti/utils/GraphPathLabel.h>
 #include <sti/utils/VirtualFileServer.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/MixedValue.h>
 
 #include <string>
+
 
 namespace STI
 {

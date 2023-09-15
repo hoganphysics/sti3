@@ -34,8 +34,6 @@ void init_Task(py::module& m)
         .value("Inactive", TaskStatus::Inactive)
         .value("Missing", TaskStatus::Missing)
         ;
-        //.export_values();
-
 
     py::class_<Task, std::shared_ptr<Task>, TaskPy>(m, "Task")
         .def(py::init<std::string>(), py::arg("id"))
@@ -115,8 +113,6 @@ void init_Task(py::module& m)
                 py::arg("taskID"), py::arg("wait_time"), py::arg("runFunc"))
         ;
 
-
-    // AppointmentRepeatType { Once, Everyday, Weekdays };
 
     py::enum_<AppointmentTask::AppointmentRepeatType>(m, "AppointmentRepeatType")
         .value("Once", AppointmentTask::AppointmentRepeatType::Once)

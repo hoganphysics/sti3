@@ -1,11 +1,10 @@
 #ifndef STI_UTILS_VIRTUALFILESERVER_H
 #define STI_UTILS_VIRTUALFILESERVER_H
 
-#include <sti/utils/FileServer.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/FileServer.h>
 #include <sti/utils/LocalFileHolder.h>
-
 #include <sti/utils/SynchronizedMap.h>
 
 #include <memory>
@@ -36,7 +35,6 @@ public:
 private:
 
     STI::Utils::SynchronizedMap<FileID, std::shared_ptr<FileHolder>> files;
-
 };
 
 

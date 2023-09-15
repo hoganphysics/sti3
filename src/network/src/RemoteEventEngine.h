@@ -39,22 +39,12 @@ public:
 	STI::Engine::EngineState getState() const;
 
 	std::shared_ptr<STI::Engine::ParsedDependencyTree> getParsedTree() const;
-	// bool getParsedEvents(const STI::Engine::ParseID& parseID, STI::Engine::DeviceEventMap& parsedEvents);
 
 	bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
 
-	//bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementVector>& measurements);
-	//bool transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
-
 private:
 
-//	bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice);
-
     std::shared_ptr<STI::TNetwork::TTriggerCallback_i> triggerCallbackServant;
-
-    //::STI::TNetwork::TEventEngine_var _tEngine; //remote reference
-
-	// STI::Engine::DeviceEventMap events;
 
 	mutable std::mutex engineMutex;
 };

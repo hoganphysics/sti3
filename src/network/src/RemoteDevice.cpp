@@ -1,17 +1,18 @@
 
 #include "RemoteDevice.h"
+
+#include <sti/device/ChannelManager.h>
+
 #include "RemoteDeviceCollection.h"
 #include "RemoteDeviceMessageDispatcher.h"
 #include "NetworkConvert.h"
-#include "RemoteEventEngineScheduler.h"
-#include <sti/device/ChannelManager.h>
-#include "RemoteChannelManager.h"
 #include "RemoteAttributeManager.h"
+#include "RemoteChannelManager.h"
+#include "RemoteEventEngineScheduler.h"
+#include "RemoteLogManager.h"
 #include "RemotePersistenceManager.h"
 #include "RemoteProfileManager.h"
-#include "RemoteLogManager.h"
 #include "RemoteTaskManager.h"
-
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -29,13 +30,6 @@ using STI::Network::RemoteLogManager;
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
 	: TReferenceHolder<STI::TNetwork::TDevice>(device, deviceMutex)
 {
-	// addDependent(remoteCollection);
-	// addDependent(remoteDispatcher);
-	// addDependent(remoteScheduler);
-	// addDependent(remoteChannelManager);
-	// addDependent(remoteAttributeManager);
-	// addDependent(remotePersistenceManager);
-	// addDependent(remoteProfileManager);
 }
 
 RemoteDevice::~RemoteDevice()
@@ -144,7 +138,6 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 
 	return deviceID;
 }
-
 
 
 void RemoteDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)

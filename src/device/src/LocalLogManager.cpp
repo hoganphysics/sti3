@@ -1,16 +1,14 @@
-
 #include "LocalLogManager.h"
 
+#include <sti/device/DeviceID.h>
 #include <sti/device/Logger.h>
+#include <sti/LocalDevice.h>
 
 #include "LocalTaskManager.h"
 #include "LocalChannelManager.h"
 #include "LocalAttributeManager.h"
 #include "LocalPersistenceManager.h"
 #include "LogRecordFile.h"
-#include <sti/LocalDevice.h>
-#include <sti/device/DeviceID.h>
-// #include <sti/utils/ConfigFile.h>
 
 #include <algorithm>
 #include <filesystem>
@@ -34,7 +32,6 @@ LocalLogManager::LocalLogManager(LocalDevice* localDevice, const std::shared_ptr
 
     logWriterMessageGrouper.setWarmup(1000);      //ms
     logWriterMessageGrouper.setCooldown(1000);    //ms
-
     logWriterMessageGrouper.start();
 }
 
@@ -89,34 +86,6 @@ bool LocalLogManager::getLogRecordFile(const STI::Utils::TimeStamp& timestamp, s
     }
 
     return recordFile->exists();
-    
-
-    // return recordFile != 0;
-
-    // if (!std::filesystem::exists(logRecordPath)) return false;
-
-    // LogRecordFile recordFile(logRecordPath.string());
-
-    // if (recordFile.exists()) {
-    //     return recordFile.getRecord(record);
-    // }
-
-
-    // ConfigFile recordFile(logRecordPath.filename());
-
-    // if (recordFile.isParsed()) {
-    //     LogRecord record;
-
-    //     std::string ts;
-    //     if (recordFile.getParameter(logName, "TimeStamp", ts)) {
-    //         record.timeStamp = STI::Utils::TimeStamp::fromString(ts);
-    //     }
-    //     auto ids = recordFile.getList(logName, "DeviceIDs");
-    //     for (auto& id : ids) {
-    //         record.loggedIDs.push_back(id);
-    //     }
-    // }
-
 }
 
 bool LocalLogManager::getLogRecord(const std::string& date, LogRecord& record)
@@ -185,18 +154,6 @@ bool LocalLogManager::getLogCounts(const STI::Utils::TimeStamp& date, const Devi
     if (it == deviceLogRecords.end()) return false;     //no log records for this device on this day
 
     if (it->second.status != LogRecordStatus::LogsPresent) return false;
-
-    // //found log record
-    // if (it->second.status == LogRecordStatus::LogsPresent) {
-    //     auto logit = it->second.logNames.find(logName);
-
-    //     if (logit == it->second.logNames.end()) return 0;   //did not find logName
-    // }
-    // else {
-    //     //LogRecordStatus indicates logs not present
-    //     return 0;
-    // }
-
 
     std::string logBasePath;
     std::string logDevicePath;
@@ -288,13 +245,11 @@ void LocalLogManager::getLogIDs(const DeviceID& deviceID, const LogFileFilter& f
         }
         date.add_day();
     } while (date <= endDate);
-    // } while (!date.isSameDate(endDate));
+
 }
 
 void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids)
 {
-    // ids.clear();
-
     std::shared_ptr<LogRecordFile> recordFile;
     
     if (!getLogRecordFile(date, recordFile, false)) {
@@ -353,14 +308,11 @@ void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceI
         std::swap(iStart, iEnd);
     }
 
-    for (unsigned i = iStart; i <= iEnd; ++i) {
-    // for (auto it = indices.begin() + iStart; it != indices.begin() + iEnd; ++it) {
-        
+    for (unsigned i = iStart; i <= iEnd; ++i) {        
         LogID logID;
         logID.date = date.date_YYYY_MM_DD("/");
         logID.deviceID = deviceID;
         logID.logName = logName;
-        // logID.index = *it;
         logID.index = indices.at(i);
 
         ids.push_back(logID);

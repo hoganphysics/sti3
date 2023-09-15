@@ -104,17 +104,9 @@ public:
     std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func);
     std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars);    //uses dictionary vars to override servars
 
-    // std::shared_ptr<PySequenceTicket> addsequence(const std::shared_ptr<Sequence>& sequence);
-
-    // addseq([{"x":5}, {"x":7}])
-    
-    
-    // std::shared_ptr<STI::Engine::Sequence> addsequence(const pybind11::list& varsTable);
-
     std::shared_ptr<STI::Engine::Sequence> makesequence(const std::function<void(void)>& func);
     std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::set& vars);
     std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::dict& vars);
-    // std::shared_ptr<STI::Engine::Sequence> makesequence(pybind11::object func);
 
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const STI::Engine::SequenceEntryID& sequenceEntryID);

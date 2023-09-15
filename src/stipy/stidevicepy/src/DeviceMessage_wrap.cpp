@@ -29,8 +29,6 @@ void init_DeviceMessage(py::module& m)
         .value("EngineStatus", DeviceMessageType::EngineStatus)
         .value("Unknown", DeviceMessageType::Unknown)
         ;
-        //.export_values();
-
 
     py::class_<DeviceMessage, std::shared_ptr<DeviceMessage>>(m, "DeviceMessage")
         .def("sourceID", &DeviceMessage::sourceID)
@@ -43,11 +41,9 @@ void init_DeviceMessage(py::module& m)
             })
         ;
 
-
     py::class_<RefreshDeviceMessage, DeviceMessage, std::shared_ptr<RefreshDeviceMessage>>(m, "RefreshDeviceMessage")
         .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") 
         );
-
 
 }
 

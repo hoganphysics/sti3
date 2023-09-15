@@ -22,13 +22,10 @@ using STI::Engine::RawStackTrace;
 STIPyGlobal::STIPyGlobal()
 {
     makingShot = false;
-
-    // std::cout << "STIPyGlobal constructor" << std::endl;
 }
 
 STIPyGlobal::~STIPyGlobal()
 {
-    // std::cout << "STIPyGlobal destructor" << std::endl;
 }
 
 std::shared_ptr<STIPyGlobal> STIPyGlobal::getInstance()
@@ -46,7 +43,6 @@ std::shared_ptr<STIPyGlobal> STIPyGlobal::getInstance()
 // }
 
 void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
-// void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::string& name, const std::function<void(void)>& func)
 {
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);

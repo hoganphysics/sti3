@@ -46,7 +46,6 @@ void init_Profile(py::module& m)
         .value("Channel", ProfileType::Channel)
         .value("All", ProfileType::All)
         ;
-        //.export_values();
 
 
     py::class_<ProfilePy, std::shared_ptr<ProfilePy>>(m, "Profile")

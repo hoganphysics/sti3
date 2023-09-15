@@ -35,8 +35,6 @@ public:
     bool transferFile(const std::shared_ptr<STI::Utils::FileHolder>& destination);
     unsigned maxBufferSize() const;
 
-    // bool deleteFile();
-
     std::string md5Checksum();
 
     bool openFile();

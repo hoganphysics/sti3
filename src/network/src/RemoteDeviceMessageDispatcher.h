@@ -38,8 +38,6 @@ public:
 private:
 
 	mutable std::mutex dispatcherMutex;
-	//::STI::TNetwork::TDeviceMessageDispatcher_var tMessageDispatcher;		//remote reference
-
 };
 
 

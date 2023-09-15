@@ -48,7 +48,8 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
 
 STIPyServer::~STIPyServer()
 {
-    //libDeviceHub->shutdown();
+    // libDevice->disable();
+    // libDevice->kill();
 }
 
 void STIPyServer::setChannels(const pybind11::dict& channels)
@@ -67,26 +68,7 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
         shotConfig.jobSourceID.user = getUserName();
     }
     
-
-    // if (getPersistenceManager(persistenceManager)) {
-    //     fileFactory = persistenceManager;
-    // }
-    // else {
-    //     fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-    // }
-
-
-    // if (getPersistenceManager(persistenceManager)) {
-    //     persistenceManager->getFileServer(fileServer);
-    // }
-    // else {
-    //     // fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
-    // }
-
     bool success = libDevice->getFileServer(fileServer);
-    // if (libDevice->getPersistenceManager(persistenceManager)) {
-    //     bool success = persistenceManager->getFileServer(fileServer);
-    // }
 
     auto stackTraceData = std::make_shared<StackTraceData>(libDevice->getID(), fileServer);
     auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTraceData);

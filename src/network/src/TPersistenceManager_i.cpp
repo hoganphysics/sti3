@@ -166,9 +166,6 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 
 		success = persistenceManager->getMeasurements(convert<STI::TNetwork::TShotID, STI::Engine::ShotID>(sid), localMeasurements);
 
-		// success &= convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*localMeasurements,
-		// 			(_CORBA_Unbounded_Sequence<STI::TNetwork::TMeasurement>&) tDeviceIDMeasurementsTupleSeq_var);
-		
 		success &= convert<std::shared_ptr<STI::Engine::MeasurementMap>, STI::TNetwork::TDeviceIDMeasurementsTupleSeq>(
 			localMeasurements, tDeviceIDMeasurementsTupleSeq_var);
 	

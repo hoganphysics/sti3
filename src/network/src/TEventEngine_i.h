@@ -17,12 +17,10 @@ class TEventEngine_i : public POA_STI::TNetwork::TEventEngine
 {
 public:
 
-	//TEventEngine_i(const std::shared_ptr<STI::Engine::EventEngine>& engine);
 	TEventEngine_i(STI::Engine::EventEngine* engine);
 	~TEventEngine_i();
 
     void play(const ::STI::TNetwork::TEventEngineJob& job);
-    //void play(::STI::TNetwork::TEventEngineJob_ptr job);
     void playCB(const ::STI::TNetwork::TEngineJobID& jobID, 
                 ::STI::TNetwork::TTriggerCallback_ptr triggerCB, ::CORBA::Boolean debug);
     void trigger();
@@ -32,15 +30,12 @@ public:
     void unpause(::CORBA::Boolean retrigger);
     TDeviceID* getDeviceID();
     TEngineState getState();
-    // ::CORBA::Boolean getParsedEvents(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TDeviceEventsSeq_out events);
     TEventEngineDependencyTree* getParsedTree();
     ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
 
 private:
 
-	//std::shared_ptr<STI::Engine::EventEngine> eventEngine;
 	STI::Engine::EventEngine* eventEngine;
-
     std::shared_ptr<STI::Network::RemoteTriggerCallback> remoteTriggerCB;
 
 };

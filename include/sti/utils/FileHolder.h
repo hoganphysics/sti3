@@ -38,8 +38,6 @@ public:
     virtual bool transferFile(const std::shared_ptr<FileHolder>& destination) = 0;
     virtual unsigned maxBufferSize() const = 0;
 
-    // virtual bool deleteFile() = 0;
-
     virtual std::string md5Checksum() = 0;
     
     virtual bool write(const char* buffer, unsigned length) = 0;

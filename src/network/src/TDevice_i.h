@@ -43,7 +43,6 @@ public:
 	TLogManager_ptr getLogManager();
 	TDeviceID* getID();
 
-
 private:
 
 	TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
