@@ -80,6 +80,10 @@ public class HubID {
     return stiJNI.HubID_module_get(swigCPtr, this);
   }
 
+  public boolean isValid() {
+    return stiJNI.HubID_isValid(swigCPtr, this);
+  }
+
   public String getID() {
     return stiJNI.HubID_getID(swigCPtr, this);
   }

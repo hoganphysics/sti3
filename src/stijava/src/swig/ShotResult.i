@@ -35,7 +35,10 @@
 
 //Measurement -- note that ordering of the %include here is very important
 %include "sti/fwd/Measurement_fwd.h"
+
+%ignore STI::Engine::Measurement::getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const;
 %include "sti/engine/Measurement.h"
+
 %template(MeasurementVector) std::vector< std::shared_ptr< STI::Engine::Measurement > >;
 %template(MeasurementMap) std::map< STI::Device::DeviceID, std::vector< std::shared_ptr< STI::Engine::Measurement > > >;
 %shared_ptr( std::vector< std::shared_ptr< STI::Engine::Measurement > > );

@@ -21,13 +21,14 @@
 
 //Utils
 %include utils.i
+%include TimeStamp.i
+%include FileID.i
 %include FileHolder.i
 %include BinaryData.i
 %include MixedValue.i
 %include MetaData.i
 %include Image.i
-
-%include TimeStamp.i
+%include FileServer.i
 
 %include EngineJobSourceID.i
 
@@ -55,4 +56,7 @@
 %include Sequence.i
 %include JEventEngineScheduler.i
 
+%include LogManager.i
+%include TaskManager.i
+%include ProfileManager.i
 

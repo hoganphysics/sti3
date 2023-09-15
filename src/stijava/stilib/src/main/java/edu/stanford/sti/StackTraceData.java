@@ -44,8 +44,12 @@ public class StackTraceData {
     this(stiJNI.new_StackTraceData__SWIG_0(), true);
   }
 
-  public StackTraceData(FileHolderVector timingFiles, StringVector functionNames) {
-    this(stiJNI.new_StackTraceData__SWIG_1(FileHolderVector.getCPtr(timingFiles), timingFiles, StringVector.getCPtr(functionNames), functionNames), true);
+  public StackTraceData(DeviceID localID, FileServer fileServer) {
+    this(stiJNI.new_StackTraceData__SWIG_1(DeviceID.getCPtr(localID), localID, FileServer.getCPtr(fileServer), fileServer), true);
+  }
+
+  public StackTraceData(FileIDVector timingFiles, StringVector functionNames) {
+    this(stiJNI.new_StackTraceData__SWIG_2(FileIDVector.getCPtr(timingFiles), timingFiles, StringVector.getCPtr(functionNames), functionNames), true);
   }
 
   public StackTrace addStackTrace(RawStackTrace stackTrace) {
@@ -56,20 +60,24 @@ public class StackTraceData {
     return new RawStackTrace(stiJNI.StackTraceData_getStackTrace(swigCPtr, this, StackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
-  public FileHolderVector getTimingFiles() {
-    return new FileHolderVector(stiJNI.StackTraceData_getTimingFiles(swigCPtr, this), true);
+  public FileIDVector getTimingFiles() {
+    return new FileIDVector(stiJNI.StackTraceData_getTimingFiles(swigCPtr, this), false);
   }
 
   public StringVector getFunctionNames() {
-    return new StringVector(stiJNI.StackTraceData_getFunctionNames(swigCPtr, this), true);
+    return new StringVector(stiJNI.StackTraceData_getFunctionNames(swigCPtr, this), false);
   }
 
-  public void replaceFile(String oldFilename, FileHolder newFile) {
-    stiJNI.StackTraceData_replaceFile(swigCPtr, this, oldFilename, FileHolder.getCPtr(newFile), newFile);
+  public void setFileServer(FileServer server) {
+    stiJNI.StackTraceData_setFileServer(swigCPtr, this, FileServer.getCPtr(server), server);
   }
 
-  public void deleteFiles() {
-    stiJNI.StackTraceData_deleteFiles(swigCPtr, this);
+  public boolean getFileServer(FileServer server) {
+    return stiJNI.StackTraceData_getFileServer(swigCPtr, this, FileServer.getCPtr(server), server);
+  }
+
+  public void replaceFile(String oldFilename, FileID newFile) {
+    stiJNI.StackTraceData_replaceFile(swigCPtr, this, oldFilename, FileID.getCPtr(newFile), newFile);
   }
 
 }

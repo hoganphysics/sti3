@@ -17,21 +17,22 @@ public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_FileHolder(JNIEnv *jenv);
     virtual ~SwigDirector_FileHolder();
+    virtual STI::Utils::FileID getID() const;
     virtual std::string getFilename() const;
+    virtual unsigned int getFileSize() const;
     virtual bool exists() const;
     virtual bool transferFile(std::shared_ptr< STI::Utils::FileHolder > const &destination);
     virtual unsigned int maxBufferSize() const;
-    virtual bool deleteFile();
     virtual std::string md5Checksum();
     virtual bool write(char const *buffer, unsigned int length);
     virtual bool openFile();
     virtual void closeFile();
 public:
     bool swig_overrides(int n) {
-      return (n < 6 ? swig_override[n] : false);
+      return (n < 7 ? swig_override[n] : false);
     }
 protected:
-    Swig::BoolArray<6> swig_override;
+    Swig::BoolArray<7> swig_override;
 };
 
 class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
@@ -45,7 +46,7 @@ public:
     SwigDirector_MixedValue(JNIEnv *jenv, int value);
     SwigDirector_MixedValue(JNIEnv *jenv, double value);
     SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::BinaryData > const &value);
-    SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::FileHolder > const &value);
+    SwigDirector_MixedValue(JNIEnv *jenv, STI::Utils::FileID const &value);
     SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::Image > const &value);
     SwigDirector_MixedValue(JNIEnv *jenv, std::string const &value);
     SwigDirector_MixedValue(JNIEnv *jenv, char const *value);
@@ -71,6 +72,72 @@ public:
     }
 protected:
     Swig::BoolArray<3> swig_override;
+};
+
+class SwigDirector_FileServer : public STI::Utils::FileServer, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_FileServer(JNIEnv *jenv);
+    virtual ~SwigDirector_FileServer();
+    virtual bool findFile(STI::Utils::FileID const &fileID);
+    virtual int getFileSize(STI::Utils::FileID const &fileID);
+    virtual bool transferFile(STI::Utils::FileID const &source, std::shared_ptr< STI::Utils::FileHolder > const &destination, STI::Utils::FileTransferType type);
+    virtual bool transferFilePartial(STI::Utils::FileID const &source, std::shared_ptr< STI::Utils::FileHolder > const &destination, int offset, int lines);
+    virtual bool deleteFile(STI::Utils::FileID const &fileID);
+public:
+    bool swig_overrides(int n) {
+      return (n < 5 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<5> swig_override;
+};
+
+class SwigDirector_VirtualFileServer : public STI::Utils::VirtualFileServer, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_VirtualFileServer(JNIEnv *jenv);
+    virtual ~SwigDirector_VirtualFileServer();
+    virtual bool findFile(STI::Utils::FileID const &fileID);
+    virtual int getFileSize(STI::Utils::FileID const &fileID);
+    virtual bool transferFile(STI::Utils::FileID const &source, std::shared_ptr< STI::Utils::FileHolder > const &destination, STI::Utils::FileTransferType type);
+    virtual bool transferFilePartial(STI::Utils::FileID const &source, std::shared_ptr< STI::Utils::FileHolder > const &destination, int offset, int lines);
+    virtual bool deleteFile(STI::Utils::FileID const &fileID);
+public:
+    bool swig_overrides(int n) {
+      return (n < 5 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<5> swig_override;
+};
+
+class SwigDirector_VirtualFileServerFactory : public STI::Utils::VirtualFileServerFactory, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_VirtualFileServerFactory(JNIEnv *jenv);
+    virtual std::shared_ptr< STI::Utils::VirtualFileServer > makeVirtualFileServer();
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_LocalVirtualFileServerFactory : public STI::Utils::LocalVirtualFileServerFactory, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_LocalVirtualFileServerFactory(JNIEnv *jenv);
+    virtual std::shared_ptr< STI::Utils::VirtualFileServer > makeVirtualFileServer();
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
 };
 
 class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {
@@ -622,6 +689,83 @@ public:
     bool swig_overrides(int n) {
       return false;
     }
+};
+
+class SwigDirector_RunnableTask : public STI::Device::RunnableTask, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_RunnableTask(JNIEnv *jenv);
+    virtual ~SwigDirector_RunnableTask();
+    virtual void run();
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_Task : public STI::Utils::Task, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_Task(JNIEnv *jenv, std::string const &id);
+    SwigDirector_Task(JNIEnv *jenv, std::string const &id, STI::Utils::MixedValue const &metaData);
+    virtual ~SwigDirector_Task();
+    virtual bool isActive() const;
+    virtual STI::Utils::TaskStatus getStatus() const;
+    virtual bool isReadyToRun();
+    virtual double secondsToNextRun() const;
+    virtual void run();
+    virtual void skipTask();
+    virtual bool repeat();
+public:
+    bool swig_overrides(int n) {
+      return (n < 7 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<7> swig_override;
+};
+
+class SwigDirector_IntervalTask : public STI::Utils::IntervalTask, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    virtual ~SwigDirector_IntervalTask();
+    virtual bool isActive() const;
+    virtual STI::Utils::TaskStatus getStatus() const;
+    virtual bool isReadyToRun();
+    virtual double secondsToNextRun() const;
+    virtual void run();
+    virtual void skipTask();
+    virtual bool repeat();
+public:
+    bool swig_overrides(int n) {
+      return (n < 7 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<7> swig_override;
+};
+
+class SwigDirector_AppointmentTask : public STI::Utils::AppointmentTask, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    virtual ~SwigDirector_AppointmentTask();
+    virtual bool isActive() const;
+    virtual STI::Utils::TaskStatus getStatus() const;
+    virtual bool isReadyToRun();
+    virtual double secondsToNextRun() const;
+    virtual void run();
+    virtual void skipTask();
+    virtual bool repeat();
+public:
+    bool swig_overrides(int n) {
+      return (n < 7 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<7> swig_override;
 };
 
 

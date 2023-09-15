@@ -86,8 +86,8 @@ public class MixedValue {
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
-  public MixedValue(FileHolder value) {
-    this(stiJNI.new_MixedValue__SWIG_7(FileHolder.getCPtr(value), value), true);
+  public MixedValue(FileID value) {
+    this(stiJNI.new_MixedValue__SWIG_7(FileID.getCPtr(value), value), true);
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
@@ -125,8 +125,8 @@ public class MixedValue {
     stiJNI.MixedValue_setValue__SWIG_5(swigCPtr, this, BinaryData.getCPtr(value), value);
   }
 
-  public void setValue(FileHolder value) {
-    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, FileHolder.getCPtr(value), value);
+  public void setValue(FileID value) {
+    stiJNI.MixedValue_setValue__SWIG_6(swigCPtr, this, FileID.getCPtr(value), value);
   }
 
   public void setValue(Image value) {
@@ -198,9 +198,8 @@ public class MixedValue {
     return (cPtr == 0) ? null : new BinaryData(cPtr, true);
   }
 
-  public FileHolder getFile() {
-    long cPtr = stiJNI.MixedValue_getFile(swigCPtr, this);
-    return (cPtr == 0) ? null : new FileHolder(cPtr, true);
+  public FileID getFileID() {
+    return new FileID(stiJNI.MixedValue_getFileID(swigCPtr, this), true);
   }
 
   public Image getImage() {

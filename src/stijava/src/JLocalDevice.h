@@ -48,11 +48,17 @@ public:
 	void addEventEngine(const STI::Engine::EngineID& engineID);
 
 	void addPartner(const DeviceID& id);
+	void addPartner(const DeviceID& id, const std::string& alias);
 	void addEventTarget(const DeviceID& id);
+	void addEventTarget(const DeviceID& id, const std::string& alias);
+
+	void addTask(const std::shared_ptr<STI::Utils::Task>& task);
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
 	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
+
+	std::shared_ptr<STI::Utils::FileServer> getFileServer();
 
 private:
 

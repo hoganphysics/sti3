@@ -53,7 +53,11 @@ public class TimeStamp {
   }
 
   public String date_YYYY_MM_DD() {
-    return stiJNI.TimeStamp_date_YYYY_MM_DD(swigCPtr, this);
+    return stiJNI.TimeStamp_date_YYYY_MM_DD__SWIG_0(swigCPtr, this);
+  }
+
+  public String date_YYYY_MM_DD(String separator) {
+    return stiJNI.TimeStamp_date_YYYY_MM_DD__SWIG_1(swigCPtr, this, separator);
   }
 
   public String time() {
@@ -61,11 +65,19 @@ public class TimeStamp {
   }
 
   public String time_hh_mm_ss() {
-    return stiJNI.TimeStamp_time_hh_mm_ss(swigCPtr, this);
+    return stiJNI.TimeStamp_time_hh_mm_ss__SWIG_0(swigCPtr, this);
+  }
+
+  public String time_hh_mm_ss(String separator) {
+    return stiJNI.TimeStamp_time_hh_mm_ss__SWIG_1(swigCPtr, this, separator);
   }
 
   public String time_hh_mm_ss_mmmuuunnn() {
     return stiJNI.TimeStamp_time_hh_mm_ss_mmmuuunnn(swigCPtr, this);
+  }
+
+  public String time_mmmuuunnn(String separator) {
+    return stiJNI.TimeStamp_time_mmmuuunnn(swigCPtr, this, separator);
   }
 
   public boolean opLess(TimeStamp rhs) {
@@ -78,6 +90,18 @@ public class TimeStamp {
 
   public boolean opNotEquals(TimeStamp rhs) {
     return stiJNI.TimeStamp_opNotEquals(swigCPtr, this, TimeStamp.getCPtr(rhs), rhs);
+  }
+
+  public boolean isSameDate(TimeStamp rhs) {
+    return stiJNI.TimeStamp_isSameDate(swigCPtr, this, TimeStamp.getCPtr(rhs), rhs);
+  }
+
+  public String toString() {
+    return stiJNI.TimeStamp_toString(swigCPtr, this);
+  }
+
+  public static TimeStamp fromString(String timeStamp) {
+    return new TimeStamp(stiJNI.TimeStamp_fromString(timeStamp), true);
   }
 
   public int year() {
@@ -114,6 +138,14 @@ public class TimeStamp {
 
   public int nanos() {
     return stiJNI.TimeStamp_nanos(swigCPtr, this);
+  }
+
+  public void add_day(int days) {
+    stiJNI.TimeStamp_add_day__SWIG_0(swigCPtr, this, days);
+  }
+
+  public void add_day() {
+    stiJNI.TimeStamp_add_day__SWIG_1(swigCPtr, this);
   }
 
   public void add_ns(int ns) {

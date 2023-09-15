@@ -103,6 +103,10 @@
 %shared_ptr(STI::Device::JChannelManager);
 %shared_ptr(STI::Device::JAttributeManager);
 %shared_ptr(STI::Device::JPersistenceManager);
+%shared_ptr(STI::Device::JLogManager);
+%shared_ptr(STI::Device::JProfileManager);
+%shared_ptr(STI::Device::JTaskManager);
+%shared_ptr(STI::Utils::Task);
 
 %shared_ptr(STI::Device::Channel);
 %shared_ptr(STI::Device::LocalChannel);
