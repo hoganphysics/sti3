@@ -74,6 +74,8 @@ add_library(stinetwork SHARED
     convert/Convert_HubID.cpp
     convert/Convert_HubNodeWalker.cpp
     convert/Convert_HubTrace.cpp
+    convert/Convert_Log.cpp
+    convert/Convert_Profile.cpp
     convert/Convert_DeviceTrace.cpp
     convert/Convert_RawEventGroup.cpp
     convert/Convert_ResultsCollector.cpp
