@@ -27,33 +27,7 @@ using STI::Python::StackTracePy;
 using STI::Python::STIPyShot;
 using STI::Engine::RawStackTrace;
 
-// int add(int i, int j) {
-//     return i + j;
-// }
 
-
-
-// auto globalLib = STIPyGlobal::getInstance();
-
-// std::string globalTest = "hello global";
-
-
-// std::shared_ptr<STIPyServer> STI::Python::connect2(const std::string& localIP, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
-// {
-//     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
-//     auto srv = std::make_shared<STIPyServer>();
-//     return srv;
-
-// }
-// void STI::Python::connect3(const std::string& localIP, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
-// {
-
-// }
-
-// void STI::Python::connect4(unsigned localIP, unsigned nameServerAddress)
-// {
-
-// }
 
 
 std::shared_ptr<STIPyShot> STI::Python::makeShot()
@@ -74,9 +48,9 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
     //    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
     //}
 
-    fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+    // fileFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
 
-    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>(fileFactory);
+    auto stackTrace = std::make_shared<STI::Engine::StackTraceData>();  //temp, needs to point to a local fileserver
     auto eventGroup = std::make_shared<STI::Engine::RawEventGroup>("", "", stackTrace);
 
     std::shared_ptr<STI::Engine::Shot> shot;

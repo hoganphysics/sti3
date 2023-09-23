@@ -6,6 +6,7 @@ namespace py = pybind11;
 
 using STI::Network::HubID;
 
+
 void init_HubID(py::module& m) 
 {
 
@@ -34,7 +35,6 @@ void init_HubID(py::module& m)
                 return (self < rhs) || (self == rhs);
             })
         ;
-
 
 }
 

@@ -57,12 +57,12 @@ void LegacySequenceXMLBuilder::build(const std::string& filename, const std::sha
 
 }
 
-void addVars(tinyxml2::XMLElement* experiment, const std::set<ParsedVar>& vars)
+void addVars(tinyxml2::XMLElement* experiment, const std::set<ParsedVar>& vars, const std::string& shotFilename)
 {
     for (auto& var : vars) {
         auto varElement = experiment->InsertNewChildElement("var");
         varElement->SetAttribute("name", var.name.c_str());
-        LegacyExperimentXMLBuilder::addValue(varElement, var.value);
+        LegacyExperimentXMLBuilder::addValue(varElement, var.value, shotFilename);
     }
 }
 
@@ -85,7 +85,7 @@ void LegacySequenceXMLBuilder::addShot(const std::string& shotFilename, const Se
     auto experiment = experiments->InsertNewChildElement("experiment");
 
     if (closedSeq) {
-        addVars(experiment, it->second.overwritten);
+        addVars(experiment, it->second.overwritten, shotFilename);
     }
 
     std::filesystem::path sequencePath = filename;

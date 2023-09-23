@@ -2,7 +2,12 @@
 #include "JDevice.h"
 #include <sti/device/Device.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/TaskManager.h>
+#include <sti/device/LogManager.h>
+#include <sti/device/ProfileManager.h>
+#include <sti/device/Attribute.h>
 #include <sti/LocalDevice.h>
+
 #include "JDeviceCollection.h"
 #include "JDeviceMessageDispatcher.h"
 #include "JEventEngineScheduler.h"
@@ -13,6 +18,9 @@
 #include "JAttributeManager.h"
 #include "JEventEngineScheduler.h"
 #include "JPersistenceManager.h"
+#include "JLogManager.h"
+#include "JTaskManager.h"
+#include "JProfileManager.h"
 
 #include <memory>
 
@@ -30,6 +38,10 @@ using STI::Device::AttributeManager;
 using STI::Device::JAttributeManager;
 using STI::Device::PersistenceManager;
 using STI::Device::JPersistenceManager;
+using STI::Device::ProfileManager;
+using STI::Device::TaskManager;
+using STI::Device::LogManager;
+using STI::Device::Attribute;
 
 
 JDevice::JDevice(const std::shared_ptr<STI::Device::Device>& device)
@@ -166,6 +178,101 @@ std::shared_ptr<STI::Device::JPersistenceManager> JDevice::getPersistenceManager
 }
 
 
+
+std::shared_ptr<STI::Device::JProfileManager> JDevice::getProfileManager()
+{
+    std::shared_ptr<STI::Device::ProfileManager> manager;
+    std::shared_ptr<STI::Device::JProfileManager> jmanager;
+
+    if (wrappedDevice != 0) {
+        wrappedDevice->getProfileManager(manager);
+    }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JProfileManager>(manager);
+    }
+
+    return jmanager;
+}
+
+std::shared_ptr<STI::Device::JTaskManager> JDevice::getTaskManager()
+{
+    std::shared_ptr<STI::Device::TaskManager> manager;
+    std::shared_ptr<STI::Device::JTaskManager> jmanager;
+
+    if (wrappedDevice != 0) {
+        wrappedDevice->getTaskManager(manager);
+    }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JTaskManager>(manager);
+    }
+
+    return jmanager;
+}
+
+std::shared_ptr<STI::Device::JLogManager> JDevice::getLogManager()
+{
+    std::shared_ptr<STI::Device::LogManager> manager;
+    std::shared_ptr<STI::Device::JLogManager> jmanager;
+
+    if (wrappedDevice != 0) {
+        wrappedDevice->getLogManager(manager);
+    }
+    if (manager != 0) {
+        jmanager = std::make_shared<STI::Device::JLogManager>(manager);
+    }
+
+    return jmanager;
+}
+
+
+bool JDevice::write(short channel, const STI::Utils::MixedValue& value)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->write(channel, value);
+    }
+    return false;
+}
+
+bool JDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->read(channel, value, data);
+    }
+    return false;
+}
+
+void JDevice::stopRW()
+{
+    if(wrappedDevice != 0) {
+        wrappedDevice->stopRW();
+    }
+}
+
+std::string JDevice::getAttribute(const std::string& key)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getAttribute(key);
+    }
+    return "";
+}
+
+bool JDevice::setAttribute(const std::string& key, const std::string& value)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->setAttribute(key, value);
+    }
+    return false;
+}
+
+bool JDevice::getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getAttribute(key, attribute);
+    }
+    return false;
+}
+
+
 void JDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
     if(wrappedDevice != 0) {
@@ -210,6 +317,30 @@ bool JDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& manager
         success = wrappedDevice->getPersistenceManager(manager);
     }
     return success;
+}
+
+bool JDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getProfileManager(manager);
+    }
+    return false;
+}
+
+bool JDevice::getTaskManager(std::shared_ptr<TaskManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getTaskManager(manager);
+    }
+    return false;
+}
+
+bool JDevice::getLogManager(std::shared_ptr<LogManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getLogManager(manager);
+    }
+    return false;
 }
 
 bool JDevice::refresh()

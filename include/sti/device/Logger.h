@@ -24,9 +24,6 @@ namespace Device
 
 class LocalLogManager;
 
-// Examples:
-// <10:24:34 | read | ch 2> MixedValue()
-// <10:24:34 | attribute | key> value
 
 class Logger
 {
@@ -76,7 +73,6 @@ public:
 
         return (*this);
     }
-
 
     // overloads for manipulators
     typedef std::ostream& (*manip1)(std::ostream&);
@@ -160,23 +156,14 @@ private:
 
     std::string getNextLogFilename(const std::string& targetDirectory);
 
-    // //PersistenceTarget
-    // std::string getFilename();
-    // // void setLoadFilename(const std::string& filename);
-    // void setPersistenceCallback(const std::function<void(void)>& refresher);
-    // bool save(const std::string& filename);
-    // void load(const std::string& filename);
-
     friend class LocalLogManager;
     bool save(const std::string& targetDirectory);
 
-    // std::string makeLogPrefix();
 
     std::string name;
     std::stringstream log;
     unsigned logTaskNumber;
 
-    // std::ofstream logFile;
     std::unique_ptr<std::ofstream> logFile;
     std::string logFilename;    //today's log file
 

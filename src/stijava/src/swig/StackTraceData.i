@@ -33,6 +33,7 @@
 %include "RawStackTrace.h"
 
 %ignore STI::Engine::StackTraceData::StackTraceData(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
+// %ignore STI::Engine::StackTraceData::StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr< STI::Utils::FileServer >& fileServer);
 
 %ignore STI::Engine::StackTraceData::setFileHolderFactory(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
 

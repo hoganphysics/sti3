@@ -113,11 +113,23 @@ public class JLocalDevice extends JDevice {
   }
 
   public void addPartner(DeviceID id) {
-    stiJNI.JLocalDevice_addPartner(swigCPtr, this, DeviceID.getCPtr(id), id);
+    stiJNI.JLocalDevice_addPartner__SWIG_0(swigCPtr, this, DeviceID.getCPtr(id), id);
+  }
+
+  public void addPartner(DeviceID id, String alias) {
+    stiJNI.JLocalDevice_addPartner__SWIG_1(swigCPtr, this, DeviceID.getCPtr(id), id, alias);
   }
 
   public void addEventTarget(DeviceID id) {
-    stiJNI.JLocalDevice_addEventTarget(swigCPtr, this, DeviceID.getCPtr(id), id);
+    stiJNI.JLocalDevice_addEventTarget__SWIG_0(swigCPtr, this, DeviceID.getCPtr(id), id);
+  }
+
+  public void addEventTarget(DeviceID id, String alias) {
+    stiJNI.JLocalDevice_addEventTarget__SWIG_1(swigCPtr, this, DeviceID.getCPtr(id), id, alias);
+  }
+
+  public void addTask(Task task) {
+    stiJNI.JLocalDevice_addTask(swigCPtr, this, Task.getCPtr(task), task);
   }
 
   public void sendMessage(DeviceMessage mess) {
@@ -126,6 +138,11 @@ public class JLocalDevice extends JDevice {
 
   public void addCollectionListener(DeviceCollectionListener listener) {
     stiJNI.JLocalDevice_addCollectionListener(swigCPtr, this, DeviceCollectionListener.getCPtr(listener), listener);
+  }
+
+  public FileServer getFileServer() {
+    long cPtr = stiJNI.JLocalDevice_getFileServer(swigCPtr, this);
+    return (cPtr == 0) ? null : new FileServer(cPtr, true);
   }
 
 }

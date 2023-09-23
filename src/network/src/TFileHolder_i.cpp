@@ -3,10 +3,13 @@
 #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "RemoteFileHolder.h"
+#include "convert/Convert_File.h"
+
 
 using STI::TNetwork::TFileHolder_i;
 using STI::Network::convertBuffer;
 using STI::Network::convert;
+using STI::TNetwork::TFileID;
 
 
 TFileHolder_i::TFileHolder_i(STI::Utils::FileHolder* fileHolder)
@@ -17,6 +20,18 @@ TFileHolder_i::TFileHolder_i(STI::Utils::FileHolder* fileHolder)
 TFileHolder_i::~TFileHolder_i()
 {
     STI::Network::ORBManager::ORBManager::deactivateServant(this);
+}
+
+TFileID* TFileHolder_i::getID()
+{
+	STI::TNetwork::TFileID_var tFileID(new STI::TNetwork::TFileID);
+
+	if(localFileHolder != 0) {
+        auto fileID = localFileHolder->getID();
+		convert<STI::Utils::FileID, TFileID>(fileID, tFileID);
+	}
+
+	return tFileID._retn();
 }
 
 char* TFileHolder_i::getFilename()
@@ -72,16 +87,6 @@ char* TFileHolder_i::md5Checksum()
 		result = localFileHolder->maxBufferSize();
 	}
     return static_cast<::CORBA::Long>(result);
-}
-
-::CORBA::Boolean TFileHolder_i::deleteFile()
-{
-    bool result = false;
-
-    if (localFileHolder != 0) {
-		result = localFileHolder->deleteFile();
-	}
-    return static_cast<::CORBA::Boolean>(result);
 }
 
 ::CORBA::Boolean TFileHolder_i::write(const ::STI::TNetwork::OctetSeq& buffer)

@@ -43,7 +43,10 @@ bool DefaultImageWriter::write(const std::string& targetDirectory, std::shared_p
 
     auto uniqueFilename = STI::Utils::makeUniquePath( fullFilename.string() );
 
-    auto localFileHolder = fileHolderFactory->makeFileHolder(uniqueFilename);
+    std::filesystem::path uniqueLocalPath = uniqueFilename;
+    auto localFileHolder = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path(), uniqueLocalPath.filename());
+
+    // auto localFileHolder = fileHolderFactory->makeFileHolder(uniqueFilename);
 
     //write file here.  switch type based on extension
 

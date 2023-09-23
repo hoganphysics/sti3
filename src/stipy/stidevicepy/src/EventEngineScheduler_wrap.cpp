@@ -1,20 +1,18 @@
-// #include "EventEngineSchedulerPy.h"
 #include <sti/engine/EventEngineScheduler.h>
-
-#include <sti/engine/ShotID.h>
-#include <sti/engine/ShotConfig.h>
-
-#include <sti/engine/RawEvent.h>
-#include "LocalShot.h"
-#include <sti/engine/RawEventGroup.h>
 
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventGroup.h>
 #include <sti/engine/Sequence.h>
 #include <sti/engine/SequenceID.h>
+#include <sti/engine/ShotID.h>
+#include <sti/engine/ShotConfig.h>
+
+#include "LocalShot.h"
 
 #include <string>
 #include <memory>
@@ -29,7 +27,6 @@
 
 namespace py = pybind11;
 
-// using STI::Python::EventEngineSchedulerPy;
 using STI::Engine::ParseID;
 using STI::Utils::TimeStamp;
 using STI::Engine::ShotConfig;
@@ -53,7 +50,6 @@ void init_EventEngineScheduler(py::module& m)
 {
 
     py::class_<LocalShot, std::shared_ptr<LocalShot>>(m, "LocalShot")
-        // .def(py::init<>())
         .def(py::init<const ShotConfig&, const std::shared_ptr<STI::Engine::RawEventGroup>&>(), py::arg("shotConfig"), py::arg("baseGroup"))
         .def("getShotConfig", &LocalShot::getShotConfig)
         .def("addEvent",
@@ -86,7 +82,6 @@ void init_EventEngineScheduler(py::module& m)
         .value("Archived", EngineJobStatus::Archived)
         .value("Deferred", EngineJobStatus::Deferred)
         ;
-        //.export_values();
 
     py::enum_<EventEngineJobList>(m, "EventEngineJobList")
         .value("Queued", EventEngineJobList::Queued)
@@ -94,14 +89,11 @@ void init_EventEngineScheduler(py::module& m)
         .value("Completed", EventEngineJobList::Completed)
         .value("Archived", EventEngineJobList::Archived)
         ;
-        //.export_values();
 
     py::enum_<EventEngineJobType>(m, "EventEngineJobType")
         .value("Parse", EventEngineJobType::Parse)
         .value("Play", EventEngineJobType::Play)
         ;
-        //.export_values();
-
 
     py::class_<STI::Engine::EngineJobID>(m, "EngineJobID")
         .def(py::init<>())
@@ -198,16 +190,6 @@ void init_EventEngineScheduler(py::module& m)
             })
         ;
 
-    // py::class_<EventEngineSchedulerPy, std::shared_ptr<EventEngineSchedulerPy>>(m, "EventEngineScheduler")
-    //     .def("parse", py::overload_cast<const std::shared_ptr<STI::Engine::Shot>&>(&EventEngineSchedulerPy::parse), py::arg("shot"))
-    //     .def("play", &EventEngineSchedulerPy::play, py::arg("parseID"), py::arg("source"))
-    //     .def("getStatus", py::overload_cast<const STI::Engine::ParseID&>(&EventEngineSchedulerPy::getStatus), py::arg("parseID"))
-    //     .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineSchedulerPy::getStatus), py::arg("shotID"))
-    //     .def("cancelAll", &EventEngineSchedulerPy::cancelAll)
-    //     .def("getJobIDs", &EventEngineSchedulerPy::getJobIDs)
-    //     ;
-
-
 
     py::class_<EventEngineScheduler, std::shared_ptr<EventEngineScheduler>>(m, "EventEngineScheduler")
         .def("parse", py::overload_cast<const std::shared_ptr<Shot>&>(&EventEngineScheduler::parse), py::arg("shot"))
@@ -218,7 +200,6 @@ void init_EventEngineScheduler(py::module& m)
         .def("getStatus", py::overload_cast<const STI::Engine::ShotID&>(&EventEngineScheduler::getStatus), py::arg("shotID"))
         .def("cancelJob", &EventEngineScheduler::cancelJob)
         .def("cancelAll", &EventEngineScheduler::cancelAll)
-        // .def("getJobIDs", &EventEngineScheduler::getJobIDs)
         .def("jobIDs",
             [](EventEngineScheduler& self, const EventEngineJobList& jobListType) {
 
@@ -232,6 +213,5 @@ void init_EventEngineScheduler(py::module& m)
                 return jobIDvec;
             })
         ;
-
 
 }

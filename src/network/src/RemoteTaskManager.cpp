@@ -242,6 +242,25 @@ void RemoteTaskManager::runTask(const std::string& taskID)
 	}
 }
 
+double RemoteTaskManager::secondsToNextRun(const std::string& taskID)
+{
+	std::unique_lock<std::mutex> taskLock(taskMutex);
+	double result = 0;
+
+	if (isDisabled()) return result;
+
+	try {
+		result = getTRef()->secondsToNextRun(convert<std::string, ::CORBA::String_member>(taskID));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+	return result;
+}
+
 bool RemoteTaskManager::ping() const
 {
 	std::unique_lock<std::mutex> taskLock(taskMutex);

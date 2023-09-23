@@ -1,7 +1,5 @@
-
 #include "DeviceCollectionPy.h"
 #include "DevicePy.h"
-
 
 #include <set>
 #include <string>
@@ -10,10 +8,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
-
 namespace py = pybind11;
 
-//using STI::Python::DevicePy;
 using STI::Python::DeviceCollectionPy;
 
 
@@ -29,7 +25,6 @@ void init_DeviceCollection(py::module& m)
         .def("add", &DeviceCollectionPy::add, py::arg("deviceID"), py::arg("Device"))
         .def("remove", &DeviceCollectionPy::remove, py::arg("deviceID"))
         ;
-
 
 }
 

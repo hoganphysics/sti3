@@ -23,9 +23,10 @@ public:
 
     virtual void getTaskIDs(std::set<std::string>& ids) const = 0;
     
-    virtual STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const= 0;
+    virtual STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const = 0;
+    virtual void setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus) = 0;
 
-    virtual bool getTask(const std::string& taskID, std::shared_ptr<STI::Utils::Task>& task) const= 0;
+    virtual bool getTask(const std::string& taskID, std::shared_ptr<STI::Utils::Task>& task) const = 0;
     virtual void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const = 0;
 
 	virtual void removeTask(const std::string& taskID) = 0;

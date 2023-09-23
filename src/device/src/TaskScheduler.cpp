@@ -9,7 +9,8 @@
 using STI::Utils::TaskScheduler;
 using STI::Utils::Task;
 using STI::Utils::TaskStatus;
-
+using STI::Utils::TaskSchedulerEvent;
+using STI::Utils::TaskSchedulerEventType;
 
 
 TaskScheduler::TaskScheduler()
@@ -47,9 +48,18 @@ void TaskScheduler::stop()
 	}
 }
 
-void TaskScheduler::refresh()
+void TaskScheduler::addListener(STI::Utils::TaskSchedulerListener* listener)
 {
+	listeners.push_back(listener);
+}
 
+void TaskScheduler::sendEvent(const TaskSchedulerEventType& type, const std::string& taskID)
+{
+	for (auto& listener : listeners) {
+		if (listener != 0) {
+			listener->handleEvent(TaskSchedulerEvent(type, taskID));
+		}
+	}
 }
 
 void TaskScheduler::getIDs(std::set<std::string>& ids) const
@@ -75,6 +85,7 @@ void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 
 	tasks.add(task->getID(), task);
 	task->setStatus(TaskStatus::Active);
+	sendEvent(TaskSchedulerEventType::Add, task->getID());
 
 	auto it = findActiveTask(task->getID());
 	if (it != activeTasks.end()) {
@@ -82,6 +93,7 @@ void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 		activeTasks.erase(it);
 	}
 	activeTasks.push_back(task);
+	sendEvent(TaskSchedulerEventType::Activate, task->getID());
 
 	schedulerCondition.notify_all();
 }
@@ -108,6 +120,7 @@ void TaskScheduler::removeTask_(const std::string& taskID)
 {
 	deactivateTask_(taskID);
 	tasks.remove(taskID);
+	sendEvent(TaskSchedulerEventType::Remove, taskID);
 }
 
 void TaskScheduler::clear()
@@ -125,6 +138,7 @@ void TaskScheduler::clear()
 
 	tasks.clear();
 	activeTasks.clear();
+	sendEvent(TaskSchedulerEventType::Refresh, "");
 
 	schedulerCondition.notify_all();
 }
@@ -138,6 +152,7 @@ void TaskScheduler::activateTask(const std::string& taskID)
 
 	if (tasks.get(taskID, task) && task != 0) {
 		task->setStatus(TaskStatus::Active);
+		sendEvent(TaskSchedulerEventType::Activate, taskID);
 		
 		if (it == activeTasks.end()) {
 			activeTasks.push_back(task);
@@ -164,6 +179,7 @@ void TaskScheduler::deactivateTask_(const std::string& taskID)
 
 	if (tasks.get(taskID, task) && task != 0) {
 		task->setStatus(TaskStatus::Inactive);
+		sendEvent(TaskSchedulerEventType::Deactivate, taskID);
 	}
 
 	if (it != activeTasks.end()) {

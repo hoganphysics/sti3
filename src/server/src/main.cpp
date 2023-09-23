@@ -5,6 +5,8 @@
 
 #include <sti/device/LogFileFilter.h>
 
+#include <sti/utils/Task.h>
+
 #include <memory>
 
 #include <iostream>
@@ -30,7 +32,7 @@ int main(int argc, char **argv)
     hub->run(false);
 
     //test logs
-    if (true) {
+    if (false) {
         int x;
         std::cin >> x;
 
@@ -65,6 +67,27 @@ int main(int argc, char **argv)
 
         auto logFilename = logFile.fileHolder->getFilename();
     }
+
+    if(true) {
+        int x;
+        std::cin >> x;
+
+        std::shared_ptr<STI::Device::TaskManager> tm;
+        std::shared_ptr<STI::Device::DeviceCollection> collection;
+        std::shared_ptr<STI::Device::Device> dev;
+        std::shared_ptr<STI::Utils::Task> task;
+
+        server->getCollection(collection);
+        auto testID = STI::Device::DeviceID("TestDevice", "localhost2", 0);
+        collection->get(testID, dev);
+        dev->getTaskManager(tm);
+        auto result = tm->getTask("Log::Read channel #2(test channel)", task);
+
+        tm->setStatus(task->getID(), STI::Utils::TaskStatus::Inactive);
+        
+    }
+
+
 
     hub->shutdown();
 

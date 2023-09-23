@@ -1,9 +1,7 @@
-
 #include <sti/device/LogManager.h>
 #include <sti/device/LogFile.h>
 #include <sti/device/LogRecord.h>
 #include <sti/device/Logger.h>
-
 
 #include <sstream>
 

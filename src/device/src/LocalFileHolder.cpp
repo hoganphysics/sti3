@@ -1,6 +1,7 @@
-
-
 #include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/FileServer.h>
+
+#include "VirtualFileHolder.h"
 
 #include <openssl/md5.h> 
 
@@ -10,17 +11,14 @@
 #include <iomanip> 
 #include <filesystem>
 
-#include "CerealArchives.h"
-#include <cereal/types/string.hpp>
-#include <cereal/types/polymorphic.hpp>
 
 using STI::Utils::FileHolder;
+using STI::Utils::FileID;
 using STI::Utils::LocalFileHolder;
+using STI::Utils::FileTransferType;
+using STI::Utils::LocalFileHolderFactory;
+using STI::Utils::VirtualFileHolder;
 
-
-//Serialization
-CEREAL_REGISTER_TYPE(LocalFileHolder);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(FileHolder, LocalFileHolder)
 
 
 std::string digestToString(unsigned char (&digest)[MD5_DIGEST_LENGTH])
@@ -35,14 +33,18 @@ std::string digestToString(unsigned char (&digest)[MD5_DIGEST_LENGTH])
 }
 
 
-LocalFileHolder::LocalFileHolder(const std::string& filename)
-: filename(filename), hashed(false)
+LocalFileHolder::LocalFileHolder(const std::string& originID, const std::string& path, const std::string& filename)
 {
+    fileID.persistenceLocation = originID;
+    fileID.origin = originID;
+    fileID.path = path;
+    fileID.filename = filename;
 }
 
-LocalFileHolder::LocalFileHolder()
-: hashed(false)
+LocalFileHolder::LocalFileHolder(const std::string& originID, const FileID& id)
+: LocalFileHolder(originID, id.path, id.filename)
 {
+    fileID.origin = id.origin;  //keep origin
 }
 
 LocalFileHolder::~LocalFileHolder()
@@ -51,7 +53,7 @@ LocalFileHolder::~LocalFileHolder()
 
 bool LocalFileHolder::operator==(const LocalFileHolder& other) const
 {
-    return other.getFilename() == getFilename();
+    return other.getID() == getID();
 }
 
 bool LocalFileHolder::operator!=(const LocalFileHolder& other) const
@@ -59,17 +61,26 @@ bool LocalFileHolder::operator!=(const LocalFileHolder& other) const
     return !((*this) == other);
 }
 
-std::string LocalFileHolder::getFilename() const
+FileID LocalFileHolder::getID() const
 {
-    return filename;
+    return fileID;
 }
 
+std::string LocalFileHolder::getFilename() const
+{
+    return fileID.getFullFilename();
+}
+
+unsigned LocalFileHolder::getFileSize() const
+{
+    std::filesystem::path filepath(getFilename());
+    return std::filesystem::file_size(filepath);
+}
 
 bool LocalFileHolder::exists() const
 {
-    return std::filesystem::exists(filename);
+    return std::filesystem::exists(getFilename());
 }
-
 
 unsigned LocalFileHolder::maxBufferSize() const
 {
@@ -83,12 +94,12 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
 
     if (destination == 0) return false;
 
-    std::ifstream ifs(filename, std::ifstream::binary|std::ios::ate);
-    if (!ifs.is_open()) return false;
+    std::shared_ptr<std::istream> ifs;
+    if (!getistream(ifs)) return false;
 
     //get file size
-    unsigned filesize = static_cast<unsigned>(ifs.tellg());
-    ifs.seekg(0, std::ios::beg);   //move to beginning
+    unsigned filesize = static_cast<unsigned>(ifs->tellg());
+    ifs->seekg(0, std::ios::beg);   //move to beginning
 
     //Can only transfer to an new destination file
     if (destination->exists()) return false;
@@ -115,14 +126,14 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
     unsigned amountRead = 0;
     unsigned nextReadSize = bufferSize;
 
-    while (nextReadSize > 0 && ifs.read(buffer, nextReadSize))
+    while (nextReadSize > 0 && ifs->read(buffer, nextReadSize))
     {
         amountRead += nextReadSize;
         nextReadSize = std::min(bufferSize, filesize - amountRead);
 
-        destination->write(buffer, static_cast<unsigned>(ifs.gcount()));
+        destination->write(buffer, static_cast<unsigned>(ifs->gcount()));
 
-        MD5_Update(&md5Context, buffer, ifs.gcount());
+        MD5_Update(&md5Context, buffer, ifs->gcount());
     }
 
     delete[] buffer;
@@ -132,32 +143,36 @@ bool LocalFileHolder::transferFile(const std::shared_ptr<FileHolder>& destinatio
 
     if (res == 0) return false;     // hash failed 
 
-    md5hash = digestToString(digest);
-    hashed = true;
+    std::string hash = digestToString(digest);
+    md5hash.set(hash);
 
-    ifs.close(); 
     destination->closeFile();
 
+    //copy fileID data
+    auto remoteFileID = destination->getID();
+    fileID.origin = remoteFileID.origin;
+    fileID.creationTime = remoteFileID.creationTime;
+
     return md5hash == destination->md5Checksum();   //compare checksums
-}
-
-bool LocalFileHolder::deleteFile()
-{
-    std::filesystem::path filepath(filename);
-
-    return std::filesystem::remove(filepath);
 }
 
 std::string LocalFileHolder::md5Checksum()
 {
     std::unique_lock<std::mutex> writeLock(fileMutex);
 
-    if (!hashed) {
+    if (md5hash.isCached()) return md5hash.get();
 
-        hashed = LocalFileHolder::makeMD5hash(filename, md5hash, 16384);
-    }
+    std::string hash;
 
-    return md5hash;
+    std::ifstream ifs(getFilename(), std::ifstream::binary);
+    if (!ifs.is_open()) return "";
+
+    LocalFileHolder::makeMD5hash(ifs, hash, 16384);
+    ifs.close(); 
+    
+    md5hash.set(hash);
+
+    return md5hash.get();
 }
 
 
@@ -167,15 +182,55 @@ bool LocalFileHolder::openFile()
 
     if (ofs != 0 && ofs->is_open()) return true;
 
-    ofs = std::make_unique<std::ofstream>(filename, std::ifstream::binary);
+    std::filesystem::path filepath(fileID.path);
+
+    if (!std::filesystem::exists(filepath)) {
+        std::filesystem::create_directories(filepath);
+    }
+
+    ofs = std::make_unique<std::ofstream>(getFilename(), std::ifstream::binary);
 
     return ofs != 0 && ofs->is_open();
 }
 
+std::ostream* LocalFileHolder::getostream()
+{
+    return ofs.get();
+}
+
+bool LocalFileHolder::getistream(std::shared_ptr<std::istream>& istream)
+{
+    auto ifs = std::make_shared<std::ifstream>(getFilename(), std::ifstream::binary|std::ios::ate);
+    // std::ifstream ifs(getFilename(), std::ifstream::binary|std::ios::ate);
+    if (!ifs->is_open()) return false;
+    istream = ifs;
+    return true;
+}
+
+// bool LocalFileHolder::openFileType(FileTransferType type, unsigned offset, unsigned& maxBufferSize)
+// {
+//     std::unique_lock<std::mutex> writeLock(fileMutex);
+
+//     if (ofs != 0 && ofs->is_open()) return true;
+
+//     if (type == FileTransferType::Binary) {
+//         ofs = std::make_unique<std::ofstream>(getFilename(), std::ifstream::binary);
+//     }
+//     else if (type == FileTransferType::String) {
+//         ofs = std::make_unique<std::ofstream>(getFilename());
+//     }
+    
+//     ofs->seekp(offset);
+
+//     maxBufferSize = maxBufferSize();
+
+//     return ofs != 0 && ofs->is_open();
+// }
+
 bool LocalFileHolder::write(const char* buffer, unsigned length)
 {
-    if (ofs != 0) {
-        ofs->write(buffer, length);
+    if (getostream() != 0) {
+        getostream()->write(buffer, length);
         return true;
     }
     return false;
@@ -189,13 +244,9 @@ void LocalFileHolder::closeFile()
 }
 
 
-bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5string, unsigned bufferSize) 
+bool LocalFileHolder::makeMD5hash(std::istream& ifs, std::string& md5string, unsigned bufferSize) 
 {
     char* buffer = new char[bufferSize];
-
-    std::ifstream ifs(fname, std::ifstream::binary);
-
-    if (! ifs.is_open()) return false;
     
     MD5_CTX md5Context; 
     MD5_Init(&md5Context); 
@@ -209,7 +260,6 @@ bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5stri
     
     delete[] buffer;
 
-    ifs.close(); 
 
     unsigned char digest[MD5_DIGEST_LENGTH];
     int res = MD5_Final(digest, &md5Context); 
@@ -222,20 +272,28 @@ bool LocalFileHolder::makeMD5hash(const std::string& fname, std::string& md5stri
     return true;
 }
 
-template<class Archive>
-void LocalFileHolder::serialize(Archive& archive)
+
+//LocalFileHolderFactory
+
+LocalFileHolderFactory::LocalFileHolderFactory(const std::string& originID) 
+: originID(originID)
 {
-	archive(
-		cereal::make_nvp("filename", filename), 
-		cereal::make_nvp("md5hash", md5hash), 
-		cereal::make_nvp("hashed", hashed)
-		);
 }
 
-template void LocalFileHolder::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void LocalFileHolder::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+std::shared_ptr<FileHolder> LocalFileHolderFactory::makeFileHolder(const std::string& path, const std::string& filename)
+{
+    std::shared_ptr<LocalFileHolder> holder(new LocalFileHolder(originID, path, filename));
+    return std::static_pointer_cast<FileHolder>(holder);
+}
 
-template void LocalFileHolder::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
-template void LocalFileHolder::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+std::shared_ptr<FileHolder> LocalFileHolderFactory::makeVirtualFileHolder(const FileID& fileID)
+{
+    std::filesystem::path newPath = originID;   //prepend orignID before path of virtual files
+    newPath /= fileID.path;
+    STI::Utils::FileID newFileID = fileID;
+    newFileID.path = newPath.string();
 
+    std::shared_ptr<VirtualFileHolder> holder(new VirtualFileHolder(originID, newFileID));
+    return std::static_pointer_cast<FileHolder>(holder);
+}
 

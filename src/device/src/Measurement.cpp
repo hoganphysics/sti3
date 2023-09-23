@@ -40,6 +40,8 @@ Measurement::Measurement(const RawEvent& sourceEvent)
 
 	fullGroupName = sourceEvent.getGroupName();
 	measurementGraphPath = sourceEvent.getEventGraphPath();
+
+	sourceEvent.getFileServer(fileServer);
 }
 
 Measurement::Measurement(const Measurement& measurement) : data_ready(false), _device(measurement._device)
@@ -65,6 +67,20 @@ void Measurement::extractMeasurementResult(STI::Utils::MixedValue& data)
 {
 	//Used to swap the result stored in measurementResult with the input parameter 'data'.
 	data = std::move(measurementResult);
+}
+
+bool Measurement::getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const
+{
+	server = fileServer;
+	return server != 0;
+}
+
+bool Measurement::attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file)
+{
+	if (fileServer == 0) return false;
+
+	fileServer->addFile(file);
+	return true;
 }
 
 bool Measurement::dataReady() const

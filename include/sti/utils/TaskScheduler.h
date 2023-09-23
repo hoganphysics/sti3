@@ -18,6 +18,11 @@ namespace STI
 namespace Utils
 {
 
+class TaskSchedulerListener;
+class TaskSchedulerEvent;
+
+enum class TaskSchedulerEventType { Add, Remove, Activate, Deactivate, Refresh };
+
 
 class TaskScheduler
 {
@@ -36,7 +41,7 @@ public:
 	void activateTask(const std::string& taskID);
 	void deactivateTask(const std::string& taskID);
 
-	void refresh();
+	void addListener(TaskSchedulerListener* listener);
 
 	void getIDs(std::set<std::string>& ids) const;
 	bool getTask(const std::string& taskID, std::shared_ptr<Task>& task) const;
@@ -59,6 +64,9 @@ private:
 	STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Task>> tasks;
 	std::vector<std::shared_ptr<Task>> activeTasks;
 
+	void sendEvent(const TaskSchedulerEventType& task, const std::string& taskID);
+	std::vector<TaskSchedulerListener*> listeners;
+
 	std::thread taskThread;
 	bool running;
 
@@ -66,6 +74,27 @@ private:
 	mutable std::condition_variable schedulerCondition;
 
 };
+
+class TaskSchedulerEvent
+{
+public:
+
+	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID)
+	: type(type), taskID(taskID) {}
+	virtual ~TaskSchedulerEvent() {}
+
+	TaskSchedulerEventType type;
+	std::string taskID;
+};
+
+class TaskSchedulerListener
+{
+public:
+	virtual ~TaskSchedulerListener() {}
+
+	virtual void handleEvent(const TaskSchedulerEvent& evt) = 0;
+};
+
 
 
 } // UTILS

@@ -1,5 +1,3 @@
-
-
 #include <sti/utils/Configuration.h>
 #include <sti/utils/ConfigFile.h>
 
@@ -9,11 +7,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
-
 namespace py = pybind11;
 
 using STI::Utils::Configuration;
 using STI::Utils::ConfigFile;
+
 
 void init_Configuration(py::module& m) 
 {

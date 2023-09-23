@@ -1,5 +1,3 @@
-
-
 #include "RemoteDeviceMessageDispatcher.h"
 #include "LocalDeviceMessageHandler.h"
 #include "NetworkDeviceMessageHandlerWrapper.h"

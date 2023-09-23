@@ -30,7 +30,6 @@ void init_ParseTicket(py::module& m)
         .value("NotFound", Ticket::TicketStatus::NotFound)
         .value("Deferred", Ticket::TicketStatus::Deferred)
         ;
-        //.export_values();
 
     py::class_<STI::Engine::EngineParsingMessage>(m, "EngineParsingMessage")
         .def("getMessage", &STI::Engine::EngineParsingMessage::getMessage)
@@ -41,7 +40,6 @@ void init_ParseTicket(py::module& m)
             })
         ;
 
-        
 
     py::class_<STI::Python::PyParseTicket, std::shared_ptr<STI::Python::PyParseTicket>>(m, "ParseTicket")
 

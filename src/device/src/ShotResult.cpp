@@ -29,14 +29,16 @@ ShotResult::ShotResult(const STI::Device::DeviceID& deviceID, std::set<STI::Devi
     }
 }
 
-void ShotResult::deleteFiles(ShotResult& shot)
+void ShotResult::deleteFiles(ShotResult& shot, const std::shared_ptr<STI::Utils::FileServer>& fileServer)
 {
     if (shot.measurements == 0) return;
+    if (fileServer == 0) return;
 
     for (auto& tuple : *shot.measurements) {            
         for (auto& meas : tuple.second) {
             if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
-                meas->data().getFile()->deleteFile();
+                fileServer->deleteFile(meas->data().getFileID());
+                // meas->data().getFile()->deleteFile();
             }
         }
     }

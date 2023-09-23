@@ -58,7 +58,6 @@ private:
 
     bool getLogRecordFile(const STI::Utils::TimeStamp& timestamp, std::shared_ptr<LogRecordFile>& recordFile, bool autocreate=false);
 
-    // int getLogCount(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName);
     bool getLogCounts(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, std::map<std::string, int>& counts);
     void getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids);
 

@@ -38,7 +38,11 @@
 %ignore STI::Engine::RawEventTarget::channel() const;
 %include "sti/engine/RawEventTarget.h"
 %include "sti/fwd/RawEvent_fwd.h"
+
+%ignore STI::Engine::RawEvent::attachFileServer(const std::shared_ptr< STI::Utils::VirtualFileServer >& server);
+%ignore STI::Engine::RawEvent::getFileServer(std::shared_ptr< STI::Utils::VirtualFileServer >& server) const;
 %include "sti/engine/RawEvent.h"
+
 %template(RawEventVector) std::vector< STI::Engine::RawEvent >;
 %template(RawEventMap) std::map< double, std::vector< STI::Engine::RawEvent > >;
 // %shared_ptr( std::vector< STI::Engine::RawEvent > );

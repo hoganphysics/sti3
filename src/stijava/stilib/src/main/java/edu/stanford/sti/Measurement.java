@@ -64,6 +64,10 @@ public class Measurement {
     stiJNI.Measurement_extractMeasurementResult(swigCPtr, this, MixedValue.getCPtr(data), data);
   }
 
+  public boolean attachFile(FileHolder file) {
+    return stiJNI.Measurement_attachFile(swigCPtr, this, FileHolder.getCPtr(file), file);
+  }
+
   public boolean dataReady() {
     return stiJNI.Measurement_dataReady(swigCPtr, this);
   }

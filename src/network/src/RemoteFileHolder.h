@@ -2,6 +2,7 @@
 #define STI_UTILS_REMOTEFILEHOLDER_H
 
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/FileID.h>
 #include "TReferenceHolder.h"
 #include "TFileHolderRefInterface.h"
 #include <sti/utils/CachedValue.h>
@@ -26,13 +27,13 @@ public:
     RemoteFileHolder(::STI::TNetwork::TFileHolder_ptr fileHolder);
     ~RemoteFileHolder();
 
+    STI::Utils::FileID getID() const;
     std::string getFilename() const;
+    unsigned getFileSize() const;
     bool exists() const;
 
     bool transferFile(const std::shared_ptr<STI::Utils::FileHolder>& destination);
     unsigned maxBufferSize() const;
-
-    bool deleteFile();
 
     std::string md5Checksum();
 

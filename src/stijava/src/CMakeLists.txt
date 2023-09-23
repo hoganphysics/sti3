@@ -34,9 +34,11 @@ add_library(stijava SHARED
     JEventEngineJob.cpp
     JEventEngineScheduler.cpp
     JLocalDevice.cpp
+    JLogManager.cpp
     JNetworkDeviceHub.cpp
     JNodeWalker.cpp
     JPersistenceManager.cpp
+    JProfileManager.cpp
     JShot.cpp
     sti_wrap.cpp
 )

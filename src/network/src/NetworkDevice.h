@@ -3,17 +3,19 @@
 
 #include <sti/device/Device.h>
 #include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/PersistenceManager.h>
+#include <sti/engine/EventEngineScheduler.h>
+
+#include "DeviceMessageListenerForwarder.h"
+#include "NetworkEventEngineFactory.h"
+#include "NetworkFileHolder.h"
 #include "TDevice_i.h"
 #include "TDeviceRefInterface.h"
-#include "NetworkEventEngineFactory.h"
+
 #include "generated/orbTypes.h"
-#include <sti/engine/EventEngineScheduler.h>
-#include "DeviceMessageListenerForwarder.h"
-#include "NetworkFileHolder.h"
-#include <sti/device/PersistenceManager.h>
-// #include "NetworkShotRepositoryWrapper.h"
 
 #include <memory>
+
 
 namespace STI
 {

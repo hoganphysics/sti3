@@ -28,10 +28,17 @@ ParseResult::~ParseResult()
 {
 }
 
-void ParseResult::deleteFiles(ParseResult& parsedResult)
+void ParseResult::deleteFiles(ParseResult& parsedResult, const std::shared_ptr<STI::Utils::FileServer>& fileServer)
 {
+    if (fileServer == 0) return;
     if (parsedResult.stackTraceResult != 0 && parsedResult.stackTraceResult->stackTraceData != 0) {
-        parsedResult.stackTraceResult->stackTraceData->deleteFiles();        
+        auto& timingFiles = parsedResult.stackTraceResult->stackTraceData->getTimingFiles();
+
+        for (auto& fileID : timingFiles) {
+            fileServer->deleteFile(fileID);
+        }
+        
+        // parsedResult.stackTraceResult->stackTraceData->deleteFiles();        
     }
 }
 

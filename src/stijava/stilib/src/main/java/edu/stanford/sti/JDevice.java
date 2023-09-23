@@ -80,6 +80,14 @@ public class JDevice {
     return stiJNI.JDevice_refresh(swigCPtr, this);
   }
 
+  public String getAttribute(String key) {
+    return stiJNI.JDevice_getAttribute(swigCPtr, this, key);
+  }
+
+  public boolean setAttribute(String key, String value) {
+    return stiJNI.JDevice_setAttribute(swigCPtr, this, key, value);
+  }
+
   public JDeviceCollection getCollection() {
     long cPtr = stiJNI.JDevice_getCollection(swigCPtr, this);
     return (cPtr == 0) ? null : new JDeviceCollection(cPtr, true);
@@ -108,6 +116,21 @@ public class JDevice {
   public JPersistenceManager getPersistenceManager() {
     long cPtr = stiJNI.JDevice_getPersistenceManager(swigCPtr, this);
     return (cPtr == 0) ? null : new JPersistenceManager(cPtr, true);
+  }
+
+  public JProfileManager getProfileManager() {
+    long cPtr = stiJNI.JDevice_getProfileManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new JProfileManager(cPtr, true);
+  }
+
+  public JTaskManager getTaskManager() {
+    long cPtr = stiJNI.JDevice_getTaskManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new JTaskManager(cPtr, true);
+  }
+
+  public JLogManager getLogManager() {
+    long cPtr = stiJNI.JDevice_getLogManager(swigCPtr, this);
+    return (cPtr == 0) ? null : new JLogManager(cPtr, true);
   }
 
 }

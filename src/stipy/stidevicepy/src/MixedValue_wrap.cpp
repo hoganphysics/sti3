@@ -1,8 +1,5 @@
-
-
 #include <sti/utils/MixedValue.h>
 #include "MixedValuePy.h"
-
 
 #include <pybind11/pybind11.h>
 
@@ -11,6 +8,7 @@ namespace py = pybind11;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 using STI::Python::MixedValuePy;
+
 
 void init_MixedValue(py::module& m) 
 {
@@ -29,7 +27,6 @@ void init_MixedValue(py::module& m)
         .value("Image", MixedValueType::Image)
         .value("Any", MixedValueType::Any)
         ;
-        //.export_values();
 
     py::class_<MixedValuePy>(m, "MixedValue")
         .def(py::init<>())

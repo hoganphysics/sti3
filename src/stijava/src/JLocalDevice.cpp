@@ -87,11 +87,44 @@ void JLocalDevice::addEventTarget(const DeviceID& id)
     }
 }
 
+
+void JLocalDevice::addEventTarget(const DeviceID& id, const std::string& alias)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addEventTarget(id, alias);
+    }
+}
+
 void JLocalDevice::addPartner(const DeviceID& id)
 {
     if (wrappedLocalDevice != 0) {
         wrappedLocalDevice->addPartner(id);
     }
+}
+
+
+void JLocalDevice::addPartner(const DeviceID& id, const std::string& alias)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addPartner(id, alias);
+    }
+}
+
+
+void JLocalDevice::addTask(const std::shared_ptr<STI::Utils::Task>& task)
+{
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->addTask(task);
+    }
+}
+
+std::shared_ptr<STI::Utils::FileServer> JLocalDevice::getFileServer()
+{
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+    if (wrappedLocalDevice != 0) {
+        wrappedLocalDevice->getFileServer(fileServer);
+    }
+    return fileServer;
 }
 
 std::shared_ptr<STI::Device::JDeviceMessageReceiver> JLocalDevice::getMessageReceiver()

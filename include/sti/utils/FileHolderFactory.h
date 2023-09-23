@@ -12,13 +12,15 @@ namespace Utils
 {
 
 class FileHolder;
+class FileID;
 
 class FileHolderFactory
 {
 public:
     virtual ~FileHolderFactory() {}
     
-    virtual std::shared_ptr<FileHolder> makeFileHolder(const std::string& filename) = 0;
+    virtual std::shared_ptr<FileHolder> makeFileHolder(const std::string& path, const std::string& filename) = 0;
+    virtual std::shared_ptr<FileHolder> makeVirtualFileHolder(const FileID& fileID) = 0;
 
 };
 

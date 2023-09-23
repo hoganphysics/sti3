@@ -73,8 +73,8 @@ public class ShotResult {
     return (cPtr == 0) ? null : new ShotResultRecord(cPtr, false);
   }
 
-  public static void deleteFiles(ShotResult shot) {
-    stiJNI.ShotResult_deleteFiles(ShotResult.getCPtr(shot), shot);
+  public static void deleteFiles(ShotResult shot, FileServer fileServer) {
+    stiJNI.ShotResult_deleteFiles(ShotResult.getCPtr(shot), shot, FileServer.getCPtr(fileServer), fileServer);
   }
 
 }

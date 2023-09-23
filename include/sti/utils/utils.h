@@ -8,6 +8,8 @@
 #include <vector>
 #include <sstream>
 #include <memory>
+#include <filesystem>
+
 
 namespace STI
 {
@@ -19,6 +21,7 @@ namespace Utils
 //		std::string generateTimeBasedFileName(const std::string& basefilename, const std::string& extension);
 
 	std::string makeUniquePath(const std::string& filename);
+	std::filesystem::path findCommonBase(const std::filesystem::path& p1, const std::filesystem::path& p2);
 
 	void convertArgs(int argc, char** argvInput, std::vector<std::string>& argvOutput);
 	void splitString(const std::string& inString, const std::string& delimiter, std::vector<std::string>& outVector);

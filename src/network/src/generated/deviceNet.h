@@ -1317,6 +1317,32 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTriggerCallback;
 
+#ifndef __STI_mTNetwork_mTFileServer__
+#define __STI_mTNetwork_mTFileServer__
+    class TFileServer;
+    class _objref_TFileServer;
+    class _impl_TFileServer;
+    
+    typedef _objref_TFileServer* TFileServer_ptr;
+    typedef TFileServer_ptr TFileServerRef;
+
+    class TFileServer_Helper {
+    public:
+      typedef TFileServer_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TFileServer, TFileServer_Helper> TFileServer_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TFileServer,TFileServer_Helper > TFileServer_out;
+
+#endif
+
 #ifndef __STI_mTNetwork_mTResultsCollector__
 #define __STI_mTNetwork_mTResultsCollector__
     class TResultsCollector;
@@ -1386,7 +1412,7 @@ _CORBA_MODULE_BEG
     public:
       // IDL operations
       TShotID* getShotID();
-      ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements);
+      ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer);
       ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
 
       // Constructors
@@ -1423,7 +1449,7 @@ _CORBA_MODULE_BEG
       virtual ~_impl_TResultsCollector();
 
       virtual TShotID* getShotID() = 0;
-      virtual ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements) = 0;
+      virtual ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer) = 0;
       virtual ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes) = 0;
       
     public:  // Really protected, workaround for xlC
@@ -2729,12 +2755,12 @@ _CORBA_MODULE_BEG
     {
     public:
       // IDL operations
+      TFileID* getID();
       char* getFilename();
       ::CORBA::Boolean exists();
       char* md5Checksum();
       ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination);
       ::CORBA::Long maxBufferSize();
-      ::CORBA::Boolean deleteFile();
       ::CORBA::Boolean write(const ::STI::TNetwork::OctetSeq& buffer);
       ::CORBA::Boolean openFile();
       void closeFile();
@@ -2772,12 +2798,12 @@ _CORBA_MODULE_BEG
     public:
       virtual ~_impl_TFileHolder();
 
+      virtual TFileID* getID() = 0;
       virtual char* getFilename() = 0;
       virtual ::CORBA::Boolean exists() = 0;
       virtual char* md5Checksum() = 0;
       virtual ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination) = 0;
       virtual ::CORBA::Long maxBufferSize() = 0;
-      virtual ::CORBA::Boolean deleteFile() = 0;
       virtual ::CORBA::Boolean write(const ::STI::TNetwork::OctetSeq& buffer) = 0;
       virtual ::CORBA::Boolean openFile() = 0;
       virtual void closeFile() = 0;
@@ -2793,6 +2819,131 @@ _CORBA_MODULE_BEG
 
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileHolder;
+
+#ifndef __STI_mTNetwork_mTFileServer__
+#define __STI_mTNetwork_mTFileServer__
+    class TFileServer;
+    class _objref_TFileServer;
+    class _impl_TFileServer;
+    
+    typedef _objref_TFileServer* TFileServer_ptr;
+    typedef TFileServer_ptr TFileServerRef;
+
+    class TFileServer_Helper {
+    public:
+      typedef TFileServer_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TFileServer, TFileServer_Helper> TFileServer_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TFileServer,TFileServer_Helper > TFileServer_out;
+
+#endif
+
+    // interface TFileServer
+    class TFileServer {
+    public:
+      // Declarations for this interface type.
+      typedef TFileServer_ptr _ptr_type;
+      typedef TFileServer_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TFileServer :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      ::CORBA::Boolean findFile(const ::STI::TNetwork::TFileID& fileID);
+      ::CORBA::Boolean getFileSize(const ::STI::TNetwork::TFileID& fileID, ::CORBA::Long& fileSize);
+      ::CORBA::Boolean transferFile(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::STI::TNetwork::TFileTransferType type);
+      ::CORBA::Boolean transferFilePartial(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::CORBA::Long offset, ::CORBA::Long lines);
+      ::CORBA::Boolean deleteFile(const ::STI::TNetwork::TFileID& fileID);
+
+      // Constructors
+      inline _objref_TFileServer()  { _PR_setobj(0); }  // nil
+      _objref_TFileServer(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TFileServer();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TFileServer(const _objref_TFileServer&);
+      _objref_TFileServer& operator = (const _objref_TFileServer&);
+      // not implemented
+
+      friend class TFileServer;
+    };
+
+    class _pof_TFileServer : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TFileServer() : _OMNI_NS(proxyObjectFactory)(TFileServer::_PD_repoId) {}
+      virtual ~_pof_TFileServer();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TFileServer :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TFileServer();
+
+      virtual ::CORBA::Boolean findFile(const ::STI::TNetwork::TFileID& fileID) = 0;
+      virtual ::CORBA::Boolean getFileSize(const ::STI::TNetwork::TFileID& fileID, ::CORBA::Long& fileSize) = 0;
+      virtual ::CORBA::Boolean transferFile(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::STI::TNetwork::TFileTransferType type) = 0;
+      virtual ::CORBA::Boolean transferFilePartial(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::CORBA::Long offset, ::CORBA::Long lines) = 0;
+      virtual ::CORBA::Boolean deleteFile(const ::STI::TNetwork::TFileID& fileID) = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileServer;
 
   _CORBA_MODULE_END
 
@@ -3022,6 +3173,18 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TFileServer :
+      public virtual STI::TNetwork::_impl_TFileServer,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TFileServer();
+
+      inline ::STI::TNetwork::TFileServer_ptr _this() {
+        return (::STI::TNetwork::TFileServer_ptr) _do_this(::STI::TNetwork::TFileServer::_PD_repoId);
+      }
+    };
+
   _CORBA_MODULE_END
 
 _CORBA_MODULE_END
@@ -3142,6 +3305,10 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolder_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolder_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileHolder_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr& _s);
+
 
 
 inline void
@@ -3231,6 +3398,11 @@ STI::TNetwork::TDevice::_marshalObjRef(::STI::TNetwork::TDevice_ptr obj, cdrStre
 
 inline void
 STI::TNetwork::TFileHolder::_marshalObjRef(::STI::TNetwork::TFileHolder_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TFileServer::_marshalObjRef(::STI::TNetwork::TFileServer_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

@@ -85,8 +85,8 @@ public class ParseResult {
     return (cPtr == 0) ? null : new StackTraceResult(cPtr, true);
   }
 
-  public static void deleteFiles(ParseResult parsedResult) {
-    stiJNI.ParseResult_deleteFiles(ParseResult.getCPtr(parsedResult), parsedResult);
+  public static void deleteFiles(ParseResult parsedResult, FileServer fileServer) {
+    stiJNI.ParseResult_deleteFiles(ParseResult.getCPtr(parsedResult), parsedResult, FileServer.getCPtr(fileServer), fileServer);
   }
 
 }

@@ -59,6 +59,10 @@ public class SynchronousEvent {
     return stiJNI.SynchronousEvent_getTime(swigCPtr, this);
   }
 
+  public void setTime(double time) {
+    stiJNI.SynchronousEvent_setTime(swigCPtr, this, time);
+  }
+
   public MeasurementVector getMeasurements() {
     return new MeasurementVector(stiJNI.SynchronousEvent_getMeasurements(swigCPtr, this), false);
   }
@@ -73,6 +77,10 @@ public class SynchronousEvent {
 
   public boolean setMeasurementResult(long index, MixedValue result) {
     return stiJNI.SynchronousEvent_setMeasurementResult__SWIG_1(swigCPtr, this, index, MixedValue.getCPtr(result), result);
+  }
+
+  public boolean attachFile(FileHolder file) {
+    return stiJNI.SynchronousEvent_attachFile(swigCPtr, this, FileHolder.getCPtr(file), file);
   }
 
   public void load() {

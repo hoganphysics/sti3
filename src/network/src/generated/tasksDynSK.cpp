@@ -10,7 +10,7 @@ static ::CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTTaskStatus[] = { "TaskActive", "TaskInactive", "TaskMissing" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTaskStatus = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TTaskStatus:1.0", "TTaskStatus", _0RL_enumMember_STI_mTNetwork_mTTaskStatus, 3, &_0RL_tcTrack);
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskStatus = _0RL_tc_STI_mTNetwork_mTTaskStatus;
@@ -53,12 +53,44 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTBinaryData[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTBinaryData = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TBinaryData:1.0", "TBinaryData", _0RL_structmember_STI_mTNetwork_mTBinaryData, 2, &_0RL_tcTrack);
 
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTTimeStamp[] = {
+  {"year", CORBA::TypeCode::PR_long_tc()},
+  {"month", CORBA::TypeCode::PR_long_tc()},
+  {"day", CORBA::TypeCode::PR_long_tc()},
+  {"hour", CORBA::TypeCode::PR_long_tc()},
+  {"min", CORBA::TypeCode::PR_long_tc()},
+  {"sec", CORBA::TypeCode::PR_long_tc()},
+  {"millis", CORBA::TypeCode::PR_long_tc()},
+  {"micros", CORBA::TypeCode::PR_long_tc()},
+  {"nanos", CORBA::TypeCode::PR_long_tc()}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTTimeStamp
+#  undef _0RL_tc_STI_mTNetwork_mTTimeStamp
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTimeStamp = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TTimeStamp:1.0", "TTimeStamp", _0RL_structmember_STI_mTNetwork_mTTimeStamp, 9, &_0RL_tcTrack);
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFileID[] = {
+  {"filename", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"path", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"origin", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"persistenceLocation", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"creationTime", _0RL_tc_STI_mTNetwork_mTTimeStamp}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTFileID
+#  undef _0RL_tc_STI_mTNetwork_mTFileID
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFileID:1.0", "TFileID", _0RL_structmember_STI_mTNetwork_mTFileID, 5, &_0RL_tcTrack);
+
 static const char* _0RL_enumMember_STI_mTNetwork_mTImageDataType[] = { "ImageDataBinary", "ImageDataFile" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTImageDataType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TImageDataType:1.0", "TImageDataType", _0RL_enumMember_STI_mTNetwork_mTImageDataType, 2, &_0RL_tcTrack);
 
+
+
 static CORBA::PR_unionMember _0RL_unionMember_STI_mTNetwork_mTImageData[] = {
   {"binary", _0RL_tc_STI_mTNetwork_mTBinaryData, (CORBA::PR_unionDiscriminator)STI::TNetwork::ImageDataBinary},
-  {"file", CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileHolder:1.0", "TFileHolder", &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::ImageDataFile}
+  {"file", _0RL_tc_STI_mTNetwork_mTFileID, (CORBA::PR_unionDiscriminator)STI::TNetwork::ImageDataFile}
 };
 #ifdef _0RL_tc_STI_mTNetwork_mTImageData
 #  undef _0RL_tc_STI_mTNetwork_mTImageData
@@ -108,7 +140,7 @@ static CORBA::PR_unionMember _0RL_unionMember_STI_mTNetwork_mTMixedValue[] = {
   {"values", _0RL_tc_STI_mTNetwork_mTMixedValueSeq, (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueVector},
   {"valuesInt", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_long_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueVectorInt},
   {"valueBin", _0RL_tc_STI_mTNetwork_mTBinaryData, (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueBinary},
-  {"value_file", CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileHolder:1.0", "TFileHolder", &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueFile},
+  {"value_file", _0RL_tc_STI_mTNetwork_mTFileID, (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueFile},
   {"value_image", _0RL_tc_STI_mTNetwork_mTImage, (CORBA::PR_unionDiscriminator)STI::TNetwork::MixedValueImage}
 };
 #ifdef _0RL_tc_STI_mTNetwork_mTMixedValue
@@ -133,7 +165,11 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTask = CORBA::TypeCode::PR_st
 
 
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTask = _0RL_tc_STI_mTNetwork_mTTask;
@@ -150,7 +186,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTask = _0RL_tc_STI_mTNetwork_mTT
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTaskSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TTaskSeq:1.0", "TTaskSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTTask, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskSeq = _0RL_tc_STI_mTNetwork_mTTaskSeq;
@@ -159,7 +195,7 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTaskSeq = _0RL_tc_STI_mTNetwork_mTTaskSeq;
 #endif
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskManager = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TTaskManager:1.0", "TTaskManager", &_0RL_tcTrack);

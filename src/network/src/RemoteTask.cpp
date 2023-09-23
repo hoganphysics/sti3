@@ -35,11 +35,10 @@ STI::Utils::TaskStatus RemoteTask::getStatus() const
     return remoteManager->getTaskStatus(getID());
 }
 
-
-void RemoteTask::setStatus(const STI::Utils::TaskStatus& newStatus)
+double RemoteTask::secondsToNextRun() const
 {
-    if (remoteManager == 0) return;
-    remoteManager->setStatus(getID(), newStatus);
+    if (remoteManager == 0) return 0;
+    return remoteManager->secondsToNextRun(getID());
 }
 
 void RemoteTask::run()

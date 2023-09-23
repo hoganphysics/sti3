@@ -88,6 +88,8 @@ public:
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
 
+	bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer);
+
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
 
 	void addEventEngine(const STI::Engine::EngineID& engineID);
@@ -146,7 +148,7 @@ public:
 
 	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
 
-	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
 
 	void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
 

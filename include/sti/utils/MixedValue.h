@@ -26,7 +26,7 @@
 #include <sti/fwd/MixedValue_fwd.h>
 
 #include <sti/utils/BinaryData.h>
-#include <sti/utils/FileHolder.h>
+#include <sti/utils/FileID.h>
 
 #include <vector>
 #include <string>
@@ -65,7 +65,7 @@ public:
 	MixedValue(int value);
 	MixedValue(double value);
 	MixedValue(const std::shared_ptr<STI::Utils::BinaryData>& value);
-	MixedValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
+	MixedValue(const FileID& value);
 	MixedValue(const std::shared_ptr<STI::Utils::Image>& value);
 	MixedValue(const std::string& value);
 	MixedValue(const char* value);
@@ -113,7 +113,7 @@ public:
 	void setValue(int value);
 	void setValue(double value);
 	void setValue(const std::shared_ptr<STI::Utils::BinaryData>& value);
-	void setValue(const std::shared_ptr<STI::Utils::FileHolder>& value);
+	void setValue(const FileID& value);
 	void setValue(const std::shared_ptr<STI::Utils::Image>& value);
 	void setValue(const std::string& value);
 	void setValue(const MixedValue& value);
@@ -154,7 +154,7 @@ public:
 	std::string getString() const;
 	const MixedValueVector& getVector() const;
 	std::shared_ptr<STI::Utils::BinaryData> getBinary() const;
-	std::shared_ptr<STI::Utils::FileHolder> getFile() const;
+	FileID getFileID() const;
 	std::shared_ptr<STI::Utils::Image> getImage() const;
 
 	template<typename T> 
@@ -272,7 +272,7 @@ private:
 						MixedValueVector, 
 						std::vector<int>,
 						std::shared_ptr<STI::Utils::BinaryData>,
-						std::shared_ptr<STI::Utils::FileHolder>,
+						FileID,
 						std::shared_ptr<STI::Utils::Image>
 						> VariantType;
 

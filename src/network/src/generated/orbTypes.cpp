@@ -83,6 +83,36 @@ STI::TNetwork::TDeviceIDVertex::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TTimeStamp::operator>>= (cdrStream &_n) const
+{
+  year >>= _n;
+  month >>= _n;
+  day >>= _n;
+  hour >>= _n;
+  min >>= _n;
+  sec >>= _n;
+  millis >>= _n;
+  micros >>= _n;
+  nanos >>= _n;
+
+}
+
+void
+STI::TNetwork::TTimeStamp::operator<<= (cdrStream &_n)
+{
+  (::CORBA::Long&)year <<= _n;
+  (::CORBA::Long&)month <<= _n;
+  (::CORBA::Long&)day <<= _n;
+  (::CORBA::Long&)hour <<= _n;
+  (::CORBA::Long&)min <<= _n;
+  (::CORBA::Long&)sec <<= _n;
+  (::CORBA::Long&)millis <<= _n;
+  (::CORBA::Long&)micros <<= _n;
+  (::CORBA::Long&)nanos <<= _n;
+
+}
+
+void
 STI::TNetwork::TEventEngineDependencyTree::operator>>= (cdrStream &_n) const
 {
   (const TDeviceIDVertexSeq&) vertices >>= _n;
@@ -107,6 +137,28 @@ void
 STI::TNetwork::TDeviceTrace::operator<<= (cdrStream &_n)
 {
   (TDeviceIDSeq&)ids <<= _n;
+
+}
+
+void
+STI::TNetwork::TFileID::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(filename,0);
+  _n.marshalString(path,0);
+  _n.marshalString(origin,0);
+  _n.marshalString(persistenceLocation,0);
+  (const TTimeStamp&) creationTime >>= _n;
+
+}
+
+void
+STI::TNetwork::TFileID::operator<<= (cdrStream &_n)
+{
+  filename = _n.unmarshalString(0);
+  path = _n.unmarshalString(0);
+  origin = _n.unmarshalString(0);
+  persistenceLocation = _n.unmarshalString(0);
+  (TTimeStamp&)creationTime <<= _n;
 
 }
 
@@ -343,7 +395,7 @@ STI::TNetwork::TImageData::operator>>= (cdrStream& _n) const
       (const TBinaryData&) (*_pd_binary) >>= _n;
       break;
     case ImageDataFile:
-      TFileHolder_Helper::marshalObjRef(_pd_file,_n);
+      (const TFileID&) (*_pd_file) >>= _n;
       break;
 
   }
@@ -365,7 +417,9 @@ STI::TNetwork::TImageData::operator<<= (cdrStream& _n)
       break;
     case ImageDataFile:
       _pd__default = 0;
-      _pd_file = TFileHolder_Helper::unmarshalObjRef(_n);
+      _pd_file = new TFileID;
+      (*_pd_file) <<= _n;
+
       break;
 
   }
@@ -558,7 +612,7 @@ STI::TNetwork::TMixedValue::operator>>= (cdrStream& _n) const
       (const TBinaryData&) (*_pd_valueBin) >>= _n;
       break;
     case MixedValueFile:
-      TFileHolder_Helper::marshalObjRef(_pd_value_file,_n);
+      (const TFileID&) (*_pd_value_file) >>= _n;
       break;
     case MixedValueImage:
       (const TImage&) (*_pd_value_image) >>= _n;
@@ -615,7 +669,9 @@ STI::TNetwork::TMixedValue::operator<<= (cdrStream& _n)
       break;
     case MixedValueFile:
       _pd__default = 0;
-      _pd_value_file = TFileHolder_Helper::unmarshalObjRef(_n);
+      _pd_value_file = new TFileID;
+      (*_pd_value_file) <<= _n;
+
       break;
     case MixedValueImage:
       _pd__default = 0;
@@ -824,36 +880,6 @@ STI::TNetwork::TEngineID::operator<<= (cdrStream &_n)
 }
 
 void
-STI::TNetwork::TTimeStamp::operator>>= (cdrStream &_n) const
-{
-  year >>= _n;
-  month >>= _n;
-  day >>= _n;
-  hour >>= _n;
-  min >>= _n;
-  sec >>= _n;
-  millis >>= _n;
-  micros >>= _n;
-  nanos >>= _n;
-
-}
-
-void
-STI::TNetwork::TTimeStamp::operator<<= (cdrStream &_n)
-{
-  (::CORBA::Long&)year <<= _n;
-  (::CORBA::Long&)month <<= _n;
-  (::CORBA::Long&)day <<= _n;
-  (::CORBA::Long&)hour <<= _n;
-  (::CORBA::Long&)min <<= _n;
-  (::CORBA::Long&)sec <<= _n;
-  (::CORBA::Long&)millis <<= _n;
-  (::CORBA::Long&)micros <<= _n;
-  (::CORBA::Long&)nanos <<= _n;
-
-}
-
-void
 STI::TNetwork::TEngineJobSourceID::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(user,0);
@@ -1044,16 +1070,18 @@ STI::TNetwork::TEngineJobID::operator<<= (cdrStream &_n)
 void
 STI::TNetwork::TStackTraceData::operator>>= (cdrStream &_n) const
 {
-  (const TFileHolderSeq&) timingFiles >>= _n;
+  (const TFileIDSeq&) timingFiles >>= _n;
   (const TStringSeq&) functionNames >>= _n;
+  TFileServer_Helper::marshalObjRef(fileServer,_n);
 
 }
 
 void
 STI::TNetwork::TStackTraceData::operator<<= (cdrStream &_n)
 {
-  (TFileHolderSeq&)timingFiles <<= _n;
+  (TFileIDSeq&)timingFiles <<= _n;
   (TStringSeq&)functionNames <<= _n;
+  fileServer = TFileServer_Helper::unmarshalObjRef(_n);
 
 }
 

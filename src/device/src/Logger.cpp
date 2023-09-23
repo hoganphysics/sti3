@@ -58,7 +58,7 @@ void Logger::addLogTask(const std::string& timeInterval, const std::function<std
     if (manager == 0 || manager->localDevice == 0) return;
 
     std::stringstream taskID;
-    taskID << "Log" << name << ":" << "Task" << ":" << logTaskNumber;
+    taskID << "Log" << ":" << name << ":" << "Task" << ":" << logTaskNumber;
     logTaskNumber++;
 
     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
@@ -83,7 +83,7 @@ void Logger::addReadLogTask(short channel, const std::string& timeInterval, cons
     std::vector<std::string> prefixTokens = {"read", STI::Utils::valueToString(targetChannel->getChannelNumber())};
 
     std::stringstream taskID;
-    taskID << "Log" << name << ":" << "Read channel #" << channel;
+    taskID << "Log" << ":" << name << ":" << "Read channel #" << channel;
     auto chName = targetChannel->getChannelName();
     if (chName != "") {
         taskID << "("  << chName << ")";
@@ -124,7 +124,7 @@ void Logger::addWriteLogTask(short channel, const std::string& timeInterval, con
     std::vector<std::string> prefixTokens = {"write", STI::Utils::valueToString(targetChannel->getChannelNumber())};
 
     std::stringstream taskID;
-    taskID << "Log" << name << ":" << "Write channel #" << channel;
+    taskID << "Log" << ":" << name << ":" << "Write channel #" << channel;
     auto chName = targetChannel->getChannelName();
     if (chName != "") {
         taskID << "("  << chName << ")";
@@ -279,7 +279,7 @@ void Logger::addAttributeLogTask(const std::string& key, const std::string& time
 
     std::stringstream taskID;
     // name:Attribute:key
-    taskID << "Log" << name << ":" << "Attribute" << ":" << key;
+    taskID << "Log" << ":" << name << ":" << "Attribute" << ":" << key;
 
     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
         [this, attribute]() {

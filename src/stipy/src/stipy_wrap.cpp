@@ -21,8 +21,6 @@ using STI::Engine::RawStackTrace;
 
 void init_stipy(py::module& m) 
 {
-
-    // m.def("connect3", &STI::Python::connect2, "Connect to the STI server");
     
     m.def("connect", 
         py::overload_cast<const std::string&, 
@@ -34,8 +32,6 @@ void init_stipy(py::module& m)
         const STI::Device::DeviceID&,
         const STI::Network::HubID&,
         const std::string&>(&STI::Python::connect), "Connect to an STI server that is located on a specified HubID");
-
-    // m.def("add", &add, "A function which adds two numbers");
 
     m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
 

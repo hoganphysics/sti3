@@ -24,6 +24,22 @@ public class stiJNI {
   public final static native String StringVector_doSet(long jarg1, StringVector jarg1_, int jarg2, String jarg3);
   public final static native void StringVector_doRemoveRange(long jarg1, StringVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_StringVector(long jarg1);
+  public final static native void StringSet_Iterator_incrementUnchecked(long jarg1, StringSet.Iterator jarg1_);
+  public final static native String StringSet_Iterator_derefUnchecked(long jarg1, StringSet.Iterator jarg1_);
+  public final static native boolean StringSet_Iterator_isNot(long jarg1, StringSet.Iterator jarg1_, long jarg2, StringSet.Iterator jarg2_);
+  public final static native void delete_StringSet_Iterator(long jarg1);
+  public final static native long new_StringSet__SWIG_0();
+  public final static native long new_StringSet__SWIG_1(long jarg1, StringSet jarg1_);
+  public final static native boolean StringSet_isEmpty(long jarg1, StringSet jarg1_);
+  public final static native void StringSet_clear(long jarg1, StringSet jarg1_);
+  public final static native long StringSet_begin(long jarg1, StringSet jarg1_);
+  public final static native long StringSet_end(long jarg1, StringSet jarg1_);
+  public final static native boolean StringSet_addImpl(long jarg1, StringSet jarg1_, String jarg2);
+  public final static native boolean StringSet_containsImpl(long jarg1, StringSet jarg1_, String jarg2);
+  public final static native boolean StringSet_removeImpl(long jarg1, StringSet jarg1_, String jarg2);
+  public final static native int StringSet_sizeImpl(long jarg1, StringSet jarg1_);
+  public final static native boolean StringSet_hasNextImpl(long jarg1, StringSet jarg1_, long jarg2, StringSet.Iterator jarg2_);
+  public final static native void delete_StringSet(long jarg1);
   public final static native long new_UIntVector__SWIG_0();
   public final static native long new_UIntVector__SWIG_1(long jarg1, UIntVector jarg1_);
   public final static native long UIntVector_capacity(long jarg1, UIntVector jarg1_);
@@ -39,6 +55,69 @@ public class stiJNI {
   public final static native long UIntVector_doSet(long jarg1, UIntVector jarg1_, int jarg2, long jarg3);
   public final static native void UIntVector_doRemoveRange(long jarg1, UIntVector jarg1_, int jarg2, int jarg3);
   public final static native void delete_UIntVector(long jarg1);
+  public final static native long new_TimeStamp__SWIG_0();
+  public final static native long new_TimeStamp__SWIG_1(int jarg1, int jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7, int jarg8, int jarg9);
+  public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_date(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_date_YYYY_MM_DD__SWIG_0(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_date_YYYY_MM_DD__SWIG_1(long jarg1, TimeStamp jarg1_, String jarg2);
+  public final static native String TimeStamp_time(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_time_hh_mm_ss__SWIG_0(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_time_hh_mm_ss__SWIG_1(long jarg1, TimeStamp jarg1_, String jarg2);
+  public final static native String TimeStamp_time_hh_mm_ss_mmmuuunnn(long jarg1, TimeStamp jarg1_);
+  public final static native String TimeStamp_time_mmmuuunnn(long jarg1, TimeStamp jarg1_, String jarg2);
+  public final static native boolean TimeStamp_opLess(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native boolean TimeStamp_opEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native boolean TimeStamp_opNotEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native boolean TimeStamp_isSameDate(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native String TimeStamp_toString(long jarg1, TimeStamp jarg1_);
+  public final static native long TimeStamp_fromString(String jarg1);
+  public final static native int TimeStamp_year(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_month(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_day(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_hour(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_minute(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_sec(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_millis(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_micros(long jarg1, TimeStamp jarg1_);
+  public final static native int TimeStamp_nanos(long jarg1, TimeStamp jarg1_);
+  public final static native void TimeStamp_add_day__SWIG_0(long jarg1, TimeStamp jarg1_, int jarg2);
+  public final static native void TimeStamp_add_day__SWIG_1(long jarg1, TimeStamp jarg1_);
+  public final static native void TimeStamp_add_ns(long jarg1, TimeStamp jarg1_, int jarg2);
+  public final static native void delete_TimeStamp(long jarg1);
+  public final static native long new_FileID();
+  public final static native String FileID_getFullFilename(long jarg1, FileID jarg1_);
+  public final static native void FileID_filename_set(long jarg1, FileID jarg1_, String jarg2);
+  public final static native String FileID_filename_get(long jarg1, FileID jarg1_);
+  public final static native void FileID_path_set(long jarg1, FileID jarg1_, String jarg2);
+  public final static native String FileID_path_get(long jarg1, FileID jarg1_);
+  public final static native void FileID_origin_set(long jarg1, FileID jarg1_, String jarg2);
+  public final static native String FileID_origin_get(long jarg1, FileID jarg1_);
+  public final static native void FileID_persistenceLocation_set(long jarg1, FileID jarg1_, String jarg2);
+  public final static native String FileID_persistenceLocation_get(long jarg1, FileID jarg1_);
+  public final static native void FileID_creationTime_set(long jarg1, FileID jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native long FileID_creationTime_get(long jarg1, FileID jarg1_);
+  public final static native boolean FileID_opLess(long jarg1, FileID jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean FileID_opEquals(long jarg1, FileID jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean FileID_opNotEquals(long jarg1, FileID jarg1_, long jarg2, FileID jarg2_);
+  public final static native String FileID_print(long jarg1, FileID jarg1_);
+  public final static native long FileID_commonBasePath(long jarg1, FileIDVector jarg1_);
+  public final static native void delete_FileID(long jarg1);
+  public final static native long new_FileIDVector__SWIG_0();
+  public final static native long new_FileIDVector__SWIG_1(long jarg1, FileIDVector jarg1_);
+  public final static native long FileIDVector_capacity(long jarg1, FileIDVector jarg1_);
+  public final static native void FileIDVector_reserve(long jarg1, FileIDVector jarg1_, long jarg2);
+  public final static native boolean FileIDVector_isEmpty(long jarg1, FileIDVector jarg1_);
+  public final static native void FileIDVector_clear(long jarg1, FileIDVector jarg1_);
+  public final static native long new_FileIDVector__SWIG_2(int jarg1, long jarg2, FileID jarg2_);
+  public final static native int FileIDVector_doSize(long jarg1, FileIDVector jarg1_);
+  public final static native void FileIDVector_doAdd__SWIG_0(long jarg1, FileIDVector jarg1_, long jarg2, FileID jarg2_);
+  public final static native void FileIDVector_doAdd__SWIG_1(long jarg1, FileIDVector jarg1_, int jarg2, long jarg3, FileID jarg3_);
+  public final static native long FileIDVector_doRemove(long jarg1, FileIDVector jarg1_, int jarg2);
+  public final static native long FileIDVector_doGet(long jarg1, FileIDVector jarg1_, int jarg2);
+  public final static native long FileIDVector_doSet(long jarg1, FileIDVector jarg1_, int jarg2, long jarg3, FileID jarg3_);
+  public final static native void FileIDVector_doRemoveRange(long jarg1, FileIDVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_FileIDVector(long jarg1);
   public final static native long new_FileHolderVector__SWIG_0();
   public final static native long new_FileHolderVector__SWIG_1(long jarg1, FileHolderVector jarg1_);
   public final static native long FileHolderVector_capacity(long jarg1, FileHolderVector jarg1_);
@@ -57,11 +136,12 @@ public class stiJNI {
   public final static native void delete_FileHolder(long jarg1);
   public final static native boolean FileHolder_opEquals(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
   public final static native boolean FileHolder_opNotEquals(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native long FileHolder_getID(long jarg1, FileHolder jarg1_);
   public final static native String FileHolder_getFilename(long jarg1, FileHolder jarg1_);
+  public final static native long FileHolder_getFileSize(long jarg1, FileHolder jarg1_);
   public final static native boolean FileHolder_exists(long jarg1, FileHolder jarg1_);
   public final static native boolean FileHolder_transferFile(long jarg1, FileHolder jarg1_, long jarg2, FileHolder jarg2_);
   public final static native long FileHolder_maxBufferSize(long jarg1, FileHolder jarg1_);
-  public final static native boolean FileHolder_deleteFile(long jarg1, FileHolder jarg1_);
   public final static native String FileHolder_md5Checksum(long jarg1, FileHolder jarg1_);
   public final static native long new_FileHolder();
   public final static native void FileHolder_director_connect(FileHolder obj, long cptr, boolean mem_own, boolean weak_global);
@@ -90,7 +170,7 @@ public class stiJNI {
   public final static native long new_MixedValue__SWIG_4(int jarg1);
   public final static native long new_MixedValue__SWIG_5(double jarg1);
   public final static native long new_MixedValue__SWIG_6(long jarg1, BinaryData jarg1_);
-  public final static native long new_MixedValue__SWIG_7(long jarg1, FileHolder jarg1_);
+  public final static native long new_MixedValue__SWIG_7(long jarg1, FileID jarg1_);
   public final static native long new_MixedValue__SWIG_8(long jarg1, Image jarg1_);
   public final static native long new_MixedValue__SWIG_9(String jarg1);
   public final static native void delete_MixedValue(long jarg1);
@@ -100,7 +180,7 @@ public class stiJNI {
   public final static native void MixedValue_setValue__SWIG_3(long jarg1, MixedValue jarg1_, int jarg2);
   public final static native void MixedValue_setValue__SWIG_4(long jarg1, MixedValue jarg1_, double jarg2);
   public final static native void MixedValue_setValue__SWIG_5(long jarg1, MixedValue jarg1_, long jarg2, BinaryData jarg2_);
-  public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native void MixedValue_setValue__SWIG_6(long jarg1, MixedValue jarg1_, long jarg2, FileID jarg2_);
   public final static native void MixedValue_setValue__SWIG_7(long jarg1, MixedValue jarg1_, long jarg2, Image jarg2_);
   public final static native void MixedValue_setValue__SWIG_8(long jarg1, MixedValue jarg1_, String jarg2);
   public final static native void MixedValue_setValue__SWIG_9(long jarg1, MixedValue jarg1_, long jarg2, MixedValue jarg2_);
@@ -118,7 +198,7 @@ public class stiJNI {
   public final static native String MixedValue_getString(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getVector(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getBinary(long jarg1, MixedValue jarg1_);
-  public final static native long MixedValue_getFile(long jarg1, MixedValue jarg1_);
+  public final static native long MixedValue_getFileID(long jarg1, MixedValue jarg1_);
   public final static native long MixedValue_getImage(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_print(long jarg1, MixedValue jarg1_);
   public final static native String MixedValue_TypeToString(int jarg1);
@@ -216,28 +296,41 @@ public class stiJNI {
   public final static native long Image_getChildren(long jarg1, Image jarg1_);
   public final static native boolean Image_opEquals(long jarg1, Image jarg1_, long jarg2, Image jarg2_);
   public final static native boolean Image_opNotEquals(long jarg1, Image jarg1_, long jarg2, Image jarg2_);
-  public final static native long new_TimeStamp__SWIG_0();
-  public final static native long new_TimeStamp__SWIG_1(int jarg1, int jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7, int jarg8, int jarg9);
-  public final static native String TimeStamp_print(long jarg1, TimeStamp jarg1_);
-  public final static native String TimeStamp_date(long jarg1, TimeStamp jarg1_);
-  public final static native String TimeStamp_date_YYYY_MM_DD(long jarg1, TimeStamp jarg1_);
-  public final static native String TimeStamp_time(long jarg1, TimeStamp jarg1_);
-  public final static native String TimeStamp_time_hh_mm_ss(long jarg1, TimeStamp jarg1_);
-  public final static native String TimeStamp_time_hh_mm_ss_mmmuuunnn(long jarg1, TimeStamp jarg1_);
-  public final static native boolean TimeStamp_opLess(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
-  public final static native boolean TimeStamp_opEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
-  public final static native boolean TimeStamp_opNotEquals(long jarg1, TimeStamp jarg1_, long jarg2, TimeStamp jarg2_);
-  public final static native int TimeStamp_year(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_month(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_day(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_hour(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_minute(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_sec(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_millis(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_micros(long jarg1, TimeStamp jarg1_);
-  public final static native int TimeStamp_nanos(long jarg1, TimeStamp jarg1_);
-  public final static native void TimeStamp_add_ns(long jarg1, TimeStamp jarg1_, int jarg2);
-  public final static native void delete_TimeStamp(long jarg1);
+  public final static native void delete_FileServer(long jarg1);
+  public final static native boolean FileServer_findFile(long jarg1, FileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native int FileServer_getFileSize(long jarg1, FileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean FileServer_transferFile(long jarg1, FileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4);
+  public final static native boolean FileServer_transferFilePartial(long jarg1, FileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4, int jarg5);
+  public final static native boolean FileServer_deleteFile(long jarg1, FileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native long new_FileServer();
+  public final static native void FileServer_director_connect(FileServer obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void FileServer_change_ownership(FileServer obj, long cptr, boolean take_or_release);
+  public final static native long new_VirtualFileServer();
+  public final static native void delete_VirtualFileServer(long jarg1);
+  public final static native void VirtualFileServer_addFile(long jarg1, VirtualFileServer jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native boolean VirtualFileServer_findFile(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean VirtualFileServer_findFileSwigExplicitVirtualFileServer(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native int VirtualFileServer_getFileSize(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native int VirtualFileServer_getFileSizeSwigExplicitVirtualFileServer(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean VirtualFileServer_transferFile(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4);
+  public final static native boolean VirtualFileServer_transferFileSwigExplicitVirtualFileServer(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4);
+  public final static native boolean VirtualFileServer_transferFilePartial(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4, int jarg5);
+  public final static native boolean VirtualFileServer_transferFilePartialSwigExplicitVirtualFileServer(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_, long jarg3, FileHolder jarg3_, int jarg4, int jarg5);
+  public final static native boolean VirtualFileServer_deleteFile(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native boolean VirtualFileServer_deleteFileSwigExplicitVirtualFileServer(long jarg1, VirtualFileServer jarg1_, long jarg2, FileID jarg2_);
+  public final static native void VirtualFileServer_director_connect(VirtualFileServer obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void VirtualFileServer_change_ownership(VirtualFileServer obj, long cptr, boolean take_or_release);
+  public final static native void delete_VirtualFileServerFactory(long jarg1);
+  public final static native long VirtualFileServerFactory_makeVirtualFileServer(long jarg1, VirtualFileServerFactory jarg1_);
+  public final static native long new_VirtualFileServerFactory();
+  public final static native void VirtualFileServerFactory_director_connect(VirtualFileServerFactory obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void VirtualFileServerFactory_change_ownership(VirtualFileServerFactory obj, long cptr, boolean take_or_release);
+  public final static native long LocalVirtualFileServerFactory_makeVirtualFileServer(long jarg1, LocalVirtualFileServerFactory jarg1_);
+  public final static native long LocalVirtualFileServerFactory_makeVirtualFileServerSwigExplicitLocalVirtualFileServerFactory(long jarg1, LocalVirtualFileServerFactory jarg1_);
+  public final static native long new_LocalVirtualFileServerFactory();
+  public final static native void delete_LocalVirtualFileServerFactory(long jarg1);
+  public final static native void LocalVirtualFileServerFactory_director_connect(LocalVirtualFileServerFactory obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void LocalVirtualFileServerFactory_change_ownership(LocalVirtualFileServerFactory obj, long cptr, boolean take_or_release);
   public final static native void EngineJobSourceID_user_set(long jarg1, EngineJobSourceID jarg1_, String jarg2);
   public final static native String EngineJobSourceID_user_get(long jarg1, EngineJobSourceID jarg1_);
   public final static native void EngineJobSourceID_machine_set(long jarg1, EngineJobSourceID jarg1_, String jarg2);
@@ -384,13 +477,15 @@ public class stiJNI {
   public final static native long RawStackTrace_getFrames(long jarg1, RawStackTrace jarg1_);
   public final static native void delete_RawStackTrace(long jarg1);
   public final static native long new_StackTraceData__SWIG_0();
-  public final static native long new_StackTraceData__SWIG_1(long jarg1, FileHolderVector jarg1_, long jarg2, StringVector jarg2_);
+  public final static native long new_StackTraceData__SWIG_1(long jarg1, DeviceID jarg1_, long jarg2, FileServer jarg2_);
+  public final static native long new_StackTraceData__SWIG_2(long jarg1, FileIDVector jarg1_, long jarg2, StringVector jarg2_);
   public final static native long StackTraceData_addStackTrace(long jarg1, StackTraceData jarg1_, long jarg2, RawStackTrace jarg2_);
   public final static native long StackTraceData_getStackTrace(long jarg1, StackTraceData jarg1_, long jarg2, StackTrace jarg2_);
   public final static native long StackTraceData_getTimingFiles(long jarg1, StackTraceData jarg1_);
   public final static native long StackTraceData_getFunctionNames(long jarg1, StackTraceData jarg1_);
-  public final static native void StackTraceData_replaceFile(long jarg1, StackTraceData jarg1_, String jarg2, long jarg3, FileHolder jarg3_);
-  public final static native void StackTraceData_deleteFiles(long jarg1, StackTraceData jarg1_);
+  public final static native void StackTraceData_setFileServer(long jarg1, StackTraceData jarg1_, long jarg2, FileServer jarg2_);
+  public final static native boolean StackTraceData_getFileServer(long jarg1, StackTraceData jarg1_, long jarg2, FileServer jarg2_);
+  public final static native void StackTraceData_replaceFile(long jarg1, StackTraceData jarg1_, String jarg2, long jarg3, FileID jarg3_);
   public final static native void delete_StackTraceData(long jarg1);
   public final static native long new_RawEventGroupVector__SWIG_0();
   public final static native long new_RawEventGroupVector__SWIG_1(long jarg1, RawEventGroupVector jarg1_);
@@ -886,12 +981,17 @@ public class stiJNI {
   public final static native void JDevice_activate(long jarg1, JDevice jarg1_);
   public final static native void JDevice_disable(long jarg1, JDevice jarg1_);
   public final static native boolean JDevice_refresh(long jarg1, JDevice jarg1_);
+  public final static native String JDevice_getAttribute(long jarg1, JDevice jarg1_, String jarg2);
+  public final static native boolean JDevice_setAttribute(long jarg1, JDevice jarg1_, String jarg2, String jarg3);
   public final static native long JDevice_getCollection(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getMessageDispatcher(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getEngineScheduler(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getChannelManager(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getAttributeManager(long jarg1, JDevice jarg1_);
   public final static native long JDevice_getPersistenceManager(long jarg1, JDevice jarg1_);
+  public final static native long JDevice_getProfileManager(long jarg1, JDevice jarg1_);
+  public final static native long JDevice_getTaskManager(long jarg1, JDevice jarg1_);
+  public final static native long JDevice_getLogManager(long jarg1, JDevice jarg1_);
   public final static native void JDevice_director_connect(JDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JDevice_change_ownership(JDevice obj, long cptr, boolean take_or_release);
   public final static native long new_EngineIDtoStateMap__SWIG_0();
@@ -1222,10 +1322,12 @@ public class stiJNI {
   public final static native void delete_PlayJobStatus(long jarg1);
   public final static native void delete_SynchronousEvent(long jarg1);
   public final static native double SynchronousEvent_getTime(long jarg1, SynchronousEvent jarg1_);
+  public final static native void SynchronousEvent_setTime(long jarg1, SynchronousEvent jarg1_, double jarg2);
   public final static native long SynchronousEvent_getMeasurements(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_addMeasurement(long jarg1, SynchronousEvent jarg1_, long jarg2, RawEvent jarg2_);
   public final static native boolean SynchronousEvent_setMeasurementResult__SWIG_0(long jarg1, SynchronousEvent jarg1_, long jarg2, MixedValue jarg2_);
   public final static native boolean SynchronousEvent_setMeasurementResult__SWIG_1(long jarg1, SynchronousEvent jarg1_, long jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean SynchronousEvent_attachFile(long jarg1, SynchronousEvent jarg1_, long jarg2, FileHolder jarg2_);
   public final static native void SynchronousEvent_load(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_play(long jarg1, SynchronousEvent jarg1_);
   public final static native void SynchronousEvent_collectData(long jarg1, SynchronousEvent jarg1_);
@@ -1299,10 +1401,14 @@ public class stiJNI {
   public final static native long JLocalDevice_addAttribute__SWIG_2(long jarg1, JLocalDevice jarg1_, String jarg2, String jarg3, String jarg4);
   public final static native long JLocalDevice_addChannel(long jarg1, JLocalDevice jarg1_, int jarg2, int jarg3, int jarg4, int jarg5, String jarg6);
   public final static native void JLocalDevice_addEventEngine(long jarg1, JLocalDevice jarg1_, long jarg2, EngineID jarg2_);
-  public final static native void JLocalDevice_addPartner(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
-  public final static native void JLocalDevice_addEventTarget(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void JLocalDevice_addPartner__SWIG_0(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void JLocalDevice_addPartner__SWIG_1(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_, String jarg3);
+  public final static native void JLocalDevice_addEventTarget__SWIG_0(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native void JLocalDevice_addEventTarget__SWIG_1(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceID jarg2_, String jarg3);
+  public final static native void JLocalDevice_addTask(long jarg1, JLocalDevice jarg1_, long jarg2, Task jarg2_);
   public final static native void JLocalDevice_sendMessage(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceMessage jarg2_);
   public final static native void JLocalDevice_addCollectionListener(long jarg1, JLocalDevice jarg1_, long jarg2, DeviceCollectionListener jarg2_);
+  public final static native long JLocalDevice_getFileServer(long jarg1, JLocalDevice jarg1_);
   public final static native void JLocalDevice_director_connect(JLocalDevice obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void JLocalDevice_change_ownership(JLocalDevice obj, long cptr, boolean take_or_release);
   public final static native void EngineJobIDSet_Iterator_incrementUnchecked(long jarg1, EngineJobIDSet.Iterator jarg1_);
@@ -1372,6 +1478,7 @@ public class stiJNI {
   public final static native String HubID_address_get(long jarg1, HubID jarg1_);
   public final static native void HubID_module_set(long jarg1, HubID jarg1_, int jarg2);
   public final static native int HubID_module_get(long jarg1, HubID jarg1_);
+  public final static native boolean HubID_isValid(long jarg1, HubID jarg1_);
   public final static native String HubID_getID(long jarg1, HubID jarg1_);
   public final static native boolean HubID_stringToHubID(String jarg1, long jarg2, HubID jarg2_);
   public final static native void delete_HubID(long jarg1);
@@ -1466,7 +1573,7 @@ public class stiJNI {
   public final static native long ParseResult_parsedDevices_get(long jarg1, ParseResult jarg1_);
   public final static native long ParseResult_messages_get(long jarg1, ParseResult jarg1_);
   public final static native long ParseResult_stackTraceResult_get(long jarg1, ParseResult jarg1_);
-  public final static native void ParseResult_deleteFiles(long jarg1, ParseResult jarg1_);
+  public final static native void ParseResult_deleteFiles(long jarg1, ParseResult jarg1_, long jarg2, FileServer jarg2_);
   public final static native void ParseResult_director_connect(ParseResult obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void ParseResult_change_ownership(ParseResult obj, long cptr, boolean take_or_release);
   public final static native long new_ShotResultRecordVector__SWIG_0();
@@ -1501,6 +1608,7 @@ public class stiJNI {
   public final static native long new_Measurement__SWIG_3(long jarg1, Measurement jarg1_);
   public final static native void Measurement_setMeasurementResult(long jarg1, Measurement jarg1_, long jarg2, MixedValue jarg2_);
   public final static native void Measurement_extractMeasurementResult(long jarg1, Measurement jarg1_, long jarg2, MixedValue jarg2_);
+  public final static native boolean Measurement_attachFile(long jarg1, Measurement jarg1_, long jarg2, FileHolder jarg2_);
   public final static native boolean Measurement_dataReady(long jarg1, Measurement jarg1_);
   public final static native double Measurement_time(long jarg1, Measurement jarg1_);
   public final static native int Measurement_channel(long jarg1, Measurement jarg1_);
@@ -1572,7 +1680,7 @@ public class stiJNI {
   public final static native long ShotResult_measurements_get(long jarg1, ShotResult jarg1_);
   public final static native long ShotResult_attributes_get(long jarg1, ShotResult jarg1_);
   public final static native long ShotResult_shotResultRecord_get(long jarg1, ShotResult jarg1_);
-  public final static native void ShotResult_deleteFiles(long jarg1, ShotResult jarg1_);
+  public final static native void ShotResult_deleteFiles(long jarg1, ShotResult jarg1_, long jarg2, FileServer jarg2_);
   public final static native void delete_ShotResult(long jarg1);
   public final static native void delete_JPersistenceManager(long jarg1);
   public final static native long JPersistenceManager_getParseResult(long jarg1, JPersistenceManager jarg1_, long jarg2, ParseID jarg2_);
@@ -1726,6 +1834,215 @@ public class stiJNI {
   public final static native void JEventEngineScheduler_cancelAll(long jarg1, JEventEngineScheduler jarg1_);
   public final static native long JEventEngineScheduler_getJobIDs(long jarg1, JEventEngineScheduler jarg1_, int jarg2);
   public final static native long JEventEngineScheduler_getJobs(long jarg1, JEventEngineScheduler jarg1_, int jarg2);
+  public final static native long new_LogIDVector__SWIG_0();
+  public final static native long new_LogIDVector__SWIG_1(long jarg1, LogIDVector jarg1_);
+  public final static native long LogIDVector_capacity(long jarg1, LogIDVector jarg1_);
+  public final static native void LogIDVector_reserve(long jarg1, LogIDVector jarg1_, long jarg2);
+  public final static native boolean LogIDVector_isEmpty(long jarg1, LogIDVector jarg1_);
+  public final static native void LogIDVector_clear(long jarg1, LogIDVector jarg1_);
+  public final static native long new_LogIDVector__SWIG_2(int jarg1, long jarg2, LogID jarg2_);
+  public final static native int LogIDVector_doSize(long jarg1, LogIDVector jarg1_);
+  public final static native void LogIDVector_doAdd__SWIG_0(long jarg1, LogIDVector jarg1_, long jarg2, LogID jarg2_);
+  public final static native void LogIDVector_doAdd__SWIG_1(long jarg1, LogIDVector jarg1_, int jarg2, long jarg3, LogID jarg3_);
+  public final static native long LogIDVector_doRemove(long jarg1, LogIDVector jarg1_, int jarg2);
+  public final static native long LogIDVector_doGet(long jarg1, LogIDVector jarg1_, int jarg2);
+  public final static native long LogIDVector_doSet(long jarg1, LogIDVector jarg1_, int jarg2, long jarg3, LogID jarg3_);
+  public final static native void LogIDVector_doRemoveRange(long jarg1, LogIDVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_LogIDVector(long jarg1);
+  public final static native long new_LogFileVector__SWIG_0();
+  public final static native long new_LogFileVector__SWIG_1(long jarg1, LogFileVector jarg1_);
+  public final static native long LogFileVector_capacity(long jarg1, LogFileVector jarg1_);
+  public final static native void LogFileVector_reserve(long jarg1, LogFileVector jarg1_, long jarg2);
+  public final static native boolean LogFileVector_isEmpty(long jarg1, LogFileVector jarg1_);
+  public final static native void LogFileVector_clear(long jarg1, LogFileVector jarg1_);
+  public final static native long new_LogFileVector__SWIG_2(int jarg1, long jarg2, LogFile jarg2_);
+  public final static native int LogFileVector_doSize(long jarg1, LogFileVector jarg1_);
+  public final static native void LogFileVector_doAdd__SWIG_0(long jarg1, LogFileVector jarg1_, long jarg2, LogFile jarg2_);
+  public final static native void LogFileVector_doAdd__SWIG_1(long jarg1, LogFileVector jarg1_, int jarg2, long jarg3, LogFile jarg3_);
+  public final static native long LogFileVector_doRemove(long jarg1, LogFileVector jarg1_, int jarg2);
+  public final static native long LogFileVector_doGet(long jarg1, LogFileVector jarg1_, int jarg2);
+  public final static native long LogFileVector_doSet(long jarg1, LogFileVector jarg1_, int jarg2, long jarg3, LogFile jarg3_);
+  public final static native void LogFileVector_doRemoveRange(long jarg1, LogFileVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_LogFileVector(long jarg1);
+  public final static native long new_LogID__SWIG_0();
+  public final static native long new_LogID__SWIG_1(long jarg1, DeviceID jarg1_, String jarg2, String jarg3, long jarg4);
+  public final static native boolean LogID_opLess(long jarg1, LogID jarg1_, long jarg2, LogID jarg2_);
+  public final static native boolean LogID_opEquals(long jarg1, LogID jarg1_, long jarg2, LogID jarg2_);
+  public final static native boolean LogID_opNotEquals(long jarg1, LogID jarg1_, long jarg2, LogID jarg2_);
+  public final static native void LogID_deviceID_set(long jarg1, LogID jarg1_, long jarg2, DeviceID jarg2_);
+  public final static native long LogID_deviceID_get(long jarg1, LogID jarg1_);
+  public final static native void LogID_date_set(long jarg1, LogID jarg1_, String jarg2);
+  public final static native String LogID_date_get(long jarg1, LogID jarg1_);
+  public final static native void LogID_logName_set(long jarg1, LogID jarg1_, String jarg2);
+  public final static native String LogID_logName_get(long jarg1, LogID jarg1_);
+  public final static native void LogID_index_set(long jarg1, LogID jarg1_, long jarg2);
+  public final static native long LogID_index_get(long jarg1, LogID jarg1_);
+  public final static native void delete_LogID(long jarg1);
+  public final static native long new_DeviceLogRecordMap__SWIG_0();
+  public final static native long new_DeviceLogRecordMap__SWIG_1(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native long DeviceLogRecordMap_Iterator_getNextUnchecked(long jarg1, DeviceLogRecordMap.Iterator jarg1_);
+  public final static native boolean DeviceLogRecordMap_Iterator_isNot(long jarg1, DeviceLogRecordMap.Iterator jarg1_, long jarg2, DeviceLogRecordMap.Iterator jarg2_);
+  public final static native String DeviceLogRecordMap_Iterator_getKey(long jarg1, DeviceLogRecordMap.Iterator jarg1_);
+  public final static native long DeviceLogRecordMap_Iterator_getValue(long jarg1, DeviceLogRecordMap.Iterator jarg1_);
+  public final static native void DeviceLogRecordMap_Iterator_setValue(long jarg1, DeviceLogRecordMap.Iterator jarg1_, long jarg2, DeviceLogRecord jarg2_);
+  public final static native void delete_DeviceLogRecordMap_Iterator(long jarg1);
+  public final static native boolean DeviceLogRecordMap_isEmpty(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native void DeviceLogRecordMap_clear(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native long DeviceLogRecordMap_find(long jarg1, DeviceLogRecordMap jarg1_, String jarg2);
+  public final static native long DeviceLogRecordMap_begin(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native long DeviceLogRecordMap_end(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native int DeviceLogRecordMap_sizeImpl(long jarg1, DeviceLogRecordMap jarg1_);
+  public final static native boolean DeviceLogRecordMap_containsImpl(long jarg1, DeviceLogRecordMap jarg1_, String jarg2);
+  public final static native void DeviceLogRecordMap_putUnchecked(long jarg1, DeviceLogRecordMap jarg1_, String jarg2, long jarg3, DeviceLogRecord jarg3_);
+  public final static native void DeviceLogRecordMap_removeUnchecked(long jarg1, DeviceLogRecordMap jarg1_, long jarg2, DeviceLogRecordMap.Iterator jarg2_);
+  public final static native void delete_DeviceLogRecordMap(long jarg1);
+  public final static native void DeviceLogRecord_deviceID_set(long jarg1, DeviceLogRecord jarg1_, String jarg2);
+  public final static native String DeviceLogRecord_deviceID_get(long jarg1, DeviceLogRecord jarg1_);
+  public final static native void DeviceLogRecord_status_set(long jarg1, DeviceLogRecord jarg1_, int jarg2);
+  public final static native int DeviceLogRecord_status_get(long jarg1, DeviceLogRecord jarg1_);
+  public final static native void DeviceLogRecord_logNames_set(long jarg1, DeviceLogRecord jarg1_, long jarg2, StringSet jarg2_);
+  public final static native long DeviceLogRecord_logNames_get(long jarg1, DeviceLogRecord jarg1_);
+  public final static native String DeviceLogRecord_logRecordStatusToString(int jarg1);
+  public final static native long new_DeviceLogRecord();
+  public final static native void delete_DeviceLogRecord(long jarg1);
+  public final static native long new_LogRecord();
+  public final static native void delete_LogRecord(long jarg1);
+  public final static native void LogRecord_timeStamp_set(long jarg1, LogRecord jarg1_, long jarg2, TimeStamp jarg2_);
+  public final static native long LogRecord_timeStamp_get(long jarg1, LogRecord jarg1_);
+  public final static native void LogRecord_deviceLogRecords_set(long jarg1, LogRecord jarg1_, long jarg2, DeviceLogRecordMap jarg2_);
+  public final static native long LogRecord_deviceLogRecords_get(long jarg1, LogRecord jarg1_);
+  public final static native void LogFile_id_set(long jarg1, LogFile jarg1_, long jarg2, LogID jarg2_);
+  public final static native long LogFile_id_get(long jarg1, LogFile jarg1_);
+  public final static native void LogFile_type_set(long jarg1, LogFile jarg1_, int jarg2);
+  public final static native int LogFile_type_get(long jarg1, LogFile jarg1_);
+  public final static native void LogFile_url_set(long jarg1, LogFile jarg1_, String jarg2);
+  public final static native String LogFile_url_get(long jarg1, LogFile jarg1_);
+  public final static native void LogFile_fileHolder_set(long jarg1, LogFile jarg1_, long jarg2, FileHolder jarg2_);
+  public final static native long LogFile_fileHolder_get(long jarg1, LogFile jarg1_);
+  public final static native void LogFile_logString_set(long jarg1, LogFile jarg1_, String jarg2);
+  public final static native String LogFile_logString_get(long jarg1, LogFile jarg1_);
+  public final static native long new_LogFile();
+  public final static native void delete_LogFile(long jarg1);
+  public final static native void LogFileFilter_logName_set(long jarg1, LogFileFilter jarg1_, String jarg2);
+  public final static native String LogFileFilter_logName_get(long jarg1, LogFileFilter jarg1_);
+  public final static native void LogFileFilter_startDate_set(long jarg1, LogFileFilter jarg1_, String jarg2);
+  public final static native String LogFileFilter_startDate_get(long jarg1, LogFileFilter jarg1_);
+  public final static native void LogFileFilter_endDate_set(long jarg1, LogFileFilter jarg1_, String jarg2);
+  public final static native String LogFileFilter_endDate_get(long jarg1, LogFileFilter jarg1_);
+  public final static native void LogFileFilter_startIndex_set(long jarg1, LogFileFilter jarg1_, int jarg2);
+  public final static native int LogFileFilter_startIndex_get(long jarg1, LogFileFilter jarg1_);
+  public final static native void LogFileFilter_endIndex_set(long jarg1, LogFileFilter jarg1_, int jarg2);
+  public final static native int LogFileFilter_endIndex_get(long jarg1, LogFileFilter jarg1_);
+  public final static native long new_LogFileFilter();
+  public final static native void delete_LogFileFilter(long jarg1);
+  public final static native void delete_JLogManager(long jarg1);
+  public final static native long JLogManager_getLogNames(long jarg1, JLogManager jarg1_);
+  public final static native int JLogManager_getLogCount__SWIG_0(long jarg1, JLogManager jarg1_, long jarg2, LogFileFilter jarg2_);
+  public final static native int JLogManager_getLogCount__SWIG_1(long jarg1, JLogManager jarg1_, long jarg2, DeviceID jarg2_, long jarg3, LogFileFilter jarg3_);
+  public final static native long JLogManager_getLogIDs__SWIG_0(long jarg1, JLogManager jarg1_, long jarg2, LogFileFilter jarg2_);
+  public final static native long JLogManager_getLogIDs__SWIG_1(long jarg1, JLogManager jarg1_, long jarg2, DeviceID jarg2_, long jarg3, LogFileFilter jarg3_);
+  public final static native long JLogManager_getLog__SWIG_0(long jarg1, JLogManager jarg1_, long jarg2, LogID jarg2_);
+  public final static native long JLogManager_getLog__SWIG_1(long jarg1, JLogManager jarg1_, String jarg2, String jarg3, long jarg4);
+  public final static native long JLogManager_getLogs__SWIG_0(long jarg1, JLogManager jarg1_, long jarg2, LogFileFilter jarg2_);
+  public final static native long JLogManager_getLogs__SWIG_1(long jarg1, JLogManager jarg1_, long jarg2, DeviceID jarg2_, long jarg3, LogFileFilter jarg3_);
+  public final static native long JLogManager_getLogRecord(long jarg1, JLogManager jarg1_, String jarg2);
+  public final static native long new_TaskVector__SWIG_0();
+  public final static native long new_TaskVector__SWIG_1(long jarg1, TaskVector jarg1_);
+  public final static native long TaskVector_capacity(long jarg1, TaskVector jarg1_);
+  public final static native void TaskVector_reserve(long jarg1, TaskVector jarg1_, long jarg2);
+  public final static native boolean TaskVector_isEmpty(long jarg1, TaskVector jarg1_);
+  public final static native void TaskVector_clear(long jarg1, TaskVector jarg1_);
+  public final static native long new_TaskVector__SWIG_2(int jarg1, long jarg2, Task jarg2_);
+  public final static native int TaskVector_doSize(long jarg1, TaskVector jarg1_);
+  public final static native void TaskVector_doAdd__SWIG_0(long jarg1, TaskVector jarg1_, long jarg2, Task jarg2_);
+  public final static native void TaskVector_doAdd__SWIG_1(long jarg1, TaskVector jarg1_, int jarg2, long jarg3, Task jarg3_);
+  public final static native long TaskVector_doRemove(long jarg1, TaskVector jarg1_, int jarg2);
+  public final static native long TaskVector_doGet(long jarg1, TaskVector jarg1_, int jarg2);
+  public final static native long TaskVector_doSet(long jarg1, TaskVector jarg1_, int jarg2, long jarg3, Task jarg3_);
+  public final static native void TaskVector_doRemoveRange(long jarg1, TaskVector jarg1_, int jarg2, int jarg3);
+  public final static native void delete_TaskVector(long jarg1);
+  public final static native long new_RunnableTask();
+  public final static native void delete_RunnableTask(long jarg1);
+  public final static native void RunnableTask_run(long jarg1, RunnableTask jarg1_);
+  public final static native void RunnableTask_runSwigExplicitRunnableTask(long jarg1, RunnableTask jarg1_);
+  public final static native void RunnableTask_director_connect(RunnableTask obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void RunnableTask_change_ownership(RunnableTask obj, long cptr, boolean take_or_release);
+  public final static native long new_Task__SWIG_0(String jarg1);
+  public final static native long new_Task__SWIG_1(String jarg1, long jarg2, MixedValue jarg2_);
+  public final static native void delete_Task(long jarg1);
+  public final static native boolean Task_opLess(long jarg1, Task jarg1_, long jarg2, Task jarg2_);
+  public final static native boolean Task_opEquals(long jarg1, Task jarg1_, long jarg2, Task jarg2_);
+  public final static native String Task_getID(long jarg1, Task jarg1_);
+  public final static native boolean Task_isActive(long jarg1, Task jarg1_);
+  public final static native boolean Task_isActiveSwigExplicitTask(long jarg1, Task jarg1_);
+  public final static native int Task_getStatus(long jarg1, Task jarg1_);
+  public final static native int Task_getStatusSwigExplicitTask(long jarg1, Task jarg1_);
+  public final static native long Task_getMetaData__SWIG_0(long jarg1, Task jarg1_);
+  public final static native long Task_getMetaData__SWIG_1(long jarg1, Task jarg1_, String jarg2);
+  public final static native long Task_addMetaData(long jarg1, Task jarg1_, String jarg2, long jarg3, MixedValue jarg3_);
+  public final static native boolean Task_isReadyToRun(long jarg1, Task jarg1_);
+  public final static native boolean Task_isReadyToRunSwigExplicitTask(long jarg1, Task jarg1_);
+  public final static native double Task_secondsToNextRun(long jarg1, Task jarg1_);
+  public final static native void Task_run(long jarg1, Task jarg1_);
+  public final static native void Task_skipTask(long jarg1, Task jarg1_);
+  public final static native boolean Task_repeat(long jarg1, Task jarg1_);
+  public final static native void Task_director_connect(Task obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void Task_change_ownership(Task obj, long cptr, boolean take_or_release);
+  public final static native void delete_IntervalTask(long jarg1);
+  public final static native double IntervalTask_secondsToNextRun(long jarg1, IntervalTask jarg1_);
+  public final static native double IntervalTask_secondsToNextRunSwigExplicitIntervalTask(long jarg1, IntervalTask jarg1_);
+  public final static native void IntervalTask_run(long jarg1, IntervalTask jarg1_);
+  public final static native void IntervalTask_runSwigExplicitIntervalTask(long jarg1, IntervalTask jarg1_);
+  public final static native void IntervalTask_skipTask(long jarg1, IntervalTask jarg1_);
+  public final static native void IntervalTask_skipTaskSwigExplicitIntervalTask(long jarg1, IntervalTask jarg1_);
+  public final static native boolean IntervalTask_repeat(long jarg1, IntervalTask jarg1_);
+  public final static native boolean IntervalTask_repeatSwigExplicitIntervalTask(long jarg1, IntervalTask jarg1_);
+  public final static native long new_IntervalTask__SWIG_0(String jarg1, double jarg2, long jarg3, RunnableTask jarg3_);
+  public final static native long new_IntervalTask__SWIG_1(String jarg1, String jarg2, long jarg3, RunnableTask jarg3_);
+  public final static native void IntervalTask_director_connect(IntervalTask obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void IntervalTask_change_ownership(IntervalTask obj, long cptr, boolean take_or_release);
+  public final static native void delete_AppointmentTask(long jarg1);
+  public final static native double AppointmentTask_secondsToNextRun(long jarg1, AppointmentTask jarg1_);
+  public final static native double AppointmentTask_secondsToNextRunSwigExplicitAppointmentTask(long jarg1, AppointmentTask jarg1_);
+  public final static native void AppointmentTask_run(long jarg1, AppointmentTask jarg1_);
+  public final static native void AppointmentTask_runSwigExplicitAppointmentTask(long jarg1, AppointmentTask jarg1_);
+  public final static native void AppointmentTask_skipTask(long jarg1, AppointmentTask jarg1_);
+  public final static native void AppointmentTask_skipTaskSwigExplicitAppointmentTask(long jarg1, AppointmentTask jarg1_);
+  public final static native boolean AppointmentTask_repeat(long jarg1, AppointmentTask jarg1_);
+  public final static native boolean AppointmentTask_repeatSwigExplicitAppointmentTask(long jarg1, AppointmentTask jarg1_);
+  public final static native long new_AppointmentTask__SWIG_0(String jarg1, String jarg2, long jarg3, RunnableTask jarg3_);
+  public final static native long new_AppointmentTask__SWIG_1(String jarg1, String jarg2, int jarg3, long jarg4, RunnableTask jarg4_);
+  public final static native void AppointmentTask_director_connect(AppointmentTask obj, long cptr, boolean mem_own, boolean weak_global);
+  public final static native void AppointmentTask_change_ownership(AppointmentTask obj, long cptr, boolean take_or_release);
+  public final static native void delete_JTaskManager(long jarg1);
+  public final static native long JTaskManager_getTaskIDs(long jarg1, JTaskManager jarg1_);
+  public final static native int JTaskManager_getTaskStatus(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native void JTaskManager_setStatus(long jarg1, JTaskManager jarg1_, String jarg2, int jarg3);
+  public final static native long JTaskManager_getTask(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native long JTaskManager_getTasks(long jarg1, JTaskManager jarg1_);
+  public final static native void JTaskManager_removeTask(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native void JTaskManager_clear(long jarg1, JTaskManager jarg1_);
+  public final static native void JTaskManager_activateTask(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native void JTaskManager_deactivateTask(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native void JTaskManager_runTask(long jarg1, JTaskManager jarg1_, String jarg2);
+  public final static native void Profile_name_set(long jarg1, Profile jarg1_, String jarg2);
+  public final static native String Profile_name_get(long jarg1, Profile jarg1_);
+  public final static native void Profile_type_set(long jarg1, Profile jarg1_, int jarg2);
+  public final static native int Profile_type_get(long jarg1, Profile jarg1_);
+  public final static native void Profile_attributeData_set(long jarg1, Profile jarg1_, long jarg2, StringMap jarg2_);
+  public final static native long Profile_attributeData_get(long jarg1, Profile jarg1_);
+  public final static native void Profile_channelData_set(long jarg1, Profile jarg1_, long jarg2, ChannelMixedValueMap jarg2_);
+  public final static native long Profile_channelData_get(long jarg1, Profile jarg1_);
+  public final static native long new_Profile();
+  public final static native void delete_Profile(long jarg1);
+  public final static native void delete_JProfileManager(long jarg1);
+  public final static native long JProfileManager_getProfiles(long jarg1, JProfileManager jarg1_);
+  public final static native long JProfileManager_getProfile(long jarg1, JProfileManager jarg1_, String jarg2);
+  public final static native boolean JProfileManager_saveProfile(long jarg1, JProfileManager jarg1_, long jarg2, Profile jarg2_);
+  public final static native boolean JProfileManager_loadProfile(long jarg1, JProfileManager jarg1_, String jarg2, int jarg3, boolean jarg4);
+  public final static native boolean JProfileManager_saveCurrentProfile(long jarg1, JProfileManager jarg1_, String jarg2, int jarg3, boolean jarg4);
+  public final static native long VirtualFileServer_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long LocalVirtualFileServerFactory_SWIGUpcast(long jarg1);
   public final static native long EventEngineDependencyTree_SWIGSmartPtrUpcast(long jarg1);
   public final static native long LocalAttribute_SWIGSmartPtrUpcast(long jarg1);
   public final static native long RefreshDeviceMessage_SWIGSmartPtrUpcast(long jarg1);
@@ -1741,9 +2058,17 @@ public class stiJNI {
   public final static native long LocalChannel_SWIGSmartPtrUpcast(long jarg1);
   public final static native long SynchronousEventAdapter_SWIGSmartPtrUpcast(long jarg1);
   public final static native long JLocalDevice_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long IntervalTask_SWIGSmartPtrUpcast(long jarg1);
+  public final static native long AppointmentTask_SWIGSmartPtrUpcast(long jarg1);
 
+  public static long SwigDirector_FileHolder_getID(FileHolder jself) {
+    return FileID.getCPtr(jself.getID());
+  }
   public static String SwigDirector_FileHolder_getFilename(FileHolder jself) {
     return jself.getFilename();
+  }
+  public static long SwigDirector_FileHolder_getFileSize(FileHolder jself) {
+    return jself.getFileSize();
   }
   public static boolean SwigDirector_FileHolder_exists(FileHolder jself) {
     return jself.exists();
@@ -1753,9 +2078,6 @@ public class stiJNI {
   }
   public static long SwigDirector_FileHolder_maxBufferSize(FileHolder jself) {
     return jself.maxBufferSize();
-  }
-  public static boolean SwigDirector_FileHolder_deleteFile(FileHolder jself) {
-    return jself.deleteFile();
   }
   public static String SwigDirector_FileHolder_md5Checksum(FileHolder jself) {
     return jself.md5Checksum();
@@ -1768,6 +2090,42 @@ public class stiJNI {
   }
   public static boolean SwigDirector_ImageWriter_write(ImageWriter jself, String targetDirectory, long fileHolder) {
     return jself.write(targetDirectory, (fileHolder == 0) ? null : new FileHolder(fileHolder, true));
+  }
+  public static boolean SwigDirector_FileServer_findFile(FileServer jself, long fileID) {
+    return jself.findFile(new FileID(fileID, false));
+  }
+  public static int SwigDirector_FileServer_getFileSize(FileServer jself, long fileID) {
+    return jself.getFileSize(new FileID(fileID, false));
+  }
+  public static boolean SwigDirector_FileServer_transferFile(FileServer jself, long source, long destination, int type) {
+    return jself.transferFile(new FileID(source, false), (destination == 0) ? null : new FileHolder(destination, true), FileTransferType.swigToEnum(type));
+  }
+  public static boolean SwigDirector_FileServer_transferFilePartial(FileServer jself, long source, long destination, int offset, int lines) {
+    return jself.transferFilePartial(new FileID(source, false), (destination == 0) ? null : new FileHolder(destination, true), offset, lines);
+  }
+  public static boolean SwigDirector_FileServer_deleteFile(FileServer jself, long fileID) {
+    return jself.deleteFile(new FileID(fileID, false));
+  }
+  public static boolean SwigDirector_VirtualFileServer_findFile(VirtualFileServer jself, long fileID) {
+    return jself.findFile(new FileID(fileID, false));
+  }
+  public static int SwigDirector_VirtualFileServer_getFileSize(VirtualFileServer jself, long fileID) {
+    return jself.getFileSize(new FileID(fileID, false));
+  }
+  public static boolean SwigDirector_VirtualFileServer_transferFile(VirtualFileServer jself, long source, long destination, int type) {
+    return jself.transferFile(new FileID(source, false), (destination == 0) ? null : new FileHolder(destination, true), FileTransferType.swigToEnum(type));
+  }
+  public static boolean SwigDirector_VirtualFileServer_transferFilePartial(VirtualFileServer jself, long source, long destination, int offset, int lines) {
+    return jself.transferFilePartial(new FileID(source, false), (destination == 0) ? null : new FileHolder(destination, true), offset, lines);
+  }
+  public static boolean SwigDirector_VirtualFileServer_deleteFile(VirtualFileServer jself, long fileID) {
+    return jself.deleteFile(new FileID(fileID, false));
+  }
+  public static long SwigDirector_VirtualFileServerFactory_makeVirtualFileServer(VirtualFileServerFactory jself) {
+    return VirtualFileServer.getCPtr(jself.makeVirtualFileServer());
+  }
+  public static long SwigDirector_LocalVirtualFileServerFactory_makeVirtualFileServer(LocalVirtualFileServerFactory jself) {
+    return VirtualFileServer.getCPtr(jself.makeVirtualFileServer());
   }
   public static String SwigDirector_Attribute_getKey(Attribute jself) {
     return jself.getKey();
@@ -1963,6 +2321,72 @@ public class stiJNI {
   }
   public static long SwigDirector_JLocalDevice_readChannel(JLocalDevice jself, int channel, long value) {
     return MixedValue.getCPtr(jself.readChannel(channel, new MixedValue(value, false)));
+  }
+  public static void SwigDirector_RunnableTask_run(RunnableTask jself) {
+    jself.run();
+  }
+  public static boolean SwigDirector_Task_isActive(Task jself) {
+    return jself.isActive();
+  }
+  public static int SwigDirector_Task_getStatus(Task jself) {
+    return (jself.getStatus()).swigValue();
+  }
+  public static boolean SwigDirector_Task_isReadyToRun(Task jself) {
+    return jself.isReadyToRun();
+  }
+  public static double SwigDirector_Task_secondsToNextRun(Task jself) {
+    return jself.secondsToNextRun();
+  }
+  public static void SwigDirector_Task_run(Task jself) {
+    jself.run();
+  }
+  public static void SwigDirector_Task_skipTask(Task jself) {
+    jself.skipTask();
+  }
+  public static boolean SwigDirector_Task_repeat(Task jself) {
+    return jself.repeat();
+  }
+  public static boolean SwigDirector_IntervalTask_isActive(IntervalTask jself) {
+    return jself.isActive();
+  }
+  public static int SwigDirector_IntervalTask_getStatus(IntervalTask jself) {
+    return (jself.getStatus()).swigValue();
+  }
+  public static boolean SwigDirector_IntervalTask_isReadyToRun(IntervalTask jself) {
+    return jself.isReadyToRun();
+  }
+  public static double SwigDirector_IntervalTask_secondsToNextRun(IntervalTask jself) {
+    return jself.secondsToNextRun();
+  }
+  public static void SwigDirector_IntervalTask_run(IntervalTask jself) {
+    jself.run();
+  }
+  public static void SwigDirector_IntervalTask_skipTask(IntervalTask jself) {
+    jself.skipTask();
+  }
+  public static boolean SwigDirector_IntervalTask_repeat(IntervalTask jself) {
+    return jself.repeat();
+  }
+  public static boolean SwigDirector_AppointmentTask_isActive(AppointmentTask jself) {
+    return jself.isActive();
+  }
+  public static int SwigDirector_AppointmentTask_getStatus(AppointmentTask jself) {
+    return (jself.getStatus()).swigValue();
+  }
+  public static boolean SwigDirector_AppointmentTask_isReadyToRun(AppointmentTask jself) {
+    return jself.isReadyToRun();
+  }
+  public static double SwigDirector_AppointmentTask_secondsToNextRun(AppointmentTask jself) {
+    return jself.secondsToNextRun();
+  }
+  public static void SwigDirector_AppointmentTask_run(AppointmentTask jself) {
+    jself.run();
+  }
+  public static void SwigDirector_AppointmentTask_skipTask(AppointmentTask jself) {
+    jself.skipTask();
+  }
+  public static boolean SwigDirector_AppointmentTask_repeat(AppointmentTask jself) {
+    return jself.repeat();
   }
 
   private final static native void swig_module_init();

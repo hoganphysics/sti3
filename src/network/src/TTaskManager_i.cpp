@@ -62,11 +62,7 @@ TTaskStatus TTaskManager_i::getTaskStatus(const char* taskID)
 void TTaskManager_i::setStatus(const char* taskID, ::STI::TNetwork::TTaskStatus newStatus)
 {
     if (taskManager != 0) {
-        std::shared_ptr<Task> task;
-        
-        if (taskManager->getTask(taskID, task)) {
-            task->setStatus(convert<TTaskStatus, TaskStatus>(newStatus));
-        }
+        taskManager->setStatus(taskID, convert<TTaskStatus, TaskStatus>(newStatus));
     }
 }
 
@@ -138,6 +134,17 @@ void TTaskManager_i::runTask(const char* taskID)
     if (taskManager != 0) {
         taskManager->runTask(taskID);
     }
+}
+
+::CORBA::Double TTaskManager_i::secondsToNextRun(const char* taskID)
+{
+    std::shared_ptr<Task> task;
+    double result = 0;
+
+    if (taskManager != 0 && taskManager->getTask(taskID, task) && task != 0) {
+        result = task->secondsToNextRun();
+    }
+    return static_cast<::CORBA::Double>(result);
 }
 
 ::CORBA::Boolean TTaskManager_i::ping()

@@ -3,6 +3,7 @@
 
 #include <sti/device/TaskManager.h>
 #include <sti/utils/TaskScheduler.h>
+#include <sti/utils/EvaluationBarrier.h>
 
 #include "PersistenceTarget.h"
 
@@ -20,7 +21,8 @@ namespace Device
 
 
 class LocalTaskManager : public TaskManager,
-						 public PersistenceTarget
+						 public PersistenceTarget,
+                         public STI::Utils::TaskSchedulerListener
 {
 public:
 
@@ -28,7 +30,9 @@ public:
     ~LocalTaskManager();
 
     void getTaskIDs(std::set<std::string>& ids) const;
+
     STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const;
+    void setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus);
 
     bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task) const;
     void getTasks(std::vector<std::shared_ptr<STI::Utils::Task>>& tasks) const;
@@ -44,11 +48,13 @@ public:
 
 private:
 
+    void handleEvent(const STI::Utils::TaskSchedulerEvent& evt);
+    
+    STI::Utils::EvaluationBarrier barrier;
     STI::Utils::TaskScheduler taskScheduler;
 
     //PersistenceTarget
     std::string getFilename();
-    // void setLoadFilename(const std::string& filename);
     void setPersistenceCallback(const std::function<void(void)>& refresher);
     bool save(const std::string& filename);
     void load(const std::string& filename);

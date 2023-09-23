@@ -1,0 +1,64 @@
+#ifndef STI_UTILS_VIRTUALFILEHOLDER_H
+#define STI_UTILS_VIRTUALFILEHOLDER_H
+
+#include <sti/utils/CachedValue.h>
+#include <sti/utils/LocalFileHolder.h>
+
+#include <sti/utils/FileServer.h>
+
+#include <string>
+#include <memory>
+#include <mutex>
+#include <sstream>
+
+namespace STI
+{
+namespace Utils
+{
+
+
+class VirtualFileHolder : public LocalFileHolder
+{
+public:
+
+    VirtualFileHolder(const std::string& originID, const FileID& fileID);
+
+    ~VirtualFileHolder();
+
+    std::ostream* getostream();
+    bool getistream(std::shared_ptr<std::istream>& istream);
+
+    bool openFile();
+    void closeFile();
+
+    template<typename T>
+    VirtualFileHolder& operator<<(const T& input)
+    {
+        (*data) << input;
+        return *this;
+    }
+
+    // overloads for manipulators
+    typedef std::ostream& (*manip1)(std::ostream&);
+    typedef std::basic_ios<std::ostream::char_type, std::ostream::traits_type> ios_type;
+    typedef ios_type& (*manip2)(ios_type&);
+    typedef std::ios_base& (*manip3)(std::ios_base&);
+
+    VirtualFileHolder& operator<<(manip1 fp);
+    VirtualFileHolder& operator<<(manip2 fp);
+    VirtualFileHolder& operator<<(manip3 fp);
+
+private:
+
+    FileID fileID;
+
+    std::shared_ptr<std::stringstream> data;
+
+    mutable std::mutex fileMutex;
+};
+
+
+} //Utils
+} //STI
+
+#endif

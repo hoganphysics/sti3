@@ -30,21 +30,7 @@ public:
 		return true;
 	}
 
-
-	// static bool getTDeviceReference(const typename std::shared_ptr<STI::Device::Device>& device, STI::TNetwork::TDevice_ptr& tDevice)
-	// {
-	// 	std::shared_ptr<TDeviceRefInterface> tDeviceRefInterface;
-	// 	tDeviceRefInterface = std::dynamic_pointer_cast<TDeviceRefInterface>(device);
-
-	// 	return (tDeviceRefInterface != 0 &&					//check dynamic_pointer_cast
-	// 		tDeviceRefInterface->getTDeviceRef(tDevice) &&	//polymorphic call
-	// 		!CORBA::is_nil(tDevice)
-	// 		);
-	// }
-
 private:
-
-//	virtual bool getTDeviceRef(STI::TNetwork::TDevice_ptr& tDevice) = 0;
 
 	virtual bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice) = 0;
 

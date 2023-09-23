@@ -114,6 +114,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localProfileManager->addProfileTarget(localAttributeManager);
 	localProfileManager->addProfileTarget(localChannelManager);
 	
+	localTaskManager = std::make_shared<LocalTaskManager>();
+
 	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
 
 	//temp for localPersistenceManager; TODO: expose to constructor
@@ -123,15 +125,16 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 
 
-	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>();
+	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
 	localPersistenceManager->addPersistenceTarget(localProfileManager);
+	localPersistenceManager->addPersistenceTarget(localTaskManager);
+
 
 	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
-
 
 
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
@@ -196,8 +199,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
-
-	localTaskManager = std::make_shared<LocalTaskManager>();
+	
 	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
 
 }
@@ -320,12 +322,12 @@ STI::Device::Logger& LocalDevice::log(const std::string& name)
 	return localLogManager->log(name);
 }
 
-std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& filename)
+std::shared_ptr<STI::Utils::FileHolder> LocalDevice::makeFileHolder(const std::string& path, const std::string& filename)
 {
 	std::shared_ptr<STI::Utils::FileHolder> file;
 
 	if (localPersistenceManager != 0) {
-		file = localPersistenceManager->makeFileHolder(filename);
+		file = localPersistenceManager->makeFileHolder(path, filename);
 	}
 	return file;
 }
@@ -673,6 +675,13 @@ bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
 {
 	manager = localLogManager;
 	return manager != 0;
+}
+
+bool LocalDevice::getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer)
+{
+	if (localPersistenceManager == 0) return false;
+
+	return localPersistenceManager->getFileServer(fileServer);
 }
 
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 

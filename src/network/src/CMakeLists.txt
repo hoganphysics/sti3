@@ -70,6 +70,7 @@ add_library(stinetwork SHARED
     convert/Convert_DeviceID.cpp
     convert/Convert_DeviceMessage.cpp
     convert/Convert_EventEngine.cpp
+    convert/Convert_File.cpp
     convert/Convert_HubID.cpp
     convert/Convert_HubNodeWalker.cpp
     convert/Convert_HubTrace.cpp
@@ -100,6 +101,7 @@ add_library(stinetwork SHARED
     NetworkDeviceMessageHandlerWrapper.cpp
     NetworkEventEngine.cpp
     NetworkFileHolder.cpp
+    NetworkFileServer.cpp
     NetworkShotWrapper.cpp
     NetworkResultsCollector.cpp
     #NetworkShotRepositoryWrapper.cpp
@@ -118,6 +120,7 @@ add_library(stinetwork SHARED
     RemoteEventEngineDependencyParser.cpp
     RemoteEventEngineScheduler.cpp
     RemoteFileHolder.cpp
+    RemoteFileServer.cpp
     RemoteLogManager.cpp
     RemotePersistenceManager.cpp
     RemoteProfileManager.cpp
@@ -138,6 +141,7 @@ add_library(stinetwork SHARED
     TEventEngineDependencyParser_i.cpp
     TEventEngineScheduler_i.cpp
     TFileHolder_i.cpp
+    TFileServer_i.cpp
     TLogManager_i.cpp
     TPersistenceManager_i.cpp
     TProfileManager_i.cpp

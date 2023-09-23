@@ -1,6 +1,8 @@
 
 #include "NetworkConvert.h"
 
+#include "convert/Convert_File.h"
+
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Image.h>
 
@@ -23,6 +25,8 @@ using STI::Utils::Image;
 using STI::TNetwork::TImage;
 using STI::TNetwork::TImageDataType;
 using STI::Utils::FileHolder;
+using STI::Utils::FileID;
+using STI::TNetwork::TFileID;
 
 
 template<>
@@ -119,7 +123,11 @@ bool STI::Network::convertBuffer(const char* buffer, unsigned length, ::STI::TNe
 	for (unsigned i = 0; i < tBuffer.length(); ++i) {
 		tBuffer[i] = buffer[i];
 	}
-	return false;
+	return true;
+
+	// //do not call tBuffer.length(length); This is done by replace.
+	// unsigned char* data = reinterpret_cast<unsigned char*>(const_cast<char*>(buffer));
+	// tBuffer.replace(length, length, data, false );	//no release
 }
 
 bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer)
@@ -128,6 +136,12 @@ bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* b
 		buffer[i] = tBuffer[i];
 	}
 	return true;
+
+	// bool release = tBuffer.release();
+	// unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(tBuffer).get_buffer(release);	//orphan if release = true
+	// buffer = reinterpret_cast<char*>(data);
+	// return true;
+
 }
 
 // template<>
@@ -238,9 +252,9 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 		break;
 	case MixedValueType::File:
 		{
-			STI::TNetwork::TFileHolder_var tFileHolder;
-			TFileHolderRefInterface::getTFileHolderReference(value.getFile(), tFileHolder);
-			tValue.value_file(tFileHolder);
+			// STI::TNetwork::TFileHolder_var tFileHolder;
+			// TFileHolderRefInterface::getTFileHolderReference(value.getFile(), tFileHolder);
+			tValue.value_file(convert<FileID, TFileID>(value.getFileID()));
 		}
 		break;
 	case MixedValueType::Image:
@@ -348,8 +362,9 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 		break;
 	case TMixedValueType::MixedValueFile:
 		{
-			std::shared_ptr<STI::Utils::FileHolder> remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(tValue.value_file());
-			value.setValue(remoteFile);	
+			// std::shared_ptr<STI::Utils::FileHolder> remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(tValue.value_file());
+			// value.setValue(remoteFile);
+			value.setValue(convert<TFileID, FileID>(tValue.value_file()));
 		}
 		break;
 	case TMixedValueType::MixedValueImage:
@@ -557,7 +572,8 @@ bool STI::Network::convert<Image, TImage>(const Image& image, TImage& tImage)
 		if (image.getFile(fileHolder)) {
 			STI::TNetwork::TFileHolder_var tFileHolder;
 			TFileHolderRefInterface::getTFileHolderReference(fileHolder, tFileHolder);
-			tImage.imageData.file(tFileHolder);		
+			tImage.imageData.file(convert<FileID, TFileID>(fileHolder->getID()));
+			// tImage.imageData.file(tFileHolder);		
 		}
 		else if (image.getData(bin)) {
 			convert<BinaryData, TBinaryData>(*bin, tImage.imageData.binary());	//no deep copy
@@ -637,9 +653,9 @@ bool STI::Network::convert<TImage, Image>(const TImage& tImage, Image& image)
 			break;
 		case TImageDataType::ImageDataFile:
 			{
-				std::shared_ptr<FileHolder> remoteFile = std::make_shared<RemoteFileHolder>(tImage.imageData.file());
-				auto writer = std::make_shared<STI::Network::RemoteImageWriter>(remoteFile);
-				image.writeToFile(writer, "");	//writer -> remoteFile	
+				// std::shared_ptr<FileHolder> remoteFile = std::make_shared<RemoteFileHolder>(tImage.imageData.file());
+				// auto writer = std::make_shared<STI::Network::RemoteImageWriter>(remoteFile);
+				// image.writeToFile(writer, "");	//writer -> remoteFile	
 			}
 			break;
 		};

@@ -15,7 +15,7 @@ namespace Device
 class PersistenceManager;
 
 
-//Java AttributeManager wrapper
+//Java PersistenceManager wrapper
 class JPersistenceManager
 {
 public:

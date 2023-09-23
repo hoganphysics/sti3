@@ -5,13 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Python C++ Debugger",
             "type": "pythoncpp",
             "request": "launch",
-            "pythonConfig": "default",
+            "pythonConfig": "custom",
+            "pythonLaunchName": "Python: Current File",
             "cppConfig": "default (gdb) Attach"
-
         },
+        // {
+        //     "name": "Python: Current File",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/env/bin/python"
+        // },
         {
             "name": "g++-7 - Build and debug active file",
             "type": "cppdbg",

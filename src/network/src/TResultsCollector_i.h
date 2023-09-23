@@ -21,17 +21,15 @@ public:
 	~TResultsCollector_i();
 
     TShotID* getShotID();
-    // void addEvents(const ::STI::TNetwork::TDeviceEventsSeq& parsedEvents);
-    // void addTimingFiles(const ::STI::TNetwork::TFileHolderSeq& files);
-    ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements);
-//    ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TAttributeSeq& attributes);
+
+    ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, 
+                                     const ::STI::TNetwork::TMeasurementSeq& measurements,
+                                     ::STI::TNetwork::TFileServer_ptr sourceFileServer);
     ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
 
-    
 private:
 
     STI::Engine::ResultsCollector* resultsCollector;
-
 };
 
 

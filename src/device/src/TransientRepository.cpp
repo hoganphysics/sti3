@@ -26,8 +26,8 @@ using STI::Engine::SequenceResult;
 
 
 
-TransientRepository::TransientRepository(const std::string& tempBasePath)
-: parseBuffer(5), resultBuffer(5), sequenceBuffer(5)
+TransientRepository::TransientRepository(const std::string& tempBasePath, const std::shared_ptr<STI::Utils::FileServer>& fileServer)
+: parseBuffer(5), resultBuffer(5), sequenceBuffer(5), fileServer(fileServer)
 {
     //Need a temporary directory to store any files (measurements, timing files, etc).
     //This directory is for temporary files that will be deleted when the shot expires.
@@ -98,13 +98,13 @@ bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<Full
     std::shared_ptr<FullShotResult> expiredResult;  //the oldest result in the buffer; ready to delete
     if (resultBuffer.addAndRemove(sid, fullShotResult, expiredResult) && expiredResult != 0) {
         //The buffer was full. Need to delete the old result;
-        ShotResult::deleteFiles(*expiredResult->shotResult);
+        ShotResult::deleteFiles(*expiredResult->shotResult, fileServer);
     }
 
     std::shared_ptr<ParseResult> expiredParseResult;  //the oldest result in the buffer; ready to delete
     if (parseBuffer.addAndRemove(sid.parseID, fullShotResult->parseResult, expiredParseResult) && expiredParseResult != 0) {
         //The buffer was full. Need to delete the old result;
-        ParseResult::deleteFiles(*expiredParseResult);
+        ParseResult::deleteFiles(*expiredParseResult, fileServer);
     }
 
     return findShotResult(sid);

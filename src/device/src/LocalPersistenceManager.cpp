@@ -13,6 +13,7 @@
 #include <sti/engine/StackTraceResult.h>
 
 #include <sti/utils/Image.h>
+#include <sti/utils/FileServer.h>
 
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
@@ -23,13 +24,12 @@
 #include "ResultsDocumenter.h"
 #include "SerializedRepository.h"
 #include "TransientRepository.h"
+#include "LocalFileServer.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
-
 using STI::Device::LocalPersistenceManager;
-
 using STI::Device::PersistenceTarget;
 using STI::Device::PersistenceTargetHolder;
 using STI::Engine::ResultsCollector;
@@ -61,11 +61,16 @@ sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) )
 deviceCollection(collection),
 basePath(basePath)
 {
+    auto server = std::make_shared<STI::Utils::LocalFileServer>(deviceID);
+    setFileServer(server);
+
     defaultRepository = std::make_shared<SerializedRepository>(basePath);
-    transientRepository = std::make_shared<TransientRepository>(basePath);
+    transientRepository = std::make_shared<TransientRepository>(basePath, server);
 
     auto resultsCollectionFactory = std::make_shared<STI::Engine::LocalResultsCollectorFactory>();
     setResultsCollectorFactory(resultsCollectionFactory);
+
+    virtualFileServerFactory = std::make_shared<STI::Utils::LocalVirtualFileServerFactory>();
 }
 
 LocalPersistenceManager::~LocalPersistenceManager()
@@ -88,9 +93,6 @@ void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::E
 void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target)
 {
     if (target != 0) {
-        // std::filesystem::path filename(getBasePath());
-        // filename /= (target->getFilenameStem() + ".ini");
-
         auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
         persistenceTargetHolders.push_back(holder);
     }
@@ -176,21 +178,56 @@ void LocalPersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::Ut
     fileHolderFactory = factory;
 }
 
+void LocalPersistenceManager::setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory)
+{
+    virtualFileServerFactory = factory;
+}
 
 void LocalPersistenceManager::setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory)
 {
     resultsCollectorFactory = factory;
 }
 
-std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& filename)
+bool LocalPersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileServer>& server)
+{
+    server = fileServer;
+    return (server != 0);
+}
+
+void LocalPersistenceManager::setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server)
+{
+    fileServer = server;
+}
+
+std::shared_ptr<STI::Utils::VirtualFileServer> LocalPersistenceManager::makeVirtualFileServer()
+{
+    if (virtualFileServerFactory == 0) {
+        std::shared_ptr<STI::Utils::VirtualFileServer> empty = std::make_shared<STI::Utils::VirtualFileServer>();
+        return empty;
+    }
+    return virtualFileServerFactory->makeVirtualFileServer();
+}
+
+std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
 {
     if (fileHolderFactory != 0) {
-        return fileHolderFactory->makeFileHolder(filename);
+        return fileHolderFactory->makeFileHolder(path, filename);
     }
 
     std::shared_ptr<STI::Utils::FileHolder> nullFile;
     return nullFile;
 }
+
+std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
+{
+    if (fileHolderFactory != 0) {
+        return fileHolderFactory->makeVirtualFileHolder(fileID);
+    }
+    
+    std::shared_ptr<STI::Utils::FileHolder> nullFile;
+    return nullFile;
+}
+
 
 void LocalPersistenceManager::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo)
 {
@@ -249,12 +286,22 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
         success &= resultsCollector->addAttributes(attribs.first, attribs.second);
     }
 
+    std::shared_ptr<STI::Utils::FileServer> fs;
+    std::shared_ptr<STI::Utils::VirtualFileServer> measurementFileServer;
+
     //Measurements
     if (shotResult->measurements != 0) {
         for (auto& tuple : *shotResult->measurements) {  //tuple = {DeviceID, MeasurementVector}
 
             if (tuple.second.size() > 0) {
-                success &= resultsCollector->addMeasurements(tuple.first, tuple.second);
+
+                if (tuple.second.front() != 0 && tuple.second.front()->getFileServer(measurementFileServer)) {
+                    fs = measurementFileServer;
+                }
+                else {
+                    fs = fileServer;    //default in case Measurement is missing VirtualFileServer
+                }
+                success &= resultsCollector->addMeasurements(tuple.first, tuple.second, fs);
             }
         }        
     }
@@ -423,9 +470,9 @@ bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, st
     if (getParseResultLocal(pid, parseResult) && parseResult != 0) {
         //rebind FileHolders of retrieved ParseResult so they match the PersistenceManager
         //(ensures that they will be served to the network properly)
-        if (parseResult->stackTraceResult != 0 && parseResult->stackTraceResult->stackTraceData != 0) {
-            parseResult->stackTraceResult->stackTraceData->setFileHolderFactory(fileHolderFactory);
-        }
+        // if (parseResult->stackTraceResult != 0 && parseResult->stackTraceResult->stackTraceData != 0) {
+        //     parseResult->stackTraceResult->stackTraceData->setFileHolderFactory(fileHolderFactory);
+        // }
         return true;
     }
 
@@ -746,22 +793,34 @@ void LocalPersistenceManager::transferParseResult(std::shared_ptr<ParseResult> p
 {
     if (parseResult == 0 || parseResult->stackTraceResult == 0 || parseResult->stackTraceResult->stackTraceData == 0) return;
 
+    std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
+
     auto stackTraceData = parseResult->stackTraceResult->stackTraceData;
-    auto files = stackTraceData->getTimingFiles();
+    auto& files = stackTraceData->getTimingFiles();
 
-    for (auto& file : files) {
-        if (file != 0) {
-            auto inputFilename = file->getFilename();
-            fs::path inputPath = inputFilename;
+    auto commonBase = STI::Utils::FileID::commonBasePath(files);    //deepest common path of files
 
-            fs::path localPath = timingPath;
-            localPath /= inputPath.filename();
+    for (auto& fileID : files) {
 
-            auto localFileHandle = fileHolderFactory->makeFileHolder( STI::Utils::makeUniquePath( localPath.string() ) );
+        fs::path localPath = timingPath;
+        fs::path filePath = fileID.path;
+        localPath /= filePath.lexically_relative(commonBase);   //relative directory of this file
+        localPath /= fileID.filename;
 
-            file->transferFile(localFileHandle);    //transfer file to local
-            stackTraceData->replaceFile(inputFilename, localFileHandle);            
+        auto uniqueFilename = STI::Utils::makeUniquePath( localPath.string() );
+        fs::path uniquePath = uniqueFilename;
+
+        auto localFileHandle = fileHolderFactory->makeFileHolder(uniquePath.parent_path(), uniquePath.filename());
+
+        if (stackTraceData->getFileServer(remoteFileServer)) {
+            //transfer file to local
+            remoteFileServer->transferFile(fileID, localFileHandle, STI::Utils::FileTransferType::Binary);
+            stackTraceData->replaceFile(fileID.getFullFilename(), localFileHandle->getID());       
         }
+
+        // file->transferFile(localFileHandle);    //transfer file to local
+        // stackTraceData->replaceFile(inputFilename, localFileHandle);            
+
     }
 }
 

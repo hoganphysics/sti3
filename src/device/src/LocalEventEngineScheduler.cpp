@@ -20,6 +20,7 @@
 #include <sti/engine/SequenceResult.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/StackTraceData.h>
 
 #include <sti/utils/SynchronizedMap.h>
 
@@ -29,6 +30,9 @@
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineJob.h"
 #include "LocalShot.h"
+#include "VirtualFileHolder.h"
+#include <sti/utils/VirtualFileServer.h>
+
 
 #include <set>
 #include <vector>
@@ -66,6 +70,11 @@ using STI::Engine::SequenceResult;
 using STI::Engine::ParseJobStatus;
 using STI::Engine::PlayJobStatus;
 using STI::Engine::AddSequenceStatus;
+using STI::Engine::StackTraceData;
+using STI::Utils::FileServer;
+using STI::Utils::FileID;
+using STI::Utils::VirtualFileHolder;
+using STI::Utils::VirtualFileServer;
 
 
 /*
@@ -240,12 +249,26 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
     return parseJobStatus;
 }
 
-void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
-// ParseID LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
+
+void LocalEventEngineScheduler::transferTimingFiles(StackTraceData& stackTraceData, FileServer& remoteFileSever, VirtualFileServer& targetFileServer)
 {
-    // ParseID parseID;
+    const std::vector<FileID>& fileIDs = stackTraceData.getTimingFiles();
+
+    // std::shared_ptr<VirtualFileHolder> virtualFile;
+
+    for (auto& fileID : fileIDs) {
+        auto virtualFile = persistenceManager->makeVirtualFileHolder(fileID);
+        // auto newFileID = virtualFile->getID();
+        remoteFileSever.transferFile(fileID, virtualFile, STI::Utils::FileTransferType::Binary);
+        targetFileServer.addFile(virtualFile);
+        stackTraceData.replaceFile(fileID.getFullFilename(), virtualFile->getID()); //replace orginal filename with new FileID
+    }
     
-    // auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, localDeviceID);
+}
+
+void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
+{
+    if (job == 0) return;
 
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
@@ -254,11 +277,25 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
     std::shared_ptr<Shot> shot;
     if (job->getShot(shot)) {
         shot->getRootEventGroup(eventGroup);
-        // parseID.shotConfig = shot->getShotConfig();      
     }
 
     if (eventGroup != 0) {
         findEventTargets(eventGroup, eventTargets);
+
+        auto stackTraceData = eventGroup->getStackTraceData();
+        std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
+        // auto virtualFileServer = std::make_shared<VirtualFileServer>();
+        auto virtualFileServer = persistenceManager->makeVirtualFileServer();
+        
+        if (stackTraceData != 0 && stackTraceData->getFileServer(remoteFileServer)) {
+            transferTimingFiles(*stackTraceData, *remoteFileServer, *virtualFileServer);
+
+            stackTraceData->setFileServer(virtualFileServer);
+        }
+    }
+    else {
+        job->addMessage(ParsingMessageType::Error, 24, "Missing Root Group")
+            << "Invalid shot: the root event group is missing.";
     }
 
     //Create dependency tree

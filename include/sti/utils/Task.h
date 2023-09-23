@@ -15,6 +15,8 @@ namespace Utils
 enum class TaskStatus { Active, Inactive, Missing };
 
 class Task;
+class TaskScheduler;
+
 
 class Task
 {
@@ -30,7 +32,6 @@ public:
 	std::string getID() const;
 	virtual bool isActive() const;
 	virtual TaskStatus getStatus() const;
-	virtual void setStatus(const TaskStatus& newStatus);
 
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
@@ -44,7 +45,10 @@ public:
 	virtual bool repeat() = 0;		//After running, does the task repeat, or is it removed?
 
 private:
-	
+
+	friend TaskScheduler;
+	virtual void setStatus(const TaskStatus& newStatus);
+
 	std::string taskID;
 	TaskStatus status;
 	STI::Utils::MetaData metaData;

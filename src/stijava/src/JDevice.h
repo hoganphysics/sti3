@@ -28,6 +28,9 @@ class JDeviceMessageDispatcher;
 class JChannelManager;
 class JAttributeManager;
 class JPersistenceManager;
+class JProfileManager;
+class JTaskManager;
+class JLogManager;
 
 
 //Java Device wrapper
@@ -49,12 +52,19 @@ public:
 	bool refresh();
 //	virtual void write(unsigned input);	//temp
 
+	std::string getAttribute(const std::string& key);
+	bool setAttribute(const std::string& key, const std::string& value);
+
 	std::shared_ptr<STI::Device::JDeviceCollection> getCollection();
 	std::shared_ptr<STI::Device::JDeviceMessageDispatcher> getMessageDispatcher();
 	std::shared_ptr<STI::Engine::JEventEngineScheduler> getEngineScheduler();
 	std::shared_ptr<STI::Device::JChannelManager> getChannelManager();
 	std::shared_ptr<STI::Device::JAttributeManager> getAttributeManager();
 	std::shared_ptr<STI::Device::JPersistenceManager> getPersistenceManager();
+
+	std::shared_ptr<STI::Device::JProfileManager> getProfileManager();
+	std::shared_ptr<STI::Device::JTaskManager> getTaskManager();
+	std::shared_ptr<STI::Device::JLogManager> getLogManager();
 
 private:
 
@@ -66,6 +76,15 @@ private:
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
+	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager);
+	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager);
+	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager);
+
+	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
+	void stopRW();
+
+	bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
 
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}

@@ -2,8 +2,10 @@
 
 #include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/Measurement.h>
 
 #include "EventEngineDependencyTree.h"
+#include "TFileServerRefInterface.h"
 
 #include "NetworkConvert.h"
 #include "convert/Convert_Attribute.h"
@@ -18,6 +20,7 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TResultsCollector;
 using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
+using STI::Network::TFileServerRefInterface;
 
 
 RemoteResultsCollector::RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector)
@@ -57,7 +60,9 @@ STI::Engine::ShotID RemoteResultsCollector::getShotID() const
     return sid;
 }
 
-bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, const STI::Engine::MeasurementVector& measurements)
+bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& deviceID, 
+											 const STI::Engine::MeasurementVector& measurements, 
+											 const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer)
 {
 	std::unique_lock<std::mutex> collectorLock(collectorMutex);
 
@@ -65,12 +70,21 @@ bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& device
     
     bool success = false;
 
+    STI::TNetwork::TFileServer_var tFileServer;
+
+    if (!TFileServerRefInterface::getTFileServerReference(sourceFileServer, tFileServer)) {
+        return false;
+    }
+
     STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
 
 	try {
 		convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(measurements, tMeasurements);
 
-		success = getTRef()->addMeasurements(convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceID), tMeasurements);	//remote call
+		success = getTRef()->addMeasurements(
+							convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceID), 
+							tMeasurements,
+							tFileServer);	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

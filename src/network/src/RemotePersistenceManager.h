@@ -36,7 +36,14 @@ public:
     bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements);
 
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory);
-    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename);
+    void setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory) {}
+
+    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
+    std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
+
+    void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
+    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) { return false; }
 
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);
@@ -57,8 +64,4 @@ private:
 
 
 #endif
-
-
-
-
 

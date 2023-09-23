@@ -114,11 +114,13 @@ module TNetwork
 		void triggerFired(in TDeviceID id);
 	};
 
+	interface TFileServer;
+
 	interface TResultsCollector
 	{
 		TShotID getShotID();
 
-		boolean addMeasurements(in TDeviceID deviceID, in TMeasurementSeq measurements);
+		boolean addMeasurements(in TDeviceID deviceID, in TMeasurementSeq measurements, in TFileServer sourceFileServer);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
 	};
 
@@ -298,19 +300,49 @@ module TNetwork
 
 	interface TFileHolder
 	{
+		TFileID getID();
 		string getFilename();
+
 		boolean exists();
 		string md5Checksum();
 
 		boolean transferFile(in TFileHolder destination);
 		long maxBufferSize();
 
-		boolean deleteFile();
+		// boolean deleteFile();
 		
 		boolean write(in OctetSeq buffer);
+		// boolean writeString(in string buffer);	//appends string
 
 		boolean openFile();
+		// boolean openFileType(in TFileTransferType type, in long offset, out long maxBufferSize);
 		void closeFile();
+	};
+
+	
+
+	// interface TFileTransferTarget
+	// {
+	// 	//boolean prepareTarget(in TFileTransferType, out long maxBufferSize, in long offset);	//Check if exists, open file, return buffersize
+
+	// 	boolean exists();
+	// 	long maxBufferSize();
+	// 	string md5Checksum();
+
+	// 	boolean write(in OctetSeq buffer);
+	// 	boolean writeString(in string buffer);	//appends string
+
+	// 	boolean openFile(in TFileTransferType type, in long offset, out long maxBufferSize);
+	// 	void closeFile();
+	// };
+
+	interface TFileServer
+	{
+		boolean findFile(in TFileID fileID);
+		boolean getFileSize(in TFileID fileID, out long fileSize);
+		boolean transferFile(in TFileID source, in TFileHolder destination, in TFileTransferType type);
+		boolean transferFilePartial(in TFileID source, in TFileHolder destination, in long offset, in long lines);
+		boolean deleteFile(in TFileID fileID);
 	};
 
 };	//TNetwork

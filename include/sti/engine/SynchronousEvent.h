@@ -2,6 +2,7 @@
 #define STI_ENGINE_SYNCHRONOUSEVENT_H
 
 #include <sti/fwd/MixedValue_fwd.h>
+#include <sti/utils/FileHolder.h>
 
 #include <vector>
 #include <memory>
@@ -26,11 +27,13 @@ public:
 	virtual ~SynchronousEvent();
 
 	double getTime() const { return _time; }
+	void setTime(double time) { _time = time; }
 
 	const std::vector<std::shared_ptr<Measurement>>& getMeasurements() const { return measurements; }
 	void addMeasurement(const RawEvent& sourceEvent);
 	bool setMeasurementResult(const STI::Utils::MixedValue& result);
 	bool setMeasurementResult(unsigned index, const STI::Utils::MixedValue& result);
+	bool attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file);
 
 	void load();
 	void play();

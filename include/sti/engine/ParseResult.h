@@ -6,7 +6,7 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/fwd/RawEvent_fwd.h>
-#include <sti/utils/FileHolder.h>
+#include <sti/utils/FileServer.h>
 
 #include <vector>
 #include <memory>
@@ -35,7 +35,7 @@ public:
     std::vector<EngineParsingMessage> messages;
     std::shared_ptr<StackTraceResult> stackTraceResult;
 
-    static void deleteFiles(ParseResult& parsedResult);
+    static void deleteFiles(ParseResult& parsedResult, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
     template<class Archive>
     void serialize(Archive& archive);

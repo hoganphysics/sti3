@@ -3,11 +3,14 @@
 
 #include <sti/fwd/Measurement_fwd.h>
 
-#include <sti/utils/MixedValue.h>
 #include <sti/device/DeviceID.h>
 #include <sti/utils/GraphPathLabel.h>
+#include <sti/utils/VirtualFileServer.h>
+#include <sti/utils/FileHolder.h>
+#include <sti/utils/MixedValue.h>
 
 #include <string>
+
 
 namespace STI
 {
@@ -31,6 +34,8 @@ public:
 
 	void setMeasurementResult(const STI::Utils::MixedValue& result);
 	void extractMeasurementResult(STI::Utils::MixedValue& data);
+	bool attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file);
+	bool getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const;
 
 	bool dataReady() const;
 
@@ -68,6 +73,8 @@ private:
 
 	STI::Utils::GraphPathLabel measurementGraphPath;
 	std::string fullGroupName;
+
+	std::shared_ptr<STI::Utils::VirtualFileServer> fileServer;
 
 	STI::Device::DeviceID _device;
 

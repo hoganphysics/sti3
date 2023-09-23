@@ -63,8 +63,16 @@ public class FileHolder {
     return stiJNI.FileHolder_opNotEquals(swigCPtr, this, FileHolder.getCPtr(other), other);
   }
 
+  public FileID getID() {
+    return new FileID(stiJNI.FileHolder_getID(swigCPtr, this), true);
+  }
+
   public String getFilename() {
     return stiJNI.FileHolder_getFilename(swigCPtr, this);
+  }
+
+  public long getFileSize() {
+    return stiJNI.FileHolder_getFileSize(swigCPtr, this);
   }
 
   public boolean exists() {
@@ -77,10 +85,6 @@ public class FileHolder {
 
   public long maxBufferSize() {
     return stiJNI.FileHolder_maxBufferSize(swigCPtr, this);
-  }
-
-  public boolean deleteFile() {
-    return stiJNI.FileHolder_deleteFile(swigCPtr, this);
   }
 
   public String md5Checksum() {

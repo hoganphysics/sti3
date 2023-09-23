@@ -35,7 +35,6 @@ private:
 
 	std::shared_ptr<STI::Device::LocalDeviceMessageHandler> messageHandler;
 
-//	::STI::TNetwork::TRefreshIndicator_var tRefreshIndicator;
 	bool tRefreshIndicatorInstalled;
 
 	std::unique_ptr<STI::TNetwork::TReferenceHolder<STI::TNetwork::TRefreshIndicator>> tRefreshIndicatorHolder;

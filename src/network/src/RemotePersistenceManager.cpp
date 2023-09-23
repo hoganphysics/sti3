@@ -6,8 +6,10 @@
 #include "convert/Convert_SequenceResult.h"
 #include "generated/orbTypes.h"
 #include "NetworkFileHolder.h"
+#include "NetworkFileServer.h"
 #include "NetworkResultsCollector.h"
 #include <sti/engine/RawEvent.h>
+
 
 using STI::Network::NetworkResultsCollector;
 using STI::Network::RemotePersistenceManager;
@@ -41,7 +43,6 @@ using ::STI::TNetwork::TEngineJobStatus;
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
 : TReferenceHolder<TPersistenceManager>(manager, persistenceMutex)
 {
-	fileFactory = std::make_shared<STI::Network::NetworkFileHolderFactory>();
 }
 
 RemotePersistenceManager::~RemotePersistenceManager()
@@ -222,7 +223,6 @@ bool RemotePersistenceManager::getMeasurements(const STI::Engine::ShotID& sid, s
 
 	STI::TNetwork::TDeviceIDMeasurementsTupleSeq_var tDeviceIDMeasurementsTupleSeq_var(new STI::TNetwork::TDeviceIDMeasurementsTupleSeq);
 
-	// STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
 	measurements = std::make_shared<STI::Engine::MeasurementMap>();
 
 	bool success = false;
@@ -248,12 +248,23 @@ void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::U
 	//not allowed (FilHolderFactory can only be set locally)
 }
 
-std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& filename)
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
 {
-	return fileFactory->makeFileHolder(filename);
+	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
+	return fileHolder;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
+{
+	std::shared_ptr<STI::Utils::FileHolder> fileHolder; //null
+	return fileHolder;
+}
 
+std::shared_ptr<STI::Utils::VirtualFileServer> RemotePersistenceManager::makeVirtualFileServer()
+{
+	auto fileServer = std::shared_ptr<STI::Network::NetworkVirtualFileServer>();
+	return fileServer;
+}
 
 void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)
 {

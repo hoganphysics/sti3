@@ -15,7 +15,6 @@ using STI::Device::LogRecordStatus;
 
 void init_LogRecord(py::module& m)
 {
-    //LogRecordStatus { Unqueried, LogsPresent, NoLogs, Error };
     
     py::enum_<LogRecordStatus>(m, "LogRecordStatus")
         .value("Unqueried", LogRecordStatus::Unqueried)
