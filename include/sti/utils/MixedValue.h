@@ -69,6 +69,7 @@ public:
 	MixedValue(const std::shared_ptr<STI::Utils::Image>& value);
 	MixedValue(const std::string& value);
 	MixedValue(const char* value);
+	MixedValue(const std::vector<std::string>& values);
 
 	virtual ~MixedValue();
 
@@ -117,6 +118,7 @@ public:
 	void setValue(const std::shared_ptr<STI::Utils::Image>& value);
 	void setValue(const std::string& value);
 	void setValue(const MixedValue& value);
+	void setValue(const std::vector<std::string>& values);
 	void setValue();	//Empty
 
 	void setValue(const char* value) { setValue(std::string(value)); }
@@ -124,6 +126,8 @@ public:
 
 	void setValue(short value) { setValue(static_cast<int>(value)); }
 	void setValue(unsigned short value) { setValue(static_cast<int>(value)); }
+	void setValue(unsigned value) { setValue(static_cast<int>(value)); }
+	void setValue(size_t value) { setValue(static_cast<int>(value)); }
 
 	void clear();
 
@@ -137,12 +141,22 @@ public:
 			values.push_back(MixedValue());		//empty
 			values.back().setValue(value);
 		}
-		catch (const std::bad_variant_access& ex) {
+		catch (const std::bad_variant_access&) {
 		}
 	}
 
 	void addValue(const MixedValue& value);
 	void addValue(const int& value);
+
+	template<typename T>
+	void addValue(const std::string& label, const T& value)
+	{
+		//add labeled value pair {label, value}
+		MixedValue pair;
+		pair.addValue(label);
+		pair.addValue(value);
+		addValue(pair);
+	}
 
 	MixedValueType getType() const;
 	bool isType(const MixedValueType& mixedValueType) const;
@@ -153,6 +167,7 @@ public:
 	double getNumber() const;
 	std::string getString() const;
 	const MixedValueVector& getVector() const;
+	MixedValueVector& vec();
 	std::shared_ptr<STI::Utils::BinaryData> getBinary() const;
 	FileID getFileID() const;
 	std::shared_ptr<STI::Utils::Image> getImage() const;
@@ -235,7 +250,7 @@ private:
 				// values.back().swap(oldValue);
 			}
 		}
-		catch (const std::bad_variant_access& ex) {
+		catch (const std::bad_variant_access&) {
 			// swap(oldValue);		//error; reset value
 		}
 

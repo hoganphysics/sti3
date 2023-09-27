@@ -82,6 +82,12 @@ LocalChannel& LocalChannel::addMetaData(const std::string& key, const STI::Utils
 	return (*this);
 }
 
+LocalChannel& LocalChannel::addMetaDataList(const std::string& key, const std::vector<std::string>& values)
+{
+    STI::Utils::MixedValue value(values);
+    return addMetaData(key, value);
+}
+
 const STI::Utils::MixedValue& LocalChannel::getMetaData() const
 {
     std::unique_lock<std::mutex> channelLock(chMutex);

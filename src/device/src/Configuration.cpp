@@ -235,6 +235,18 @@ bool Configuration::hasPrefix(const std::string& item, const std::string& prefix
     return false;
 }
 
+std::string Configuration::chopPrefix(const std::string& item, const std::string& prefix)
+{
+	if (item.compare(prefix) == 0) return "";
+
+	auto found = item.find(prefix);
+	if (found == 0 && item.size() > prefix.size()) {
+
+		return item.substr(prefix.size() + 1, std::string::npos);
+	}
+	return item;
+}
+
 Configuration Configuration::extract(const std::string& section) const
 {
 	//could support subsections
@@ -251,7 +263,7 @@ Configuration Configuration::extract(const std::string& section) const
     //find all sections names with the prefix 'section'
     while (it != configData.end()) {
         if (hasPrefix(it->first, section)) {
-			config + Configuration({{it->first, getParameters(it->first)}});
+			config + Configuration({{chopPrefix(it->first, section), getParameters(it->first)}});
         }
         ++it;
     }
@@ -267,6 +279,44 @@ Configuration Configuration::extract(const std::vector<std::string>& sections) c
 
 	for (auto& section : sections) {
 		config + extract(section);
+	}
+	return config;
+}
+
+
+
+Configuration Configuration::filter(const std::string& section) const
+{
+	//could support subsections
+	//[Camera 1]
+	//[Camera 1.STI]
+	//[.Network]
+	//config.extract("Camera 1.*")
+	//config.extract(dev + ".*")
+
+	Configuration config;
+
+	auto it = configData.find(section);
+
+	//find all sections names with the prefix 'section'
+	while (it != configData.end()) {
+		if (hasPrefix(it->first, section)) {
+			config + Configuration({ {it->first, getParameters(it->first)} });
+		}
+		++it;
+	}
+
+	// return Configuration({{section, getParameters(section)}});
+
+	return config;
+}
+
+Configuration Configuration::filter(const std::vector<std::string>& sections) const
+{
+	Configuration config;
+
+	for (auto& section : sections) {
+		config + filter(section);
 	}
 	return config;
 }

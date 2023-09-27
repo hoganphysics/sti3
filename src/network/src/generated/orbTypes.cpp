@@ -449,10 +449,9 @@ STI::TNetwork::TImage::operator>>= (cdrStream &_n) const
   (const TStringPairSeq&) metaData >>= _n;
   _n.marshalString(filename,0);
   _n.marshalString(extension,0);
+  (const TFileID&) fileID >>= _n;
   height >>= _n;
   width >>= _n;
-  _n.marshalBoolean(isChild);
-  (const TImageSeq&) children >>= _n;
 
 }
 
@@ -463,10 +462,9 @@ STI::TNetwork::TImage::operator<<= (cdrStream &_n)
   (TStringPairSeq&)metaData <<= _n;
   filename = _n.unmarshalString(0);
   extension = _n.unmarshalString(0);
+  (TFileID&)fileID <<= _n;
   (::CORBA::Long&)height <<= _n;
   (::CORBA::Long&)width <<= _n;
-  isChild = _n.unmarshalBoolean();
-  (TImageSeq&)children <<= _n;
 
 }
 

@@ -1932,13 +1932,11 @@ _CORBA_MODULE_BEG
 
       ::CORBA::String_member extension;
 
+      TFileID fileID;
+
       ::CORBA::Long height;
 
       ::CORBA::Long width;
-
-      ::CORBA::Boolean isChild;
-
-      TImageSeq children;
 
     
 

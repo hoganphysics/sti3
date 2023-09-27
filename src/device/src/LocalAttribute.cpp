@@ -113,7 +113,14 @@ bool LocalAttribute::_refresh(const std::string& oldValue)
 {
     bool changed = false;
 
-    value_ = refreshValueCallback();
+    std::string newValue;
+
+    if (refreshValueCallback(newValue)) {
+        value_ = newValue;
+    }
+    else {
+        return false;
+    }
 
     //Fires refresh message if value_ has changed.
     if (value_.compare(oldValue) != 0) {
@@ -133,6 +140,15 @@ void LocalAttribute::_fireRefreshEvent()
 }
 
 LocalAttribute& LocalAttribute::setRefresher(const std::function<std::string(void)>& refresher)
+{
+    return setRefresher(
+        [refresher](std::string& result) -> bool {
+            result = refresher();
+            return true;
+        });
+}
+
+LocalAttribute& LocalAttribute::setRefresher(const std::function<bool(std::string&)>& refresher)
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
 

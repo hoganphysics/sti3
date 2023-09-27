@@ -51,10 +51,13 @@ def settag(name, group="") :
 
 def event(channel, time, value, group="") :
     return _event(channel, time, value, _makeStackTrace(), group)
-def meas(channel, time, value, group="") :
-    return _meas(channel, time, value, _makeStackTrace(), group)
-def meas(channel, time, group="") :
-    return _meas(channel, time, _makeStackTrace(), group)
+def meas(channel, time, value=None, group="") :
+    if value == None:
+        return _meas(channel, time, _makeStackTrace(), group)
+    else:
+        return _meas(channel, time, value, _makeStackTrace(), group)
+#def meas(channel, time, group="") :
+#    return _meas(channel, time, _makeStackTrace(), group)
 
 def makesequence(shotmaker, varsTable=None) :
     return STIPySequence(shotmaker, varsTable)

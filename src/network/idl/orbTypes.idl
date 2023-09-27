@@ -137,11 +137,13 @@ module TNetwork
 		string filename;
 		string extension;
 
+		TFileID fileID;
+
 		long height;
 		long width;
 
-		boolean isChild;
-		TImageSeq children;
+		//boolean isChild;
+		//TImageSeq children;
 	};
 
 

@@ -60,7 +60,7 @@ add_library(stidevice SHARED
     BinaryData.cpp
     ConfigFile.cpp
     Configuration.cpp
-    DefaultImageWriter.cpp
+    # DefaultImageWriter.cpp
     DeviceEventParser.cpp
     DeviceID.cpp
     DeviceMessage.cpp

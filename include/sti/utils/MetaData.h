@@ -27,10 +27,11 @@ public:
     {
         MixedValue mixedValue;
         mixedValue.setValue(value);
-        addMetaData(key, value);
+        addMetaData(key, (const STI::Utils::MixedValue&) value);
     }
 
     void addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
+
     bool resetMetaDataEntry(const std::string& key, const STI::Utils::MixedValue& newValue);
     
     void removeMetaData(const std::string& key);

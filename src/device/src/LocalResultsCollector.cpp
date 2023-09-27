@@ -1,5 +1,5 @@
 #include "LocalResultsCollector.h"
-#include "DefaultImageWriter.h"
+//#include "DefaultImageWriter.h"
 
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
@@ -88,60 +88,87 @@ bool LocalResultsCollector::addMeasurements(const DeviceID& deviceID, const Meas
 
     bool success = true;
 
-    //on results destination
-    STI::Utils::MixedValue filedata;
+    //Need to cache FileIDs during transfer to make sure to only transfer each file
+    //and image data once, since Measurements can share references.
+    std::map<STI::Utils::FileID, STI::Utils::FileID> cachedIDs; 
 
     for (auto& meas : measurements) {
-        if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::File) {
-            //possibly do this in 
-            meas->extractMeasurementResult(filedata);
-            auto remoteFileID = filedata.getFileID();     //remote file, to be transfered
 
-            
+        if (meas == 0) continue;
 
-            // std::string localPath = resultsDocumenter->makeLocalPath(sid, fileHandle->getFilename());
-            
+        STI::Utils::MixedValue data;
+        meas->extractMeasurementResult(data);
+        success &= transferValue(data, cachedIDs, sourceFileServer);
+        meas->setMeasurementResult(data);
+    }
+    return success;
+}
+
+bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data, std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer)
+{
+    bool success = false;
+
+    if (data.getType() == STI::Utils::MixedValueType::Vector) {
+        success = true;
+        for (auto& v : data.vec()) {
+            success &= transferValue(v, cachedFileIDs, sourceFileServer);
+        }
+    }
+    else if (data.getType() == STI::Utils::MixedValueType::File) {
+        
+        auto remoteFileID = data.getFileID();     //remote file, to be transfered
+
+        auto it = cachedFileIDs.find(remoteFileID);
+
+        if (it == cachedFileIDs.end()) {
+            //new file
             auto localFileHandle = makeLocalFileHandle(resultsPaths.dataPath, remoteFileID);
-            
-            // auto localFileHandle = fileHolderFactory->makeFileHolder(localPath);
-            
+
             //transfer file to local
-            if (sourceFileServer != 0 && 
-                sourceFileServer->transferFile(remoteFileID, localFileHandle, STI::Utils::FileTransferType::Binary)) 
+            if (sourceFileServer != 0 &&
+                sourceFileServer->transferFile(remoteFileID, localFileHandle, STI::Utils::FileTransferType::Binary))
             {
                 //sucess; delete remote?
-                success &= true;
-                filedata.setValue(localFileHandle->getID());
-                meas->setMeasurementResult(filedata);
+                success = true;
+                cachedFileIDs[remoteFileID] = localFileHandle->getID();
+                data.setValue(cachedFileIDs[remoteFileID]);
             }
-            else {
-                success = false;
-            }
-
+            
         }
-        else if (meas != 0 && meas->data().getType() == STI::Utils::MixedValueType::Image) {
-            STI::Utils::MixedValue imagedata;
-            meas->extractMeasurementResult(imagedata);
-            
-            auto imageWritter = std::make_shared<STI::Utils::DefaultImageWriter>(fileHolderFactory);
-
-            auto imageHandle = filedata.getImage();
-            imageHandle->writeToFile(imageWritter, resultsPaths.dataPath);
-
-            std::shared_ptr<STI::Utils::FileHolder> fileHandle;
-            
-            // //transfer file to local
-            // if (imageHandle->getFile(fileHandle) && fileHandle->transferFile(localFileHandle)) {
-            //     //sucess; delete remote?
-            //     success &= true;
-            //     filedata.setValue(localFileHandle);
-            //     meas->setMeasurementResult(filedata);
-            // }
-            // else {
-            //     success = false;
-            // }
+        else {
+            //already transferred this file
+            success = true;
+            data.setValue(it->second);
         }
 
+    }
+    else if (data.getType() == STI::Utils::MixedValueType::Image) {
+
+        auto imageHandle = data.getImage();
+        auto remoteFileID = imageHandle->getFileID();   //images have a unique FileID, even if stored as BinaryData
+
+        auto it = cachedFileIDs.find(remoteFileID);
+
+        if (it == cachedFileIDs.end()) {
+            //new image
+            auto localFileHandle = makeLocalFileHandle(resultsPaths.dataPath, remoteFileID);
+
+            if (sourceFileServer != 0 && imageHandle->write(sourceFileServer, localFileHandle)) {
+                //success
+                success = true;
+                cachedFileIDs[remoteFileID] = localFileHandle->getID();
+                imageHandle->setImageData(localFileHandle);
+            }
+        }
+        else {
+            //already transferred this image
+            success = true;
+            data.setValue(it->second);
+        }        
+    }
+    else {
+        //do nothing for all other MixedValue types
+        success = true;
     }
     return success;
 }
@@ -167,7 +194,7 @@ std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalFileHand
     auto uniqueLocalFilename = STI::Utils::makeUniquePath( localPath.string() );
     fs::path uniqueLocalPath = uniqueLocalFilename;
 
-    auto localFileHandle = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path(), uniqueLocalPath.filename());
+    auto localFileHandle = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path().string(), uniqueLocalPath.filename().string());
 
     return localFileHandle;
 }

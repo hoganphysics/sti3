@@ -103,6 +103,13 @@ MixedValue::MixedValue(const char* value)
 	setValue(value);
 }
 
+
+MixedValue::MixedValue(const std::vector<std::string>& values)
+{
+	setValue(values);
+}
+
+
 MixedValue::~MixedValue()
 {
 }
@@ -272,6 +279,15 @@ void MixedValue::setValue(const std::shared_ptr<STI::Utils::Image>& value)
 
 	value_v = value;
 	type = MixedValueType::Image;
+}
+
+void MixedValue::setValue(const std::vector<std::string>& values)
+{
+	clear();
+
+	for (auto& v : values) {
+		addValue(v);
+	}
 }
 
 void MixedValue::setValue(const MixedValue& value)
@@ -505,6 +521,18 @@ const MixedValueVector& MixedValue::getVector() const
 	return empty;
 }
 
+MixedValueVector& MixedValue::vec()
+{
+	try {
+		auto& result = std::get<MixedValueVector>(value_v);
+		return result;
+	}
+	catch (const std::bad_variant_access& ex) {
+	}
+
+	return empty;
+}
+
 std::shared_ptr<STI::Utils::BinaryData> MixedValue::getBinary() const
 {
 	try {
@@ -628,9 +656,7 @@ std::string MixedValue::print() const
 			auto image = getImage();
 			result << "Image(";
 			if (image != 0) {
-				result << image->getFilename();
-				result << ".";
-				result << image->getExtension();
+				result << image->getFileID().print();
 				result << ", height=" << image->getHeight();
 				result << ", width=" << image->getWidth();
 			}

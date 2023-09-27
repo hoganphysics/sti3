@@ -52,6 +52,7 @@ public:
 	}
 
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
+	LocalChannel& addMetaDataList(const std::string& key, const std::vector<std::string>& values);
 
 	void addRefreshListener(ChannelRefreshListener* listener);
 

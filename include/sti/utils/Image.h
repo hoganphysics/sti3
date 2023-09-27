@@ -5,6 +5,7 @@
 #include <sti/utils/CachedValue.h>
 #include <sti/utils/MetaData.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/FileID.h>
 
 #include <string>
 #include <memory>
@@ -16,20 +17,25 @@ namespace STI
 namespace Utils
 {
 
-class ImageWriter;
+//class ImageWriter;
 class MixedValue;
-
+class FileServer;
 
 class Image
 {
 public:
 
-    Image();
-    Image(const std::string& filename);
-    Image(const std::string& filename, const std::shared_ptr<ImageWriter>& writter);
-    ~Image();
+    Image();    //serialization
+    Image(const std::string& orginID, const std::string& filename);
+    //Image(const std::string& filename);
+    Image(const FileID& fileID);
+    //Image(const std::string& filename, const std::shared_ptr<ImageWriter>& writter);
+    virtual ~Image();
 
-    std::shared_ptr<Image> makeChildImage();
+    //std::shared_ptr<Image> makeChildImage();
+
+    FileID getFileID() const;
+    void setFileID(const FileID& fileID);
 
     //image dimensions
 
@@ -40,7 +46,7 @@ public:
 
     Image& setMetaData(const std::string& key, const MixedValue& value);
 
-    void setWriter(const std::shared_ptr<ImageWriter>& writer);  //custom writer
+    //void setWriter(const std::shared_ptr<ImageWriter>& writer);  //custom writer
 
     void setImageData(const std::shared_ptr<FileHolder>& file);
 
@@ -59,18 +65,18 @@ public:
 
     MetaData metaData;
 
-    void writeToFile(const std::shared_ptr<ImageWriter>& writer, const std::string& targetDirectory);
+    //void writeToFile(const std::shared_ptr<ImageWriter>& writer, const std::string& targetDirectory);
+
+    bool write(const std::shared_ptr<FileServer>& sourceFileServer, const std::shared_ptr<FileHolder>& destination);
 
     bool getData(std::shared_ptr<BinaryData>& data) const;
     bool getFile(std::shared_ptr<FileHolder>& file) const;
 
-    std::string getFilename() const;
-    std::string getExtension() const;
     unsigned getHeight() const;
     unsigned getWidth() const;
 
-    bool isChild() const;
-    const std::vector<std::shared_ptr<Image>>& getChildren() const;
+    //bool isChild() const;
+    //const std::vector<std::shared_ptr<Image>>& getChildren() const;
 
     bool operator==(const Image& other) const;
     bool operator!=(const Image& other) const;
@@ -91,17 +97,19 @@ private:
 
     // std::shared_ptr<BinaryData> thumbnail;
 
-    std::shared_ptr<ImageWriter> customWriter;
+    //std::shared_ptr<ImageWriter> customWriter;
 
-    std::string filename_;
-    std::string extension_;     //tif, png, etc.
+    //std::string filename_;
+    //std::string extension_;     //tif, png, etc.
+
+    FileID fileID;
 
     unsigned height_;
     unsigned width_;
 
-    std::vector<std::shared_ptr<Image>> children;
+    //std::vector<std::shared_ptr<Image>> children;
 
-    bool isChild_;   //child images are written by the parent image
+    //bool isChild_;   //child images are written by the parent image
 
 };
 

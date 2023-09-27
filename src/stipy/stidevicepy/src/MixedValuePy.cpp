@@ -132,6 +132,13 @@ void MixedValuePy::setValue_py(const py::object& value)
             addValue_py(obj);
         }
     }
+
+    if (value && py::isinstance<py::tuple>(value)) {
+        const py::tuple& list_vals = value.cast<py::tuple>();
+        for (const py::handle& obj : list_vals) {
+            addValue_py(obj);
+        }
+    }
 }
 
 void MixedValuePy::addValue_py(const py::handle& value)
@@ -162,6 +169,19 @@ void MixedValuePy::addValue_py(const py::handle& value)
         //     }
         //     addValue_py(newListVal);
         // }
+
+        //Make and add new sublist
+        MixedValuePy newListVal;
+
+        for (const py::handle& obj : list_vals) {
+            newListVal.addValue_py(obj);
+        }
+        addValue_py(newListVal);
+    }
+
+    if (value && py::isinstance<py::tuple>(value)) {
+
+        const py::tuple& list_vals = value.cast<py::tuple>();
 
         //Make and add new sublist
         MixedValuePy newListVal;

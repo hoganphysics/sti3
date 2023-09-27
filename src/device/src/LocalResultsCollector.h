@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 #include <mutex>
-
+#include <map>
 
 namespace STI
 {
@@ -45,6 +45,8 @@ public:
     std::shared_ptr<ParseResult> getParseResults() const;
 
 private:
+
+    bool transferValue(STI::Utils::MixedValue& data, std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
 
     std::shared_ptr<STI::Utils::FileHolder> makeLocalFileHandle(const std::string& basePath, const STI::Utils::FileID& remoteFileID);
 

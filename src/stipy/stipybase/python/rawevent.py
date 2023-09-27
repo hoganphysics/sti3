@@ -3,7 +3,7 @@ from stipy.bin.stipybase import RawEventType
 
 
 def print(self):
-    if self.type() == RawEventType.MeasurementEvent:
+    if self.type() == RawEventType.Measurement:
         header = "meas"
     elif self.type() == RawEventType.Waveform:
         header = "waveform"

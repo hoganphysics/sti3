@@ -586,6 +586,17 @@ void LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelT
 	localChannelManager->addChannel(channel);
 }
 
+LocalChannel& LocalDevice::addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+	return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, outputType, defaultName);
+}
+
+LocalChannel& LocalDevice::addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+	return addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, outputType, defaultName);
+}
+
+
 
 void LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, 
 								std::shared_ptr<STI::Device::LocalAttribute>& attribute)

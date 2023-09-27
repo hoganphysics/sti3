@@ -114,8 +114,8 @@ unsigned StackTraceData::addFile(const std::string& filename)
     STI::Utils::FileID fileID;
     fs::path filepath = filename;
     
-    fileID.filename = filepath.filename();
-    fileID.path = filepath.parent_path();
+    fileID.filename = filepath.filename().string();
+    fileID.path = filepath.parent_path().string();
     fileID.origin = localID.getID();
     fileID.persistenceLocation = localID.getID();
 

@@ -567,18 +567,18 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
     getResultsPaths(sid, resultsPaths);
     resultsPaths.dataPath;
 
-    //if any measurements are Images with a custom writter, write to disk now before transferring
-    std::shared_ptr<STI::Utils::ImageWriter> dummyWriter;     //hack; use null writter so only Images with a custom writter will be written
+    ////if any measurements are Images with a custom writter, write to disk now before transferring
+    //std::shared_ptr<STI::Utils::ImageWriter> dummyWriter;     //hack; use null writter so only Images with a custom writter will be written
 
-    if (fullShotResult != 0 && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
-        for (auto& tuple : *(fullShotResult->shotResult->measurements)) {
-            for (auto& m : tuple.second) {
-                if (m != 0 && m->data().isType(STI::Utils::MixedValueType::Image)) {
-                    m->data().getImage()->writeToFile(dummyWriter, resultsPaths.dataPath);
-                }
-            }
-        }        
-    }
+    //if (fullShotResult != 0 && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
+    //    for (auto& tuple : *(fullShotResult->shotResult->measurements)) {
+    //        for (auto& m : tuple.second) {
+    //            if (m != 0 && m->data().isType(STI::Utils::MixedValueType::Image)) {
+    //                m->data().getImage()->writeToFile(dummyWriter, resultsPaths.dataPath);
+    //            }
+    //        }
+    //    }        
+    //}
     
     return addToBuffer(fullShotResult);
 
@@ -810,7 +810,7 @@ void LocalPersistenceManager::transferParseResult(std::shared_ptr<ParseResult> p
         auto uniqueFilename = STI::Utils::makeUniquePath( localPath.string() );
         fs::path uniquePath = uniqueFilename;
 
-        auto localFileHandle = fileHolderFactory->makeFileHolder(uniquePath.parent_path(), uniquePath.filename());
+        auto localFileHandle = fileHolderFactory->makeFileHolder(uniquePath.parent_path().string(), uniquePath.filename().string());
 
         if (stackTraceData->getFileServer(remoteFileServer)) {
             //transfer file to local
