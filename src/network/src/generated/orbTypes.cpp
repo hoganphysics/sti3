@@ -193,6 +193,9 @@ STI::TNetwork::TMixedBinaryData::operator>>= (cdrStream& _n) const
     case BinaryDouble:
       (const _CORBA_Unbounded_Sequence_w_FixSizeElement< ::CORBA::Double, 8, 8 > &) (*_pd_data_double) >>= _n;
       break;
+    case BinaryStream:
+      TBinaryDataStream_Helper::marshalObjRef(_pd_data_stream,_n);
+      break;
 
   }
 }
@@ -252,6 +255,10 @@ STI::TNetwork::TMixedBinaryData::operator<<= (cdrStream& _n)
       _pd_data_double = new _CORBA_Unbounded_Sequence_w_FixSizeElement< ::CORBA::Double, 8, 8 > ;
       (*_pd_data_double) <<= _n;
 
+      break;
+    case BinaryStream:
+      _pd__default = 0;
+      _pd_data_stream = TBinaryDataStream_Helper::unmarshalObjRef(_n);
       break;
 
   }

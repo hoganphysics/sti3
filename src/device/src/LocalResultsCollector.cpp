@@ -191,8 +191,9 @@ std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalFileHand
 
     localPath /= remotePath.filename();
 
-    auto uniqueLocalFilename = STI::Utils::makeUniquePath( localPath.string() );
+    auto uniqueLocalFilename = STI::Utils::makeUniquePath( localPath.string());
     fs::path uniqueLocalPath = uniqueLocalFilename;
+    uniqueLocalPath.make_preferred();
 
     auto localFileHandle = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path().string(), uniqueLocalPath.filename().string());
 

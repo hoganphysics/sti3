@@ -144,7 +144,7 @@ bool Image::write(const std::shared_ptr<FileServer>& sourceFileServer, const std
         destination->openFile();
 
         char* data;
-        imageData.get()->get(data, false);  //keep ownership
+        imageData.get()->getBytes(data, false);  //keep ownership
         success = destination->write(data, imageData.get()->bytes());
 
         destination->closeFile();

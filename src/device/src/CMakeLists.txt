@@ -82,6 +82,7 @@ add_library(stidevice SHARED
     IntervalTask.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
+    LocalBinaryDataStream.cpp
     LocalChannel.cpp
     LocalChannelManager.cpp
     LocalDevice.cpp

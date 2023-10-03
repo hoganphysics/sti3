@@ -297,7 +297,7 @@ void MixedValue::setValue(const MixedValue& value)
 
 void MixedValue::setValueMixed(const MixedValue& value)
 {
-	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
+	//{ Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Number, Any}
 
 	switch( value.getType() )
 	{
@@ -418,6 +418,31 @@ MixedValueType MixedValue::getType() const
 bool MixedValue::isType(const MixedValueType& mixedValueType) const
 {
 	return type == mixedValueType;
+}
+
+bool MixedValue::isType(const std::vector<MixedValueType>& types) const
+{
+	if (!isType(MixedValueType::Vector)) return false;
+
+	const MixedValueVector& vecItems = getVector();
+
+	if (types.size() != vecItems.size()) return false;
+
+	bool match = true;
+
+	unsigned i = 0;
+	for (auto& t : types) {
+		match &= (t == MixedValueType::Any) || vecItems.at(i).isType(t) 
+			|| (t == MixedValueType::Number && vecItems.at(i).isNumber());
+		i++;
+	}
+	return match;
+}
+
+bool MixedValue::isNumber() const
+{
+	return isType(MixedValueType::Int) || isType(MixedValueType::Double)
+		|| isType(MixedValueType::Boolean) || isType(MixedValueType::Number);
 }
 
 bool MixedValue::getBoolean() const
@@ -677,7 +702,7 @@ std::string MixedValue::print() const
 
 std::string MixedValue::TypeToString(const MixedValueType& type)
 {
-	//{ Empty, Boolean, Int, Double, String, Vector, File, Image, Any};
+	//{ Empty, Boolean, Int, Double, String, Vector, File, Image, Number, Any};
 	std::string result = "";
 	
 	switch (type)
@@ -711,6 +736,9 @@ std::string MixedValue::TypeToString(const MixedValueType& type)
 		break;
 	case MixedValueType::Image:
 		result = "Image";
+		break;
+	case MixedValueType::Number:
+		result = "Number";
 		break;
 	case MixedValueType::Any:
 		result = "Any";

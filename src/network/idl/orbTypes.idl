@@ -90,7 +90,9 @@ module TNetwork
 	interface TFileHolder;
 	typedef sequence<TFileHolder> TFileHolderSeq;
 
-	enum TBinaryType { BinaryChar, BinaryUChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble };
+	enum TBinaryType { BinaryChar, BinaryUChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble, BinaryStream };
+
+	interface TBinaryDataStream;
 
 	union TMixedBinaryData switch(TBinaryType)
 	{
@@ -102,6 +104,7 @@ module TNetwork
 		case BinaryLong: 	sequence<long> 				data_long;
 		case BinaryFloat: 	sequence<float> 			data_float;
 		case BinaryDouble: 	sequence<double> 			data_double;
+		case BinaryStream:	TBinaryDataStream			data_stream;
 	};
 
 	struct TBinaryData
@@ -109,7 +112,8 @@ module TNetwork
 		short wordsize;
 		TMixedBinaryData data;
 	};
-	
+
+
 	struct TImage;
 	typedef sequence<TImage> TImageSeq;
 
@@ -149,7 +153,7 @@ module TNetwork
 
 	union TMixedValue;
 	typedef sequence<TMixedValue> TMixedValueSeq;
-	enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueBinary, MixedValueFile, MixedValueImage, MixedValueAny};
+	enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueBinary, MixedValueFile, MixedValueImage, MixedValueNumber, MixedValueAny};
 	
 	union TMixedValue switch(TMixedValueType) 
 	{

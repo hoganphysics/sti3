@@ -160,6 +160,9 @@ public:
 
 	MixedValueType getType() const;
 	bool isType(const MixedValueType& mixedValueType) const;
+	bool isType(const std::vector<MixedValueType>& types) const;
+	bool isNumber() const;
+	
 
 	bool getBoolean() const;
 	int getInt() const;
@@ -278,7 +281,7 @@ private:
 
 	MixedValueType type;
 
-	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Any}
+	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Number, Any}
 	typedef std::variant<std::monostate, 
 						bool, 
 						int, 

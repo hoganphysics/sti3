@@ -19,16 +19,16 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTaskStatus = _0RL_tc_STI_mTNetwork_mTTaskStatus;
 #endif
 
-static const char* _0RL_enumMember_STI_mTNetwork_mTMixedValueType[] = { "MixedValueEmpty", "MixedValueBoolean", "MixedValueInt", "MixedValueDouble", "MixedValueString", "MixedValueVector", "MixedValueVectorInt", "MixedValueBinary", "MixedValueFile", "MixedValueImage", "MixedValueAny" };
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValueType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TMixedValueType:1.0", "TMixedValueType", _0RL_enumMember_STI_mTNetwork_mTMixedValueType, 11, &_0RL_tcTrack);
+static const char* _0RL_enumMember_STI_mTNetwork_mTMixedValueType[] = { "MixedValueEmpty", "MixedValueBoolean", "MixedValueInt", "MixedValueDouble", "MixedValueString", "MixedValueVector", "MixedValueVectorInt", "MixedValueBinary", "MixedValueFile", "MixedValueImage", "MixedValueNumber", "MixedValueAny" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValueType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TMixedValueType:1.0", "TMixedValueType", _0RL_enumMember_STI_mTNetwork_mTMixedValueType, 12, &_0RL_tcTrack);
 static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTMixedValue = CORBA::TypeCode::PR_forward_tc("IDL:STI/TNetwork/TMixedValue:1.0", &_0RL_tcTrack);
 #define _0RL_tc_STI_mTNetwork_mTMixedValue _0RL_ft_STI_mTNetwork_mTMixedValue
 
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValueSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMixedValueSeq:1.0", "TMixedValueSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMixedValue, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-static const char* _0RL_enumMember_STI_mTNetwork_mTBinaryType[] = { "BinaryChar", "BinaryUChar", "BinaryUShort", "BinaryShort", "BinaryULong", "BinaryLong", "BinaryFloat", "BinaryDouble" };
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTBinaryType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TBinaryType:1.0", "TBinaryType", _0RL_enumMember_STI_mTNetwork_mTBinaryType, 8, &_0RL_tcTrack);
+static const char* _0RL_enumMember_STI_mTNetwork_mTBinaryType[] = { "BinaryChar", "BinaryUChar", "BinaryUShort", "BinaryShort", "BinaryULong", "BinaryLong", "BinaryFloat", "BinaryDouble", "BinaryStream" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTBinaryType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TBinaryType:1.0", "TBinaryType", _0RL_enumMember_STI_mTNetwork_mTBinaryType, 9, &_0RL_tcTrack);
 static CORBA::PR_unionMember _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData[] = {
   {"data_uchar", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_char_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryUChar},
   {"data_char", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_char_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryChar},
@@ -37,12 +37,13 @@ static CORBA::PR_unionMember _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData[] 
   {"data_ulong", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_ulong_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryULong},
   {"data_long", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_long_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryLong},
   {"data_float", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_float_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryFloat},
-  {"data_double", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_double_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryDouble}
+  {"data_double", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_double_tc(), &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryDouble},
+  {"data_stream", CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStream:1.0", "TBinaryDataStream", &_0RL_tcTrack), (CORBA::PR_unionDiscriminator)STI::TNetwork::BinaryStream}
 };
 #ifdef _0RL_tc_STI_mTNetwork_mTMixedBinaryData
 #  undef _0RL_tc_STI_mTNetwork_mTMixedBinaryData
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedBinaryData = CORBA::TypeCode::PR_union_tc("IDL:STI/TNetwork/TMixedBinaryData:1.0", "TMixedBinaryData", _0RL_tc_STI_mTNetwork_mTBinaryType, _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData, 8, -1, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedBinaryData = CORBA::TypeCode::PR_union_tc("IDL:STI/TNetwork/TMixedBinaryData:1.0", "TMixedBinaryData", _0RL_tc_STI_mTNetwork_mTBinaryType, _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData, 9, -1, &_0RL_tcTrack);
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTBinaryData[] = {
   {"wordsize", CORBA::TypeCode::PR_short_tc()},
   {"data", _0RL_tc_STI_mTNetwork_mTMixedBinaryData}

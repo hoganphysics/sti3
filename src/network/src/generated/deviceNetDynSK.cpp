@@ -325,6 +325,24 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileServer = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileServer:1.0", "TFileServer", &_0RL_tcTrack);
 #endif
 
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TBinaryDataStreamTarget = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStreamTarget:1.0", "TBinaryDataStreamTarget", &_0RL_tcTrack);
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TBinaryDataStreamTarget = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStreamTarget:1.0", "TBinaryDataStreamTarget", &_0RL_tcTrack);
+#endif
+
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TBinaryDataStream = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStream:1.0", "TBinaryDataStream", &_0RL_tcTrack);
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TBinaryDataStream = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStream:1.0", "TBinaryDataStream", &_0RL_tcTrack);
+#endif
+
 static void _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn(cdrStream& _s, void* _v)
 {
   STI::TNetwork::TDeviceNode* _p = (STI::TNetwork::TDeviceNode*)_v;
@@ -1563,6 +1581,110 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr* _op)
       _o = (STI::TNetwork::TFileServer_ptr)_r->_ptrToObjRef(STI::TNetwork::TFileServer::_PD_repoId);
     else
       _o = STI::TNetwork::TFileServer::_nil();
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_marshal_fn(cdrStream& _s, void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  omniObjRef::_marshal(_o, _s);
+}
+static void _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  omniObjRef* _o = omniObjRef::_unMarshal(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId, _s);
+  _v = _o;
+}
+static void _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_destructor_fn(void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  if (_o)
+    omni::releaseObjRef(_o);
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr _o)
+{
+  STI::TNetwork::TBinaryDataStreamTarget_ptr _no = STI::TNetwork::TBinaryDataStreamTarget::_duplicate(_o);
+  _a.PR_insert(STI::TNetwork::_tc_TBinaryDataStreamTarget,
+               _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_marshal_fn,
+               _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_destructor_fn,
+               _no->_PR_getobj());
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr* _op)
+{
+  _a.PR_insert(STI::TNetwork::_tc_TBinaryDataStreamTarget,
+               _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_marshal_fn,
+               _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_destructor_fn,
+               (*_op)->_PR_getobj());
+  *_op = STI::TNetwork::TBinaryDataStreamTarget::_nil();
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr& _o)
+{
+  void* _v;
+  if (_a.PR_extract(STI::TNetwork::_tc_TBinaryDataStreamTarget,
+                    _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_marshal_fn,
+                    _0RL_STI_mTNetwork_mTBinaryDataStreamTarget_destructor_fn,
+                    _v)) {
+    omniObjRef* _r = (omniObjRef*)_v;
+    if (_r)
+      _o = (STI::TNetwork::TBinaryDataStreamTarget_ptr)_r->_ptrToObjRef(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
+    else
+      _o = STI::TNetwork::TBinaryDataStreamTarget::_nil();
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTBinaryDataStream_marshal_fn(cdrStream& _s, void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  omniObjRef::_marshal(_o, _s);
+}
+static void _0RL_STI_mTNetwork_mTBinaryDataStream_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  omniObjRef* _o = omniObjRef::_unMarshal(STI::TNetwork::TBinaryDataStream::_PD_repoId, _s);
+  _v = _o;
+}
+static void _0RL_STI_mTNetwork_mTBinaryDataStream_destructor_fn(void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  if (_o)
+    omni::releaseObjRef(_o);
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr _o)
+{
+  STI::TNetwork::TBinaryDataStream_ptr _no = STI::TNetwork::TBinaryDataStream::_duplicate(_o);
+  _a.PR_insert(STI::TNetwork::_tc_TBinaryDataStream,
+               _0RL_STI_mTNetwork_mTBinaryDataStream_marshal_fn,
+               _0RL_STI_mTNetwork_mTBinaryDataStream_destructor_fn,
+               _no->_PR_getobj());
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr* _op)
+{
+  _a.PR_insert(STI::TNetwork::_tc_TBinaryDataStream,
+               _0RL_STI_mTNetwork_mTBinaryDataStream_marshal_fn,
+               _0RL_STI_mTNetwork_mTBinaryDataStream_destructor_fn,
+               (*_op)->_PR_getobj());
+  *_op = STI::TNetwork::TBinaryDataStream::_nil();
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr& _o)
+{
+  void* _v;
+  if (_a.PR_extract(STI::TNetwork::_tc_TBinaryDataStream,
+                    _0RL_STI_mTNetwork_mTBinaryDataStream_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTBinaryDataStream_marshal_fn,
+                    _0RL_STI_mTNetwork_mTBinaryDataStream_destructor_fn,
+                    _v)) {
+    omniObjRef* _r = (omniObjRef*)_v;
+    if (_r)
+      _o = (STI::TNetwork::TBinaryDataStream_ptr)_r->_ptrToObjRef(STI::TNetwork::TBinaryDataStream::_PD_repoId);
+    else
+      _o = STI::TNetwork::TBinaryDataStream::_nil();
     return 1;
   }
   return 0;

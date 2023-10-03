@@ -1,5 +1,5 @@
-#ifndef STI_UTILS_REMOTEFILESERVER_H
-#define STI_UTILS_REMOTEFILESERVER_H
+#ifndef STI_NETWORK_REMOTEFILESERVER_H
+#define STI_NETWORK_REMOTEFILESERVER_H
 
 #include <sti/utils/FileServer.h>
 #include "TReferenceHolder.h"

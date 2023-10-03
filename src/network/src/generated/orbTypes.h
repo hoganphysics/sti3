@@ -1080,10 +1080,36 @@ _CORBA_MODULE_BEG
       TFileHolderSeq_out& operator=(const TFileHolderSeq_var&);
     };
 
-    enum TBinaryType { BinaryChar, BinaryUChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble /*, __max_TBinaryType=0xffffffff */ };
+    enum TBinaryType { BinaryChar, BinaryUChar, BinaryUShort, BinaryShort, BinaryULong, BinaryLong, BinaryFloat, BinaryDouble, BinaryStream /*, __max_TBinaryType=0xffffffff */ };
     typedef TBinaryType& TBinaryType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TBinaryType;
+
+#ifndef __STI_mTNetwork_mTBinaryDataStream__
+#define __STI_mTNetwork_mTBinaryDataStream__
+    class TBinaryDataStream;
+    class _objref_TBinaryDataStream;
+    class _impl_TBinaryDataStream;
+    
+    typedef _objref_TBinaryDataStream* TBinaryDataStream_ptr;
+    typedef TBinaryDataStream_ptr TBinaryDataStreamRef;
+
+    class TBinaryDataStream_Helper {
+    public:
+      typedef TBinaryDataStream_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TBinaryDataStream, TBinaryDataStream_Helper> TBinaryDataStream_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TBinaryDataStream,TBinaryDataStream_Helper > TBinaryDataStream_out;
+
+#endif
 
     class TMixedBinaryData {
     public:
@@ -1114,6 +1140,8 @@ _CORBA_MODULE_BEG
             case BinaryFloat: data_float(_value.data_float()); break;
 
             case BinaryDouble: data_double(_value.data_double()); break;
+
+            case BinaryStream: data_stream(_value.data_stream()); break;
 
             default: break;
 
@@ -1149,6 +1177,8 @@ _CORBA_MODULE_BEG
 
               case BinaryDouble: data_double(_value.data_double()); break;
 
+              case BinaryStream: data_stream(_value.data_stream()); break;
+
               default: break;
 
             
@@ -1181,6 +1211,7 @@ _CORBA_MODULE_BEG
           case BinaryLong: goto fail;
           case BinaryFloat: goto fail;
           case BinaryDouble: goto fail;
+          case BinaryStream: goto fail;
           default: goto fail;
 
         };
@@ -1363,6 +1394,32 @@ _CORBA_MODULE_BEG
       }
 #endif
 
+      TBinaryDataStream_ptr data_stream () const { return _pd_data_stream; }
+      void data_stream(TBinaryDataStream_ptr _value) {
+         _release_member();
+        _pd__initialised = 1;
+        _pd__d = BinaryStream;
+        _pd__default = 0;
+        TBinaryDataStream_Helper::duplicate(_value);
+        _pd_data_stream = _value;
+      }
+      void data_stream(const _CORBA_ObjRef_Member< _objref_TBinaryDataStream, TBinaryDataStream_Helper> & _value) {
+        _release_member();
+        _pd__initialised = 1;
+        _pd__d = BinaryStream;
+        _pd__default = 0;
+        TBinaryDataStream_Helper::duplicate(_value);
+        _pd_data_stream = _value;
+      }
+      void data_stream(const TBinaryDataStream_var&  _value) {
+         _release_member();
+        _pd__initialised = 1;
+        _pd__d = BinaryStream;
+        _pd__default = 0;
+        TBinaryDataStream_Helper::duplicate(_value);
+        _pd_data_stream = _value;
+      }
+
     
       
       void operator>>= (cdrStream&) const;
@@ -1382,6 +1439,7 @@ _CORBA_MODULE_BEG
         _data_long_seq* _pd_data_long;
         _data_float_seq* _pd_data_float;
         _data_double_seq* _pd_data_double;
+        TBinaryDataStream_ptr _pd_data_stream;
     
       };
       void _release_member () {
@@ -1441,6 +1499,13 @@ _CORBA_MODULE_BEG
           case BinaryDouble:
 
             delete _pd_data_double;
+
+
+            break;
+
+          case BinaryStream:
+
+            TBinaryDataStream_Helper::release(_pd_data_stream);
 
 
             break;
@@ -2076,7 +2141,7 @@ _CORBA_MODULE_BEG
       TMixedValueSeq_out& operator=(const TMixedValueSeq_var&);
     };
 
-    enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueBinary, MixedValueFile, MixedValueImage, MixedValueAny /*, __max_TMixedValueType=0xffffffff */ };
+    enum TMixedValueType { MixedValueEmpty, MixedValueBoolean, MixedValueInt, MixedValueDouble, MixedValueString, MixedValueVector, MixedValueVectorInt, MixedValueBinary, MixedValueFile, MixedValueImage, MixedValueNumber, MixedValueAny /*, __max_TMixedValueType=0xffffffff */ };
     typedef TMixedValueType& TMixedValueType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMixedValueType;
@@ -2230,7 +2295,7 @@ _CORBA_MODULE_BEG
       {
         _release_member();
         _pd__initialised = 1;
-        _pd__d = MixedValueAny;
+        _pd__d = MixedValueNumber;
         _pd__default = 1;
       }
 
@@ -6754,7 +6819,7 @@ inline void operator >>=(STI::TNetwork::TBinaryType _e, cdrStream& s) {
 inline void operator <<= (STI::TNetwork::TBinaryType& _e, cdrStream& s) {
   ::CORBA::ULong _0RL_e;
   ::operator<<=(_0RL_e,s);
-  if (_0RL_e <= STI::TNetwork::BinaryDouble) {
+  if (_0RL_e <= STI::TNetwork::BinaryStream) {
     _e = (STI::TNetwork::TBinaryType) _0RL_e;
   }
   else {

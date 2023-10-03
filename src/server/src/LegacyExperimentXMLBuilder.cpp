@@ -119,7 +119,12 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
 
                 std::shared_ptr<STI::Utils::FileHolder> fileHolder;
                 if (value.getImage() != 0 && value.getImage()->getFile(fileHolder)) {
-                    file->InsertNewChildElement("filename")->SetText(fileHolder->getFilename().c_str());
+                    
+                    std::filesystem::path shotPath = shotFilename;
+                    std::filesystem::path absFilePath = fileHolder->getID().getFullFilename();
+                    auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+
+                    file->InsertNewChildElement("filename")->SetText(relativeFilePath.string().c_str());
                     file->InsertNewChildElement("md5hash")->SetText(fileHolder->md5Checksum().c_str());
                 }
             }

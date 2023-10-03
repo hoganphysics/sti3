@@ -171,6 +171,20 @@ EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name
 	return messages.back();
 }
 
+bool EventEngineParser::checkOutputType(const STI::Utils::MixedValueType& eventValueType, const STI::Utils::MixedValueType& channelType)
+{
+	if (channelType == MixedValueType::Any) return true;
+
+	if (channelType == MixedValueType::Number) {
+
+		return eventValueType == MixedValueType::Boolean
+			|| eventValueType == MixedValueType::Double
+			|| eventValueType == MixedValueType::Int;
+	}
+
+	return eventValueType == channelType;
+}
+
 bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
 {
 	bool success = true;
@@ -190,7 +204,7 @@ bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, un
 			<< " is not defined on this device.";
 
 	}
-	else if (rawEvent.value().getType() != channel->getOutputType()) {
+	else if (!checkOutputType(rawEvent.value().getType(), channel->getOutputType())) {
 		//Wrong output type
 		success = false;
 		errorCount++;

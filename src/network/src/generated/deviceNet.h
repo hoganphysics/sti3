@@ -2945,6 +2945,244 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TFileServer;
 
+#ifndef __STI_mTNetwork_mTBinaryDataStreamTarget__
+#define __STI_mTNetwork_mTBinaryDataStreamTarget__
+    class TBinaryDataStreamTarget;
+    class _objref_TBinaryDataStreamTarget;
+    class _impl_TBinaryDataStreamTarget;
+    
+    typedef _objref_TBinaryDataStreamTarget* TBinaryDataStreamTarget_ptr;
+    typedef TBinaryDataStreamTarget_ptr TBinaryDataStreamTargetRef;
+
+    class TBinaryDataStreamTarget_Helper {
+    public:
+      typedef TBinaryDataStreamTarget_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TBinaryDataStreamTarget, TBinaryDataStreamTarget_Helper> TBinaryDataStreamTarget_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TBinaryDataStreamTarget,TBinaryDataStreamTarget_Helper > TBinaryDataStreamTarget_out;
+
+#endif
+
+    // interface TBinaryDataStreamTarget
+    class TBinaryDataStreamTarget {
+    public:
+      // Declarations for this interface type.
+      typedef TBinaryDataStreamTarget_ptr _ptr_type;
+      typedef TBinaryDataStreamTarget_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TBinaryDataStreamTarget :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void start();
+      void writeNext(const ::STI::TNetwork::TBinaryData& data);
+      void stop();
+
+      // Constructors
+      inline _objref_TBinaryDataStreamTarget()  { _PR_setobj(0); }  // nil
+      _objref_TBinaryDataStreamTarget(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TBinaryDataStreamTarget();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TBinaryDataStreamTarget(const _objref_TBinaryDataStreamTarget&);
+      _objref_TBinaryDataStreamTarget& operator = (const _objref_TBinaryDataStreamTarget&);
+      // not implemented
+
+      friend class TBinaryDataStreamTarget;
+    };
+
+    class _pof_TBinaryDataStreamTarget : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TBinaryDataStreamTarget() : _OMNI_NS(proxyObjectFactory)(TBinaryDataStreamTarget::_PD_repoId) {}
+      virtual ~_pof_TBinaryDataStreamTarget();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TBinaryDataStreamTarget :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TBinaryDataStreamTarget();
+
+      virtual void start() = 0;
+      virtual void writeNext(const ::STI::TNetwork::TBinaryData& data) = 0;
+      virtual void stop() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TBinaryDataStreamTarget;
+
+#ifndef __STI_mTNetwork_mTBinaryDataStream__
+#define __STI_mTNetwork_mTBinaryDataStream__
+    class TBinaryDataStream;
+    class _objref_TBinaryDataStream;
+    class _impl_TBinaryDataStream;
+    
+    typedef _objref_TBinaryDataStream* TBinaryDataStream_ptr;
+    typedef TBinaryDataStream_ptr TBinaryDataStreamRef;
+
+    class TBinaryDataStream_Helper {
+    public:
+      typedef TBinaryDataStream_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TBinaryDataStream, TBinaryDataStream_Helper> TBinaryDataStream_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TBinaryDataStream,TBinaryDataStream_Helper > TBinaryDataStream_out;
+
+#endif
+
+    // interface TBinaryDataStream
+    class TBinaryDataStream {
+    public:
+      // Declarations for this interface type.
+      typedef TBinaryDataStream_ptr _ptr_type;
+      typedef TBinaryDataStream_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TBinaryDataStream :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      void transfer(::STI::TNetwork::TBinaryDataStreamTarget_ptr target);
+
+      // Constructors
+      inline _objref_TBinaryDataStream()  { _PR_setobj(0); }  // nil
+      _objref_TBinaryDataStream(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TBinaryDataStream();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TBinaryDataStream(const _objref_TBinaryDataStream&);
+      _objref_TBinaryDataStream& operator = (const _objref_TBinaryDataStream&);
+      // not implemented
+
+      friend class TBinaryDataStream;
+    };
+
+    class _pof_TBinaryDataStream : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TBinaryDataStream() : _OMNI_NS(proxyObjectFactory)(TBinaryDataStream::_PD_repoId) {}
+      virtual ~_pof_TBinaryDataStream();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TBinaryDataStream :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TBinaryDataStream();
+
+      virtual void transfer(::STI::TNetwork::TBinaryDataStreamTarget_ptr target) = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TBinaryDataStream;
+
   _CORBA_MODULE_END
 
 _CORBA_MODULE_END
@@ -3185,6 +3423,30 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TBinaryDataStreamTarget :
+      public virtual STI::TNetwork::_impl_TBinaryDataStreamTarget,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TBinaryDataStreamTarget();
+
+      inline ::STI::TNetwork::TBinaryDataStreamTarget_ptr _this() {
+        return (::STI::TNetwork::TBinaryDataStreamTarget_ptr) _do_this(::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
+      }
+    };
+
+    class TBinaryDataStream :
+      public virtual STI::TNetwork::_impl_TBinaryDataStream,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TBinaryDataStream();
+
+      inline ::STI::TNetwork::TBinaryDataStream_ptr _this() {
+        return (::STI::TNetwork::TBinaryDataStream_ptr) _do_this(::STI::TNetwork::TBinaryDataStream::_PD_repoId);
+      }
+    };
+
   _CORBA_MODULE_END
 
 _CORBA_MODULE_END
@@ -3309,6 +3571,14 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileServer_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TBinaryDataStreamTarget_ptr& _s);
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr& _s);
+
 
 
 inline void
@@ -3403,6 +3673,16 @@ STI::TNetwork::TFileHolder::_marshalObjRef(::STI::TNetwork::TFileHolder_ptr obj,
 
 inline void
 STI::TNetwork::TFileServer::_marshalObjRef(::STI::TNetwork::TFileServer_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TBinaryDataStreamTarget::_marshalObjRef(::STI::TNetwork::TBinaryDataStreamTarget_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TBinaryDataStream::_marshalObjRef(::STI::TNetwork::TBinaryDataStream_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

@@ -17,6 +17,9 @@ std::string AttributeManagerPy::getValue(const std::string& key)
     if (attributeManager != 0) {
         return attributeManager->getValue(key);
     }
+    //pybind11::key_error missingKey();
+    //throw missingKey;
+
     return "";
 }
 
@@ -35,8 +38,8 @@ std::shared_ptr<STI::Device::Attribute> AttributeManagerPy::getAttribute(const s
         return attribute;
     }
 
-    // pybind11::key_error missingKey();
-    // throw missingKey;
+    //pybind11::key_error missingKey();
+    //throw missingKey;
 
     //not found
     attribute = std::make_shared<STI::Device::LocalAttribute>("", "");

@@ -94,6 +94,8 @@ add_library(stinetwork SHARED
     generated/tasksDynSK.cpp
 
     COSBindingNode.cpp
+    NetworkBinaryDataStream.cpp
+    NetworkBinaryDataStreamTarget.cpp
     NetworkConvert.cpp
     NetworkDeviceHub.cpp
     NetworkDeviceHubWrapper.cpp
@@ -109,6 +111,8 @@ add_library(stinetwork SHARED
 
     RemoteAttribute.cpp
     RemoteAttributeManager.cpp
+    RemoteBinaryDataStream.cpp
+    RemoteBinaryDataStreamTarget.cpp
     RemoteChannel.cpp
     RemoteChannelManager.cpp
     RemoteDeviceCollection.cpp
@@ -131,6 +135,8 @@ add_library(stinetwork SHARED
     #RemoteShotRepository.cpp
     RemoteTriggerCallback.cpp
     TAttributeManager_i.cpp
+    TBinaryDataStream_i.cpp
+    TBinaryDataStreamTarget_i.cpp
     TChannelManager_i.cpp
     TDeviceCollection_i.cpp
     TDeviceHub_i.cpp

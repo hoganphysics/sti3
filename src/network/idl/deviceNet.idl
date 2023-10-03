@@ -345,6 +345,18 @@ module TNetwork
 		boolean deleteFile(in TFileID fileID);
 	};
 
+	interface TBinaryDataStreamTarget
+	{
+		void start();
+		void writeNext(in TBinaryData data);
+		void stop();
+	};
+
+	interface TBinaryDataStream
+	{
+		void transfer(in TBinaryDataStreamTarget target);
+	};
+
 };	//TNetwork
 };	//STI
 

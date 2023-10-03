@@ -1,5 +1,5 @@
-#ifndef STI_UTILS_REMOTEFILEHOLDER_H
-#define STI_UTILS_REMOTEFILEHOLDER_H
+#ifndef STI_NETWORK_REMOTEFILEHOLDER_H
+#define STI_NETWORK_REMOTEFILEHOLDER_H
 
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/FileID.h>

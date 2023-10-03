@@ -250,9 +250,9 @@ Utils::MixedValueType Network::convert<TNetwork::TMixedValueType, Utils::MixedVa
 
 
 template<>
-bool Network::convert<Utils::BinaryData, TNetwork::TBinaryData>(const Utils::BinaryData& bin, TNetwork::TBinaryData& tBin);
+bool Network::convert<std::shared_ptr<Utils::BinaryData>, TNetwork::TBinaryData>(const std::shared_ptr<Utils::BinaryData>& bin, TNetwork::TBinaryData& tBin);
 template<>
-bool Network::convert<TNetwork::TBinaryData, Utils::BinaryData>(const TNetwork::TBinaryData& tBin, Utils::BinaryData& bin);
+bool Network::convert<TNetwork::TBinaryData, std::shared_ptr<Utils::BinaryData>>(const TNetwork::TBinaryData& tBin, std::shared_ptr<Utils::BinaryData>& bin);
 
 template<>
 bool Network::convert<Utils::Image, TNetwork::TImage>(const Utils::Image& image, TNetwork::TImage& tImage);

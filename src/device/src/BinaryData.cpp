@@ -1,6 +1,7 @@
 #include <sti/utils/BinaryData.h>
 
 #include <algorithm>
+#include <cmath>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -79,6 +80,100 @@ bool BinaryData::getBytes(char*& data, bool orphan)
         return true;
     }
     return false;
+}
+
+void BinaryData::merge(std::vector<std::shared_ptr<BinaryData>>& chunks)
+{
+    size_t totalSize = 0;
+    for (auto& chunk : chunks) {
+        totalSize += chunk->bytes();
+    }
+
+    if (isType<char*>()) {
+        allocate<char>(totalSize);
+    }
+    else if (isType<unsigned char*>()) {
+        allocate<unsigned char>(totalSize);
+    }
+    else if (isType<signed char*>()) {
+        allocate<signed char>(totalSize);
+    }
+    else if (isType<unsigned short*>()) {
+        allocate<unsigned short>(totalSize);
+    }
+    else if (isType<short*>()) {
+        allocate<short>(totalSize);
+    }
+    else if (isType<unsigned int*>()) {
+        allocate<unsigned int>(totalSize);
+    }
+    else if (isType<int*>()) {
+        allocate<int>(totalSize);
+    }
+    else if (isType<float*>()) {
+        allocate<float>(totalSize);
+    }
+    else if (isType<double*>()) {
+        allocate<double>(totalSize);
+    }
+    else {
+        allocate<char>(totalSize);
+    }
+
+    char* next;
+    char* data;
+    getBytes(data);
+
+    size_t pos = 0;
+    size_t chunkLength = 0;     //in bytes
+
+    //deep copy
+    for (auto& chunk : chunks) {
+        chunk->getBytes(next);
+        chunkLength = chunk->bytes();
+
+        std::copy(next, next + chunkLength, data + pos);
+        pos += chunkLength;
+    }
+}
+
+void BinaryData::split(std::vector<std::shared_ptr<BinaryData>>& chunks, size_t maxBytes) const
+{
+    chunks.clear();
+
+    size_t nChunks = std::ceil((1.0 * bytes()) / maxBytes);     //number of chunks
+    size_t maxChunk = std::ceil((1.0 * maxBytes) / wordsize()); //maximum of words per chunk
+
+    size_t pos = 0;
+    size_t chunkLength = 0;         //in words
+    size_t remaining = length();    //in words
+
+    char* data;
+    getBytes(data);
+
+    bool first = true;
+
+    for (unsigned i = 0; i < nChunks && remaining > 0; ++i) {
+        auto chunk = std::make_shared<BinaryData>();
+
+        chunkLength = std::min(maxChunk, remaining);
+
+        if (isType<char*>()) {
+            char* dataStart = static_cast<char*>(data + pos);
+            chunk->assign(dataStart, chunkLength, false);   //first owns the set: isOwner && transferOwnership && first
+        }
+
+        pos += (chunkLength * wordsize());
+        remaining -= chunkLength;
+        first = false;
+
+        chunks.push_back(chunk);
+    }
+}
+
+void BinaryData::attachStream(const std::shared_ptr<BinaryDataStream>& stream)
+{
+    streams.push_back(stream);
 }
 
 

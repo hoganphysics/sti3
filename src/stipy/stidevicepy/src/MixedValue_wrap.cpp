@@ -25,6 +25,7 @@ void init_MixedValue(py::module& m)
         .value("Binary", MixedValueType::Binary)
         .value("File", MixedValueType::File)
         .value("Image", MixedValueType::Image)
+        .value("Number", MixedValueType::Number)
         .value("Any", MixedValueType::Any)
         ;
 
@@ -37,7 +38,8 @@ void init_MixedValue(py::module& m)
         .def("addValue", py::overload_cast<const MixedValuePy&>(&MixedValuePy::addValue_py), py::arg("MixedValue"))
         .def("addValue", py::overload_cast<const py::handle&>(&MixedValuePy::addValue_py), py::arg("value"))
         .def("getType", &MixedValuePy::getType)
-        .def("isType", &MixedValuePy::isType)
+        .def("isType", py::overload_cast<const MixedValueType&>(&MixedValuePy::isType, py::const_), py::arg("type"))
+        .def("isType", py::overload_cast<const std::vector<MixedValueType>&>(&MixedValuePy::isType, py::const_), py::arg("types"))
         .def("clear", &MixedValuePy::clear)
         .def("print", &MixedValuePy::print)
         .def("__repr__",

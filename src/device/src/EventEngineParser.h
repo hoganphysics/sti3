@@ -3,12 +3,14 @@
 
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/fwd/Measurement_fwd.h>
+#include <sti/fwd/MixedValue_fwd.h>
 #include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/device/DeviceID.h>
 #include <sti/engine/DeviceEventParser.h>
 #include <sti/engine/EngineID.h>
 #include <sti/utils/GraphPathLabel.h>
 #include <sti/utils/VirtualFileServer.h>
+
 
 #include "fwd/ChannelManager_fwd.h"
 #include "fwd/PersistenceManager_fwd.h"
@@ -56,6 +58,7 @@ private:
 	bool groupEventsByTime(const RawEventGroup& eventGroup);
 	bool parseEvents(SynchronousEventVector& synchedEvents);
 	bool checkMeasurements(SynchronousEventVector& synchedEvents);
+	bool checkOutputType(const STI::Utils::MixedValueType& eventValueType, const STI::Utils::MixedValueType& channelType);
 
 	struct MeasurementCounter
 	{

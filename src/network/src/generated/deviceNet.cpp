@@ -12306,6 +12306,541 @@ STI::TNetwork::_impl_TFileServer::_mostDerivedRepoId()
   return ::STI::TNetwork::TFileServer::_PD_repoId;
 }
 
+STI::TNetwork::TBinaryDataStreamTarget_ptr STI::TNetwork::TBinaryDataStreamTarget_Helper::_nil() {
+  return ::STI::TNetwork::TBinaryDataStreamTarget::_nil();
+}
+
+::CORBA::Boolean STI::TNetwork::TBinaryDataStreamTarget_Helper::is_nil(::STI::TNetwork::TBinaryDataStreamTarget_ptr p) {
+  return ::CORBA::is_nil(p);
+
+}
+
+void STI::TNetwork::TBinaryDataStreamTarget_Helper::release(::STI::TNetwork::TBinaryDataStreamTarget_ptr p) {
+  ::CORBA::release(p);
+}
+
+void STI::TNetwork::TBinaryDataStreamTarget_Helper::marshalObjRef(::STI::TNetwork::TBinaryDataStreamTarget_ptr obj, cdrStream& s) {
+  ::STI::TNetwork::TBinaryDataStreamTarget::_marshalObjRef(obj, s);
+}
+
+STI::TNetwork::TBinaryDataStreamTarget_ptr STI::TNetwork::TBinaryDataStreamTarget_Helper::unmarshalObjRef(cdrStream& s) {
+  return ::STI::TNetwork::TBinaryDataStreamTarget::_unmarshalObjRef(s);
+}
+
+void STI::TNetwork::TBinaryDataStreamTarget_Helper::duplicate(::STI::TNetwork::TBinaryDataStreamTarget_ptr obj) {
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+}
+
+STI::TNetwork::TBinaryDataStreamTarget_ptr
+STI::TNetwork::TBinaryDataStreamTarget::_duplicate(::STI::TNetwork::TBinaryDataStreamTarget_ptr obj)
+{
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  return obj;
+}
+
+STI::TNetwork::TBinaryDataStreamTarget_ptr
+STI::TNetwork::TBinaryDataStreamTarget::_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+
+STI::TNetwork::TBinaryDataStreamTarget_ptr
+STI::TNetwork::TBinaryDataStreamTarget::_unchecked_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+STI::TNetwork::TBinaryDataStreamTarget_ptr
+STI::TNetwork::TBinaryDataStreamTarget::_nil()
+{
+#ifdef OMNI_UNLOADABLE_STUBS
+  static _objref_TBinaryDataStreamTarget _the_nil_obj;
+  return &_the_nil_obj;
+#else
+  static _objref_TBinaryDataStreamTarget* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new _objref_TBinaryDataStreamTarget;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+#endif
+}
+
+const char* STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId = "IDL:STI/TNetwork/TBinaryDataStreamTarget:1.0";
+
+
+STI::TNetwork::_objref_TBinaryDataStreamTarget::~_objref_TBinaryDataStreamTarget() {
+  
+}
+
+
+STI::TNetwork::_objref_TBinaryDataStreamTarget::_objref_TBinaryDataStreamTarget(omniIOR* ior, omniIdentity* id) :
+   omniObjRef(::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId, ior, id, 1)
+   
+   
+{
+  _PR_setobj(this);
+}
+
+void*
+STI::TNetwork::_objref_TBinaryDataStreamTarget::_ptrToObjRef(const char* id)
+{
+  if (id == ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId)
+    return (::STI::TNetwork::TBinaryDataStreamTarget_ptr) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (::CORBA::Object_ptr) this;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId))
+    return (::STI::TNetwork::TBinaryDataStreamTarget_ptr) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+
+//
+// Code for STI::TNetwork::TBinaryDataStreamTarget::start
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_bd000000(omniCallDescriptor*, omniServant* svnt)
+{
+  
+  STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
+  impl->start();
+
+
+}
+
+void STI::TNetwork::_objref_TBinaryDataStreamTarget::start()
+{
+  _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_bd000000, "start", 6);
+
+
+  _invoke(_call_desc);
+
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TBinaryDataStreamTarget::writeNext
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTBinaryData
+class _0RL_cd_968894b19fdce141_cd000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_cd000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TBinaryData_var arg_0_;
+  const STI::TNetwork::TBinaryData* arg_0;
+};
+
+void _0RL_cd_968894b19fdce141_cd000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TBinaryData&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_968894b19fdce141_cd000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TBinaryData;
+  (STI::TNetwork::TBinaryData&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_cd000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_dd000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_cd000000* tcd = (_0RL_cd_968894b19fdce141_cd000000*)cd;
+  STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
+  impl->writeNext(*tcd->arg_0);
+
+
+}
+
+void STI::TNetwork::_objref_TBinaryDataStreamTarget::writeNext(const ::STI::TNetwork::TBinaryData& data)
+{
+  _0RL_cd_968894b19fdce141_cd000000 _call_desc(_0RL_lcfn_968894b19fdce141_dd000000, "writeNext", 10);
+  _call_desc.arg_0 = &(::STI::TNetwork::TBinaryData&) data;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TBinaryDataStreamTarget::stop
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_ed000000(omniCallDescriptor*, omniServant* svnt)
+{
+  
+  STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
+  impl->stop();
+
+
+}
+
+void STI::TNetwork::_objref_TBinaryDataStreamTarget::stop()
+{
+  _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_ed000000, "stop", 5);
+
+
+  _invoke(_call_desc);
+
+
+
+}
+
+STI::TNetwork::_pof_TBinaryDataStreamTarget::~_pof_TBinaryDataStreamTarget() {}
+
+
+omniObjRef*
+STI::TNetwork::_pof_TBinaryDataStreamTarget::newObjRef(omniIOR* ior, omniIdentity* id)
+{
+  return new ::STI::TNetwork::_objref_TBinaryDataStreamTarget(ior, id);
+}
+
+
+::CORBA::Boolean
+STI::TNetwork::_pof_TBinaryDataStreamTarget::is_a(const char* id) const
+{
+  if (omni::ptrStrMatch(id, ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId))
+    return 1;
+  
+  return 0;
+}
+
+const STI::TNetwork::_pof_TBinaryDataStreamTarget _the_pof_STI_mTNetwork_mTBinaryDataStreamTarget;
+
+STI::TNetwork::_impl_TBinaryDataStreamTarget::~_impl_TBinaryDataStreamTarget() {}
+
+
+::CORBA::Boolean
+STI::TNetwork::_impl_TBinaryDataStreamTarget::_dispatch(omniCallHandle& _handle)
+{
+  const char* op = _handle.operation_name();
+
+  if (omni::strMatch(op, "start")) {
+
+    _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_bd000000, "start", 6, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "writeNext")) {
+
+    _0RL_cd_968894b19fdce141_cd000000 _call_desc(_0RL_lcfn_968894b19fdce141_dd000000, "writeNext", 10, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+  if (omni::strMatch(op, "stop")) {
+
+    _0RL_cd_968894b19fdce141_c1000000 _call_desc(_0RL_lcfn_968894b19fdce141_ed000000, "stop", 5, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+
+  return 0;
+}
+
+void*
+STI::TNetwork::_impl_TBinaryDataStreamTarget::_ptrToInterface(const char* id)
+{
+  if (id == ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId)
+    return (::STI::TNetwork::_impl_TBinaryDataStreamTarget*) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (void*) 1;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId))
+    return (::STI::TNetwork::_impl_TBinaryDataStreamTarget*) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (void*) 1;
+  return 0;
+}
+
+const char*
+STI::TNetwork::_impl_TBinaryDataStreamTarget::_mostDerivedRepoId()
+{
+  return ::STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId;
+}
+
+STI::TNetwork::TBinaryDataStream_ptr STI::TNetwork::TBinaryDataStream_Helper::_nil() {
+  return ::STI::TNetwork::TBinaryDataStream::_nil();
+}
+
+::CORBA::Boolean STI::TNetwork::TBinaryDataStream_Helper::is_nil(::STI::TNetwork::TBinaryDataStream_ptr p) {
+  return ::CORBA::is_nil(p);
+
+}
+
+void STI::TNetwork::TBinaryDataStream_Helper::release(::STI::TNetwork::TBinaryDataStream_ptr p) {
+  ::CORBA::release(p);
+}
+
+void STI::TNetwork::TBinaryDataStream_Helper::marshalObjRef(::STI::TNetwork::TBinaryDataStream_ptr obj, cdrStream& s) {
+  ::STI::TNetwork::TBinaryDataStream::_marshalObjRef(obj, s);
+}
+
+STI::TNetwork::TBinaryDataStream_ptr STI::TNetwork::TBinaryDataStream_Helper::unmarshalObjRef(cdrStream& s) {
+  return ::STI::TNetwork::TBinaryDataStream::_unmarshalObjRef(s);
+}
+
+void STI::TNetwork::TBinaryDataStream_Helper::duplicate(::STI::TNetwork::TBinaryDataStream_ptr obj) {
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+}
+
+STI::TNetwork::TBinaryDataStream_ptr
+STI::TNetwork::TBinaryDataStream::_duplicate(::STI::TNetwork::TBinaryDataStream_ptr obj)
+{
+  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  return obj;
+}
+
+STI::TNetwork::TBinaryDataStream_ptr
+STI::TNetwork::TBinaryDataStream::_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+
+STI::TNetwork::TBinaryDataStream_ptr
+STI::TNetwork::TBinaryDataStream::_unchecked_narrow(::CORBA::Object_ptr obj)
+{
+  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
+
+STI::TNetwork::TBinaryDataStream_ptr
+STI::TNetwork::TBinaryDataStream::_nil()
+{
+#ifdef OMNI_UNLOADABLE_STUBS
+  static _objref_TBinaryDataStream _the_nil_obj;
+  return &_the_nil_obj;
+#else
+  static _objref_TBinaryDataStream* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new _objref_TBinaryDataStream;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+#endif
+}
+
+const char* STI::TNetwork::TBinaryDataStream::_PD_repoId = "IDL:STI/TNetwork/TBinaryDataStream:1.0";
+
+
+STI::TNetwork::_objref_TBinaryDataStream::~_objref_TBinaryDataStream() {
+  
+}
+
+
+STI::TNetwork::_objref_TBinaryDataStream::_objref_TBinaryDataStream(omniIOR* ior, omniIdentity* id) :
+   omniObjRef(::STI::TNetwork::TBinaryDataStream::_PD_repoId, ior, id, 1)
+   
+   
+{
+  _PR_setobj(this);
+}
+
+void*
+STI::TNetwork::_objref_TBinaryDataStream::_ptrToObjRef(const char* id)
+{
+  if (id == ::STI::TNetwork::TBinaryDataStream::_PD_repoId)
+    return (::STI::TNetwork::TBinaryDataStream_ptr) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (::CORBA::Object_ptr) this;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TBinaryDataStream::_PD_repoId))
+    return (::STI::TNetwork::TBinaryDataStream_ptr) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+
+//
+// Code for STI::TNetwork::TBinaryDataStream::transfer
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTBinaryDataStreamTarget
+class _0RL_cd_968894b19fdce141_fd000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_968894b19fdce141_fd000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+    
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TBinaryDataStreamTarget_var arg_0_;
+  STI::TNetwork::TBinaryDataStreamTarget_ptr arg_0;
+};
+
+void _0RL_cd_968894b19fdce141_fd000000::marshalArguments(cdrStream& _n)
+{
+  STI::TNetwork::TBinaryDataStreamTarget::_marshalObjRef(arg_0,_n);
+
+}
+
+void _0RL_cd_968894b19fdce141_fd000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = STI::TNetwork::TBinaryDataStreamTarget::_unmarshalObjRef(_n);
+  arg_0 = arg_0_.in();
+
+}
+
+const char* const _0RL_cd_968894b19fdce141_fd000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_968894b19fdce141_0e000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_968894b19fdce141_fd000000* tcd = (_0RL_cd_968894b19fdce141_fd000000*)cd;
+  STI::TNetwork::_impl_TBinaryDataStream* impl = (STI::TNetwork::_impl_TBinaryDataStream*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStream::_PD_repoId);
+  impl->transfer(tcd->arg_0);
+
+
+}
+
+void STI::TNetwork::_objref_TBinaryDataStream::transfer(::STI::TNetwork::TBinaryDataStreamTarget_ptr target)
+{
+  _0RL_cd_968894b19fdce141_fd000000 _call_desc(_0RL_lcfn_968894b19fdce141_0e000000, "transfer", 9);
+  _call_desc.arg_0 = target;
+
+  _invoke(_call_desc);
+
+
+
+}
+
+STI::TNetwork::_pof_TBinaryDataStream::~_pof_TBinaryDataStream() {}
+
+
+omniObjRef*
+STI::TNetwork::_pof_TBinaryDataStream::newObjRef(omniIOR* ior, omniIdentity* id)
+{
+  return new ::STI::TNetwork::_objref_TBinaryDataStream(ior, id);
+}
+
+
+::CORBA::Boolean
+STI::TNetwork::_pof_TBinaryDataStream::is_a(const char* id) const
+{
+  if (omni::ptrStrMatch(id, ::STI::TNetwork::TBinaryDataStream::_PD_repoId))
+    return 1;
+  
+  return 0;
+}
+
+const STI::TNetwork::_pof_TBinaryDataStream _the_pof_STI_mTNetwork_mTBinaryDataStream;
+
+STI::TNetwork::_impl_TBinaryDataStream::~_impl_TBinaryDataStream() {}
+
+
+::CORBA::Boolean
+STI::TNetwork::_impl_TBinaryDataStream::_dispatch(omniCallHandle& _handle)
+{
+  const char* op = _handle.operation_name();
+
+  if (omni::strMatch(op, "transfer")) {
+
+    _0RL_cd_968894b19fdce141_fd000000 _call_desc(_0RL_lcfn_968894b19fdce141_0e000000, "transfer", 9, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
+
+  return 0;
+}
+
+void*
+STI::TNetwork::_impl_TBinaryDataStream::_ptrToInterface(const char* id)
+{
+  if (id == ::STI::TNetwork::TBinaryDataStream::_PD_repoId)
+    return (::STI::TNetwork::_impl_TBinaryDataStream*) this;
+  
+  if (id == ::CORBA::Object::_PD_repoId)
+    return (void*) 1;
+
+  if (omni::strMatch(id, ::STI::TNetwork::TBinaryDataStream::_PD_repoId))
+    return (::STI::TNetwork::_impl_TBinaryDataStream*) this;
+  
+  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+    return (void*) 1;
+  return 0;
+}
+
+const char*
+STI::TNetwork::_impl_TBinaryDataStream::_mostDerivedRepoId()
+{
+  return ::STI::TNetwork::TBinaryDataStream::_PD_repoId;
+}
+
 POA_STI::TNetwork::TDeviceHub::~TDeviceHub() {}
 
 POA_STI::TNetwork::TDeviceCollection::~TDeviceCollection() {}
@@ -12343,4 +12878,8 @@ POA_STI::TNetwork::TDevice::~TDevice() {}
 POA_STI::TNetwork::TFileHolder::~TFileHolder() {}
 
 POA_STI::TNetwork::TFileServer::~TFileServer() {}
+
+POA_STI::TNetwork::TBinaryDataStreamTarget::~TBinaryDataStreamTarget() {}
+
+POA_STI::TNetwork::TBinaryDataStream::~TBinaryDataStream() {}
 
