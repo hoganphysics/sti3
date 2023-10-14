@@ -128,8 +128,9 @@ bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data, std::map
             if (sourceFileServer != 0 &&
                 sourceFileServer->transferFile(remoteFileID, localFileHandle, STI::Utils::FileTransferType::Binary))
             {
-                //sucess; delete remote?
                 success = true;
+                sourceFileServer->deleteFile(remoteFileID);     //delete remote
+
                 cachedFileIDs[remoteFileID] = localFileHandle->getID();
                 data.setValue(cachedFileIDs[remoteFileID]);
             }

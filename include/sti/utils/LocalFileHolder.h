@@ -15,6 +15,7 @@ namespace STI
 namespace Utils
 {
 
+class BinaryData;
 
 class LocalFileHolder : public FileHolder
 {
@@ -44,6 +45,7 @@ public:
     virtual bool openFile();
 
     bool write(const char* buffer, unsigned length);
+    bool write(const std::shared_ptr<BinaryData>& data);
     // bool writeString(const std::string& buffer);
     virtual void closeFile();
     

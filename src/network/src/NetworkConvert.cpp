@@ -1,20 +1,20 @@
 
 #include "NetworkConvert.h"
 
-#include "convert/Convert_File.h"
-
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Image.h>
 
-#include "generated/orbTypes.h"
+#include "convert/Convert_File.h"
+
 #include "TFileHolderRefInterface.h"
 #include "RemoteFileHolder.h"
-//#include "RemoteImageWriter.h"
-
 #include "RemoteBinaryDataStream.h"
 #include "NetworkBinaryDataStreamTarget.h"
 #include "NetworkBinaryDataStream.h"
 
+#include "generated/orbTypes.h"
+
+#include <omniORB4/internal/orbParameters.h>
 #include <vector>
 
 
@@ -126,29 +126,31 @@ bool STI::Network::convert<STI::TNetwork::TStringPairSeq, std::map<std::string, 
 
 bool STI::Network::convertBuffer(const char* buffer, unsigned length, ::STI::TNetwork::OctetSeq& tBuffer)
 {
-	tBuffer.length(length);
-	
-	for (unsigned i = 0; i < tBuffer.length(); ++i) {
-		tBuffer[i] = buffer[i];
-	}
-	return true;
+	//tBuffer.length(length);
+	//
+	//for (unsigned i = 0; i < tBuffer.length(); ++i) {
+	//	tBuffer[i] = buffer[i];
+	//}
+	//return true;
 
 	// //do not call tBuffer.length(length); This is done by replace.
-	// unsigned char* data = reinterpret_cast<unsigned char*>(const_cast<char*>(buffer));
-	// tBuffer.replace(length, length, data, false );	//no release
+	unsigned char* data = reinterpret_cast<unsigned char*>(const_cast<char*>(buffer));
+	tBuffer.replace(length, length, data, false);	//no release
+	return true;
+
 }
 
 bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer)
 {
-	for (unsigned i = 0; i < tBuffer.length(); ++i) {
-		buffer[i] = tBuffer[i];
-	}
-	return true;
+	//for (unsigned i = 0; i < tBuffer.length(); ++i) {
+	//	buffer[i] = tBuffer[i];
+	//}
+	//return true;
 
-	// bool release = tBuffer.release();
-	// unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(tBuffer).get_buffer(release);	//orphan if release = true
-	// buffer = reinterpret_cast<char*>(data);
-	// return true;
+	bool release = tBuffer.release();
+	unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(tBuffer).get_buffer(release);	//orphan if release = true
+	buffer = reinterpret_cast<char*>(data);
+	return true;
 
 }
 
@@ -393,8 +395,6 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	return true;
 }
 
-#include <omniORB4/internal/orbParameters.h>
-
 template<>
 bool STI::Network::convert<std::shared_ptr<BinaryData>, TBinaryData>(const std::shared_ptr<BinaryData>& bin, TBinaryData& tBin)
 {
@@ -404,7 +404,6 @@ bool STI::Network::convert<std::shared_ptr<BinaryData>, TBinaryData>(const std::
 
 	tBin.wordsize = static_cast<CORBA::Short>(bin->wordsize());
 
-	
 	size_t maxNetworkMessage = omni::orbParameters::giopMaxMsgSize;
 
 	//size_t maxNetworkMessage = 1000000;

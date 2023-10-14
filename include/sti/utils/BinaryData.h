@@ -62,7 +62,10 @@ public:
     void swap(BinaryData& other);
 
 	template<class Archive>
-	void serialize(Archive& archive);
+	void save(Archive& archive) const;
+
+    template<class Archive>
+    void load(Archive& archive);
     
     void attachStream(const std::shared_ptr<BinaryDataStream>& stream);
 

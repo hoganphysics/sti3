@@ -116,6 +116,7 @@ add_library(stidevice SHARED
     PartnerDevice.cpp
     PersistenceTargetHolder.cpp
     Profile.cpp
+    PseudoSynchronousEvent.cpp
     LocalProfileManager.cpp
     RawEvent.cpp
     RawEventGroup.cpp

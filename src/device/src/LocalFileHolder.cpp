@@ -1,5 +1,6 @@
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/FileServer.h>
+#include <sti/utils/BinaryData.h>
 
 #include "VirtualFileHolder.h"
 
@@ -18,7 +19,7 @@ using STI::Utils::LocalFileHolder;
 using STI::Utils::FileTransferType;
 using STI::Utils::LocalFileHolderFactory;
 using STI::Utils::VirtualFileHolder;
-
+using STI::Utils::BinaryData;
 
 
 std::string digestToString(unsigned char (&digest)[MD5_DIGEST_LENGTH])
@@ -234,6 +235,16 @@ bool LocalFileHolder::write(const char* buffer, unsigned length)
         return true;
     }
     return false;
+}
+
+bool LocalFileHolder::write(const std::shared_ptr<BinaryData>& data)
+{
+    if (data == 0) return false;
+
+    char* cData;
+    data->getBytes(cData);
+
+    return write(cData, data->bytes());
 }
 
 void LocalFileHolder::closeFile()

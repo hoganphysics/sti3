@@ -194,8 +194,14 @@ public:
 
 	void swap(MixedValue& value);
 
+	//template<class Archive>
+	//void serialize(Archive& archive);
+
 	template<class Archive>
-	void serialize(Archive& archive);
+	void save(Archive& archive) const;
+
+	template<class Archive>
+	void load(Archive& archive);
 
 private:
 

@@ -178,18 +178,44 @@ void BinaryData::attachStream(const std::shared_ptr<BinaryDataStream>& stream)
 
 
 template<class Archive>
-void BinaryData::serialize(Archive& archive)
+void BinaryData::save(Archive& archive) const
 {
+    char* data;
+    getBytes(data);
+    auto serialBinData = cereal::binary_data(data, bytes());
+
+    //std::stringstream d;
+
 	archive(
 		cereal::make_nvp("isOwner", isOwner), 
         cereal::make_nvp("length_", length_), 
         cereal::make_nvp("wordSize_", wordSize_)
+        //cereal::make_nvp("d", d.str())
+        //cereal::make_nvp("data", serialBinData)
 		);
 }
 
+template void BinaryData::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
+template void BinaryData::save<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&) const;
 
-template void BinaryData::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void BinaryData::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
-template void BinaryData::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
-template void BinaryData::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+template<class Archive>
+void BinaryData::load(Archive& archive)
+{
+    char* data;
+    auto serialBinData = cereal::binary_data(data, 0);
+
+    archive(
+        cereal::make_nvp("isOwner", isOwner),
+        cereal::make_nvp("length_", length_),
+        cereal::make_nvp("wordSize_", wordSize_)
+        //cereal::make_nvp("data", serialBinData)
+    );
+    data = static_cast<char*>(serialBinData.data);
+    assign(data, serialBinData.size);
+}
+
+
+template void BinaryData::load<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+template void BinaryData::load<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+

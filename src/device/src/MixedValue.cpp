@@ -756,26 +756,82 @@ void MixedValue::printError()
 	std::cout << "Error: Unsupported type was passed to MixedValue." << std::endl;
 }
 
+template<class Archive>
+void MixedValue::save(Archive& archive) const
+{
+	//Save image to file before serialization
+	if (isType(MixedValueType::Image)) {
+		auto image = getImage();
+		std::shared_ptr<Image> newImage;
+
+		if (image != 0) {
+			image->saveToFile();
+			newImage = std::make_shared<Image>(*image);		//shallow clone
+		}
+		else {
+			//error
+			newImage = std::make_shared<Image>();
+		}
+
+		MixedValue newValue;
+		newValue.setValue(newImage);	//need to replace with newImage to avoid possible polymorphic serialization (if Image is some derived type)
+
+		archive(
+			cereal::make_nvp("type", newValue.type),
+			cereal::make_nvp("value_v", newValue.value_v)
+		);
+
+		return;
+	}
+
+	archive(
+		cereal::make_nvp("type", type),
+		cereal::make_nvp("value_v", value_v)
+	);
+}
 
 template<class Archive>
-void MixedValue::serialize(Archive& archive)
+void MixedValue::load(Archive& archive)
 {
 	archive(
-		cereal::make_nvp("type", type), 
-		// cereal::make_nvp("value_b", value_b), 
-		// cereal::make_nvp("value_i", value_i), 
-		// cereal::make_nvp("value_d", value_d), 
-		// cereal::make_nvp("value_s", value_s),
-		// cereal::make_nvp("value_file", value_file),
+		cereal::make_nvp("type", type),
 		cereal::make_nvp("value_v", value_v)
-		// cereal::make_nvp("values", values)
-		);
+	);
 }
 
 
-template void MixedValue::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void MixedValue::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+template void MixedValue::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
+template void MixedValue::save<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&) const;
 
-template void MixedValue::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
-template void MixedValue::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
+template void MixedValue::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
+template void MixedValue::load<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+
+
+
+
+//template<class Archive>
+//void MixedValue::serialize(Archive& archive)
+//{
+//	if (isType(MixedValueType::Image)) {
+//		auto image = getImage();
+//		if (image != 0) {
+//			image->saveToFile();
+//			auto newImage = std::shared_ptr<Image>(*image);
+//			MixedValue newValue;
+//			newValue.setValue(newImage);
+//		}
+//	}
+//
+//	archive(
+//		cereal::make_nvp("type", type), 
+//		cereal::make_nvp("value_v", value_v)
+//		);
+//}
+
+
+//template void MixedValue::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
+//template void MixedValue::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+//
+//template void MixedValue::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
+//template void MixedValue::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
 

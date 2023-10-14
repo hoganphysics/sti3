@@ -32,6 +32,8 @@ public:
     //Image(const std::string& filename, const std::shared_ptr<ImageWriter>& writter);
     virtual ~Image();
 
+    Image(const Image& other);
+
     //std::shared_ptr<Image> makeChildImage();
 
     FileID getFileID() const;
@@ -49,7 +51,6 @@ public:
     //void setWriter(const std::shared_ptr<ImageWriter>& writer);  //custom writer
 
     void setImageData(const std::shared_ptr<FileHolder>& file);
-
     void setImageData(const std::shared_ptr<BinaryData>& data);
 
     template<typename T>
@@ -68,6 +69,7 @@ public:
     //void writeToFile(const std::shared_ptr<ImageWriter>& writer, const std::string& targetDirectory);
 
     bool write(const std::shared_ptr<FileServer>& sourceFileServer, const std::shared_ptr<FileHolder>& destination);
+    bool saveToFile();  //before serialization
 
     bool getData(std::shared_ptr<BinaryData>& data) const;
     bool getFile(std::shared_ptr<FileHolder>& file) const;

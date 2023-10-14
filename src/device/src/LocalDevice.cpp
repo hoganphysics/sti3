@@ -29,6 +29,7 @@
 #include "LocalProfileManager.h"
 #include "LocalTaskManager.h"
 #include "LocalShot.h"
+#include "PseudoSynchronousEvent.h"
 
 #include <filesystem>
 #include <memory>
@@ -82,7 +83,8 @@ LocalDevice::LocalDevice(const Configuration& config, const std::string& section
 
 LocalDevice::LocalDevice(const std::string& name, const std::string& address, unsigned short module,
 	const std::string& targetServer, const STI::Utils::Configuration& config)
-: STI::Engine::DeviceEventParser(), id(name, address, module, targetServer)
+: STI::Engine::DeviceEventParser(), id(name, address, module, targetServer), usingParseDefault(false), usingRWdefault(false)
+
 {
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
@@ -495,6 +497,9 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValue& value)
 {
+	usingRWdefault = true;
+	if (usingParseDefault) return false;
+
 	double eventTime = 100;
 	STI::Engine::RawEventTarget eventTarget(getID(), channel);
 	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Play);
@@ -508,6 +513,9 @@ bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValu
 
 bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
+	usingRWdefault = true;
+	if (usingParseDefault) return false;
+
 	double eventTime = 100;
 	STI::Engine::RawEventTarget eventTarget(getID(), channel);
 	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Measurement);
@@ -524,6 +532,21 @@ bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue
 	}
 
 	return false;
+}
+
+void LocalDevice::parseEventsDefault(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
+{
+	usingParseDefault = true;
+
+	for (auto& evts : events) {
+		
+		if (usingRWdefault) {
+			throw STI::Engine::EventParsingException(evts.second.at(0), "Error: Recursive parse detected. Atempted to use both the default parseDeviceEvents and the default read/write channel. The device must override at least one of these.");
+		}
+
+		auto pseudoSyncEvt = std::make_shared<STI::Engine::PseudoSynchronousEvent>(evts.first, evts.second, this);
+		synchedEvents.push_back(pseudoSyncEvt);
+	}
 }
 
 std::string LocalDevice::getAttribute(const std::string& key)
@@ -584,6 +607,11 @@ void LocalDevice::addChannel(unsigned short channelNumber, STI::Device::ChannelT
 {
 	channel = std::make_shared<LocalChannel>(channelNumber, type, inputType, outputType, defaultName);
 	localChannelManager->addChannel(channel);
+}
+
+LocalChannel& LocalDevice::addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, const std::string& defaultName)
+{
+	return addInputChannel(channelNumber, inputType, STI::Utils::MixedValueType::Empty, defaultName);
 }
 
 LocalChannel& LocalDevice::addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)

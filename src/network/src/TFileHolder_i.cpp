@@ -95,13 +95,17 @@ char* TFileHolder_i::md5Checksum()
 
     if (localFileHolder != 0) {
 
-        char* copyBuffer = new char[buffer.length()];
+  //      char* copyBuffer = new char[buffer.length()];
 
-        convertBuffer(buffer, copyBuffer);
+  //      convertBuffer(buffer, copyBuffer);
 
-		result = localFileHolder->write(copyBuffer, buffer.length());
+		//result = localFileHolder->write(copyBuffer, buffer.length());
 
-        delete[] copyBuffer;
+  //      delete[] copyBuffer;
+
+        unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(buffer).get_buffer();    //no deep copy
+        char* dataC = reinterpret_cast<char*>(data);
+        result = localFileHolder->write(dataC, buffer.length());
 	}
     return static_cast<::CORBA::Boolean>(result);
 }

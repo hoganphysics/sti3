@@ -102,6 +102,7 @@ public:
 	void addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName, std::shared_ptr<STI::Device::LocalChannel>& channel);
 
+	LocalChannel& addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, const std::string& defaultName);
 	LocalChannel& addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 	LocalChannel& addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 
@@ -137,7 +138,7 @@ public:
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
-	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
+	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) { parseEventsDefault(events, synchedEvents); }
 	void getEventTargets(std::set<DeviceID>& targetIDs);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
@@ -148,6 +149,8 @@ public:
 	bool writeChannelDefault(short channel, const STI::Utils::MixedValue& value);
 	bool readChannelDefault(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	bool playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket);
+
+	void parseEventsDefault(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
 
 	virtual bool isEventTarget(const DeviceID& id);
 
@@ -203,6 +206,8 @@ private:
 
 	DeviceID id;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
+	bool usingParseDefault;
+	bool usingRWdefault;
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
 	std::shared_ptr<LocalDeviceMessageDispatcher> deviceMessageDispatcher;
