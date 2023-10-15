@@ -10,7 +10,7 @@ static ::CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTTaskStatus[] = { "TaskActive", "TaskInactive", "TaskMissing" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTaskStatus = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TTaskStatus:1.0", "TTaskStatus", _0RL_enumMember_STI_mTNetwork_mTTaskStatus, 3, &_0RL_tcTrack);
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskStatus = _0RL_tc_STI_mTNetwork_mTTaskStatus;
@@ -167,7 +167,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTask = CORBA::TypeCode::PR_st
 
 
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTask = _0RL_tc_STI_mTNetwork_mTTask;
@@ -184,7 +184,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTask = _0RL_tc_STI_mTNetwork_mTT
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTaskSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TTaskSeq:1.0", "TTaskSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTTask, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskSeq = _0RL_tc_STI_mTNetwork_mTTaskSeq;
@@ -193,7 +193,7 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTaskSeq = _0RL_tc_STI_mTNetwork_mTTaskSeq;
 #endif
 
-#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTaskManager = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TTaskManager:1.0", "TTaskManager", &_0RL_tcTrack);
