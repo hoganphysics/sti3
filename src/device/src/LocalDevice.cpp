@@ -427,13 +427,35 @@ const DeviceID LocalDevice::getID() const
 
 bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 {
-	return writeChannel(channel, value);
+	std::shared_ptr<STI::Device::Channel> ch;
+	
+	//type check
+	if (localChannelManager->getChannel(channel, ch) 
+		&& ch->getType() == STI::Device::ChannelType::Output 
+		&& value.isType(ch->getOutputType())) {
+		
+		return writeChannel(channel, value);
+	}
+	return false;	//value has wrong type	
 }
 
+bool LocalDevice::read(short channel, STI::Utils::MixedValue& data)
+{
+	return read(channel, STI::Utils::MixedValueType::Empty, data);
+}
 
 bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
-	return readChannel(channel, value, data);
+	std::shared_ptr<STI::Device::Channel> ch;
+
+	//type check
+	if (localChannelManager->getChannel(channel, ch)
+		&& ch->getType() == STI::Device::ChannelType::Input
+		&& value.isType(ch->getOutputType())) {
+		
+		return readChannel(channel, value, data);
+	}
+	return false;	//value has wrong type	
 }
 
 void LocalDevice::stopRW()

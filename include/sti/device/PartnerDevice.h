@@ -48,6 +48,7 @@ public:
 	void addEvent(double time, const STI::Engine::RawEventTargetChannel& channel, const STI::Utils::MixedValue& value, const STI::Engine::RawEventType& eventType, const STI::Engine::RawEvent& referenceEvent);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, STI::Utils::MixedValue& data);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	void stopRW();
 

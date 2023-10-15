@@ -142,6 +142,7 @@ public:
 	void getEventTargets(std::set<DeviceID>& targetIDs);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, STI::Utils::MixedValue& data);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	void stopRW();
 

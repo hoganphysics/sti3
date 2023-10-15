@@ -124,6 +124,12 @@ public:
 		}
 		return false;
 	}
+
+	bool read(short channel, STI::Utils::MixedValue& data)
+	{
+		return read(channel, STI::Utils::MixedValueType::Empty, data);
+	}
+
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 	{
 		if (localDevice != 0) {
@@ -131,12 +137,14 @@ public:
 		}
 		return false;
 	}
+
 	void stopRW()
 	{
 		if (localDevice != 0) {
 			localDevice->stopRW();
 		}
 	}
+
 	std::string getAttribute(const std::string& key)
 	{
 		if (localDevice != 0) {
@@ -144,6 +152,7 @@ public:
 		}
 		return "";
 	}
+
 	bool setAttribute(const std::string& key, const std::string& value)
 	{
 		if (localDevice != 0) {
@@ -151,6 +160,7 @@ public:
 		}
 		return false;
 	}
+
 	bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute)
 	{
 		if (localDevice != 0) {

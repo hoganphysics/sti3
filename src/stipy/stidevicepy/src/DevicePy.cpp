@@ -195,6 +195,11 @@ bool DevicePy::write(short channel, const pybind11::object& value)
     return (device_ != 0) && device_->write(channel, valuepy.getMixedValue());
 }
 
+pybind11::object DevicePy::read(short channel)
+{
+    return read(channel, pybind11::none());
+}
+
 pybind11::object DevicePy::read(short channel, const pybind11::object& value)
 {
     MixedValue data;

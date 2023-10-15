@@ -497,6 +497,11 @@ bool RemoteDevice::write(short channel, const STI::Utils::MixedValue& value)
 	return false;
 }
 
+bool RemoteDevice::read(short channel, STI::Utils::MixedValue& data)
+{
+	return read(channel, STI::Utils::MixedValueType::Empty, data);
+}
+
 bool RemoteDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
 	std::shared_ptr<ChannelManager> manager;

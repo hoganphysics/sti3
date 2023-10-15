@@ -50,6 +50,7 @@ public:
     std::shared_ptr<STI::Device::LogManager> getLogManager();
 
     bool write(short channel, const pybind11::object& value);
+    pybind11::object read(short channel);
     pybind11::object read(short channel, const pybind11::object& value);
     void stopRW();
 

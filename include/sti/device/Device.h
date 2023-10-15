@@ -50,6 +50,7 @@ public:
 
 	//convenience functions
 	virtual bool write(short channel, const STI::Utils::MixedValue& value) = 0;
+	virtual bool read(short channel, STI::Utils::MixedValue& data) = 0;
 	virtual bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) = 0;
 	virtual void stopRW() = 0;
 	virtual std::string getAttribute(const std::string& key) = 0;
