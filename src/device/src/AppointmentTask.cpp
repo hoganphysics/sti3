@@ -7,9 +7,11 @@
 #ifdef USE_DATE_LIB
 #include <sti/extern/date/date.h>
 #include <sti/extern/date/tz.h>
-using namespace date;
+// using namespace date;
+namespace chronodate = date;
 #else
-using namespace std::chrono;
+// using namespace std::chrono;
+namespace chronodate = date;
 #endif
 
 using STI::Utils::AppointmentTask;
@@ -44,7 +46,7 @@ AppointmentTask::AppointmentTask(const std::string& id, const std::string& timeO
 
 	std::stringstream timeSS;
 	timeSS << timeOfDay;
-	timeSS >> parse("%H:%M:%S", timeAfterMidnight);	//convert to seconds
+	timeSS >> chronodate::parse("%H:%M:%S", timeAfterMidnight);	//convert to seconds
 
 	computeNextRuntime();
 	//std::cout << "nextRunTime: " << nextRunTime << std::endl;
@@ -74,9 +76,9 @@ void AppointmentTask::computeNextRuntime()
 
 void AppointmentTask::computeNextRuntimeAnyday()
 {
-	//using namespace std::chrono;
+	using namespace std::chrono;
 
-	auto now = current_zone()->to_local(std::chrono::system_clock::now());
+	auto now = chronodate::current_zone()->to_local(std::chrono::system_clock::now());
 	auto today = floor<days>(now);		//At midnight local time
 	auto tomorrow = today + days(1);
 
@@ -94,9 +96,10 @@ void AppointmentTask::computeNextRuntimeAnyday()
 
 void AppointmentTask::computeNextRuntimeWeekdays()
 {
-	//using namespace std::chrono;
+	// using namespace std::chrono;
+	using namespace chronodate;
 
-	auto now = current_zone()->to_local(std::chrono::system_clock::now());
+	auto now = chronodate::current_zone()->to_local(std::chrono::system_clock::now());
 	auto today = floor<days>(now);		//At midnight local time
 
 	bool runToday;
@@ -109,7 +112,7 @@ void AppointmentTask::computeNextRuntimeWeekdays()
 		runToday = false;	//run on next weekday
 	}
 
-	std::chrono::time_point<local_t, std::chrono::seconds> nextWeekday;
+	std::chrono::time_point<chronodate::local_t, std::chrono::seconds> nextWeekday;
 
 	weekday wd{ today };
 	if (wd == Saturday) {
@@ -143,7 +146,7 @@ double AppointmentTask::secondsToNextRun() const
 {
 	using namespace std::chrono;
 
-	auto now = current_zone()->to_local(std::chrono::system_clock::now());
+	auto now = chronodate::current_zone()->to_local(std::chrono::system_clock::now());
 
 	auto wait = nextRunTimeHolder->nextRunTime - now;
 

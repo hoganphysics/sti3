@@ -14,14 +14,6 @@ namespace STI
 namespace Utils
 {
 
-//template<class ID>
-//class DistributerListener
-//{
-//public:
-//	virtual void addNode(const ID& id) = 0;
-//	virtual void removeNode(const ID& id) = 0;
-//	virtual void refresh() = 0;
-//};
 
 template<class ID, class T>
 class Distributer
@@ -156,13 +148,9 @@ public:
 
 private:
 
-
 	void cleanup()
 	{
 		nodes->cleanup();		//ensure the owned Nodes match the Collection policy
-
-								//std::set<ID> nodeIDs;
-								//nodes->getIDs(nodeIDs);
 
 		std::set<ID> collectorIDs;
 		collectors.getKeys(collectorIDs);
@@ -181,7 +169,6 @@ private:
 	}
 
 	bool addCollector(const ID& id, const CollectorT_ptr& collector) {
-		//	bool addCollector(const ID& id, const NodeTCollection_ptr& collector) {
 		if (collector != 0 && collectors.add(id, collector)) {
 			distribute(id, collector);		//was distribute(collector)
 			return true;
@@ -292,7 +279,6 @@ private:
 	{
 		CollectorT_ptr collector;
 		CollectionT_ptr collection;
-		//		CollectorT_ptr collection;
 
 		for (typename std::set<ID>::const_iterator id = collectorIDs.begin(); id != collectorIDs.end(); ++id) {
 			if (collectors.get(*id, collector) && collector != 0) {
@@ -306,18 +292,12 @@ private:
 	}
 
 	CollectionT_ptr nodes;
-//	STI::Utils::SynchronizedMap<ID, T_ptr> nodes;
 	
 	typename STI::Utils::SynchronizedMap<ID, CollectorT_ptr> collectors;
-	//typename STI::Utils::SynchronizedMap<ID, std::shared_ptr<Collection<ID, Node<ID, T>>>> collectors;
-
 };
-
-
 
 
 } //Utils
 } //STI
-
 
 #endif

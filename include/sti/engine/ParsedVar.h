@@ -29,7 +29,6 @@ public:
             const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
     
     std::string name;
-//     std::string fullGroupName;
     STI::Utils::MixedValue value;   //can be MixedValueType::Empty to indicate an unbound var
     
     STI::Engine::StackTrace trace;

@@ -23,7 +23,7 @@ class SynchronousEvent
 {
 public:
 
-	SynchronousEvent(double time);	//Time type?
+	SynchronousEvent(double time);
 	virtual ~SynchronousEvent();
 
 	double getTime() const { return _time; }

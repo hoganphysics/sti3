@@ -1,18 +1,15 @@
-
 #include <sti/device/Logger.h>
 
-#include "LocalLogManager.h"
-#include "LocalTaskManager.h"
-#include "LocalAttributeManager.h"
-#include <sti/device/ChannelManager.h>
-#include <sti/device/Channel.h>
-
-#include "LocalPersistenceManager.h"
-
 #include <sti/LocalDevice.h>
-
 #include <sti/device/Attribute.h>
+#include <sti/device/Channel.h>
+#include <sti/device/ChannelManager.h>
 #include <sti/utils/IntervalTask.h>
+
+#include "LocalAttributeManager.h"
+#include "LocalLogManager.h"
+#include "LocalPersistenceManager.h"
+#include "LocalTaskManager.h"
 
 #include <sstream>
 #include <filesystem>
@@ -45,7 +42,6 @@ Logger::~Logger()
     }
     
     messageGrouper.stop();
-
 }
 
 std::string Logger::getName() const
@@ -167,89 +163,10 @@ void Logger::addReadLogTask(short channel, const std::string& timeInterval, cons
     addReadLogTask(channel, timeInterval, [value](){ return value; });
 }
 
-// {
-//     std::shared_ptr<ChannelManager> channelManager;
-//     std::shared_ptr<Channel> targetChannel;
-
-//     manager->localDevice->getChannelManager(channelManager);
-//     if (channelManager == 0) return;
-
-//     if (!channelManager->getChannel(channel, targetChannel)) return;
-
-//     // <09/03/2023 13:25:22|read channel|3|'temperature'> 23
-//     std::vector<std::string> prefixTokens = {"read channel", STI::Utils::valueToString(targetChannel->getChannelNumber())};
-
-//     std::stringstream taskID;
-//     taskID << "Log:" << name << ":" << "Read channel #" << channel;
-//     auto chName = targetChannel->getChannelName();
-//     if (chName != "") {
-//         taskID << "("  << chName << ")";
-//         prefixTokens.push_back("'" + chName + "'");
-//     }
-
-//     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
-//         [this, channelManager, targetChannel, value, prefixTokens]() {
-//             STI::Utils::TimeStamp timeStamp;
-//             STI::Utils::MixedValue data;
-            
-//             if (channelManager == 0 || targetChannel == 0) return;
-
-//             if (!channelManager->readChannel(targetChannel->getChannelNumber(), value, data)) return;
-
-//             append(makePrefix(timeStamp, prefixTokens), data.print());
-//         });
-//     manager->localDevice->addTask(task);
-// }
-
-
 void Logger::addWriteLogTask(short channel, const std::string& timeInterval, const STI::Utils::MixedValue& value)
 {
     addWriteLogTask(channel, timeInterval, [value](){ return value; });
 }
-
-// {
-//     std::shared_ptr<ChannelManager> channelManager;
-//     std::shared_ptr<Channel> targetChannel;
-
-//     manager->localDevice->getChannelManager(channelManager);
-//     if (channelManager == 0) return;
-
-//     if (!channelManager->getChannel(channel, targetChannel)) return;
-
-//     // <09/03/2023 13:25:22|write channel|3|'setpoint'> target value = 34 | Success | current value = 34
-//     std::vector<std::string> prefixTokens = {"write channel", STI::Utils::valueToString(targetChannel->getChannelNumber())};
-
-//     std::stringstream taskID;
-//     taskID << "Log:" << name << ":" << "Write channel #" << channel;
-//     auto chName = targetChannel->getChannelName();
-//     if (chName != "") {
-//         taskID << "("  << chName << ")";
-//         prefixTokens.push_back("'" + chName + "'");
-//     }
-
-//     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
-//         [this, channelManager, targetChannel, value, prefixTokens]() {
-//             STI::Utils::TimeStamp timeStamp;
-//             std::stringstream result;
-            
-//             if (channelManager == 0 || targetChannel == 0) return;
-
-//             result << "target value = ";
-//             result << value.print();
-//             result << " | ";
-
-//             if (channelManager->writeChannel(targetChannel->getChannelNumber(), value)) {
-//                 result << "Success";
-//             }
-//             else {
-//                 result << "Failed";
-//             }
-//             result << " | " << targetChannel->getLastValue().print();
-
-//             append(makePrefix(timeStamp, prefixTokens), result.str());
-//         });
-//     manager->localDevice->addTask(task);
-// }
 
 std::string Logger::makePrefix(const STI::Utils::TimeStamp& timeStamp, const std::vector<std::string>& annotations)
 {
@@ -266,14 +183,10 @@ std::string Logger::makePrefix(const STI::Utils::TimeStamp& timeStamp, const std
 
 void Logger::addAttributeLogTask(const std::string& key, const std::string& timeInterval)
 {
-    
-    // [this](){ log() << getAttribute(key) << std::endl;
-    // log << 
     if (manager == 0 || manager->localDevice == 0) return;
 
     std::shared_ptr<Attribute> attribute;
     manager->localDevice->getAttribute(key, attribute);
-    // manager->localAttributeManager->getAttribute(key, attribute);
     
     if (attribute == 0) return;
 
@@ -285,15 +198,9 @@ void Logger::addAttributeLogTask(const std::string& key, const std::string& time
         [this, attribute]() {
             STI::Utils::TimeStamp timeStamp;
             auto prefix = makePrefix(timeStamp, {"attribute", attribute->getKey()});
-            // std::stringstream prefix;
-            // prefix << "<" << timeStamp.date_YYYY_MM_DD() << " " << timeStamp.time_hh_mm_ss(":");
-            // prefix << "|" << "attribute" << "|" << attribute->getKey() << ">";
             append(prefix, attribute->getValue());
-
-            
         });
     manager->localDevice->addTask(task);
-    // manager->localTaskManager->addTask(task);
 }
 
 std::string Logger::extract()
@@ -321,11 +228,6 @@ std::string Logger::getLog() const
 
 Logger& Logger::operator<<(manip1 fp)
 {
-    // std::unique_lock<std::mutex> loglock(logMutex);
-    // log << fp;
-    // sendLogWriteMessage();
-    // return *this;
-
     std::unique_lock<std::mutex> loglock(logMutex);
     auto mess = std::make_shared<LogStreamMessage>(fp);
     messageGrouper.addMessage(mess);
@@ -334,10 +236,6 @@ Logger& Logger::operator<<(manip1 fp)
 
 Logger& Logger::operator<<(manip2 fp)
 {
-    // std::unique_lock<std::mutex> loglock(logMutex);
-    // log << fp;
-    // sendLogWriteMessage();
-    // return *this;
     std::unique_lock<std::mutex> loglock(logMutex);
     auto mess = std::make_shared<LogStreamMessage>(fp);
     messageGrouper.addMessage(mess);
@@ -346,10 +244,6 @@ Logger& Logger::operator<<(manip2 fp)
 
 Logger& Logger::operator<<(manip3 fp)
 {
-    // std::unique_lock<std::mutex> loglock(logMutex);
-    // log << fp;
-    // sendLogWriteMessage();
-    // return *this;
     std::unique_lock<std::mutex> loglock(logMutex);
     auto mess = std::make_shared<LogStreamMessage>(fp);
     messageGrouper.addMessage(mess);
@@ -375,16 +269,6 @@ void Logger::append(const std::string& input)
 void Logger::append(const std::string& prefix, const std::string& input)
 {
     std::unique_lock<std::mutex> loglock(logMutex);
-    // log << prefix;
-    // log << input;
-    // log << std::endl;
-
-    //ensure today's log file is created and open
-    // if (!logFile.is_open()) {
-    //     logFile.open("file.log", std::ios::app);
-    // }
-    // if (!logFile.is_open()) return;
-
     log << prefix << " ";
     log << input;
     log << std::endl;
@@ -398,42 +282,16 @@ void Logger::sendLogWriteMessage()
     manager->logWriterMessageGrouper.addMessage(mess);
 }
 
-// std::string Logger::getFilename()
-// {
-//     return name + ".log";
-// }
-
-// // void Logger::setLoadFilename(const std::string& filename)
-// // {
-
-// // }
-
-// void Logger::setPersistenceCallback(const std::function<void(void)>& refresher)
-// {
-
-// }
-
 std::string Logger::getNextLogFilename(const std::string& targetDirectory)
 {
     fs::path nextLogFilename;
     fs::path newLogFilenamePath = targetDirectory;
 
-    // std::string logbasename = "sti";
-    // std::string extension = "log";
     bool fileCheck = false;
     unsigned i = 0;
-    // std::stringstream filename;
     int maxFileSize = 10000;    //bytes
 
     do {
-        // filename.str("");
-        // filename.clear();
-        // filename << logbasename;
-        // if (name != "") {
-        //     filename << "_" << name;
-        // }
-        // filename << "_" << STI::Utils::valueToString(i) << "." << extension;
-
         auto filename = manager->makeLogFilename(name, i);
 
         nextLogFilename = newLogFilenamePath / filename;
@@ -489,14 +347,3 @@ bool Logger::save(const std::string& targetDirectory)
 
     return false;
 }
-
-// void Logger::load(const std::string& filename)
-// {
-//     STI::Utils::TimeStamp timestamp;
-//     std::string todaysLogBasePath;
-
-//     if (manager->localPersistenceManager->getLogBasePath(timestamp, todaysLogBasePath)) {
-//         //open shot record
-//     }
-// }
-

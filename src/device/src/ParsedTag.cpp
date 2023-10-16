@@ -10,7 +10,6 @@ using STI::Engine::ParsedTag;
 
 bool ParsedTag::operator<(const ParsedTag& rhs) const 
 {
-    // if (scope == rhs.scope) return name < rhs.name;
     return name < rhs.name;
 }
 
@@ -30,7 +29,6 @@ void ParsedTag::serialize(Archive& archive)
 	archive(
 		cereal::make_nvp("name", name), 
 		cereal::make_nvp("trace", trace) 
-		// cereal::make_nvp("scope", scope)
 		);
 }
 

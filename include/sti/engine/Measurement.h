@@ -64,7 +64,6 @@ public:
 
 private:
 
-//	const RawEvent& sourceEvent;
 	STI::Utils::MixedValue measurementResult;
 	bool data_ready;
 	

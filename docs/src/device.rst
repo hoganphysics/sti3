@@ -164,7 +164,7 @@ In all cases, you create a derived class using LocalDevice as a base class. All 
 your device is then implemented by overriding function hooks provided by LocalDevice.
 
 .. Note::
-    Several examples of device drivers may be found in the *examples/* subdirectory in the 
+    Several :ref:`examples <deviceexamples>` of device drivers may be found in the *examples/* subdirectory in the 
     STI source distribution.
     
 

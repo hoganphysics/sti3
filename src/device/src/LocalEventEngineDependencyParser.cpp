@@ -216,16 +216,6 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
 
         getDependants(targets, tree, missingTargets, messages, STI::Device::DeviceTrace());
 
-        ////Remove direct partners from missingTargets, since the localDevice will act as their server
-        //for (auto it = missingTargets.begin(); it != missingTargets.end(); ) {
-        //    if (localDevice->isEventTarget(*it)) {
-        //        it = missingTargets.erase(it);
-        //    }
-        //    else {
-        //        ++it;
-        //    }
-        //}
-
         // If there are still missingTargets, they may be found on another pass.
         // Make sure the new missingTarget list is not the same as the last targets list, 
         // since those IDs have already been tried and were missing.
@@ -333,33 +323,6 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
         //if (!parsing) break;    //abort
     }
 
-    //addToTargetsByServer(unownedIDs, tree, targetsByServer, upstreamTargets);    //sort any new missing ids by their server
-    //unownedIDs.clear();
-
-    //*** (4) Add targets that declare the local device as server ***//
-
-    //std::set<DeviceID> targetsForLocal;    
-
-    ////Add any targets that declare this as their server
-    //auto it = targetsByServer.find(localDeviceID.getID());
-    //if (it != targetsByServer.end()) {
-
-    //    //Targets found that need this device as server
-    //    tree.addVertex(localDeviceID);   //add if not already added
-
-    //    for (auto& id : it->second) {
-    //        targetsForLocal.clear();
-    //        targetsForLocal.insert(id);     //call as getDeviceDependants(id, {id}, ...) to just add this id (and its partners...)
-
-    //        getDeviceDependants(id, targetsForLocal, tree, missingIDs, messages, newTrace);
-    //    }
-    //    addToTargetsByServer(missingIDs, tree, targetsByServer, upstreamTargets);
-    //    missingIDs.clear();
-
-    //    targetsByServer.erase(it);  //any missingIDs that were added to targetsByServer[localDeviceID] are already in the tree -> delete from map
-    //}
- 
-
     //*** (4) Search the full graph for any missing targets, following server chain ***//
 
     //Any targets in targetsByServer could not be found by the local device.  Pass them downstream to the 
@@ -413,19 +376,5 @@ void LocalEventEngineDependencyParser::getDownstreamIDs(const std::map<std::stri
     for (auto& it : targetsByServer) {
         downstreamIDs.insert(it.second.begin(), it.second.end());
     }
-    //targetsByServer.clear(); 
-
-    //This is a problem for devices acting as a server for their partners
-    ////Check for any target in the tree that is still not connected via a server chain
-    //std::set<STI::Device::DeviceID> allTreeIDs;
-    //tree.getNodes(allTreeIDs);
-
-    ////Add any targets in the tree that are not connected via the server chain
-    //for(auto& id : allTreeIDs) {
-    //    if (id != localDeviceID && !tree.hasBranchToTarget(localDeviceID, id)) {
-    //        downstreamIDs.insert(id);
-    //    }
-    //}
-
 }
 

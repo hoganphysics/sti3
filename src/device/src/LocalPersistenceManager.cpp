@@ -337,7 +337,6 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     }
 
     return record;
-
 }
 
 bool LocalPersistenceManager::findShotLocal(const STI::Engine::ShotID& sid)
@@ -468,11 +467,6 @@ bool LocalPersistenceManager::getParseResult(const STI::Engine::ParseID& pid, st
     }
 
     if (getParseResultLocal(pid, parseResult) && parseResult != 0) {
-        //rebind FileHolders of retrieved ParseResult so they match the PersistenceManager
-        //(ensures that they will be served to the network properly)
-        // if (parseResult->stackTraceResult != 0 && parseResult->stackTraceResult->stackTraceData != 0) {
-        //     parseResult->stackTraceResult->stackTraceData->setFileHolderFactory(fileHolderFactory);
-        // }
         return true;
     }
 
@@ -550,7 +544,6 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
         if (!updateSequence(sid.parseID.sequenceEntryID, sid, STI::Engine::EngineJobStatus::Completed, isOwner)) {
             saveSequence(sequenceResult, isOwner);
         }
-        // sequenceResult->status[sid.parseID.sequenceEntryID.seqIndex] = STI::Engine::EngineJobStatus::Completed;
     }
 
     if (isOwner) {
@@ -567,51 +560,7 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
     getResultsPaths(sid, resultsPaths);
     resultsPaths.dataPath;
 
-    ////if any measurements are Images with a custom writter, write to disk now before transferring
-    //std::shared_ptr<STI::Utils::ImageWriter> dummyWriter;     //hack; use null writter so only Images with a custom writter will be written
-
-    //if (fullShotResult != 0 && fullShotResult->shotResult != 0 && fullShotResult->shotResult->measurements != 0) {
-    //    for (auto& tuple : *(fullShotResult->shotResult->measurements)) {
-    //        for (auto& m : tuple.second) {
-    //            if (m != 0 && m->data().isType(STI::Utils::MixedValueType::Image)) {
-    //                m->data().getImage()->writeToFile(dummyWriter, resultsPaths.dataPath);
-    //            }
-    //        }
-    //    }        
-    //}
-    
     return addToBuffer(fullShotResult);
-
-    // std::shared_ptr<ResultsCollector> collector;
-
-    // if (sid.parseID.shotType == STI::Engine::ParseID::ShotType::SingleUndocumented) {
-    //     //Skip documentation
-    //     return true;
-    // }
-
-    // std::set<unsigned> priorities;
-    // delegatePriorities.getKeys(priorities);
-
-    // std::vector<std::shared_ptr<PersistenceManager>> orderedDelegates;
-
-    // for (auto& p : priorities) {
-    //     DeviceID id;
-    //     delegatePriorities.get(p, id);
-
-    //     if (delegates.get(id, delegate) && delegate != 0) {
-    //         orderedDelegates.push_back(delegate);
-    //     }
-    // }
-
-    // if (orderedDelegates.size() > 0) {
-    //     return orderedDelegates.front()->saveShot(sid, eventEngine);
-    //     //other delegates?
-    // }
-    // else {
-    //     return saveShotLocal(sid, eventEngine);
-    // }
-
-    // return false;
 }
 
 bool LocalPersistenceManager::updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, 
@@ -667,9 +616,7 @@ bool LocalPersistenceManager::saveSequence(const std::shared_ptr<STI::Engine::Se
         addToBuffer(sequenceResult);
     }
 
-    // sequenceBuffer.get()
     //would help to have a way to update a sequence;  updateSequence(sequenceID, shotResult)
-
 
     if (isOwner) {
         return saveSequenceLocal(sequenceResult, isOwner);
@@ -717,8 +664,6 @@ bool LocalPersistenceManager::getResultsPaths(const STI::Engine::ShotID& sid, Re
         repo = transientRepository;
     }
 
-    // std::shared_ptr<ShotResult> finalShotResult = shotResult;
-
     //happens on (remote) delegate, where data should be saved.
     resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
 
@@ -742,11 +687,8 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
         repo = transientRepository;
     }
 
-    // std::shared_ptr<ShotResult> finalShotResult = shotResult;
-
     //happens on (remote) delegate, where data should be saved.
     ResultsPaths resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
-    // auto collector = std::make_shared<LocalResultsCollector>(sid, resultsPaths, fileHolderFactory);
     auto collector = resultsCollectorFactory->createResultsCollector(sid, resultsPaths, fileHolderFactory);
 
     auto shotRecord = transferResults(collector, fullShotResult->shotResult, isOwner);   //collector is passed on to all devices in shot
@@ -771,20 +713,6 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
     }
 
     return success;
-
-
-    // if (resultsDocumenter == 0) return false;
-
-
-    
-    // ResultsPaths resultsPaths = resultsDocumenter->preparePaths(sid);    //e.g., make directory sturcture
-
-    // collector = std::make_shared<LocalResultsCollector>(sid, eventEngine->getParsedTree(), 
-    //                                                     resultsPaths, fileHolderFactory);
-
-    // eventEngine->transferResults(collector);   //collector is passed on to all devices in shot
-
-    // return resultsDocumenter->save(resultsPaths, collector);
 }
 
 

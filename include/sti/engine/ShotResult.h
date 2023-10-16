@@ -30,11 +30,8 @@ public:
     ShotID sid;
 	STI::Utils::TimeStamp playTime;
 
-    // std::shared_ptr<STI::Engine::MeasurementVector> measurements;
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
-    // std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> measurements;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
-
 
     //The result is stored by the device in a repository. Initially, only the local device data is available.
     //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.

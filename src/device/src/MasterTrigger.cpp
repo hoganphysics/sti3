@@ -1,8 +1,8 @@
-
 #include "MasterTrigger.h"
 
 using STI::Engine::MasterTrigger;
 using STI::Device::DeviceID;
+
 
 MasterTrigger::MasterTrigger(const STI::Device::DeviceID& triggerDevice) 
 : triggerDevice(triggerDevice), running(false)

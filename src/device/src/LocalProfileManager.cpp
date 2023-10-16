@@ -153,14 +153,8 @@ std::string getProfileFilename(const std::string& profileName)
 
 bool LocalProfileManager::save(const std::string& filename)
 {
-	// std::ofstream file( filename );
-    // // cereal::XMLOutputArchive archive( file );
-	// cereal::JSONOutputArchive archive( file );
-
 	STI::Device::Profiles profiles;
 	profileMap.getValues(profiles.profiles);
-
-    // archive(profiles);
 
 	fs::path baseProfilePath = filename;	//.sti/deviceID/profiles/
     if (!fs::exists(baseProfilePath)) {
@@ -183,21 +177,6 @@ bool LocalProfileManager::save(const std::string& filename)
 
 void LocalProfileManager::load(const std::string& filename)
 {
-	// fs::path profilePath = filename;
-	// if (!fs::exists(profilePath)) return;
-
-	// std::ifstream file( filename );
-	// cereal::JSONInputArchive archive( file );
-
-	// STI::Device::Profiles profiles;
-    // archive(profiles);
-
-	// for (auto& profile : profiles.profiles) {
-	// 	if (profile != 0) {
-	// 		profileMap.add(profile->name, profile);
-	// 	}
-	// }
-
     fs::path searchPath = filename;
 	if (!fs::exists(searchPath)) return;
 

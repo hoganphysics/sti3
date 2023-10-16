@@ -50,7 +50,6 @@ public:
 
     virtual AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source) = 0;
     virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
-    // virtual ShotID play(const ParseID& parseID, const EngineJobSourceID& source, const SequenceEntryID& sequenceEntryID) = 0;
 
     virtual EngineJobStatus getStatus(const ParseID& pid) = 0;
     virtual EngineJobStatus getStatus(const ShotID& sid) = 0;
@@ -60,15 +59,7 @@ public:
     virtual bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const = 0;    
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;
-
     virtual void cancelAll() = 0;
-
-    // struct EventEngineJobFilter
-    // {
-    //     EventEngineJobList jobListType;
-    //     int startIndex;
-    //     int endIndex;
-    // };
 
     virtual std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const = 0;
     virtual std::vector<std::shared_ptr<EventEngineJob>> getJobs(const EventEngineJobList& jobListType) const = 0;

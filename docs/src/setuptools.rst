@@ -6,10 +6,77 @@ Setup
 
 Setting up STI for the first time.
 
-Windows
--------
+Build using Docker
+------------------
 
-Build STI3 in windows
+The easiest way to build the STI3 library is using Docker. The Dockerfile for
+building the library is located in the root directory: `sti3/Dockerfile`.
+From the root sti3 directory, run the following:
+
+.. code-block:: bash
+    
+    docker build -t sti3:v1 .
+
+The image name and version are optional.  In addition to installing all build dependencies,
+this Dockerfile will download and build omniORB before building STI3.
+
+
+Build from source (Linux)
+-------------------------
+
+* Install `openSSL` and `curl`
+
+.. code-block:: bash
+
+    apt install libssl-dev openssl libcurl4-openssl-dev
+
+
+* Install `pybind11`
+
+.. code-block:: bash
+
+    pip3 install pybind11
+
+
+* Install `omniORB` from source
+
+.. code-block:: bash
+
+    # Download latest source zip
+    wget https://sourceforge.net/projects/omniorb/files/latest/download
+
+    # unzip; change to $OMNIORB_TOP (root directory of omniORB)
+    cd $OMNIORB_TOP
+    mkdir build
+    cd build
+
+    ../configure --with-openssl
+    make
+    make install
+
+* Install `STI3` from source
+
+.. code-block:: bash
+
+    # Download latest STI3 source zip
+
+    # Change to build directory
+    cd sti3/build
+
+    # Configure.  For debug builds, include option -DCMAKE_BUILD_TYPE=Debug
+    cmake ..
+
+    # Build
+    cmake --build . --parallel 4
+
+    # Install
+    make DESTDIR=/sti3 install
+
+
+
+Build from source (Windows)
+---------------------------
+
 
 * Install `openSSL <https://www.openssl.org/>`_
 
@@ -20,7 +87,7 @@ Prebuilt Windows binaries: `<https://slproweb.com/products/Win32OpenSSL.html>`_ 
 
 .. code-block:: bash
 
-        pip install pybind11
+    pip install pybind11
 
 
 * Install `omniORB <https://omniorb.sourceforge.io/>`_
@@ -43,9 +110,9 @@ Prebuilt Windows binaries: `<https://slproweb.com/products/Win32OpenSSL.html>`_ 
 
 .. code-block:: bash
 
-        OPENSSL_ROOT_DIR
-        OMNIORB_ROOT_DIR
-        BOOST_ROOT
+    OPENSSL_ROOT_DIR
+    OMNIORB_ROOT_DIR
+    BOOST_ROOT
 
 These should be defined as their respective directories of these on the local computer.
 OPENSSL_ROOT_DIR should point to the root directory of openSSL.
@@ -67,22 +134,33 @@ BOOST_ROOT should point to the root directory of boost.
     Without access, the CMake config step may give an error claiming to not find cmd.exe, for example.
     One way to fix this is to append %SystemRoot%\\System32 to the Path environment variable.
 
-Build STI3 Python in Windows
-----------------------------
+Build STI3 Python (STIPy)
+-------------------------
 
-* Setup python virtual environment for build (optional)
-* Install required python packages for build using requirements.txt in the root directory
+The build system for STIPy uses `setuptools` to create the python package.  The `setup.py` file in the 
+root directory configures the build. The python build will configure the package and call `cmake` to compile
+the c++ code for the core STI shared libraries. The output of thee build is a platform-specific python wheel 
+(whl file) which contains the complied STI binaries. The following build instructions are platform independent.
+
+* Setup python virtual environment for the build (optional)
+* Install the required python packages for the build using `requirements.txt` in the root directory
 
 .. code-block:: bash
 
     pip install -r requirements.txt
 
 
-* Build wheel
+* Build the wheel
 
 .. code-block:: bash
 
     python -m build --wheel
 
 * The created whl file will be in the sti3/dist directory.
+
+* (Optional) Install STIPy wheel directly (in the desired virtual environment)
+
+.. code-block:: bash
+
+    pip install -I ./sti3/dist/<whl filename>
 

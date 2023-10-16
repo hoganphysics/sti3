@@ -40,8 +40,6 @@ public:
     virtual void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory) = 0;
 
     virtual bool getMeasurements(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::MeasurementMap>& measurements) = 0;
-
-    //virtual bool getResultTicket(const STI::Engine::ShotID& sid, std::shared_ptr<STI::Engine::ResultTicket>& ticket) = 0;
     
 	virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
     virtual void setVirtualFileServerFactory(const std::shared_ptr<STI::Utils::VirtualFileServerFactory>& factory) = 0;
@@ -53,22 +51,6 @@ public:
     virtual void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
     virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;
     virtual bool saveSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult, bool isOwner) = 0;
-    
-    // virtual bool getLogDirectory(std::string& logDirectory) = 0;
-
-    // virtual std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& filename) = 0;
-    
-
-//    virtual void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;
-//    virtual bool getShotRepository(std::shared_ptr<STI::Engine::ShotRepository>& repo) = 0;
-
-    // virtual std::shared_ptr<STI::Engine::ResultsCollector> createResultsCollector(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::EventEngine>& eventEngine) = 0;
-
-    // //virtual void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) = 0;
-    // virtual void setResultsCollectorFactory(const std::shared_ptr<STI::Engine::ResultsCollectorFactory>& factory) = 0;
-
-    // virtual void saveShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector) = 0;
-    // virtual void copyShot(const std::shared_ptr<STI::Engine::ResultsCollector>& collector) = 0;
 
 };
 

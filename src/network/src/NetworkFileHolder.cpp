@@ -1,11 +1,5 @@
-
 #include "NetworkFileHolder.h"
 #include "ORBManager.h"
-
-// #include "CerealArchives.h"
-// #include <sti/extern/cereal/archives/xml.hpp>
-// #include <cereal/types/string.hpp>
-// #include <cereal/types/polymorphic.hpp>
 
 #include <filesystem>
 
@@ -13,17 +7,6 @@ using STI::Network::NetworkFileHolder;
 using STI::Utils::FileHolder;
 using STI::Network::NetworkFileHolderFactory;
 
-
-
-//Serialization
-// CEREAL_REGISTER_TYPE(NetworkFileHolder);
-// CEREAL_REGISTER_POLYMORPHIC_RELATION(FileHolder, NetworkFileHolder)
-
-
-// NetworkFileHolder::NetworkFileHolder()
-// : STI::Utils::LocalFileHolder(), fileHolderServant(this)
-// {
-// }
 
 NetworkFileHolder::NetworkFileHolder(const STI::Utils::FileID& fileID, const std::shared_ptr<STI::Utils::FileHolder>& fileHolder)
 : fileHolderServant(this)

@@ -24,7 +24,6 @@ class ParseID;
 class SequenceID;
 class SequenceEntryID;
 class SequenceResult;
-// enum class EngineJobStatus;
 
 
 //should this be shot-specific, or general?

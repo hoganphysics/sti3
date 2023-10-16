@@ -10,7 +10,6 @@ namespace Engine
 {
 
 class SynchronousEvent;
-// typedef std::vector<std::unique_ptr<SynchronousEvent>> SynchronousEventVector;
 typedef std::vector<std::shared_ptr<SynchronousEvent>> SynchronousEventVector;
 
 } //Engine

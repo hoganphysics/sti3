@@ -87,8 +87,6 @@ private:
     MessageGrouperState state;
     std::shared_ptr<Message> message;
 
-    // std::shared_ptr<STI::Device::DeviceMessageDispatcher> messageDispatcher;
-
 	mutable std::mutex cacherMutex;
 	mutable std::condition_variable condition;
 

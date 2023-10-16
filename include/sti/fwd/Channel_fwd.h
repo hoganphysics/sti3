@@ -8,7 +8,6 @@ namespace Device
 {
 
 class Channel;
-//typedef std::map<unsigned short, Channel> ChannelMap;
 enum class ChannelType { Output, Input };
 
 } //Device

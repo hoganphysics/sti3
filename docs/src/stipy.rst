@@ -253,9 +253,10 @@ Groups
 .. code-block:: py
 
     g = group("groupName")              #gets RawEventGroup object
-    g.addEvent(channel, time, value)    #adds event to this group
+    g.event(channel, time, value)       #adds event to this group
     
     event(channel, time, value, "groupName")     #equivalent to above
+    event(channel, time, value, g)               #equivalent to above
 
 .. code-block:: py
 

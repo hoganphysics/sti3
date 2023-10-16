@@ -17,7 +17,6 @@ using STI::Device::PersistenceManager;
 using STI::Device::ProfileManager;
 
 
-
 PartnerDevice::PartnerDevice(LocalDevice* localDevice, const std::shared_ptr<Device>& device)
 : localDevice(localDevice), device(device)
 {

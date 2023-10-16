@@ -106,8 +106,6 @@ bool EventEngineStateMachine::setState(EngineState target)
 
 bool EventEngineStateMachine::_setState(EngineState target)
 {
-	//private use only; mutex protected elsewhere
-
 	if (_isAllowedTransition(target)) {
 		state = target;
 	}
@@ -123,7 +121,6 @@ bool EventEngineStateMachine::isState(EngineState target) const
 
 bool EventEngineStateMachine::_isState(EngineState target) const
 {
-	//private use only; mutex protected elsewhere
 	return state == target;
 }
 

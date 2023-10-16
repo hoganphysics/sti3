@@ -19,7 +19,6 @@ LogRecord::~LogRecord()
 {
 }
 
-
 template<class Archive>
 void DeviceLogRecord::serialize(Archive& archive)
 {
@@ -30,7 +29,6 @@ void DeviceLogRecord::serialize(Archive& archive)
 		);
 }
 
-
 template<class Archive>
 void LogRecord::serialize(Archive& archive)
 {
@@ -40,14 +38,8 @@ void LogRecord::serialize(Archive& archive)
 		);
 }
 
-
 template void LogRecord::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void LogRecord::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 
-
-
-
 template void DeviceLogRecord::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void DeviceLogRecord::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
-
-

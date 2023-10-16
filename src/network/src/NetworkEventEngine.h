@@ -28,7 +28,6 @@ public:
 
 	~NetworkEventEngine();
 
-
     static bool getTEventEngineReference(
         const typename std::shared_ptr<STI::Engine::EventEngine>& engine, STI::TNetwork::TEventEngine_var& tEngine);
 

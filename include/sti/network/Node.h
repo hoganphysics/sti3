@@ -28,8 +28,8 @@ public:
 	virtual bool addto(const HubID& target) = 0;
 
 	//virtual T& get() = 0;
-	T& get() { return static_cast<T&>(*this); }		//static polymorphism via CRTP
-	T* operator->() { return &get(); }
+	// T& get() { return static_cast<T&>(*this); }		//static polymorphism via CRTP
+	// T* operator->() { return &get(); }
 };
 
 

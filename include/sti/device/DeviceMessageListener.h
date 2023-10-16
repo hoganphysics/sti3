@@ -34,8 +34,6 @@ public:
 		}
 
 		return type < rhs.type;
-
-		// return type < rhs.type && name.compare(rhs.name) < 0;
 	}
 
 	bool operator==(const DeviceMessageListenerID& rhs) const

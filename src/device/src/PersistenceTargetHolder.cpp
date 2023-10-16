@@ -7,6 +7,7 @@ namespace fs = std::filesystem;
 using STI::Device::PersistenceTargetHolder;
 using STI::Utils::ConfigFile;
 
+
 PersistenceTargetHolder::PersistenceTargetHolder(const std::shared_ptr<PersistenceTarget>& target, const std::string& basepath)
 : target(target), basepath(basepath)
 {
@@ -14,10 +15,7 @@ PersistenceTargetHolder::PersistenceTargetHolder(const std::shared_ptr<Persisten
     saveMessager.setCooldown(500);    //ms
     saveMessager.start();
 
-    // file = std::make_shared<ConfigFile>(filename);
-
     if (target != 0) {
-        // auto refresher = [this](void) -> void { return this->save(); };
         auto refresher = 
             [this](void) -> void 
             {
@@ -27,8 +25,6 @@ PersistenceTargetHolder::PersistenceTargetHolder(const std::shared_ptr<Persisten
             };
 
         target->setPersistenceCallback(refresher);
-        // target->setPersistenceData(file);
-        // target->setLoadFilename(filename);
     }
 }
 
@@ -48,11 +44,6 @@ void PersistenceTargetHolder::load()
 
 void PersistenceTargetHolder::save()
 {
-    // if(file != 0 && target != 0 && target->save()) {
-    //     file->setHeader(target->getHeader());
-    //     file->save();
-    // }
-
     if (target != 0) {
         std::filesystem::path filename(basepath);
         filename /= (target->getFilename());
@@ -60,4 +51,3 @@ void PersistenceTargetHolder::save()
         target->save(filename.string());
     }
 }
-

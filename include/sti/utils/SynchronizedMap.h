@@ -12,14 +12,6 @@ allowed by the custom include policy of the SynchronizedMap.
 The class also generates Events when items are added or removed from the map.  It accepts listeners for these events and 
 pushs events.
 
-To do:  Refactor SynchronizedMap so there is a base class with no Event pusher, and derive a 
-
-EmittingSynchronizedMap
-EESynchronizedMap
-EventEmittingSynchronizedMap
-ActiveSynchronizedMap
-EventDispatcherSynchronizedMap
-
 */
 
 #include <sti/utils/EventQueue.h>
@@ -142,14 +134,7 @@ public:
 	typedef std::shared_ptr<KeyPolicy> KeyPolicy_ptr;
 
 	SynchronizedMap();
-	//{
-	//	typedef DefaultSynchronizedMapPolicy<Key> DefPol;
-
-	//	std::shared_ptr<DefPol> defaultPolicy = boost::make_shared<DefPol>();
-	//	setPolicy(defaultPolicy);
-	//}
-//	SynchronizedMap(KeyPolicy_ptr Policy) : policy(defaultPolicy) { setPolicy(Policy); }
-	SynchronizedMap(const KeyPolicy_ptr& Policy);	// : SynchronizedMap() { setPolicy(Policy); }
+	SynchronizedMap(const KeyPolicy_ptr& Policy);
 	virtual ~SynchronizedMap(); // { }
 
 	void setPolicy(const KeyPolicy_ptr& Policy);
@@ -179,24 +164,16 @@ private:
 	bool _get(const Key& key, T& item) const;
 	bool _remove(const Key& key);
 
-//	static shared_ptr<KeyPolicy> defaultPolicy;
-	
-	
-//	SynchronizedMapEventHandler< SynchronizedMapEvent<Key> > eventHandler;
 	SynchronizedMapEventHandler<Key> eventHandler;
 	void pushAddEvent(const Key& key);
 	void pushRemoveEvent(const Key& key);
 	void pushRefreshEvent();
-
 
 	KeyPolicy_ptr policy;
 	TMap items;
 
 	mutable std::mutex mapMutex;
 };
-
-//template<class Key, class T>
-//shared_ptr<DefaultSynchronizedMapPolicy<Key> > SynchronizedMap<Key, T>::defaultPolicy = shared_ptr<DefaultSynchronizedMapPolicy<Key> >(new DefaultSynchronizedMapPolicy<Key>());
 
 } // UTILS
 } // STI

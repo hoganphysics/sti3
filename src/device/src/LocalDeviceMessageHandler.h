@@ -75,6 +75,4 @@ private:
 } //Device
 } //STI
 
-
 #endif
-

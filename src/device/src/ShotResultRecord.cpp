@@ -6,6 +6,7 @@
 using STI::Engine::ShotResultRecord;
 using STI::Engine::RecordStatus;
 
+
 ShotResultRecord::ShotResultRecord() 
 : recordStatus(RecordStatus::Unqueried)
 {

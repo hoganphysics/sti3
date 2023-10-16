@@ -27,7 +27,6 @@ public:
 
     SerializedRepository(const std::string& baseDevicePath);
 
-
     //ShotRepositroy
     bool findParseResult(const ParseID& pid);
     bool findShotResult(const ShotID& sid);
@@ -43,15 +42,11 @@ public:
     bool saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult);
 
     bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements);
-    // bool getParseTicket(const ShotID& sid, std::shared_ptr<ParseTicket>& parseTicket); 
 
     //ResultsDocumenter
     std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
-    // bool save(const ResultsPaths& paths, const std::shared_ptr<LocalResultsCollector>& resultsCollector);
-
-    // bool load(const ShotID& sid, std::shared_ptr<ShotResult>& shotResult);
 
 private:
 
@@ -61,28 +56,18 @@ private:
     std::string makeShotFilename(const ShotID& sid);
     std::string makeSequenceFilename(const SequenceID& seqid);
 
-    // ResultsPaths makePaths(const ShotID& sid);
-    // ResultsPaths makePaths(const SequenceID& seqid);
-
     ResultsPaths makePaths(const STI::Utils::TimeStamp& timeStamp);
-    // std::string makeBaseDevicePath();
 
     void makePathIfNew(const std::string& pathName);
 
     std::string getShotBasePath(const STI::Utils::TimeStamp& timeStamp);
     std::string getLogBasePath(const STI::Utils::TimeStamp& timeStamp);
 
-    // STI::Device::DeviceID deviceID;
-    // std::string rootPath;
     std::string baseDevicePath;
 
-    // std::string archiveFilename;
-
     STI::Utils::OrderedBufferMap<STI::Utils::TimeStamp, ResultsPaths> cachedPaths;
-    // STI::Utils::OrderedBufferMap<SequenceID, ResultsPaths> cachedSequencePaths;
 
     mutable std::mutex pathMutex;
-
 };
 
 

@@ -77,27 +77,6 @@ using STI::Utils::VirtualFileHolder;
 using STI::Utils::VirtualFileServer;
 
 
-/*
-
-Need to refactor.
-
-* functions like: getDependants, loopDetected, addDeviceEventTargets, addToTargetsByServer, getPartnerDeviceDependants
-are not part of "scheduler" logic.  Should be in a separate class.
-
-Even most of parse() should be delegated. Need a class that provides
-
-EngineJob parse(shot);
-
-The missing class should handle job creation across the network.
-
-DistributedJobCreator
-
-
-* EventEngineManager seems unneeded.  Could replace list of EventMangers with list of EventEngines directly.
-
-*/
-
-
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
                                                     const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
@@ -108,7 +87,6 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
 
     localDeviceID = localDevice->getID();
     
-
     localDependencyParser = std::make_shared<LocalEventEngineDependencyParser>(localDevice);
 
     running = true;
@@ -162,9 +140,7 @@ void LocalEventEngineScheduler::setEngineFactory(const std::shared_ptr<STI::Engi
             
             addEngine(id, engine->getDeviceParser());  //replaces existing engine with newly created engine (using new factory)
         }
-
     }
-
 }
 
 void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventParser* deviceParser)
@@ -254,11 +230,8 @@ void LocalEventEngineScheduler::transferTimingFiles(StackTraceData& stackTraceDa
 {
     const std::vector<FileID>& fileIDs = stackTraceData.getTimingFiles();
 
-    // std::shared_ptr<VirtualFileHolder> virtualFile;
-
     for (auto& fileID : fileIDs) {
         auto virtualFile = persistenceManager->makeVirtualFileHolder(fileID);
-        // auto newFileID = virtualFile->getID();
         remoteFileSever.transferFile(fileID, virtualFile, STI::Utils::FileTransferType::Binary);
         targetFileServer.addFile(virtualFile);
         stackTraceData.replaceFile(fileID.getFullFilename(), virtualFile->getID()); //replace orginal filename with new FileID
@@ -284,7 +257,6 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
 
         auto stackTraceData = eventGroup->getStackTraceData();
         std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
-        // auto virtualFileServer = std::make_shared<VirtualFileServer>();
         auto virtualFileServer = persistenceManager->makeVirtualFileServer();
         
         if (stackTraceData != 0 && stackTraceData->getFileServer(remoteFileServer)) {
@@ -358,17 +330,11 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
         //return; //abort
     }
 
-    //Make parse job
-    //auto job = std::make_shared<LocalEventEngineJob>(parseID, shot, tree, localDeviceID, diff);
-
     job->setDependencies(tree);
     job->setMissingTargets(diff);
 
     addJob(job);
-
-    // return job->getJobID().pid;
 }
-
 
 
 PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source)
@@ -376,8 +342,6 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     PlayJobStatus playJobStatus;
     playJobStatus.sid = ShotID::generateUniqueID(parseID, source);
     playJobStatus.status = EngineJobStatus::New;
-
-    // ShotID shotID(parseID, source);
 
     std::shared_ptr<SequenceResult> sequenceResult;
     if (parseID.shotConfig.shotType == ShotType::Sequence &&
@@ -412,8 +376,6 @@ AddSequenceStatus LocalEventEngineScheduler::addSequence(const std::shared_ptr<S
     addSequenceStatus.seqid = SequenceID::generateUniqueID(source);
     addSequenceStatus.status = EngineJobStatus::New;
 
-    // auto seqid = SequenceID::generateUniqueID(source);
-
     auto result = std::make_shared<SequenceResult>(addSequenceStatus.seqid, sequence);
 
     if (persistenceManager != 0) {
@@ -427,7 +389,6 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
 {
     ParseJobStatus parseJobStatus;
     parseJobStatus.status = EngineJobStatus::New;
-    // ParseID parseID;
 
     if (shot != 0) {
         parseJobStatus.pid.shotConfig = shot->getShotConfig();
@@ -441,7 +402,6 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
     std::shared_ptr<SequenceResult> sequenceResult;
     if (persistenceManager != 0 && persistenceManager->getSequenceResult(sequenceEntryID.seqID, sequenceResult)) {
         //sequence found
-        // sequenceResult->status
 
         if (sequenceResult->sequence->type == STI::Engine::SequenceType::Closed && 
             sequenceResult->sequence->sequenceTable.count(sequenceEntryID.seqIndex.index) == 0) {
@@ -467,35 +427,12 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
     return parseJobStatus;
 }
 
-
-// ShotID LocalEventEngineScheduler::play(const ParseID& parseID, const EngineJobSourceID& source, const SequenceEntryID& sequenceEntryID)
-// {
-//     ShotID shotID(parseID, source);
-
-//     auto sid = play(shotID);
-
-//     std::shared_ptr<SequenceResult> sequenceResult;
-//     if (persistenceManager != 0 && persistenceManager->getSequenceResult(sequenceEntryID.seqID, sequenceResult)) {
-//         //sequence found
-//         // sequenceResult->status[sequenceEntryID.seqIndex.index] = 
-//         // add sequence message
-//     }
-    
-//     return sid;
-// }
-
-
 void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& newJob)
 {
     std::unique_lock<std::mutex> jobLock(jobMutex);
         
     if (newJob != 0) {
         queuedJobs.add(newJob->getJobID(), newJob);
-
-        //only the owner of the job sends job messages
-        // if (newJob->getJobOwner() == localDeviceID) {
-
-        // }
 
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toQueuedList(newJob);
@@ -616,10 +553,6 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 
         runningJobs.remove(jobID);
         job->markCancelled();
-
-        //if (job->getJobOwner() == localDeviceID) {
-        //    //job->getDependencies();
-        //}
         
         archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
@@ -649,10 +582,6 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         sendMessage(message2);
     }
 
-    //if (getManager(jobID, manager) && manager != 0) {
-    //    manager->abortJob();
-    //}
-
     jobCondition.notify_all();
 }
 
@@ -660,7 +589,6 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 std::shared_ptr<Shot> LocalEventEngineScheduler::createShot(const ShotConfig& shotConfig, const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup)
 {
     auto shot = std::make_shared<LocalShot>(shotConfig, eventGroup);
-    // shot->setEvents(events);
     return shot;
 }
 
@@ -675,7 +603,6 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
         job->markComplete();
-        // completedJobs.add(jobID, job);
         bool valid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
@@ -702,8 +629,6 @@ void LocalEventEngineScheduler::assignJobs()
     std::set<EngineID> allEngines;
     std::set<EngineID> freeEngines;
     std::set<EngineJobID> queuedJobIDs;     //sorted by priority
-
-//    std::set<EngineJobID> queuedPlayJobIDs;     //sorted by priority
   
     std::shared_ptr<EventEngineManager> manager;
     EngineID engineID;
@@ -715,11 +640,6 @@ void LocalEventEngineScheduler::assignJobs()
         queuedJobs.getKeys(queuedJobIDs);
         freeEngines.clear();
 
-        // //Filter play jobs
-        // queuedPlayJobIDs.clear();
-        // std::copy_if(queuedJobIDs.begin(), queuedJobIDs.end(), std::back_inserter(queuedPlayJobIDs),
-        //          [](const EngineJobID& id){ return id.type == EventEngineJobType::Play; });
-
         //check for available engines
         for (auto& id : allEngines) {
             if (engineManagers.get(id, manager) && manager != 0 && !manager->jobRunning()) {
@@ -727,7 +647,6 @@ void LocalEventEngineScheduler::assignJobs()
             }
         }
         assignableJobCount = static_cast<int>(queuedJobIDs.size());
-        //assignableFreeEngines = freeEngines.size();
 
         if (freeEngines.size() > 0) {
             

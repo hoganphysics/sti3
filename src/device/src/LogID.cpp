@@ -5,6 +5,7 @@
 
 using STI::Device::LogID;
 
+
 LogID::LogID() 
 {
 }
@@ -12,7 +13,6 @@ LogID::LogID()
 LogID::LogID(const DeviceID& deviceID, const std::string& date, const std::string& logName, unsigned index)
 : deviceID(deviceID), date(date), logName(logName), index(index)
 {
-
 }
 
 bool LogID::operator<(const LogID& rhs) const

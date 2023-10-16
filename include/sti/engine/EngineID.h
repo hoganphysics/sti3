@@ -14,13 +14,6 @@ public:
 	EngineID();
 	EngineID(int number);
 
-
-	// struct EngineIDCompare 
-	// {
-	// 	bool operator() (const STI::Engine::EngineID& lhs, const STI::Engine::EngineID& rhs) const
-	// 	{ return lhs < rhs; }
-	// };
-
 	bool operator<(const EngineID& rhs) const;
 	bool operator==(const EngineID& rhs) const;
 	bool operator!=(const EngineID& rhs) const;

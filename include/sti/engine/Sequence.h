@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <mutex>
+#include <string>
 
 namespace STI
 {

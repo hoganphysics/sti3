@@ -10,14 +10,13 @@
 
 #include <memory>
 
+
 namespace STI
 {
 namespace Network
 {
 
-//Maybe NetworkMessageHandlerWrapper, RemoteMessageHandler, MessageDispatcher, MessageReceiver, etc.
 
-//thin wrapper around LocalDeviceEventHandler that also holds the TDeviceEventHandler_i servant of the same Handler
 class NetworkDeviceMessageHandlerWrapper : public STI::Device::DeviceMessageHandler
 {
 public:
@@ -60,4 +59,3 @@ private:
 
 
 #endif
-

@@ -36,9 +36,7 @@ void ParseResult::deleteFiles(ParseResult& parsedResult, const std::shared_ptr<S
 
         for (auto& fileID : timingFiles) {
             fileServer->deleteFile(fileID);
-        }
-        
-        // parsedResult.stackTraceResult->stackTraceData->deleteFiles();        
+        }     
     }
 }
 

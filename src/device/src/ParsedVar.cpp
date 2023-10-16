@@ -32,19 +32,14 @@ ParsedVar::ParsedVar(const std::string& name, const RawEventGroup* group, const 
 
 bool ParsedVar::operator<(const ParsedVar& rhs) const 
 {
-    // if (scope == rhs.scope) return name < rhs.name;
-    // return scope < rhs.scope;
-
 	if (getGroupName() == rhs.getGroupName()) {
 		return name < rhs.name;
 	}
 	return getGroupName() < rhs.getGroupName();
-
 }
 
 bool ParsedVar::operator==(const ParsedVar& rhs) const 
 {
-    // return (scope == rhs.scope) && (name == rhs.name);
 	return (getGroupName() == rhs.getGroupName()) && (name == rhs.name);
 }
 
@@ -73,9 +68,7 @@ void ParsedVar::serialize(Archive& archive)
 		cereal::make_nvp("name", name), 
 		cereal::make_nvp("value", value), 
 		cereal::make_nvp("trace", trace),
-		// cereal::make_nvp("parentGroup", parentGroup),	//raw pointers not supported
 		cereal::make_nvp("stackTraceData", stackTraceData)
-		// cereal::make_nvp("scope", scope)
 		);
 }
 

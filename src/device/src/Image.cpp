@@ -1,7 +1,6 @@
 #include <sti/utils/Image.h>
 
 #include <sti/utils/BinaryData.h>
-#include <sti/utils/ImageWriter.h>
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/FileServer.h>
 #include <sti/utils/LocalFileHolder.h>

@@ -1,25 +1,3 @@
-/*! \file MixedValue.h
- *  \author Jason Michael Hogan
- *  \brief Include-file for the class MixedValue
- *  \section license License
- *
- *  Copyright (C) 2009 Jason Hogan <hogan@stanford.edu>\n
- *  This file is part of the Stanford Timing Interface (STI).
- *
- *  The STI is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The STI is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with the STI.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef STI_UTILS_MIXEDVALUE_H
 #define STI_UTILS_MIXEDVALUE_H
 
@@ -49,14 +27,6 @@ class MixedValue
 public:
 
 	MixedValue();	//for std::vector
-	// template<typename T> MixedValue(const T& value)
-	// {
-	// 	std::cout << "template<typename T> MixedValue::MixedValue" << std::endl;
-	// 	setValue(value);
-	// }
-	// template<> MixedValue<MixedValue>(const MixedValue& value)
-	// {}
-	// template<> void sort(Array<int>&);
 	MixedValue(const MixedValue& copy);
 	MixedValue(const MixedValueType& value);
 
@@ -162,7 +132,6 @@ public:
 	bool isType(const MixedValueType& mixedValueType) const;
 	bool isType(const std::vector<MixedValueType>& types) const;
 	bool isNumber() const;
-	
 
 	bool getBoolean() const;
 	int getInt() const;
@@ -194,9 +163,6 @@ public:
 
 	void swap(MixedValue& value);
 
-	//template<class Archive>
-	//void serialize(Archive& archive);
-
 	template<class Archive>
 	void save(Archive& archive) const;
 
@@ -220,8 +186,7 @@ private:
 	void convertToVector()
 	{
 		if (isVectorType<T>()) return;
-		
-		// MixedValueType oldType = type;
+
 		MixedValue oldValue;	//initally empty
 		swap(oldValue);
 
@@ -255,8 +220,6 @@ private:
 			else {
 				auto& values = std::get<MixedValueVector>(value_v);
 				wrapThenAppend(oldValue, values);
-				// values.push_back(MixedValue());		//empty
-				// values.back().swap(oldValue);
 			}
 		}
 		catch (const std::bad_variant_access&) {
@@ -282,12 +245,8 @@ private:
 	// template<typename T, typename... ALL_T>
 	// struct isVariantMember<T, std::variant<ALL_T...>> : public std::disjunction<std::is_same<T, ALL_T>...> {};
 
-
-	// MixedValueVector values;
-
 	MixedValueType type;
 
-	//MixedValueType { Empty, Boolean, Int, Double, String, Vector, VectorInt, Binary, File, Image, Number, Any}
 	typedef std::variant<std::monostate, 
 						bool, 
 						int, 
@@ -303,13 +262,6 @@ private:
 	VariantType value_v;
 
 	MixedValueVector empty;	//needed to return reference (when value_v doesn't hold a vector)
-
-	// bool        value_b;
-	// int         value_i;
-	// double      value_d;
-	// std::string value_s;
-
-	// std::shared_ptr<STI::Utils::FileHolder> value_file;
 
 };
 

@@ -1,30 +1,6 @@
-/*! \file MixedValue.cpp
- *  \author Jason Michael Hogan
- *  \brief Source-file for the class MixedValue
- *  \section license License
- *
- *  Copyright (C) 2009 Jason Hogan <hogan@stanford.edu>\n
- *  This file is part of the Stanford Timing Interface (STI).
- *
- *  The STI is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The STI is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with the STI.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Image.h>
 #include <sti/utils/utils.h>
-
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -347,9 +323,7 @@ void MixedValue::setValueMixed(const MixedValue& value)
 void MixedValue::setValue()
 {
 	clear();
-	// type = MixedValueType::Empty;
 }
-
 
 void MixedValue::addValue(const MixedValue& value)
 {
@@ -799,39 +773,8 @@ void MixedValue::load(Archive& archive)
 	);
 }
 
-
 template void MixedValue::save<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&) const;
 template void MixedValue::save<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&) const;
 
 template void MixedValue::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
 template void MixedValue::load<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
-
-
-
-
-//template<class Archive>
-//void MixedValue::serialize(Archive& archive)
-//{
-//	if (isType(MixedValueType::Image)) {
-//		auto image = getImage();
-//		if (image != 0) {
-//			image->saveToFile();
-//			auto newImage = std::shared_ptr<Image>(*image);
-//			MixedValue newValue;
-//			newValue.setValue(newImage);
-//		}
-//	}
-//
-//	archive(
-//		cereal::make_nvp("type", type), 
-//		cereal::make_nvp("value_v", value_v)
-//		);
-//}
-
-
-//template void MixedValue::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-//template void MixedValue::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
-//
-//template void MixedValue::serialize<cereal::JSONOutputArchive>( cereal::JSONOutputArchive& );
-//template void MixedValue::serialize<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
-

@@ -1,9 +1,7 @@
-
 #include "LocalTaskManager.h"
 
 #include <sti/utils/Task.h>
 #include <sti/utils/IntervalTask.h>
-
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>

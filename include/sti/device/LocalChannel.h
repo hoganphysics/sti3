@@ -17,7 +17,7 @@ namespace Device
 class ChannelRefreshListener;
 
 
-class LocalChannel	: public Channel //: public EventEmitter<ChannelEvent>
+class LocalChannel	: public Channel
 {
 public:
 
@@ -59,9 +59,7 @@ public:
 	// void saveLastInValue(const STI::Utils::MixedValue& value);
 	// const STI::Utils::MixedValue getLastInValue() const;
 
-//	std::string usageTip;
-
-	//getLastValue (unknown is allowed, i.e., XXXXXXX)  Is Empty the same as Unknown?  I think so!
+	//getLastValue (unknown is allowed, i.e., XXXXXXX)  Empty is the same as Unknown
 	//saveLastValue(const MixedValue&);
 	//lastOutValue
 	//lastInValue
@@ -83,7 +81,6 @@ private:
 
 	std::vector<ChannelRefreshListener*> listeners;	
 
-	// STI::Utils::MixedValue metaData;	//usage tip, units, etc
 	STI::Utils::MetaData metaData;		//usage tip, units, etc
 
     mutable std::mutex chMutex;

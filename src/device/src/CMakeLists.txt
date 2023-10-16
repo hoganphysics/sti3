@@ -1,16 +1,11 @@
 cmake_minimum_required(VERSION 3.14...3.20)
 
-#if(MSVC)
-#  cmake_policy(SET CMP0091 NEW)
-#endif()
-
 # set the project name
 project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
 
 
 if(MSVC)
@@ -33,10 +28,7 @@ if(USE_STI_DEBUG_POSTFIX)
   set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
-#set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-#set( CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1 )
 
-#add_compile_definitions(_DEBUG)
 if(MSVC)
   add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
@@ -48,24 +40,19 @@ find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 find_package(Boost 1.64 REQUIRED)
 
 
-
 set(STI_BASE_DIR ../../..)
 
 include_directories("." ${Boost_INCLUDE_DIR})
-
-#link_directories(${STI_BASE_DIR}/lib)
 
 add_library(stidevice SHARED 
     AppointmentTask.cpp
     BinaryData.cpp
     ConfigFile.cpp
     Configuration.cpp
-    # DefaultImageWriter.cpp
     DeviceEventParser.cpp
     DeviceID.cpp
     DeviceMessage.cpp
     DeviceMessageReceiver.cpp
-    # EngineParsingError.cpp
     EngineClock.cpp
     EngineID.cpp
     EngineJobSourceID.cpp
@@ -77,7 +64,6 @@ add_library(stidevice SHARED
     EventEngineStateMachine.cpp
     FileID.cpp
     FullShotResult.cpp
-    # EngineParseResult.cpp
     Image.cpp
     IntervalTask.cpp
     LocalAttribute.cpp
@@ -120,7 +106,6 @@ add_library(stidevice SHARED
     LocalProfileManager.cpp
     RawEvent.cpp
     RawEventGroup.cpp
-    # RawEventGroupManager.cpp
     RawEventTarget.cpp
     RawEventTargetChannel.cpp
     RawEventTargetDevice.cpp
@@ -148,10 +133,9 @@ add_library(stidevice SHARED
     VirtualFileServer.cpp
 )
 
-#set_property(TARGET tgt PROPERTY CXX_STANDARD 11)
-#set_target_properties(stidevice PROPERTIES CXX_STANDARD 23)
 
 if(MSVC)
+# elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 13.0)
 else()
   message("Using date.h")
   message("STI_BASE_DIR: ${STI_BASE_DIR}")
@@ -170,17 +154,13 @@ set_target_properties(stidevice PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
 )
-# set_property(TARGET STIServer PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(stidevice PROPERTIES
     VERSION ${PROJECT_VERSION}
-    # DEBUG_POSTFIX "_d"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-#    DEBUG_POSTFIX ${STI_LIB_POSTFIX}
-#    SOVERSION 1
 )
 
 if(USE_STI_DEBUG_POSTFIX) 
@@ -220,4 +200,4 @@ else()
     #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
 endif()
-# target_link_libraries(testDevice stidevice stinetwork)
+

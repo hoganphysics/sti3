@@ -15,23 +15,6 @@ typedef std::vector<unsigned> GraphPathLabel;
 //as well as an additional number associated with the child. When labeled in this way, each
 //node has a unique label that describes the path to the node from the root node.
 
-//template<class T>
-//class GraphPathLabel
-//{
-//private:
-//	GraphPathLabel() {}
-//	void add(const T& label) { graphPath.push_back(label); }
-//
-//	bool operator<(const GraphPathLabel& rhs) const { return graphPath < rhs.graphPath; }
-//	bool operator==(const GraphPathLabel& rhs) const { return parseID == rhs.parseID && shotTimeStamp == rhs.shotTimeStamp; }
-//	bool operator!=(const GraphPathLabel& rhs) const { return !((*this) == rhs); }
-//
-//
-//private:
-//	std::vector<T> graphPath;
-//};
-
-
 } // UTILS
 } // STI
 

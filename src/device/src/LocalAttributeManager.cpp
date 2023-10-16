@@ -191,22 +191,6 @@ void LocalAttributeManager::setPersistenceCallback(const std::function<void(void
     persistenceRefresher = refresher;
 }
 
-// void LocalAttributeManager::setPersistenceData(const std::shared_ptr<Configuration>& data)
-// {
-//     persistenceData = data;
-// }
-
-// void LocalAttributeManager::setLoadFilename(const std::string& filename)
-// {
-//     if (file != 0) {
-//         file->load(filename);
-//     }
-//     else {
-//         file = std::make_shared<ConfigFile>(filename);
-//     }
-//     persistenceData = file;
-// }
-
 bool LocalAttributeManager::save(const std::string& filename)
 {
     if (file == 0 || !file->isParsed()) return false;

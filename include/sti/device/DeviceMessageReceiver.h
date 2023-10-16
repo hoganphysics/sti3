@@ -2,7 +2,6 @@
 #define STI_DEVICE_DEVICEMESSAGERECEIVER_H
 
 #include <sti/device/DeviceID.h>
-//#include "LocalDeviceMessageHandler.h"
 #include <sti/device/DeviceMessageHandler.h>
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/utils/LocalCollection.h>

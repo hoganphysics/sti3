@@ -1,7 +1,6 @@
 #ifndef STI_DEVICE_LOCALCHANNELMANAGER_H
 #define STI_DEVICE_LOCALCHANNELMANAGER_H
 
-
 #include <sti/device/ChannelManager.h>
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/fwd/ConfigFile_fwd.h>
@@ -10,7 +9,6 @@
 #include "DeviceMessageGrouper.h"
 #include "PersistenceTarget.h"
 #include "ProfileTarget.h"
-#include "DeviceMessage.h"
 
 #include <memory>
 #include <atomic>
@@ -54,10 +52,8 @@ private:
 
     //PersistenceTarget
     std::string getFilename();
-    // void setLoadFilename(const std::string& filename);
     std::string getHeader();
     void setPersistenceCallback(const std::function<void(void)>& refresher);
-    // void setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data);
     bool save(const std::string& filename);
     void load(const std::string& filename);
 

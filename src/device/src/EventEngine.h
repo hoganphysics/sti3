@@ -40,18 +40,10 @@ public:
 	virtual void unpause(bool retrigger) = 0;
 
     virtual STI::Device::DeviceID getDeviceID() const = 0;
-
 	virtual STI::Engine::EngineState getState() const = 0;
 
 	virtual std::shared_ptr<ParsedDependencyTree> getParsedTree() const = 0;
-	// virtual bool getParsedEvents(const ParseID& parseID, DeviceEventMap& parsedEvents) = 0;
-	// virtual const DeviceEventMap& getParsedEvents() = 0;
 	virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
-	
-	//virtual bool getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
-	// virtual bool transferMeasurements(const ShotID& sid, std::shared_ptr<MeasurementVector>& measurements) = 0;
-
-	//virtual bool transferResults(const std::shared_ptr<ResultsCollector>& resultsCollector) = 0;
 };
 
 } //Engine

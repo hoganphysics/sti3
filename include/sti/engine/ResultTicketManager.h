@@ -123,8 +123,6 @@ void ResultTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::En
     {
         //    ticket->cancel();
     }
-
-    //TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
 }
 
 } //Engine

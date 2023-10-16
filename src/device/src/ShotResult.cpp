@@ -38,7 +38,6 @@ void ShotResult::deleteFiles(ShotResult& shot, const std::shared_ptr<STI::Utils:
         for (auto& meas : tuple.second) {
             if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
                 fileServer->deleteFile(meas->data().getFileID());
-                // meas->data().getFile()->deleteFile();
             }
         }
     }

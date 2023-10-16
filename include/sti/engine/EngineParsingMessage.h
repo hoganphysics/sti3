@@ -59,8 +59,6 @@ private:
 	unsigned id_code;
 	std::string name;
 	std::string message_;
-
-
 };
 
 } //Engine

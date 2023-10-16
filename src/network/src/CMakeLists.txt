@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.10...3.20)
 
-#if (MSVC)
-#  cmake_policy(SET CMP0091 NEW)
-#endif()
 
 # set the project name
 project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
@@ -57,10 +54,6 @@ set(STI_BASE_DIR ../../..)
 
 include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 
-# include_directories("${STI_BASE_DIR}/src/device/src")
-
-#link_directories(${STI_BASE_DIR}/lib)
-
 
 add_library(stinetwork SHARED 
     convert/Convert_Log.cpp
@@ -106,7 +99,6 @@ add_library(stinetwork SHARED
     NetworkFileServer.cpp
     NetworkShotWrapper.cpp
     NetworkResultsCollector.cpp
-    #NetworkShotRepositoryWrapper.cpp
     ORBManager.cpp
 
     RemoteAttribute.cpp
@@ -132,8 +124,8 @@ add_library(stinetwork SHARED
     RemoteTask.cpp
     RemoteTaskManager.cpp
     RemoteShot.cpp
-    #RemoteShotRepository.cpp
     RemoteTriggerCallback.cpp
+
     TAttributeManager_i.cpp
     TBinaryDataStream_i.cpp
     TBinaryDataStreamTarget_i.cpp
@@ -155,14 +147,12 @@ add_library(stinetwork SHARED
     TResultsCollector_i.cpp
     TShotCallback_i.cpp
     TTaskManager_i.cpp
-    #TShotRepository_i.cpp
     TTriggerCallback_i.cpp
 )
 
 add_dependencies(stinetwork stidevice)
 
 if(MSVC)
-
     target_link_directories(stinetwork PUBLIC 
         "${OMNIORB_PATH}/lib/x86_win32"
         #"${STI_BASE_DIR}/lib"
@@ -178,11 +168,6 @@ target_link_libraries(stinetwork
     omnithread${OMNI_EXT}
     omniORB4${OMNI_EXT}
     omniDynamic4${OMNI_EXT}
-    #omniCodeSets4${OMNI_EXT}
-    # omnisslTP4   #if OpenSSL is available
-    #COS4${OMNI_EXT}
-    #COSDynamic4${OMNI_EXT}
-    # stidevice${STI_LIB_POSTFIX}
 )
 
 
@@ -200,14 +185,10 @@ endif()
 
 set_target_properties(stinetwork PROPERTIES
     VERSION ${PROJECT_VERSION}
-#    DEBUG_POSTFIX "$<IF:$<CONFIG:Debug>,${STI_LIB_POSTFIX},"">"
-#    "$<$<CONFIG:Debug>,DEBUG_POSTFIX ${STI_LIB_POSTFIX}>"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-    #MSVC_RUNTIME_LIBRARY "MultiThreadedDebug>"
-#    SOVERSION 1
 )
 
 if(USE_STI_DEBUG_POSTFIX) 
@@ -295,5 +276,3 @@ else()
 endif()
 
 
-
-# target_link_libraries(testDevice stidevice stinetwork)

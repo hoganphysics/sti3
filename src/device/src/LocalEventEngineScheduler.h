@@ -116,10 +116,7 @@ public:
     //device references are used to call schedulder->reserveParse on all owned devices.  Callback messages are directed to the main device engine.
     //Callbacks contain engine references for all top level (owned) devices. When all are reserved, the main engine calls engine->parse on all devices.    
 //    void reserveParse(const ParseID& parseID, ParseTree tree);          //local, when ready; create global dependency graph, reserve parse on all dependents
-    //void parse(const EventEngineJob& job); 
-
 //    void reservePlay(ShotID shotID);       //just waits for engine reservations down the chain, then calls engine->play
-    //void play(const EventEngineJob& job); //no need for these here -- do this with direct call to relevant engine, after reserve is successful
 
 private:
 

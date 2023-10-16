@@ -60,7 +60,6 @@ void StackFrame::serialize(Archive& archive)
 		);
 }
 
-
 template<class Archive>
 void StackTrace::serialize(Archive& archive)
 {

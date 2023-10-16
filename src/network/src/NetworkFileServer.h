@@ -47,12 +47,6 @@ public:
     NetworkVirtualFileServer();
     ~NetworkVirtualFileServer();
 
-    // static bool isNetworkFileServer(const std::shared_ptr<STI::Utils::FileServer>& fileServer)
-    // {
-    //     auto wrapper = std::dynamic_pointer_cast<TFileServerRefInterface>(fileServer);
-    //     return (wrapper != 0);
-    // }
-
 private:
 
     bool getTFileServerRef(STI::TNetwork::TFileServer_var& tFileServer);

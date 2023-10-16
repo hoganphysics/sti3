@@ -19,7 +19,6 @@ class EventEngineFactory
 public:
 
     virtual std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser) = 0;
-
 };
 
 

@@ -1,7 +1,6 @@
 #ifndef STI_DEVICE_LOGRECORDFILE_H
 #define STI_DEVICE_LOGRECORDFILE_H
 
-
 #include <sti/device/LogRecord.h>
 #include <sti/device/DeviceID.h>
 #include <sti/utils/ConfigFile.h>
@@ -9,6 +8,7 @@
 
 #include <vector>
 #include <map>
+
 
 namespace STI
 {

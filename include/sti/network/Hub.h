@@ -9,8 +9,7 @@
 #include "NodeWalker.h"
 
 #include <memory>
-//#include <mutex>
-//#include <algorithm>
+
 
 namespace STI
 {
@@ -21,8 +20,6 @@ template<class ID, class T>
 class Hub
 {
 public:
-//	Hub() {}
-//	Hub(Hub& other) {}
 
 	virtual ~Hub() {}
 

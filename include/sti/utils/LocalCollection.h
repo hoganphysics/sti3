@@ -20,9 +20,6 @@ public:
 	typedef std::shared_ptr<LocalCollectionListener<ID> > _ptr;
 	
 	virtual ~LocalCollectionListener() {}
-//	virtual void add(const ID& id) = 0;
-//	virtual void remove(const ID& id) = 0;
-//	virtual void refresh() = 0;
 };
 
 template<class ID>

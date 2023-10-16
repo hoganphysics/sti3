@@ -45,14 +45,11 @@ public:
     }
     bool setValue(const std::string& value);
 
-
-    // LocalAttribute& setRefresher(const std::function<const std::string&(void)>& refesher);
     LocalAttribute& setRefresher(const std::function<bool(std::string&)>& refresher);
     LocalAttribute& setRefresher(const std::function<std::string(void)>& refresher);
     LocalAttribute& setSetter(const std::function<bool(const std::string&)>& setter);
     
     LocalAttribute& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
-    //LocalAttribute& addMetaData(const std::string& key, const std::string& data);
 
     template<typename T>
     LocalAttribute& setRefresher(std::string(T::* refresher)(void), T* self)
@@ -92,9 +89,10 @@ private:
     std::string key_;
     std::string value_;
     std::vector<std::string> allowedValues_;
-    std::string group_;     // "::attribute" on global group "::".  "MyGroup::attribute" in group "::MyGroup". "MyGroup::Sub::attribute" in group "::MyGroup::Sub".
 
-    //std::function<std::string(void)> refreshValueCallback;
+    // "::attribute" on global group "::".  "MyGroup::attribute" in group "::MyGroup". "MyGroup::Sub::attribute" in group "::MyGroup::Sub".
+    std::string group_;
+
     std::function<bool(std::string&)> refreshValueCallback;
     std::function<bool(const std::string&)> setValueCallback;
 

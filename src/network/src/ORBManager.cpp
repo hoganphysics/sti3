@@ -78,21 +78,7 @@ NameServer IP:Port = 192.168.1.1:2809
 
 */
 
-//namespace {
 
-//class Concrete_ORBManager : public ORBManager
-//{
-//public:
-//	Concrete_ORBManager(const std::string& nameServiceIP, const std::string& args) 
-//		: ORBManager(nameServiceIP, args) {}
-//	~Concrete_ORBManager() {}
-//
-//};
-
-//struct Concrete_ORBManager : public ORBManager {};
-
-
-//} // anonymous
 
 namespace STI
 {
@@ -110,6 +96,7 @@ public:
 } // Network
 } // STI
 
+
 bool ORBManager::orb_initialized = false;
 std::shared_ptr<ORBManager> ORBManager::instance = 0;
 std::mutex ORBManager::orbInitMutex = std::mutex();
@@ -124,7 +111,6 @@ std::shared_ptr<ORBManager> ORBManager::getInstance(const STI::Utils::Configurat
 
 		omniOptions = orbConfig;
 		instance = std::make_shared<STI::Network::Concrete_ORBManager>(args);
-		//orb_initialized = true;
 	}
 	return instance;
 }
@@ -148,7 +134,6 @@ ORBManager::ORBManager(const std::string& args)
 	
 	//Prepare ORB arguments
 	std::vector<std::string> arguments;
-	//STI::Utils::splitString(args, " ", arguments);
 
 	std::string prefix = "-ORB";
 	for (auto& name : paramsNames) {
@@ -180,14 +165,8 @@ ORBManager::ORBManager(const std::string& args)
 		root_poa = PortableServer::POA::_narrow(poa_obj);
 		poa_manager = root_poa->the_POAManager();
 
-		// poa = PortableServer::POA::_narrow(poa_obj);
-		// poa_manager = poa->the_POAManager();
-
-		// poa_manager->_NP_is_nil();
-
 		poa_manager->activate();
 		poa_is_active = true;
-
 
 		//Create POA with a Bidirectional policy
 		CORBA::PolicyList policies;

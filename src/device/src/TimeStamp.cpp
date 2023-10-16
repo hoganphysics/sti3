@@ -5,7 +5,6 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
-//#include <time.h>
 
 #include "CerealArchives.h"
 
@@ -45,9 +44,6 @@ TimeStamp::TimeStamp(int year, int month, int day, int hour,
     timeinfo.tm_isdst = -1; //use local system timezone (mktime will fill this in)
 
     std::time_t now_time = mktime(&timeinfo);
-    
-    //timeinfo = *localtime(&now_time);   //  1/2/2023
-    //localtime_s(&timeinfo, &now_time);      //this is working in windows 1/21/2023
 
     //generate local time using timeinfo (retrieves dst information)
     auto generatedLocalTime = localtime(&now_time);

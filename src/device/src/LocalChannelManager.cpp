@@ -181,22 +181,6 @@ void LocalChannelManager::setPersistenceCallback(const std::function<void(void)>
     persistenceRefresher = refresher;
 }
 
-// void LocalChannelManager::setPersistenceData(const std::shared_ptr<STI::Utils::Configuration>& data)
-// {
-//     persistenceData = data;
-// }
-
-// void LocalChannelManager::setLoadFilename(const std::string& filename)
-// {
-//     if (file != 0) {
-//         file->load(filename);
-//     }
-//     else {
-//         file = std::make_shared<ConfigFile>(filename);
-//     }
-//     persistenceData = file;
-// }
-
 bool LocalChannelManager::save(const std::string& filename)
 {
     if (file == 0 || !file->isParsed()) return false;

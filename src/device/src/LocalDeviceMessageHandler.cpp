@@ -1,4 +1,3 @@
-
 #include "LocalDeviceMessageHandler.h"
 #include <sti/device/DeviceMessageListenerGroup.h>
 #include <sti/device/DeviceMessage.h>
@@ -16,13 +15,11 @@ LocalDeviceMessageHandler::LocalDeviceMessageHandler() : eventQueue(this)
 	eventQueue.start();
 }
 
-
 LocalDeviceMessageHandler::~LocalDeviceMessageHandler()
 {
 	eventQueue.stop();
 	eventQueue.clearEvents();
 }
-
 
 void LocalDeviceMessageHandler::addListenerGroup(const DeviceMessageType& type, 
 	std::shared_ptr<AbstractMessageListenerGroup>& listenerGroup)
@@ -32,13 +29,11 @@ void LocalDeviceMessageHandler::addListenerGroup(const DeviceMessageType& type,
 	}
 }
 
-
 void LocalDeviceMessageHandler::removeListenerGroup(const DeviceMessageType& type)
 {
 	messageListenerGroups.remove(type);
 	listenersTypes[type] = 0;
 }
-
 
 void LocalDeviceMessageHandler::addMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
@@ -47,12 +42,10 @@ void LocalDeviceMessageHandler::addMessage(const std::shared_ptr<DeviceMessage>&
 	eventQueue.addEvent(mess);
 }
 
-
 void LocalDeviceMessageHandler::clearMessages()
 {
 	eventQueue.clearEvents();
 }
-
 
 bool LocalDeviceMessageHandler::hasListeners(const std::shared_ptr<DeviceMessage>& mess)
 {
@@ -62,7 +55,6 @@ bool LocalDeviceMessageHandler::hasListeners(const std::shared_ptr<DeviceMessage
 
 	return (it != listenersTypes.end() && it->second > 0);
 }
-
 
 ///List of event type that this handler responds to (based on which listeners are currently attached)
 void LocalDeviceMessageHandler::getListenerTypes(std::set<DeviceMessageType>& types)
@@ -76,7 +68,6 @@ void LocalDeviceMessageHandler::getListenerTypes(std::set<DeviceMessageType>& ty
 	}
 }
 
-
 void LocalDeviceMessageHandler::handleMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
 	if (mess == 0) return;
@@ -87,4 +78,3 @@ void LocalDeviceMessageHandler::handleMessage(const std::shared_ptr<DeviceMessag
 	}
 
 }
-

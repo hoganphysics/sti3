@@ -55,7 +55,6 @@ private:
 
 	DispatcherEventQueue eventQueue;
 
-	// DispatcherEventQueue : EventQueue implementation
 	void handleMessage(const std::shared_ptr<DeviceMessage>& mess);
 
 	STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<DeviceMessageHandler>> handlers;

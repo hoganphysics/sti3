@@ -6,6 +6,7 @@ using STI::Utils::MetaData;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
+
 MetaData::MetaData()
 {
 	std::vector<MixedValue> vec;

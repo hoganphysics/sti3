@@ -29,7 +29,10 @@
    :maxdepth: 2
    
    src/setuptools
-   src/subtable
+   src/examples
+   src/api
+   src/techstack
+   .. src/subtable
 
 
 

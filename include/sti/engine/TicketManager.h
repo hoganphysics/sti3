@@ -1,12 +1,10 @@
 #ifndef STI_ENGINE_TICKETMANAGER_H
 #define STI_ENGINE_TICKETMANAGER_H
 
-
 #include <sti/device/Device.h>
 #include <sti/utils/SynchronizedMap.h>
 
 #include <memory>
-// #include <mutex>
 #include <set>
 
 
@@ -33,12 +31,9 @@ public:
 
     std::set<ID> getIDs();
 
-//    std::shared_ptr<T> makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server);
-
 private:
 
     STI::Utils::SynchronizedMap<ID, std::shared_ptr<T>> tickets;
-
 };
 
 
@@ -104,16 +99,6 @@ std::set<ID> STI::Engine::TicketManager<ID, T>::getIDs()
     tickets.getKeys(ids);
     return ids;
 }
-
-// template<typename ID, typename T>
-// std::shared_ptr<T> STI::Engine::TicketManager<ID, T>::makeTicket(const ID& id, const std::shared_ptr<STI::Device::Device>& server)
-// {
-//     auto ticket = std::make_shared<T>(id, server);
-
-//     add(id, ticket);
-
-//     return ticket;
-// }
 
 
 #endif

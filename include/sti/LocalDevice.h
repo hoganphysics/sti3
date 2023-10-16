@@ -170,14 +170,11 @@ private:
 
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 
-
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }
 
-
 	friend class DeviceMessageListenerForwarder;
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}	//not needed for local device
-	// DeviceMessageListenerForwarder listenerForwarder;
 	std::shared_ptr<DeviceMessageListenerForwarder> listenerForwarder;
 
 
@@ -190,13 +187,9 @@ private:
 		void remove(const DeviceID& id);
 
 		LocalDevice* localDevice;
-		//MessageGrouper<CollectionMessage> messageGrouper;
 	};
 	
-	//DeviceMessageListenerID collectionMessageLID;
 	DeviceMessageListenerID schedulerMessageLID;
-
-	//std::vector<DeviceMessageListenerID> messageListenerIDs;
 	
 	std::shared_ptr<STI::Engine::ParseTicketManager<>> parseTicketManager;
 	std::shared_ptr<STI::Engine::ResultTicketManager<>> resultTicketManager;
@@ -222,8 +215,6 @@ private:
 	std::shared_ptr<LocalLogManager> localLogManager;
 
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
-
-	//std::shared_ptr<STI::Engine::SerializedRepository> localSerializedRepository;
 
 	std::set<DeviceID> partnerDevices;
 	std::map<std::string, DeviceID> partnerAliases;

@@ -18,9 +18,6 @@ std::string ParseID::print() const
 {
 	std::stringstream pid;
 
-    // pid << shotConfig.print() << "\n";
-    // pid << "Parse time: " << parseTimestamp.print();
-
     pid << "pid:" << shotConfig.jobSourceID.print() << "#" << parseTimestamp.time_hh_mm_ss_mmmuuunnn();
 
     return pid.str();

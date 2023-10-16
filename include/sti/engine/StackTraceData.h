@@ -33,7 +33,6 @@ public:
     RawStackTrace getStackTrace(const StackTrace& stackTrace) const;
 
     const std::vector<STI::Utils::FileID>& getTimingFiles() const;
-    // std::vector<std::string> timingFileNames()
     const std::vector<std::string>& getFunctionNames() const;
 
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server);
@@ -60,7 +59,6 @@ private:
     std::shared_ptr<VectorMapFileID> fileMap;
 
     std::shared_ptr<STI::Utils::FileServer> fileServer;
-    // std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
 
     STI::Device::DeviceID localID;
 

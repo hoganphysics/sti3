@@ -29,7 +29,6 @@ public:
 private:
 
     std::shared_ptr<PersistenceTarget> target;
-    // std::shared_ptr<STI::Utils::ConfigFile> file;
     const std::string basepath;
 
     //Group refresh events to limit rate of writing to file

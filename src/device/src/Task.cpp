@@ -1,4 +1,3 @@
-
 #include <sti/utils/Task.h>
 
 #include <chrono>

@@ -39,7 +39,6 @@ public:
 private:
 
     std::vector<DeviceIDVertex> vertices;
-
 };
 
 

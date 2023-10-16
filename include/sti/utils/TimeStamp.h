@@ -2,6 +2,7 @@
 #define STI_ENGINE_TIMESTAMP_H
 
 #include <string>
+#include <ctime>
 
 
 namespace STI
@@ -18,10 +19,6 @@ public:
 	TimeStamp(int year, int month, int day, int hour,
     		  int min, int sec, int millis, int micros, int nanos);
 
-	//date
-	//time
-	//timezone
-	// double timestamp;	//show use std::chrono
 	std::string print() const;
 
 	std::string date() const;
@@ -65,9 +62,6 @@ public:
 
 	template<class Archive>
 	void serialize(Archive& archive);
-	// {
-	// 	archive(_millis, _micros, _nanos);//timeinfo, 
-	// }
 
 private:
 

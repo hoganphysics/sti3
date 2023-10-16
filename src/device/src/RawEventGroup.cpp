@@ -415,21 +415,7 @@ bool RawEventGroup::bindVars(const std::set<ParsedVar>& overwritten)
 
     for (auto& ovar : overwritten) {
         success &= bindVar(ovar);
-
-        // ParsedVar var;
-        
-        // if (varMap.get(ovar.name, var)) {
-        //     if (var.isBound()) {
-        //         success = false;
-        //     }
-        //     else {
-        //         var.value = ovar.value;
-        //         varMap.replace(ovar.name, var); //overwrite
-        //     }
-        // }
     }
-
-    // overwrittenVars.insert(overwritten.begin(), overwritten.end());
 
     return success;
 }
@@ -463,18 +449,14 @@ double RawEventGroup::getTimeOffset() const
 
 void RawEventGroup::shiftStartTimeTo(double time)
 {
-//shifts all events so that group start is at time
-
+    //shifts all events so that group start is at time
     std::unique_lock groupLock(groupMutex);
     timeOffset = time;
 }
 
 void RawEventGroup::shiftEndTimeTo(double time)
 {
-//shifts all events so that group end is at time
-    // if (events == 0) return;
-    // std::sort(events->begin(), events->end());
-
+    //shifts all events so that group end is at time
     std::unique_lock groupLock(groupMutex);
     timeOffset = time - timeMax;
 }
@@ -555,16 +537,6 @@ void RawEventGroup::splitGroupName(const std::string& groupName, std::string& ba
 
 std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName)
 {
-    // auto it = subgroups.find(groupName);
-
-    // if (it != subgroups.end()) {
-    //     //found group
-    //     return it->second;
-    // }
-    // //new subgroup
-    // auto newGroup = std::make_shared<RawEventGroup>(name + "/" + groupName, stackTraceData);
-    // return newGroup;
-
     std::string trimmedGroupName;
 
     //remove leading "/" from group name (relative path)
@@ -584,12 +556,6 @@ std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName
 
     std::string newParentName = getFullName();
     std::string trimmedParentName = newParentName;
-    // if (newParentName.size() > 0 && newParentName.at(0) == '/') {
-    //     trimmedParentName = newParentName.substr(1, std::string::npos);
-    // }
-    // else {
-    //     trimmedParentName = newParentName;
-    // }
 
     if (!groupMap.get(baseName, g)) {
         //new subgroup
@@ -607,12 +573,6 @@ std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName
 
 std::vector<std::shared_ptr<RawEventGroup>> RawEventGroup::getSubgroups() const
 {
-    // std::vector<std::shared_ptr<RawEventGroup>> groupList;
-
-    // for (auto& g : subgroups) {
-    //     groupList.push_back(g.second);
-    // }
-    // return groupList;
     return subgroups;
 }
 
@@ -626,12 +586,6 @@ void RawEventGroup::merge(const RawEventGroup& other)
     if (events == 0) {
         events = std::make_shared<RawEventVector>();
     }
-
-    // if (otherEvents != 0) {
-    //     for (auto& evt : *otherEvents) {
-    //         events->push_back(evt);
-    //     }
-    // }
 
     if (otherEvents != 0) {
         events->insert(events->end(), std::make_move_iterator(otherEvents->begin()), std::make_move_iterator(otherEvents->end()) );
@@ -654,8 +608,6 @@ void RawEventGroup::swapEvents(RawEventGroup& other)
     events.swap(other.events);
 
     refreshMinMax();
-
-    // events->swap(*other.getEvents());
 
     for (auto& g : other.getSubgroups()) {
         if (g != 0) {
@@ -877,11 +829,6 @@ void RawEventGroup::serialize(Archive& archive)
         cereal::make_nvp("subgroups", subgroups), 
 		cereal::make_nvp("name", name),
         cereal::make_nvp("parentName", parentName)
-
-		// cereal::make_nvp("index", index), 
-		// cereal::make_nvp("groupIndex", groupIndex),
-		// cereal::make_nvp("targetServerID", targetServerID)
-        // cereal::make_nvp("parentGroup", parentGroup)
 		);
 }
 

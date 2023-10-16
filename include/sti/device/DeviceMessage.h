@@ -14,7 +14,6 @@
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
-//#include "EventEngineDependencyTree.h"
 
 #include <sstream>
 
@@ -81,7 +80,6 @@ public:
 private:
 
 	DeviceMessageType _type;
-	//STI::Device::DeviceID _source;
 	STI::Device::DeviceTrace _trace;
 };
 
@@ -228,8 +226,6 @@ public:
 		attributes[key] = value;
 	}
 
-	//MixedValue channelValue();
-
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::AttributeUpdate; }
 
     bool appendMessage(const AttributeUpdateMessage& mess)
@@ -263,12 +259,9 @@ public:
 		mess << "}";
 		return mess.str();
 	}
-
 };
 
 
-
-// enum class EngineJobUpdateTarget { Queued, Running, Completed };
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage
 {
@@ -369,11 +362,6 @@ private:
 };
 
 
-/*
-
-ParseReserve:  Ready, Not ready
-
-*/
 
 //should rename this EngineParserMessage
 //EngineSchedulerMessage should deal with requesting parse/play across network
@@ -392,10 +380,8 @@ public:
 	
 	static DeviceMessageType getMessageClassType() { return DeviceMessageType::EngineScheduler; }
 
-
 	SchedulerMessageType schedulerMessageType;
 
-	//STI::Device::DeviceID originalSource;	//device that generated the original message
 	STI::Engine::EngineJobID jobID;
 
 	std::shared_ptr<STI::Engine::EventEngine> getEngine() const
@@ -406,12 +392,6 @@ public:
 	{
 		_engine = engine;
 	}
-
-	// std::vector<STI::Engine::RawEvent> parsedEvents; //device generated events that are already parsed; want a complete record to make it up the chain
-	// std::vector<STI::Engine::RawEvent> upstreamEvents; //to be handled upstream
-
-	// std::vector<STI::Engine::RawEvent> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
-	// std::vector<STI::Engine::RawEvent> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
 
 	std::shared_ptr<STI::Engine::RawEventGroup> handledEvents;	//:device generated events that are being sent upstream for documentation, but they have already been parsed
 	std::shared_ptr<STI::Engine::RawEventGroup> unhandledEvents;	//:device generated events that have not been parsed and are being sent upstream so their target can be found. 
@@ -427,22 +407,6 @@ private:
 	std::shared_ptr<STI::Engine::EventEngine> _engine;
 };
 
-// class STIParsingMessage
-// {
-// public:
-
-// 	//errors, warnings
-// 	//status
-
-// 	enum class ParsingMessageType { Error, Warning, Information };
-
-// 	ParsingMessageType type;
-
-// 	unsigned id_code;
-// 	std::string name;
-// 	std::string message;
-// 	std::vector<STI::Engine::RawEvent> events;
-// };
 
 class EngineParserDeviceMessage : public DeviceMessage
 {
@@ -464,7 +428,6 @@ public:
 	//status
 	STI::Engine::ParseID pid;
 	std::vector<STI::Engine::EngineParsingMessage> messages;
-//	std::shared_ptr<STI::Engine::EventEngineDependencyTree> parsedTree;
 
 };
 
@@ -476,7 +439,6 @@ class EngineStateMessage : public DeviceMessage,
 						   public STI::Device::GroupableMessage<EngineStateMessage>
 {
 public:
-	//engine status
 
 	EngineStateMessage(const STI::Device::DeviceTrace& trace)
 	: DeviceMessage(trace, DeviceMessageType::EngineStatus)
@@ -508,7 +470,7 @@ public:
 	{
 		return *this;
 	}
-//, STI::Engine::EngineID::EngineIDCompare
+
 	std::map<STI::Engine::EngineID, STI::Engine::EngineState> engineStates;
 
 };
@@ -518,4 +480,3 @@ public:
 
 
 #endif
-

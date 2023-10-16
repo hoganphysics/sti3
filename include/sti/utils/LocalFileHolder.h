@@ -10,6 +10,7 @@
 #include <memory>
 #include <mutex>
 
+
 namespace STI
 {
 namespace Utils
@@ -63,13 +64,10 @@ protected:
 private:
 
     FileID fileID;
-    // std::string filename;
-    // std::string md5hash;
-    // bool hashed;
+
     STI::Utils::CachedValue<std::string> md5hash;
 
     std::unique_ptr<std::ofstream> ofs;
-    // std::shared_ptr<std::ifstream> ifs;
     
     mutable std::mutex fileMutex;
 };
@@ -79,23 +77,12 @@ class LocalFileHolderFactory : public FileHolderFactory
 {
 public:
 
-    LocalFileHolderFactory(const std::string& originID);    // : originID(originID) {}
+    LocalFileHolderFactory(const std::string& originID);
 
     std::shared_ptr<FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
-    // {
-    //     std::shared_ptr<LocalFileHolder> holder(new LocalFileHolder(originID, path, filename));
-    //     // auto holder = std::make_shared<LocalFileHolder>(filename);
-    //     return std::static_pointer_cast<FileHolder>(holder);
-    // }
-
     std::shared_ptr<FileHolder> makeVirtualFileHolder(const FileID& fileID);
-    // {
-    //     std::shared_ptr<VirtualLocalFileHolder> holder(new VirtualLocalFileHolder(fileID));
-    //     return std::static_pointer_cast<FileHolder>(holder);
-    // }
 
     std::string originID;
-
 };
 
 } //Utils

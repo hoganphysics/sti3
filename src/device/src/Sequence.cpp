@@ -4,12 +4,9 @@
 #include <sti/engine/SequenceID.h>
 #include <sti/engine/ParsedVar.h>
 
-
 #include "CerealArchives.h"
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
-// #include <cereal/types/memory.hpp>
-// #include <cereal/types/vector.hpp>
 #include <cereal/types/set.hpp>
 
 #include <sstream>

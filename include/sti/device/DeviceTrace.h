@@ -11,14 +11,12 @@ namespace STI
 namespace Device
 {
 
-//Identical to HubTrace
-//Should be made a template class....
+
 class DeviceTrace
 {
 public:
 
 	DeviceTrace() {}
-
 	DeviceTrace(const DeviceID& first) { addID(first); }
 	DeviceTrace(const DeviceTrace& src) { ids = src.ids; }
 
@@ -52,7 +50,6 @@ public:
 	{
 		std::string result;
 
-		// for (auto& id : ids) {
 		for (unsigned i = 0; i < ids.size(); ++i) {
 			
 			result += ids[i].getID();

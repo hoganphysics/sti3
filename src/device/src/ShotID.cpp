@@ -34,10 +34,6 @@ std::string ShotID::print() const
 {
 	std::stringstream sid;
 
-    // sid << "ParseID: " << parseID.print() << "\n";
-    // sid << "Source: " << jobSourceID.print() << "\n";
-    // sid << "Submission time: " << submissionTime.print();
-
     sid << "sid:" << jobSourceID.print() << "#" << submissionTime.time_hh_mm_ss_mmmuuunnn();
 
     return sid.str();

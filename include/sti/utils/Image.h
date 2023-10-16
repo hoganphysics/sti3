@@ -17,7 +17,6 @@ namespace STI
 namespace Utils
 {
 
-//class ImageWriter;
 class MixedValue;
 class FileServer;
 
@@ -27,28 +26,19 @@ public:
 
     Image();    //serialization
     Image(const std::string& orginID, const std::string& filename);
-    //Image(const std::string& filename);
     Image(const FileID& fileID);
-    //Image(const std::string& filename, const std::shared_ptr<ImageWriter>& writter);
     virtual ~Image();
 
     Image(const Image& other);
 
-    //std::shared_ptr<Image> makeChildImage();
-
     FileID getFileID() const;
     void setFileID(const FileID& fileID);
-
-    //image dimensions
-
     Image& setFilename(const std::string& filename);
 
     Image& setHeight(unsigned height);
     Image& setWidth(unsigned width);
 
     Image& setMetaData(const std::string& key, const MixedValue& value);
-
-    //void setWriter(const std::shared_ptr<ImageWriter>& writer);  //custom writer
 
     void setImageData(const std::shared_ptr<FileHolder>& file);
     void setImageData(const std::shared_ptr<BinaryData>& data);
@@ -66,8 +56,6 @@ public:
 
     MetaData metaData;
 
-    //void writeToFile(const std::shared_ptr<ImageWriter>& writer, const std::string& targetDirectory);
-
     bool write(const std::shared_ptr<FileServer>& sourceFileServer, const std::shared_ptr<FileHolder>& destination);
     bool saveToFile();  //before serialization
 
@@ -77,14 +65,8 @@ public:
     unsigned getHeight() const;
     unsigned getWidth() const;
 
-    //bool isChild() const;
-    //const std::vector<std::shared_ptr<Image>>& getChildren() const;
-
     bool operator==(const Image& other) const;
     bool operator!=(const Image& other) const;
-
-    // template<class Archive>
-	// void serialize(Archive& archive);
 
     template<class Archive>
     void save(Archive& archive) const;
@@ -97,22 +79,10 @@ private:
     CachedValue<std::shared_ptr<BinaryData>> imageData;
     CachedValue<std::shared_ptr<FileHolder>> fileHolder;
 
-    // std::shared_ptr<BinaryData> thumbnail;
-
-    //std::shared_ptr<ImageWriter> customWriter;
-
-    //std::string filename_;
-    //std::string extension_;     //tif, png, etc.
-
     FileID fileID;
 
     unsigned height_;
     unsigned width_;
-
-    //std::vector<std::shared_ptr<Image>> children;
-
-    //bool isChild_;   //child images are written by the parent image
-
 };
 
 
@@ -120,4 +90,3 @@ private:
 } //STI
 
 #endif
-

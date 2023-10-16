@@ -184,7 +184,6 @@ std::shared_ptr<MeasurementMap> LocalResultsCollector::getMeasurements()
     return empty;
 }
 
-// std::string LocalResultsCollector::makeLocalPath(const std::string& basePath, const std::string& remoteFilename)
 std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalFileHandle(const std::string& basePath, const STI::Utils::FileID& remoteFileID)
 {
     fs::path remotePath = remoteFileID.filename;

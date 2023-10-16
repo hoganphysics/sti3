@@ -135,15 +135,12 @@ public:
     void setVars(const std::vector<ParsedVar>& vars);
     void setTags(const std::vector<ParsedTag>& tags);
 
-    // void add(const std::shared_ptr<RawEventGroup>& g, devs, vars);  //makes new group (deep copy) with new vars, except does not deep copy events
-
     bool getConcreteTarget(const RawEventTarget& abstractTarget, RawEventTarget& concreteTarget) const;
 
     RawEventGroup& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
     RawEventGroup& addMetaData(const STI::Utils::MetaData& data);
     const STI::Utils::MixedValue& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
-
 
     template<class Archive>
     void serialize(Archive& archive);

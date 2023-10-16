@@ -26,7 +26,6 @@ LocalAttribute::LocalAttribute(const std::string& key, const std::string& inital
     
     if (pos != std::string::npos) {
         group_ = key.substr(0, pos - 1);
-//        key_ = key.substr(pos + 1, key.size());
         key_ = key; //store full key with group
     }
     else {
@@ -36,7 +35,6 @@ LocalAttribute::LocalAttribute(const std::string& key, const std::string& inital
     //Default setter/refresher behavior makes the Attribute act as a simple synchronized key/value 
     //pair storage with no side effects. Setting always succeeds and refreshing returns the last set value.
     setSetter( [](const std::string&) { return true; } );
-    // setRefresher( [this](void) -> const std::string& { return this->value_; } );
     setRefresher( [this](void) -> std::string { return this->value_; } );
 }
 
@@ -174,18 +172,6 @@ LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const STI::U
 
     return (*this);
 }
-
-// LocalAttribute& LocalAttribute::addMetaData(const std::string& key, const std::string& data)
-// {
-//     std::unique_lock<std::mutex> attributeLock(attMutex);
-
-//     STI::Utils::MixedValue value;
-//     value.setValue(data);
-
-//     metaData.addMetaData(key, value);
-
-//     return (*this);
-// }
 
 const STI::Utils::MixedValue& LocalAttribute::getMetaData() const
 {

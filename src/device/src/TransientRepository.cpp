@@ -37,7 +37,6 @@ TransientRepository::TransientRepository(const std::string& tempBasePath, const 
     uniqueBasePath /= "tmp";
 
     //The directory will be cleared regularly, so we need to make sure to use a unique path.
-    //tempResultsPath = STI::Utils::makeUniquePath( uniqueBasePath.string() );    // tmp_0, tmp_1, etc.
     tempResultsPath = uniqueBasePath.string();  //Fix: using fixed path for now to avoid many tmp directories
     std::filesystem::path repoPath = tempResultsPath;
 

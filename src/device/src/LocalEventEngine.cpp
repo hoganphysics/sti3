@@ -113,8 +113,6 @@ void LocalEventEngine::clear()
 	upstreamPartnerEvents = 0;
 	handledPartnerEvents = 0;
 	unhandledEvents = 0;
-	// upstreamPartnerEvents.clear();
-	// handledPartnerEvents.clear();
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
 	playReadyOwnedTargets.clear();
@@ -200,8 +198,6 @@ void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventG
 		if (evt.getTarget().isAbstract()) {
 			
 			if (eventGroup->getConcreteTarget(evt.getTarget(), target)) {
-				// addEvent(target.device().deviceID(), evt, subgroupName);
-				// eventsByTarget[target.device().deviceID()].addEvent( std::move(evt) );
 				getTargetEventGroup( target.device().deviceID() ).addEvent( std::move(evt), subgroupName );
 			}
 			else {
@@ -210,12 +206,9 @@ void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventG
 			}
 		}
 		else {
-			// addEvent(target.device().deviceID(), evt, subgroupName);
-			// getTargetEventGroup( target.device().deviceID() ).addEvent( std::move(evt), subgroupName );
 			addEvent(evt, subgroupName, ownedIDs, unhandledEventGroup);
 		}
 	}
-
 }
 
 void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroupName, 
@@ -516,14 +509,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	parseCompleteMessage->setEngine(jobEngine);
 
 	sendMessage(parseCompleteMessage);
-
-	// if (job.getJobOwner() == localDeviceID) {
-	// 	DeviceEventMap eventMap;
-	// 	getParsedEvents(lastParseID, eventMap);
-	// }
-
-	//TODO: state needs to be contingent on errors from this device or owned devices.
-
 }
 
 void LocalEventEngine::cancelParse(const EngineJobID& jobID)

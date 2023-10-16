@@ -117,7 +117,6 @@ private:
 	
 	double _time;
 	RawEventTarget _target;		//target device and channel
-	// STI::Utils::MixedValue _value;
 	ParsedVar parsedValue;
 	
 	std::string _description;

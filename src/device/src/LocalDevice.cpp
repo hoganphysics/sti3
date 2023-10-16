@@ -94,20 +94,14 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	auto deviceCollectionListener = std::make_shared<STI::Device::LocalDevice::DeviceCollectionListener>(this);
 	addCollectionListener(deviceCollectionListener);
-	// localCollection->addListener(deviceCollectionListener);
 
-    // std::cout << "CWD: " << std::filesystem::current_path().c_str() << std::endl;
 	auto deviceRootPath = std::filesystem::current_path();	//cwd
 	deviceRootPath /= ".sti";
 
-	// configuration.set<std::string>("PersistenceManager", "basePath", basePath);
-	
 	auto basePath = LocalPersistenceManager::makeBasePath(
 		config.get<std::string>("PersistenceManager", "root path", deviceRootPath.generic_string()),
 		config.get<std::string>("PersistenceManager", "device subdirectory", getID().getID())
 	);
-
-	//auto basePath = LocalPersistenceManager::makeBasePath(deviceRootPath.generic_string(), getID());
 
 	localChannelManager = std::make_shared<LocalChannelManager>(this, deviceMessageDispatcher);
 	localAttributeManager = std::make_shared<LocalAttributeManager>(id, deviceMessageDispatcher);
@@ -118,15 +112,6 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 	localTaskManager = std::make_shared<LocalTaskManager>();
 
-	//localSerializedRepository = std::make_shared<SerializedRepository>(basePath);
-
-	//temp for localPersistenceManager; TODO: expose to constructor
-	//Configuration configuration;
-	//configuration.set<int>("PersistenceManager", "resultBufferSize", 5);
-	//configuration.set<int>("PersistenceManager", "sequenceBufferSize", 5);
-	
-
-
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
 
@@ -136,28 +121,15 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localPersistenceManager->addPersistenceTarget(localTaskManager);
 
 
-	// localPersistenceManager->setFileHolderFactory(localFileHolderFactory);
-
-
     auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
 																	localCollection, localPersistenceManager);
 	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher, localPersistenceManager);
 	localPersistenceManager->attachEngineScheduler(eventEngineScheduler);
 
-
-	//setEngineFactory(engineFactory);
-
 	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);
 
-	//EngineSchedulerMessage ListenerID
 	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler";
 	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
-//	messageListenerIDs.push_back(schedulerMessageLID);
-
-	// //CollectionMessage ListenerID
-	// collectionMessageLID.name = getID().getID() + "::DeviceCollection";
-	// collectionMessageLID.type = STI::Device::DeviceMessageType::CollectionUpdate;
-	// messageListenerIDs.push_back(collectionMessageLID);
 
 	serverMessageRelayer = std::make_shared<STI::Device::ServerMessageRelayer>(getID(), deviceMessageDispatcher);
 
@@ -173,37 +145,16 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	// 		return true;
 	// 	});
 
-
-	// serverMessageRelayer->test<STI::Device::EngineJobUpdateDeviceMessage>( 
-	// 	[](const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& message)->bool {
-	// 		return true;
-	// 	});
-
-	// auto listenerTest = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(r1);
-	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest);
-
-	// auto listenerTest2 = std::static_pointer_cast<DeviceMessageListener<STI::Device::CollectionUpdateMessage>>(r1);
-	// deviceMessageReceiver->addListener(id, schedulerMessageLID, listenerTest2);
-
 	STI::Engine::EngineID id0(0);
 	addEventEngine(id0);
 
-
 	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>(eventEngineScheduler);
 	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>(localPersistenceManager, eventEngineScheduler);
-	// DeviceMessageListenerID lid(DeviceMessageType::EngineScheduler, "");
-
-	// deviceMessageReceiver->addListener(id, DeviceMessageListenerID(DeviceMessageType::EngineScheduler, ""), 
-	// 	std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(parseTicketManager));
-	// deviceMessageReceiver->addListener(id, DeviceMessageListenerID(DeviceMessageType::EngineScheduler, ""), 
-	// 	std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(resultTicketManager));
-
 
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
 	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
 	
 	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
-
 }
 
 LocalDevice::~LocalDevice()
@@ -365,7 +316,7 @@ void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalC
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 {
-	std::cout << "++++ DeviceCollectionListener::add( " << id.getID() << " )" << std::endl;
+	std::cout << "++++ add( " << id.getID() << " )" << std::endl;
 
 	// Listen to EngineScheduler messages from:
 	// 1) Declared event targets and 2) any device that has this device as a target server.
@@ -374,17 +325,15 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	// 	localDevice->addEventTarget(id);
 	// }
 
-	if ( localDevice->isTargetServerOf(id) ) {
+	if (localDevice->isTargetServerOf(id)) {
 		STI::Device::ServerMessageRelayer::addAllListeners(localDevice->deviceMessageReceiver, id, localDevice->serverMessageRelayer);
 	}
 
-
-	if( localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id)) {
-		
-		//auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(localDevice->eventEngineScheduler);
+	if (localDevice->isEventTarget(id) || localDevice->isTargetServerOf(id)) {
 		auto listener = localDevice->eventEngineScheduler->getMessageListener();
-		
-		localDevice->deviceMessageReceiver->addListener(id, localDevice->schedulerMessageLID, listener);	//listen to events on new device 'id'
+
+		//listen to events on new device 'id'
+		localDevice->deviceMessageReceiver->addListener(id, localDevice->schedulerMessageLID, listener);
 	}
 	
 	//The DeviceMessageListenerForwarder allows newly added devices to register message listeners via the
@@ -395,28 +344,23 @@ void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 	}
 
 	auto mess = std::make_shared<CollectionUpdateMessage>(localDevice->getID());
-//	auto mess = CollectionUpdateMessage::makeMessage(localDevice->getID());
 	localDevice->sendMessage(mess);
-
 }
 
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::remove(const DeviceID& id)
 {
 	auto mess = std::make_shared<CollectionUpdateMessage>(localDevice->getID());
-//	auto mess = CollectionUpdateMessage::makeMessage(localDevice->getID());
+
 	localDevice->sendMessage(mess);
 
 	if ( localDevice->isTargetServerOf(id) ) {
 		STI::Device::ServerMessageRelayer::removeAllListeners(localDevice->deviceMessageReceiver, id, localDevice->serverMessageRelayer);
 	}
-	// std::cout << "DeviceCollectionListener::remove" << std::endl;
 
 	localDevice->deviceMessageReceiver->removeListener(id, localDevice->schedulerMessageLID);
 
-	std::cout << "---- DeviceCollectionListener::remove( " << id.getID() << " )" << std::endl;
-
-
+	std::cout << "---- remove( " << id.getID() << " )" << std::endl;
 }
 
 const DeviceID LocalDevice::getID() const
@@ -645,8 +589,6 @@ LocalChannel& LocalDevice::addOutputChannel(unsigned short channelNumber, STI::U
 {
 	return addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, outputType, defaultName);
 }
-
-
 
 void LocalDevice::addAttribute(const std::string& key, const std::string& initialValue, 
 								std::shared_ptr<STI::Device::LocalAttribute>& attribute)

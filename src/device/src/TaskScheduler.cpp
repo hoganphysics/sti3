@@ -1,4 +1,3 @@
-
 #include <sti/utils/TaskScheduler.h>
 #include <sti/utils/utils.h>
 
@@ -262,16 +261,10 @@ void TaskScheduler::taskLoop()
 
 		if (nextSleep > coarseSleep) {
 			//coarse sleep
-			//std::cout << "coarse sleep: " << nextSleep << std::endl;
-			// schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ),
-			// 	[this]() { return false; });
 			schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ));
 		}
 		else {
 			//fine sleep
-			//std::cout << "fine sleep: " << nextSleep << std::endl;
-			// schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)),
-			// 	[this]() { return false; });
 			schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)));
 		}		
 

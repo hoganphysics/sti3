@@ -32,7 +32,6 @@ class LocalHub : public Hub<ID, T>
 {
 public:
 
-	// LocalHub();
 	LocalHub(const STI::Network::HubID& hubID);
 	virtual ~LocalHub();
 
@@ -82,7 +81,6 @@ public:
 
 	const HubID& getID() const { return hubID; }
 	void setID(const STI::Network::HubID& newHubID) { hubID = newHubID; }
-//	virtual const HubID& getID() const = 0;
 
 	void disconnect(const HubID& hid);
 
@@ -110,10 +108,6 @@ private:
 
 //Implementation
 
-// template<class ID, class T>
-// STI::Network::LocalHub<ID, T>::LocalHub()
-// {
-// }
 
 template<class ID, class T>
 STI::Network::LocalHub<ID, T>::LocalHub(const STI::Network::HubID& hubID)
@@ -450,14 +444,10 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 	return true;
 }
 
+//distribute all owned Nodes to target Hub
 template<class ID, class T>
-bool STI::Network::LocalHub<ID, T>::distributeNodes(const HubID& targetHub)//, const HubTrace& trace)		//distribute all owned Nodes to target Hub
+bool STI::Network::LocalHub<ID, T>::distributeNodes(const HubID& targetHub)
 {
-	//if (trace.includesHubID(getID())) {
-	//	//this call has already been to this hub; short circuit the call
-	//	return true;
-	//}
-
 	//Forward call to network (with appended trace)
 	HubTrace newTrace;
 	newTrace.addHubID(getID());

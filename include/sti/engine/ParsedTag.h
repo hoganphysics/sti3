@@ -21,15 +21,13 @@ public:
 
     std::string name;
     STI::Engine::StackTrace trace;
-    // STI::Device::DeviceID targetServerID;
-    // RawEventGroup scope;
 
     bool operator<(const ParsedTag& rhs) const;
     bool operator==(const ParsedTag& rhs) const;
     bool operator!=(const ParsedTag& rhs) const;
 
   	template<class Archive>
-	void serialize(Archive& archive);
+	  void serialize(Archive& archive);
 };
 
 

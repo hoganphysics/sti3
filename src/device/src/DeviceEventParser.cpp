@@ -75,13 +75,6 @@ void DeviceEventParser::addEvent(const RawEvent& evt, const RawEvent& referenceE
 		partnerGroup->addEvent(RawEvent(evt, referenceEvent, eventNumber));
 		eventNumber++;
 	}
-
-	//if (parsing && partnerEventTarget != nullptr) {
-	//	
-	//	(*partnerEventTarget)[evt.target().device().deviceID()]->addEvent(RawEvent(evt, referenceEvent, eventNumber));
-
-	//	eventNumber++;
-	//}
 }
 
 EngineParsingMessage& DeviceEventParser::addInfo(unsigned id, const std::string& name)

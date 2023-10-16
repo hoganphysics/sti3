@@ -11,7 +11,6 @@
 #include <sti/utils/GraphPathLabel.h>
 #include <sti/utils/VirtualFileServer.h>
 
-
 #include "fwd/ChannelManager_fwd.h"
 #include "fwd/PersistenceManager_fwd.h"
 

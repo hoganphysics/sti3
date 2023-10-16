@@ -42,18 +42,15 @@ RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Ut
 		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, 
 		const std::shared_ptr<StackTraceData>& stackTraceData)
 : _target(eventTarget), _time(time), _eventType(eventType), stackTrace(eventStackTrace), stackTraceData(stackTraceData)
-//, _isScheduled(false)
 {
 	parsedValue.value = value;
 	isMeasurement = (eventType == RawEventType::Measurement);
 	eventGraphPath.push_back(eventNumber);
-
-	// eventGroupIndex = group.getFullIndex();
 }
 
 RawEvent::RawEvent(const RawEvent& newEvent, const RawEvent& referenceEvent, unsigned eventNumber)
 : _time(newEvent._time), _target(newEvent.target()), _description(newEvent._description), 
-_eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) //, _isScheduled(false)
+_eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) 
 {
 	//Creates a new RawEvent based on the data stored in newEvent and the eventGraphPath
 	//of the referenceEvent.  This is used for device-generated events to track their source.
@@ -62,15 +59,12 @@ _eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement) //, _isSc
 	//eventNumber appended.
 	eventGraphPath = referenceEvent.eventGraphPath;
 	eventGraphPath.push_back(eventNumber);
-	// fullGroupName = referenceEvent.getGroupName();
 
 	setParentGroup(referenceEvent.parentGroup);
 	stackTrace = referenceEvent.getStackTrace();
 	stackTraceData = referenceEvent.stackTraceData;
 
 	parsedValue = std::move(newEvent.parsedValue);
-
-	// _value = std::move(newEvent._value);
 }
 
 RawEvent::~RawEvent()
@@ -171,7 +165,6 @@ void RawEvent::serialize(Archive& archive)
 		cereal::make_nvp("eventType", _eventType),
 		cereal::make_nvp("stackTrace", stackTrace),
 		cereal::make_nvp("eventGraphPath", eventGraphPath), 
-		// cereal::make_nvp("parentGroup", parentGroup), 
 		cereal::make_nvp("isMeasurement", isMeasurement),
 		cereal::make_nvp("stackTraceData", stackTraceData)
 		);

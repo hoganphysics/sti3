@@ -295,9 +295,6 @@ ResultsPaths SerializedRepository::makePaths(const TimeStamp& timeStamp)
     auto sequencePath = uniqueBasePath / "sequences" / time;
     paths.sequencePath = sequencePath.string();
 
-    // auto logPath = uniqueBasePath / "logs";
-    // paths.logPath = logPath.string();
-
     cachedPaths.add(timeStamp, paths);
 
     return paths;
