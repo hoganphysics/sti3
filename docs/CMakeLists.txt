@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.20)
 
 # project ("stidocs")
-project(stidocs VERSION 3.0.0 DESCRIPTION "STI library docs")
+project(stidocs VERSION 3.0.1 DESCRIPTION "STI library docs")
 
 # Add the cmake folder so the FindSphinx module is found
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
@@ -20,7 +20,7 @@ set(STI_HEADER_DIR "${PROJECT_SOURCE_DIR}/../include")
 file(GLOB_RECURSE TEST_PUBLIC_HEADERS ${STI_HEADER_DIR}/sti/device/*.h)
 
 set(DOXYGEN_INPUT_DIR ${STI_DIR}/include)
-set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
+set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/sti3docs/doxygen)
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
@@ -77,7 +77,7 @@ add_custom_target(Doxygen ALL DEPENDS ${DOXYGEN_INDEX_FILE})
 
 set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(SPHINX_SRC ${SPHINX_SOURCE}/src)
-set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sphinx)
+set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sti3docs/sphinx)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
 message("SPHINX_BUILD: ")
@@ -120,6 +120,28 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 
 # Nice named target so we can run the job easily
 add_custom_target(Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} ${SPHINX_FILES})
+
+
+
+# Zip docs
+
+# Define the directories to include in the zip file
+set(files_to_zip sti3docs)
+
+# Define the output zip file
+set(zip_file_name "${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz")
+message(STATUS "Zip name: ${zip_file_name}")
+
+add_custom_command(OUTPUT ${zip_file_name}
+	COMMAND tar "cvfz" "${zip_file_name}" ${files_to_zip}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	DEPENDS 
+		${SPHINX_FILES}
+		${DOXYGEN_INDEX_FILE}
+	MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
+	COMMENT "Creating ${zip_file_name}")
+
+add_custom_target(Zip ALL DEPENDS ${zip_file_name})
 
 
 include(GNUInstallDirs)
