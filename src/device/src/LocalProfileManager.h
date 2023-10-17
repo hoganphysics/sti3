@@ -46,6 +46,8 @@ private:
     bool save(const std::string& filename);
     void load(const std::string& filename);
 
+    std::string getDependentProfileName(const std::string& name) const;
+
     std::function<void(void)> persistenceRefresher;
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Profile>> profileMap;

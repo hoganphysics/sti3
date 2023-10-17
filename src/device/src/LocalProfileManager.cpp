@@ -88,6 +88,24 @@ bool LocalProfileManager::loadProfile(const std::string& name, const ProfileType
 		success &= target->loadProfile(profile);
 	}
 
+	if (loadDependentDevices && deviceCollection != 0) {
+		std::set<DeviceID> ids;
+		std::shared_ptr<STI::Device::Device> device;
+		std::shared_ptr <STI::Device::ProfileManager> manager;
+
+		deviceCollection->getIDs(ids);
+
+		for (auto& id : ids) {
+			//skip unless the device declares this device as server
+			if (id.getTargetServerID() != deviceID.getID()) continue;
+
+			if (deviceCollection->get(id, device) && device != 0 
+				&& device->getProfileManager(manager) && manager != 0) {
+				success &= manager->loadProfile(getDependentProfileName(name), type, true);
+			}
+		}
+	}
+
 	return success;
 }
 
@@ -119,7 +137,7 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 
 			if (deviceCollection->get(id, device) && device != 0 
 				&& device->getProfileManager(manager) && manager != 0) {
-				success &= manager->saveCurrentProfile(name, type, true);
+				success &= manager->saveCurrentProfile(getDependentProfileName(name), type, true);
 			}
 		}
 	}
@@ -128,6 +146,11 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 
 }
 
+std::string LocalProfileManager::getDependentProfileName(const std::string& name) const
+{
+	// return deviceID.getID() + "/" + name;
+	return name; //using absolute name for now; need to switch to relative (above), with option for absolute for 'safe', etc.
+}
 
 std::string LocalProfileManager::getFilename()
 {

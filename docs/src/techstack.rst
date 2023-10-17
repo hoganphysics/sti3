@@ -6,9 +6,9 @@ STI library architecture
 
 
 * Core device library (C++)
-* Network library (C++, CORBA)
+* Python wrapper for device library and STIPy (pybind11)
 * Java wrapper (SWIG)
-* Python wrapper (pybind11)
+* Network library (C++, CORBA)
 * Spring Boot Java web server (GraphQL backend)
 * Angular javascript web console (Apollo Angular GraphQL)
 

@@ -139,7 +139,7 @@ Build STI3 Python (STIPy)
 
 The build system for STIPy uses `setuptools` to create the python package.  The `setup.py` file in the 
 root directory configures the build. The python build will configure the package and call `cmake` to compile
-the c++ code for the core STI shared libraries. The output of thee build is a platform-specific python wheel 
+the C++ code for the core STI shared libraries. The output of the build is a platform-specific python wheel 
 (whl file) which contains the complied STI binaries. The following build instructions are platform independent.
 
 * Setup python virtual environment for the build (optional)

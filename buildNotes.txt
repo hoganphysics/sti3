@@ -37,3 +37,15 @@ python3 -m ipykernel install --user --name=projectname
 
 
 https://sourceforge.net/projects/stanfordtiminginterface/
+
+
+Docker
+
+#Build image.  Run from sti3 directory:
+sudo docker build -t sti3:v1 .
+
+#Show containers
+sudo docker ps -a
+
+Enter the image:
+sudo docker run -it sti3:v1

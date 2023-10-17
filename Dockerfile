@@ -54,14 +54,20 @@ WORKDIR /sti3
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libcurl4-openssl-dev
 
-# Optionally, copy your source code or files into the container
+# Copy source code into the container
 COPY . /sti3
+
+# Generate IDL stubs
+WORKDIR /sti3/src/network
+RUN ./compileIDL.sh
+
+# Build STI
 WORKDIR /sti3
 RUN mkdir -p /sti3/build
 WORKDIR /sti3/build
 RUN rm -rf *
 RUN cmake ..
-RUN cmake --build . --parallel 4
+RUN cmake --build . --parallel 20
 RUN make DESTDIR=/sti3 install
 
 # Define the default command to run when the container starts

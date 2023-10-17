@@ -59,7 +59,7 @@ add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 #    MAIN_DEPENDENCY Doxyfile
 				   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
-                   COMMENT "Generating docs")
+                   COMMENT "Generating doxygen docs")
 
                    
 
@@ -74,12 +74,31 @@ message(OUTPUT ${DOXYGEN_INDEX_FILE}
 # Nice named target so we can run the job easily
 add_custom_target(Doxygen ALL DEPENDS ${DOXYGEN_INDEX_FILE})
 
+
 set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
+set(SPHINX_SRC ${SPHINX_SOURCE}/src)
 set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sphinx)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
 message("SPHINX_BUILD: ")
 message(${SPHINX_BUILD})
+
+set(SPHINX_FILES 
+	${CMAKE_CURRENT_SOURCE_DIR}/index.rst
+	${SPHINX_SRC}/api.rst 
+	${SPHINX_SRC}/device.rst
+	${SPHINX_SRC}/examples.rst
+	${SPHINX_SRC}/interface.rst
+	${SPHINX_SRC}/network.rst
+	${SPHINX_SRC}/readme.rst
+	${SPHINX_SRC}/setuptools.rst
+	${SPHINX_SRC}/stipy.rst
+	${SPHINX_SRC}/techstack.rst
+)
+
+message("SPHINX_FILES: ")
+message(${SPHINX_FILES})
+
 
 # Only regenerate Sphinx when:
 #  - Doxygen has rerun 
@@ -94,13 +113,13 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 	DEPENDS 
 		# Other docs files you want to track should go here (or in some variable)
-		${CMAKE_CURRENT_SOURCE_DIR}/index.rst
-		${DOXYGEN_INDEX_FILE}
+		${SPHINX_FILES}
+		# ${DOXYGEN_INDEX_FILE}
 	MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
 	COMMENT "Generating documentation with Sphinx")
 
 # Nice named target so we can run the job easily
-add_custom_target(Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE})
+add_custom_target(Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} ${SPHINX_FILES})
 
 
 include(GNUInstallDirs)

@@ -95,8 +95,11 @@ accomplished by running the notebook server on the same LAN as the STI device
 network, for example.
 
 
-Basic timing sequences
+.. _stipytimingseqences:
+
+Basic timing sequences  
 ----------------------
+
 
 Targets
 +++++++

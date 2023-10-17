@@ -21,7 +21,7 @@
    src/network
    src/device
    src/stipy
-   src/webconsole
+   .. src/webconsole
 
 .. toctree::
    :hidden:
