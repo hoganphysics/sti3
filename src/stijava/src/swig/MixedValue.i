@@ -19,6 +19,8 @@
 %include "sti/utils/MixedValue.h"
 %rename(MixedValueVec) STI::Utils::MixedValueVector;
 
+%template(MixedValueTypeVector) std::vector< STI::Utils::MixedValueType >;
+
 %template(VectorInt) std::vector< int >;
 
 %extend STI::Utils::MixedValue

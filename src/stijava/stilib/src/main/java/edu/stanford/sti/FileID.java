@@ -101,8 +101,4 @@ public class FileID {
     return stiJNI.FileID_print(swigCPtr, this);
   }
 
-  public static SWIGTYPE_p_std__filesystem__path commonBasePath(FileIDVector fileIDs) {
-    return new SWIGTYPE_p_std__filesystem__path(stiJNI.FileID_commonBasePath(FileIDVector.getCPtr(fileIDs), fileIDs), true);
-  }
-
 }

@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class ImageWriter {
+public class BinaryDataStreamTarget {
   private transient long swigCPtr;
   private transient boolean swigCMemOwn;
 
-  protected ImageWriter(long cPtr, boolean cMemoryOwn) {
+  protected BinaryDataStreamTarget(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(ImageWriter obj) {
+  protected static long getCPtr(BinaryDataStreamTarget obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -34,7 +34,7 @@ public class ImageWriter {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_ImageWriter(swigCPtr);
+        stiJNI.delete_BinaryDataStreamTarget(swigCPtr);
       }
       swigCPtr = 0;
     }
@@ -47,29 +47,29 @@ public class ImageWriter {
 
   public void swigReleaseOwnership() {
     swigSetCMemOwn(false);
-    stiJNI.ImageWriter_change_ownership(this, swigCPtr, false);
+    stiJNI.BinaryDataStreamTarget_change_ownership(this, swigCPtr, false);
   }
 
   public void swigTakeOwnership() {
     swigSetCMemOwn(true);
-    stiJNI.ImageWriter_change_ownership(this, swigCPtr, true);
+    stiJNI.BinaryDataStreamTarget_change_ownership(this, swigCPtr, true);
   }
 
-  public void clear() {
-    stiJNI.ImageWriter_clear(swigCPtr, this);
+  public void start() {
+    stiJNI.BinaryDataStreamTarget_start(swigCPtr, this);
   }
 
-  public void addImage(Image image) {
-    stiJNI.ImageWriter_addImage(swigCPtr, this, Image.getCPtr(image), image);
+  public void writeNext(BinaryData data) {
+    stiJNI.BinaryDataStreamTarget_writeNext(swigCPtr, this, BinaryData.getCPtr(data), data);
   }
 
-  public boolean write(String targetDirectory, FileHolder fileHolder) {
-    return stiJNI.ImageWriter_write(swigCPtr, this, targetDirectory, FileHolder.getCPtr(fileHolder), fileHolder);
+  public void stop() {
+    stiJNI.BinaryDataStreamTarget_stop(swigCPtr, this);
   }
 
-  public ImageWriter() {
-    this(stiJNI.new_ImageWriter(), true);
-    stiJNI.ImageWriter_director_connect(this, swigCPtr, true, true);
+  public BinaryDataStreamTarget() {
+    this(stiJNI.new_BinaryDataStreamTarget(), true);
+    stiJNI.BinaryDataStreamTarget_director_connect(this, swigCPtr, true, true);
   }
 
 }

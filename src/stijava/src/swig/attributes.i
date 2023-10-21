@@ -36,6 +36,7 @@
 %include "AttributeSetter.h"
 
 %ignore STI::Device::LocalAttribute::setRefresher(const std::function< std::string( void ) >& refesher);
+%ignore STI::Device::LocalAttribute::setRefresher(const std::function< bool(std::string&) >& refresher);
 %ignore STI::Device::LocalAttribute::setSetter(const std::function< bool( const std::string& ) >& setter);
 %include "sti/device/LocalAttribute.h"
 %extend STI::Device::LocalAttribute 

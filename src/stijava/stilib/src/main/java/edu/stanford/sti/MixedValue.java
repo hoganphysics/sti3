@@ -101,6 +101,11 @@ public class MixedValue {
     stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
   }
 
+  public MixedValue(StringVector values) {
+    this(stiJNI.new_MixedValue__SWIG_11(StringVector.getCPtr(values), values), true);
+    stiJNI.MixedValue_director_connect(this, swigCPtr, true, true);
+  }
+
   public boolean opEquals(MixedValue other) {
     return stiJNI.MixedValue_opEquals(swigCPtr, this, MixedValue.getCPtr(other), other);
   }
@@ -141,12 +146,20 @@ public class MixedValue {
     stiJNI.MixedValue_setValue__SWIG_9(swigCPtr, this, MixedValue.getCPtr(value), value);
   }
 
+  public void setValue(StringVector values) {
+    stiJNI.MixedValue_setValue__SWIG_10(swigCPtr, this, StringVector.getCPtr(values), values);
+  }
+
   public void setValue() {
-    stiJNI.MixedValue_setValue__SWIG_10(swigCPtr, this);
+    stiJNI.MixedValue_setValue__SWIG_11(swigCPtr, this);
   }
 
   public void setValue(short value) {
-    stiJNI.MixedValue_setValue__SWIG_13(swigCPtr, this, value);
+    stiJNI.MixedValue_setValue__SWIG_14(swigCPtr, this, value);
+  }
+
+  public void setValue(long value) {
+    stiJNI.MixedValue_setValue__SWIG_16(swigCPtr, this, value);
   }
 
   public void clear() {
@@ -166,7 +179,15 @@ public class MixedValue {
   }
 
   public boolean isType(MixedValueType mixedValueType) {
-    return stiJNI.MixedValue_isType(swigCPtr, this, mixedValueType.swigValue());
+    return stiJNI.MixedValue_isType__SWIG_0(swigCPtr, this, mixedValueType.swigValue());
+  }
+
+  public boolean isType(MixedValueTypeVector types) {
+    return stiJNI.MixedValue_isType__SWIG_1(swigCPtr, this, MixedValueTypeVector.getCPtr(types), types);
+  }
+
+  public boolean isNumber() {
+    return stiJNI.MixedValue_isNumber(swigCPtr, this);
   }
 
   public boolean getBoolean() {
@@ -191,6 +212,10 @@ public class MixedValue {
 
   public MixedValueVec getVector() {
     return new MixedValueVec(stiJNI.MixedValue_getVector(swigCPtr, this), false);
+  }
+
+  public MixedValueVec vec() {
+    return new MixedValueVec(stiJNI.MixedValue_vec(swigCPtr, this), false);
   }
 
   public BinaryData getBinary() {

@@ -81,6 +81,7 @@ private:
 	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager);
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
+	bool read(short channel, STI::Utils::MixedValue& data);
 	bool read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 	void stopRW();
 

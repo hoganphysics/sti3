@@ -35,6 +35,36 @@ protected:
     Swig::BoolArray<7> swig_override;
 };
 
+class SwigDirector_BinaryDataStreamTarget : public STI::Utils::BinaryDataStreamTarget, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_BinaryDataStreamTarget(JNIEnv *jenv);
+    virtual void start();
+    virtual void writeNext(std::shared_ptr< STI::Utils::BinaryData > const &data);
+    virtual void stop();
+public:
+    bool swig_overrides(int n) {
+      return (n < 3 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<3> swig_override;
+};
+
+class SwigDirector_BinaryDataStream : public STI::Utils::BinaryDataStream, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_BinaryDataStream(JNIEnv *jenv);
+    virtual void transfer(std::shared_ptr< STI::Utils::BinaryDataStreamTarget > const &target);
+public:
+    bool swig_overrides(int n) {
+      return (n < 1 ? swig_override[n] : false);
+    }
+protected:
+    Swig::BoolArray<1> swig_override;
+};
+
 class SwigDirector_MixedValue : public STI::Utils::MixedValue, public Swig::Director {
 
 public:
@@ -50,28 +80,12 @@ public:
     SwigDirector_MixedValue(JNIEnv *jenv, std::shared_ptr< STI::Utils::Image > const &value);
     SwigDirector_MixedValue(JNIEnv *jenv, std::string const &value);
     SwigDirector_MixedValue(JNIEnv *jenv, char const *value);
+    SwigDirector_MixedValue(JNIEnv *jenv, std::vector< std::string > const &values);
     virtual ~SwigDirector_MixedValue();
 public:
     bool swig_overrides(int n) {
       return false;
     }
-};
-
-class SwigDirector_ImageWriter : public STI::Utils::ImageWriter, public Swig::Director {
-
-public:
-    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_ImageWriter(JNIEnv *jenv);
-    virtual ~SwigDirector_ImageWriter();
-    virtual void clear();
-    virtual void addImage(STI::Utils::Image *image);
-    virtual bool write(std::string const &targetDirectory, std::shared_ptr< STI::Utils::FileHolder > &fileHolder);
-public:
-    bool swig_overrides(int n) {
-      return (n < 3 ? swig_override[n] : false);
-    }
-protected:
-    Swig::BoolArray<3> swig_override;
 };
 
 class SwigDirector_FileServer : public STI::Utils::FileServer, public Swig::Director {
@@ -138,6 +152,21 @@ public:
     }
 protected:
     Swig::BoolArray<1> swig_override;
+};
+
+class SwigDirector_Image : public STI::Utils::Image, public Swig::Director {
+
+public:
+    void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
+    SwigDirector_Image(JNIEnv *jenv);
+    SwigDirector_Image(JNIEnv *jenv, std::string const &orginID, std::string const &filename);
+    SwigDirector_Image(JNIEnv *jenv, STI::Utils::FileID const &fileID);
+    SwigDirector_Image(JNIEnv *jenv, STI::Utils::Image const &other);
+    virtual ~SwigDirector_Image();
+public:
+    bool swig_overrides(int n) {
+      return false;
+    }
 };
 
 class SwigDirector_DeviceIDDependencyTree : public STI::Utils::DependencyTree< STI::Device::DeviceID >, public Swig::Director {

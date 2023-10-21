@@ -40,21 +40,47 @@ public class Image {
     }
   }
 
+  protected void swigDirectorDisconnect() {
+    swigSetCMemOwn(false);
+    delete();
+  }
+
+  public void swigReleaseOwnership() {
+    swigSetCMemOwn(false);
+    stiJNI.Image_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigSetCMemOwn(true);
+    stiJNI.Image_change_ownership(this, swigCPtr, true);
+  }
+
   public Image() {
     this(stiJNI.new_Image__SWIG_0(), true);
+    stiJNI.Image_director_connect(this, swigCPtr, true, true);
   }
 
-  public Image(String filename) {
-    this(stiJNI.new_Image__SWIG_1(filename), true);
+  public Image(String orginID, String filename) {
+    this(stiJNI.new_Image__SWIG_1(orginID, filename), true);
+    stiJNI.Image_director_connect(this, swigCPtr, true, true);
   }
 
-  public Image(String filename, ImageWriter writter) {
-    this(stiJNI.new_Image__SWIG_2(filename, ImageWriter.getCPtr(writter), writter), true);
+  public Image(FileID fileID) {
+    this(stiJNI.new_Image__SWIG_2(FileID.getCPtr(fileID), fileID), true);
+    stiJNI.Image_director_connect(this, swigCPtr, true, true);
   }
 
-  public Image makeChildImage() {
-    long cPtr = stiJNI.Image_makeChildImage(swigCPtr, this);
-    return (cPtr == 0) ? null : new Image(cPtr, true);
+  public Image(Image other) {
+    this(stiJNI.new_Image__SWIG_3(Image.getCPtr(other), other), true);
+    stiJNI.Image_director_connect(this, swigCPtr, true, true);
+  }
+
+  public FileID getFileID() {
+    return new FileID(stiJNI.Image_getFileID(swigCPtr, this), true);
+  }
+
+  public void setFileID(FileID fileID) {
+    stiJNI.Image_setFileID(swigCPtr, this, FileID.getCPtr(fileID), fileID);
   }
 
   public Image setFilename(String filename) {
@@ -71,10 +97,6 @@ public class Image {
 
   public Image setMetaData(String key, MixedValue value) {
     return new Image(stiJNI.Image_setMetaData(swigCPtr, this, key, MixedValue.getCPtr(value), value), true);
-  }
-
-  public void setWriter(ImageWriter writer) {
-    stiJNI.Image_setWriter(swigCPtr, this, ImageWriter.getCPtr(writer), writer);
   }
 
   public void setImageData(FileHolder file) {
@@ -94,8 +116,12 @@ public class Image {
     return (cPtr == 0) ? null : new MetaData(cPtr, false);
   }
 
-  public void writeToFile(ImageWriter writer, String targetDirectory) {
-    stiJNI.Image_writeToFile(swigCPtr, this, ImageWriter.getCPtr(writer), writer, targetDirectory);
+  public boolean write(FileServer sourceFileServer, FileHolder destination) {
+    return stiJNI.Image_write(swigCPtr, this, FileServer.getCPtr(sourceFileServer), sourceFileServer, FileHolder.getCPtr(destination), destination);
+  }
+
+  public boolean saveToFile() {
+    return stiJNI.Image_saveToFile(swigCPtr, this);
   }
 
   public boolean getData(BinaryData data) {
@@ -106,28 +132,12 @@ public class Image {
     return stiJNI.Image_getFile(swigCPtr, this, FileHolder.getCPtr(file), file);
   }
 
-  public String getFilename() {
-    return stiJNI.Image_getFilename(swigCPtr, this);
-  }
-
-  public String getExtension() {
-    return stiJNI.Image_getExtension(swigCPtr, this);
-  }
-
   public long getHeight() {
     return stiJNI.Image_getHeight(swigCPtr, this);
   }
 
   public long getWidth() {
     return stiJNI.Image_getWidth(swigCPtr, this);
-  }
-
-  public boolean isChild() {
-    return stiJNI.Image_isChild(swigCPtr, this);
-  }
-
-  public ImageVector getChildren() {
-    return new ImageVector(stiJNI.Image_getChildren(swigCPtr, this), false);
   }
 
   public boolean opEquals(Image other) {

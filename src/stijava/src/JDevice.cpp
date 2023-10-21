@@ -233,6 +233,11 @@ bool JDevice::write(short channel, const STI::Utils::MixedValue& value)
     return false;
 }
 
+bool JDevice::read(short channel, STI::Utils::MixedValue& data)
+{
+    return read(channel, STI::Utils::MixedValueType::Empty, data);
+}
+
 bool JDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
     if(wrappedDevice != 0) {

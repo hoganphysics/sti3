@@ -1,7 +1,9 @@
 
 %{
     #include <sti/utils/BinaryData.h>
-
+    #include <sti/utils/BinaryDataStream.h>
+    using STI::Utils::BinaryDataStream;
+    using STI::Utils::BinaryDataStreamTarget;
 %}
 
 // %include <carrays.i>
@@ -10,7 +12,10 @@
 // %array_class(unsigned char,ByteArr);
 
 %shared_ptr(STI::Utils::BinaryData);
+%shared_ptr(STI::Utils::BinaryDataStream);
+%shared_ptr(STI::Utils::BinaryDataStreamTarget);
 
+%template(BinaryDataVector) std::vector< std::shared_ptr < STI::Utils::BinaryData > >;
 
 //////////////////
 
@@ -315,3 +320,9 @@ float* STI::Utils::BinaryData::getFloats();
     }
   
 }
+
+////////////// BinaryDataStream //////////////
+
+%include "sti/utils/BinaryDataStream.h"
+
+

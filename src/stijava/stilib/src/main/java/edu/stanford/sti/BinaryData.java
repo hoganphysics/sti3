@@ -76,8 +76,20 @@ public class BinaryData {
     return stiJNI.BinaryData_getBytes__SWIG_1(swigCPtr, this, data, orphan);
   }
 
+  public void split(BinaryDataVector chunks, long maxBytes) {
+    stiJNI.BinaryData_split(swigCPtr, this, BinaryDataVector.getCPtr(chunks), chunks, maxBytes);
+  }
+
+  public void merge(BinaryDataVector chunks) {
+    stiJNI.BinaryData_merge(swigCPtr, this, BinaryDataVector.getCPtr(chunks), chunks);
+  }
+
   public void swap(BinaryData other) {
     stiJNI.BinaryData_swap(swigCPtr, this, BinaryData.getCPtr(other), other);
+  }
+
+  public void attachStream(BinaryDataStream stream) {
+    stiJNI.BinaryData_attachStream(swigCPtr, this, BinaryDataStream.getCPtr(stream), stream);
   }
 
   public byte[] get() {

@@ -5,10 +5,9 @@
 
 %}
 
-%ignore STI::Utils::FileID::commonBasePath(const std::vector< STI::Utils::FileID >& fileIDs);
+%template(FileIDVector) std::vector< STI::Utils::FileID >;
 
-
+%ignore STI::Utils::FileID::commonBasePath;
 
 %include "sti/utils/FileID.h"
 
-%template(FileIDVector) std::vector< STI::Utils::FileID >;
