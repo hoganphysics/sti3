@@ -8,6 +8,9 @@
 
 package edu.stanford.sti;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class STIJava {
 
 
@@ -25,10 +28,24 @@ public class STIJava {
     public static void Reload() {
         try {
             System.out.print("Loading stijava...");
-            System.loadLibrary("stijava");
+            // System.loadLibrary("stijava");
+
+            try {
+                NativeUtils.loadLibraryFromJar("/lib/libstidevice.so.3.0.0", true);
+                NativeUtils.loadLibraryFromJar("/lib/libstinetwork.so.3.0.0", true);
+                NativeUtils.loadLibraryFromJar("/lib/libstijava.so");
+            } catch (FileNotFoundException e) {
+                System.out.println("");
+                System.out.println("NativeUtils loadLibraryFromJar failed:");
+                e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("");
+                System.out.println("NativeUtils loadLibraryFromJar failed:");
+                e.printStackTrace();
+            } 
+
             System.out.println("success.");
-            //Runtime.getRuntime().loadLibrary("stijava");  //seems to be the same as System.loadLibrary
-            //System.out.println("Loaded stijava");
+
         } catch (UnsatisfiedLinkError e) {
             System.out.println("failed.");
             //External library for loading an so the is stored inside the jar (cz.adamh.utils.NativeUtils)

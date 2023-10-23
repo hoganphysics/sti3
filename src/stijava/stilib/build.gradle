@@ -32,6 +32,23 @@ dependencies {
     testImplementation 'junit:junit:4.13'
 }
 
+def stiLibDir = "" + projectDir + "/../../../lib/"
+println "dir: " + stiLibDir
+
+//Add STI3 shared libraries to jar
+task copyNativeBinaries(type: Copy) {
+    from files(stiLibDir + "libstijava.so", 
+               stiLibDir + "libstijava.so.3.0.0", 
+               stiLibDir + "libstidevice.so", 
+               stiLibDir + "libstidevice.so.3.0.0",
+               stiLibDir + "libstinetwork.so",
+               stiLibDir + "libstinetwork.so.3.0.0"
+               ) // path native binaries
+    into file('build/resources/main/lib/')    // Target resources directory
+}
+
+jar.dependsOn(copyNativeBinaries)
+
 jar {
     manifest {
         attributes('Implementation-Title': project.name,

@@ -17,6 +17,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(STI_BASE_DIR ../../..)
 
+# set(CMAKE_BUILD_RPATH "\$ORIGIN")
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+# set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
 include_directories(".")
 # include_directories("${STI_BASE_DIR}/src/device/src")
 
