@@ -14,12 +14,15 @@ except ImportError:
     )
     raise
 
-# build_type = 'RelWithDebInfo'
-build_type = 'Release'
+build_type = 'RelWithDebInfo'
+# build_type = 'Release'
 
 #Force sci-kit to use RelWithDebInfo build instead of Release
 #Release fails to link on the first build (for some reason) causing a crash.
 sys.argv.append('--build-type=' + build_type)
+sys.argv.append('-DCMAKE_BUILD_PARALLEL_LEVEL=10')
+# sys.argv.append('-DCMAKE_GENERATOR=Ninja')
+
 #print("command line args: " + str(sys.argv))
 
 from setuptools import find_packages
@@ -84,7 +87,7 @@ if sys.platform == 'linux':
 else:
     copyOmniORBwindows()
 
-
+# '-DCMAKE_GENERATOR=Ninja', '-DCMAKE_MAKE_PROGRAM=Ninja',
 setup(
     name="stipy",
     version="3.0.1",

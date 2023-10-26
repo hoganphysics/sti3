@@ -20,10 +20,11 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 	addOutputChannel(4, MixedValueType::String, "string output");
 
 	// Input channels (make measurements that are recorded by the device)
-	addInputChannel(10, MixedValueType::Number, "thermocouple voltage");		// measures a number
+	addInputChannel(10, MixedValueType::Number, "thermocouple voltage");		// measures a number (input)
 
 	// Input/Output channel
-	addInputChannel(11, MixedValueType::Vector, MixedValueType::Number, "thermocouple voltage");	//outputs a number to measure a vector
+	addInputChannel(11, MixedValueType::Number, MixedValueType::Vector, "vector args");	//measures a number (input); accepts a vector argument (output)
+	addInputChannel(12, MixedValueType::Vector, MixedValueType::Number, "vector measurement");	//measures a vector (input), accepts a number argument (output)
 
 }
 
@@ -81,5 +82,34 @@ bool TestDevice::writeChannel(short channel, const STI::Utils::MixedValue& value
 
 bool TestDevice::readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
-	return false;
+	bool success = false;
+
+	switch (channel) {
+	case 10:
+		//thermocouple voltage
+		data.setValue(34.5);
+		success = true;
+		break;
+	case 11:
+		//Input/Output
+		//vector arguments (output)
+		if (value.isType({ MixedValueType::Number, MixedValueType::String })) {
+			data.setValue(12.2 * value.getVector().at(0));	//double measurement (input)
+			success = true;	
+		}
+		break;
+	case 12:
+		//Input/Output
+		auto arg = value.getNumber();	//number argument (output)
+		
+		data.addValue(3.2 * arg);	//vector measurement (input)
+		data.addValue("example string result")
+		data.addValue(true);
+
+		success = true;
+		break;
+	default:
+		break;
+	}
+	return success;
 }

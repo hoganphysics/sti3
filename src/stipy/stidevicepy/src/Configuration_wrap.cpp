@@ -13,6 +13,26 @@ using STI::Utils::Configuration;
 using STI::Utils::ConfigFile;
 
 
+std::string print(const Configuration& self)
+{
+    std::stringstream repr;
+    repr << "<";
+    
+    bool first = true;
+    auto sectionNames = self.getSectionNames();
+    
+    for (auto& section : sectionNames) {
+        if (!first) {
+            repr << ", ";
+        }
+        repr << "'" << section << "'";
+        first = false;
+    }
+    repr << ">";
+    return repr.str();
+}
+
+
 void init_Configuration(py::module& m) 
 {
 
@@ -79,6 +99,13 @@ void init_Configuration(py::module& m)
         .def("append", py::overload_cast<const Configuration&>(&Configuration::append), py::arg("config"))
         .def("append", py::overload_cast<const std::map<std::string, std::map<std::string, std::string>>&>(&Configuration::append), 
                         py::arg("config"))
+        
+        .def("extract", py::overload_cast<const std::string&>(&Configuration::extract, py::const_), py::arg("section"))
+        .def("extract", py::overload_cast<const std::vector<std::string>&>(&Configuration::extract, py::const_), py::arg("sections"))
+        .def("filter", py::overload_cast<const std::string&>(&Configuration::filter, py::const_), py::arg("section"))
+        .def("filter", py::overload_cast<const std::vector<std::string>&>(&Configuration::filter, py::const_), py::arg("sections"))
+        .def("clear", &Configuration::clear)
+
         .def("__add__",
             [](Configuration& self, const Configuration& other) {
                 return self + other;
@@ -89,19 +116,12 @@ void init_Configuration(py::module& m)
             })
         .def("__repr__",
             [](const Configuration& self) {
-                std::stringstream repr;
-                repr << "| ";
-
-                auto sectionNames = self.getSectionNames();
-                for (auto& section : sectionNames) {
-                    repr << section << " | ";
-                }
-                return repr.str();
+                return print(self);
             })
         ;
 
 
-    py::class_<ConfigFile>(m, "ConfigFile")
+    py::class_<ConfigFile, Configuration>(m, "ConfigFile")
         .def(py::init<>())
         .def(py::init<const std::string&>(), py::arg("filename") )
         .def("save", &ConfigFile::save)
@@ -109,6 +129,10 @@ void init_Configuration(py::module& m)
         .def("load", py::overload_cast<const std::string&>(&ConfigFile::load), py::arg("filename"))
         .def("isParsed", &ConfigFile::isParsed)
         .def("setHeader", &ConfigFile::setHeader)
+        .def("__repr__",
+            [](const Configuration& self) {
+                return print(self);
+            })
         ;
 
 }

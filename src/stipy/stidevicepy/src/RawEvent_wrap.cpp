@@ -170,14 +170,15 @@ void init_RawEvent(py::module& m)
         .def("getGroupName", &STI::Engine::RawEvent::getGroupName)
         .def("getStackTrace", &STI::Engine::RawEvent::getRawStackTrace)
         .def("getEventGraphPath", &STI::Engine::RawEvent::getEventGraphPath)
+        .def("isMeasurementEvent", &STI::Engine::RawEvent::isMeasurementEvent)
         .def("printTime", 
             [](const STI::Engine::RawEvent& self) {
                 return STI::Utils::printTimeFormated(self.time());
             })
-        // .def("__repr__",
-        //     [](const STI::Engine::RawEvent& self) {
-        //         return self.print();
-        //     })
+        .def("__repr__",
+            [](const STI::Engine::RawEvent& self) {
+                return self.print();
+            })
         .def("__eq__",  // operator ==
             [](const STI::Engine::RawEvent& self, const STI::Engine::RawEvent& other) {
                 return self == other;

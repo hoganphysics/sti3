@@ -391,7 +391,7 @@ MixedValueType MixedValue::getType() const
 
 bool MixedValue::isType(const MixedValueType& mixedValueType) const
 {
-	return type == mixedValueType;
+	return type == mixedValueType || (mixedValueType == MixedValueType::Number && isNumber());
 }
 
 bool MixedValue::isType(const std::vector<MixedValueType>& types) const

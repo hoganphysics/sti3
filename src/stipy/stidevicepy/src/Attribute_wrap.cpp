@@ -120,6 +120,13 @@ void init_Attribute(py::module& m)
                 self->addMetaData(key, v);
                 return self;
             }, py::arg("key"), py::arg("value") ) //, py::return_value_policy::reference)
+        .def("addMetadata", 
+            [](std::shared_ptr<STI::Device::LocalAttribute>& self, const std::string& key, const std::string& value) {
+                MixedValue v;
+                v.setValue(value);
+                self->addMetaData(key, v);
+                return self;
+            }, py::arg("key"), py::arg("value") ) //, py::return_value_policy::reference)
         ;
 
 

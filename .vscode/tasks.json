@@ -79,6 +79,39 @@
 			"group": "build"
 		},
 		{
+			"type": "shell",
+			"label": "Docs CMake config",
+			"command": "cmake",
+			"args": [
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/docs/build", 
+				"env": {
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+		{
+			"type": "shell",
+			"label": "Docs CMake build",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/docs/build"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+        },
+		{
 			"type": "gradle",
 			"id": "/home/hogan/code/dev/sti3/src/stijava/stilibbuildsti",
 			"script": "build",

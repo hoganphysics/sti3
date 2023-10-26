@@ -25,8 +25,12 @@ class LocalDevicePy : public DevicePy
 {
 public:
 
-    LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
-		const std::string& targetServer);
+    LocalDevicePy(const std::map<std::string, std::string>& config);
+	LocalDevicePy(const STI::Utils::Configuration& config, const std::string& section="");
+	LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
+                  const std::string& targetServer, 
+                  const STI::Utils::Configuration& config=STI::Utils::Configuration());
+
     virtual ~LocalDevicePy();
 
     virtual bool writeChannel(short channel, const pybind11::object& value);
@@ -41,7 +45,21 @@ public:
         device->addChannel(channelNumber, type, inputType, outputType, defaultName, channel);
         return channel;
     }
-    
+	std::shared_ptr<STI::Device::LocalChannel> addInputChannel(unsigned short channelNumber, 
+                                                               STI::Utils::MixedValueType inputType, const std::string& defaultName)
+    {
+        return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, STI::Utils::MixedValueType::Empty, defaultName);
+    }
+	std::shared_ptr<STI::Device::LocalChannel> addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, 
+                                                               STI::Utils::MixedValueType outputType, const std::string& defaultName)
+    {
+        return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, outputType, defaultName);
+    }
+	std::shared_ptr<STI::Device::LocalChannel> addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+    {
+        return addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, outputType, defaultName);
+    }
+
     void addEventEngine(const STI::Engine::EngineID& engineID)
     {
         device->addEventEngine(engineID);
@@ -109,9 +127,15 @@ private:
     {
     public:
 
-        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::string& name, const std::string& address, unsigned short module,
-		    const std::string& targetServer)
-            : STI::Device::LocalDevice(name, address, module, targetServer), localDevicePy(localDevicePy) {}
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::map<std::string, std::string>& config)
+            : STI::Device::LocalDevice(config), localDevicePy(localDevicePy) {}
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const STI::Utils::Configuration& config, const std::string& section="")
+            : STI::Device::LocalDevice(config, section), localDevicePy(localDevicePy) {}
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, 
+                            const std::string& name, const std::string& address, unsigned short module,
+                            const std::string& targetServer, 
+                            const STI::Utils::Configuration& config=STI::Utils::Configuration())
+            : STI::Device::LocalDevice(name, address, module, targetServer, config), localDevicePy(localDevicePy) {}
 
         bool writeChannel(short channel, const STI::Utils::MixedValue& value)
         {

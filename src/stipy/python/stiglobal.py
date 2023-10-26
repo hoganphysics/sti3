@@ -9,6 +9,7 @@ from stipy.bin.stipy import STIPyServer
 # from stipy.bin.stipybase import Sequence
 from stipy.stipybase.python.sequence import STIPySequence
 from stipy.python.stacktrace import makeStackTrace as _makeStackTrace
+from stipy.bin.stipybase import DeviceID
 
 from socket import gethostname as _gethostname
 from getpass import getuser as _getuser
@@ -17,6 +18,9 @@ from getpass import getuser as _getuser
 def connect(serverID, nameServerAddress, serverHubID=None):
     localAddress = _gethostname()
     username = _getuser()
+
+    if type(serverID) == str:
+        serverID = DeviceID(serverID)
 
     if serverHubID == None:
         server = _connect(localAddress, serverID, nameServerAddress)

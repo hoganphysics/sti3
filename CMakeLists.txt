@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.20...3.22)
 project(sti3)
 
 set(STI_BASE_DIR ${sti3_SOURCE_DIR})

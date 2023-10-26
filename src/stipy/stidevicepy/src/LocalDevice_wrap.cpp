@@ -30,15 +30,33 @@ using STI::Device::ChannelType;
 
 void init_LocalDevice(py::module& m) 
 {
+
     py::class_<LocalDevicePy, DevicePy, LocalDevicePyTrampoline, std::shared_ptr<LocalDevicePy>>(m, "LocalDevice") 
+        .def(py::init<const std::map<std::string, std::string>&>(), py::arg("config") )
+        .def(py::init<const STI::Utils::Configuration&>(), py::arg("config") )
+        .def(py::init<const STI::Utils::Configuration&, const std::string&>(), py::arg("config"), py::arg("section") )
         .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&>(), 
                      py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID") )
+        .def(py::init<const std::string&, const std::string&, unsigned short, const std::string&, const STI::Utils::Configuration&>(), 
+                     py::arg("name"), py::arg("address"), py::arg("module"), py::arg("targetServerID"), py::arg("config") )
+
         .def("writeChannel", &LocalDevicePy::writeChannel, py::arg("channelNumber"), py::arg("value"))
         .def("readChannel", &LocalDevicePy::readChannel, py::arg("channelNumber"), py::arg("value"))
         .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
+        
         .def("addChannel", 
             py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
             py::arg("channelNumber"), py::arg("type"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))
+        .def("addInputChannel", 
+            py::overload_cast<unsigned short, STI::Utils::MixedValueType, const std::string&>(&LocalDevicePy::addInputChannel), 
+            py::arg("channelNumber"), py::arg("inputType"), py::arg("defaultName"))
+        .def("addInputChannel", 
+            py::overload_cast<unsigned short, STI::Utils::MixedValueType, STI::Utils::MixedValueType, const std::string&>(&LocalDevicePy::addInputChannel), 
+            py::arg("channelNumber"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))
+        .def("addOutputChannel", 
+            py::overload_cast<unsigned short, STI::Utils::MixedValueType, const std::string&>(&LocalDevicePy::addOutputChannel), 
+            py::arg("channelNumber"), py::arg("outputType"), py::arg("defaultName"))
+
         .def("addPartner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::addPartner), 
                 py::arg("deviceID"))
         .def("addPartner", py::overload_cast<const STI::Device::DeviceID&, const std::string&>(&LocalDevicePy::addPartner), 

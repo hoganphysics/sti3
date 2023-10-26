@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	auto device1 = std::make_shared<TestDevice>(configFile.extract("TestDevice1"));
 	auto device2 = std::make_shared<TestDevice>(configFile.extract("TestDevice2"));
 
-	auto hub = std::make_shared<NetworkDeviceHub>(configFile);	//automaticall uses [NetworkHub] parameters to configure hub
+	auto hub = std::make_shared<NetworkDeviceHub>(configFile);	//automatically uses [NetworkHub] parameters to configure hub
 
 
 	hub->addDevice(device1);

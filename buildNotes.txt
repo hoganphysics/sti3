@@ -24,6 +24,7 @@ This produces a manylinux wheel that can be uploaded to pypi
 
 Linux
 
+* For faster builds using Ninja, apt install ninja-build
 * setup virtual environment
 * source env/bin/activate
 

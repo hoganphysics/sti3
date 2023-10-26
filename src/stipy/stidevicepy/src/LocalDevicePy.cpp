@@ -23,11 +23,26 @@ using STI::Device::ChannelManager;
 using STI::Utils::MixedValue;
 
 
-LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module,
-    const std::string& targetServer)
+
+LocalDevicePy::LocalDevicePy(const std::map<std::string, std::string>& config)
 : DevicePy()
 {
-    device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, name, address, module, targetServer);
+    device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, config);
+    setDevice(device);
+}
+
+LocalDevicePy::LocalDevicePy(const STI::Utils::Configuration& config, const std::string& section)
+: DevicePy()
+{
+    device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, config, section);
+    setDevice(device);
+}
+
+LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address, unsigned short module, 
+                             const std::string& targetServer, const STI::Utils::Configuration& config)
+: DevicePy()
+{
+    device = std::make_shared<LocalDevicePy::LocalDeviceDelegate>(this, name, address, module, targetServer, config);
     setDevice(device);
 }
 
