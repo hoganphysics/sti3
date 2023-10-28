@@ -180,8 +180,6 @@ bool LegacyShotRepository::saveShot(const ShotID& sid, const std::shared_ptr<Ful
     targetParsePath /= makeParseFilename(sid.parseID);
     targetShotPath /= makeShotFilename(sid);
 
-    // std::cout << "LegacyShotRepository::saveShot " << targetShotPath.string() << std::endl;
-
     LegacyExperimentXMLBuilder builder(targetShotPath.string(), fullShotResult);
 
     if (sid.parseID.shotConfig.shotType == ShotType::Sequence) {

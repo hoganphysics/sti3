@@ -95,6 +95,7 @@ public:
     void jobComplete(const EngineJobID& jobID);
     void cancelAll();
     void stopAll();
+    void clearAll();
 
     std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const;
     std::vector<std::shared_ptr<EventEngineJob>> getJobs(const EventEngineJobList& jobListType) const;

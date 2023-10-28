@@ -151,14 +151,18 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>(eventEngineScheduler);
 	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>(localPersistenceManager, eventEngineScheduler);
 
-	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManager", parseTicketManager);
-	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManager", resultTicketManager);
+	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ParseTicketManagerScheduler", parseTicketManager);
+	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "ResultTicketManagerScheduler", resultTicketManager);
+
+	deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(getID(), "ParseTicketManagerJobUpdate", parseTicketManager);
+	deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(getID(), "ResultTicketManagerJobUpdate", resultTicketManager);
 	
 	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
 }
 
 LocalDevice::~LocalDevice()
 {
+	disable();
 	localCollection->clear();
 }
 
@@ -171,6 +175,12 @@ void LocalDevice::activate()
 
 void LocalDevice::disable()
 {
+	if (eventEngineScheduler != 0) {
+		eventEngineScheduler->cancelAll();
+		eventEngineScheduler->stopAll();
+		eventEngineScheduler->clearAll();
+	}
+
 	if (deviceMessageReceiver != 0) {
 		deviceMessageReceiver->clearListeners();
 	}

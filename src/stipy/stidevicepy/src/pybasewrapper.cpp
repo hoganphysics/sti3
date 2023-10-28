@@ -31,6 +31,7 @@ void init_LogID(py::module& m);
 void init_LogRecord(py::module& m);
 void init_Task(py::module& m);
 void init_RawEventGroup(py::module& m);
+void init_EngineParsingMessage(py::module& m);
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 PYBIND11_MAKE_OPAQUE(std::map<std::string, std::string>);
@@ -66,6 +67,7 @@ PYBIND11_MODULE(stipybase, m) {
     init_LogID(m);
     init_LogRecord(m);
     init_Task(m);
+    init_EngineParsingMessage(m);
 }
 
 int main(int argc, char* argv[])

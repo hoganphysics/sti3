@@ -10,6 +10,9 @@ namespace Engine
 
 enum class EngineJobStatus { New, Running, Completed, Canceled, NotFound, Archived, Deferred };
 
+std::string EngineJobStatusToString(const STI::Engine::EngineJobStatus& status);
+
+
 } //Engine
 } //STI
 

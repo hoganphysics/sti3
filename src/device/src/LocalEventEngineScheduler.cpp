@@ -39,6 +39,7 @@
 #include <memory>
 #include <algorithm>
 
+
 using STI::Device::DeviceID;
 using STI::Device::EngineSchedulerMessage;
 
@@ -101,6 +102,9 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
 
 LocalEventEngineScheduler::~LocalEventEngineScheduler()
 {
+    stopAll();
+    clearAll();
+    
     stop();
     schedulerThread.join();
 }
@@ -475,6 +479,23 @@ void LocalEventEngineScheduler::stopAll()
             manager->getEngine(engine);
             if (engine != 0) {
                 engine->stop();
+            }
+        }
+    }
+}
+
+void LocalEventEngineScheduler::clearAll()
+{
+    std::set<EngineID> ids;
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+    engineManagers.getKeys(ids);
+
+    for (auto& id : ids) {
+        if (engineManagers.get(id, manager) && (manager != 0)) {
+            manager->getEngine(engine);
+            if (engine != 0) {
+                engine->clear();
             }
         }
     }

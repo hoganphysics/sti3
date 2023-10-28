@@ -72,6 +72,7 @@ pybind11_add_module(stipybase MODULE
     Attribute_wrap.cpp
     Configuration_wrap.cpp
     DeviceID_wrap.cpp
+    EngineParsingMessage_wrap.cpp
     HubID_wrap.cpp
     LogID_wrap.cpp
     LogRecord_wrap.cpp
@@ -130,6 +131,7 @@ pybind11_add_module(stidevicepy
     DeviceMessage_wrap.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
+    # Exception_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
     LogManager_wrap.cpp

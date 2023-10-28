@@ -36,140 +36,84 @@ public:
     virtual bool writeChannel(short channel, const pybind11::object& value);
     virtual pybind11::object readChannel(short channel, const pybind11::object& value);
 
-    virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
+    //for exception handling
+    virtual void parseEventsWrapper(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) {}
 
     std::shared_ptr<STI::Device::LocalChannel> addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
-		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
-    {
-        std::shared_ptr<STI::Device::LocalChannel> channel;
-        device->addChannel(channelNumber, type, inputType, outputType, defaultName, channel);
-        return channel;
-    }
+		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName);
 	std::shared_ptr<STI::Device::LocalChannel> addInputChannel(unsigned short channelNumber, 
-                                                               STI::Utils::MixedValueType inputType, const std::string& defaultName)
-    {
-        return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, STI::Utils::MixedValueType::Empty, defaultName);
-    }
+                                                               STI::Utils::MixedValueType inputType, const std::string& defaultName);
 	std::shared_ptr<STI::Device::LocalChannel> addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, 
-                                                               STI::Utils::MixedValueType outputType, const std::string& defaultName)
-    {
-        return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, outputType, defaultName);
-    }
-	std::shared_ptr<STI::Device::LocalChannel> addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, const std::string& defaultName)
-    {
-        return addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, outputType, defaultName);
-    }
+                                                               STI::Utils::MixedValueType outputType, const std::string& defaultName);
+	std::shared_ptr<STI::Device::LocalChannel> addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, 
+                                                                const std::string& defaultName);
 
-    void addEventEngine(const STI::Engine::EngineID& engineID)
-    {
-        device->addEventEngine(engineID);
-    }
+    void addEventEngine(const STI::Engine::EngineID& engineID);
+    void addPartner(const STI::Device::DeviceID& id);
+    void addPartner(const STI::Device::DeviceID& id, const std::string& alias);
+    void addEventTarget(const STI::Device::DeviceID& id);
 
-    void addPartner(const STI::Device::DeviceID& id)
-    {
-        device->addPartner(id);
-    }
-    
-    void addPartner(const STI::Device::DeviceID& id, const std::string& alias)
-    {
-        device->addPartner(id, alias);
-    }
+    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue);
+    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues);
 
-    void addEventTarget(const STI::Device::DeviceID& id)
-    {
-        device->addEventTarget(id);
-    }    
+    void addTask(const std::shared_ptr<STI::Utils::Task>& task);
 
-    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue)
-    {
-        std::shared_ptr<STI::Device::LocalAttribute> attribute;
-        device->addAttribute(key, initialValue, attribute);
-        return attribute;
-    }
+    STI::Device::Logger& log();
+    STI::Device::Logger& log(const std::string& name);
 
-    std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues)
-    {
-        std::shared_ptr<STI::Device::LocalAttribute> attribute;
-        device->addAttribute(key, initialValue, allowedValues, attribute);
-        return attribute;
-    }
+	PartnerDevicePy partner(const STI::Device::DeviceID& id);
+	PartnerDevicePy partner(const std::string& alias);
 
-    void addTask(const std::shared_ptr<STI::Utils::Task>& task)
-    {
-        device->addTask(task);
-    }
+	STI::Engine::EngineParsingMessage& addInfo(unsigned id, const std::string& name);
+	STI::Engine::EngineParsingMessage& addWarning(unsigned id, const std::string& name);
 
-    STI::Device::Logger& log()
-    {
-        return device->log();
-    }
-
-    STI::Device::Logger& log(const std::string& name)
-    {
-        return device->log(name);
-    }
-
-	PartnerDevicePy partner(const STI::Device::DeviceID& id)
-    {
-        PartnerDevicePy partner(device->partner(id));
-        return partner;
-    }
-
-	PartnerDevicePy partner(const std::string& alias)
-    {
-        PartnerDevicePy partner(device->partner(alias));
-        return partner;
-    }
+    void throwConflictException(const STI::Engine::RawEvent& evt, const std::string& message);
+    void throwConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message);
+    void throwParsingException(const STI::Engine::RawEvent& evt, const std::string& message);
+    void throwPythonException(const std::string& message);
 
 private:
+
+    class CachedExceptions
+    {
+    public:
+
+        CachedExceptions();
+
+        void clear();
+        void throwException();
+
+        void addConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message);
+        void addParsingException(const STI::Engine::RawEvent& evt, const std::string& message);
+        void addPythonException(const std::string& message);
+
+    private:
+
+        int conflictCount;
+        int parseCount;
+        int pyExceptCount;
+        
+        std::shared_ptr<STI::Engine::EventConflictException> conflictException;
+        std::shared_ptr<STI::Engine::EventParsingException> parseException;
+        std::shared_ptr<STI::Engine::STI_Exception> pyException;
+    };
+
+    CachedExceptions cachedExceptions;
+
 
     class LocalDeviceDelegate : public STI::Device::LocalDevice
     {
     public:
 
-        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::map<std::string, std::string>& config)
-            : STI::Device::LocalDevice(config), localDevicePy(localDevicePy) {}
-        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const STI::Utils::Configuration& config, const std::string& section="")
-            : STI::Device::LocalDevice(config, section), localDevicePy(localDevicePy) {}
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::map<std::string, std::string>& config);
+        LocalDeviceDelegate(LocalDevicePy* localDevicePy, const STI::Utils::Configuration& config, const std::string& section="");
         LocalDeviceDelegate(LocalDevicePy* localDevicePy, 
                             const std::string& name, const std::string& address, unsigned short module,
                             const std::string& targetServer, 
-                            const STI::Utils::Configuration& config=STI::Utils::Configuration())
-            : STI::Device::LocalDevice(name, address, module, targetServer, config), localDevicePy(localDevicePy) {}
+                            const STI::Utils::Configuration& config=STI::Utils::Configuration());
 
-        bool writeChannel(short channel, const STI::Utils::MixedValue& value)
-        {
-            STI::Python::MixedValuePy valuePy(value);
-            pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
-
-            bool success = false;
-            {
-                pybind11::gil_scoped_release release;
-                success = localDevicePy->writeChannel(channel, valuePyObj);
-            }
-            
-            return success;
-        }
-
-	    bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) 
-        {
-            STI::Python::MixedValuePy valuePy(value);
-            pybind11::object dataPyObj;
-            pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
-            
-            {
-                pybind11::gil_scoped_release release;
-                dataPyObj = localDevicePy->readChannel(channel, valuePyObj);
-            }           
-
-            //convert result
-            STI::Python::MixedValuePy dataPy;
-            dataPy.setValue_py(dataPyObj);
-            data.setValue(dataPy.getMixedValue());
-
-            return true;
-        }
-
+        bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+	    bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
         void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents);
     
     private:
@@ -178,9 +122,7 @@ private:
     };
 
     std::shared_ptr<STI::Device::LocalDevice> device;
-
 };
-
 
 
 
@@ -213,14 +155,16 @@ public:
         );
     }
 
-    void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) override
-    {
+    void parseEventsWrapper(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) override
+    {        
+        pybind11::gil_scoped_acquire acquire;
+        
         pybind11::object dummy = pybind11::cast(synchedEvents, pybind11::return_value_policy::reference);
 
         PYBIND11_OVERRIDE(
             void,                   /* Return type */
             LocalDevicePy,          /* Parent class */
-            parseEvents,            /* Name of function in C++ (must match Python name) */
+            parseEventsWrapper,     /* Name of function in C++ (must match Python name) */
             events, synchedEvents   /* Argument(s) */
         );
     }

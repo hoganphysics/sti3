@@ -4,10 +4,8 @@
 #include "JEngineJobUpdateDeviceMessage.h"
 #include <sti/device/DeviceMessageListener.h>
 
-
 #include <memory>
 
-#include <iostream>
 
 namespace STI
 {
@@ -30,18 +28,13 @@ public:
 
 // private:
 
-    // void handleMessage(const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) {}
-
     void handleMessage(const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) 
     {
-        // std::cout << "JEngineJobUpdateDeviceMessageListener::handleMessage " << std::endl;
         if (mess == 0 || mess->getEngineJob() == 0) return;
 
         auto jMess = JEngineJobUpdateDeviceMessage::makeJMessage(*mess);
 
         handleJMessage(jMess);
-
-        // std::cout << "Job handleMessage done" << std::endl;
     }
 
 };

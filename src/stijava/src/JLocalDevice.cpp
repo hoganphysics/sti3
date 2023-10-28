@@ -1,4 +1,3 @@
-
 #include "JLocalDevice.h"
 #include <sti/LocalDevice.h>
 #include <sti/device/DeviceMessageReceiver.h>
@@ -9,7 +8,6 @@
 
 #include <memory>
 
-#include <iostream>
 
 using STI::Device::JLocalDevice;
 using STI::Device::JDeviceMessageReceiver;

@@ -1,4 +1,3 @@
-
 #include "PyParseTicket.h"
 
 #include <pybind11/pybind11.h>
@@ -15,11 +14,18 @@ PyParseTicket::PyParseTicket(const STI::Engine::ParseID& id,
 {
 }
  
-bool PyParseTicket::waitCheck()
+bool PyParseTicket::waitCheck() const
 {
-    if (PyErr_CheckSignals() != 0) 
-        throw py::error_already_set();
-    
+    {
+        pybind11::gil_scoped_acquire acquire;
+
+        if (PyErr_CheckSignals() != 0) {
+            throw py::error_already_set();
+            return false;
+        }        
+    }
+
+    pybind11::gil_scoped_release release;
+
     return true;
 }
-

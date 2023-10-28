@@ -502,7 +502,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	parseCompleteMessage->messages.insert(parseCompleteMessage->messages.end(), jobMessages.begin(), jobMessages.end());
 	parseCompleteMessage->engineState = getState();
 
-
 	//pass local engine reference upstream to server
 	std::shared_ptr<STI::Engine::EventEngine> jobEngine;
 	job.getEngine(jobEngine);

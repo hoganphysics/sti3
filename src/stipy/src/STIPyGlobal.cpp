@@ -1,5 +1,3 @@
-
-
 #include "STIPyGlobal.h"
 #include "STIPyShot.h"
 #include <sti/device/DeviceID.h>
@@ -8,7 +6,6 @@
 #include "RawStackTrace.h"
 
 #include <stdexcept>
-// #include <iostream>
 
 using STI::Python::STIPyGlobal;
 using STI::Python::STIPyShot;
@@ -49,7 +46,6 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
 
         if (makingShot) {
             //error
-            // std::cout << "Error: reentrant makeshot" << std::endl;
             std::runtime_error ex("Illegal reentrant call to makeshot. Shots cannot be generated recursively.");
             throw ex;
             return;

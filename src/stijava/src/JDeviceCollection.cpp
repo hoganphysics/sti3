@@ -5,7 +5,6 @@
 #include <sti/device/Device.h>
 
 #include <memory>
-#include <iostream>
 
 using STI::Device::JDeviceCollection;
 using STI::Device::DeviceID;
@@ -32,23 +31,8 @@ std::shared_ptr<JDevice> JDeviceCollection::get(const DeviceID& id) const
 {
     std::shared_ptr<STI::Device::Device> device;
     std::shared_ptr<JDevice> jDevice;
-    
-    // std::cout << "**** JDeviceCollection::get " 
-    // << ((localDeviceCollection != 0) ? "1" : "0") << "," 
-    // << ((localDeviceCollection->get(id, device)) ? "1" : "0") << "," 
-    // << ((device != 0) ? "1" : "0") 
-    // << std::endl;
-
-    // std::cout << "**** size=" << localDeviceCollection->size() << std::endl;
-    // std::set<DeviceID> ids;
-    // localDeviceCollection->getIDs(ids);
-    // for (auto& i : ids) {
-    //     std::cout << "**** id=" << i.getID() << " : " << i.getTargetServerID() << std::endl;
-    // }
-
-    
+   
     if (localDeviceCollection != 0 && localDeviceCollection->get(id, device) && device != 0) {
-        // std::cout << "**** JDeviceCollection::get inside if" << std::endl;
         jDevice = std::make_shared<JDevice>(device);
     }
     return jDevice;
@@ -95,7 +79,6 @@ void JDeviceCollection::clear()
         return localDeviceCollection->clear();
     }
 }
-
 
 bool JDeviceCollection::add(const DeviceID& id, const DeviceCollection::T_ptr& node)
 {

@@ -72,7 +72,7 @@ bool STI::Engine::TicketManager<ID, T>::get(const ID& id, std::shared_ptr<T>& ti
 
 template<typename ID, typename T>
 void STI::Engine::TicketManager<ID, T>::cancel(const ID& id)
-{
+{   
     std::shared_ptr<T> ticket;
 
     if (tickets.get(id, ticket)) {
@@ -100,6 +100,4 @@ std::set<ID> STI::Engine::TicketManager<ID, T>::getIDs()
     return ids;
 }
 
-
 #endif
-

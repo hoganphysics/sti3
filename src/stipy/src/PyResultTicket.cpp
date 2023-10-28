@@ -2,7 +2,6 @@
 
 #include <pybind11/pybind11.h>
 
-
 using STI::Python::PyResultTicket;
 using STI::Engine::ResultTicket;
 using STI::Engine::ShotID;
@@ -21,27 +20,18 @@ PyResultTicket::PyResultTicket(const ShotID& id,
 {
 }
 
-// std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> PyResultTicket::pyMeasurements()
-// {
-//     std::map<STI::Device::DeviceID, STI::Engine::MeasurementVector> pyMeasurements;
-//     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
-    
-//     if (getMeasurements(measurements)) {
-//         for (auto& tuple : *measurements) {
-//             if (tuple.second != 0) {
-//                 auto& mVec = pyMeasurements[tuple.first];
-//                 mVec.insert(mVec.end(), tuple.second->begin(), tuple.second->end());
-//             }
-//         }
-//     }
-//     return pyMeasurements;
-// }
-
-bool PyResultTicket::waitCheck()
+bool PyResultTicket::waitCheck() const
 {
-    if (PyErr_CheckSignals() != 0) 
-        throw py::error_already_set();
-    
+    {
+        pybind11::gil_scoped_acquire acquire;
+
+        if (PyErr_CheckSignals() != 0) {
+            throw py::error_already_set();
+            return false;
+        }        
+    }
+
+    pybind11::gil_scoped_release release;
+
     return true;
 }
-

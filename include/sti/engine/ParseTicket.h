@@ -9,6 +9,7 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/utils/CachedValue.h>
 
+#include<iostream>
 
 namespace STI
 {
@@ -36,7 +37,11 @@ public:
 
 private:
 
-    virtual bool waitCheck() const { return true; }
+    virtual bool waitCheck() const 
+    {
+        std::cout << "***** ParseTicket::waitCheck()" << std::endl;
+        return true; 
+    }
 
     bool ensureCachedParseResult();
 

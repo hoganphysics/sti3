@@ -302,7 +302,7 @@ bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, un
 
 bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 {
-	RawEventMap::iterator badEvent = rawEvents.end();
+	// RawEventMap::iterator badEvent = rawEvents.end();
 
 	bool success;
 
@@ -314,76 +314,82 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 //	deviceParser->clearEventNumber();						//Each device generated event gets a unique number appended to the graph label
 //	deviceParser->setPartnerEventTarget(&partnerEvents);	//Set partner event target to point to this engine.
 
-	do {
-		success = true;	//Each time through the loop any offending events 
-						//are removed before trying again. This way all events
-						//can generate errors messages before returning.
-		try {
-			deviceParser->parseEvents(rawEvents, synchedEvents, localDeviceID, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
+	// do {
+	success = true;	//Each time through the loop any offending events 
+					//are removed before trying again. This way all events
+					//can generate errors messages before returning.
+	try {
+		deviceParser->parseEvents(rawEvents, synchedEvents, localDeviceID, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
+	}
+	catch (EventConflictException& eventConflict) {
+		errorCount++;
+		success = false;
+		//Error: Event conflict. <Device Specific Message>
+		//       Event trace:
+		auto& err = addParsingError(eventConflict.getName());
+		
+		for (auto& e : eventConflict.getEvents()) {
+			err.addEvent(e);
 		}
-		catch (EventConflictException& eventConflict)
-		{
-			errorCount++;
-			success = false;
-			//Error: Event conflict. <Device Specific Message>
-			//       Event trace:
-			addParsingError("Event Conflict Exception")
-				.addEvent(eventConflict.getEvent1())
-				.addEvent(eventConflict.getEvent2())
-				<< "Event conflict. " << eventConflict.printMessage();
+		err << eventConflict.printMessage();
 
-			//find the latest event associated with this exception
-			badEvent = rawEvents.find(eventConflict.lastTime());
+		//find the latest event associated with this exception
+		// badEvent = rawEvents.find(eventConflict.lastTime());
+	}
+	catch (EventParsingException& eventParsing) {
+		errorCount++;
+		success = false;
+		//Error: Event parsing error. <Device Specific Message>
+		//       Event trace:
+		auto& err = addParsingError(eventParsing.getName());
+		
+		for (auto& e : eventParsing.getEvents()) {
+			err.addEvent(e);
 		}
-		catch (EventParsingException& eventParsing)
-		{
-			errorCount++;
-			success = false;
-			//Error: Event parsing error. <Device Specific Message>
-			//       Event trace:
-			addParsingError("Event Parsing Exception")
-				.addEvent(eventParsing.getEvent())
-				<< eventParsing.printMessage();
+		err << eventParsing.printMessage();
 
-			//find the event associated with this exception
-			badEvent = rawEvents.find(eventParsing.getEvent().time());
-		}
-		catch (STI_Exception& exception)
-		{
-			errorCount++;
-			success = false;
+		//find the event associated with this exception
+		// badEvent = rawEvents.find(eventParsing.getEvent().time());
+	}
+	catch (STI_Exception& exception) {
+		errorCount++;
+		success = false;
 
-			addParsingError("Generic Parsing Exception")
-				 << "Caught generic STI_Exception while parsing events in device code. "
-				 << "Message: '"
-				 << exception.printMessage() << "'.";
-
-			return false;		//break the error loop immediately
-		}
-		catch (...)	//generic conflict or error
-		{
-			errorCount++;
-			success = false;
-			//Error: Event error or conflict detected. Debug info not available.
-			addParsingError("Unhandled Parsing Exception")
-				<< "Unhandled exception while parsing events in device. "
-				<< "Debug info not available.";
-
-			return false;		//break the error loop immediately
+		auto& err = addParsingError(exception.getName())
+				// << "Caught generic STI_Exception while parsing events in device code. "
+				// << "Message: '"
+				<< exception.printMessage();
+		
+		for (auto& e : exception.getEvents()) {
+			err.addEvent(e);
 		}
 
-		if (maxErrorCheck(errorCount, maxErrors)) {
-			return false;
-		}
+		return false;		//break the error loop immediately
+	}
+	catch (...)	//generic conflict or error
+	{
+		errorCount++;
+		success = false;
+		//Error: Event error or conflict detected. Debug info not available.
+		addParsingError("Unknown Parsing Exception")
+			<< "Unhandled exception while parsing events in device. "
+			<< "Debug info not available.";
 
-		//Try to continue parsing the rest of the rawEvents list
-		if (!success && badEvent != rawEvents.end()) {
-			//remove all previous events from the map
-			badEvent++;		//erase removes [first, last)
-			rawEvents.erase(rawEvents.begin(), badEvent);
-		}
+		return false;		//break the error loop immediately
+	}
 
-	} while (!success && rawEvents.size() != 0);
+	if (maxErrorCheck(errorCount, maxErrors)) {
+		return false;
+	}
+
+	// //Try to continue parsing the rest of the rawEvents list
+	// if (!success && badEvent != rawEvents.end()) {
+	// 	//remove all previous events from the map
+	// 	badEvent++;		//erase removes [first, last)
+	// 	rawEvents.erase(rawEvents.begin(), badEvent);
+	// }
+
+	// } while (!success && rawEvents.size() != 0);
 
 	auto& deviceParsingMessages = deviceParser->getParsingMessages();
 	messages.insert(messages.begin(), deviceParsingMessages.begin(), deviceParsingMessages.end());

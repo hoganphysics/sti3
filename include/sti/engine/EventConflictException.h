@@ -17,27 +17,28 @@ class EventConflictException : public STI_Exception
 public:
 
 	EventConflictException(const STI::Engine::RawEvent& evt, const std::string& message)
-		: STI_Exception(message), _event1(evt), _event2(evt) {}
+		: STI_Exception("Event Conflict Exception", message)
+		{
+			attachEvent(evt);
+		}
 	EventConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message)
-		: STI_Exception(message), _event1(event1), _event2(event2) {}
-	~EventConflictException() throw() {}
+		: STI_Exception("Event Conflict Exception", message)
+		{
+			attachEvent(event1);
+			attachEvent(event2);
+		}
+	~EventConflictException() {}
 
 	double lastTime() const
 	{
-		if (_event1.time() > _event2.time())
-			return _event1.time();
-		else
-			return _event2.time();
+		double last = 0;
+		for (auto& evt : getEvents()) {
+			if (evt.time() > last) {
+				last = evt.time();
+			}
+		}
+		return last;
 	}
-
-	const STI::Engine::RawEvent& getEvent1() const { return _event1; }
-	const STI::Engine::RawEvent& getEvent2() const { return _event2; }
-
-private:
-
-	STI::Engine::RawEvent _event1;
-	STI::Engine::RawEvent _event2;
-
 };
 
 

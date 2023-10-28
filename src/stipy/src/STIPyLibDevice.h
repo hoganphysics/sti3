@@ -67,7 +67,7 @@ private:
         std::shared_ptr<EngineMessageListener> resultTicketManager;
     };
 
-    std::shared_ptr<TicketManagerListener> engineMessageListener;
+    // std::shared_ptr<TicketManagerListener> engineMessageListener;
 
     STI::Network::HubID serverHubID;
     const STI::Device::DeviceID serverID;

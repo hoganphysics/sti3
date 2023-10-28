@@ -44,9 +44,7 @@ public:
 
     using STI::Engine::SynchronousEventAdapter::SynchronousEventAdapter;  //inherit constructors
 
-    virtual ~SynchronousEventPy()
-    {
-    }
+    virtual ~SynchronousEventPy() {}
 
     static std::shared_ptr<SynchronousEventPyManager> pyEventManager;   //stores reference to python objects to keep them alive
     
@@ -57,6 +55,8 @@ public:
     /* Trampoline (need one for each virtual function) */
     void loadEvent() override 
     {
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -67,6 +67,8 @@ public:
     
     void playEvent() override 
     {
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -76,6 +78,9 @@ public:
     }
     
     void collectMeasurementData() override {
+
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -85,6 +90,9 @@ public:
     }
     
     void stopEvent() override {
+
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -94,6 +102,9 @@ public:
     }
     
     void pauseEvent() override {
+
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -103,6 +114,9 @@ public:
     }
     
     void unpauseEvent(bool retrigger) override {
+
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -113,6 +127,9 @@ public:
 
 
     void waitBeforePlay() override {
+
+        pybind11::gil_scoped_acquire acquire;
+
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */
@@ -122,6 +139,9 @@ public:
     }
 
     void waitBeforeCollectData() override {
+
+        pybind11::gil_scoped_acquire acquire;
+        
         PYBIND11_OVERRIDE(
             void,                           /* Return type */
             SynchronousEventAdapter,  /* Parent class */

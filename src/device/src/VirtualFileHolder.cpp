@@ -2,8 +2,6 @@
 #include "VirtualFileHolder.h"
 
 
-#include <iostream>
-
 using STI::Utils::VirtualFileHolder;
 using STI::Utils::FileID;
 
@@ -44,9 +42,9 @@ bool VirtualFileHolder::openFile()
 
 void VirtualFileHolder::closeFile()
 {
-    std::cout << "File: " << getID().filename << std::endl;
+    // std::cout << "File: " << getID().filename << std::endl;
 
-    std::cout << "File: " << data->str() << std::endl;
+    // std::cout << "File: " << data->str() << std::endl;
 }
 
 VirtualFileHolder& VirtualFileHolder::operator<<(manip1 fp)

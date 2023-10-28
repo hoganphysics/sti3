@@ -125,7 +125,12 @@ void init_DeviceHub(py::module& m)
                 self.getDeviceIDs(ids);
                 return ids;
             })
-        .def("run", py::overload_cast<bool>(&NetworkDeviceHub::run), py::arg("block") = true)
+        // .def("run", py::overload_cast<bool>(&NetworkDeviceHub::run), py::arg("block") = true)
+        .def("run", 
+            [](NetworkDeviceHub& self, bool block = true) {
+                py::gil_scoped_release release;
+                return self.run(block);
+            })
         .def("shutdown", &NetworkDeviceHub::shutdown)
         .def("printNetwork", py::overload_cast<>(&NetworkDeviceHub::printNetwork))
         .def("printNetwork", py::overload_cast<const std::string&>(&NetworkDeviceHub::printNetwork), py::arg("baseContext"))

@@ -20,7 +20,7 @@ public:
  
 private:
 
-    bool waitCheck();
+    bool waitCheck() const;
 
 };
 

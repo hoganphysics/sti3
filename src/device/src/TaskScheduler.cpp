@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <chrono>
-#include <iostream>
 
 using STI::Utils::TaskScheduler;
 using STI::Utils::Task;

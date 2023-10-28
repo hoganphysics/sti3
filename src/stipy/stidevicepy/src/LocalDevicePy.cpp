@@ -1,4 +1,3 @@
-
 #include "LocalDevicePy.h"
 #include "DevicePy.h"
 #include "ChannelManagerPy.h"
@@ -10,8 +9,6 @@
 #include "SynchronousEventPy.h"
 #include "SynchronousEventPyManager.h"
 
-#include <iostream>
-
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
@@ -21,7 +18,6 @@ using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
 using STI::Utils::MixedValue;
-
 
 
 LocalDevicePy::LocalDevicePy(const std::map<std::string, std::string>& config)
@@ -48,6 +44,9 @@ LocalDevicePy::LocalDevicePy(const std::string& name, const std::string& address
 
 LocalDevicePy::~LocalDevicePy()
 {
+    if (device != 0) {
+        device->disable();
+    }
 }
 
 //Can be overridden in python
@@ -91,33 +90,269 @@ pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::objec
     return py::none();
 }
 
+std::shared_ptr<STI::Device::LocalChannel> LocalDevicePy::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
+    STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+    std::shared_ptr<STI::Device::LocalChannel> channel;
+    device->addChannel(channelNumber, type, inputType, outputType, defaultName, channel);
+    return channel;
+}
+
+std::shared_ptr<STI::Device::LocalChannel> LocalDevicePy::addInputChannel(unsigned short channelNumber, 
+                                                            STI::Utils::MixedValueType inputType, const std::string& defaultName)
+{
+    return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, STI::Utils::MixedValueType::Empty, defaultName);
+}
+
+std::shared_ptr<STI::Device::LocalChannel> LocalDevicePy::addInputChannel(unsigned short channelNumber, STI::Utils::MixedValueType inputType, 
+                                                            STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+    return addChannel(channelNumber, STI::Device::ChannelType::Input, inputType, outputType, defaultName);
+}
+
+std::shared_ptr<STI::Device::LocalChannel> LocalDevicePy::addOutputChannel(unsigned short channelNumber, STI::Utils::MixedValueType outputType, const std::string& defaultName)
+{
+    return addChannel(channelNumber, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, outputType, defaultName);
+}
+
+void LocalDevicePy::addEventEngine(const STI::Engine::EngineID& engineID)
+{
+    device->addEventEngine(engineID);
+}
+
+void LocalDevicePy::addPartner(const STI::Device::DeviceID& id)
+{
+    device->addPartner(id);
+}
+
+void LocalDevicePy::addPartner(const STI::Device::DeviceID& id, const std::string& alias)
+{
+    device->addPartner(id, alias);
+}
+
+void LocalDevicePy::addEventTarget(const STI::Device::DeviceID& id)
+{
+    device->addEventTarget(id);
+}    
+
+std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const std::string& key, const std::string& initialValue)
+{
+    std::shared_ptr<STI::Device::LocalAttribute> attribute;
+    device->addAttribute(key, initialValue, attribute);
+    return attribute;
+}
+
+std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues)
+{
+    std::shared_ptr<STI::Device::LocalAttribute> attribute;
+    device->addAttribute(key, initialValue, allowedValues, attribute);
+    return attribute;
+}
+
+void LocalDevicePy::addTask(const std::shared_ptr<STI::Utils::Task>& task)
+{
+    device->addTask(task);
+}
+
+STI::Device::Logger& LocalDevicePy::log()
+{
+    return device->log();
+}
+
+STI::Device::Logger& LocalDevicePy::log(const std::string& name)
+{
+    return device->log(name);
+}
+
+
+STI::Python::PartnerDevicePy LocalDevicePy::partner(const STI::Device::DeviceID& id)
+{
+    PartnerDevicePy partner(device->partner(id));
+    return partner;
+}
+
+STI::Python::PartnerDevicePy LocalDevicePy::partner(const std::string& alias)
+{
+    PartnerDevicePy partner(device->partner(alias));
+    return partner;
+}
+
+STI::Engine::EngineParsingMessage& LocalDevicePy::addInfo(unsigned id, const std::string& name)
+{
+    return device->addInfo(id, name);
+}
+STI::Engine::EngineParsingMessage& LocalDevicePy::addWarning(unsigned id, const std::string& name)
+{
+    return device->addWarning(id, name);
+}
+
+void LocalDevicePy::throwConflictException(const STI::Engine::RawEvent& evt, const std::string& message)
+{
+    STI::Engine::EventConflictException exception(evt, message);
+    throw exception;
+}
+
+void LocalDevicePy::throwConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message)
+{
+    cachedExceptions.addConflictException(event1, event2, message);
+}
+
+void LocalDevicePy::throwParsingException(const STI::Engine::RawEvent& evt, const std::string& message)
+{
+    cachedExceptions.addParsingException(evt, message);
+}
+
+void LocalDevicePy::throwPythonException(const std::string& message)
+{
+    cachedExceptions.addPythonException(message);
+}
+
+
+
+
+///////////////////// CachedExceptions ///////////////////////////
+
+
+LocalDevicePy::CachedExceptions::CachedExceptions()
+{
+    clear();
+}
+
+void LocalDevicePy::CachedExceptions::clear()
+{
+    conflictCount = 0;
+    parseCount = 0;
+    conflictException = 0;
+    parseException = 0;
+    pyException = 0;
+    pyExceptCount = 0;
+}
+
+void LocalDevicePy::CachedExceptions::throwException()
+{
+    if (pyExceptCount > 0 && pyException != 0) {
+        throw *pyException;
+    }
+    else if (parseCount > 0 && parseException != 0) {
+        throw *parseException;
+    }
+    else if (conflictCount > 0 && conflictException != 0) {
+        throw *conflictException;
+    }
+}
+
+void LocalDevicePy::CachedExceptions::addConflictException(const STI::Engine::RawEvent& event1, const STI::Engine::RawEvent& event2, const std::string& message)
+{
+    conflictException = std::make_shared<STI::Engine::EventConflictException>(event1, event2, message);
+    conflictCount++;
+}
+
+void LocalDevicePy::CachedExceptions::addParsingException(const STI::Engine::RawEvent& evt, const std::string& message)
+{
+    parseException = std::make_shared<STI::Engine::EventParsingException>(evt, message);
+    parseCount++;
+}
+
+void LocalDevicePy::CachedExceptions::addPythonException(const std::string& message)
+{
+    pyException = std::make_shared<STI::Engine::STI_Exception>("Python Exception", message);
+    pyExceptCount++;
+}
+
+
+
+////////////////// LocalDevicePy::LocalDeviceDelegate /////////////////////
+
+
+LocalDevicePy::LocalDeviceDelegate::LocalDeviceDelegate(LocalDevicePy* localDevicePy, const std::map<std::string, std::string>& config)
+: STI::Device::LocalDevice(config), localDevicePy(localDevicePy)
+{
+}
+
+LocalDevicePy::LocalDeviceDelegate::LocalDeviceDelegate(LocalDevicePy* localDevicePy, const STI::Utils::Configuration& config, 
+                                                        const std::string& section)
+: STI::Device::LocalDevice(config, section), localDevicePy(localDevicePy)
+{
+}
+
+LocalDevicePy::LocalDeviceDelegate::LocalDeviceDelegate(
+                    LocalDevicePy* localDevicePy, 
+                    const std::string& name, const std::string& address, unsigned short module,
+                    const std::string& targetServer, 
+                    const STI::Utils::Configuration& config)
+: STI::Device::LocalDevice(name, address, module, targetServer, config), localDevicePy(localDevicePy) 
+{
+}
+
+bool LocalDevicePy::LocalDeviceDelegate::writeChannel(short channel, const STI::Utils::MixedValue& value)
+{
+    pybind11::gil_scoped_acquire acquire;
+
+    STI::Python::MixedValuePy valuePy(value);
+    pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
+
+    bool success = false;
+    {
+        pybind11::gil_scoped_release release;
+        success = localDevicePy->writeChannel(channel, valuePyObj);
+    }
+    
+    return success;
+}
+
+bool LocalDevicePy::LocalDeviceDelegate::readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) 
+{
+    pybind11::gil_scoped_acquire acquire;
+
+    STI::Python::MixedValuePy valuePy(value);
+    pybind11::object dataPyObj;
+    pybind11::object valuePyObj = valuePy.getValue_py();    //Must create python object before releasing GIL
+    
+    {
+        pybind11::gil_scoped_release release;
+        dataPyObj = localDevicePy->readChannel(channel, valuePyObj);
+    }           
+
+    //convert result
+    STI::Python::MixedValuePy dataPy;
+    dataPy.setValue_py(dataPyObj);
+    data.setValue(dataPy.getMixedValue());
+
+    return true;
+}
 
 void LocalDevicePy::LocalDeviceDelegate::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 {
-    try {
+    bool error = false;
 
-        auto manager = std::make_shared<STI::Python::SynchronousEventPyManager>();
-        STI::Python::SynchronousEventPy::pyEventManager = manager;      //temporarily store manager in static member
+    pybind11::gil_scoped_acquire acquire;
+   
+    auto manager = std::make_shared<STI::Python::SynchronousEventPyManager>();
+    STI::Python::SynchronousEventPy::pyEventManager = manager;      //temporarily store manager in static member        
 
-        if (localDevicePy != 0) {
-            localDevicePy->parseEvents(events, synchedEvents);
+    if (localDevicePy != 0) {
+        localDevicePy->cachedExceptions.clear();
+
+        try {
+            localDevicePy->parseEventsWrapper(events, synchedEvents);
         }
-
-        double holderEventTime = 100;
-        if (synchedEvents.size() > 0) {
-            std::sort(synchedEvents.begin(), synchedEvents.end(), STI::Utils::compare_shared_ptr<STI::Engine::SynchronousEvent>);
-            holderEventTime = synchedEvents.back()->getTime() + 100;
+        catch (py::error_already_set& e) {
+            error = true;   //cleanup first, then throw exception below
         }
-
-        auto managerHolderEvent = std::make_shared<STI::Python::SynchronousEventPyManagerHolder>(holderEventTime, manager);
-        synchedEvents.push_back(managerHolderEvent);   
-
-        STI::Python::SynchronousEventPy::pyEventManager = 0;    //clear static member reference
-
-    }
-    catch (py::error_already_set& e) {
-        std::cout << "parseEvents exception: " << e.what() << std::endl;
     }
 
+    double holderEventTime = 100;
+    if (synchedEvents.size() > 0) {
+        std::sort(synchedEvents.begin(), synchedEvents.end(), STI::Utils::compare_shared_ptr<STI::Engine::SynchronousEvent>);
+        holderEventTime = synchedEvents.back()->getTime() + 100;
+    }
+
+    auto managerHolderEvent = std::make_shared<STI::Python::SynchronousEventPyManagerHolder>(holderEventTime, manager);
+    synchedEvents.push_back(managerHolderEvent);   
+
+    STI::Python::SynchronousEventPy::pyEventManager = 0;    //clear static member reference
+
+    if (error && localDevicePy != 0) {
+        localDevicePy->cachedExceptions.throwException();
+    }
 }
-

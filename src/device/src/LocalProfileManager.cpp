@@ -4,8 +4,6 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/Device.h>
 
-#include <iostream>
-
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 #include <cereal/types/vector.hpp>

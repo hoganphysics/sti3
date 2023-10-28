@@ -42,8 +42,21 @@ void init_LocalDevice(py::module& m)
 
         .def("writeChannel", &LocalDevicePy::writeChannel, py::arg("channelNumber"), py::arg("value"))
         .def("readChannel", &LocalDevicePy::readChannel, py::arg("channelNumber"), py::arg("value"))
-        .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
+        // .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
+        .def("parseEventsWrapper", &LocalDevicePy::parseEventsWrapper, py::arg("eventsIn"), py::arg("synchedEvents"))
+        .def("addInfo", &LocalDevicePy::addInfo, py::arg("id"), py::arg("name"))
+        .def("addWarning", &LocalDevicePy::addWarning, py::arg("id"), py::arg("name"))
+        .def("throwConflictException", 
+            py::overload_cast<const STI::Engine::RawEvent&, const std::string&>(&LocalDevicePy::throwConflictException), 
+            py::arg("evt"), py::arg("message"))
+        .def("throwConflictException", 
+            py::overload_cast<const STI::Engine::RawEvent&, const STI::Engine::RawEvent&, const std::string&>(&LocalDevicePy::throwConflictException), 
+            py::arg("event1"), py::arg("event2"), py::arg("message"))
         
+        .def("throwParsingException", 
+            py::overload_cast<const STI::Engine::RawEvent&, const std::string&>(&LocalDevicePy::throwParsingException), 
+            py::arg("evt"), py::arg("message"))
+        .def("throwPythonException", &LocalDevicePy::throwPythonException, py::arg("message"))
         .def("addChannel", 
             py::overload_cast<unsigned short, ChannelType, MixedValueType, MixedValueType, const std::string&>(&LocalDevicePy::addChannel), 
             py::arg("channelNumber"), py::arg("type"), py::arg("inputType"), py::arg("outputType"), py::arg("defaultName"))

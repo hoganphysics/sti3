@@ -1,7 +1,6 @@
 #ifndef STI_ENGINE_EVENTPARSINGEXCEPTION_H
 #define STI_ENGINE_EVENTPARSINGEXCEPTION_H
 
-#include <sti/engine/RawEvent.h>
 #include <sti/engine/STI_Exception.h>
 
 #include <string>
@@ -18,14 +17,11 @@ class EventParsingException : public STI_Exception
 public:
 
 	EventParsingException(const STI::Engine::RawEvent& evt, const std::string& message)
-		: STI_Exception(message), _evt(evt) {}
-	~EventParsingException() throw() {}
-
-	const STI::Engine::RawEvent& getEvent() const { return _evt; };
+		: STI_Exception("Event Parsing Exception", message) { attachEvent(evt); }
+	~EventParsingException() {}
 
 private:
 
-	const STI::Engine::RawEvent _evt;
 };
 
 

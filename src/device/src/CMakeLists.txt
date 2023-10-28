@@ -56,6 +56,7 @@ add_library(stidevice SHARED
     EngineClock.cpp
     EngineID.cpp
     EngineJobSourceID.cpp
+    EngineJobStatus.cpp
     EngineParsingMessage.cpp
     EngineState.cpp
     EventEngineDependencyTree.cpp
@@ -122,6 +123,7 @@ add_library(stidevice SHARED
     StackTrace.cpp
     StackTraceData.cpp
     StackTraceResult.cpp
+    STI_Exception.cpp
     SynchronousEvent.cpp
     Task.cpp
     TaskScheduler.cpp

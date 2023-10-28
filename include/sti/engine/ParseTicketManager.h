@@ -9,6 +9,8 @@
 #include <sti/engine/EventEngineScheduler.h>
 
 #include <memory>
+#include <mutex>
+
 
 namespace STI
 {
@@ -20,7 +22,8 @@ class ParseID;
 
 template<class T = ParseTicket>
 class ParseTicketManager : public STI::Engine::TicketManager<STI::Engine::ParseID, T>,
-                           public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+                           public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>,
+                           public STI::Device::DeviceMessageListener<STI::Device::EngineJobUpdateDeviceMessage>
 {
 public:
 
@@ -32,8 +35,11 @@ public:
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
+    void handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess);
 
     std::shared_ptr<EventEngineScheduler> eventEngineScheduler;
+
+    std::mutex managerMutex;
 
 };
 
@@ -47,6 +53,8 @@ ParseTicketManager<T>::ParseTicketManager(const std::shared_ptr<EventEngineSched
 template<class T>
 std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID& id)
 {
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
     auto ticket = std::make_shared<T>(id, eventEngineScheduler);
 
     if (eventEngineScheduler == 0) {
@@ -93,10 +101,40 @@ std::shared_ptr<T> ParseTicketManager<T>::makeTicket(const STI::Engine::ParseID&
 
 
 template<class T>
+void ParseTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess)
+{
+    if (mess == 0) return;
+    if (mess->getEngineJob() == 0) return;
+    if (mess->getEngineJob()->getJobID().type != EventEngineJobType::Parse) return;
+
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
+    std::shared_ptr<T> ticket;
+
+    const auto& id = mess->getEngineJob()->getJobID().pid;
+    if (!TicketManager<STI::Engine::ParseID, T>::get(id, ticket)) {
+        return;
+    }
+
+    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Canceled) {
+        ticket->cancel();
+        TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
+    }
+    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Completed) {
+        ticket->setComplete();
+        TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
+    }
+}
+
+template<class T>
 void ParseTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess)
 {
+    if (mess == 0) return;
+
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
     std::shared_ptr<T> ticket;
-  
+
     const auto& id = mess->jobID.pid;
     if (!TicketManager<STI::Engine::ParseID, T>::get(id, ticket)) {
         return;
@@ -104,12 +142,12 @@ void ParseTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::Eng
 
     if (mess->schedulerMessageType == STI::Device::EngineSchedulerMessage::SchedulerMessageType::ParseComplete) {
         ticket->setComplete();
+        TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
     }
     else {
         ticket->cancel();
+        TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
     }
-
-    TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
 }
 
 

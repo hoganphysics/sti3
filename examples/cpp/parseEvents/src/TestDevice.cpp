@@ -90,8 +90,8 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engi
 
 
 
-////////////////// TestDeviceOutputEvent //////////////////
-//
+// //////////////// TestDeviceOutputEvent //////////////////
+
 // This subclass is used to specify the custom behavior controlling the hardware for each device output channel.
 
 TestDevice::TestDeviceOutputEvent::TestDeviceOutputEvent(double time)
@@ -144,8 +144,8 @@ void TestDevice::TestDeviceOutputEvent::stopEvent()
 
 
 
-////////////////// TestDeviceInputEvent //////////////////
-//
+// //////////////// TestDeviceInputEvent //////////////////
+
 // This subclass is used to control the hardware for the device's input channel.
 // Note that the same event class can be used for both input and output events, if desired. In this 
 // example they are separated for clarity.

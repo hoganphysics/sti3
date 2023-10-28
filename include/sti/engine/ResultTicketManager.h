@@ -1,4 +1,3 @@
-
 #ifndef STI_ENGINE_RESULTTICKETMANAGER_H
 #define STI_ENGINE_RESULTTICKETMANAGER_H
 
@@ -11,6 +10,8 @@
 #include <sti/engine/EventEngineScheduler.h>
 
 #include <memory>
+#include <mutex>
+
 
 namespace STI
 {
@@ -19,7 +20,8 @@ namespace Engine
 
 template <class T = ResultTicket>
 class ResultTicketManager : public STI::Engine::TicketManager<STI::Engine::ShotID, T>,
-                            public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>
+                            public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>,
+                            public STI::Device::DeviceMessageListener<STI::Device::EngineJobUpdateDeviceMessage>
 {
 public:
     ResultTicketManager(const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, 
@@ -31,22 +33,27 @@ public:
 private:
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
+    void handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess);
 
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     std::shared_ptr<EventEngineScheduler> eventEngineScheduler;
+
+    std::mutex managerMutex;
 };
 
 
 template <class T>
 ResultTicketManager<T>::ResultTicketManager(const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager,
                                             const std::shared_ptr<EventEngineScheduler>& scheduler)
-    : persistenceManager(persistenceManager), eventEngineScheduler(scheduler)
+: persistenceManager(persistenceManager), eventEngineScheduler(scheduler)
 {
 }
 
 template <class T>
 std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID &id)
 {
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
     using STI::Engine::EngineJobStatus;
 
     auto ticket = std::make_shared<T>(id, persistenceManager);
@@ -100,27 +107,56 @@ std::shared_ptr<T> ResultTicketManager<T>::makeTicket(const STI::Engine::ShotID 
     return ticket;
 }
 
+
+template<class T>
+void ResultTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess)
+{
+    if (mess == 0) return;
+    if (mess->getEngineJob() == 0) return;
+    if (mess->getEngineJob()->getJobID().type != EventEngineJobType::Play) return;
+
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
+    std::shared_ptr<T> ticket;
+
+    const auto& id = mess->getEngineJob()->getJobID().sid;
+    if (!TicketManager<STI::Engine::ShotID, T>::get(id, ticket)) {
+        return;
+    }
+
+    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Canceled) {
+        ticket->cancel();
+        TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
+    }
+
+    // if (mess->getEngineJob()->getStatus() == EngineJobStatus::Completed) {
+    //     ticket->setComplete();
+    //     TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
+    // }
+
+}
+
+
 template <class T>
 void ResultTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage> &mess)
 {
     if (mess == 0)
         return;
 
+    std::unique_lock<std::mutex> managerLock(managerMutex);
+
     std::shared_ptr<T> ticket;
 
     const auto &id = mess->jobID.sid;
-    if (!TicketManager<STI::Engine::ShotID, T>::get(id, ticket))
-    {
+    if (!TicketManager<STI::Engine::ShotID, T>::get(id, ticket)) {
         return;
     }
 
-    if (mess->schedulerMessageType == STI::Device::EngineSchedulerMessage::SchedulerMessageType::PlayComplete)
-    {
+    if (mess->schedulerMessageType == STI::Device::EngineSchedulerMessage::SchedulerMessageType::PlayComplete) {
         ticket->setComplete();
         TicketManager<STI::Engine::ShotID, T>::remove(id);
     }
-    else
-    {
+    else {
         //    ticket->cancel();
     }
 }

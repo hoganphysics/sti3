@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         auto logFilename = logFile.fileHolder->getFilename();
     }
 
-    if(true) {
+    if(false) {
         int x;
         std::cin >> x;
 

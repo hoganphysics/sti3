@@ -12,7 +12,6 @@
 #include <sti/device/PersistenceManager.h>
 
 #include <memory>
-// #include <iostream>
 
 #include <pybind11/pybind11.h>
 
@@ -83,19 +82,15 @@ void STIPyLibDevice::connectToServer()
     parseTicketManager = std::make_shared<PyParseTicketManager>(eventEngineScheduler);
     resultTicketManager = std::make_shared<PyResultTicketManager>(persistenceManager, eventEngineScheduler);
 
-    //EventEngineScheduler message listener
-    engineMessageListener = std::make_shared<STIPyLibDevice::TicketManagerListener>(parseTicketManager, resultTicketManager);
-    //auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(engineMessageListener);
-    
-   	schedulerMessageLID.name = getID().getID() + "::EventEngineScheduler::TicketManagers";
-	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
-	
     if (receiver != 0) {
-        receiver->addListener<EngineSchedulerMessage>(serverID, schedulerMessageLID, engineMessageListener);	//listen to engine events from server
+        receiver->addListener<EngineSchedulerMessage>(serverID, "PyParseTicketManagerScheduler", parseTicketManager);
+        receiver->addListener<EngineSchedulerMessage>(serverID, "PyResultTicketManagerScheduler", resultTicketManager);
+
+        receiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(serverID, "PyParseTicketManagerJobUpdate", parseTicketManager);
+        receiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(serverID, "PyResultTicketManagerJobUpdate", resultTicketManager);
     }
 
     connectionCondition.notify_all();
-
 }
 
 void STIPyLibDevice::waitForConnection()

@@ -11,7 +11,8 @@
 #include <pybind11/stl_bind.h>
 namespace py = pybind11;
 
-void init_EngineID(py::module& m) ;
+void init_EngineID(py::module& m);
+// void init_Exception(py::module& m);
 void init_DeviceMessage(py::module& m);
 void init_DeviceMessageDispatcher(py::module& m);
 void init_Channel(py::module& m);
@@ -39,6 +40,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     // py::module_::import("stidevicepybase");
 
     init_EngineID(m);
+    // init_Exception(m);
     init_DeviceMessage(m);
     init_DeviceMessageDispatcher(m);
     init_Channel(m);

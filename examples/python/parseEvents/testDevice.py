@@ -1,6 +1,8 @@
 import stipy
 import stipy.stidevicepy as stidevicepy
 
+import traceback
+
 
 class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, config):
@@ -18,6 +20,7 @@ class TestDevice(stidevicepy.LocalDevice):
         return
     
     def parseEvents(self, eventsIn, synchedEvents):
+        print("**** Python parseEvents2")
 
         # eventsIn type: Dict[float, List[stipy.RawEvent]]
         # synchedEvents type: stidevicepy.SynchronousEventVector
@@ -48,25 +51,65 @@ class TestDevice(stidevicepy.LocalDevice):
             #check for input event
             for evt in events:
                 if evt.isMeasurementEvent():
-                    print("isMeasurementEvent")
+                    # print("isMeasurementEvent")
                     inputEvent = True
                     break
+            
+
+            # x = [1,2]
+            # y = x[3]
 
 
-            for evt in events:
-                testEvent = TestDeviceOutputEvent(time)
-                testEvent.addMeasurement(evt)
+            # Example of error checking. When an error is encountered during parsing, an exception should be thrown.
+            # This exception is handled by STI and converted to a parsing error message. 
+            # if inputEvent and tuple.second.size() > 1:
 
-                synchedEvents.append(testEvent)
+            if inputEvent and len(events) > 1:
+                # Error: In this example, when there is an input event, it must be the only event at that time.
+                # The EventConflictException constuctor accepts reference to the two offending events, plus a message: 
+                raise stipy.EventConflictException(events[0], events[1], "Error: An input event cannot be at the same time as an output event.")
+            
+            if not inputEvent:
+                # Output event
+                testDeviceOutputEvent = TestDeviceOutputEvent(time)
 
+                for evt in events:
+                    testDeviceOutputEvent.addValue(evt.channel(), evt.value())  # attach values to event for use later
+
+                synchedEvents.append(testDeviceOutputEvent)
+
+            else:
+                testDeviceInputEvent = TestDeviceInputEvent(time)
+                testDeviceInputEvent.addMeasurement(events[0])  # REQUIRED: The source RawEvent must be attached to the input event for
+															    # data to be properly saved later. Skipping this will result in a parse error.
+                
+                testDeviceInputEvent.exampleParameter = 2.5;	# Configre other event parameters, as needed...
+            
+                synchedEvents.append(testDeviceInputEvent)
+
+            # for evt in events:
+            #     testEvent = TestDeviceOutputEvent(time)
+            #     testEvent.addMeasurement(evt)
+
+            #     synchedEvents.append(testEvent)
+
+                # raise stipy.EventParsingException(evt, "parsing error!!!!")
+            
+            # raise ValueError(22)
+            
         return
 
+
+################### TestDeviceOutputEvent ##################
+
+# This subclass is used to specify the custom behavior controlling the hardware for each device output channel.
 
 class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
     def __init__(self, time):
         stidevicepy.SynchronousEvent.__init__(self, time)
         self.values = {}
-
+    # def __del__(self):
+    #     print("^^^^^^^^^^^ TestDeviceOutputEvent del")
     def addValue(self, channel, value):
         # Collect all values scheduled to play at this time so that can be play (psuedo) synchronously
         self.values[channel] = value
@@ -77,17 +120,17 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
         # For example, if this device requires values to be preloaded into some buffer on the hardware
         # (e.g., an FPGA, or an arbitrary waveform generator), this can be done here.
         for channel, value in self.values.items():
-            print("Loading channel #" << channel << " with value " << value.getNumber() << ".")
+            print("Loading channel #" + str(channel) + " with value " + str(value) + ".")
         return
     
     def collectMeasurementData(self):
         print("collectMeasurementData:")
-        tmpMeas=self.getMeasurements()
-        print(tmpMeas)
-        for m in tmpMeas:
-            # val=stidevicepy.MixedValue(123)
-            # m.setMeasurementResult(val)
-            m.setMeasurementResult(321)
+        # tmpMeas=self.getMeasurements()
+        # print(tmpMeas)
+        # for m in tmpMeas:
+        #     # val=stidevicepy.MixedValue(123)
+        #     # m.setMeasurementResult(val)
+        #     m.setMeasurementResult(321)
         return
     def stopEvent(self):
         return
@@ -96,6 +139,30 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
     def unpauseEvent(self, retrigger):
         return
     def playEvent(self):
-        print("Custom play event!")
+        # This function will be called at time specified in the timing file.
+        # Use this function to control the hardware to implement the change on the requested channel.
+
+        # Add hardware play code here...
+        for channel, value in self.values.items():
+            print("Playing channel #" + str(channel) + " with value " + str(value) + ".")
+
         return
+
+################## TestDeviceInputEvent ###############
+
+# This subclass is used to control the hardware for the device's input channel.
+# Note that the same event class can be used for both input and output events, if desired. In this 
+# example they are separated for clarity.
+
+class TestDeviceInputEvent(stidevicepy.SynchronousEvent):
+    def __init__(self, time):
+        stidevicepy.SynchronousEvent.__init__(self, time)
+        self.exampleParameter = 0
+
+    def collectMeasurementData(self):
+        # This function is called after playEvent() and is used to retrieve any measurement data.
+        # The new data is then attached to this event so it can later be saved at the end of the shot.
+        for m in self.getMeasurements():
+            m.setMeasurementResult(3.6 * self.exampleParameter)
+
 

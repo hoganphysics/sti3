@@ -1,5 +1,3 @@
-
-
 #include "JDeviceMessageReceiver.h"
 #include <sti/device/DeviceMessageReceiver.h>
 #include <sti/device/DeviceMessageListener.h>
@@ -9,14 +7,12 @@
 
 #include <memory>
 
-#include <iostream>
 
 using STI::Device::JDeviceMessageReceiver;
 using STI::Device::DeviceID;
 using STI::Device::DeviceMessageListenerID;
 using STI::Device::DeviceMessageListener;
 using STI::Device::JEngineJobUpdateDeviceMessageListener;
-
 
 
 JDeviceMessageReceiver::JDeviceMessageReceiver(std::shared_ptr<STI::Device::DeviceMessageReceiver>& receiver)
@@ -66,13 +62,13 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
     if(deviceMessageReceiver != 0) {
         deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerID, listener);
 
-        auto listenerIDtmp = listenerID;
-        listenerIDtmp.name = listenerID.name + "tmp";
+        // auto listenerIDtmp = listenerID;
+        // listenerIDtmp.name = listenerID.name + "tmp";
 
-        deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerIDtmp,
-        [](auto message) {
-            std::cout << "*** Java CollectionUpdateMessage ***" << std::endl;
-        });
+        // deviceMessageReceiver->addListener<STI::Device::CollectionUpdateMessage>(sourceDeviceID, listenerIDtmp,
+        // [](auto message) {
+        //     std::cout << "*** Java CollectionUpdateMessage ***" << std::endl;
+        // });
     }
 }
 
@@ -84,20 +80,9 @@ void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const D
     }
 }
 
-// void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
-//                         const std::shared_ptr<DeviceMessageListener<EngineJobUpdateDeviceMessage>>& listener)
-// {
-//     if(deviceMessageReceiver != 0) {
-//         deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(sourceDeviceID, listenerID, listener);
-//     }
-// }
-
 void JDeviceMessageReceiver::addListener(const DeviceID& sourceDeviceID, const DeviceMessageListenerID& listenerID, 
                         const std::shared_ptr<JEngineJobUpdateDeviceMessageListener>& jListener)
 {
-
-    // std::cout << "JDeviceMessageReceiver addListener JOB***" << std::endl;
-
     auto listener = std::static_pointer_cast<DeviceMessageListener<EngineJobUpdateDeviceMessage>>(jListener);
 
     if(deviceMessageReceiver != 0) {

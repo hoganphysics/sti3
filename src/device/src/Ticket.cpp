@@ -27,7 +27,6 @@ void Ticket::wait(const std::function<bool()>& waitChecker) const
 
         keepWaiting = waitChecker();
     }
-
 }
 
 bool Ticket::waitCheck() const

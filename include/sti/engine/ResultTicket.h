@@ -24,7 +24,7 @@ class ResultTicket : public Ticket  //, public ShotResult
 public:
 
     ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
-     ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, const TicketStatus& initialStatus);
+    ResultTicket(const STI::Engine::ShotID& id, const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager, const TicketStatus& initialStatus);
 
     virtual ~ResultTicket() {}
 

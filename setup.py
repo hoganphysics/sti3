@@ -14,8 +14,9 @@ except ImportError:
     )
     raise
 
-build_type = 'RelWithDebInfo'
+# build_type = 'RelWithDebInfo'
 # build_type = 'Release'
+build_type = 'Debug'
 
 #Force sci-kit to use RelWithDebInfo build instead of Release
 #Release fails to link on the first build (for some reason) causing a crash.
