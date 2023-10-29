@@ -68,7 +68,13 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engi
 		if (!inputEvent) {
 			//Output event
 			auto testDeviceOutputEvent = std::make_shared<TestDevice::TestDeviceOutputEvent>(tuple.first);	//time
+			
 			for (auto& rawEvent : tuple.second) {
+				
+				if (rawEvent.value().getNumber() > 10) {
+					throw STI::Engine::EventParsingException(rawEvent, 
+					"The value " + rawEvent.value().print() + " exceeds the maximium allowed value for this channel. Max value is 10.");
+				}
 				testDeviceOutputEvent->addValue(rawEvent.channel(), rawEvent.value());	//attach values to event for use later
 			}
 			synchedEvents.push_back(testDeviceOutputEvent);
@@ -154,7 +160,6 @@ TestDevice::TestDeviceInputEvent::TestDeviceInputEvent(double time)
 : STI::Engine::SynchronousEventAdapter(time)
 {
 }
-
 
 void TestDevice::TestDeviceInputEvent::collectMeasurementData()
 {

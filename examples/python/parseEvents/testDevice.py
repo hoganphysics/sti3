@@ -20,7 +20,6 @@ class TestDevice(stidevicepy.LocalDevice):
         return
     
     def parseEvents(self, eventsIn, synchedEvents):
-        print("**** Python parseEvents2")
 
         # eventsIn type: Dict[float, List[stipy.RawEvent]]
         # synchedEvents type: stidevicepy.SynchronousEventVector
@@ -55,10 +54,8 @@ class TestDevice(stidevicepy.LocalDevice):
                     inputEvent = True
                     break
             
-
             # x = [1,2]
             # y = x[3]
-
 
             # Example of error checking. When an error is encountered during parsing, an exception should be thrown.
             # This exception is handled by STI and converted to a parsing error message. 
@@ -74,6 +71,8 @@ class TestDevice(stidevicepy.LocalDevice):
                 testDeviceOutputEvent = TestDeviceOutputEvent(time)
 
                 for evt in events:
+                    if evt.value() > 10:
+                        raise stipy.EventParsingException(evt, "The value " + str(evt.value()) + " exceeds the maximium allowed value for this channel. Max value is 10.")
                     testDeviceOutputEvent.addValue(evt.channel(), evt.value())  # attach values to event for use later
 
                 synchedEvents.append(testDeviceOutputEvent)
@@ -86,16 +85,6 @@ class TestDevice(stidevicepy.LocalDevice):
                 testDeviceInputEvent.exampleParameter = 2.5;	# Configre other event parameters, as needed...
             
                 synchedEvents.append(testDeviceInputEvent)
-
-            # for evt in events:
-            #     testEvent = TestDeviceOutputEvent(time)
-            #     testEvent.addMeasurement(evt)
-
-            #     synchedEvents.append(testEvent)
-
-                # raise stipy.EventParsingException(evt, "parsing error!!!!")
-            
-            # raise ValueError(22)
             
         return
 
@@ -108,8 +97,6 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
     def __init__(self, time):
         stidevicepy.SynchronousEvent.__init__(self, time)
         self.values = {}
-    # def __del__(self):
-    #     print("^^^^^^^^^^^ TestDeviceOutputEvent del")
     def addValue(self, channel, value):
         # Collect all values scheduled to play at this time so that can be play (psuedo) synchronously
         self.values[channel] = value
@@ -123,21 +110,6 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
             print("Loading channel #" + str(channel) + " with value " + str(value) + ".")
         return
     
-    def collectMeasurementData(self):
-        print("collectMeasurementData:")
-        # tmpMeas=self.getMeasurements()
-        # print(tmpMeas)
-        # for m in tmpMeas:
-        #     # val=stidevicepy.MixedValue(123)
-        #     # m.setMeasurementResult(val)
-        #     m.setMeasurementResult(321)
-        return
-    def stopEvent(self):
-        return
-    def pauseEvent(self):
-        return
-    def unpauseEvent(self, retrigger):
-        return
     def playEvent(self):
         # This function will be called at time specified in the timing file.
         # Use this function to control the hardware to implement the change on the requested channel.
@@ -147,6 +119,21 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
             print("Playing channel #" + str(channel) + " with value " + str(value) + ".")
 
         return
+    def collectMeasurementData(self):
+        # This function is called after playEvent() and is used to retrieve any measurement data.
+        # The new data is then attached to this event so it can later be saved at the end of the shot.
+
+        # In this case, there is no data to save for an output event.
+        return
+    def stopEvent(self):
+        # Custom behavior for when "stop" is called. 
+        # Use this to interrupt the hardware and put it back to the desired idle state.
+        return
+    def pauseEvent(self):
+        return
+    def unpauseEvent(self, retrigger):
+        return
+
 
 ################## TestDeviceInputEvent ###############
 
