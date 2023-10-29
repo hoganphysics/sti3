@@ -6,6 +6,7 @@
 
 #include "DevicePy.h"
 #include "PartnerDevicePy.h"
+#include "DeviceMessageReceiverPy.h"
 
 #include <memory>
 #include <pybind11/pybind11.h>
@@ -19,6 +20,7 @@ namespace Python
 class DevicePy;
 class ChannelManagerPy;
 class MixedValuePy;
+class DeviceMessageReceiverPy;
 
 
 class LocalDevicePy : public DevicePy
@@ -72,6 +74,8 @@ public:
     void throwParsingException(const STI::Engine::RawEvent& evt, const std::string& message);
     void throwPythonException(const std::string& message);
 
+    std::shared_ptr<STI::Python::DeviceMessageReceiverPy> getMessageReceiver();   
+
 private:
 
     class CachedExceptions
@@ -122,6 +126,7 @@ private:
     };
 
     std::shared_ptr<STI::Device::LocalDevice> device;
+    std::shared_ptr<STI::Python::DeviceMessageReceiverPy> messageReceiverPy;
 };
 
 

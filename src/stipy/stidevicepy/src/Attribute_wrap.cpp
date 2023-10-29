@@ -40,7 +40,7 @@ void init_Attribute(py::module& m)
         //     })
         .def("metadata", [](Attribute& self) {
                 MixedValuePy value(self.getMetaData());
-                return value.getValue_py();
+                return py::dict(value.getValue_py());
             })
         .def("metadata", [](Attribute& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));

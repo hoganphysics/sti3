@@ -2,8 +2,12 @@
 
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineState.h>
+#include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventGroup.h>
@@ -44,6 +48,8 @@ using STI::Engine::Sequence;
 using STI::Engine::EngineJobSourceID;
 using STI::Engine::EventEngineJobType;
 using STI::Engine::EngineJobID;
+using STI::Engine::EventEngineJob;
+using STI::Engine::EngineState;
 
 
 void init_EventEngineScheduler(py::module& m)
@@ -90,6 +96,22 @@ void init_EventEngineScheduler(py::module& m)
         .value("Archived", EventEngineJobList::Archived)
         ;
 
+    // EngineState {Idle, Parsing, Parsed, PreparingPlay, PlayReady, WaitingForTrigger, Playing, Paused, Unknown, Missing, Error}
+
+    py::enum_<EngineState>(m, "EngineState")
+        .value("Idle", EngineState::Idle)
+        .value("Parsing", EngineState::Parsing)
+        .value("Parsed", EngineState::Parsed)
+        .value("PreparingPlay", EngineState::PreparingPlay)
+        .value("PlayReady", EngineState::PlayReady)
+        .value("WaitingForTrigger", EngineState::WaitingForTrigger)
+        .value("Playing", EngineState::Playing)
+        .value("Paused", EngineState::Paused)
+        .value("Unknown", EngineState::Unknown)
+        .value("Missing", EngineState::Missing)
+        .value("Error", EngineState::Error)
+        ;
+
     py::enum_<EventEngineJobType>(m, "EventEngineJobType")
         .value("Parse", EventEngineJobType::Parse)
         .value("Play", EventEngineJobType::Play)
@@ -124,6 +146,27 @@ void init_EventEngineScheduler(py::module& m)
             [](const EngineJobID& self, const EngineJobID& other) {
                 return self < other;
             })
+        ;
+
+    py::class_<EventEngineJob>(m, "EventEngineJob")
+        .def("jobID", &EventEngineJob::getJobID)
+        .def("jobOwner", &EventEngineJob::getJobOwner)
+        .def("status", &EventEngineJob::getStatus)
+        .def("engineID", &EventEngineJob::getEngineID)
+        .def("dependencies",
+            [](const EventEngineJob& self) {
+                std::shared_ptr<STI::Engine::EventEngineDependencyTree> tree;
+                std::shared_ptr<STI::Engine::ParsedDependencyTree> parsedTree;
+                
+                if (self.getDependencies(tree)) {
+                    parsedTree = std::make_shared<STI::Engine::ParsedDependencyTree>(tree);
+                }
+                else {
+                    parsedTree = std::make_shared<STI::Engine::ParsedDependencyTree>();
+                }
+
+                return parsedTree;
+            })       
         ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")

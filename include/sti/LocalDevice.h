@@ -82,7 +82,7 @@ public:
 	void disable();
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
-	void getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver);
+	bool getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver);
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);

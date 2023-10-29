@@ -1346,6 +1346,7 @@ public class stiJNI {
   public final static native long ShotID_generateUniqueID(long jarg1, ParseID jarg1_, long jarg2, EngineJobSourceID jarg2_);
   public final static native String ShotID_print(long jarg1, ShotID jarg1_);
   public final static native void delete_ShotID(long jarg1);
+  public final static native String EngineJobStatusToString(int jarg1);
   public final static native void AddSequenceStatus_status_set(long jarg1, AddSequenceStatus jarg1_, int jarg2);
   public final static native int AddSequenceStatus_status_get(long jarg1, AddSequenceStatus jarg1_);
   public final static native void AddSequenceStatus_seqid_set(long jarg1, AddSequenceStatus jarg1_, long jarg2, SequenceID jarg2_);

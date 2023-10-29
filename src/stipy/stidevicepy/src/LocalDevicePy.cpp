@@ -207,7 +207,17 @@ void LocalDevicePy::throwPythonException(const std::string& message)
     cachedExceptions.addPythonException(message);
 }
 
+std::shared_ptr<STI::Python::DeviceMessageReceiverPy> LocalDevicePy::getMessageReceiver()
+{
+    if (messageReceiverPy == 0) {
+        std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+        device->getMessageReceiver(receiver);
 
+        messageReceiverPy = std::make_shared<STI::Python::DeviceMessageReceiverPy>(receiver);
+    }
+
+    return messageReceiverPy;
+}
 
 
 ///////////////////// CachedExceptions ///////////////////////////

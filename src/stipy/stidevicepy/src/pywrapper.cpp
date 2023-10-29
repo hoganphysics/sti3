@@ -15,6 +15,7 @@ void init_EngineID(py::module& m);
 // void init_Exception(py::module& m);
 void init_DeviceMessage(py::module& m);
 void init_DeviceMessageDispatcher(py::module& m);
+void init_DeviceMessageReceiver(py::module& m);
 void init_Channel(py::module& m);
 void init_ChannelManager(py::module& m);
 void init_SynchronousEvent(py::module& m);
@@ -43,6 +44,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     // init_Exception(m);
     init_DeviceMessage(m);
     init_DeviceMessageDispatcher(m);
+    init_DeviceMessageReceiver(m);
     init_Channel(m);
     init_ChannelManager(m);
     init_DeviceCollection(m);

@@ -12,7 +12,7 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addAttribute("message", "A test message")
 
         # Float attrribute using class functions for setter/refresher
-        self.height = 4
+        self.height = 4.6
         self.addAttribute("Height", str(self.height)).setSetter(self.setHeight).setRefresher(self.refreshHeight)
 
         # Integer attribute with lambda functions for setter or refresher
@@ -65,4 +65,37 @@ hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)
 
-hub.run(True)
+# hub.run(True)
+
+
+
+print("message = " + device.getAttribute("message"))
+device.setAttribute("message", "Hello")
+print("message = " + device.getAttribute("message"))
+print("*****")
+
+print("Height = " + device.getAttribute("Height"))
+success = device.setAttribute("Height", str(23.6))    #too big, fails
+print("success? " + str(success))
+print("Height = " + device.getAttribute("Height"))
+device.setAttribute("Height", str(5.2))     #ok
+print("Height = " + device.getAttribute("Height"))
+print("*****")
+
+device.setAttribute("Downsample", str(10))
+print("Downsample = " + device.getAttribute("Downsample"))
+print("*****")
+
+
+print("TriggerSource = " + device.getAttribute("TriggerSource"))
+device.setAttribute("TriggerSource", "Software")
+print("TriggerSource = " + device.getAttribute("TriggerSource"))
+print("*****")
+
+at = device.getAttributeManager().getAttribute("Mode")
+print(at)
+print("Mode = " + at.value())
+at.setValue("Total")
+print("Mode = " + at.value())
+print(dict(at.metadata()))
+

@@ -13,6 +13,10 @@ public class sti {
     return stiJNI.printShotType(type.swigValue());
   }
 
+  public static String EngineJobStatusToString(EngineJobStatus status) {
+    return stiJNI.EngineJobStatusToString(status.swigValue());
+  }
+
   public static String print(EngineState state) {
     return stiJNI.print(state.swigValue());
   }

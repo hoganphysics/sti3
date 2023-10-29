@@ -32820,6 +32820,22 @@ SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_delete_1ShotID(JNIEnv *jenv
 }
 
 
+SWIGEXPORT jstring JNICALL Java_edu_stanford_sti_stiJNI_EngineJobStatusToString(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jstring jresult = 0 ;
+  STI::Engine::EngineJobStatus *arg1 = 0 ;
+  STI::Engine::EngineJobStatus temp1 ;
+  std::string result;
+  
+  (void)jenv;
+  (void)jcls;
+  temp1 = (STI::Engine::EngineJobStatus)jarg1; 
+  arg1 = &temp1; 
+  result = STI::Engine::EngineJobStatusToString((enum STI::Engine::EngineJobStatus const &)*arg1);
+  jresult = jenv->NewStringUTF((&result)->c_str()); 
+  return jresult;
+}
+
+
 SWIGEXPORT void JNICALL Java_edu_stanford_sti_stiJNI_AddSequenceStatus_1status_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   STI::Engine::AddSequenceStatus *arg1 = (STI::Engine::AddSequenceStatus *) 0 ;
   STI::Engine::EngineJobStatus arg2 ;

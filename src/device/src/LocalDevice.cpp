@@ -639,9 +639,10 @@ void LocalDevice::getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>&
 	dispatcher = deviceMessageDispatcher;
 }
 
-void LocalDevice::getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver)
+bool LocalDevice::getMessageReceiver(std::shared_ptr<DeviceMessageReceiver>& receiver)
 {
 	receiver = deviceMessageReceiver;
+	return receiver != 0;
 }
 
 bool LocalDevice::getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)

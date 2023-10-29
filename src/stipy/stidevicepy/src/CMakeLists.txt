@@ -128,6 +128,7 @@ pybind11_add_module(stidevicepy
     DeviceCollection_wrap.cpp
     DeviceHub_wrap.cpp
     DeviceMessageDispatcher_wrap.cpp
+    DeviceMessageReceiver_wrap.cpp
     DeviceMessage_wrap.cpp
     EventEngineScheduler_wrap.cpp
     EngineID_wrap.cpp
