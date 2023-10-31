@@ -8,8 +8,8 @@
 #include <sti/utils/TimeStamp.h>
 #include <sti/utils/utils.h>
 
-
 #include <string>
+#include <map>
 #include <sstream>
 #include <functional>
 #include <mutex>
@@ -159,6 +159,8 @@ private:
     friend class LocalLogManager;
     bool save(const std::string& targetDirectory);
 
+    int getNextTaskCount(short channel);
+    int getNextTaskCount(const std::string& key);
 
     std::string name;
     std::stringstream log;
@@ -168,6 +170,8 @@ private:
     std::string logFilename;    //today's log file
 
     std::vector<std::string> taskIDs;
+    std::map<short, int> taskCount;    // {channel number, task count}
+    std::map<std::string, int> attributeCount;    // {attribute key, task count}
     
     LogMessageGrouper messageGrouper;
 

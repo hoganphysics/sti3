@@ -93,7 +93,8 @@ public:
 
 	bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
-	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);	//temp
+	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);
+	bool getLogManager(std::shared_ptr<LocalLogManager>& manager);
 
 	void addEventEngine(const STI::Engine::EngineID& engineID);
 

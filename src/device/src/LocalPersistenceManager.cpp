@@ -113,7 +113,6 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
 
     if (!std::filesystem::exists(root) && autocreate) {
         std::filesystem::create_directory(root);
-
     }
 
     std::string forbidden = "<>:\"\\|?*";
@@ -151,7 +150,7 @@ bool LocalPersistenceManager::getLogBasePath(const STI::Utils::TimeStamp& timest
 
     logBasePath = makeBasePath(todaysLogPath, deviceID.getID(), false);   //don't make path if it doesn't exist
 
-    return false;
+    return true;
 }
 
 bool LocalPersistenceManager::makeLogPath(const STI::Utils::TimeStamp& timestamp, std::string& logPath)

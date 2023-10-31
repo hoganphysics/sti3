@@ -94,19 +94,21 @@ bool TestDevice::readChannel(short channel, const STI::Utils::MixedValue& value,
 		//Input/Output
 		//vector arguments (output)
 		if (value.isType({ MixedValueType::Number, MixedValueType::String })) {
-			data.setValue(12.2 * value.getVector().at(0));	//double measurement (input)
+			data.setValue(12.2 * value.getVector().at(0).getNumber());	//double measurement (input)
 			success = true;	
 		}
 		break;
 	case 12:
 		//Input/Output
-		auto arg = value.getNumber();	//number argument (output)
-		
-		data.addValue(3.2 * arg);	//vector measurement (input)
-		data.addValue("example string result")
-		data.addValue(true);
+		{
+			auto arg = value.getNumber();	//number argument (output)
+			
+			data.addValue(3.2 * arg);	//vector measurement (input)
+			data.addValue("example string result");
+			data.addValue(true);
 
-		success = true;
+			success = true;
+		}
 		break;
 	default:
 		break;

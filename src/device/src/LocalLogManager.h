@@ -50,6 +50,7 @@ public:
     bool getLogRecord(const std::string& date, LogRecord& record);
 
     void createLogger(const std::string& name);
+    bool getLogger(const std::string& name, std::shared_ptr<Logger>& logger) const;
     
     Logger& log();
     Logger& log(const std::string& name);

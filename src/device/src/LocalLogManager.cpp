@@ -37,6 +37,7 @@ LocalLogManager::LocalLogManager(LocalDevice* localDevice, const std::shared_ptr
 
 LocalLogManager::~LocalLogManager()
 {
+    logWriterMessageGrouper.stop();
 }
 
 void LocalLogManager::writeLog(const std::string& logName)
@@ -403,6 +404,10 @@ void LocalLogManager::createLogger(const std::string& name)
     loggers.add(name, logger);
 }
 
+bool LocalLogManager::getLogger(const std::string& name, std::shared_ptr<Logger>& logger) const
+{
+    return loggers.get(name, logger) && (logger != 0);
+}
 
 Logger& LocalLogManager::log()
 {

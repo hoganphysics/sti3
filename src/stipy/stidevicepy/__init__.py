@@ -7,3 +7,5 @@ from stipy.stidevicepy.python.localdevice import EventParsingException
 from stipy.stidevicepy.python.localdevice import EventConflictException
 
 from stipy.stidevicepy.python.messagereceiver import DeviceMessageReceiver
+
+from stipy.stidevicepy.python.logger import Logger

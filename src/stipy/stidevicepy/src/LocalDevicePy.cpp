@@ -1,9 +1,9 @@
 #include "LocalDevicePy.h"
 #include "DevicePy.h"
 #include "ChannelManagerPy.h"
+#include "LocalLogManager.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/utils/MixedValue.h>
-
 #include <sti/engine/SynchronousEvent.h>
 
 #include "SynchronousEventPy.h"
@@ -154,14 +154,21 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Utils::Task>& task)
     device->addTask(task);
 }
 
-STI::Device::Logger& LocalDevicePy::log()
+std::shared_ptr<STI::Device::Logger> LocalDevicePy::log()
 {
-    return device->log();
+    return log("");
 }
 
-STI::Device::Logger& LocalDevicePy::log(const std::string& name)
+std::shared_ptr<STI::Device::Logger> LocalDevicePy::log(const std::string& name)
 {
-    return device->log(name);
+    device->log(name);    // Ensure log exists (auto creates if needed)
+
+    std::shared_ptr<STI::Device::LocalLogManager> manager;
+    std::shared_ptr<STI::Device::Logger> logger;
+
+    device->getLogManager(manager);
+    manager->getLogger(name, logger);
+    return logger;
 }
 
 

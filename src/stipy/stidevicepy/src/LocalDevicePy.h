@@ -60,8 +60,8 @@ public:
 
     void addTask(const std::shared_ptr<STI::Utils::Task>& task);
 
-    STI::Device::Logger& log();
-    STI::Device::Logger& log(const std::string& name);
+    std::shared_ptr<STI::Device::Logger> log();
+    std::shared_ptr<STI::Device::Logger> log(const std::string& name);
 
 	PartnerDevicePy partner(const STI::Device::DeviceID& id);
 	PartnerDevicePy partner(const std::string& alias);

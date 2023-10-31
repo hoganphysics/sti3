@@ -3,11 +3,15 @@
 #include <sti/device/LogRecord.h>
 #include <sti/device/Logger.h>
 
+#include "MixedValuePy.h"
+
 #include <sstream>
+#include <iostream>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
+#include <pybind11/functional.h>
 namespace py = pybind11;
 
 using STI::Device::LogManager;
@@ -45,66 +49,75 @@ void init_LogManager(py::module& m)
     py::class_<Logger, std::shared_ptr<Logger>>(m, "Logger")
         .def("name", &Logger::getName)
         .def("addLogTask", 
-            [](std::shared_ptr<Logger>& self, const std::string& timeInterval, const std::function<std::string(void)>& runFunc) {
+            [](const std::shared_ptr<Logger>& self, const std::string& timeInterval, const std::function<std::string(void)>& runFunc) {
                 // Need to wrap python function reference in another lambda so we can release the GIL
                 // before calling back to python
                 auto gil_runFunc = [runFunc]() {
                     std::string result = "";
                     {
-                        pybind11::gil_scoped_release release;
+                        pybind11::gil_scoped_acquire acquire;
                         result = runFunc();
                     }
                     return result;
                 };
-
                 self->addLogTask(timeInterval, gil_runFunc);
-
             }, py::arg("timeInterval"), py::arg("runFunc"))
-        .def("addReadLogTask", py::overload_cast<short, const std::string&>(&Logger::addReadLogTask), 
+
+        .def("__addReadLogTask", py::overload_cast<short, const std::string&>(&Logger::addReadLogTask), 
                 py::arg("channel"), py::arg("timeInterval"))
-        .def("addReadLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addReadLogTask), 
-                py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
+        // .def("addReadLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addReadLogTask), 
+        //         py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
         
+        .def("__addReadLogTask_value", (
+            [](const std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const py::object& value) {
+                STI::Python::MixedValuePy mixedValue(value);
+                self->addReadLogTask(channel, timeInterval, mixedValue.getMixedValue());
+            }), py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
+
         // .def("addReadLogTask",py::overload_cast<Logger&, short, const std::string&, const std::function<STI::Utils::MixedValue(void)>&>(
-        .def("addReadLogTask", (
-            [](std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<STI::Utils::MixedValue(void)>& runFunc) {
+        .def("__addReadLogTask_callable", (
+            [](const std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<py::object(void)>& runFunc) {
                 // Need to wrap python function reference in another lambda so we can release the GIL
                 // before calling back to python
                 auto gil_runFunc = [runFunc]() -> STI::Utils::MixedValue {
-                    STI::Utils::MixedValue result;
+                    STI::Python::MixedValuePy result;
                     {
-                        pybind11::gil_scoped_release release;
-                        result = runFunc();
+                        pybind11::gil_scoped_acquire acquire;
+                        auto pyResult = runFunc();
+                        result.setValue_py(pyResult);
                     }
-                    return result;
+                    return result.getMixedValue();
                 };
-
                 self->addReadLogTask(channel, timeInterval, gil_runFunc);
-
             }), py::arg("channel"), py::arg("timeInterval"), py::arg("runFunc"))
 
+        // .def("addWriteLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addWriteLogTask), 
+        //         py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
+        .def("__addWriteLogTask_value", (
+            [](const std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const py::object& value) {
+                STI::Python::MixedValuePy mixedValue(value);
+                self->addWriteLogTask(channel, timeInterval, mixedValue.getMixedValue());
+            }), py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
 
-        .def("addWriteLogTask", py::overload_cast<short, const std::string&, const STI::Utils::MixedValue&>(&Logger::addWriteLogTask), 
-                py::arg("channel"), py::arg("timeInterval"), py::arg("value"))
-        .def("addWriteLogTask", (
-            [](std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<STI::Utils::MixedValue(void)>& runFunc) {
+        .def("__addWriteLogTask_callable", (
+            [](const std::shared_ptr<Logger>& self, short channel, const std::string& timeInterval, const std::function<py::object(void)>& runFunc) {
                 // Need to wrap python function reference in another lambda so we can release the GIL
                 // before calling back to python
                 auto gil_runFunc = [runFunc]() -> STI::Utils::MixedValue {
-                    STI::Utils::MixedValue result;
+                    STI::Python::MixedValuePy result;
                     {
-                        pybind11::gil_scoped_release release;
-                        result = runFunc();
+                        pybind11::gil_scoped_acquire acquire;
+                        auto pyResult = runFunc();
+                        result.setValue_py(pyResult);
                     }
-                    return result;
-                };
-
+                    return result.getMixedValue();
+                };               
                 self->addWriteLogTask(channel, timeInterval, gil_runFunc);
-
             }), py::arg("channel"), py::arg("timeInterval"), py::arg("runFunc"))
+
         .def("addAttributeLogTask", &Logger::addAttributeLogTask, py::arg("key"), py::arg("timeInterval"))
         .def("append", 
-            [](std::shared_ptr<Logger>& self, const std::string& message) {
+            [](const std::shared_ptr<Logger>& self, const std::string& message) {
                 (*self) << message;
                 return self;
             })

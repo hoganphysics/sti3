@@ -64,7 +64,7 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 11:
             #vector arguments (output)
             mval = stipy.MixedValue()
-            mval.setValue(value)
+            mval.setValue(value)    # wrap in MixedValue to allow type checking, below
             if mval.isType([stipy.MixedValueType.Number, stipy.MixedValueType.String]):
                 return 12.2 * value[0]     #number measurement (input)
                 success = True

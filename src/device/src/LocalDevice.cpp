@@ -691,6 +691,12 @@ bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
 	return manager != 0;
 }
 
+bool LocalDevice::getLogManager(std::shared_ptr<LocalLogManager>& manager)
+{
+	manager = localLogManager;
+	return manager != 0;
+}
+
 bool LocalDevice::getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer)
 {
 	if (localPersistenceManager == 0) return false;

@@ -49,6 +49,32 @@ std::string Logger::getName() const
     return name;
 }
 
+int Logger::getNextTaskCount(short channel)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (!taskCount.contains(channel)) {
+        taskCount[channel] = 0;
+    }
+
+    taskCount[channel]++;
+
+    return taskCount[channel];
+}
+
+int Logger::getNextTaskCount(const std::string& key)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (!attributeCount.contains(key)) {
+        attributeCount[key] = 0;
+    }
+
+    attributeCount[key]++;
+
+    return attributeCount[key];
+}
+
 void Logger::addLogTask(const std::string& timeInterval, const std::function<std::string(void)>& runFunc)
 {
     if (manager == 0 || manager->localDevice == 0) return;
@@ -79,12 +105,15 @@ void Logger::addReadLogTask(short channel, const std::string& timeInterval, cons
     std::vector<std::string> prefixTokens = {"read", STI::Utils::valueToString(targetChannel->getChannelNumber())};
 
     std::stringstream taskID;
-    taskID << "Log" << ":" << name << ":" << "Read channel #" << channel;
+    taskID << "Log" << ":" << name 
+            << ":" << "Read channel #" << channel;
     auto chName = targetChannel->getChannelName();
     if (chName != "") {
         taskID << "("  << chName << ")";
         prefixTokens.push_back("'" + chName + "'");
     }
+    // Add task count to support multiple tasks on this channel.
+    taskID << ":" << "Task #" << getNextTaskCount(channel);
 
     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
         [this, channelManager, targetChannel, runFunc, prefixTokens]() {
@@ -126,6 +155,8 @@ void Logger::addWriteLogTask(short channel, const std::string& timeInterval, con
         taskID << "("  << chName << ")";
         prefixTokens.push_back("'" + chName + "'");
     }
+    // Add task count to support multiple tasks on this channel.
+    taskID << ":" << "Task #" << getNextTaskCount(channel);
 
     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
         [this, channelManager, targetChannel, runFunc, prefixTokens]() {
@@ -191,8 +222,10 @@ void Logger::addAttributeLogTask(const std::string& key, const std::string& time
     if (attribute == 0) return;
 
     std::stringstream taskID;
-    // name:Attribute:key
+    // name:Attribute:key:task
     taskID << "Log" << ":" << name << ":" << "Attribute" << ":" << key;
+    // Add task count to support multiple tasks on this attribute.
+    taskID << ":" << "Task #" << getNextTaskCount(key);
 
     auto task = std::make_shared<IntervalTask>(taskID.str(), timeInterval, 
         [this, attribute]() {
