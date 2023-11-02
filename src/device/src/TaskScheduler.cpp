@@ -24,6 +24,7 @@ TaskScheduler::~TaskScheduler()
 void TaskScheduler::start()
 {
 	std::unique_lock<std::mutex> writeLock(schedulerMutex);
+	
 	if (!running) {
 		running = true;
 		taskThread = std::thread(&TaskScheduler::taskLoop, this);
@@ -32,8 +33,7 @@ void TaskScheduler::start()
 
 void TaskScheduler::stop()
 {
-	if (!running)
-		return;
+	if (!running) return;
 
 	{
 		std::unique_lock<std::mutex> writeLock(schedulerMutex);
@@ -231,7 +231,6 @@ void TaskScheduler::taskLoop()
 		//run tasks
 		for (auto& task : activeTasks) {
 			if (task != 0 && task->secondsToNextRun() <= 0) {
-
 				run(task);
 			}
 			else {
@@ -265,8 +264,7 @@ void TaskScheduler::taskLoop()
 		else {
 			//fine sleep
 			schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)));
-		}		
-
+		}
 	}
 }
 

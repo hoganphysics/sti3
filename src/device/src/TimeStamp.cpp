@@ -92,6 +92,32 @@ int TimeStamp::nanos() const
     return _nanos;
 }
 
+void TimeStamp::add_day(int days)
+{
+    timeinfo.tm_mday += days;
+}
+
+void TimeStamp::add_hour(int hours)
+{
+    timeinfo.tm_hour += hours;
+}
+
+void TimeStamp::add_minute(int minutes)
+{
+    timeinfo.tm_min += minutes;
+}
+
+void TimeStamp::add_sec(int seconds)
+{
+    timeinfo.tm_sec += seconds;
+}
+
+void TimeStamp::add_ns(int ns)
+{
+    _nanos += ns;
+}
+
+
 std::string TimeStamp::getMonthName() const
 {
 	char buffer[50];

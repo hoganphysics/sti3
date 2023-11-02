@@ -9,6 +9,8 @@
 #include "SynchronousEventPy.h"
 #include "SynchronousEventPyManager.h"
 
+#include <thread>
+
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
@@ -151,7 +153,33 @@ std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const s
 
 void LocalDevicePy::addTask(const std::shared_ptr<STI::Utils::Task>& task)
 {
-    device->addTask(task);
+    if (task == 0) return;
+
+    std::thread addThread([this, task]() {
+        pybind11::gil_scoped_acquire acquire;
+        device->addTask(task);
+    });
+    addThread.detach();
+}
+
+void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task)
+{
+    if (task == 0) return;
+
+    std::thread addThread([this, task]() {
+        pybind11::gil_scoped_acquire acquire;
+        device->addTask(task);
+    });
+    addThread.detach();
+}
+
+void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, const pybind11::object& taskObj)
+{
+    if (task == 0) return;
+
+    pybind11::gil_scoped_acquire acquire;
+    task->task_object = taskObj;
+    addTask(task);
 }
 
 std::shared_ptr<STI::Device::Logger> LocalDevicePy::log()
@@ -340,6 +368,8 @@ bool LocalDevicePy::LocalDeviceDelegate::readChannel(short channel, const STI::U
 
 void LocalDevicePy::LocalDeviceDelegate::parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
 {
+    std::unique_lock<std::mutex> parseLock(STI::Python::SynchronousEventPy::pyEventManagerMutex);
+
     bool error = false;
 
     pybind11::gil_scoped_acquire acquire;

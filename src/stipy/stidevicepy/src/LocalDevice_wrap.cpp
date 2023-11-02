@@ -8,6 +8,7 @@
 #include "AttributeManagerPy.h"
 #include "ChannelManagerPy.h"
 #include "DevicePy.h"
+#include "TaskPy.h"
 #include "LocalDevicePy.h"
 #include "MixedValuePy.h"
 #include "PersistenceManagerPy.h"
@@ -26,6 +27,8 @@ using STI::Python::LocalDevicePy;
 using STI::Python::LocalDevicePyTrampoline;
 using STI::Utils::MixedValueType;
 using STI::Device::ChannelType;
+using STI::Python::TaskPy;
+using STI::Utils::Task;
 
 
 void init_LocalDevice(py::module& m) 
@@ -84,7 +87,11 @@ void init_LocalDevice(py::module& m)
         .def("addAttribute", 
                 py::overload_cast<const std::string&, const std::string&, const std::vector<std::string>&>(&LocalDevicePy::addAttribute), 
                 py::return_value_policy::reference, py::arg("key"), py::arg("initialValue"), py::arg("allowedValues"))
-        .def("addTask", &LocalDevicePy::addTask, py::arg("task"))
+        
+        .def("__addTask_Base", py::overload_cast<const std::shared_ptr<Task>&>(&LocalDevicePy::addTask), py::arg("task"))
+        // .def("addTask", py::overload_cast<const std::shared_ptr<TaskPy>&>(&LocalDevicePy::addTask), py::arg("task"))
+        .def("__addTask", py::overload_cast<const std::shared_ptr<STI::Python::TaskPy>&, const pybind11::object&>(&LocalDevicePy::addTask), py::arg("task"), py::arg("object"))
+
         .def("log", py::overload_cast<>(&LocalDevicePy::log))
         .def("log", py::overload_cast<const std::string&>(&LocalDevicePy::log), py::arg("name"))
         .def("partner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::partner), py::arg("deviceID"))

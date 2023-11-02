@@ -10,6 +10,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/functional.h>
 
 #include <memory>
 
@@ -17,6 +18,7 @@ using STI::Utils::Task;
 using STI::Utils::TaskStatus;
 using STI::Utils::MixedValue;
 using STI::Python::TaskPy;
+using STI::Python::TaskPyTrampoline;
 using STI::Python::MixedValuePy;
 using STI::Utils::AppointmentTask;
 using STI::Utils::IntervalTask;
@@ -35,45 +37,48 @@ void init_Task(py::module& m)
         .value("Missing", TaskStatus::Missing)
         ;
 
-    py::class_<Task, std::shared_ptr<Task>, TaskPy>(m, "Task")
+    py::class_<Task, std::shared_ptr<Task>>(m, "TaskBase")
+        ;
+
+    py::class_<TaskPy, TaskPyTrampoline, std::shared_ptr<TaskPy>>(m, "Task")
         .def(py::init<std::string>(), py::arg("id"))
 
-        .def("getID", &Task::getID)
-        .def("isActive", &Task::isActive)
-        .def("getStatus", &Task::getStatus)
+        .def("getID", &TaskPy::getID)
+        .def("isActive", &TaskPy::isActive)
+        .def("getStatus", &TaskPy::getStatus)
         // .def("setStatus", &Task::setStatus, py::arg("newStatus"))
-        .def("getMetaData", py::overload_cast<>(&Task::getMetaData, py::const_))
-        .def("getMetaData", py::overload_cast<const std::string&>(&Task::getMetaData, py::const_), py::arg("key"))
+        .def("getMetaData", py::overload_cast<>(&TaskPy::getMetaData, py::const_))
+        .def("getMetaData", py::overload_cast<const std::string&>(&TaskPy::getMetaData, py::const_), py::arg("key"))
         .def("addMetadata", 
-            [](std::shared_ptr<Task>& self, const std::string& key, const MixedValuePy& value) {
+            [](std::shared_ptr<TaskPy>& self, const std::string& key, const MixedValuePy& value) {
                 const MixedValue& v = static_cast<const MixedValue&>(value);
                 self->addMetaData(key, v);
                 return self;
             }, py::arg("key"), py::arg("value") )
 
-        .def("isReadyToRun", &Task::isReadyToRun)
-        .def("secondsToNextRun", &Task::secondsToNextRun)
-        .def("run", &Task::run)
-        .def("skipTask", &Task::skipTask)
-        .def("repeat", &Task::repeat)
+        .def("isReadyToRun", &TaskPy::isReadyToRun)
+        .def("secondsToNextRun", py::overload_cast<>(&TaskPy::secondsToNextRun, py::const_) )
+        .def("run", &TaskPy::run)
+        .def("skipTask", &TaskPy::skipTask)
+        .def("repeat", &TaskPy::repeat)
 
         .def("__repr__",
-            [](const Task& self) {
+            [](const TaskPy& self) {
                 std::stringstream s;
                 // "<Profile | 'Startup'>"
                 s << "<Task | '" << self.getID() << "'>";     
                 return s.str();
             })
         .def("__eq__",  // operator ==
-            [](const Task& self, const Task& other) {
+            [](const TaskPy& self, const Task& other) {
                 return self == other;
             })
         .def("__lt__",  // operator <
-            [](const Task& self, const Task& rhs) {
+            [](const TaskPy& self, const Task& rhs) {
                 return self < rhs;
             })
         .def("__le__",  // operator <=
-            [](const Task& self, const Task& rhs) {
+            [](const TaskPy& self, const Task& rhs) {
                 return (self < rhs) || (self == rhs);
             })
         ;
@@ -82,11 +87,11 @@ void init_Task(py::module& m)
         .def(py::init(
             [](const std::string& id, double wait_seconds, const std::function<void(void)>& runFunc) 
                 {
-                    // Need to wrap python function reference in another lambda so we can release the GIL
+                    // Need to wrap python function reference in another lambda so we can acquire the GIL
                     // before calling back to python
                     auto gil_runFunc = [runFunc]() {
                         {
-                            pybind11::gil_scoped_release release;
+                            pybind11::gil_scoped_acquire acquire;
                             runFunc();
                         }
                     };
@@ -98,11 +103,11 @@ void init_Task(py::module& m)
         .def(py::init(
             [](const std::string& id, const std::string& wait_time, const std::function<void(void)>& runFunc) 
                 {
-                    // Need to wrap python function reference in another lambda so we can release the GIL
+                    // Need to wrap python function reference in another lambda so we can acquire the GIL
                     // before calling back to python
                     auto gil_runFunc = [runFunc]() {
                         {
-                            pybind11::gil_scoped_release release;
+                            pybind11::gil_scoped_acquire acquire;
                             runFunc();
                         }
                     };
@@ -125,11 +130,11 @@ void init_Task(py::module& m)
         .def(py::init(
             [](const std::string& id, const std::string& timeOfDay, const std::function<void(void)>& runFunc) 
                 {
-                    // Need to wrap python function reference in another lambda so we can release the GIL
+                    // Need to wrap python function reference in another lambda so we can acquire the GIL
                     // before calling back to python
                     auto gil_runFunc = [runFunc]() {
                         {
-                            pybind11::gil_scoped_release release;
+                            pybind11::gil_scoped_acquire acquire;
                             runFunc();
                         }
                     };
@@ -143,11 +148,11 @@ void init_Task(py::module& m)
                 const AppointmentTask::AppointmentRepeatType& repeatType, 
                 const std::function<void(void)>& runFunc) 
                 {
-                    // Need to wrap python function reference in another lambda so we can release the GIL
+                    // Need to wrap python function reference in another lambda so we can acquire the GIL
                     // before calling back to python
                     auto gil_runFunc = [runFunc]() {
                         {
-                            pybind11::gil_scoped_release release;
+                            pybind11::gil_scoped_acquire acquire;
                             runFunc();
                         }
                     };

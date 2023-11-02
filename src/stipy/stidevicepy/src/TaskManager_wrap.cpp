@@ -2,6 +2,8 @@
 
 #include <sti/utils/Task.h>
 
+#include "TaskPy.h"
+
 #include <string>
 #include <memory>
 
@@ -32,13 +34,21 @@ void init_TaskManager(py::module& m)
             [](const TaskManager& self, const std::string& taskID) {
                 std::shared_ptr<STI::Utils::Task> task;
                 self.getTask(taskID, task);
-                return task;
+                std::shared_ptr<STI::Python::TaskPy> taskPy = std::make_shared<STI::Python::TaskWrapperPy>(task);
+                return taskPy;
             }, py::arg("taskID"))
         .def("getTasks",
             [](const TaskManager& self) {
                 std::vector<std::shared_ptr<STI::Utils::Task>> tasks;
                 self.getTasks(tasks);
-                return tasks;
+
+                std::vector<std::shared_ptr<STI::Python::TaskPy>> tasksPy;
+
+                for (auto& task : tasks) {
+                    auto taskPy = std::make_shared<STI::Python::TaskWrapperPy>(task);
+                    tasksPy.push_back(taskPy);
+                }
+                return tasksPy;
             })
         .def("removeTask", &TaskManager::removeTask, py::arg("taskID"))
         .def("clear", &TaskManager::clear)

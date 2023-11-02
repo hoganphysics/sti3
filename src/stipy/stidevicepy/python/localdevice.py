@@ -3,6 +3,9 @@ from stipy.bin.stidevicepy import LocalDevice
 from stipy.bin.stipybase import RawEvent
 from stipy.bin.stidevicepy import SynchronousEventVector
 
+from stipy.bin.stipybase import Task
+from stipy.bin.stipybase import TaskBase
+
 import traceback
 
 class EventParsingException(Exception):
@@ -35,8 +38,15 @@ def _parseEventsWrapper(self, eventsIn, synchedEvents):
         self.throwPythonException(traceback.format_exc())
         raise e
 
+def addTask(self: LocalDevice, task):
+    if isinstance(task, TaskBase):
+        self.__addTask_Base(task)
+    elif isinstance(task, Task):
+        self.__addTask(task, task)
 
 
 setattr(LocalDevice, 'parseEventsWrapper', _parseEventsWrapper)
 setattr(LocalDevice, 'parseEvents', _parseEvents)
+
+setattr(LocalDevice, 'addTask', addTask)
 

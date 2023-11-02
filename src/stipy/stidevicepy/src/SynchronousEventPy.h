@@ -10,6 +10,7 @@
 #include <pybind11/pybind11.h>
 
 #include <memory>
+#include <mutex>
 
 
 PYBIND11_MAKE_OPAQUE(STI::Engine::SynchronousEventVector);
@@ -46,6 +47,7 @@ public:
 
     virtual ~SynchronousEventPy() {}
 
+    static std::mutex pyEventManagerMutex;
     static std::shared_ptr<SynchronousEventPyManager> pyEventManager;   //stores reference to python objects to keep them alive
     
     static void addPyReference(const std::shared_ptr<STI::Engine::SynchronousEvent>& value);

@@ -5,6 +5,7 @@
 #include <sti/device/DeviceID.h>
 
 #include "DevicePy.h"
+#include "TaskPy.h"
 #include "PartnerDevicePy.h"
 #include "DeviceMessageReceiverPy.h"
 
@@ -59,6 +60,9 @@ public:
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues);
 
     void addTask(const std::shared_ptr<STI::Utils::Task>& task);
+    void addTask(const std::shared_ptr<STI::Python::TaskPy>& task);
+
+    void addTask(const std::shared_ptr<STI::Python::TaskPy>& task, const pybind11::object& taskObj);
 
     std::shared_ptr<STI::Device::Logger> log();
     std::shared_ptr<STI::Device::Logger> log(const std::string& name);

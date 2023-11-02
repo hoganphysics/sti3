@@ -8,6 +8,7 @@ using STI::Python::SynchronousEventPy;
 using STI::Python::SynchronousEventPyManager;
 
 
+std::mutex SynchronousEventPy::pyEventManagerMutex;
 std::shared_ptr<SynchronousEventPyManager> SynchronousEventPy::pyEventManager = 0;  
 
 

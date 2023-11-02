@@ -50,15 +50,11 @@ public:
     int micros() const;
     int nanos() const;
 
-	void add_day(int days = 1)
-	{
-		timeinfo.tm_mday += days;
-	}
-
-	void add_ns(int ns)
-	{
-		_nanos += ns;
-	}
+	void add_day(int days = 1);
+	void add_hour(int hours);
+	void add_minute(int minutes);
+	void add_sec(int seconds);
+	void add_ns(int ns);
 
 	template<class Archive>
 	void serialize(Archive& archive);
