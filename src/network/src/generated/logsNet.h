@@ -389,7 +389,7 @@ _CORBA_MODULE_BEG
       TLogIDSeq_out& operator=(const TLogIDSeq_var&);
     };
 
-    enum TLogFileType { LogFileURL, LogFileFileHolder, LogFileString /*, __max_TLogFileType=0xffffffff */ };
+    enum TLogFileType { LogFileFileID, LogFileFileHolder, LogFileString /*, __max_TLogFileType=0xffffffff */ };
     typedef TLogFileType& TLogFileType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogFileType;
@@ -428,7 +428,7 @@ _CORBA_MODULE_BEG
 
       TLogFileType type;
 
-      ::CORBA::String_member url;
+      TFileID fileID;
 
       _CORBA_ObjRef_Member< _objref_TFileHolder, TFileHolder_Helper>  fileHolder;
 

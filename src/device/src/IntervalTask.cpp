@@ -22,8 +22,11 @@ IntervalTask::IntervalTask(const std::string& id, double wait_seconds, const std
 : Task(id), waitInterval(wait_seconds), runFunc(runFunc)
 {
 	lastRunTime = std::chrono::system_clock::now();
-	if (waitInterval < 1) {
-		waitInterval = 1;	//minimum wait 1 second
+
+	double minimum_wait_s = 0.1;	//minimum wait 0.1 seconds
+
+	if (waitInterval < minimum_wait_s) {
+		waitInterval = minimum_wait_s;
 	}
 }
 

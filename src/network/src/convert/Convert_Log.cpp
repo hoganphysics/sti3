@@ -2,6 +2,7 @@
 #include "Convert_Log.h"
 #include "Convert_EventEngine.h"
 #include "Convert_ResultsCollector.h"
+#include "Convert_File.h"
 
 
 #include <sti/device/LogID.h>
@@ -27,6 +28,8 @@ using STI::TNetwork::TLogFileType;
 using STI::TNetwork::TLogFile;
 using STI::Device::LogFile;
 
+using STI::TNetwork::TFileID;
+using STI::Utils::FileID;
 
 
 //LogID
@@ -241,14 +244,14 @@ bool STI::Network::convert<LogRecord, TLogRecord>(const LogRecord& logRecord, TL
 template<>
 LogFile::LogFileType STI::Network::convert<TLogFileType, LogFile::LogFileType>(const TLogFileType& tLogFileType)
 {
-    //enum class LogFileType { URL, FileHolder, String };
+    //enum class LogFileType { FileID, FileHolder, String };
 
     LogFile::LogFileType type;
     
     switch (tLogFileType) 
     {
-    case TLogFileType::LogFileURL:
-        type = LogFile::LogFileType::URL;
+    case TLogFileType::LogFileFileID:
+        type = LogFile::LogFileType::FileID;
         break;
     case TLogFileType::LogFileFileHolder:
         type = LogFile::LogFileType::FileHolder;
@@ -271,8 +274,8 @@ TLogFileType STI::Network::convert<LogFile::LogFileType, TLogFileType>(const Log
     
     switch (logFileType) 
     {
-    case LogFile::LogFileType::URL:
-        tType = TLogFileType::LogFileURL;
+    case LogFile::LogFileType::FileID:
+        tType = TLogFileType::LogFileFileID;
         break;
     case LogFile::LogFileType::FileHolder:
         tType = TLogFileType::LogFileFileHolder;
@@ -312,7 +315,7 @@ bool STI::Network::convert<TLogFile, LogFile>(const TLogFile& tLogFile, LogFile&
     logFile.id = convert<TLogID, LogID>(tLogFile.logID);
     logFile.type = convert<TLogFileType, LogFile::LogFileType>(tLogFile.type);
     logFile.logString = convert<CORBA::String_member, std::string>(tLogFile.logString);
-    logFile.url = convert<CORBA::String_member, std::string>(tLogFile.url);
+    logFile.fileID = convert<TFileID, FileID>(tLogFile.fileID);
     convert<STI::TNetwork::TFileHolder_var, std::shared_ptr<STI::Utils::FileHolder>>(tLogFile.fileHolder, logFile.fileHolder);
     return true;
 }
@@ -324,7 +327,7 @@ bool STI::Network::convert<LogFile, TLogFile>(const LogFile& logFile, TLogFile& 
     tLogFile.logID = convert<LogID, TLogID>(logFile.id);
     tLogFile.type = convert<LogFile::LogFileType, TLogFileType>(logFile.type);
     tLogFile.logString = convert<std::string, CORBA::String_member>(logFile.logString);
-    tLogFile.url = convert<std::string, CORBA::String_member>(logFile.url);
+    tLogFile.fileID = convert<FileID, TFileID>(logFile.fileID);
 
     STI::TNetwork::TFileHolder_var tFileHolder;
     convert<std::shared_ptr<STI::Utils::FileHolder>, STI::TNetwork::TFileHolder_var>(logFile.fileHolder, tFileHolder);

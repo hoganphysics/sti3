@@ -74,7 +74,7 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 
 	// *** Task examples *** //
 
-	//Add a task that runs a lambda function every 2 seconds
+	// Add a task that runs a lambda function every 2 seconds
 	auto task1 = std::make_shared<IntervalTask>("task#1", "00:00:02", 
 		[this]() {
 			MixedValue data;

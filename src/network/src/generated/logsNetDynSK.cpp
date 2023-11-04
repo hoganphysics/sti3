@@ -177,7 +177,7 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogIDSeq = _0RL_tc_STI_mTNetwork_mTLogIDSeq;
 #endif
 
-static const char* _0RL_enumMember_STI_mTNetwork_mTLogFileType[] = { "LogFileURL", "LogFileFileHolder", "LogFileString" };
+static const char* _0RL_enumMember_STI_mTNetwork_mTLogFileType[] = { "LogFileFileID", "LogFileFileHolder", "LogFileString" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogFileType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TLogFileType:1.0", "TLogFileType", _0RL_enumMember_STI_mTNetwork_mTLogFileType, 3, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
@@ -190,10 +190,24 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogFileType = _0RL_tc_STI_mTNetw
 
 
 
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFileID[] = {
+  {"filename", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"path", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"origin", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"persistenceLocation", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"creationTime", _0RL_tc_STI_mTNetwork_mTTimeStamp}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTFileID
+#  undef _0RL_tc_STI_mTNetwork_mTFileID
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFileID:1.0", "TFileID", _0RL_structmember_STI_mTNetwork_mTFileID, 5, &_0RL_tcTrack);
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogFile[] = {
   {"logID", _0RL_tc_STI_mTNetwork_mTLogID},
   {"type", _0RL_tc_STI_mTNetwork_mTLogFileType},
-  {"url", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"fileID", _0RL_tc_STI_mTNetwork_mTFileID},
   {"fileHolder", CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileHolder:1.0", "TFileHolder", &_0RL_tcTrack)},
   {"logString", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)}
 };
@@ -205,6 +219,8 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogFile = CORBA::TypeCode::PR
 
 
 
+
+
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -213,6 +229,14 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogFile = _0RL_tc_STI_mTNetwork_mTLogFile;
 #endif
+
+
+
+
+
+
+
+
 
 
 

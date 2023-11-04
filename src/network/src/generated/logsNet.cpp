@@ -95,7 +95,7 @@ STI::TNetwork::TLogFile::operator>>= (cdrStream &_n) const
 {
   (const TLogID&) logID >>= _n;
   type >>= _n;
-  _n.marshalString(url,0);
+  (const TFileID&) fileID >>= _n;
   TFileHolder_Helper::marshalObjRef(fileHolder,_n);
   _n.marshalString(logString,0);
 
@@ -106,7 +106,7 @@ STI::TNetwork::TLogFile::operator<<= (cdrStream &_n)
 {
   (TLogID&)logID <<= _n;
   (TLogFileType&)type <<= _n;
-  url = _n.unmarshalString(0);
+  (TFileID&)fileID <<= _n;
   fileHolder = TFileHolder_Helper::unmarshalObjRef(_n);
   logString = _n.unmarshalString(0);
 

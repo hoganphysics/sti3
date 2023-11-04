@@ -21,6 +21,8 @@ LocalTaskManager::LocalTaskManager()
 {
     persistenceRefresher = [](){};
     
+    taskScheduler.setMinSleep(0.1);     //seconds
+
     taskScheduler.start();
     taskScheduler.addListener(this);
 }

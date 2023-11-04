@@ -47,6 +47,7 @@ class TestDevice(stidevicepy.LocalDevice):
 
         # Add a task that runs 'task_function' every 2 seconds
         task1 = stipy.IntervalTask("task#1", "00:00:02", task_function)
+        # task1 = stipy.IntervalTask("task#1", 2, task_function)
         self.addTask(task1)
 
 

@@ -44,14 +44,14 @@ module TNetwork
 	};
     typedef sequence<TLogID> TLogIDSeq;
 
-    enum TLogFileType { LogFileURL, LogFileFileHolder, LogFileString };
+    enum TLogFileType { LogFileFileID, LogFileFileHolder, LogFileString };
 
     interface TFileHolder;
     struct TLogFile
     {
         TLogID logID;
         TLogFileType type;
-        string url;
+        TFileID fileID;
         TFileHolder fileHolder;
         string logString;
     };

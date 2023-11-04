@@ -49,6 +49,8 @@ public:
 
 	void runNow(const std::string& taskID);
 
+	void setMinSleep(double sleep);		//in seconds
+
 private:
 	
 	void run(std::shared_ptr<Task>& task);
@@ -70,9 +72,10 @@ private:
 	std::thread taskThread;
 	bool running;
 
+	double minSleep;
+
 	mutable std::mutex schedulerMutex;
 	mutable std::condition_variable schedulerCondition;
-
 };
 
 class TaskSchedulerEvent

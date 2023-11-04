@@ -14,6 +14,7 @@ using STI::Utils::TaskSchedulerEventType;
 TaskScheduler::TaskScheduler()
 : running(false)
 {
+	setMinSleep(1);		//seconds
 }
 
 TaskScheduler::~TaskScheduler()
@@ -215,9 +216,14 @@ void TaskScheduler::run(std::shared_ptr<Task>& task)
 	}
 }
 
+void TaskScheduler::setMinSleep(double sleep)
+{
+	std::unique_lock<std::mutex> taskLock(schedulerMutex);
+	minSleep = sleep;	//seconds
+}
+
 void TaskScheduler::taskLoop()
 {
-	double minSleep = 1;			//seconds
 	double maxSleep = 10000;		//seconds
 	double coarseSleep = 10;		//boundary (in seconds) between using seconds vs milliseconds to specify sleep
 	double nextSleep = maxSleep;	//seconds
