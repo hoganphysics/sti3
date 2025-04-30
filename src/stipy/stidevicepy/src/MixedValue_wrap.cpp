@@ -43,6 +43,36 @@ void init_MixedValue(py::module& m)
         .def("isType", py::overload_cast<const std::vector<MixedValueType>&>(&MixedValuePy::isType, py::const_), py::arg("types"))
         .def("clear", &MixedValuePy::clear)
         .def("print", &MixedValuePy::print)
+        .def("__len__",
+            [](const MixedValuePy& val) {
+                return val.getVector().size();
+            })
+        .def("__getitem__",
+            [](const MixedValuePy& val, int index) {
+                if (val.getType() != MixedValueType::Vector) {
+                    throw py::type_error("Not a Vector");
+                }
+                if (index < 0) {
+                    index += val.getVector().size();
+                }
+                if (index < 0 || index >= val.getVector().size()) {
+                    throw py::index_error("Index out of range");
+                }
+
+                // return MixedValuePy::convertValue(val.getVector().at(index));
+                return MixedValuePy(val.getVector().at(index));
+            })
+        // .def("__iter__",
+        //     [](const MixedValuePy& val) 
+        //     {
+        //         if (val.getType() != MixedValueType::Vector) {
+        //             throw py::type_error("Attempted to use an iterator on a MixedValue that is not a Vector");
+        //         }
+        //         // py::list pyList = val.getValue_py();
+        //         // return py::make_iterator(val.getVector().begin(), val.getVector().end()); 
+        //         // return py::make_iterator(pyList.begin(), pyList.end(), pyList);
+        //     }, 
+        //     py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__repr__",
             [](const MixedValuePy& val) {
                 return val.print();

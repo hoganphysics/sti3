@@ -64,7 +64,7 @@ class TestDeviceEvent(stidevicepy.SynchronousEvent):
 #dev1=TestDevice("TestDevice 2", "maximus", 1, "localhost/0/BridgeServer")
 dev1=TestDevice("TestDevice 2", "localhost", 1, "localhost/0/STI Server")
 
-hub=stidevicepy.NetworkDeviceHub("10.34.203.51:2809")
+hub=stidevicepy.NetworkDeviceHub("192.168.1.6:2809")
 
 hub.addDevice(dev1)
 

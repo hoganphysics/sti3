@@ -162,7 +162,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 LocalDevice::~LocalDevice()
 {
-	disable();
+	// disable();
 	localCollection->clear();
 }
 

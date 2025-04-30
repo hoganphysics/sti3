@@ -32,6 +32,11 @@ MixedValuePy::MixedValuePy(const py::object& value)
     setValue_py(value);
 }
 
+const STI::Utils::MixedValue& MixedValuePy::getMixedValue() const
+{
+    return (*this);
+}
+
 STI::Utils::MixedValue& MixedValuePy::getMixedValue()
 {
     return (*this);
@@ -71,7 +76,8 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
             const STI::Utils::MixedValueVector& vec = value.getVector();
 
             for (auto& v : vec) {
-                pyList.append( convertValue(v) );
+                // pyList.append( convertValue(v) );
+                pyList.append( MixedValuePy(v) );
             }
 
             obj = pyList;
@@ -205,3 +211,11 @@ void MixedValuePy::addValue_py(const MixedValuePy& value)
 {
     MixedValue::addValue( static_cast<const MixedValue&>(value) );
 }
+
+// pybind11::object MixedValuePy::flatten() const
+// {
+//     py::list nodes;
+
+//     //DFS 
+
+// }

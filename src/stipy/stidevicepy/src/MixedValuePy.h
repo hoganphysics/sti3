@@ -21,6 +21,7 @@ public:
     MixedValuePy(const MixedValue& value);
     MixedValuePy(const pybind11::object& value);
 
+    const STI::Utils::MixedValue& getMixedValue() const;
     STI::Utils::MixedValue& getMixedValue();
     pybind11::object getValue_py() const;
 
@@ -30,9 +31,11 @@ public:
     void setValue_py(const MixedValuePy& value);
     void addValue_py(const MixedValuePy& value);
 
-private:
+    // pybind11::object flatten() const;
 
     static pybind11::object convertValue(const MixedValue& value);
+
+private:
 
     template<typename PyT, typename T>
     bool setValueExtract(const pybind11::object& value)

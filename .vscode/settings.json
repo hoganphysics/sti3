@@ -100,5 +100,6 @@
         "ranges": "cpp",
         "span": "cpp"
     },
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

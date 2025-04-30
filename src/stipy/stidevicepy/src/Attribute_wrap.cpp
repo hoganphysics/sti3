@@ -70,7 +70,8 @@ void init_Attribute(py::module& m)
                 auto gil_refresher = [refresher]() {
                     std::string result = "";
                     {
-                        pybind11::gil_scoped_release release;
+                        pybind11::gil_scoped_acquire acquire;
+                        // pybind11::gil_scoped_release release;
                         result = refresher();
                     }
                     return result;
@@ -85,7 +86,8 @@ void init_Attribute(py::module& m)
                 auto gil_setter = [setter](const std::string& value) {
                     bool result = false;
                     {
-                        pybind11::gil_scoped_release release;
+                        pybind11::gil_scoped_acquire acquire;
+                        // pybind11::gil_scoped_release release;
                         result = setter(value);
                     }
                     return result;

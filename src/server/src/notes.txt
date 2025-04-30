@@ -1,0 +1,6 @@
+
+~/code/dev/sti3/src/server/test$ ./start_nameserver.sh
+
+
+export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3/lib:$LD_LIBRARY_PATH
+./STIServer

@@ -23,7 +23,7 @@ namespace py = pybind11;
 using STI::Python::DevicePy;
 using STI::Utils::MixedValueType;
 using STI::Device::ChannelType;
-
+using STI::Python::MixedValuePy;
 
 void init_Device(py::module& m)
 {
@@ -40,8 +40,10 @@ void init_Device(py::module& m)
         .def("getProfileManager", &DevicePy::getProfileManager)
         .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
-        .def("write", &DevicePy::write, py::arg("channelNumber"), py::arg("value"))
+        .def("write", py::overload_cast<short, const MixedValuePy&>(&DevicePy::write), py::arg("channelNumber"), py::arg("value"))
+        .def("write", py::overload_cast<short, const pybind11::object&>(&DevicePy::write), py::arg("channelNumber"), py::arg("value"))
         .def("read", py::overload_cast<short>(&DevicePy::read), py::arg("channelNumber"))
+        .def("read", py::overload_cast<short, const MixedValuePy&>(&DevicePy::read), py::arg("channelNumber"), py::arg("value"))
         .def("read", py::overload_cast<short, const pybind11::object&>(&DevicePy::read), py::arg("channelNumber"), py::arg("value"))
         .def("stopRW", &DevicePy::stopRW)
         .def("getAttribute",

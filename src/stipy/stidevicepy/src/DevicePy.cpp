@@ -192,6 +192,11 @@ std::shared_ptr<STI::Device::LogManager> DevicePy::getLogManager()
 bool DevicePy::write(short channel, const pybind11::object& value)
 {
     MixedValuePy valuepy(value);
+    return write(channel, valuepy);
+}
+
+bool DevicePy::write(short channel, const MixedValuePy& valuepy)
+{
     return (device_ != 0) && device_->write(channel, valuepy.getMixedValue());
 }
 
@@ -202,8 +207,13 @@ pybind11::object DevicePy::read(short channel)
 
 pybind11::object DevicePy::read(short channel, const pybind11::object& value)
 {
-    MixedValue data;
     MixedValuePy valuepy(value);
+    return read(channel, valuepy);
+}
+
+pybind11::object DevicePy::read(short channel, const MixedValuePy& valuepy)
+{
+    MixedValue data;
 
     bool success = (device_ != 0) && device_->read(channel, valuepy.getMixedValue(), data);
 

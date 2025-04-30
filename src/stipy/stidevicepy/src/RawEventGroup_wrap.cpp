@@ -68,6 +68,10 @@ void init_RawEventGroup(py::module& m)
                 MixedValuePy val = self.getMetaData(key);
                 return val.getValue_py();                
             })
+        .def("metadata", [](RawEventGroup& self) {
+                MixedValuePy value(self.getMetaData());
+                return py::dict(value.getValue_py());
+            })
 
         .def("var", &RawEventGroup::var, py::arg("fullVarName"), py::arg("stackTrace"))
 

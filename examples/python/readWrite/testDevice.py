@@ -59,16 +59,19 @@ class TestDevice(stidevicepy.LocalDevice):
     def readChannel(self, channel, value):
         if channel == 10:
             #thermocouple voltage
+            print("Read Ch:" + str(channel) + ", " + "in value: " + str(value))
             return 34.5     #double measurement (input)
             success = True
         elif channel == 11:
             #vector arguments (output)
+            print("Read ch 11: " + str(value))
             mval = stipy.MixedValue()
             mval.setValue(value)    # wrap in MixedValue to allow type checking, below
             if mval.isType([stipy.MixedValueType.Number, stipy.MixedValueType.String]):
-                return 12.2 * value[0]     #number measurement (input)
+                return 12.2 * value[0].getValue()     #number measurement (input)
                 success = True
         elif channel == 12:
+            print("Read ch 12: " + str(value))
             return [3.2 * value, "example string result", True]   #vector measurement (input)
 
         return None
@@ -102,7 +105,7 @@ data = device.read(12, 23.4)
 print("Measurement 3: " + str(data))
 
 
-nameServiceAddr = "192.168.1.4:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.6:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)

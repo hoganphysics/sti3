@@ -53,19 +53,19 @@ class TestDevice(stidevicepy.LocalDevice):
 
 
 config = stipy.Configuration(
-    {'Device Name': 'TestDevice',
+    {'Device Name': 'TestDevice2',
      'IP Address': 'localhost',
      'Module': '0',
      'Target Server': 'localhost/0/STI Server'})
 
 device = TestDevice(config)
 
-nameServiceAddr = "192.168.1.4:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.6:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)
 
-# hub.run(True)
+hub.run(True)
 
 
 

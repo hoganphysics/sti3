@@ -46,9 +46,13 @@ void init_Channel(py::module& m)
 //        .def("getMetaData", &Channel::getMetaData)
         // .def("getMetaData", py::overload_cast<>(&Channel::getMetaData, py::const_))
         // .def("getMetaData", py::overload_cast<const std::string&>(&Channel::getMetaData, py::const_))
+        // .def("metadata", [](Channel& self) {
+        //         MixedValuePy value(self.getMetaData());
+        //         return value.getValue_py();
+        //     })
         .def("metadata", [](Channel& self) {
                 MixedValuePy value(self.getMetaData());
-                return value.getValue_py();
+                return py::dict(value.getValue_py());
             })
         .def("metadata", [](Channel& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));

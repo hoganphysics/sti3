@@ -98,6 +98,12 @@ void init_DeviceHub(py::module& m)
 
     m.def("connect", &LocalDeviceHub::connect, "Connect two hubs");
 
+    py::class_<NetworkDeviceHub::PersistenceOptions>(m, "PersistenceOptions")
+        .def(py::init<bool, bool>(), py::arg("bindToRootContext"), py::arg("bindToTargetContexts"))
+        .def(py::init<>())
+        .def_readwrite("bindToRootContext", &NetworkDeviceHub::PersistenceOptions::bindToRootContext)
+        .def_readwrite("bindToTargetContexts", &NetworkDeviceHub::PersistenceOptions::bindToTargetContexts)
+        ;
 
     py::class_<NetworkDeviceHub, std::shared_ptr<NetworkDeviceHub>>(m, "NetworkDeviceHub")
         .def(py::init<const std::string&>(), py::arg("nameServiceAddress") )
@@ -126,6 +132,10 @@ void init_DeviceHub(py::module& m)
                 return ids;
             })
         // .def("run", py::overload_cast<bool>(&NetworkDeviceHub::run), py::arg("block") = true)
+        .def("getPersistenceOptions", &NetworkDeviceHub::getPersistenceOptions)
+        .def("setPersistenceOptions", [](NetworkDeviceHub& self, NetworkDeviceHub::PersistenceOptions& options) {
+            self.getPersistenceOptions() = options;
+        })
         .def("run", 
             [](NetworkDeviceHub& self, bool block = true) {
                 py::gil_scoped_release release;

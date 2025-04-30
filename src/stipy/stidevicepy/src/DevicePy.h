@@ -49,10 +49,14 @@ public:
     std::shared_ptr<STI::Device::TaskManager> getTaskManager();
     std::shared_ptr<STI::Device::LogManager> getLogManager();
 
+    bool write(short channel, const MixedValuePy& value);
     bool write(short channel, const pybind11::object& value);
     pybind11::object read(short channel);
+    pybind11::object read(short channel, const MixedValuePy& valuepy);
     pybind11::object read(short channel, const pybind11::object& value);
     void stopRW();
+
+    
 
     std::string getAttribute(const std::string& key);
     bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute);

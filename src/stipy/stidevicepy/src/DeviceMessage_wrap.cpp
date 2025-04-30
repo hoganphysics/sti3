@@ -82,7 +82,7 @@ void init_DeviceMessage(py::module& m)
         ;
 
     py::class_<ChannelUpdateMessage, DeviceMessage, std::shared_ptr<ChannelUpdateMessage>>(m, "ChannelUpdateMessage")
-        // .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") )
+        .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") )
         .def_readonly("channelUpdateType", &ChannelUpdateMessage::channelUpdateType)
         // .def_readonly("channelValues", &ChannelUpdateMessage::channelValues)
         .def("channelValues",
@@ -91,7 +91,8 @@ void init_DeviceMessage(py::module& m)
                 
                 for (auto& tuple : mess.channelValues) {
                     MixedValuePy pyval(tuple.second);
-                    values[py::int_{tuple.first}] = pyval.getValue_py();
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[py::int_{tuple.first}] = pyval;
                 }
                 return values;
             })
@@ -100,6 +101,12 @@ void init_DeviceMessage(py::module& m)
         ;
 
     py::class_<AttributeUpdateMessage, DeviceMessage, std::shared_ptr<AttributeUpdateMessage>>(m, "AttributeUpdateMessage")
+        // .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") )
+        .def(py::init(
+            [](const STI::Device::DeviceID& sourceID) 
+                {
+                    return new AttributeUpdateMessage(sourceID);
+                } ), py::arg("sourceID"))
         .def_readonly("attributes", &AttributeUpdateMessage::attributes)
         ;
 
