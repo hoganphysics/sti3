@@ -41,7 +41,7 @@ void init_Channel(py::module& m)
         .def("name", &Channel::getChannelName)
         .def("getLastValue", [](Channel& self) {
                 MixedValuePy value(self.getLastValue());
-                return value.getValue_py();
+                return value;
             })
 //        .def("getMetaData", &Channel::getMetaData)
         // .def("getMetaData", py::overload_cast<>(&Channel::getMetaData, py::const_))
@@ -51,8 +51,17 @@ void init_Channel(py::module& m)
         //         return value.getValue_py();
         //     })
         .def("metadata", [](Channel& self) {
-                MixedValuePy value(self.getMetaData());
-                return py::dict(value.getValue_py());
+                // MixedValuePy value(self.getMetaData());
+                // return py::dict(value.getValue_py());
+                auto& vec = self.getMetaData().getVector();
+                py::dict values;
+                
+                for (auto& tuple : vec) {
+                    MixedValuePy pyval(tuple.getVector().at(1));
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[tuple.getVector().at(0).getString().c_str()] = pyval;
+                }
+                return values;
             })
         .def("metadata", [](Channel& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));

@@ -39,12 +39,21 @@ void init_Attribute(py::module& m)
         //         return true;
         //     })
         .def("metadata", [](Attribute& self) {
-                MixedValuePy value(self.getMetaData());
-                return py::dict(value.getValue_py());
+                // MixedValuePy value();
+                auto& vec = self.getMetaData().getVector();
+                // return py::dict(value.getValue_py());
+                py::dict values;
+                
+                for (auto& tuple : vec) {
+                    MixedValuePy pyval(tuple.getVector().at(1));
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[tuple.getVector().at(0).getString().c_str()] = pyval;
+                }
+                return values;
             })
         .def("metadata", [](Attribute& self, const std::string& key) {
                 MixedValuePy value(self.getMetaData(key));
-                return value.getValue_py();
+                return value;
             }, py::arg("key"))
         .def("__repr__",
             [](const Attribute& att) {

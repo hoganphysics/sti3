@@ -322,6 +322,11 @@ std::string STIPyServer::getUserName() const
     return username;
 }
 
+std::shared_ptr<STI::Network::NetworkDeviceHub> STIPyServer::getDeviceHub() const
+{
+    return libDeviceHub;
+}
+
 std::string STIPyServer::printNetwork()
 {
     std::string result;

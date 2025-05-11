@@ -1,5 +1,6 @@
 #include <sti/LocalDeviceHub.h>
 #include "DevicePy.h"
+#include "NodeWalkerPy.h"
 #include <sti/network/HubID.h>
 
 #include <sti/NetworkDeviceHub.h>
@@ -20,9 +21,52 @@ using STI::Network::HubID;
 using STI::Network::LocalDeviceHub;
 using STI::Network::NetworkDeviceHub;
 
+using STI::Python::NodeWalkerPy;
+using STI::Python::HubGraphNodePy;
+using STI::Python::DeviceGraphNodePy;
+
 
 void init_DeviceHub(py::module& m) 
 {
+    py::class_<HubGraphNodePy>(m, "HubGraphNode")
+        .def("getHubID", &HubGraphNodePy::getHubID)
+        .def("getNodes", &HubGraphNodePy::getNodes)
+        .def("__repr__",
+            [](const HubGraphNodePy& self) {
+                std::stringstream s;
+                s << "HubGraphNode (" << self.getHubID().getID() << ") \n";
+                return s.str();
+            })
+        ;
+
+    py::class_<NodeWalkerPy>(m, "NodeWalker")
+        .def("getNode", &NodeWalkerPy::getNode)
+        .def("getConnections", &NodeWalkerPy::getConnections)
+        .def("__repr__",
+            [](const NodeWalkerPy& self) {
+                std::stringstream s;
+                s << "NodeWalker (" << self.getNode().getHubID().getID() << ") \n";
+                for(const auto& connection : self.getConnections()) {
+                    s << "* " << connection.getNode().getHubID().getID() << "\n";
+                }
+                return s.str();
+            })
+        ;
+    
+    py::class_<DeviceGraphNodePy>(m, "DeviceGraphNode")
+        .def("getID", &DeviceGraphNodePy::getID)
+        .def("getNode", &DeviceGraphNodePy::getNode)
+        .def("getOutConnections", &DeviceGraphNodePy::getOutConnections)
+        .def("__repr__",
+            [](const DeviceGraphNodePy& self) {
+                std::stringstream s;
+                s << "DeviceGraphNode (" << self.getID().getID() << ") \n";
+                for(const auto& connection : self.getOutConnections()) {
+                    s << "* " << connection.getID() << "\n";
+                }
+                return s.str();
+            })
+        ;
 
     // py::class_<LocalDeviceHub::HubNodeWalker::NodeType::DirectedGraphNodeType, 
     //             std::unique_ptr<LocalDeviceHub::HubNodeWalker::NodeType::DirectedGraphNodeType>>(m, "DeviceDirectedGraphNode")
@@ -36,6 +80,17 @@ void init_DeviceHub(py::module& m)
     //     .def(py::init<>())
     //     .def_readonly("id", &LocalDeviceHub::HubNodeWalker::NodeType::id)
     //     .def_readonly("nodes", &LocalDeviceHub::HubNodeWalker::NodeType::nodes)
+    //     // ...existing code...
+    //     .def_property_readonly("nodes", [](const LocalDeviceHub::HubNodeWalker::NodeType &self) {
+    //         std::vector<std::shared_ptr<LocalDeviceHub::HubNodeWalker::NodeType::DirectedGraphNodeType>> result;
+    //         result.reserve(self.nodes.size());
+    //         for (auto &node : self.nodes) {
+    //             // Convert each unique_ptr to a shared_ptr (or raw pointer) before returning
+    //             result.push_back(std::shared_ptr<LocalDeviceHub::HubNodeWalker::NodeType::DirectedGraphNodeType>(node.get()));
+    //         }
+    //         return result;
+    //     })
+    //     // ...existing code...
     //     ;
 
     // py::class_<LocalDeviceHub::HubNodeWalker, std::unique_ptr<LocalDeviceHub::HubNodeWalker>>(m, "HubNodeWalker")
@@ -84,6 +139,11 @@ void init_DeviceHub(py::module& m)
         })
         .def("containsHub", &LocalDeviceHub::containsHub)
         .def("disconnect", &LocalDeviceHub::disconnect)
+        .def("walk", [](LocalDeviceHub& self) {
+            LocalDeviceHub::HubNodeWalker walker;
+            self.walk(walker);
+            return NodeWalkerPy(walker);
+        })
         .def("__repr__",
             [](const LocalDeviceHub& hub) {
                 std::stringstream s;
@@ -142,6 +202,11 @@ void init_DeviceHub(py::module& m)
                 return self.run(block);
             })
         .def("shutdown", &NetworkDeviceHub::shutdown)
+        .def("walk", [](NetworkDeviceHub& self) {
+            LocalDeviceHub::HubNodeWalker walker;
+            self.walk(walker);
+            return NodeWalkerPy(walker);
+        })
         .def("printNetwork", py::overload_cast<>(&NetworkDeviceHub::printNetwork))
         .def("printNetwork", py::overload_cast<const std::string&>(&NetworkDeviceHub::printNetwork), py::arg("baseContext"))
         ;

@@ -160,7 +160,7 @@ bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_pt
 	{
 	}
 
-    return false;
+    return success;
 }
 
 void RemoteAttributeManager::getAttributes(std::vector<std::shared_ptr<Attribute>>& attributes)

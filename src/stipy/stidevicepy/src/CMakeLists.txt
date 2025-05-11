@@ -41,6 +41,7 @@ add_library(sticommonpy STATIC
     DeviceCollectionPy.cpp
     DevicePy.cpp
     MixedValuePy.cpp
+    NodeWalkerPy.cpp
     PartnerDevicePy.cpp
     PersistenceManagerPy.cpp
     ProfilePy.cpp

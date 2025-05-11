@@ -2,7 +2,6 @@
 #include "RemoteAttribute.h"
 #include "RemoteAttributeManager.h"
 
-
 using STI::Network::RemoteAttribute;
 using STI::Network::RemoteAttributeManager;
 
@@ -57,7 +56,7 @@ void RemoteAttribute::refreshValue()
 bool RemoteAttribute::setValue(const std::string& value)
 {
     if (remoteManager != 0) {
-        return remoteManager->setValue(key_, value_);
+        return remoteManager->setValue(key_, value);
     }
     return false;
 }

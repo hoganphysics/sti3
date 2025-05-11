@@ -98,7 +98,11 @@
         "cfenv": "cpp",
         "*.ipp": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "cassert": "cpp",
+        "cerrno": "cpp",
+        "cfloat": "cpp",
+        "climits": "cpp"
     },
     "esbonio.sphinx.confDir": "",
     "java.compile.nullAnalysis.mode": "automatic"

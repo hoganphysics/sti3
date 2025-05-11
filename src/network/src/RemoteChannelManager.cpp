@@ -179,7 +179,7 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
         return convert<TMixedValue, MixedValue>(tData, data);
     }
 
-    return false;
+    return success;
 }
 
 void RemoteChannelManager::stop()

@@ -34,7 +34,7 @@ bool AttributeManagerPy::setValue(const std::string& key, const std::string& val
 std::shared_ptr<STI::Device::Attribute> AttributeManagerPy::getAttribute(const std::string& key)
 {
     std::shared_ptr<STI::Device::Attribute> attribute;
-    if (getAttribute(key, attribute)) {
+    if (AttributeManagerPy::getAttribute(key, attribute)) {
         return attribute;
     }
 
@@ -42,14 +42,14 @@ std::shared_ptr<STI::Device::Attribute> AttributeManagerPy::getAttribute(const s
     //throw missingKey;
 
     //not found
-    attribute = std::make_shared<STI::Device::LocalAttribute>("", "");
+    attribute = std::make_shared<STI::Device::LocalAttribute>("1", "2");
     return attribute;
 }
 
 std::vector<std::shared_ptr<STI::Device::Attribute>> AttributeManagerPy::getAttributes()
 {
     std::vector<std::shared_ptr<STI::Device::Attribute>> attributes;
-    getAttributes(attributes);
+    AttributeManagerPy::getAttributes(attributes);
     return attributes;
 }
 

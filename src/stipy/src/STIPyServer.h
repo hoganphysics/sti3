@@ -128,6 +128,8 @@ public:
     void setUserName(const std::string& name);
     std::string getUserName() const;
 
+    std::shared_ptr<STI::Network::NetworkDeviceHub> getDeviceHub() const;
+
 private:
 
     bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);

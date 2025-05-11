@@ -69,8 +69,17 @@ void init_RawEventGroup(py::module& m)
                 return val.getValue_py();                
             })
         .def("metadata", [](RawEventGroup& self) {
-                MixedValuePy value(self.getMetaData());
-                return py::dict(value.getValue_py());
+                // MixedValuePy value(self.getMetaData());
+                // return py::dict(value.getValue_py());
+                auto& vec = self.getMetaData().getVector();
+                py::dict values;
+                
+                for (auto& tuple : vec) {
+                    MixedValuePy pyval(tuple.getVector().at(1));
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[tuple.getVector().at(0).getString().c_str()] = pyval;
+                }
+                return values;
             })
 
         .def("var", &RawEventGroup::var, py::arg("fullVarName"), py::arg("stackTrace"))
