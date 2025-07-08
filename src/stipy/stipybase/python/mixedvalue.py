@@ -77,7 +77,8 @@ def _unflatten_vector(nodes: List[MixedValueNode], level) -> MixedValue:
     i = 0
 
     while i < len(nodes):
-        if len(nodes[i].index)-1 == level:
+        if len(nodes[i].index) - 1 == level or len(nodes[i].index) == 0:
+            # catches missing index information to avoid infinite recursion
             out.addValue(nodes[i].value)
             i += 1
         else:

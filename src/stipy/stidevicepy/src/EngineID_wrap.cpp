@@ -3,7 +3,9 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+// #include <sti/utils/utils.h>
 
+#include <sstream>
 using STI::Engine::EngineID;
 
 namespace py = pybind11;
@@ -20,7 +22,16 @@ void init_EngineID(py::module& m)
 
         .def("__repr__",
             [](const EngineID& id) {
-                return id.getNumber();
+                std::stringstream s;
+                s << "EngineID (" << id.getNumber() << ")";
+                return s.str();
+                // return STI::Utils::valueToString(id.getNumber());
+            })
+        .def("__hash__",
+            [](const EngineID& id) {
+                std::hash<int> hasher;
+                auto hash = hasher(id.getNumber());
+                return hash;
             })
         .def("__eq__",  // operator ==
             [](const EngineID& self, const EngineID& other) {

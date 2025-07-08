@@ -55,7 +55,16 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
         currentShot = shot;
     }
     
-    func();
+    try {
+        func();
+    }
+    catch (...) {
+        {
+            std::unique_lock<std::mutex> shotLock(shotMutex);
+            makingShot = false;
+        }
+        throw;
+    }
 
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);

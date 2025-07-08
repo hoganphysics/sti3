@@ -230,7 +230,7 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseT
     if (ticket != 0) {
 
         if (ticket->getStatus() == PyParseTicket::TicketStatus::Complete) {
-            resultTicket = play(ticket->getParseID(), repeats);            
+            resultTicket = play(ticket->getParseID());            
         }
         else {
             if (libDevice == 0) return 0;
@@ -249,7 +249,7 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseT
     return resultTicket;
 }
 
-std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID, unsigned repeats)
+std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& parseID)
 {
     STI::Engine::PlayJobStatus playJobStatus;
     bool success = false;

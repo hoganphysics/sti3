@@ -13,6 +13,10 @@ namespace Engine
 class EngineJobSourceID
 {
 public:
+
+	EngineJobSourceID() = default;
+	EngineJobSourceID(const std::string& user, const std::string& machine) : user(user), machine(machine) {}
+
 	std::string user;
 	std::string machine;
 

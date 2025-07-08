@@ -23,6 +23,8 @@ void init_ShotConfig(py::module& m)
 
     py::class_<EngineJobSourceID>(m, "EngineJobSourceID")
         .def(py::init<>())
+        .def(py::init<const std::string&, const std::string&>(),
+            py::arg("user"), py::arg("machine"))
         .def_readwrite("user", &EngineJobSourceID::user)
         .def_readwrite("machine", &EngineJobSourceID::machine)
 
@@ -35,6 +37,9 @@ void init_ShotConfig(py::module& m)
 
     py::class_<STI::Engine::ShotConfig>(m, "ShotConfig")
         .def(py::init<>())
+        .def(py::init<ShotType, const EngineJobSourceID&, int, const std::string&, const std::string&>(),
+            py::arg("shotType"), py::arg("jobSourceID"), py::arg("targetEnginePool"),
+            py::arg("file") , py::arg("comment"))
         // .def("type", [](const ShotConfig& self) {
         //         return printShotType(self.shotType);
         //     })

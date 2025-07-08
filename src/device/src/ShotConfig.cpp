@@ -15,6 +15,11 @@ ShotConfig::ShotConfig()
     shotType = ShotType::Single;
 }
 
+ShotConfig::ShotConfig(ShotType shotType, const EngineJobSourceID& jobSourceID, int targetEnginePool, 
+    const std::string& file, const std::string& comment)
+: shotType(shotType), jobSourceID(jobSourceID), targetEnginePool(targetEnginePool), file(file), comment(comment)
+{
+}
 
 std::string ShotConfig::print() const
 {

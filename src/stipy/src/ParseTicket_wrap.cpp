@@ -64,6 +64,7 @@ void init_ParseTicket(py::module& m)
         .def("rootgroup", &STI::Python::PyParseTicket::getEvents)
         .def("status", &STI::Python::PyParseTicket::getStatus)
         .def("getParseResult", &STI::Python::PyParseTicket::getParseResult)
+        .def("getParseID", &STI::Python::PyParseTicket::getParseID)
         .def("__repr__",
             [](const PyParseTicket& self) {
                 std::stringstream s;

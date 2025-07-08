@@ -92,6 +92,15 @@ pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::objec
     return py::none();
 }
 
+void LocalDevicePy::parseEventsDefault(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)
+{
+    if (device == 0) {
+        return;
+    }
+    device->parseEventsDefault(events, synchedEvents);
+}
+
+
 std::shared_ptr<STI::Device::LocalChannel> LocalDevicePy::addChannel(unsigned short channelNumber, STI::Device::ChannelType type,
     STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, const std::string& defaultName)
 {

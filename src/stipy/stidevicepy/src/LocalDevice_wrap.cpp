@@ -47,6 +47,7 @@ void init_LocalDevice(py::module& m)
         .def("readChannel", &LocalDevicePy::readChannel, py::arg("channelNumber"), py::arg("value"))
         // .def("parseEvents", &LocalDevicePy::parseEvents, py::arg("eventsIn"), py::arg("synchedEvents")) //py::call_guard<py::gil_scoped_release>() , py::keep_alive<1, 2>() py::return_value_policy::reference
         .def("parseEventsWrapper", &LocalDevicePy::parseEventsWrapper, py::arg("eventsIn"), py::arg("synchedEvents"))
+        .def("parseEventsDefault", &LocalDevicePy::parseEventsDefault, py::arg("eventsIn"), py::arg("synchedEvents"))
         .def("addInfo", &LocalDevicePy::addInfo, py::arg("id"), py::arg("name"))
         .def("addWarning", &LocalDevicePy::addWarning, py::arg("id"), py::arg("name"))
         .def("throwConflictException", 

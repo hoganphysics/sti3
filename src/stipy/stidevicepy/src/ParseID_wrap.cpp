@@ -13,6 +13,10 @@ void init_ParseID(py::module& m)
 
     py::class_<TimeStamp>(m, "TimeStamp")
         .def(py::init<>())
+        .def(py::init<int, int, int, int, int, int, int, int, int>(),
+            py::arg("year"), py::arg("month"), py::arg("day"),
+            py::arg("hour"), py::arg("minute"), py::arg("sec"),
+            py::arg("millis") = 0, py::arg("micros") = 0, py::arg("nanos"))
         .def("year", &TimeStamp::year)
         .def("month", &TimeStamp::month)
         .def("day", &TimeStamp::day)
@@ -41,9 +45,17 @@ void init_ParseID(py::module& m)
             })
         ;
 
-
     py::class_<STI::Engine::ParseID>(m, "ParseID")
         .def(py::init<>())
+        .def(py::init(
+            [](const STI::Engine::ParseID& parseID) 
+            {
+                return STI::Engine::ParseID(parseID.parseTimestamp, parseID.shotConfig, parseID.sequenceEntryID);
+            } ), py::arg("parseID"))
+        .def(py::init<const TimeStamp&, const STI::Engine::ShotConfig&>(),
+            py::arg("parseTimestamp"), py::arg("shotConfig"))
+        .def(py::init<const TimeStamp&, const STI::Engine::ShotConfig&, const STI::Engine::SequenceEntryID&>(),
+            py::arg("parseTimestamp"), py::arg("shotConfig"), py::arg("sequenceEntryID"))
         .def_readonly("parseTimestamp", &ParseID::parseTimestamp)
         .def_readonly("shotConfig", &ParseID::shotConfig)
         .def("__repr__",

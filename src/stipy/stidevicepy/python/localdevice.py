@@ -23,6 +23,7 @@ class EventConflictException(Exception):
 
 def _parseEvents(self: LocalDevice, eventsIn: dict[float, list[RawEvent]], synchedEvents: SynchronousEventVector) -> None:
     '''User defined conversion of RawEvents to SynchronousEvent'''
+    self.parseEventsDefault(eventsIn, synchedEvents)
     return
 
 def _parseEventsWrapper(self, eventsIn, synchedEvents):

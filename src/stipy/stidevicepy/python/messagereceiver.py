@@ -23,4 +23,3 @@ def addListener(self, type: DeviceMessageType, sourceDeviceID: DeviceID, listene
     return
 
 setattr(DeviceMessageReceiver, 'addListener', addListener)
-

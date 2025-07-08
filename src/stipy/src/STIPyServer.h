@@ -116,7 +116,7 @@ public:
 
     std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket);
     std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket, unsigned repeats);
-    std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID, unsigned repeats);
+    std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID);
 
     STI::Engine::SequenceID parse(const std::shared_ptr<STI::Engine::Sequence>& seq);
 

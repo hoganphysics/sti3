@@ -20,6 +20,10 @@ class ParseID
 public:
 
 	ParseID();
+	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const ShotConfig& shotConfig)
+	: parseTimestamp(parseTimestamp), shotConfig(shotConfig) {}
+	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const ShotConfig& shotConfig, const SequenceEntryID& sequenceEntryID)
+	: parseTimestamp(parseTimestamp), shotConfig(shotConfig), sequenceEntryID(sequenceEntryID) {}
 
 	STI::Utils::TimeStamp parseTimestamp;
 	ShotConfig shotConfig;

@@ -21,6 +21,8 @@ class ShotConfig
 public:
 
     ShotConfig();
+	ShotConfig(ShotType shotType, const EngineJobSourceID& jobSourceID, int targetEnginePool, 
+		const std::string& file, const std::string& comment);
 
 	ShotType shotType;
 
