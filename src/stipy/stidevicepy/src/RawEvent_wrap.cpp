@@ -162,7 +162,8 @@ void init_RawEvent(py::module& m)
         .def("value",
             [](const STI::Engine::RawEvent& self) {
                 MixedValuePy pyval(self.value());
-                return pyval.getValue_py();
+                // return pyval.getValue_py();
+                return pyval;
             })
         .def("description", &STI::Engine::RawEvent::description)
         .def("type", &STI::Engine::RawEvent::type)

@@ -1,7 +1,7 @@
 %feature("director");
 
 %{
-    #include "DeviceIDIndexedGraph.h"
+    #include <sti/device/DeviceIDIndexedGraph.h>
     using STI::Device::DeviceIDIndexedGraph;
 
     #include "utils/IndexedGraph.h"

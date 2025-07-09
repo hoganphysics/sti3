@@ -27,6 +27,29 @@ void init_ParseResult(py::module& m)
         .def_readonly("messages", &ParseResult::messages)
         .def_readonly("stackTraceResult", &ParseResult::stackTraceResult)       
         
+        .def("parsedDevicesGraph",
+            [](const ParseResult& self) {
+
+                py::dict nodeDict;
+                std::shared_ptr<STI::Engine::ParsedDependencyTree> parsedTree = self.parsedDevices;
+                std::shared_ptr<STI::Engine::EventEngineDependencyTree> tree;
+
+                if (parsedTree == 0) {
+                    return nodeDict;
+                }
+                
+                auto graph = parsedTree->getDependencyGraph();
+
+                for (const auto& pair : graph) {
+                    const STI::Device::DeviceID& deviceID = pair.first;
+                    const std::vector<unsigned>& connections = pair.second;
+
+                    nodeDict[deviceID.getID().c_str()] = connections;
+                }
+
+                return nodeDict;
+            })
+
         .def("__repr__",
             [](const ParseResult& self) {
                 std::stringstream s;

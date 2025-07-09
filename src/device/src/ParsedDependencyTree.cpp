@@ -68,6 +68,16 @@ void ParsedDependencyTree::getDependedentNodes(const STI::Device::DeviceID& node
     }
 }
 
+std::map<STI::Device::DeviceID, std::vector<unsigned>> ParsedDependencyTree::getDependencyGraph() const
+{
+    std::map<STI::Device::DeviceID, std::vector<unsigned>> dependencyGraph;
+
+    for (const auto& vertex : vertices) {
+        dependencyGraph[vertex.id] = vertex.outConnections;
+    }
+
+    return dependencyGraph;
+}
 
 template<class Archive>
 void DeviceIDVertex::serialize(Archive& archive)

@@ -1,5 +1,7 @@
 
 #include <sti/engine/ParsedTag.h>
+#include <sti/engine/StackTraceData.h>
+#include <sti/engine/RawEventGroup.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -7,6 +9,24 @@
 
 using STI::Engine::ParsedTag;
 
+
+ParsedTag::ParsedTag()
+{
+}
+
+ParsedTag::ParsedTag(const std::string& name, const RawEventGroup* group,
+		const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
+: name(name), trace(trace), stackTraceData(stackTraceData), parentGroup(group)
+{
+}
+
+std::string ParsedTag::getGroupName() const
+{
+	if (parentGroup != 0) {
+		return parentGroup->getFullName();
+	}
+	return "";
+}
 
 bool ParsedTag::operator<(const ParsedTag& rhs) const 
 {

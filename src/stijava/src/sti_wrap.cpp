@@ -2959,7 +2959,7 @@ SWIGINTERN void std_map_Sl_STI_Device_DeviceID_Sc_std_map_Sl_std_string_Sc_std_s
 
 
 
-    #include "DeviceIDIndexedGraph.h"
+    #include <sti/device/DeviceIDIndexedGraph.h>
     using STI::Device::DeviceIDIndexedGraph;
 
     #include "utils/IndexedGraph.h"

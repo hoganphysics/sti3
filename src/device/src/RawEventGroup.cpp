@@ -86,6 +86,18 @@ void RawEventGroup::setName(const std::string& newName)
     name = newName;
 }
 
+void RawEventGroup::setParentName(const std::string& newParentName)
+{
+    parentName = newParentName;
+
+    //update all subgroups
+    for (auto& g : subgroups) {
+        if (g != 0) {
+            g->setParentName(getFullName());
+        }
+    }
+}
+
 double RawEventGroup::startTime() const
 {
     std::unique_lock groupLock(groupMutex);
@@ -222,9 +234,9 @@ bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& 
         return false;
     }
 
-    ParsedTag tag;
-    tag.name = tagName;
-    tag.trace = stackTraceData->addStackTrace(stackTrace);
+    auto trace = stackTraceData->addStackTrace(stackTrace);
+
+    ParsedTag tag(tagName, this, trace, stackTraceData);
 
     tagMap.add(tagName, tag);
 
@@ -560,7 +572,7 @@ std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName
     if (!groupMap.get(baseName, g)) {
         //new subgroup
         g = std::make_shared<RawEventGroup>(baseName, trimmedParentName, stackTraceData);
-        groupMap.add(baseName, g);            
+        groupMap.add(baseName, g);
     }
 
     if (subName != "" && g != 0) {
@@ -569,6 +581,26 @@ std::shared_ptr<RawEventGroup> RawEventGroup::group(const std::string& groupName
     }
 
     return g;
+}
+
+void RawEventGroup::addSubgroup(const std::shared_ptr<RawEventGroup>& subgroup)
+{
+    std::unique_lock groupLock(groupMutex);
+
+    if (subgroup == 0) return;
+
+    //check if subgroup already exists
+    for (auto& g : subgroups) {
+        if (g != 0 && g->getName() == subgroup->getName()) {
+            //already exists, do not add
+            return;
+        }
+    }
+
+    subgroup->setParentName(getFullName());
+
+    //add new subgroup
+    groupMap.add(subgroup->getName(), subgroup);
 }
 
 std::vector<std::shared_ptr<RawEventGroup>> RawEventGroup::getSubgroups() const

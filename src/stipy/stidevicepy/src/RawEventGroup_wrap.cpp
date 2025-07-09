@@ -21,12 +21,31 @@ namespace py = pybind11;
 
 using STI::Python::MixedValuePy;
 using STI::Engine::RawEventGroup;
+using STI::Engine::RawEventGroupStats;
 using STI::Engine::RawEventType;
 using STI::Engine::RawStackTrace;
 
 
 void init_RawEventGroup(py::module& m)
 {
+    py::class_<RawEventGroupStats>(m, "RawEventGroupStats")
+        .def(py::init<>())
+        .def_readwrite("vars", &RawEventGroupStats::vars)
+        .def_readwrite("tags", &RawEventGroupStats::tags)
+        .def_readwrite("events", &RawEventGroupStats::events)
+        .def_readwrite("subgroups", &RawEventGroupStats::subgroups)
+        .def("__iadd__", &RawEventGroupStats::operator+=)
+        .def("__repr__", [](const RawEventGroupStats& stats) {
+            std::ostringstream oss;
+            oss << "RawEventGroupStats("
+                << "subgroups=" << stats.subgroups
+                << ", events=" << stats.events
+                << ", vars=" << stats.vars
+                << ", tags=" << stats.tags
+                << ")";
+            return oss.str();
+        })
+    ;
 
     py::class_<RawEventGroup, std::shared_ptr<RawEventGroup>>(m, "RawEventGroup")
         .def(py::init<>())
@@ -34,7 +53,11 @@ void init_RawEventGroup(py::module& m)
         
         .def("getName", py::overload_cast<>(&RawEventGroup::getName, py::const_))
         .def("getFullName", py::overload_cast<>(&RawEventGroup::getFullName, py::const_))
+        .def("getParentGroupName", py::overload_cast<>(&RawEventGroup::getParentGroupName, py::const_))
         .def("setName", &RawEventGroup::setName)
+
+        .def("getStats", &RawEventGroup::getStats)
+        .def("getTotalStats", &RawEventGroup::getTotalStats)
 
         .def("startTime", py::overload_cast<>(&RawEventGroup::startTime, py::const_))
         .def("endTime", py::overload_cast<>(&RawEventGroup::endTime, py::const_))
@@ -51,11 +74,15 @@ void init_RawEventGroup(py::module& m)
                 self.getReferencePoint(refName, time);
                 return time;
             }, py::arg("refName"))
-        .def("getReferencePoint",
-            [](const RawEventGroup& self, const std::string& refName) {
-                double time = 0;
-                self.getReferencePoint(refName, time);
-                return time;
+        .def("getReferencePoints",
+            [](const RawEventGroup& self) {
+                auto refPoints = self.getReferencePoints();
+                
+                py::dict refDict;
+                for (const auto& ref : refPoints) {
+                    refDict[ref.first.c_str()] = ref.second;
+                }
+                return refDict;
             })
         .def("addMetadata",
             [](RawEventGroup& self, const std::string& key, const pybind11::object& data) {
@@ -127,6 +154,7 @@ void init_RawEventGroup(py::module& m)
 
         .def("group", &RawEventGroup::group, py::arg("name"))
         .def("subgroups", &RawEventGroup::getSubgroups)
+        .def("addSubgroup", &RawEventGroup::addSubgroup, py::arg("subgroup"))
 
         // .def("getEvents", &RawEventGroup::getEvents, py::const_)
         .def("events", 
@@ -147,6 +175,8 @@ void init_RawEventGroup(py::module& m)
         .def("vars", &RawEventGroup::getVars)
         .def("tags", &RawEventGroup::getTags)
         .def("overwrittenVars", &RawEventGroup::getOverwrittenVars)
+
+        .def("getStackTraceData", &RawEventGroup::getStackTraceData)
         
         .def("__repr__",
             [](const RawEventGroup& self) {

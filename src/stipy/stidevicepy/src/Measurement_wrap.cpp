@@ -37,6 +37,7 @@ void init_Measurement(py::module& m)
                 return pyval.getValue_py();
             })
         .def("device", &STI::Engine::Measurement::device)
+        .def("groupName", &STI::Engine::Measurement::groupName)
         .def("getMeasurementGraphPath", &STI::Engine::Measurement::getMeasurementGraphPath)
         .def("dataReady", &STI::Engine::Measurement::dataReady)
         .def("print", &STI::Engine::Measurement::print)

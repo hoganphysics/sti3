@@ -7,6 +7,7 @@
 #include <sti/engine/RawEventGroup.h>
 
 #include <string>
+#include <memory>
 
 
 namespace STI
@@ -14,13 +15,26 @@ namespace STI
 namespace Engine
 {
 
+class RawEventGroup;    
+class StackTraceData;
+
 
 class ParsedTag
 {
 public:
 
+    ParsedTag();
+    ParsedTag(const std::string& name, const RawEventGroup* group,
+            const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
+
     std::string name;
     STI::Engine::StackTrace trace;
+    
+    std::shared_ptr<StackTraceData> stackTraceData;
+
+    const RawEventGroup* parentGroup;
+
+    std::string getGroupName() const;
 
     bool operator<(const ParsedTag& rhs) const;
     bool operator==(const ParsedTag& rhs) const;

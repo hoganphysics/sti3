@@ -1,8 +1,9 @@
 #include "RawStackTrace.h"
 
+#include <sti/engine/StackTrace.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
-
+#include <sti/utils/FileID.h>
 #include <sstream>
 
 #include <pybind11/pybind11.h>
@@ -12,6 +13,7 @@ using STI::Engine::RawStackFrame;
 using STI::Engine::RawStackTrace;
 using STI::Engine::StackTraceData;
 using STI::Engine::StackTraceResult;
+using STI::Utils::FileID;
 
 
 namespace py = pybind11;
@@ -46,9 +48,19 @@ void init_StackTrace(py::module& m)
         //     })
         ;
 
+    py::class_<STI::Utils::FileID>(m, "FileID")
+        .def(py::init<>())
+        .def_readonly("filename", &FileID::filename)
+        .def_readonly("path", &FileID::path)
+        .def_readonly("origin", &FileID::origin)
+        .def_readonly("persistenceLocation", &FileID::persistenceLocation)
+        .def_readonly("creationTime", &FileID::creationTime)
+        ;
+
     py::class_<StackTraceData, std::shared_ptr<StackTraceData>>(m, "StackTraceData")
         .def("getFunctionNames", &StackTraceData::getFunctionNames)
-        // .def("getTimingFiles", &StackTraceData::getTimingFiles)
+        .def("getTimingFiles", &StackTraceData::getTimingFiles)
+        .def("getStackTrace", &StackTraceData::getStackTrace)
         ;
     
     py::class_<StackTraceResult, std::shared_ptr<StackTraceResult>>(m, "StackTraceResult")

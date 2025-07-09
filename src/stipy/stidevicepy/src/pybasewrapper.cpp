@@ -18,6 +18,7 @@ void init_Measurement(py::module& m);
 void init_Attribute(py::module& m);
 void init_AttributeManager(py::module& m);
 void init_ShotConfig(py::module& m);
+void init_Shot(py::module& m);
 void init_ParseID(py::module& m);
 void init_ShotID(py::module& m);
 void init_Configuration(py::module& m);
@@ -56,6 +57,7 @@ PYBIND11_MODULE(stipybase, m) {
     init_Attribute(m);
     init_AttributeManager(m);
     init_ShotConfig(m);
+    init_Shot(m);
     init_ParseID(m);
     init_ShotID(m);
     init_Sequence(m);

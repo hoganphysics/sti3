@@ -114,6 +114,7 @@ public:
 
     std::shared_ptr<RawEventGroup> group(const std::string& groupName);
     std::vector<std::shared_ptr<RawEventGroup>> getSubgroups() const;
+    void addSubgroup(const std::shared_ptr<RawEventGroup>& subgroup);
 
     void merge(const RawEventGroup& other);
     void swapEvents(RawEventGroup& other);
@@ -147,6 +148,7 @@ public:
 
 private:
 
+    void setParentName(const std::string& newParentName);
     void _addEvent(RawEvent& evt);
     void refreshMinMax();
     

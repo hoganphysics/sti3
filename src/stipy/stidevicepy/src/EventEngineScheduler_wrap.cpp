@@ -3,7 +3,9 @@
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineID.h>
+#include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineState.h>
+
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
@@ -13,10 +15,13 @@
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/Sequence.h>
 #include <sti/engine/SequenceID.h>
+#include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/device/DeviceIDIndexedGraph.h>
 
 #include "LocalShot.h"
+#include "EventEngineDependencyTree.h"
 
 #include <string>
 #include <memory>
@@ -28,6 +33,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
+
 
 namespace py = pybind11;
 
@@ -50,7 +56,8 @@ using STI::Engine::EventEngineJobType;
 using STI::Engine::EngineJobID;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EngineState;
-
+using STI::Utils::DependencyTree;
+using STI::Device::DeviceID;
 
 void init_EventEngineScheduler(py::module& m)
 {
@@ -148,11 +155,17 @@ void init_EventEngineScheduler(py::module& m)
             })
         ;
 
-    py::class_<EventEngineJob>(m, "EventEngineJob")
+    py::class_<EventEngineJob, std::shared_ptr<EventEngineJob>>(m, "EventEngineJob")
         .def("jobID", &EventEngineJob::getJobID)
         .def("jobOwner", &EventEngineJob::getJobOwner)
         .def("status", &EventEngineJob::getStatus)
         .def("engineID", &EventEngineJob::getEngineID)
+        .def("shot",
+            [](EventEngineJob& self) {
+                std::shared_ptr<STI::Engine::Shot> shot;
+                self.getShot(shot);
+                return shot;
+            })
         .def("dependencies",
             [](const EventEngineJob& self) {
                 std::shared_ptr<STI::Engine::EventEngineDependencyTree> tree;
@@ -166,7 +179,27 @@ void init_EventEngineScheduler(py::module& m)
                 }
 
                 return parsedTree;
-            })       
+            })
+        .def("dependencyGraph",
+            [](const EventEngineJob& self) {
+
+                py::dict nodeDict;
+                std::shared_ptr<STI::Engine::EventEngineDependencyTree> tree;
+                if (self.getDependencies(tree)) {
+
+                    std::shared_ptr<DependencyTree<DeviceID>> depTree =
+                        std::static_pointer_cast<DependencyTree<DeviceID>>(tree);
+                    
+                    STI::Device::DeviceIDIndexedGraph graph(*depTree);
+
+                    for(auto& node : graph.getNodes()) {
+                        nodeDict[node.node.getID().c_str()] = node.outConnections;
+                    }
+                    return nodeDict;
+                }
+                return nodeDict;
+            })
+        .def("getParsingMessages", &EventEngineJob::getParsingMessages)
         ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")

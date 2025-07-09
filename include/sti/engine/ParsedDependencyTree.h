@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 namespace STI
 {
@@ -33,6 +34,8 @@ public:
     void getNodes(std::vector<STI::Device::DeviceID>& nodes) const;
     void getDependedentNodes(const STI::Device::DeviceID& node, std::vector<STI::Device::DeviceID>& depNodes) const;
 
+    std::map<STI::Device::DeviceID, std::vector<unsigned>> getDependencyGraph() const;
+    
     template<class Archive>
     void serialize(Archive& archive);
 

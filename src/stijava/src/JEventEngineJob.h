@@ -4,7 +4,7 @@
 
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EngineJobStatus.h>
-#include "DeviceIDIndexedGraph.h"
+#include <sti/device/DeviceIDIndexedGraph.h>
 
 #include <memory>
 
