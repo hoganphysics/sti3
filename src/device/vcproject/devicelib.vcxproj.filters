@@ -248,7 +248,7 @@
     <ClInclude Include="..\src\EventParsingException.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\StackTrace.h">
+    <ClInclude Include="..\src\CompressedStackTrace.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
     <ClInclude Include="..\src\LocalEventEngine.h">

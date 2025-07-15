@@ -3,7 +3,7 @@
 
 
 #include <sti/utils/MixedValue.h>
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 #include <sti/device/DeviceID.h>
 
 #include <string>
@@ -24,14 +24,14 @@ public:
 
     ParsedVar();
     ParsedVar(const std::string& name, const RawEventGroup* group,
-            const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
+            const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
     ParsedVar(const std::string& name, const RawEventGroup* group, const STI::Utils::MixedValue& value, 
-            const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
+            const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData);
     
     std::string name;
     STI::Utils::MixedValue value;   //can be MixedValueType::Empty to indicate an unbound var
     
-    STI::Engine::StackTrace trace;
+    STI::Engine::CompressedStackTrace trace;
     std::shared_ptr<StackTraceData> stackTraceData;
 
     const RawEventGroup* parentGroup;

@@ -2,7 +2,7 @@
 
 #include <sti/engine/RawEventTarget.h>
 
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 #include "STIPyServer.h"
 #include "STIPyShot.h"
 
@@ -16,7 +16,7 @@ namespace py = pybind11;
 
 using STI::Engine::RawEventTarget;
 // using STI::Python::StackTracePy;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 
 
 void init_stipy(py::module& m) 
@@ -56,10 +56,10 @@ void init_stipy(py::module& m)
     m.def("event", &STI::Python::event, 
                     py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
     m.def("meas", py::overload_cast<const RawEventTarget&, double, const pybind11::object&,
-                    const RawStackTrace&, const std::string&>(&STI::Python::meas),
+                    const StackTrace&, const std::string&>(&STI::Python::meas),
                     py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"));
     m.def("meas", py::overload_cast<const RawEventTarget&, double,
-                    const RawStackTrace&, const std::string&>(&STI::Python::meas),
+                    const StackTrace&, const std::string&>(&STI::Python::meas),
                     py::arg("channel"), py::arg("time"), py::arg("stackTrace"), py::arg("group"));
     m.def("dev", 
         py::overload_cast<const std::string&>(

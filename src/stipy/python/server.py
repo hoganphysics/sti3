@@ -3,6 +3,8 @@ from stipy.bin.stipybase import Sequence
 from stipy.bin.stipybase import SequenceType
 from stipy.bin.stipy import ParsedVar
 from stipy.bin.stipybase import RawEventGroup
+from stipy.bin.stipybase import SequenceEntryID
+from stipy.bin.stipybase import SequenceID
 
 _makeshot = STIPyServer.makeshot
 
@@ -68,16 +70,20 @@ def makeshot(self, source=None, vars=None):
 
 
 
-def run(self, sequence: Sequence):
+def run(self, sequence: Sequence, sequenceID: SequenceID):
     print(sequence.sequenceTable)
 
     shots = []
 
     for key in sequence.sequenceTable.keys():
-        shot = _makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten)
+        shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten)
         shots.append(shot)
 
-        parseTick = self.parse(shot)
+        seqEntryID = SequenceEntryID()
+        seqEntryID.seqID = sequenceID
+        seqEntryID.seqIndex = key
+
+        parseTick = self.parse(shot, seqEntryID)
         parseTick.wait()
 
         resultTick = self.play(parseTick)

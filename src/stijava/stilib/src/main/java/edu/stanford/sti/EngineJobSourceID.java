@@ -36,6 +36,14 @@ public class EngineJobSourceID {
     }
   }
 
+  public EngineJobSourceID() {
+    this(stiJNI.new_EngineJobSourceID__SWIG_0(), true);
+  }
+
+  public EngineJobSourceID(String user, String machine) {
+    this(stiJNI.new_EngineJobSourceID__SWIG_1(user, machine), true);
+  }
+
   public void setUser(String value) {
     stiJNI.EngineJobSourceID_user_set(swigCPtr, this, value);
   }
@@ -54,10 +62,6 @@ public class EngineJobSourceID {
 
   public String print() {
     return stiJNI.EngineJobSourceID_print(swigCPtr, this);
-  }
-
-  public EngineJobSourceID() {
-    this(stiJNI.new_EngineJobSourceID(), true);
   }
 
 }

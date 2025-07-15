@@ -203,7 +203,9 @@ TSequenceType STI::Network::convert<SequenceType, TSequenceType>(const SequenceT
 template<>
 bool STI::Network::convert<TSequenceEntry, SequenceEntry>(const TSequenceEntry& tSequenceEntry, SequenceEntry& sequenceEntry)
 {
-    sequenceEntry.index = static_cast<int>(tSequenceEntry.index);
+    // sequenceEntry.index = static_cast<int>(tSequenceEntry.index);
+    
+    convert<TSequenceIndex, SequenceIndex>(tSequenceEntry.index, sequenceEntry.index);
     bool success = convert<TParsedVar, ParsedVar>(tSequenceEntry.overwritten, sequenceEntry.overwritten);
     return success;
 }
@@ -211,7 +213,8 @@ bool STI::Network::convert<TSequenceEntry, SequenceEntry>(const TSequenceEntry& 
 template<>
 bool STI::Network::convert<SequenceEntry, TSequenceEntry>(const SequenceEntry& sequenceEntry, TSequenceEntry& tSequenceEntry)
 {
-    tSequenceEntry.index = static_cast<CORBA::Long>(sequenceEntry.index);
+    // tSequenceEntry.index = static_cast<CORBA::Long>(sequenceEntry.index);
+    convert<SequenceIndex, TSequenceIndex>(sequenceEntry.index, tSequenceEntry.index);
     bool success = convert<ParsedVar, TParsedVar>(sequenceEntry.overwritten, tSequenceEntry.overwritten);
     return success;
 }
@@ -228,7 +231,8 @@ bool STI::Network::convert<TSequence, std::shared_ptr<Sequence>>(const TSequence
     auto len = tSequence.sequenceTable.length();
 
     for (unsigned i = 0; i < len; ++i) {
-        unsigned index = static_cast<unsigned>(tSequence.sequenceTable[i].index);
+        // unsigned index = static_cast<unsigned>(tSequence.sequenceTable[i].index);
+        SequenceIndex index = convert<TSequenceIndex, SequenceIndex>(tSequence.sequenceTable[i].index);
         convert<TSequenceEntry, SequenceEntry>(tSequence.sequenceTable[i].entry, sequence->sequenceTable[index]);
     }
 
@@ -247,7 +251,8 @@ bool STI::Network::convert<std::shared_ptr<Sequence>, TSequence>(const std::shar
 
     unsigned i = 0;
     for (auto& tuple : sequence->sequenceTable) {
-        tSequence.sequenceTable[i].index = static_cast<CORBA::Long>(tuple.first);
+        // tSequence.sequenceTable[i].index = static_cast<CORBA::Long>(tuple.first);
+        tSequence.sequenceTable[i].index = convert<SequenceIndex, TSequenceIndex>(tuple.first);
         convert<SequenceEntry, TSequenceEntry>(tuple.second, tSequence.sequenceTable[i].entry);
         i++;
     }
@@ -278,4 +283,23 @@ TSequenceIndex STI::Network::convert<SequenceIndex, TSequenceIndex>(const Sequen
 
     return tSequenceIndex;
 }
+
+template<>
+bool STI::Network::convert<TSequenceIndex, SequenceIndex>(
+        const TSequenceIndex& tSequenceIndex, SequenceIndex& sequenceIndex)
+{
+    sequenceIndex.index = static_cast<int>(tSequenceIndex.index);
+    sequenceIndex.repeat = static_cast<int>(tSequenceIndex.repeat);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<SequenceIndex, TSequenceIndex>(
+        const SequenceIndex& sequenceIndex, TSequenceIndex& tSequenceIndex)
+{
+    tSequenceIndex.index = static_cast<CORBA::Long>(sequenceIndex.index);
+    tSequenceIndex.repeat = static_cast<CORBA::Long>(sequenceIndex.repeat);
+    return true;
+}
+
 

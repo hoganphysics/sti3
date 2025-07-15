@@ -20,4 +20,4 @@
 
 %template(DeviceIDIndexedGraph) STI::Utils::IndexedGraph< STI::Device::DeviceID >;
 
-%include "DeviceIDIndexedGraph.h"
+%include "sti/device/DeviceIDIndexedGraph.h"

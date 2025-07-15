@@ -52,8 +52,8 @@ public class Sequence {
     stiJNI.Sequence_addEntry__SWIG_0(swigCPtr, this, SequenceEntry.getCPtr(entry), entry);
   }
 
-  public void addEntry(int index, ParsedVarSet overwritten) {
-    stiJNI.Sequence_addEntry__SWIG_1(swigCPtr, this, index, ParsedVarSet.getCPtr(overwritten), overwritten);
+  public void addEntry(SequenceIndex index, ParsedVarSet overwritten) {
+    stiJNI.Sequence_addEntry__SWIG_1(swigCPtr, this, SequenceIndex.getCPtr(index), index, ParsedVarSet.getCPtr(overwritten), overwritten);
   }
 
   public void append(ParsedVarSet overwritten) {

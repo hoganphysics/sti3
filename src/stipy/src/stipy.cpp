@@ -6,7 +6,7 @@
 #include <sti/utils/LocalFileHolder.h>
 
 #include "LocalShot.h"
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 #include "STIPyGlobal.h"
 #include "STIPyLibDevice.h"
 #include "STIPyServer.h"
@@ -20,12 +20,12 @@ using STI::Network::ORBManager;
 using STI::Python::STIPyServer;
 using STI::Python::STIPyLibDevice;
 using STI::Python::STIPyGlobal;
-using STI::Engine::StackTrace;
+using STI::Engine::CompressedStackTrace;
 using STI::Engine::RawEventGroup;
 using STI::Engine::RawEventTarget;
 using STI::Python::StackTracePy;
 using STI::Python::STIPyShot;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 
 
 
@@ -145,7 +145,7 @@ std::string STI::Python::printNetwork(const std::string& nameServerAddress, cons
     return STI::Network::NetworkDeviceHub::printNetwork(nameServerAddress, baseContext);
 }
 
-STI::Engine::ParsedVar STI::Python::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+STI::Engine::ParsedVar STI::Python::var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace)
 {
     auto stipy = STIPyGlobal::getInstance();
 
@@ -157,7 +157,7 @@ STI::Engine::ParsedVar STI::Python::var(const std::string& fullVarName, const ST
     return v;
 }
 
-void STI::Python::setvar(const std::string& name, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+void STI::Python::setvar(const std::string& name, const pybind11::object& value, const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
@@ -166,7 +166,7 @@ void STI::Python::setvar(const std::string& name, const pybind11::object& value,
     }
 }
 
-void STI::Python::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+void STI::Python::settag(const std::string& name, const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
@@ -176,7 +176,7 @@ void STI::Python::settag(const std::string& name, const STI::Engine::RawStackTra
 }
 
 void STI::Python::event(const RawEventTarget& target, double time, const pybind11::object& value, 
-                        const RawStackTrace& stackTrace, const std::string& scope)
+                        const StackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
@@ -186,7 +186,7 @@ void STI::Python::event(const RawEventTarget& target, double time, const pybind1
 }
 
 void STI::Python::meas(const RawEventTarget& target, double time, const pybind11::object& value,
-                        const RawStackTrace& stackTrace, const std::string& scope)
+                        const StackTrace& stackTrace, const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();
 
@@ -195,7 +195,7 @@ void STI::Python::meas(const RawEventTarget& target, double time, const pybind11
     }
 }
 
-void STI::Python::meas(const RawEventTarget& target, double time, const RawStackTrace& stackTrace, 
+void STI::Python::meas(const RawEventTarget& target, double time, const StackTrace& stackTrace, 
                         const std::string& scope)
 {
     auto stipy = STIPyGlobal::getInstance();

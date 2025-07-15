@@ -1,6 +1,8 @@
 #ifndef STI_ENGINE_SEQUENCE_H
 #define STI_ENGINE_SEQUENCE_H
 
+#include <sti/engine/SequenceID.h>
+
 #include <set>
 #include <map>
 #include <mutex>
@@ -20,7 +22,7 @@ public:
 
     SequenceEntry();
 
-    int index;
+    SequenceIndex index;
     std::set<ParsedVar> overwritten;
 
 	bool operator<(const SequenceEntry& rhs) const  { return index < rhs.index; }
@@ -44,10 +46,10 @@ public:
     Sequence(const SequenceType& type);
 
     void addEntry(const SequenceEntry& entry);
-    void addEntry(int index, const std::set<ParsedVar>& overwritten);
+    void addEntry(const SequenceIndex& index, const std::set<ParsedVar>& overwritten);
     void append(const std::set<ParsedVar>& overwritten);
 
-    std::map<unsigned, SequenceEntry> sequenceTable;
+    std::map<SequenceIndex, SequenceEntry> sequenceTable;
     unsigned repeats;
     SequenceType type;
 

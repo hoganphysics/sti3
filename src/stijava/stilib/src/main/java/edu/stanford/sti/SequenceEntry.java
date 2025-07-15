@@ -40,12 +40,13 @@ public class SequenceEntry {
     this(stiJNI.new_SequenceEntry(), true);
   }
 
-  public void setIndex(int value) {
-    stiJNI.SequenceEntry_index_set(swigCPtr, this, value);
+  public void setIndex(SequenceIndex value) {
+    stiJNI.SequenceEntry_index_set(swigCPtr, this, SequenceIndex.getCPtr(value), value);
   }
 
-  public int getIndex() {
-    return stiJNI.SequenceEntry_index_get(swigCPtr, this);
+  public SequenceIndex getIndex() {
+    long cPtr = stiJNI.SequenceEntry_index_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new SequenceIndex(cPtr, false);
   }
 
   public void setOverwritten(ParsedVarSet value) {

@@ -8,7 +8,7 @@
 
 package edu.stanford.sti;
 
-public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry> {
+public class SequenceEntryMap extends java.util.AbstractMap<SequenceIndex, SequenceEntry> {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
@@ -42,19 +42,19 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
   }
 
   public boolean containsKey(java.lang.Object key) {
-    if (!(key instanceof Long)) {
+    if (!(key instanceof SequenceIndex)) {
       return false;
     }
 
-    return containsImpl((Long)key);
+    return containsImpl((SequenceIndex)key);
   }
 
   public SequenceEntry get(java.lang.Object key) {
-    if (!(key instanceof Long)) {
+    if (!(key instanceof SequenceIndex)) {
       return null;
     }
 
-    Iterator itr = find((Long) key);
+    Iterator itr = find((SequenceIndex) key);
     if (itr.isNot(end())) {
       return itr.getValue();
     }
@@ -62,8 +62,8 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
     return null;
   }
 
-  public SequenceEntry put(Long key, SequenceEntry value) {
-    Iterator itr = find((Long) key);
+  public SequenceEntry put(SequenceIndex key, SequenceEntry value) {
+    Iterator itr = find((SequenceIndex) key);
     if (itr.isNot(end())) {
       SequenceEntry oldValue = itr.getValue();
       itr.setValue(value);
@@ -75,11 +75,11 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
   }
 
   public SequenceEntry remove(java.lang.Object key) {
-    if (!(key instanceof Long)) {
+    if (!(key instanceof SequenceIndex)) {
       return null;
     }
 
-    Iterator itr = find((Long) key);
+    Iterator itr = find((SequenceIndex) key);
     if (itr.isNot(end())) {
       SequenceEntry oldValue = itr.getValue();
       removeUnchecked(itr);
@@ -89,22 +89,22 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
     }
   }
 
-  public java.util.Set<Entry<Long, SequenceEntry>> entrySet() {
-    java.util.Set<Entry<Long, SequenceEntry>> setToReturn =
-        new java.util.HashSet<Entry<Long, SequenceEntry>>();
+  public java.util.Set<Entry<SequenceIndex, SequenceEntry>> entrySet() {
+    java.util.Set<Entry<SequenceIndex, SequenceEntry>> setToReturn =
+        new java.util.HashSet<Entry<SequenceIndex, SequenceEntry>>();
 
     Iterator itr = begin();
     final Iterator end = end();
     while (itr.isNot(end)) {
-      setToReturn.add(new Entry<Long, SequenceEntry>() {
+      setToReturn.add(new Entry<SequenceIndex, SequenceEntry>() {
         private Iterator iterator;
 
-        private Entry<Long, SequenceEntry> init(Iterator iterator) {
+        private Entry<SequenceIndex, SequenceEntry> init(Iterator iterator) {
           this.iterator = iterator;
           return this;
         }
 
-        public Long getKey() {
+        public SequenceIndex getKey() {
           return iterator.getKey();
         }
 
@@ -168,8 +168,8 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
       return stiJNI.SequenceEntryMap_Iterator_isNot(swigCPtr, this, SequenceEntryMap.Iterator.getCPtr(other), other);
     }
   
-    private long getKey() {
-      return stiJNI.SequenceEntryMap_Iterator_getKey(swigCPtr, this);
+    private SequenceIndex getKey() {
+      return new SequenceIndex(stiJNI.SequenceEntryMap_Iterator_getKey(swigCPtr, this), true);
     }
   
     private SequenceEntry getValue() {
@@ -190,8 +190,8 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
     stiJNI.SequenceEntryMap_clear(swigCPtr, this);
   }
 
-  private SequenceEntryMap.Iterator find(long key) {
-    return new SequenceEntryMap.Iterator(stiJNI.SequenceEntryMap_find(swigCPtr, this, key), true);
+  private SequenceEntryMap.Iterator find(SequenceIndex key) {
+    return new SequenceEntryMap.Iterator(stiJNI.SequenceEntryMap_find(swigCPtr, this, SequenceIndex.getCPtr(key), key), true);
   }
 
   private SequenceEntryMap.Iterator begin() {
@@ -206,12 +206,12 @@ public class SequenceEntryMap extends java.util.AbstractMap<Long, SequenceEntry>
     return stiJNI.SequenceEntryMap_sizeImpl(swigCPtr, this);
   }
 
-  private boolean containsImpl(long key) {
-    return stiJNI.SequenceEntryMap_containsImpl(swigCPtr, this, key);
+  private boolean containsImpl(SequenceIndex key) {
+    return stiJNI.SequenceEntryMap_containsImpl(swigCPtr, this, SequenceIndex.getCPtr(key), key);
   }
 
-  private void putUnchecked(long key, SequenceEntry value) {
-    stiJNI.SequenceEntryMap_putUnchecked(swigCPtr, this, key, SequenceEntry.getCPtr(value), value);
+  private void putUnchecked(SequenceIndex key, SequenceEntry value) {
+    stiJNI.SequenceEntryMap_putUnchecked(swigCPtr, this, SequenceIndex.getCPtr(key), key, SequenceEntry.getCPtr(value), value);
   }
 
   private void removeUnchecked(SequenceEntryMap.Iterator itr) {

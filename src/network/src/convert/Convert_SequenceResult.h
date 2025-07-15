@@ -87,6 +87,12 @@ template<>
 Engine::SequenceIndex Network::convert<TNetwork::TSequenceIndex, Engine::SequenceIndex>(const TNetwork::TSequenceIndex& tSequenceIndex);
 template<>
 TNetwork::TSequenceIndex Network::convert<Engine::SequenceIndex, TNetwork::TSequenceIndex>(const Engine::SequenceIndex& sequenceIndex);
+template<>
+bool Network::convert<TNetwork::TSequenceIndex, Engine::SequenceIndex>(
+        const TNetwork::TSequenceIndex& tSequenceIndex, Engine::SequenceIndex& sequenceIndex);
+template<>
+bool Network::convert<Engine::SequenceIndex, TNetwork::TSequenceIndex>(
+        const Engine::SequenceIndex& sequenceIndex, TNetwork::TSequenceIndex& tSequenceIndex);
 
 
 } //STI

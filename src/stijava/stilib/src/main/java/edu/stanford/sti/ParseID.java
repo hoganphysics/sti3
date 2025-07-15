@@ -37,7 +37,15 @@ public class ParseID {
   }
 
   public ParseID() {
-    this(stiJNI.new_ParseID(), true);
+    this(stiJNI.new_ParseID__SWIG_0(), true);
+  }
+
+  public ParseID(TimeStamp parseTimestamp, ShotConfig shotConfig) {
+    this(stiJNI.new_ParseID__SWIG_1(TimeStamp.getCPtr(parseTimestamp), parseTimestamp, ShotConfig.getCPtr(shotConfig), shotConfig), true);
+  }
+
+  public ParseID(TimeStamp parseTimestamp, ShotConfig shotConfig, SequenceEntryID sequenceEntryID) {
+    this(stiJNI.new_ParseID__SWIG_2(TimeStamp.getCPtr(parseTimestamp), parseTimestamp, ShotConfig.getCPtr(shotConfig), shotConfig, SequenceEntryID.getCPtr(sequenceEntryID), sequenceEntryID), true);
   }
 
   public void setParseTimestamp(TimeStamp value) {

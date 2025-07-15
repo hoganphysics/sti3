@@ -887,7 +887,7 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
     tEvent.target = convert<RawEventTarget, TRawEventTarget>(evt.target());
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.parsedValue.value);
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
-    convert<STI::Engine::StackTrace, STI::TNetwork::TStackFrameSeq>(evt.getStackTrace(), tEvent.stackTrace);
+    convert<STI::Engine::CompressedStackTrace, STI::TNetwork::TStackFrameSeq>(evt.getCompressedStackTrace(), tEvent.stackTrace);
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
     STI::Network::convertEventGraphPath(evt.getEventGraphPath(), tEvent.eventGraphPath);
@@ -902,7 +902,7 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
     evt.setTarget(convert<TRawEventTarget, RawEventTarget>(tEvent.target));
 	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.parsedValue.value));
 	evt.setDescription(convert<::CORBA::String_member, std::string>(tEvent.description));
-    convert<STI::TNetwork::TStackFrameSeq, STI::Engine::StackTrace>(tEvent.stackTrace, evt.getStackTrace());
+    convert<STI::TNetwork::TStackFrameSeq, STI::Engine::CompressedStackTrace>(tEvent.stackTrace, evt.getCompressedStackTrace());
 
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
 

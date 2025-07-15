@@ -37,7 +37,11 @@ public class ShotConfig {
   }
 
   public ShotConfig() {
-    this(stiJNI.new_ShotConfig(), true);
+    this(stiJNI.new_ShotConfig__SWIG_0(), true);
+  }
+
+  public ShotConfig(ShotType shotType, EngineJobSourceID jobSourceID, int targetEnginePool, String file, String comment) {
+    this(stiJNI.new_ShotConfig__SWIG_1(shotType.swigValue(), EngineJobSourceID.getCPtr(jobSourceID), jobSourceID, targetEnginePool, file, comment), true);
   }
 
   public void setShotType(ShotType value) {

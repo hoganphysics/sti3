@@ -437,13 +437,13 @@ module TNetwork
 
 	struct TSequenceEntry
 	{
-		long index;
+		TSequenceIndex index;
 		TParsedVarSeq overwritten;
 	};
 
 	struct TSequenceEntryTuple
 	{
-		long index;
+		TSequenceIndex index;
 		TSequenceEntry entry;
 	};
 	typedef sequence<TSequenceEntryTuple> TSequenceEntryTupleSeq;

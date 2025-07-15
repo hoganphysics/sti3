@@ -19,13 +19,13 @@ ParsedVar::ParsedVar()
 }
 
 ParsedVar::ParsedVar(const std::string& name, const RawEventGroup* group,
-		const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
+		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
 : name(name), parentGroup(group), trace(trace), stackTraceData(stackTraceData)
 {
 }
 
 ParsedVar::ParsedVar(const std::string& name, const RawEventGroup* group, const STI::Utils::MixedValue& value, 
-		const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
+		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
 : name(name), parentGroup(group), value(value), trace(trace), stackTraceData(stackTraceData)
 {
 }

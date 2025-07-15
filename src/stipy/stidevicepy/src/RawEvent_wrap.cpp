@@ -7,7 +7,7 @@
 #include <sti/utils/utils.h>
 #include "MixedValuePy.h"
 #include <sti/engine/RawEventGroup.h>
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include <sstream>
 
@@ -169,7 +169,12 @@ void init_RawEvent(py::module& m)
         .def("type", &STI::Engine::RawEvent::type)
         .def("target", &STI::Engine::RawEvent::target)
         .def("getGroupName", &STI::Engine::RawEvent::getGroupName)
-        .def("getStackTrace", &STI::Engine::RawEvent::getRawStackTrace)
+        .def("trace", &STI::Engine::RawEvent::getStackTrace)
+        // .def("compressedTrace", &STI::Engine::RawEvent::getCompressedStackTrace)
+        .def("compressedTrace",
+            [](const STI::Engine::RawEvent& self) {
+                return self.getCompressedStackTrace();
+            })
         .def("getEventGraphPath", &STI::Engine::RawEvent::getEventGraphPath)
         .def("isMeasurementEvent", &STI::Engine::RawEvent::isMeasurementEvent)
         .def("printTime", 

@@ -1,10 +1,10 @@
 #include <sti/engine/StackTraceData.h>
 
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/FileID.h>
 
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -16,8 +16,8 @@
 namespace fs = std::filesystem;
 
 using STI::Engine::StackTraceData;
+using STI::Engine::CompressedStackTrace;
 using STI::Engine::StackTrace;
-using STI::Engine::RawStackTrace;
 
 
 StackTraceData::StackTraceData()
@@ -53,9 +53,9 @@ void StackTraceData::init()
 }
 
 
-StackTrace StackTraceData::addStackTrace(const RawStackTrace& rawStackTrace)
+CompressedStackTrace StackTraceData::addStackTrace(const StackTrace& rawStackTrace)
 {
-    StackTrace stackTrace;
+    CompressedStackTrace stackTrace;
     
     for (auto& rawFrame : rawStackTrace.getFrames()) {
         stackTrace.appendFrame(
@@ -67,14 +67,14 @@ StackTrace StackTraceData::addStackTrace(const RawStackTrace& rawStackTrace)
     return stackTrace;
 }
 
-RawStackTrace StackTraceData::getStackTrace(const StackTrace& stackTrace) const
+StackTrace StackTraceData::getStackTrace(const CompressedStackTrace& stackTrace) const
 {
     std::unique_lock<std::mutex> fileLock(stackDataMutex);
 
     STI::Utils::FileID fileID;
     std::string func;
 
-    RawStackTrace rawTrace;
+    StackTrace rawTrace;
 
     for (auto& frame : stackTrace.getFrames()) {
 

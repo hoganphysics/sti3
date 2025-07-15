@@ -6,7 +6,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEventTarget.h>
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/GraphPathLabel.h>
 #include <sti/utils/VirtualFileServer.h>
@@ -23,7 +23,7 @@ namespace Engine
 
 class RawEventGroup;
 class StackTraceData;
-class RawStackTrace;
+class StackTrace;
 
 
 struct RawEventID
@@ -52,7 +52,7 @@ public:
 	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
 		unsigned eventNumber, const RawEventType& eventType);
 	RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
-		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, 
+		unsigned eventNumber, const RawEventType& eventType, const CompressedStackTrace& eventStackTrace, 
 		const std::shared_ptr<StackTraceData>& stackTraceData);
 
 	//For device generated events
@@ -75,12 +75,12 @@ public:
 	
 	const RawEventType& type() const { return _eventType; }
 
-	const StackTrace& getStackTrace() const { return stackTrace; }
-	StackTrace& getStackTrace() { return stackTrace; }
-	void setStackTrace(const StackTrace& eventStackTrace) { stackTrace = eventStackTrace; }
+	const CompressedStackTrace& getCompressedStackTrace() const { return stackTrace; }
+	CompressedStackTrace& getCompressedStackTrace() { return stackTrace; }
+	void setStackTrace(const CompressedStackTrace& eventStackTrace) { stackTrace = eventStackTrace; }
 	void setStackTraceData(const std::shared_ptr<StackTraceData>& traceData) { stackTraceData = traceData; }
 
-	RawStackTrace getRawStackTrace() const;
+	StackTrace getStackTrace() const;
 
 	const STI::Utils::GraphPathLabel& getEventGraphPath() const { return eventGraphPath; }
 
@@ -121,7 +121,7 @@ private:
 	
 	std::string _description;
 	
-	StackTrace stackTrace;
+	CompressedStackTrace stackTrace;
 	std::shared_ptr<StackTraceData> stackTraceData;
 
 	std::shared_ptr<STI::Utils::VirtualFileServer> fileServer;	//for measurement events that attach files

@@ -40,15 +40,15 @@ public class StackFrame {
     this(stiJNI.new_StackFrame__SWIG_0(), true);
   }
 
-  public StackFrame(long file, long line, long func) {
+  public StackFrame(String file, long line, String func) {
     this(stiJNI.new_StackFrame__SWIG_1(file, line, func), true);
   }
 
-  public void setFile(long value) {
+  public void setFile(String value) {
     stiJNI.StackFrame_file_set(swigCPtr, this, value);
   }
 
-  public long getFile() {
+  public String getFile() {
     return stiJNI.StackFrame_file_get(swigCPtr, this);
   }
 
@@ -60,11 +60,11 @@ public class StackFrame {
     return stiJNI.StackFrame_line_get(swigCPtr, this);
   }
 
-  public void setFunc(long value) {
+  public void setFunc(String value) {
     stiJNI.StackFrame_func_set(swigCPtr, this, value);
   }
 
-  public long getFunc() {
+  public String getFunc() {
     return stiJNI.StackFrame_func_get(swigCPtr, this);
   }
 

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <map>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -25,8 +26,8 @@ void init_Sequence(py::module& m)
     py::class_<SequenceIndex>(m, "SequenceIndex")
         .def(py::init<>())
         .def(py::init<int, int>())
-        .def_readwrite("index", &SequenceIndex::index)
-        .def_readwrite("repeat", &SequenceIndex::repeat)
+        .def_readonly("index", &SequenceIndex::index)
+        .def_readonly("repeat", &SequenceIndex::repeat)
         .def("__repr__",
             [](const SequenceIndex& self) {
                 return self.print();
@@ -38,6 +39,10 @@ void init_Sequence(py::module& m)
         .def("__lt__",  // operator <
             [](const SequenceIndex& self, const SequenceIndex& other) {
                 return self < other;
+            })
+        .def("__hash__", [](const SequenceIndex& idx) {
+                // std::cout << "Hashing SequenceIndex: " << idx.index << ", " << idx.repeat << std::endl;
+                return std::hash<int>()(idx.index) ^ (std::hash<int>()(idx.repeat) << 1);
             })
         ;
 
@@ -110,7 +115,7 @@ void init_Sequence(py::module& m)
         .def_readwrite("type", &Sequence::type)
         .def_readwrite("sequenceTable", &Sequence::sequenceTable)
         .def("addEntry", py::overload_cast<const SequenceEntry&>(&Sequence::addEntry), py::arg("entry"))
-        .def("addEntry", py::overload_cast<int, const std::set<ParsedVar>&>(&Sequence::addEntry), py::arg("index"), py::arg("overwritten"))
+        .def("addEntry", py::overload_cast<const SequenceIndex&, const std::set<ParsedVar>&>(&Sequence::addEntry), py::arg("index"), py::arg("overwritten"))
         .def("append", py::overload_cast<const std::set<ParsedVar>&>(&Sequence::append), py::arg("overwritten"))
         ;
 

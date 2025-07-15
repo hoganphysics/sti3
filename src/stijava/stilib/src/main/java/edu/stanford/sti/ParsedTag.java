@@ -36,6 +36,14 @@ public class ParsedTag {
     }
   }
 
+  public ParsedTag() {
+    this(stiJNI.new_ParsedTag__SWIG_0(), true);
+  }
+
+  public ParsedTag(String name, RawEventGroup group, CompressedStackTrace trace, StackTraceData stackTraceData) {
+    this(stiJNI.new_ParsedTag__SWIG_1(name, RawEventGroup.getCPtr(group), group, CompressedStackTrace.getCPtr(trace), trace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
+  }
+
   public void setName(String value) {
     stiJNI.ParsedTag_name_set(swigCPtr, this, value);
   }
@@ -44,13 +52,35 @@ public class ParsedTag {
     return stiJNI.ParsedTag_name_get(swigCPtr, this);
   }
 
-  public void setTrace(StackTrace value) {
-    stiJNI.ParsedTag_trace_set(swigCPtr, this, StackTrace.getCPtr(value), value);
+  public void setTrace(CompressedStackTrace value) {
+    stiJNI.ParsedTag_trace_set(swigCPtr, this, CompressedStackTrace.getCPtr(value), value);
   }
 
-  public StackTrace getTrace() {
+  public CompressedStackTrace getTrace() {
     long cPtr = stiJNI.ParsedTag_trace_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new StackTrace(cPtr, false);
+    return (cPtr == 0) ? null : new CompressedStackTrace(cPtr, false);
+  }
+
+  public void setStackTraceData(StackTraceData value) {
+    stiJNI.ParsedTag_stackTraceData_set(swigCPtr, this, StackTraceData.getCPtr(value), value);
+  }
+
+  public StackTraceData getStackTraceData() {
+    long cPtr = stiJNI.ParsedTag_stackTraceData_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new StackTraceData(cPtr, true);
+  }
+
+  public void setParentGroup(RawEventGroup value) {
+    stiJNI.ParsedTag_parentGroup_set(swigCPtr, this, RawEventGroup.getCPtr(value), value);
+  }
+
+  public RawEventGroup getParentGroup() {
+    long cPtr = stiJNI.ParsedTag_parentGroup_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new RawEventGroup(cPtr, true);
+  }
+
+  public String getGroupName() {
+    return stiJNI.ParsedTag_getGroupName(swigCPtr, this);
   }
 
   public boolean opLess(ParsedTag rhs) {
@@ -63,10 +93,6 @@ public class ParsedTag {
 
   public boolean opNotEquals(ParsedTag rhs) {
     return stiJNI.ParsedTag_opNotEquals(swigCPtr, this, ParsedTag.getCPtr(rhs), rhs);
-  }
-
-  public ParsedTag() {
-    this(stiJNI.new_ParsedTag(), true);
   }
 
 }

@@ -6,7 +6,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include <sstream>
 
@@ -22,7 +22,7 @@ using STI::Engine::RawEventType;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventID;
 using STI::Engine::StackTraceData;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
@@ -34,12 +34,12 @@ RawEvent::RawEvent()
 
 RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
 	unsigned eventNumber, const RawEventType& eventType)
-: RawEvent(eventTarget, time, value, eventNumber, eventType, StackTrace(), 0)
+: RawEvent(eventTarget, time, value, eventNumber, eventType, CompressedStackTrace(), 0)
 {
 }
 
 RawEvent::RawEvent(const RawEventTarget& eventTarget, double time, const STI::Utils::MixedValue& value,
-		unsigned eventNumber, const RawEventType& eventType, const StackTrace& eventStackTrace, 
+		unsigned eventNumber, const RawEventType& eventType, const CompressedStackTrace& eventStackTrace, 
 		const std::shared_ptr<StackTraceData>& stackTraceData)
 : _target(eventTarget), _time(time), _eventType(eventType), stackTrace(eventStackTrace), stackTraceData(stackTraceData)
 {
@@ -61,7 +61,7 @@ _eventType(newEvent._eventType), isMeasurement(newEvent.isMeasurement)
 	eventGraphPath.push_back(eventNumber);
 
 	setParentGroup(referenceEvent.parentGroup);
-	stackTrace = referenceEvent.getStackTrace();
+	stackTrace = referenceEvent.getCompressedStackTrace();
 	stackTraceData = referenceEvent.stackTraceData;
 
 	parsedValue = std::move(newEvent.parsedValue);
@@ -133,13 +133,13 @@ RawEventID RawEvent::getEventID() const
 	return eventID;
 }
 
-RawStackTrace RawEvent::getRawStackTrace() const
+StackTrace RawEvent::getStackTrace() const
 {
 	if (stackTraceData != 0) {
-		return stackTraceData->getStackTrace( getStackTrace() );
+		return stackTraceData->getStackTrace( getCompressedStackTrace() );
 	}
 	
-	RawStackTrace trace;
+	StackTrace trace;
 	return trace;	
 }
 

@@ -1,7 +1,6 @@
 #ifndef STI_ENGINE_PARSETICKET_H
 #define STI_ENGINE_PARSETICKET_H
 
-
 #include <sti/engine/Ticket.h>
 #include <sti/engine/ParseID.h>
 #include <sti/device/Device.h>
@@ -9,7 +8,6 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/utils/CachedValue.h>
 
-#include<iostream>
 
 namespace STI
 {
@@ -37,11 +35,7 @@ public:
 
 private:
 
-    virtual bool waitCheck() const 
-    {
-        std::cout << "***** ParseTicket::waitCheck()" << std::endl;
-        return true; 
-    }
+    virtual bool waitCheck() const { return true; }
 
     bool ensureCachedParseResult();
 

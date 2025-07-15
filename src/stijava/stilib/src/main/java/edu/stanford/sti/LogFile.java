@@ -53,12 +53,13 @@ public class LogFile {
     return LogFile.LogFileType.swigToEnum(stiJNI.LogFile_type_get(swigCPtr, this));
   }
 
-  public void setUrl(String value) {
-    stiJNI.LogFile_url_set(swigCPtr, this, value);
+  public void setFileID(FileID value) {
+    stiJNI.LogFile_fileID_set(swigCPtr, this, FileID.getCPtr(value), value);
   }
 
-  public String getUrl() {
-    return stiJNI.LogFile_url_get(swigCPtr, this);
+  public FileID getFileID() {
+    long cPtr = stiJNI.LogFile_fileID_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new FileID(cPtr, false);
   }
 
   public void setFileHolder(FileHolder value) {
@@ -83,7 +84,7 @@ public class LogFile {
   }
 
   public final static class LogFileType {
-    public final static LogFile.LogFileType URL = new LogFile.LogFileType("URL");
+    public final static LogFile.LogFileType FileID = new LogFile.LogFileType("FileID");
     public final static LogFile.LogFileType FileHolder = new LogFile.LogFileType("FileHolder");
     public final static LogFile.LogFileType String = new LogFile.LogFileType("String");
 
@@ -121,7 +122,7 @@ public class LogFile {
       swigNext = this.swigValue+1;
     }
 
-    private static LogFileType[] swigValues = { URL, FileHolder, String };
+    private static LogFileType[] swigValues = { FileID, FileHolder, String };
     private static int swigNext = 0;
     private final int swigValue;
     private final String swigName;

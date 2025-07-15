@@ -16,8 +16,8 @@ namespace STI
 namespace Engine
 {
 
-class StackTrace;
-class StackFrame;
+class CompressedStackTrace;
+class CompressedStackFrame;
 class StackTraceResult;
 class StackTraceData;
 
@@ -26,30 +26,30 @@ class StackTraceData;
 
 
 
-//StackFrame
+//CompressedStackFrame
 template<>
-Engine::StackFrame Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
+Engine::CompressedStackFrame Network::convert<TNetwork::TStackFrame, Engine::CompressedStackFrame>(
     const TNetwork::TStackFrame& tStackFrame);
 template<>
-TNetwork::TStackFrame Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
-    const Engine::StackFrame& stackFrame);
+TNetwork::TStackFrame Network::convert<Engine::CompressedStackFrame, TNetwork::TStackFrame>(
+    const Engine::CompressedStackFrame& stackFrame);
 
 template<>
-bool Network::convert<TNetwork::TStackFrame, Engine::StackFrame>(
-        const TNetwork::TStackFrame& tStackFrame, Engine::StackFrame& stackFrame);
+bool Network::convert<TNetwork::TStackFrame, Engine::CompressedStackFrame>(
+        const TNetwork::TStackFrame& tStackFrame, Engine::CompressedStackFrame& stackFrame);
 template<>
-bool Network::convert<Engine::StackFrame, TNetwork::TStackFrame>(
-        const Engine::StackFrame& stackFrame, TNetwork::TStackFrame& tStackFrame);
+bool Network::convert<Engine::CompressedStackFrame, TNetwork::TStackFrame>(
+        const Engine::CompressedStackFrame& stackFrame, TNetwork::TStackFrame& tStackFrame);
 
 
 
-//StackTrace
+//CompressedStackTrace
 template<>
-bool Network::convert<TNetwork::TStackFrameSeq, Engine::StackTrace>(
-    const TNetwork::TStackFrameSeq& tStackFrameSeq, Engine::StackTrace& stackFrame);
+bool Network::convert<TNetwork::TStackFrameSeq, Engine::CompressedStackTrace>(
+    const TNetwork::TStackFrameSeq& tStackFrameSeq, Engine::CompressedStackTrace& stackFrame);
 template<>
-bool Network::convert<Engine::StackTrace, TNetwork::TStackFrameSeq>(
-    const Engine::StackTrace& stackFrame, TNetwork::TStackFrameSeq& tStackFrameSeq);
+bool Network::convert<Engine::CompressedStackTrace, TNetwork::TStackFrameSeq>(
+    const Engine::CompressedStackTrace& stackFrame, TNetwork::TStackFrameSeq& tStackFrameSeq);
 
 
 //StackTraceResult

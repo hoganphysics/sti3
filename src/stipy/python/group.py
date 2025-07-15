@@ -4,10 +4,10 @@ from stipy.python.stacktrace import makeStackTrace
 
 _group = RawEventGroup.group
 _var = RawEventGroup.var
-_addvar = RawEventGroup.addvar
-_addtag = RawEventGroup.addtag
-_addEvent = RawEventGroup.addEvent
-_addMeas = RawEventGroup.addMeas
+_addvar = RawEventGroup._addvar
+_addtag = RawEventGroup._addtag
+_addEvent = RawEventGroup._addEvent
+_addMeas = RawEventGroup._addMeas
 
 
 def group(self, name, color="") :

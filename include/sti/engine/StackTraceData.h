@@ -17,8 +17,8 @@ namespace STI
 namespace Engine
 {
 
+class CompressedStackTrace;
 class StackTrace;
-class RawStackTrace;
 
 
 class StackTraceData
@@ -29,8 +29,8 @@ public:
     StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
     StackTraceData(const std::vector<STI::Utils::FileID>& timingFiles, const std::vector<std::string>& functionNames);
     
-    StackTrace addStackTrace(const RawStackTrace& stackTrace);
-    RawStackTrace getStackTrace(const StackTrace& stackTrace) const;
+    CompressedStackTrace addStackTrace(const StackTrace& stackTrace);
+    StackTrace getStackTrace(const CompressedStackTrace& stackTrace) const;
 
     const std::vector<STI::Utils::FileID>& getTimingFiles() const;
     const std::vector<std::string>& getFunctionNames() const;

@@ -4,6 +4,7 @@
     using STI::Engine::Sequence;
     using STI::Engine::SequenceType;
     using STI::Engine::SequenceEntry;
+    using STI::Engine::SequenceIndex;
 
     #include <sti/engine/SequenceResult.h>
     using STI::Engine::SequenceResult;
@@ -23,8 +24,9 @@
 
 
 //Sequence
-%template(SequenceEntryMap) std::map< unsigned, STI::Engine::SequenceEntry >;
-typedef std::map< unsigned, STI::Engine::SequenceEntry >::iterator SequenceEntryMapIterator;
+%template(SequenceEntryMap) std::map< STI::Engine::SequenceIndex, STI::Engine::SequenceEntry >;
+typedef std::map< STI::Engine::SequenceIndex, STI::Engine::SequenceEntry >::iterator SequenceEntryMapIterator;
+
 
 %include "sti/engine/Sequence.h"
 

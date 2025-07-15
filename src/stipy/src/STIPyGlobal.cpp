@@ -3,7 +3,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/RawEventTargetDevice.h>
 
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include <stdexcept>
 
@@ -11,9 +11,9 @@ using STI::Python::STIPyGlobal;
 using STI::Python::STIPyShot;
 using STI::Engine::RawEventTargetDevice;
 using STI::Engine::RawEventGroup;
-using STI::Engine::StackTrace;
+using STI::Engine::CompressedStackTrace;
 using STI::Engine::RawEventTarget;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 
 
 STIPyGlobal::STIPyGlobal()
@@ -73,7 +73,7 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
 }
 
 
-STI::Engine::ParsedVar STIPyGlobal::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+STI::Engine::ParsedVar STIPyGlobal::var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -92,7 +92,7 @@ STI::Engine::ParsedVar STIPyGlobal::var(const std::string& fullVarName, const ST
 }
 
 void STIPyGlobal::setvar(const std::string& name, const pybind11::object& value, 
-            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+            const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -107,7 +107,7 @@ void STIPyGlobal::setvar(const std::string& name, const pybind11::object& value,
     }
 }
 
-void STIPyGlobal::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+void STIPyGlobal::settag(const std::string& name, const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -145,7 +145,7 @@ std::shared_ptr<STI::Engine::RawEventGroup> STIPyGlobal::group(const std::string
 }
 
 void STIPyGlobal::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value,
-            const STI::Engine::RawStackTrace& stackTrace)
+            const STI::Engine::StackTrace& stackTrace)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -161,7 +161,7 @@ void STIPyGlobal::event(const STI::Engine::RawEventTarget& target, double time, 
 }
 
 void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind11::object& value, 
-                        const RawStackTrace& stackTrace, const std::string& scope)
+                        const StackTrace& stackTrace, const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -177,7 +177,7 @@ void STIPyGlobal::event(const RawEventTarget& target, double time, const pybind1
 }
 
 void STIPyGlobal::meas(const RawEventTarget& target, double time, const pybind11::object& value,
-                        const RawStackTrace& stackTrace, const std::string& scope)
+                        const StackTrace& stackTrace, const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -192,7 +192,7 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const pybind11
     }
 }
 
-void STIPyGlobal::meas(const RawEventTarget& target, double time, const RawStackTrace& stackTrace, 
+void STIPyGlobal::meas(const RawEventTarget& target, double time, const StackTrace& stackTrace, 
                         const std::string& scope)
 {
     std::unique_lock<std::mutex> shotLock(shotMutex);

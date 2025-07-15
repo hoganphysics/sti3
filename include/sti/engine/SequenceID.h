@@ -20,7 +20,7 @@ class SequenceIndex
 public:
 
 	SequenceIndex();
-	SequenceIndex(int index, int repeat);
+	explicit SequenceIndex(int index, int repeat);
 
     int index;
     int repeat;

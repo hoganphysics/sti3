@@ -38,7 +38,7 @@ using STI::Engine::ParsedTag;
 using STI::TNetwork::TParsedTag;
 using STI::Device::DeviceID;
 using STI::TNetwork::TDeviceID;
-using STI::Engine::StackTrace;
+using STI::Engine::CompressedStackTrace;
 using STI::TNetwork::TStackFrameSeq;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValue;
@@ -236,7 +236,7 @@ template<>
 bool STI::Network::convert<TParsedVar, ParsedVar>(const TParsedVar& tParsedVar, ParsedVar& parsedVar)
 {
     parsedVar.name = convert<CORBA::String_member, std::string>(tParsedVar.name);
-    convert<TStackFrameSeq, StackTrace>(tParsedVar.trace, parsedVar.trace);
+    convert<TStackFrameSeq, CompressedStackTrace>(tParsedVar.trace, parsedVar.trace);
     convert<TMixedValue, MixedValue>(tParsedVar.value, parsedVar.value);
 
     return true;
@@ -246,7 +246,7 @@ template<>
 bool STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedVar, TParsedVar& tParsedVar)
 {
     convert<std::string, CORBA::String_member>(parsedVar.name, tParsedVar.name);
-    convert<StackTrace, TStackFrameSeq>(parsedVar.trace, tParsedVar.trace);
+    convert<CompressedStackTrace, TStackFrameSeq>(parsedVar.trace, tParsedVar.trace);
     convert<MixedValue, TMixedValue>(parsedVar.value, tParsedVar.value);
 
     return true;
@@ -275,7 +275,7 @@ template<>
 bool STI::Network::convert<TParsedTag, ParsedTag>(const TParsedTag& tParsedTag, ParsedTag& parsedTag)
 {
     parsedTag.name = convert<CORBA::String_member, std::string>(tParsedTag.name);
-    convert<TStackFrameSeq, StackTrace>(tParsedTag.trace, parsedTag.trace);
+    convert<TStackFrameSeq, CompressedStackTrace>(tParsedTag.trace, parsedTag.trace);
 
     return true;
 }
@@ -284,7 +284,7 @@ template<>
 bool STI::Network::convert<ParsedTag, TParsedTag>(const ParsedTag& parsedTag, TParsedTag& tParsedTag)
 {
     convert<std::string, CORBA::String_member>(parsedTag.name, tParsedTag.name);
-    convert<StackTrace, TStackFrameSeq>(parsedTag.trace, tParsedTag.trace);
+    convert<CompressedStackTrace, TStackFrameSeq>(parsedTag.trace, tParsedTag.trace);
 
     return true;
 }

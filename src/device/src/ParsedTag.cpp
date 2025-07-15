@@ -15,7 +15,7 @@ ParsedTag::ParsedTag()
 }
 
 ParsedTag::ParsedTag(const std::string& name, const RawEventGroup* group,
-		const STI::Engine::StackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
+		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
 : name(name), trace(trace), stackTraceData(stackTraceData), parentGroup(group)
 {
 }

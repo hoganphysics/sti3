@@ -33,7 +33,7 @@ void Sequence::addEntry(const SequenceEntry& entry)
     sequenceTable[entry.index] = entry;
 }
 
-void Sequence::addEntry(int index, const std::set<ParsedVar>& overwritten)
+void Sequence::addEntry(const SequenceIndex& index, const std::set<ParsedVar>& overwritten)
 {
     std::unique_lock<std::mutex> seqLock(sequenceMutex);
 
@@ -43,7 +43,7 @@ void Sequence::addEntry(int index, const std::set<ParsedVar>& overwritten)
 
 void Sequence::append(const std::set<ParsedVar>& overwritten)
 {
-    int index;
+    SequenceIndex index;
 
     {
         std::unique_lock<std::mutex> seqLock(sequenceMutex);
@@ -51,11 +51,13 @@ void Sequence::append(const std::set<ParsedVar>& overwritten)
         auto it = sequenceTable.rbegin();   //last element
         
         if (it != sequenceTable.rend()) {
-            index = it->first + 1;
+            index = it->first;
+            index.index++;  //increment index for next entry
         }
         else {
             //map is empty
-            index = 0;
+            index.index = 0;
+            index.repeat = 0;  //default repeat
         }
     }
 
@@ -73,13 +75,29 @@ void Sequence::serialize(Archive& archive)
 
 SequenceEntry::SequenceEntry()
 {
-    index = -1;
+    index.index = -1;
+    index.repeat = 0;
 }
 
 std::string SequenceEntry::print() const
 {
     std::stringstream entry;
-    entry << "<index=" << index << ">";
+    // entry << "<index=" << index.index;
+    // if (index.repeat > 0) {
+    //     entry << ", repeat=" << index.repeat;
+    // }
+    // entry << ">";
+    entry << "[";
+    bool first = true;
+    for (const auto& var : overwritten) {
+        if (!first) {
+            entry << ", ";
+        }
+        first = false;
+        entry << var.name << "=";
+        entry << var.value.print();
+    }
+    entry << "]";
     return entry.str();
 }
 

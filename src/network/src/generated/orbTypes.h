@@ -4679,7 +4679,7 @@ _CORBA_MODULE_BEG
       typedef _CORBA_ConstrType_Variable_Var<TSequenceEntry> _var_type;
 
       
-      ::CORBA::Long index;
+      TSequenceIndex index;
 
       TParsedVarSeq overwritten;
 
@@ -4699,7 +4699,7 @@ _CORBA_MODULE_BEG
       typedef _CORBA_ConstrType_Variable_Var<TSequenceEntryTuple> _var_type;
 
       
-      ::CORBA::Long index;
+      TSequenceIndex index;
 
       TSequenceEntry entry;
 

@@ -6,7 +6,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/ShotConfig.h>
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 
 #include "LocalShot.h"
 #include "MixedValuePy.h"
@@ -17,7 +17,7 @@
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
 using STI::Engine::RawEvent;
-using STI::Engine::StackTrace;
+using STI::Engine::CompressedStackTrace;
 using STI::Engine::RawEventType;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventGroup;
@@ -41,7 +41,7 @@ STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
 
 
 void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
-            const STI::Engine::RawStackTrace& stackTrace)
+            const STI::Engine::StackTrace& stackTrace)
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
@@ -50,7 +50,7 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value,
 
 
 void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
-            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+            const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
@@ -58,24 +58,32 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value,
 }
 
 
-STI::Engine::ParsedVar STIPyShot::var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace)
+STI::Engine::ParsedVar STIPyShot::var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace)
 {
     return group()->var(fullVarName, stackTrace);
 }
 
 
-void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace)
+void STIPyShot::settag(const std::string& name, const STI::Engine::StackTrace& stackTrace)
 {
-    group()->addtag(name, stackTrace);
+    auto result = group()->addtag(name, stackTrace);
+    
+    if (!result.success) {
+        throw std::runtime_error(result.errorMessage);
+    }
 }
 
-void STIPyShot::settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+void STIPyShot::settag(const std::string& name, const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
-    group(scope)->addtag(name, stackTrace);
+    auto result = group(scope)->addtag(name, stackTrace);
+    
+    if (!result.success) {
+        throw std::runtime_error(result.errorMessage);
+    }
 }
 
 void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
-                const STI::Engine::RawStackTrace& stackTrace)
+                const STI::Engine::StackTrace& stackTrace)
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
@@ -83,7 +91,7 @@ void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, co
 }
 
 void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
-            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+            const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
@@ -91,14 +99,14 @@ void STIPyShot::event(const STI::Engine::RawEventTarget& target, double time, co
 }
 
 void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, 
-            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+            const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     MixedValuePy mixedValue;
     group(scope)->addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
 }
 
 void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
-            const STI::Engine::RawStackTrace& stackTrace, const std::string& scope)
+            const STI::Engine::StackTrace& stackTrace, const std::string& scope)
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);

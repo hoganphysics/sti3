@@ -28,7 +28,7 @@ class RawEvent;
 class RawEventGroup;
 class RawEventTarget;
 class RawEventTargetDevice;
-class RawStackTrace;
+class StackTrace;
 class StackTraceData;
 
 
@@ -73,30 +73,35 @@ public:
     bool operator==(const RawEventGroup& other) const;
     bool operator<(const RawEventGroup& other) const;
 
-    bool addvar(const std::string& fullVarName, const STI::Utils::MixedValue& value, 
-                const RawStackTrace& stackTrace);  //checks overwritten list and uses the overwritten value if found; fails if already bound and not in overwritten (cannnot call setvar twice)
-    bool addtag(const std::string& fullTagName, const RawStackTrace& stackTrace);
+    struct Result {
+        bool success;
+        std::string errorMessage;
+    };
+
+    Result addvar(const std::string& fullVarName, const STI::Utils::MixedValue& value, 
+                const StackTrace& stackTrace);  //checks overwritten list and uses the overwritten value if found; fails if already bound and not in overwritten (cannnot call setvar twice)
+    Result addtag(const std::string& fullTagName, const StackTrace& stackTrace);
 
     void addEvent(const RawEvent& evt);
     void addEvent(const RawEvent& evt, const std::string& subgroupName);
 
     void addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
-                    const RawEventType& type, const RawStackTrace& stackTrace);
+                    const RawEventType& type, const StackTrace& stackTrace);
 
     void addEvent(const RawEventTarget& target, double time, const STI::Engine::ParsedVar& var, 
-                    const RawEventType& type, const RawStackTrace& stackTrace);
+                    const RawEventType& type, const StackTrace& stackTrace);
 
     void addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
                     const RawEventType& type);
 
     void addEvents(const RawEventVector& newEvents);
 
-    ParsedVar var(const std::string& fullVarName, const RawStackTrace& stackTrace);   //the value of the var, or an unbound var
+    ParsedVar var(const std::string& fullVarName, const StackTrace& stackTrace);   //the value of the var, or an unbound var
 
     //for overwritten vars
-    bool bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value);
-    bool bindVar(const ParsedVar& overwrittenVar);
-    bool bindVars(const std::set<ParsedVar>& overwritten);   //fails if it attempts to overwrite any already bound var
+    Result bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value);
+    Result bindVar(const ParsedVar& overwrittenVar);
+    Result bindVars(const std::set<ParsedVar>& overwritten);   //fails if it attempts to overwrite any already bound var
     //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
     //It's not possible to bindVars after addEvent, since in general the added events can depend on the initial bound values
 
@@ -142,6 +147,9 @@ public:
     RawEventGroup& addMetaData(const STI::Utils::MetaData& data);
     const STI::Utils::MixedValue& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
+
+
+
 
     template<class Archive>
     void serialize(Archive& archive);

@@ -40,12 +40,12 @@ public class StackTrace {
     this(stiJNI.new_StackTrace(), true);
   }
 
-  public void appendFrame(long file, long line, long func) {
-    stiJNI.StackTrace_appendFrame__SWIG_0(swigCPtr, this, file, line, func);
+  public void appendFrame(StackFrame frame) {
+    stiJNI.StackTrace_appendFrame__SWIG_0(swigCPtr, this, StackFrame.getCPtr(frame), frame);
   }
 
-  public void appendFrame(StackFrame frame) {
-    stiJNI.StackTrace_appendFrame__SWIG_1(swigCPtr, this, StackFrame.getCPtr(frame), frame);
+  public void appendFrame(String file, long line, String func) {
+    stiJNI.StackTrace_appendFrame__SWIG_1(swigCPtr, this, file, line, func);
   }
 
   public StackFrameVector getFrames() {

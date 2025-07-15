@@ -44,8 +44,8 @@ public class RawEvent {
     this(stiJNI.new_RawEvent__SWIG_1(RawEventTarget.getCPtr(eventTarget), eventTarget, time, MixedValue.getCPtr(value), value, eventNumber, eventType.swigValue()), true);
   }
 
-  public RawEvent(RawEventTarget eventTarget, double time, MixedValue value, long eventNumber, RawEventType eventType, StackTrace eventStackTrace, StackTraceData stackTraceData) {
-    this(stiJNI.new_RawEvent__SWIG_2(RawEventTarget.getCPtr(eventTarget), eventTarget, time, MixedValue.getCPtr(value), value, eventNumber, eventType.swigValue(), StackTrace.getCPtr(eventStackTrace), eventStackTrace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
+  public RawEvent(RawEventTarget eventTarget, double time, MixedValue value, long eventNumber, RawEventType eventType, CompressedStackTrace eventStackTrace, StackTraceData stackTraceData) {
+    this(stiJNI.new_RawEvent__SWIG_2(RawEventTarget.getCPtr(eventTarget), eventTarget, time, MixedValue.getCPtr(value), value, eventNumber, eventType.swigValue(), CompressedStackTrace.getCPtr(eventStackTrace), eventStackTrace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
   }
 
   public RawEvent(RawEvent newEvent, RawEvent referenceEvent, long eventNumber) {
@@ -92,20 +92,20 @@ public class RawEvent {
     return RawEventType.swigToEnum(stiJNI.RawEvent_type(swigCPtr, this));
   }
 
-  public StackTrace getStackTrace() {
-    return new StackTrace(stiJNI.RawEvent_getStackTrace__SWIG_0(swigCPtr, this), false);
+  public CompressedStackTrace getCompressedStackTrace() {
+    return new CompressedStackTrace(stiJNI.RawEvent_getCompressedStackTrace__SWIG_0(swigCPtr, this), false);
   }
 
-  public void setStackTrace(StackTrace eventStackTrace) {
-    stiJNI.RawEvent_setStackTrace(swigCPtr, this, StackTrace.getCPtr(eventStackTrace), eventStackTrace);
+  public void setStackTrace(CompressedStackTrace eventStackTrace) {
+    stiJNI.RawEvent_setStackTrace(swigCPtr, this, CompressedStackTrace.getCPtr(eventStackTrace), eventStackTrace);
   }
 
   public void setStackTraceData(StackTraceData traceData) {
     stiJNI.RawEvent_setStackTraceData(swigCPtr, this, StackTraceData.getCPtr(traceData), traceData);
   }
 
-  public RawStackTrace getRawStackTrace() {
-    return new RawStackTrace(stiJNI.RawEvent_getRawStackTrace(swigCPtr, this), true);
+  public StackTrace getStackTrace() {
+    return new StackTrace(stiJNI.RawEvent_getStackTrace(swigCPtr, this), true);
   }
 
   public UIntVector getEventGraphPath() {

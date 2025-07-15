@@ -92,12 +92,62 @@ public class RawEventGroup {
     return stiJNI.RawEventGroup_opLess(swigCPtr, this, RawEventGroup.getCPtr(other), other);
   }
 
-  public boolean addvar(String fullVarName, MixedValue value, RawStackTrace stackTrace) {
-    return stiJNI.RawEventGroup_addvar(swigCPtr, this, fullVarName, MixedValue.getCPtr(value), value, RawStackTrace.getCPtr(stackTrace), stackTrace);
+  static public class Result {
+    private transient long swigCPtr;
+    protected transient boolean swigCMemOwn;
+  
+    protected Result(long cPtr, boolean cMemoryOwn) {
+      swigCMemOwn = cMemoryOwn;
+      swigCPtr = cPtr;
+    }
+  
+    protected static long getCPtr(Result obj) {
+      return (obj == null) ? 0 : obj.swigCPtr;
+    }
+  
+    @SuppressWarnings("deprecation")
+    protected void finalize() {
+      delete();
+    }
+  
+    public synchronized void delete() {
+      if (swigCPtr != 0) {
+        if (swigCMemOwn) {
+          swigCMemOwn = false;
+          stiJNI.delete_RawEventGroup_Result(swigCPtr);
+        }
+        swigCPtr = 0;
+      }
+    }
+  
+    public void setSuccess(boolean value) {
+      stiJNI.RawEventGroup_Result_success_set(swigCPtr, this, value);
+    }
+  
+    public boolean getSuccess() {
+      return stiJNI.RawEventGroup_Result_success_get(swigCPtr, this);
+    }
+  
+    public void setErrorMessage(String value) {
+      stiJNI.RawEventGroup_Result_errorMessage_set(swigCPtr, this, value);
+    }
+  
+    public String getErrorMessage() {
+      return stiJNI.RawEventGroup_Result_errorMessage_get(swigCPtr, this);
+    }
+  
+    public Result() {
+      this(stiJNI.new_RawEventGroup_Result(), true);
+    }
+  
   }
 
-  public boolean addtag(String fullTagName, RawStackTrace stackTrace) {
-    return stiJNI.RawEventGroup_addtag(swigCPtr, this, fullTagName, RawStackTrace.getCPtr(stackTrace), stackTrace);
+  public RawEventGroup.Result addvar(String fullVarName, MixedValue value, StackTrace stackTrace) {
+    return new RawEventGroup.Result(stiJNI.RawEventGroup_addvar(swigCPtr, this, fullVarName, MixedValue.getCPtr(value), value, StackTrace.getCPtr(stackTrace), stackTrace), true);
+  }
+
+  public RawEventGroup.Result addtag(String fullTagName, StackTrace stackTrace) {
+    return new RawEventGroup.Result(stiJNI.RawEventGroup_addtag(swigCPtr, this, fullTagName, StackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
   public void addEvent(RawEvent evt) {
@@ -108,12 +158,12 @@ public class RawEventGroup {
     stiJNI.RawEventGroup_addEvent__SWIG_1(swigCPtr, this, RawEvent.getCPtr(evt), evt, subgroupName);
   }
 
-  public void addEvent(RawEventTarget target, double time, MixedValue value, RawEventType type, RawStackTrace stackTrace) {
-    stiJNI.RawEventGroup_addEvent__SWIG_2(swigCPtr, this, RawEventTarget.getCPtr(target), target, time, MixedValue.getCPtr(value), value, type.swigValue(), RawStackTrace.getCPtr(stackTrace), stackTrace);
+  public void addEvent(RawEventTarget target, double time, MixedValue value, RawEventType type, StackTrace stackTrace) {
+    stiJNI.RawEventGroup_addEvent__SWIG_2(swigCPtr, this, RawEventTarget.getCPtr(target), target, time, MixedValue.getCPtr(value), value, type.swigValue(), StackTrace.getCPtr(stackTrace), stackTrace);
   }
 
-  public void addEvent(RawEventTarget target, double time, ParsedVar var, RawEventType type, RawStackTrace stackTrace) {
-    stiJNI.RawEventGroup_addEvent__SWIG_3(swigCPtr, this, RawEventTarget.getCPtr(target), target, time, ParsedVar.getCPtr(var), var, type.swigValue(), RawStackTrace.getCPtr(stackTrace), stackTrace);
+  public void addEvent(RawEventTarget target, double time, ParsedVar var, RawEventType type, StackTrace stackTrace) {
+    stiJNI.RawEventGroup_addEvent__SWIG_3(swigCPtr, this, RawEventTarget.getCPtr(target), target, time, ParsedVar.getCPtr(var), var, type.swigValue(), StackTrace.getCPtr(stackTrace), stackTrace);
   }
 
   public void addEvent(RawEventTarget target, double time, MixedValue value, RawEventType type) {
@@ -124,20 +174,20 @@ public class RawEventGroup {
     stiJNI.RawEventGroup_addEvents(swigCPtr, this, RawEventVector.getCPtr(newEvents), newEvents);
   }
 
-  public ParsedVar var(String fullVarName, RawStackTrace stackTrace) {
-    return new ParsedVar(stiJNI.RawEventGroup_var(swigCPtr, this, fullVarName, RawStackTrace.getCPtr(stackTrace), stackTrace), true);
+  public ParsedVar var(String fullVarName, StackTrace stackTrace) {
+    return new ParsedVar(stiJNI.RawEventGroup_var(swigCPtr, this, fullVarName, StackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
-  public boolean bindVar(String fullVarName, MixedValue value) {
-    return stiJNI.RawEventGroup_bindVar__SWIG_0(swigCPtr, this, fullVarName, MixedValue.getCPtr(value), value);
+  public RawEventGroup.Result bindVar(String fullVarName, MixedValue value) {
+    return new RawEventGroup.Result(stiJNI.RawEventGroup_bindVar__SWIG_0(swigCPtr, this, fullVarName, MixedValue.getCPtr(value), value), true);
   }
 
-  public boolean bindVar(ParsedVar overwrittenVar) {
-    return stiJNI.RawEventGroup_bindVar__SWIG_1(swigCPtr, this, ParsedVar.getCPtr(overwrittenVar), overwrittenVar);
+  public RawEventGroup.Result bindVar(ParsedVar overwrittenVar) {
+    return new RawEventGroup.Result(stiJNI.RawEventGroup_bindVar__SWIG_1(swigCPtr, this, ParsedVar.getCPtr(overwrittenVar), overwrittenVar), true);
   }
 
-  public boolean bindVars(ParsedVarSet overwritten) {
-    return stiJNI.RawEventGroup_bindVars(swigCPtr, this, ParsedVarSet.getCPtr(overwritten), overwritten);
+  public RawEventGroup.Result bindVars(ParsedVarSet overwritten) {
+    return new RawEventGroup.Result(stiJNI.RawEventGroup_bindVars(swigCPtr, this, ParsedVarSet.getCPtr(overwritten), overwritten), true);
   }
 
   public void bindTargets(RawEventTargetMap targetReplacements) {
@@ -179,6 +229,10 @@ public class RawEventGroup {
 
   public RawEventGroupVector getSubgroups() {
     return new RawEventGroupVector(stiJNI.RawEventGroup_getSubgroups(swigCPtr, this), true);
+  }
+
+  public void addSubgroup(RawEventGroup subgroup) {
+    stiJNI.RawEventGroup_addSubgroup(swigCPtr, this, RawEventGroup.getCPtr(subgroup), subgroup);
   }
 
   public void merge(RawEventGroup other) {

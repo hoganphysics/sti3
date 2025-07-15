@@ -3,7 +3,7 @@
 #include <sti/engine/ParsedTag.h>
 #include <sti/engine/StackTraceData.h>
 
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 #include "MixedValuePy.h"
 
 #include <vector>
@@ -18,7 +18,7 @@ namespace py = pybind11;
 
 // using STI::Python::ParsedVarPy;
 using STI::Engine::ParsedTag;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 using STI::Python::MixedValuePy;
 
 void init_ParsedTag(py::module& m) 
@@ -32,8 +32,12 @@ void init_ParsedTag(py::module& m)
                 if (self.stackTraceData != 0) {
                     return self.stackTraceData->getStackTrace(self.trace);
                 }
-                RawStackTrace emptyTrace;
+                StackTrace emptyTrace;
                 return emptyTrace;
+            })
+        .def("compressedTrace",
+            [](const ParsedTag& self) {
+                return self.trace;
             })
         .def("getGroupName", &ParsedTag::getGroupName)  
         .def("__repr__",

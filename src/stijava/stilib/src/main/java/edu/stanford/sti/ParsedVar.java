@@ -40,12 +40,12 @@ public class ParsedVar {
     this(stiJNI.new_ParsedVar__SWIG_0(), true);
   }
 
-  public ParsedVar(String name, RawEventGroup group, StackTrace trace, StackTraceData stackTraceData) {
-    this(stiJNI.new_ParsedVar__SWIG_1(name, RawEventGroup.getCPtr(group), group, StackTrace.getCPtr(trace), trace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
+  public ParsedVar(String name, RawEventGroup group, CompressedStackTrace trace, StackTraceData stackTraceData) {
+    this(stiJNI.new_ParsedVar__SWIG_1(name, RawEventGroup.getCPtr(group), group, CompressedStackTrace.getCPtr(trace), trace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
   }
 
-  public ParsedVar(String name, RawEventGroup group, MixedValue value, StackTrace trace, StackTraceData stackTraceData) {
-    this(stiJNI.new_ParsedVar__SWIG_2(name, RawEventGroup.getCPtr(group), group, MixedValue.getCPtr(value), value, StackTrace.getCPtr(trace), trace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
+  public ParsedVar(String name, RawEventGroup group, MixedValue value, CompressedStackTrace trace, StackTraceData stackTraceData) {
+    this(stiJNI.new_ParsedVar__SWIG_2(name, RawEventGroup.getCPtr(group), group, MixedValue.getCPtr(value), value, CompressedStackTrace.getCPtr(trace), trace, StackTraceData.getCPtr(stackTraceData), stackTraceData), true);
   }
 
   public void setName(String value) {
@@ -65,13 +65,13 @@ public class ParsedVar {
     return (cPtr == 0) ? null : new MixedValue(cPtr, false);
   }
 
-  public void setTrace(StackTrace value) {
-    stiJNI.ParsedVar_trace_set(swigCPtr, this, StackTrace.getCPtr(value), value);
+  public void setTrace(CompressedStackTrace value) {
+    stiJNI.ParsedVar_trace_set(swigCPtr, this, CompressedStackTrace.getCPtr(value), value);
   }
 
-  public StackTrace getTrace() {
+  public CompressedStackTrace getTrace() {
     long cPtr = stiJNI.ParsedVar_trace_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new StackTrace(cPtr, false);
+    return (cPtr == 0) ? null : new CompressedStackTrace(cPtr, false);
   }
 
   public void setStackTraceData(StackTraceData value) {

@@ -1,12 +1,12 @@
 #ifndef STI_PYTHON_STIPY_H
 #define STI_PYTHON_STIPY_H
 
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventGroup.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/HubID.h>
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include <memory>
 #include <string>
@@ -39,16 +39,16 @@ std::shared_ptr<STIPyShot> makeShot();
 std::shared_ptr<STIPyShot> makeShot(const std::string& name);
 std::shared_ptr<STIPyShot> makeShot(const std::string& name, const std::function<void(void)>& func);
 
-STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::RawStackTrace& stackTrace);
+STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace);
 
 std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);
 
-void setvar(const std::string& name, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
-void settag(const std::string& name, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+void setvar(const std::string& name, const pybind11::object& value, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
+void settag(const std::string& name, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 
-void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
-void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
-void meas(const STI::Engine::RawEventTarget& target, double time, const STI::Engine::RawStackTrace& stackTrace, const std::string& scope);
+void event(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
+void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
+void meas(const STI::Engine::RawEventTarget& target, double time, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 
 
 STI::Engine::RawEventTargetDevice dev(const std::string& deviceName);  //abstract device

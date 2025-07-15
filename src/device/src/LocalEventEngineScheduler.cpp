@@ -408,7 +408,7 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
         //sequence found
 
         if (sequenceResult->sequence->type == STI::Engine::SequenceType::Closed && 
-            sequenceResult->sequence->sequenceTable.count(sequenceEntryID.seqIndex.index) == 0) {
+            sequenceResult->sequence->sequenceTable.count(sequenceEntryID.seqIndex) == 0) {
             //Error: Sequence entry not found in sequence table
             
             job->addMessage(ParsingMessageType::Error, 10, "Invalid sequence entry")

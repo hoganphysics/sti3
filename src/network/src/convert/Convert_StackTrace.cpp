@@ -4,15 +4,15 @@
 #include "Convert_File.h"
 #include "TFileServerRefInterface.h"
 
-#include <sti/engine/StackTrace.h>
+#include <sti/engine/CompressedStackTrace.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
 
 using STI::Network::convert;
 using STI::TNetwork::TStackFrame;
-using STI::Engine::StackFrame;
+using STI::Engine::CompressedStackFrame;
 using STI::TNetwork::TStackFrameSeq;
-using STI::Engine::StackTrace;
+using STI::Engine::CompressedStackTrace;
 using STI::TNetwork::TStackTraceResult;
 using STI::Engine::StackTraceResult;
 using STI::TNetwork::TParseID;
@@ -21,25 +21,25 @@ using STI::TNetwork::TStackTraceData;
 using STI::Engine::StackTraceData;
 
 
-//StackFrame
+//CompressedStackFrame
 template<>
-bool STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tStackFrame, StackFrame& stackFrame)
+bool STI::Network::convert<TStackFrame, CompressedStackFrame>(const TStackFrame& tStackFrame, CompressedStackFrame& stackFrame)
 {
-    stackFrame = convert<TStackFrame, StackFrame>(tStackFrame);
+    stackFrame = convert<TStackFrame, CompressedStackFrame>(tStackFrame);
     return true;
 }
 
 template<>
-bool STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& stackFrame, TStackFrame& tStackFrame)
+bool STI::Network::convert<CompressedStackFrame, TStackFrame>(const CompressedStackFrame& stackFrame, TStackFrame& tStackFrame)
 {
-    tStackFrame = convert<StackFrame, TStackFrame>(stackFrame);
+    tStackFrame = convert<CompressedStackFrame, TStackFrame>(stackFrame);
     return true;
 }
 
 template<>
-StackFrame STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tStackFrame)
+CompressedStackFrame STI::Network::convert<TStackFrame, CompressedStackFrame>(const TStackFrame& tStackFrame)
 {
-    StackFrame frame;
+    CompressedStackFrame frame;
 
     frame.file = static_cast<unsigned>(tStackFrame.file);
     frame.func = static_cast<unsigned>(tStackFrame.func);
@@ -49,7 +49,7 @@ StackFrame STI::Network::convert<TStackFrame, StackFrame>(const TStackFrame& tSt
 }
 
 template<>
-TStackFrame STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& stackFrame)
+TStackFrame STI::Network::convert<CompressedStackFrame, TStackFrame>(const CompressedStackFrame& stackFrame)
 {
     TStackFrame tframe;
 
@@ -61,20 +61,20 @@ TStackFrame STI::Network::convert<StackFrame, TStackFrame>(const StackFrame& sta
 }
 
 
-//StackTrace
+//CompressedStackTrace
 template<>
-bool STI::Network::convert<TStackFrameSeq, StackTrace>(const TStackFrameSeq& tStackFrameSeq, StackTrace& stackFrame)
+bool STI::Network::convert<TStackFrameSeq, CompressedStackTrace>(const TStackFrameSeq& tStackFrameSeq, CompressedStackTrace& stackFrame)
 {
     for (unsigned i = 0; i < tStackFrameSeq.length(); ++i) {
-        stackFrame.appendFrame( convert<TStackFrame, StackFrame>(tStackFrameSeq[i]) );
+        stackFrame.appendFrame( convert<TStackFrame, CompressedStackFrame>(tStackFrameSeq[i]) );
     }
     return true;
 }
 
 template<>
-bool STI::Network::convert<StackTrace, TStackFrameSeq>(const StackTrace& stackFrame, TStackFrameSeq& tStackFrameSeq)
+bool STI::Network::convert<CompressedStackTrace, TStackFrameSeq>(const CompressedStackTrace& stackFrame, TStackFrameSeq& tStackFrameSeq)
 {
-    return convert<StackFrame, TStackFrame>(stackFrame.getFrames(), tStackFrameSeq);
+    return convert<CompressedStackFrame, TStackFrame>(stackFrame.getFrames(), tStackFrameSeq);
 }
 
 

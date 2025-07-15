@@ -8,16 +8,16 @@
 
 package edu.stanford.sti;
 
-public class RawStackTrace {
+public class CompressedStackTrace {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  protected RawStackTrace(long cPtr, boolean cMemoryOwn) {
+  protected CompressedStackTrace(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(RawStackTrace obj) {
+  protected static long getCPtr(CompressedStackTrace obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -30,26 +30,26 @@ public class RawStackTrace {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
-        stiJNI.delete_RawStackTrace(swigCPtr);
+        stiJNI.delete_CompressedStackTrace(swigCPtr);
       }
       swigCPtr = 0;
     }
   }
 
-  public RawStackTrace() {
-    this(stiJNI.new_RawStackTrace(), true);
+  public CompressedStackTrace() {
+    this(stiJNI.new_CompressedStackTrace(), true);
   }
 
-  public void appendFrame(RawStackFrame frame) {
-    stiJNI.RawStackTrace_appendFrame__SWIG_0(swigCPtr, this, RawStackFrame.getCPtr(frame), frame);
+  public void appendFrame(long file, long line, long func) {
+    stiJNI.CompressedStackTrace_appendFrame__SWIG_0(swigCPtr, this, file, line, func);
   }
 
-  public void appendFrame(String file, long line, String func) {
-    stiJNI.RawStackTrace_appendFrame__SWIG_1(swigCPtr, this, file, line, func);
+  public void appendFrame(CompressedStackFrame frame) {
+    stiJNI.CompressedStackTrace_appendFrame__SWIG_1(swigCPtr, this, CompressedStackFrame.getCPtr(frame), frame);
   }
 
-  public RawStackFrameVector getFrames() {
-    return new RawStackFrameVector(stiJNI.RawStackTrace_getFrames(swigCPtr, this), true);
+  public CompressedStackFrameVector getFrames() {
+    return new CompressedStackFrameVector(stiJNI.CompressedStackTrace_getFrames(swigCPtr, this), true);
   }
 
 }

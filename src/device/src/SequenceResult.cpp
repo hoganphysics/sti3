@@ -37,7 +37,7 @@ bool SequenceResult::addShotResult(const SequenceIndex& index, const ShotID& sho
     if (shots.count(index) != 0) return false;
 
     if (sequence->type == STI::Engine::SequenceType::Closed && 
-        sequence->sequenceTable.count(index.index) == 0) {
+        sequence->sequenceTable.count(index) == 0) {
         //sequence entry not found
         return false;
     }

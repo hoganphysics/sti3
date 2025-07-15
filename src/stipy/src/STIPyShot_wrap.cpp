@@ -4,7 +4,7 @@
 #include <sti/engine/RawEvent.h>
 
 #include <sti/engine/RawEventGroup.h>
-#include "RawStackTrace.h"
+#include "StackTrace.h"
 
 #include <vector>
 #include <memory>
@@ -16,7 +16,7 @@ namespace py = pybind11;
 
 using STI::Engine::RawEventTarget;
 using STI::Python::STIPyShot;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 using STI::Engine::RawEventGroup;
 
 
@@ -28,24 +28,24 @@ void init_STIPyShot(py::module& m)
     py::class_<STIPyShot, std::shared_ptr<STIPyShot>>(m, "STIPyShot")
 
         .def("setvar", py::overload_cast<const std::string&, const pybind11::object&, 
-                        const RawStackTrace&>(&STIPyShot::setvar),
+                        const StackTrace&>(&STIPyShot::setvar),
                         py::arg("name"), py::arg("value"), py::arg("stackTrace"))
         .def("setvar", py::overload_cast<const std::string&, const pybind11::object&, 
-                        const RawStackTrace&, const std::string&>(&STIPyShot::setvar),
+                        const StackTrace&, const std::string&>(&STIPyShot::setvar),
                         py::arg("name"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"))
 
         .def("event", py::overload_cast<const RawEventTarget&, double, const pybind11::object&, 
-                        const RawStackTrace&>(&STIPyShot::event), 
+                        const StackTrace&>(&STIPyShot::event), 
                         py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"))
         .def("event", py::overload_cast<const RawEventTarget&, double, const pybind11::object&, 
-                        const RawStackTrace&, const std::string&>(&STIPyShot::event), 
+                        const StackTrace&, const std::string&>(&STIPyShot::event), 
                         py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"))
 
-        .def("meas", py::overload_cast<const RawEventTarget&, double, const RawStackTrace&, 
+        .def("meas", py::overload_cast<const RawEventTarget&, double, const StackTrace&, 
                     const std::string&>(&STIPyShot::meas), 
                     py::arg("channel"), py::arg("time"), py::arg("stackTrace"), py::arg("scope"))
         .def("meas", py::overload_cast<const RawEventTarget&, double, const pybind11::object&, 
-                        const RawStackTrace&, const std::string&>(&STIPyShot::meas), 
+                        const StackTrace&, const std::string&>(&STIPyShot::meas), 
                         py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"))
 
         .def("rootgroup", py::overload_cast<>(&STIPyShot::group))

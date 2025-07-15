@@ -1327,7 +1327,7 @@ STI::TNetwork::TEventEngineJob::operator<<= (cdrStream &_n)
 void
 STI::TNetwork::TSequenceEntry::operator>>= (cdrStream &_n) const
 {
-  index >>= _n;
+  (const TSequenceIndex&) index >>= _n;
   (const TParsedVarSeq&) overwritten >>= _n;
 
 }
@@ -1335,7 +1335,7 @@ STI::TNetwork::TSequenceEntry::operator>>= (cdrStream &_n) const
 void
 STI::TNetwork::TSequenceEntry::operator<<= (cdrStream &_n)
 {
-  (::CORBA::Long&)index <<= _n;
+  (TSequenceIndex&)index <<= _n;
   (TParsedVarSeq&)overwritten <<= _n;
 
 }
@@ -1343,7 +1343,7 @@ STI::TNetwork::TSequenceEntry::operator<<= (cdrStream &_n)
 void
 STI::TNetwork::TSequenceEntryTuple::operator>>= (cdrStream &_n) const
 {
-  index >>= _n;
+  (const TSequenceIndex&) index >>= _n;
   (const TSequenceEntry&) entry >>= _n;
 
 }
@@ -1351,7 +1351,7 @@ STI::TNetwork::TSequenceEntryTuple::operator>>= (cdrStream &_n) const
 void
 STI::TNetwork::TSequenceEntryTuple::operator<<= (cdrStream &_n)
 {
-  (::CORBA::Long&)index <<= _n;
+  (TSequenceIndex&)index <<= _n;
   (TSequenceEntry&)entry <<= _n;
 
 }

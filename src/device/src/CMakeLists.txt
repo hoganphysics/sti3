@@ -47,6 +47,7 @@ include_directories("." ${Boost_INCLUDE_DIR})
 add_library(stidevice SHARED 
     AppointmentTask.cpp
     BinaryData.cpp
+    CompressedStackTrace.cpp
     ConfigFile.cpp
     Configuration.cpp
     DeviceEventParser.cpp
@@ -110,7 +111,6 @@ add_library(stidevice SHARED
     RawEventTarget.cpp
     RawEventTargetChannel.cpp
     RawEventTargetDevice.cpp
-    RawStackTrace.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     Sequence.cpp

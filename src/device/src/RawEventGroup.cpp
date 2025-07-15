@@ -26,7 +26,7 @@ using STI::Engine::ParsedVar;
 using STI::Engine::ParsedTag;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventType;
-using STI::Engine::RawStackTrace;
+using STI::Engine::StackTrace;
 using STI::Engine::StackTraceData;
 using STI::Engine::RawEventGroupStats;
 
@@ -170,11 +170,11 @@ bool RawEventGroup::splitFullGroupName(const std::string& fullName, std::string&
 }
 
 //checks overwritten list and uses the overwritten value if found; fails if already bound and not in overwritten (cannnot call setvar twice)
-bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::MixedValue& value, const RawStackTrace& stackTrace)
+RawEventGroup::Result RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::MixedValue& value, const StackTrace& stackTrace)
 {
     std::unique_lock groupLock(groupMutex);
 
-    if (fullVarName == "") return false;
+    if (fullVarName == "") return {false, "Variable name cannot be empty"};
 
     std::string groupName;
     std::string varName;
@@ -183,7 +183,12 @@ bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::Mix
         //fullVarName includes a group prefix
         //need to check if it refers to this group
         auto g = group(groupName);
-        return (g != 0 && g->addvar(varName, value, stackTrace));
+        // return (g != 0 && g->addvar(varName, value, stackTrace));
+        if (g != 0) {
+            return g->addvar(varName, value, stackTrace);
+        } else {
+            return {false, "Group not found: " + groupName};
+        }
     }
 
     //No group prefix found
@@ -193,7 +198,9 @@ bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::Mix
 
     if (varMap.exists(varName)) {
         //Error, var already defined
-        return false;
+        std::stringstream ss;
+        ss << "Variable '" << varName << "' already defined in group " << groupName;
+        return {false, ss.str()};
     }
 
     auto trace = stackTraceData->addStackTrace(stackTrace);
@@ -208,11 +215,13 @@ bool RawEventGroup::addvar(const std::string& fullVarName, const STI::Utils::Mix
 
     varMap.add(varName, var);
 
-    return varMap.exists(varName);
+    // return varMap.exists(varName);
+    bool success = varMap.exists(varName);
+    return {success, "Failed to add variable: '" + varName + "' in group: " + groupName};
 }
 
 
-bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& stackTrace)
+RawEventGroup::Result RawEventGroup::addtag(const std::string& fullTagName, const StackTrace& stackTrace)
 {
     std::unique_lock groupLock(groupMutex);
 
@@ -222,7 +231,12 @@ bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& 
     if (splitFullGroupName(fullTagName, groupName, tagName)) {
         //fullTagName includes a group prefix
         auto g = group(groupName);
-        return (g != 0 && g->addtag(tagName, stackTrace));
+        // return (g != 0 && g->addtag(tagName, stackTrace));
+        if (g != 0) {
+            return g->addtag(tagName, stackTrace);
+        } else {
+            return {false, "Group not found: " + groupName};
+        }
     }
 
     //No group prefix found
@@ -231,7 +245,7 @@ bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& 
 
     if (tagMap.exists(tagName)) {
         //Error, tag already defined
-        return false;
+        return {false, "Tag '" + tagName + "' already defined in group " + groupName};
     }
 
     auto trace = stackTraceData->addStackTrace(stackTrace);
@@ -240,7 +254,7 @@ bool RawEventGroup::addtag(const std::string& fullTagName, const RawStackTrace& 
 
     tagMap.add(tagName, tag);
 
-    return tagMap.exists(tagName);
+    return {tagMap.exists(tagName), "Failed to add tag: '" + tagName + "' in group: " + groupName};
 }
 
 
@@ -283,7 +297,7 @@ void RawEventGroup::addEvent(const RawEvent& evt, const std::string& subgroupNam
 }
 
 void RawEventGroup::addEvent(const RawEventTarget& target, double time, const STI::Utils::MixedValue& value, 
-                const RawEventType& type, const RawStackTrace& stackTrace)
+                const RawEventType& type, const StackTrace& stackTrace)
 {
     std::unique_lock groupLock(groupMutex);
 
@@ -309,14 +323,14 @@ void RawEventGroup::addEvent(const RawEventTarget& target, double time, const ST
 }
 
 void RawEventGroup::addEvent(const RawEventTarget& target, double time, const STI::Engine::ParsedVar& var, 
-                    const RawEventType& type, const RawStackTrace& stackTrace)
+                    const RawEventType& type, const StackTrace& stackTrace)
 {
     // std::unique_lock groupLock(groupMutex);
     addEvent(target, time, var.value, type, stackTrace);
 
 }
 
-ParsedVar RawEventGroup::var(const std::string& fullVarName, const RawStackTrace& stackTrace)
+ParsedVar RawEventGroup::var(const std::string& fullVarName, const StackTrace& stackTrace)
 {
     std::unique_lock groupLock(groupMutex);
 
@@ -358,9 +372,9 @@ ParsedVar RawEventGroup::var(const std::string& fullVarName, const RawStackTrace
     return var;
 }
 
-bool RawEventGroup::bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value)
+RawEventGroup::Result RawEventGroup::bindVar(const std::string& fullVarName, const STI::Utils::MixedValue& value)
 {
-    if (fullVarName == "") return false;
+    if (fullVarName == "") return {false, "Variable name cannot be empty"};
 
     std::string groupName;
     std::string varName;
@@ -369,20 +383,25 @@ bool RawEventGroup::bindVar(const std::string& fullVarName, const STI::Utils::Mi
         //fullVarName includes a group prefix
         //need to check if it refers to this group
         auto g = group(groupName);
-        return (g != 0 && g->bindVar(varName, value));
+        // return (g != 0 && g->bindVar(varName, value));
+        if (g != 0) {
+            return g->bindVar(varName, value);
+        } else {
+            return {false, "Group not found: " + groupName};
+        }
     }
 
     //No group prefix found
     groupName = getName();  //belongs to local group
     varName = fullVarName;
 
-    STI::Engine::StackTrace dummytrace;
+    STI::Engine::CompressedStackTrace dummytrace;
     ParsedVar var(varName, this, value, dummytrace, stackTraceData);
 
     return bindVar(var);
 }
 
-bool RawEventGroup::bindVar(const ParsedVar& overwrittenVar)
+RawEventGroup::Result RawEventGroup::bindVar(const ParsedVar& overwrittenVar)
 {
     //fails if it attempts to overwrite any already bound var
     //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
@@ -392,10 +411,12 @@ bool RawEventGroup::bindVar(const ParsedVar& overwrittenVar)
 
     bool success = true;
     ParsedVar var;
+    std::stringstream ss;
         
     if (varMap.get(overwrittenVar.name, var)) {
         if (var.isBound()) {
             success = false;
+            ss << "Variable '" << overwrittenVar.name << "' already bound in group " << getName();
         }
         else {
             var.value = overwrittenVar.value;
@@ -412,10 +433,10 @@ bool RawEventGroup::bindVar(const ParsedVar& overwrittenVar)
         overwrittenVars.insert(overwrittenVar);
     }
 
-    return success;
+    return {success, ss.str()};
 }
 
-bool RawEventGroup::bindVars(const std::set<ParsedVar>& overwritten)
+RawEventGroup::Result RawEventGroup::bindVars(const std::set<ParsedVar>& overwritten)
 {
 //fails if it attempts to overwrite any already bound var
 //sequence overwritten vars must be declared as an argument to makeshot, so that python parsing can account for them
@@ -423,13 +444,18 @@ bool RawEventGroup::bindVars(const std::set<ParsedVar>& overwritten)
     
     // std::unique_lock groupLock(groupMutex);
 
+    std::stringstream ss;
     bool success = true;
 
     for (auto& ovar : overwritten) {
-        success &= bindVar(ovar);
+        auto result = bindVar(ovar);
+        if (!result.success) {
+            ss << result.errorMessage << "\n";
+        }
+        success &= result.success;
     }
 
-    return success;
+    return {success, ss.str()};
 }
 
 

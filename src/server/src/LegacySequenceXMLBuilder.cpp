@@ -72,13 +72,13 @@ void LegacySequenceXMLBuilder::addShot(const std::string& shotFilename, const Se
     if (experiments == 0) return;
     if (sequence == 0) return;
 
-    std::map<unsigned, SequenceEntry>::iterator it;
+    std::map<SequenceIndex, SequenceEntry>::iterator it;
     bool closedSeq = false;
 
     if (sequence->type == SequenceType::Closed) {
         closedSeq = true;
         
-        it = sequence->sequenceTable.find(id.seqIndex.index);
+        it = sequence->sequenceTable.find(id.seqIndex);
         if (it == sequence->sequenceTable.end()) return;
     }
 

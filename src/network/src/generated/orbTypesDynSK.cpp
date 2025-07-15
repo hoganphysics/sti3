@@ -1980,8 +1980,9 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceType = _0RL_tc_STI_mTNet
 
 
 
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceEntry[] = {
-  {"index", CORBA::TypeCode::PR_long_tc()},
+  {"index", _0RL_tc_STI_mTNetwork_mTSequenceIndex},
   {"overwritten", _0RL_tc_STI_mTNetwork_mTParsedVarSeq}
 };
 
@@ -1989,6 +1990,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceEntry[] 
 #  undef _0RL_tc_STI_mTNetwork_mTSequenceEntry
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntry = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequenceEntry:1.0", "TSequenceEntry", _0RL_structmember_STI_mTNetwork_mTSequenceEntry, 2, &_0RL_tcTrack);
+
 
 
 
@@ -2005,8 +2007,10 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceEntry = _0RL_tc_STI_mTNe
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceEntryTuple[] = {
-  {"index", CORBA::TypeCode::PR_long_tc()},
+  {"index", _0RL_tc_STI_mTNetwork_mTSequenceIndex},
   {"entry", _0RL_tc_STI_mTNetwork_mTSequenceEntry}
 };
 
@@ -2014,6 +2018,8 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceEntryTup
 #  undef _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequenceEntryTuple:1.0", "TSequenceEntryTuple", _0RL_structmember_STI_mTNetwork_mTSequenceEntryTuple, 2, &_0RL_tcTrack);
+
+
 
 
 
@@ -2026,6 +2032,14 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceEntryTuple = _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple;
 #endif
+
+
+
+
+
+
+
+
 
 
 
@@ -2060,6 +2074,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceEntryTupleSeq = _0RL_tc_
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequence[] = {
   {"sequenceTable", _0RL_tc_STI_mTNetwork_mTSequenceEntryTupleSeq},
   {"repeats", CORBA::TypeCode::PR_long_tc()},
@@ -2070,6 +2086,8 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequence[] = {
 #  undef _0RL_tc_STI_mTNetwork_mTSequence
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequence = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequence:1.0", "TSequence", _0RL_structmember_STI_mTNetwork_mTSequence, 3, &_0RL_tcTrack);
+
+
 
 
 
@@ -2265,6 +2283,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotIDTupleSeq = _0RL_tc_STI_mTN
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceResult[] = {
   {"seqid", _0RL_tc_STI_mTNetwork_mTSequenceID},
   {"sequenceData", _0RL_tc_STI_mTNetwork_mTSequence},
@@ -2276,6 +2296,8 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceResult[]
 #  undef _0RL_tc_STI_mTNetwork_mTSequenceResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequenceResult:1.0", "TSequenceResult", _0RL_structmember_STI_mTNetwork_mTSequenceResult, 4, &_0RL_tcTrack);
+
+
 
 
 

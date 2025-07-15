@@ -148,6 +148,18 @@ public class TimeStamp {
     stiJNI.TimeStamp_add_day__SWIG_1(swigCPtr, this);
   }
 
+  public void add_hour(int hours) {
+    stiJNI.TimeStamp_add_hour(swigCPtr, this, hours);
+  }
+
+  public void add_minute(int minutes) {
+    stiJNI.TimeStamp_add_minute(swigCPtr, this, minutes);
+  }
+
+  public void add_sec(int seconds) {
+    stiJNI.TimeStamp_add_sec(swigCPtr, this, seconds);
+  }
+
   public void add_ns(int ns) {
     stiJNI.TimeStamp_add_ns(swigCPtr, this, ns);
   }

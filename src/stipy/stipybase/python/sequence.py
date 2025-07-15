@@ -38,10 +38,11 @@ def getAllVars(eventGroup: RawEventGroup):
     if (type(eventGroup) != RawEventGroup):
         return set()
     
-    vars = set(eventGroup.getVars())
+    vars = set(eventGroup.vars())
 
-    if len(eventGroup.getSubgroups()) > 0:
-        for g in eventGroup.getSubgroups():
+    subgroups = eventGroup.subgroups()
+    if len(subgroups) > 0:
+        for g in eventGroup.subgroups():
             vars.update(getAllVars(g))
     
     return vars
@@ -50,10 +51,11 @@ def getAllOverwrittenVars(eventGroup: RawEventGroup):
     if (type(eventGroup) != RawEventGroup):
         return set()
     
-    ovars = eventGroup.getOverwrittenVars()
+    ovars = eventGroup.overwrittenVars()
 
-    if len(eventGroup.getSubgroups()) > 0:
-        for g in eventGroup.getSubgroups():
+    subgroups = eventGroup.subgroups()
+    if len(subgroups) > 0:
+        for g in subgroups:
             ovars.update(getAllOverwrittenVars(g))
     
     return ovars
@@ -83,16 +85,16 @@ class STIPySequence(Sequence):
                     self.basegroup.bindvar(key, entry[key])
                     # v = ParsedVar(key, entry[key])
                     # vars.add(v)
-                self.append(self.getOverwrittenVars())
+                self.append(self.overwrittenVars())
             elif (type(entry) is set):
                 self.append(entry)
             else:
                 raise ValueError("Sequence table entries must be a set or a dictionary.")
 
-    def getVars(self):
+    def vars(self):
         return getAllVars(self.basegroup)
 
-    def getOverwrittenVars(self):
+    def overwrittenVars(self):
         return getAllOverwrittenVars(self.basegroup)
 
     # def __getvars(eventGroup: RawEventGroup):

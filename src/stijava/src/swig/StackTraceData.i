@@ -3,11 +3,11 @@
     #include <sti/engine/StackTraceData.h>
     using STI::Engine::StackTraceData;
 
-    #include <sti/engine/StackTrace.h>
+    #include <sti/engine/CompressedStackTrace.h>
+    using STI::Engine::CompressedStackTrace;
+    #include "StackTrace.h"
     using STI::Engine::StackTrace;
-    #include "RawStackTrace.h"
-    using STI::Engine::RawStackTrace;
-    using STI::Engine::RawStackFrame;
+    using STI::Engine::StackFrame;
 
     // #include <sti/utils/FileHolder.h>
     // using STI::Utils::FileHolder;
@@ -26,11 +26,11 @@
 // %include "sti/utils/FileHolder.h"
 
 
-//StackTrace
+//CompressedStackTrace
+%template(CompressedStackFrameVector) std::vector< STI::Engine::CompressedStackFrame >;
 %template(StackFrameVector) std::vector< STI::Engine::StackFrame >;
-%template(RawStackFrameVector) std::vector< STI::Engine::RawStackFrame >;
-%include "sti/engine/StackTrace.h"
-%include "RawStackTrace.h"
+%include "sti/engine/CompressedStackTrace.h"
+%include "StackTrace.h"
 
 %ignore STI::Engine::StackTraceData::StackTraceData(const std::shared_ptr< STI::Utils::FileHolderFactory >& fileFactory);
 // %ignore STI::Engine::StackTraceData::StackTraceData(const STI::Device::DeviceID& localID, const std::shared_ptr< STI::Utils::FileServer >& fileServer);

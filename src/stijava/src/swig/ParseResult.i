@@ -31,6 +31,7 @@
 %include "sti/engine/EngineParsingMessage.h"
 %template(EngineParserMessageVector) std::vector< STI::Engine::EngineParsingMessage >;
 
+%template(DeviceDependencyGraph) std::map< STI::Device::DeviceID, std::vector< unsigned > >;
 
 
 %extend STI::Engine::ParsedDependencyTree

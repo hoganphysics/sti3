@@ -52,12 +52,12 @@ public class StackTraceData {
     this(stiJNI.new_StackTraceData__SWIG_2(FileIDVector.getCPtr(timingFiles), timingFiles, StringVector.getCPtr(functionNames), functionNames), true);
   }
 
-  public StackTrace addStackTrace(RawStackTrace stackTrace) {
-    return new StackTrace(stiJNI.StackTraceData_addStackTrace(swigCPtr, this, RawStackTrace.getCPtr(stackTrace), stackTrace), true);
+  public CompressedStackTrace addStackTrace(StackTrace stackTrace) {
+    return new CompressedStackTrace(stiJNI.StackTraceData_addStackTrace(swigCPtr, this, StackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
-  public RawStackTrace getStackTrace(StackTrace stackTrace) {
-    return new RawStackTrace(stiJNI.StackTraceData_getStackTrace(swigCPtr, this, StackTrace.getCPtr(stackTrace), stackTrace), true);
+  public StackTrace getStackTrace(CompressedStackTrace stackTrace) {
+    return new StackTrace(stiJNI.StackTraceData_getStackTrace(swigCPtr, this, CompressedStackTrace.getCPtr(stackTrace), stackTrace), true);
   }
 
   public FileIDVector getTimingFiles() {
