@@ -28,6 +28,7 @@ def connect(serverID, nameServerAddress, serverHubID=None):
         server = _connect(localAddress, serverID, serverHubID, nameServerAddress)
 
     if server != None and type(server) == STIPyServer:
+        server.setHostname(localAddress)
         server.setUsername(username)
 
     return server

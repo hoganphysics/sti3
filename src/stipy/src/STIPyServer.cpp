@@ -64,7 +64,8 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
 
     STI::Engine::ShotConfig shotConfig;
     if (libDevice != 0) {
-        shotConfig.jobSourceID.machine = libDevice->getID().getAddress();
+        // shotConfig.jobSourceID.machine = libDevice->getID().getAddress();
+        shotConfig.jobSourceID.machine = getHostname();
         shotConfig.jobSourceID.user = getUserName();
     }
     
@@ -218,6 +219,26 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::vector<PyParseTicke
 }
 
 
+STI::Engine::SequenceID STIPyServer::addSequence(const std::shared_ptr<STI::Engine::Sequence>& seq)
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    bool success = false;
+    STI::Engine::AddSequenceStatus addSequenceStatus;
+
+    if (getScheduler(scheduler) && seq != 0) {
+        STI::Engine::EngineJobSourceID source;
+        addSequenceStatus = scheduler->addSequence(seq, source);
+        success = true;
+    }
+    
+    if (addSequenceStatus.status == STI::Engine::EngineJobStatus::Deferred) {
+    }
+
+    return addSequenceStatus.seqid;
+}
+
+
+
 std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseTicket>& ticket)
 {
     return play(ticket, 0);
@@ -238,7 +259,7 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseT
             STI::Engine::EngineJobSourceID source;
             
             source.machine = libDevice->getID().getAddress();
-            source.user = username = getUserName();
+            source.user = getUserName();
 
             auto shotID = STI::Engine::ShotID::generateUniqueID(ticket->getParseID(), source);
             resultTicket = libDevice->makeResultTicket(shotID);
@@ -260,8 +281,9 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& pa
 
         STI::Engine::EngineJobSourceID source;
         if (libDevice != 0) {
-            source.machine = libDevice->getID().getAddress();
-            source.user = username = getUserName();
+            // source.machine = libDevice->getID().getAddress();
+            source.machine = getHostname();
+            source.user = getUserName();
         }
         
         playJobStatus = scheduler->play(parseID, source);
@@ -284,23 +306,6 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& pa
     return ticket;
 }
 
-STI::Engine::SequenceID STIPyServer::parse(const std::shared_ptr<STI::Engine::Sequence>& seq)
-{
-    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
-    bool success = false;
-    STI::Engine::AddSequenceStatus addSequenceStatus;
-
-    if (getScheduler(scheduler) && seq != 0) {
-        STI::Engine::EngineJobSourceID source;
-        addSequenceStatus = scheduler->addSequence(seq, source);
-        success = true;
-    }
-    
-    if (addSequenceStatus.status == STI::Engine::EngineJobStatus::Deferred) {
-    }
-
-    return addSequenceStatus.seqid;
-}
 
 
 void STIPyServer::cancelAll()
@@ -320,6 +325,16 @@ void STIPyServer::setUserName(const std::string& name)
 std::string STIPyServer::getUserName() const
 {
     return username;
+}
+
+void STIPyServer::setHostname(const std::string& name)
+{
+    hostname = name;
+}
+
+std::string STIPyServer::getHostname() const
+{
+    return hostname;
 }
 
 std::shared_ptr<STI::Network::NetworkDeviceHub> STIPyServer::getDeviceHub() const

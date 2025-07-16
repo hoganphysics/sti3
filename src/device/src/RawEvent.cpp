@@ -113,15 +113,20 @@ RawEventTarget& RawEvent::getTarget()
 
 std::string RawEvent::getGroupName() const
 {
+	return _groupName;
+}
+
+void RawEvent::refreshGroupName()
+{
 	if (parentGroup != 0) {
-		return parentGroup->getFullName();
+		_groupName =  parentGroup->getFullName();
 	}
-	return "";
 }
 
 void RawEvent::setParentGroup(const RawEventGroup* group)
 {
 	parentGroup = group;
+	refreshGroupName();
 }
 
 RawEventID RawEvent::getEventID() const

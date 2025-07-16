@@ -118,7 +118,7 @@ public:
     std::shared_ptr<PyResultTicket> play(const std::shared_ptr<PyParseTicket>& ticket, unsigned repeats);
     std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID);
 
-    STI::Engine::SequenceID parse(const std::shared_ptr<STI::Engine::Sequence>& seq);
+    STI::Engine::SequenceID addSequence(const std::shared_ptr<STI::Engine::Sequence>& seq);
 
     void cancelAll();
 
@@ -128,6 +128,9 @@ public:
     void setUserName(const std::string& name);
     std::string getUserName() const;
 
+    void setHostname(const std::string& name);
+    std::string getHostname() const;
+    
     std::shared_ptr<STI::Network::NetworkDeviceHub> getDeviceHub() const;
 
 private:
@@ -136,6 +139,7 @@ private:
     bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
 
     std::string username;   //name of user that created this server instance
+    std::string hostname;   //host machine address that created this server instance
     std::shared_ptr<STI::Network::NetworkDeviceHub> libDeviceHub;
     std::shared_ptr<STIPyLibDevice> libDevice;
     STI::Device::DeviceID serverID;

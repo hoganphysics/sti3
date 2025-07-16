@@ -809,6 +809,7 @@ STI::TNetwork::TRawEvent::operator>>= (cdrStream &_n) const
   (const TRawEventTarget&) target >>= _n;
   (const TParsedVar&) parsedValue >>= _n;
   _n.marshalString(description,0);
+  _n.marshalString(groupName,0);
   (const TStackFrameSeq&) stackTrace >>= _n;
   _n.marshalBoolean(isMeasurement);
   rawEventType >>= _n;
@@ -823,6 +824,7 @@ STI::TNetwork::TRawEvent::operator<<= (cdrStream &_n)
   (TRawEventTarget&)target <<= _n;
   (TParsedVar&)parsedValue <<= _n;
   description = _n.unmarshalString(0);
+  groupName = _n.unmarshalString(0);
   (TStackFrameSeq&)stackTrace <<= _n;
   isMeasurement = _n.unmarshalBoolean();
   (TRawEventType&)rawEventType <<= _n;
@@ -1299,32 +1301,6 @@ STI::TNetwork::TShot::operator<<= (cdrStream &_n)
 }
 
 void
-STI::TNetwork::TEventEngineJob::operator>>= (cdrStream &_n) const
-{
-  (const TEngineJobID&) jobID >>= _n;
-  (const TDeviceID&) jobOwner >>= _n;
-  status >>= _n;
-  (const TEngineID&) engineID >>= _n;
-  (const TShot&) shot >>= _n;
-  (const TEventEngineDependencyTree&) dependencies >>= _n;
-  (const TDeviceIDSeq&) missingTargetIDs >>= _n;
-
-}
-
-void
-STI::TNetwork::TEventEngineJob::operator<<= (cdrStream &_n)
-{
-  (TEngineJobID&)jobID <<= _n;
-  (TDeviceID&)jobOwner <<= _n;
-  (TEngineJobStatus&)status <<= _n;
-  (TEngineID&)engineID <<= _n;
-  (TShot&)shot <<= _n;
-  (TEventEngineDependencyTree&)dependencies <<= _n;
-  (TDeviceIDSeq&)missingTargetIDs <<= _n;
-
-}
-
-void
 STI::TNetwork::TSequenceEntry::operator>>= (cdrStream &_n) const
 {
   (const TSequenceIndex&) index >>= _n;
@@ -1509,6 +1485,34 @@ STI::TNetwork::TEngineParsingMessage::operator<<= (cdrStream &_n)
   name = _n.unmarshalString(0);
   message = _n.unmarshalString(0);
   (TRawEventSeq&)events <<= _n;
+
+}
+
+void
+STI::TNetwork::TEventEngineJob::operator>>= (cdrStream &_n) const
+{
+  (const TEngineJobID&) jobID >>= _n;
+  (const TDeviceID&) jobOwner >>= _n;
+  status >>= _n;
+  (const TEngineID&) engineID >>= _n;
+  (const TShot&) shot >>= _n;
+  (const TEventEngineDependencyTree&) dependencies >>= _n;
+  (const TDeviceIDSeq&) missingTargetIDs >>= _n;
+  (const TEngineParsingMessageSeq&) messages >>= _n;
+
+}
+
+void
+STI::TNetwork::TEventEngineJob::operator<<= (cdrStream &_n)
+{
+  (TEngineJobID&)jobID <<= _n;
+  (TDeviceID&)jobOwner <<= _n;
+  (TEngineJobStatus&)status <<= _n;
+  (TEngineID&)engineID <<= _n;
+  (TShot&)shot <<= _n;
+  (TEventEngineDependencyTree&)dependencies <<= _n;
+  (TDeviceIDSeq&)missingTargetIDs <<= _n;
+  (TEngineParsingMessageSeq&)messages <<= _n;
 
 }
 

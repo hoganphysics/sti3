@@ -28,7 +28,7 @@ void init_STIPyServer(py::module& m)
         // .def("makesequence", py::overload_cast<>(&STIPyServer::makesequence))
         .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse))
         .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&, const STI::Engine::SequenceEntryID&>(&STIPyServer::parse))
-        .def("parse", py::overload_cast<const std::shared_ptr<STI::Engine::Sequence>&>(&STIPyServer::parse))    //sequences
+        .def("addSequence", py::overload_cast<const std::shared_ptr<STI::Engine::Sequence>&>(&STIPyServer::addSequence))    //sequences
 
         .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play))
         .def("play", py::overload_cast<const STI::Engine::ParseID&>(&STIPyServer::play))
@@ -37,6 +37,8 @@ void init_STIPyServer(py::module& m)
         
         .def("setUsername", &STIPyServer::setUserName)
         .def("username", &STIPyServer::getUserName)
+        .def("setHostname", &STIPyServer::setHostname)
+        .def("hostname", &STIPyServer::getHostname)
         .def("hub", &STIPyServer::getDeviceHub)
         
         .def("printNetwork", py::overload_cast<>(&STIPyServer::printNetwork))

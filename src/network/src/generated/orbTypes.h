@@ -3184,6 +3184,8 @@ _CORBA_MODULE_BEG
 
       ::CORBA::String_member description;
 
+      ::CORBA::String_member groupName;
+
       TStackFrameSeq stackTrace;
 
       ::CORBA::Boolean isMeasurement;
@@ -4526,150 +4528,6 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJobList;
 
-    struct TEventEngineJob {
-      typedef _CORBA_ConstrType_Variable_Var<TEventEngineJob> _var_type;
-
-      
-      TEngineJobID jobID;
-
-      TDeviceID jobOwner;
-
-      TEngineJobStatus status;
-
-      TEngineID engineID;
-
-      TShot shot;
-
-      TEventEngineDependencyTree dependencies;
-
-      TDeviceIDSeq missingTargetIDs;
-
-    
-
-      void operator>>= (cdrStream &) const;
-      void operator<<= (cdrStream &);
-    };
-
-    typedef TEventEngineJob::_var_type TEventEngineJob_var;
-
-    typedef _CORBA_ConstrType_Variable_OUT_arg< TEventEngineJob,TEventEngineJob_var > TEventEngineJob_out;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJob;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJobSeq;
-
-    class TEventEngineJobSeq_var;
-
-    class TEventEngineJobSeq : public _CORBA_Unbounded_Sequence< TEventEngineJob >  {
-    public:
-      typedef TEventEngineJobSeq_var _var_type;
-      inline TEventEngineJobSeq() {}
-      inline TEventEngineJobSeq(const TEventEngineJobSeq& _s)
-        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_s) {}
-
-      inline TEventEngineJobSeq(_CORBA_ULong _max)
-        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_max) {}
-      inline TEventEngineJobSeq(_CORBA_ULong _max, _CORBA_ULong _len, TEventEngineJob* _val, _CORBA_Boolean _rel=0)
-        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_max, _len, _val, _rel) {}
-
-    
-
-      inline TEventEngineJobSeq& operator = (const TEventEngineJobSeq& _s) {
-        _CORBA_Unbounded_Sequence< TEventEngineJob > ::operator=(_s);
-        return *this;
-      }
-    };
-
-    class TEventEngineJobSeq_out;
-
-    class TEventEngineJobSeq_var {
-    public:
-      inline TEventEngineJobSeq_var() : _pd_seq(0) {}
-      inline TEventEngineJobSeq_var(TEventEngineJobSeq* _s) : _pd_seq(_s) {}
-      inline TEventEngineJobSeq_var(const TEventEngineJobSeq_var& _s) {
-        if (_s._pd_seq)  _pd_seq = new TEventEngineJobSeq(*_s._pd_seq);
-        else             _pd_seq = 0;
-      }
-      inline ~TEventEngineJobSeq_var() { if (_pd_seq)  delete _pd_seq; }
-        
-      inline TEventEngineJobSeq_var& operator = (TEventEngineJobSeq* _s) {
-        if (_pd_seq)  delete _pd_seq;
-        _pd_seq = _s;
-        return *this;
-      }
-      inline TEventEngineJobSeq_var& operator = (const TEventEngineJobSeq_var& _s) {
-        if (&_s != this) {
-          if (_s._pd_seq) {
-            if (!_pd_seq)  _pd_seq = new TEventEngineJobSeq;
-            *_pd_seq = *_s._pd_seq;
-          }
-          else if (_pd_seq) {
-            delete _pd_seq;
-            _pd_seq = 0;
-          }
-        }
-        return *this;
-      }
-      inline TEventEngineJob& operator [] (_CORBA_ULong _s) {
-        return (*_pd_seq)[_s];
-      }
-
-    
-
-      inline TEventEngineJobSeq* operator -> () { return _pd_seq; }
-      inline const TEventEngineJobSeq* operator -> () const { return _pd_seq; }
-#if defined(__GNUG__)
-      inline operator TEventEngineJobSeq& () const { return *_pd_seq; }
-#else
-      inline operator const TEventEngineJobSeq& () const { return *_pd_seq; }
-      inline operator TEventEngineJobSeq& () { return *_pd_seq; }
-#endif
-        
-      inline const TEventEngineJobSeq& in() const { return *_pd_seq; }
-      inline TEventEngineJobSeq&       inout()    { return *_pd_seq; }
-      inline TEventEngineJobSeq*&      out() {
-        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
-        return _pd_seq;
-      }
-      inline TEventEngineJobSeq* _retn() { TEventEngineJobSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
-        
-      friend class TEventEngineJobSeq_out;
-      
-    private:
-      TEventEngineJobSeq* _pd_seq;
-    };
-
-    class TEventEngineJobSeq_out {
-    public:
-      inline TEventEngineJobSeq_out(TEventEngineJobSeq*& _s) : _data(_s) { _data = 0; }
-      inline TEventEngineJobSeq_out(TEventEngineJobSeq_var& _s)
-        : _data(_s._pd_seq) { _s = (TEventEngineJobSeq*) 0; }
-      inline TEventEngineJobSeq_out(const TEventEngineJobSeq_out& _s) : _data(_s._data) {}
-      inline TEventEngineJobSeq_out& operator = (const TEventEngineJobSeq_out& _s) {
-        _data = _s._data;
-        return *this;
-      }
-      inline TEventEngineJobSeq_out& operator = (TEventEngineJobSeq* _s) {
-        _data = _s;
-        return *this;
-      }
-      inline operator TEventEngineJobSeq*&()  { return _data; }
-      inline TEventEngineJobSeq*& ptr()       { return _data; }
-      inline TEventEngineJobSeq* operator->() { return _data; }
-
-      inline TEventEngineJob& operator [] (_CORBA_ULong _i) {
-        return (*_data)[_i];
-      }
-
-    
-
-      TEventEngineJobSeq*& _data;
-
-    private:
-      TEventEngineJobSeq_out();
-      TEventEngineJobSeq_out& operator=(const TEventEngineJobSeq_var&);
-    };
-
     enum TSequenceType { SequenceTypeOpen, SequenceTypeClosed /*, __max_TSequenceType=0xffffffff */ };
     typedef TSequenceType& TSequenceType_out;
 
@@ -5522,6 +5380,152 @@ _CORBA_MODULE_BEG
     private:
       TEngineParsingMessageSeq_out();
       TEngineParsingMessageSeq_out& operator=(const TEngineParsingMessageSeq_var&);
+    };
+
+    struct TEventEngineJob {
+      typedef _CORBA_ConstrType_Variable_Var<TEventEngineJob> _var_type;
+
+      
+      TEngineJobID jobID;
+
+      TDeviceID jobOwner;
+
+      TEngineJobStatus status;
+
+      TEngineID engineID;
+
+      TShot shot;
+
+      TEventEngineDependencyTree dependencies;
+
+      TDeviceIDSeq missingTargetIDs;
+
+      TEngineParsingMessageSeq messages;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TEventEngineJob::_var_type TEventEngineJob_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TEventEngineJob,TEventEngineJob_var > TEventEngineJob_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJob;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJobSeq;
+
+    class TEventEngineJobSeq_var;
+
+    class TEventEngineJobSeq : public _CORBA_Unbounded_Sequence< TEventEngineJob >  {
+    public:
+      typedef TEventEngineJobSeq_var _var_type;
+      inline TEventEngineJobSeq() {}
+      inline TEventEngineJobSeq(const TEventEngineJobSeq& _s)
+        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_s) {}
+
+      inline TEventEngineJobSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_max) {}
+      inline TEventEngineJobSeq(_CORBA_ULong _max, _CORBA_ULong _len, TEventEngineJob* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TEventEngineJob > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TEventEngineJobSeq& operator = (const TEventEngineJobSeq& _s) {
+        _CORBA_Unbounded_Sequence< TEventEngineJob > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TEventEngineJobSeq_out;
+
+    class TEventEngineJobSeq_var {
+    public:
+      inline TEventEngineJobSeq_var() : _pd_seq(0) {}
+      inline TEventEngineJobSeq_var(TEventEngineJobSeq* _s) : _pd_seq(_s) {}
+      inline TEventEngineJobSeq_var(const TEventEngineJobSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TEventEngineJobSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TEventEngineJobSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TEventEngineJobSeq_var& operator = (TEventEngineJobSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TEventEngineJobSeq_var& operator = (const TEventEngineJobSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TEventEngineJobSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TEventEngineJob& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TEventEngineJobSeq* operator -> () { return _pd_seq; }
+      inline const TEventEngineJobSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TEventEngineJobSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TEventEngineJobSeq& () const { return *_pd_seq; }
+      inline operator TEventEngineJobSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TEventEngineJobSeq& in() const { return *_pd_seq; }
+      inline TEventEngineJobSeq&       inout()    { return *_pd_seq; }
+      inline TEventEngineJobSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TEventEngineJobSeq* _retn() { TEventEngineJobSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TEventEngineJobSeq_out;
+      
+    private:
+      TEventEngineJobSeq* _pd_seq;
+    };
+
+    class TEventEngineJobSeq_out {
+    public:
+      inline TEventEngineJobSeq_out(TEventEngineJobSeq*& _s) : _data(_s) { _data = 0; }
+      inline TEventEngineJobSeq_out(TEventEngineJobSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TEventEngineJobSeq*) 0; }
+      inline TEventEngineJobSeq_out(const TEventEngineJobSeq_out& _s) : _data(_s._data) {}
+      inline TEventEngineJobSeq_out& operator = (const TEventEngineJobSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TEventEngineJobSeq_out& operator = (TEventEngineJobSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TEventEngineJobSeq*&()  { return _data; }
+      inline TEventEngineJobSeq*& ptr()       { return _data; }
+      inline TEventEngineJobSeq* operator->() { return _data; }
+
+      inline TEventEngineJob& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TEventEngineJobSeq*& _data;
+
+    private:
+      TEventEngineJobSeq_out();
+      TEventEngineJobSeq_out& operator=(const TEventEngineJobSeq_var&);
     };
 
     enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerPlayComplete, SchedulerYieldPlay /*, __max_TSchedulerMessageType=0xffffffff */ };
@@ -7180,16 +7184,6 @@ inline void operator <<= (STI::TNetwork::TEventEngineJobList& _e, cdrStream& s) 
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobList _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobList& _s);
 
-extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob& _s);
-extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJob* _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJob*& _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob*& _sp);
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq& _s);
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq* _sp);
-_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq*& _sp);
-_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq*& _sp);
-
 inline void operator >>=(STI::TNetwork::TSequenceType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);
 }
@@ -7345,6 +7339,16 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageSeq
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJob* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJob*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq*& _sp);
 
 inline void operator >>=(STI::TNetwork::TSchedulerMessageType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);

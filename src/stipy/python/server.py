@@ -6,6 +6,8 @@ from stipy.bin.stipybase import RawEventGroup
 from stipy.bin.stipybase import SequenceEntryID
 from stipy.bin.stipybase import SequenceID
 
+from collections.abc import Callable
+
 _makeshot = STIPyServer.makeshot
 
 # _makesequence = STIPyServer.makesequence
@@ -70,10 +72,15 @@ def makeshot(self, source=None, vars=None):
 
 
 
-def run(self, sequence: Sequence, sequenceID: SequenceID):
-    print(sequence.sequenceTable)
+def run(self, sequence: Sequence, progress: Callable[[int, int], None] = None):
+
+    sequenceID = self.addSequence(sequence)
+    # print(sequence.sequenceTable)
+    print(sequenceID)
 
     shots = []
+    shot_number = 0
+    
 
     for key in sequence.sequenceTable.keys():
         shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten)
@@ -88,6 +95,10 @@ def run(self, sequence: Sequence, sequenceID: SequenceID):
 
         resultTick = self.play(parseTick)
         resultTick.wait()
+
+        if progress is not None:
+            shot_number += 1
+            progress(shot_number, len(sequence.sequenceTable))
 
     return
 

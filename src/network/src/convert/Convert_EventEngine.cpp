@@ -621,6 +621,8 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
 
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getMissingTargetIDs(), tEngineJob.missingTargetIDs);
 
+    convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(engineJob.getParsingMessages(), tEngineJob.messages);
+
     return true;
 }
 
@@ -675,6 +677,10 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     default:
         break;
     }
+
+    std::vector<EngineParsingMessage> messages;
+    convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tEngineJob.messages, messages);
+    engineJob->addMessages(messages);
 
     return success && (engineJob != 0);
 }
@@ -887,6 +893,7 @@ bool STI::Network::convert<RawEvent, TRawEvent>(const RawEvent& evt, TRawEvent& 
     tEvent.target = convert<RawEventTarget, TRawEventTarget>(evt.target());
     convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(evt.value(), tEvent.parsedValue.value);
     convert<std::string, ::CORBA::String_member>(evt.description(), tEvent.description);
+    convert<std::string, ::CORBA::String_member>(evt.getGroupName(), tEvent.groupName);
     convert<STI::Engine::CompressedStackTrace, STI::TNetwork::TStackFrameSeq>(evt.getCompressedStackTrace(), tEvent.stackTrace);
     tEvent.isMeasurement = static_cast<CORBA::Boolean>(evt.isMeasurementEvent());
     tEvent.rawEventType = convert<RawEventType, TRawEventType>(evt.type());
@@ -902,6 +909,7 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
     evt.setTarget(convert<TRawEventTarget, RawEventTarget>(tEvent.target));
 	evt.setValue(convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tEvent.parsedValue.value));
 	evt.setDescription(convert<::CORBA::String_member, std::string>(tEvent.description));
+    evt.setGroupName(convert<::CORBA::String_member, std::string>(tEvent.groupName));
     convert<STI::TNetwork::TStackFrameSeq, STI::Engine::CompressedStackTrace>(tEvent.stackTrace, evt.getCompressedStackTrace());
 
 	evt.setEventType(convert<TRawEventType, RawEventType>(tEvent.rawEventType));
@@ -909,6 +917,7 @@ bool STI::Network::convert<TRawEvent, RawEvent>(const TRawEvent& tEvent, RawEven
     STI::Utils::GraphPathLabel gpl;
     STI::Network::convertEventGraphPath(tEvent.eventGraphPath, gpl);
 	evt.setEventGraphPath(gpl);
+    evt.setParentGroup(nullptr);
 
     return true;
 }

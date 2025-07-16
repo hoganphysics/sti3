@@ -69,6 +69,7 @@ public:
 	RawEventTarget& getTarget();
 
 	std::string getGroupName() const;
+	void refreshGroupName();
 	void setParentGroup(const RawEventGroup* group);
 
 	RawEventID getEventID() const;
@@ -104,6 +105,7 @@ public:
 		isMeasurement = (eventType == RawEventType::Measurement);
 		_eventType = eventType;
 	}
+	void setGroupName(const std::string& group) { _groupName = group; }
 
 	void attachFileServer(const std::shared_ptr<STI::Utils::VirtualFileServer>& server);
 	bool getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const;
@@ -120,6 +122,7 @@ private:
 	ParsedVar parsedValue;
 	
 	std::string _description;
+	std::string _groupName;	//default group name; used if parentGroup is not set
 	
 	CompressedStackTrace stackTrace;
 	std::shared_ptr<StackTraceData> stackTraceData;

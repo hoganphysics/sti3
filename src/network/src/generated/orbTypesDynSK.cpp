@@ -783,6 +783,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTRawEvent[] = {
   {"target", _0RL_tc_STI_mTNetwork_mTRawEventTarget},
   {"parsedValue", _0RL_tc_STI_mTNetwork_mTParsedVar},
   {"description", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"groupName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"stackTrace", _0RL_tc_STI_mTNetwork_mTStackFrameSeq},
   {"isMeasurement", CORBA::TypeCode::PR_boolean_tc()},
   {"rawEventType", _0RL_tc_STI_mTNetwork_mTRawEventType},
@@ -792,7 +793,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTRawEvent[] = {
 #ifdef _0RL_tc_STI_mTNetwork_mTRawEvent
 #  undef _0RL_tc_STI_mTNetwork_mTRawEvent
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEvent = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TRawEvent:1.0", "TRawEvent", _0RL_structmember_STI_mTNetwork_mTRawEvent, 8, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEvent = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TRawEvent:1.0", "TRawEvent", _0RL_structmember_STI_mTNetwork_mTRawEvent, 9, &_0RL_tcTrack);
 
 
 
@@ -1740,233 +1741,6 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJobList = _0RL_tc_STI_mTNetwork_mTEventEngineJobList;
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEventEngineJob[] = {
-  {"jobID", _0RL_tc_STI_mTNetwork_mTEngineJobID},
-  {"jobOwner", _0RL_tc_STI_mTNetwork_mTDeviceID},
-  {"status", _0RL_tc_STI_mTNetwork_mTEngineJobStatus},
-  {"engineID", _0RL_tc_STI_mTNetwork_mTEngineID},
-  {"shot", _0RL_tc_STI_mTNetwork_mTShot},
-  {"dependencies", _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree},
-  {"missingTargetIDs", _0RL_tc_STI_mTNetwork_mTDeviceIDSeq}
-};
-
-#ifdef _0RL_tc_STI_mTNetwork_mTEventEngineJob
-#  undef _0RL_tc_STI_mTNetwork_mTEventEngineJob
-#endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEventEngineJob:1.0", "TEventEngineJob", _0RL_structmember_STI_mTNetwork_mTEventEngineJob, 7, &_0RL_tcTrack);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-namespace STI { namespace TNetwork { 
-  const ::CORBA::TypeCode_ptr _tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
-} } 
-#else
-const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEventEngineJobSeq:1.0", "TEventEngineJobSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEventEngineJob, &_0RL_tcTrack), &_0RL_tcTrack);
-
-
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-namespace STI { namespace TNetwork { 
-  const ::CORBA::TypeCode_ptr _tc_TEventEngineJobSeq = _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq;
-} } 
-#else
-const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJobSeq = _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq;
-#endif
-
 static const char* _0RL_enumMember_STI_mTNetwork_mTSequenceType[] = { "SequenceTypeOpen", "SequenceTypeClosed" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TSequenceType:1.0", "TSequenceType", _0RL_enumMember_STI_mTNetwork_mTSequenceType, 2, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -2567,6 +2341,294 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageSeq = _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq;
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEventEngineJob[] = {
+  {"jobID", _0RL_tc_STI_mTNetwork_mTEngineJobID},
+  {"jobOwner", _0RL_tc_STI_mTNetwork_mTDeviceID},
+  {"status", _0RL_tc_STI_mTNetwork_mTEngineJobStatus},
+  {"engineID", _0RL_tc_STI_mTNetwork_mTEngineID},
+  {"shot", _0RL_tc_STI_mTNetwork_mTShot},
+  {"dependencies", _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree},
+  {"missingTargetIDs", _0RL_tc_STI_mTNetwork_mTDeviceIDSeq},
+  {"messages", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTEventEngineJob
+#  undef _0RL_tc_STI_mTNetwork_mTEventEngineJob
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEventEngineJob:1.0", "TEventEngineJob", _0RL_structmember_STI_mTNetwork_mTEventEngineJob, 8, &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEventEngineJobSeq:1.0", "TEventEngineJobSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEventEngineJob, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEventEngineJobSeq = _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJobSeq = _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq;
+#endif
+
 static const char* _0RL_enumMember_STI_mTNetwork_mTSchedulerMessageType[] = { "SchedulerParseComplete", "SchedulerYieldParse", "SchedulerPartialParse", "SchedulerPlayReady", "SchedulerPlayComplete", "SchedulerYieldPlay" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSchedulerMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TSchedulerMessageType:1.0", "TSchedulerMessageType", _0RL_enumMember_STI_mTNetwork_mTSchedulerMessageType, 6, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -2824,6 +2886,16 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineSchedulerMessage = _0RL_tc
 
 
 
+
+
+
+
+
+
+
+
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage[] = {
   {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
   {"targetList", _0RL_tc_STI_mTNetwork_mTEventEngineJobList},
@@ -2834,6 +2906,16 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateD
 #  undef _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobUpdateDeviceMessage:1.0", "TEngineJobUpdateDeviceMessage", _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage, 3, &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7134,108 +7216,6 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobList _s)
                        &_s);
 }
 
-static void _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn(cdrStream& _s, void* _v)
-{
-  STI::TNetwork::TEventEngineJob* _p = (STI::TNetwork::TEventEngineJob*)_v;
-  *_p >>= _s;
-}
-static void _0RL_STI_mTNetwork_mTEventEngineJob_unmarshal_fn(cdrStream& _s, void*& _v)
-{
-  STI::TNetwork::TEventEngineJob* _p = new STI::TNetwork::TEventEngineJob;
-  *_p <<= _s;
-  _v = _p;
-}
-static void _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn(void* _v)
-{
-  STI::TNetwork::TEventEngineJob* _p = (STI::TNetwork::TEventEngineJob*)_v;
-  delete _p;
-}
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob& _s)
-{
-  STI::TNetwork::TEventEngineJob* _p = new STI::TNetwork::TEventEngineJob(_s);
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
-               _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
-               _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
-               _p);
-}
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJob* _sp)
-{
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
-               _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
-               _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
-               _sp);
-}
-
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJob*& _sp)
-{
-  return _a >>= (const STI::TNetwork::TEventEngineJob*&) _sp;
-}
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob*& _sp)
-{
-  void* _v;
-  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
-                    _0RL_STI_mTNetwork_mTEventEngineJob_unmarshal_fn,
-                    _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
-                    _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
-                    _v)) {
-    _sp = (const STI::TNetwork::TEventEngineJob*)_v;
-    return 1;
-  }
-  return 0;
-}
-
-static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn(cdrStream& _s, void* _v)
-{
-  STI::TNetwork::TEventEngineJobSeq* _p = (STI::TNetwork::TEventEngineJobSeq*)_v;
-  *_p >>= _s;
-}
-static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_unmarshal_fn(cdrStream& _s, void*& _v)
-{
-  STI::TNetwork::TEventEngineJobSeq* _p = new STI::TNetwork::TEventEngineJobSeq;
-  *_p <<= _s;
-  _v = _p;
-}
-static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn(void* _v)
-{
-  STI::TNetwork::TEventEngineJobSeq* _p = (STI::TNetwork::TEventEngineJobSeq*)_v;
-  delete _p;
-}
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq& _s)
-{
-  STI::TNetwork::TEventEngineJobSeq* _p = new STI::TNetwork::TEventEngineJobSeq(_s);
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
-               _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
-               _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
-               _p);
-}
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq* _sp)
-{
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
-               _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
-               _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
-               _sp);
-}
-
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq*& _sp)
-{
-  return _a >>= (const STI::TNetwork::TEventEngineJobSeq*&) _sp;
-}
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq*& _sp)
-{
-  void* _v;
-  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
-                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_unmarshal_fn,
-                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
-                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
-                    _v)) {
-    _sp = (const STI::TNetwork::TEventEngineJobSeq*)_v;
-    return 1;
-  }
-  return 0;
-}
-
 static void _0RL_STI_mTNetwork_mTSequenceType_marshal_fn(cdrStream& _s, void* _v)
 {
   STI::TNetwork::TSequenceType* _p = (STI::TNetwork::TSequenceType*)_v;
@@ -8147,6 +8127,108 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq* _sp)
                     _0RL_STI_mTNetwork_mTEngineParsingMessageSeq_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TEngineParsingMessageSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEventEngineJob* _p = (STI::TNetwork::TEventEngineJob*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEventEngineJob_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEventEngineJob* _p = new STI::TNetwork::TEventEngineJob;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEventEngineJob* _p = (STI::TNetwork::TEventEngineJob*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob& _s)
+{
+  STI::TNetwork::TEventEngineJob* _p = new STI::TNetwork::TEventEngineJob(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
+               _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
+               _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJob* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
+               _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
+               _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJob*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEventEngineJob*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEventEngineJob,
+                    _0RL_STI_mTNetwork_mTEventEngineJob_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEventEngineJob_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEventEngineJob*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEventEngineJobSeq* _p = (STI::TNetwork::TEventEngineJobSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEventEngineJobSeq* _p = new STI::TNetwork::TEventEngineJobSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEventEngineJobSeq* _p = (STI::TNetwork::TEventEngineJobSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq& _s)
+{
+  STI::TNetwork::TEventEngineJobSeq* _p = new STI::TNetwork::TEventEngineJobSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
+               _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
+               _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJobSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEventEngineJobSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEventEngineJobSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEventEngineJobSeq,
+                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEventEngineJobSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEventEngineJobSeq*)_v;
     return 1;
   }
   return 0;

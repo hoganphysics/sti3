@@ -227,6 +227,7 @@ module TNetwork
 		// TMixedValue value;
 		TParsedVar parsedValue;
 		string description;
+		string groupName;
 		TStackFrameSeq stackTrace;
 
 		boolean isMeasurement;
@@ -417,21 +418,6 @@ module TNetwork
 
 	enum TEventEngineJobList { EngineJobListQueued, EngineJobListRunning, EngineJobListCompleted, EngineJobListArchived };
 
-	struct TEventEngineJob
-	{
-		TEngineJobID jobID;
-		TDeviceID jobOwner;
-		TEngineJobStatus status;
-
-		TEngineID engineID;
-		//TEventEngine eventEngine;
-
-		TShot shot;
-		TEventEngineDependencyTree dependencies;
-		TDeviceIDSeq missingTargetIDs;
-	};
-	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
-
 
 	enum TSequenceType { SequenceTypeOpen, SequenceTypeClosed };
 
@@ -527,7 +513,27 @@ module TNetwork
 		string message;
 		TRawEventSeq events;
 	};
+
+
 	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
+
+
+		struct TEventEngineJob
+	{
+		TEngineJobID jobID;
+		TDeviceID jobOwner;
+		TEngineJobStatus status;
+
+		TEngineID engineID;
+		//TEventEngine eventEngine;
+
+		TShot shot;
+		TEventEngineDependencyTree dependencies;
+		TDeviceIDSeq missingTargetIDs;
+
+		TEngineParsingMessageSeq messages;
+	};
+	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
 
 
 	enum TSchedulerMessageType { SchedulerParseComplete, SchedulerYieldParse, SchedulerPartialParse, SchedulerPlayReady, SchedulerPlayComplete, SchedulerYieldPlay };

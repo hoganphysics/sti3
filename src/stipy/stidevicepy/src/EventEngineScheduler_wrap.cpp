@@ -29,6 +29,8 @@
 #include <set>
 #include <vector>
 
+// #include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
@@ -200,6 +202,20 @@ void init_EventEngineScheduler(py::module& m)
                 return nodeDict;
             })
         .def("getParsingMessages", &EventEngineJob::getParsingMessages)
+        // .def("getParsingMessages",
+        //     [](EventEngineJob& self) {
+        //         // return self.getParsingMessages();
+                
+        //         std::vector<STI::Engine::EngineParsingMessage> messages = self.getParsingMessages();
+        //         std::cout << "getParsingMessages() " << messages.size() << std::endl;
+
+        //         py::list messageList;
+        //         for (const auto& msg : messages) {
+        //             messageList.append(msg);
+        //             std::cout << "Message: " << msg.getMessage() << std::endl;
+        //         }
+        //         return messageList;
+        //     })
         ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")
