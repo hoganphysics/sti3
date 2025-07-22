@@ -205,7 +205,7 @@ void LocalAttributeManager::load(const std::string& filename)
 {
     if (file != 0 && !file->isParsed()) {
         
-        file->load(filename);
+        file->load(filename, true);
     }
     else {
         file = std::make_shared<ConfigFile>(filename);

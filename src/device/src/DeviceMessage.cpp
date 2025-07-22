@@ -1,11 +1,13 @@
-
-
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/DeviceID.h>
+#include <sti/engine/Shot.h>
+#include <sti/engine/RawEventGroup.h>
 
 using STI::Device::DeviceMessage;
 using STI::Device::DeviceMessageType;
 using STI::Device::RefreshDeviceMessage;
+using STI::Device::EngineJobUpdateDeviceMessage;
+
 
 DeviceMessage::DeviceMessage(const STI::Device::DeviceID& source, DeviceMessageType type)
 : _trace(source), _type(type)
@@ -94,4 +96,28 @@ std::string DeviceMessage::typeToString(const DeviceMessageType& type)
 	}
 
 	return name;
+}
+
+
+
+void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::EventEngineJob>& engineJob)
+{
+	jobID = engineJob->getJobID();
+	jobOwner = engineJob->getJobOwner();
+	jobStatus = engineJob->getStatus();
+	engineID = engineJob->getEngineID();
+
+	std::shared_ptr<STI::Engine::Shot> shot;
+	if (engineJob->getShot(shot)) {
+		shotConfig = shot->getShotConfig();
+
+		std::shared_ptr<STI::Engine::RawEventGroup> rootGroup;
+		shot->getRootEventGroup(rootGroup);
+
+		if (shot != 0) {
+			overwrittenVars =rootGroup->getOverwrittenVars();
+		}
+	}
+
+	parsingMessageCount.setCounts(engineJob->getParsingMessages());
 }

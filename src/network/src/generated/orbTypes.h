@@ -5593,6 +5593,28 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineSchedulerMessage;
 
+    struct TEngineParsingMessageCount {
+      typedef _CORBA_ConstrType_Fix_Var<TEngineParsingMessageCount> _var_type;
+
+      
+      ::CORBA::Short errorCount;
+
+      ::CORBA::Short warningCount;
+
+      ::CORBA::Short infoCount;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TEngineParsingMessageCount::_var_type TEngineParsingMessageCount_var;
+
+    typedef TEngineParsingMessageCount& TEngineParsingMessageCount_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineParsingMessageCount;
+
     struct TEngineJobUpdateDeviceMessage {
       typedef _CORBA_ConstrType_Variable_Var<TEngineJobUpdateDeviceMessage> _var_type;
 
@@ -5601,7 +5623,19 @@ _CORBA_MODULE_BEG
 
       TEventEngineJobList targetList;
 
-      TEventEngineJob engineJob;
+      TEngineJobID jobID;
+
+      TDeviceID jobOwner;
+
+      TEngineJobStatus jobStatus;
+
+      TEngineID engineID;
+
+      TShotConfig shotConfig;
+
+      TParsedVarSeq overwrittenVars;
+
+      TEngineParsingMessageCount parsingMessageCount;
 
     
 
@@ -7373,6 +7407,11 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineSchedulerM
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineSchedulerMessage* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineSchedulerMessage*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineSchedulerMessage*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageCount& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageCount* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageCount*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageCount*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineJobUpdateDeviceMessage& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineJobUpdateDeviceMessage* _sp);

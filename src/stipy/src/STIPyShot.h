@@ -36,6 +36,8 @@ public:
 
     STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot);
 
+    const STI::Engine::ShotConfig& getShotConfig() const;
+
     void setvar(const std::string& name, const pybind11::object& value, 
                 const STI::Engine::StackTrace& stackTrace);
 

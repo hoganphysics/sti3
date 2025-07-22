@@ -59,6 +59,8 @@ using STI::Device::EngineJobUpdateDeviceMessage;
 // using STI::Device::EngineJobUpdateTarget;
 using STI::TNetwork::TEventEngineJobList;
 using STI::Engine::EventEngineJobList;
+using STI::Engine::EngineParsingMessageCount;
+using STI::TNetwork::TEngineParsingMessageCount;
 
 using STI::Engine::EventEngine;
 using STI::TNetwork::TEventEngine_var;
@@ -847,30 +849,43 @@ bool STI::Network::convert<std::shared_ptr<EngineStateMessage>, TEngineStateMess
 }
 
 
+using STI::TNetwork::TEngineJobID;
+using STI::Engine::EngineJobID;
+using STI::TNetwork::TEngineJobStatus;
+using STI::Engine::EngineJobStatus;
+using STI::TNetwork::TParsedVar;
+using STI::Engine::ParsedVar;
 
 //EngineJobUpdateDeviceMessage
 template<>
 bool STI::Network::convert<TEngineJobUpdateDeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(
 	const TEngineJobUpdateDeviceMessage& tMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>& deviceMessage)
 {
-	std::shared_ptr<EventEngineJob> engineJob;
-
-	convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, engineJob);
-
 	deviceMessage = std::make_shared<EngineJobUpdateDeviceMessage>(
 		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace),
-		engineJob,
 		convert<TEventEngineJobList, EventEngineJobList>(tMessage.targetList)
 		);
 
-	// deviceMessage->targetList = convert<TEngineJobUpdateTarget, EngineJobUpdateTarget>(
-	// 							tMessage.targetList);
+	// STI::Engine::EngineJobID jobID;
+    // STI::Device::DeviceID jobOwner;
+    // STI::Engine::EngineJobStatus jobStatus;
+	// STI::Engine::EngineID engineID;
+	// STI::Engine::ShotConfig shotConfig;
+	// std::set<STI::Engine::ParsedVar> overwrittenVars;
+	// STI::Engine::EngineParsingMessageCount parsingMessageCount;
 
-	// return convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(tMessage.engineJob, deviceMessage->engineJob)
-	// 		&&  (deviceMessage != 0);
+	deviceMessage->jobID = convert<TEngineJobID, EngineJobID>(tMessage.jobID);
+	deviceMessage->jobOwner = convert<TDeviceID, DeviceID>(tMessage.jobOwner);
+	deviceMessage->jobStatus = convert<TEngineJobStatus, EngineJobStatus>(tMessage.jobStatus);
+	deviceMessage->engineID =convert<TEngineID, EngineID>(tMessage.engineID);
+	deviceMessage->shotConfig = convert<STI::TNetwork::TShotConfig, STI::Engine::ShotConfig>(tMessage.shotConfig);
+
+    convert<TParsedVar, ParsedVar>(tMessage.overwrittenVars, deviceMessage->overwrittenVars);
+	convert<TEngineParsingMessageCount, EngineParsingMessageCount>(tMessage.parsingMessageCount, deviceMessage->parsingMessageCount);
 
 	return (deviceMessage != 0);
 }
+
 
 template<>
 bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngineJobUpdateDeviceMessage>(
@@ -883,7 +898,17 @@ bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngin
 	tMessage.targetList = convert<EventEngineJobList, TEventEngineJobList>(
 								deviceMessage->getTargetList());
 
-	return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->getEngineJob(), tMessage.engineJob);
+	tMessage.jobID = convert<EngineJobID, TEngineJobID>(deviceMessage->jobID);
+	tMessage.jobOwner = convert<DeviceID, TDeviceID>(deviceMessage->jobOwner);
+	tMessage.jobStatus = convert<EngineJobStatus, TEngineJobStatus>(deviceMessage->jobStatus);
+	tMessage.engineID = convert<EngineID, TEngineID>(deviceMessage->engineID);
+	tMessage.shotConfig = convert<STI::Engine::ShotConfig, STI::TNetwork::TShotConfig>(deviceMessage->shotConfig);
+	convert<EngineParsingMessageCount, TEngineParsingMessageCount>(deviceMessage->parsingMessageCount, tMessage.parsingMessageCount);
+	convert<ParsedVar, TParsedVar>(deviceMessage->overwrittenVars, tMessage.overwrittenVars);
+
+	// return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->getEngineJob(), tMessage.engineJob);
+
+	return true;
 }
 
 

@@ -76,6 +76,8 @@ using STI::TNetwork::TShot;
 using STI::Engine::Shot;
 using STI::Engine::EngineParsingMessage;
 using STI::TNetwork::TEngineParsingMessage;
+using STI::Engine::EngineParsingMessageCount;
+using STI::TNetwork::TEngineParsingMessageCount;
 using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
 using STI::Engine::ParseID; 
@@ -660,7 +662,10 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
         
             job->setDependencies(tree);
             job->setMissingTargets(missingTargets);
-            job->setStatus(jobStatus);
+
+            job->markRunning(convert<TEngineID, EngineID>(tEngineJob.engineID));    // work around to set EngineID
+            job->setStatus(jobStatus);  //set actual status
+
             engineJob = job;
             success = true;
         }
@@ -1520,6 +1525,28 @@ EngineParsingMessage STI::Network::convert<TEngineParsingMessage, EngineParsingM
     convert<TRawEvent, RawEvent>(tParsingMessage.events, parsingMessage.getEventVector());
 
     return parsingMessage;
+}
+
+
+//EngineParsingMessageCount
+template<>
+bool STI::Network::convert<EngineParsingMessageCount, TEngineParsingMessageCount>(const EngineParsingMessageCount& parsingMessageCount, TEngineParsingMessageCount& tParsingMessageCount)
+{
+    tParsingMessageCount.errorCount = static_cast<CORBA::Short>(parsingMessageCount.errorCount);
+    tParsingMessageCount.warningCount = static_cast<CORBA::Short>(parsingMessageCount.warningCount);
+    tParsingMessageCount.infoCount = static_cast<CORBA::Short>(parsingMessageCount.infoCount);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TEngineParsingMessageCount, EngineParsingMessageCount>(const TEngineParsingMessageCount& tParsingMessageCount, EngineParsingMessageCount& parsingMessageCount)
+{
+    parsingMessageCount.errorCount = static_cast<unsigned>(tParsingMessageCount.errorCount);
+    parsingMessageCount.warningCount = static_cast<unsigned>(tParsingMessageCount.warningCount);
+    parsingMessageCount.infoCount = static_cast<unsigned>(tParsingMessageCount.infoCount);
+
+    return true;
 }
 
 

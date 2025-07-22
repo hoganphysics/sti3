@@ -39,6 +39,10 @@ STIPyShot::STIPyShot(const std::shared_ptr<STI::Engine::Shot>& shot)
     shot->getRootEventGroup(rootEventGroup);
 }
 
+const ShotConfig& STIPyShot::getShotConfig() const
+{
+    return shot->getShotConfig();
+}
 
 void STIPyShot::setvar(const std::string& name, const pybind11::object& value, 
             const STI::Engine::StackTrace& stackTrace)

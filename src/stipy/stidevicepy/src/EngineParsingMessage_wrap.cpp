@@ -1,4 +1,5 @@
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EngineParsingMessageCount.h>
 
 #include <sti/engine/RawEvent.h>
 
@@ -39,4 +40,21 @@ void init_EngineParsingMessage(py::module& m)
             })
         ;
 
+    py::class_<STI::Engine::EngineParsingMessageCount>(m, "EngineParsingMessageCount")
+        .def(py::init<>() )
+        .def(py::init<const std::vector<STI::Engine::EngineParsingMessage>&>(), py::arg("messages"))
+        .def_readonly("errorCount", &STI::Engine::EngineParsingMessageCount::errorCount)
+        .def_readonly("warningCount", &STI::Engine::EngineParsingMessageCount::warningCount)
+        .def_readonly("infoCount", &STI::Engine::EngineParsingMessageCount::infoCount)
+        .def("__repr__",
+            [](const STI::Engine::EngineParsingMessageCount& count) {
+                std::ostringstream oss;
+                oss << "<EngineParsingMessageCount | "
+                    << "Errors: " << count.errorCount
+                    << ", Warnings: " << count.warningCount
+                    << ", Info: " << count.infoCount
+                    << ">";
+                return oss.str();
+            })
+        ;
 }

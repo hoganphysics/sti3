@@ -104,23 +104,23 @@ template<class T>
 void ParseTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess)
 {
     if (mess == 0) return;
-    if (mess->getEngineJob() == 0) return;
-    if (mess->getEngineJob()->getJobID().type != EventEngineJobType::Parse) return;
+    // if (mess->getEngineJob() == 0) return;
+    if (mess->getJobID().type != EventEngineJobType::Parse) return;
 
     std::unique_lock<std::mutex> managerLock(managerMutex);
 
     std::shared_ptr<T> ticket;
 
-    const auto& id = mess->getEngineJob()->getJobID().pid;
+    const auto& id = mess->getJobID().pid;
     if (!TicketManager<STI::Engine::ParseID, T>::get(id, ticket)) {
         return;
     }
 
-    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Canceled) {
+    if (mess->getStatus() == EngineJobStatus::Canceled) {
         ticket->cancel();
         TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
     }
-    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Completed) {
+    if (mess->getStatus() == EngineJobStatus::Completed) {
         ticket->setComplete();
         TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
     }

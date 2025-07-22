@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 
 
 namespace STI
@@ -99,11 +100,29 @@ public:
     template<typename T>
     ConfigResult<T> get(const std::string& section, const std::string& key, const T& defaultValue) const
     {
-        std::string value;
-        if (!getStringValue(section, key, value)) {
+        T value;
+        if (!getParameter<T>(section, key, value)) {
 
             ConfigResult<T> tResult(defaultValue);
             return tResult;
+        }
+
+        ConfigResult<T> result(value);
+        return result;
+    }
+
+    template<typename T>
+    ConfigResult<T> getOrThrow(const std::string& key, const std::function<void(const std::string&)>& missingHandler) const
+    {
+        return getOrThrow<T>("", key, missingHandler);
+    }
+
+    template<typename T>
+    ConfigResult<T> getOrThrow(const std::string& section, const std::string& key, const std::function<void(const std::string&)>& missingHandler) const
+    {
+        T value;
+        if (!getParameter<T>(section, key, value)) {
+            missingHandler(key);
         }
 
         ConfigResult<T> result(value);

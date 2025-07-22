@@ -113,7 +113,14 @@ void init_DeviceMessage(py::module& m)
 
     py::class_<EngineJobUpdateDeviceMessage, DeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(m, "EngineJobUpdateDeviceMessage")
         .def("targetList", &EngineJobUpdateDeviceMessage::getTargetList)
-        .def("engineJob", &EngineJobUpdateDeviceMessage::getEngineJob)
+        // .def("engineJob", &EngineJobUpdateDeviceMessage::getEngineJob)
+        .def_readonly("jobID", &EngineJobUpdateDeviceMessage::jobID)
+        .def_readonly("jobOwner", &EngineJobUpdateDeviceMessage::jobOwner)
+        .def_readonly("jobStatus", &EngineJobUpdateDeviceMessage::jobStatus)
+        .def_readonly("engineID", &EngineJobUpdateDeviceMessage::engineID)
+        .def_readonly("shotConfig", &EngineJobUpdateDeviceMessage::shotConfig)
+        .def_readonly("overwrittenVars", &EngineJobUpdateDeviceMessage::overwrittenVars)
+        .def_readonly("parsingMessageCount", &EngineJobUpdateDeviceMessage::parsingMessageCount)
         ;
 
 

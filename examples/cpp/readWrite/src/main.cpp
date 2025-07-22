@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
 	auto device = std::make_shared<TestDevice>(config);
 
-	std::string nameServiceAddr = "192.168.1.7:2809";   //OmniORB NameService
+	std::string nameServiceAddr = "192.168.1.6:2809";   //OmniORB NameService
 	auto hub = std::make_shared<NetworkDeviceHub>(nameServiceAddr);
 
 	hub->addDevice(device);

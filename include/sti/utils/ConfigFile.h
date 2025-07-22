@@ -24,10 +24,10 @@ public:
 	ConfigFile(const std::string& filename);
 	~ConfigFile() {}
 
-	void load();
+	void load(bool autocreate = false);
 	void save();
 
-	void load(const std::string& filename);
+	void load(const std::string& filename, bool autocreate = false);
 	bool isParsed() const { return parsed; }
 
 	void setHeader(const std::string& header);

@@ -41,6 +41,7 @@ class EngineID;
 class EngineJobID;
 class Measurement;
 class EngineParsingMessage;
+class EngineParsingMessageCount;
 enum class ParsingMessageType;
 class ShotResultRecord;
 enum class ShotType;
@@ -337,6 +338,11 @@ bool Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMess
 template<>
 Engine::EngineParsingMessage Network::convert<TNetwork::TEngineParsingMessage, Engine::EngineParsingMessage>(const TNetwork::TEngineParsingMessage& tParsingMessage);
 
+//EngineParsingMessageCount
+template<>
+bool Network::convert<Engine::EngineParsingMessageCount, TNetwork::TEngineParsingMessageCount>(const Engine::EngineParsingMessageCount& parsingMessageCount, TNetwork::TEngineParsingMessageCount& tParsingMessageCount);
+template<>
+bool Network::convert<TNetwork::TEngineParsingMessageCount, Engine::EngineParsingMessageCount>(const TNetwork::TEngineParsingMessageCount& tParsingMessageCount, Engine::EngineParsingMessageCount& parsingMessageCount);
 
 
 //ParsingMessageType

@@ -34,6 +34,7 @@
 #include <filesystem>
 #include <memory>
 #include <iostream>
+#include <sstream>
 
 using STI::Device::AttributeManager;
 using STI::Device::ChannelManager;
@@ -65,6 +66,13 @@ using STI::Engine::ShotID;
 
 using STI::Utils::Configuration;
 
+static auto constructorConfigError = [](const std::string& key) {
+	std::stringstream message;
+	message << "LocalDevice constructor error: ";
+	message << "Required parameter '" << key << "' was not found in the Configuration.";
+	throw std::runtime_error(message.str());
+};
+
 
 LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
 : LocalDevice( Configuration(config) )
@@ -73,10 +81,10 @@ LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
 
 LocalDevice::LocalDevice(const Configuration& config, const std::string& section)
 : LocalDevice(
-	config.get<std::string>(section, "Device Name", ""), 
-	config.get<std::string>(section, "IP Address", ""), 
-	config.get<unsigned short>(section, "Module", 0),
-	config.get<std::string>(section, "Target Server", ""),
+	config.getOrThrow<std::string>(section, "Device Name", constructorConfigError), 
+	config.getOrThrow<std::string>(section, "IP Address", constructorConfigError), 
+	config.getOrThrow<unsigned short>(section, "Module", constructorConfigError),
+	config.getOrThrow<std::string>(section, "Target Server", constructorConfigError),
 	config)
 {
 }
@@ -136,7 +144,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	serverMessageRelayer->addFilter<STI::Device::EngineJobUpdateDeviceMessage>( 
 		[](const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& message)->bool {
 			//only relay job messages that originate from the job owner (avoids duplicates)
-			return message->getEngineJob()->getJobOwner() == message->originalSourceID();
+			return message->getJobOwner() == message->originalSourceID();
 		});
 
 	// serverMessageRelayer->addFilter<STI::Device::EngineStateMessage>( 

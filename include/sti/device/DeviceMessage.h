@@ -7,6 +7,7 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/device/GroupableMessage.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EngineParsingMessageCount.h>
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
@@ -14,6 +15,7 @@
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EngineJobStatus.h>
 
 #include <sstream>
 
@@ -271,6 +273,11 @@ public:
 	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate), targetList(STI::Engine::EventEngineJobList::Completed)
 	{
 	}
+	
+	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, STI::Engine::EventEngineJobList targetList) 
+	: DeviceMessage(trace, DeviceMessageType::EngineJobUpdate), targetList(targetList)
+	{
+	}
 
 	EngineJobUpdateDeviceMessage(const STI::Device::DeviceTrace& trace, 
 		const std::shared_ptr<STI::Engine::EventEngineJob>& job, STI::Engine::EventEngineJobList targetList) 
@@ -299,34 +306,48 @@ public:
 	void toQueuedList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
 		targetList = STI::Engine::EventEngineJobList::Queued;
-		engineJob = job;
+		setJob(job);
 	}
 	void toRunningList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
 		targetList = STI::Engine::EventEngineJobList::Running;
-		engineJob = job;
+		setJob(job);
 	}
 	void toCompleteList(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
 		targetList = STI::Engine::EventEngineJobList::Completed;
-		engineJob = job;
+		setJob(job);
 	}
 	void toArchive(const std::shared_ptr<STI::Engine::EventEngineJob>& job)
 	{
 		targetList = STI::Engine::EventEngineJobList::Archived;
-		engineJob = job;
+		setJob(job);
 	}
-	
+
 
 	STI::Engine::EventEngineJobList getTargetList() const
 	{
 		return targetList;
 	}
 
-	std::shared_ptr<STI::Engine::EventEngineJob> getEngineJob() const
-	{
-		return engineJob;
-	}
+	// std::shared_ptr<STI::Engine::EventEngineJob> getEngineJob() const
+	// {
+	// 	return engineJob;
+	// }
+
+	STI::Engine::EngineJobID getJobID() const { return jobID; }
+    STI::Device::DeviceID getJobOwner() const { return jobOwner; }
+    STI::Engine::EngineJobStatus getStatus() const { return jobStatus; }
+
+	STI::Engine::EngineJobID jobID;
+    STI::Device::DeviceID jobOwner;
+    STI::Engine::EngineJobStatus jobStatus;
+
+	STI::Engine::EngineID engineID;
+	STI::Engine::ShotConfig shotConfig;
+	std::set<STI::Engine::ParsedVar> overwrittenVars;
+
+	STI::Engine::EngineParsingMessageCount parsingMessageCount;
 
 	static std::string jobTargetToString(STI::Engine::EventEngineJobList target) 
 	{
@@ -356,8 +377,10 @@ public:
 
 private:
 
+	void setJob(const std::shared_ptr<STI::Engine::EventEngineJob>& engineJob);
+
 	STI::Engine::EventEngineJobList targetList;	//the list the job belongs in
-	std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
+	// std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
 
 };
 

@@ -112,19 +112,19 @@ template<class T>
 void ResultTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>& mess)
 {
     if (mess == 0) return;
-    if (mess->getEngineJob() == 0) return;
-    if (mess->getEngineJob()->getJobID().type != EventEngineJobType::Play) return;
+    // if (mess->getEngineJob() == 0) return;
+    if (mess->getJobID().type != EventEngineJobType::Play) return;
 
     std::unique_lock<std::mutex> managerLock(managerMutex);
 
     std::shared_ptr<T> ticket;
 
-    const auto& id = mess->getEngineJob()->getJobID().sid;
+    const auto& id = mess->getJobID().sid;
     if (!TicketManager<STI::Engine::ShotID, T>::get(id, ticket)) {
         return;
     }
 
-    if (mess->getEngineJob()->getStatus() == EngineJobStatus::Canceled) {
+    if (mess->getStatus() == EngineJobStatus::Canceled) {
         ticket->cancel();
         TicketManager<STI::Engine::ShotID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)
     }

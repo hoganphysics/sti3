@@ -146,6 +146,15 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 
 std::string LocalProfileManager::getDependentProfileName(const std::string& name) const
 {
+	/*
+	
+	#safe
+	//safe
+	//localhost_0_STI_Server/safe
+	
+	*/
+	//  #safe
+	//
 	// return deviceID.getID() + "/" + name;
 	return name; //using absolute name for now; need to switch to relative (above), with option for absolute for 'safe', etc.
 }

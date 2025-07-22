@@ -21,14 +21,31 @@ ConfigFile::ConfigFile(const std::string& filename)
 	load(filename_);
 }
 
-void ConfigFile::load(const std::string& filename)
+void ConfigFile::load(const std::string& filename, bool autocreate)
 {
 	filename_ = filename;
-	load();
+	load(autocreate);
 }
 
-void ConfigFile::load()
+void ConfigFile::load(bool autocreate)
 {
+	if (autocreate) {
+		//check if file exists, if not create it
+		std::ifstream file(filename_.c_str());
+		if (!file.is_open()) {
+			std::ofstream newFile(filename_.c_str());
+			if (!newFile.is_open()) {
+				std::cerr << "Error creating config file '" << filename_ << "'." << std::endl;
+				parsed = false;
+				return;
+			}
+			newFile.close();
+		}
+		else {
+			file.close();
+		}
+	}
+	
 	std::fstream configFile(filename_.c_str(), std::fstream::in);
 
 	if (!configFile.is_open()) {

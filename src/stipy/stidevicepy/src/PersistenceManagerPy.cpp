@@ -1,3 +1,4 @@
+#include <pybind11/pybind11.h>
 
 #include "PersistenceManagerPy.h"
 
@@ -7,6 +8,8 @@
 #include <sti/engine/ShotResult.h>
 
 using STI::Python::PersistenceManagerPy;
+
+namespace py = pybind11;
 
 
 PersistenceManagerPy::PersistenceManagerPy(const std::shared_ptr<STI::Device::PersistenceManager>& manager)
@@ -73,8 +76,13 @@ std::shared_ptr<STI::Engine::ParseResult> PersistenceManagerPy::getParseResult(c
     }
 
     //not found
-    parseResult = std::make_shared<STI::Engine::ParseResult>();
-    return parseResult;
+
+    // throw py::type_error("Not a Vector");
+    throw py::value_error("ParseResult not found for ParseID: " + pid.print());
+    // throw py::PyFileNotFoundError("Resource '" + resource_name + "' not found.");
+
+    // parseResult = std::make_shared<STI::Engine::ParseResult>();
+    // return parseResult;
 }
 
 std::shared_ptr<STI::Engine::ShotResult> PersistenceManagerPy::getShotResult(const STI::Engine::ShotID& sid)

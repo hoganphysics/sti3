@@ -195,7 +195,7 @@ void LocalChannelManager::load(const std::string& filename)
 {
     if (file != 0 && !file->isParsed()) {
         
-        file->load(filename);
+        file->load(filename, true); //autocreate if file does not exist
     }
     else {
         file = std::make_shared<ConfigFile>(filename);

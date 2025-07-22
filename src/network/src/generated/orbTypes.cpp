@@ -1547,11 +1547,35 @@ STI::TNetwork::TEngineSchedulerMessage::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TEngineParsingMessageCount::operator>>= (cdrStream &_n) const
+{
+  errorCount >>= _n;
+  warningCount >>= _n;
+  infoCount >>= _n;
+
+}
+
+void
+STI::TNetwork::TEngineParsingMessageCount::operator<<= (cdrStream &_n)
+{
+  (::CORBA::Short&)errorCount <<= _n;
+  (::CORBA::Short&)warningCount <<= _n;
+  (::CORBA::Short&)infoCount <<= _n;
+
+}
+
+void
 STI::TNetwork::TEngineJobUpdateDeviceMessage::operator>>= (cdrStream &_n) const
 {
   (const TDeviceMessage&) base >>= _n;
   targetList >>= _n;
-  (const TEventEngineJob&) engineJob >>= _n;
+  (const TEngineJobID&) jobID >>= _n;
+  (const TDeviceID&) jobOwner >>= _n;
+  jobStatus >>= _n;
+  (const TEngineID&) engineID >>= _n;
+  (const TShotConfig&) shotConfig >>= _n;
+  (const TParsedVarSeq&) overwrittenVars >>= _n;
+  (const TEngineParsingMessageCount&) parsingMessageCount >>= _n;
 
 }
 
@@ -1560,7 +1584,13 @@ STI::TNetwork::TEngineJobUpdateDeviceMessage::operator<<= (cdrStream &_n)
 {
   (TDeviceMessage&)base <<= _n;
   (TEventEngineJobList&)targetList <<= _n;
-  (TEventEngineJob&)engineJob <<= _n;
+  (TEngineJobID&)jobID <<= _n;
+  (TDeviceID&)jobOwner <<= _n;
+  (TEngineJobStatus&)jobStatus <<= _n;
+  (TEngineID&)engineID <<= _n;
+  (TShotConfig&)shotConfig <<= _n;
+  (TParsedVarSeq&)overwrittenVars <<= _n;
+  (TEngineParsingMessageCount&)parsingMessageCount <<= _n;
 
 }
 

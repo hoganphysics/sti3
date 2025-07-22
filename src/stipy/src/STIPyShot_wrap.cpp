@@ -26,7 +26,8 @@ void init_STIPyShot(py::module& m)
 //    m.def("add", [](int a, int b) { return a + b; });
 
     py::class_<STIPyShot, std::shared_ptr<STIPyShot>>(m, "STIPyShot")
-
+    
+        .def("shotconfig", &STIPyShot::getShotConfig)
         .def("setvar", py::overload_cast<const std::string&, const pybind11::object&, 
                         const StackTrace&>(&STIPyShot::setvar),
                         py::arg("name"), py::arg("value"), py::arg("stackTrace"))

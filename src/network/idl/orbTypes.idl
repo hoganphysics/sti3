@@ -562,12 +562,30 @@ module TNetwork
 
 	// enum TEngineJobUpdateTarget {  JobUpdateTargetQueued, JobUpdateTargetRunning, JobUpdateTargetCompleted };
 
+
+	struct TEngineParsingMessageCount
+	{
+		short errorCount;
+		short warningCount;
+		short infoCount;
+	};
+
 	struct TEngineJobUpdateDeviceMessage
 	{
 		TDeviceMessage base;	//base class data
 
 		TEventEngineJobList targetList;
-		TEventEngineJob engineJob;
+		// TEventEngineJob engineJob;
+		
+		TEngineJobID jobID;
+		TDeviceID jobOwner;
+		TEngineJobStatus jobStatus;
+
+		TEngineID engineID;
+		TShotConfig shotConfig;
+		TParsedVarSeq overwrittenVars;
+
+		TEngineParsingMessageCount parsingMessageCount;
 	};
 
 	struct TAttributeTuple
