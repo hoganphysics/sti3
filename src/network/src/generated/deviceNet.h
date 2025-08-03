@@ -1794,8 +1794,11 @@ _CORBA_MODULE_BEG
       TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
       TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& sequenceData, const ::STI::TNetwork::TEngineJobSourceID& source);
       TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
+      void closeSequence(const ::STI::TNetwork::TSequenceID& seqid);
+      void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid);
       TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid);
       TEngineJobStatus getStatusSID(const ::STI::TNetwork::TShotID& sid);
+      TEngineJobStatus getStatusSeqID(const ::STI::TNetwork::TSequenceID& seqID);
       TEventEngineDependencyParser_ptr getDependencyParser();
       ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job);
       void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
@@ -1843,8 +1846,11 @@ _CORBA_MODULE_BEG
       virtual TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source) = 0;
       virtual TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& sequenceData, const ::STI::TNetwork::TEngineJobSourceID& source) = 0;
       virtual TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID) = 0;
+      virtual void closeSequence(const ::STI::TNetwork::TSequenceID& seqid) = 0;
+      virtual void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid) = 0;
       virtual TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid) = 0;
       virtual TEngineJobStatus getStatusSID(const ::STI::TNetwork::TShotID& sid) = 0;
+      virtual TEngineJobStatus getStatusSeqID(const ::STI::TNetwork::TSequenceID& seqID) = 0;
       virtual TEventEngineDependencyParser_ptr getDependencyParser() = 0;
       virtual ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job) = 0;
       virtual void addJob(const ::STI::TNetwork::TEventEngineJob& newJob) = 0;
@@ -2198,6 +2204,7 @@ _CORBA_MODULE_BEG
       ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TFullShotResult& fullShotResult, ::CORBA::Boolean isOwner);
       TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
       ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
+      TFileServer_ptr getFileServer();
       void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult);
       ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner);
       ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult, ::CORBA::Boolean isOwner);
@@ -2243,6 +2250,7 @@ _CORBA_MODULE_BEG
       virtual ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TFullShotResult& fullShotResult, ::CORBA::Boolean isOwner) = 0;
       virtual TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector) = 0;
       virtual ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements) = 0;
+      virtual TFileServer_ptr getFileServer() = 0;
       virtual void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult) = 0;
       virtual ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner) = 0;
       virtual ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult, ::CORBA::Boolean isOwner) = 0;

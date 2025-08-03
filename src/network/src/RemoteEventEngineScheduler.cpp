@@ -175,6 +175,42 @@ AddSequenceStatus RemoteEventEngineScheduler::addSequence(const std::shared_ptr<
 	return addSequenceStatus;
 }
 
+void RemoteEventEngineScheduler::closeSequence(const SequenceID& seqid)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->closeSequence(convert<SequenceID, TSequenceID>(seqid));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::cancelSequence(const SequenceID& seqid)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->cancelSequence(convert<SequenceID, TSequenceID>(seqid));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
 ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
 {
 	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
@@ -243,6 +279,30 @@ EngineJobStatus RemoteEventEngineScheduler::getStatus(const STI::Engine::ShotID&
 
 	try {
 		auto tStatus = getTRef()->getStatusSID(convert<ShotID, TShotID>(sid));	//remote call
+
+		status = convert<TEngineJobStatus, EngineJobStatus>(tStatus);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return status;
+}
+
+EngineJobStatus RemoteEventEngineScheduler::getStatus(const SequenceID& seqID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	EngineJobStatus status = EngineJobStatus::NotFound;
+
+	if (isDisabled()) return status;
+
+	try {
+		auto tStatus = getTRef()->getStatusSeqID(convert<SequenceID, TSequenceID>(seqID));	//remote call
 
 		status = convert<TEngineJobStatus, EngineJobStatus>(tStatus);
 	}

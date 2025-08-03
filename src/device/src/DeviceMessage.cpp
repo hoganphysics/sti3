@@ -2,6 +2,8 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/RawEventGroup.h>
+#include <sti/engine/SequenceJob.h>
+
 
 using STI::Device::DeviceMessage;
 using STI::Device::DeviceMessageType;
@@ -120,4 +122,13 @@ void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::Eve
 	}
 
 	parsingMessageCount.setCounts(engineJob->getParsingMessages());
+}
+
+void EngineJobUpdateDeviceMessage::setSequenceJob(const std::shared_ptr<STI::Engine::SequenceJob>& job)
+{
+	jobID = job->jobID;
+	jobOwner = job->jobOwner;
+	jobStatus = job->getJobStatus();
+	
+	// engineID = job->;
 }

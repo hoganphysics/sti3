@@ -10,7 +10,7 @@ namespace STI
 namespace Engine
 {
 
-enum class EventEngineJobType { Parse, Play };
+enum class EventEngineJobType { Parse, Play, Sequence };
 
 
 class EngineJobID
@@ -27,6 +27,9 @@ public:
                 case EventEngineJobType::Play:
                     return sid == rhs.sid;
                 break;
+                case EventEngineJobType::Sequence:
+                    return seqid == rhs.seqid;
+                break;
             } 
         }
         return false;
@@ -42,6 +45,9 @@ public:
                 case EventEngineJobType::Play:
                     return sid < rhs.sid;
                 break;
+                case EventEngineJobType::Sequence:
+                    return seqid < rhs.seqid;
+                break;
             } 
         }
         else {
@@ -55,25 +61,30 @@ public:
                 case EventEngineJobType::Play:
                     rhsTime = rhs.sid.submissionTime;
                 break;
+                case EventEngineJobType::Sequence:
+                    rhsTime = rhs.seqid.timestamp;
+                break;
             }
 
             switch(type) {
                 case EventEngineJobType::Parse:
                     if(pid == rhs.pid) {
                         return true;
-                    } 
+                    }
                     else {
                         return pid.parseTimestamp < rhsTime;
                     }
-                    
                 break;
                 case EventEngineJobType::Play:
-                    if(pid == rhs.pid) {
-                        return false;
+                    if(rhs.type == EventEngineJobType::Parse && pid == rhs.pid) {
+                        return false; //parse jobs are always before the associated play job
                     }
                     else {
                         return sid.submissionTime < rhsTime;
                     }
+                break;
+                case EventEngineJobType::Sequence:
+                    return seqid.timestamp < rhsTime;
                 break;
             } 
         }
@@ -81,8 +92,11 @@ public:
     }
     
     EventEngineJobType type;
+    
     ParseID pid;
     ShotID sid;
+    SequenceID seqid;
+
     STI::Utils::TimeStamp runTime;  //time job was run
 
 };

@@ -362,6 +362,7 @@ bool STI::Network::convert<EngineJobID, TEngineJobID>(const EngineJobID& jobID, 
     tJobID.type = convert<EventEngineJobType, TEventEngineJobType>(jobID.type);
     tJobID.pid = convert<ParseID, TParseID>(jobID.pid);
     tJobID.sid = convert<ShotID, TShotID>(jobID.sid);
+    tJobID.seqid = convert<SequenceID, TSequenceID>(jobID.seqid);
 
     return true;
 }
@@ -372,6 +373,7 @@ bool STI::Network::convert<TEngineJobID, EngineJobID>(const TEngineJobID& tJobID
     jobID.type = convert<TEventEngineJobType, EventEngineJobType>(tJobID.type);
     jobID.pid = convert<TParseID, ParseID>(tJobID.pid);
     jobID.sid = convert<TShotID, ShotID>(tJobID.sid);
+    jobID.seqid = convert<TSequenceID, SequenceID>(tJobID.seqid);
 
     return true;
 }
@@ -412,6 +414,9 @@ TEventEngineJobType STI::Network::convert<EventEngineJobType, TEventEngineJobTyp
         case EventEngineJobType::Play:
             tJobType = TEventEngineJobType::EngineJobPlay;
             break;
+        case EventEngineJobType::Sequence:
+            tJobType = TEventEngineJobType::EngineJobSequence;
+            break;
         default:
             tJobType = TEventEngineJobType::EngineJobParse;
             break;
@@ -432,6 +437,9 @@ EventEngineJobType STI::Network::convert<TEventEngineJobType, EventEngineJobType
             break;
         case TEventEngineJobType::EngineJobPlay:
             jobType = EventEngineJobType::Play;
+            break;
+        case TEventEngineJobType::EngineJobSequence:
+            jobType = EventEngineJobType::Sequence;
             break;
         default:
             jobType = EventEngineJobType::Parse;

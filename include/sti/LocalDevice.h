@@ -39,6 +39,7 @@
 #include <mutex>
 #include <set>
 #include <string>
+#include <functional>
 
 
 namespace STI
@@ -203,6 +204,9 @@ private:
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 	bool usingParseDefault;
 	bool usingRWdefault;
+	
+	virtual void setRemoveCB(const std::function<void(void)>& remover) override;
+	std::function<void(void)> removerCallback;
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> localCollection;
 	std::shared_ptr<LocalDeviceMessageDispatcher> deviceMessageDispatcher;

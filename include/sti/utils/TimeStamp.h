@@ -54,6 +54,7 @@ public:
 	void add_hour(int hours);
 	void add_minute(int minutes);
 	void add_sec(int seconds);
+	void add_ms(int ms);
 	void add_ns(int ns);
 
 	template<class Archive>

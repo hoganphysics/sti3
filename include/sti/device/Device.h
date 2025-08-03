@@ -47,6 +47,7 @@ public:
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
 	virtual bool addto(const STI::Network::HubID& target) { return true; }
+	virtual void setRemoveCB(const std::function<void(void)>& remover) {}
 
 	//convenience functions
 	virtual bool write(short channel, const STI::Utils::MixedValue& value) = 0;

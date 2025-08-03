@@ -1,8 +1,8 @@
 from stipy.bin.stipybase import Sequence
 from stipy.bin.stipybase import SequenceType
 from stipy.bin.stipybase import RawEventGroup
-
-
+from stipy.bin.stipybase import ShotType
+# from stipy.bin.stipy import ParsedVar
 # _sequence__init__ = Sequence.__init__
 
 def init(self, shotmaker, varsTable=None):
@@ -64,7 +64,7 @@ def getAllOverwrittenVars(eventGroup: RawEventGroup):
 
 
 class STIPySequence(Sequence):
-    def __init__(self, shotmaker, varsTable = None):
+    def __init__(self, shotmaker, varsTable = None, description: str = ""):
         self.repeats = 0
         self.shotmaker = shotmaker
         self.basegroup = RawEventGroup()
@@ -77,6 +77,10 @@ class STIPySequence(Sequence):
         
         # seq.type = SequenceType.Closed
         Sequence.__init__(self, SequenceType.Closed)
+
+        if hasattr(self, 'shotConfig'):
+            self.shotConfig.description = description
+            self.shotConfig.shotType = ShotType.Sequence
 
         for entry in varsTable:
             if (type(entry) is dict):

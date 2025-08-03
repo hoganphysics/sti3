@@ -103,6 +103,11 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>("refresh", refreshTime,
 		[this]() {
 			localHub->refresh();
+
+			if (localHub->numberOfNodes() == 0) {
+				//Terminate hub if no nodes are left
+				unblock();		// unblock run() if it is blocking
+			}
 		});
 	
 	refreshScheduler = std::make_shared<STI::Utils::TaskScheduler>();
@@ -388,6 +393,13 @@ void NetworkDeviceHub::shutdown()
 
 	if (orbmanager != 0 && orbmanager->running()) {
 		orbmanager->shutdown();		// fixes slow shutdown in windows
+	}
+}
+
+void NetworkDeviceHub::unblock()
+{
+	if (orbmanager != 0 && orbmanager->blocking()) {
+		orbmanager->unblock();
 	}
 }
 

@@ -3619,7 +3619,7 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineState;
 
-    enum TEventEngineJobType { EngineJobParse, EngineJobPlay /*, __max_TEventEngineJobType=0xffffffff */ };
+    enum TEventEngineJobType { EngineJobParse, EngineJobPlay, EngineJobSequence /*, __max_TEventEngineJobType=0xffffffff */ };
     typedef TEventEngineJobType& TEventEngineJobType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEventEngineJobType;
@@ -3848,6 +3848,8 @@ _CORBA_MODULE_BEG
       TParseID pid;
 
       TShotID sid;
+
+      TSequenceID seqid;
 
     
 
@@ -7063,7 +7065,7 @@ inline void operator >>=(STI::TNetwork::TEventEngineJobType _e, cdrStream& s) {
 inline void operator <<= (STI::TNetwork::TEventEngineJobType& _e, cdrStream& s) {
   ::CORBA::ULong _0RL_e;
   ::operator<<=(_0RL_e,s);
-  if (_0RL_e <= STI::TNetwork::EngineJobPlay) {
+  if (_0RL_e <= STI::TNetwork::EngineJobSequence) {
     _e = (STI::TNetwork::TEventEngineJobType) _0RL_e;
   }
   else {

@@ -1062,6 +1062,7 @@ STI::TNetwork::TEngineJobID::operator>>= (cdrStream &_n) const
   type >>= _n;
   (const TParseID&) pid >>= _n;
   (const TShotID&) sid >>= _n;
+  (const TSequenceID&) seqid >>= _n;
 
 }
 
@@ -1071,6 +1072,7 @@ STI::TNetwork::TEngineJobID::operator<<= (cdrStream &_n)
   (TEventEngineJobType&)type <<= _n;
   (TParseID&)pid <<= _n;
   (TShotID&)sid <<= _n;
+  (TSequenceID&)seqid <<= _n;
 
 }
 

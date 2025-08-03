@@ -58,6 +58,7 @@ void init_ParseID(py::module& m)
             py::arg("parseTimestamp"), py::arg("shotConfig"), py::arg("sequenceEntryID"))
         .def_readonly("parseTimestamp", &ParseID::parseTimestamp)
         .def_readonly("shotConfig", &ParseID::shotConfig)
+        .def_readonly("sequenceEntryID", &ParseID::sequenceEntryID)
         .def("__repr__",
             [](const ParseID& self) {
                 return self.print();

@@ -33,9 +33,12 @@ public:
 
     STI::Engine::AddSequenceStatus addSequence(const std::shared_ptr<STI::Engine::Sequence>& sequence, const STI::Engine::EngineJobSourceID& source);
     STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Engine::SequenceEntryID& sequenceEntryID);
+    void closeSequence(const STI::Engine::SequenceID& seqid);
+    void cancelSequence(const STI::Engine::SequenceID& seqid);
 
     STI::Engine::EngineJobStatus getStatus(const STI::Engine::ParseID& pid);
     STI::Engine::EngineJobStatus getStatus(const STI::Engine::ShotID& sid);
+    STI::Engine::EngineJobStatus getStatus(const STI::Engine::SequenceID& seqID);
 
     bool getDependencyParser(std::shared_ptr<STI::Engine::EventEngineDependencyParser>& dependencyParser);
 

@@ -2,7 +2,7 @@
 #include <sti/utils/FileServer.h>
 #include <sti/utils/BinaryData.h>
 
-#include "VirtualFileHolder.h"
+#include <sti/utils/VirtualFileHolder.h>
 
 #include <openssl/md5.h> 
 

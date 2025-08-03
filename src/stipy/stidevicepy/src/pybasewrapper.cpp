@@ -10,6 +10,7 @@
 namespace py = pybind11;
 
 void init_DeviceID(pybind11::module&);
+void init_FileID(py::module& m);
 void init_MixedValue(py::module& m);
 void init_StackTrace(py::module& m);
 void init_RawEvent(py::module& m);
@@ -33,6 +34,7 @@ void init_LogRecord(py::module& m);
 void init_Task(py::module& m);
 void init_RawEventGroup(py::module& m);
 void init_EngineParsingMessage(py::module& m);
+void init_FileServer(py::module& m);
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
 PYBIND11_MAKE_OPAQUE(std::map<std::string, std::string>);
@@ -48,6 +50,8 @@ PYBIND11_MODULE(stipybase, m) {
 
     init_DeviceID(m);
     init_ParsedDependencyTree(m);
+    init_FileID(m);
+    init_FileServer(m);
     init_MixedValue(m);
     init_StackTrace(m);
     init_RawEvent(m);

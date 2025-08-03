@@ -112,6 +112,11 @@ void TimeStamp::add_sec(int seconds)
     timeinfo.tm_sec += seconds;
 }
 
+void TimeStamp::add_ms(int ms)
+{
+    _millis += ms;
+}
+
 void TimeStamp::add_ns(int ns)
 {
     _nanos += ns;

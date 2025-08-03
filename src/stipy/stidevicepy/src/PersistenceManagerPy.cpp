@@ -112,3 +112,16 @@ std::shared_ptr<STI::Engine::SequenceResult> PersistenceManagerPy::getSequenceRe
     return sequenceResult;
 }
 
+std::shared_ptr<STI::Utils::FileServer> PersistenceManagerPy::getFileServer()
+{
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+
+    if (persistenceManager != 0 && persistenceManager->getFileServer(fileServer)) {
+        return fileServer;
+    }
+
+    //not found
+    // fileServer = std::make_shared<STI::Utils::FileServer>();
+    // return fileServer;
+    throw py::value_error("FileServer not found.");
+}

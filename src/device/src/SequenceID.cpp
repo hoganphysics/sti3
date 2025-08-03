@@ -19,6 +19,11 @@ SequenceID::SequenceID()
 {
 }
 
+SequenceID::SequenceID(const STI::Utils::TimeStamp& timestamp, const EngineJobSourceID& jobSourceID)
+: timestamp(timestamp), jobSourceID(jobSourceID)
+{
+}
+
 SequenceID SequenceID::generateUniqueID(const EngineJobSourceID& source)
 {
     std::unique_lock<std::mutex> IDlock(IDmutex);
@@ -86,6 +91,11 @@ void SequenceIndex::serialize(Archive& archive)
 }
 
 SequenceEntryID::SequenceEntryID()
+{
+}
+
+SequenceEntryID::SequenceEntryID(const SequenceID& seqID, const SequenceIndex& seqIndex)
+: seqID(seqID), seqIndex(seqIndex)
 {
 }
 

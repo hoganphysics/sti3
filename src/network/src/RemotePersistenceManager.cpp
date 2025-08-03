@@ -4,6 +4,7 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_File.h"
 #include "generated/orbTypes.h"
 #include "NetworkFileHolder.h"
 #include "NetworkFileServer.h"
@@ -37,7 +38,7 @@ using STI::Engine::SequenceEntryID;
 using ::STI::TNetwork::TSequenceEntryID;
 using STI::Engine::EngineJobStatus;
 using ::STI::TNetwork::TEngineJobStatus;
-
+using ::STI::TNetwork::TFileServer_var;
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
@@ -264,6 +265,28 @@ std::shared_ptr<STI::Utils::VirtualFileServer> RemotePersistenceManager::makeVir
 {
 	auto fileServer = std::shared_ptr<STI::Network::NetworkVirtualFileServer>();
 	return fileServer;
+}
+
+bool RemotePersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) 
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return false;
+
+    bool success = false;
+
+	try {
+		TFileServer_var tFileServer = getTRef()->getFileServer();	//remote call
+		success = convert<TFileServer_var, std::shared_ptr<STI::Utils::FileServer>>(tFileServer, server);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+    return success;
 }
 
 void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)

@@ -25,9 +25,12 @@ public:
     TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
     TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& tSequenceData, const ::STI::TNetwork::TEngineJobSourceID& source);
     TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
-    
+    void closeSequence(const ::STI::TNetwork::TSequenceID& seqid);
+    void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid);
+
     TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid);
     TEngineJobStatus getStatusSID(const ::STI::TNetwork::TShotID& sid);
+    TEngineJobStatus getStatusSeqID(const ::STI::TNetwork::TSequenceID& seqID);
 
     TEventEngineDependencyParser_ptr getDependencyParser();
 

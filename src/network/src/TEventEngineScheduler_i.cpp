@@ -134,6 +134,22 @@ TAddSequenceStatus* TEventEngineScheduler_i::addSequence(const TSequence& tSeque
 	return tAddSequenceStatus._retn();
 }
 
+void TEventEngineScheduler_i::closeSequence(const ::STI::TNetwork::TSequenceID& seqid)
+{
+    if (engineScheduler != 0) {
+		engineScheduler->closeSequence(convert<TSequenceID, STI::Engine::SequenceID>(seqid));
+	}
+}
+
+
+void TEventEngineScheduler_i::cancelSequence(const ::STI::TNetwork::TSequenceID& seqid)
+{
+    if (engineScheduler != 0) {
+		engineScheduler->cancelSequence(convert<TSequenceID, STI::Engine::SequenceID>(seqid));
+	}
+}
+
+
 TParseJobStatus* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const TSequenceEntryID& sequenceEntryID)
 {
 	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
@@ -169,6 +185,17 @@ TEngineJobStatus TEventEngineScheduler_i::getStatusSID(const ::STI::TNetwork::TS
 
 	if (engineScheduler != 0) {
 		auto status = engineScheduler->getStatus(convert<TShotID, STI::Engine::ShotID>(sid));
+		convert<STI::Engine::EngineJobStatus, TEngineJobStatus>(status, tStatus);
+	}
+	return tStatus;
+}
+
+TEngineJobStatus TEventEngineScheduler_i::getStatusSeqID(const ::STI::TNetwork::TSequenceID& seqID)
+{
+	TEngineJobStatus tStatus;
+
+	if (engineScheduler != 0) {
+		auto status = engineScheduler->getStatus(convert<TSequenceID, STI::Engine::SequenceID>(seqID));
 		convert<STI::Engine::EngineJobStatus, TEngineJobStatus>(status, tStatus);
 	}
 	return tStatus;

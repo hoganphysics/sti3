@@ -81,6 +81,8 @@ public:
 
 private:
 
+	void unblock();
+	
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
 
 	void connectToTargetHubs();

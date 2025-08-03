@@ -54,7 +54,7 @@ class EventCheckingDevice(stidevicepy.LocalDevice):
 ###################################
 
 
-nameServiceAddr = "192.168.1.6:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 dev_config = {'Device Name': 'EventCheckingDevice',

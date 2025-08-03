@@ -25,7 +25,7 @@ void init_Sequence(py::module& m)
 {
     py::class_<SequenceIndex>(m, "SequenceIndex")
         .def(py::init<>())
-        .def(py::init<int, int>())
+        .def(py::init<int, int>(), py::arg("index"), py::arg("repeat"))
         .def_readonly("index", &SequenceIndex::index)
         .def_readonly("repeat", &SequenceIndex::repeat)
         .def("__repr__",
@@ -48,6 +48,7 @@ void init_Sequence(py::module& m)
 
     py::class_<SequenceID>(m, "SequenceID")
         .def(py::init<>())
+        .def(py::init<const STI::Utils::TimeStamp&, const STI::Engine::EngineJobSourceID&>(), py::arg("timestamp"), py::arg("jobSourceID"))
         .def_readonly("timestamp", &SequenceID::timestamp)
         .def_readwrite("jobSourceID", &SequenceID::jobSourceID)
         .def("__repr__",
@@ -66,6 +67,8 @@ void init_Sequence(py::module& m)
 
     py::class_<SequenceEntryID>(m, "SequenceEntryID")
         .def(py::init<>())
+        .def(py::init<const SequenceID&, const SequenceIndex&>(),
+            py::arg("seqID"), py::arg("seqIndex"))
         .def_readwrite("seqID", &SequenceEntryID::seqID)
         .def_readwrite("seqIndex", &SequenceEntryID::seqIndex)
         .def("__repr__",
@@ -106,11 +109,11 @@ void init_Sequence(py::module& m)
         .value("Closed", SequenceType::Closed)
         ;
         //.export_values();
-    
+
 
     py::class_<Sequence, std::shared_ptr<Sequence>>(m, "Sequence")
         .def(py::init<>())
-        .def(py::init<const SequenceType&>())
+        .def(py::init<const SequenceType&>(), py::arg("type"))
         .def_readwrite("repeats", &Sequence::repeats)
         .def_readwrite("type", &Sequence::type)
         .def_readwrite("sequenceTable", &Sequence::sequenceTable)

@@ -160,9 +160,12 @@ module TNetwork
 
 		TAddSequenceStatus addSequence(in TSequence sequenceData, in TEngineJobSourceID source);
 		TParseJobStatus parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
+		void closeSequence(in TSequenceID seqid);
+    	void cancelSequence(in TSequenceID seqid);
 
     	TEngineJobStatus getStatusPID(in TParseID pid);
     	TEngineJobStatus getStatusSID(in TShotID sid);
+		TEngineJobStatus getStatusSeqID(in TSequenceID seqID);
 
 		TEventEngineDependencyParser getDependencyParser();
 
@@ -228,6 +231,8 @@ module TNetwork
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
 
 		boolean getMeasurements(in TShotID sid, out TDeviceIDMeasurementsTupleSeq measurements);
+
+		TFileServer getFileServer();
 
 		void addSequence(in TSequenceResult sequenceResult);
 		boolean updateSequence(in TSequenceEntryID id, in TShotID shotID, in TEngineJobStatus shotStatus, in boolean isOwner);

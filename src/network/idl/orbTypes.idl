@@ -264,7 +264,7 @@ module TNetwork
 
 	enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError };
 
-	enum TEventEngineJobType { EngineJobParse, EngineJobPlay };
+	enum TEventEngineJobType { EngineJobParse, EngineJobPlay, EngineJobSequence };
 	
 	struct TEngineJobSourceID
 	{
@@ -345,6 +345,7 @@ module TNetwork
     	TEventEngineJobType type;
     	TParseID pid;
     	TShotID sid;
+		TSequenceID seqid;
 	};
 	typedef sequence<TEngineJobID> TEngineJobIDSeq;
 
@@ -518,7 +519,7 @@ module TNetwork
 	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
 
 
-		struct TEventEngineJob
+	struct TEventEngineJob
 	{
 		TEngineJobID jobID;
 		TDeviceID jobOwner;

@@ -24,6 +24,7 @@ public:
     std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);
     std::shared_ptr<STI::Engine::ShotResult> getShotResult(const STI::Engine::ShotID& sid);
     std::shared_ptr<STI::Engine::SequenceResult> getSequenceResult(const STI::Engine::SequenceID& id);
+    std::shared_ptr<STI::Utils::FileServer> getFileServer();
 
 	STI::Engine::MeasurementMap getMeasurements(const STI::Engine::ShotID& sid);
 

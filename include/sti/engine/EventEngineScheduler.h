@@ -50,9 +50,12 @@ public:
 
     virtual AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source) = 0;
     virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
+    virtual void closeSequence(const SequenceID& seqid) = 0;
+    virtual void cancelSequence(const SequenceID& seqid) = 0;
 
     virtual EngineJobStatus getStatus(const ParseID& pid) = 0;
     virtual EngineJobStatus getStatus(const ShotID& sid) = 0;
+    virtual EngineJobStatus getStatus(const SequenceID& seqID) = 0;
 
     virtual bool getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser) = 0;
 

@@ -169,6 +169,20 @@ public:
 		return false;
 	}
 
+	bool addto(const STI::Network::HubID& target) 
+	{ 
+		if (localDevice != 0) {
+			return localDevice->addto(target);
+		}
+		return true; 
+	}
+	void setRemoveCB(const std::function<void(void)>& remover) override 
+	{
+		if (localDevice != 0) {
+			localDevice->setRemoveCB(remover);
+		}
+	}
+
 private:
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder)

@@ -64,7 +64,7 @@ def meas(channel, time, value=None, group="") :
 #def meas(channel, time, group="") :
 #    return _meas(channel, time, _makeStackTrace(), group)
 
-def makesequence(shotmaker, varsTable=None) :
-    return STIPySequence(shotmaker, varsTable)
+def makesequence(shotmaker, varsTable=None, description: str = ""):
+    return STIPySequence(shotmaker, varsTable, description=description)
 
 

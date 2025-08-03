@@ -66,6 +66,13 @@ using STI::Engine::EventEngine;
 using STI::TNetwork::TEventEngine_var;
 using STI::TNetwork::TChannelUpdateTupleSeq;
 using STI::Utils::MixedValue;
+using STI::TNetwork::TEngineJobID;
+using STI::Engine::EngineJobID;
+using STI::TNetwork::TEngineJobStatus;
+using STI::Engine::EngineJobStatus;
+using STI::TNetwork::TParsedVar;
+using STI::Engine::ParsedVar;
+
 
 
 template<>
@@ -847,14 +854,6 @@ bool STI::Network::convert<std::shared_ptr<EngineStateMessage>, TEngineStateMess
 
 	return true;
 }
-
-
-using STI::TNetwork::TEngineJobID;
-using STI::Engine::EngineJobID;
-using STI::TNetwork::TEngineJobStatus;
-using STI::Engine::EngineJobStatus;
-using STI::TNetwork::TParsedVar;
-using STI::Engine::ParsedVar;
 
 //EngineJobUpdateDeviceMessage
 template<>

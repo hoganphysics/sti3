@@ -43,7 +43,7 @@ public:
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
 
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
-    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) { return false; }
+    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
 
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);

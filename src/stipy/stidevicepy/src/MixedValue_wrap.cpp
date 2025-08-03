@@ -1,4 +1,5 @@
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/FileID.h>
 #include "MixedValuePy.h"
 
 #include <pybind11/pybind11.h>
@@ -34,6 +35,13 @@ void init_MixedValue(py::module& m)
         .def(py::init<>())
         .def(py::init<const py::object&>(), py::arg("value"))
         .def("getValue", &MixedValuePy::getValue_py)
+        // .def("getValue",
+        //     [](const MixedValuePy& val) {
+        //         if (val.getType() == MixedValueType::File) {
+        //             return val.getFileID();
+        //         }
+        //         return val.getValue_py();
+        //     })
         .def("setValue", py::overload_cast<const MixedValuePy&>(&MixedValuePy::setValue_py), py::arg("MixedValue"))    //, py::keep_alive<1, 2>()
         .def("setValue", py::overload_cast<const py::object&>(&MixedValuePy::setValue_py), py::arg("value"))
         .def("addValue", py::overload_cast<const MixedValuePy&>(&MixedValuePy::addValue_py), py::arg("MixedValue"))

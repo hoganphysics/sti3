@@ -116,6 +116,7 @@ add_library(stidevice SHARED
     SerializedRepository.cpp
     Sequence.cpp
     SequenceID.cpp
+    SequenceJob.cpp
     SequenceResult.cpp
     ShotConfig.cpp
     ShotID.cpp

@@ -48,6 +48,7 @@ class SequenceID
 public:
 
 	SequenceID();
+	SequenceID(const STI::Utils::TimeStamp& timestamp, const EngineJobSourceID& jobSourceID);
 
 	STI::Utils::TimeStamp timestamp;
     EngineJobSourceID jobSourceID;
@@ -75,6 +76,7 @@ class SequenceEntryID
 public:
 
 	SequenceEntryID();
+	SequenceEntryID(const SequenceID& seqID, const SequenceIndex& seqIndex);
 
     SequenceID seqID;
     SequenceIndex seqIndex;

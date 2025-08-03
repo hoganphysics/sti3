@@ -108,7 +108,7 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
         break;
     case MixedValueType::File:
         {
-            
+            obj = py::cast(value.getFileID());
         }
         break;
     case MixedValueType::Image:

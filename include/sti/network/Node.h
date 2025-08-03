@@ -3,6 +3,8 @@
 
 #include <sti/utils/Collector.h>
 
+#include <functional>
+
 namespace STI
 {
 namespace Network
@@ -26,6 +28,9 @@ public:
 	//Optimization to allow Nodes to be selective about when Hubs they are broadcast to.
 	//If the Node is known to be restricted to specific hubs, this potentially avoid unneeded network calls.
 	virtual bool addto(const HubID& target) = 0;
+
+	// Callback to remove this Node from the Hub.
+	virtual void setRemoveCB(const std::function<void(void)>& remover) = 0;
 
 	//virtual T& get() = 0;
 	// T& get() { return static_cast<T&>(*this); }		//static polymorphism via CRTP

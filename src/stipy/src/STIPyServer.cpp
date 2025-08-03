@@ -9,13 +9,13 @@
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/Sequence.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/StackTraceData.h>
 
 #include <sti/utils/LocalFileHolder.h>
 
 #include "LocalShot.h"
 #include "PyParseTicket.h"
 #include "PyResultTicket.h"
-#include <sti/engine/StackTraceData.h>
 #include "STIPyGlobal.h"
 #include "STIPyShot.h"
 
@@ -91,6 +91,16 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>
     if (stipy != 0) {
         stipy->makeShot(shot, func);        
     }
+
+    // const STI::Engine::ShotConfig& sc = shot->getShotConfig();
+    // STI::Engine::ShotConfig& sc2 = const_cast<STI::Engine::ShotConfig&>(sc);
+
+    // auto& files = shot->group()->getStackTraceData()->getTimingFiles();
+    // if (!files.empty()) {
+    //     sc2.file = files[0].getFullFilename();
+    // } else {
+    //     sc2.file = "default.shot";
+    // }
 
     return shot;
 }
@@ -226,8 +236,8 @@ STI::Engine::SequenceID STIPyServer::addSequence(const std::shared_ptr<STI::Engi
     STI::Engine::AddSequenceStatus addSequenceStatus;
 
     if (getScheduler(scheduler) && seq != 0) {
-        STI::Engine::EngineJobSourceID source;
-        addSequenceStatus = scheduler->addSequence(seq, source);
+        // STI::Engine::EngineJobSourceID source;
+        addSequenceStatus = scheduler->addSequence(seq, seq->shotConfig.jobSourceID);
         success = true;
     }
     

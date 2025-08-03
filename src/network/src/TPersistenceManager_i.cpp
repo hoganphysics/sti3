@@ -10,6 +10,7 @@
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
 #include "ORBManager.h"
+#include "TFileServerRefInterface.h"
 
 using STI::TNetwork::TPersistenceManager_i;
 using STI::Network::convert;
@@ -28,6 +29,7 @@ using ::STI::TNetwork::TSequenceEntryID;
 using STI::Engine::SequenceEntryID;
 using ::STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EngineJobStatus;
+using STI::Network::TFileServerRefInterface;
 
 
 TPersistenceManager_i::TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -173,6 +175,19 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 	}
 
 	return success;
+}
+
+::STI::TNetwork::TFileServer_ptr TPersistenceManager_i::getFileServer()
+{
+	std::shared_ptr<STI::Utils::FileServer> fileServer;
+	STI::TNetwork::TFileServer_var tFileServer;
+
+	if (persistenceManager != 0 && persistenceManager->getFileServer(fileServer)
+		&& TFileServerRefInterface::getTFileServerReference(fileServer, tFileServer)) {
+		
+		return tFileServer._retn();
+	}
+	return ::STI::TNetwork::TFileServer::_nil();
 }
 
 void TPersistenceManager_i::addSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult)

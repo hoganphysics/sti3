@@ -202,6 +202,15 @@ bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::sh
 
 	node->activate();
 
+	//set callback to remove this Node from the LocalHub
+	node->setRemoveCB( [this, id]() { 
+		// Use a thread to ensure the Node has time to finish its work before removing it
+		std::thread([this, id]() {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100)); // give the Node time to finish call
+			removeNode(id);
+		}).detach();
+	} );
+
 	if (success) {
 		return distribute(id, node, HubTrace(), getID()); //includes redundant local distribute...
 	}

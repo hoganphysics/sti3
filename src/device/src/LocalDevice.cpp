@@ -200,7 +200,15 @@ void LocalDevice::disable()
 
 void LocalDevice::kill()
 {
+	if (removerCallback) {
+		//callback to remove this LocalDevice from the LocalHub
+		removerCallback();
+	}
+}
 
+void LocalDevice::setRemoveCB(const std::function<void(void)>& remover) 
+{
+	removerCallback = remover;
 }
 
 void LocalDevice::addEventTarget(const DeviceID& id, const std::string& alias)

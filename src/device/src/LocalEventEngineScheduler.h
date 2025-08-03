@@ -65,6 +65,7 @@ class LocalEventEngine;
 class ParseID;
 class Shot;
 class LocalEventEngineJob;
+class SequenceJob;
 
 
 class LocalEventEngineScheduler : public EventEngineScheduler,
@@ -83,9 +84,12 @@ public:
 
     AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source);
     ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
+    void closeSequence(const SequenceID& seqid);
+    void cancelSequence(const SequenceID& seqid);
 
     EngineJobStatus getStatus(const ParseID& pid);
     EngineJobStatus getStatus(const ShotID& sid);
+    EngineJobStatus getStatus(const SequenceID& seqID);
 
     bool getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser);
 
@@ -121,6 +125,9 @@ public:
 
 private:
 
+    void addSequenceJob(const std::shared_ptr<SequenceJob>& job);
+    void refreshSequenceJobs();
+
     void parse(const std::shared_ptr<LocalEventEngineJob>& job);
     void play(const ShotID& shotID);
     void stop();
@@ -129,12 +136,16 @@ private:
     void transferTimingFiles(StackTraceData& stackTraceData, STI::Utils::FileServer& remoteFileSever, STI::Utils::VirtualFileServer& targetFileServer);
    
     void assignJobs();
+    void assignPlayJobs(const std::set<EngineJobID>& queuedJobIDs, std::set<EngineID>& freeEngines);
+    void assignParseJobs(const std::set<EngineJobID>& queuedJobIDs, std::set<EngineID>& freeEngines);
+
     bool assignJob(const EngineJobID& jobID, const EngineID& engineID);
     void _cancelJob(const EngineJobID& jobID);
     bool isCanceledJob(const STI::Engine::ParseID& parseID);
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
     bool findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const;
+    bool findJob(const SequenceID& seqID, std::shared_ptr<SequenceJob>& job) const;
 
     bool findOldestParsedEngine(std::set<EngineID>& freeEngines, EngineID& engineID);
     bool findParsedEngine(const STI::Engine::ParseID& parseID, std::set<EngineID>& freeEngines, EngineID& engineID);
@@ -152,11 +163,15 @@ private:
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 
-    STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;
+    STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;  
 
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> queuedJobs;
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> runningJobs;
     STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<EventEngineJob>> completedJobs;
+    
+    STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<SequenceJob>> queuedSequenceJobs;
+    std::shared_ptr<SequenceJob> currentSequenceJob;
+    STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<SequenceJob>> completedSequenceJobs;
 
     bool running;
     std::thread schedulerThread;

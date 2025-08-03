@@ -11,11 +11,14 @@
 
 #include <iostream>
 
+#include <sti/network/Node.h>
+
 int main(int argc, char **argv)
 {
-	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.6:2809");
+	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.109:2809");
 //    hub->getPersistenceOptions().bindToRootContext = false;
 //    hub->getPersistenceOptions().bindToTargetContexts = false;
+
 
     std::string testName = "STI Server";
 
@@ -87,29 +90,7 @@ int main(int argc, char **argv)
         
     }
 
-
-
     hub->shutdown();
-
-    //auto hub2 = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.14:2809");
-
-    //STI::Network::HubID hubID;
-    //
-    //hub2->run(false);
-
-
-    //hub2->findHub(id, hubID);
-
-
-    
-
-    // int x;
-    // std::cin >> x;
-
-    // server = 0;
-    // hub->shutdown();
-
-    // std::cin >> x;
 
     return 0;
 }

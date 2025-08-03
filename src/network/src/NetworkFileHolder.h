@@ -4,7 +4,7 @@
 #include <sti/utils/LocalFileHolder.h>
 
 #include "TFileHolderRefInterface.h"
-#include "VirtualFileHolder.h"
+#include <sti/utils/VirtualFileHolder.h>
 #include "TFileHolder_i.h"
 #include "generated/deviceNet.h"
 

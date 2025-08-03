@@ -85,15 +85,6 @@ void init_StackTrace(py::module& m)
             })
         ;
 
-    py::class_<STI::Utils::FileID>(m, "FileID")
-        .def(py::init<>())
-        .def_readonly("filename", &FileID::filename)
-        .def_readonly("path", &FileID::path)
-        .def_readonly("origin", &FileID::origin)
-        .def_readonly("persistenceLocation", &FileID::persistenceLocation)
-        .def_readonly("creationTime", &FileID::creationTime)
-        ;
-
     py::class_<StackTraceData, std::shared_ptr<StackTraceData>>(m, "StackTraceData")
         .def("getFunctionNames", &StackTraceData::getFunctionNames)
         .def("getTimingFiles", &StackTraceData::getTimingFiles)

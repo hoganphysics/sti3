@@ -2,6 +2,7 @@
 #include "STIPyShot.h"
 #include <sti/device/DeviceID.h>
 #include <sti/engine/RawEventTargetDevice.h>
+#include <sti/engine/StackTraceData.h>
 
 #include "StackTrace.h"
 
@@ -69,6 +70,20 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);
         makingShot = false;
+    }
+
+    // set filename (temp work around)
+
+    if (shot == 0) return;
+
+    const STI::Engine::ShotConfig& sc = shot->getShotConfig();
+    STI::Engine::ShotConfig& sc2 = const_cast<STI::Engine::ShotConfig&>(sc);    //temp
+    auto& files = shot->group()->getStackTraceData()->getTimingFiles();
+
+    if (!files.empty()) {
+        sc2.file = files[0].getFullFilename();
+    } else {
+        sc2.file = "default.shot";
     }
 }
 

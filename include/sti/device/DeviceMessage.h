@@ -16,6 +16,7 @@
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineJobStatus.h>
+#include <sti/engine/SequenceJob.h>
 
 #include <sstream>
 
@@ -375,9 +376,32 @@ public:
 		return result;
 	}
 
+
+	void toQueuedList(const std::shared_ptr<STI::Engine::SequenceJob>& job)
+	{
+		targetList = STI::Engine::EventEngineJobList::Queued;
+		setSequenceJob(job);
+	}
+	void toRunningList(const std::shared_ptr<STI::Engine::SequenceJob>& job)
+	{
+		targetList = STI::Engine::EventEngineJobList::Running;
+		setSequenceJob(job);
+	}
+	void toCompleteList(const std::shared_ptr<STI::Engine::SequenceJob>& job)
+	{
+		targetList = STI::Engine::EventEngineJobList::Completed;
+		setSequenceJob(job);
+	}
+	void toArchive(const std::shared_ptr<STI::Engine::SequenceJob>& job)
+	{
+		targetList = STI::Engine::EventEngineJobList::Archived;
+		setSequenceJob(job);
+	}
+
 private:
 
 	void setJob(const std::shared_ptr<STI::Engine::EventEngineJob>& engineJob);
+	void setSequenceJob(const std::shared_ptr<STI::Engine::SequenceJob>& job);
 
 	STI::Engine::EventEngineJobList targetList;	//the list the job belongs in
 	// std::shared_ptr<STI::Engine::EventEngineJob> engineJob;
