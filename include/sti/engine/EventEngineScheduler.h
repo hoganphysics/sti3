@@ -46,10 +46,12 @@ public:
     virtual ~EventEngineScheduler() {}
 
     virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot) = 0;
+    virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
+    virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceID& sequenceID) = 0;
+
     virtual PlayJobStatus play(const ParseID& parseID, const EngineJobSourceID& source) = 0;
 
     virtual AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source) = 0;
-    virtual ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID) = 0;
     virtual void closeSequence(const SequenceID& seqid) = 0;
     virtual void cancelSequence(const SequenceID& seqid) = 0;
 

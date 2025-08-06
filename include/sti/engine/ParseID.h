@@ -3,11 +3,11 @@
 
 #include <sti/utils/TimeStamp.h>
 #include <sti/engine/EngineJobSourceID.h>
-#include <sti/engine/ShotConfig.h>
 #include <sti/engine/SequenceID.h>
+#include <sti/engine/ShotConfig.h>
 
 #include <string>
-
+#include <mutex>
 
 namespace STI
 {
@@ -20,13 +20,14 @@ class ParseID
 public:
 
 	ParseID();
-	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const ShotConfig& shotConfig)
-	: parseTimestamp(parseTimestamp), shotConfig(shotConfig) {}
-	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const ShotConfig& shotConfig, const SequenceEntryID& sequenceEntryID)
-	: parseTimestamp(parseTimestamp), shotConfig(shotConfig), sequenceEntryID(sequenceEntryID) {}
+	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const EngineJobSourceID& jobSourceID)
+	: parseTimestamp(parseTimestamp), jobSourceID(jobSourceID)  { shotType = ShotType::Single; }
+	ParseID(const STI::Utils::TimeStamp& parseTimestamp, const EngineJobSourceID& jobSourceID, const SequenceEntryID& sequenceEntryID)
+	: parseTimestamp(parseTimestamp), jobSourceID(jobSourceID), sequenceEntryID(sequenceEntryID) { shotType = ShotType::SequenceEntry; }
 
 	STI::Utils::TimeStamp parseTimestamp;
-	ShotConfig shotConfig;
+	ShotType shotType;
+	EngineJobSourceID jobSourceID;
 
 	SequenceEntryID sequenceEntryID;
 
@@ -34,10 +35,18 @@ public:
 	bool operator==(const ParseID& rhs) const { return parseTimestamp == rhs.parseTimestamp; }
 	bool operator!=(const ParseID& rhs) const { return !((*this) == rhs); }
 
+	static ParseID generateUniqueID(const EngineJobSourceID& jobSourceID);
+	static ParseID generateUniqueID(const EngineJobSourceID& jobSourceID, const SequenceEntryID& sequenceEntryID);
+
 	std::string print() const;
 
 	template<class Archive>
 	void serialize(Archive& archive);
+
+private:
+
+	static STI::Utils::TimeStamp lastSubmissionTime;
+	static std::mutex IDmutex;
 };
 
 

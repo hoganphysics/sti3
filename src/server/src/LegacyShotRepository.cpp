@@ -182,7 +182,7 @@ bool LegacyShotRepository::saveShot(const ShotID& sid, const std::shared_ptr<Ful
 
     LegacyExperimentXMLBuilder builder(targetShotPath.string(), fullShotResult);
 
-    if (sid.parseID.shotConfig.shotType == ShotType::Sequence) {
+    if (sid.parseID.shotType == ShotType::SequenceEntry) {
         std::shared_ptr<LegacySequenceXMLBuilder> seqBuilder;
         if (cachedSequences.get(sid.parseID.sequenceEntryID.seqID, seqBuilder) && seqBuilder != 0) {            
             builder.addSequenceFilename(seqBuilder->getFilename());

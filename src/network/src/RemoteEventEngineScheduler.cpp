@@ -11,6 +11,7 @@
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/SequenceID.h>
 
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_EventEngine.h"
@@ -244,6 +245,41 @@ ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& sh
 
 	return parseJobStatus;
 }
+
+ParseJobStatus RemoteEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceID& sequenceID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	ParseJobStatus parseJobStatus;
+	parseJobStatus.status = EngineJobStatus::NotFound;
+
+	STI::TNetwork::TShot tShot;
+
+	if (isDisabled()) return parseJobStatus;
+
+	if (!convert<std::shared_ptr<Shot>, STI::TNetwork::TShot>(shot, tShot)) {
+		return parseJobStatus;
+	}
+
+	try {
+		auto tParseJobStatus = getTRef()->parseSeq(tShot,
+				convert<SequenceID, TSequenceID>(sequenceID));	//remote call
+
+		if (tParseJobStatus != 0) {
+			parseJobStatus = convert<TParseJobStatus, ParseJobStatus>(*tParseJobStatus);			
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return parseJobStatus;
+}
+
 
 EngineJobStatus RemoteEventEngineScheduler::getStatus(const ParseID& pid)
 {

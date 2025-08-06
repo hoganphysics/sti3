@@ -16,16 +16,41 @@ ParsedTag::ParsedTag()
 
 ParsedTag::ParsedTag(const std::string& name, const RawEventGroup* group,
 		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
-: name(name), trace(trace), stackTraceData(stackTraceData), parentGroup(group)
+: name(name), trace(trace), stackTraceData(stackTraceData)
 {
+	setParentGroup(group);
 }
+
+// std::string ParsedTag::getGroupName() const
+// {
+// 	if (parentGroup != 0) {
+// 		return parentGroup->getFullName();
+// 	}
+// 	return "";
+// }
 
 std::string ParsedTag::getGroupName() const
 {
+	return _groupName;
+}
+
+void ParsedTag::setGroupName(const std::string& groupName)
+{
+	_groupName = groupName;
+	refreshGroupName();	//override new name if parentGroup is set
+}
+
+void ParsedTag::refreshGroupName()
+{
 	if (parentGroup != 0) {
-		return parentGroup->getFullName();
+		_groupName =  parentGroup->getFullName();
 	}
-	return "";
+}
+
+void ParsedTag::setParentGroup(const RawEventGroup* group)
+{
+	parentGroup = group;
+	refreshGroupName();	//override new name if parentGroup is set
 }
 
 bool ParsedTag::operator<(const ParsedTag& rhs) const 

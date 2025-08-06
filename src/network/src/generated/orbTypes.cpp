@@ -788,6 +788,7 @@ void
 STI::TNetwork::TParsedVar::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
+  _n.marshalString(groupName,0);
   (const TMixedValue&) value >>= _n;
   (const TStackFrameSeq&) trace >>= _n;
 
@@ -797,6 +798,7 @@ void
 STI::TNetwork::TParsedVar::operator<<= (cdrStream &_n)
 {
   name = _n.unmarshalString(0);
+  groupName = _n.unmarshalString(0);
   (TMixedValue&)value <<= _n;
   (TStackFrameSeq&)trace <<= _n;
 
@@ -976,7 +978,8 @@ void
 STI::TNetwork::TParseID::operator>>= (cdrStream &_n) const
 {
   (const TTimeStamp&) parseTimestamp >>= _n;
-  (const TShotConfig&) shotConfig >>= _n;
+  shotType >>= _n;
+  (const TEngineJobSourceID&) jobSourceID >>= _n;
   (const TSequenceEntryID&) sequenceEntryID >>= _n;
 
 }
@@ -985,7 +988,8 @@ void
 STI::TNetwork::TParseID::operator<<= (cdrStream &_n)
 {
   (TTimeStamp&)parseTimestamp <<= _n;
-  (TShotConfig&)shotConfig <<= _n;
+  (TShotType&)shotType <<= _n;
+  (TEngineJobSourceID&)jobSourceID <<= _n;
   (TSequenceEntryID&)sequenceEntryID <<= _n;
 
 }
@@ -1114,6 +1118,7 @@ void
 STI::TNetwork::TParsedTag::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
+  _n.marshalString(groupName,0);
   (const TStackFrameSeq&) trace >>= _n;
 
 }
@@ -1122,6 +1127,7 @@ void
 STI::TNetwork::TParsedTag::operator<<= (cdrStream &_n)
 {
   name = _n.unmarshalString(0);
+  groupName = _n.unmarshalString(0);
   (TStackFrameSeq&)trace <<= _n;
 
 }
@@ -1890,6 +1896,7 @@ void
 STI::TNetwork::TParseResult::operator>>= (cdrStream &_n) const
 {
   (const TParseID&) parseID >>= _n;
+  (const TShotConfig&) shotConfig >>= _n;
   (const TRawEventGroup&) baseEventGroup >>= _n;
   (const TEventEngineDependencyTree&) parsedDevices >>= _n;
   (const TEngineParsingMessageSeq&) messages >>= _n;
@@ -1901,6 +1908,7 @@ void
 STI::TNetwork::TParseResult::operator<<= (cdrStream &_n)
 {
   (TParseID&)parseID <<= _n;
+  (TShotConfig&)shotConfig <<= _n;
   (TRawEventGroup&)baseEventGroup <<= _n;
   (TEventEngineDependencyTree&)parsedDevices <<= _n;
   (TEngineParsingMessageSeq&)messages <<= _n;

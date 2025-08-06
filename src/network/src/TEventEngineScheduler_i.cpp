@@ -166,6 +166,21 @@ TParseJobStatus* TEventEngineScheduler_i::parseSeqEntry(const TShot& shot, const
 	return tParseJobStatus._retn();
 }
 
+TParseJobStatus* TEventEngineScheduler_i::parseSeq(const TShot& shot, const ::STI::TNetwork::TSequenceID& sequenceID)
+{
+	STI::TNetwork::TParseJobStatus_var tParseJobStatus(new STI::TNetwork::TParseJobStatus);
+
+	std::shared_ptr<Shot> parsedShot;
+	bool success = convert<::STI::TNetwork::TShot, std::shared_ptr<Shot>>(shot, parsedShot);
+    
+	if (engineScheduler != 0) {
+		auto parseJobStatus = engineScheduler->parse(parsedShot, 
+										  convert<TSequenceID, SequenceID>(sequenceID));
+		convert<ParseJobStatus, TParseJobStatus>(parseJobStatus, tParseJobStatus.inout());
+	}
+
+	return tParseJobStatus._retn();
+}
 
 TEngineJobStatus TEventEngineScheduler_i::getStatusPID(const ::STI::TNetwork::TParseID& pid)
 {

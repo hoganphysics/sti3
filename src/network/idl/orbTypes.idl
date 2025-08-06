@@ -214,6 +214,7 @@ module TNetwork
 	struct TParsedVar
 	{
 		string name;
+		string groupName;
 		TMixedValue value;
 		TStackFrameSeq trace;
 	};
@@ -273,7 +274,7 @@ module TNetwork
 	};
 
 
-	enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented };
+	enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented, ShotTypeSequenceEntry };
 
 	struct TSequenceIndex
 	{
@@ -308,7 +309,9 @@ module TNetwork
 	struct TParseID
 	{
 		TTimeStamp parseTimestamp;
-		TShotConfig shotConfig;
+		// TShotConfig shotConfig;
+		TShotType shotType;
+		TEngineJobSourceID jobSourceID;
 
 		TSequenceEntryID sequenceEntryID;
 	};
@@ -372,6 +375,7 @@ module TNetwork
 	struct TParsedTag
 	{
 		string name;
+		string groupName;
 		TStackFrameSeq trace;
 	};
 	typedef sequence<TParsedTag> TParsedTagSeq;
@@ -693,6 +697,7 @@ module TNetwork
 	struct TParseResult
 	{
 		TParseID parseID;
+		TShotConfig shotConfig;
 
 		TRawEventGroup baseEventGroup;
 		TEventEngineDependencyTree parsedDevices;

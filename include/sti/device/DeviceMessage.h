@@ -17,6 +17,7 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/SequenceJob.h>
+#include <sti/engine/ShotConfig.h>
 
 #include <sstream>
 

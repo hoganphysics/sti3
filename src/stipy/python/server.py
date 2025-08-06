@@ -5,6 +5,7 @@ from stipy.bin.stipy import ParsedVar
 from stipy.bin.stipybase import RawEventGroup
 from stipy.bin.stipybase import SequenceEntryID
 from stipy.bin.stipybase import SequenceID
+from stipy.bin.stipybase import ShotType
 
 from collections.abc import Callable
 import importlib.util, sys, pathlib
@@ -69,7 +70,7 @@ def load_module(path, name=None):
     spec.loader.exec_module(module)
     return module
 
-def _makeshot_file(self, filename, vars=None):
+def _makeshot_file(self, filename, vars, shot_type):
 
     # def execute_file():
     #     with open(filename) as file:
@@ -91,11 +92,11 @@ def _makeshot_file(self, filename, vars=None):
         load_module(filename)
 
     if vars == None:
-        return _makeshot(self, execute_file)
+        return _makeshot(self, execute_file, shot_type)
     else:
-        return _makeshotVars(self, execute_file, vars)
+        return _makeshotVars(self, execute_file, vars, shot_type)
 
-def _makeshotVars(self, shotmaker, vars):
+def _makeshotVars(self, shotmaker, vars, shot_type):
     g = RawEventGroup()
 
     if (type(vars) is dict):
@@ -103,20 +104,21 @@ def _makeshotVars(self, shotmaker, vars):
     elif (type(vars) is set):
         [g.bindvar(v.name, v.value()) for v in vars]
     
-    return _makeshot(self, shotmaker, g.overwrittenVars())
+    return _makeshot(self, shotmaker, g.overwrittenVars(), shot_type)
 
-def makeshot(self, source=None, vars=None):
-
-
+def makeshot(self, source=None, vars=None, shot_type=None):
+    if shot_type is None:
+        shot_type = ShotType.Single
     if source == None and vars == None:
-        return self.makeshot()
+        # return self.makeshot()
+        return _makeshot(self, shot_type)
     elif type(source) == str:
-        return _makeshot_file(self, source, vars)
+        return _makeshot_file(self, source, vars, shot_type)
     elif callable(source):
         if vars == None:
-            return _makeshot(self, source)
+            return _makeshot(self, source, shot_type)
         else:
-            return _makeshotVars(self, source, vars)
+            return _makeshotVars(self, source, vars, shot_type)
     else:
         raise ValueError("Source must be a string filename or a callable.")
 
@@ -133,8 +135,8 @@ def run(self, sequence: Sequence, progress: Callable[[int, int], None] = None):
     
 
     for key in sequence.sequenceTable.keys():
-        shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten)
-        shots.append(shot)
+        shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten, shot_type=ShotType.SequenceEntry)
+        # shots.append(shot)
 
         seqEntryID = SequenceEntryID()
         seqEntryID.seqID = sequenceID

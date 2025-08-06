@@ -11,7 +11,7 @@ namespace STI
 namespace Engine
 {
 
-enum class ShotType { Single, Sequence, SingleUndocumented };
+enum class ShotType { Single, Sequence, SingleUndocumented, SequenceEntry };
 
 std::string printShotType(const ShotType& type);
 

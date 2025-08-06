@@ -4,6 +4,7 @@
 
 #include <sti/engine/RawEventTargetDevice.h>
 #include <sti/engine/ParseID.h>
+#include <sti/engine/SequenceID.h>
 
 #include <sti/NetworkDeviceHub.h>
 #include "STIPyLibDevice.h"
@@ -100,15 +101,17 @@ public:
 
     void setChannels(const pybind11::dict& channels);
 
-    std::shared_ptr<STIPyShot> makeshot();
-    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func);
-    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars);    //uses dictionary vars to override servars
+    // std::shared_ptr<STIPyShot> makeshot();
+    std::shared_ptr<STIPyShot> makeshot(const STI::Engine::ShotType& shotType);
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType);
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType);    //uses dictionary vars to override servars
 
-    std::shared_ptr<STI::Engine::Sequence> makesequence(const std::function<void(void)>& func);
-    std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::set& vars);
-    std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::dict& vars);
+    // std::shared_ptr<STI::Engine::Sequence> makesequence(const std::function<void(void)>& func);
+    // std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::set& vars);
+    // std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::dict& vars);
 
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot);
+    std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const STI::Engine::SequenceID& sequenceID);
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const STI::Engine::SequenceEntryID& sequenceEntryID);
 
     std::shared_ptr<PyParseTicket> parse(const std::shared_ptr<STIPyShot>& pyShot, const pybind11::dict& channels);
@@ -119,6 +122,8 @@ public:
     std::shared_ptr<PyResultTicket> play(const STI::Engine::ParseID& parseID);
 
     STI::Engine::SequenceID addSequence(const std::shared_ptr<STI::Engine::Sequence>& seq);
+    void closeSequence(const STI::Engine::SequenceID& seqid);
+    void cancelSequence(const STI::Engine::SequenceID& seqid);
 
     void cancelAll();
 

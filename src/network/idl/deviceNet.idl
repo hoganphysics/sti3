@@ -156,10 +156,13 @@ module TNetwork
 	interface TEventEngineScheduler
 	{
 		TParseJobStatus parse(in TShot shot);
+		TParseJobStatus parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
+		TParseJobStatus parseSeq(in TShot shot, in TSequenceID sequenceID);
+
 		TPlayJobStatus play(in TParseID parseID, in TEngineJobSourceID source);
 
 		TAddSequenceStatus addSequence(in TSequence sequenceData, in TEngineJobSourceID source);
-		TParseJobStatus parseSeqEntry(in TShot shot, in TSequenceEntryID sequenceEntryID);
+		
 		void closeSequence(in TSequenceID seqid);
     	void cancelSequence(in TSequenceID seqid);
 

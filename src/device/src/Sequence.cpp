@@ -15,6 +15,7 @@ using STI::Engine::Sequence;
 using STI::Engine::SequenceType;
 using STI::Engine::SequenceEntry;
 using STI::Engine::ParsedVar;
+using STI::Engine::SequenceEntryID;
 
 
 Sequence::Sequence()

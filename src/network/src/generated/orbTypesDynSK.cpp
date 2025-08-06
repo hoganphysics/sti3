@@ -731,6 +731,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TRawEventTarget = _0RL_tc_STI_mTN
 
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParsedVar[] = {
   {"name", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"groupName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"value", _0RL_tc_STI_mTNetwork_mTMixedValue},
   {"trace", _0RL_tc_STI_mTNetwork_mTStackFrameSeq}
 };
@@ -738,7 +739,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParsedVar[] = {
 #ifdef _0RL_tc_STI_mTNetwork_mTParsedVar
 #  undef _0RL_tc_STI_mTNetwork_mTParsedVar
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedVar = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedVar:1.0", "TParsedVar", _0RL_structmember_STI_mTNetwork_mTParsedVar, 3, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedVar = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedVar:1.0", "TParsedVar", _0RL_structmember_STI_mTNetwork_mTParsedVar, 4, &_0RL_tcTrack);
 
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -1017,8 +1018,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobSourceID = _0RL_tc_STI_
 #endif
 
 
-static const char* _0RL_enumMember_STI_mTNetwork_mTShotType[] = { "ShotTypeSingle", "ShotTypeSequence", "ShotTypeSingleUndocumented" };
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TShotType:1.0", "TShotType", _0RL_enumMember_STI_mTNetwork_mTShotType, 3, &_0RL_tcTrack);
+static const char* _0RL_enumMember_STI_mTNetwork_mTShotType[] = { "ShotTypeSingle", "ShotTypeSequence", "ShotTypeSingleUndocumented", "ShotTypeSequenceEntry" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TShotType:1.0", "TShotType", _0RL_enumMember_STI_mTNetwork_mTShotType, 4, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -1132,18 +1133,17 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotConfig = _0RL_tc_STI_mTNetwo
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParseID[] = {
   {"parseTimestamp", _0RL_tc_STI_mTNetwork_mTTimeStamp},
-  {"shotConfig", _0RL_tc_STI_mTNetwork_mTShotConfig},
+  {"shotType", _0RL_tc_STI_mTNetwork_mTShotType},
+  {"jobSourceID", _0RL_tc_STI_mTNetwork_mTEngineJobSourceID},
   {"sequenceEntryID", _0RL_tc_STI_mTNetwork_mTSequenceEntryID}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTParseID
 #  undef _0RL_tc_STI_mTNetwork_mTParseID
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParseID:1.0", "TParseID", _0RL_structmember_STI_mTNetwork_mTParseID, 3, &_0RL_tcTrack);
-
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParseID:1.0", "TParseID", _0RL_structmember_STI_mTNetwork_mTParseID, 4, &_0RL_tcTrack);
 
 
 
@@ -1160,7 +1160,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParseID = _0RL_tc_STI_mTNetwork_mTParseID;
 #endif
-
 
 
 
@@ -1189,7 +1188,6 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseJobStatus = CORBA::TypeC
 
 
 
-
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -1198,7 +1196,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParseJobStatus = _0RL_tc_STI_mTNetwork_mTParseJobStatus;
 #endif
-
 
 
 
@@ -1232,7 +1229,6 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotID = CORBA::TypeCode::PR_
 
 
 
-
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -1241,7 +1237,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotID = _0RL_tc_STI_mTNetwork_mTShotID;
 #endif
-
 
 
 
@@ -1264,7 +1259,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTPlayJobStatus[] 
 #  undef _0RL_tc_STI_mTNetwork_mTPlayJobStatus
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTPlayJobStatus = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TPlayJobStatus:1.0", "TPlayJobStatus", _0RL_structmember_STI_mTNetwork_mTPlayJobStatus, 2, &_0RL_tcTrack);
-
 
 
 
@@ -1335,8 +1329,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAddSequenceStatus = _0RL_tc_STI_
 
 
 
-
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobID[] = {
   {"type", _0RL_tc_STI_mTNetwork_mTEventEngineJobType},
   {"pid", _0RL_tc_STI_mTNetwork_mTParseID},
@@ -1371,8 +1363,6 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobID = CORBA::TypeCode
 
 
 
-
-
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -1381,14 +1371,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobID = _0RL_tc_STI_mTNetwork_mTEngineJobID;
 #endif
-
-
-
-
-
-
-
-
 
 
 
@@ -1534,7 +1516,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TStackTraceData = _0RL_tc_STI_mTN
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTStackTraceResult[] = {
   {"parseID", _0RL_tc_STI_mTNetwork_mTParseID},
   {"stackTraceData", _0RL_tc_STI_mTNetwork_mTStackTraceData}
@@ -1544,7 +1525,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTStackTraceResult
 #  undef _0RL_tc_STI_mTNetwork_mTStackTraceResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStackTraceResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TStackTraceResult:1.0", "TStackTraceResult", _0RL_structmember_STI_mTNetwork_mTStackTraceResult, 2, &_0RL_tcTrack);
-
 
 
 
@@ -1570,13 +1550,14 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TStackTraceResult = _0RL_tc_STI_m
 
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParsedTag[] = {
   {"name", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"groupName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"trace", _0RL_tc_STI_mTNetwork_mTStackFrameSeq}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTParsedTag
 #  undef _0RL_tc_STI_mTNetwork_mTParsedTag
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedTag = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedTag:1.0", "TParsedTag", _0RL_structmember_STI_mTNetwork_mTParsedTag, 2, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedTag = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedTag:1.0", "TParsedTag", _0RL_structmember_STI_mTNetwork_mTParsedTag, 3, &_0RL_tcTrack);
 
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -1950,7 +1931,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobStatusTupleSeq = _0RL_t
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotIDTuple[] = {
   {"index", _0RL_tc_STI_mTNetwork_mTSequenceIndex},
   {"sid", _0RL_tc_STI_mTNetwork_mTShotID}
@@ -1973,7 +1953,6 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotIDTuple = CORBA::TypeCode
 
 
 
-
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -1982,10 +1961,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotIDTuple = _0RL_tc_STI_mTNetwork_mTShotIDTuple;
 #endif
-
-
-
-
 
 
 
@@ -2077,7 +2052,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotIDTupleSeq = _0RL_tc_STI_mTN
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceResult[] = {
   {"seqid", _0RL_tc_STI_mTNetwork_mTSequenceID},
   {"sequenceData", _0RL_tc_STI_mTNetwork_mTSequence},
@@ -2089,7 +2063,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceResult[]
 #  undef _0RL_tc_STI_mTNetwork_mTSequenceResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequenceResult:1.0", "TSequenceResult", _0RL_structmember_STI_mTNetwork_mTSequenceResult, 4, &_0RL_tcTrack);
-
 
 
 
@@ -2402,8 +2375,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageSeq = _0RL_t
 
 
 
-
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEventEngineJob[] = {
   {"jobID", _0RL_tc_STI_mTNetwork_mTEngineJobID},
   {"jobOwner", _0RL_tc_STI_mTNetwork_mTDeviceID},
@@ -2462,8 +2433,6 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeC
 
 
 
-
-
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -2472,14 +2441,6 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
 #endif
-
-
-
-
-
-
-
-
 
 
 
@@ -2770,8 +2731,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSchedulerMessageType = _0RL_tc_S
 
 
 
-
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineSchedulerMessage[] = {
   {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
   {"type", _0RL_tc_STI_mTNetwork_mTSchedulerMessageType},
@@ -2788,8 +2747,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineSchedulerM
 #  undef _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineSchedulerMessage:1.0", "TEngineSchedulerMessage", _0RL_structmember_STI_mTNetwork_mTEngineSchedulerMessage, 9, &_0RL_tcTrack);
-
-
 
 
 
@@ -2948,8 +2905,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageCount = _0RL
 
 
 
-
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage[] = {
   {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
   {"targetList", _0RL_tc_STI_mTNetwork_mTEventEngineJobList},
@@ -2966,8 +2921,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateD
 #  undef _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobUpdateDeviceMessage:1.0", "TEngineJobUpdateDeviceMessage", _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage, 9, &_0RL_tcTrack);
-
-
 
 
 
@@ -3247,7 +3200,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineStateMessage = _0RL_tc_STI
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineParserDeviceMessage[] = {
   {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
   {"pid", _0RL_tc_STI_mTNetwork_mTParseID},
@@ -3258,7 +3210,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineParserDevi
 #  undef _0RL_tc_STI_mTNetwork_mTEngineParserDeviceMessage
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineParserDeviceMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineParserDeviceMessage:1.0", "TEngineParserDeviceMessage", _0RL_structmember_STI_mTNetwork_mTEngineParserDeviceMessage, 3, &_0RL_tcTrack);
-
 
 
 
@@ -3499,6 +3450,7 @@ static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTShotID = CORBA::TypeCode::PR_
 
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParseResult[] = {
   {"parseID", _0RL_tc_STI_mTNetwork_mTParseID},
+  {"shotConfig", _0RL_tc_STI_mTNetwork_mTShotConfig},
   {"baseEventGroup", _0RL_tc_STI_mTNetwork_mTRawEventGroup},
   {"parsedDevices", _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree},
   {"messages", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq},
@@ -3508,7 +3460,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParseResult[] = 
 #ifdef _0RL_tc_STI_mTNetwork_mTParseResult
 #  undef _0RL_tc_STI_mTNetwork_mTParseResult
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParseResult:1.0", "TParseResult", _0RL_structmember_STI_mTNetwork_mTParseResult, 5, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParseResult:1.0", "TParseResult", _0RL_structmember_STI_mTNetwork_mTParseResult, 6, &_0RL_tcTrack);
 
 
 
@@ -3595,7 +3547,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParseResult = _0RL_tc_STI_mTNetw
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotResult[] = {
   {"sid", _0RL_tc_STI_mTNetwork_mTShotID},
   {"playTime", _0RL_tc_STI_mTNetwork_mTTimeStamp},
@@ -3608,7 +3559,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotResult[] = {
 #  undef _0RL_tc_STI_mTNetwork_mTShotResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TShotResult:1.0", "TShotResult", _0RL_structmember_STI_mTNetwork_mTShotResult, 5, &_0RL_tcTrack);
-
 
 
 
@@ -3718,7 +3668,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotResult = _0RL_tc_STI_mTNetwo
 
 
 
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFullShotResult[] = {
   {"parseResult", _0RL_tc_STI_mTNetwork_mTParseResult},
   {"shotResult", _0RL_tc_STI_mTNetwork_mTShotResult}
@@ -3728,7 +3677,6 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFullShotResult[]
 #  undef _0RL_tc_STI_mTNetwork_mTFullShotResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFullShotResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFullShotResult:1.0", "TFullShotResult", _0RL_structmember_STI_mTNetwork_mTFullShotResult, 2, &_0RL_tcTrack);
-
 
 
 

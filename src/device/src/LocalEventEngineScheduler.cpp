@@ -237,13 +237,22 @@ void LocalEventEngineScheduler::findEventTargets(const std::shared_ptr<STI::Engi
 
 ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
+    if (shot == 0) {
+        ParseJobStatus parseJobStatus;
+        parseJobStatus.status = EngineJobStatus::Canceled;
+        return parseJobStatus;
+    }
+
     ParseJobStatus parseJobStatus;
     parseJobStatus.status = EngineJobStatus::New;
+    parseJobStatus.pid = ParseID::generateUniqueID(shot->getShotConfig().jobSourceID);
+    parseJobStatus.pid.shotType = shot->getShotConfig().shotType;
+
     // ParseID parseID;
     
-    if (shot != 0) {
-        parseJobStatus.pid.shotConfig = shot->getShotConfig();      
-    }
+    // if (shot != 0) {
+    //     parseJobStatus.pid.shotConfig = shot->getShotConfig();      
+    // }
 
     auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 
@@ -370,14 +379,19 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     playJobStatus.sid = ShotID::generateUniqueID(parseID, source);
     playJobStatus.status = EngineJobStatus::New;
 
-    std::shared_ptr<SequenceResult> sequenceResult;
-    if (parseID.shotConfig.shotType == ShotType::Sequence &&
-        persistenceManager != 0 && 
-        persistenceManager->getSequenceResult(parseID.sequenceEntryID.seqID, sequenceResult)) {
-        //sequence found
-        // sequenceResult->status[sequenceEntryID.seqIndex.index] = 
-        // add sequence message
+    std::shared_ptr<SequenceJob> seqJob;
+    if (parseID.shotType == ShotType::SequenceEntry && findJob(parseID.sequenceEntryID.seqID, seqJob)) {
+        seqJob->sequenceResult->addShotResult(parseID.sequenceEntryID.seqIndex, playJobStatus.sid, playJobStatus.status);
     }
+
+    // std::shared_ptr<SequenceResult> sequenceResult;
+    // if (parseID.shotType == ShotType::Sequence &&
+    //     persistenceManager != 0 && 
+    //     persistenceManager->getSequenceResult(parseID.sequenceEntryID.seqID, sequenceResult)) {
+    //     //sequence found
+    //     // sequenceResult->status[sequenceEntryID.seqIndex.index] = 
+    //     // add sequence message
+    // }
 
     play(playJobStatus.sid);
 
@@ -525,17 +539,35 @@ void LocalEventEngineScheduler::cancelSequence(const SequenceID& seqid)
     jobCondition.notify_all();
 }
 
+ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceID& sequenceID)
+{
+    SequenceEntryID sequenceEntryID;
+    sequenceEntryID.seqID = sequenceID;
+    std::shared_ptr<SequenceJob> seqJob;
+
+    if (!findJob(sequenceID, seqJob)) {
+        ParseJobStatus parseJobStatus;
+        parseJobStatus.status = EngineJobStatus::NotFound;
+        return parseJobStatus;
+    }
+
+    sequenceEntryID.seqIndex = seqJob->sequenceResult->append(EngineJobStatus::New);
+
+    return parse(shot, sequenceEntryID);
+}
+
 ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID)
 {
     ParseJobStatus parseJobStatus;
     parseJobStatus.status = EngineJobStatus::New;
+    parseJobStatus.pid = ParseID::generateUniqueID(shot->getShotConfig().jobSourceID, sequenceEntryID);
 
-    if (shot != 0) {
-        parseJobStatus.pid.shotConfig = shot->getShotConfig();
-    }
+    // if (shot != 0) {
+    //     parseJobStatus.pid.shotConfig = shot->getShotConfig();
+    // }
 
-    parseJobStatus.pid.shotConfig.shotType = ShotType::Sequence;
-    parseJobStatus.pid.sequenceEntryID = sequenceEntryID;
+    // parseJobStatus.pid.shotType = ShotType::Sequence;
+    // parseJobStatus.pid.sequenceEntryID = sequenceEntryID;
 
     auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 

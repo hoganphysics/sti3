@@ -5,6 +5,9 @@ from stipy.bin.stipybase import ShotType
 # from stipy.bin.stipy import ParsedVar
 # _sequence__init__ = Sequence.__init__
 
+from socket import gethostname as _gethostname
+from getpass import getuser as _getuser
+
 def init(self, shotmaker, varsTable=None):
     self.repeats = 0
     self.shotmaker = shotmaker
@@ -61,26 +64,31 @@ def getAllOverwrittenVars(eventGroup: RawEventGroup):
     return ovars
 
 
-
-
 class STIPySequence(Sequence):
     def __init__(self, shotmaker, varsTable = None, description: str = ""):
         self.repeats = 0
         self.shotmaker = shotmaker
         self.basegroup = RawEventGroup()
 
+        localAddress = _gethostname()
+        username = _getuser()
+        
         if varsTable == None:
-            return Sequence.__init__(self)
-        
-        if (not (type(varsTable) is list)):
-            raise ValueError("Sequence table must be a list.")
-        
-        # seq.type = SequenceType.Closed
-        Sequence.__init__(self, SequenceType.Closed)
+            Sequence.__init__(self, SequenceType.Open)
+        else:
+            Sequence.__init__(self, SequenceType.Closed)
 
         if hasattr(self, 'shotConfig'):
-            self.shotConfig.description = description
+            self.shotConfig.comment = description
             self.shotConfig.shotType = ShotType.Sequence
+            self.shotConfig.jobSourceID.machine = localAddress
+            self.shotConfig.jobSourceID.user = username
+        
+        if varsTable == None:
+            return
+
+        if (not (type(varsTable) is list)):
+            raise ValueError("Sequence table must be a list.")
 
         for entry in varsTable:
             if (type(entry) is dict):

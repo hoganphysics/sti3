@@ -20,14 +20,16 @@ ParsedVar::ParsedVar()
 
 ParsedVar::ParsedVar(const std::string& name, const RawEventGroup* group,
 		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
-: name(name), parentGroup(group), trace(trace), stackTraceData(stackTraceData)
+: name(name), trace(trace), stackTraceData(stackTraceData)
 {
+	setParentGroup(group);
 }
 
 ParsedVar::ParsedVar(const std::string& name, const RawEventGroup* group, const STI::Utils::MixedValue& value, 
 		const STI::Engine::CompressedStackTrace& trace, const std::shared_ptr<StackTraceData>& stackTraceData)
-: name(name), parentGroup(group), value(value), trace(trace), stackTraceData(stackTraceData)
+: name(name), value(value), trace(trace), stackTraceData(stackTraceData)
 {
+	setParentGroup(group);
 }
 
 bool ParsedVar::operator<(const ParsedVar& rhs) const 
@@ -53,12 +55,36 @@ bool ParsedVar::isBound() const
 	return value.getType() != STI::Utils::MixedValueType::Empty;
 }
 
+// std::string ParsedVar::getGroupName() const
+// {
+// 	if (parentGroup != 0) {
+// 		return parentGroup->getFullName();
+// 	}
+// 	return "";
+// }
+
 std::string ParsedVar::getGroupName() const
 {
+	return _groupName;
+}
+
+void ParsedVar::setGroupName(const std::string& groupName)
+{
+	_groupName = groupName;
+	refreshGroupName();	//override new name if parentGroup is set
+}
+
+void ParsedVar::refreshGroupName()
+{
 	if (parentGroup != 0) {
-		return parentGroup->getFullName();
+		_groupName =  parentGroup->getFullName();
 	}
-	return "";
+}
+
+void ParsedVar::setParentGroup(const RawEventGroup* group)
+{
+	parentGroup = group;
+	refreshGroupName();
 }
 
 template<class Archive>

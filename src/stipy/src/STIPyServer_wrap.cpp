@@ -1,5 +1,7 @@
 #include "STIPyServer.h"
 
+#include <sti/engine/ShotConfig.h>
+
 #include "STIPyShot.h"
 #include "PyParseTicket.h"
 #include "PyResultTicket.h"
@@ -22,22 +24,27 @@ void init_STIPyServer(py::module& m)
 
     py::class_<STIPyServer, DevicePy, std::shared_ptr<STIPyServer>>(m, "STIPyServer")
 
-        .def("makeshot", py::overload_cast<>(&STIPyServer::makeshot))
-        .def("makeshot", py::overload_cast<const std::function<void(void)>&>(&STIPyServer::makeshot))
-        .def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&>(&STIPyServer::makeshot))
+        .def("makeshot", py::overload_cast<const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("shotType"))
+        .def("makeshot", py::overload_cast<const std::function<void(void)>&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("shotType"))
+        .def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("vars"), py::arg("shotType"))
         // .def("makesequence", py::overload_cast<>(&STIPyServer::makesequence))
-        .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse))
-        .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&, const STI::Engine::SequenceEntryID&>(&STIPyServer::parse))
-        .def("addSequence", py::overload_cast<const std::shared_ptr<STI::Engine::Sequence>&>(&STIPyServer::addSequence))    //sequences
+        
+        .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse), py::arg("shot"))
+        .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&, const STI::Engine::SequenceID&>(&STIPyServer::parse), py::arg("shot"), py::arg("sequenceID"))
+        .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&, const STI::Engine::SequenceEntryID&>(&STIPyServer::parse), py::arg("shot"), py::arg("sequenceEntryID"))
 
-        .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play))
-        .def("play", py::overload_cast<const STI::Engine::ParseID&>(&STIPyServer::play))
+        .def("addSequence", py::overload_cast<const std::shared_ptr<STI::Engine::Sequence>&>(&STIPyServer::addSequence), py::arg("sequence"))
+        .def("closeSequence", &STIPyServer::closeSequence)
+        .def("cancelSequence", &STIPyServer::cancelSequence)
+
+        .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play), py::arg("ticket"))
+        .def("play", py::overload_cast<const STI::Engine::ParseID&>(&STIPyServer::play), py::arg("parseID"))
 
         .def("cancel_all", &STIPyServer::cancelAll)
         
-        .def("setUsername", &STIPyServer::setUserName)
+        .def("setUsername", &STIPyServer::setUserName, py::arg("name"))
         .def("username", &STIPyServer::getUserName)
-        .def("setHostname", &STIPyServer::setHostname)
+        .def("setHostname", &STIPyServer::setHostname, py::arg("name"))
         .def("hostname", &STIPyServer::getHostname)
         .def("hub", &STIPyServer::getDeviceHub)
         

@@ -3042,6 +3042,8 @@ _CORBA_MODULE_BEG
       
       ::CORBA::String_member name;
 
+      ::CORBA::String_member groupName;
+
       TMixedValue value;
 
       TStackFrameSeq trace;
@@ -3644,7 +3646,7 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineJobSourceID;
 
-    enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented /*, __max_TShotType=0xffffffff */ };
+    enum TShotType { ShotTypeSingle, ShotTypeSequence, ShotTypeSingleUndocumented, ShotTypeSequenceEntry /*, __max_TShotType=0xffffffff */ };
     typedef TShotType& TShotType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TShotType;
@@ -3741,7 +3743,9 @@ _CORBA_MODULE_BEG
       
       TTimeStamp parseTimestamp;
 
-      TShotConfig shotConfig;
+      TShotType shotType;
+
+      TEngineJobSourceID jobSourceID;
 
       TSequenceEntryID sequenceEntryID;
 
@@ -4078,6 +4082,8 @@ _CORBA_MODULE_BEG
 
       
       ::CORBA::String_member name;
+
+      ::CORBA::String_member groupName;
 
       TStackFrameSeq trace;
 
@@ -6590,6 +6596,8 @@ _CORBA_MODULE_BEG
       
       TParseID parseID;
 
+      TShotConfig shotConfig;
+
       TRawEventGroup baseEventGroup;
 
       TEventEngineDependencyTree parsedDevices;
@@ -7089,7 +7097,7 @@ inline void operator >>=(STI::TNetwork::TShotType _e, cdrStream& s) {
 inline void operator <<= (STI::TNetwork::TShotType& _e, cdrStream& s) {
   ::CORBA::ULong _0RL_e;
   ::operator<<=(_0RL_e,s);
-  if (_0RL_e <= STI::TNetwork::ShotTypeSingleUndocumented) {
+  if (_0RL_e <= STI::TNetwork::ShotTypeSequenceEntry) {
     _e = (STI::TNetwork::TShotType) _0RL_e;
   }
   else {

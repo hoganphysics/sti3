@@ -80,10 +80,12 @@ public:
     ~LocalEventEngineScheduler();
 
     ParseJobStatus parse(const std::shared_ptr<Shot>& shot);        //local; add event to queue
+    ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
+    ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceID& sequenceID);
+
     PlayJobStatus play(const ParseID& parseID, const EngineJobSourceID& source);
 
     AddSequenceStatus addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source);
-    ParseJobStatus parse(const std::shared_ptr<Shot>& shot, const SequenceEntryID& sequenceEntryID);
     void closeSequence(const SequenceID& seqid);
     void cancelSequence(const SequenceID& seqid);
 

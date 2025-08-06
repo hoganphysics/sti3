@@ -537,7 +537,7 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
     }
 
     std::shared_ptr<STI::Engine::SequenceResult> sequenceResult;
-    if (sid.parseID.shotConfig.shotType == ShotType::Sequence && 
+    if (sid.parseID.shotType == ShotType::SequenceEntry && 
         getSequenceResult(sid.parseID.sequenceEntryID.seqID, sequenceResult)) {
         
         if (!updateSequence(sid.parseID.sequenceEntryID, sid, STI::Engine::EngineJobStatus::Completed, isOwner)) {
@@ -659,7 +659,7 @@ bool LocalPersistenceManager::getResultsPaths(const STI::Engine::ShotID& sid, Re
     std::shared_ptr<STI::Engine::ShotRepository> repo;
     if (!getShotRepository(repo)) return false;
 
-    if (sid.parseID.shotConfig.shotType == ShotType::SingleUndocumented) {
+    if (sid.parseID.shotType == ShotType::SingleUndocumented) {
         repo = transientRepository;
     }
 
@@ -682,7 +682,7 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
     std::shared_ptr<STI::Engine::ShotRepository> repo;
     if (!getShotRepository(repo)) return false;
 
-    if (sid.parseID.shotConfig.shotType == ShotType::SingleUndocumented) {
+    if (sid.parseID.shotType == ShotType::SingleUndocumented) {
         repo = transientRepository;
     }
 

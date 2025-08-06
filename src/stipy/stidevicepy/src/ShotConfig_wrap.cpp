@@ -17,6 +17,7 @@ void init_ShotConfig(py::module& m)
         .value("Single", ShotType::Single)
         .value("Sequence", ShotType::Sequence)
         .value("SingleUndocumented", ShotType::SingleUndocumented)
+        .value("SequenceEntry", ShotType::SequenceEntry)
         ;
         //.export_values();
 
@@ -43,11 +44,11 @@ void init_ShotConfig(py::module& m)
         // .def("type", [](const ShotConfig& self) {
         //         return printShotType(self.shotType);
         //     })
-        .def_readonly("shotType", &ShotConfig::shotType)
-        .def_readonly("jobSourceID", &ShotConfig::jobSourceID)
-        .def_readonly("targetEnginePool", &ShotConfig::targetEnginePool)
-        .def_readonly("file", &ShotConfig::file)
-        .def_readonly("comment", &ShotConfig::comment)
+        .def_readwrite("shotType", &ShotConfig::shotType)
+        .def_readwrite("jobSourceID", &ShotConfig::jobSourceID)
+        .def_readwrite("targetEnginePool", &ShotConfig::targetEnginePool)
+        .def_readwrite("file", &ShotConfig::file)
+        .def_readwrite("comment", &ShotConfig::comment)
 
         .def("__repr__",
             [](const ShotConfig& self) {

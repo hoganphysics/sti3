@@ -21,6 +21,10 @@
 
 #include <chrono>
 
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
+
 using STI::Python::STIPyServer;
 using STI::Python::STIPyShot;
 using STI::Python::STIPySeq;
@@ -56,18 +60,21 @@ void STIPyServer::setChannels(const pybind11::dict& channels)
 {
 }
 
-std::shared_ptr<STIPyShot> STIPyServer::makeshot()
+// std::shared_ptr<STIPyShot> STIPyServer::makeshot()
+// {
+//     return makeshot(STI::Engine::ShotType::Single);
+// }
+
+std::shared_ptr<STIPyShot>  STIPyServer::makeshot(const STI::Engine::ShotType& shotType)
 {
     std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     std::shared_ptr<STI::Utils::FileServer> fileServer;
 
     STI::Engine::ShotConfig shotConfig;
-    if (libDevice != 0) {
-        // shotConfig.jobSourceID.machine = libDevice->getID().getAddress();
-        shotConfig.jobSourceID.machine = getHostname();
-        shotConfig.jobSourceID.user = getUserName();
-    }
+    shotConfig.shotType = shotType;
+    shotConfig.jobSourceID.machine = getHostname();
+    shotConfig.jobSourceID.user = getUserName();
     
     bool success = libDevice->getFileServer(fileServer);
 
@@ -79,13 +86,16 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot()
     if (getScheduler(scheduler)) {
         shot = scheduler->createShot(shotConfig, eventGroup);
     }
+    else {
+        throw py::value_error("Failed to get EventEngineScheduler to create shot.");
+    }
     auto pyShot = std::make_shared<STIPyShot>(shot);
     return pyShot;
 }
 
-std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>& func)
+std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType)
 {
-    auto shot = makeshot();
+    auto shot = makeshot(shotType);
     auto stipy = STI::Python::STIPyGlobal::getInstance();
 
     if (stipy != 0) {
@@ -105,9 +115,9 @@ std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>
     return shot;
 }
 
-std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>& func, const std::set<ParsedVar>& vars)
+std::shared_ptr<STIPyShot> STIPyServer::makeshot(const std::function<void(void)>& func, const std::set<ParsedVar>& vars, const STI::Engine::ShotType& shotType)
 {
-    auto shot = makeshot();
+    auto shot = makeshot(shotType);
     auto stipy = STI::Python::STIPyGlobal::getInstance();
 
     shot->group()->bindVars(vars);
@@ -163,6 +173,33 @@ std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPySho
 
     if (getScheduler(scheduler) && pyShot != 0) {
         parseJobStatus = scheduler->parse(pyShot->getShot());
+        success = true;
+    }
+    
+    if (libDevice == 0) return 0;
+
+    auto ticket = libDevice->makeParseTicket(parseJobStatus.pid);
+
+    if (ticket == 0) return ticket;
+
+    if (!success) {
+        ticket->cancel();
+    }
+    else if (parseJobStatus.status == STI::Engine::EngineJobStatus::Deferred) {
+        ticket->defer();
+    }
+
+    return ticket;
+}
+
+std::shared_ptr<PyParseTicket> STIPyServer::parse(const std::shared_ptr<STIPyShot>& pyShot, const STI::Engine::SequenceID& sequenceID)
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+    bool success = false;
+    STI::Engine::ParseJobStatus parseJobStatus;
+
+    if (getScheduler(scheduler) && pyShot != 0) {
+        parseJobStatus = scheduler->parse(pyShot->getShot(), sequenceID);
         success = true;
     }
     
@@ -247,7 +284,23 @@ STI::Engine::SequenceID STIPyServer::addSequence(const std::shared_ptr<STI::Engi
     return addSequenceStatus.seqid;
 }
 
+void STIPyServer::closeSequence(const STI::Engine::SequenceID& seqid)
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
 
+    if (getScheduler(scheduler)) {
+        scheduler->closeSequence(seqid);
+    }
+}
+
+void STIPyServer::cancelSequence(const STI::Engine::SequenceID& seqid)
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    if (getScheduler(scheduler)) {
+        scheduler->cancelSequence(seqid);
+    }
+}
 
 std::shared_ptr<PyResultTicket> STIPyServer::play(const std::shared_ptr<PyParseTicket>& ticket)
 {

@@ -610,12 +610,10 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     if (!shotMissing && engineJob.getShot(shot) && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 
         tShot.shotCallback = tShotCallback;
-
         tShot.shotConfig = convert<ShotConfig, TShotConfig>(shot->getShotConfig());
     }
     else {
-        
-        tShot.shotConfig = convert<ShotConfig, TShotConfig>(engineJob.getJobID().pid.shotConfig);
+        // tShot.shotConfig = convert<ShotConfig, TShotConfig>(engineJob.getJobID().pid.shotConfig);
         tShot.shotCallback = STI::TNetwork::TShotCallback::_nil();
     }
 
@@ -1113,7 +1111,10 @@ TShotType STI::Network::convert<ShotType, TShotType>(const ShotType& shotType)
         break;
     case ShotType::SingleUndocumented:
         tShotType = TShotType::ShotTypeSingleUndocumented;
-        break;      
+        break;
+    case ShotType::SequenceEntry:
+        tShotType = TShotType::ShotTypeSequenceEntry;
+        break;
     default:
         tShotType = TShotType::ShotTypeSingle;
         break;
@@ -1137,7 +1138,10 @@ ShotType STI::Network::convert<TShotType, ShotType>(const TShotType& tShotType)
         break;
     case TShotType::ShotTypeSingleUndocumented:
         shotType = ShotType::SingleUndocumented;
-        break;      
+        break;
+    case TShotType::ShotTypeSequenceEntry:
+        shotType = ShotType::SequenceEntry;
+        break; 
     default:
         shotType = ShotType::Single;
         break;
@@ -1156,9 +1160,11 @@ TParseID STI::Network::convert<ParseID, TParseID>(const ParseID& pid)
     TParseID tParseID;
 
     tParseID.parseTimestamp = convert<TimeStamp, TTimeStamp>(pid.parseTimestamp);
-    tParseID.shotConfig = convert<ShotConfig, TShotConfig>(pid.shotConfig);
+    // tParseID.shotConfig = convert<ShotConfig, TShotConfig>(pid.shotConfig);
+    tParseID.shotType = convert<ShotType, TShotType>(pid.shotType);
+    tParseID.jobSourceID = convert<EngineJobSourceID, TEngineJobSourceID>(pid.jobSourceID);
 
-    if (pid.shotConfig.shotType == ShotType::Sequence) {
+    if (pid.shotType == ShotType::SequenceEntry) {
         tParseID.sequenceEntryID = convert<SequenceEntryID, TSequenceEntryID>(pid.sequenceEntryID);
     }
 
@@ -1171,9 +1177,13 @@ ParseID STI::Network::convert<TParseID, ParseID>(const TParseID& tpid)
     ParseID parseID;
 
     parseID.parseTimestamp = convert<TTimeStamp, TimeStamp>(tpid.parseTimestamp);
-    parseID.shotConfig = convert<TShotConfig, ShotConfig>(tpid.shotConfig);
+    parseID.shotType = convert<TShotType, ShotType>(tpid.shotType);
+    parseID.jobSourceID = convert<TEngineJobSourceID, EngineJobSourceID>(tpid.jobSourceID);
+    // parseID.shotConfig = convert<TShotConfig, ShotConfig>(tpid.shotConfig);
+    // ShotType shotType;
+	// EngineJobSourceID jobSourceID;
     
-    if (parseID.shotConfig.shotType == ShotType::Sequence) {
+    if (parseID.shotType == ShotType::SequenceEntry) {
         parseID.sequenceEntryID = convert<TSequenceEntryID, SequenceEntryID>(tpid.sequenceEntryID);
     }
     

@@ -362,9 +362,11 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	lastParseResult->pid = lastParseID;
 	lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
 	lastParseResult->stackTraceResult = std::make_shared<StackTraceResult>(lastParseID);
-
+	lastParseResult->shotConfig = shot->getShotConfig();
+	
 	std::shared_ptr<RawEventGroup> eventGroup;
 	shot->getRootEventGroup(eventGroup);
+	
 
 	if (eventGroup != 0) {
 		baseEventGroupName = eventGroup->getName();
@@ -561,7 +563,11 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 				//if is jobOwner and id is partner and id.targetServer is not in tree,
 				//then takeOwnershipOfPartners = true;
 
-				auto shot = scheduler->createShot(job.getJobID().pid.shotConfig, it->second);
+				std::shared_ptr<Shot> jshot;
+				job.getShot(jshot);
+				jshot->getShotConfig();
+
+				auto shot = scheduler->createShot(jshot->getShotConfig(), it->second);
 				
 				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
 				newJob->setDependencies(dependencyTree);

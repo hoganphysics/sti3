@@ -57,6 +57,7 @@ using STI::Device::DeviceID;
 using STI::Engine::MeasurementVector;
 using STI::Engine::MeasurementMap;
 using STI::Engine::Measurement;
+using STI::Engine::ShotConfig;
 
 
 //ShotResult
@@ -164,6 +165,7 @@ bool STI::Network::convert<TParseResult, ParseResult>(
         const TParseResult& tParseResult, ParseResult& parseResult)
 {
     convert<STI::TNetwork::TParseID, ParseID>(tParseResult.parseID, parseResult.pid);
+    parseResult.shotConfig = convert<STI::TNetwork::TShotConfig, ShotConfig>(tParseResult.shotConfig);
     convert<TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tParseResult.baseEventGroup, parseResult.baseEventGroup);
     convert<TEventEngineDependencyTree, std::shared_ptr<ParsedDependencyTree>>(tParseResult.parsedDevices, parseResult.parsedDevices);
     convert<TEngineParsingMessage, EngineParsingMessage>(tParseResult.messages, parseResult.messages);
@@ -178,6 +180,7 @@ bool STI::Network::convert<ParseResult, TParseResult>(
 {
 
     convert<ParseID, STI::TNetwork::TParseID>(parseResult.pid, tParseResult.parseID);
+    tParseResult.shotConfig = convert<ShotConfig, STI::TNetwork::TShotConfig>(parseResult.shotConfig);
     convert<std::shared_ptr<STI::Engine::RawEventGroup>, TRawEventGroup>(parseResult.baseEventGroup, tParseResult.baseEventGroup);
     convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDependencyTree>(parseResult.parsedDevices, tParseResult.parsedDevices);
     convert<EngineParsingMessage, TEngineParsingMessage>(parseResult.messages, tParseResult.messages);
@@ -235,7 +238,9 @@ bool STI::Network::convert<std::shared_ptr<FullShotResult>, TFullShotResult>(
 template<>
 bool STI::Network::convert<TParsedVar, ParsedVar>(const TParsedVar& tParsedVar, ParsedVar& parsedVar)
 {
+    parsedVar.setParentGroup(nullptr);
     parsedVar.name = convert<CORBA::String_member, std::string>(tParsedVar.name);
+    parsedVar.setGroupName(convert<CORBA::String_member, std::string>(tParsedVar.groupName));
     convert<TStackFrameSeq, CompressedStackTrace>(tParsedVar.trace, parsedVar.trace);
     convert<TMixedValue, MixedValue>(tParsedVar.value, parsedVar.value);
 
@@ -246,6 +251,7 @@ template<>
 bool STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedVar, TParsedVar& tParsedVar)
 {
     convert<std::string, CORBA::String_member>(parsedVar.name, tParsedVar.name);
+    convert<std::string, CORBA::String_member>(parsedVar.getGroupName(), tParsedVar.groupName);
     convert<CompressedStackTrace, TStackFrameSeq>(parsedVar.trace, tParsedVar.trace);
     convert<MixedValue, TMixedValue>(parsedVar.value, tParsedVar.value);
 
@@ -274,7 +280,9 @@ TParsedVar STI::Network::convert<ParsedVar, TParsedVar>(const ParsedVar& parsedV
 template<>
 bool STI::Network::convert<TParsedTag, ParsedTag>(const TParsedTag& tParsedTag, ParsedTag& parsedTag)
 {
+    parsedTag.setParentGroup(nullptr);
     parsedTag.name = convert<CORBA::String_member, std::string>(tParsedTag.name);
+    parsedTag.setGroupName(convert<CORBA::String_member, std::string>(tParsedTag.groupName));
     convert<TStackFrameSeq, CompressedStackTrace>(tParsedTag.trace, parsedTag.trace);
 
     return true;
@@ -284,6 +292,7 @@ template<>
 bool STI::Network::convert<ParsedTag, TParsedTag>(const ParsedTag& parsedTag, TParsedTag& tParsedTag)
 {
     convert<std::string, CORBA::String_member>(parsedTag.name, tParsedTag.name);
+    convert<std::string, CORBA::String_member>(parsedTag.getGroupName(), tParsedTag.groupName);
     convert<CompressedStackTrace, TStackFrameSeq>(parsedTag.trace, tParsedTag.trace);
 
     return true;

@@ -1791,9 +1791,10 @@ _CORBA_MODULE_BEG
     public:
       // IDL operations
       TParseJobStatus* parse(const ::STI::TNetwork::TShot& shot);
+      TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
+      TParseJobStatus* parseSeq(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceID& sequenceID);
       TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
       TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& sequenceData, const ::STI::TNetwork::TEngineJobSourceID& source);
-      TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
       void closeSequence(const ::STI::TNetwork::TSequenceID& seqid);
       void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid);
       TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid);
@@ -1843,9 +1844,10 @@ _CORBA_MODULE_BEG
       virtual ~_impl_TEventEngineScheduler();
 
       virtual TParseJobStatus* parse(const ::STI::TNetwork::TShot& shot) = 0;
+      virtual TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID) = 0;
+      virtual TParseJobStatus* parseSeq(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceID& sequenceID) = 0;
       virtual TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source) = 0;
       virtual TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& sequenceData, const ::STI::TNetwork::TEngineJobSourceID& source) = 0;
-      virtual TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID) = 0;
       virtual void closeSequence(const ::STI::TNetwork::TSequenceID& seqid) = 0;
       virtual void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid) = 0;
       virtual TEngineJobStatus getStatusPID(const ::STI::TNetwork::TParseID& pid) = 0;

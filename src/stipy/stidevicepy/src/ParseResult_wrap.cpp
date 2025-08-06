@@ -22,6 +22,7 @@ void init_ParseResult(py::module& m)
 {
     py::class_<ParseResult, std::shared_ptr<ParseResult>>(m, "ParseResult")
         .def_readonly("pid", &ParseResult::pid)
+        .def_readonly("shotConfig", &ParseResult::shotConfig)
         .def_readonly("baseEventGroup", &ParseResult::baseEventGroup)
         .def_readonly("parsedDevices", &ParseResult::parsedDevices)
         .def_readonly("messages", &ParseResult::messages)

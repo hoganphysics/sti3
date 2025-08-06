@@ -22,9 +22,10 @@ public:
 	~TEventEngineScheduler_i();
 
     TParseJobStatus* parse(const ::STI::TNetwork::TShot& shot);
+    TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
+    TParseJobStatus* parseSeq(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceID& sequenceID);
     TPlayJobStatus* play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source);
     TAddSequenceStatus* addSequence(const ::STI::TNetwork::TSequence& tSequenceData, const ::STI::TNetwork::TEngineJobSourceID& source);
-    TParseJobStatus* parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID);
     void closeSequence(const ::STI::TNetwork::TSequenceID& seqid);
     void cancelSequence(const ::STI::TNetwork::TSequenceID& seqid);
 

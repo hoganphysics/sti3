@@ -256,7 +256,8 @@ bool SerializedRepository::getSequenceResult(const SequenceID& id, std::shared_p
         std::ifstream file( serializePath.string() );
         cereal::XMLInputArchive archive( file );  
         
-        sequenceResult = std::make_shared<STI::Engine::SequenceResult>();
+        auto seq = std::make_shared<STI::Engine::Sequence>();
+        sequenceResult = std::make_shared<STI::Engine::SequenceResult>(id, seq);
 
         archive(sequenceResult);
     }

@@ -2,8 +2,8 @@
 #ifndef STI_ENGINE_PARSERESULT_H
 #define STI_ENGINE_PARSERESULT_H
 
-
 #include <sti/engine/ParseID.h>
+#include <sti/engine/ShotConfig.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/utils/FileServer.h>
@@ -29,6 +29,7 @@ public:
     virtual ~ParseResult();
 
     ParseID pid;
+    ShotConfig shotConfig;
 
     std::shared_ptr<RawEventGroup> baseEventGroup;
     std::shared_ptr<ParsedDependencyTree> parsedDevices;

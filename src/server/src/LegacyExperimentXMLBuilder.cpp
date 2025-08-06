@@ -249,7 +249,7 @@ void LegacyExperimentXMLBuilder::build()
     auto date = e->InsertNewChildElement("date");
     date->SetText(shotResult->playTime.print().c_str());
     
-    if (parseResult->pid.shotConfig.shotType == ShotType::Sequence) {
+    if (parseResult->shotConfig.shotType == ShotType::SequenceEntry) {
 
         //add relative path to sequence XML filename
         

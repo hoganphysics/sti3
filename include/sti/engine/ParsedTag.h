@@ -32,16 +32,24 @@ public:
     
     std::shared_ptr<StackTraceData> stackTraceData;
 
-    const RawEventGroup* parentGroup;
-
     std::string getGroupName() const;
 
     bool operator<(const ParsedTag& rhs) const;
     bool operator==(const ParsedTag& rhs) const;
     bool operator!=(const ParsedTag& rhs) const;
 
-  	template<class Archive>
-	  void serialize(Archive& archive);
+    void refreshGroupName();
+    void setParentGroup(const RawEventGroup* group);
+    void setGroupName(const std::string& groupName);
+
+    template<class Archive>
+    void serialize(Archive& archive);
+
+private:
+
+    std::string _groupName;
+    const RawEventGroup* parentGroup;
+
 };
 
 

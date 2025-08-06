@@ -6,6 +6,7 @@ namespace py = pybind11;
 
 using STI::Utils::TimeStamp;
 using STI::Engine::ParseID;
+using STI::Engine::EngineJobSourceID;
 
 
 void init_ParseID(py::module& m)
@@ -50,14 +51,16 @@ void init_ParseID(py::module& m)
         .def(py::init(
             [](const STI::Engine::ParseID& parseID) 
             {
-                return STI::Engine::ParseID(parseID.parseTimestamp, parseID.shotConfig, parseID.sequenceEntryID);
+                return STI::Engine::ParseID(parseID.parseTimestamp, parseID.jobSourceID, parseID.sequenceEntryID);
             } ), py::arg("parseID"))
-        .def(py::init<const TimeStamp&, const STI::Engine::ShotConfig&>(),
-            py::arg("parseTimestamp"), py::arg("shotConfig"))
-        .def(py::init<const TimeStamp&, const STI::Engine::ShotConfig&, const STI::Engine::SequenceEntryID&>(),
-            py::arg("parseTimestamp"), py::arg("shotConfig"), py::arg("sequenceEntryID"))
+        .def(py::init<const TimeStamp&, const EngineJobSourceID&>(),
+            py::arg("parseTimestamp"), py::arg("jobSourceID"))
+        .def(py::init<const TimeStamp&, const EngineJobSourceID&, const STI::Engine::SequenceEntryID&>(),
+            py::arg("parseTimestamp"), py::arg("jobSourceID"), py::arg("sequenceEntryID"))
         .def_readonly("parseTimestamp", &ParseID::parseTimestamp)
-        .def_readonly("shotConfig", &ParseID::shotConfig)
+        // .def_readonly("shotConfig", &ParseID::shotConfig)
+        .def_readonly("shotType", &ParseID::shotType)
+        .def_readonly("jobSourceID", &ParseID::jobSourceID)
         .def_readonly("sequenceEntryID", &ParseID::sequenceEntryID)
         .def("__repr__",
             [](const ParseID& self) {

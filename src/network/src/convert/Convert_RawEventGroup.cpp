@@ -129,7 +129,7 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
     convert<TParsedVar, ParsedVar>(tRawEventGroup.parsedVars, vars);
 
     for (auto& v : vars) {
-        v.parentGroup = rawEventGroup.get();
+        v.setParentGroup( rawEventGroup.get() );
         v.stackTraceData = rawEventGroup->getStackTraceData();
     }
 

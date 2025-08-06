@@ -355,7 +355,7 @@ ParsedVar RawEventGroup::var(const std::string& fullVarName, const StackTrace& s
 
     //create new unbound var
     var.name = fullVarName;
-    var.parentGroup = this;
+    var.setParentGroup(this);
     if (stackTraceData != 0) {
         var.trace = stackTraceData->addStackTrace(stackTrace);
         var.stackTraceData = stackTraceData;

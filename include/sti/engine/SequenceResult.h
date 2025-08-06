@@ -32,6 +32,7 @@ public:
     std::map<SequenceIndex, ShotID> shots;
 
     bool addShotResult(const SequenceIndex& index, const ShotID& shotID, const EngineJobStatus& shotStatus);
+    SequenceIndex append(const EngineJobStatus& shotStatus);
 
     template<class Archive>
     void serialize(Archive& archive);

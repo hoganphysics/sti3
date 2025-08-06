@@ -59,6 +59,9 @@ std::string STI::Engine::printShotType(const ShotType& type)
     case ShotType::SingleUndocumented:
         result = "SingleUndocumented";
         break;
+    case ShotType::SequenceEntry:
+        result = "SequenceEntry";
+        break;
     default:
         result = "Unknown";
         break;
