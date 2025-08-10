@@ -482,7 +482,7 @@ void LocalEventEngineScheduler::closeSequence(const SequenceID& seqid)
                 job->close();
 
                 auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
-                message->toQueuedList(job);
+                message->toCompleteList(job);
                 sendMessage(message);      
                 
                 break;
@@ -671,24 +671,34 @@ void LocalEventEngineScheduler::clearAll()
 
 std::set<EngineJobID> LocalEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
     std::set<EngineJobID> jobIDs;
+    std::set<EngineJobID> seqJobIDs;
 
     switch (jobListType)
     {
     case EventEngineJobList::Queued:
         queuedJobs.getKeys(jobIDs);
+        queuedSequenceJobs.getKeys(seqJobIDs);
         break;
     case EventEngineJobList::Running:
         runningJobs.getKeys(jobIDs);
+        if (currentSequenceJob != 0) {
+            seqJobIDs.insert(currentSequenceJob->jobID);
+        }
         break;
     case EventEngineJobList::Completed:
         completedJobs.getKeys(jobIDs);
+        completedSequenceJobs.getKeys(seqJobIDs);
         break;
     case EventEngineJobList::Archived:
         break;
     default:
         break;
     }
+    
+    jobIDs.insert(seqJobIDs.begin(), seqJobIDs.end());
     return jobIDs;
 }
 

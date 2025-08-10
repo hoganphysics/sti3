@@ -25,13 +25,13 @@ void init_stipy(py::module& m)
     m.def("connect", 
         py::overload_cast<const std::string&, 
                         const STI::Device::DeviceID&, 
-                        const std::string&>(&STI::Python::connect), "Connect to an STI server");
+                        const std::string&>(&STI::Python::connect), py::arg("localAddress"), py::arg("serverID"), py::arg("nameServerAddress"), "Connect to an STI server");
     
     m.def("connect",
         py::overload_cast<const std::string&,
         const STI::Device::DeviceID&,
         const STI::Network::HubID&,
-        const std::string&>(&STI::Python::connect), "Connect to an STI server that is located on a specified HubID");
+        const std::string&>(&STI::Python::connect), py::arg("localAddress"), py::arg("serverID"),py::arg("serverHubID"),py::arg("nameServerAddress"), "Connect to an STI server that is located on a specified HubID");
 
     m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
 

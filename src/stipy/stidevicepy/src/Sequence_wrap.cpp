@@ -63,6 +63,12 @@ void init_Sequence(py::module& m)
             [](const SequenceID& self, const SequenceID& other) {
                 return self < other;
             })
+        .def("__hash__", [](const SequenceID& sid) {
+            // Combine hashes of members (customize as needed)
+            return std::hash<std::string>()(sid.timestamp.print()) 
+                    ^ std::hash<std::string>()(sid.jobSourceID.user)
+                    ^ std::hash<std::string>()(sid.jobSourceID.machine);
+            })
         ;
 
     py::class_<SequenceEntryID>(m, "SequenceEntryID")

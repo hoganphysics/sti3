@@ -29,9 +29,12 @@ void init_ParseID(py::module& m)
         .def("nanos", &TimeStamp::nanos)
         .def("date", &TimeStamp::date)
         .def("date_YYYY_MM_DD", py::overload_cast<>(&TimeStamp::date_YYYY_MM_DD, py::const_))
+        .def("date_YYYY_MM_DD", py::overload_cast<const std::string&>(&TimeStamp::date_YYYY_MM_DD, py::const_), py::arg("separator"))
         .def("time", &TimeStamp::time)
         .def("time_hh_mm_ss", py::overload_cast<>(&TimeStamp::time_hh_mm_ss, py::const_))
+        .def("time_hh_mm_ss", py::overload_cast<const std::string&>(&TimeStamp::time_hh_mm_ss, py::const_), py::arg("separator"))
         .def("time_hh_mm_ss_mmmuuunnn", &TimeStamp::time_hh_mm_ss_mmmuuunnn)
+        .def("time_mmmuuunnn", &TimeStamp::time_mmmuuunnn, py::arg("separator"))
         .def("__repr__",
             [](const TimeStamp& self) {
                 return self.print();

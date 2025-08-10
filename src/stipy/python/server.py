@@ -6,6 +6,7 @@ from stipy.bin.stipybase import RawEventGroup
 from stipy.bin.stipybase import SequenceEntryID
 from stipy.bin.stipybase import SequenceID
 from stipy.bin.stipybase import ShotType
+from stipy.stipybase.python.sequence import STIPySequence
 
 from collections.abc import Callable
 import importlib.util, sys, pathlib
@@ -123,16 +124,9 @@ def makeshot(self, source=None, vars=None, shot_type=None):
         raise ValueError("Source must be a string filename or a callable.")
 
 
-
-def run(self, sequence: Sequence, progress: Callable[[int, int], None] = None):
-
-    sequenceID = self.addSequence(sequence)
-    # print(sequence.sequenceTable)
-    print(sequenceID)
-
-    shots = []
-    shot_number = 0
+def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: Callable[[int, int], None] = None):
     
+    shot_number = 0
 
     for key in sequence.sequenceTable.keys():
         shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten, shot_type=ShotType.SequenceEntry)
@@ -154,5 +148,39 @@ def run(self, sequence: Sequence, progress: Callable[[int, int], None] = None):
 
     return
 
+def run(self, sequence: STIPySequence, progress: Callable[[int, int], None] = None):
+
+    sequenceID = self.addSequence(sequence)
+    # print(sequence.sequenceTable)
+    # print(sequenceID)
+
+    run_shots(self, sequence, sequenceID, progress)
+
+    # shots = []
+    # shot_number = 0
+    
+
+    # for key in sequence.sequenceTable.keys():
+    #     shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten, shot_type=ShotType.SequenceEntry)
+    #     # shots.append(shot)
+
+    #     seqEntryID = SequenceEntryID()
+    #     seqEntryID.seqID = sequenceID
+    #     seqEntryID.seqIndex = key
+
+    #     parseTick = self.parse(shot, seqEntryID)
+    #     parseTick.wait()
+
+    #     resultTick = self.play(parseTick)
+    #     resultTick.wait()
+
+    #     if progress is not None:
+    #         shot_number += 1
+    #         progress(shot_number, len(sequence.sequenceTable))
+
+    # return
+
+
 setattr(STIPyServer, 'run', run)
+setattr(STIPyServer, 'run_shots', run_shots)
 setattr(STIPyServer, 'makeshot', makeshot)
