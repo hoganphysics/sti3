@@ -6,7 +6,7 @@
 #include <sti/fwd/DeviceID_fwd.h>
 #include <sti/engine/EngineID.h>
 #include <sti/device/DeviceID.h>
-
+#include <sti/engine/ParseID.h>
 
 #include <set>
 #include <mutex>
@@ -35,7 +35,9 @@ public:
 	virtual bool isEventTarget(const STI::Device::DeviceID& id) = 0;
 	virtual void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs) = 0;
 
-	void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents, STI::Device::DeviceID deviceID, const STI::Engine::EngineID& engineID, DeviceEventMap* target);
+	void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents, 
+		STI::Device::DeviceID deviceID, const STI::Engine::EngineID& engineID, 
+		DeviceEventMap* target, const ParseID& parseID);
 
 	//void push_error();	//should throw instead
 	EngineParsingMessage& addInfo(unsigned id, const std::string& name);
@@ -46,6 +48,7 @@ public:
 	void addEvent(const RawEvent& evt, const RawEvent& referenceEvent);
 
 	const EngineID& getCurrentEngineID() const { return currentEngineID; }
+	const ParseID& getParseID() const { return lastParseID; }
 
 	std::vector<EngineParsingMessage>& getParsingMessages() { return parsingMessages; }
 
@@ -58,6 +61,7 @@ private:
 
 	void clearWarnings();
 
+	ParseID lastParseID;
 	STI::Device::DeviceID localDeviceID;
 	EngineID currentEngineID;
 	DeviceEventMap* partnerEventTarget;

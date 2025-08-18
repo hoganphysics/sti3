@@ -39,7 +39,7 @@ public:
 					  DeviceEventParser* deviceParser);
 	~EventEngineParser();
 
-	bool parse(const STI::Engine::RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents);
+	bool parse(const STI::Engine::RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents, const ParseID& parseID);
 	void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs);
 	void clear();
 
@@ -55,7 +55,7 @@ private:
 	bool addRawEvent(RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors);
 	bool addEventGroup(const RawEventGroup& eventGroup, unsigned& errorCount, unsigned maxErrors, bool& success);
 	bool groupEventsByTime(const RawEventGroup& eventGroup);
-	bool parseEvents(SynchronousEventVector& synchedEvents);
+	bool parseEvents(SynchronousEventVector& synchedEvents, const ParseID& parseID);
 	bool checkMeasurements(SynchronousEventVector& synchedEvents);
 	bool checkOutputType(const STI::Utils::MixedValueType& eventValueType, const STI::Utils::MixedValueType& channelType);
 

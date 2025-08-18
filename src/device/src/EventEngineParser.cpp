@@ -69,7 +69,7 @@ const std::vector<EngineParsingMessage>& EventEngineParser::getParsingMessages()
 	return messages;
 }
 
-bool EventEngineParser::parse(const RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents)
+bool EventEngineParser::parse(const RawEventGroup& eventGroup, SynchronousEventVector& synchedEvents, const ParseID& parseID)
 {
 	bool success = true;
 
@@ -83,7 +83,7 @@ bool EventEngineParser::parse(const RawEventGroup& eventGroup, SynchronousEventV
 		//All events were added successfully.  
 		//Now check for device-specific conflicts and errors while parsing.
 
-		success = parseEvents(synchedEvents);
+		success = parseEvents(synchedEvents, parseID);
 	}
 
 	if (success) {
@@ -300,7 +300,7 @@ bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, un
 	return success;
 }
 
-bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
+bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents, const ParseID& parseID)
 {
 	// RawEventMap::iterator badEvent = rawEvents.end();
 
@@ -319,7 +319,7 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents)
 					//are removed before trying again. This way all events
 					//can generate errors messages before returning.
 	try {
-		deviceParser->parseEvents(rawEvents, synchedEvents, localDeviceID, engineID, &partnerEvents);	//delegates to parseDeviceEvents (user code)
+		deviceParser->parseEvents(rawEvents, synchedEvents, localDeviceID, engineID, &partnerEvents, parseID);	//delegates to parseDeviceEvents (user code)
 	}
 	catch (EventConflictException& eventConflict) {
 		errorCount++;

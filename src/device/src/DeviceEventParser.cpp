@@ -3,6 +3,7 @@
 
 #include <sti/device/DeviceID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventTargetDevice.h>
@@ -17,6 +18,8 @@ using STI::Engine::RawEventMap;
 using STI::Engine::RawEvent;
 using STI::Engine::SynchronousEventVector;
 using STI::Engine::EngineParsingMessage;
+using STI::Engine::ParseID;
+
 
 DeviceEventParser::DeviceEventParser()
 {
@@ -26,7 +29,8 @@ DeviceEventParser::DeviceEventParser()
 }
 
 void DeviceEventParser::parseEvents(const RawEventMap& events, 
-					SynchronousEventVector& synchedEvents, STI::Device::DeviceID deviceID, const STI::Engine::EngineID& engineID, DeviceEventMap* target)
+					SynchronousEventVector& synchedEvents, STI::Device::DeviceID deviceID, 
+					const STI::Engine::EngineID& engineID, DeviceEventMap* target, const ParseID& parseID)
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);		//ensure only one engine can parse at a time
 
@@ -39,6 +43,7 @@ void DeviceEventParser::parseEvents(const RawEventMap& events,
 
 	currentEngineID = engineID;
 	localDeviceID = deviceID;
+	lastParseID = parseID;
 
 	parseEvents(events, synchedEvents);		//call pure virtual
 

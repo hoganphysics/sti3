@@ -529,7 +529,7 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 {
 	if (id == localDeviceID) {
 		//Parse local
-		if (parser.parse( getTargetEventGroup(localDeviceID), synchedEvents )) {
+		if (parser.parse( getTargetEventGroup(localDeviceID), synchedEvents, lastParseID )) {
 			//successfully parsed
 			mergePartnerEvents(parser.partnerEvents);
 		}
