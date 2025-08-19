@@ -153,7 +153,8 @@ private:
     bool findParsedEngine(const STI::Engine::ParseID& parseID, std::set<EngineID>& freeEngines, EngineID& engineID);
     bool findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
     bool findCompletedEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const;
-
+    
+    int getTargetPool(const EngineJobID& jobID);
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
 

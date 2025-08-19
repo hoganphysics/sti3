@@ -895,6 +895,18 @@ void LocalEventEngineScheduler::assignPlayJobs(const std::set<EngineJobID>& queu
     }
 }
 
+int LocalEventEngineScheduler::getTargetPool(const EngineJobID& jobID)
+{
+    // This function determines the target engine pool based on the job ID.
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<Shot> shot;
+    
+    if (queuedJobs.get(jobID, job) && job != 0 && job->getShot(shot) && shot != 0) {
+        return shot->getShotConfig().targetEnginePool;
+    }
+    return 1;   //common sync pool by default 
+}
+
 void LocalEventEngineScheduler::assignParseJobs(const std::set<EngineJobID>& queuedJobIDs, std::set<EngineID>& freeEngines)
 {
     EngineID engineID;
@@ -902,6 +914,19 @@ void LocalEventEngineScheduler::assignParseJobs(const std::set<EngineJobID>& que
     for (auto& jobID : queuedJobIDs) {
         if (jobID.type != EventEngineJobType::Parse) {
             continue; //only process parse jobs
+        }
+        
+        int targetEnginePool = getTargetPool(jobID);
+
+        if (targetEnginePool == 0) {
+            //async engine pool, assign engineID #0 if available
+            EngineID asyncEngineID(0);
+            auto it = freeEngines.find(asyncEngineID);
+            
+            if (it != freeEngines.end() && assignJob(jobID, *it)) {
+                freeEngines.erase(it);
+            }
+            continue; //async engine unavailable
         }
 
         if (findOldestParsedEngine(freeEngines, engineID) && assignJob(jobID, engineID)) {
@@ -1046,6 +1071,8 @@ bool LocalEventEngineScheduler::findOldestParsedEngine(std::set<EngineID>& freeE
     bool found = false;
 
     for (auto& id : freeEngines) {
+        if (id.getNumber() == 0) continue; //skip async engine ID
+
         if (engineManagers.get(id, manager) && manager != 0) {
  
             //first time through, found == false, so we initialize with the first timestamp

@@ -153,8 +153,15 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	// 		return true;
 	// 	});
 
-	STI::Engine::EngineID id0(0);
-	addEventEngine(id0);
+	// STI::Engine::EngineID id0(0);
+	// addEventEngine(id0);
+
+	//0=async, >0=sync engines
+	int engineCount = config.get<int>("EngineManager", "Engine Count", 2); //sync engines
+	for (unsigned i = 0; i < engineCount + 1; ++i) {
+		STI::Engine::EngineID id(i);
+		addEventEngine(id);
+	}
 
 	parseTicketManager = std::make_shared<STI::Engine::ParseTicketManager<>>(eventEngineScheduler);
 	resultTicketManager = std::make_shared<STI::Engine::ResultTicketManager<>>(localPersistenceManager, eventEngineScheduler);
