@@ -1,7 +1,7 @@
 #ifndef STI_TNETWORK_TREFERENCEHOLDER_H
 #define STI_TNETWORK_TREFERENCEHOLDER_H
 
-#include "generated/deviceNet.h"
+#include <omniORB4/CORBA.h>
 
 #include <mutex>
 #include <vector>
