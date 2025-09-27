@@ -1,15 +1,15 @@
-from stipy.bin.stipy import setvar as _setvar
-from stipy.bin.stipy import var as _var
-from stipy.bin.stipy import settag as _settag
-from stipy.bin.stipy import event as _event
-from stipy.bin.stipy import meas as _meas
-from stipy.bin.stipy import group as _group
-from stipy.bin.stipy import connect as _connect
-from stipy.bin.stipy import STIPyServer
+from stipy.stipy import setvar as _setvar
+from stipy.stipy import var as _var
+from stipy.stipy import settag as _settag
+from stipy.stipy import event as _event
+from stipy.stipy import meas as _meas
+from stipy.stipy import group as _group
+from stipy.stipy import connect as _connect
+from stipy.stipy import STIPyServer
 # from stipy.bin.stipybase import Sequence
 from stipy.stipybase.python.sequence import STIPySequence
 from stipy.python.stacktrace import makeStackTrace as _makeStackTrace
-from stipy.bin.stipybase import DeviceID
+from stipy.stipybase.stipybase import DeviceID
 
 from socket import gethostname as _gethostname
 from getpass import getuser as _getuser

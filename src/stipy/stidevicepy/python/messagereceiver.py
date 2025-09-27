@@ -1,7 +1,7 @@
-from stipy.bin.stidevicepy import DeviceMessageReceiver
-from stipy.bin.stidevicepy import DeviceMessage
-from stipy.bin.stidevicepy import DeviceMessageType
-from stipy.bin.stipybase import DeviceID
+from stipy.stidevicepy.stidevicepy import DeviceMessageReceiver
+from stipy.stidevicepy.stidevicepy import DeviceMessage
+from stipy.stidevicepy.stidevicepy import DeviceMessageType
+from stipy.stipybase.stipybase import DeviceID
 
 from typing import Callable
 

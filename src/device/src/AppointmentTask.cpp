@@ -11,7 +11,7 @@
 namespace chronodate = date;
 #else
 // using namespace std::chrono;
-namespace chronodate = date;
+namespace chronodate = std::chrono;
 #endif
 
 using STI::Utils::AppointmentTask;

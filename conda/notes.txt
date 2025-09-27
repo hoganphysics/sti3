@@ -1,0 +1,19 @@
+conda create -n sti3-build
+conda activate sti3-build
+
+conda install -c conda-forge conda-build anaconda-client setuptools pip
+conda install conda-verify (causes error)
+
+conda build -c conda-forge .
+
+
+Installing:
+conda env remove -n sti3 --yes
+rm -rf /home/hogan/miniconda3/pkgs/stipy-*
+conda create -n sti3 python=3.13
+conda activate sti3
+conda install -n sti3 -c conda-forge libstdcxx-ng libgcc-ng
+
+
+
+conda install --force-reinstall /home/hogan/miniconda3/envs/sti3-build/conda-bld/linux-64/stipy-3.0.1-h2bc3f7f_0.conda

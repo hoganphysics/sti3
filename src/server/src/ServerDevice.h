@@ -9,11 +9,12 @@ namespace STI
 namespace Device
 {
 
-class ServerDevice : public STI::Device::LocalDevice	//LocalServer ?
+class ServerDevice : public STI::Device::LocalDevice
 {
 public:
-    ServerDevice(const std::string& name, const std::string& address, unsigned short module,
-		const std::string& targetServer);
+	ServerDevice(const STI::Utils::Configuration& config);
+    // ServerDevice(const std::string& name, const std::string& address, unsigned short module,
+	// 	const std::string& targetServer);
 	~ServerDevice();
 
 };

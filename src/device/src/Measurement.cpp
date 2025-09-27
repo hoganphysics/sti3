@@ -63,10 +63,20 @@ void Measurement::setMeasurementResult(const STI::Utils::MixedValue& result)
 	data_ready = true;
 }
 
+void Measurement::setMeasurementResult(STI::Utils::MixedValue&& result) noexcept
+{
+    measurementResult = std::move(result);
+    data_ready = true;
+}
+
 void Measurement::extractMeasurementResult(STI::Utils::MixedValue& data)
 {
 	//Used to swap the result stored in measurementResult with the input parameter 'data'.
-	data = std::move(measurementResult);
+	// data = std::move(measurementResult);
+
+	using std::swap;
+    swap(data, measurementResult);
+	data_ready = false;
 }
 
 bool Measurement::getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const

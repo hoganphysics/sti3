@@ -1,5 +1,5 @@
-from stipy.bin.stipybase import MixedValue
-from stipy.bin.stipybase import MixedValueType
+from ..stipybase import MixedValue
+from ..stipybase import MixedValueType
 
 from typing import List
 import copy

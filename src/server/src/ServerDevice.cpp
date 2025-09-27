@@ -21,9 +21,11 @@ public:
 	std::string name;
 };
 
-ServerDevice::ServerDevice(const std::string& name, const std::string& address, unsigned short module,
-    const std::string& targetServer)
-: STI::Device::LocalDevice(name, address, module, targetServer)
+// ServerDevice::ServerDevice(const std::string& name, const std::string& address, unsigned short module,
+//     const std::string& targetServer)
+// : STI::Device::LocalDevice(name, address, module, targetServer)
+ServerDevice::ServerDevice(const STI::Utils::Configuration& config)
+: STI::Device::LocalDevice(config)
 {
 	STI::Engine::EngineID id(0);
 	addEventEngine(id);
@@ -42,23 +44,23 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
     std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
     getMessageReceiver(receiver);
 
-	auto l1 = std::make_shared<TempListener>("L1");
-    auto l2 = std::make_shared<TempListener>("L2");
+	// auto l1 = std::make_shared<TempListener>("L1");
+    // auto l2 = std::make_shared<TempListener>("L2");
 	
-	STI::Device::DeviceMessageListenerID schedulerMessageLID;
-    STI::Device::DeviceMessageListenerID schedulerMessageLID2;
+	// STI::Device::DeviceMessageListenerID schedulerMessageLID;
+    // STI::Device::DeviceMessageListenerID schedulerMessageLID2;
 
 
-    //EventEngineScheduler message listener
-    auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(l1);
+    // //EventEngineScheduler message listener
+    // auto listener = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(l1);
     
-   	schedulerMessageLID.name = "::EventEngineScheduler::ParseResult";	//getID().getID() + 
-	schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
+   	// schedulerMessageLID.name = "::EventEngineScheduler::ParseResult";	//getID().getID() + 
+	// schedulerMessageLID.type = STI::Device::DeviceMessageType::EngineScheduler;
 	
-    auto listener2 = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(l2);
+    // auto listener2 = std::static_pointer_cast<DeviceMessageListener<EngineSchedulerMessage>>(l2);
     
-   	schedulerMessageLID2.name = "::EventEngineScheduler::ResultTicket";	//getID().getID() + 
-	schedulerMessageLID2.type = STI::Device::DeviceMessageType::EngineScheduler;
+   	// schedulerMessageLID2.name = "::EventEngineScheduler::ResultTicket";	//getID().getID() + 
+	// schedulerMessageLID2.type = STI::Device::DeviceMessageType::EngineScheduler;
 
 	// std::cout << "Adding Listeners? ";
     // if (receiver != 0) {
@@ -68,44 +70,44 @@ ServerDevice::ServerDevice(const std::string& name, const std::string& address, 
     // }
 
 
-	STI::Device::DeviceID tmpDeviceID("dev3", "localhost", 0, "localhost/0/STI Server");
-	STI::Device::DeviceMessageListenerID channelMessageLID;
-	channelMessageLID.name = "::ChannelUpdateMessage::dev3";
-	channelMessageLID.type = STI::Device::DeviceMessageType::ChannelUpdate;
-    receiver->addListener<STI::Device::ChannelUpdateMessage>(tmpDeviceID, channelMessageLID, 
-        [](auto message) { 
-            std::cout << "New value: " << message->channelValues[1].print() << std::endl;
-        } );
+	// STI::Device::DeviceID tmpDeviceID("dev3", "localhost", 0, "localhost/0/STI Server");
+	// STI::Device::DeviceMessageListenerID channelMessageLID;
+	// channelMessageLID.name = "::ChannelUpdateMessage::dev3";
+	// channelMessageLID.type = STI::Device::DeviceMessageType::ChannelUpdate;
+    // receiver->addListener<STI::Device::ChannelUpdateMessage>(tmpDeviceID, channelMessageLID, 
+    //     [](auto message) { 
+    //         std::cout << "New value: " << message->channelValues[1].print() << std::endl;
+    //     } );
 
-	receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "LocalCollectionLister",
-		[this](auto& message) {
-			std::cout << "Collection: " << message->sourceID().getID() << std::endl;
-			std::shared_ptr<STI::Device::DeviceCollection> collection;
-			this->getCollection(collection);
-			DeviceID id;
-			DeviceID::stringToDeviceID("localhost/0/TestDevice", id);
-			std::shared_ptr<STI::Device::Device> device;
+	// receiver->addListener<STI::Device::CollectionUpdateMessage>(getID(), "LocalCollectionLister",
+	// 	[this](auto& message) {
+	// 		std::cout << "Collection: " << message->sourceID().getID() << std::endl;
+	// 		std::shared_ptr<STI::Device::DeviceCollection> collection;
+	// 		this->getCollection(collection);
+	// 		DeviceID id;
+	// 		DeviceID::stringToDeviceID("localhost/0/TestDevice", id);
+	// 		std::shared_ptr<STI::Device::Device> device;
 			
-			std::cout << "collection->get " << (collection->get(id, device) ? "1" : "0") << std::endl;
-			std::cout << "device ? " << (device != 0 ? "1" : "0") << std::endl;
+	// 		std::cout << "collection->get " << (collection->get(id, device) ? "1" : "0") << std::endl;
+	// 		std::cout << "device ? " << (device != 0 ? "1" : "0") << std::endl;
 
-			// if (device != 0) {
-			// 	std::cout << "write:" << std::endl;
-			// 	std::shared_ptr<ChannelManager> manager;
-			// 	device->getChannelManager(manager);
-			// 	manager->writeChannel(1, 2.2);
-			// 	std::cout << "write complete" << std::endl;
-			// }
-		});
+	// 		// if (device != 0) {
+	// 		// 	std::cout << "write:" << std::endl;
+	// 		// 	std::shared_ptr<ChannelManager> manager;
+	// 		// 	device->getChannelManager(manager);
+	// 		// 	manager->writeChannel(1, 2.2);
+	// 		// 	std::cout << "write complete" << std::endl;
+	// 		// }
+	// 	});
 
-		DeviceID testID;
-		DeviceID::stringToDeviceID("localhost/0/TestDevice", testID);
+		// DeviceID testID;
+		// DeviceID::stringToDeviceID("localhost/0/TestDevice", testID);
 
-		receiver->addListener<STI::Device::AttributeUpdateMessage>(testID,"server attribute update listener",
-			[this](auto& message) {
-				std::cout << "AttributeUpdateMessage: " << message->toString() << std::endl;
-			}
-		);
+		// receiver->addListener<STI::Device::AttributeUpdateMessage>(testID,"server attribute update listener",
+		// 	[this](auto& message) {
+		// 		std::cout << "AttributeUpdateMessage: " << message->toString() << std::endl;
+		// 	}
+		// );
 
 }
 

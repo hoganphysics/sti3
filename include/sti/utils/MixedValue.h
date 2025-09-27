@@ -161,7 +161,7 @@ public:
 
 	static std::string TypeToString(const MixedValueType& type);
 
-	void swap(MixedValue& value);
+	void swap(MixedValue& value) noexcept;
 
 	template<class Archive>
 	void save(Archive& archive) const;

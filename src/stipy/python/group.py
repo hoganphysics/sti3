@@ -1,5 +1,5 @@
 
-from stipy.bin.stipybase import RawEventGroup
+from stipy.stipybase.stipybase import RawEventGroup
 from stipy.python.stacktrace import makeStackTrace
 
 _group = RawEventGroup.group

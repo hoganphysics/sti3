@@ -99,7 +99,7 @@ bool LocalResultsCollector::addMeasurements(const DeviceID& deviceID, const Meas
         STI::Utils::MixedValue data;
         meas->extractMeasurementResult(data);
         success &= transferValue(data, cachedIDs, sourceFileServer);
-        meas->setMeasurementResult(data);
+        meas->setMeasurementResult(std::move(data));
     }
     return success;
 }
