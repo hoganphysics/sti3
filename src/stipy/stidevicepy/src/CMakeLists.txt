@@ -34,6 +34,9 @@ endif()
 
 find_package(pybind11 CONFIG REQUIRED)
 
+find_package(Boost 1.64 REQUIRED)
+include_directories("." ${Boost_INCLUDE_DIR})
+
 # Static lib needed by stipybase and stipy
 add_library(sticommonpy STATIC
     AttributeManagerPy.cpp

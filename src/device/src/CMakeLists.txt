@@ -38,7 +38,8 @@ set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
 find_package(Boost 1.64 REQUIRED)
-
+message("Boost: ")
+message(${Boost_INCLUDE_DIR})
 
 set(STI_BASE_DIR ../../..)
 
