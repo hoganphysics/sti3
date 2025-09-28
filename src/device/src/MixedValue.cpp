@@ -194,7 +194,7 @@ std::ostream& MixedValue::operator<<(std::ostream& os)
 	return os << print();
 }
 
-void MixedValue::swap(MixedValue& other)
+void MixedValue::swap(MixedValue& other) noexcept
 {
 	std::swap(type, other.type);
 	value_v.swap(other.value_v);

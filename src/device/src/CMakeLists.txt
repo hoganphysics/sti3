@@ -34,16 +34,15 @@ if(MSVC)
 endif()
 
 
-set(OPENSSL_USE_STATIC_LIBS TRUE)
+# set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
-find_package(Boost 1.64 REQUIRED)
-message("Boost: ")
-message(${Boost_INCLUDE_DIR})
+find_package(Boost 1.70 REQUIRED)
+
 
 set(STI_BASE_DIR ../../..)
 
-include_directories("." ${Boost_INCLUDE_DIR})
+# include_directories("." ${Boost_INCLUDE_DIR})
 
 add_library(stidevice SHARED 
     AppointmentTask.cpp
@@ -141,7 +140,9 @@ add_library(stidevice SHARED
 
 if(MSVC)
 # elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 13.0)
-else()
+
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+        CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13.0)
   message("Using date.h")
   message("STI_BASE_DIR: ${STI_BASE_DIR}")
   # versions of gcc < 13 do not support std::chrono features required by AppointmentTask.cpp
@@ -149,9 +150,22 @@ else()
   find_package(CURL REQUIRED)
   target_sources(stidevice PRIVATE ${STI_BASE_DIR}/src/device/src/extern/date/tz.cpp)
   target_compile_definitions(stidevice PRIVATE USE_DATE_LIB=1)
-  target_link_libraries(stidevice ${CURL_LIBRARY})
-  message("CURL_LIBRARY: ${CURL_LIBRARY}")
+  # target_link_libraries(stidevice PRIVATE ${CURL_LIBRARY})
+  # message("CURL_LIBRARY: ${CURL_LIBRARY}")
+  target_link_libraries(stidevice
+    PRIVATE
+      CURL::libcurl
+  )
+else()
+  message(STATUS "Using native std::chrono (GCC >= 13 or non-GNU toolchain)")
 endif()
+
+target_link_libraries(stidevice
+  PRIVATE
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    Boost::headers
+)
 
 set_target_properties(stidevice PROPERTIES 
     VERSION ${PROJECT_VERSION}
@@ -175,18 +189,31 @@ if(USE_STI_DEBUG_POSTFIX)
 endif()
 
 
-target_include_directories(stidevice PRIVATE 
-    ${WORKING_DIRECTORY}
-    ${OPENSSL_INCLUDE_DIR}
-    ${STI_BASE_DIR}/include
-    ${STI_BASE_DIR}/include/sti/extern
-    ${WORKING_DIRECTORY}/fwd
-    ${WORKING_DIRECTORY}/utils
+# target_include_directories(stidevice PRIVATE 
+#     ${WORKING_DIRECTORY}
+#     # ${OPENSSL_INCLUDE_DIR}
+#     ${STI_BASE_DIR}/include
+#     ${STI_BASE_DIR}/include/sti/extern
+#     ${WORKING_DIRECTORY}/fwd
+#     ${WORKING_DIRECTORY}/utils
+    
+# )
+
+target_include_directories(stidevice 
+  PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../include> 
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> 
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/sti/extern
+    ${CMAKE_CURRENT_SOURCE_DIR}/fwd
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils
 )
 
-target_link_libraries(stidevice 
-    ${OPENSSL_LIBRARIES}
-)
+# target_link_libraries(stidevice PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+# target_link_libraries(stidevice 
+#     ${OPENSSL_LIBRARIES}
+# )
 
 if(DEFINED SKBUILD)
   if(MSVC)
@@ -199,10 +226,23 @@ if(DEFINED SKBUILD)
     )
   endif()
 else()
+  # install(TARGETS stidevice
+  #   #DESTINATION ${STI_BASE_DIR}/lib
+  # LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
+  #   #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  # )
+
+  # conda build
   install(TARGETS stidevice
-    #DESTINATION ${STI_BASE_DIR}/lib
-  LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
-    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    EXPORT sti3Targets                 # <-- put targets into this export set
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
+  # headers
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+          )
+          # FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hxx")
 endif()
 

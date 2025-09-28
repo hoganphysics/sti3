@@ -1,0 +1,41 @@
+package:
+  name: stipy
+  version: "3.0.1"
+
+source:
+  path: ..
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+    - python
+    - pip
+    - pybind11           # for headers/cmake config
+    # - openssl
+  host:
+    - python
+    - openssl
+    - curl 
+    - boost-cpp
+    - omniorb 
+  run:
+    - libgcc             # linux
+    - libstdcxx          # linux
+    - omniorb-libs          # use the conda package instead of vendoring
+    # - python
+    - openssl
+    - curl
+    - boost-cpp
+
+# test:
+#   commands:
+#     - test -d "$PREFIX/include/stipy"                                  # [unix]
+#     - test -f "$PREFIX/lib/cmake/stipy/stipyConfig.cmake"              # [unix]
+#     - python -c "import stipy; print('ok')"                            # [unix]
+#     - if not exist %PREFIX%\\Library\\include\\stipy exit 1            # [win]
+#     - if not exist %PREFIX%\\Library\\lib\\cmake\\stipy\\stipyConfig.cmake exit 1  # [win]

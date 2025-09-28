@@ -32,9 +32,10 @@ message("STI_LIB_POSTFIX:")
 message(STATUS "${STI_LIB_POSTFIX}")
 
 
-find_package(Boost 1.64 REQUIRED)
+find_package(Boost 1.70 REQUIRED)
 find_package(Threads REQUIRED)
-#find_package(OmniORB 4.2.1 COMPONENTS program_options REQUIRED)
+# find_package(OmniORB 4.3.0 COMPONENTS program_options REQUIRED)
+find_package(omniORB CONFIG QUIET)
 
 if (MSVC)
   add_compile_definitions(__WIN32__ __x86__ _WIN32_WINNT=0x0400 __NT__ __OSVERSION__=4 _WINDOWS)   #_DEBUG  NDEBUG
@@ -42,17 +43,17 @@ if (MSVC)
 endif()
 
 
-if (DEFINED ENV{OMNIORB_ROOT_DIR})
-    message("Enviromental var defined!!")
-    set(OMNIORB_PATH $ENV{OMNIORB_ROOT_DIR})
-else()
-    message("Enviromental NOT defined")
-    set(OMNIORB_PATH "")
-endif()
+# if (DEFINED ENV{OMNIORB_ROOT_DIR})
+#     message("Enviromental var defined!!")
+#     set(OMNIORB_PATH $ENV{OMNIORB_ROOT_DIR})
+# else()
+#     message("Enviromental NOT defined")
+#     set(OMNIORB_PATH "")
+# endif()
 
 set(STI_BASE_DIR ../../..)
 
-include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
+# include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 
 
 add_library(stinetwork SHARED 
@@ -152,23 +153,94 @@ add_library(stinetwork SHARED
 
 add_dependencies(stinetwork stidevice)
 
-if(MSVC)
-    target_link_directories(stinetwork PUBLIC 
-        "${OMNIORB_PATH}/lib/x86_win32"
-        #"${STI_BASE_DIR}/lib"
-        "${CMAKE_CURRENT_BINARY_DIR}/../../device/src"
-    )
-    set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
+# if(MSVC)
+#     target_link_directories(stinetwork PUBLIC 
+#         "${OMNIORB_PATH}/lib/x86_win32"
+#         #"${STI_BASE_DIR}/lib"
+#         "${CMAKE_CURRENT_BINARY_DIR}/../../device/src"
+#     )
+#     set(OMNI_EXT "_rt$<$<CONFIG:Debug>:d>")
+# endif()
+
+
+# If no imported targets were provided, create them by hand
+if(NOT TARGET OmniORB::omnithread)
+  # Choose the conda prefix: $PREFIX inside conda-build, or $CONDA_PREFIX when testing locally
+  set(_CONDAPREFIX $ENV{PREFIX})
+  if(NOT _CONDAPREFIX)
+    set(_CONDAPREFIX $ENV{CONDA_PREFIX})
+  endif()
+
+  if(WIN32)
+    set(_inc_hints "${_CONDAPREFIX}/Library/include" "${_CONDAPREFIX}/include")
+    set(_lib_hints "${_CONDAPREFIX}/Library/lib"     "${_CONDAPREFIX}/lib")
+    set(_names_omnithread  omnithread omnithread_rt omnithread4)
+    set(_names_omniORB4    omniORB4   omniORB4_rt)
+    set(_names_omniDynamic4 omniDynamic4 omniDynamic4_rt)
+  else()
+    set(_inc_hints "${_CONDAPREFIX}/include")
+    set(_lib_hints "${_CONDAPREFIX}/lib")
+    set(_names_omnithread  omnithread)
+    set(_names_omniORB4    omniORB4)
+    set(_names_omniDynamic4 omniDynamic4)
+  endif()
+
+  find_path(OMNIORB_INCLUDE_DIR
+    NAMES omniORB4/CORBA.h
+    HINTS ${_inc_hints}
+  )
+  find_library(OMNIORB_LIB     NAMES ${_names_omniORB4}    HINTS ${_lib_hints})
+  find_library(OMNITHREAD_LIB  NAMES ${_names_omnithread}  HINTS ${_lib_hints})
+  find_library(OMNIDYNAMIC_LIB NAMES ${_names_omniDynamic4} HINTS ${_lib_hints})
+
+  if(NOT OMNIORB_INCLUDE_DIR OR NOT OMNIORB_LIB OR NOT OMNITHREAD_LIB OR NOT OMNIDYNAMIC_LIB)
+    message(FATAL_ERROR
+      "omniORB not found in conda prefix '${_CONDAPREFIX}'.\n"
+      "  Tried includes: ${_inc_hints}\n"
+      "  Tried libs:     ${_lib_hints}")
+  endif()
+
+  add_library(OmniORB::omniORB4 UNKNOWN IMPORTED)
+  set_target_properties(OmniORB::omniORB4 PROPERTIES
+    IMPORTED_LOCATION "${OMNIORB_LIB}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OMNIORB_INCLUDE_DIR}"
+  )
+  add_library(OmniORB::omnithread UNKNOWN IMPORTED)
+  set_target_properties(OmniORB::omnithread PROPERTIES
+    IMPORTED_LOCATION "${OMNITHREAD_LIB}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OMNIORB_INCLUDE_DIR}"
+  )
+  add_library(OmniORB::omniDynamic4 UNKNOWN IMPORTED)
+  set_target_properties(OmniORB::omniDynamic4 PROPERTIES
+    IMPORTED_LOCATION "${OMNIDYNAMIC_LIB}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OMNIORB_INCLUDE_DIR}"
+  )
 endif()
 
-
-target_link_libraries(stinetwork 
+target_link_libraries(stinetwork
+  PUBLIC
     Threads::Threads
-    # pthread
-    omnithread${OMNI_EXT}
-    omniORB4${OMNI_EXT}
-    omniDynamic4${OMNI_EXT}
+    OmniORB::omnithread
+    OmniORB::omniORB4
+    OmniORB::omniDynamic4
+  PRIVATE
+    Boost::headers
 )
+
+
+# target_link_libraries(stinetwork
+#   PRIVATE
+#     Threads::Threads
+#     Boost::headers
+#     # pthread
+#     # omnithread${OMNI_EXT}
+#     # omniORB4${OMNI_EXT}
+#     # omniDynamic4${OMNI_EXT}
+#     # OmniORB::omnithread
+#     # OmniORB::omniORB4
+#     # OmniORB::omniDynamic4
+# )
+
 
 
 if(MSVC)
@@ -241,19 +313,30 @@ message("Output: ${OMNI_MSVC_VER}")
 
 message("Lib: omniORB4_${OMNI_MSVC_VER}${OMNI_EXT}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
+# target_include_directories(stinetwork PRIVATE 
+#     ${WORKING_DIRECTORY}
+#     ${STI_BASE_DIR}/include
+#     ${STI_BASE_DIR}/src/device/src
+#     ${STI_BASE_DIR}/src/network/src/generated
+#     ${STI_BASE_DIR}/include/sti/extern
+# )
+
+
 target_include_directories(stinetwork PRIVATE 
-    ${WORKING_DIRECTORY}
-    ${STI_BASE_DIR}/include
-    ${STI_BASE_DIR}/src/device/src
-    ${STI_BASE_DIR}/src/network/src/generated
-    ${STI_BASE_DIR}/include/sti/extern
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/device/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/convert
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/sti/extern
 )
 
-if(MSVC)
-    target_include_directories(stinetwork PUBLIC 
-        ${OMNIORB_PATH}/include
-    )
-endif()
+
+# if(MSVC)
+#     target_include_directories(stinetwork PUBLIC 
+#         ${OMNIORB_PATH}/include
+#     )
+# endif()
 
 if(DEFINED SKBUILD)
   message(">>>>>> STI Network: SKBUILD")
@@ -267,12 +350,24 @@ if(DEFINED SKBUILD)
     )
   endif()
 else()
-  message(">>>>>> STI Network: regular CMake build")
+  # message(">>>>>> STI Network: regular CMake build")
+  # install(TARGETS stinetwork
+  #   #DESTINATION ${STI_BASE_DIR}/lib
+  #   LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
+  #   #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  # )
+
+  # conda build
   install(TARGETS stinetwork
-    #DESTINATION ${STI_BASE_DIR}/lib
-    LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
-    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    EXPORT sti3Targets                 # <-- put targets into this export set
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
+  # headers
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+          )
 endif()
 
 

@@ -3,6 +3,7 @@
 
 #include <sti/utils/BinaryDataStream.h>
 #include "TReferenceHolder.h"
+#include "generated/deviceNet.h"
 
 #include <memory>
 

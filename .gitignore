@@ -43,4 +43,4 @@ stipy.egg-info/
 env/
 build_env/
 env1/
-
+_conda_build/

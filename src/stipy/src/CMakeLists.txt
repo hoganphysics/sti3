@@ -36,6 +36,30 @@ if(MSVC)
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 endif()
 
+
+# Default from CMake’s Python package (works for local builds)
+set(_PY_DEFAULT "${Python3_SITEARCH}")
+if(NOT _PY_DEFAULT)
+  set(_PY_DEFAULT "${Python3_SITELIB}")
+endif()
+
+# Allow build.sh to override with -DCMAKE_INSTALL_PYTHONDIR="$SP_DIR"
+set(CMAKE_INSTALL_PYTHONDIR "${CMAKE_INSTALL_PYTHONDIR}"
+    CACHE PATH "Python site-packages install dir")
+
+if(NOT CMAKE_INSTALL_PYTHONDIR)
+  set(CMAKE_INSTALL_PYTHONDIR "${_PY_DEFAULT}")
+endif()
+
+# Final sanity check so we never get '/stipy/...'
+if(NOT CMAKE_INSTALL_PYTHONDIR OR CMAKE_INSTALL_PYTHONDIR STREQUAL "/")
+  message(FATAL_ERROR "CMAKE_INSTALL_PYTHONDIR is not set. Pass -DCMAKE_INSTALL_PYTHONDIR=<site-packages> (use \$SP_DIR in conda-build).")
+endif()
+
+message(STATUS "CMAKE_INSTALL_PYTHONDIR=${CMAKE_INSTALL_PYTHONDIR}")
+
+
+
 find_package(pybind11 REQUIRED)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
@@ -102,22 +126,34 @@ else()
 endif()
 
 
-if(DEFINED SKBUILD)
-  install(TARGETS stipy
-    LIBRARY DESTINATION src/stipy/bin
-  )
-else()
-  install(TARGETS stipy
-    #DESTINATION ${STI_BASE_DIR}/lib
-    LIBRARY DESTINATION ${STIDEVICEPY_INSTALL_DIR}
-    #LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
-    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  )
-endif()
-
-
 target_link_libraries(stipy PRIVATE 
     stidevice${STI_LIB_POSTFIX}
     stinetwork${STI_LIB_POSTFIX}
     sticommonpy${STI_LIB_POSTFIX}
 )
+
+if(DEFINED SKBUILD)
+  install(TARGETS stipy
+    LIBRARY DESTINATION src/stipy/bin
+  )
+else()
+  # install(TARGETS stipy
+  #   #DESTINATION ${STI_BASE_DIR}/lib
+  #   LIBRARY DESTINATION ${STIDEVICEPY_INSTALL_DIR}
+  #   #LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
+  #   #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  # )
+
+  # conda build
+  install(TARGETS stipy
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy
+    # On Windows with pybind11, a MODULE may be an import library + dll; this covers the .pyd
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy
+  )
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
+          DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy
+          FILES_MATCHING PATTERN "*.py")
+  
+endif()
+
+

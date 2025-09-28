@@ -1,5 +1,5 @@
-from stipy.bin.stidevicepy import DeviceCollection
-from stipy.bin.stipybase import DeviceID
+from stipy.stidevicepy.stidevicepy import DeviceCollection
+from stipy.stipybase.stipybase import DeviceID
 
 
 _get = DeviceCollection.get

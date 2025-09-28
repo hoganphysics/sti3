@@ -1,10 +1,10 @@
-from stipy.bin.stidevicepy import LocalDevice
+from stipy.stidevicepy.stidevicepy import LocalDevice
 
-from stipy.bin.stipybase import RawEvent
-from stipy.bin.stidevicepy import SynchronousEventVector
+from stipy.stipybase.stipybase import RawEvent
+from stipy.stidevicepy.stidevicepy import SynchronousEventVector
 
-from stipy.bin.stipybase import Task
-from stipy.bin.stipybase import TaskBase
+from stipy.stipybase.stipybase import Task
+from stipy.stipybase.stipybase import TaskBase
 
 import traceback
 

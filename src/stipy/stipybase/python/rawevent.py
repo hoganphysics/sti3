@@ -1,5 +1,5 @@
-from stipy.bin.stipybase import RawEvent
-from stipy.bin.stipybase import RawEventType
+from stipy.stipybase.stipybase import RawEvent
+from stipy.stipybase.stipybase import RawEventType
 
 
 def print(self):

@@ -33,6 +33,7 @@ public:
 	Measurement(const Measurement& measurement);
 
 	void setMeasurementResult(const STI::Utils::MixedValue& result);
+	void setMeasurementResult(STI::Utils::MixedValue&& result) noexcept;
 	void extractMeasurementResult(STI::Utils::MixedValue& data);
 	bool attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file);
 	bool getFileServer(std::shared_ptr<STI::Utils::VirtualFileServer>& server) const;

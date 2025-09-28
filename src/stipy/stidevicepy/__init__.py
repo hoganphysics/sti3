@@ -1,4 +1,5 @@
-from stipy.bin.stidevicepy import *
+from stipy.stidevicepy import *
+from stipy.stidevicepy.stidevicepy import *
 
 from stipy.stidevicepy.python.collection import DeviceCollection
 

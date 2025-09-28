@@ -1,7 +1,7 @@
-from stipy.bin.stipybase import Sequence
-from stipy.bin.stipybase import SequenceType
-from stipy.bin.stipybase import RawEventGroup
-from stipy.bin.stipybase import ShotType
+from ..stipybase import Sequence
+from ..stipybase import SequenceType
+from ..stipybase import RawEventGroup
+from ..stipybase import ShotType
 # from stipy.bin.stipy import ParsedVar
 # _sequence__init__ = Sequence.__init__
 

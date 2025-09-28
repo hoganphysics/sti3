@@ -13,6 +13,7 @@
 #include <cereal/types/memory.hpp>
 
 #include <filesystem>
+#include <algorithm>
 namespace fs = std::filesystem;
 
 using STI::Engine::StackTraceData;

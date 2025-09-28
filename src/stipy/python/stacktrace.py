@@ -1,5 +1,5 @@
 from inspect import getframeinfo, stack
-from stipy.stipybase import StackTrace as _StackTrace
+from stipy.stipybase.stipybase import StackTrace as _StackTrace
 
 def isFilename(name):
     if isinstance(name, str) :

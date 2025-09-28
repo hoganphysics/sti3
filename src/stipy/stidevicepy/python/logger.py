@@ -1,4 +1,4 @@
-from stipy.bin.stidevicepy import Logger
+from stipy.stidevicepy.stidevicepy import Logger
 
 from typing import Callable
 

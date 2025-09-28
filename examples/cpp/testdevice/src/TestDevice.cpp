@@ -191,7 +191,7 @@ void TestDevice::TestEvent::collectMeasurementData()
         STI::Utils::MixedValue result;
         result.setValue(256 + localDevice->tmp);
         (localDevice->tmp)++;
-        getMeasurements().at(0)->setMeasurementResult(result);
+        getMeasurements().at(0)->setMeasurementResult(std::move(result));
 
     }
 
@@ -201,7 +201,7 @@ void TestDevice::TestEvent::collectMeasurementData()
         result.setValue(value);
         // this->getMeasurements().at(0)->
 
-        getMeasurements().at(0)->setMeasurementResult(result);
+        getMeasurements().at(0)->setMeasurementResult(std::move(result));
 
     }
 
@@ -221,7 +221,7 @@ void TestDevice::TestEvent::collectMeasurementData()
         auto file = localDevice->makeFileHolder("", filename);
         result.setValue(file->getID());
         // getMeasurements().at(0)->setMeasurementResult(result);
-        setMeasurementResult(result);
+        setMeasurementResult(std::move(result));
         attachFile(file);
 
     }

@@ -1,7 +1,7 @@
-from stipy.bin.stipy import STIPyShot
+from stipy.stipy import STIPyShot
 from stipy.python.stacktrace import makeStackTrace as _makeStackTrace
-from stipy.bin.stipybase import MixedValue
-from stipy.bin.stipybase import MixedValueType
+from stipy.stipybase.stipybase import MixedValue
+from stipy.stipybase.stipybase import MixedValueType
 
 _setvar = STIPyShot.setvar
 _event = STIPyShot.event

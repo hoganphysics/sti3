@@ -1,8 +1,10 @@
 
 from stipy.stipybase import *
 from stipy.stidevicepy import *
-from stipy.bin.stidevicepy import *
-from stipy.bin.stipy import *
+
+from stipy.stipy import *
+from stipy.stidevicepy.stidevicepy import *
+from stipy.stipybase.stipybase import *
 
 from stipy.python.stacktrace import makeStackTrace
 from stipy.python.group import RawEventGroup, RawEventGroupNode

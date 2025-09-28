@@ -1651,7 +1651,7 @@ bool STI::Network::convert<TMeasurement, std::shared_ptr<Measurement>>(
         );
 
     auto data = convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tMeasurement.measurementResult);
-    measurement->setMeasurementResult(data);
+    measurement->setMeasurementResult(std::move(data));
 
     return true;
 }

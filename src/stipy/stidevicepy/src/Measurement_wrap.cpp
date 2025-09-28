@@ -47,12 +47,12 @@ void init_Measurement(py::module& m)
         //     }), py::arg("result"))
         .def("setMeasurementResult", 
             [](STI::Engine::Measurement& self, const MixedValuePy& result)->void {
-                self.setMeasurementResult(result);
+                self.setMeasurementResult(std::move(result));
             }, py::arg("result"))
         .def("setMeasurementResult", 
             [](STI::Engine::Measurement& self, const py::object& obj)->void {
                 MixedValuePy result(obj);
-                self.setMeasurementResult(result);
+                self.setMeasurementResult(std::move(result));
             }, py::arg("result"))
         .def("__repr__",
             [](const STI::Engine::Measurement& self) {
