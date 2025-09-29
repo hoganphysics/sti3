@@ -1,0 +1,7 @@
+# conda_build_config.yaml
+c_compiler:
+  - vs2022
+cxx_compiler:
+  - vs2022
+vc:
+  - 14

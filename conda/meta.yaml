@@ -10,12 +10,14 @@ build:
 
 requirements:
   build:
+    - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake
     - ninja
     - python
     - pip
     - pybind11           # for headers/cmake config
+    - vs2022_win-64      # [win]
     # - openssl
   host:
     - python
@@ -24,13 +26,14 @@ requirements:
     - boost-cpp
     - omniorb 
   run:
-    - libgcc             # linux
-    - libstdcxx          # linux
+    # - libgcc             # [linux]
+    # - libstdcxx          # [linux]
     - omniorb-libs          # use the conda package instead of vendoring
-    # - python
+    - python
     - openssl
     - curl
-    - boost-cpp
+    # - boost-cpp
+    - vc14_runtime       # [win]
 
 # test:
 #   commands:

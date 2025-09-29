@@ -25,11 +25,17 @@ endif (MSVC)
 
 # If building inside the superbuild, the targets already exist.
 # Create ALIAS targets with the installed namespace.
-if(TARGET stidevice AND TARGET stinetwork)
-  add_library(sti3::stidevice ALIAS stidevice)
-  add_library(sti3::stinetwork ALIAS stinetwork)
-else()
-  # Standalone / consumer build (after sti3 is installed)
+
+
+# if(TARGET stidevice AND TARGET stinetwork)
+#   add_library(sti3::stidevice ALIAS stidevice)
+#   add_library(sti3::stinetwork ALIAS stinetwork)
+# else()
+#   # Standalone / consumer build (after sti3 is installed)
+#   find_package(sti3 CONFIG REQUIRED)
+# endif()
+
+if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
 endif()
 

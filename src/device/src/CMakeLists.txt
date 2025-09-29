@@ -137,6 +137,9 @@ add_library(stidevice SHARED
     VirtualFileServer.cpp
 )
 
+if(NOT TARGET sti3::stidevice)
+  add_library(sti3::stidevice ALIAS stidevice)
+endif()
 
 if(MSVC)
 # elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 13.0)
@@ -234,10 +237,14 @@ else()
 
   # conda build
   install(TARGETS stidevice
-    EXPORT sti3Targets                 # <-- put targets into this export set
+    EXPORT sti3Targets 
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+  install(EXPORT sti3Targets
+    NAMESPACE sti3::
+    DESTINATION lib/cmake/sti3
   )
   # headers
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/

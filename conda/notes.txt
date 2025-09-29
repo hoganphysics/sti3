@@ -6,6 +6,8 @@ conda install conda-verify (causes error)
 
 conda build -c conda-forge .
 
+conda build -c conda-forge . --dirty --keep-old-work --no-test
+
 
 Installing:
 conda env remove -n sti3 --yes
@@ -17,3 +19,6 @@ conda install -n sti3 -c conda-forge libstdcxx-ng libgcc-ng
 
 
 conda install --force-reinstall /home/hogan/miniconda3/envs/sti3-build/conda-bld/linux-64/stipy-3.0.1-h2bc3f7f_0.conda
+
+# windows install:
+conda install -n sti3 -c conda-forge -c C:\Users\Jason\miniconda3\envs\sti3-build\conda-bld stipy

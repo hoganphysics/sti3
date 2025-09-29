@@ -123,6 +123,8 @@ pybind11_add_module(stipybase MODULE
     Task_wrap.cpp
 )
 
+
+
 add_dependencies(stipybase sticommonpy stidevice stinetwork)
 
 
@@ -137,7 +139,7 @@ target_compile_options(stipybase PRIVATE ${STIDEVICEPYBASE_COMPILE_OPTIONS})
 
 set_target_properties(stipybase PROPERTIES
     POSITION_INDEPENDENT_CODE TRUE
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    WINDOWS_EXPORT_ALL_SYMBOLS OFF
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
@@ -195,7 +197,7 @@ target_compile_options(stidevicepy PRIVATE ${STIDEVICEPY_COMPILE_OPTIONS})
 
 set_target_properties(stidevicepy PROPERTIES
     POSITION_INDEPENDENT_CODE TRUE
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    WINDOWS_EXPORT_ALL_SYMBOLS OFF
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"

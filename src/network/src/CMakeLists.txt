@@ -42,6 +42,9 @@ if (MSVC)
   add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
+if(NOT TARGET sti3::stidevice)
+  find_package(sti3 CONFIG REQUIRED)
+endif()
 
 # if (DEFINED ENV{OMNIORB_ROOT_DIR})
 #     message("Enviromental var defined!!")
@@ -151,7 +154,11 @@ add_library(stinetwork SHARED
     TTriggerCallback_i.cpp
 )
 
-add_dependencies(stinetwork stidevice)
+if(NOT TARGET sti3::stinetwork)
+  add_library(sti3::stinetwork ALIAS stinetwork)
+endif()
+
+# add_dependencies(stinetwork stidevice)
 
 # if(MSVC)
 #     target_link_directories(stinetwork PUBLIC 
@@ -219,13 +226,21 @@ endif()
 
 target_link_libraries(stinetwork
   PUBLIC
+    sti3::stidevice
     Threads::Threads
     OmniORB::omnithread
     OmniORB::omniORB4
     OmniORB::omniDynamic4
+    # stidevice
   PRIVATE
     Boost::headers
 )
+
+# target_link_libraries(stinetwork PUBLIC sti3::stidevice)
+
+
+get_target_property(_links stinetwork LINK_LIBRARIES)
+message(STATUS "stinetwork LINK_LIBRARIES=${_links}")
 
 
 # target_link_libraries(stinetwork
@@ -243,11 +258,12 @@ target_link_libraries(stinetwork
 
 
 
-if(MSVC)
-    target_link_libraries(stinetwork 
-        stidevice${STI_LIB_POSTFIX}
-    )
-endif()
+# if(MSVC)
+#     target_link_libraries(stinetwork 
+#       PUBLIC
+#         stidevice${STI_LIB_POSTFIX}
+#     )
+# endif()
 
 #set_target_properties(stinetwork PROPERTIES VERSION ${PROJECT_VERSION})
 
