@@ -102,6 +102,12 @@ set_target_properties(stipy PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )
 
+target_compile_definitions(stipy PRIVATE
+  PYBIND11_DETAILED_ERROR_MESSAGES=1
+  PYBIND11_ASSERT_GIL_HELD_INCREF_DECREF=1  # optional, catches GIL mistakes
+)
+
+
 #https://github.com/pybind/cmake_example/issues/11
 if(UNIX AND NOT APPLE)
     set_target_properties(stipy PROPERTIES INSTALL_RPATH "$ORIGIN")

@@ -366,6 +366,17 @@ bool EventEngineParser::parseEvents(SynchronousEventVector& synchedEvents, const
 
 		return false;		//break the error loop immediately
 	}
+	catch (std::exception& e)	//generic conflict or error
+	{
+		errorCount++;
+		success = false;
+		//Error: Event error or conflict detected. Debug info not available.
+		addParsingError("Unhandled Parsing Exception")
+			<< "Unhandled standard exception while parsing events in device. "
+			<< "Message: '" << e.what() << "'";
+
+		return false;		//break the error loop immediately
+	}
 	catch (...)	//generic conflict or error
 	{
 		errorCount++;
@@ -551,6 +562,7 @@ void EventEngineParser::defineErrorIDs()
 	errorIDs["Illegal Input Event"] 				= 43;
 
 	errorIDs["Null Measurement"] 					= 44;	
+	errorIDs["Unknown Parsing Exception"]			= 45;
 
 }
 

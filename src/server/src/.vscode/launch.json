@@ -28,21 +28,37 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/STIServer",
-            "args": [],
+            "args": ["-f", "${workspaceFolder}/default.ini"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
+            "environment": [
+                { "name": "CONDA_PREFIX", "value": "/home/hogan/miniconda3/envs/sti3" }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
+                // {
+                //     "description": "Enable pretty-printing for gdb",
+                //     "text": "-enable-pretty-printing",
+                //     "ignoreFailures": true
+                // },
+                { "text": "-enable-pretty-printing" },
+                { "text": "-gdb-set print pretty on" },
+                
+                { "text": "-interpreter-exec console \"python import sys; sys.path.insert(0, '/home/hogan/miniconda3/envs/sti3/share/gcc-14.3.0/python')\"" },
+                { "text": "-interpreter-exec console \"python from libstdcxx.v6.printers import register_libstdcxx_printers; register_libstdcxx_printers(None)\"" },
+
+                
+                { "text": "-gdb-set print object on" },
+                { "text": "-interpreter-exec console \"set auto-load safe-path /\"" },
+                // { "text": "-interpreter-exec console \"python from libstdcxx.v6.printers import register_libstdcxx_printers; register_libstdcxx_printers(None)\"" },
+                { "text": "set substitute-path /usr/local/src/conda/stipy-3.0.1 /home/hogan/code/dev/sti3" },
+                { "text": "-interpreter-exec console \"directory /home/hogan/code/dev/sti3/src/device/src\"" },
+                { "text": "-interpreter-exec console \"directory /home/hogan/code/dev/sti3/src/network/src\"" }
             ],
             "preLaunchTask": "CMake build",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/home/hogan/miniconda3/envs/sti3/bin/gdb"
+            // "miDebuggerPath": "/usr/bin/gdb"
             // "sourceFileMap": {
             //     "${workspaceFolder}/build": "${workspaceFolder}"
             // }

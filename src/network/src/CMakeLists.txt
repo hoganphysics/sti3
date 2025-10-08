@@ -227,13 +227,13 @@ endif()
 target_link_libraries(stinetwork
   PUBLIC
     sti3::stidevice
+    # stidevice
+  PRIVATE
     Threads::Threads
+    Boost::headers
     OmniORB::omnithread
     OmniORB::omniORB4
     OmniORB::omniDynamic4
-    # stidevice
-  PRIVATE
-    Boost::headers
 )
 
 # target_link_libraries(stinetwork PUBLIC sti3::stidevice)

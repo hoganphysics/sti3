@@ -17,7 +17,6 @@
 #include <sti/network/Node.h>
 
 
-
 int main(int argc, char **argv)
 {
     //command line parsing

@@ -2,16 +2,56 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Configure (conda run)",
+			"type": "shell",
+			"command": "conda",
+			"args": [
+				"run", "-n", "sti3",
+				"cmake",
+				"-S", ".", "-B", "build",
+				"-DCMAKE_BUILD_TYPE=Debug",
+				"-DCMAKE_PREFIX_PATH=$CONDA_PREFIX",
+				"-Dsti3_DIR=$CONDA_PREFIX/lib/cmake/sti3",
+				"--debug-find"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": ["$gcc"],
+			"group": "build"
+		},
+		{
+			"label": "Build (conda run)",
+			"type": "shell",
+			"command": "conda",
+			"args": [
+				"run", "-n", "sti3",
+				"--no-capture-output",
+				"cmake",
+				"--build",
+				"build",
+				"-j"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": ["$gcc"],
+			"group": "build"
+		},
+		{
 			"type": "shell",
 			"label": "CMake config",
 			"command": "cmake",
 			"args": [
 				"-DCMAKE_BUILD_TYPE=Debug",
+				// "-DCMAKE_PREFIX_PATH=/home/hogan/code/dev/sti3/conda/cmake/",
+				// "-DCMAKE_PREFIX_PATH=${env:CONDA_PREFIX}",
+				"-DCMAKE_PREFIX_PATH=/home/hogan/miniconda3",
+				"-Dsti3_DIR=${workspaceFolder}/../../../conda/cmake/",
 				".."
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/build", 
 				"env": {
+					"CONDA_PREFIX": "/home/hogan/miniconda3",
+					"sti3_DIR": "${workspaceFolder}/../../../conda/cmake/",
+					// "CMAKE_PREFIX_PATH": "/home/hogan/code/dev/sti3/conda/cmake/;${CMAKE_PREFIX_PATH}"
 				}
 			},
 			"problemMatcher": [

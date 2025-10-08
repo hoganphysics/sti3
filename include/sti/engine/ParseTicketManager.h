@@ -116,6 +116,8 @@ void ParseTicketManager<T>::handleMessage(const std::shared_ptr<STI::Device::Eng
         return;
     }
 
+    ticket->setEngineID(mess->engineID);
+
     if (mess->getStatus() == EngineJobStatus::Canceled) {
         ticket->cancel();
         TicketManager<STI::Engine::ParseID, T>::remove(id);  //avoid storing ticket indefinitely (memory leak)

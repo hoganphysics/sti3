@@ -137,6 +137,11 @@ endif()
 target_compile_options(stipybase PRIVATE ${STIDEVICEPYBASE_COMPILE_OPTIONS})
 
 
+target_compile_definitions(stipybase PRIVATE
+  PYBIND11_DETAILED_ERROR_MESSAGES=1
+  PYBIND11_ASSERT_GIL_HELD_INCREF_DECREF=1  # optional, catches GIL mistakes
+)
+
 set_target_properties(stipybase PROPERTIES
     POSITION_INDEPENDENT_CODE TRUE
     WINDOWS_EXPORT_ALL_SYMBOLS OFF
@@ -194,6 +199,11 @@ else()
 endif()
 
 target_compile_options(stidevicepy PRIVATE ${STIDEVICEPY_COMPILE_OPTIONS})
+
+target_compile_definitions(stidevicepy PRIVATE
+  PYBIND11_DETAILED_ERROR_MESSAGES=1
+  PYBIND11_ASSERT_GIL_HELD_INCREF_DECREF=1  # optional, catches GIL mistakes
+)
 
 set_target_properties(stidevicepy PROPERTIES
     POSITION_INDEPENDENT_CODE TRUE

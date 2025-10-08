@@ -4,3 +4,8 @@
 
 export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3/lib:$LD_LIBRARY_PATH
 ./STIServer
+
+
+Build notes for sti3 build using conda.  We need to build STIServer using a conda env that has sti3 PLUS a recent gcc:
+conda create -n sti3 -c conda-forge compilers cmake ninja sti3
+It's important to include compilers, etc, so that this env has an up to date version of gcc. Otherwise there will be linker errors.

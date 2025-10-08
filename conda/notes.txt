@@ -22,3 +22,24 @@ conda install --force-reinstall /home/hogan/miniconda3/envs/sti3-build/conda-bld
 
 # windows install:
 conda install -n sti3 -c conda-forge -c C:\Users\Jason\miniconda3\envs\sti3-build\conda-bld stipy
+
+
+
+#upload (linux)
+anaconda upload /home/hogan/miniconda3/envs/sti3-build/conda-bld/linux-64/stipy-3.0.1-py313h3fd9d12_0.conda 
+
+
+# For local install of package (dev cycle)
+
+conda create -n sti3 -c conda-forge cmake ninja compilers
+conda activate sti3
+conda config --add channels file://$(conda info --base)/envs/sti3-build/conda-bld
+conda config --add channels conda-forge
+
+conda install --use-local stipy
+
+# Make sure to increment build number each time
+
+# For debugging:
+conda install -n sti3 -c conda-forge gdb
+
