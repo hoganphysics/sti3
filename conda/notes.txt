@@ -22,3 +22,13 @@ conda install --force-reinstall /home/hogan/miniconda3/envs/sti3-build/conda-bld
 
 # windows install:
 conda install -n sti3 -c conda-forge -c C:\Users\Jason\miniconda3\envs\sti3-build\conda-bld stipy
+
+#uploading
+In build env,
+
+conda install anaconda-client conda-build
+anaconda login
+anaconda upload C:\Users\Jason\miniconda3\envs\sti3-build\conda-bld\win-64\stipy-3.0.1-h82bb817_0.conda
+
+conda located at:
+https://anaconda.org/hoganlab/stipy
