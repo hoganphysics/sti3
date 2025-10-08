@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(STI_BASE_DIR ../../../..)
 
+find_package(sti3 CONFIG REQUIRED)
+
 
 if(MSVC)
   if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -29,14 +31,20 @@ if (USE_STI_DEBUG_POSTFIX)
 set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
-link_directories(${STI_BASE_DIR}/lib)
+# link_directories(${STI_BASE_DIR}/lib)
 
 # add the executable
 add_executable(testDevice main.cpp TestDevice.cpp)
 
 target_include_directories(testDevice PRIVATE 
     ${WORKING_DIRECTORY}
-    ${STI_BASE_DIR}/include
+    # ${STI_BASE_DIR}/include
 )
 
-target_link_libraries(testDevice stidevice${STI_LIB_POSTFIX} stinetwork${STI_LIB_POSTFIX})
+# target_link_libraries(testDevice stidevice${STI_LIB_POSTFIX} stinetwork${STI_LIB_POSTFIX})
+
+target_link_libraries(testDevice
+  PRIVATE
+    sti3::stidevice
+    sti3::stinetwork
+)

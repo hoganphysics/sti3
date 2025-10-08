@@ -2,6 +2,7 @@
 #define STI_ENGINE_PARSETICKET_H
 
 #include <sti/engine/Ticket.h>
+#include <sti/engine/EngineID.h>
 #include <sti/engine/ParseID.h>
 #include <sti/device/Device.h>
 #include <sti/fwd/RawEvent_fwd.h>
@@ -33,6 +34,9 @@ public:
     std::shared_ptr<RawEventGroup> getEvents();
     std::shared_ptr<ParseResult> getParseResult();
 
+    void setEngineID(const EngineID& id) { engineID = id; }
+    EngineID getEngineID() const { return engineID; }
+
 private:
 
     virtual bool waitCheck() const { return true; }
@@ -42,6 +46,7 @@ private:
     mutable STI::Utils::CachedValue<std::shared_ptr<ParseResult>> parseResult;
 
     STI::Engine::ParseID pid;
+    STI::Engine::EngineID engineID;
     std::shared_ptr<EventEngineScheduler> engineScheduler;
 };
 

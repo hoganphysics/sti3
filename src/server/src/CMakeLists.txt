@@ -35,6 +35,8 @@ endif (MSVC)
 #   find_package(sti3 CONFIG REQUIRED)
 # endif()
 
+message("CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+
 if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
 endif()

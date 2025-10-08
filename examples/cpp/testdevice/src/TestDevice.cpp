@@ -115,7 +115,7 @@ void TestDevice::init()
     receiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(serverID, jobMessageLID, 
         [](auto message) { 
             std::cout << "Job message: " << STI::Device::EngineJobUpdateDeviceMessage::jobTargetToString(message->getTargetList())// << STI::Device::DeviceMessage::typeToString(message->getMessageClassType())
-            << " : " <<  message->getDeviceTrace().print() << " : " << message->getEngineJob()->getJobID().pid.parseTimestamp.print() << std::endl;
+            << " : " <<  message->getDeviceTrace().print() << " : " << message->jobID.pid.parseTimestamp.print() << std::endl;
         } );
 
     stateMessageLID.name = "::EngineStateMessage::Test";	//getID().getID() + 
