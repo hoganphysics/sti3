@@ -22,7 +22,7 @@ export OPENSSL_ROOT_DIR="$PREFIX"
 
 cmake -S "$SRC_DIR" -B "$BUILD_DIR" -G Ninja \
   -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-omit-frame-pointer" \
   -DCMAKE_INSTALL_DO_STRIP=OFF \
   -DCMAKE_INSTALL_BINDIR=bin \

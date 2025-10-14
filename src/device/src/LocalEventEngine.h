@@ -135,7 +135,7 @@ private:
 
 	void updateChannelValues(const RawEventVector& rawEvents);
 
-	void scheduleAllPlayJobs(const EngineJobID& jobID, const STI::Device::DeviceID& jobOwner);
+	void scheduleAllPlayJobs(const EngineJobID& jobID, const std::shared_ptr<Shot>& shot, const STI::Device::DeviceID& jobOwner);
 
 	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);
 	void playShot(TriggerCallback& triggerCB);

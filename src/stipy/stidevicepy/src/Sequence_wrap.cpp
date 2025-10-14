@@ -126,9 +126,9 @@ void init_Sequence(py::module& m)
         .def_readwrite("sequenceTable", &Sequence::sequenceTable)
         .def("addEntry", py::overload_cast<const SequenceEntry&>(&Sequence::addEntry), py::arg("entry"))
         .def("addEntry", py::overload_cast<const SequenceIndex&, const std::set<ParsedVar>&>(&Sequence::addEntry), py::arg("index"), py::arg("overwritten"))
+        .def("removeEntry", &Sequence::removeEntry, py::arg("index"))
         .def("append", py::overload_cast<const std::set<ParsedVar>&>(&Sequence::append), py::arg("overwritten"))
         ;
-
 
 }
 

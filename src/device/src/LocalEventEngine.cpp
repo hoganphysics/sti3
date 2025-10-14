@@ -565,7 +565,7 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 
 				std::shared_ptr<Shot> jshot;
 				job.getShot(jshot);
-				jshot->getShotConfig();
+				// jshot->getShotConfig();
 
 				auto shot = scheduler->createShot(jshot->getShotConfig(), it->second);
 				
@@ -711,8 +711,7 @@ TimeStamp LocalEventEngine::getCurrentTimeStamp()
 	return ts;
 }
 
-
-void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const DeviceID& jobOwner)
+void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const std::shared_ptr<Shot>& shot, const DeviceID& jobOwner)
 {
 	if (ownedTargets.size() == 0) {
 		return;
@@ -726,7 +725,7 @@ void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const Devic
 		
 		if (deviceCollection->get(id, device) && device != 0 && device->getEngineScheduler(scheduler)) {
 
-			auto newJob = std::make_shared<LocalEventEngineJob>(jobID, jobOwner);
+			auto newJob = std::make_shared<LocalEventEngineJob>(jobID, shot, jobOwner);
 			scheduler->addJob(newJob);
 		}
 		else {
@@ -770,8 +769,11 @@ void LocalEventEngine::play(EventEngineJob& job)
 		//playTime = getCurrentTimeStamp();
 		jobID.runTime = getCurrentTimeStamp();
 	}
+	
+	std::shared_ptr<Shot> shot;
+	job.getShot(shot);
 
-	scheduleAllPlayJobs(jobID, job.getJobOwner());
+	scheduleAllPlayJobs(jobID, shot, job.getJobOwner());
 
 	//Wait for all owned target devices to reach PlayReady state
 	if (ownedTargets.size() > 0) {

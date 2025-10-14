@@ -26,7 +26,8 @@ int main(int argc, char **argv)
 	
 	auto device = std::make_shared<TestDevice>(config);
 
-	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServiceAddr, config);
+	// auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServiceAddr, config);
+	auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServiceAddr);
 
 	hub->addDevice(device);
 

@@ -70,6 +70,8 @@ class STIPySequence(Sequence):
         self.shotmaker = shotmaker
         self.basegroup = RawEventGroup()
 
+        # self._table_lock = threading.RLock()
+
         localAddress = _gethostname()
         username = _getuser()
         
@@ -79,6 +81,7 @@ class STIPySequence(Sequence):
             Sequence.__init__(self, SequenceType.Closed)
 
         if hasattr(self, 'shotConfig'):
+            self.shotConfig.file = str(self.shotmaker)
             self.shotConfig.comment = description
             self.shotConfig.shotType = ShotType.Sequence
             self.shotConfig.jobSourceID.machine = localAddress

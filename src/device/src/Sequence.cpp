@@ -42,6 +42,16 @@ void Sequence::addEntry(const SequenceIndex& index, const std::set<ParsedVar>& o
     sequenceTable[index].overwritten = overwritten;
 }
 
+void Sequence::removeEntry(const SequenceIndex& index)
+{
+    std::unique_lock<std::mutex> seqLock(sequenceMutex);
+
+    auto it = sequenceTable.find(index);
+    if (it != sequenceTable.end()) {
+        sequenceTable.erase(it);
+    }
+}
+
 void Sequence::append(const std::set<ParsedVar>& overwritten)
 {
     SequenceIndex index;

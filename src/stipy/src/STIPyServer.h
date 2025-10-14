@@ -125,6 +125,7 @@ public:
     void closeSequence(const STI::Engine::SequenceID& seqid);
     void cancelSequence(const STI::Engine::SequenceID& seqid);
 
+    void cancelJob(const STI::Engine::EngineJobID& jobID);
     void cancelAll();
 
     std::string printNetwork();

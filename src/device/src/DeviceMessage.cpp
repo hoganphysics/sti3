@@ -2,6 +2,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/RawEventGroup.h>
+#include <sti/engine/Sequence.h>
 #include <sti/engine/SequenceJob.h>
 
 
@@ -104,6 +105,10 @@ std::string DeviceMessage::typeToString(const DeviceMessageType& type)
 
 void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::EventEngineJob>& engineJob)
 {
+	if (engineJob == 0) {
+		return;
+	}
+
 	jobID = engineJob->getJobID();
 	jobOwner = engineJob->getJobOwner();
 	jobStatus = engineJob->getStatus();
@@ -116,8 +121,8 @@ void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::Eve
 		std::shared_ptr<STI::Engine::RawEventGroup> rootGroup;
 		shot->getRootEventGroup(rootGroup);
 
-		if (shot != 0) {
-			overwrittenVars =rootGroup->getOverwrittenVars();
+		if (rootGroup != 0) {
+			overwrittenVars = rootGroup->getOverwrittenVars();
 		}
 	}
 
@@ -126,9 +131,15 @@ void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::Eve
 
 void EngineJobUpdateDeviceMessage::setSequenceJob(const std::shared_ptr<STI::Engine::SequenceJob>& job)
 {
+	if (job == 0) {
+		return;
+	}
+
 	jobID = job->jobID;
 	jobOwner = job->jobOwner;
 	jobStatus = job->getJobStatus();
-	
-	// engineID = job->;
+
+	if (job->sequence != 0) {
+		shotConfig = job->sequence->shotConfig;
+	}
 }

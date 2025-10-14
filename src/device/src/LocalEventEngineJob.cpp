@@ -32,22 +32,20 @@ using STI::Engine::EngineJobStatus;
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
                                          const std::shared_ptr<Shot>& shot,
                                          const STI::Device::DeviceID& owner)
-: shot_(shot), jobOwner(owner)
+: jobID(parseID), shot_(shot), jobOwner(owner)
 {
     std::unique_lock< std::mutex > writeLock(jobMutex);
-
     status = EngineJobStatus::New;
-    jobID.type = EventEngineJobType::Parse;
-
-    jobID.pid = parseID;
 }
 
 
-LocalEventEngineJob::LocalEventEngineJob(const EngineJobID& id, const DeviceID& owner)
-: jobID(id), jobOwner(owner)
+LocalEventEngineJob::LocalEventEngineJob(const EngineJobID& id, 
+                                         const std::shared_ptr<Shot>& shot, 
+                                         const DeviceID& owner)
+: jobID(id), shot_(shot), jobOwner(owner)
 {
+    std::unique_lock< std::mutex > writeLock(jobMutex);
     status = EngineJobStatus::New;
-    jobID.type = EventEngineJobType::Play;
 }
                    
 
