@@ -40,7 +40,8 @@ void init_STIPyServer(py::module& m)
         .def("play", py::overload_cast<const std::shared_ptr<PyParseTicket>&>(&STIPyServer::play), py::arg("ticket"))
         .def("play", py::overload_cast<const STI::Engine::ParseID&>(&STIPyServer::play), py::arg("parseID"))
 
-        .def("cancel_all", &STIPyServer::cancelAll)
+        .def("cancelJob", &STIPyServer::cancelJob)
+        .def("cancelAll", &STIPyServer::cancelAll)
         
         .def("setUsername", &STIPyServer::setUserName, py::arg("name"))
         .def("username", &STIPyServer::getUserName)

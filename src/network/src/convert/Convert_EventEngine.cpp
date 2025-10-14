@@ -678,7 +678,9 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
         break;
 	case EventEngineJobType::Play:
         {
-            auto job = std::make_shared<LocalEventEngineJob>(jobID,
+            convert<TShot, std::shared_ptr<Shot>>(tEngineJob.shot, parsedShot);
+
+            auto job = std::make_shared<LocalEventEngineJob>(jobID, parsedShot,
                 convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tEngineJob.jobOwner));
             job->setStatus(jobStatus);
             engineJob = job;

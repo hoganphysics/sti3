@@ -129,6 +129,12 @@ void init_EventEngineScheduler(py::module& m)
 
     py::class_<STI::Engine::EngineJobID>(m, "EngineJobID")
         .def(py::init<>())
+        .def(py::init<const STI::Engine::ParseID&>(), py::arg("parseID"))
+        .def(py::init<const STI::Engine::ShotID&>(), py::arg("shotID"))
+        .def(py::init<const STI::Engine::SequenceID&>(), py::arg("sequenceID"))
+        .def(py::init<STI::Engine::EventEngineJobType, STI::Engine::ParseID, STI::Engine::ShotID, STI::Engine::SequenceID, STI::Utils::TimeStamp>(),
+            py::arg("type"), py::arg("pid"), py::arg("sid"), py::arg("seqid"), py::arg("runTime"))
+        
         .def_readonly("type", &EngineJobID::type)
         .def_readonly("pid", &EngineJobID::pid)
         .def_readonly("sid", &EngineJobID::sid)

@@ -38,6 +38,7 @@ public:
 
     //Play jobs
     LocalEventEngineJob(const EngineJobID& id, 
+                        const std::shared_ptr<Shot>& shot,
                         const STI::Device::DeviceID& owner);
 
     EngineJobID getJobID() const;

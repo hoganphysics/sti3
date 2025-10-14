@@ -248,12 +248,6 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
     parseJobStatus.pid = ParseID::generateUniqueID(shot->getShotConfig().jobSourceID);
     parseJobStatus.pid.shotType = shot->getShotConfig().shotType;
 
-    // ParseID parseID;
-    
-    // if (shot != 0) {
-    //     parseJobStatus.pid.shotConfig = shot->getShotConfig();      
-    // }
-
     auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 
     parse(job);
@@ -380,35 +374,53 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     playJobStatus.status = EngineJobStatus::New;
 
     std::shared_ptr<SequenceJob> seqJob;
-    if (parseID.shotType == ShotType::SequenceEntry && findJob(parseID.sequenceEntryID.seqID, seqJob)) {
+    if (parseID.shotType == ShotType::SequenceEntry) {
+        if (!findJob(parseID.sequenceEntryID.seqID, seqJob)) {
+            //Error: SequenceID not found
+            playJobStatus.status = EngineJobStatus::NotFound;
+            return playJobStatus;
+        }
         seqJob->sequenceResult->addShotResult(parseID.sequenceEntryID.seqIndex, playJobStatus.sid, playJobStatus.status);
     }
 
-    // std::shared_ptr<SequenceResult> sequenceResult;
-    // if (parseID.shotType == ShotType::Sequence &&
-    //     persistenceManager != 0 && 
-    //     persistenceManager->getSequenceResult(parseID.sequenceEntryID.seqID, sequenceResult)) {
-    //     //sequence found
-    //     // sequenceResult->status[sequenceEntryID.seqIndex.index] = 
-    //     // add sequence message
-    // }
+    std::shared_ptr<EventEngineJob> parseJob;
+    std::shared_ptr<Shot> shot;
+    std::shared_ptr<EventEngineDependencyTree> tree;
+    
+    if (parseID.shotType == ShotType::Single 
+        || parseID.shotType == ShotType::SequenceEntry 
+        || parseID.shotType == ShotType::SingleUndocumented) {
+        
+            if (!findJob(parseID, parseJob)) {
+            //Error: ParseID not found
+            playJobStatus.status = EngineJobStatus::NotFound;
+            return playJobStatus;
+        }
 
-    play(playJobStatus.sid);
+        parseJob->getShot(shot);
+        parseJob->getDependencies(tree);
+    }
+
+    // play(playJobStatus.sid, shot);
+
+    //Make play job
+    EngineJobID jobID(playJobStatus.sid);
+    auto job = std::make_shared<LocalEventEngineJob>(jobID, shot, localDeviceID);
+    job->setDependencies(tree);
+
+    addJob(job);
 
     return playJobStatus;
 }
 
-void LocalEventEngineScheduler::play(const ShotID& shotID)
-{
-    //Make play job
-    EngineJobID jobID;
-    jobID.pid = shotID.parseID;
-    jobID.sid = shotID;
-    jobID.type = EventEngineJobType::Play;
-    auto job = std::make_shared<LocalEventEngineJob>(jobID, localDeviceID);
+// void LocalEventEngineScheduler::play(const ShotID& shotID, const std::shared_ptr<Shot>& shot)
+// {
+//     //Make play job
+//     EngineJobID jobID(shotID);
+//     auto job = std::make_shared<LocalEventEngineJob>(jobID, shot, localDeviceID);
 
-    addJob(job);
-}
+//     addJob(job);
+// }
 
 
 AddSequenceStatus LocalEventEngineScheduler::addSequence(const std::shared_ptr<Sequence>& sequence, const EngineJobSourceID& source)

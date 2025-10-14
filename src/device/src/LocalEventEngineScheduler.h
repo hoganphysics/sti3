@@ -131,7 +131,7 @@ private:
     void refreshSequenceJobs();
 
     void parse(const std::shared_ptr<LocalEventEngineJob>& job);
-    void play(const ShotID& shotID);
+    // void play(const ShotID& shotID, const std::shared_ptr<Shot>& shot);
     void stop();
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);

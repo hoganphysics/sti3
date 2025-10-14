@@ -48,8 +48,10 @@ public:
 
     void addEntry(const SequenceEntry& entry);
     void addEntry(const SequenceIndex& index, const std::set<ParsedVar>& overwritten);
-    void append(const std::set<ParsedVar>& overwritten);
+    void removeEntry(const SequenceIndex& index);
 
+    void append(const std::set<ParsedVar>& overwritten);
+    
     ShotConfig shotConfig;  //shot config for this sequence
 
     std::map<SequenceIndex, SequenceEntry> sequenceTable;

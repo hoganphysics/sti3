@@ -126,10 +126,37 @@ def makeshot(self, source=None, vars=None, shot_type=None):
 
 def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: Callable[[int, int], None] = None):
     
+    # # ensure sequence has a lock
+    # if not hasattr(sequence, "_table_lock"):
+    #     sequence._table_lock = threading.RLock()
+
+    # take a snapshot of keys while holding the lock
+    getKeyAttempts = 3  # try a few times to avoid RuntimeError from dict size change
+    while getKeyAttempts > 0:
+        try:
+            # We can't garantee the dict won't change size between calling keys() and list(),
+            # so we retry a few times if that happens. This because the STI library
+            # doesn't provide a way to lock the sequenceTable while we read it.
+            keys = list(sequence.sequenceTable.keys())
+        except RuntimeError:
+            getKeyAttempts -= 1
+            if getKeyAttempts == 0:
+                raise
+        else:
+            break
+
     shot_number = 0
 
-    for key in sequence.sequenceTable.keys():
-        shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten, shot_type=ShotType.SequenceEntry)
+    for key in keys:
+
+        # Fetch the current entry under the lock; sequenceTable might have changed
+        entry = sequence.sequenceTable.get(key)
+
+        if entry is None:
+            # entry was removed
+            continue
+
+        shot = makeshot(self, sequence.shotmaker, entry.overwritten, shot_type=ShotType.SequenceEntry)
         # shots.append(shot)
 
         seqEntryID = SequenceEntryID()

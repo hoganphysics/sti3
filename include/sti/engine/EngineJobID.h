@@ -16,6 +16,16 @@ enum class EventEngineJobType { Parse, Play, Sequence };
 class EngineJobID
 {
 public:
+
+    EngineJobID() : type(EventEngineJobType::Parse) {}
+    EngineJobID(const ParseID& parseID) : type(EventEngineJobType::Parse), pid(parseID) {}
+    EngineJobID(const ShotID& shotID) : type(EventEngineJobType::Play), pid(shotID.parseID), sid(shotID) {}
+    EngineJobID(const SequenceID& sequenceID) : type(EventEngineJobType::Sequence), seqid(sequenceID) {}
+
+    EngineJobID(const EventEngineJobType& type, const ParseID& pid, const ShotID& sid, 
+        const SequenceID& seqid, const STI::Utils::TimeStamp& runTime)
+    : type(type), pid(pid), sid(sid), seqid(seqid), runTime(runTime) {}
+   
     
     bool operator==(const EngineJobID& rhs) const
     {

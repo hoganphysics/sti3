@@ -369,6 +369,14 @@ std::shared_ptr<PyResultTicket> STIPyServer::play(const STI::Engine::ParseID& pa
     return ticket;
 }
 
+void STIPyServer::cancelJob(const STI::Engine::EngineJobID& jobID)
+{
+    std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+
+    if (getScheduler(scheduler)) {
+        scheduler->cancelJob(jobID);
+    }
+}
 
 
 void STIPyServer::cancelAll()
