@@ -15,11 +15,13 @@ REM CMake needs to know where to look for deps
 set CMAKE_PREFIX_PATH=%PREFIX%;%PREFIX%\\Library
 set OPENSSL_ROOT_DIR=%PREFIX%\\Library
 
+REM   -DCMAKE_BUILD_TYPE=Release ^
 
 REM Configure
 cmake -S "%SRC_DIR%" -B "%BUILD_DIR%" -G Ninja ^
   -DCMAKE_INSTALL_PREFIX="%PREFIX%" ^
-  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
+  -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-omit-frame-pointer" ^
   -DCMAKE_INSTALL_BINDIR=Library\\bin ^
   -DCMAKE_INSTALL_LIBDIR=Library\\lib ^
   -DCMAKE_INSTALL_INCLUDEDIR=Library\\include ^
