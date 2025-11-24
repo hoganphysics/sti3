@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 # set the project name
 project(configFile)
@@ -7,7 +7,7 @@ project(configFile)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(STI_BASE_DIR ../../../..)
+# set(STI_BASE_DIR ../../../..)
 
 
 if(MSVC)
@@ -29,14 +29,24 @@ if (USE_STI_DEBUG_POSTFIX)
 set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
-link_directories(${STI_BASE_DIR}/lib)
+find_package(sti3 CONFIG REQUIRED)
+
+# link_directories(${STI_BASE_DIR}/lib)
 
 # add the executable
 add_executable(configFile main.cpp)
 
-target_include_directories(configFile PRIVATE 
-    ${WORKING_DIRECTORY}
-    ${STI_BASE_DIR}/include
+target_include_directories(configFile 
+  PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    # ${WORKING_DIRECTORY}
+    # ${STI_BASE_DIR}/include
 )
 
-target_link_libraries(configFile stidevice${STI_LIB_POSTFIX} stinetwork${STI_LIB_POSTFIX})
+target_link_libraries(configFile
+  PRIVATE
+    sti3::stidevice
+    sti3::stinetwork
+)
+
+# target_link_libraries(configFile stidevice${STI_LIB_POSTFIX} stinetwork${STI_LIB_POSTFIX})

@@ -1,0 +1,7 @@
+Install miniconda3
+
+conda create -n sti3 python=3.13
+
+conda activate sti3
+
+conda install -c conda-forge hoganlab::stipy

@@ -251,5 +251,13 @@ else()
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
           )
           # FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hxx")
+  
+  # if(MSVC)
+  #   install(FILES
+  #     $<TARGET_PDB_FILE:stidevice>
+  #     DESTINATION ${CMAKE_INSTALL_BINDIR}  # or ${CMAKE_INSTALL_LIBDIR} or a subdir like debug/
+  #   )
+  # endif()
+
 endif()
 

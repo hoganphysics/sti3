@@ -37,6 +37,9 @@ https://anaconda.org/hoganlab/stipy
 #upload (linux)
 anaconda upload /home/hogan/miniconda3/envs/sti3-build/conda-bld/linux-64/stipy-3.0.1-py313h3fd9d12_0.conda 
 
+# Install:
+
+conda install -c conda-forge hoganlab::stipy
 
 # For local install of package (dev cycle)
 

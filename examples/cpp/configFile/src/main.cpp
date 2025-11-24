@@ -60,13 +60,16 @@ public:
 
 int main(int argc, char** argv)
 {
-	std::string configFileName;
+	std::string configFileName = "testDevice.ini";
 
 	if (argc > 1) {
 		configFileName = argv[1];
 	}
 
 	ConfigFile configFile(configFileName);
+
+	std::string addr = configFile.get<std::string>("TestDevice1", "IP Address", "none");
+	std::cout << "Test: " << addr << std::endl;
 
 	auto device1 = std::make_shared<TestDevice>(configFile.extract("TestDevice1"));
 	auto device2 = std::make_shared<TestDevice>(configFile.extract("TestDevice2"));

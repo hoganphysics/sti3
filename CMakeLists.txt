@@ -67,3 +67,28 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/sti3ConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/sti3
 )
+
+install(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/examples/cpp/
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/sti3/examples/cpp
+
+  FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    PATTERN "*.ini"
+    PATTERN "*.txt"
+    PATTERN "*.cpp"
+    PATTERN "*.json"
+    PATTERN "CMakeLists.txt"
+  
+  # Exclude build directories and sti hidden files
+  PATTERN "build" EXCLUDE
+  PATTERN ".sti" EXCLUDE
+)
+install(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/examples/python/
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/sti3/examples/python
+  PATTERN "build" EXCLUDE
+  PATTERN ".sti" EXCLUDE
+  PATTERN "__pycache__" EXCLUDE
+)

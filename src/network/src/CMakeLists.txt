@@ -384,6 +384,13 @@ else()
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
           )
+
+  # if(MSVC)
+  #   install(FILES
+  #     $<TARGET_PDB_FILE:stinetwork>
+  #     DESTINATION ${CMAKE_INSTALL_BINDIR}  # or ${CMAKE_INSTALL_LIBDIR} or a subdir like debug/
+  #   )
+  # endif()
 endif()
 
 
