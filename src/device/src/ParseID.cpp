@@ -18,13 +18,40 @@ ParseID::ParseID()
     shotType = ShotType::Single;
 }
 
-std::string ParseID::print() const
+std::string ParseID::toString() const
 {
-	std::stringstream pid;
+    std::stringstream pid;
 
-    pid << "pid:" << jobSourceID.print() << "#" << parseTimestamp.time_hh_mm_ss_mmmuuunnn();
+    pid << "pid:" << jobSourceID.toString() << "#" << parseTimestamp.toString();
 
     return pid.str();
+}
+
+ParseID ParseID::fromString(const std::string& pid)
+{
+    ParseID parseID;
+
+    //pid:user@machine#2023/09/15|11:45:09.235.567.129
+
+    size_t pos1 = pid.find(":");
+    size_t pos2 = pid.find("#");
+
+    if (pos1 == std::string::npos || pos2 == std::string::npos || pos2 <= pos1) {
+        return ParseID();   //invalid
+    }
+
+    std::string jobSourceIDstr = pid.substr(pos1 + 1, pos2 - (pos1 + 1));
+    std::string timeStampStr = pid.substr(pos2 + 1);
+
+    parseID.jobSourceID = EngineJobSourceID::fromString(jobSourceIDstr);
+    parseID.parseTimestamp = TimeStamp::fromString(timeStampStr);
+
+    return parseID;
+}
+
+std::string ParseID::print() const
+{
+    return toString();
 }
 
 template<class Archive>

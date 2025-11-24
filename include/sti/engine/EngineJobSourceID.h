@@ -22,6 +22,9 @@ public:
 
 	std::string print() const;
 
+	std::string toString() const;
+	static EngineJobSourceID fromString(const std::string& jobSourceID);
+
 	template<class Archive>
 	void serialize(Archive& archive);
 };
