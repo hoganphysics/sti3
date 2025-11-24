@@ -40,6 +40,9 @@ public:
 
 	std::string print() const;
 
+	std::string toString() const;
+	static ParseID fromString(const std::string& pid);
+
 	template<class Archive>
 	void serialize(Archive& archive);
 

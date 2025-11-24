@@ -179,12 +179,7 @@ std::string TimeStamp::time() const
 
     ts << time_hh_mm_ss(":");
     ts << ".";
-
-    ts << std::setfill('0') << std::setw(3) << millis();
-    ts << " ";
-    ts << std::setfill('0') << std::setw(3) << micros();
-    ts << " ";
-    ts << std::setfill('0') << std::setw(3) << nanos();
+    ts << time_mmmuuunnn(" ");
 
     return ts.str();
 }
