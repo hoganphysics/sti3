@@ -44,3 +44,5 @@ env/
 build_env/
 env1/
 _conda_build/
+dev/
+build-ninja/

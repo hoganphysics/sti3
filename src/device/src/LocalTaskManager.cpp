@@ -147,19 +147,32 @@ void LocalTaskManager::load(const std::string& filename)
 	if (!fs::exists(profilePath)) return;
 
 	std::ifstream file( filename );
-    cereal::XMLInputArchive archive( file );
 
-	LocalTaskManager::StoredTasks storedTasks;
-    archive(storedTasks);   //load from disk
+    if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+        // file exists but is empty
+        return;
+    }
 
-	for (auto& storedTask : storedTasks.tasks) {
-        if (storedTask.status == TaskStatus::Active) {
-            taskScheduler.activateTask(storedTask.taskID);
+    try {
+        cereal::XMLInputArchive archive(file);
+
+        LocalTaskManager::StoredTasks storedTasks;
+        archive(storedTasks);   //load from disk
+
+        for (auto& storedTask : storedTasks.tasks) {
+            if (storedTask.status == TaskStatus::Active) {
+                taskScheduler.activateTask(storedTask.taskID);
+            }
+            else {
+                taskScheduler.deactivateTask(storedTask.taskID);
+            }
         }
-        else {
-            taskScheduler.deactivateTask(storedTask.taskID);
-        }
-	}
+    }
+    catch (const cereal::Exception &e) {
+        //failed to load - likely due to version mismatch or corruption
+        return;
+    }
+
 }
 
 void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
@@ -185,8 +198,7 @@ void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
     }
 
     //Catch sequential calls and call once at the end of the wait period
-    barrier.wait(std::chrono::milliseconds(1000), persistenceRefresher);
-
+     barrier.wait(std::chrono::milliseconds(1000), persistenceRefresher);
 }
 
 //******** Persistence ***********//

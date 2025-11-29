@@ -33,6 +33,7 @@ public:
 
     bool jobRunning();
     void abortJob();
+    void unloadEngine();
     
     void handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);
     void handlePlayReadyMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt);

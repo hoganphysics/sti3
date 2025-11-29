@@ -112,25 +112,72 @@
 			"group": "build"
         },
 		{
-			"type": "gradle",
-			"id": "/home/hogan/code/dev/sti3/src/stijava/stilibbuildsti",
-			"script": "build",
-			"description": "Assembles and tests this project.",
+			"type": "shell",
+			"label": "CMake config (conda sti3-build)",
+			"command": "conda",
+			"args": [
+				"run",
+				"--no-capture-output",
+				"-n", "sti3-build",
+				"cmake",
+				"-G", "Ninja",
+				"-DCMAKE_BUILD_TYPE=Debug",
+				"-DCMAKE_INSTALL_PREFIX:PATH=${STI_DEV_DIR}",
+				"-DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages",
+				".."
+				// add extra -D options here if you actually need them
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build-ninja",
+				"env": {
+					"STI_DEV_DIR": "${workspaceFolder}/dev"
+				}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "CMake build (conda sti3-build)",
+			"command": "conda",
+			"args": [
+				"run",
+				"--no-capture-output",
+				"-n", "sti3-build",
+				"cmake",
+				"--build",
+				".",
+				// "--config", "Debug",
+				"--parallel", "8"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build-ninja"
+			},
 			"group": {
 				"kind": "build"
-				// "isDefault": true
 			},
-			"project": "sti",
-			"buildFile": "/home/hogan/code/dev/sti3/src/stijava/stilib/build.gradle",
-			"rootProject": "sti",
-			"projectFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
-			"workspaceFolder": "/home/hogan/code/dev/sti3/src/stijava/stilib",
-			"args": "",
-			"javaDebug": false,
 			"problemMatcher": [
-				"$gradle"
+				"$gcc"
+			]
+		},
+		{
+			"label": "CMake install (conda sti3-build)",
+			"type": "shell",
+			"command": "conda",
+			"args": [
+				"run", "--no-capture-output", "-n", "sti3-build",
+				"cmake", "--install", "."
 			],
-			"label": "gradle: build"
+			"options": {
+				"cwd": "${workspaceFolder}/build-ninja"
+			},
+			"group": {
+				"kind": "build"
+			},
+			"dependsOn": "CMake build (conda sti3-build)",
+			"problemMatcher": []
 		}
     ],
     "version": "2.0.0"

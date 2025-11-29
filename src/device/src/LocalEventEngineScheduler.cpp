@@ -7,6 +7,7 @@
 
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EventEngineJob.h>
+#include <sti/engine/EngineConflictPolicy.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/ResultsCollector.h>
@@ -102,6 +103,7 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
 
     engineSchedulerMessageListenerDelegate = std::make_shared<LocalEventEngineScheduler::EngineSchedulerMessageListenerDelegate>(this);
 
+    conflictPolicy = std::make_shared<EngineConflictPolicyDefault>();
 
     // sequenceJobs.addListener()
 
@@ -164,6 +166,12 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
 
         engineManagers.add(engineID, manager);        
     }
+}
+
+void LocalEventEngineScheduler::setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy)
+{
+    if (policy == 0) return;
+    conflictPolicy = policy;
 }
 
 EngineJobStatus LocalEventEngineScheduler::getStatus(const ParseID& pid)
@@ -1032,6 +1040,64 @@ bool LocalEventEngineScheduler::isCanceledJob(const STI::Engine::ParseID& parseI
     return (success && job->getStatus() == EngineJobStatus::Canceled);
 }
 
+bool LocalEventEngineScheduler::satisfiesConflictPolicy(const std::shared_ptr<EventEngineJob>& runningJob, 
+                                                        const EventEngineJobType& newJobType,
+                                                        const EngineID& engineID)
+{
+    if (runningJob == 0) return true;
+    if (conflictPolicy == 0) return true;
+
+    if (runningJob->getJobID().type == EventEngineJobType::Parse) {
+        
+        if (newJobType == EventEngineJobType::Parse) {
+            //Parse vs Parse
+            return conflictPolicy->parseWhenParsing(runningJob->getEngineID(), engineID);
+        }
+        else if (newJobType == EventEngineJobType::Play) {
+            //Parse vs Play
+            return conflictPolicy->playWhenParsing(runningJob->getEngineID(), engineID);
+        }
+    }
+    else if (runningJob->getJobID().type == EventEngineJobType::Play) {
+        
+        if (newJobType == EventEngineJobType::Parse) {
+            //Play vs Parse
+            return conflictPolicy->parseWhenPlaying(runningJob->getEngineID(), engineID);
+        }
+        else if (newJobType == EventEngineJobType::Play) {
+            //Play vs Play (this should never happen as only one play job per engine is allowed)
+            return false; //cannot play when playing
+        }
+    }
+    return true;
+}
+
+void LocalEventEngineScheduler::unloadEngines(const EventEngineJobType& type, const EngineID& engineID)
+{
+    //unload other engines according to policy, based on job type running on engineID
+
+    std::shared_ptr<EventEngineManager> manager;
+    std::set<EngineID> engineIDs;
+    engineManagers.getKeys(engineIDs);
+
+    for (auto& id : engineIDs) {
+        if (id == engineID) continue;
+        
+        if (type == EventEngineJobType::Parse && conflictPolicy->unloadAfterParsing(engineID, id)) {
+            // engineID is parsing, unload other engines as per policy
+            if (engineManagers.get(id, manager) && manager != 0) {
+                manager->unloadEngine();
+            }
+        }
+        else if (type == EventEngineJobType::Play && conflictPolicy->unloadAfterPlaying(engineID, id)) {
+            // engineID is playing, unload other engines as per policy
+            if (engineManagers.get(id, manager) && manager != 0) {
+                manager->unloadEngine();
+            }
+        }
+    }
+}
+
 bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
@@ -1040,7 +1106,32 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
     bool freeEngineCheck = engineManagers.get(engineID, manager) && manager != 0 && !manager->jobRunning();
     
     if (!freeEngineCheck) return false;
-    
+
+    std::vector<std::shared_ptr<EventEngineJob>> runningJobList;
+    runningJobs.getValues(runningJobList);
+
+    for (auto& job : runningJobList) {
+      if (!satisfiesConflictPolicy(job, jobID.type, engineID)) {
+          return false;
+      }
+    }
+
+    switch (jobID.type)
+    {
+    case EventEngineJobType::Parse:
+        if (manager->isParsed(jobID.pid)) {
+            //already parsed on this engine
+            return false;
+        }
+        break;
+    case EventEngineJobType::Play:        
+        if (!manager->isParsed(jobID.pid)) {
+            //not parsed on this engine
+            return false;
+        }
+        break;
+    }
+
     if (queuedJobs.get(jobID, job) && job != 0 && manager->submitJob(job)) {
         
         queuedJobs.remove(jobID);
@@ -1050,6 +1141,9 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
         message->toRunningList(job);
         sendMessage(message);
+
+        //unload other engines according to policy
+        unloadEngines(jobID.type, engineID);
        
         return true;
     }

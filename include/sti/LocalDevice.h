@@ -22,6 +22,7 @@
 
 #include <sti/engine/DeviceEventParser.h>
 #include <sti/engine/EngineID.h>
+#include <sti/engine/EngineConflictPolicy.h>
 #include <sti/engine/EventConflictException.h>
 #include <sti/engine/EventParsingException.h>
 #include <sti/engine/Measurement.h>
@@ -162,6 +163,7 @@ public:
 	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
 
 	void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
+	void setEngineConflictPolicy(const std::shared_ptr<STI::Engine::EngineConflictPolicy>& policy);
 
 	std::string getAttribute(const std::string& key);
 	bool setAttribute(const std::string& key, const std::string& value);

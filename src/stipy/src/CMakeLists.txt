@@ -99,7 +99,7 @@ set_target_properties(stipy PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS OFF
     CMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS 1
     BUILD_SHARED_LIBS TRUE
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+    # MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )
 
 target_compile_definitions(stipy PRIVATE
@@ -149,6 +149,9 @@ else()
   #   #LIBRARY DESTINATION ../../lib   #Prepends DESTDIR from command line. Here using ../../ to escape the default /usr/local prefix (hack)
   #   #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   # )
+
+  # Ensure CMAKE_INSTALL_PYTHONDIR is CMake-style (forward slashes)
+  file(TO_CMAKE_PATH "${CMAKE_INSTALL_PYTHONDIR}" CMAKE_INSTALL_PYTHONDIR)
 
   # conda build
   install(TARGETS stipy

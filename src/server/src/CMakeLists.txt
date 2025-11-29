@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
   cmake_policy(SET CMP0091 NEW)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 endif (MSVC)
 
 
@@ -61,10 +62,10 @@ if(USE_STI_DEBUG_POSTFIX)
   set(STI_LIB_POSTFIX "_d")
 endif (USE_STI_DEBUG_POSTFIX)
 
-if (MSVC)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
-endif (MSVC)
+# if (MSVC)
+#     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+#     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+# endif (MSVC)
 
 set(STI_BASE_DIR ../../..)
 

@@ -138,6 +138,13 @@ void EventEngineManager::runJob()
     }
 }
 
+void EventEngineManager::unloadEngine()
+{
+    if (engine != 0) {
+        engine->unload();
+    }
+}
+
 void EventEngineManager::handleParseMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& evt)
 {
     if(jobRunning()) {

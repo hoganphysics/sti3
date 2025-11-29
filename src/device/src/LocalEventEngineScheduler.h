@@ -66,6 +66,7 @@ class ParseID;
 class Shot;
 class LocalEventEngineJob;
 class SequenceJob;
+class EngineConflictPolicy;
 
 
 class LocalEventEngineScheduler : public EventEngineScheduler,
@@ -112,6 +113,8 @@ public:
  
     void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser);
 
+    void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
+
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
@@ -144,6 +147,8 @@ private:
     bool assignJob(const EngineJobID& jobID, const EngineID& engineID);
     void _cancelJob(const EngineJobID& jobID);
     bool isCanceledJob(const STI::Engine::ParseID& parseID);
+    bool satisfiesConflictPolicy(const std::shared_ptr<EventEngineJob>& runningJob, const EventEngineJobType& newJobType, const EngineID& engineID);
+    void unloadEngines(const EventEngineJobType& type, const EngineID& engineID);
 
     bool findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const;
     bool findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const;
@@ -165,6 +170,7 @@ private:
     std::shared_ptr<LocalEventEngineDependencyParser> localDependencyParser;
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+    std::shared_ptr<EngineConflictPolicy> conflictPolicy;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;  
 

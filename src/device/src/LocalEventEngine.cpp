@@ -966,6 +966,23 @@ void LocalEventEngine::resetPlayThread()
 	}
 }
 
+void LocalEventEngine::unload()
+{
+	std::thread unloadThread([this]() {
+		// Attempt unload in background thread
+		std::unique_lock<std::mutex> playLock(playMutex);
+
+		if (getState() != EngineState::Parsed) {
+			//Can only unload when in Parsed state
+			return;
+		}
+
+		for (auto& evt : synchedEvents) {
+			evt->unload();
+		}
+	});
+	unloadThread.detach();	//let it run in background
+}
 
 void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 {

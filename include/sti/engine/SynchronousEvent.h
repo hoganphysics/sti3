@@ -50,6 +50,8 @@ public:
 	void reset();		//must call before playing again
 	void unload();		//call to indicate that the event is no longer loaded
 
+	virtual bool unloadEvent() { return true; }
+
 	bool operator<(const SynchronousEvent& rhs) const { return getTime() < rhs.getTime(); }
 
 private:

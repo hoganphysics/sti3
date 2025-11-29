@@ -55,5 +55,8 @@ conda install --use-local stipy
 # For debugging:
 conda install -n sti3 -c conda-forge gdb
 
-
-
+# Getting local build (VS Code) to work again:
+conda activate sti3-build
+conda install -c conda-forge omniorb omniorb-libs
+conda install -c conda-forge pybind11
+conda install -c conda-forge ninja cmake vs2022_win-64

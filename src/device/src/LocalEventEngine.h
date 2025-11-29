@@ -71,6 +71,7 @@ public:
 	virtual ~LocalEventEngine();
 
 	void clear();
+	void unload();
 	void parse(STI::Engine::EventEngineJob& job);	//include results callback in job?
 
 	void play(STI::Engine::EventEngineJob& job);
@@ -82,6 +83,7 @@ public:
 	void stop();
 	void pause();
 	void unpause(bool retrigger);		//if retrigger, require a trigger before resuming (allows hard time resume)
+
 
 	//debugging;
 //	void addBreakpoint(time);

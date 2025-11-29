@@ -325,6 +325,13 @@ void LocalDevice::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepos
 	}
 }
 
+void LocalDevice::setEngineConflictPolicy(const std::shared_ptr<STI::Engine::EngineConflictPolicy>& policy)
+{
+	if (eventEngineScheduler != 0) {
+		eventEngineScheduler->setEngineConflictPolicy(policy);
+	}
+}
+
 void LocalDevice::sendMessage(const std::shared_ptr<DeviceMessage>& mess)
 {
 	if (deviceMessageDispatcher != 0) {

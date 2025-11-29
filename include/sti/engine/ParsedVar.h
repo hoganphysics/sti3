@@ -8,6 +8,11 @@
 
 #include <string>
 
+/*
+This could be a dynamic variable bound during parsing.
+Keep track of whether getvar() was called during parsing.
+If not, pass through as a dynamic variable to RawEvent.
+*/
 
 namespace STI
 {

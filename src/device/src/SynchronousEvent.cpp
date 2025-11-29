@@ -66,7 +66,9 @@ void SynchronousEvent::load()
 void SynchronousEvent::unload()
 {
 	std::unique_lock<std::mutex> loadLock(evtMutex);
-	loaded = false;
+	if (unloadEvent()) {
+		loaded = false;
+	}
 }
 
 void SynchronousEvent::play()

@@ -45,7 +45,9 @@ void PersistenceTargetHolder::load()
 void PersistenceTargetHolder::save()
 {
     if (target != 0) {
+
         std::filesystem::path filename(basepath);
+        
         filename /= (target->getFilename());
         
         target->save(filename.string());
