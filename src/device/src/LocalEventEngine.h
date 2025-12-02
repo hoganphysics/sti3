@@ -47,7 +47,7 @@ class ResultsCollector;
 class ShotResult;
 class RawEventGroup;
 class FullShotResult;
-
+class EngineTriggerTarget;
 
 class EventTime
 {
@@ -65,6 +65,7 @@ public:
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
 		const std::shared_ptr<STI::Device::AttributeManager>& attributeManager,
 		DeviceEventParser* deviceParser,
+		EngineTriggerTarget* triggerTarget,
 		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection,
 		const std::shared_ptr<STI::Device::PersistenceManager>& persistence);
@@ -114,6 +115,7 @@ public:
 	std::shared_ptr<ParsedDependencyTree> getParsedTree() const;
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
+	EngineTriggerTarget* getTriggerTarget() { return triggerTarget; }
 
 private:
 
@@ -176,6 +178,7 @@ private:
 	EngineID engineID;
 	STI::Device::DeviceID localDeviceID;	//The DeviceID of the host of this engine
 	STI::Engine::ParseID lastParseID;		//The ID of the most recently parsed shot
+	STI::Device::DeviceID triggerDeviceID;	//The DeviceID used for triggering (could be localDeviceID or another device)
 
 	std::shared_ptr<ParseResult> lastParseResult;
 
@@ -183,6 +186,7 @@ private:
 	
 	EventEngineParser parser;
 	DeviceEventParser* deviceParser;
+	EngineTriggerTarget* triggerTarget;
 
 	std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
 	std::shared_ptr<STI::Device::ChannelManager> localChannels;

@@ -132,6 +132,7 @@ public:
 	bool isType(const MixedValueType& mixedValueType) const;
 	bool isType(const std::vector<MixedValueType>& types) const;
 	bool isNumber() const;
+	bool isEmpty() const;
 
 	bool getBoolean() const;
 	int getInt() const;
@@ -143,6 +144,33 @@ public:
 	std::shared_ptr<STI::Utils::BinaryData> getBinary() const;
 	FileID getFileID() const;
 	std::shared_ptr<STI::Utils::Image> getImage() const;
+
+	template<typename T>
+	bool get(T& value, const T& defaultValue) const
+	{
+		try {
+			auto& result = std::get<T>(value_v);
+			value = result;
+			return true;
+		}
+		catch (const std::bad_variant_access& ex) {
+		}
+		value = defaultValue;
+		return false;
+	}
+	
+	template<typename T>
+	bool get(T& value) const
+	{
+		try {
+			auto& result = std::get<T>(value_v);
+			value = result;
+			return true;
+		}
+		catch (const std::bad_variant_access& ex) {
+		}
+		return false;
+	}
 
 	template<typename T> 
 	bool getFlatVector(const std::vector<T>*& flatVector) const

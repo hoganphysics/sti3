@@ -32,6 +32,8 @@ public:
     void appendFrame(const std::string& file, unsigned line, const std::string& func);
     std::vector<StackFrame> getFrames() const;
 
+    std::string print() const;
+
 private:
 
     std::vector<StackFrame> frames;

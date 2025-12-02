@@ -145,7 +145,7 @@ public:
 
     RawEventGroup& addMetaData(const std::string& key, const STI::Utils::MixedValue& data);
     RawEventGroup& addMetaData(const STI::Utils::MetaData& data);
-    const STI::Utils::MixedValue& getMetaData() const;
+    const STI::Utils::MetaData& getMetaData() const;
     STI::Utils::MixedValue getMetaData(const std::string& key) const;
 
 

@@ -50,6 +50,8 @@ void event(const STI::Engine::RawEventTarget& target, double time, const pybind1
 void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 void meas(const STI::Engine::RawEventTarget& target, double time, const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 
+void set_trigger(const STI::Device::DeviceID& deviceID, const STI::Engine::StackTrace& stackTrace);
+void set_trigger(const STI::Engine::RawEventTargetDevice& device, const STI::Engine::StackTrace& stackTrace);
 
 STI::Engine::RawEventTargetDevice dev(const std::string& deviceName);  //abstract device
 STI::Engine::RawEventTargetDevice dev(const std::string& name, const std::string& address, unsigned module);

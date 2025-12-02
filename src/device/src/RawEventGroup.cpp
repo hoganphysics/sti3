@@ -860,10 +860,10 @@ RawEventGroup& RawEventGroup::addMetaData(const STI::Utils::MetaData& data)
     return (*this);
 }
 
-const STI::Utils::MixedValue& RawEventGroup::getMetaData() const
+const STI::Utils::MetaData& RawEventGroup::getMetaData() const
 {
     std::unique_lock groupLock(groupMutex);
-    return metaData.getMetaData();
+    return metaData;
 }
 
 STI::Utils::MixedValue RawEventGroup::getMetaData(const std::string& key) const

@@ -12,13 +12,14 @@ namespace Engine
 class LocalEventEngine;
 class EngineID;
 class DeviceEventParser;
+class EngineTriggerTarget;
 
 
 class EventEngineFactory
 {
 public:
 
-    virtual std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser) = 0;
+    virtual std::shared_ptr<LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget) = 0;
 };
 
 

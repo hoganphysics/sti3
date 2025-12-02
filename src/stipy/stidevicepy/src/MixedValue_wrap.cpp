@@ -49,6 +49,8 @@ void init_MixedValue(py::module& m)
         .def("getType", &MixedValuePy::getType)
         .def("isType", py::overload_cast<const MixedValueType&>(&MixedValuePy::isType, py::const_), py::arg("type"))
         .def("isType", py::overload_cast<const std::vector<MixedValueType>&>(&MixedValuePy::isType, py::const_), py::arg("types"))
+        .def("isNumber", &MixedValuePy::isNumber)
+        .def("isEmpty", &MixedValuePy::isEmpty)
         .def("clear", &MixedValuePy::clear)
         .def("print", &MixedValuePy::print)
         .def("__len__",

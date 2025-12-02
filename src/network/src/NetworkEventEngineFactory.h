@@ -28,10 +28,11 @@ public:
     {
     }
 
-    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const STI::Engine::EngineID& engineID, STI::Engine::DeviceEventParser* deviceParser)
+    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const STI::Engine::EngineID& engineID, 
+        STI::Engine::DeviceEventParser* deviceParser, STI::Engine::EngineTriggerTarget* triggerTarget)
     {
         auto networkEngine = std::make_shared<NetworkEventEngine>(engineID,
-                                            localDeviceID, channelManager, attributeManager, deviceParser, 
+                                            localDeviceID, channelManager, attributeManager, deviceParser, triggerTarget,
                                             messageDispatcher, localCollection, persistenceManager);
         return networkEngine;
     }

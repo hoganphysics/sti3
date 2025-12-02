@@ -80,7 +80,7 @@ bool STI::Network::convertGroup(const std::shared_ptr<RawEventGroup>& rawEventGr
         tRawEventGroup.events.length(0);
     }
 
-    tRawEventGroup.metaData = convert<MixedValue, TMixedValue>(rawEventGroup->getMetaData());
+    tRawEventGroup.metaData = convert<MixedValue, TMixedValue>(rawEventGroup->getMetaData().getMetaData());
 
     convert<ParsedTag, TParsedTag>(rawEventGroup->getTags(), tRawEventGroup.parsedTags);
     convert<ParsedVar, TParsedVar>(rawEventGroup->getVars(), tRawEventGroup.parsedVars);

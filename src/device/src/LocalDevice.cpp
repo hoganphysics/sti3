@@ -594,7 +594,7 @@ void LocalDevice::addEventEngine(const STI::Engine::EngineID& engineID)
 //	auto engine = eventEngineFactory->createEngine(getID(), localChannels, this, deviceMessageDispatcher, localCollection);
 
 	if (eventEngineScheduler != 0) {
-		eventEngineScheduler->addEngine(engineID, this);		
+		eventEngineScheduler->addEngine(engineID, this, this);
 	}
 
 }

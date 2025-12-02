@@ -36,3 +36,12 @@ std::vector<StackFrame> StackTrace::getFrames() const
 {
     return frames;
 }
+
+std::string StackTrace::print() const
+{
+    std::string result;
+    for (const auto& frame : frames) {
+        result += frame.file + ":" + std::to_string(frame.line) + " in " + frame.func + "\n";
+    }
+    return result;
+}

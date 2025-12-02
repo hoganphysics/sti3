@@ -13,6 +13,7 @@
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/EngineTriggerTarget.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ParseResult.h>
@@ -68,13 +69,16 @@ using STI::Engine::FullShotResult;
 LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::DeviceID& localID, 
 								   const std::shared_ptr<STI::Device::ChannelManager>& channels,
 								   const std::shared_ptr<STI::Device::AttributeManager>& attributeManager,
- 								   DeviceEventParser* deviceParser, const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
+ 								   DeviceEventParser* deviceParser, 
+								   EngineTriggerTarget* triggerTarget,
+								   const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher, 
  								   const std::shared_ptr<STI::Device::DeviceCollection>& collection,
 								   const std::shared_ptr<STI::Device::PersistenceManager>& persistence) 
   : MessageGenerator(dispatcher),
   	engineID(engineID),
 	parser(engineID, localID, channels, persistence, deviceParser), 
 	deviceParser(deviceParser),
+	triggerTarget(triggerTarget),
 	resultBuffer(3),
 	localDeviceID(localID),
 	localChannels(channels),
@@ -366,8 +370,9 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	
 	std::shared_ptr<RawEventGroup> eventGroup;
 	shot->getRootEventGroup(eventGroup);
-	
 
+	triggerDeviceID = job.getJobOwner();	//default trigger device is job owner
+	
 	if (eventGroup != 0) {
 		baseEventGroupName = eventGroup->getName();
 		upstreamPartnerEvents = std::make_shared<RawEventGroup>(baseEventGroupName, "");
@@ -378,6 +383,18 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		lastParseResult->stackTraceResult->stackTraceData = eventGroup->getStackTraceData();
 
 		divideEvents(eventGroup, unhandledEvents);
+
+		// Look for delegated trigger in root event group meta data
+		const auto& metaData = eventGroup->getMetaData();
+		if (metaData.contains("delegatedTriggerID")) {
+			STI::Utils::MixedValue delegatedTriggerValue = metaData.getMetaData("delegatedTriggerID");
+
+			DeviceID delegatedTriggerID;
+			if (delegatedTriggerValue.isType(STI::Utils::MixedValueType::String) 
+				&& DeviceID::stringToDeviceID(delegatedTriggerValue.getString(), delegatedTriggerID)) {
+				triggerDeviceID = delegatedTriggerID;
+			}
+		}
 	}
 	else {
 		//Error: null event vector
@@ -826,7 +843,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 
 	// Setup trigger
-	STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
+	// STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
 	masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
 	masterTrigger->arm(ownedTargets);
 
@@ -1060,6 +1077,7 @@ void LocalEventEngine::trigger(const STI::Device::DeviceID& target)
 {
 	//Triggers a specific device (allows any device to act as the system trigger)
 	if (target == localDeviceID) {
+		triggerTarget->requestTrigger(engineID, lastParseID);	// optionally waits for hardware trigger; returns when received
 		trigger();
 	}
 	else {
@@ -1259,9 +1277,11 @@ void LocalEventEngine::releasePlayLock()
 
 void LocalEventEngine::releaseTriggerLock()
 {
+	triggerTarget->cancelTrigger();
 //	std::unique_lock<std::mutex> triggerLock(triggerMutex);
 	triggerCondition.notify_all();			//releases waitForTrigger
 }
+	
 
 void LocalEventEngine::stopOwnedDevices()
 {

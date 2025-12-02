@@ -25,6 +25,7 @@
 #include <sti/engine/EngineConflictPolicy.h>
 #include <sti/engine/EventConflictException.h>
 #include <sti/engine/EventParsingException.h>
+#include <sti/engine/EngineTriggerTarget.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/ParseTicketManager.h>
 #include <sti/engine/RawEvent.h>
@@ -65,7 +66,7 @@ class LocalTaskManager;
 class LocalLogManager;
 
 
-class LocalDevice : public Device, public STI::Engine::DeviceEventParser
+class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
 {
 public:
 	
@@ -143,6 +144,9 @@ public:
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) { parseEventsDefault(events, synchedEvents); }
 	void getEventTargets(std::set<DeviceID>& targetIDs);
+	
+	virtual void requestTrigger(const STI::Engine::EngineID& engineID, const STI::Engine::ParseID& parseID) override { }
+	virtual void cancelTrigger() { }
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, STI::Utils::MixedValue& data);

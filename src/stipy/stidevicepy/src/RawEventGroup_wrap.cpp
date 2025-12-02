@@ -98,7 +98,7 @@ void init_RawEventGroup(py::module& m)
         .def("metadata", [](RawEventGroup& self) {
                 // MixedValuePy value(self.getMetaData());
                 // return py::dict(value.getValue_py());
-                auto& vec = self.getMetaData().getVector();
+                auto& vec = self.getMetaData().getMetaData().getVector();
                 py::dict values;
                 
                 for (auto& tuple : vec) {

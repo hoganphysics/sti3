@@ -26,10 +26,10 @@ public:
     {
     }
 
-    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser)
+    std::shared_ptr<STI::Engine::LocalEventEngine> createEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget)
     {
         auto engine = std::make_shared<STI::Engine::LocalEventEngine>(engineID, localDeviceID, channelManager, attributeManager,
-        deviceParser, messageDispatcher, localCollection, localPersistenceManager);
+                        deviceParser, triggerTarget, messageDispatcher, localCollection, localPersistenceManager);
         return engine;       
     }
 

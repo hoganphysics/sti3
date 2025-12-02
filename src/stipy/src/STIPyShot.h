@@ -58,6 +58,8 @@ public:
     void meas(const STI::Engine::RawEventTarget& target, double time, const pybind11::object& value, 
                 const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 
+    void set_trigger(const STI::Device::DeviceID& deviceID, const STI::Engine::StackTrace& stackTrace);
+
     std::shared_ptr<std::vector<STI::Engine::RawEvent>> getEvents();
     std::vector<STI::Engine::ParsedVar> getVars();
 

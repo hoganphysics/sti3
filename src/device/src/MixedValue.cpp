@@ -419,6 +419,11 @@ bool MixedValue::isNumber() const
 		|| isType(MixedValueType::Boolean) || isType(MixedValueType::Number);
 }
 
+bool MixedValue::isEmpty() const 
+{
+	return type == MixedValueType::Empty;
+}
+
 bool MixedValue::getBoolean() const
 {
 	if (type == MixedValueType::Boolean) {

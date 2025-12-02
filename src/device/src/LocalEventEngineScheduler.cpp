@@ -151,17 +151,16 @@ void LocalEventEngineScheduler::setEngineFactory(const std::shared_ptr<STI::Engi
     for (auto& id : ids) {
         if (engineManagers.get(id, manager) && manager != 0 && manager->getEngine(engine)) {
             
-            addEngine(id, engine->getDeviceParser());  //replaces existing engine with newly created engine (using new factory)
+            addEngine(id, engine->getDeviceParser(), engine->getTriggerTarget());  //replaces existing engine with newly created engine (using new factory)
         }
     }
 }
 
-void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventParser* deviceParser)
+void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget)
 {
     if (eventEngineFactory != 0) {
  
-        std::shared_ptr<LocalEventEngine> engine = eventEngineFactory->createEngine(engineID, deviceParser);
-
+        std::shared_ptr<LocalEventEngine> engine = eventEngineFactory->createEngine(engineID, deviceParser, triggerTarget);
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
         engineManagers.add(engineID, manager);        

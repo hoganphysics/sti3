@@ -48,6 +48,7 @@ void init_STIPyShot(py::module& m)
         .def("meas", py::overload_cast<const RawEventTarget&, double, const pybind11::object&, 
                         const StackTrace&, const std::string&>(&STIPyShot::meas), 
                         py::arg("channel"), py::arg("time"), py::arg("value"), py::arg("stackTrace"), py::arg("scope"))
+        .def("set_trigger", &STIPyShot::set_trigger, py::arg("deviceID"), py::arg("stackTrace"))
 
         .def("rootgroup", py::overload_cast<>(&STIPyShot::group))
         .def("group", py::overload_cast<const std::string&>(&STIPyShot::group), py::arg("fullName"))

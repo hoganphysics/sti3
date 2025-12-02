@@ -205,6 +205,20 @@ void STI::Python::meas(const RawEventTarget& target, double time, const StackTra
     }
 }
 
+void STI::Python::set_trigger(const STI::Device::DeviceID& deviceID, const StackTrace& stackTrace)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->set_trigger(deviceID, stackTrace);
+    }
+}
+
+void STI::Python::set_trigger(const STI::Engine::RawEventTargetDevice& device, const STI::Engine::StackTrace& stackTrace)
+{
+    STI::Python::set_trigger(device.deviceID(), stackTrace);
+}
+
 STI::Engine::RawEventTargetDevice STI::Python::dev(const std::string& deviceName)
 {
     STI::Engine::RawEventTargetDevice device(deviceName);

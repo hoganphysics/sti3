@@ -22,6 +22,7 @@ public:
 		const std::shared_ptr<STI::Device::ChannelManager>& channels,
         const std::shared_ptr<STI::Device::AttributeManager>& attributeManager,
 		STI::Engine::DeviceEventParser* deviceParser,
+		STI::Engine::EngineTriggerTarget* triggerTarget,
 		const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection,
         const std::shared_ptr<STI::Device::PersistenceManager>& persistence);

@@ -31,7 +31,7 @@ public:
     void stop();
     bool allStatusMatch(const TriggerStatus& target);
 
-    STI::Device::DeviceID& triggerID() { return triggerDevice; }
+    const STI::Device::DeviceID& triggerID() const { return triggerDevice; }
 
     //TriggerCallbackTarget
     void ready(const STI::Device::DeviceID& id);

@@ -7,12 +7,15 @@
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/CompressedStackTrace.h>
+#include <sti/engine/StackTraceData.h>
 
 #include "LocalShot.h"
 #include "MixedValuePy.h"
 #include <sti/engine/ParsedTag.h>
 
 #include <pybind11/pybind11.h>
+
+namespace py = pybind11;
 
 using STI::Python::STIPyShot;
 using STI::Python::ParseTicket;
@@ -117,6 +120,23 @@ void STIPyShot::meas(const STI::Engine::RawEventTarget& target, double time, con
     group(scope)->addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
 }
 
+void STIPyShot::set_trigger(const STI::Device::DeviceID& deviceID, const STI::Engine::StackTrace& stackTrace)
+{
+    //set trigger device for shot
+
+    auto tags = group()->getTags();
+    for (const auto& tag : tags) {
+        if (tag.name == "Set Global Trigger") {
+            //already set
+            auto trace = group()->getStackTraceData()->getStackTrace(tag.trace);
+            throw py::value_error("Global trigger device already set for this shot: \n" + trace.print());
+            return;
+        }
+    }
+
+    group()->addMetaData("delegatedTriggerID", STI::Utils::MixedValue(deviceID.getID()));
+    settag("Set Global Trigger", stackTrace);
+}
 
 std::shared_ptr<std::vector<STI::Engine::RawEvent>> STIPyShot::getEvents()
 {

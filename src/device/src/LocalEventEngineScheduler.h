@@ -111,7 +111,7 @@ public:
 
     void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory);
  
-    void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser);
+    void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget);
 
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
 

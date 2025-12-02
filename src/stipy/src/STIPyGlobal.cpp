@@ -223,5 +223,20 @@ void STIPyGlobal::meas(const RawEventTarget& target, double time, const StackTra
     }
 }
 
+void STIPyGlobal::set_trigger(const STI::Device::DeviceID& deviceID, const STI::Engine::StackTrace& stackTrace)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'set_trigger(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot != 0) {
+        currentShot->set_trigger(deviceID, stackTrace);
+    }
+}
+
 std::shared_ptr<STIPyGlobal> STIPyGlobal::instance = 0;
 bool STIPyGlobal::initialized = false;
