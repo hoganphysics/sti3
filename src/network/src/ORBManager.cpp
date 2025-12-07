@@ -228,6 +228,13 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 
 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
 
+		auto realPoa = p_servant->_default_POA();
+		if (realPoa != orbManager->poa) {
+			// you're deactivating via the wrong POA
+			// std::cout << "ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
+		}
+
+
 		try {
 			auto objref = (orbManager->poa->servant_to_id(p_servant));
 

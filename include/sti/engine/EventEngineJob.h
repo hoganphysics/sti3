@@ -48,7 +48,11 @@ public:
 
     virtual std::set<STI::Device::DeviceID> getMissingTargetIDs() const = 0;
 
+    virtual void setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree) = 0;
+    virtual void setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets) = 0;
+
     virtual void addMessages(const std::vector<EngineParsingMessage>& messages) = 0;
+    virtual EngineParsingMessage& addMessage(const EngineParsingMessage& message) = 0;
     virtual EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name) = 0;
     virtual const std::vector<EngineParsingMessage>& getParsingMessages() const = 0;
 

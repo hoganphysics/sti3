@@ -24,7 +24,7 @@
             ]
         },
         {
-            "name": "g++ - Build and debug active file",
+            "name": "Debug Linux (gdb)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/STIServer",
@@ -63,6 +63,58 @@
             //     "${workspaceFolder}/build": "${workspaceFolder}"
             // }
             
-        }
+        },
+        {
+            "name": "Debug STIServer (MSVC, conda sti3)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            // Adjust program path if your .exe lands elsewhere
+            "program": "${workspaceFolder}/build/Debug/STIServer.exe",
+            "cwd": "${workspaceFolder}",
+            "args": ["-f", "${workspaceFolder}/default.ini"],
+            "environment": [
+                // { "name": "CONDA_PREFIX", "value": "C:\\Users\\Jason\\miniconda3\\envs\\sti3-build" },
+                { "name": "PATH", "value": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3\\Library\\bin;;${env:PATH}" }
+            ],
+            // "externalConsole": true,
+            "externalConsole": false,
+            // Make MSVC debugger load PDBs for DLLs from these folders
+            // Include the folder containing stidevice_d.dll and its PDB
+            "symbolSearchPath": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3\\Library\\bin;${env:CONDA_PREFIX}\\Library\\bin;${env:CONDA_PREFIX}\\Library\\lib;${workspaceFolder}\\build\\x64\\Debug",
+            // If PDBs reference original source paths, map them to local
+            // Update keys below to the actual build-time source roots if needed
+            "sourceFileMap": {
+                // "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src"
+                // Example: map a conda build source root to local workspace
+                // "C:\\bld\\sti3-src": "${workspaceFolder}",
+                // Example: map device/network component roots
+                // "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\src\\device\\src": "${workspaceFolder}\\..\\..\\device\\src",
+                // "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\src\\network\\src": "${workspaceFolder}\\..\\..\\network\\src"
+            }
+            // Build using your existing conda-run task
+            // "preLaunchTask": "Build (conda run)",
+            // Inherit env where possible and prepend conda sti3 PATH pieces.
+            // Requires CONDA_PREFIX to be set in the VS Code environment or shell.
+            // "env": {
+            //     "CONDA_DEFAULT_ENV": "sti3",
+            //     // Prepend conda env directories commonly needed on Windows
+            //     "PATH": "${env:CONDA_PREFIX}\\Library\\bin;${env:CONDA_PREFIX}\\Scripts;${env:CONDA_PREFIX};${env:PATH}",
+            //     "CONDA_PREFIX": "${env:CONDA_PREFIX}"
+            // }
+        },
+        // {
+        //     "name": "Attach STIServer (MSVC, conda sti3)",
+        //     "type": "cppvsdbg",
+        //     "request": "attach",
+        //     // Set the process name or pick it at attach time
+        //     "processName": "STIServer.exe",
+        //     "cwd": "${workspaceFolder}",
+        //     "externalConsole": false,
+        //     "env": {
+        //         "CONDA_DEFAULT_ENV": "sti3",
+        //         "PATH": "${env:CONDA_PREFIX}\\Library\\bin;${env:CONDA_PREFIX}\\Scripts;${env:CONDA_PREFIX};${env:PATH}",
+        //         "CONDA_PREFIX": "${env:CONDA_PREFIX}"
+        //     }
+        // }
     ]
 }

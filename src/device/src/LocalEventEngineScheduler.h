@@ -127,13 +127,15 @@ public:
     //Callbacks contain engine references for all top level (owned) devices. When all are reserved, the main engine calls engine->parse on all devices.    
 //    void reserveParse(const ParseID& parseID, ParseTree tree);          //local, when ready; create global dependency graph, reserve parse on all dependents
 //    void reservePlay(ShotID shotID);       //just waits for engine reservations down the chain, then calls engine->play
+    
+    void parseJob(const std::shared_ptr<EventEngineJob>& job);
 
 private:
 
     void addSequenceJob(const std::shared_ptr<SequenceJob>& job);
     void refreshSequenceJobs();
 
-    void parse(const std::shared_ptr<LocalEventEngineJob>& job);
+
     // void play(const ShotID& shotID, const std::shared_ptr<Shot>& shot);
     void stop();
 
@@ -176,7 +178,8 @@ private:
 
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> queuedJobs;
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<EventEngineJob>> runningJobs;
-    STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<EventEngineJob>> completedJobs;
+    STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<EventEngineJob>> completedParseJobs;
+    STI::Utils::OrderedBufferMap<EngineJobID, std::shared_ptr<EventEngineJob>> completedPlayJobs;
     
     STI::Utils::SynchronizedMap<EngineJobID, std::shared_ptr<SequenceJob>> queuedSequenceJobs;
     std::shared_ptr<SequenceJob> currentSequenceJob;

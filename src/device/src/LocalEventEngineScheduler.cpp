@@ -86,9 +86,11 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
                                                     const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
                                                     const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager)
-: MessageGenerator(dispatcher), completedJobs(3), completedSequenceJobs(3), persistenceManager(persistenceManager)
+: MessageGenerator(dispatcher), completedParseJobs(3), completedPlayJobs(3), completedSequenceJobs(3), persistenceManager(persistenceManager)
 {
-    completedJobs.setMaxSize(3);
+    completedParseJobs.setMaxSize(3);
+    completedPlayJobs.setMaxSize(6);
+    completedSequenceJobs.setMaxSize(3);
 
     localDeviceID = localDevice->getID();
     
@@ -127,7 +129,7 @@ bool LocalEventEngineScheduler::getDependencyParser(std::shared_ptr<EventEngineD
 
 void LocalEventEngineScheduler::stop()
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     running = false;
 
     jobCondition.notify_all();
@@ -257,7 +259,8 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
 
     auto job = std::make_shared<LocalEventEngineJob>(parseJobStatus.pid, shot, localDeviceID);
 
-    parse(job);
+    //parse(job);
+    addJob(job);
 
     return parseJobStatus;
 }
@@ -276,7 +279,7 @@ void LocalEventEngineScheduler::transferTimingFiles(StackTraceData& stackTraceDa
     
 }
 
-void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>& job)
+void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& job)
 {
     if (job == 0) return;
 
@@ -305,6 +308,7 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
     else {
         job->addMessage(ParsingMessageType::Error, 24, "Missing Root Group")
             << "Invalid shot: the root event group is missing.";
+        job->markCancelled();
     }
 
     //Create dependency tree
@@ -370,7 +374,7 @@ void LocalEventEngineScheduler::parse(const std::shared_ptr<LocalEventEngineJob>
     job->setDependencies(tree);
     job->setMissingTargets(diff);
 
-    addJob(job);
+    //addJob(job);
 }
 
 
@@ -613,7 +617,8 @@ ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& sho
             << "This sequence does not exist.\n";
     }
 
-    parse(job);
+    // parseJob(job);
+    addJob(job);
 
     return parseJobStatus;
 }
@@ -708,7 +713,12 @@ std::set<EngineJobID> LocalEventEngineScheduler::getJobIDs(const EventEngineJobL
         }
         break;
     case EventEngineJobList::Completed:
-        completedJobs.getKeys(jobIDs);
+        completedParseJobs.getKeys(jobIDs);
+        {
+            std::set<EngineJobID> playJobIDs;
+            completedPlayJobs.getKeys(playJobIDs);
+            jobIDs.insert(playJobIDs.begin(), playJobIDs.end());
+        }
         completedSequenceJobs.getKeys(seqJobIDs);
         break;
     case EventEngineJobList::Archived:
@@ -734,7 +744,12 @@ std::vector<std::shared_ptr<EventEngineJob>> LocalEventEngineScheduler::getJobs(
         runningJobs.getValues(jobs);
         break;
     case EventEngineJobList::Completed:
-        completedJobs.getValues(jobs);
+        completedParseJobs.getValues(jobs);
+        {
+            std::vector<std::shared_ptr<EventEngineJob>> playJobs;
+            completedPlayJobs.getValues(playJobs);
+            jobs.insert(jobs.end(), playJobs.begin(), playJobs.end());
+        }
         break;
     case EventEngineJobList::Archived:
         break;
@@ -771,8 +786,17 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 
         runningJobs.remove(jobID);
         job->markCancelled();
-        
-        archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
+
+        if (jobID.type == EventEngineJobType::Parse) {
+            archivedJobValid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Play) {
+            archivedJobValid = completedPlayJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Sequence) {
+            //should not reach here - sequence jobs handled separately
+        }
+        // archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
@@ -784,7 +808,16 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         queuedJobs.remove(jobID);
         job->markCancelled();
         
-        archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
+        if (jobID.type == EventEngineJobType::Parse) {
+            archivedJobValid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Play) {
+            archivedJobValid = completedPlayJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Sequence) {
+            //should not reach here - sequence jobs handled separately
+        }
+        // archivedJobValid = completedJobs.addAndRemove(jobID, job, archivedJob);
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
@@ -824,7 +857,17 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
     if (runningJobs.get(jobID, job) && job != 0) {
         runningJobs.remove(jobID);
         job->markComplete();
-        bool valid = completedJobs.addAndRemove(jobID, job, archivedJob);
+        
+        bool valid = false;
+        if (jobID.type == EventEngineJobType::Parse) {
+            valid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Play) {
+            valid = completedPlayJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Sequence) {
+            //should not reach here - sequence jobs handled separately
+        }
 
         //Message: Job complete
         auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
@@ -899,8 +942,13 @@ void LocalEventEngineScheduler::assignPlayJobs(const std::set<EngineJobID>& queu
         if (isCanceledJob(jobID.pid)) {
             _cancelJob(jobID);  //cancel play if parse was canceled
         }
+
+        if (!findParsedEngine(jobID.pid, freeEngines, engineID)) {
+            _cancelJob(jobID);  //cancel play if no parsed engine available
+            continue; //no parsed engine available for this play job
+        }
     
-        if (findParsedEngine(jobID.pid, freeEngines, engineID) && assignJob(jobID, engineID)) {
+        if (assignJob(jobID, engineID)) {
             //play job assigned to engineID
             freeEngines.erase(engineID);
 
@@ -979,8 +1027,9 @@ void LocalEventEngineScheduler::assignJobs()
     }
 
     int assignableJobCount;
+    int freeEngineCount;
 
-    do {
+    while (running) {
         engineManagers.getKeys(allEngines);
         queuedJobs.getKeys(queuedJobIDs);
         freeEngines.clear();
@@ -992,7 +1041,11 @@ void LocalEventEngineScheduler::assignJobs()
             }
         }
 
-        if (freeEngines.size() > 0) {
+        // Intial counts before attempting assignment
+        freeEngineCount = freeEngines.size();
+        assignableJobCount = queuedJobs.size();
+
+        if (freeEngineCount > 0 && assignableJobCount > 0) {
             
             //First priority is to run a play event if a free engine is parsed for it, regardless of position in set.
             assignPlayJobs(queuedJobIDs, freeEngines);
@@ -1002,7 +1055,8 @@ void LocalEventEngineScheduler::assignJobs()
             
             std::set<EngineJobID>* queuedParsedJobIDs;
 
-            if (currentSequenceJob !=0 && !currentSequenceJob->isDone() && 
+            if (currentSequenceJob !=0 && 
+                !currentSequenceJob->isDone() && 
                 currentSequenceJob->hasPriority(queuedJobIDs)) {
                 //if current sequence has priority, filter jobs for just the sequence
                 currentSequenceJob->filter(queuedJobIDs, filteredJobsIDs);
@@ -1012,17 +1066,19 @@ void LocalEventEngineScheduler::assignJobs()
                 queuedParsedJobIDs = &queuedJobIDs;
             }
 
-            //assign parse jobs
+            //Finally, assign parse jobs to remaining free engines
             assignParseJobs(*queuedParsedJobIDs, freeEngines);
         }
 
-        assignableJobCount = queuedJobIDs.size();
-
-        if (queuedJobs.size() == 0 || freeEngines.size() == 0 || assignableJobCount < 1) {
-            jobCondition.wait(jobLock);
+        if (queuedJobs.size() == 0 || freeEngines.size() == 0) {
+            jobCondition.wait(jobLock, [this] { return !running || queuedJobs.size() > 0; } );
         }
-
-    } while (running);
+        else if (assignableJobCount == queuedJobs.size() && freeEngineCount == freeEngines.size()) {
+            //no assignments made, wait for job completion or new job
+            //100 ms timeout to recheck
+            jobCondition.wait_for(jobLock, std::chrono::milliseconds(100));
+        }
+    }
 
 }
 
@@ -1034,7 +1090,17 @@ bool LocalEventEngineScheduler::isCanceledJob(const STI::Engine::ParseID& parseI
     jobID.pid = parseID;
 
     std::shared_ptr<EventEngineJob> job;
-    bool success = completedJobs.get(jobID, job) && job != 0;
+    bool success = false;
+
+    if (jobID.type == EventEngineJobType::Parse) {
+        success = completedParseJobs.get(jobID, job) && job != 0;
+    }
+    else if (jobID.type == EventEngineJobType::Play) {
+        success = completedPlayJobs.get(jobID, job) && job != 0;
+    }
+    else if (jobID.type == EventEngineJobType::Sequence) {
+        //should not reach here - sequence jobs handled separately
+    }
 
     return (success && job->getStatus() == EngineJobStatus::Canceled);
 }
@@ -1131,7 +1197,10 @@ bool LocalEventEngineScheduler::assignJob(const EngineJobID& jobID, const Engine
         break;
     }
 
-    if (queuedJobs.get(jobID, job) && job != 0 && manager->submitJob(job)) {
+    if (!queuedJobs.get(jobID, job)) return false;
+    if (job == nullptr) return false;
+
+    if (manager->submitJob(job)) {
         
         queuedJobs.remove(jobID);
         runningJobs.add(jobID, job);
@@ -1244,7 +1313,7 @@ bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<
     jobID.type = EventEngineJobType::Parse;
     jobID.pid = parseID;
 
-    bool success = completedJobs.get(jobID, job);
+    bool success = completedParseJobs.get(jobID, job);
 
     if (!success) {
         success = runningJobs.get(jobID, job);
@@ -1265,7 +1334,7 @@ bool LocalEventEngineScheduler::findJob(const ShotID& shotID, std::shared_ptr<Ev
     jobID.sid = shotID;
     jobID.pid = shotID.parseID;
 
-    bool success = completedJobs.get(jobID, job);
+    bool success = completedPlayJobs.get(jobID, job);
 
     if (!success) {
         success = runningJobs.get(jobID, job);
@@ -1307,7 +1376,7 @@ bool LocalEventEngineScheduler::getParsedEngine(const ParseID& parseID, std::sha
     jobID.type = EventEngineJobType::Parse;
     jobID.pid = parseID;
 
-    if (completedJobs.get(jobID, job) && job !=0 
+    if (completedParseJobs.get(jobID, job) && job !=0 
         && engineManagers.get(job->getEngineID(), manager) && manager != 0) 
     {        
         manager->getEngine(engine);   
@@ -1372,7 +1441,7 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
     jobID.sid = shotID;
     jobID.pid = shotID.parseID;
 
-    if (completedJobs.get(jobID, job) && job !=0 
+    if (completedPlayJobs.get(jobID, job) && job !=0 
         && engineManagers.get(job->getEngineID(), manager) && manager != 0) 
     {       
         manager->getEngine(engine);

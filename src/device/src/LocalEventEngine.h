@@ -121,6 +121,7 @@ private:
 
 	void parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job);
 	void cancelParse(const EngineJobID& jobID);
+	void cancelParseJob(STI::Engine::EventEngineJob& job);
 
 	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	bool isActingServerForDevice(const STI::Device::DeviceID& id);

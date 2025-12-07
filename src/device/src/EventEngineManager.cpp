@@ -114,6 +114,7 @@ void EventEngineManager::runJob()
 
     switch(currentJob->getJobID().type) {
         case EventEngineJobType::Parse:
+            scheduler->parseJob(currentJob);
             currentJob->setEventEngine(engine);
             engine->parse(*currentJob); 
         break;

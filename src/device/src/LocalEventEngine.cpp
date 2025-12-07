@@ -340,8 +340,11 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	isJobOwner = (job.getJobOwner() == localDeviceID);
 
 	if (!setState(EngineState::Parsing)) {
-		setState(EngineState::Error);
-		return;
+		job.addMessage(ParsingMessageType::Error, 24, "Bad engine state")
+			<< "Parsing aborted: The EventEngine was not able to change its state to Parsing. "
+			<< "EngineState: " << print(getState());
+		cancelParseJob(job);
+		return;		//not recoverable
 	}
 
 	std::shared_ptr<Shot> shot;
@@ -350,16 +353,16 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		//Error: no parsed shot
         job.addMessage(ParsingMessageType::Error, 20, "Missing shot")
             << "Parsing aborted: The submited EventEngineJob has a null Shot. There are no events to parse.";
-		setState(EngineState::Error);
-		return;
+		cancelParseJob(job);
+		return;		//not recoverable
 	}
     if (!job.getDependencies(dependencyTree)) {
 		//Error: no tree
 		job.addMessage(ParsingMessageType::Error, 21, "Missing dependency graph")
             << "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
 			<< "Cannot proceed without the event target dependency graph.";
-		setState(EngineState::Error);
-		return;
+		cancelParseJob(job);
+		return;		//not recoverable
 	}
 
 	lastParseID = job.getJobID().pid;
@@ -482,11 +485,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	}
 
 	if (cancelJob) {
-		stop();
-		setState(EngineState::Error);
-		job.markCancelled();
-		cancelled = true;
-		cancelParse(job.getJobID());
+		cancelParseJob(job);
 	}
 
 	if (isJobOwner) {
@@ -527,6 +526,15 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	parseCompleteMessage->setEngine(jobEngine);
 
 	sendMessage(parseCompleteMessage);
+}
+
+void LocalEventEngine::cancelParseJob(STI::Engine::EventEngineJob& job)
+{
+	stop();
+	setState(EngineState::Error);
+	job.markCancelled();
+	cancelled = true;
+	cancelParse(job.getJobID());
 }
 
 void LocalEventEngine::cancelParse(const EngineJobID& jobID)
@@ -1229,6 +1237,9 @@ void LocalEventEngine::measureData()
 void LocalEventEngine::stop()
 {
 	switch (getState()) {
+	case EngineState::Error:
+		cancelled = true;
+		break;
 	case EngineState::Parsing:
 		setState(EngineState::Idle, EngineState::Error);
 		cancelled = true;
