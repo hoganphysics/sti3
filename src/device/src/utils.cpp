@@ -76,21 +76,39 @@ void convertArgs(int argc, char** argvInput, std::vector<std::string>& argvOutpu
 void splitString(const std::string& inString, const std::string& delimiter, std::vector<std::string>& outVector)
 {
 	outVector.clear();
+
+	if (delimiter.empty()) {
+		outVector.push_back(inString);
+		return;
+	}
 	
-	std::string::size_type tBegin = 0;
-	std::string::size_type tEnd = 0;
+	// std::string::size_type tBegin = 0;
+	// std::string::size_type tEnd = 0;
+
+	// // splits the string at every delimiter
+	// while(tEnd != string::npos)
+	// {
+	// 	tBegin = inString.find_first_not_of(delimiter, tEnd);
+	// 	tEnd = inString.find_first_of(delimiter, tBegin);
+		
+	// 	if(tBegin != string::npos)
+	// 		outVector.push_back(inString.substr(tBegin, tEnd - tBegin));
+	// 	else
+	// 		outVector.push_back("");
+	// }
 
 	// splits the string at every delimiter
-	while(tEnd != string::npos)
-	{
-		tBegin = inString.find_first_not_of(delimiter, tEnd);
-		tEnd = inString.find_first_of(delimiter, tBegin);
-		
-		if(tBegin != string::npos)
-			outVector.push_back(inString.substr(tBegin, tEnd - tBegin));
-		else
-			outVector.push_back("");
-	}
+	std::size_t pos = 0;
+    while (true) {
+        std::size_t next = inString.find(delimiter, pos);
+        if (next == std::string::npos) {
+            // push the rest (may be empty if string ends with delimiter)
+            outVector.push_back(inString.substr(pos));
+            break;
+        }
+        outVector.push_back(inString.substr(pos, next - pos));
+        pos = next + delimiter.size();
+    }
 }
 
 bool isUniqueString(const std::string& value, std::vector<std::string>& list)
@@ -204,18 +222,25 @@ std::string replaceChar(const std::string& input, const std::string& removedChar
 
 std::string trim(const std::string& input, std::string white)
 {
-	if (input.length() == 0) {
-		return input;
-	}
+	// default whitespace if caller didn't provide any
+    if (white.empty()) {
+        white = " \t\n\r\f\v";
+    }
+
+	if (input.empty()) {
+        return input;
+    }
+
 
 	std::size_t start = input.find_first_not_of(white);
+	    if (start == std::string::npos) {
+        // input is all whitespace
+        return std::string();
+    }
+
 	std::size_t end = input.find_last_not_of(white);
 
-	if (start == std::string::npos || end == std::string::npos) {
-		return input;
-	}
-
-	return input.substr(start, end + 1);
+	return input.substr(start, end - start + 1);
 }
 
 
