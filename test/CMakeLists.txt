@@ -27,6 +27,7 @@ add_executable(sti3_test_device
   device/localcollection_tests.cpp
   device/eventqueue_tests.cpp
   device/evaluationbarrier_tests.cpp
+  device/localattribute_tests.cpp
   # add more device test .cpp files here
 )
 

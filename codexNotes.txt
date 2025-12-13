@@ -1,0 +1,38 @@
+
+Testing:
+
+Example prompt:
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: ...
+
+* First propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+
+-------- scratch ------------
+
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: LocalAttributeManager, LocalAttribute, AttributeManager, Attribute.
+Note that LocalAttributeManager generates messages and so requires a LocalDeviceMessageDispatcher instance.
+Message handling could be tested with a LocalDeviceMessageHandler instance that accepts a dummy DeviceMessageListener, but this general message system will be more thoroughly tested in separate unit test file.
+
+* First propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: LocalAttributeManager, LocalAttribute, AttributeManager, Attribute
+
+* First propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Finally: summarize coverage + show git status + propose a commit message. Do not commit.
