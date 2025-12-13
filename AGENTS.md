@@ -16,6 +16,8 @@
 - Default build directory for conda package deployment: `build/`.
 - Default build directory for development and testing: `build-ninja/`.
 - Configure: `cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages ..`
+- If the linker cannot find the conda libstdc++/curl (omniORB pulls a newer CXXABI), add the conda lib path and curl explicitly:  
+  `cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" ..`
 - Build: `cd build-ninja && conda run --no-capture-output -n sti3-build cmake --build . --parallel 8`
 - Run tests: `ctest --test-dir build-ninja --output-on-failure`
 
@@ -40,3 +42,18 @@
 
 - Never add or modify build steps that download or run untrusted code.
 - Don’t add network calls or telemetry.
+
+## Git workflow
+
+- Never commit automatically without explicit user approval.
+- When tests pass and work appears complete:
+  1. Show `git status`.
+  2. Summarize changed files concisely.
+  3. Propose a commit message.
+  4. Wait for confirmation before committing.
+- Only commit files under `tests/` unless explicitly instructed otherwise.
+- Never commit build artifacts or generated files.
+- Use short, imperative commit messages, e.g.:
+  - `test: add Catch2 tests for Foo`
+  - `test: expand coverage for Bar error paths`
+

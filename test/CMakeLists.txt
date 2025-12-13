@@ -14,7 +14,19 @@ include(Catch)
 
 # ---- Device tests ----
 add_executable(sti3_test_device
-  device/test_utils.cpp
+  device/utils_tests.cpp
+  device/deviceid_tests.cpp
+  device/mixedvalue_tests.cpp
+  device/configuration_tests.cpp
+  device/cachedvalue_tests.cpp
+  device/synchronizedmap_tests.cpp
+  device/metadata_tests.cpp
+  device/timestamp_tests.cpp
+  device/vectormap_tests.cpp
+  device/fileid_tests.cpp
+  device/localcollection_tests.cpp
+  device/eventqueue_tests.cpp
+  device/evaluationbarrier_tests.cpp
   # add more device test .cpp files here
 )
 
