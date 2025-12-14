@@ -41,6 +41,10 @@ add_executable(sti3_test_device
   device/localfileserver_tests.cpp
   device/virtualfileholder_tests.cpp
   device/virtualfileserver_tests.cpp
+  device/task_tests.cpp
+  device/taskscheduler_tests.cpp
+  device/intervaltask_tests.cpp
+  device/appointmenttask_tests.cpp
   # add more device test .cpp files here
 )
 
