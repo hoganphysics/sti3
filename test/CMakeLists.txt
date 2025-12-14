@@ -48,6 +48,7 @@ add_executable(sti3_test_device
   device/taskscheduler_tests.cpp
   device/intervaltask_tests.cpp
   device/appointmenttask_tests.cpp
+  device/distributer_tests.cpp
   # add more device test .cpp files here
 )
 

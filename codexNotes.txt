@@ -158,3 +158,14 @@ Please write tests for Image.
 
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
 Examples of uses of both FileHolder and BinaryData can be found in their respective test files in test/device/
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for Distributer. In typical usage, ID is a DeviceID and T is a std::shared_ptr<Device> where Device is a LocalDevice instance.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets). Make sure to include tests for FileHolder and BinaryData data options.
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Examples of uses of both LocalCollection and Collector can be found in their respective test files in test/device/, and an example of a dummy LocalDevice is in localchannel_tests_support.h
