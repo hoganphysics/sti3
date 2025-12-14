@@ -46,3 +46,4 @@ env1/
 _conda_build/
 dev/
 build-ninja/
+build-tsan/

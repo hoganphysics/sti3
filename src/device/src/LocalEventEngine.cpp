@@ -100,9 +100,9 @@ LocalEventEngine::LocalEventEngine(const EngineID& engineID, const STI::Device::
 
 LocalEventEngine::~LocalEventEngine()
 {
-	resetPlayThread();
 	engineStateMessageGrouper.stop();
 	clear();
+	resetPlayThread();
 }
 
 void LocalEventEngine::clear()

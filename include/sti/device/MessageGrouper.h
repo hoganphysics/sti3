@@ -71,7 +71,7 @@ public:
 
 private:
 
-    void sendMessage();
+    // void sendMessage();
     void appendMessage(const std::shared_ptr<GroupableMessage<Message>>& mess);   //static polymorphism using CRTP
     virtual void dispatchMessage(const std::shared_ptr<Message>& mess) = 0;
 
@@ -110,8 +110,8 @@ void STI::Device::MessageGrouper<Message>::start()
 template<class Message>
 void STI::Device::MessageGrouper<Message>::stop()
 {
-	if (!running)
-		return;
+    if (!running)
+        return;
 
 	{
 		std::unique_lock<std::mutex> writeLock(cacherMutex);
@@ -128,50 +128,64 @@ void STI::Device::MessageGrouper<Message>::stop()
 template<class Message>
 void STI::Device::MessageGrouper<Message>::addMessage(const std::shared_ptr<Message>& mess)
 {
-    std::unique_lock<std::mutex> writeLock(cacherMutex);
+    if (!running)
+		return;
 
-    if (!running || mess == 0) {
-        return;
-    }
+    std::shared_ptr<Message> immediate;
 
-    //For non-groupable messages, just send immediately
-    if (!mess->groupable()) {
-        dispatchMessage(mess);
-        return;
-    }
-
-    //For groupable messages
-    switch (state)
     {
-    case MessageGrouperState::Idle:
-        message = mess;
-        messageCached = true;
-        state = MessageGrouperState::Warming;
-        condition.notify_all();
-        break;
-    case MessageGrouperState::Warming:
-    case MessageGrouperState::Cooling:
-        if (messageCached) {
-            appendMessage(mess);
+        std::unique_lock<std::mutex> writeLock(cacherMutex);
+
+        if (!running || mess == 0) {
+            return;
+        }
+
+        //For non-groupable messages, just send immediately
+        if (!mess->groupable()) {
+            immediate = mess;
         }
         else {
-            message = mess;
-            messageCached = true;
+            //For groupable messages
+            switch (state)
+            {
+            case MessageGrouperState::Idle:
+                message = mess;
+                messageCached = true;
+                state = MessageGrouperState::Warming;
+                condition.notify_all();
+                break;
+            case MessageGrouperState::Warming:
+            case MessageGrouperState::Sending:
+            case MessageGrouperState::Cooling:
+                if (messageCached) {
+                    appendMessage(mess);
+                }
+                else {
+                    message = mess;
+                    messageCached = true;
+                }
+                break;
+
+            default:
+                break;
+            }
         }
-        break;
-    default:
-        break;
+    }
+    
+    // Dispatch any immediate messages outside of the lock
+    if (immediate != 0) {
+        dispatchMessage(immediate);
     }
 }
 
-template<class Message>
-void STI::Device::MessageGrouper<Message>::sendMessage()
-{
-    if (state == MessageGrouperState::Sending && messageCached) {
-        dispatchMessage(message);
-        messageCached = false;
-    }
-}
+// template<class Message>
+// void STI::Device::MessageGrouper<Message>::sendMessage()
+// {
+//     if (state == MessageGrouperState::Sending && messageCached) {
+//         dispatchMessage(message);
+//         messageCached = false;
+//     }
+// }
 
 template<class Message>
 void STI::Device::MessageGrouper<Message>::appendMessage(const std::shared_ptr<GroupableMessage<Message>>& mess)
@@ -185,9 +199,11 @@ void STI::Device::MessageGrouper<Message>::appendMessage(const std::shared_ptr<G
 template<class Message>
 void STI::Device::MessageGrouper<Message>::messageHandlerLoop()
 {
+    std::unique_lock<std::mutex> writeLock(cacherMutex);
+    
     while (running)
     {
-       	std::unique_lock<std::mutex> writeLock(cacherMutex);
+        std::shared_ptr<Message> toDispatch;
         
         //Idle
         while (state == MessageGrouperState::Idle && running) {
@@ -202,7 +218,16 @@ void STI::Device::MessageGrouper<Message>::messageHandlerLoop()
         //Sending
         if (state == MessageGrouperState::Warming && running) {
             state = MessageGrouperState::Sending;
-            sendMessage();
+            // sendMessage();
+            
+            if (messageCached) {
+                messageCached = false;
+                toDispatch = message;
+
+                writeLock.unlock();
+                dispatchMessage(toDispatch);
+                writeLock.lock();
+            }
             state = MessageGrouperState::Cooling;
         }
         

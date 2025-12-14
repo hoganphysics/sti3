@@ -14,8 +14,47 @@ include(Catch)
 
 # ---- Device tests ----
 add_executable(sti3_test_device
-  device/test_utils.cpp
-  device/test_deviceid.cpp
+  device/utils_tests.cpp
+  device/deviceid_tests.cpp
+  device/mixedvalue_tests.cpp
+  device/configuration_tests.cpp
+  device/configfile_tests.cpp
+  device/cachedvalue_tests.cpp
+  device/synchronizedmap_tests.cpp
+  device/metadata_tests.cpp
+  device/timestamp_tests.cpp
+  device/vectormap_tests.cpp
+  device/fileid_tests.cpp
+  device/localcollection_tests.cpp
+  device/eventqueue_tests.cpp
+  device/evaluationbarrier_tests.cpp
+  device/localattribute_tests.cpp
+  device/localattributemanager_tests.cpp
+  device/devicemessagelistener_tests.cpp
+  device/localdevicemessagehandler_tests.cpp
+  device/localdevicemessagedispatcher_tests.cpp
+  device/devicemessagereceiver_tests.cpp
+  device/messagegrouper_tests.cpp
+  device/channel_tests.cpp
+  device/channelmanager_tests.cpp
+  device/localchannel_tests.cpp
+  device/localchannelmanager_tests.cpp
+  device/localfileholder_tests.cpp
+  device/localbinarydatastream_tests.cpp
+  device/localfileserver_tests.cpp
+  device/binarydata_tests.cpp
+  device/image_tests.cpp
+  device/virtualfileholder_tests.cpp
+  device/virtualfileserver_tests.cpp
+  device/task_tests.cpp
+  device/taskscheduler_tests.cpp
+  device/intervaltask_tests.cpp
+  device/appointmenttask_tests.cpp
+  device/distributer_tests.cpp
+  device/locallogmanager_tests.cpp
+  device/logger_tests.cpp
+  device/logid_tests.cpp
+  device/logrecordfile_tests.cpp
   # add more device test .cpp files here
 )
 
@@ -26,6 +65,8 @@ target_link_libraries(sti3_test_device
     # link your device lib target here:
     # sti3_device
 )
+
+target_include_directories(sti3_test_device PRIVATE ${CMAKE_SOURCE_DIR}/src/device/src)
 
 # target_compile_features(sti3_test_device PRIVATE cxx_std_17)
 

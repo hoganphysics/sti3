@@ -1,0 +1,199 @@
+
+Testing:
+
+Example prompt:
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: ...
+
+* First propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+
+-------- scratch ------------
+
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: LocalAttributeManager, LocalAttribute, AttributeManager, Attribute.
+Note that LocalAttributeManager generates messages and so requires a LocalDeviceMessageDispatcher instance.
+Message handling could be tested with a LocalDeviceMessageHandler instance that accepts a dummy DeviceMessageListener, but this general message system will be more thoroughly tested in separate unit test file.
+
+* First propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+
+
+Write tests for the generic message passing infrastructure.
+You do not need to test all the specific derived types in DeviceMessage.h; a dummy message is fine for testing the message system as a whole.
+For each of these files: DeviceMessageReceiver, LocalDeviceMessageDispatcher, LocalDeviceMessageHandler, DeviceMessageListener,
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Summarize coverage + show git status + propose a commit message. Do not commit.
+Please run all tasks (propose, implement, run, git)
+
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: LocalChannelManager, LocalChannel, ChannelManager, Channel.
+
+* propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+Run tests and iterate until passing.
+Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+Read AGENTS.md and test/AGENTS.md.
+For each of these files: LocalChannelManager, LocalChannel, ChannelManager, Channel,
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Summarize coverage + show git status + propose a commit message. Do not commit.
+Please run all tasks (propose, implement, run, git)
+Note that LocalChannelManager requires a DeviceMessageDispatcher instance.  
+See localattributemanager_tests.cpp for an example of how to use a dummy DeviceMessageDispatcher.
+
+
+
+
+Read AGENTS.md and tests/AGENTS.md.
+Target classes/files: LocalChannelManager, LocalChannel, ChannelManager, Channel.
+Do not stop after planning. Produce the plan briefly (5–10 bullets), then immediately implement the tests, run them, fix failures until passing, and finally show git status + propose a commit message (do not commit).
+If you need a dummy DeviceMessageDispatcher, follow the pattern in tests/localattributemanager_tests.cpp.
+Completion criteria: all new/modified tests pass locally.
+
+
+
+Read AGENTS.md and tests/AGENTS.md. Execute all phases automatically without waiting for confirmation between phases.
+Phase 1: (brief) test plan, 5–10 bullets.
+Phase 2: implement Catch2 tests under tests/ following existing patterns.
+Phase 3: build + run tests; iterate up to 3 fix cycles until passing.
+Phase 4: summarize coverage, show git diff --stat and git status, propose commit message (do not commit).
+Note: LocalChannelManager requires a DeviceMessageDispatcher; copy the dummy pattern from tests/localattributemanager_tests.cpp.
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for LocalFileHolder (with associated abstract base class FileHolder).
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Summarize coverage + show git status + propose a commit message. Do not commit.
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Note that testing LocalFileHolder requires local file I/O. The tests can make a local temp dir and file to test transfering.
+Here is sample code:
+
+#include <filesystem>
+#include <chrono>
+#include <random>
+#include <string>
+
+struct TempDir {
+  std::filesystem::path path;
+
+  TempDir(std::string prefix = "myproj-test-") {
+    auto base = std::filesystem::temp_directory_path();
+
+    // simple unique suffix
+    auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::mt19937_64 rng(static_cast<uint64_t>(now));
+    auto r = rng();
+
+    path = base / (prefix + std::to_string(now) + "-" + std::to_string(r));
+    std::filesystem::create_directories(path);
+  }
+
+  ~TempDir() {
+    std::error_code ec;
+    std::filesystem::remove_all(path, ec); // ignore errors in destructor
+  }
+};
+
+#include "support/temp_dir.h"
+
+TEST_CASE("persistence writes a file", "[io]") {
+  TempDir td;
+  auto file = td.path / "state.bin";
+
+  // call your code, configured to write into td.path
+  // REQUIRE(std::filesystem::exists(file));
+}
+
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for TaskScheduler and Task.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+
+Implement a dummy Task for testing TaskScheduler.
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for BinaryData.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for Image.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets). Make sure to include tests for FileHolder and BinaryData data options.
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Examples of uses of both FileHolder and BinaryData can be found in their respective test files in test/device/
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for Distributer. In typical usage, ID is a DeviceID and T is a std::shared_ptr<Device> where Device is a LocalDevice instance.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets). Make sure to include tests for FileHolder and BinaryData data options.
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Examples of uses of both LocalCollection and Collector can be found in their respective test files in test/device/, and an example of a dummy LocalDevice is in localchannel_tests_support.h
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for LocalLogManager.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+An example of a dummy LocalDevice is in localchannel_tests_support.h and also distributer_tests.cpp
+
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching tag [localchannel] (and related tags) until they pass. Run the full suite only once at the end.
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for ConfigFile.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching relevant tags until they pass. Run the full suite only once at the end.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Note that existing tests of the Configuration base class are in test/devices/configuration_tests.cpp

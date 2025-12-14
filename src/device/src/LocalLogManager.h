@@ -93,6 +93,7 @@ private:
     public:
         
         LogWriterEventQueue(LocalLogManager* manager) : self(manager) { start(); }
+        ~LogWriterEventQueue() { stop(); }
 
         void handleEvent(const std::shared_ptr<LogWriteMessage>& mess)
         {

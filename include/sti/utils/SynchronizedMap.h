@@ -199,6 +199,7 @@ STI::Utils::SynchronizedMap<Key, T>::SynchronizedMap(const KeyPolicy_ptr& Policy
 template<class Key, class T>
 STI::Utils::SynchronizedMap<Key, T>::~SynchronizedMap()
 {
+	eventHandler.stop();
 }
 
 template<class Key, class T>
