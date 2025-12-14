@@ -49,6 +49,10 @@ add_executable(sti3_test_device
   device/intervaltask_tests.cpp
   device/appointmenttask_tests.cpp
   device/distributer_tests.cpp
+  device/locallogmanager_tests.cpp
+  device/logger_tests.cpp
+  device/logid_tests.cpp
+  device/logrecordfile_tests.cpp
   # add more device test .cpp files here
 )
 

@@ -169,3 +169,18 @@ Please write tests for Distributer. In typical usage, ID is a DeviceID and T is 
 
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
 Examples of uses of both LocalCollection and Collector can be found in their respective test files in test/device/, and an example of a dummy LocalDevice is in localchannel_tests_support.h
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for LocalLogManager.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+An example of a dummy LocalDevice is in localchannel_tests_support.h and also distributer_tests.cpp
+
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching tag [localchannel] (and related tags) until they pass. Run the full suite only once at the end.
+
