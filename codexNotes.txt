@@ -75,3 +75,53 @@ Phase 2: implement Catch2 tests under tests/ following existing patterns.
 Phase 3: build + run tests; iterate up to 3 fix cycles until passing.
 Phase 4: summarize coverage, show git diff --stat and git status, propose commit message (do not commit).
 Note: LocalChannelManager requires a DeviceMessageDispatcher; copy the dummy pattern from tests/localattributemanager_tests.cpp.
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for LocalFileHolder (with associated abstract base class FileHolder).
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Summarize coverage + show git status + propose a commit message. Do not commit.
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Note that testing LocalFileHolder requires local file I/O. The tests can make a local temp dir and file to test transfering.
+Here is sample code:
+
+#include <filesystem>
+#include <chrono>
+#include <random>
+#include <string>
+
+struct TempDir {
+  std::filesystem::path path;
+
+  TempDir(std::string prefix = "myproj-test-") {
+    auto base = std::filesystem::temp_directory_path();
+
+    // simple unique suffix
+    auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::mt19937_64 rng(static_cast<uint64_t>(now));
+    auto r = rng();
+
+    path = base / (prefix + std::to_string(now) + "-" + std::to_string(r));
+    std::filesystem::create_directories(path);
+  }
+
+  ~TempDir() {
+    std::error_code ec;
+    std::filesystem::remove_all(path, ec); // ignore errors in destructor
+  }
+};
+
+#include "support/temp_dir.h"
+
+TEST_CASE("persistence writes a file", "[io]") {
+  TempDir td;
+  auto file = td.path / "state.bin";
+
+  // call your code, configured to write into td.path
+  // REQUIRE(std::filesystem::exists(file));
+}
+

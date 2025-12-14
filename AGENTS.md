@@ -27,6 +27,11 @@
 - Prefer `std::unique_ptr` / `std::shared_ptr` over raw owning pointers.
 - Follow existing naming in this file for new code.
 
+## C++ header files
+
+- Header gaurds should always use the #ifndef, #define, #endif convention instead of #pragma once.
+- The preprocessor name for the header gaurd should be the fully qualified NAMESPACE_CLASS_H, in all caps.
+
 ## C++ Testing
 
 - Use Catch2.

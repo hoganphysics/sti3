@@ -37,6 +37,7 @@ add_executable(sti3_test_device
   device/channelmanager_tests.cpp
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
+  device/localfileholder_tests.cpp
   # add more device test .cpp files here
 )
 
