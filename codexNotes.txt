@@ -184,3 +184,16 @@ An example of a dummy LocalDevice is in localchannel_tests_support.h and also di
 
 * For the build/test loop: rebuild as needed, but only run Catch2 tests matching tag [localchannel] (and related tags) until they pass. Run the full suite only once at the end.
 
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for ConfigFile.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching relevant tags until they pass. Run the full suite only once at the end.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Note that existing tests of the Configuration base class are in test/devices/configuration_tests.cpp
