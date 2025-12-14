@@ -41,6 +41,7 @@ add_executable(sti3_test_device
   device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp
   device/binarydata_tests.cpp
+  device/image_tests.cpp
   device/virtualfileholder_tests.cpp
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp

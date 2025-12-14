@@ -147,3 +147,14 @@ Please write tests for BinaryData.
 * Run tests and iterate until passing.
 
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for Image.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets). Make sure to include tests for FileHolder and BinaryData data options.
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Examples of uses of both FileHolder and BinaryData can be found in their respective test files in test/device/
