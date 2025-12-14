@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STI_DEVICE_LOCALCHANNEL_TESTS_SUPPORT_H
+#define STI_DEVICE_LOCALCHANNEL_TESTS_SUPPORT_H
 
 #include <sti/LocalDevice.h>
 #include <sti/device/Channel.h>
@@ -87,3 +88,5 @@ private:
 };
 
 } // namespace local_channel_test_support
+
+#endif

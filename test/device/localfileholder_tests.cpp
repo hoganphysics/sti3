@@ -2,49 +2,24 @@
 
 #include <sti/utils/LocalFileHolder.h>
 
+#include "fileholder_tests_support.h"
+
 #include <filesystem>
-#include <fstream>
-#include <iterator>
-#include <random>
+#include <memory>
 #include <string>
-#include <chrono>
 
 using STI::Utils::FileHolder;
 using STI::Utils::LocalFileHolder;
 
 namespace {
 
-// Simple RAII temp directory for file I/O tests.
-struct TempDir {
-    std::filesystem::path path;
-
-    TempDir(std::string prefix = "sti3-localfileholder-") {
-        auto base = std::filesystem::temp_directory_path();
-        auto now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        std::mt19937_64 rng(static_cast<uint64_t>(now));
-        auto suffix = rng();
-        path = base / (prefix + std::to_string(now) + "-" + std::to_string(suffix));
-        std::filesystem::create_directories(path);
-    }
-
-    ~TempDir() {
-        std::error_code ec;
-        std::filesystem::remove_all(path, ec);
-    }
-};
-
 constexpr const char* kOriginA = "origin-A";
 constexpr const char* kOriginB = "origin-B";
-
-std::string readFileToString(const std::filesystem::path& file) {
-    std::ifstream ifs(file, std::ios::binary);
-    return std::string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
-}
 
 } // namespace
 
 TEST_CASE("LocalFileHolder: construction, equality, and filename") {
-    TempDir td;
+    fileholder_test_support::TempDir td;
     LocalFileHolder holderA(kOriginA, td.path.string(), "file.bin");
     LocalFileHolder holderB(kOriginA, td.path.string(), "file.bin");
     LocalFileHolder holderC(kOriginA, td.path.string(), "other.bin");
@@ -58,7 +33,7 @@ TEST_CASE("LocalFileHolder: construction, equality, and filename") {
 }
 
 TEST_CASE("LocalFileHolder: open, write, exists, size, and md5") {
-    TempDir td;
+    fileholder_test_support::TempDir td;
     LocalFileHolder holder(kOriginA, td.path.string(), "payload.dat");
     const std::string payload = "hello world\n";
 
@@ -76,7 +51,7 @@ TEST_CASE("LocalFileHolder: open, write, exists, size, and md5") {
 }
 
 TEST_CASE("LocalFileHolder: transferFile copies content and updates metadata") {
-    TempDir td;
+    fileholder_test_support::TempDir td;
     auto sourcePath = td.path / "src";
     auto destPath = td.path / "dest";
     LocalFileHolder source(kOriginA, sourcePath.string(), "source.bin");
@@ -91,14 +66,14 @@ TEST_CASE("LocalFileHolder: transferFile copies content and updates metadata") {
     REQUIRE(source.transferFile(destination));
 
     CHECK(destination->exists());
-    CHECK(readFileToString(destination->getFilename()) == payload);
+    CHECK(fileholder_test_support::readFileToString(destination->getFilename()) == payload);
     // Source metadata adopts destination origin and creationTime.
     CHECK(source.getID().origin == kOriginB);
     CHECK(source.getID().creationTime == destination->getID().creationTime);
 }
 
 TEST_CASE("LocalFileHolder: transferFile failure cases") {
-    TempDir td;
+    fileholder_test_support::TempDir td;
     auto sourcePath = td.path / "src";
     auto destPath = td.path / "dest";
     LocalFileHolder source(kOriginA, sourcePath.string(), "source.bin");
@@ -125,7 +100,7 @@ TEST_CASE("LocalFileHolder: transferFile failure cases") {
 }
 
 TEST_CASE("LocalFileHolder: maxBufferSize constant") {
-    TempDir td;
+    fileholder_test_support::TempDir td;
     LocalFileHolder holder(kOriginA, td.path.string(), "file.bin");
     CHECK(holder.maxBufferSize() == 16384);
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STI_DEVICE_LOCALATTRIBUTE_TESTS_SUPPORT_H
+#define STI_DEVICE_LOCALATTRIBUTE_TESTS_SUPPORT_H
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
@@ -68,3 +69,5 @@ private:
 };
 
 } // namespace local_attribute_test_support
+
+#endif

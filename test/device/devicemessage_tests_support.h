@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STI_DEVICE_DEVICEMESSAGE_TESTS_SUPPORT_H
+#define STI_DEVICE_DEVICEMESSAGE_TESTS_SUPPORT_H
 
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/DeviceMessageListener.h>
@@ -68,3 +69,5 @@ private:
 };
 
 } // namespace device_message_test_support
+
+#endif

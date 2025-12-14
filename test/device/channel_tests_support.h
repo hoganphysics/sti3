@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STI_DEVICE_CHANNEL_TESTS_SUPPORT_H
+#define STI_DEVICE_CHANNEL_TESTS_SUPPORT_H
 
 #include <sti/device/Channel.h>
 #include <sti/utils/MixedValue.h>
@@ -40,3 +41,5 @@ private:
     STI::Utils::MixedValue lastValue;
     STI::Utils::MetaData metaData;
 };
+
+#endif
