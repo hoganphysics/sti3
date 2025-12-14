@@ -137,3 +137,13 @@ Please write tests for TaskScheduler and Task.
 
 Implement a dummy Task for testing TaskScheduler.
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for BinaryData.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.

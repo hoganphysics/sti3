@@ -38,7 +38,9 @@ add_executable(sti3_test_device
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
   device/localfileholder_tests.cpp
+  device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp
+  device/binarydata_tests.cpp
   device/virtualfileholder_tests.cpp
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp
@@ -55,6 +57,8 @@ target_link_libraries(sti3_test_device
     # link your device lib target here:
     # sti3_device
 )
+
+target_include_directories(sti3_test_device PRIVATE ${CMAKE_SOURCE_DIR}/src/device/src)
 
 # target_compile_features(sti3_test_device PRIVATE cxx_std_17)
 
