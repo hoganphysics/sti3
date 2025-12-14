@@ -13,17 +13,19 @@ export CMAKE_PREFIX_PATH="$PREFIX;$PREFIX/Library"
 # Point CMake to the host prefix (libs live here). This is cross-platform friendly.
 export OPENSSL_ROOT_DIR="$PREFIX"
 
-#  -DCMAKE_BUILD_TYPE=Debug \
-#-DCMAKE_CXX_FLAGS_DEBUG="-Og -g3 -fno-omit-frame-pointer" \
+  # -DCMAKE_BUILD_TYPE=Debug \
+  # -DCMAKE_CXX_FLAGS_DEBUG="-Og -g3 -fno-omit-frame-pointer" \
 
 # -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 #-DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-omit-frame-pointer" \
 
+  # -DCMAKE_BUILD_TYPE=Release \
+  # -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-omit-frame-pointer" \
 
 cmake -S "$SRC_DIR" -B "$BUILD_DIR" -G Ninja \
   -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-omit-frame-pointer" \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_CXX_FLAGS_DEBUG="-Og -g3 -fno-omit-frame-pointer" \
   -DCMAKE_INSTALL_DO_STRIP=OFF \
   -DCMAKE_INSTALL_BINDIR=bin \
   -DCMAKE_INSTALL_LIBDIR=lib \

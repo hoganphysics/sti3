@@ -15,6 +15,7 @@ include(Catch)
 # ---- Device tests ----
 add_executable(sti3_test_device
   device/test_utils.cpp
+  device/test_deviceid.cpp
   # add more device test .cpp files here
 )
 

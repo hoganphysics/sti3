@@ -11,8 +11,7 @@
 				"-S", ".", "-B", "build",
 				"-DCMAKE_BUILD_TYPE=Debug",
 				"-DCMAKE_PREFIX_PATH=$CONDA_PREFIX",
-				"-Dsti3_DIR=$CONDA_PREFIX/lib/cmake/sti3",
-				"--debug-find"
+				"-Dsti3_DIR=$CONDA_PREFIX/lib/cmake/sti3"
 			],
 			"options": { "cwd": "${workspaceFolder}" },
 			"problemMatcher": ["$gcc"],
