@@ -33,6 +33,10 @@ add_executable(sti3_test_device
   device/localdevicemessagehandler_tests.cpp
   device/localdevicemessagedispatcher_tests.cpp
   device/devicemessagereceiver_tests.cpp
+  device/channel_tests.cpp
+  device/channelmanager_tests.cpp
+  device/localchannel_tests.cpp
+  device/localchannelmanager_tests.cpp
   # add more device test .cpp files here
 )
 

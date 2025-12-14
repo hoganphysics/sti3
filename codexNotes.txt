@@ -37,3 +37,41 @@ For each of these files: DeviceMessageReceiver, LocalDeviceMessageDispatcher, Lo
 * Run tests and iterate until passing.
 * Summarize coverage + show git status + propose a commit message. Do not commit.
 Please run all tasks (propose, implement, run, git)
+
+
+Read AGENTS.md and test/AGENTS.md.
+For these files: LocalChannelManager, LocalChannel, ChannelManager, Channel.
+
+* propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Then implement Catch2 tests in test/ following existing patterns.
+Run tests and iterate until passing.
+Finally: summarize coverage + show git status + propose a commit message. Do not commit.
+
+
+Read AGENTS.md and test/AGENTS.md.
+For each of these files: LocalChannelManager, LocalChannel, ChannelManager, Channel,
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Run tests and iterate until passing.
+* Summarize coverage + show git status + propose a commit message. Do not commit.
+Please run all tasks (propose, implement, run, git)
+Note that LocalChannelManager requires a DeviceMessageDispatcher instance.  
+See localattributemanager_tests.cpp for an example of how to use a dummy DeviceMessageDispatcher.
+
+
+
+
+Read AGENTS.md and tests/AGENTS.md.
+Target classes/files: LocalChannelManager, LocalChannel, ChannelManager, Channel.
+Do not stop after planning. Produce the plan briefly (5–10 bullets), then immediately implement the tests, run them, fix failures until passing, and finally show git status + propose a commit message (do not commit).
+If you need a dummy DeviceMessageDispatcher, follow the pattern in tests/localattributemanager_tests.cpp.
+Completion criteria: all new/modified tests pass locally.
+
+
+
+Read AGENTS.md and tests/AGENTS.md. Execute all phases automatically without waiting for confirmation between phases.
+Phase 1: (brief) test plan, 5–10 bullets.
+Phase 2: implement Catch2 tests under tests/ following existing patterns.
+Phase 3: build + run tests; iterate up to 3 fix cycles until passing.
+Phase 4: summarize coverage, show git diff --stat and git status, propose commit message (do not commit).
+Note: LocalChannelManager requires a DeviceMessageDispatcher; copy the dummy pattern from tests/localattributemanager_tests.cpp.
