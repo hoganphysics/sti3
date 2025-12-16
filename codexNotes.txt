@@ -212,3 +212,18 @@ Please write tests for LocalProfileManager.
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
 Note that this class requires a LocalDeviceCollection instance; an example can be found in test/devices/distributer_tests.cpp
 
+
+DeviceMessageRelayer
+ServerMessageRelayer
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for DeviceMessageRelayer.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching relevant tags until they pass. Run the full suite only once at the end.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+DeviceMessageRelayer uses extensive template meta programming. The only use of this class in the library is ServerMessageRelayer. You don't have to test the actual ServerMessageRelayer but can mock it as needed.
+Note that there are examples of use of the message architecture in localdevicemessagedispatcher_tests.cpp.
