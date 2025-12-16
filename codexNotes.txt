@@ -197,3 +197,18 @@ Please write tests for ConfigFile.
 
 Do not stop after planning. Implement the tests, run them, fix failures until passing.
 Note that existing tests of the Configuration base class are in test/devices/configuration_tests.cpp
+
+
+
+
+Read AGENTS.md and test/AGENTS.md.
+Please write tests for LocalProfileManager.
+* Propose a test plan (major behaviors + edge cases, 5–10 bullets).
+* Implement Catch2 tests in test/ following existing patterns.
+* Add the new test cpp file to CMakeList.txt.
+* Run tests and iterate until passing.
+* For the build/test loop: rebuild as needed, but only run Catch2 tests matching relevant tags until they pass. Run the full suite only once at the end.
+
+Do not stop after planning. Implement the tests, run them, fix failures until passing.
+Note that this class requires a LocalDeviceCollection instance; an example can be found in test/devices/distributer_tests.cpp
+
