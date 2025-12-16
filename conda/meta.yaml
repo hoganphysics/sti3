@@ -6,7 +6,7 @@ source:
   path: ..
 
 build:
-  number: 14
+  number: 18
 
 requirements:
   build:
@@ -25,6 +25,7 @@ requirements:
     - curl 
     - boost-cpp
     - omniorb 
+    - catch2
   run:
     # - libgcc             # [linux]
     # - libstdcxx          # [linux]
@@ -34,6 +35,11 @@ requirements:
     - curl
     # - boost-cpp
     - vc14_runtime       # [win]
+    
+# test:
+#   commands:
+#     - ctest --test-dir build --output-on-failure
+
 
 # test:
 #   commands:

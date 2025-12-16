@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 # If you're already setting this in the top-level, you can omit it here.
 # project(STI3Tests LANGUAGES CXX)
+project(sti3_test_device VERSION 3.0.1 DESCRIPTION "sti3_test_device" LANGUAGES CXX)
+include(GNUInstallDirs)
 
 find_package(Catch2 3 CONFIG REQUIRED)
 
@@ -9,8 +11,6 @@ if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
 endif()
 
-# Catch2 provides a CMake helper to auto-register tests with ctest
-include(Catch)
 
 # ---- Device tests ----
 add_executable(sti3_test_device
@@ -58,6 +58,15 @@ add_executable(sti3_test_device
   # add more device test .cpp files here
 )
 
+
+# target_include_directories(sti3_test_device PRIVATE ${CMAKE_SOURCE_DIR}/src/device/src)
+
+target_include_directories(sti3_test_device PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/device/src>
+)
+
+
+
 target_link_libraries(sti3_test_device
   PRIVATE
     Catch2::Catch2WithMain
@@ -66,11 +75,29 @@ target_link_libraries(sti3_test_device
     # sti3_device
 )
 
-target_include_directories(sti3_test_device PRIVATE ${CMAKE_SOURCE_DIR}/src/device/src)
+# set_target_properties(sti3_test_device PROPERTIES
+#   BUILD_RPATH "$<TARGET_FILE_DIR:sti3::stidevice>"
+# )
+
+set_target_properties(sti3_test_device PROPERTIES
+  BUILD_RPATH "\$ORIGIN/../src/device/src"
+  BUILD_RPATH_USE_ORIGIN TRUE
+)
+
+
+
+# Catch2 provides a CMake helper to auto-register tests with ctest
+include(Catch)
+
+catch_discover_tests(sti3_test_device
+  DISCOVERY_MODE PRE_TEST
+)
+
+
 
 # target_compile_features(sti3_test_device PRIVATE cxx_std_17)
 
-catch_discover_tests(sti3_test_device)
+# catch_discover_tests(sti3_test_device)
 
 # # ---- Network tests ----
 # add_executable(sti3_test_network

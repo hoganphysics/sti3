@@ -16,15 +16,34 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 	addOutputChannel(0, MixedValueType::Double, "coil current");		//channel 0, must be a double
 	addOutputChannel(1, MixedValueType::Int, "temperature setpoint");	//channel 1, must be an integer
 	addOutputChannel(2, MixedValueType::Number, "supply voltage");		//channel 2, any numeric type
-	addOutputChannel(3, MixedValueType::Vector, "list output");			//channel 3, vector tuple of outputs, format checked by device
-	addOutputChannel(4, MixedValueType::String, "string output");
 
-	// Input channels (make measurements that are recorded by the device)
-	addInputChannel(10, MixedValueType::Number, "thermocouple voltage");		// measures a number (input)
-
-	// Input/Output channel
-	addInputChannel(11, MixedValueType::Number, MixedValueType::Vector, "vector args");	//measures a number (input); accepts a vector argument (output)
-	addInputChannel(12, MixedValueType::Vector, MixedValueType::Number, "vector measurement");	//measures a vector (input), accepts a number argument (output)
+	addAttribute("Downsample", 1)
+		.setSetter([this](const std::string& value) -> bool {
+			int ds;
+			if (STI::Utils::stringToValue(value, ds) && ds > 0) {
+				downsample = ds;
+				return true;	//success
+			}
+			return false;	//illegal value; set failed
+		})
+		.setRefresher([this]() -> std::string {
+			//refresh string attribute value with downsample integer
+			return STI::Utils::valueToString(downsample);
+		});
+	
+	addAttribute("Height", 1)
+		.setSetter([this](const std::string& value) -> bool {
+			double val;
+			if (STI::Utils::stringToValue(value, val)) {
+				height = val;
+				return true;	//success
+			}
+			return false;	//illegal value; set failed
+		})
+		.setRefresher([this]() -> std::string {
+			//refresh string attribute value with downsample integer
+			return STI::Utils::valueToString(height);
+		});
 
 }
 
@@ -49,30 +68,6 @@ bool TestDevice::writeChannel(short channel, const STI::Utils::MixedValue& value
 		std::cout << "Ch:" << channel << ", " << "supply voltage: " << value.getNumber() << std::endl;
 		success = true;
 		break;
-	case 3:
-		//list output
-		std::cout << "Ch:" << channel << ", " << "list output: ";
-		
-		//Example of vector type checking
-		if (value.isType({ MixedValueType::Number, MixedValueType::String, MixedValueType::Boolean })) {
-			//do something...
-		}
-
-		//print args
-		{
-			auto& tuple = value.getVector();
-			for (auto& arg : tuple) {
-				std::cout << "  " << arg.print() << std::endl;
-			}
-			std::cout << std::endl;
-			success = true;
-		}
-		break;
-	case 4:
-		//string output
-		std::cout << "Ch:" << channel << ", " << "string output: " << value.getString() << std::endl;
-		success = true;
-		break;
 	default:
 		break;
 	}
@@ -84,34 +79,5 @@ bool TestDevice::readChannel(short channel, const STI::Utils::MixedValue& value,
 {
 	bool success = false;
 
-	switch (channel) {
-	case 10:
-		//thermocouple voltage
-		data.setValue(34.5);
-		success = true;
-		break;
-	case 11:
-		//Input/Output
-		//vector arguments (output)
-		if (value.isType({ MixedValueType::Number, MixedValueType::String })) {
-			data.setValue(12.2 * value.getVector().at(0).getNumber());	//double measurement (input)
-			success = true;	
-		}
-		break;
-	case 12:
-		//Input/Output
-		{
-			auto arg = value.getNumber();	//number argument (output)
-			
-			data.addValue(3.2 * arg);	//vector measurement (input)
-			data.addValue("example string result");
-			data.addValue(true);
-
-			success = true;
-		}
-		break;
-	default:
-		break;
-	}
 	return success;
 }

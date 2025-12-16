@@ -134,3 +134,35 @@ TEST_CASE("MixedValue: getters convert when possible") {
     CHECK(fidOut.path == "/tmp");
     CHECK(fidOut.origin == "originA");
 }
+
+TEST_CASE("MixedValue: isType(Number) recurses for non-numeric values", "[mixedvalue]") {
+    MixedValue stringValue(std::string("abc"));
+
+    // Calling isType(Number) triggers isNumber(), which calls isType(Number) again.
+    // On non-number types this infinite recursion overflows the stack.
+    CHECK_FALSE(stringValue.isType(MixedValueType::Number));
+}
+
+TEST_CASE("MixedValue: empty comparison does not fall through to boolean logic", "[mixedvalue]") {
+    MixedValue emptyA;
+    MixedValue emptyB;
+
+    // Should be equal purely because both are Empty; no boolean fallback.
+    CHECK(emptyA == emptyB);
+}
+
+TEST_CASE("MixedValue: null Binary and Image values compare equal", "[mixedvalue]") {
+    MixedValue nullBinaryA(std::shared_ptr<STI::Utils::BinaryData>{});
+    MixedValue nullBinaryB(std::shared_ptr<STI::Utils::BinaryData>{});
+    CHECK(nullBinaryA == nullBinaryB);  // currently fails because operator== requires non-null
+
+    MixedValue nullImageA(std::shared_ptr<STI::Utils::Image>{});
+    MixedValue nullImageB(std::shared_ptr<STI::Utils::Image>{});
+    CHECK(nullImageA == nullImageB);  // currently fails for the same reason
+}
+
+TEST_CASE("MixedValue: getBoolean treats empty as falsy", "[mixedvalue]") {
+    MixedValue emptyValue;
+    CHECK(emptyValue.isEmpty());
+    CHECK_FALSE(emptyValue.getBoolean());  // currently returns true via NaN != 0
+}

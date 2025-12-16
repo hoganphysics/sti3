@@ -47,6 +47,16 @@ bool LocalProfileManager::getProfile(const std::string& name, std::shared_ptr<Pr
 	return profileMap.get(name, profile) && profile != 0;
 }
 
+bool LocalProfileManager::loadProfile(const std::string& name)
+{
+	return loadProfile(name, ProfileType::All, false);
+}
+
+bool LocalProfileManager::saveCurrentProfile(const std::string& name)
+{
+	return saveCurrentProfile(name, ProfileType::All, false);
+}
+
 bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)
 {
 	if (profile == 0) return false;
@@ -107,6 +117,9 @@ bool LocalProfileManager::loadProfile(const std::string& name, const ProfileType
 	return success;
 }
 
+// 
+// 
+
 bool LocalProfileManager::saveCurrentProfile(const std::string& name, const ProfileType& type, bool saveDependentDevices)
 {
 	auto profile = std::make_shared<Profile>();
@@ -120,7 +133,8 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 	}
 
 	//save to disk
-	persistenceRefresher();
+	// persistenceRefresher();
+	saveProfile(profile);
 
 	if (saveDependentDevices && deviceCollection != 0) {
 		std::set<DeviceID> ids;
@@ -147,6 +161,14 @@ bool LocalProfileManager::saveCurrentProfile(const std::string& name, const Prof
 std::string LocalProfileManager::getDependentProfileName(const std::string& name) const
 {
 	/*
+
+	Examples:
+	localhost_0_STI_Server/profileName
+	//localhost/0/STI_Server:profileName
+	@localhost/0/STI_Server@localhost/1/frame1:profileName
+
+	@localhost/1/frame1@localhost/0/STI_Server#profileName
+	#safe
 	
 	#safe
 	//safe
@@ -156,7 +178,43 @@ std::string LocalProfileManager::getDependentProfileName(const std::string& name
 	//  #safe
 	//
 	// return deviceID.getID() + "/" + name;
-	return name; //using absolute name for now; need to switch to relative (above), with option for absolute for 'safe', etc.
+
+
+	//Check for global profile, starting with #
+	//Othwise, make relative by prepending device context
+
+	auto pos = name.find_first_of("#");
+	if (pos != std::string::npos && pos == 0) {
+		//global profile detected
+		return name;
+	}
+
+	auto posColon = name.find_first_of("#");
+	std::vector<std::string> tokens;
+
+	if (posColon != std::string::npos) {
+		STI::Utils::splitString(name, "#", tokens);
+	}
+	else {
+		tokens.push_back(name);
+	}
+	auto baseName = tokens.back();	// The actual profile name
+	tokens.pop_back();
+
+	//add this device's context to the end
+	tokens.push_back(deviceID.getID());
+
+	//add path
+	std::stringstream s;
+
+	for (auto& id : tokens) {
+		s << "@" << id;
+	}
+	s << "#" << baseName;
+
+	return s.str();
+
+	// return name; //using absolute name for now; need to switch to relative (above), with option for absolute for 'safe', etc.
 }
 
 std::string LocalProfileManager::getFilename()
@@ -174,7 +232,7 @@ std::string getProfileFilename(const std::string& profileName)
 {
 	std::stringstream s;
 
-	std::string forbidden = "<>:\"\\|?*";
+	std::string forbidden = "<>:\"\\|?*/ ";
     s << STI::Utils::replaceChars(profileName, forbidden, "_");
 	s << ".json";
 	

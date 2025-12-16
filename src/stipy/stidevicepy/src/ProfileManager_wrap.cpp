@@ -16,6 +16,7 @@
 namespace py = pybind11;
 
 using STI::Device::Profile;
+using STI::Device::ProfileType;
 using STI::Device::ProfileManager;
 using STI::Python::ProfilePy;
 
@@ -51,10 +52,21 @@ void init_ProfileManager(py::module& m)
                 return self.saveProfile(profile);
             }, py::arg("profile"))
 
-        .def("loadProfile", &ProfileManager::loadProfile, py::arg("name"), py::arg("type"), py::arg("loadDependentDevices"))
-        .def("saveCurrentProfile", &ProfileManager::saveCurrentProfile, py::arg("name"), py::arg("type"), py::arg("saveDependentDevices"))
+        .def("loadProfile", py::overload_cast<const std::string&, const ProfileType&, bool>(&ProfileManager::loadProfile), py::arg("name"), py::arg("type"), py::arg("loadDependentDevices"))
+        .def("saveCurrentProfile", py::overload_cast<const std::string&, const ProfileType&, bool>(&ProfileManager::saveCurrentProfile), py::arg("name"), py::arg("type"), py::arg("saveDependentDevices"))
         
+        // .def("loadProfile", py::overload_cast<const std::string&>(&ProfileManager::loadProfile), py::arg("name"))
+        // .def("saveCurrentProfile", py::overload_cast<const std::string&>(&ProfileManager::saveCurrentProfile), py::arg("name"))
+
+        .def("loadProfile", [](ProfileManager& self, const std::string& name) {
+                return self.loadProfile(name, ProfileType::All, false);
+            }, py::arg("name") )
+        .def("saveCurrentProfile", [](ProfileManager& self, const std::string& name) {
+                return self.saveCurrentProfile(name, ProfileType::All, false);
+            }, py::arg("name") )
+
         ;
 
 }
+
 

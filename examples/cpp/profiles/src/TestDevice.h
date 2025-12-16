@@ -14,6 +14,8 @@ public:
 	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
 	bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
+	int downsample;
+	double height;
 };
 
 

@@ -38,6 +38,9 @@ public:
     bool loadProfile(const std::string& name, const ProfileType& type, bool loadDependentDevices);
     bool saveCurrentProfile(const std::string& name, const ProfileType& type, bool saveDependentDevices);
 
+    bool loadProfile(const std::string& name);
+    bool saveCurrentProfile(const std::string& name);
+
 private:
 
     //PersistenceTarget
