@@ -104,6 +104,7 @@ bool MixedValue::operator==(const MixedValue& other) const
 	{
 	case MixedValueType::Empty:
 		result = true;	//both are empty
+		break;
 	case MixedValueType::Boolean:
 		result = ( getBoolean() == other.getBoolean() );
 		break;
@@ -152,6 +153,9 @@ bool MixedValue::operator==(const MixedValue& other) const
 			if (bin != 0 && otherBin != 0) {
 				result = (*bin) == (*otherBin);
 			}
+			else if (bin == 0 && otherBin == 0) {
+				result = true;	//both are null
+			}
 		}
 		break;
 
@@ -171,6 +175,9 @@ bool MixedValue::operator==(const MixedValue& other) const
 
 			if (image != 0 && otherImage != 0) {
 				result = (*image) == (*otherImage);
+			}
+			else if (image == 0 && otherImage == 0) {
+				result = true;	//both are null
 			}
 		}
 		break;
@@ -415,8 +422,8 @@ bool MixedValue::isType(const std::vector<MixedValueType>& types) const
 
 bool MixedValue::isNumber() const
 {
-	return isType(MixedValueType::Int) || isType(MixedValueType::Double)
-		|| isType(MixedValueType::Boolean) || isType(MixedValueType::Number);
+	return type == MixedValueType::Int || type == MixedValueType::Double 
+		|| type == MixedValueType::Boolean || type == MixedValueType::Number;
 }
 
 bool MixedValue::isEmpty() const 
@@ -433,6 +440,9 @@ bool MixedValue::getBoolean() const
 		}
 		catch (const std::bad_variant_access& ex) {
 		}
+	}
+	else if (type == MixedValueType::Empty) {
+		return false;
 	}
 	return (getNumber() != 0);
 }
@@ -669,6 +679,9 @@ std::string MixedValue::print() const
 			}
 			result << ")";
 		}
+		break;
+	case MixedValueType::Number:
+		result << getNumber();
 		break;
 	default:
 		//this should never happen

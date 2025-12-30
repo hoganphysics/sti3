@@ -88,6 +88,54 @@ LocalChannel& LocalChannel::addMetaDataList(const std::string& key, const std::v
     return addMetaData(key, value);
 }
 
+LocalChannel& LocalChannel::setColor(const std::string& color)
+{
+    return addMetaData("color", STI::Utils::MixedValue(color));
+}
+
+LocalChannel& LocalChannel::setUnits(const std::string& units)
+{
+    return addMetaData("units", STI::Utils::MixedValue(units));
+}
+
+LocalChannel& LocalChannel::setMinValue(const STI::Utils::MixedValue& value)
+{
+    return addMetaData("minValue", value);
+}
+
+LocalChannel& LocalChannel::setMaxValue(const STI::Utils::MixedValue& value)
+{
+    return addMetaData("maxValue", value);
+}
+
+LocalChannel& LocalChannel::setVectorFormat(const std::vector<STI::Utils::MixedValueType>& types)
+{
+    if (getOutputType() != STI::Utils::MixedValueType::Vector) {
+        //not a vector channel
+        return (*this);
+    }
+
+    STI::Utils::MixedValue typeList;
+    // typeList.setValue(types);
+
+    // typeList.
+    for (const auto& t : types) {
+        typeList.addValue(STI::Utils::MixedValue::TypeToString(t));
+    }
+
+    return addMetaData("vectorFormat", typeList);
+}
+
+LocalChannel& LocalChannel::setValueHint(const std::string& hint)
+{
+    return addMetaData("valueHint", STI::Utils::MixedValue(hint));
+}
+
+LocalChannel& LocalChannel::setHelp(const std::string& help)
+{
+    return addMetaData("help", STI::Utils::MixedValue(help));
+}
+
 const STI::Utils::MixedValue& LocalChannel::getMetaData() const
 {
     std::unique_lock<std::mutex> channelLock(chMutex);

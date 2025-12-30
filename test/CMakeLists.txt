@@ -1,0 +1,119 @@
+cmake_minimum_required(VERSION 3.20)
+
+# If you're already setting this in the top-level, you can omit it here.
+# project(STI3Tests LANGUAGES CXX)
+project(sti3_test_device VERSION 3.0.1 DESCRIPTION "sti3_test_device" LANGUAGES CXX)
+include(GNUInstallDirs)
+
+find_package(Catch2 3 CONFIG REQUIRED)
+
+if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
+  find_package(sti3 CONFIG REQUIRED)
+endif()
+
+
+# ---- Device tests ----
+add_executable(sti3_test_device
+  device/utils_tests.cpp
+  device/deviceid_tests.cpp
+  device/mixedvalue_tests.cpp
+  device/configuration_tests.cpp
+  device/configfile_tests.cpp
+  device/cachedvalue_tests.cpp
+  device/synchronizedmap_tests.cpp
+  device/metadata_tests.cpp
+  device/timestamp_tests.cpp
+  device/vectormap_tests.cpp
+  device/fileid_tests.cpp
+  device/localcollection_tests.cpp
+  device/eventqueue_tests.cpp
+  device/evaluationbarrier_tests.cpp
+  device/localattribute_tests.cpp
+  device/localattributemanager_tests.cpp
+  device/devicemessagelistener_tests.cpp
+  device/devicemessagerelayer_tests.cpp
+  device/localdevicemessagehandler_tests.cpp
+  device/localdevicemessagedispatcher_tests.cpp
+  device/devicemessagereceiver_tests.cpp
+  device/messagegrouper_tests.cpp
+  device/channel_tests.cpp
+  device/channelmanager_tests.cpp
+  device/localchannel_tests.cpp
+  device/localchannelmanager_tests.cpp
+  device/localfileholder_tests.cpp
+  device/localbinarydatastream_tests.cpp
+  device/localfileserver_tests.cpp
+  device/localprofilemanager_tests.cpp
+  device/binarydata_tests.cpp
+  device/image_tests.cpp
+  device/virtualfileholder_tests.cpp
+  device/virtualfileserver_tests.cpp
+  device/task_tests.cpp
+  device/taskscheduler_tests.cpp
+  device/intervaltask_tests.cpp
+  device/appointmenttask_tests.cpp
+  device/distributer_tests.cpp
+  device/locallogmanager_tests.cpp
+  device/logger_tests.cpp
+  device/logid_tests.cpp
+  device/logrecordfile_tests.cpp
+  # add more device test .cpp files here
+)
+
+
+# target_include_directories(sti3_test_device PRIVATE ${CMAKE_SOURCE_DIR}/src/device/src)
+
+target_include_directories(sti3_test_device PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/device/src>
+)
+
+
+
+target_link_libraries(sti3_test_device
+  PRIVATE
+    Catch2::Catch2WithMain
+    sti3::stidevice
+    # link your device lib target here:
+    # sti3_device
+)
+
+# set_target_properties(sti3_test_device PROPERTIES
+#   BUILD_RPATH "$<TARGET_FILE_DIR:sti3::stidevice>"
+# )
+
+set_target_properties(sti3_test_device PROPERTIES
+  BUILD_RPATH "\$ORIGIN/../src/device/src"
+  BUILD_RPATH_USE_ORIGIN TRUE
+)
+
+
+
+# Catch2 provides a CMake helper to auto-register tests with ctest
+include(Catch)
+
+catch_discover_tests(sti3_test_device
+  DISCOVERY_MODE PRE_TEST
+)
+
+
+
+# target_compile_features(sti3_test_device PRIVATE cxx_std_17)
+
+# catch_discover_tests(sti3_test_device)
+
+# # ---- Network tests ----
+# add_executable(sti3_test_network
+#   network/test_network_example.cpp
+#   # add more network test .cpp files here
+# )
+
+# target_link_libraries(sti3_test_network
+#   PRIVATE
+#     Catch2::Catch2WithMain
+#     # link your network lib target here:
+#     # sti3_network
+# )
+
+# target_compile_features(sti3_test_network PRIVATE cxx_std_17)
+
+# catch_discover_tests(sti3_test_network)

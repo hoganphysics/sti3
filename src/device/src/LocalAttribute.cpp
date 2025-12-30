@@ -109,8 +109,6 @@ bool LocalAttribute::_isAllowed(const std::string& value)
 
 bool LocalAttribute::_refresh(const std::string& oldValue)
 {
-    bool changed = false;
-
     std::string newValue;
 
     if (refreshValueCallback(newValue)) {
@@ -123,9 +121,8 @@ bool LocalAttribute::_refresh(const std::string& oldValue)
     //Fires refresh message if value_ has changed.
     if (value_.compare(oldValue) != 0) {
         _fireRefreshEvent();
-        changed = true;
     }
-    return changed;
+    return true;    //success, even if value did not change
 }
 
 void LocalAttribute::_fireRefreshEvent()

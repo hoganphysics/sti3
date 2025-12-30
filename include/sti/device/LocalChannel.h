@@ -54,6 +54,15 @@ public:
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
 	LocalChannel& addMetaDataList(const std::string& key, const std::vector<std::string>& values);
 
+	LocalChannel& setColor(const std::string& color);
+	LocalChannel& setUnits(const std::string& units);
+	LocalChannel& setMinValue(const STI::Utils::MixedValue& value);
+	LocalChannel& setMaxValue(const STI::Utils::MixedValue& value);
+	LocalChannel& setVectorFormat(const std::vector<STI::Utils::MixedValueType>& types);
+
+	LocalChannel& setValueHint(const std::string& hint);
+	LocalChannel& setHelp(const std::string& help);
+
 	void addRefreshListener(ChannelRefreshListener* listener);
 
 	// void saveLastInValue(const STI::Utils::MixedValue& value);

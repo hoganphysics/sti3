@@ -25,7 +25,6 @@ int main(int argc, char** argv)
 
 	hub->addDevice(device);
 	hub->run();     	//blocks until ctrl-c or Device terminates
-	hub->shutdown();
 
 	return 0;
 }

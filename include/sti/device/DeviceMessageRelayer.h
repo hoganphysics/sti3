@@ -8,7 +8,7 @@
 #include <sti/device/DeviceID.h>
 
 #include <memory>
-
+#include <mutex>
 
 namespace STI
 {
@@ -73,6 +73,7 @@ public:
     void addFilter(const std::function<bool(const std::shared_ptr<M>&)>& filter) 
     {
         //match
+        std::lock_guard<std::mutex> lock(filtersMutex);
         DeviceMessageRelayer<M>::filters.push_back(filter);
     }
 
@@ -90,9 +91,13 @@ public:
             return; //loop detected
         }
 
-        //apply filters
-        for (auto& relayQ : DeviceMessageRelayer<M>::filters) {
-            if(!relayQ(message)) return;
+        {
+            std::lock_guard<std::mutex> lock(filtersMutex);
+
+            //apply filters
+            for (auto& relayQ : DeviceMessageRelayer<M>::filters) {
+                if(!relayQ(message)) return;
+            }
         }
 
         //relay message
@@ -125,6 +130,7 @@ public:
 private:
 
     std::vector<std::function<bool(const std::shared_ptr<M>&)>> filters;
+    std::mutex filtersMutex;
 
     DeviceID relayerID;
     DeviceMessageListenerID listenerID;

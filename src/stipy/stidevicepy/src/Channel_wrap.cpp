@@ -9,6 +9,7 @@
 #include <memory>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -87,7 +88,45 @@ void init_Channel(py::module& m)
                 //return ch;        //error: use of deleted function ‘STI::Device::LocalChannel::LocalChannel(const STI::Device::LocalChannel&’
                 self.addMetaData(key, v);
                 return;
-            } ) //, py::return_value_policy::reference)
+            }, py::arg("key"), py::arg("value") ) //, py::return_value_policy::reference)
+        .def("setColor", 
+            
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::string& color) {
+                self->setColor(color);
+                return self;
+            }, py::arg("color") )
+        .def("setUnits", 
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::string& units) {
+                self->setUnits(units);
+                return self;
+            }, py::arg("units") )
+        .def("setMinValue", 
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const MixedValuePy& value) {
+                const MixedValue& v = static_cast<const MixedValue&>(value);
+                self->setMinValue(v);
+                return self;
+            }, py::arg("minValue") )
+        .def("setMaxValue", 
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const MixedValuePy& value) {
+                const MixedValue& v = static_cast<const MixedValue&>(value);
+                self->setMaxValue(v);
+                return self;
+            }, py::arg("maxValue") )
+        .def("setVectorFormat", 
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::vector<STI::Utils::MixedValueType>& types) {
+                self->setVectorFormat(types);
+                return self;
+            }, py::arg("types"))
+        .def("setValueHint", 
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::string& hint) {
+                self->setValueHint(hint);
+                return self;
+            }, py::arg("hint") )
+        .def("setHelp",
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::string& help) {
+                self->setHelp(help);
+                return self;
+            }, py::arg("help") )
         ;
 
 

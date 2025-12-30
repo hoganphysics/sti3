@@ -24,6 +24,7 @@ ConfigFile::ConfigFile(const std::string& filename)
 void ConfigFile::load(const std::string& filename, bool autocreate)
 {
 	filename_ = filename;
+	clear();	//clear existing data if this is a reload
 	load(autocreate);
 }
 
@@ -62,14 +63,30 @@ void ConfigFile::load(bool autocreate)
 
 	while (success && getline(configFile, line))
 	{
-		equalsLoc = line.find_first_of("=");
-		sectionHeadStart = line.find_first_of("[");
+
+		std::string lineNoComment = line;
+		auto hashPos = lineNoComment.find_first_of("#");
+		if (hashPos != std::string::npos) {
+			lineNoComment = lineNoComment.substr(0, hashPos);
+		}
+
+		equalsLoc = lineNoComment.find_first_of("=");
+		sectionHeadStart = lineNoComment.find_first_of("[");
 
 		//Sections are written as [...] with no preceeding = sign
 		if (sectionHeadStart != std::string::npos && equalsLoc == std::string::npos) {
 			//new section found
-			sectionHeadEnd = line.find_first_of("]");
-			auto nextSection = line.substr(sectionHeadStart + 1, sectionHeadEnd - sectionHeadStart - 1);
+			sectionHeadEnd = lineNoComment.find_first_of("]");
+			
+			std::string sectionNameBody;
+			if (sectionHeadEnd != std::string::npos) {
+				sectionNameBody = lineNoComment.substr(sectionHeadStart + 1,
+					sectionHeadEnd - sectionHeadStart - 1);
+			} else {
+				sectionNameBody = lineNoComment.substr(sectionHeadStart + 1);
+			}
+
+			auto nextSection = STI::Utils::trim(sectionNameBody);
 
 			//check for relative subsection
 			auto found = nextSection.find_first_of(".");

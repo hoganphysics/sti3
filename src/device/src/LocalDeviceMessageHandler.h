@@ -10,6 +10,7 @@
 #include <set>
 #include <memory>
 #include <map>
+#include <mutex>
 
 
 namespace STI
@@ -66,6 +67,7 @@ private:
 
 	using ListenerTypes = std::map<DeviceMessageType, unsigned>;
 	ListenerTypes listenersTypes;
+	mutable std::mutex listenersTypesMutex;
 
 	STI::Utils::SynchronizedMap<DeviceMessageType, std::shared_ptr<AbstractMessageListenerGroup>> messageListenerGroups;
 

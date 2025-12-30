@@ -25,12 +25,11 @@ int main(int argc, char **argv)
 
 	auto device = std::make_shared<SimpleDevice>(config);
 
-	std::string nameServiceAddr = "192.168.1.4:2809";   //OmniORB NameService
+	std::string nameServiceAddr = "192.168.1.109:2809";   //OmniORB NameService
 	auto hub = std::make_shared<NetworkDeviceHub>(nameServiceAddr);
 
 	hub->addDevice(device);
 	hub->run();     	//blocks until ctrl-c or Device terminates
-	hub->shutdown();
 
 	return 0;
 }

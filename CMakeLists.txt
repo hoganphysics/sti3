@@ -7,6 +7,7 @@ message("STI_BASE_DIR: ${STI_BASE_DIR}")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+option(STI3_BUILD_TESTS "Build STI3 unit tests" ON)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -26,6 +27,14 @@ add_subdirectory(src/network/src)
 add_subdirectory(src/server/src)
 add_subdirectory(src/stipy/stidevicepy/src)
 add_subdirectory(src/stipy/src)
+
+
+if(STI3_BUILD_TESTS)
+  include(CTest)          # enables BUILD_TESTING option + ctest integration
+  enable_testing()
+  add_subdirectory(test)
+endif()
+
 
 #install(TARGETS stipybase stidevicepy stipy
 #    LIBRARY DESTINATION "src/stipy/bin"

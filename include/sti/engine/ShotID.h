@@ -19,6 +19,8 @@ public:
 
 	ShotID() {}
 	ShotID(const ParseID& pid, const EngineJobSourceID& jobSourceID) : parseID(pid), jobSourceID(jobSourceID) {}
+	ShotID(const ParseID& pid, const EngineJobSourceID& jobSourceID, const STI::Utils::TimeStamp& submissionTime) 
+	: parseID(pid), jobSourceID(jobSourceID), submissionTime(submissionTime) {}
 
 	ParseID parseID;
 	EngineJobSourceID jobSourceID;

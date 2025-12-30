@@ -24,6 +24,8 @@ LocalDeviceMessageHandler::~LocalDeviceMessageHandler()
 void LocalDeviceMessageHandler::addListenerGroup(const DeviceMessageType& type, 
 	std::shared_ptr<AbstractMessageListenerGroup>& listenerGroup)
 {
+	std::lock_guard<std::mutex> listenerTypesLock(listenersTypesMutex);
+
 	if (messageListenerGroups.add(type, listenerGroup)) {
 		listenersTypes[type] = listenerGroup->size();
 	}
@@ -31,6 +33,8 @@ void LocalDeviceMessageHandler::addListenerGroup(const DeviceMessageType& type,
 
 void LocalDeviceMessageHandler::removeListenerGroup(const DeviceMessageType& type)
 {
+	std::lock_guard<std::mutex> listenerTypesLock(listenersTypesMutex);
+
 	messageListenerGroups.remove(type);
 	listenersTypes[type] = 0;
 }
@@ -51,6 +55,8 @@ bool LocalDeviceMessageHandler::hasListeners(const std::shared_ptr<DeviceMessage
 {
 	if (mess == 0) return false;
 
+	std::lock_guard<std::mutex> listenerTypesLock(listenersTypesMutex);
+
 	auto it = listenersTypes.find(mess->getType());
 
 	return (it != listenersTypes.end() && it->second > 0);
@@ -59,6 +65,8 @@ bool LocalDeviceMessageHandler::hasListeners(const std::shared_ptr<DeviceMessage
 ///List of event type that this handler responds to (based on which listeners are currently attached)
 void LocalDeviceMessageHandler::getListenerTypes(std::set<DeviceMessageType>& types)
 {
+	std::lock_guard<std::mutex> listenerTypesLock(listenersTypesMutex);
+	
 	types.clear();
 
 	for (auto& t : listenersTypes) {

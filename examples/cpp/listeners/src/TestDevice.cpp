@@ -54,7 +54,7 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 		receiver->addListener<EngineJobUpdateDeviceMessage>(serverID, "TestDeviceJobUpdateListener", 
 			[](const std::shared_ptr<EngineJobUpdateDeviceMessage>& mess) {
 				std::cout << "Engine message: " 
-					<< STI::Engine::EngineJobStatusToString(mess->getEngineJob()->getStatus()) << std::endl;
+					<< STI::Engine::EngineJobStatusToString(mess->getStatus()) << std::endl;
 			});
 		
 
