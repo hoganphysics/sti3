@@ -9,11 +9,23 @@ class TestDevice(stidevicepy.LocalDevice):
         # *** Define channels *** #
 
         # Output channels (the device's output actuators)
-        self.addOutputChannel(0, stipy.MixedValueType.Double, "coil current")	    #channel 0, must be a double
+        ch = self.addOutputChannel(0, stipy.MixedValueType.Double, "coil current")	    #channel 0, must be a double
+        ch.setUnits("A")    #set unit to Amperes
+        ch.setMinValue(stipy.MixedValue(-10.0))  #set minimum value
+        ch.setMaxValue(stipy.MixedValue(10.0))   #set maximum value
+        ch.setColor("blue")    #set color for GUI representation
+        ch.setValueHint("[-10.0 to 10.0 A]")   #set value hints for GUI representation
+        
         self.addOutputChannel(1, stipy.MixedValueType.Int, "temperature setpoint")  #channel 1, must be an integer
         self.addOutputChannel(2, stipy.MixedValueType.Number, "supply voltage")		#channel 2, any numeric type
-        self.addOutputChannel(3, stipy.MixedValueType.Vector, "list output")		#channel 3, vector tuple of outputs, format checked by device
+        
+        ch = self.addOutputChannel(3, stipy.MixedValueType.Vector, "list output")		#channel 3, vector tuple of outputs, format checked by device
+        ch.setVectorFormat([stipy.MixedValueType.Number, stipy.MixedValueType.String, stipy.MixedValueType.Boolean])  #set allowed types for vector elements
+        ch.setColor("green")  #set color for GUI representation
+        ch.setValueHint("[Frequency (MHz), name, enable]")   #set value hints for GUI representation
+
         self.addOutputChannel(4, stipy.MixedValueType.String, "string output")
+        self.addOutputChannel(5, stipy.MixedValueType.Boolean, "enable current")      #channel 5, boolean output
 
         # Input channel (make measurements that are recorded by the device)
         self.addInputChannel(10, stipy.MixedValueType.Double, "thermocouple voltage")   # measures a double
@@ -52,6 +64,10 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 4:
             #string output
             print("Ch:" + str(channel) + ", " + "string output: " + str(value))
+            success = True
+        elif channel == 5:
+            #enable current (Boolean)
+            print("Ch:" + str(channel) + ", " + "enable current: " + str(value))
             success = True
 
         return success

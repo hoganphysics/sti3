@@ -67,6 +67,19 @@ def _flatten(self):
 
 setattr(MixedValue, 'flatten', _flatten)
 
+def _node_to_value(node: MixedValueNode) -> MixedValue:
+    if node.type == MixedValueType.Double or node.type == MixedValueType.Number:
+        value = float(node.value)
+    elif node.type == MixedValueType.Int:
+        value = int(node.value)
+    elif node.type == MixedValueType.String:
+        value = str(node.value)
+    elif node.type == MixedValueType.Boolean:
+        value = bool(node.value)
+    else:
+        value = node.value
+    return MixedValue(value)
+
 def _unflatten_vector(nodes: List[MixedValueNode], level) -> MixedValue:
     # Vectors can be nested arbitrarily deeply.
     # The index array indicates the position within the nested hierarchy
@@ -79,7 +92,7 @@ def _unflatten_vector(nodes: List[MixedValueNode], level) -> MixedValue:
     while i < len(nodes):
         if len(nodes[i].index) - 1 == level or len(nodes[i].index) == 0:
             # catches missing index information to avoid infinite recursion
-            out.addValue(nodes[i].value)
+            out.addValue(_node_to_value(nodes[i]))
             i += 1
         else:
             # recurse into sublist
@@ -110,7 +123,7 @@ def _unflatten(nodes: List[MixedValueNode]) -> MixedValue:
     nodes.sort()
 
     if len(nodes) == 1:
-        return MixedValue(nodes[0].value)
+        return _node_to_value(nodes[0])
     
     return _unflatten_vector(nodes, 0)
 

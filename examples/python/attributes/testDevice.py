@@ -35,6 +35,9 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addAttribute("Mode", "Mean", ["Mean", "Total"]).setSetter(setMode) \
             .addMetadata("help", "Sets the mode of the device.") \
             .addMetadata("type", "string attribute") #example meta data
+        
+        # self.addAttribute("Enable Trigger", "True", ["True", "False"])
+        self.addAttribute("Enable Trigger", "On", ["On", "Off"])
 
         return
 
@@ -60,7 +63,7 @@ config = stipy.Configuration(
 
 device = TestDevice(config)
 
-nameServiceAddr = "192.168.1.6:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)
