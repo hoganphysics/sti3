@@ -8,6 +8,8 @@ conda install -c conda-forge catch2 cmake ninja
 
 conda build -c conda-forge .
 
+In windows, build using powershell to avoid line character limit
+
 conda build -c conda-forge . --dirty --keep-old-work --no-test
 
 

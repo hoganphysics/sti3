@@ -459,6 +459,11 @@ void LocalDevice::stopRW()
 	if (sit != sids.end()) {
 		resultTicketManager->cancel(*sit);
 	}
+
+	std::shared_ptr<STI::Engine::EventEngineScheduler> scheduler;
+	if (getEngineScheduler(scheduler)) {
+		scheduler->cancelAll();
+	}
 }
 
 bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::shared_ptr<STI::Engine::ResultTicket>& resultTicket)
@@ -484,6 +489,7 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
 
 	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		parseTicket->cancel();
 		return false;
 	}
 
@@ -495,6 +501,7 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		resultTicket->cancel();
 		return false;
 	}
 
@@ -506,7 +513,7 @@ bool LocalDevice::writeChannelDefault(short channel, const STI::Utils::MixedValu
 	usingRWdefault = true;
 	if (usingParseDefault) return false;
 
-	double eventTime = 100;
+	double eventTime = getMinimumEventStartTime();
 	STI::Engine::RawEventTarget eventTarget(getID(), channel);
 	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Play);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
