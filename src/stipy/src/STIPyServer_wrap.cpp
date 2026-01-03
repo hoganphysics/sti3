@@ -48,6 +48,8 @@ void init_STIPyServer(py::module& m)
         .def("setHostname", &STIPyServer::setHostname, py::arg("name"))
         .def("hostname", &STIPyServer::getHostname)
         .def("hub", &STIPyServer::getDeviceHub)
+
+        .def("disconnect", &STIPyServer::disconnect)
         
         .def("printNetwork", py::overload_cast<>(&STIPyServer::printNetwork))
         .def("printNetwork", py::overload_cast<const std::string&>(&STIPyServer::printNetwork))

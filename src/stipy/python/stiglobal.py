@@ -11,22 +11,62 @@ from stipy.stipy import STIPyServer
 from stipy.stipybase.python.sequence import STIPySequence
 from stipy.python.stacktrace import makeStackTrace as _makeStackTrace
 from stipy.stipybase.stipybase import DeviceID
+from stipy.stipybase.stipybase import HubID
+from stipy.stipybase.stipybase import Configuration
 
 from socket import gethostname as _gethostname
 from getpass import getuser as _getuser
+from socket import socket as _socket
+from socket import AF_INET as _AF_INET
+from socket import SOCK_DGRAM as _SOCK_DGRAM
 
 
-def connect(serverID, nameServerAddress, serverHubID=None):
+def get_local_ip_address():
+    s = _socket(_AF_INET, _SOCK_DGRAM)
+    try:
+        # Doesn't even have to be reachable
+        s.connect(('8.8.8.8', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+
+def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
     localAddress = _gethostname()
     username = _getuser()
+
+    if nameServerAddress is None:
+        configAddress = config.get("NetworkHub", "NameService") if config is not None else None
+        if configAddress is not None:
+            nameServerAddress = configAddress
+        else:
+            return None
+    
+    hubConfig = Configuration()
+    hubConfig.set("omniORB", "endPoint", "giop:tcp::")
+    hubConfig.set("omniORB", "endPointPublish", "giop:tcp:" + get_local_ip_address() + ":")
+
+    if config is not None:
+        hubConfig.append(config)
 
     if type(serverID) == str:
         serverID = DeviceID(serverID)
 
     if serverHubID == None:
-        server = _connect(localAddress, serverID, nameServerAddress)
+        if hubConfig is not None:
+            server = _connect(localAddress, serverID, nameServerAddress, hubConfig)
+        else:
+            server = _connect(localAddress, serverID, nameServerAddress)
     else:
-        server = _connect(localAddress, serverID, serverHubID, nameServerAddress)
+        if type(serverHubID) == str:
+            serverHubID = HubID(serverHubID)
+        if hubConfig is not None:
+            server = _connect(localAddress, serverID, serverHubID, nameServerAddress, hubConfig)
+        else:
+            server = _connect(localAddress, serverID, serverHubID, nameServerAddress)
 
     if server != None and type(server) == STIPyServer:
         server.setHostname(localAddress)

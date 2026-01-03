@@ -63,6 +63,7 @@ public:
 
 	void run(bool block = true);
 	void shutdown();
+	void disconnect();
 
 	void walk(LocalDeviceHub::HubNodeWalker& root) const;
 

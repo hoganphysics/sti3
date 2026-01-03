@@ -33,7 +33,7 @@ void init_stipy(py::module& m)
         const STI::Network::HubID&,
         const std::string&>(&STI::Python::connect), py::arg("localAddress"), py::arg("serverID"),py::arg("serverHubID"),py::arg("nameServerAddress"), "Connect to an STI server that is located on a specified HubID");
 
-    m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
+    // m.def("disconnect", &STI::Python::disconnect, "Disconnect from the STI server");
 
     m.def("printNetwork", &STI::Python::printNetwork, "Print the STI network tree");
 

@@ -6,6 +6,7 @@
 #include <sti/engine/RawEventGroup.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/HubID.h>
+#include <sti/utils/Configuration.h>
 #include "StackTrace.h"
 
 #include <memory>
@@ -27,10 +28,15 @@ class STIPyServer;
 class STIPyShot;
 
 
-std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
-std::shared_ptr<STIPyServer> connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localhost, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress);
+std::shared_ptr<STIPyServer> connect(const std::string& localhost, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress);
 
-void disconnect();
+std::shared_ptr<STIPyServer> connect(const std::string& localhost, const STI::Device::DeviceID& serverID, 
+                                     const STI::Network::HubID& serverHubID, const std::string& nameServerAddress, 
+                                     const STI::Utils::Configuration& config);
+std::shared_ptr<STIPyServer> connect(const std::string& localhost, const STI::Device::DeviceID& serverID, 
+                                     const std::string& nameServerAddress, const STI::Utils::Configuration& config);
+// void disconnect();
 
 std::string printNetwork(const std::string& nameServerAddress, const std::string& baseContext);
 

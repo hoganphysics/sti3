@@ -138,7 +138,11 @@ void init_DeviceHub(py::module& m)
             return ids;
         })
         .def("containsHub", &LocalDeviceHub::containsHub)
-        .def("disconnect", &LocalDeviceHub::disconnect)
+        // .def("disconnect", &LocalDeviceHub::disconnect)
+        .def("disconnect", py::overload_cast<>(&LocalDeviceHub::disconnect))
+        .def("disconnect", py::overload_cast<const HubID&>(&LocalDeviceHub::disconnect), py::arg("hubID"))
+
+
         .def("walk", [](LocalDeviceHub& self) {
             LocalDeviceHub::HubNodeWalker walker;
             self.walk(walker);
@@ -202,6 +206,7 @@ void init_DeviceHub(py::module& m)
                 return self.run(block);
             })
         .def("shutdown", &NetworkDeviceHub::shutdown)
+        .def("disconnect", &NetworkDeviceHub::disconnect)
         .def("walk", [](NetworkDeviceHub& self) {
             LocalDeviceHub::HubNodeWalker walker;
             self.walk(walker);

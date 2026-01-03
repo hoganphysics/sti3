@@ -139,6 +139,8 @@ public:
     
     std::shared_ptr<STI::Network::NetworkDeviceHub> getDeviceHub() const;
 
+    void disconnect();
+
 private:
 
     bool getScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);

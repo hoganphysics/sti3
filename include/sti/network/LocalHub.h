@@ -83,6 +83,7 @@ public:
 	void setID(const STI::Network::HubID& newHubID) { hubID = newHubID; }
 
 	void disconnect(const HubID& hid);
+	void disconnect();
 
 	void walk(typename LocalHub<ID, T>::HubNodeWalker& root) const;
 	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
@@ -527,18 +528,12 @@ void STI::Network::LocalHub<ID, T>::clear()
 		removeNode(id);
 	}
 
-	std::set<HubID> hids;
-	getHubIDs(hids);
-
-	for(auto hid : hids) {
-		disconnect(hid);
-	}
+	disconnect();
 
 	//These should be empty; clear just in case
 	nodeDistributer.clearAll();
 	hubs.clear();
 }
-
 
 template<class ID, class T>
 void STI::Network::LocalHub<ID, T>::disconnect(const HubID& hid)
@@ -550,5 +545,15 @@ void STI::Network::LocalHub<ID, T>::disconnect(const HubID& hid)
 	}
 }
 
+template<class ID, class T>
+void STI::Network::LocalHub<ID, T>::disconnect()
+{
+	std::set<HubID> hids;
+	getHubIDs(hids);
+
+	for(const auto& hid : hids) {
+		disconnect(hid);
+	}
+}
 
 #endif

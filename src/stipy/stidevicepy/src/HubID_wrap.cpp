@@ -13,6 +13,7 @@ void init_HubID(py::module& m)
     py::class_<HubID>(m, "HubID")
         .def(py::init<const std::string&, const std::string&, unsigned short>(), 
                         py::arg("name"), py::arg("address"), py::arg("module") )
+        .def(py::init<const std::string&>(), py::arg("hubID") )
         .def_readwrite("name", &HubID::name)
         .def_readwrite("address", &HubID::address)
         .def_readwrite("module", &HubID::module)

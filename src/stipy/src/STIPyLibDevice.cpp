@@ -51,12 +51,12 @@ STIPyLibDevice::STIPyLibDevice(const std::string& name, const std::string& addre
 
 STIPyLibDevice::~STIPyLibDevice()
 {
-    std::shared_ptr<DeviceMessageReceiver> receiver;
-    getMessageReceiver(receiver);
+    // std::shared_ptr<DeviceMessageReceiver> receiver;
+    // getMessageReceiver(receiver);
 
-    if (receiver != 0) {
-        receiver->removeListener(serverID, schedulerMessageLID);
-    }
+    // if (receiver != 0) {
+    //     receiver->removeListener(serverID, schedulerMessageLID);
+    // }
 }
 
 void STIPyLibDevice::connectToServer()

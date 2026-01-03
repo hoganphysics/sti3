@@ -20,6 +20,15 @@ public:
 	HubID(const std::string& name, const std::string& address, unsigned short module) 
 	: name(ensurePrefix(name)), address(address), module(module) {}
 
+	HubID(const std::string& hubID)
+	{
+		if (!stringToHubID(hubID, *this)) {
+			this->name = "";
+			this->address = "";
+			this->module = 0;
+		}
+	}
+
 	bool operator<(const HubID& rhs) const { return getID().compare(rhs.getID()) < 0; }
 	bool operator==(const HubID& rhs) const { return getID().compare(rhs.getID()) == 0; }
 	bool operator!=(const HubID& rhs) const { return !((*this) == rhs); }

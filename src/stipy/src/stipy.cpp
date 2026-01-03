@@ -4,6 +4,7 @@
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/Configuration.h>
 
 #include "LocalShot.h"
 #include "StackTrace.h"
@@ -82,18 +83,36 @@ std::shared_ptr<STI::Engine::RawEventGroup> STI::Python::group(const std::string
     return g;
 }
 
-std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localhost, const STI::Device::DeviceID& serverID, const std::string& nameServerAddress)
 {
     //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
     STI::Network::HubID serverHubID(serverID.getName(), serverID.getAddress(), serverID.getModule());
 
-    return connect(localAddress, serverID, serverHubID, nameServerAddress);
+    return connect(localhost, serverID, serverHubID, nameServerAddress);
+}
+
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localhost, const STI::Device::DeviceID& serverID, 
+                                     const std::string& nameServerAddress, const STI::Utils::Configuration& config)
+{
+    //Default is to assume the server is connected to a Hub with a HubID matching the server's DeviceID
+    STI::Network::HubID serverHubID(serverID.getName(), serverID.getAddress(), serverID.getModule());
+
+    return connect(localhost, serverID, serverHubID, nameServerAddress, config);
 }
 
 //Treat serverHubID as a guess. Check if it is live and hosts serverID
-std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddress, const STI::Device::DeviceID& serverID, const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localhost, const STI::Device::DeviceID& serverID, 
+                                                  const STI::Network::HubID& serverHubID, const std::string& nameServerAddress)
 {
-    auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress);
+    STI::Utils::Configuration config; //empty
+    return connect(localhost, serverID, serverHubID, nameServerAddress, config);
+}
+
+std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localhost, const STI::Device::DeviceID& serverID, 
+                                     const STI::Network::HubID& serverHubID, const std::string& nameServerAddress, 
+                                     const STI::Utils::Configuration& config)
+{
+    auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(nameServerAddress, config);
     hub->getPersistenceOptions().bindToRootContext = false;
     hub->getPersistenceOptions().bindToTargetContexts = false;
 
@@ -114,16 +133,17 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddres
     std::stringstream uniqueName;
     STI::Utils::TimeStamp connectTime;
        
-    uniqueName << "STIPy";   //STIPy:localAddress:<data>:<time>
-    uniqueName << ":" << localAddress;
+    uniqueName << "STIPy";   //STIPy:localhost:<data>:<time>
+    uniqueName << ":" << localhost;
     uniqueName << ":" << connectTime.date_YYYY_MM_DD("-") << ":" << connectTime.time_hh_mm_ss_mmmuuunnn();
 
     //Use a non-unique form of DeviceID to set STIPyLibDevice path structure (to avoid unwanted persistence directories).
-    STI::Device::DeviceID subdirID("STIPy", localAddress, 0);
-    STI::Utils::Configuration config;
-    config.set<std::string>("PersistenceManager", "device subdirectory", subdirID.getID());
+    STI::Device::DeviceID subdirID("STIPy", localhost, 0);
+    STI::Utils::Configuration pyLibDeviceConfig;
+    pyLibDeviceConfig.set<std::string>("PersistenceManager", "device subdirectory", subdirID.getID());
+    pyLibDeviceConfig.append(config); 
 
-    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName.str(), localAddress, 0, serverID, verifiedServerHubID, config);
+    auto stipydev = std::make_shared<STIPyLibDevice>(uniqueName.str(), localhost, 0, serverID, verifiedServerHubID, pyLibDeviceConfig);
 
     hub->addDevice(stipydev, verifiedServerHubID);
     hub->run(false);    //don't block
@@ -136,9 +156,9 @@ std::shared_ptr<STIPyServer> STI::Python::connect(const std::string& localAddres
 }
 
 
-void STI::Python::disconnect()
-{
-}
+// void STI::Python::disconnect()
+// {
+// }
 
 std::string STI::Python::printNetwork(const std::string& nameServerAddress, const std::string& baseContext)
 {

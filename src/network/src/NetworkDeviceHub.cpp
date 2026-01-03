@@ -117,9 +117,12 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 
 NetworkDeviceHub::~NetworkDeviceHub()
 {
-	if (localHub != 0) {
-		localHub->clear();
-	}
+	// if (localHub != 0) {
+	// 	localHub->clear();
+	// }
+	
+	shutdown();
+
 	if (refreshScheduler != 0) {
 		refreshScheduler->stop();
 	}
@@ -387,12 +390,20 @@ void NetworkDeviceHub::shutdown()
 	// for(auto id : ids) {
 	// 	deviceHubWrapper->removeNode(id);
 	// }
+	// if (localHub != 0) {
+	// 	localHub->clear();
+	// }
+	disconnect();
+
+	// Keep the ORB alive so it can be reused across hub instances.
+	unblock();
+}
+
+void NetworkDeviceHub::disconnect()
+{
 	if (localHub != 0) {
 		localHub->clear();
-	}
-
-	if (orbmanager != 0 && orbmanager->running()) {
-		orbmanager->shutdown();		// fixes slow shutdown in windows
+		localHub->disconnect();
 	}
 }
 
