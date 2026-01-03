@@ -144,6 +144,8 @@ public:
 
 	virtual void parseEvents(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents) { parseEventsDefault(events, synchedEvents); }
 	void getEventTargets(std::set<DeviceID>& targetIDs);
+	virtual double getMinimumEventSpacing() { return 1000.0; }	//in nanoseconds
+	virtual double getMinimumEventStartTime() { return 1000.0; }	//in nanoseconds
 	
 	virtual void requestTrigger(const STI::Engine::EngineID& engineID, const STI::Engine::ParseID& parseID) override { }
 	virtual void cancelTrigger() { }

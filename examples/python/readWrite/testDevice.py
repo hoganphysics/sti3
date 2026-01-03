@@ -99,7 +99,17 @@ config = stipy.Configuration(
     {'Device Name': 'TestDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
+
+config.set("NetworkHub", "NameService", "192.168.1.242:2809")
+
+config.set("omniORB", "traceLevel", "0")
+config.set("omniORB", "endPoint", "giop:tcp::2820")
+config.set("omniORB", "endPointPublish", "giop:tcp:192.168.1.247:2820")
+
+config.set("omniORB", "scanGranularity", "1")
+config.set("omniORB", "clientConnectTimeOutPeriod", "200")  # milliseconds
+config.set("omniORB", "clientCallTimeOutPeriod", "200")  # milliseconds
 
 device = TestDevice(config)
 
@@ -121,8 +131,9 @@ data = device.read(12, 23.4)
 print("Measurement 3: " + str(data))
 
 
-nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
-hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
+nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
+# hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
+hub = stidevicepy.NetworkDeviceHub(config)
 
 hub.addDevice(device)
 

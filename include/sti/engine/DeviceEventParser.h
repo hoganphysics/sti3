@@ -34,6 +34,8 @@ public:
 	
 	virtual bool isEventTarget(const STI::Device::DeviceID& id) = 0;
 	virtual void getEventTargets(std::set<STI::Device::DeviceID>& targetIDs) = 0;
+	virtual double getMinimumEventSpacing() = 0;	//in nanoseconds
+	virtual double getMinimumEventStartTime() = 0;	//in nanoseconds
 
 	void parseEvents(const STI::Engine::RawEventMap& events, SynchronousEventVector& synchedEvents, 
 		STI::Device::DeviceID deviceID, const STI::Engine::EngineID& engineID, 
