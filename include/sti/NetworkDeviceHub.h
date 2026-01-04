@@ -47,6 +47,8 @@ public:
 	
 	bool connect(const std::shared_ptr<LocalDeviceHub>& hub);
 
+	HubID getID() const;
+
 	void getDeviceIDs(std::set<STI::Device::DeviceID>& ids) const;
 
 	void setTargetHubs(const std::vector<HubID>& hubIDs);

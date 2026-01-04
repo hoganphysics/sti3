@@ -53,14 +53,19 @@ STIPyServer::STIPyServer(const std::shared_ptr<STI::Network::NetworkDeviceHub>& 
 STIPyServer::~STIPyServer()
 {
     // libDevice->disable();
-    libDevice->kill();
-    libDeviceHub->shutdown();
+    
+    disconnect();
 }
 
 void STIPyServer::disconnect()
 {
-    libDevice->kill();
-    libDeviceHub->shutdown();
+    if (libDevice != nullptr) {
+        libDevice->kill();
+    }
+
+    if (libDeviceHub != nullptr) {
+        libDeviceHub->shutdown();
+    }
 
     libDevice = 0;
     libDeviceHub = 0;
@@ -85,6 +90,8 @@ std::shared_ptr<STIPyShot>  STIPyServer::makeshot(const STI::Engine::ShotType& s
     shotConfig.shotType = shotType;
     shotConfig.jobSourceID.machine = getHostname();
     shotConfig.jobSourceID.user = getUserName();
+
+    if (libDevice == 0) return 0;
     
     bool success = libDevice->getFileServer(fileServer);
 

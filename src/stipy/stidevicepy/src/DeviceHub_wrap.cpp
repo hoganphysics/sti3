@@ -195,6 +195,7 @@ void init_DeviceHub(py::module& m)
                 self.getDeviceIDs(ids);
                 return ids;
             })
+        .def("getID", &NetworkDeviceHub::getID)
         // .def("run", py::overload_cast<bool>(&NetworkDeviceHub::run), py::arg("block") = true)
         .def("getPersistenceOptions", &NetworkDeviceHub::getPersistenceOptions)
         .def("setPersistenceOptions", [](NetworkDeviceHub& self, NetworkDeviceHub::PersistenceOptions& options) {

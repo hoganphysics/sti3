@@ -155,6 +155,14 @@ std::string NetworkDeviceHub::printNetwork(const std::string& nameServiceAddress
 	return "";
 }
 
+STI::Network::HubID NetworkDeviceHub::getID() const
+{
+	if (localHub != 0) {
+		return localHub->getID();
+	}
+	return STI::Network::HubID();
+}
+
 NetworkDeviceHub::PersistenceOptions& NetworkDeviceHub::getPersistenceOptions()
 {
 	return persistence;
@@ -220,11 +228,19 @@ bool NetworkDeviceHub::addDevice(const typename std::shared_ptr<STI::Device::Dev
 	if (node == 0) return false;
 	
 	HubID serverHubID;
-	std::string nodeTargetServerID = node->getID().getTargetServerID();
+	std::string nodeTargetServerID = node->getID().getTargetServerID();		//initial guess
 
 	if (useAutoTargetHubIDs && nodeTargetServerID.compare("root") != 0) {
 
 		HubID::stringToHubID(nodeTargetServerID, serverHubID);
+		
+		// Attempt to find the hub that hosts the target server ID; only work if it's already connected
+		if (!findHub(nodeTargetServerID, serverHubID)) {
+			std::cerr << "Warning: Unable to find target hub for device " 
+				<< node->getID().getID() << " with target server ID " 
+				<< nodeTargetServerID << std::endl;
+			std::cerr << "Adding device to default hub context: " << serverHubID.getID() << std::endl;
+		}
 	}
 
 	return addDevice(node, serverHubID);
@@ -384,15 +400,6 @@ bool NetworkDeviceHub::registerHubContext()
 
 void NetworkDeviceHub::shutdown()
 {
-	// std::set<DeviceID> ids;
-	// getDeviceIDs(ids);
-
-	// for(auto id : ids) {
-	// 	deviceHubWrapper->removeNode(id);
-	// }
-	// if (localHub != 0) {
-	// 	localHub->clear();
-	// }
 	disconnect();
 
 	// Keep the ORB alive so it can be reused across hub instances.

@@ -47,7 +47,9 @@ int main(int argc, char **argv)
 	// scheduler.start();
 
 
-	hub->run(true);     //blocks until ctrl-c or Device terminates
+	hub->run(false);     //blocks until ctrl-c or Device terminates
+
+	hub->disconnect();
 
 	if (false) {
 		std::cin >> x;
@@ -59,7 +61,7 @@ int main(int argc, char **argv)
 		auto count = lm->getLogCount(device->getID(), filter);
 	}
 
-	hub->shutdown();
+	// hub->shutdown();
 	// int x;
 	// std::cin >> x;
 

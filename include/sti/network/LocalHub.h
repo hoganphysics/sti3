@@ -51,7 +51,7 @@ public:
 	bool hasNodeID(const ID& id) const;
 
 	void getHubIDs(std::set<HubID>& ids) const { hubs.getKeys(ids); }
-	bool containsHub(const HubID& hubID) const { return hubs.contains(hubID); }
+	bool containsHub(const HubID& hid) const { return hubs.contains(hid); }
 
 	//local and remote, but non propagating (not trail tracked)
 
@@ -165,15 +165,15 @@ void STI::Network::LocalHub<ID, T>::walk(STI::Network::NodeWalker<ID, T>& root, 
 	std::shared_ptr<Hub<ID, T>> hub;
 	
 	//Hubs
-	for (auto& hubID : hubIDs) {
+	for (auto& hid : hubIDs) {
 		
 		auto hubGraph = std::make_unique<STI::Network::NodeWalker<ID, T>>();
 
-		hubGraph->node.id = hubID;
+		hubGraph->node.id = hid;
 		
 		//Check if HubID was already walked because of a loop.
-		if (!foundHubs.includesHubID(hubID)) {
-			if (getHub(hubID, hub) && hub != 0) {
+		if (!foundHubs.includesHubID(hid)) {
+			if (getHub(hid, hub) && hub != 0) {
 				hub->walk(*hubGraph, newTrace);
 			}
 		}
@@ -311,10 +311,10 @@ bool STI::Network::LocalHub<ID, T>::removeNode(const ID& id, const HubTrace& tra
 	std::shared_ptr<Hub<ID, T>> hub;
 
 	//Remove from all connected Hubs
-	for (auto& hubID : hubIDs) {
-		if (!newTrace.includesHubID(hubID)) {
+	for (auto& hid : hubIDs) {
+		if (!newTrace.includesHubID(hid)) {
 			//found a hub that has not received the call yet
-			if (hubs.get(hubID, hub) && hub != 0) {
+			if (hubs.get(hid, hub) && hub != 0) {
 				hub->removeNode(id, newTrace);
 			}
 		}
@@ -396,10 +396,10 @@ bool STI::Network::LocalHub<ID, T>::refresh(const HubTrace& trace)
 	hubs.getKeys(hubIDs);
 	std::shared_ptr<Hub<ID, T>> hub;
 
-	for (auto& hubID : hubIDs) {
-		if (!newTrace.includesHubID(hubID)) {
+	for (auto& hid : hubIDs) {
+		if (!newTrace.includesHubID(hid)) {
 			//found a hub that has not received the call yet
-			if (hubs.get(hubID, hub) && hub != 0) {
+			if (hubs.get(hid, hub) && hub != 0) {
 				hub->refresh(newTrace);
 			}
 		}
@@ -438,13 +438,13 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 	hubs.getKeys(hubIDs);
 	std::shared_ptr<Hub<ID, T>> hub;
 
-	for (auto& hubID : hubIDs) {
-		if (!newTrace.includesHubID(hubID)) {
+	for (auto& hid : hubIDs) {
+		if (!newTrace.includesHubID(hid)) {
 			//Found a hub that has not received the call yet.
 
 			// Condition call to distribute(..) on addto(...) so nodes can optionally localize 
 			// (optimization to avoid unneeded network calls)
-			if (node->addto(hubID) && hubs.get(hubID, hub) && hub != 0) {
+			if (node->addto(hid) && hubs.get(hid, hub) && hub != 0) {
 
 				hub->distribute(id, node, newTrace, first);
 			}
@@ -503,13 +503,13 @@ bool STI::Network::LocalHub<ID, T>::redistributeNodes(const HubTrace& trace)
 	std::shared_ptr<Hub<ID, T>> hub;
 
 	//Force redistribution of all Nodes owned by this Hub to all connected Hubs
-	for (auto& hubID : hubIDs) {
-		distributeNodes(hubID);		//Force redistribution of all Nodes owned by this Hub to hubID
+	for (auto& hid : hubIDs) {
+		distributeNodes(hid);		//Force redistribution of all Nodes owned by this Hub to hid
 
 									//Pass along redistributeNodes call to connected Hubs, with tracer
-		if (!newTrace.includesHubID(hubID)) {
+		if (!newTrace.includesHubID(hid)) {
 			//found a hub that has not received the call yet
-			if (hubs.get(hubID, hub) && hub != 0) {
+			if (hubs.get(hid, hub) && hub != 0) {
 				hub->redistributeNodes(newTrace);	//Request redistibution of all nodes owned by connected Hub
 			}
 		}
@@ -529,7 +529,7 @@ void STI::Network::LocalHub<ID, T>::clear()
 	}
 
 	disconnect();
-
+	
 	//These should be empty; clear just in case
 	nodeDistributer.clearAll();
 	hubs.clear();
