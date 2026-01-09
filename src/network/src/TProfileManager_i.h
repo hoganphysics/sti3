@@ -24,6 +24,7 @@ public:
     void getProfiles(::STI::TNetwork::TStringSeq_out names);
     ::CORBA::Boolean getProfile(const char* name, ::STI::TNetwork::TProfile_out profile);
     ::CORBA::Boolean saveProfile(const ::STI::TNetwork::TProfile& profile);
+    ::CORBA::Boolean setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile);
     ::CORBA::Boolean loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices);
     ::CORBA::Boolean saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices);
     ::CORBA::Boolean ping();

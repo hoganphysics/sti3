@@ -2341,6 +2341,7 @@ _CORBA_MODULE_BEG
       void getProfiles(::STI::TNetwork::TStringSeq_out names);
       ::CORBA::Boolean getProfile(const char* name, ::STI::TNetwork::TProfile_out profile);
       ::CORBA::Boolean saveProfile(const ::STI::TNetwork::TProfile& profile);
+      ::CORBA::Boolean setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile);
       ::CORBA::Boolean loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices);
       ::CORBA::Boolean saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices);
       ::CORBA::Boolean ping();
@@ -2381,6 +2382,7 @@ _CORBA_MODULE_BEG
       virtual void getProfiles(::STI::TNetwork::TStringSeq_out names) = 0;
       virtual ::CORBA::Boolean getProfile(const char* name, ::STI::TNetwork::TProfile_out profile) = 0;
       virtual ::CORBA::Boolean saveProfile(const ::STI::TNetwork::TProfile& profile) = 0;
+      virtual ::CORBA::Boolean setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile) = 0;
       virtual ::CORBA::Boolean loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices) = 0;
       virtual ::CORBA::Boolean saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices) = 0;
       virtual ::CORBA::Boolean ping() = 0;

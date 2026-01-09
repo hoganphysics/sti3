@@ -11,6 +11,15 @@
 using STI::Device::Profile;
 using STI::Device::Profiles;
 
+Profile::Profile()
+: name(""), type(ProfileType::All), readOnly(false)
+{
+}
+
+Profile::Profile(const std::string& name)
+: name(name), type(ProfileType::All), readOnly(false)
+{
+}
 
 template<class Archive>
 void Profile::serialize(Archive& archive)

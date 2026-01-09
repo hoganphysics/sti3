@@ -99,6 +99,28 @@ bool RemoteProfileManager::saveProfile(const std::shared_ptr<STI::Device::Profil
 	return success;
 }
 
+bool RemoteProfileManager::setReadOnly(const std::string& name, bool readOnly)
+{
+	std::unique_lock<std::mutex> profileLock(profileMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+
+	try {
+		success = getTRef()->setReadOnly(
+			convert<std::string, ::CORBA::String_member>(name),
+			static_cast<::CORBA::Boolean>(readOnly));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+	return success;
+}
 
 bool RemoteProfileManager::loadProfile(const std::string& name, const STI::Device::ProfileType& type, bool loadDependentDevices)
 {

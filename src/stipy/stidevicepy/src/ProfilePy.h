@@ -26,6 +26,7 @@ public:
 
     std::string name;
     STI::Device::ProfileType type;
+    bool readOnly;
     std::map<std::string, std::string> attributeData;
     std::map<short, STI::Python::MixedValuePy> channelData;
 

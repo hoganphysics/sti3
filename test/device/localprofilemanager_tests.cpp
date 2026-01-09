@@ -89,6 +89,8 @@ public:
 
     bool saveProfile(const std::shared_ptr<Profile>&) override { return false; }
 
+    bool setReadOnly(const std::string&, bool) override { return false; }
+
     bool loadProfile(const std::string& name, const ProfileType& type, bool loadDependentDevices) override {
         loadCalls.emplace_back(name, type, loadDependentDevices);
         return loadReturn;

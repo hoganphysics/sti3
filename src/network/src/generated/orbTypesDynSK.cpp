@@ -3781,6 +3781,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TProfileType = _0RL_tc_STI_mTNetw
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTProfile[] = {
   {"name", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"type", _0RL_tc_STI_mTNetwork_mTProfileType},
+  {"readOnlyProfile", CORBA::TypeCode::PR_boolean_tc()},
   {"attributeData", _0RL_tc_STI_mTNetwork_mTAttributeTupleSeq},
   {"channelData", _0RL_tc_STI_mTNetwork_mTChannelUpdateTupleSeq}
 };
@@ -3788,7 +3789,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTProfile[] = {
 #ifdef _0RL_tc_STI_mTNetwork_mTProfile
 #  undef _0RL_tc_STI_mTNetwork_mTProfile
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTProfile = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TProfile:1.0", "TProfile", _0RL_structmember_STI_mTNetwork_mTProfile, 4, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTProfile = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TProfile:1.0", "TProfile", _0RL_structmember_STI_mTNetwork_mTProfile, 5, &_0RL_tcTrack);
 
 
 

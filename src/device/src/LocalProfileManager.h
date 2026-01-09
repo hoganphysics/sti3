@@ -35,6 +35,8 @@ public:
     bool getProfile(const std::string& name, std::shared_ptr<Profile>& profile) const;
     bool saveProfile(const std::shared_ptr<Profile>& profile);
 
+    bool setReadOnly(const std::string& name, bool readOnly);
+
     bool loadProfile(const std::string& name, const ProfileType& type, bool loadDependentDevices);
     bool saveCurrentProfile(const std::string& name, const ProfileType& type, bool saveDependentDevices);
 
@@ -59,6 +61,7 @@ private:
 
     STI::Device::DeviceID deviceID;
     std::shared_ptr<DeviceCollection> deviceCollection;
+
 };
 
 

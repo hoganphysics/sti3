@@ -52,6 +52,8 @@ void init_ProfileManager(py::module& m)
                 return self.saveProfile(profile);
             }, py::arg("profile"))
 
+        .def("setReadOnly", &ProfileManager::setReadOnly, py::arg("name"), py::arg("readOnly"))
+
         .def("loadProfile", py::overload_cast<const std::string&, const ProfileType&, bool>(&ProfileManager::loadProfile), py::arg("name"), py::arg("type"), py::arg("loadDependentDevices"))
         .def("saveCurrentProfile", py::overload_cast<const std::string&, const ProfileType&, bool>(&ProfileManager::saveCurrentProfile), py::arg("name"), py::arg("type"), py::arg("saveDependentDevices"))
         

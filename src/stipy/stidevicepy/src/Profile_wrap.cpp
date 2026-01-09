@@ -53,6 +53,7 @@ void init_Profile(py::module& m)
         .def(py::init<std::string>(), py::arg("name"))
         .def_readwrite("name", &ProfilePy::name)
         .def_readwrite("type", &ProfilePy::type)
+        .def_readwrite("readOnly", &ProfilePy::readOnly)
         .def_readwrite("attributeData", &ProfilePy::attributeData)
         .def_readwrite("channelData", &ProfilePy::channelData)
 
@@ -60,7 +61,13 @@ void init_Profile(py::module& m)
             [](const ProfilePy& self) {
                 std::stringstream s;
                 // "<Profile | 'Startup'>"
-                s << "<Profile | '" << self.name << "'>";     
+                s << "<Profile | '" << self.name;
+                
+                if (self.readOnly) {
+                    s << "' (read-only)";
+                }
+
+                s << "'>";     
                 return s.str();
             })
         ;

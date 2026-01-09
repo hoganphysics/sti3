@@ -61,6 +61,14 @@ bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)
 {
 	if (profile == 0) return false;
 
+	if (profileMap.contains(profile->name)) {
+		std::shared_ptr<Profile> existingProfile;
+		if (profileMap.get(profile->name, existingProfile) && existingProfile != 0 && existingProfile->readOnly) {
+			//cannot overwrite read-only profile
+			return false;
+		}
+	}
+
 	if (!profileMap.add(profile->name, profile)) return false;	// failed to add
 
 	//save to disk
@@ -69,6 +77,17 @@ bool LocalProfileManager::saveProfile(const std::shared_ptr<Profile>& profile)
 	return true;
 }
 
+bool LocalProfileManager::setReadOnly(const std::string& name, bool readOnly)
+{
+	std::shared_ptr<Profile> profile;
+
+	if (!profileMap.get(name, profile)) return false;	// not found
+	if (profile == 0) return false;
+
+	profile->readOnly = readOnly;
+
+	return true;
+}
 
 bool LocalProfileManager::loadProfile(const std::string& name, const ProfileType& type, bool loadDependentDevices)
 {

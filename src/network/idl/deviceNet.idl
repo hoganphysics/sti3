@@ -250,6 +250,8 @@ module TNetwork
 		boolean getProfile(in string name, out TProfile profile);
 		boolean saveProfile(in TProfile profile);
 
+		boolean setReadOnly(in string name, in boolean readOnlyProfile);
+
 		boolean loadProfile(in string name, in TProfileType type, in boolean loadDependentDevices);
 		boolean saveCurrentProfile(in string name, in TProfileType type, in boolean saveDependentDevices);
 

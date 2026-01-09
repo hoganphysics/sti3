@@ -730,6 +730,7 @@ module TNetwork
 	{
 		string name;
 		TProfileType type;
+		boolean readOnlyProfile;
 		TAttributeTupleSeq attributeData;
 		TChannelUpdateTupleSeq channelData;
 	};

@@ -1959,6 +1959,7 @@ STI::TNetwork::TProfile::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
   type >>= _n;
+  _n.marshalBoolean(readOnlyProfile);
   (const TAttributeTupleSeq&) attributeData >>= _n;
   (const TChannelUpdateTupleSeq&) channelData >>= _n;
 
@@ -1969,6 +1970,7 @@ STI::TNetwork::TProfile::operator<<= (cdrStream &_n)
 {
   name = _n.unmarshalString(0);
   (TProfileType&)type <<= _n;
+  readOnlyProfile = _n.unmarshalBoolean();
   (TAttributeTupleSeq&)attributeData <<= _n;
   (TChannelUpdateTupleSeq&)channelData <<= _n;
 

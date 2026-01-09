@@ -18,8 +18,13 @@ class Profile
 {
 public:
 
+    Profile();
+    Profile(const std::string& name);
+    virtual ~Profile() {}
+
     std::string name;
     ProfileType type;
+    bool readOnly;
     std::map<std::string, std::string> attributeData;
     std::map<short, STI::Utils::MixedValue> channelData;
 

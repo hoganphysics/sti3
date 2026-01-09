@@ -6677,6 +6677,8 @@ _CORBA_MODULE_BEG
 
       TProfileType type;
 
+      ::CORBA::Boolean readOnlyProfile;
+
       TAttributeTupleSeq attributeData;
 
       TChannelUpdateTupleSeq channelData;

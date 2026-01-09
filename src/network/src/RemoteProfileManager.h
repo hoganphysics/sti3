@@ -28,6 +28,8 @@ public:
     bool getProfile(const std::string& name, std::shared_ptr<STI::Device::Profile>& profile) const;
     bool saveProfile(const std::shared_ptr<STI::Device::Profile>& profile);
 
+    bool setReadOnly(const std::string& name, bool readOnly);
+
     bool loadProfile(const std::string& name, const STI::Device::ProfileType& type, bool loadDependentDevices);
     bool saveCurrentProfile(const std::string& name, const STI::Device::ProfileType& type, bool saveDependentDevices);
 

@@ -82,6 +82,18 @@ void TProfileManager_i::getProfiles(::STI::TNetwork::TStringSeq_out names)
     return success;
 }
 
+::CORBA::Boolean TProfileManager_i::setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile)
+{
+    bool success = false;
+
+    if (profileManager != 0) {
+
+        success = profileManager->setReadOnly(name, static_cast<bool>(readOnlyProfile));
+    }
+
+    return success;
+}
+
 ::CORBA::Boolean TProfileManager_i::loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices)
 {
     bool success = false;

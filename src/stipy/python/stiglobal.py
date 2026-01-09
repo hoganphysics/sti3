@@ -55,7 +55,7 @@ def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
     if type(serverID) == str:
         serverID = DeviceID(serverID)
 
-    if serverHubID == None:
+    if serverHubID is None:
         if hubConfig is not None:
             server = _connect(localAddress, serverID, nameServerAddress, hubConfig)
         else:
