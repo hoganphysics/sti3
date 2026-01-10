@@ -19,19 +19,19 @@ from getpass import getuser as _getuser
 from socket import socket as _socket
 from socket import AF_INET as _AF_INET
 from socket import SOCK_DGRAM as _SOCK_DGRAM
+from ip_address import get_local_ip_address
 
-
-def get_local_ip_address():
-    s = _socket(_AF_INET, _SOCK_DGRAM)
-    try:
-        # Doesn't even have to be reachable
-        s.connect(('8.8.8.8', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
+# def get_local_ip_address():
+#     s = _socket(_AF_INET, _SOCK_DGRAM)
+#     try:
+#         # Doesn't even have to be reachable
+#         s.connect(('8.8.8.8', 1))
+#         IP = s.getsockname()[0]
+#     except Exception:
+#         IP = '127.0.0.1'
+#     finally:
+#         s.close()
+#     return IP
 
 
 def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
