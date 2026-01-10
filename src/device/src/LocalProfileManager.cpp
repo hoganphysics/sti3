@@ -86,6 +86,9 @@ bool LocalProfileManager::setReadOnly(const std::string& name, bool readOnly)
 
 	profile->readOnly = readOnly;
 
+	//save to disk
+	persistenceRefresher();
+
 	return true;
 }
 
@@ -102,6 +105,7 @@ bool LocalProfileManager::loadProfile(const std::string& name, const ProfileType
 		profile = std::make_shared<Profile>();
 		profile->name = name;
 		profile->type = type;
+		profile->readOnly = cachedProfile->readOnly;
 		profile->attributeData = cachedProfile->attributeData;
 		profile->channelData = cachedProfile->channelData;
 	}
@@ -294,14 +298,24 @@ void LocalProfileManager::load(const std::string& filename)
         if (p.path().has_extension() && p.path().extension().string() == ".json") {
 
 			std::ifstream file( p.path().string() );
-			cereal::JSONInputArchive archive( file );
+            if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+                // file exists but is empty
+                continue;
+            }
 
-			auto profile = std::make_shared<STI::Device::Profile>();
-			archive(*profile);
+            try {
+                cereal::JSONInputArchive archive( file );
 
-			profileMap.add(profile->name, profile);
+                auto profile = std::make_shared<STI::Device::Profile>();
+                archive(*profile);
+
+                profileMap.add(profile->name, profile);
+            }
+            catch (const cereal::Exception &e) {
+                // failed to load - likely due to version mismatch or corruption
+                continue;
+            }
 
         }
     }
 }
-

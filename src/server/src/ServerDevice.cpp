@@ -115,3 +115,9 @@ ServerDevice::~ServerDevice()
 {
 }
 
+bool ServerDevice::writeChannel(short channel, const STI::Utils::MixedValue& value)
+{
+	std::cout << "ServerDevice::writeChannel " << channel << " value: " << value.print() << std::endl;
+
+	return true;
+}

@@ -27,6 +27,7 @@ void Profile::serialize(Archive& archive)
 	archive(
 		cereal::make_nvp("name", name), 
 		cereal::make_nvp("type", type), 
+		cereal::make_nvp("readOnly", readOnly),
 		cereal::make_nvp("attributeData", attributeData),
 		cereal::make_nvp("channelData", channelData)
 		);

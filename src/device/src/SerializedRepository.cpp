@@ -212,11 +212,23 @@ bool SerializedRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
     serializePath /= makeParseFilename(id);
     {
         std::ifstream file( serializePath.string() );
-        cereal::XMLInputArchive archive( file );  
-        
-        parseResult = std::make_shared<STI::Engine::ParseResult>();
+        if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+            // file exists but is empty
+            return false;
+        }
 
-        archive(parseResult);
+        try {
+            cereal::XMLInputArchive archive( file );  
+        
+            auto loadedResult = std::make_shared<STI::Engine::ParseResult>();
+            archive(loadedResult);
+            parseResult = loadedResult;
+        }
+        catch (const cereal::Exception &e) {
+            //failed to load - likely due to version mismatch or corruption
+            parseResult.reset();
+            return false;
+        }
     }
 
     return true;
@@ -233,11 +245,23 @@ bool SerializedRepository::getShotResult(const ShotID& sid, std::shared_ptr<Shot
     serializePath /= makeShotFilename(sid);
     {
         std::ifstream file( serializePath.string() );
-        cereal::XMLInputArchive archive( file );  
-        
-        shotResult = std::make_shared<STI::Engine::ShotResult>();
+        if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+            // file exists but is empty
+            return false;
+        }
 
-        archive(shotResult);
+        try {
+            cereal::XMLInputArchive archive( file );  
+        
+            auto loadedResult = std::make_shared<STI::Engine::ShotResult>();
+            archive(loadedResult);
+            shotResult = loadedResult;
+        }
+        catch (const cereal::Exception &e) {
+            //failed to load - likely due to version mismatch or corruption
+            shotResult.reset();
+            return false;
+        }
     }
 
     return true;
@@ -254,12 +278,24 @@ bool SerializedRepository::getSequenceResult(const SequenceID& id, std::shared_p
     serializePath /= makeSequenceFilename(id);
     {
         std::ifstream file( serializePath.string() );
-        cereal::XMLInputArchive archive( file );  
-        
-        auto seq = std::make_shared<STI::Engine::Sequence>();
-        sequenceResult = std::make_shared<STI::Engine::SequenceResult>(id, seq);
+        if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+            // file exists but is empty
+            return false;
+        }
 
-        archive(sequenceResult);
+        try {
+            cereal::XMLInputArchive archive( file );  
+        
+            auto seq = std::make_shared<STI::Engine::Sequence>();
+            auto loadedResult = std::make_shared<STI::Engine::SequenceResult>(id, seq);
+            archive(loadedResult);
+            sequenceResult = loadedResult;
+        }
+        catch (const cereal::Exception &e) {
+            //failed to load - likely due to version mismatch or corruption
+            sequenceResult.reset();
+            return false;
+        }
     }
 
     return true;

@@ -11,7 +11,7 @@ ProfilePy::ProfilePy()
 }
 
 ProfilePy::ProfilePy(const std::string& name)
-: name(name), type(STI::Device::ProfileType::All)
+: name(name), type(STI::Device::ProfileType::All), readOnly(false)
 {
 }
 

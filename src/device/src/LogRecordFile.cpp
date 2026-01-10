@@ -63,10 +63,20 @@ void LogRecordFile::load()
     std::ifstream file( filename );
     
     if (!file.is_open()) return;
+    if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+        // file exists but is empty
+        return;
+    }
 
-    cereal::XMLInputArchive archive( file );
+    try {
+        cereal::XMLInputArchive archive( file );
 
-    archive(logRecord);
+        archive(logRecord);
+    }
+    catch (const cereal::Exception &e) {
+        //failed to load - likely due to version mismatch or corruption
+        return;
+    }
 }
 
 bool LogRecordFile::exists() const
@@ -88,6 +98,5 @@ bool LogRecordFile::copyRecord(LogRecord& record)
     }
     return false;
 }
-
 
 

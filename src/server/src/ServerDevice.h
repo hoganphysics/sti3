@@ -17,6 +17,8 @@ public:
 	// 	const std::string& targetServer);
 	~ServerDevice();
 
+	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+
 };
 
 

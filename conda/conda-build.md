@@ -20,13 +20,28 @@ conda build -c conda-forge .
 
 ## Installing the built package
 - Switch to the target conda environment where you want to install the package (e.g., `sti3`).
+- To install from Anaconda Cloud, run:
+```bash
+conda install -c conda-forge hoganlab::stipy
+```
+
+### Local build installation
 - To install from a local build (e.g., for development or debugging sti3), run:
 ```bash
 conda install --use-local stipy
 ```
-- Alternatively, to install from Anaconda Cloud, run:
+- If the local build fails to install the newest build, try specifying the exact version and build number explicitly:
 ```bash
-conda install -c conda-forge hoganlab::stipy
+conda install --use-local "stipy=3.0.1=py313h3fd9d12_46"
+```
+- If that reports already-installed, force reinstall:
+```bash
+conda install --use-local --force-reinstall stipy
+```
+- Or remove then install:
+```bash
+conda remove stipy
+conda install --use-local stipy
 ```
 
 ## Uploading the package to Anaconda Cloud
