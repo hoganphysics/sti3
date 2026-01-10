@@ -68,6 +68,7 @@ bool STI::Network::convert<TProfile, Profile>(const TProfile& tProfile, Profile&
 {
     profile.name = convert<::CORBA::String_member, std::string>(tProfile.name);
     profile.type = convert<TProfileType, ProfileType>(tProfile.type);
+    profile.readOnly = static_cast<bool>(tProfile.readOnlyProfile);
 
     convert<TAttributeTupleSeq, std::map<std::string, std::string>>(tProfile.attributeData, profile.attributeData);
     convert<TChannelUpdateTupleSeq, std::map<short, MixedValue>>(tProfile.channelData, profile.channelData);
@@ -80,6 +81,7 @@ bool STI::Network::convert<Profile, TProfile>(const Profile& profile, TProfile& 
 {
     tProfile.name = convert<std::string, ::CORBA::String_member>(profile.name);
     tProfile.type = convert<ProfileType, TProfileType>(profile.type);
+    tProfile.readOnlyProfile = static_cast<::CORBA::Boolean>(profile.readOnly);
 
     convert<std::map<std::string, std::string>, TAttributeTupleSeq>(profile.attributeData, tProfile.attributeData);
     convert<std::map<short, MixedValue>, TChannelUpdateTupleSeq>(profile.channelData, tProfile.channelData);
