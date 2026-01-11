@@ -45,6 +45,7 @@ void ParseResult::serialize(Archive& archive)
 {
     archive( 
         cereal::make_nvp("pid", pid),
+        cereal::make_nvp("shotConfig", shotConfig),
         cereal::make_nvp("baseEventGroup", baseEventGroup), 
         cereal::make_nvp("parsedDevices", parsedDevices),
         cereal::make_nvp("messages", messages),

@@ -128,11 +128,17 @@ private:
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
 
 	void divideEvents(const std::shared_ptr<RawEventGroup>& events, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
-	void divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
+	void divideEvents(const std::shared_ptr<RawEventGroup>& events, std::shared_ptr<RawEventGroup>& unhandledEventGroup, std::shared_ptr<RawEventGroup>& handledEventGroup);
+	void divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, 
+		const std::string& subgroupName, 
+		const std::set<STI::Device::DeviceID>& ownedIDs, 
+		std::shared_ptr<RawEventGroup>& unhandledEventGroup, 
+		std::shared_ptr<RawEventGroup>& handledEventGroup);
 
-	void addEvent(const RawEvent& evt, const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
+	void addEvent(const RawEvent& evt, const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup, std::shared_ptr<RawEventGroup>& handledEventGroup);
 
 	RawEventGroup& getTargetEventGroup(const STI::Device::DeviceID& deviceTarget);
+	RawEventGroup& getAbstractTargetEventGroup(const RawEventTargetDevice& deviceTarget);
 
 	void mergePartnerEvents(const DeviceEventMap& events);
 

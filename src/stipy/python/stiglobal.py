@@ -19,7 +19,7 @@ from getpass import getuser as _getuser
 from socket import socket as _socket
 from socket import AF_INET as _AF_INET
 from socket import SOCK_DGRAM as _SOCK_DGRAM
-from ip_address import get_local_ip_address
+from .ip_address import get_local_ip_address
 
 # def get_local_ip_address():
 #     s = _socket(_AF_INET, _SOCK_DGRAM)

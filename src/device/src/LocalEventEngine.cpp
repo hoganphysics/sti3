@@ -174,22 +174,29 @@ bool LocalEventEngine::isActingServerForDevice(const STI::Device::DeviceID& id)
 
 void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, std::shared_ptr<RawEventGroup>& unhandledEventGroup)
 {
+	std::shared_ptr<RawEventGroup> handledEventGroup;
+
+	divideEvents(eventGroup, unhandledEventGroup, handledEventGroup);
+}
+
+void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, std::shared_ptr<RawEventGroup>& unhandledEventGroup, std::shared_ptr<RawEventGroup>& handledEventGroup)
+{
 	if (eventGroup == 0) return;
 
 	std::set<STI::Device::DeviceID> ownedIDs;
 	getOwnedDeviceIDs(ownedIDs);
 
-	divideEvents(eventGroup, "", ownedIDs, unhandledEventGroup);
+	divideEvents(eventGroup, "", ownedIDs, unhandledEventGroup, handledEventGroup);
 }
 
 void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventGroup, 
 									const std::string& subgroupName, const std::set<STI::Device::DeviceID>& ownedIDs, 
-									std::shared_ptr<RawEventGroup>& unhandledEventGroup)
+									std::shared_ptr<RawEventGroup>& unhandledEventGroup, std::shared_ptr<RawEventGroup>& handledEventGroup)
 {
 	if (eventGroup == 0) return;
 
 	for (auto& g : eventGroup->getSubgroups()) {
-		divideEvents(g, subgroupName + "/" + g->getName(), ownedIDs, unhandledEventGroup);
+		divideEvents(g, subgroupName + "/" + g->getName(), ownedIDs, unhandledEventGroup, handledEventGroup);
 	}
 
 	auto events = eventGroup->getEvents();
@@ -202,21 +209,28 @@ void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventG
 		if (evt.getTarget().isAbstract()) {
 			
 			if (eventGroup->getConcreteTarget(evt.getTarget(), target)) {
-				getTargetEventGroup( target.device().deviceID() ).addEvent( std::move(evt), subgroupName );
+				getTargetEventGroup( target.device().deviceID() ).addEvent(evt, subgroupName);
 			}
 			else {
 				//abstract target
-				eventsByAbstractTarget[evt.getTarget().device()]->addEvent( std::move(evt) );
+				getAbstractTargetEventGroup( evt.getTarget().device() ).addEvent(evt);
+				// eventsByAbstractTarget[evt.getTarget().device()]->addEvent(evt);
+			}
+
+			if (handledEventGroup != 0) {
+				handledEventGroup->addEvent(evt, subgroupName);
 			}
 		}
 		else {
-			addEvent(evt, subgroupName, ownedIDs, unhandledEventGroup);
+			addEvent(evt, subgroupName, ownedIDs, unhandledEventGroup, handledEventGroup);
 		}
 	}
 }
 
 void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroupName, 
-								const std::set<STI::Device::DeviceID>& ownedIDs, std::shared_ptr<RawEventGroup>& unhandledEventGroup)
+								const std::set<STI::Device::DeviceID>& ownedIDs, 
+								std::shared_ptr<RawEventGroup>& unhandledEventGroup, 
+								std::shared_ptr<RawEventGroup>& handledEventGroup)
 {
 	STI::Device::DeviceID branchID;
 
@@ -224,15 +238,23 @@ void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroup
 
 	if (localDeviceID == evt.target().device().deviceID() || it != ownedIDs.end()) {
 		//Event target is this device or is directly owned by this device
-		getTargetEventGroup( evt.target().device().deviceID() ).addEvent( std::move(evt), subgroupName );
+		getTargetEventGroup( evt.target().device().deviceID() ).addEvent(evt, subgroupName);
+		
+		if (handledEventGroup != 0) {
+			handledEventGroup->addEvent(evt, subgroupName);
+		}
 	}
 	else if (dependencyTree->getBranchToTarget(localDeviceID, evt.target().device().deviceID(), branchID)) {
 		//Event target is in the subgraph under branchID
-		getTargetEventGroup(branchID).addEvent( std::move(evt), subgroupName );
+		getTargetEventGroup(branchID).addEvent(evt, subgroupName);
+		
+		if (handledEventGroup != 0) {
+			handledEventGroup->addEvent(evt, subgroupName);
+		}
 	}
 	else if (upstreamPartnerEvents != 0) {
 		//Event target not in this subgraph; these events will handled elsewhere
-		unhandledEventGroup->addEvent( std::move(evt), subgroupName );
+		unhandledEventGroup->addEvent(evt, subgroupName);
 	}
 }
 
@@ -246,6 +268,15 @@ RawEventGroup& LocalEventEngine::getTargetEventGroup(const STI::Device::DeviceID
 	return *(it->second);
 }
 
+RawEventGroup& LocalEventEngine::getAbstractTargetEventGroup(const RawEventTargetDevice& deviceTarget)
+{
+	auto it = eventsByAbstractTarget.find(deviceTarget);
+	if (it == eventsByAbstractTarget.end()) {
+		auto res = eventsByAbstractTarget.insert( {deviceTarget, std::make_shared<RawEventGroup>(baseEventGroupName, "") } );
+		it = res.first;
+	}
+	return *(it->second);
+}
 
 void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 {
@@ -264,15 +295,19 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 			//Event target is this device or is directly owned by this device
 
 			//Deep copy to report partner events
-			handledPartnerEvents->copyEvents(*evtGroup);
-
+			if (handledPartnerEvents != 0) {
+				handledPartnerEvents->copyEvents(*evtGroup);
+			}
+			
 			getTargetEventGroup(id).merge(*evtGroup);
 		}
 		else if (dependencyTree->getBranchToTarget(localDeviceID, id, branchID)) {
 			//Event target is in the subgraph under branchID
 
 			//Deep copy to report partner events
-			handledPartnerEvents->copyEvents(*evtGroup);;
+			if (handledPartnerEvents != 0) {
+				handledPartnerEvents->copyEvents(*evtGroup);
+			}
 
 			getTargetEventGroup(branchID).merge(*evtGroup);
 		}
@@ -666,7 +701,7 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	}
 
 	//Attempt to handle generated events locally, or pass upstream
-	divideEvents(message->upstreamPartnerEvents, upstreamPartnerEvents);
+	divideEvents(message->upstreamPartnerEvents, upstreamPartnerEvents, handledPartnerEvents);
 
 	//Collect any handled partner events
 	if (message->handledEvents != 0 && handledPartnerEvents != 0) {
