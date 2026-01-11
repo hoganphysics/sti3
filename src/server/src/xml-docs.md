@@ -58,7 +58,8 @@
 
 # To do
 - Parse XML files are not generated yet. Implement the functionality to generate parse XML files in LegacyShotRepository and LegacyExperimentXMLBuilder.
-- There is a bug in the shot XML generation associated with the timing file links
+- There is a bug in the shot XML generation associated with the timing file links (fixed)
   - When multiple shots are played using the same ParseID and ParseResult, the timing python files should only be copied once (this works correctly), but the shot XML files for each shot should still correctly reference the timing files (this is currently broken).
   - Right now, the relative paths to the timing files in the shot XML files are only correct for the first shot played with a given ParseID. Subsequent shots referencing the same ParseID have incorrect timing file links in their shot XML files (they point to a path using the shot's own directory, but the timing files are only copied to the first shot's directory).
 - Implement the getParseResult method in LegacyShotRepository to read parse XML files back into ParseResult objects.
+- Bug in LegacyShotRepository::preparePaths. When there are no timing files copied for a shot (e.g., because the shot uses the same ParseID as a previous shot), we should not make a new directory for timing files. Right now makePathIfNew(paths.timingPath); is still called even when there are no timing files, resulting in an empty timing directory being created.

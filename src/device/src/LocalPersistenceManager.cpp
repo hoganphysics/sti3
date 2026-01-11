@@ -720,34 +720,38 @@ void LocalPersistenceManager::transferParseResult(std::shared_ptr<ParseResult> p
 {
     if (parseResult == 0 || parseResult->stackTraceResult == 0 || parseResult->stackTraceResult->stackTraceData == 0) return;
 
-    std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
-
     auto stackTraceData = parseResult->stackTraceResult->stackTraceData;
     auto& files = stackTraceData->getTimingFiles();
+
+    std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
+    if (!stackTraceData->getFileServer(remoteFileServer) || remoteFileServer == 0) {
+        return;
+    }
 
     auto commonBase = STI::Utils::FileID::commonBasePath(files);    //deepest common path of files
 
     for (auto& fileID : files) {
+        if (!remoteFileServer->findFile(fileID)) {
+            //File already persisted; preserve the original FileID for stable links.
+            continue;
+        }
 
         fs::path localPath = timingPath;
         fs::path filePath = fileID.path;
         localPath /= filePath.lexically_relative(commonBase);   //relative directory of this file
         localPath /= fileID.filename;
 
-        auto uniqueFilename = STI::Utils::makeUniquePath( localPath.string() );
+        auto uniqueFilename = STI::Utils::makeUniquePath(localPath.string());
         fs::path uniquePath = uniqueFilename;
 
         auto localFileHandle = fileHolderFactory->makeFileHolder(uniquePath.parent_path().string(), uniquePath.filename().string());
-
-        if (stackTraceData->getFileServer(remoteFileServer)) {
-            //transfer file to local
-            remoteFileServer->transferFile(fileID, localFileHandle, STI::Utils::FileTransferType::Binary);
-            stackTraceData->replaceFile(fileID.getFullFilename(), localFileHandle->getID());       
+        if (localFileHandle == 0) {
+            continue;
         }
 
-        // file->transferFile(localFileHandle);    //transfer file to local
-        // stackTraceData->replaceFile(inputFilename, localFileHandle);            
-
+        if (remoteFileServer->transferFile(fileID, localFileHandle, STI::Utils::FileTransferType::Binary)) {
+            stackTraceData->replaceFile(fileID.getFullFilename(), localFileHandle->getID());
+        }
     }
 }
 
