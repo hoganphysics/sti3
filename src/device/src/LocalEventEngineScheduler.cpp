@@ -283,6 +283,11 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
 {
     if (job == 0) return;
 
+    if (job->getJobOwner() != localDeviceID) {
+        // Only parse jobs owned by local device need to be processed here
+        return;
+    }
+
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
     std::shared_ptr<STI::Engine::RawEventGroup> eventGroup;

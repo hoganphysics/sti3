@@ -649,6 +649,8 @@ void RawEventGroup::merge(const RawEventGroup& other)
         events->insert(events->end(), std::make_move_iterator(otherEvents->begin()), std::make_move_iterator(otherEvents->end()) );
     }
 
+    eventNumber += otherEvents->size();
+
     refreshMinMax();
 
     //merge other subgroups into local subgroup (add new group if needed)
