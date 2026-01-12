@@ -23,6 +23,54 @@ using STI::Engine::LegacyExperimentXMLBuilder;
 using STI::Engine::FullShotResult;
 using STI::Device::DeviceID;
 
+namespace {
+
+std::string makeParseFilename(const STI::Engine::ParseID& pid)
+{
+    return "parse_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
+}
+
+std::filesystem::path safeRelativePath(const std::filesystem::path& target,
+                                       const std::filesystem::path& base)
+{
+    if (base.empty()) {
+        return target;
+    }
+
+    try {
+        auto relative = std::filesystem::relative(target, base);
+        if (!relative.empty()) {
+            return relative;
+        }
+    }
+    catch (const std::filesystem::filesystem_error&) {
+    }
+
+    auto lexical = target.lexically_relative(base);
+    if (!lexical.empty()) {
+        return lexical;
+    }
+
+    return target;
+}
+
+std::filesystem::path parseFilePathForShot(const std::filesystem::path& shotPath,
+                                           const STI::Engine::ParseID& pid)
+{
+    auto experimentDir = shotPath.parent_path();
+    auto shotDatePath = experimentDir.parent_path();
+    auto shotCachePath = shotDatePath.parent_path().parent_path().parent_path();
+
+    if (experimentDir.empty() || shotDatePath.empty() || shotCachePath.empty()) {
+        return experimentDir / makeParseFilename(pid);
+    }
+
+    std::filesystem::path parseDatePath = shotCachePath / pid.parseTimestamp.date_YYYY_MM_DD("/");
+    return parseDatePath / "experiments" / makeParseFilename(pid);
+}
+
+} // namespace
+
 LegacyExperimentXMLBuilder::LegacyExperimentXMLBuilder()
 {
 }
@@ -221,7 +269,7 @@ void addFiles(tinyxml2::XMLElement* timing, const std::filesystem::path& shotPat
 {  
     for (auto& fileID : fileIDs) {
         std::filesystem::path absFilePath = fileID.getFullFilename();
-        auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+        auto relativeFilePath = safeRelativePath(absFilePath, shotPath.parent_path());
         timing->InsertNewChildElement("file")->SetText(relativeFilePath.string().c_str());
     }
 }
@@ -268,6 +316,17 @@ void LegacyExperimentXMLBuilder::build()
             addFiles(timing, shotPath, files);
         }       
         addVars(timing, parseResult->baseEventGroup, filename);
+    }
+
+    //parse
+    {
+        auto parse = e->InsertNewChildElement("parse");
+        auto parseFile = parse->InsertNewChildElement("file");
+
+        std::filesystem::path parsePath = parseFilePathForShot(shotPath, parseResult->pid);
+
+        auto relativeParsePath = safeRelativePath(parsePath, shotPath.parent_path());
+        parseFile->SetText(relativeParsePath.string().c_str());
     }
 
     auto devices = e->InsertNewChildElement("devices");

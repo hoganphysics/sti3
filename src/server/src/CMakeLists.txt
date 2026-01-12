@@ -83,6 +83,7 @@ set(TINYXML_SOURCES
 add_executable(STIServer 
     main.cpp 
     LegacyExperimentXMLBuilder.cpp
+    LegacyParseXMLBuilder.cpp
     LegacyShotRepository.cpp
     LegacySequenceXMLBuilder.cpp
     ServerDevice.cpp
@@ -108,6 +109,7 @@ target_include_directories(STIServer
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/sti/extern
     ${CMAKE_CURRENT_SOURCE_DIR}/../../device/src/
 )
 

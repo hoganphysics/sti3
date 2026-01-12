@@ -1,13 +1,21 @@
 #include "LegacyShotRepository.h"
 
 #include "LegacyExperimentXMLBuilder.h"
+#include "LegacyParseXMLBuilder.h"
 #include "LegacySequenceXMLBuilder.h"
 
+#include <sti/engine/ParseResult.h>
 
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include <iostream>
+
+#include "CerealArchives.h"
+#include <cereal/types/map.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
 
 #include <tinyxml2.h>
 
@@ -106,15 +114,27 @@ bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeParseFilename(id);
     {
-        // std::ifstream file( serializePath.string() );
-        // cereal::XMLInputArchive archive( file );  
-        
-        // parseResult = std::make_shared<STI::Engine::ParseResult>();
+        std::ifstream file(serializePath.string());
+        if (!file.good() || file.peek() == std::ifstream::traits_type::eof()) {
+            // file exists but is empty
+            return false;
+        }
 
-        // archive(parseResult);
+        try {
+            cereal::XMLInputArchive archive(file);
+
+            auto loadedResult = std::make_shared<STI::Engine::ParseResult>();
+            archive(loadedResult);
+            parseResult = loadedResult;
+        }
+        catch (const cereal::Exception& e) {
+            //failed to load - likely due to version mismatch or corruption
+            parseResult.reset();
+            return false;
+        }
     }
 
-    return (parseResult != 0);
+    return true;
 }
 
 bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotResult>& shotResult)
@@ -179,6 +199,12 @@ bool LegacyShotRepository::saveShot(const ShotID& sid, const std::shared_ptr<Ful
 
     targetParsePath /= makeParseFilename(sid.parseID);
     targetShotPath /= makeShotFilename(sid);
+
+    if (!std::filesystem::exists(targetParsePath)) {
+        LegacyParseXMLBuilder parseBuilder(targetParsePath.string(), fullShotResult->parseResult);
+        parseBuilder.build();
+        parseBuilder.write();
+    }
 
     LegacyExperimentXMLBuilder builder(targetShotPath.string(), fullShotResult);
 
@@ -317,4 +343,3 @@ std::string LegacyShotRepository::getShotBasePath(const TimeStamp& timeStamp)
 
     return basePath.string();
 }
-

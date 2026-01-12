@@ -877,8 +877,8 @@ template<class Archive>
 void RawEventGroup::serialize(Archive& archive)
 {
 	archive(
-		cereal::make_nvp("start time", timeMin), 
-		cereal::make_nvp("end time", timeMax), 
+		cereal::make_nvp("start_time", timeMin), 
+		cereal::make_nvp("end_time", timeMax), 
 		cereal::make_nvp("timeOffset", timeOffset),
         cereal::make_nvp("referencePoints", referencePoints),
         cereal::make_nvp("events", events), 
@@ -893,4 +893,3 @@ void RawEventGroup::serialize(Archive& archive)
 
 template void RawEventGroup::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void RawEventGroup::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
-
