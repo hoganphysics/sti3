@@ -353,6 +353,31 @@ void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalC
 	}
 }
 
+bool LocalDevice::refresh()
+{
+	if (localCollection == 0) {
+		return true;
+	}
+
+	std::set<DeviceID> ids;
+	localCollection->getIDs(ids);
+	const auto selfID = getID();
+
+	for (auto& id : ids) {
+		if (id == selfID) {
+			continue;
+		}
+
+		std::shared_ptr<Device> node;
+		bool alive = localCollection->get(id, node) && node != 0 && node->refresh();
+		if (!alive) {
+			localCollection->remove(id);
+		}
+	}
+
+	return true;
+}
+
 //LocalDeviceCollection event handler
 void LocalDevice::DeviceCollectionListener::add(const DeviceID& id)
 {

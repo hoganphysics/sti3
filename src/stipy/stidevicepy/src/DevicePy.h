@@ -38,6 +38,7 @@ public:
 
     const STI::Device::DeviceID getID() const;
     void kill();
+    bool refresh();
 
     std::shared_ptr<STI::Python::DeviceCollectionPy> getDeviceCollection();
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> getMessageDispatcher();
@@ -161,4 +162,3 @@ private:
 } //STI
 
 #endif
-

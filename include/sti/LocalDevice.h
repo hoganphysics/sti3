@@ -79,7 +79,7 @@ public:
 
 	const DeviceID getID() const;
 
-	bool refresh() { return true; }
+	bool refresh() override;
 	void kill();
 	void activate();
 	void disable();

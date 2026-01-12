@@ -31,6 +31,7 @@ void init_Device(py::module& m)
         .def(py::init<>())
         .def("getID", &DevicePy::getID)
         .def("kill", &DevicePy::kill)
+        .def("refresh", &DevicePy::refresh)
         .def("getDeviceCollection", &DevicePy::getDeviceCollection)
         .def("getMessageDispatcher", &DevicePy::getMessageDispatcher)
         .def("getEngineScheduler", &DevicePy::getEngineScheduler)
@@ -55,4 +56,3 @@ void init_Device(py::module& m)
         ;
 
 }
-

@@ -84,6 +84,7 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	// STI::Utils::Configuration omniConfig(config.getParameters("omniORB"));
 	STI::Utils::Configuration omniConfig;
 	omniConfig.set("InitRef", "NameService=corbaname::" + _nameServiceAddress);
+	omniConfig.set("omniORB", "clientConnectTimeOutPeriod", "500");
 
 	//Add parameters from config file (overwrites any duplicate entries)
 	omniConfig.append(STI::Utils::Configuration().append( config.getParameters("omniORB") ));
@@ -152,6 +153,17 @@ std::string NetworkDeviceHub::printNetwork(const std::string& nameServiceAddress
 	// 	return orbmanager->printNameTree(baseContext);
 	// }
 	
+	// return "";
+
+	STI::Utils::Configuration omniConfig;
+	omniConfig.set("InitRef", "NameService=corbaname::" + nameServiceAddress);
+	omniConfig.set("omniORB", "clientConnectTimeOutPeriod", "500");
+
+	auto orbmanager = STI::Network::ORBManager::getInstance(omniConfig, "");
+
+	if (orbmanager != 0) {
+		return orbmanager->printNameTree(baseContext);
+	}
 	return "";
 }
 

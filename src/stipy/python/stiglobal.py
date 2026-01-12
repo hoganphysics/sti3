@@ -19,7 +19,7 @@ from getpass import getuser as _getuser
 from socket import socket as _socket
 from socket import AF_INET as _AF_INET
 from socket import SOCK_DGRAM as _SOCK_DGRAM
-from .ip_address import get_local_ip_address
+from .ip_address import get_local_ip_address as _get_local_ip_address
 
 # def get_local_ip_address():
 #     s = _socket(_AF_INET, _SOCK_DGRAM)
@@ -33,6 +33,8 @@ from .ip_address import get_local_ip_address
 #         s.close()
 #     return IP
 
+def get_local_ip_address():
+    return _get_local_ip_address()
 
 def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
     localAddress = _gethostname()
@@ -48,6 +50,7 @@ def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
     hubConfig = Configuration()
     hubConfig.set("omniORB", "endPoint", "giop:tcp::")
     hubConfig.set("omniORB", "endPointPublish", "giop:tcp:" + get_local_ip_address() + ":")
+    hubConfig.set("omniORB", "clientConnectTimeOutPeriod", "500")
 
     if config is not None:
         hubConfig.append(config)

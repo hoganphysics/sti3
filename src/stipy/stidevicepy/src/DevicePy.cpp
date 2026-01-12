@@ -69,6 +69,14 @@ void DevicePy::kill()
     }
 }
 
+bool DevicePy::refresh()
+{
+    if (device_ != 0) {
+        return device_->refresh();
+    }
+    return false;
+}
+
 std::shared_ptr<STI::Python::DeviceCollectionPy> DevicePy::getDeviceCollection()
 {
     std::shared_ptr<STI::Device::DeviceCollection> collection;
@@ -255,5 +263,4 @@ bool DevicePy::setAttribute(const std::string& key, const std::string& value)
     }
     return false;
 }
-
 
