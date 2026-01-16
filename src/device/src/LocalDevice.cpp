@@ -359,6 +359,8 @@ bool LocalDevice::refresh()
 		return true;
 	}
 
+	return true;
+
 	std::set<DeviceID> ids;
 	localCollection->getIDs(ids);
 	const auto selfID = getID();

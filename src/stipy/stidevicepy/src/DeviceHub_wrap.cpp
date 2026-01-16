@@ -196,6 +196,24 @@ void init_DeviceHub(py::module& m)
                 return ids;
             })
         .def("getID", &NetworkDeviceHub::getID)
+        .def("getIDs", 
+            [](const NetworkDeviceHub& self) {
+            std::set<STI::Device::DeviceID> ids;
+            self.getDeviceIDs(ids);
+            return ids;
+        })
+        .def("findHub", 
+            [](NetworkDeviceHub& self, const STI::Device::DeviceID& deviceID) {
+                STI::Network::HubID hubID;
+                bool found = self.findHub(deviceID, hubID);
+
+                if (!found) {
+                    hubID = STI::Network::HubID();
+                    throw py::key_error("DeviceID not found on any Hub");
+                }
+
+                return hubID;
+            })
         // .def("run", py::overload_cast<bool>(&NetworkDeviceHub::run), py::arg("block") = true)
         .def("getPersistenceOptions", &NetworkDeviceHub::getPersistenceOptions)
         .def("setPersistenceOptions", [](NetworkDeviceHub& self, NetworkDeviceHub::PersistenceOptions& options) {
