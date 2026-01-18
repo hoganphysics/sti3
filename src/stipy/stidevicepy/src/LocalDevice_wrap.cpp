@@ -78,7 +78,10 @@ void init_LocalDevice(py::module& m)
                 py::arg("deviceID"))
         .def("addPartner", py::overload_cast<const STI::Device::DeviceID&, const std::string&>(&LocalDevicePy::addPartner), 
                 py::arg("deviceID"), py::arg("alias"))
-        .def("addEventTarget", &LocalDevicePy::addEventTarget, py::arg("deviceID"))
+        .def("addEventTarget", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::addEventTarget), 
+                py::arg("deviceID"))
+        .def("addEventTarget", py::overload_cast<const STI::Device::DeviceID&, const std::string&>(&LocalDevicePy::addEventTarget), 
+                py::arg("deviceID"), py::arg("alias"))
         .def("addEventEngine", py::overload_cast<const STI::Engine::EngineID&>(&LocalDevicePy::addEventEngine), py::arg("engineID"))
         //  .def("addAttribute", &LocalDevicePy::addAttribute)
         .def("addAttribute", 
