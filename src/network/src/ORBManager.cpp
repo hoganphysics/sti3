@@ -205,24 +205,55 @@ ORBManager::ORBManager(const std::string& args)
 	delete[] argv;
 }
 
-
-
 ORBManager::~ORBManager()
 {
 	shutdown();
 }
 
-void ORBManager::activateServant(PortableServer::ServantBase& servant)
+PortableServer::ObjectId* ORBManager::activateServant(PortableServer::ServantBase& servant)
+{
+	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
+
+	// PortableServer::ObjectId_var oid;
+	PortableServer::ObjectId* oidPtr;
+
+	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
+		
+		oidPtr = orbManager->poa->activate_object(&servant);
+	}
+
+	return oidPtr;
+}
+
+// PortableServer::ObjectId_var ORBManager::activateServant(PortableServer::POA_ptr poa,
+//                                                         PortableServer::ServantBase* servant)
+// {
+//     if (CORBA::is_nil(poa) || servant == nullptr) {
+//         throw CORBA::BAD_PARAM();
+//     }
+
+//     PortableServer::ObjectId_var oid;
+//     oid = poa->activate_object(servant);  // adopts the returned ObjectId*
+//     return oid;
+// }
+
+void ORBManager::deactivateServant(const PortableServer::ObjectId& oid)
 {
 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-		orbManager->poa->activate_object(&servant);
+
+		try {
+			orbManager->poa->deactivate_object(oid);
+		}
+		catch (PortableServer::POA::ServantNotActive& e) {
+			// std::cout << "ORBManager::deactivateServant. Caught ServantNotActive" << std::endl;
+		}
+
 	}
 }
 
-void ORBManager::deactivateServant(PortableServer::Servant p_servant)
+void ORBManager::deactivateServant(PortableServer::Servant p_servant, bool printErrors)
 {
 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
@@ -231,9 +262,10 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 		auto realPoa = p_servant->_default_POA();
 		if (realPoa != orbManager->poa) {
 			// you're deactivating via the wrong POA
-			// std::cout << "ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
+			if (printErrors) {
+				std::cout << "*ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
+			}
 		}
-
 
 		try {
 			auto objref = (orbManager->poa->servant_to_id(p_servant));
@@ -244,6 +276,9 @@ void ORBManager::deactivateServant(PortableServer::Servant p_servant)
 			}	
 		}
 		catch (PortableServer::POA::ServantNotActive& e) {
+			if (printErrors) {
+				std::cout << "ORBManager::deactivateServant. Caught ServantNotActive: " << std::endl;
+			}
 		}
 
 	}
@@ -339,6 +374,7 @@ void ORBManager::shutdown()
 		signal(13, SIG_IGN);	//Note SIGPIPE=13 in linux; not defined in windows
 		// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
 
+		orb->destroy();
 		// orb->destroy() causes error
 		// try {
 		// 	orb->destroy();

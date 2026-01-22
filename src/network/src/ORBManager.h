@@ -63,10 +63,18 @@ public:
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref);
 	bool getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref, std::ostream& errorBuf);
 
-	static void activateServant(PortableServer::ServantBase& servant);
-	static void deactivateServant(PortableServer::Servant p_servant);
+	static PortableServer::ObjectId* activateServant(PortableServer::ServantBase& servant);
+	static void deactivateServant(PortableServer::Servant p_servant, bool printErrors = false);
+	void deactivateServant(const PortableServer::ObjectId& oid);
 
 	static bool orbInstanceInitializd();
+
+	bool isPOAactive() const { return (!CORBA::is_nil(poa)) && poa_is_active; }
+
+	PortableServer::POA_ptr getPOA() const
+	{
+		return PortableServer::POA::_duplicate(poa);
+	}
 
 private:
 

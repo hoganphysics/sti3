@@ -16,6 +16,11 @@
 
 #include <sti/network/Node.h>
 
+// #include "../../network/src/TTestNetwork_i.h"
+// #include "../../network/src/ORBManager.h"
+#include "TestNetworkWrapper.h"
+#include "generated/deviceNet.h"
+
 
 int main(int argc, char **argv)
 {
@@ -64,7 +69,30 @@ int main(int argc, char **argv)
 
     hub->addDevice(server);
 
-    hub->run(true);
+    hub->run(false);	//non-blocking
+
+    std::string enableActivateAt = configFile.get<std::string>("EnableActivate", "false");
+    std::string enableDeactivateAt = configFile.get<std::string>("EnableDeactivate", "false");
+    bool enableActivate = (enableActivateAt == "1" || enableActivateAt == "true");
+    bool enableDeactivate = (enableDeactivateAt == "1" || enableDeactivateAt == "true");
+
+    std::cout << "TestNetwork servant activate: " << (enableActivate ? "true" : "false") << ", deactivate: " << (enableDeactivate ? "true" : "false") << std::endl;
+    ::STI::TNetwork::TTestNetwork_var testRef;
+
+    {
+        using STI::TNetwork::TestNetworkWrapper;
+        TestNetworkWrapper wrapper(enableActivate, enableDeactivate);
+
+        wrapper.getTestNetworkReference(testRef);
+        // testRef->ping();
+
+        // auto testRef = wrapper.test->_this();
+    }
+
+
+    // STI::Network::ORBManager::getInstance()->block();	//blocking
+
+
 
     //test logs
     if (false) {
@@ -122,7 +150,7 @@ int main(int argc, char **argv)
         
     }
 
-    hub->shutdown();
+    // hub->shutdown();
 
     return 0;
 }

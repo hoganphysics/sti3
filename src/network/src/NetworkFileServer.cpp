@@ -1,5 +1,6 @@
 #include "NetworkFileServer.h"
 #include "LocalFileServer.h"
+#include "ORBManager.h"
 
 using STI::Network::NetworkFileServer;
 using STI::Network::NetworkVirtualFileServer;
@@ -8,6 +9,7 @@ using STI::Network::NetworkVirtualFileServer;
 NetworkFileServer::NetworkFileServer(const STI::Device::DeviceID& localID)
 : STI::Utils::LocalFileServer(localID), fileServerServant(this)
 {
+    STI::Network::ORBManager::ORBManager::activateServant(fileServerServant);
 }
 
 NetworkFileServer::~NetworkFileServer()
@@ -27,6 +29,7 @@ bool NetworkFileServer::getTFileServerRef(STI::TNetwork::TFileServer_var& tFileS
 NetworkVirtualFileServer::NetworkVirtualFileServer()
 : STI::Utils::VirtualFileServer(), fileServerServant(this)
 {
+    STI::Network::ORBManager::ORBManager::activateServant(fileServerServant);
 }
 
 NetworkVirtualFileServer::~NetworkVirtualFileServer()
