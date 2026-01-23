@@ -8,7 +8,6 @@
 #include "convert/Convert_Attribute.h"
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ResultsCollector.h"
-// #include "ORBManager.h"
 
 #include "RemoteFileServer.h"
 
@@ -38,7 +37,6 @@ TResultsCollector_i::TResultsCollector_i(STI::Engine::ResultsCollector* resultsC
 
 TResultsCollector_i::~TResultsCollector_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 

@@ -10,7 +10,6 @@ NetworkResultsCollector::NetworkResultsCollector(const STI::Engine::ShotID& sid,
             const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
 : STI::Engine::LocalResultsCollector(sid, paths, factory), resultsCollectorServantHolder(new STI::TNetwork::TResultsCollector_i(this))
 {
-    // STI::Network::ORBManager::ORBManager::activateServant(resultsCollectorServant);
 }
 
 NetworkResultsCollector::~NetworkResultsCollector()

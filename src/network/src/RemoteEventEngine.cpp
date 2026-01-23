@@ -6,7 +6,6 @@
 #include <sti/engine/ParsedDependencyTree.h>
 
 #include "NetworkResultsCollector.h"
-// #include "ORBManager.h"
 
 
 using STI::Network::RemoteEventEngine;
@@ -58,12 +57,6 @@ void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::s
 	if (isDisabled()) return;
 
 	triggerCallbackServantHolder.emplace(triggerCB);
-
-    // triggerCallbackServant = std::make_shared<STI::TNetwork::TTriggerCallback_i>(triggerCB);
-
-	// if (triggerCallbackServant != 0) {
-	// 	STI::Network::ORBManager::ORBManager::activateServant(*triggerCallbackServant);
-	// }
 
 	try {
 		getTRef()->playCB(

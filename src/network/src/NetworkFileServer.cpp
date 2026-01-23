@@ -9,7 +9,6 @@ using STI::Network::NetworkVirtualFileServer;
 NetworkFileServer::NetworkFileServer(const STI::Device::DeviceID& localID)
 : STI::Utils::LocalFileServer(localID), fileServerServantHolder(new STI::TNetwork::TFileServer_i(this))
 {
-    // STI::Network::ORBManager::ORBManager::activateServant(fileServerServant);
 }
 
 NetworkFileServer::~NetworkFileServer()
@@ -29,7 +28,6 @@ bool NetworkFileServer::getTFileServerRef(STI::TNetwork::TFileServer_var& tFileS
 NetworkVirtualFileServer::NetworkVirtualFileServer()
 : STI::Utils::VirtualFileServer(), fileServerServantHolder(new STI::TNetwork::TFileServer_i(this))
 {
-    // STI::Network::ORBManager::ORBManager::activateServant(fileServerServant);
 }
 
 NetworkVirtualFileServer::~NetworkVirtualFileServer()

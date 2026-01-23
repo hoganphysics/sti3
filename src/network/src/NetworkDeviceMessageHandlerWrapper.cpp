@@ -16,7 +16,6 @@ NetworkDeviceMessageHandlerWrapper::NetworkDeviceMessageHandlerWrapper(const std
 : localMessageHandler(localHandler), 
 messageHandlerServantHolder(new STI::TNetwork::TDeviceMessageHandler_i(localHandler))
 {
-	// STI::Network::ORBManager::ORBManager::activateServant(messageHandlerServant);
 }
 
 NetworkDeviceMessageHandlerWrapper::~NetworkDeviceMessageHandlerWrapper()
@@ -29,8 +28,6 @@ void NetworkDeviceMessageHandlerWrapper::disable()
 	if (servant == nullptr) return;
 
 	servant->disableRefreshIndicator();
-	// messageHandlerServantHolder.get()->disableRefreshIndicator();
-	// messageHandlerServant.disableRefreshIndicator();
 }
 
 void NetworkDeviceMessageHandlerWrapper::addListenerGroup(const DeviceMessageType& type, 

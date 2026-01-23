@@ -1,6 +1,5 @@
 
 #include "TBinaryDataStream_i.h"
-// #include "ORBManager.h"
 #include "RemoteBinaryDataStreamTarget.h"
 
 using STI::TNetwork::TBinaryDataStream_i;
@@ -13,7 +12,6 @@ TBinaryDataStream_i::TBinaryDataStream_i(STI::Utils::BinaryDataStream* dataStrea
 
 TBinaryDataStream_i::~TBinaryDataStream_i()
 {
-	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TBinaryDataStream_i::transfer(::STI::TNetwork::TBinaryDataStreamTarget_ptr target)

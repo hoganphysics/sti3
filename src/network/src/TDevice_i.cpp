@@ -1,5 +1,4 @@
 #include "TDevice_i.h"
-// #include "ORBManager.h"
 #include <sti/device/DeviceID.h>
 #include "NetworkConvert.h"
 
@@ -31,20 +30,10 @@ profileManagerServantHolder(new STI::TNetwork::TProfileManager_i(device)),
 taskManagerServantHolder(new STI::TNetwork::TTaskManager_i(device)), 
 logManagerServantHolder(new STI::TNetwork::TLogManager_i(device))
 {
-	// STI::Network::ORBManager::ORBManager::activateServant(attributeManagerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(channelManagerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(deviceCollectionServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(messageDispatcherServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(eventSchedulerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(persistenceManagerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(profileManagerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(taskManagerServant);
-	// STI::Network::ORBManager::ORBManager::activateServant(logManagerServant);
 }
 
 TDevice_i::~TDevice_i()
 {
-	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ::CORBA::Boolean TDevice_i::refresh()

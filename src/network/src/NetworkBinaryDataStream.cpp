@@ -17,8 +17,6 @@ NetworkBinaryDataStream::NetworkBinaryDataStream(const std::shared_ptr<STI::Util
 : dataStreamServantHolder(new STI::TNetwork::TBinaryDataStream_i(this))
 {
 	localdataStreamTarget = dataStream;
-
-	// STI::Network::ORBManager::ORBManager::activateServant(dataStreamServant);
 }
 
 NetworkBinaryDataStream::~NetworkBinaryDataStream()
@@ -40,7 +38,6 @@ bool NetworkBinaryDataStream::getTBinaryDataStreamRef(const typename std::shared
 
 	if (networkDataStream == 0) return false;		//check dynamic_pointer_cast
 
-	// tdataStream = networkDataStream->dataStreamServant._this();
 	tdataStream = networkDataStream->dataStreamServantHolder.getRefVar();
 	return !CORBA::is_nil(tdataStream);
 }

@@ -17,8 +17,6 @@ NetworkFileHolder::NetworkFileHolder(const STI::Utils::FileID& fileID, const std
     else {
         localFileHolder = std::make_shared<STI::Utils::LocalFileHolder>(fileID.origin, fileID.path, fileID.filename);
     }
-    
-    // STI::Network::ORBManager::ORBManager::activateServant(fileHolderServant);
 }
 
 NetworkFileHolder::~NetworkFileHolder()

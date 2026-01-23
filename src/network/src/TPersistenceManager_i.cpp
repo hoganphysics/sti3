@@ -9,7 +9,6 @@
 #include "convert/Convert_ResultsCollector.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
-// #include "ORBManager.h"
 #include "TFileServerRefInterface.h"
 
 using STI::TNetwork::TPersistenceManager_i;
@@ -41,7 +40,6 @@ TPersistenceManager_i::TPersistenceManager_i(const std::shared_ptr<STI::Device::
 
 TPersistenceManager_i::~TPersistenceManager_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ::CORBA::Boolean TPersistenceManager_i::findShot(const ::STI::TNetwork::TShotID& sid)
@@ -138,8 +136,6 @@ TPersistenceManager_i::~TPersistenceManager_i()
 TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector)
 {
 	std::shared_ptr<ResultsCollector> remoteCollector;
-
-	// ::STI::TNetwork::TResultsCollector_var tResultsCollector_var = tResultsCollector;
     
 	ShotResultRecord record;
 	STI::TNetwork::TShotResultRecord_var tShotResultRecord(new STI::TNetwork::TShotResultRecord);

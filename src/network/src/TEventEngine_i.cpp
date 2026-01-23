@@ -8,7 +8,6 @@
 #include <sti/engine/RawEvent.h>
 
 #include "LocalEventEngineJob.h"
-// #include "ORBManager.h"
 #include "RemoteResultsCollector.h"
 #include "RemoteTriggerCallback.h"
 
@@ -34,7 +33,6 @@ TEventEngine_i::TEventEngine_i(STI::Engine::EventEngine* engine)
 
 TEventEngine_i::~TEventEngine_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)

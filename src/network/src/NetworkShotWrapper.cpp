@@ -11,8 +11,6 @@ using STI::Network::NetworkShotWrapper;
 NetworkShotWrapper::NetworkShotWrapper(const std::shared_ptr<STI::Engine::Shot>& shot)
 : localshot(shot), shotEventsCBServantHolder(new STI::TNetwork::TShotCallback_i(shot))
 {
-    // STI::Network::ORBManager::ORBManager::activateServant(shotEventsCBServant);
-
     if (localshot != 0) {
         shotConfig = localshot->getShotConfig();
     }

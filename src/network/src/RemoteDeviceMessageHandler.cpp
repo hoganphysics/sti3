@@ -20,8 +20,6 @@ RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceM
 : TReferenceHolder<TDeviceMessageHandler>(deviceHandler), 
 refreshIndicatorHolder(new STI::TNetwork::TRefreshIndicator_i())
 {
-	// STI::Network::ORBManager::ORBManager::activateServant(refreshIndicator);
-	
 	std::unique_lock<std::mutex> handlerLock(handlerMutex);
 
 	//install refresh indicator on the remote resource this object is wrapping

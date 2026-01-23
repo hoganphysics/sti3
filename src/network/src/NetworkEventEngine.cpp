@@ -18,7 +18,6 @@ NetworkEventEngine::NetworkEventEngine(
 : LocalEventEngine(engineID, localID, channels, attributeManager, deviceParser, triggerTarget, dispatcher, collection, persistence), 
 eventEngineServantHolder(new STI::TNetwork::TEventEngine_i(this))
 {
-    // STI::Network::ORBManager::ORBManager::activateServant(eventEngineServant);
 }
 
 NetworkEventEngine::~NetworkEventEngine()

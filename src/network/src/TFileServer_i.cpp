@@ -3,7 +3,6 @@
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileServer.h>
 
-// #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "RemoteFileHolder.h"
 #include "convert/Convert_File.h"
@@ -24,7 +23,6 @@ TFileServer_i::TFileServer_i(STI::Utils::FileServer* fileServer)
 
 TFileServer_i::~TFileServer_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 

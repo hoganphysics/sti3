@@ -1,6 +1,5 @@
 #include "TTriggerCallback_i.h"
 
-// #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include <sti/device/DeviceID.h>
 #include "TriggerCallback.h"
@@ -18,7 +17,6 @@ TTriggerCallback_i::TTriggerCallback_i(const std::shared_ptr<STI::Engine::Trigge
 
 TTriggerCallback_i::~TTriggerCallback_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TTriggerCallback_i::ready(const TDeviceID& id)

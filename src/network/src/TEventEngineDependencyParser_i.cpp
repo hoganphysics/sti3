@@ -5,7 +5,6 @@
 #include "convert/Convert_DeviceTrace.h"
 
 #include "NetworkConvert.h"
-// #include "ORBManager.h"
 #include "EventEngineDependencyTree.h"
 #include <sti/engine/EventEngineDependencyParser.h>
 #include <sti/engine/EngineParsingMessage.h>
@@ -29,7 +28,6 @@ TEventEngineDependencyParser_i::TEventEngineDependencyParser_i(const std::shared
 
 TEventEngineDependencyParser_i::~TEventEngineDependencyParser_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 

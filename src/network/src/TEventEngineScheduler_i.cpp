@@ -21,7 +21,6 @@
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
-// #include "ORBManager.h"
 #include "RemoteResultsCollector.h"
 
 #include <memory>
@@ -80,14 +79,11 @@ TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Devi
 		&& engineScheduler->getDependencyParser(dependencyParser)) {
 	
 		dependencyParserServantHolder.emplace(dependencyParser);
-		// dependencyParserServant = std::make_shared<TEventEngineDependencyParser_i>(dependencyParser);
-		// STI::Network::ORBManager::ORBManager::activateServant(*dependencyParserServant);
     }
 }
 
 TEventEngineScheduler_i::~TEventEngineScheduler_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -219,10 +215,6 @@ TEngineJobStatus TEventEngineScheduler_i::getStatusSeqID(const ::STI::TNetwork::
 
 TEventEngineDependencyParser_ptr TEventEngineScheduler_i::getDependencyParser()
 {
-	// if (dependencyParserServant == 0) {
-	// 	return TEventEngineDependencyParser::_nil();
-	// }
-
 	return dependencyParserServantHolder.getRefPtr();
 }
 

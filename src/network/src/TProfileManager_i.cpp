@@ -2,7 +2,6 @@
 #include "TProfileManager_i.h"
 
 #include <sti/device/ProfileManager.h>
-// #include "ORBManager.h"
 #include "convert/Convert_Profile.h"
 
 using STI::Network::convert;
@@ -22,7 +21,6 @@ TProfileManager_i::TProfileManager_i(const std::shared_ptr<STI::Device::Device>&
 
 TProfileManager_i::~TProfileManager_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TProfileManager_i::getProfiles(::STI::TNetwork::TStringSeq_out names)

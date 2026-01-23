@@ -1,6 +1,5 @@
 #include "TDeviceMessageHandler_i.h"
 
-// #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "convert/Convert_DeviceMessage.h"
 
@@ -22,8 +21,6 @@ TDeviceMessageHandler_i::TDeviceMessageHandler_i(const std::shared_ptr<STI::Devi
 TDeviceMessageHandler_i::~TDeviceMessageHandler_i()
 {
 	disableRefreshIndicator();
-
-	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TDeviceMessageHandler_i::disableRefreshIndicator()

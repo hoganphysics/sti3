@@ -3,7 +3,6 @@
 
 #include <sti/device/TaskManager.h>
 #include <sti/utils/Task.h>
-// #include "ORBManager.h"
 
 #include "convert/Convert_Task.h"
 
@@ -24,7 +23,6 @@ TTaskManager_i::TTaskManager_i(const std::shared_ptr<STI::Device::Device>& devic
 
 TTaskManager_i::~TTaskManager_i()
 {
-    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TTaskManager_i::getTaskIDs(::STI::TNetwork::TStringSeq_out ids)
