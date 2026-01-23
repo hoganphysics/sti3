@@ -6,8 +6,8 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TTriggerCallback;
 
 
-RemoteTriggerCallback::RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_ptr trigger)
-: TReferenceHolder<TTriggerCallback>(trigger, cbMutex)
+RemoteTriggerCallback::RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_var trigger)
+: TReferenceHolder<TTriggerCallback>(trigger)
 {
 }
 

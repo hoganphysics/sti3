@@ -1,6 +1,5 @@
 #include "TFileHolder_i.h"
 
-#include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "RemoteFileHolder.h"
 #include "convert/Convert_File.h"
@@ -19,7 +18,6 @@ TFileHolder_i::TFileHolder_i(STI::Utils::FileHolder* fileHolder)
 
 TFileHolder_i::~TFileHolder_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 TFileID* TFileHolder_i::getID()
@@ -72,8 +70,9 @@ char* TFileHolder_i::md5Checksum()
 {
     bool result = false;
 
-    if (localFileHolder != 0) {
-        auto remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(destination);
+    if (localFileHolder != 0 && !CORBA::is_nil(destination)) {
+        STI::TNetwork::TFileHolder_var destination_var = STI::TNetwork::TFileHolder::_duplicate(destination);
+        auto remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(destination_var);
 		result = localFileHolder->transferFile(remoteFile);
 	}
     return static_cast<::CORBA::Boolean>(result);
@@ -94,15 +93,6 @@ char* TFileHolder_i::md5Checksum()
     bool result = false;
 
     if (localFileHolder != 0) {
-
-  //      char* copyBuffer = new char[buffer.length()];
-
-  //      convertBuffer(buffer, copyBuffer);
-
-		//result = localFileHolder->write(copyBuffer, buffer.length());
-
-  //      delete[] copyBuffer;
-
         unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(buffer).get_buffer();    //no deep copy
         char* dataC = reinterpret_cast<char*>(data);
         result = localFileHolder->write(dataC, buffer.length());

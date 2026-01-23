@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TAttributeManager_i : public POA_STI::TNetwork::TAttributeManager
+class TAttributeManager_i : public POA_STI::TNetwork::TAttributeManager, 
+                            public PortableServer::RefCountServantBase
 {
 public:
 

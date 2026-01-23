@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TTaskManager_i : public POA_STI::TNetwork::TTaskManager
+class TTaskManager_i : public POA_STI::TNetwork::TTaskManager,
+                       public PortableServer::RefCountServantBase
 {
 public:
 

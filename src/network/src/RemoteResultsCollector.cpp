@@ -23,8 +23,8 @@ using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Network::TFileServerRefInterface;
 
 
-RemoteResultsCollector::RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector)
-: TReferenceHolder<TResultsCollector>(collector, collectorMutex)
+RemoteResultsCollector::RemoteResultsCollector(::STI::TNetwork::TResultsCollector_var collector)
+: TReferenceHolder<TResultsCollector>(collector)
 {
 }
 

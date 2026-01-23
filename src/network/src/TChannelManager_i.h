@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TChannelManager_i : public POA_STI::TNetwork::TChannelManager
+class TChannelManager_i : public POA_STI::TNetwork::TChannelManager,
+                          public PortableServer::RefCountServantBase
 {
 public:
 

@@ -41,8 +41,8 @@ using ::STI::TNetwork::TEngineJobStatus;
 using ::STI::TNetwork::TFileServer_var;
 
 
-RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager)
-: TReferenceHolder<TPersistenceManager>(manager, persistenceMutex)
+RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager)
+: TReferenceHolder<TPersistenceManager>(manager)
 {
 }
 

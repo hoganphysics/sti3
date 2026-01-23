@@ -23,8 +23,8 @@ using STI::TNetwork::TDeviceHubID;
 using STI::Network::NodeWalker;
 
 
-RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceHub>(deviceHub, hubMutex)
+RemoteDeviceHub::RemoteDeviceHub(::STI::TNetwork::TDeviceHub_var deviceHub)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceHub>(deviceHub)
 {
 	_getHubID();	// network call to get HubID once and save locally
 }

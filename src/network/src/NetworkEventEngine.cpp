@@ -16,9 +16,8 @@ NetworkEventEngine::NetworkEventEngine(
     const std::shared_ptr<STI::Device::DeviceCollection>& collection,
     const std::shared_ptr<STI::Device::PersistenceManager>& persistence)
 : LocalEventEngine(engineID, localID, channels, attributeManager, deviceParser, triggerTarget, dispatcher, collection, persistence), 
-eventEngineServant(this) 
+eventEngineServantHolder(new STI::TNetwork::TEventEngine_i(this))
 {
-    STI::Network::ORBManager::ORBManager::activateServant(eventEngineServant);
 }
 
 NetworkEventEngine::~NetworkEventEngine()
@@ -35,7 +34,7 @@ bool NetworkEventEngine::getTEventEngineReference(const typename std::shared_ptr
     
     auto wrapper = std::dynamic_pointer_cast<NetworkEventEngine>(engine);
     if (wrapper) {
-        tEngine = wrapper->eventEngineServant._this();
+        tEngine = wrapper->eventEngineServantHolder.getRefVar();
         return !CORBA::is_nil(tEngine);
     }
     return false;

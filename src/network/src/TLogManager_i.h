@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TLogManager_i : public POA_STI::TNetwork::TLogManager
+class TLogManager_i : public POA_STI::TNetwork::TLogManager,
+                      public PortableServer::RefCountServantBase
 {
 public:
 

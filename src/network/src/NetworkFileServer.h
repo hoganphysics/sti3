@@ -2,10 +2,12 @@
 #define STI_ENGINE_NETWORKFILESERVER_H
 
 #include <sti/utils/VirtualFileServer.h>
+
 #include "LocalFileServer.h"
 #include "TFileServerRefInterface.h"
 #include "TFileServer_i.h"
 #include "generated/deviceNet.h"
+#include "ServantHolder.h"
 
 #include <vector>
 #include <memory>
@@ -35,7 +37,8 @@ private:
 
     bool getTFileServerRef(STI::TNetwork::TFileServer_var& tFileServer);
 
-    STI::TNetwork::TFileServer_i fileServerServant;
+    // STI::TNetwork::TFileServer_i fileServerServant;
+    ServantHolder<STI::TNetwork::TFileServer_i, STI::TNetwork::TFileServer> fileServerServantHolder;
 };
 
 
@@ -50,7 +53,8 @@ public:
 private:
 
     bool getTFileServerRef(STI::TNetwork::TFileServer_var& tFileServer);
-    STI::TNetwork::TFileServer_i fileServerServant;
+    // STI::TNetwork::TFileServer_i fileServerServant;
+    ServantHolder<STI::TNetwork::TFileServer_i, STI::TNetwork::TFileServer> fileServerServantHolder;
 };
 
 

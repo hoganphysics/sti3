@@ -2,11 +2,12 @@
 #define STI_ENGINE_NETWORKSHOTWRAPPER_H
 
 #include <sti/engine/Shot.h>
-#include "TShotRefInterface.h"
+#include <sti/engine/ShotConfig.h>
 
+#include "TShotRefInterface.h"
 #include "TShotCallback_i.h"
 #include "generated/deviceNet.h"
-#include <sti/engine/ShotConfig.h>
+#include "ServantHolder.h"
 
 #include <vector>
 #include <memory>
@@ -30,12 +31,13 @@ public:
 
 private:
 
-    bool getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback);
+    bool getTShotReference(STI::TNetwork::TShotCallback_var& tShotCallback);
 
     STI::Engine::ShotConfig shotConfig;
 
     std::shared_ptr<STI::Engine::Shot> localshot;
-    STI::TNetwork::TShotCallback_i shotEventsCBServant;
+    // STI::TNetwork::TShotCallback_i shotEventsCBServant;
+    ServantHolder<STI::TNetwork::TShotCallback_i, STI::TNetwork::TShotCallback> shotEventsCBServantHolder;
 };
 
 

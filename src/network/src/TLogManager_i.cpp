@@ -1,7 +1,6 @@
 
 #include "TLogManager_i.h"
 
-#include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "convert/Convert_Log.h"
 
@@ -29,7 +28,6 @@ TLogManager_i::TLogManager_i(const std::shared_ptr<STI::Device::Device>& device)
 
 TLogManager_i::~TLogManager_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TLogManager_i::getLogNames(::STI::TNetwork::TStringSeq_out names)

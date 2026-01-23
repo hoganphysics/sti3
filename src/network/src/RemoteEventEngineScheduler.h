@@ -25,7 +25,7 @@ class RemoteEventEngineScheduler : public STI::Engine::EventEngineScheduler,
 {
 public:
 
-    RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler);
+    RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler);
     ~RemoteEventEngineScheduler();
 
     STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot);

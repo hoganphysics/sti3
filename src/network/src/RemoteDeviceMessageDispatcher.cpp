@@ -11,8 +11,8 @@ using STI::TNetwork::TDeviceID;
 using STI::Network::convert;
 
 
-RemoteDeviceMessageDispatcher::RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_ptr messageDispatcher)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageDispatcher>(messageDispatcher, dispatcherMutex)
+RemoteDeviceMessageDispatcher::RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_var messageDispatcher)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TDeviceMessageDispatcher>(messageDispatcher)
 {
 }
 
@@ -30,7 +30,7 @@ void RemoteDeviceMessageDispatcher::addMessageHandler(const STI::Device::DeviceI
 	if (isDisabled()) return;
 
 	//need to upcast to NetworkDeviceMessageHandlerWrapper and extract TDeviceMessageHandler_ptr reference from servant
-	STI::TNetwork::TDeviceMessageHandler_ptr tMessageHandler;
+	STI::TNetwork::TDeviceMessageHandler_var tMessageHandler;
 
 	if (!NetworkDeviceMessageHandlerWrapper::getTDeviceMessageHandlerReference(handler, tMessageHandler)) {
 		return;

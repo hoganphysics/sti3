@@ -15,8 +15,8 @@ using STI::Network::RemoteShot;
 using STI::Engine::ShotConfig;
 
 
-RemoteShot::RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotCallback_ptr shotCallback)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotCallback>(shotCallback, shotMutex), shotConfig(shotConfig)
+RemoteShot::RemoteShot(const STI::Engine::ShotConfig& shotConfig, ::STI::TNetwork::TShotCallback_var shotCallback)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TShotCallback>(shotCallback), shotConfig(shotConfig)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -28,7 +28,7 @@ RemoteShot::~RemoteShot()
 	disable();
 }
 
-bool RemoteShot::getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback)
+bool RemoteShot::getTShotReference(STI::TNetwork::TShotCallback_var& tShotCallback)
 {
 	std::unique_lock<std::mutex> shotLock(shotMutex);
 

@@ -602,7 +602,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     std::shared_ptr<Shot> shot;
     STI::TNetwork::TShot tShot;
 
-    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
+    ::STI::TNetwork::TShotCallback_var tShotCallback;
     
     bool shotMissing = engineJob.getStatus() == EngineJobStatus::NotFound || 
                        engineJob.getStatus() == EngineJobStatus::Archived;
@@ -1433,7 +1433,7 @@ bool STI::Network::convert<TShot, std::shared_ptr<Shot>>(const TShot& tShot, std
 template<>
 bool STI::Network::convert<std::shared_ptr<Shot>, TShot>(const std::shared_ptr<Shot>& shot, TShot& tShot)
 {
-    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
+    ::STI::TNetwork::TShotCallback_var tShotCallback;
 
     if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 

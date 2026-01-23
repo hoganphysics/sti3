@@ -13,7 +13,8 @@ namespace TNetwork
 {
 
 
-class TResultsCollector_i : public POA_STI::TNetwork::TResultsCollector
+class TResultsCollector_i : public POA_STI::TNetwork::TResultsCollector,
+                            public PortableServer::RefCountServantBase
 {
 public:
 

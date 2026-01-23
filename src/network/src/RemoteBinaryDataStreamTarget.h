@@ -19,7 +19,7 @@ class RemoteBinaryDataStreamTarget : public STI::Utils::BinaryDataStreamTarget,
 {
 public:
 
-    RemoteBinaryDataStreamTarget(::STI::TNetwork::TBinaryDataStreamTarget_ptr streamTarget);
+    RemoteBinaryDataStreamTarget(::STI::TNetwork::TBinaryDataStreamTarget_var streamTarget);
     ~RemoteBinaryDataStreamTarget();
 
     void start();

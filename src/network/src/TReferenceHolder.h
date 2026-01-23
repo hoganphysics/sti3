@@ -31,8 +31,8 @@ class TReferenceHolder : public TReferenceHolderInterface
 {
 public:
 
-	TReferenceHolder(typename T::_ptr_type t_ptr, std::mutex& refMutex)
-	: tReference(T::_duplicate(t_ptr)), refMutex(refMutex) {}
+	TReferenceHolder(typename T::_var_type t_var)
+	: tReference(t_var) {}
 
 	virtual ~TReferenceHolder() 
     {
@@ -41,10 +41,60 @@ public:
 
 	void addDependent(const typename std::shared_ptr<TReferenceHolderInterface>& holder)
 	{
+		std::unique_lock<std::mutex> refLock(refMutex);
 		holders.push_back(holder);
 	}
 
+	bool isDisabled() const
+	{
+		std::unique_lock<std::mutex> refLock(refMutex);
+		return CORBA::is_nil(tReference);
+	}
+
+	// void disable()
+	// {
+	// 	std::unique_lock<std::mutex> refLock(refMutex);
+		
+	// 	disable(refLock);
+	// }
+
+	// void disable(const std::unique_lock<std::mutex>& lock)
+	void disable()
+	{
+		std::unique_lock<std::mutex> refLock(refMutex);
+
+		typename T::_var_type nilRef = T::_nil();
+		tReference = nilRef;	//release reference; reference is now nil
+
+		for(auto& holder : holders) {
+			if (holder != 0) {
+				holder->disable();
+			}
+		}
+		_clean();
+	}
+
+	typename T::_var_type getTRef()
+	{
+		std::unique_lock<std::mutex> refLock(refMutex);
+		return tReference;
+	}
+
+    const typename T::_var_type getTRef() const
+	{
+		std::unique_lock<std::mutex> refLock(refMutex);
+		return tReference;
+	}
+
 	void clean()
+	{
+		std::unique_lock<std::mutex> refLock(refMutex);
+		_clean();
+	}
+
+private:
+
+	void _clean()
 	{
 		for(auto it = holders.begin(); it != holders.end();) {
 			if ((*it) != 0 && (*it)->isDisabled()) {
@@ -56,48 +106,11 @@ public:
 		}
 	}
 
-	bool isDisabled() const
-	{
-		return CORBA::is_nil(tReference);
-	}
-
-	void disable()
-	{
-		std::unique_lock<std::mutex> refLock(refMutex);
-		
-		disable(refLock);
-	}
-
-	void disable(const std::unique_lock<std::mutex>& lock)
-	{
-		typename T::_var_type nilRef = T::_nil();
-		tReference = nilRef;	//release reference; reference is now nil
-
-		for(auto& holder : holders) {
-			if (holder != 0) {
-				holder->disable();
-			}
-		}
-		clean();
-	}
-
-	typename T::_var_type& getTRef()
-	{
-		return tReference;
-	}
-
-    const typename T::_var_type& getTRef() const
-	{
-		return tReference;
-	}
-
-private:
-
 	typename T::_var_type tReference;
 
 	std::vector<std::shared_ptr<TReferenceHolderInterface>> holders;
 
-	std::mutex& refMutex;
+	mutable std::mutex refMutex;
 };
 
 

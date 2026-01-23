@@ -6,7 +6,6 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_RawEventGroup.h"
-#include "ORBManager.h"
 #include "generated/orbTypes.h"
 
 #include <vector>
@@ -23,7 +22,6 @@ TShotCallback_i::TShotCallback_i(const std::shared_ptr<STI::Engine::Shot>& shot)
 
 TShotCallback_i::~TShotCallback_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TShotCallback_i::getRootEventGroup(::STI::TNetwork::TRawEventGroup_out rootGroup)

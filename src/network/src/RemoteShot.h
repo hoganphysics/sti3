@@ -25,7 +25,7 @@ class RemoteShot : public STI::Engine::Shot,
 public:
 
 	RemoteShot(const STI::Engine::ShotConfig& shotConfig, 
-                ::STI::TNetwork::TShotCallback_ptr shotCallback);
+                ::STI::TNetwork::TShotCallback_var shotCallback);
     ~RemoteShot();
 
     const STI::Engine::ShotConfig& getShotConfig() const;
@@ -34,7 +34,7 @@ public:
 
 private:
 
-    bool getTShotReference(STI::TNetwork::TShotCallback_ptr& tShotCallback);
+    bool getTShotReference(STI::TNetwork::TShotCallback_var& tShotCallback);
 
     void refresh();
     bool refreshRequired;

@@ -13,6 +13,7 @@
 #include "TProfileManager_i.h"
 #include "TLogManager_i.h"
 #include "TTaskManager_i.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -22,7 +23,8 @@ namespace TNetwork
 {
 
 
-class TDevice_i : public POA_STI::TNetwork::TDevice
+class TDevice_i : public POA_STI::TNetwork::TDevice,
+				  public PortableServer::RefCountServantBase
 {
 public:
 
@@ -45,15 +47,25 @@ public:
 
 private:
 
-	TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
-	TDeviceMessageDispatcher_i messageDispatcherServant;	//Servant for this Device's event dispatcher.
-	TEventEngineScheduler_i eventSchedulerServant;		//Servant for this Device's event scheduler.
-	TChannelManager_i channelManagerServant;
-	TAttributeManager_i attributeManagerServant;
-	TPersistenceManager_i persistenceManagerServant;
-	TProfileManager_i profileManagerServant;
-	TTaskManager_i taskManagerServant;
-	TLogManager_i logManagerServant;
+	// TDeviceCollection_i deviceCollectionServant;		//Servant for this Device's collection.
+	// TDeviceMessageDispatcher_i messageDispatcherServant;	//Servant for this Device's event dispatcher.
+	// TEventEngineScheduler_i eventSchedulerServant;		//Servant for this Device's event scheduler.
+	// TChannelManager_i channelManagerServant;
+	// TAttributeManager_i attributeManagerServant;
+	// TPersistenceManager_i persistenceManagerServant;
+	// TProfileManager_i profileManagerServant;
+	// TTaskManager_i taskManagerServant;
+	// TLogManager_i logManagerServant;
+
+	STI::Network::ServantHolder<TDeviceCollection_i, TDeviceCollection> deviceCollectionServantHolder;
+	STI::Network::ServantHolder<TDeviceMessageDispatcher_i, TDeviceMessageDispatcher> messageDispatcherServantHolder;
+	STI::Network::ServantHolder<TEventEngineScheduler_i, TEventEngineScheduler> eventSchedulerServantHolder;
+	STI::Network::ServantHolder<TChannelManager_i, TChannelManager> channelManagerServantHolder;
+	STI::Network::ServantHolder<TAttributeManager_i, TAttributeManager> attributeManagerServantHolder;
+	STI::Network::ServantHolder<TPersistenceManager_i, TPersistenceManager> persistenceManagerServantHolder;
+	STI::Network::ServantHolder<TProfileManager_i, TProfileManager> profileManagerServantHolder;
+	STI::Network::ServantHolder<TTaskManager_i, TTaskManager> taskManagerServantHolder;
+	STI::Network::ServantHolder<TLogManager_i, TLogManager> logManagerServantHolder;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };

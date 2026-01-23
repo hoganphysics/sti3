@@ -6,7 +6,6 @@
 #include <sti/engine/ParsedDependencyTree.h>
 
 #include "NetworkResultsCollector.h"
-#include "ORBManager.h"
 
 
 using STI::Network::RemoteEventEngine;
@@ -23,8 +22,8 @@ using STI::Engine::ShotID;
 using STI::Network::NetworkResultsCollector;
 
 
-RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine)
-: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngine>(engine, engineMutex)
+RemoteEventEngine::RemoteEventEngine(::STI::TNetwork::TEventEngine_var engine)
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngine>(engine)
 {
 }
 
@@ -57,21 +56,14 @@ void RemoteEventEngine::play(const STI::Engine::EngineJobID& jobID, const std::s
 
 	if (isDisabled()) return;
 
-    triggerCallbackServant = std::make_shared<STI::TNetwork::TTriggerCallback_i>(triggerCB);
-
-	if (triggerCallbackServant != 0) {
-		STI::Network::ORBManager::ORBManager::activateServant(*triggerCallbackServant);
-	}
+	triggerCallbackServantHolder.emplace(triggerCB);
 
 	try {
-		if (triggerCallbackServant != 0) {
-			
-			getTRef()->playCB(
-				convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(jobID),
-				(*triggerCallbackServant)._this(),
-				static_cast<CORBA::Boolean>(debug)
-				);			
-		}
+		getTRef()->playCB(
+			convert<STI::Engine::EngineJobID, STI::TNetwork::TEngineJobID>(jobID),
+			triggerCallbackServantHolder.getRefPtr(),
+			static_cast<CORBA::Boolean>(debug)
+			);
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

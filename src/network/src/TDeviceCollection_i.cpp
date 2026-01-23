@@ -2,7 +2,6 @@
 #include "RemoteDevice.h"
 #include "NetworkConvert.h"
 #include "TDeviceRefInterface.h"
-#include "ORBManager.h"
 
 using STI::Network::TDeviceRefInterface;
 using STI::Network::RemoteDevice;
@@ -21,7 +20,6 @@ TDeviceCollection_i::TDeviceCollection_i(const std::shared_ptr<STI::Device::Devi
 
 TDeviceCollection_i::~TDeviceCollection_i()
 {
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ::CORBA::Boolean TDeviceCollection_i::add(const TDeviceID& deviceID, ::STI::TNetwork::TDevice_ptr device)
@@ -29,7 +27,8 @@ TDeviceCollection_i::~TDeviceCollection_i()
 	if (deviceCollection != 0 && !CORBA::is_nil(device)) {
 		
 		//wrap the received TDevice reference in RemoteDevice
-		std::shared_ptr<RemoteDevice> remoteDevice = std::make_shared<RemoteDevice>(device);
+		STI::TNetwork::TDevice_var device_var = STI::TNetwork::TDevice::_duplicate(device);
+		std::shared_ptr<RemoteDevice> remoteDevice = std::make_shared<RemoteDevice>(device_var);
 		
 		return (remoteDevice != 0 &&
 			deviceCollection->add(convert<TDeviceID, DeviceID>(deviceID), remoteDevice)

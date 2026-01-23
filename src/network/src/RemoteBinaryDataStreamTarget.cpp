@@ -7,12 +7,12 @@ using STI::Network::convert;
 using ::STI::TNetwork::TBinaryData;
 using STI::Utils::BinaryData;
 using STI::Network::RemoteBinaryDataStreamTarget;
-using ::STI::TNetwork::TBinaryDataStreamTarget_ptr;
+using ::STI::TNetwork::TBinaryDataStreamTarget_var;
 using ::STI::TNetwork::TBinaryDataStreamTarget;
 
 
-RemoteBinaryDataStreamTarget::RemoteBinaryDataStreamTarget(TBinaryDataStreamTarget_ptr streamTarget)
-: STI::TNetwork::TReferenceHolder<TBinaryDataStreamTarget>(streamTarget, streamMutex)
+RemoteBinaryDataStreamTarget::RemoteBinaryDataStreamTarget(TBinaryDataStreamTarget_var streamTarget)
+: STI::TNetwork::TReferenceHolder<TBinaryDataStreamTarget>(streamTarget)
 {
 }
 

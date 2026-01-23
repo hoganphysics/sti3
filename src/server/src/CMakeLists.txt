@@ -7,7 +7,7 @@ project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
 include(GNUInstallDirs)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)  # omniORB headers use 'requires' identifier, incompatible with C++20
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if (MSVC)
@@ -40,6 +40,11 @@ message("CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
+endif()
+
+# TestNetworkWrapper.h pulls in omniORB headers via generated/deviceNet.h.
+if(NOT TARGET OmniORB::omnithread)
+  find_package(omniORB CONFIG QUIET)
 endif()
 
 
@@ -111,6 +116,8 @@ target_include_directories(STIServer
     ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/sti/extern
     ${CMAKE_CURRENT_SOURCE_DIR}/../../device/src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../network/src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../network/src/generated/
 )
 
 target_link_libraries(STIServer
@@ -118,6 +125,36 @@ target_link_libraries(STIServer
     sti3::stidevice
     sti3::stinetwork
 )
+
+if(TARGET OmniORB::omnithread AND TARGET OmniORB::omniORB4 AND TARGET OmniORB::omniDynamic4)
+  target_link_libraries(STIServer
+    PRIVATE
+      OmniORB::omnithread
+      OmniORB::omniORB4
+      OmniORB::omniDynamic4
+  )
+else()
+  # Fallback for builds without OmniORB CMake targets (e.g., local conda envs).
+  set(_CONDAPREFIX $ENV{PREFIX})
+  if(NOT _CONDAPREFIX)
+    set(_CONDAPREFIX $ENV{CONDA_PREFIX})
+  endif()
+  set(_omni_lib_hints "")
+  if(_CONDAPREFIX)
+    list(APPEND _omni_lib_hints "${_CONDAPREFIX}/lib")
+  endif()
+  find_library(OMNITHREAD_LIB NAMES omnithread omnithread4 HINTS ${_omni_lib_hints})
+  find_library(OMNIORB4_LIB NAMES omniORB4 HINTS ${_omni_lib_hints})
+  find_library(OMNIDYNAMIC4_LIB NAMES omniDynamic4 HINTS ${_omni_lib_hints})
+  if(OMNITHREAD_LIB AND OMNIORB4_LIB AND OMNIDYNAMIC4_LIB)
+    target_link_libraries(STIServer
+      PRIVATE
+        ${OMNITHREAD_LIB}
+        ${OMNIORB4_LIB}
+        ${OMNIDYNAMIC4_LIB}
+    )
+  endif()
+endif()
 
 # RPATH so the executable finds your shared libs in $PREFIX/lib at runtime
 # (No-op on Windows)

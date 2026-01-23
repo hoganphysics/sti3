@@ -21,7 +21,7 @@ class RemoteResultsCollector : public STI::Engine::ResultsCollector,
 {
 public:
 
-	RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector);
+	RemoteResultsCollector(::STI::TNetwork::TResultsCollector_var collector);
     ~RemoteResultsCollector();
 
     STI::Engine::ShotID getShotID() const;

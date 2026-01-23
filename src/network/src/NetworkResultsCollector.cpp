@@ -8,9 +8,8 @@ using STI::Network::NetworkResultsCollector;
 NetworkResultsCollector::NetworkResultsCollector(const STI::Engine::ShotID& sid, 
             const STI::Engine::ResultsPaths& paths,
             const std::shared_ptr<STI::Utils::FileHolderFactory>& factory)
-: STI::Engine::LocalResultsCollector(sid, paths, factory), resultsCollectorServant(this)
+: STI::Engine::LocalResultsCollector(sid, paths, factory), resultsCollectorServantHolder(new STI::TNetwork::TResultsCollector_i(this))
 {
-    STI::Network::ORBManager::ORBManager::activateServant(resultsCollectorServant);
 }
 
 NetworkResultsCollector::~NetworkResultsCollector()
@@ -27,7 +26,7 @@ bool NetworkResultsCollector::getTResultsCollector(
     
     auto wrapper = std::dynamic_pointer_cast<NetworkResultsCollector>(resultsCollector);
     if (wrapper) {
-        tResultsCollector = wrapper->resultsCollectorServant._this();
+        tResultsCollector = wrapper->resultsCollectorServantHolder.getRefVar();
         return !CORBA::is_nil(tResultsCollector);
     }
     return false;

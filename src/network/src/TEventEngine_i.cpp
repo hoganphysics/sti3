@@ -8,7 +8,6 @@
 #include <sti/engine/RawEvent.h>
 
 #include "LocalEventEngineJob.h"
-#include "ORBManager.h"
 #include "RemoteResultsCollector.h"
 #include "RemoteTriggerCallback.h"
 
@@ -34,7 +33,6 @@ TEventEngine_i::TEventEngine_i(STI::Engine::EventEngine* engine)
 
 TEventEngine_i::~TEventEngine_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)
@@ -51,11 +49,11 @@ void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)
 void TEventEngine_i::playCB(const TEngineJobID& jobID, 
                 ::STI::TNetwork::TTriggerCallback_ptr triggerCB, ::CORBA::Boolean debug)
 {
-    
-    remoteTriggerCB = std::make_shared<STI::Network::RemoteTriggerCallback>(triggerCB);
-
-    if (eventEngine != 0) {
-
+    if (eventEngine != 0 && !CORBA::is_nil(triggerCB)) {
+		
+		STI::TNetwork::TTriggerCallback_var triggerCB_var = STI::TNetwork::TTriggerCallback::_duplicate(triggerCB);
+    	remoteTriggerCB = std::make_shared<STI::Network::RemoteTriggerCallback>(triggerCB_var);
+		
 		eventEngine->play(
                 convert<TEngineJobID, EngineJobID>(jobID),
                 remoteTriggerCB,

@@ -8,6 +8,15 @@ static const char* _0RL_dyn_library_version = omniORB_4_3_dyn;
 
 static ::CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TTestNetwork = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TTestNetwork:1.0", "TTestNetwork", &_0RL_tcTrack);
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TTestNetwork = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TTestNetwork:1.0", "TTestNetwork", &_0RL_tcTrack);
+#endif
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceID[] = {
   {"deviceName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"address", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
@@ -342,6 +351,58 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TBinaryDataStream = CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TBinaryDataStream:1.0", "TBinaryDataStream", &_0RL_tcTrack);
 #endif
+
+static void _0RL_STI_mTNetwork_mTTestNetwork_marshal_fn(cdrStream& _s, void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  omniObjRef::_marshal(_o, _s);
+}
+static void _0RL_STI_mTNetwork_mTTestNetwork_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  omniObjRef* _o = omniObjRef::_unMarshal(STI::TNetwork::TTestNetwork::_PD_repoId, _s);
+  _v = _o;
+}
+static void _0RL_STI_mTNetwork_mTTestNetwork_destructor_fn(void* _v)
+{
+  omniObjRef* _o = (omniObjRef*)_v;
+  if (_o)
+    omni::releaseObjRef(_o);
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr _o)
+{
+  STI::TNetwork::TTestNetwork_ptr _no = STI::TNetwork::TTestNetwork::_duplicate(_o);
+  _a.PR_insert(STI::TNetwork::_tc_TTestNetwork,
+               _0RL_STI_mTNetwork_mTTestNetwork_marshal_fn,
+               _0RL_STI_mTNetwork_mTTestNetwork_destructor_fn,
+               _no->_PR_getobj());
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr* _op)
+{
+  _a.PR_insert(STI::TNetwork::_tc_TTestNetwork,
+               _0RL_STI_mTNetwork_mTTestNetwork_marshal_fn,
+               _0RL_STI_mTNetwork_mTTestNetwork_destructor_fn,
+               (*_op)->_PR_getobj());
+  *_op = STI::TNetwork::TTestNetwork::_nil();
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr& _o)
+{
+  void* _v;
+  if (_a.PR_extract(STI::TNetwork::_tc_TTestNetwork,
+                    _0RL_STI_mTNetwork_mTTestNetwork_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTTestNetwork_marshal_fn,
+                    _0RL_STI_mTNetwork_mTTestNetwork_destructor_fn,
+                    _v)) {
+    omniObjRef* _r = (omniObjRef*)_v;
+    if (_r)
+      _o = (STI::TNetwork::TTestNetwork_ptr)_r->_ptrToObjRef(STI::TNetwork::TTestNetwork::_PD_repoId);
+    else
+      _o = STI::TNetwork::TTestNetwork::_nil();
+    return 1;
+  }
+  return 0;
+}
 
 static void _0RL_STI_mTNetwork_mTDeviceNode_marshal_fn(cdrStream& _s, void* _v)
 {

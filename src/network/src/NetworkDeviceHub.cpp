@@ -325,6 +325,10 @@ bool NetworkDeviceHub::findHub(const STI::Device::DeviceID& deviceID, HubID& hub
 		return true;
 	}
 
+	if (orbmanager == nullptr) {
+		return false;
+	}
+
 	std::vector<std::string> liveHubs;
 	orbmanager->getAllLiveObjectContexts(stiContext, hubObjectName, liveHubs);
 
@@ -383,9 +387,13 @@ bool NetworkDeviceHub::registerHubContext()
 		return false;
 	}
 
+	if (orbmanager == nullptr) {
+		return false;
+	}
+
 	// (1) Bind primary reference to this Hub under root context
 	if (persistence.bindToRootContext) {
-		success = orbmanager->bindObjectReference(thisHubContext, tDeviceHubLocal);
+		success = orbmanager->bindObjectReference(thisHubContext, tDeviceHubLocal.in());
 	}
 	else {
 		success = true;
@@ -400,7 +408,7 @@ bool NetworkDeviceHub::registerHubContext()
 		if (persistence.bindToTargetContexts) {
 			success &= orbmanager->bindObjectReference(
 				makeHubContext(targetHubPath, localHub->getID()),
-				tDeviceHubLocal);
+				tDeviceHubLocal.in());
 		}
 		else {
 			success &= true;
@@ -510,13 +518,13 @@ bool NetworkDeviceHub::getRemoteHub(const std::string& remoteHubContext, std::sh
 {
 	bool success = false;
 
-	STI::TNetwork::TDeviceHub_ptr tDeviceHubRemote; // = STI::TNetwork::TDeviceHub::_nil();
-	CORBA::Object_ptr obj;
+	// STI::TNetwork::TDeviceHub_var tDeviceHubRemote; // = STI::TNetwork::TDeviceHub::_nil();
+	CORBA::Object_var obj;
 
 	//Attempt to find and connect to live hub with remoteHubContext in NameService
 	if (orbmanager->getObjectReference(remoteHubContext, obj, errorBuf)) {
 
-		tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
+		STI::TNetwork::TDeviceHub_var tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
 
 		if (!CORBA::is_nil(tDeviceHubRemote)) {
 			success = true;

@@ -70,8 +70,8 @@ using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
 
 
-RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
-	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler, schedulerMutex)
+RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler)
+	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler)
 {
 	addDependent(remoteDependencyParser);
 }

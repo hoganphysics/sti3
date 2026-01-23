@@ -2,11 +2,12 @@
 #define STI_ENGINE_NETWORKFILEHOLDER_H
 
 #include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/VirtualFileHolder.h>
 
 #include "TFileHolderRefInterface.h"
-#include <sti/utils/VirtualFileHolder.h>
 #include "TFileHolder_i.h"
 #include "generated/deviceNet.h"
+#include "ServantHolder.h"
 
 #include <vector>
 #include <memory>
@@ -54,7 +55,8 @@ private:
     bool getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder);
 
     std::shared_ptr<STI::Utils::FileHolder> localFileHolder;
-    STI::TNetwork::TFileHolder_i fileHolderServant;
+    // STI::TNetwork::TFileHolder_i fileHolderServant;
+    ServantHolder<STI::TNetwork::TFileHolder_i, STI::TNetwork::TFileHolder> fileHolderServantHolder;
 };
 
 

@@ -22,8 +22,8 @@ using STI::TNetwork::TLogRecord;
 
 
 
-RemoteLogManager::RemoteLogManager(::STI::TNetwork::TLogManager_ptr manager, const STI::Device::DeviceID& deviceID)
-: TReferenceHolder<TLogManager>(manager, logMutex), remoteDeviceID(deviceID)
+RemoteLogManager::RemoteLogManager(::STI::TNetwork::TLogManager_var manager, const STI::Device::DeviceID& deviceID)
+: TReferenceHolder<TLogManager>(manager), remoteDeviceID(deviceID)
 {
 }
 

@@ -1,12 +1,14 @@
 #ifndef STI_NETWORK_NETWORKDEVICEMESSAGEHANDLERWRAPPER_H
 #define STI_NETWORK_NETWORKDEVICEMESSAGEHANDLERWRAPPER_H
 
-#include <sti/device/DeviceMessageHandler.h>
 #include "LocalDeviceMessageHandler.h"
 #include "TDeviceMessageHandler_i.h"
+
 #include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageHandler.h>
 
 #include "generated/orbTypes.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -34,11 +36,11 @@ public:
 
 	static bool getTDeviceMessageHandlerReference(
 		const typename std::shared_ptr<STI::Device::DeviceMessageHandler>& messageHandler,
-		STI::TNetwork::TDeviceMessageHandler_ptr& tMessageHandler)
+		STI::TNetwork::TDeviceMessageHandler_var& tMessageHandler)
 	{
 		auto wrapper = std::dynamic_pointer_cast<NetworkDeviceMessageHandlerWrapper>(messageHandler);
 		if (wrapper) {
-			tMessageHandler = wrapper->messageHandlerServant._this();
+			tMessageHandler = wrapper->messageHandlerServantHolder.getRefVar();
 			return !CORBA::is_nil(tMessageHandler);
 		}
 		return false;
@@ -50,7 +52,8 @@ private:
 
 	std::shared_ptr<STI::Device::LocalDeviceMessageHandler> localMessageHandler;
 
-	STI::TNetwork::TDeviceMessageHandler_i messageHandlerServant;
+	// STI::TNetwork::TDeviceMessageHandler_i messageHandlerServant;
+	ServantHolder<STI::TNetwork::TDeviceMessageHandler_i, STI::TNetwork::TDeviceMessageHandler> messageHandlerServantHolder;
 
 };
 

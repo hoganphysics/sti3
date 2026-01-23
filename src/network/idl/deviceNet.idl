@@ -13,6 +13,12 @@ module STI
 {
 module TNetwork
 {
+
+	interface TTestNetwork
+	{
+		boolean ping();
+	};
+
 	interface TDevice;	
 	interface TDeviceHub;
 

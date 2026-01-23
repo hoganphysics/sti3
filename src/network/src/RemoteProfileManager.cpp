@@ -12,8 +12,8 @@ using STI::Device::ProfileType;
 using STI::TNetwork::TProfileType;
 
 
-RemoteProfileManager::RemoteProfileManager(::STI::TNetwork::TProfileManager_ptr manager)
-: TReferenceHolder<TProfileManager>(manager, profileMutex)
+RemoteProfileManager::RemoteProfileManager(::STI::TNetwork::TProfileManager_var manager)
+: TReferenceHolder<TProfileManager>(manager)
 {
 }
 

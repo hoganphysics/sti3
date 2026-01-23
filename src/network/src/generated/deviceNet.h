@@ -72,6 +72,123 @@ _CORBA_MODULE_BEG
 
   _CORBA_MODULE_BEG
 
+#ifndef __STI_mTNetwork_mTTestNetwork__
+#define __STI_mTNetwork_mTTestNetwork__
+    class TTestNetwork;
+    class _objref_TTestNetwork;
+    class _impl_TTestNetwork;
+    
+    typedef _objref_TTestNetwork* TTestNetwork_ptr;
+    typedef TTestNetwork_ptr TTestNetworkRef;
+
+    class TTestNetwork_Helper {
+    public:
+      typedef TTestNetwork_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TTestNetwork, TTestNetwork_Helper> TTestNetwork_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TTestNetwork,TTestNetwork_Helper > TTestNetwork_out;
+
+#endif
+
+    // interface TTestNetwork
+    class TTestNetwork {
+    public:
+      // Declarations for this interface type.
+      typedef TTestNetwork_ptr _ptr_type;
+      typedef TTestNetwork_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TTestNetwork :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      ::CORBA::Boolean ping();
+
+      // Constructors
+      inline _objref_TTestNetwork()  { _PR_setobj(0); }  // nil
+      _objref_TTestNetwork(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TTestNetwork();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TTestNetwork(const _objref_TTestNetwork&);
+      _objref_TTestNetwork& operator = (const _objref_TTestNetwork&);
+      // not implemented
+
+      friend class TTestNetwork;
+    };
+
+    class _pof_TTestNetwork : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TTestNetwork() : _OMNI_NS(proxyObjectFactory)(TTestNetwork::_PD_repoId) {}
+      virtual ~_pof_TTestNetwork();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TTestNetwork :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TTestNetwork();
+
+      virtual ::CORBA::Boolean ping() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTestNetwork;
+
 #ifndef __STI_mTNetwork_mTDevice__
 #define __STI_mTNetwork_mTDevice__
     class TDevice;
@@ -3207,6 +3324,18 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE TNetwork
   _CORBA_MODULE_BEG
 
+    class TTestNetwork :
+      public virtual STI::TNetwork::_impl_TTestNetwork,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TTestNetwork();
+
+      inline ::STI::TNetwork::TTestNetwork_ptr _this() {
+        return (::STI::TNetwork::TTestNetwork_ptr) _do_this(::STI::TNetwork::TTestNetwork::_PD_repoId);
+      }
+    };
+
     class TDeviceHub :
       public virtual STI::TNetwork::_impl_TDeviceHub,
       public virtual ::PortableServer::ServantBase
@@ -3482,6 +3611,10 @@ _CORBA_MODULE_END
 #undef _core_attr
 #undef _dyn_attr
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTestNetwork_ptr& _s);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceNode& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceNode* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceNode*& _sp);
@@ -3592,6 +3725,11 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TBinaryDataStream_ptr& _s);
 
 
+
+inline void
+STI::TNetwork::TTestNetwork::_marshalObjRef(::STI::TNetwork::TTestNetwork_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
 
 inline void
 STI::TNetwork::TDeviceHub::_marshalObjRef(::STI::TNetwork::TDeviceHub_ptr obj, cdrStream& s) {
