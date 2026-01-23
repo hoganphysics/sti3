@@ -71,8 +71,9 @@ ParseID ParseID::generateUniqueID(const EngineJobSourceID& jobSourceID)
 
     TimeStamp currentTime;
 
-    if (currentTime == lastSubmissionTime) {
-        //error: increment TimeStamp to ensure ParseID is unique!
+    if (currentTime <= lastSubmissionTime) {
+        //Ensure monotonic ParseID generation if clock resolution stalls or moves backward.
+        currentTime = lastSubmissionTime;
         currentTime.add_ns(1);
     }
 
@@ -94,4 +95,3 @@ ParseID ParseID::generateUniqueID(const EngineJobSourceID& jobSourceID, const Se
 
 template void STI::Engine::ParseID::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
 template void STI::Engine::ParseID::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
-

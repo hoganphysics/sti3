@@ -29,6 +29,7 @@ public:
     ~EventEngineManager();
 
     bool submitJob(const std::shared_ptr<EventEngineJob>& job);
+    // void joinJobThread();
     bool getJob(std::shared_ptr<EventEngineJob>& job);
 
     bool jobRunning();
@@ -57,6 +58,7 @@ private:
 
 	std::thread jobThread;
 	bool running;
+	bool jobFinished;
 
 	mutable std::mutex jobMutex;
 	mutable std::condition_variable condition;

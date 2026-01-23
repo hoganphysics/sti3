@@ -185,6 +185,8 @@ private:
 	EngineID engineID;
 	STI::Device::DeviceID localDeviceID;	//The DeviceID of the host of this engine
 	STI::Engine::ParseID lastParseID;		//The ID of the most recently parsed shot
+	EngineJobID activeParseJobID;
+	EngineJobID activePlayJobID;
 	STI::Device::DeviceID triggerDeviceID;	//The DeviceID used for triggering (could be localDeviceID or another device)
 
 	std::shared_ptr<ParseResult> lastParseResult;
@@ -229,6 +231,8 @@ private:
 
 	bool cancelled;
 	bool isJobOwner;
+	bool activeParseJob = false;
+	bool activePlayJob = false;
 	bool eventsByTargetCached;
 	std::string baseEventGroupName;
 

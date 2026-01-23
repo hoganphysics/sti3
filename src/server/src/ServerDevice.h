@@ -17,7 +17,32 @@ public:
 	// 	const std::string& targetServer);
 	~ServerDevice();
 
-	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+	// bool writeChannel(short channel, const STI::Utils::MixedValue& value);
+
+	void parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engine::SynchronousEventVector& synchedEvents);
+
+	STI::Device::DeviceID partnerID;
+
+	//Custom event class for this device's output channels
+	class TestDeviceOutputEvent : public STI::Engine::SynchronousEvent
+	{
+	public:
+		TestDeviceOutputEvent(double time);
+
+		//implementation of SynchronousEvent pure virtual interface
+		void loadEvent();
+		void playEvent();
+		void collectMeasurementData() {}
+		void stopEvent() {}
+		void pauseEvent() {}
+		void unpauseEvent(bool retrigger) {}
+
+		void addValue(short channel, const STI::Utils::MixedValue& value);
+
+	private:
+
+		std::map<short, STI::Utils::MixedValue> values;
+	};
 
 };
 

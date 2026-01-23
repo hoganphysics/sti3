@@ -645,7 +645,7 @@ void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& ne
 
 void LocalEventEngineScheduler::cancelAll()
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
 
     std::set<EngineJobID> ids;
     
@@ -700,7 +700,7 @@ void LocalEventEngineScheduler::clearAll()
 
 std::set<EngineJobID> LocalEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
 
     std::set<EngineJobID> jobIDs;
     std::set<EngineJobID> seqJobIDs;
@@ -772,7 +772,7 @@ bool LocalEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<Ev
 
 void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     _cancelJob(jobID);
 }
 
@@ -785,7 +785,7 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 
     if (runningJobs.get(jobID, job) && job != 0) {
 
-        if (getManager(jobID, manager)) {
+        if (getManager(job, manager)) {
             manager->abortJob();
         }
 
@@ -1302,17 +1302,31 @@ bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared
 {
     std::shared_ptr<EventEngineJob> job;
 
-    if (runningJobs.get(jobID, job) && job != 0
-        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    // if (runningJobs.get(jobID, job) && job != 0
+    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    //     return true;
+    // }
+
+    if (runningJobs.get(jobID, job) && job != 0) {
+        return getManager(job, manager);
+    }
+
+    return false;
+}
+
+bool LocalEventEngineScheduler::getManager(const std::shared_ptr<EventEngineJob>& job, std::shared_ptr<EventEngineManager>& manager)
+{
+    if (job != 0 && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
         return true;
     }
 
     return false;
 }
 
+
 bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     
     EngineJobID jobID;
     jobID.type = EventEngineJobType::Parse;
@@ -1332,7 +1346,7 @@ bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<
 
 bool LocalEventEngineScheduler::findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     
     EngineJobID jobID;
     jobID.type = EventEngineJobType::Play;

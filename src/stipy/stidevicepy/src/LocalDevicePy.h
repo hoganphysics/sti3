@@ -55,6 +55,7 @@ public:
     void addEventEngine(const STI::Engine::EngineID& engineID);
     void addPartner(const STI::Device::DeviceID& id);
     void addPartner(const STI::Device::DeviceID& id, const std::string& alias);
+    void addEventTarget(const STI::Device::DeviceID& id, const std::string& alias);
     void addEventTarget(const STI::Device::DeviceID& id);
 
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue);

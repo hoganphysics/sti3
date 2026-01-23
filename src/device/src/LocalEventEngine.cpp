@@ -121,6 +121,10 @@ void LocalEventEngine::clear()
 	parsedOwnedTargets.clear();
 	playReadyOwnedTargets.clear();
 	playedOwnedTargets.clear();
+	activeParseJob = false;
+	activePlayJob = false;
+	activeParseJobID = EngineJobID();
+	activePlayJobID = EngineJobID();
 
 	localParsingMessages.clear();
 
@@ -391,7 +395,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		cancelParseJob(job);
 		return;		//not recoverable
 	}
-    if (!job.getDependencies(dependencyTree)) {
+	if (!job.getDependencies(dependencyTree)) {
 		//Error: no tree
 		job.addMessage(ParsingMessageType::Error, 21, "Missing dependency graph")
             << "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
@@ -399,6 +403,9 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		cancelParseJob(job);
 		return;		//not recoverable
 	}
+
+	activeParseJobID = job.getJobID();
+	activeParseJob = true;
 
 	lastParseID = job.getJobID().pid;
 	lastParseResult->pid = lastParseID;
@@ -561,6 +568,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	parseCompleteMessage->setEngine(jobEngine);
 
 	sendMessage(parseCompleteMessage);
+
+	activeParseJob = false;
 }
 
 void LocalEventEngine::cancelParseJob(STI::Engine::EventEngineJob& job)
@@ -678,6 +687,14 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 		return;
 	}
 
+	if (!activeParseJob || !(message->jobID == activeParseJobID)) {
+		return;
+	}
+
+	if (!isState(EngineState::Parsing)) {
+		return;
+	}
+
 	std::shared_ptr<EventEngine> remoteEngine;
 	remoteEngine = message->getEngine();
 
@@ -695,10 +712,6 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	}
 
 	localParsingMessages.insert(localParsingMessages.end(), message->messages.begin(), message->messages.end());
-
-	if (!isState(EngineState::Parsing)) {
-		return;
-	}
 
 	//Attempt to handle generated events locally, or pass upstream
 	divideEvents(message->upstreamPartnerEvents, upstreamPartnerEvents, handledPartnerEvents);
@@ -726,8 +739,16 @@ void LocalEventEngine::handlePlayReadyMessage(const std::shared_ptr<EngineSchedu
 
 	std::shared_ptr<EventEngine> remoteEngine;
 
+	if (message == 0) {
+		return;
+	}
+
 	if (message != 0) {
 		remoteEngine = message->getEngine();
+	}
+
+	if (!activePlayJob || !(message->jobID == activePlayJobID)) {
+		return;
 	}
 
 	if (remoteEngine == 0) {
@@ -751,6 +772,10 @@ void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSch
 	std::unique_lock<std::mutex> playLock(playMutex);
 
 	if (message == 0) {
+		return;
+	}
+
+	if (!activePlayJob || !(message->jobID == activePlayJobID)) {
 		return;
 	}
 
@@ -818,6 +843,9 @@ void LocalEventEngine::play(EventEngineJob& job)
 		return;
 	}
 
+	activePlayJobID = job.getJobID();
+	activePlayJob = true;
+
 	playReadyOwnedTargets.clear();
 	playedOwnedTargets.clear();
 
@@ -882,6 +910,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		// an error occurred, or play was aborted
 		job.markCancelled();
 		stop();
+		activePlayJob = false;
 		return;
 	}
 
@@ -924,6 +953,8 @@ void LocalEventEngine::play(EventEngineJob& job)
 		job.markCancelled();
 		cancelled = true;
 	}
+
+	activePlayJob = false;
 }
 
 
@@ -1393,4 +1424,3 @@ bool LocalEventEngine::allEngineStateCheck(const std::map<STI::Device::DeviceID,
 	}
 	return success;
 }
-

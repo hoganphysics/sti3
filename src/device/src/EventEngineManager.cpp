@@ -20,7 +20,7 @@ using STI::Engine::LocalEventEngineScheduler;
 EventEngineManager::EventEngineManager(const EngineID& engineID, 
                                         const std::shared_ptr<LocalEventEngine>& engine, 
                                         LocalEventEngineScheduler* scheduler)
-: engineID(engineID), engine(engine), scheduler(scheduler), running(false)
+: engineID(engineID), engine(engine), scheduler(scheduler), running(false), jobFinished(true)
 {
 }
 
@@ -53,6 +53,41 @@ const ParseID& EventEngineManager::getLastParseID()
     return engine->getLastParseID();
 }
 
+// bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
+// {
+//     std::thread threadToJoin;
+//     std::unique_lock<std::mutex> writeLock(jobMutex);
+
+//     if(running || job == 0) {
+//         return false;
+//     }
+
+//     // if (job->getStatus() != STI::Engine::EngineJobStatus::New) {
+//     //     return false;
+//     // }
+
+//     if (jobThread.joinable()) {
+//         if (!jobFinished) {
+//             return false;
+//         }
+//         threadToJoin = std::move(jobThread);
+//     }
+
+//     currentJob = job;
+//     currentJob->markRunning(engineID);
+//     running = true;
+//     jobFinished = false;
+
+//     jobThread = std::thread(&EventEngineManager::runJob, this);
+
+//     writeLock.unlock();
+//     if (threadToJoin.joinable()) {
+//         threadToJoin.join();
+//     }
+
+//     return true;
+// }
+
 bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
 {
     std::unique_lock<std::mutex> writeLock(jobMutex);
@@ -60,6 +95,10 @@ bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
     if(running || job == 0) {
         return false;
     }
+
+    // if (job->getStatus() != STI::Engine::EngineJobStatus::New) {
+    //     return false;
+    // }
 
     if(jobThread.joinable()) {
         jobThread.join();
@@ -72,7 +111,23 @@ bool EventEngineManager::submitJob(const std::shared_ptr<EventEngineJob>& job)
     jobThread = std::thread(&EventEngineManager::runJob, this);
     
 	return true;
+
 }
+
+// void EventEngineManager::joinJobThread()
+// {
+//     std::thread threadToJoin;
+
+//     {
+//         std::unique_lock<std::mutex> writeLock(jobMutex);
+//         if (!jobThread.joinable() || !jobFinished) {
+//             return;
+//         }
+//         threadToJoin = std::move(jobThread);
+//     }
+
+//     threadToJoin.join();
+// }
 
 bool EventEngineManager::getJob(std::shared_ptr<EventEngineJob>& job)
 {
@@ -137,6 +192,11 @@ void EventEngineManager::runJob()
     else {
         scheduler->jobComplete(currentJob->getJobID());
     }
+
+    // {
+    //     std::unique_lock<std::mutex> writeLock(jobMutex);
+    //     jobFinished = true;
+    // }
 }
 
 void EventEngineManager::unloadEngine()
