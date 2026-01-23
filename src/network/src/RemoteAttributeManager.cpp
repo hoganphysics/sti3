@@ -21,10 +21,10 @@ using STI::TNetwork::TAttributeManager;
 using STI::TNetwork::TReferenceHolder;
 
 
-RemoteAttributeManager::RemoteAttributeManager(::STI::TNetwork::TAttributeManager_ptr attributeManager,
+RemoteAttributeManager::RemoteAttributeManager(::STI::TNetwork::TAttributeManager_var attributeManager,
                             const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
                             const STI::Device::DeviceID& remoteID)
-: TReferenceHolder<TAttributeManager>(attributeManager, managerMutex),
+: TReferenceHolder<TAttributeManager>(attributeManager),
 //: tAttributeManager(STI::TNetwork::TAttributeManager::_duplicate(attributeManager))
 listenerForwarder(forwarder), remoteID(remoteID)
 {

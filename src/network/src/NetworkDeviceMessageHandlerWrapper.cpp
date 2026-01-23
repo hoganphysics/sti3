@@ -13,9 +13,10 @@ using STI::Device::DeviceMessage;
 
 
 NetworkDeviceMessageHandlerWrapper::NetworkDeviceMessageHandlerWrapper(const std::shared_ptr<LocalDeviceMessageHandler>& localHandler)
-	: localMessageHandler(localHandler), messageHandlerServant(localHandler)
+: localMessageHandler(localHandler), 
+messageHandlerServantHolder(new STI::TNetwork::TDeviceMessageHandler_i(localHandler))
 {
-	STI::Network::ORBManager::ORBManager::activateServant(messageHandlerServant);
+	// STI::Network::ORBManager::ORBManager::activateServant(messageHandlerServant);
 }
 
 NetworkDeviceMessageHandlerWrapper::~NetworkDeviceMessageHandlerWrapper()
@@ -24,7 +25,12 @@ NetworkDeviceMessageHandlerWrapper::~NetworkDeviceMessageHandlerWrapper()
 
 void NetworkDeviceMessageHandlerWrapper::disable()
 {
-	messageHandlerServant.disableRefreshIndicator();
+	auto servant = messageHandlerServantHolder.get();
+	if (servant == nullptr) return;
+
+	servant->disableRefreshIndicator();
+	// messageHandlerServantHolder.get()->disableRefreshIndicator();
+	// messageHandlerServant.disableRefreshIndicator();
 }
 
 void NetworkDeviceMessageHandlerWrapper::addListenerGroup(const DeviceMessageType& type, 
@@ -32,7 +38,11 @@ void NetworkDeviceMessageHandlerWrapper::addListenerGroup(const DeviceMessageTyp
 {
 	if (localMessageHandler != 0) {
 		localMessageHandler->addListenerGroup(type, listenerGroup);
-		messageHandlerServant.refresh();		//Raises flag on RemoteDeviceMessageHandler, 
+		
+		auto servant = messageHandlerServantHolder.get();
+		if (servant == nullptr) return;
+		
+		servant->refresh();		//Raises flag on RemoteDeviceMessageHandler, 
 												//indicating that this Handler has changed and need to be refreshed.
 	}
 }
@@ -41,7 +51,11 @@ void NetworkDeviceMessageHandlerWrapper::removeListenerGroup(const DeviceMessage
 {
 	if (localMessageHandler != 0) {
 		localMessageHandler->removeListenerGroup(type);
-		messageHandlerServant.refresh();		//Raises flag on RemoteDeviceMessageHandler
+
+		auto servant = messageHandlerServantHolder.get();
+		if (servant == nullptr) return;
+		
+		servant->refresh();		//Raises flag on RemoteDeviceMessageHandler
 	}
 }
 

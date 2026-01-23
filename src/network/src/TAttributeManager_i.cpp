@@ -1,5 +1,5 @@
 #include "TAttributeManager_i.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 #include <sti/device/AttributeManager.h>
 #include "convert/Convert_Attribute.h"
 #include <sti/device/Attribute.h>
@@ -20,7 +20,7 @@ TAttributeManager_i::TAttributeManager_i(const std::shared_ptr<STI::Device::Devi
 
 TAttributeManager_i::~TAttributeManager_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
+    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 char* TAttributeManager_i::getValue(const char* key)

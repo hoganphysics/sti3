@@ -210,20 +210,30 @@ ORBManager::~ORBManager()
 	shutdown();
 }
 
-PortableServer::ObjectId* ORBManager::activateServant(PortableServer::ServantBase& servant)
-{
-	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-	// PortableServer::ObjectId_var oid;
-	PortableServer::ObjectId* oidPtr;
-
-	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-		oidPtr = orbManager->poa->activate_object(&servant);
-	}
-
-	return oidPtr;
+bool ORBManager::isPOAactive() const 
+{ 
+	return (!CORBA::is_nil(poa)) && poa_is_active; 
 }
+
+PortableServer::POA_ptr ORBManager::getPOA() const
+{
+	return PortableServer::POA::_duplicate(poa);
+}
+
+// PortableServer::ObjectId* ORBManager::activateServant(PortableServer::ServantBase& servant)
+// {
+// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
+
+// 	// PortableServer::ObjectId_var oid;
+// 	PortableServer::ObjectId* oidPtr;
+
+// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
+		
+// 		oidPtr = orbManager->poa->activate_object(&servant);
+// 	}
+
+// 	return oidPtr;
+// }
 
 // PortableServer::ObjectId_var ORBManager::activateServant(PortableServer::POA_ptr poa,
 //                                                         PortableServer::ServantBase* servant)
@@ -237,52 +247,52 @@ PortableServer::ObjectId* ORBManager::activateServant(PortableServer::ServantBas
 //     return oid;
 // }
 
-void ORBManager::deactivateServant(const PortableServer::ObjectId& oid)
-{
-	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
+// void ORBManager::deactivateServant(const PortableServer::ObjectId& oid)
+// {
+// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
-	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
+// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
 
-		try {
-			orbManager->poa->deactivate_object(oid);
-		}
-		catch (PortableServer::POA::ServantNotActive& e) {
-			// std::cout << "ORBManager::deactivateServant. Caught ServantNotActive" << std::endl;
-		}
+// 		try {
+// 			orbManager->poa->deactivate_object(oid);
+// 		}
+// 		catch (PortableServer::POA::ServantNotActive& e) {
+// 			// std::cout << "ORBManager::deactivateServant. Caught ServantNotActive" << std::endl;
+// 		}
 
-	}
-}
+// 	}
+// }
 
-void ORBManager::deactivateServant(PortableServer::Servant p_servant, bool printErrors)
-{
-	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
+// void ORBManager::deactivateServant(PortableServer::Servant p_servant, bool printErrors)
+// {
+// 	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
 
-	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
+// 	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
 
-		auto realPoa = p_servant->_default_POA();
-		if (realPoa != orbManager->poa) {
-			// you're deactivating via the wrong POA
-			if (printErrors) {
-				std::cout << "*ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
-			}
-		}
+// 		auto realPoa = p_servant->_default_POA();
+// 		if (realPoa != orbManager->poa) {
+// 			// you're deactivating via the wrong POA
+// 			if (printErrors) {
+// 				std::cout << "*ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
+// 			}
+// 		}
 
-		try {
-			auto objref = (orbManager->poa->servant_to_id(p_servant));
+// 		try {
+// 			auto objref = (orbManager->poa->servant_to_id(p_servant));
 
-			if (objref != 0) {
+// 			if (objref != 0) {
 
-				orbManager->poa->deactivate_object(*objref);
-			}	
-		}
-		catch (PortableServer::POA::ServantNotActive& e) {
-			if (printErrors) {
-				std::cout << "ORBManager::deactivateServant. Caught ServantNotActive: " << std::endl;
-			}
-		}
+// 				orbManager->poa->deactivate_object(*objref);
+// 			}	
+// 		}
+// 		catch (PortableServer::POA::ServantNotActive& e) {
+// 			if (printErrors) {
+// 				std::cout << "ORBManager::deactivateServant. Caught ServantNotActive: " << std::endl;
+// 			}
+// 		}
 
-	}
-}
+// 	}
+// }
 
 bool ORBManager::running()
 {
@@ -577,12 +587,12 @@ bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
 	return false;
 }
 
-bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref)
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_var& objref)
 {
 	return getObjectReference(objectFullPath, objref, std::cerr);
 }
 
-bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref, std::ostream& errorBuf)
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_var& objref, std::ostream& errorBuf)
 {
 	bool success = false;
 
@@ -593,7 +603,9 @@ bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Ob
 	}
 
 	CosNaming::NamingContext_var rootContext;
-	if (!getRootContext(rootContext)) return false;
+	if (!getRootContext(rootContext)) {
+		return false;
+	}
 
 	CosNaming::Name_var objectName =
 		omni::omniURI::stringToName(objectFullPath.c_str());

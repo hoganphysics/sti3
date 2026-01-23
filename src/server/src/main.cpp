@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 
     hub->addDevice(server);
 
-    hub->run(false);	//non-blocking
+    hub->run(true);	//non-blocking
 
     std::string enableActivateAt = configFile.get<std::string>("EnableActivate", "false");
     std::string enableDeactivateAt = configFile.get<std::string>("EnableDeactivate", "false");

@@ -9,7 +9,7 @@ using STI::Network::NetworkFileHolderFactory;
 
 
 NetworkFileHolder::NetworkFileHolder(const STI::Utils::FileID& fileID, const std::shared_ptr<STI::Utils::FileHolder>& fileHolder)
-: fileHolderServant(this)
+: fileHolderServantHolder(new STI::TNetwork::TFileHolder_i(this))
 {
     if (fileHolder != 0) {
         localFileHolder = fileHolder;
@@ -18,7 +18,7 @@ NetworkFileHolder::NetworkFileHolder(const STI::Utils::FileID& fileID, const std
         localFileHolder = std::make_shared<STI::Utils::LocalFileHolder>(fileID.origin, fileID.path, fileID.filename);
     }
     
-    STI::Network::ORBManager::ORBManager::activateServant(fileHolderServant);
+    // STI::Network::ORBManager::ORBManager::activateServant(fileHolderServant);
 }
 
 NetworkFileHolder::~NetworkFileHolder()
@@ -27,7 +27,7 @@ NetworkFileHolder::~NetworkFileHolder()
 
 bool NetworkFileHolder::getTFileHolderRef(STI::TNetwork::TFileHolder_var& tFileHolder)
 {
-    tFileHolder = fileHolderServant._this();
+    tFileHolder = fileHolderServantHolder.getRefVar();
     return !CORBA::is_nil(tFileHolder);
 }
 

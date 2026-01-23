@@ -19,7 +19,7 @@ class RemoteLogManager : public STI::Device::LogManager,
 {
 public:
 
-    RemoteLogManager(::STI::TNetwork::TLogManager_ptr manager, const STI::Device::DeviceID& deviceID);
+    RemoteLogManager(::STI::TNetwork::TLogManager_var manager, const STI::Device::DeviceID& deviceID);
     ~RemoteLogManager();
 
     void getLogNames(std::set<std::string>& names);

@@ -23,7 +23,7 @@ class RemoteDeviceMessageDispatcher : public STI::Device::DeviceMessageDispatche
 {
 public:
 
-	RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_ptr messageDispatcher);
+	RemoteDeviceMessageDispatcher(::STI::TNetwork::TDeviceMessageDispatcher_var messageDispatcher);
 	~RemoteDeviceMessageDispatcher();
 
 	void addMessageHandler(const STI::Device::DeviceID& targetID, const std::shared_ptr<STI::Device::DeviceMessageHandler>& handler);

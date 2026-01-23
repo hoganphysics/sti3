@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TPersistenceManager_i : public POA_STI::TNetwork::TPersistenceManager
+class TPersistenceManager_i : public POA_STI::TNetwork::TPersistenceManager,
+                              public PortableServer::RefCountServantBase
 {
 public:
 

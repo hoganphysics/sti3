@@ -16,17 +16,19 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TDeviceMessageHandler;
 
 
-RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_ptr deviceHandler)
-: TReferenceHolder<TDeviceMessageHandler>(deviceHandler, handlerMutex)
+RemoteDeviceMessageHandler::RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_var deviceHandler)
+: TReferenceHolder<TDeviceMessageHandler>(deviceHandler), 
+refreshIndicatorHolder(new STI::TNetwork::TRefreshIndicator_i())
 {
-	STI::Network::ORBManager::ORBManager::activateServant(refreshIndicator);
+	// STI::Network::ORBManager::ORBManager::activateServant(refreshIndicator);
 	
 	std::unique_lock<std::mutex> handlerLock(handlerMutex);
 
 	//install refresh indicator on the remote resource this object is wrapping
 	try {
-	
-		getTRef()->setRefreshIndicator(refreshIndicator._this());	//remote call
+		if (!isDisabled()) {
+			getTRef()->setRefreshIndicator(refreshIndicatorHolder.getRefPtr());	//remote call
+		}
 	}
 	catch (CORBA::TRANSIENT&) {
 	}
@@ -115,7 +117,8 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 	bool success = true;
 
 	//A remote call is only made to refresh the event filter list if the remote resource refreshed.
-	if (refreshIndicator.checkThenReset()) {
+	if (refreshIndicatorHolder.get() != nullptr 
+		&& refreshIndicatorHolder.get()->checkThenReset()) {
 		//a refresh occurred on the remote resource; we need to refresh
 		
 		success = false;
@@ -144,12 +147,13 @@ bool RemoteDeviceMessageHandler::hasListeners(const std::shared_ptr<STI::Device:
 		}
 		else {
 			//A refresh occured, but remote call failed, so update was not completed.
-			refreshIndicator.refresh();	//undo reset done by checkThenReset()
+			if (refreshIndicatorHolder.get() != nullptr) {
+				refreshIndicatorHolder.get()->refresh();	//undo reset done by checkThenReset()
+			}
 		}
 	}
 
 	//Event filter based on whether listeners of a given type are present on the remote device
 	return success && listenersTypes.count(mess->getType()) > 0;
-	
 }
 

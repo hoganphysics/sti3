@@ -29,7 +29,7 @@ class RemoteAttributeManager : public STI::Device::AttributeManager,
 {
 public:
 
-	RemoteAttributeManager(::STI::TNetwork::TAttributeManager_ptr attributeManager,  
+	RemoteAttributeManager(::STI::TNetwork::TAttributeManager_var attributeManager,  
                             const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
                             const STI::Device::DeviceID& remoteID);
 	~RemoteAttributeManager();

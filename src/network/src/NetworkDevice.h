@@ -13,6 +13,7 @@
 #include "TDeviceRefInterface.h"
 
 #include "generated/orbTypes.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -194,13 +195,14 @@ private:
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice)
 	{
-		tDevice = deviceServant._this();
+		tDevice = deviceServantHolder.getRefVar();
 		
 		return !CORBA::is_nil(tDevice);
 	}
 
 	std::shared_ptr<STI::Device::Device> localDevice;
-	STI::TNetwork::TDevice_i deviceServant;
+	// STI::TNetwork::TDevice_i deviceServant;
+	ServantHolder<STI::TNetwork::TDevice_i, STI::TNetwork::TDevice> deviceServantHolder;
 };
 
 

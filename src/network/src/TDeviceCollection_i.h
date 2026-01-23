@@ -13,7 +13,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TDeviceCollection_i : public POA_STI::TNetwork::TDeviceCollection
+class TDeviceCollection_i : public POA_STI::TNetwork::TDeviceCollection,
+							public PortableServer::RefCountServantBase
 {
 public:
 

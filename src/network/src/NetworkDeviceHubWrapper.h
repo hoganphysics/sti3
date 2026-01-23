@@ -2,11 +2,13 @@
 #define STI_NETWORK_NETWORKDEVICEHUBWRAPPER_H
 
 #include <sti/LocalDeviceHub.h>
-#include "TDeviceHub_i.h"
 #include <sti/network/DeviceHub.h>
-#include "generated/orbTypes.h"
 #include <sti/device/DeviceID.h>
 #include <sti/device/Device.h>
+
+#include "TDeviceHub_i.h"
+#include "generated/orbTypes.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -50,7 +52,8 @@ private:
 
 	std::shared_ptr<LocalDeviceHub> localHub;
 	
-	STI::TNetwork::TDeviceHub_i deviceHubServant;
+	// STI::TNetwork::TDeviceHub_i deviceHubServant;
+	ServantHolder<STI::TNetwork::TDeviceHub_i, STI::TNetwork::TDeviceHub> deviceHubServantHolder;
 };
 
 } //Network

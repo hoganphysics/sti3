@@ -11,7 +11,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TFileHolder_i : public POA_STI::TNetwork::TFileHolder
+class TFileHolder_i : public POA_STI::TNetwork::TFileHolder, 
+                      public PortableServer::RefCountServantBase
 {
 public:
 

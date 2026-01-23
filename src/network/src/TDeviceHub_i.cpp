@@ -5,7 +5,7 @@
 
 #include "RemoteDevice.h"
 #include "RemoteDeviceHub.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "convert/Convert_HubNodeWalker.h"
 #include "generated/orbTypes.h"
@@ -26,7 +26,7 @@ TDeviceHub_i::TDeviceHub_i(const std::shared_ptr<STI::Network::LocalDeviceHub>& 
 
 TDeviceHub_i::~TDeviceHub_i()
 {
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ::CORBA::Boolean TDeviceHub_i::addHub(const TDeviceHubID& hubID, ::STI::TNetwork::TDeviceHub_ptr hub)
@@ -35,8 +35,9 @@ TDeviceHub_i::~TDeviceHub_i()
 	std::shared_ptr<RemoteDeviceHub> remoteDeviceHub;
 
 	//wrap the received TDeviceHub reference in RemoteDevice
-	if (hub != 0) {
-		remoteDeviceHub = std::make_shared<RemoteDeviceHub>(hub);
+	if (!CORBA::is_nil(hub)) {
+		STI::TNetwork::TDeviceHub_var hub_var = STI::TNetwork::TDeviceHub::_duplicate(hub);
+		remoteDeviceHub = std::make_shared<RemoteDeviceHub>(hub_var);
 	}
 
 	if (localHub != 0 && remoteDeviceHub != 0) {
@@ -91,8 +92,9 @@ TDeviceHub_i::~TDeviceHub_i()
 	std::shared_ptr<RemoteDevice> remoteDevice;
 
 	//wrap the received TDevice reference in RemoteDevice
-	if (node != 0) {
-		remoteDevice = std::make_shared<RemoteDevice>(node);
+	if (!CORBA::is_nil(node)) {
+		STI::TNetwork::TDevice_var node_var = STI::TNetwork::TDevice::_duplicate(node);
+		remoteDevice = std::make_shared<RemoteDevice>(node_var);
 	}
 
 	if (localHub != 0 && remoteDevice != 0) {

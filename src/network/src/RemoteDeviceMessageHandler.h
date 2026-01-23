@@ -1,10 +1,12 @@
 #ifndef STI_NETWORK_REMOTEDEVICEMESSAGEHANDLER_H
 #define STI_NETWORK_REMOTEDEVICEMESSAGEHANDLER_H
 
-#include "generated/deviceNet.h"
 #include <sti/device/DeviceMessageHandler.h>
+
+#include "generated/deviceNet.h"
 #include "TRefreshIndicator_i.h"
 #include "TReferenceHolder.h"
+#include "ServantHolder.h"
 
 #include <memory>
 #include <set>
@@ -21,7 +23,7 @@ class RemoteDeviceMessageHandler : public STI::Device::DeviceMessageHandler,
 {
 public:
 	
-	RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_ptr deviceHandler);
+	RemoteDeviceMessageHandler(::STI::TNetwork::TDeviceMessageHandler_var deviceHandler);
 	~RemoteDeviceMessageHandler();
 
 	void addMessage(const std::shared_ptr<STI::Device::DeviceMessage>& mess);
@@ -36,7 +38,8 @@ private:
 	void addListenerGroup(const STI::Device::DeviceMessageType& type, std::shared_ptr<STI::Device::AbstractMessageListenerGroup>& listenerGroup);
 	void removeListenerGroup(const STI::Device::DeviceMessageType& type);
 
-	::STI::TNetwork::TRefreshIndicator_i refreshIndicator;		//records if the remote resource refreshed
+	// ::STI::TNetwork::TRefreshIndicator_i refreshIndicator;		//records if the remote resource refreshed
+	ServantHolder<STI::TNetwork::TRefreshIndicator_i, STI::TNetwork::TRefreshIndicator> refreshIndicatorHolder;	//records if the remote resource refreshed
 	std::set<STI::Device::DeviceMessageType> listenersTypes;		//set of all event types this handler responds to
 
 	mutable std::mutex handlerMutex;

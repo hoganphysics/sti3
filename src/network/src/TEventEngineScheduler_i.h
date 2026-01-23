@@ -5,6 +5,7 @@
 #include <sti/device/Device.h>
 #include "TEventEngineDependencyParser_i.h"
 #include "generated/deviceNet.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -14,7 +15,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TEventEngineScheduler_i : public POA_STI::TNetwork::TEventEngineScheduler
+class TEventEngineScheduler_i : public POA_STI::TNetwork::TEventEngineScheduler,
+                                public PortableServer::RefCountServantBase
 {
 public:
 
@@ -49,7 +51,8 @@ public:
 
 private:
 
-    std::shared_ptr<TEventEngineDependencyParser_i> dependencyParserServant;
+    // std::shared_ptr<TEventEngineDependencyParser_i> dependencyParserServant;
+    STI::Network::ServantHolder<TEventEngineDependencyParser_i, TEventEngineDependencyParser> dependencyParserServantHolder;
     std::shared_ptr<STI::Engine::EventEngineScheduler> engineScheduler;
 };
 

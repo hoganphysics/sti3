@@ -15,7 +15,8 @@ namespace TNetwork
 {
 
 
-class TEventEngineDependencyParser_i : public POA_STI::TNetwork::TEventEngineDependencyParser
+class TEventEngineDependencyParser_i : public POA_STI::TNetwork::TEventEngineDependencyParser,
+                                       public PortableServer::RefCountServantBase
 {
 public:
 

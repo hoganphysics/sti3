@@ -27,8 +27,8 @@ using STI::TNetwork::TProfileManager;
 using STI::Network::RemoteLogManager;
 
 
-RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_ptr device)
-	: TReferenceHolder<STI::TNetwork::TDevice>(device, deviceMutex)
+RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_var device)
+	: TReferenceHolder<STI::TNetwork::TDevice>(device)
 {
 }
 

@@ -16,12 +16,11 @@ using STI::Device::Channel;
 using STI::Device::ChannelUpdateMessage;
 
 
-RemoteChannelManager::RemoteChannelManager(::STI::TNetwork::TChannelManager_ptr channelManager,
+RemoteChannelManager::RemoteChannelManager(::STI::TNetwork::TChannelManager_var channelManager,
 											const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
 											const STI::Device::DeviceID& remoteID)
-	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TChannelManager>(channelManager, managerMutex), 
-	listenerForwarder(forwarder), remoteID(remoteID)
-	//: tChannelManager(STI::TNetwork::TChannelManager::_duplicate(channelManager))
+: STI::TNetwork::TReferenceHolder<STI::TNetwork::TChannelManager>(channelManager), 
+listenerForwarder(forwarder), remoteID(remoteID)
 {
 
 	//Message listener for channel update messages

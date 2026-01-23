@@ -33,7 +33,7 @@ class RemoteChannelManager : public STI::Device::ChannelManager,
 {
 public:
 
-	RemoteChannelManager(::STI::TNetwork::TChannelManager_ptr channelManager, 
+	RemoteChannelManager(::STI::TNetwork::TChannelManager_var channelManager, 
                             const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder,
                             const STI::Device::DeviceID& remoteID);
 	~RemoteChannelManager();

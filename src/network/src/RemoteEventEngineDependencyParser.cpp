@@ -29,8 +29,8 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TEventEngineDependencyParser;
 
 
-RemoteEventEngineDependencyParser::RemoteEventEngineDependencyParser(::STI::TNetwork::TEventEngineDependencyParser_ptr dependencyParser)
-: TReferenceHolder<TEventEngineDependencyParser>(dependencyParser, dependencyMutex)
+RemoteEventEngineDependencyParser::RemoteEventEngineDependencyParser(::STI::TNetwork::TEventEngineDependencyParser_var dependencyParser)
+: TReferenceHolder<TEventEngineDependencyParser>(dependencyParser)
 {
 }
 

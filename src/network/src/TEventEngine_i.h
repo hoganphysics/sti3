@@ -13,7 +13,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TEventEngine_i : public POA_STI::TNetwork::TEventEngine
+class TEventEngine_i : public POA_STI::TNetwork::TEventEngine,
+                       public PortableServer::RefCountServantBase
 {
 public:
 

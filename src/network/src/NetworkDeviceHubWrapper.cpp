@@ -9,6 +9,7 @@
 #include "ORBManager.h"
 
 #include <memory>
+#include <iostream>
 
 using STI::Network::NetworkDevice;
 using STI::Network::NetworkDeviceHubWrapper;
@@ -20,9 +21,9 @@ using STI::Network::NodeWalker;
 
 
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDeviceHub>& hub)
-	: localHub(hub), deviceHubServant(hub)
+	: localHub(hub), deviceHubServantHolder(new STI::TNetwork::TDeviceHub_i(hub))
 {
-	STI::Network::ORBManager::ORBManager::activateServant(deviceHubServant);
+	// STI::Network::ORBManager::ORBManager::activateServant(deviceHubServant);
 
 	//The LocalHub might have (local) nodes and hubs already attached that must be wrapped.
 	//For all hubs currently stored by localHub, replace with NetworkDeviceHubWrapper (this is recursive)
@@ -170,8 +171,15 @@ bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_
 
 	if (networkDeviceHubWrapper) {		//check dynamic_pointer_cast
 
-		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
+		// std::cerr << "Getting TDeviceHub reference from NetworkDeviceHubWrapper." << std::endl;
+
+		tDeviceHub = networkDeviceHubWrapper->deviceHubServantHolder.getRefVar();
 		success = true;
+
+		// std::cerr << "Getting TDeviceHub reference from NetworkDeviceHubWrapper: active? " 
+		// << (networkDeviceHubWrapper->deviceHubServantHolder.active() ? "true" : "false") << std::endl;
+
+		// std::cerr << "Getting TDeviceHub reference from NetworkDeviceHubWrapper: nil? " << (CORBA::is_nil(tDeviceHub) ? "true" : "false") << std::endl;
 	}
 
 	return success && !CORBA::is_nil(tDeviceHub);

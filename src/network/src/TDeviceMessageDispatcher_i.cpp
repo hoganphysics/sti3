@@ -4,7 +4,7 @@
 
 #include "NetworkConvert.h"
 #include "RemoteDeviceMessageHandler.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 
 using STI::TNetwork::TDeviceMessageDispatcher_i;
 using ::STI::TNetwork::TDeviceID;
@@ -24,7 +24,7 @@ TDeviceMessageDispatcher_i::TDeviceMessageDispatcher_i(const std::shared_ptr<STI
 
 TDeviceMessageDispatcher_i::~TDeviceMessageDispatcher_i()
 {
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TDeviceMessageDispatcher_i::addMessageHandler(const TDeviceID& targetID, TDeviceMessageHandler_ptr handler)
@@ -32,7 +32,8 @@ void TDeviceMessageDispatcher_i::addMessageHandler(const TDeviceID& targetID, TD
 	if (messageDispatcher != 0 && !CORBA::is_nil(handler)) {
 
 		//wrap the received TDevice reference in RemoteDevice
-		std::shared_ptr<RemoteDeviceMessageHandler> remoteHandler = std::make_shared<RemoteDeviceMessageHandler>(handler);
+		STI::TNetwork::TDeviceMessageHandler_var handler_var = STI::TNetwork::TDeviceMessageHandler::_duplicate(handler);
+		std::shared_ptr<RemoteDeviceMessageHandler> remoteHandler = std::make_shared<RemoteDeviceMessageHandler>(handler_var);
 
 		if (remoteHandler != 0) {
 			messageDispatcher->addMessageHandler(convert<TDeviceID, DeviceID>(targetID), remoteHandler);

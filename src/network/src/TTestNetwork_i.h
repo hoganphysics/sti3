@@ -12,7 +12,7 @@ namespace TNetwork
 {
 
 class TTestNetwork_i : public POA_STI::TNetwork::TTestNetwork, 
-                       public PortableServer::RefCountServantBase 
+                       public PortableServer::RefCountServantBase
 {
 public:
 

@@ -36,7 +36,8 @@ cmake -S "$SRC_DIR" -B "$BUILD_DIR" -G Ninja \
   -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
   -DCMAKE_INSTALL_PYTHONDIR="$SP_DIR"
 
-cmake --build "$BUILD_DIR" -j"${CPU_COUNT}"
+# cmake --build "$BUILD_DIR" -j"${CPU_COUNT}"
+cmake --build "$BUILD_DIR" -j4
 
 # Issues with rpath in tests, disable for now
 # ctest --test-dir "$BUILD_DIR" --output-on-failure

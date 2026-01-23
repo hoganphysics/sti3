@@ -11,7 +11,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TShotCallback_i : public POA_STI::TNetwork::TShotCallback
+class TShotCallback_i : public POA_STI::TNetwork::TShotCallback,
+						public PortableServer::RefCountServantBase
 {
 public:
 

@@ -24,5 +24,5 @@ TestNetworkWrapper::~TestNetworkWrapper()
 void TestNetworkWrapper::getTestNetworkReference(::STI::TNetwork::TTestNetwork_var& testRef)
 {
     // testRef = test->_this();
-    testRef = servantHolder.getRef();
+    testRef = servantHolder.getRefVar();
 }

@@ -11,7 +11,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TTriggerCallback_i : public POA_STI::TNetwork::TTriggerCallback
+class TTriggerCallback_i : public POA_STI::TNetwork::TTriggerCallback,
+                           public PortableServer::RefCountServantBase
 {
 public:
 

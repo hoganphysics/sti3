@@ -1,6 +1,6 @@
 
 #include "TBinaryDataStreamTarget_i.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 #include "NetworkConvert.h"
 
 #include <sti/utils/BinaryData.h>
@@ -18,7 +18,7 @@ TBinaryDataStreamTarget_i::TBinaryDataStreamTarget_i(STI::Utils::BinaryDataStrea
 
 TBinaryDataStreamTarget_i::~TBinaryDataStreamTarget_i()
 {
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TBinaryDataStreamTarget_i::start()

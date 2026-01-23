@@ -1,5 +1,5 @@
 #include "TRefreshIndicator_i.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 
 using STI::TNetwork::TRefreshIndicator_i;
 
@@ -11,7 +11,7 @@ TRefreshIndicator_i::TRefreshIndicator_i()
 
 TRefreshIndicator_i::~TRefreshIndicator_i()
 {
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
+	// STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 ///Reset and check status within the same mutex block to avoid any delay between check and reset

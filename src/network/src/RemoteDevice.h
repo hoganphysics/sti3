@@ -38,7 +38,7 @@ class RemoteDevice : public STI::Device::Device,
 {
 public:
 
-	RemoteDevice(::STI::TNetwork::TDevice_ptr device);
+	RemoteDevice(::STI::TNetwork::TDevice_var device);
 	~RemoteDevice();
 
 	bool refresh();

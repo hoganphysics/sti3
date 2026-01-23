@@ -21,7 +21,7 @@
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
-#include "ORBManager.h"
+// #include "ORBManager.h"
 #include "RemoteResultsCollector.h"
 
 #include <memory>
@@ -78,15 +78,16 @@ TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Devi
 	if (device != 0 
 		&& device->getEngineScheduler(engineScheduler) 
 		&& engineScheduler->getDependencyParser(dependencyParser)) {
-		
-		dependencyParserServant = std::make_shared<TEventEngineDependencyParser_i>(dependencyParser);
-		STI::Network::ORBManager::ORBManager::activateServant(*dependencyParserServant);
+	
+		dependencyParserServantHolder.emplace(dependencyParser);
+		// dependencyParserServant = std::make_shared<TEventEngineDependencyParser_i>(dependencyParser);
+		// STI::Network::ORBManager::ORBManager::activateServant(*dependencyParserServant);
     }
 }
 
 TEventEngineScheduler_i::~TEventEngineScheduler_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
+    // STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -218,11 +219,11 @@ TEngineJobStatus TEventEngineScheduler_i::getStatusSeqID(const ::STI::TNetwork::
 
 TEventEngineDependencyParser_ptr TEventEngineScheduler_i::getDependencyParser()
 {
-	if (dependencyParserServant == 0) {
-		return TEventEngineDependencyParser::_nil();
-	}
+	// if (dependencyParserServant == 0) {
+	// 	return TEventEngineDependencyParser::_nil();
+	// }
 
-	return dependencyParserServant->_this();
+	return dependencyParserServantHolder.getRefPtr();
 }
 
 ::CORBA::Boolean TEventEngineScheduler_i::getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job)

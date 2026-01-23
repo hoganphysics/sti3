@@ -1,12 +1,13 @@
-#ifndef STI_TNETWORK_SERVANTHOLDER_H
-#define STI_TNETWORK_SERVANTHOLDER_H
+#ifndef STI_NETWORK_SERVANTHOLDER_H
+#define STI_NETWORK_SERVANTHOLDER_H
 
 #include <utility>
 #include "ORBManager.h"
+#include <iostream>
 
 namespace STI
 {
-namespace TNetwork
+namespace Network
 {
 
 // ServantHolder<> is a RAII wrapper for CORBA servants that handles activation
@@ -15,7 +16,7 @@ namespace TNetwork
 // Example usage:
 // For IDL interface MyIface, with servant implementation MyIface_i:
 //   ServantHolder<MyIface_i, MyIface> servantHolder(new MyIface_i(...));
-//   MyIface::_var_type myIfaceRef = servantHolder.getRef();
+//   MyIface::_var_type myIfaceRef = servantHolder.getRefVar();
 // Note: The servant implementation class (MyIface_i) must derive from
 // PortableServer::ServantBase (directly or indirectly) for this to work.
 
@@ -77,14 +78,29 @@ public:
 
     explicit operator bool() const noexcept { return servant_ != nullptr; }
 
-    typename Iface::_var_type getRef() const
+    // typename Iface::_var_type getRef() const
+    // {
+    //     if (!active_ || CORBA::is_nil(poa_)) {
+    //         return Iface::_nil();
+    //     }
+    //     CORBA::Object_var obj = poa_->id_to_reference(oid_);
+    //     return Iface::_narrow(obj);
+    // }
+
+    typename Iface::_var_type getRefVar() const
     {
-        if (!active_ || CORBA::is_nil(poa_)) {
-            return Iface::_nil();
-        }
+        if (!active_ || CORBA::is_nil(poa_)) return Iface::_nil();
         CORBA::Object_var obj = poa_->id_to_reference(oid_);
         return Iface::_narrow(obj);
     }
+
+    // Caller gets a pointer that it owns (CORBA return convention)
+    typename Iface::_ptr_type getRefPtr() const
+    {
+        typename Iface::_var_type v = getRefVar();
+        return v._retn();   // relinquish ownership to caller
+    }
+
 
     template <class... Args>
     void emplace(Args&&... args)
@@ -99,14 +115,17 @@ private:
         auto orbManager = STI::Network::ORBManager::ORBManager::getInstance();
 
         if (orbManager == nullptr) {
-            return;
+            std::cerr << "ServantHolder::activate_or_throw: ORBManager instance is null." << std::endl;
+            throw CORBA::BAD_INV_ORDER();
         }
 
-        if (!orbManager->running()) {
-            return;
-        }
+        // if (!orbManager->running()) {
+        //     std::cerr << "ServantHolder::activate_or_throw: ORBManager is not running." << std::endl;
+        //     throw CORBA::BAD_INV_ORDER();
+        // }
 
         if (!orbManager->isPOAactive()) {
+            std::cerr << "ServantHolder::activate_or_throw: ORBManager POA is not active." << std::endl;
             throw CORBA::BAD_INV_ORDER();
         }
 

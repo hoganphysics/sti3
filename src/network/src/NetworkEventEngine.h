@@ -4,6 +4,7 @@
 #include "LocalEventEngine.h"
 #include "TEventEngine_i.h"
 #include "generated/deviceNet.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -34,7 +35,8 @@ public:
 
 private:
 
-    STI::TNetwork::TEventEngine_i eventEngineServant;
+    // STI::TNetwork::TEventEngine_i eventEngineServant;
+	ServantHolder<STI::TNetwork::TEventEngine_i, STI::TNetwork::TEventEngine> eventEngineServantHolder;
 };
 
 

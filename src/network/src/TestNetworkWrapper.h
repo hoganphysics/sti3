@@ -25,7 +25,7 @@ public:
 
     // std::shared_ptr<TTestNetwork_i> test;
 
-    ServantHolder<TTestNetwork_i, STI::TNetwork::TTestNetwork> servantHolder;
+    STI::Network::ServantHolder<TTestNetwork_i, STI::TNetwork::TTestNetwork> servantHolder;
 
 };
 
