@@ -976,6 +976,22 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineID = _0RL_tc_STI_mTNetwork
 #endif
 
 
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineIDSeq:1.0", "TEngineIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineID, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEngineIDSeq = _0RL_tc_STI_mTNetwork_mTEngineIDSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineIDSeq = _0RL_tc_STI_mTNetwork_mTEngineIDSeq;
+#endif
+
 static const char* _0RL_enumMember_STI_mTNetwork_mTEngineState[] = { "EngineIdle", "EngineParsing", "EngineParsed", "EnginePreparingPlay", "EnginePlayReady", "EngineWaitingForTrigger", "EnginePlaying", "EnginePaused", "EngineUnknown", "EngineMissing", "EngineError" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineState = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TEngineState:1.0", "TEngineState", _0RL_enumMember_STI_mTNetwork_mTEngineState, 11, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -6039,6 +6055,57 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineID* _sp)
                     _0RL_STI_mTNetwork_mTEngineID_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TEngineID*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTEngineIDSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEngineIDSeq* _p = (STI::TNetwork::TEngineIDSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEngineIDSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEngineIDSeq* _p = new STI::TNetwork::TEngineIDSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEngineIDSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEngineIDSeq* _p = (STI::TNetwork::TEngineIDSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineIDSeq& _s)
+{
+  STI::TNetwork::TEngineIDSeq* _p = new STI::TNetwork::TEngineIDSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEngineIDSeq,
+               _0RL_STI_mTNetwork_mTEngineIDSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEngineIDSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineIDSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEngineIDSeq,
+               _0RL_STI_mTNetwork_mTEngineIDSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEngineIDSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineIDSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEngineIDSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineIDSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEngineIDSeq,
+                    _0RL_STI_mTNetwork_mTEngineIDSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEngineIDSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEngineIDSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEngineIDSeq*)_v;
     return 1;
   }
   return 0;

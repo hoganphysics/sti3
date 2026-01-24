@@ -45,6 +45,10 @@ public:
     TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType);
     TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType);
 
+    void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs);
+    TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID);
+    void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
+
     ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
 
     ::CORBA::Boolean ping();

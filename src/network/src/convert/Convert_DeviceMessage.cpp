@@ -72,7 +72,9 @@ using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EngineJobStatus;
 using STI::TNetwork::TParsedVar;
 using STI::Engine::ParsedVar;
-
+using STI::TNetwork::TEngineStateTupleSeq;
+using STI::Engine::EngineID;
+using STI::Engine::EngineState;
 
 
 template<>
@@ -821,14 +823,15 @@ bool STI::Network::convert<TEngineStateMessage, std::shared_ptr<EngineStateMessa
 		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
 		);
 
-	for(unsigned i = 0; i < tMessage.engineStates.length(); ++i) {
+	// for(unsigned i = 0; i < tMessage.engineStates.length(); ++i) {
 
-		deviceMessage->engineStates.insert(
-			std::pair<EngineID, EngineState>(
-				convert<TEngineID, EngineID>(tMessage.engineStates[i].engineID),
-				convert<TEngineState, EngineState>(tMessage.engineStates[i].state)
-			));
-	}
+	// 	deviceMessage->engineStates.insert(
+	// 		std::pair<EngineID, EngineState>(
+	// 			convert<TEngineID, EngineID>(tMessage.engineStates[i].engineID),
+	// 			convert<TEngineState, EngineState>(tMessage.engineStates[i].state)
+	// 		));
+	// }
+	convert<TEngineStateTupleSeq, std::map<EngineID, EngineState>>(tMessage.engineStates, deviceMessage->engineStates);
 
 	return (deviceMessage != 0);
 }
@@ -841,19 +844,57 @@ bool STI::Network::convert<std::shared_ptr<EngineStateMessage>, TEngineStateMess
 		return false;
 	}
 
-	tMessage.engineStates.length( static_cast<unsigned>(deviceMessage->engineStates.size()) );
+	// tMessage.engineStates.length( static_cast<unsigned>(deviceMessage->engineStates.size()) );
+
+	// unsigned i = 0;
+	// for (auto& tuple : deviceMessage->engineStates) {
+	// 	if (i < tMessage.engineStates.length()) {
+	// 		tMessage.engineStates[i].engineID = convert<EngineID, TEngineID>(tuple.first);
+	// 		tMessage.engineStates[i].state = convert<EngineState, TEngineState>(tuple.second);
+	// 	}
+	// 	++i;
+	// }
+	return convert<std::map<EngineID, EngineState>, TEngineStateTupleSeq>(deviceMessage->engineStates, tMessage.engineStates);
+
+}
+
+
+//EngineState Map
+template<>
+bool STI::Network::convert<TEngineStateTupleSeq, std::map<EngineID, EngineState>>(
+	const TEngineStateTupleSeq& tEngineStateTupleSeq, std::map<EngineID, EngineState>& engineStates)
+{
+	engineStates.clear();
+
+	for(unsigned i = 0; i < tEngineStateTupleSeq.length(); ++i) {
+
+		engineStates.insert(
+			std::pair<EngineID, EngineState>(
+				convert<TEngineID, EngineID>(tEngineStateTupleSeq[i].engineID),
+				convert<TEngineState, EngineState>(tEngineStateTupleSeq[i].state)
+			));
+	}
+	return true;
+}
+
+template<>
+bool STI::Network::convert<std::map<EngineID, EngineState>, TEngineStateTupleSeq>(
+	const std::map<EngineID, EngineState>& engineStates, TEngineStateTupleSeq& tEngineStateTupleSeq)
+{
+	tEngineStateTupleSeq.length( static_cast<unsigned>(engineStates.size()) );
 
 	unsigned i = 0;
-	for (auto& tuple : deviceMessage->engineStates) {
-		if (i < tMessage.engineStates.length()) {
-			tMessage.engineStates[i].engineID = convert<EngineID, TEngineID>(tuple.first);
-			tMessage.engineStates[i].state = convert<EngineState, TEngineState>(tuple.second);
+	for (auto& tuple : engineStates) {
+		if (i < tEngineStateTupleSeq.length()) {
+			tEngineStateTupleSeq[i].engineID = convert<EngineID, TEngineID>(tuple.first);
+			tEngineStateTupleSeq[i].state = convert<EngineState, TEngineState>(tuple.second);
 		}
 		++i;
 	}
 
 	return true;
 }
+
 
 //EngineJobUpdateDeviceMessage
 template<>

@@ -3616,6 +3616,120 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineID;
 
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineIDSeq;
+
+    class TEngineIDSeq_var;
+
+    class TEngineIDSeq : public _CORBA_Unbounded_Sequence< TEngineID >  {
+    public:
+      typedef TEngineIDSeq_var _var_type;
+      inline TEngineIDSeq() {}
+      inline TEngineIDSeq(const TEngineIDSeq& _s)
+        : _CORBA_Unbounded_Sequence< TEngineID > (_s) {}
+
+      inline TEngineIDSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TEngineID > (_max) {}
+      inline TEngineIDSeq(_CORBA_ULong _max, _CORBA_ULong _len, TEngineID* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TEngineID > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TEngineIDSeq& operator = (const TEngineIDSeq& _s) {
+        _CORBA_Unbounded_Sequence< TEngineID > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TEngineIDSeq_out;
+
+    class TEngineIDSeq_var {
+    public:
+      inline TEngineIDSeq_var() : _pd_seq(0) {}
+      inline TEngineIDSeq_var(TEngineIDSeq* _s) : _pd_seq(_s) {}
+      inline TEngineIDSeq_var(const TEngineIDSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TEngineIDSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TEngineIDSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TEngineIDSeq_var& operator = (TEngineIDSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TEngineIDSeq_var& operator = (const TEngineIDSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TEngineIDSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TEngineID& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TEngineIDSeq* operator -> () { return _pd_seq; }
+      inline const TEngineIDSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TEngineIDSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TEngineIDSeq& () const { return *_pd_seq; }
+      inline operator TEngineIDSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TEngineIDSeq& in() const { return *_pd_seq; }
+      inline TEngineIDSeq&       inout()    { return *_pd_seq; }
+      inline TEngineIDSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TEngineIDSeq* _retn() { TEngineIDSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TEngineIDSeq_out;
+      
+    private:
+      TEngineIDSeq* _pd_seq;
+    };
+
+    class TEngineIDSeq_out {
+    public:
+      inline TEngineIDSeq_out(TEngineIDSeq*& _s) : _data(_s) { _data = 0; }
+      inline TEngineIDSeq_out(TEngineIDSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TEngineIDSeq*) 0; }
+      inline TEngineIDSeq_out(const TEngineIDSeq_out& _s) : _data(_s._data) {}
+      inline TEngineIDSeq_out& operator = (const TEngineIDSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TEngineIDSeq_out& operator = (TEngineIDSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TEngineIDSeq*&()  { return _data; }
+      inline TEngineIDSeq*& ptr()       { return _data; }
+      inline TEngineIDSeq* operator->() { return _data; }
+
+      inline TEngineID& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TEngineIDSeq*& _data;
+
+    private:
+      TEngineIDSeq_out();
+      TEngineIDSeq_out& operator=(const TEngineIDSeq_var&);
+    };
+
     enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError /*, __max_TEngineState=0xffffffff */ };
     typedef TEngineState& TEngineState_out;
 
@@ -7048,6 +7162,11 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineID& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineID* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineID*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineID*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineIDSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineIDSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineIDSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineIDSeq*& _sp);
 
 inline void operator >>=(STI::TNetwork::TEngineState _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);

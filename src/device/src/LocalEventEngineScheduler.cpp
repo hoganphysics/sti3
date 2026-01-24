@@ -80,6 +80,7 @@ using STI::Utils::FileID;
 using STI::Utils::VirtualFileHolder;
 using STI::Utils::VirtualFileServer;
 using STI::Engine::SequenceJob;
+using STI::Engine::EngineState;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
@@ -166,6 +167,34 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
         engineManagers.add(engineID, manager);        
+    }
+}
+
+void LocalEventEngineScheduler::getEngineIDs(std::set<EngineID>& engineIDs) const
+{
+    engineManagers.getKeys(engineIDs);
+}
+
+EngineState LocalEventEngineScheduler::getEngineState(const EngineID& engineID) const
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        return engine->getState();
+    }
+    return EngineState::Missing;
+}
+
+void LocalEventEngineScheduler::getEngineStates(std::map<EngineID, EngineState>& engineStates) const
+{
+    std::set<EngineID> engineIDs;
+    engineManagers.getKeys(engineIDs);
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    for (auto& id : engineIDs) {
+        engineStates[id] = getEngineState(id);
     }
 }
 

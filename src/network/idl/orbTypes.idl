@@ -262,6 +262,7 @@ module TNetwork
 	{
 		long engineNumber;
 	};
+	typedef sequence<TEngineID> TEngineIDSeq;
 
 	enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError };
 

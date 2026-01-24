@@ -18,6 +18,7 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
@@ -67,7 +68,7 @@ using STI::Engine::PlayJobStatus;
 using STI::TNetwork::TPlayJobStatus;
 using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
-
+using STI::TNetwork::TEngineState;
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -304,6 +305,52 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 	}
 
 	return tJobs._retn();
+}
+
+
+void TEventEngineScheduler_i::getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs)
+{
+	std::set<STI::Engine::EngineID> ids;
+	engineIDs = new STI::TNetwork::TEngineIDSeq();
+
+	if (engineScheduler != 0) {
+		engineScheduler->getEngineIDs(ids);
+
+		STI::TNetwork::TEngineIDSeq_var tEngineIDseq_var(new STI::TNetwork::TEngineIDSeq);
+
+		convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(ids,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineID>&) tEngineIDseq_var);
+
+		(*engineIDs) = tEngineIDseq_var;
+	}
+}
+
+
+TEngineState TEventEngineScheduler_i::getEngineState(const ::STI::TNetwork::TEngineID& engineID)
+{
+	TEngineState tState = STI::TNetwork::TEngineState::EngineUnknown;
+
+	if (engineScheduler != 0) {
+		auto state = engineScheduler->getEngineState(convert<TEngineID, STI::Engine::EngineID>(engineID));
+		convert<STI::Engine::EngineState, TEngineState>(state, tState);
+	}
+	return tState;
+}
+
+void TEventEngineScheduler_i::getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates)
+{
+	engineStates = new STI::TNetwork::TEngineStateTupleSeq();
+
+	if (engineScheduler != 0) {
+		std::map<STI::Engine::EngineID, STI::Engine::EngineState> states;
+		engineScheduler->getEngineStates(states);
+
+		STI::TNetwork::TEngineStateTupleSeq_var tEngineStateTupleSeq_var(new STI::TNetwork::TEngineStateTupleSeq);
+
+		convert<std::map<STI::Engine::EngineID, STI::Engine::EngineState>, TEngineStateTupleSeq>(states, tEngineStateTupleSeq_var);
+
+		(*engineStates) = tEngineStateTupleSeq_var;
+	}
 }
 
 

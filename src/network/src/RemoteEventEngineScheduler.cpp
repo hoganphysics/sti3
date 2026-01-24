@@ -17,6 +17,7 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
@@ -526,6 +527,78 @@ std::vector<std::shared_ptr<EventEngineJob>> RemoteEventEngineScheduler::getJobs
 	{
 	}
 	return jobs;
+}
+
+
+void RemoteEventEngineScheduler::getEngineIDs(std::set<STI::Engine::EngineID>& engineIDs) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineIDSeq_var tEngineIDs(new STI::TNetwork::TEngineIDSeq);
+
+	try {
+		getTRef()->getEngineIDs(tEngineIDs);	//remote call
+
+		convert<STI::TNetwork::TEngineID, STI::Engine::EngineID>(tEngineIDs, engineIDs);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+STI::Engine::EngineState RemoteEventEngineScheduler::getEngineState(const STI::Engine::EngineID& engineID) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	STI::Engine::EngineState state = STI::Engine::EngineState::Unknown;
+
+	if (isDisabled()) return state;
+
+	try {
+		STI::TNetwork::TEngineState tEngineState = STI::TNetwork::TEngineState::EngineUnknown;
+
+		tEngineState = getTRef()->getEngineState(
+			convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(engineID));		//remote call
+
+        convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tEngineState, state);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return state;
+}
+
+void RemoteEventEngineScheduler::getEngineStates(std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineStateTupleSeq_var tEngineStates(new STI::TNetwork::TEngineStateTupleSeq);
+
+	try {
+		getTRef()->getEngineStates(tEngineStates);	//remote call
+
+		convert<STI::TNetwork::TEngineStateTupleSeq, std::map<STI::Engine::EngineID, STI::Engine::EngineState>>(tEngineStates, engineStates);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
 }
 
 std::shared_ptr<Shot> RemoteEventEngineScheduler::createShot(const ShotConfig& shotConfig, 

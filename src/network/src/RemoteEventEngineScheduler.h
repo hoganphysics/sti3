@@ -58,6 +58,10 @@ public:
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 	
+    void getEngineIDs(std::set<STI::Engine::EngineID>& engineIDs) const;
+    STI::Engine::EngineState getEngineState(const STI::Engine::EngineID& engineID) const;
+    void getEngineStates(std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates) const;
+
     bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
 
     bool ping() const;

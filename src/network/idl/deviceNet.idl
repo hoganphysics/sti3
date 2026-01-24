@@ -191,6 +191,10 @@ module TNetwork
 	    // void getRunningJobs(out TEngineJobIDSeq jobIDs);
     	// void getCompletedJobs(out TEngineJobIDSeq jobIDs);
 
+		void getEngineIDs(out TEngineIDSeq engineIDs);
+    	TEngineState getEngineState(in TEngineID engineID);
+    	void getEngineStates(out TEngineStateTupleSeq engineStates);
+
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 
 		boolean ping();

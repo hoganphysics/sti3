@@ -113,6 +113,10 @@ public:
  
     void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget);
 
+    void getEngineIDs(std::set<EngineID>& engineIDs) const;
+    EngineState getEngineState(const EngineID& engineID) const;
+    void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
+
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
 
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;

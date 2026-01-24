@@ -28,6 +28,7 @@
 #include <sstream>
 #include <set>
 #include <vector>
+#include <map>
 
 // #include <iostream>
 
@@ -60,6 +61,8 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::EngineState;
 using STI::Utils::DependencyTree;
 using STI::Device::DeviceID;
+using STI::Engine::EngineID;
+
 
 void init_EventEngineScheduler(py::module& m)
 {
@@ -318,6 +321,32 @@ void init_EventEngineScheduler(py::module& m)
 
                 return jobIDvec;
             })
+        .def("getEngineState", &EventEngineScheduler::getEngineState)
+        .def("getEngineIDs",
+            [](EventEngineScheduler& self) {
+                std::set<EngineID> engineIDs;
+
+                self.getEngineIDs(engineIDs);
+                std::vector<EngineID> engineIDvec;
+
+                for(auto& id : engineIDs) {
+                    engineIDvec.push_back(id);
+                }
+
+                return engineIDvec;
+            })
+        .def("getEngineStates",
+            [](EventEngineScheduler& self) {
+                std::map<EngineID, EngineState> engineStates;
+
+                self.getEngineStates(engineStates);
+
+                return engineStates;
+            })
         ;
+
+    //         void getEngineIDs(std::set<EngineID>& engineIDs) const;
+    // EngineState getEngineState(const EngineID& engineID) const;
+    // void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
 
 }

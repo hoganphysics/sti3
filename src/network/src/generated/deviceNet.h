@@ -1924,6 +1924,9 @@ _CORBA_MODULE_BEG
       void cancelAll();
       TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType);
       TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType);
+      void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs);
+      TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID);
+      void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
       ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult);
       ::CORBA::Boolean ping();
 
@@ -1977,6 +1980,9 @@ _CORBA_MODULE_BEG
       virtual void cancelAll() = 0;
       virtual TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType) = 0;
       virtual TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType) = 0;
+      virtual void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs) = 0;
+      virtual TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID) = 0;
+      virtual void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates) = 0;
       virtual ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult) = 0;
       virtual ::CORBA::Boolean ping() = 0;
       
