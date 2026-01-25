@@ -31,6 +31,7 @@
 #include "LocalTriggerCallback.h"
 #include "MasterTrigger.h"
 
+#include <iostream>
 #include <memory>
 #include <thread>
 #include <iterator>
@@ -839,6 +840,9 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 	if (!setState(EngineState::PreparingPlay)) {
 		//error
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: failed to enter PreparingPlay (state=" << print(getState())
+				  << ", sid=" << job.getJobID().sid.print() << ")\n";
 		cancelled = true;
 		return;
 	}
@@ -875,6 +879,9 @@ void LocalEventEngine::play(EventEngineJob& job)
 	bool ownedDevicesPlayReady = allEngineStateCheck(playReadyOwnedTargets, EngineState::PlayReady);
 
 	if (!ownedDevicesPlayReady) {
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: owned devices not PlayReady (state=" << print(getState())
+				  << ", sid=" << job.getJobID().sid.print() << ")\n";
 		stop();
 
 		// auto& err = job.addMessage(PlayingMessageType::Error, 1, "PlayReady")
@@ -887,7 +894,31 @@ void LocalEventEngine::play(EventEngineJob& job)
 	}
 
 	if (!setState(EngineState::PlayReady)) {
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: failed to enter PlayReady (state=" << print(getState())
+				  << ", sid=" << job.getJobID().sid.print() << ")\n";
 		setState(EngineState::Error);
+	}
+
+	// Setup trigger
+	// STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
+	masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
+	masterTrigger->arm(ownedTargets);
+
+	if (isJobOwner || ownedTargets.size() > 0) {
+		
+		masterTriggerCB = std::make_shared<LocalTriggerCallback>(masterTrigger.get());
+	}
+
+	if (!isState(EngineState::PlayReady)) {
+		// an error occurred, or play was aborted
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: PlayReady aborted before send (state=" << print(getState())
+				  << ", sid=" << job.getJobID().sid.print() << ")\n";
+		job.markCancelled();
+		stop();
+		activePlayJob = false;
+		return;
 	}
 
 	//Send PlayReady message with local engine reference
@@ -905,27 +936,8 @@ void LocalEventEngine::play(EventEngineJob& job)
 	
 	sendMessage(playReadyMessage);
 
-
-	if (!isState(EngineState::PlayReady)) {
-		// an error occurred, or play was aborted
-		job.markCancelled();
-		stop();
-		activePlayJob = false;
-		return;
-	}
-
-	// Setup trigger
-	// STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
-	masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
-	masterTrigger->arm(ownedTargets);
-
-	if (isJobOwner || ownedTargets.size() > 0) {
-		
-		masterTriggerCB = std::make_shared<LocalTriggerCallback>(masterTrigger.get());
-
-		if (isJobOwner) {
-			play(jobID, masterTriggerCB, false);
-		}
+	if (isJobOwner) {
+		play(jobID, masterTriggerCB, false);
 	}
 
 	waitForPlayComplete(playLock);	//so job doesn't finish until play finishes or is aborted
@@ -971,6 +983,9 @@ void LocalEventEngine::waitForPlayComplete(std::unique_lock<std::mutex>& playLoc
 void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug)
 {
 	if (!isState(EngineState::PlayReady)) {
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: play() called while not PlayReady (state=" << print(getState())
+				  << ", sid=" << jobID.sid.print() << ")\n";
 		cancelled = true;
 		return;
 	}
@@ -1079,6 +1094,8 @@ void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 {
 	if (!armTrigger(triggerCB)) {
 
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: armTrigger failed (state=" << print(getState()) << ")\n";
 		setState(EngineState::Error);
 		stop();
 		masterTrigger->stop();
@@ -1191,6 +1208,8 @@ bool LocalEventEngine::playDeviceEvents()
 	std::unique_lock<std::mutex> playLock(playMutex);
 
 	if (!setState(EngineState::Playing)) {
+		std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+				  << "] play cancel: failed to enter Playing (state=" << print(getState()) << ")\n";
 		setState(EngineState::Error);
 		return false;
 	}

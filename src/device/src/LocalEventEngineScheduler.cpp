@@ -975,11 +975,20 @@ void LocalEventEngineScheduler::assignPlayJobs(const std::set<EngineJobID>& queu
         //check if the associated parse job was canceled
         if (isCanceledJob(jobID.pid)) {
             _cancelJob(jobID);  //cancel play if parse was canceled
+            continue;
         }
 
         if (!findParsedEngine(jobID.pid, freeEngines, engineID)) {
-            _cancelJob(jobID);  //cancel play if no parsed engine available
-            continue; //no parsed engine available for this play job
+            EngineJobID parseJobID;
+            parseJobID.type = EventEngineJobType::Parse;
+            parseJobID.pid = jobID.pid;
+
+            if (queuedJobs.contains(parseJobID) || runningJobs.contains(parseJobID)) {
+                continue; //defer play while parse is queued or running
+            }
+
+            _cancelJob(jobID);  //cancel play if no parsed engine available and no pending parse
+            continue;
         }
     
         if (assignJob(jobID, engineID)) {
@@ -1498,4 +1507,3 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
 
     return false;
 }
-

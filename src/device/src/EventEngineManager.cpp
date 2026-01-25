@@ -179,18 +179,17 @@ void EventEngineManager::runJob()
             engine->play(*currentJob);  //reserve not needed because it's already handled by the queue system.  When play is called, engines should call upstreat with their reference; server then calls play when all have been received.
         break;
     }
-
-    {
-        //Avoid deadlock with scheduler->cancelJob below, which calls abortJob
-        std::unique_lock<std::mutex> writeLock(jobMutex);
-        running = false;
-    }
-    
+   
     if (engine->jobCancelled()) {
         scheduler->cancelJob(currentJob->getJobID());
     }
     else {
         scheduler->jobComplete(currentJob->getJobID());
+    }
+
+    {
+        std::unique_lock<std::mutex> writeLock(jobMutex);
+        running = false;
     }
 
     // {
