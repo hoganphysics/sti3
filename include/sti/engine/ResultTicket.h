@@ -3,12 +3,15 @@
 
 #include <sti/engine/Ticket.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/device/Device.h>
 
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/fwd/DeviceID_fwd.h>
 
 #include <sti/utils/CachedValue.h>
+
+#include <vector>
 
 namespace STI
 {
@@ -36,6 +39,8 @@ public:
     STI::Engine::MeasurementMap measurements();
     STI::Engine::MeasurementVector measurements(const STI::Device::DeviceID& id);
     STI::Engine::MeasurementVector measurements(const std::string& id);
+
+    std::vector<EnginePlayingMessage> getMessages();
 
     bool getMeasurements(std::shared_ptr<STI::Engine::MeasurementMap>& measurements);
 

@@ -43,6 +43,9 @@ class Measurement;
 class EngineParsingMessage;
 class EngineParsingMessageCount;
 enum class ParsingMessageType;
+class EnginePlayingMessage;
+class EnginePlayingMessageCount;
+enum class PlayingMessageType;
 class ShotResultRecord;
 enum class ShotType;
 enum class RecordStatus;
@@ -352,6 +355,29 @@ template<>
 Engine::ParsingMessageType Network::convert<TNetwork::TParsingMessageType, Engine::ParsingMessageType>(const TNetwork::TParsingMessageType& tMessType);
 
 
+//EnginePlayingMessage
+template<>
+bool Network::convert<Engine::EnginePlayingMessage, TNetwork::TEnginePlayingMessage>(const Engine::EnginePlayingMessage& playingMessage, TNetwork::TEnginePlayingMessage& tPlayingMessage);
+template<>
+bool Network::convert<TNetwork::TEnginePlayingMessage, Engine::EnginePlayingMessage>(const TNetwork::TEnginePlayingMessage& tPlayingMessage, Engine::EnginePlayingMessage& playingMessage);
+
+template<>
+Engine::EnginePlayingMessage Network::convert<TNetwork::TEnginePlayingMessage, Engine::EnginePlayingMessage>(const TNetwork::TEnginePlayingMessage& tPlayingMessage);
+
+//EnginePlayingMessageCount
+template<>
+bool Network::convert<Engine::EnginePlayingMessageCount, TNetwork::TEnginePlayingMessageCount>(const Engine::EnginePlayingMessageCount& playingMessageCount, TNetwork::TEnginePlayingMessageCount& tPlayingMessageCount);
+template<>
+bool Network::convert<TNetwork::TEnginePlayingMessageCount, Engine::EnginePlayingMessageCount>(const TNetwork::TEnginePlayingMessageCount& tPlayingMessageCount, Engine::EnginePlayingMessageCount& playingMessageCount);
+
+
+//PlayingMessageType
+template<>
+TNetwork::TPlayingMessageType Network::convert<Engine::PlayingMessageType, TNetwork::TPlayingMessageType>(const Engine::PlayingMessageType& messType);
+template<>
+Engine::PlayingMessageType Network::convert<TNetwork::TPlayingMessageType, Engine::PlayingMessageType>(const TNetwork::TPlayingMessageType& tMessType);
+
+
 //Measurement
 template<>
 bool Network::convert<std::shared_ptr<Engine::Measurement>, TNetwork::TMeasurement>(
@@ -384,4 +410,3 @@ bool Network::convert<std::shared_ptr<Engine::MeasurementMap>, TNetwork::TDevice
 } //STI
 
 #endif
-

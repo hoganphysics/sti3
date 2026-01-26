@@ -353,6 +353,12 @@ void TEventEngineScheduler_i::getEngineStates(::STI::TNetwork::TEngineStateTuple
 	}
 }
 
+void TEventEngineScheduler_i::stopEngine(const ::STI::TNetwork::TEngineID& engineID) 
+{
+	if (engineScheduler != 0) {
+		engineScheduler->stopEngine(convert<TEngineID, STI::Engine::EngineID>(engineID));
+	}
+}
 
 ::CORBA::Boolean TEventEngineScheduler_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, 
 															::STI::TNetwork::TParseResult_out tParseResult)

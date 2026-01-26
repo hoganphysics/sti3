@@ -5504,6 +5504,151 @@ _CORBA_MODULE_BEG
       TEngineParsingMessageSeq_out& operator=(const TEngineParsingMessageSeq_var&);
     };
 
+    enum TPlayingMessageType { PlayingError, PlayingWarning, PlayingInformation /*, __max_TPlayingMessageType=0xffffffff */ };
+    typedef TPlayingMessageType& TPlayingMessageType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPlayingMessageType;
+
+    struct TEnginePlayingMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TEnginePlayingMessage> _var_type;
+
+      
+      TPlayingMessageType type;
+
+      TDeviceID sourceID;
+
+      ::CORBA::Short id_code;
+
+      ::CORBA::String_member name;
+
+      ::CORBA::String_member message;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TEnginePlayingMessage::_var_type TEnginePlayingMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TEnginePlayingMessage,TEnginePlayingMessage_var > TEnginePlayingMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessage;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageSeq;
+
+    class TEnginePlayingMessageSeq_var;
+
+    class TEnginePlayingMessageSeq : public _CORBA_Unbounded_Sequence< TEnginePlayingMessage >  {
+    public:
+      typedef TEnginePlayingMessageSeq_var _var_type;
+      inline TEnginePlayingMessageSeq() {}
+      inline TEnginePlayingMessageSeq(const TEnginePlayingMessageSeq& _s)
+        : _CORBA_Unbounded_Sequence< TEnginePlayingMessage > (_s) {}
+
+      inline TEnginePlayingMessageSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TEnginePlayingMessage > (_max) {}
+      inline TEnginePlayingMessageSeq(_CORBA_ULong _max, _CORBA_ULong _len, TEnginePlayingMessage* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TEnginePlayingMessage > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TEnginePlayingMessageSeq& operator = (const TEnginePlayingMessageSeq& _s) {
+        _CORBA_Unbounded_Sequence< TEnginePlayingMessage > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TEnginePlayingMessageSeq_out;
+
+    class TEnginePlayingMessageSeq_var {
+    public:
+      inline TEnginePlayingMessageSeq_var() : _pd_seq(0) {}
+      inline TEnginePlayingMessageSeq_var(TEnginePlayingMessageSeq* _s) : _pd_seq(_s) {}
+      inline TEnginePlayingMessageSeq_var(const TEnginePlayingMessageSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TEnginePlayingMessageSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TEnginePlayingMessageSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TEnginePlayingMessageSeq_var& operator = (TEnginePlayingMessageSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TEnginePlayingMessageSeq_var& operator = (const TEnginePlayingMessageSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TEnginePlayingMessageSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TEnginePlayingMessage& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TEnginePlayingMessageSeq* operator -> () { return _pd_seq; }
+      inline const TEnginePlayingMessageSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TEnginePlayingMessageSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TEnginePlayingMessageSeq& () const { return *_pd_seq; }
+      inline operator TEnginePlayingMessageSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TEnginePlayingMessageSeq& in() const { return *_pd_seq; }
+      inline TEnginePlayingMessageSeq&       inout()    { return *_pd_seq; }
+      inline TEnginePlayingMessageSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TEnginePlayingMessageSeq* _retn() { TEnginePlayingMessageSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TEnginePlayingMessageSeq_out;
+      
+    private:
+      TEnginePlayingMessageSeq* _pd_seq;
+    };
+
+    class TEnginePlayingMessageSeq_out {
+    public:
+      inline TEnginePlayingMessageSeq_out(TEnginePlayingMessageSeq*& _s) : _data(_s) { _data = 0; }
+      inline TEnginePlayingMessageSeq_out(TEnginePlayingMessageSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TEnginePlayingMessageSeq*) 0; }
+      inline TEnginePlayingMessageSeq_out(const TEnginePlayingMessageSeq_out& _s) : _data(_s._data) {}
+      inline TEnginePlayingMessageSeq_out& operator = (const TEnginePlayingMessageSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TEnginePlayingMessageSeq_out& operator = (TEnginePlayingMessageSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TEnginePlayingMessageSeq*&()  { return _data; }
+      inline TEnginePlayingMessageSeq*& ptr()       { return _data; }
+      inline TEnginePlayingMessageSeq* operator->() { return _data; }
+
+      inline TEnginePlayingMessage& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TEnginePlayingMessageSeq*& _data;
+
+    private:
+      TEnginePlayingMessageSeq_out();
+      TEnginePlayingMessageSeq_out& operator=(const TEnginePlayingMessageSeq_var&);
+    };
+
     struct TEventEngineJob {
       typedef _CORBA_ConstrType_Variable_Var<TEventEngineJob> _var_type;
 
@@ -5523,6 +5668,8 @@ _CORBA_MODULE_BEG
       TDeviceIDSeq missingTargetIDs;
 
       TEngineParsingMessageSeq messages;
+
+      TEnginePlayingMessageSeq playingMessages;
 
     
 
@@ -5701,6 +5848,8 @@ _CORBA_MODULE_BEG
 
       TEngineParsingMessageSeq messages;
 
+      TEnginePlayingMessageSeq playMessages;
+
       TEngineState engineState;
 
     
@@ -5737,6 +5886,28 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEngineParsingMessageCount;
 
+    struct TEnginePlayingMessageCount {
+      typedef _CORBA_ConstrType_Fix_Var<TEnginePlayingMessageCount> _var_type;
+
+      
+      ::CORBA::Short errorCount;
+
+      ::CORBA::Short warningCount;
+
+      ::CORBA::Short infoCount;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TEnginePlayingMessageCount::_var_type TEnginePlayingMessageCount_var;
+
+    typedef TEnginePlayingMessageCount& TEnginePlayingMessageCount_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageCount;
+
     struct TEngineJobUpdateDeviceMessage {
       typedef _CORBA_ConstrType_Variable_Var<TEngineJobUpdateDeviceMessage> _var_type;
 
@@ -5758,6 +5929,8 @@ _CORBA_MODULE_BEG
       TParsedVarSeq overwrittenVars;
 
       TEngineParsingMessageCount parsingMessageCount;
+
+      TEnginePlayingMessageCount playingMessageCount;
 
     
 
@@ -6744,6 +6917,8 @@ _CORBA_MODULE_BEG
 
       TDeviceIDAttributesTupleSeq attributes;
 
+      TEnginePlayingMessageSeq messages;
+
       TShotResultRecord shotResultRecord;
 
     
@@ -7505,6 +7680,35 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq* _sp)
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageSeq*& _sp);
 
+inline void operator >>=(STI::TNetwork::TPlayingMessageType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TPlayingMessageType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::PlayingInformation) {
+    _e = (STI::TNetwork::TPlayingMessageType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPlayingMessageType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPlayingMessageType& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessage*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageSeq*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEventEngineJob& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEventEngineJob* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEventEngineJob*& _sp);
@@ -7543,6 +7747,11 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMes
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageCount* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageCount*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEngineParsingMessageCount*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageCount& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageCount* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageCount*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageCount*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineJobUpdateDeviceMessage& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineJobUpdateDeviceMessage* _sp);

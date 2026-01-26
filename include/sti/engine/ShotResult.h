@@ -5,8 +5,9 @@
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/engine/ShotID.h>
 #include <sti/device/Attribute.h>
-#include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/Measurement.h>
+#include <sti/engine/ShotResultRecord.h>
 #include <sti/utils/FileServer.h>
 
 #include <memory>
@@ -32,6 +33,7 @@ public:
 
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
+    std::vector<EnginePlayingMessage> messages;
 
     //The result is stored by the device in a repository. Initially, only the local device data is available.
     //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.

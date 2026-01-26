@@ -51,6 +51,7 @@ void ShotResult::serialize(Archive& archive)
         cereal::make_nvp("playTime", playTime),
         cereal::make_nvp("attributes", attributes), 
         cereal::make_nvp("measurements", measurements),
+        cereal::make_nvp("messages", messages),
         cereal::make_nvp("shotResultRecord", shotResultRecord)
         );
 }

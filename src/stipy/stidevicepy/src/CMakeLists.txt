@@ -99,6 +99,7 @@ pybind11_add_module(stipybase MODULE
     Configuration_wrap.cpp
     DeviceID_wrap.cpp
     EngineParsingMessage_wrap.cpp
+    EnginePlayingMessage_wrap.cpp
     FileID_wrap.cpp
     FileServer_wrap.cpp
     HubID_wrap.cpp

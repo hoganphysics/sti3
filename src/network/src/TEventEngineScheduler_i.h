@@ -49,6 +49,8 @@ public:
     TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID);
     void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
 
+    void stopEngine(const ::STI::TNetwork::TEngineID& engineID);
+
     ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
 
     ::CORBA::Boolean ping();

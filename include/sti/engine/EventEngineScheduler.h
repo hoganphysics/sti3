@@ -79,6 +79,8 @@ public:
     virtual EngineState getEngineState(const EngineID& engineID) const = 0;
     virtual void getEngineStates(std::map<EngineID, EngineState>& engineStates) const = 0;
 
+    virtual void stopEngine(const EngineID& engineID) = 0;
+
     virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
 
 };

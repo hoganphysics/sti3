@@ -115,6 +115,9 @@ public:
 
     void getEngineIDs(std::set<EngineID>& engineIDs) const;
     EngineState getEngineState(const EngineID& engineID) const;
+
+    void stopEngine(const EngineID& engineID);
+
     void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
 
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
@@ -134,7 +137,12 @@ public:
     
     void parseJob(const std::shared_ptr<EventEngineJob>& job);
 
+    static void definePlayMessageIDs();
+    static const std::map<std::string, unsigned>& getPlayMessageIDs();
+
 private:
+
+    static std::map<std::string, unsigned> playMessageIDs;
 
     void addSequenceJob(const std::shared_ptr<SequenceJob>& job);
     void refreshSequenceJobs();

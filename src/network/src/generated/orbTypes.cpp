@@ -1497,6 +1497,28 @@ STI::TNetwork::TEngineParsingMessage::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TEnginePlayingMessage::operator>>= (cdrStream &_n) const
+{
+  type >>= _n;
+  (const TDeviceID&) sourceID >>= _n;
+  id_code >>= _n;
+  _n.marshalString(name,0);
+  _n.marshalString(message,0);
+
+}
+
+void
+STI::TNetwork::TEnginePlayingMessage::operator<<= (cdrStream &_n)
+{
+  (TPlayingMessageType&)type <<= _n;
+  (TDeviceID&)sourceID <<= _n;
+  (::CORBA::Short&)id_code <<= _n;
+  name = _n.unmarshalString(0);
+  message = _n.unmarshalString(0);
+
+}
+
+void
 STI::TNetwork::TEventEngineJob::operator>>= (cdrStream &_n) const
 {
   (const TEngineJobID&) jobID >>= _n;
@@ -1507,6 +1529,7 @@ STI::TNetwork::TEventEngineJob::operator>>= (cdrStream &_n) const
   (const TEventEngineDependencyTree&) dependencies >>= _n;
   (const TDeviceIDSeq&) missingTargetIDs >>= _n;
   (const TEngineParsingMessageSeq&) messages >>= _n;
+  (const TEnginePlayingMessageSeq&) playingMessages >>= _n;
 
 }
 
@@ -1521,6 +1544,7 @@ STI::TNetwork::TEventEngineJob::operator<<= (cdrStream &_n)
   (TEventEngineDependencyTree&)dependencies <<= _n;
   (TDeviceIDSeq&)missingTargetIDs <<= _n;
   (TEngineParsingMessageSeq&)messages <<= _n;
+  (TEnginePlayingMessageSeq&)playingMessages <<= _n;
 
 }
 
@@ -1535,6 +1559,7 @@ STI::TNetwork::TEngineSchedulerMessage::operator>>= (cdrStream &_n) const
   (const TRawEventGroup&) unhandledEvents >>= _n;
   (const TRawEventGroup&) upstreamPartnerEvents >>= _n;
   (const TEngineParsingMessageSeq&) messages >>= _n;
+  (const TEnginePlayingMessageSeq&) playMessages >>= _n;
   engineState >>= _n;
 
 }
@@ -1550,6 +1575,7 @@ STI::TNetwork::TEngineSchedulerMessage::operator<<= (cdrStream &_n)
   (TRawEventGroup&)unhandledEvents <<= _n;
   (TRawEventGroup&)upstreamPartnerEvents <<= _n;
   (TEngineParsingMessageSeq&)messages <<= _n;
+  (TEnginePlayingMessageSeq&)playMessages <<= _n;
   (TEngineState&)engineState <<= _n;
 
 }
@@ -1573,6 +1599,24 @@ STI::TNetwork::TEngineParsingMessageCount::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TEnginePlayingMessageCount::operator>>= (cdrStream &_n) const
+{
+  errorCount >>= _n;
+  warningCount >>= _n;
+  infoCount >>= _n;
+
+}
+
+void
+STI::TNetwork::TEnginePlayingMessageCount::operator<<= (cdrStream &_n)
+{
+  (::CORBA::Short&)errorCount <<= _n;
+  (::CORBA::Short&)warningCount <<= _n;
+  (::CORBA::Short&)infoCount <<= _n;
+
+}
+
+void
 STI::TNetwork::TEngineJobUpdateDeviceMessage::operator>>= (cdrStream &_n) const
 {
   (const TDeviceMessage&) base >>= _n;
@@ -1584,6 +1628,7 @@ STI::TNetwork::TEngineJobUpdateDeviceMessage::operator>>= (cdrStream &_n) const
   (const TShotConfig&) shotConfig >>= _n;
   (const TParsedVarSeq&) overwrittenVars >>= _n;
   (const TEngineParsingMessageCount&) parsingMessageCount >>= _n;
+  (const TEnginePlayingMessageCount&) playingMessageCount >>= _n;
 
 }
 
@@ -1599,6 +1644,7 @@ STI::TNetwork::TEngineJobUpdateDeviceMessage::operator<<= (cdrStream &_n)
   (TShotConfig&)shotConfig <<= _n;
   (TParsedVarSeq&)overwrittenVars <<= _n;
   (TEngineParsingMessageCount&)parsingMessageCount <<= _n;
+  (TEnginePlayingMessageCount&)playingMessageCount <<= _n;
 
 }
 
@@ -1923,6 +1969,7 @@ STI::TNetwork::TShotResult::operator>>= (cdrStream &_n) const
   (const TTimeStamp&) playTime >>= _n;
   (const TDeviceIDMeasurementsTupleSeq&) measurements >>= _n;
   (const TDeviceIDAttributesTupleSeq&) attributes >>= _n;
+  (const TEnginePlayingMessageSeq&) messages >>= _n;
   (const TShotResultRecord&) shotResultRecord >>= _n;
 
 }
@@ -1934,6 +1981,7 @@ STI::TNetwork::TShotResult::operator<<= (cdrStream &_n)
   (TTimeStamp&)playTime <<= _n;
   (TDeviceIDMeasurementsTupleSeq&)measurements <<= _n;
   (TDeviceIDAttributesTupleSeq&)attributes <<= _n;
+  (TEnginePlayingMessageSeq&)messages <<= _n;
   (TShotResultRecord&)shotResultRecord <<= _n;
 
 }

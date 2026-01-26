@@ -14,3 +14,4 @@ I've noticed this when a device is parsing an event and has one dependent device
 
 
 I'm not sure if this is the exact scenario that is causing the race condition, because it seems like EventEngineManager alwasys should call either jobComplete or cancelJob after parse completes, regardless of the message arrival time. The bug is inconsistent, so it is hard to pin down the exact cause. But it seems likely that the message passing system and the timing of when running is set to false in EventEngineManager::runJob() is contributing to the race condition. When I test this with many rapid parse/play cylces, it works most of the time, but occasionally hits the deadlock situation where the job in LocalEventEngineScheduler never stops, even though the LocalEventEngine has reached the parse state.
+

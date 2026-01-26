@@ -4,6 +4,7 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/EngineState.h>
 
 #include <sti/engine/EventEngineJob.h>
@@ -231,6 +232,7 @@ void init_EventEngineScheduler(py::module& m)
         //         }
         //         return messageList;
         //     })
+        .def("getPlayMessages", &EventEngineJob::getPlayMessages)
         ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")
@@ -343,10 +345,7 @@ void init_EventEngineScheduler(py::module& m)
 
                 return engineStates;
             })
+        .def("stopEngine", &EventEngineScheduler::stopEngine)
         ;
-
-    //         void getEngineIDs(std::set<EngineID>& engineIDs) const;
-    // EngineState getEngineState(const EngineID& engineID) const;
-    // void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
 
 }

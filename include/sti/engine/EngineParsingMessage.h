@@ -51,7 +51,6 @@ public:
 
 private:
 
-    //Fix this; exposed to help with conversion
 	std::vector<RawEvent> events;
 
     STI::Device::DeviceID sourceID;

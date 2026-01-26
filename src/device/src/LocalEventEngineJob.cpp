@@ -4,6 +4,7 @@
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/RawEvent.h>
@@ -27,6 +28,8 @@ using STI::Engine::EngineID;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::ParsingMessageType;
 using STI::Engine::EngineJobStatus;
+using STI::Engine::EnginePlayingMessage;
+using STI::Engine::PlayingMessageType;
 
 
 LocalEventEngineJob::LocalEventEngineJob(const ParseID& parseID, 
@@ -141,7 +144,6 @@ void LocalEventEngineJob::addMessages(const std::vector<EngineParsingMessage>& m
 EngineParsingMessage& LocalEventEngineJob::addMessage(const EngineParsingMessage& message)
 {
     parsingMessages.push_back(message);
-    //parsingMessages.push_back(std::move(message));
     return parsingMessages.back();
 }
 
@@ -149,4 +151,21 @@ EngineParsingMessage& LocalEventEngineJob::addMessage(const ParsingMessageType& 
 {
     parsingMessages.emplace_back(jobOwner, type, id, name);
     return parsingMessages.back();
+}
+
+void LocalEventEngineJob::addPlayMessages(const std::vector<EnginePlayingMessage>& messages)
+{
+    playingMessages.insert(playingMessages.end(), messages.begin(), messages.end());
+}
+
+EnginePlayingMessage& LocalEventEngineJob::addPlayMessage(const EnginePlayingMessage& message)
+{
+    playingMessages.push_back(message);
+    return playingMessages.back();
+}
+
+EnginePlayingMessage& LocalEventEngineJob::addPlayMessage(const PlayingMessageType& type, unsigned id, const std::string& name)
+{
+    playingMessages.emplace_back(jobOwner, type, id, name);
+    return playingMessages.back();
 }

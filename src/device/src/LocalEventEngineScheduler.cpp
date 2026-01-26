@@ -82,6 +82,8 @@ using STI::Utils::VirtualFileServer;
 using STI::Engine::SequenceJob;
 using STI::Engine::EngineState;
 
+std::map<std::string, unsigned> LocalEventEngineScheduler::playMessageIDs;
+
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
@@ -184,6 +186,16 @@ EngineState LocalEventEngineScheduler::getEngineState(const EngineID& engineID) 
         return engine->getState();
     }
     return EngineState::Missing;
+}
+
+void LocalEventEngineScheduler::stopEngine(const EngineID& engineID)
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        engine->stop();
+    }
 }
 
 void LocalEventEngineScheduler::getEngineStates(std::map<EngineID, EngineState>& engineStates) const
@@ -1506,4 +1518,20 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
     }
 
     return false;
+}
+
+void LocalEventEngineScheduler::definePlayMessageIDs()
+{
+	// playMessageIDs["Missing Channel"] 					= 30;
+	// playMessageIDs["Incorrect Output Type"]  			= 31;
+}
+
+const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()
+{
+    static std::once_flag initFlag;
+    std::call_once(initFlag, []() {
+        LocalEventEngineScheduler::definePlayMessageIDs();
+    });
+
+    return playMessageIDs;
 }

@@ -601,6 +601,25 @@ void RemoteEventEngineScheduler::getEngineStates(std::map<STI::Engine::EngineID,
 	}
 }
 
+void RemoteEventEngineScheduler::stopEngine(const STI::Engine::EngineID& engineID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->stopEngine(
+			convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(engineID));		//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
 std::shared_ptr<Shot> RemoteEventEngineScheduler::createShot(const ShotConfig& shotConfig, 
 															 const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup)
 {

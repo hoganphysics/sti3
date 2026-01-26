@@ -8,13 +8,14 @@
 #include <sti/device/GroupableMessage.h>
 #include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineParsingMessageCount.h>
+#include <sti/engine/EnginePlayingMessage.h>
+#include <sti/engine/EnginePlayingMessageCount.h>
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/device/DeviceMessageType.h>
 #include <sti/device/DeviceTrace.h>
 #include <sti/engine/EngineID.h>
-#include <sti/engine/EngineParsingMessage.h>
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/SequenceJob.h>
 #include <sti/engine/ShotConfig.h>
@@ -350,6 +351,7 @@ public:
 	std::set<STI::Engine::ParsedVar> overwrittenVars;
 
 	STI::Engine::EngineParsingMessageCount parsingMessageCount;
+	STI::Engine::EnginePlayingMessageCount playingMessageCount;
 
 	static std::string jobTargetToString(STI::Engine::EventEngineJobList target) 
 	{
@@ -447,6 +449,7 @@ public:
 	std::shared_ptr<STI::Engine::RawEventGroup> upstreamPartnerEvents;
 
 	std::vector<STI::Engine::EngineParsingMessage> messages;
+	std::vector<STI::Engine::EnginePlayingMessage> playMessages;
 
 	STI::Engine::EngineState engineState;
 

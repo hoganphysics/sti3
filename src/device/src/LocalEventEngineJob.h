@@ -25,6 +25,8 @@ class EventEngineDependencyTree;
 class EventEngine;
 class EngineParsingMessage;
 enum class ParsingMessageType;
+class EnginePlayingMessage;
+enum class PlayingMessageType;
 
 
 class LocalEventEngineJob : public EventEngineJob
@@ -72,6 +74,12 @@ public:
 
     const std::vector<EngineParsingMessage>& getParsingMessages() const { return parsingMessages; }
 
+    void addPlayMessages(const std::vector<EnginePlayingMessage>& messages);
+    EnginePlayingMessage& addPlayMessage(const EnginePlayingMessage& message);
+    EnginePlayingMessage& addPlayMessage(const PlayingMessageType& type, unsigned id, const std::string& name);
+
+    const std::vector<EnginePlayingMessage>& getPlayMessages() const { return playingMessages; }
+
 private:
 
     STI::Device::DeviceID jobOwner;    
@@ -88,6 +96,7 @@ private:
     std::vector<std::shared_ptr<EventEngineJob>> attachedJobs;
 
     std::vector<EngineParsingMessage> parsingMessages;
+    std::vector<EnginePlayingMessage> playingMessages;
 
 	mutable std::mutex jobMutex;
 };

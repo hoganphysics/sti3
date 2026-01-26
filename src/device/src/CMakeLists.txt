@@ -60,6 +60,8 @@ add_library(stidevice SHARED
     EngineJobStatus.cpp
     EngineParsingMessage.cpp
     EngineParsingMessageCount.cpp
+    EnginePlayingMessage.cpp
+    EnginePlayingMessageCount.cpp
     EngineState.cpp
     EventEngineDependencyTree.cpp
     EventEngineManager.cpp

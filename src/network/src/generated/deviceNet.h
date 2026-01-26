@@ -1927,6 +1927,7 @@ _CORBA_MODULE_BEG
       void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs);
       TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID);
       void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
+      void stopEngine(const ::STI::TNetwork::TEngineID& engineID);
       ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult);
       ::CORBA::Boolean ping();
 
@@ -1983,6 +1984,7 @@ _CORBA_MODULE_BEG
       virtual void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs) = 0;
       virtual TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates) = 0;
+      virtual void stopEngine(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult) = 0;
       virtual ::CORBA::Boolean ping() = 0;
       

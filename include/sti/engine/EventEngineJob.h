@@ -20,6 +20,8 @@ class Shot;
 class EngineJobID;
 class EngineParsingMessage;
 enum class ParsingMessageType;
+class EnginePlayingMessage;
+enum class PlayingMessageType;
 
 
 class EventEngineJob
@@ -56,6 +58,10 @@ public:
     virtual EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name) = 0;
     virtual const std::vector<EngineParsingMessage>& getParsingMessages() const = 0;
 
+    virtual void addPlayMessages(const std::vector<EnginePlayingMessage>& messages) = 0;
+    virtual EnginePlayingMessage& addPlayMessage(const EnginePlayingMessage& message) = 0;
+    virtual EnginePlayingMessage& addPlayMessage(const PlayingMessageType& type, unsigned id, const std::string& name) = 0;
+    virtual const std::vector<EnginePlayingMessage>& getPlayMessages() const = 0;
 };
 
 

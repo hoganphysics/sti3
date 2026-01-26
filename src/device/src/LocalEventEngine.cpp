@@ -11,6 +11,7 @@
 #include <sti/engine/EngineState.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EnginePlayingMessageCount.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/EngineTriggerTarget.h>
@@ -55,6 +56,7 @@ using STI::Engine::LocalTriggerCallback;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EngineJobID;
 using STI::Engine::EngineParsingMessage;
+using STI::Engine::EnginePlayingMessageCount;
 using STI::Engine::MasterTrigger;
 using STI::Engine::ResultsCollector;
 using STI::Engine::ParsedDependencyTree;
@@ -128,6 +130,8 @@ void LocalEventEngine::clear()
 	activePlayJobID = EngineJobID();
 
 	localParsingMessages.clear();
+	localPlayMessages.clear();
+	localPlayMsgCounter.clearCounts();
 
 	baseEventGroupName = "";
 
@@ -958,6 +962,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playCompleteMessage->jobID.sid = job.getJobID().sid;
 	playCompleteMessage->jobID.type = job.getJobID().type;
 	playCompleteMessage->engineState = getState();
+	playCompleteMessage->playMessages = localPlayMessages;
 	sendMessage(playCompleteMessage);
 
 	//After play completes (without error or abort), the engine should be in the Parsed state
@@ -1026,10 +1031,25 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 
 	resultBuffer.add(cachedShot->sid, cachedFullShot);	//Add this shot to the buffer
 
+	localPlayMessages.clear();
+	localPlayMsgCounter.clearCounts();
+
 	//Prepare local events
 	for (auto& synchEvent : synchedEvents) {
+		if (synchEvent == nullptr) {
+			continue;
+		}
+
 		synchEvent->reset();		//resets Measurement events if they've played before
 		synchEvent->load();			//loads (or reloads) events if needed
+		
+		if (appendPlayMessages(synchEvent->getMessages())) {
+			// error message found
+			std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
+					  << "] play cancel: event preparation error (sid=" << jobID.sid.print() << ")\n";
+			setState(EngineState::Error);
+			cancelled = true;
+		}
 	}
 
 	if (ownedTargets.size() > 0 && masterTriggerCB != 0) {
@@ -1084,6 +1104,9 @@ void LocalEventEngine::unload()
 		}
 
 		for (auto& evt : synchedEvents) {
+			if (evt == nullptr) {
+				continue;
+			}
 			evt->unload();
 		}
 	});
@@ -1228,9 +1251,19 @@ bool LocalEventEngine::playDeviceEvents()
 		if (!isState(EngineState::Playing))
 			break;
 
-		if (evt != 0 && waitUntil(playLock, evt->getTime())) {	//success if not interrupted
+		if (evt == nullptr) {
+			continue;
+		}
+
+		if (waitUntil(playLock, evt->getTime())) {	//success if not interrupted
 			evt->waitBeforePlay();
 			evt->play();
+		}
+
+		if (appendPlayMessages(evt->getMessages())) {
+			// error message found
+			setState(EngineState::Error);
+			cancelled = true;
 		}
 
 		//push channel value updates
@@ -1308,11 +1341,36 @@ void LocalEventEngine::unpauseOwnedDevices(bool retrigger)
 	}
 }
 
+bool LocalEventEngine::appendPlayMessages(const std::vector<EnginePlayingMessage>& messages)
+{
+	// return true if error message found
+
+	if (messages.size() == 0) {
+		return false;
+	}
+
+	std::unique_lock<std::mutex> messageLock(playMessageMutex);
+
+	localPlayMessages.insert(localPlayMessages.end(), messages.begin(), messages.end());
+	localPlayMsgCounter.appendCounts(messages);
+
+	return localPlayMsgCounter.errorCount > 0;
+}
 
 void LocalEventEngine::measureData()
 {
 	for (auto& evt : synchedEvents) {
+		if (evt == nullptr) {
+			continue;
+		}
+
 		evt->collectData();
+
+		if (appendPlayMessages(evt->getMessages())) {
+			// error message found
+			setState(EngineState::Error);
+			cancelled = true;
+		}
 
 		if (!isState(EngineState::Playing))
 			break;

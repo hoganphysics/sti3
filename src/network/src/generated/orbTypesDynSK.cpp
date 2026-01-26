@@ -2349,6 +2349,64 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageSeq = _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq;
 #endif
 
+static const char* _0RL_enumMember_STI_mTNetwork_mTPlayingMessageType[] = { "PlayingError", "PlayingWarning", "PlayingInformation" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTPlayingMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TPlayingMessageType:1.0", "TPlayingMessageType", _0RL_enumMember_STI_mTNetwork_mTPlayingMessageType, 3, &_0RL_tcTrack);
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TPlayingMessageType = _0RL_tc_STI_mTNetwork_mTPlayingMessageType;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TPlayingMessageType = _0RL_tc_STI_mTNetwork_mTPlayingMessageType;
+#endif
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessage[] = {
+  {"type", _0RL_tc_STI_mTNetwork_mTPlayingMessageType},
+  {"sourceID", _0RL_tc_STI_mTNetwork_mTDeviceID},
+  {"id_code", CORBA::TypeCode::PR_short_tc()},
+  {"name", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"message", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage
+#  undef _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEnginePlayingMessage:1.0", "TEnginePlayingMessage", _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessage, 5, &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessage = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEnginePlayingMessage = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage;
+#endif
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEnginePlayingMessageSeq:1.0", "TEnginePlayingMessageSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageSeq = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEnginePlayingMessageSeq = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq;
+#endif
+
+
+
 
 
 
@@ -2399,13 +2457,16 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEventEngineJob[]
   {"shot", _0RL_tc_STI_mTNetwork_mTShot},
   {"dependencies", _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree},
   {"missingTargetIDs", _0RL_tc_STI_mTNetwork_mTDeviceIDSeq},
-  {"messages", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq}
+  {"messages", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq},
+  {"playingMessages", _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTEventEngineJob
 #  undef _0RL_tc_STI_mTNetwork_mTEventEngineJob
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEventEngineJob:1.0", "TEventEngineJob", _0RL_structmember_STI_mTNetwork_mTEventEngineJob, 8, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEventEngineJob:1.0", "TEventEngineJob", _0RL_structmember_STI_mTNetwork_mTEventEngineJob, 9, &_0RL_tcTrack);
+
+
 
 
 
@@ -2457,6 +2518,14 @@ namespace STI { namespace TNetwork {
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
 #endif
+
+
+
+
+
+
+
+
 
 
 
@@ -2747,6 +2816,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSchedulerMessageType = _0RL_tc_S
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineSchedulerMessage[] = {
   {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
   {"type", _0RL_tc_STI_mTNetwork_mTSchedulerMessageType},
@@ -2756,13 +2827,16 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineSchedulerM
   {"unhandledEvents", _0RL_tc_STI_mTNetwork_mTRawEventGroup},
   {"upstreamPartnerEvents", _0RL_tc_STI_mTNetwork_mTRawEventGroup},
   {"messages", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq},
+  {"playMessages", _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq},
   {"engineState", _0RL_tc_STI_mTNetwork_mTEngineState}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage
 #  undef _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineSchedulerMessage:1.0", "TEngineSchedulerMessage", _0RL_structmember_STI_mTNetwork_mTEngineSchedulerMessage, 9, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineSchedulerMessage:1.0", "TEngineSchedulerMessage", _0RL_structmember_STI_mTNetwork_mTEngineSchedulerMessage, 10, &_0RL_tcTrack);
+
+
 
 
 
@@ -2888,6 +2962,28 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageCount = _0RL
 #endif
 
 
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessageCount[] = {
+  {"errorCount", CORBA::TypeCode::PR_short_tc()},
+  {"warningCount", CORBA::TypeCode::PR_short_tc()},
+  {"infoCount", CORBA::TypeCode::PR_short_tc()}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount
+#  undef _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEnginePlayingMessageCount:1.0", "TEnginePlayingMessageCount", _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessageCount, 3, &_0RL_tcTrack);
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageCount = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEnginePlayingMessageCount = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount;
+#endif
+
+
+
 
 
 
@@ -2930,13 +3026,15 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateD
   {"engineID", _0RL_tc_STI_mTNetwork_mTEngineID},
   {"shotConfig", _0RL_tc_STI_mTNetwork_mTShotConfig},
   {"overwrittenVars", _0RL_tc_STI_mTNetwork_mTParsedVarSeq},
-  {"parsingMessageCount", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageCount}
+  {"parsingMessageCount", _0RL_tc_STI_mTNetwork_mTEngineParsingMessageCount},
+  {"playingMessageCount", _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage
 #  undef _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobUpdateDeviceMessage:1.0", "TEngineJobUpdateDeviceMessage", _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage, 9, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobUpdateDeviceMessage:1.0", "TEngineJobUpdateDeviceMessage", _0RL_structmember_STI_mTNetwork_mTEngineJobUpdateDeviceMessage, 10, &_0RL_tcTrack);
+
 
 
 
@@ -3563,18 +3661,23 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParseResult = _0RL_tc_STI_mTNetw
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotResult[] = {
   {"sid", _0RL_tc_STI_mTNetwork_mTShotID},
   {"playTime", _0RL_tc_STI_mTNetwork_mTTimeStamp},
   {"measurements", _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTupleSeq},
   {"attributes", _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTupleSeq},
+  {"messages", _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq},
   {"shotResultRecord", _0RL_tc_STI_mTNetwork_mTShotResultRecord}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTShotResult
 #  undef _0RL_tc_STI_mTNetwork_mTShotResult
 #endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TShotResult:1.0", "TShotResult", _0RL_structmember_STI_mTNetwork_mTShotResult, 5, &_0RL_tcTrack);
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TShotResult:1.0", "TShotResult", _0RL_structmember_STI_mTNetwork_mTShotResult, 6, &_0RL_tcTrack);
+
+
 
 
 
@@ -3684,6 +3787,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotResult = _0RL_tc_STI_mTNetwo
 
 
 
+
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFullShotResult[] = {
   {"parseResult", _0RL_tc_STI_mTNetwork_mTParseResult},
   {"shotResult", _0RL_tc_STI_mTNetwork_mTShotResult}
@@ -3693,6 +3798,8 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFullShotResult[]
 #  undef _0RL_tc_STI_mTNetwork_mTFullShotResult
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFullShotResult = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFullShotResult:1.0", "TFullShotResult", _0RL_structmember_STI_mTNetwork_mTFullShotResult, 2, &_0RL_tcTrack);
+
+
 
 
 
@@ -8198,6 +8305,133 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageSeq* _sp)
   return 0;
 }
 
+static void _0RL_STI_mTNetwork_mTPlayingMessageType_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TPlayingMessageType* _p = (STI::TNetwork::TPlayingMessageType*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTPlayingMessageType_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TPlayingMessageType* _p = (STI::TNetwork::TPlayingMessageType*)_v;
+  *_p <<= _s;
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPlayingMessageType _s)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTPlayingMessageType,
+               _0RL_STI_mTNetwork_mTPlayingMessageType_marshal_fn,
+               &_s);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPlayingMessageType& _s)
+{
+  return _a.PR_extract(_0RL_tc_STI_mTNetwork_mTPlayingMessageType,
+                       _0RL_STI_mTNetwork_mTPlayingMessageType_unmarshal_fn,
+                       &_s);
+}
+
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessage_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessage* _p = (STI::TNetwork::TEnginePlayingMessage*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessage_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEnginePlayingMessage* _p = new STI::TNetwork::TEnginePlayingMessage;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessage_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessage* _p = (STI::TNetwork::TEnginePlayingMessage*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessage& _s)
+{
+  STI::TNetwork::TEnginePlayingMessage* _p = new STI::TNetwork::TEnginePlayingMessage(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessage,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessage_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessage* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessage,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessage_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessage*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEnginePlayingMessage*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessage*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessage,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessage_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessage_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessage_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEnginePlayingMessage*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessageSeq* _p = (STI::TNetwork::TEnginePlayingMessageSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEnginePlayingMessageSeq* _p = new STI::TNetwork::TEnginePlayingMessageSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessageSeq* _p = (STI::TNetwork::TEnginePlayingMessageSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageSeq& _s)
+{
+  STI::TNetwork::TEnginePlayingMessageSeq* _p = new STI::TNetwork::TEnginePlayingMessageSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEnginePlayingMessageSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEnginePlayingMessageSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
 static void _0RL_STI_mTNetwork_mTEventEngineJob_marshal_fn(cdrStream& _s, void* _v)
 {
   STI::TNetwork::TEventEngineJob* _p = (STI::TNetwork::TEventEngineJob*)_v;
@@ -8422,6 +8656,57 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineParsingMessageCount* _s
                     _0RL_STI_mTNetwork_mTEngineParsingMessageCount_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TEngineParsingMessageCount*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessageCount* _p = (STI::TNetwork::TEnginePlayingMessageCount*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TEnginePlayingMessageCount* _p = new STI::TNetwork::TEnginePlayingMessageCount;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_destructor_fn(void* _v)
+{
+  STI::TNetwork::TEnginePlayingMessageCount* _p = (STI::TNetwork::TEnginePlayingMessageCount*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageCount& _s)
+{
+  STI::TNetwork::TEnginePlayingMessageCount* _p = new STI::TNetwork::TEnginePlayingMessageCount(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageCount* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_marshal_fn,
+               _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TEnginePlayingMessageCount*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TEnginePlayingMessageCount*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TEnginePlayingMessageCount*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_marshal_fn,
+                    _0RL_STI_mTNetwork_mTEnginePlayingMessageCount_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TEnginePlayingMessageCount*)_v;
     return 1;
   }
   return 0;
