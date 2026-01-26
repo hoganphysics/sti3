@@ -9,6 +9,7 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/SequenceID.h>
@@ -660,6 +661,37 @@ bool RemoteEventEngineScheduler::getParseResult(const ParseID& parseID, std::sha
 	return success;
 }
 
+bool RemoteEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TShotResult_var tShotResult(new STI::TNetwork::TShotResult);
+
+	bool success = false;
+
+	try {
+		success = getTRef()->getShotResult(convert<ShotID, TShotID>(shotID), tShotResult);		//remote call
+
+		success &= convert<STI::TNetwork::TShotResult, std::shared_ptr<STI::Engine::ShotResult>>(tShotResult, shotResult);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (!success) {
+		shotResult = std::make_shared<STI::Engine::ShotResult>();
+		shotResult->sid = shotID;
+	}
+
+	return success;
+}
+
 
 bool RemoteEventEngineScheduler::ping() const
 {
@@ -682,4 +714,3 @@ bool RemoteEventEngineScheduler::ping() const
 
 	return success;
 }
-

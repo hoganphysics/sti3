@@ -1929,6 +1929,7 @@ _CORBA_MODULE_BEG
       void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
       void stopEngine(const ::STI::TNetwork::TEngineID& engineID);
       ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult);
+      ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult);
       ::CORBA::Boolean ping();
 
       // Constructors
@@ -1986,6 +1987,7 @@ _CORBA_MODULE_BEG
       virtual void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates) = 0;
       virtual void stopEngine(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult) = 0;
+      virtual ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult) = 0;
       virtual ::CORBA::Boolean ping() = 0;
       
     public:  // Really protected, workaround for xlC

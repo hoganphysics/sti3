@@ -64,6 +64,7 @@ class EventEngineManager;
 class LocalEventEngine;
 class ParseID;
 class Shot;
+class ShotResult;
 class LocalEventEngineJob;
 class SequenceJob;
 class EngineConflictPolicy;
@@ -123,6 +124,7 @@ public:
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
 
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
+    bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const;
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {
@@ -206,6 +208,9 @@ private:
 
     mutable std::mutex parseResultMutex;
     mutable bool searchingParseResult;
+
+    mutable std::mutex shotResultMutex;
+    mutable bool searchingShotResult;
 
 
     class EngineSchedulerMessageListenerDelegate : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>

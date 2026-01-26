@@ -245,6 +245,12 @@ void addMeasurements(tinyxml2::XMLElement* measurements, const STI::Engine::Meas
             measurement->SetAttribute("channel", meas->channel());
             measurement->SetAttribute("group", meas->groupName().c_str());
             LegacyExperimentXMLBuilder::addValue(measurement, meas->data(), shotFilename);
+
+            const auto& graphPath = meas->getMeasurementGraphPath();
+            if (!graphPath.empty()) {
+                auto graphPathElement = measurement->InsertNewChildElement("graphpath");
+                addDimlimitedVector(graphPathElement, &graphPath, ",", "UInt");
+            }
         }
     }
 }

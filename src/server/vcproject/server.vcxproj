@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\LegacyExperimentXMLBuilder.cpp" />
+    <ClCompile Include="..\src\LegacyExperimentXMLReader.cpp" />
     <ClCompile Include="..\src\LegacySequenceXMLBuilder.cpp" />
     <ClCompile Include="..\src\LegacyShotRepository.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\LegacyExperimentXMLBuilder.h" />
+    <ClInclude Include="..\src\LegacyExperimentXMLReader.h" />
     <ClInclude Include="..\src\LegacySequenceXMLBuilder.h" />
     <ClInclude Include="..\src\LegacyShotRepository.h" />
     <ClInclude Include="..\src\ServerDevice.h" />

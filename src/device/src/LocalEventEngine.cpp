@@ -370,6 +370,17 @@ bool LocalEventEngine::getParseResult(const ParseID& parseID, std::shared_ptr<Pa
 	return false;
 }
 
+bool LocalEventEngine::getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const
+{
+	std::shared_ptr<FullShotResult> fullShotResult;
+	if (resultBuffer.get(shotID, fullShotResult) && fullShotResult != 0) {
+		shotResult = fullShotResult->shotResult;
+		return (shotResult != 0);
+	}
+
+	return false;
+}
+
 std::shared_ptr<ParsedDependencyTree> LocalEventEngine::getParsedTree() const 
 {
 	return lastParseResult->parsedDevices;

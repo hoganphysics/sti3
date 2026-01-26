@@ -88,6 +88,7 @@ set(TINYXML_SOURCES
 add_executable(STIServer 
     main.cpp 
     LegacyExperimentXMLBuilder.cpp
+    LegacyExperimentXMLReader.cpp
     LegacyParseXMLBuilder.cpp
     LegacyShotRepository.cpp
     LegacySequenceXMLBuilder.cpp

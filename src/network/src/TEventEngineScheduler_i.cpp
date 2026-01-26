@@ -10,6 +10,8 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Shot.h>
@@ -378,6 +380,29 @@ void TEventEngineScheduler_i::stopEngine(const ::STI::TNetwork::TEngineID& engin
 		success = convert<std::shared_ptr<ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);
 
 		(*tParseResult) = tParseResult_var;
+
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngineScheduler_i::getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult)
+{
+	bool success = false;
+	shotResult = new STI::TNetwork::TShotResult();
+
+	if (engineScheduler != 0) {
+
+		STI::TNetwork::TShotResult_var tShotResult_var(new STI::TNetwork::TShotResult);
+		std::shared_ptr<STI::Engine::ShotResult> localShotResult;
+
+		success = engineScheduler->getShotResult(
+			convert<TShotID, STI::Engine::ShotID>(shotID),
+			localShotResult);
+
+		success = convert<std::shared_ptr<STI::Engine::ShotResult>, ::STI::TNetwork::TShotResult>(localShotResult, tShotResult_var);
+
+		(*shotResult) = tShotResult_var;
 
 	}
 

@@ -55,7 +55,7 @@ void init_ShotResult(py::module& m)
     py::class_<ShotResult, std::shared_ptr<ShotResult>>(m, "ShotResult")
         .def_readonly("sid", &ShotResult::sid)
         .def_readonly("playTime", &ShotResult::playTime)
-        // .def_readonly("attributes", &ShotResult::attributes)
+        .def_readonly("attributes", &ShotResult::attributes)
         .def_readonly("messages", &ShotResult::messages)
         .def("getAttributes",
             [](ShotResult& self) {

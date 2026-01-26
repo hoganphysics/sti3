@@ -26,6 +26,7 @@ class ParseID;
 class EngineJobID;
 class EventEngineFactory;
 class ShotID;
+class ShotResult;
 class EngineParsingMessage;
 class ResultsCollector;
 class ResultTicket;
@@ -82,6 +83,7 @@ public:
     virtual void stopEngine(const EngineID& engineID) = 0;
 
     virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
+    virtual bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const = 0;
 
 };
 

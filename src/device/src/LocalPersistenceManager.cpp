@@ -483,6 +483,12 @@ bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std:
         }
     }
 
+    if (auto observe = eventEngineScheduler.lock()) {
+        if (observe->getShotResult(sid, result)) {
+            return true;
+        }
+    }
+
     return getShotLocal(sid, result);
 }
 
@@ -846,4 +852,3 @@ void LocalPersistenceManager::removePersistenceDelegate(const DeviceID& id)
         }
     }
 }
-

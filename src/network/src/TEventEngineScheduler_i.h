@@ -52,6 +52,7 @@ public:
     void stopEngine(const ::STI::TNetwork::TEngineID& engineID);
 
     ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out tParseResult);
+    ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult);
 
     ::CORBA::Boolean ping();
 

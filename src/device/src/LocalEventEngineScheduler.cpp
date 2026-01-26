@@ -57,6 +57,7 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::Shot;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::ShotID;
+using STI::Engine::ShotResult;
 using STI::Engine::EngineJobID;
 using STI::Engine::EventEngineManager;
 using STI::Engine::LocalEventEngineFactory;
@@ -103,6 +104,7 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
     schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
 
     searchingParseResult = false;
+    searchingShotResult = false;
 
     setEngineFactory(engineFactory);
 
@@ -1475,6 +1477,29 @@ bool LocalEventEngineScheduler::getParseResult(const ParseID& parseID, std::shar
     }
 
     searchingParseResult = false;
+    return success;
+}
+
+bool LocalEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const
+{
+    if (searchingShotResult) return false;
+
+    std::unique_lock<std::mutex> resultLock(shotResultMutex);
+    searchingShotResult = true;
+
+    std::shared_ptr<LocalEventEngine> engine;
+
+    bool success = false;
+
+    if (findRunningEngine(shotID, engine) || findCompletedEngine(shotID, engine)) {
+        success = engine->getShotResult(shotID, shotResult);
+    }
+
+    if (!success) {
+        success = persistenceManager != 0 && persistenceManager->getShotResult(shotID, shotResult);
+    }
+
+    searchingShotResult = false;
     return success;
 }
 

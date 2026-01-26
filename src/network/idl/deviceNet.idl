@@ -198,6 +198,7 @@ module TNetwork
 		void stopEngine(in TEngineID engineID);
 
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
+		boolean getShotResult(in TShotID shotID, out TShotResult shotResult);
 
 		boolean ping();
 	};

@@ -113,6 +113,7 @@ public:
 	bool jobCancelled() const { return cancelled; }
 
 	bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
+	bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const;
 	std::shared_ptr<ParsedDependencyTree> getParsedTree() const;
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
