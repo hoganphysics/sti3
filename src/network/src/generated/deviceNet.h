@@ -1531,6 +1531,7 @@ _CORBA_MODULE_BEG
       TShotID* getShotID();
       ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer);
       ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
+      ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages);
 
       // Constructors
       inline _objref_TResultsCollector()  { _PR_setobj(0); }  // nil
@@ -1568,6 +1569,7 @@ _CORBA_MODULE_BEG
       virtual TShotID* getShotID() = 0;
       virtual ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer) = 0;
       virtual ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes) = 0;
+      virtual ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages) = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);
@@ -1656,6 +1658,7 @@ _CORBA_MODULE_BEG
       void stop();
       void pause();
       void unpause(::CORBA::Boolean retrigger);
+      void clear();
       TDeviceID* getDeviceID();
       TEngineState getState();
       TEventEngineDependencyTree* getParsedTree();
@@ -1701,6 +1704,7 @@ _CORBA_MODULE_BEG
       virtual void stop() = 0;
       virtual void pause() = 0;
       virtual void unpause(::CORBA::Boolean retrigger) = 0;
+      virtual void clear() = 0;
       virtual TDeviceID* getDeviceID() = 0;
       virtual TEngineState getState() = 0;
       virtual TEventEngineDependencyTree* getParsedTree() = 0;
@@ -1927,6 +1931,7 @@ _CORBA_MODULE_BEG
       void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs);
       TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID);
       void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates);
+      void clearEngine(const ::STI::TNetwork::TEngineID& engineID);
       void stopEngine(const ::STI::TNetwork::TEngineID& engineID);
       ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult);
       ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult);
@@ -1985,6 +1990,7 @@ _CORBA_MODULE_BEG
       virtual void getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs) = 0;
       virtual TEngineState getEngineState(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual void getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates) = 0;
+      virtual void clearEngine(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual void stopEngine(const ::STI::TNetwork::TEngineID& engineID) = 0;
       virtual ::CORBA::Boolean getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult) = 0;
       virtual ::CORBA::Boolean getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult) = 0;

@@ -355,6 +355,13 @@ void TEventEngineScheduler_i::getEngineStates(::STI::TNetwork::TEngineStateTuple
 	}
 }
 
+void TEventEngineScheduler_i::clearEngine(const ::STI::TNetwork::TEngineID& engineID) 
+{
+	if (engineScheduler != 0) {
+		engineScheduler->clearEngine(convert<TEngineID, STI::Engine::EngineID>(engineID));
+	}
+}
+
 void TEventEngineScheduler_i::stopEngine(const ::STI::TNetwork::TEngineID& engineID) 
 {
 	if (engineScheduler != 0) {

@@ -29,6 +29,7 @@ public:
     void stop();
     void pause();
     void unpause(::CORBA::Boolean retrigger);
+    void clear();
     TDeviceID* getDeviceID();
     TEngineState getState();
     TEventEngineDependencyTree* getParsedTree();

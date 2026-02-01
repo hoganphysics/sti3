@@ -117,6 +117,7 @@ public:
     void getEngineIDs(std::set<EngineID>& engineIDs) const;
     EngineState getEngineState(const EngineID& engineID) const;
 
+    void clearEngine(const EngineID& engineID);
     void stopEngine(const EngineID& engineID);
 
     void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;

@@ -17,6 +17,13 @@ class TestListenerDevice(stidevicepy.LocalDevice):
         receiver.addListener(stipy.DeviceMessageType.ChannelUpdate, sourceID, "PythonChannelUpdates", self.channelUpdateListener)
         receiver.addListener(stipy.DeviceMessageType.AttributeUpdate, sourceID, "PythonAttributeUpdates", self.attributesUpdateListener)
 
+        serverID = stipy.DeviceID("sr-magis/2/Frame2")     # the origin of the messages we want to listen to
+        self.addPartner(serverID)
+        receiver.addListener(stipy.DeviceMessageType.EngineJobUpdate, serverID, "PythonEngineJobUpdate", self.engineJobUpdateListener)
+        self.count = 0
+        receiver.addListener(stipy.DeviceMessageType.EngineStatus, serverID, "PythonEngineStatusUpdates", self.engineStatusListener)
+        self.count2 = 0
+
         # def update(stipy.DeviceID("localhost/0/TestDevice")
         return
     
@@ -27,14 +34,20 @@ class TestListenerDevice(stidevicepy.LocalDevice):
     def attributesUpdateListener(self, message) :
         print("Attribute update!")
         print(message.attributes)
-    
+
+    def engineJobUpdateListener(self, message) :
+        print("count =", self.count)
+        self.count += 1
+    def engineStatusListener(self, message) :
+        print("count2 =", self.count2)
+        self.count2 += 1
 
 
 config1 = stipy.Configuration(
     {'Device Name': 'TestDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
 
 sourceDevice = TestDevice(config1)
 
@@ -43,11 +56,11 @@ config2 = stipy.Configuration(
     {'Device Name': 'TestListenerDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
 
 listenerDevice = TestListenerDevice(config2)
 
-nameServiceAddr = "192.168.1.4:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(sourceDevice)

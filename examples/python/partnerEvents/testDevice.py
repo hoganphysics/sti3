@@ -21,6 +21,8 @@ class TestDevice(stidevicepy.LocalDevice):
         self.partnerID = stipy.DeviceID("TestDevice2", "localhost", 2, 'sr-magis/2/Frame2')
         self.addEventTarget(self.partnerID)   #partner device
 
+        self.addAttribute("Enable Load Error", "On", ["On", "Off"])
+
         return
     
     def parseEvents(self, eventsIn, synchedEvents):
@@ -49,12 +51,15 @@ class TestDevice(stidevicepy.LocalDevice):
 
         partnerCh = stipy.RawEventTargetChannel(0)
 
+        num = 0
+
         for time, events in eventsIn.items():
             # Here 'tuple' is of type { time, list[RawEvent] }, where the list is the set of events at this time.
             inputEvent = False
-
+            num += 1
             #check for input event
             for evt in events:
+                num += 1
                 if evt.isMeasurementEvent():
                     # print("isMeasurementEvent")
                     inputEvent = True
@@ -74,7 +79,8 @@ class TestDevice(stidevicepy.LocalDevice):
             
             if not inputEvent:
                 # Output event
-                testDeviceOutputEvent = TestDeviceOutputEvent(time)
+                print("Enable load error: " + str(self.getAttributeManager().getValue("Enable Load Error")))
+                testDeviceOutputEvent = TestDeviceOutputEvent(time, num, loadError=(self.getAttributeManager().getValue("Enable Load Error") == "On"))
 
                 for evt in events:
                     if evt.value().getValue() > 10:
@@ -104,9 +110,11 @@ class TestDevice(stidevicepy.LocalDevice):
 # This subclass is used to specify the custom behavior controlling the hardware for each device output channel.
 
 class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
-    def __init__(self, time):
+    def __init__(self, time, id=None, loadError=False):
         stidevicepy.SynchronousEvent.__init__(self, time)
         self.values = {}
+        self.id = id
+        self.loadError = loadError
     def addValue(self, channel, value):
         # Collect all values scheduled to play at this time so that can be play (psuedo) synchronously
         self.values[channel] = value
@@ -116,6 +124,11 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
         # Use this function to setup the hardware to prepare for hard timing playback.
         # For example, if this device requires values to be preloaded into some buffer on the hardware
         # (e.g., an FPGA, or an arbitrary waveform generator), this can be done here.
+        if self.loadError:
+            print("Raising load error for event ID " + str(self.id))
+            self.addError("Test Err 1").appendMessage("A test load error message.")
+
+        # self.addWarning("Test Warn").appendMessage("A test load warning message. ")
         for channel, value in self.values.items():
             print("Loading channel #" + str(channel) + " with value " + str(value) + ".")
         return
@@ -125,6 +138,10 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
         # Use this function to control the hardware to implement the change on the requested channel.
 
         # Add hardware play code here...
+        # self.addWarning("Test Err").appendMessage("A test error message. " + str(self.id))
+        # self.addWarning("Test Warn").appendMessage("A test warning message. ")
+        # self.addInfoMessage("Test Info").appendMessage("A test info message. ")
+        # self.addError("Test Err 1").appendMessage("A test error message.")
         for channel, value in self.values.items():
             print("Playing channel #" + str(channel) + " with value " + str(value) + ".")
 

@@ -133,6 +133,9 @@ void SynchronousEvent::reset()
 	stopped = false;
 	paused = false;
 
+	loadMessages.clear();
+	playMessages.clear();
+	measureMessages.clear();
 	messages.clear();
 }
 
@@ -152,6 +155,18 @@ void SynchronousEvent::unpause(bool retrigger)
 	paused = false;
 
 	unpauseEvent(retrigger);
+}
+
+std::vector<EnginePlayingMessage>& SynchronousEvent::getMessages()
+{
+	std::unique_lock<std::mutex> readLock(evtMutex);
+
+	messages.clear();
+	messages.insert(messages.end(), loadMessages.begin(), loadMessages.end());
+	messages.insert(messages.end(), playMessages.begin(), playMessages.end());
+	messages.insert(messages.end(), measureMessages.begin(), measureMessages.end());
+
+	return messages;
 }
 
 EnginePlayingMessage& SynchronousEvent::addError(const std::string& name)
@@ -179,8 +194,17 @@ EnginePlayingMessage& SynchronousEvent::addMessage(const std::string& name, cons
 		id = it->second;
 	}
 
-    messages.emplace_back(type, id, name);
-	
-	return messages.back();
-}
+    if (loaded) {
+        if (played) {
+            measureMessages.emplace_back(type, id, name);
+            return measureMessages.back();
+        }
 
+        playMessages.emplace_back(type, id, name);
+        return playMessages.back();
+    }
+
+    loadMessages.emplace_back(type, id, name);
+	
+	return loadMessages.back();
+}

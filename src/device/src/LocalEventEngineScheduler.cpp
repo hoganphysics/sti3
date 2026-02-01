@@ -190,6 +190,16 @@ EngineState LocalEventEngineScheduler::getEngineState(const EngineID& engineID) 
     return EngineState::Missing;
 }
 
+void LocalEventEngineScheduler::clearEngine(const EngineID& engineID)
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        engine->clear();
+    }
+}
+
 void LocalEventEngineScheduler::stopEngine(const EngineID& engineID)
 {
     std::shared_ptr<EventEngineManager> manager;
@@ -354,7 +364,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
         }
     }
     else {
-        job->addMessage(ParsingMessageType::Error, 24, "Missing Root Group")
+        job->addMessage(ParsingMessageType::Error, 5, "Missing Root Group")
             << "Invalid shot: the root event group is missing.";
         job->markCancelled();
     }
@@ -387,7 +397,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     if (diff.size() > 0) {
         //missing targets...
         //Warning: will attempt parse but cannot play
-        auto& m = job->addMessage(ParsingMessageType::Warning, 1000, "Missing Targets")
+        auto& m = job->addMessage(ParsingMessageType::Warning, 102, "Missing Targets")
             << "Some required event targets could not be found. "
             << "Parsing is proceeding as an abstract shot. Playing will not be possible. "
             << "Missing targets: \n";
@@ -835,6 +845,7 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
         runningJobs.remove(jobID);
         job->markCancelled();
 
+        
         if (jobID.type == EventEngineJobType::Parse) {
             archivedJobValid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
         }
@@ -1549,6 +1560,17 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
 {
 	// playMessageIDs["Missing Channel"] 					= 30;
 	// playMessageIDs["Incorrect Output Type"]  			= 31;
+    playMessageIDs["Cannot Play Abstract Shot"]             = 70;
+    playMessageIDs["Bad engine state"]                      = 71;
+    playMessageIDs["Owned devices not PlayReady"]           = 72;
+    playMessageIDs["Not Parsed"]                            = 73;
+    playMessageIDs["Failed to contact owned device"]        = 74;
+    playMessageIDs["PlayReady message invalid"]             = 75;
+    playMessageIDs["PlayComplete message invalid"]          = 76;
+    playMessageIDs["Play called while not PlayReady"]       = 77;
+    playMessageIDs["Play parse ID mismatch"]                = 78;
+    playMessageIDs["Failed to enter WaitingForTrigger"]     = 79;
+    playMessageIDs["Failed to enter Playing"]               = 80;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()

@@ -35,6 +35,8 @@ public:
 	void pause();
 	void unpause(bool retrigger);
 
+	void clear();
+
     STI::Device::DeviceID getDeviceID() const;
 
 	STI::Engine::EngineState getState() const;

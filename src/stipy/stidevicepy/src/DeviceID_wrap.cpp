@@ -20,6 +20,7 @@ void init_DeviceID(py::module& m)
         .def("address", &STI::Device::DeviceID::getAddress)
         .def("module", &STI::Device::DeviceID::getModule)
         .def("getID", &STI::Device::DeviceID::getID)
+        .def("empty", &STI::Device::DeviceID::empty)
         .def("getTargetServerID", &STI::Device::DeviceID::getTargetServerID)
         .def("__repr__",
             [](const STI::Device::DeviceID& id) {

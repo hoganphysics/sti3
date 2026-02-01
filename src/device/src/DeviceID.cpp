@@ -78,6 +78,11 @@ std::string DeviceID::generateContext(const DeviceID& deviceID)
 	return context.str();
 }
 
+bool DeviceID::empty() const
+{
+	return deviceIDBase->getID() == "/0/";
+}
+
 DeviceIDBase::DeviceIDBase()
 : DeviceIDBase("", "", 0, "")
 {

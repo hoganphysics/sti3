@@ -127,6 +127,7 @@ void EngineJobUpdateDeviceMessage::setJob(const std::shared_ptr<STI::Engine::Eve
 	}
 
 	parsingMessageCount.setCounts(engineJob->getParsingMessages());
+	playingMessageCount.setCounts(engineJob->getPlayMessages());
 }
 
 void EngineJobUpdateDeviceMessage::setSequenceJob(const std::shared_ptr<STI::Engine::SequenceJob>& job)

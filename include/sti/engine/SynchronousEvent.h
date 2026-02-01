@@ -59,7 +59,10 @@ public:
 	EnginePlayingMessage& addWarning(const std::string& name);
 	EnginePlayingMessage& addInfoMessage(const std::string& name);
 
-	std::vector<EnginePlayingMessage>& getMessages() { return messages; }
+	const std::vector<EnginePlayingMessage>& getLoadMessages() const { return loadMessages; }
+	const std::vector<EnginePlayingMessage>& getPlayMessages() const { return playMessages; }
+	const std::vector<EnginePlayingMessage>& getMeasureMessages() const { return measureMessages; }
+	std::vector<EnginePlayingMessage>& getMessages();
 
 private:
 
@@ -81,6 +84,9 @@ private:
 
 	double _time;
 	std::vector<std::shared_ptr<Measurement>> measurements;
+	std::vector<EnginePlayingMessage> loadMessages;
+	std::vector<EnginePlayingMessage> playMessages;
+	std::vector<EnginePlayingMessage> measureMessages;
 	std::vector<EnginePlayingMessage> messages;
 
 	mutable std::mutex evtMutex;
@@ -109,4 +115,3 @@ public:
 } //STI
 
 #endif
-

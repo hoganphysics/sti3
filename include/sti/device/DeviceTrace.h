@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <mutex>
 
 namespace STI
 {
@@ -18,12 +19,37 @@ public:
 
 	DeviceTrace() {}
 	DeviceTrace(const DeviceID& first) { addID(first); }
-	DeviceTrace(const DeviceTrace& src) { ids = src.ids; }
+	DeviceTrace(const DeviceTrace& src) 
+	{
+		std::lock_guard<std::mutex> lock(src.idsMutex);
+		ids = src.ids; 
+	}
 
-	void addID(const DeviceID& id) { ids.push_back(id); }
-	bool includesID(const DeviceID& id) const { return std::find(ids.begin(), ids.end(), id) != ids.end(); }
+	DeviceTrace& operator=(const DeviceTrace& src)
+    {
+        if (this == &src) return *this;
+        // lock both mutexes without deadlock
+        std::scoped_lock lock(idsMutex, src.idsMutex);
+        ids = src.ids;
+        return *this;
+    }
+
+	void addID(const DeviceID& id) 
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
+		ids.push_back(id); 
+	}
+
+	bool includesID(const DeviceID& id) const
+	{ 
+		std::lock_guard<std::mutex> lock(idsMutex);
+		return std::find(ids.begin(), ids.end(), id) != ids.end(); 
+	}
+
 	const DeviceID first() const 
 	{	
+		std::lock_guard<std::mutex> lock(idsMutex);
+
 		if (!ids.empty()) {
 			return ids.front(); 			
 		}
@@ -33,7 +59,8 @@ public:
 	}
 
 	const DeviceID last() const 
-	{	
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
 		if (!ids.empty()) {
 			return ids.back(); 			
 		}
@@ -42,12 +69,21 @@ public:
 		return id;
 	}
 	
-	unsigned size() const { return static_cast<unsigned>(ids.size()); }
+	unsigned size() const
+	{ 
+		std::lock_guard<std::mutex> lock(idsMutex);
+		return static_cast<unsigned>(ids.size());
+	}
 
-	const std::vector<DeviceID>& getIDs() const { return ids; }
+	void getIDs(std::vector<DeviceID>& deviceIDs) const 
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
+		deviceIDs = ids;
+	}
 
 	std::string print(const std::string& separator = " -> ") const
 	{
+		std::lock_guard<std::mutex> lock(idsMutex);
 		std::string result;
 
 		for (unsigned i = 0; i < ids.size(); ++i) {
@@ -65,6 +101,8 @@ public:
 private:
 
 	std::vector<DeviceID> ids;
+
+	mutable std::mutex idsMutex;
 
 };
 

@@ -62,6 +62,7 @@ public:
     STI::Engine::EngineState getEngineState(const STI::Engine::EngineID& engineID) const;
     void getEngineStates(std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates) const;
 
+    void clearEngine(const STI::Engine::EngineID& engineID);
     void stopEngine(const STI::Engine::EngineID& engineID);
 
     bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;

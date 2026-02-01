@@ -1,6 +1,7 @@
 #include "LocalResultsCollector.h"
 //#include "DefaultImageWriter.h"
 
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/FullShotResult.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/RawEvent.h>
@@ -27,6 +28,7 @@ using STI::Engine::ShotResultRecord;
 using STI::Engine::ParseResult;
 using STI::Utils::FileServer;
 using STI::Device::DeviceID;
+using STI::Engine::EnginePlayingMessage;
 
 
 LocalResultsCollector::LocalResultsCollector(const STI::Engine::ShotID& sid, 
@@ -211,3 +213,12 @@ bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID,
     return true;
 }
 
+bool LocalResultsCollector::addMessages(const std::vector<EnginePlayingMessage>& messages)
+{
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (fullShotResult == 0 || fullShotResult->shotResult == 0) return false;
+
+    fullShotResult->shotResult->messages.insert(fullShotResult->shotResult->messages.end(), messages.begin(), messages.end());
+    return true;
+}

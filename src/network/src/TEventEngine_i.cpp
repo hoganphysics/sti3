@@ -41,7 +41,6 @@ void TEventEngine_i::play(const ::STI::TNetwork::TEventEngineJob& job)
     convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(job, engineJob);
 
     if (eventEngine != 0 && engineJob != 0) {
-
 		eventEngine->play(*engineJob);
 	}
 }
@@ -65,7 +64,6 @@ void TEventEngine_i::playCB(const TEngineJobID& jobID,
 void TEventEngine_i::trigger()
 {
     if (eventEngine != 0) {
-
 		eventEngine->trigger();
 	}
 }
@@ -73,7 +71,6 @@ void TEventEngine_i::trigger()
 void TEventEngine_i::triggerTarget(const TDeviceID& target)
 {
     if (eventEngine != 0) {
-
 		eventEngine->trigger(convert<TDeviceID, DeviceID>(target));
 	}
 }
@@ -81,7 +78,6 @@ void TEventEngine_i::triggerTarget(const TDeviceID& target)
 void TEventEngine_i::stop()
 {
     if (eventEngine != 0) {
-
 		eventEngine->stop();
 	}
 }
@@ -89,7 +85,6 @@ void TEventEngine_i::stop()
 void TEventEngine_i::pause()
 {
     if (eventEngine != 0) {
-
 		eventEngine->pause();
 	}
 }
@@ -97,8 +92,14 @@ void TEventEngine_i::pause()
 void TEventEngine_i::unpause(::CORBA::Boolean retrigger)
 {
     if (eventEngine != 0) {
-
 		eventEngine->unpause(static_cast<bool>(retrigger));
+	}
+}
+
+void TEventEngine_i::clear()
+{
+	if (eventEngine != 0) {
+		eventEngine->clear();
 	}
 }
 

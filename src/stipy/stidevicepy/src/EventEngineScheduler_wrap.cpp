@@ -11,6 +11,7 @@
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParsedDependencyTree.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventGroup.h>
@@ -19,6 +20,7 @@
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/device/DeviceIDIndexedGraph.h>
 
 #include "LocalShot.h"
@@ -345,7 +347,20 @@ void init_EventEngineScheduler(py::module& m)
 
                 return engineStates;
             })
+        .def("clearEngine", &EventEngineScheduler::clearEngine)
         .def("stopEngine", &EventEngineScheduler::stopEngine)
+        .def("getParseResult",
+            [](EventEngineScheduler& self, const STI::Engine::ParseID& parseID) {
+                std::shared_ptr<STI::Engine::ParseResult> parseResult;
+                bool found = self.getParseResult(parseID, parseResult);
+                return parseResult;
+            })
+        .def("getShotResult",
+            [](EventEngineScheduler& self, const STI::Engine::ShotID& shotID) {
+                std::shared_ptr<STI::Engine::ShotResult> shotResult;
+                bool found = self.getShotResult(shotID, shotResult);
+                return shotResult;
+            })
         ;
 
 }

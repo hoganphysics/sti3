@@ -3,6 +3,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/EnginePlayingMessage.h>
 
 #include "NetworkConvert.h"
 #include "convert/Convert_Attribute.h"
@@ -81,3 +82,15 @@ TShotID* TResultsCollector_i::getShotID()
     return false;
 }
 
+::CORBA::Boolean TResultsCollector_i::addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages)
+{
+	if (resultsCollector != 0) {
+
+		std::vector<STI::Engine::EnginePlayingMessage> remoteMessages;
+
+	    convert<::STI::TNetwork::TEnginePlayingMessage, STI::Engine::EnginePlayingMessage>(messages, remoteMessages);
+
+		return resultsCollector->addMessages(remoteMessages);
+	}
+	return false;
+}

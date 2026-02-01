@@ -166,6 +166,23 @@ void RemoteEventEngine::unpause(bool retrigger)
 	}
 }
 
+void RemoteEventEngine::clear()
+{
+	std::unique_lock<std::mutex> engineLock(engineMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->clear();
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
 
 STI::Device::DeviceID RemoteEventEngine::getDeviceID() const
 {

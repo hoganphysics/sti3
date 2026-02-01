@@ -28,6 +28,7 @@ public:
 
     bool addMeasurements(const STI::Device::DeviceID& deviceID, const STI::Engine::MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
+    bool addMessages(const std::vector<STI::Engine::EnginePlayingMessage>& messages);
 
 private:
 

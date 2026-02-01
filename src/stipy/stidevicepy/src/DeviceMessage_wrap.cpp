@@ -50,7 +50,8 @@ void init_DeviceMessage(py::module& m)
             [](const DeviceMessage& mess) {
                 const auto& trace = mess.getDeviceTrace();
                 
-                std::vector<STI::Device::DeviceID> ids = trace.getIDs();
+                std::vector<STI::Device::DeviceID> ids;
+                trace.getIDs(ids);
                 return ids;
             })
         .def("__repr__",
@@ -121,6 +122,7 @@ void init_DeviceMessage(py::module& m)
         .def_readonly("shotConfig", &EngineJobUpdateDeviceMessage::shotConfig)
         .def_readonly("overwrittenVars", &EngineJobUpdateDeviceMessage::overwrittenVars)
         .def_readonly("parsingMessageCount", &EngineJobUpdateDeviceMessage::parsingMessageCount)
+        .def_readonly("playingMessageCount", &EngineJobUpdateDeviceMessage::playingMessageCount)
         ;
 
 

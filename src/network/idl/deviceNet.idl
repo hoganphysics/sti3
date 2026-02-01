@@ -128,6 +128,7 @@ module TNetwork
 
 		boolean addMeasurements(in TDeviceID deviceID, in TMeasurementSeq measurements, in TFileServer sourceFileServer);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
+		boolean addMessages(in TEnginePlayingMessageSeq messages);
 	};
 
 	interface TEventEngine
@@ -141,6 +142,8 @@ module TNetwork
 		void stop();
 		void pause();
 		void unpause(in boolean retrigger);
+
+		void clear();
 
     	TDeviceID getDeviceID();
 		TEngineState getState();
@@ -195,6 +198,7 @@ module TNetwork
     	TEngineState getEngineState(in TEngineID engineID);
     	void getEngineStates(out TEngineStateTupleSeq engineStates);
 
+		void clearEngine(in TEngineID engineID);
 		void stopEngine(in TEngineID engineID);
 
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
