@@ -144,6 +144,14 @@ template<>
 bool Network::convert<std::shared_ptr<Device::EngineStateMessage>, TNetwork::TEngineStateMessage>(
 	const std::shared_ptr<Device::EngineStateMessage>& deviceMessage, TNetwork::TEngineStateMessage& tMessage);
 
+//EngineState Map
+template<>
+bool Network::convert<TNetwork::TEngineStateTupleSeq, std::map<STI::Engine::EngineID, STI::Engine::EngineState>>(
+	const TNetwork::TEngineStateTupleSeq& tEngineStateTupleSeq, std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates);
+template<>
+bool Network::convert<std::map<STI::Engine::EngineID, STI::Engine::EngineState>, TNetwork::TEngineStateTupleSeq>(
+	const std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates, TNetwork::TEngineStateTupleSeq& tEngineStateTupleSeq);
+
 
 //EngineJobUpdateDeviceMessage
 template<>

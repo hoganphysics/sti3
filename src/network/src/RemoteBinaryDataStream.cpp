@@ -8,8 +8,8 @@ using STI::Network::RemoteBinaryDataStream;
 using STI::TNetwork::TBinaryDataStream;
 
 
-RemoteBinaryDataStream::RemoteBinaryDataStream(::STI::TNetwork::TBinaryDataStream_ptr dataStream)
-: STI::TNetwork::TReferenceHolder<TBinaryDataStream>(dataStream, streamMutex)
+RemoteBinaryDataStream::RemoteBinaryDataStream(::STI::TNetwork::TBinaryDataStream_var dataStream)
+: STI::TNetwork::TReferenceHolder<TBinaryDataStream>(dataStream)
 {
 }
 

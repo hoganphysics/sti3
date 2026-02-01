@@ -57,6 +57,7 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::Shot;
 using STI::Engine::LocalEventEngineJob;
 using STI::Engine::ShotID;
+using STI::Engine::ShotResult;
 using STI::Engine::EngineJobID;
 using STI::Engine::EventEngineManager;
 using STI::Engine::LocalEventEngineFactory;
@@ -80,6 +81,9 @@ using STI::Utils::FileID;
 using STI::Utils::VirtualFileHolder;
 using STI::Utils::VirtualFileServer;
 using STI::Engine::SequenceJob;
+using STI::Engine::EngineState;
+
+std::map<std::string, unsigned> LocalEventEngineScheduler::playMessageIDs;
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
@@ -100,6 +104,7 @@ LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* l
     schedulerThread = std::thread(&LocalEventEngineScheduler::assignJobs, this);
 
     searchingParseResult = false;
+    searchingShotResult = false;
 
     setEngineFactory(engineFactory);
 
@@ -166,6 +171,54 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
         engineManagers.add(engineID, manager);        
+    }
+}
+
+void LocalEventEngineScheduler::getEngineIDs(std::set<EngineID>& engineIDs) const
+{
+    engineManagers.getKeys(engineIDs);
+}
+
+EngineState LocalEventEngineScheduler::getEngineState(const EngineID& engineID) const
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        return engine->getState();
+    }
+    return EngineState::Missing;
+}
+
+void LocalEventEngineScheduler::clearEngine(const EngineID& engineID)
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        engine->clear();
+    }
+}
+
+void LocalEventEngineScheduler::stopEngine(const EngineID& engineID)
+{
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
+        engine->stop();
+    }
+}
+
+void LocalEventEngineScheduler::getEngineStates(std::map<EngineID, EngineState>& engineStates) const
+{
+    std::set<EngineID> engineIDs;
+    engineManagers.getKeys(engineIDs);
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    for (auto& id : engineIDs) {
+        engineStates[id] = getEngineState(id);
     }
 }
 
@@ -311,7 +364,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
         }
     }
     else {
-        job->addMessage(ParsingMessageType::Error, 24, "Missing Root Group")
+        job->addMessage(ParsingMessageType::Error, 5, "Missing Root Group")
             << "Invalid shot: the root event group is missing.";
         job->markCancelled();
     }
@@ -344,7 +397,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     if (diff.size() > 0) {
         //missing targets...
         //Warning: will attempt parse but cannot play
-        auto& m = job->addMessage(ParsingMessageType::Warning, 1000, "Missing Targets")
+        auto& m = job->addMessage(ParsingMessageType::Warning, 102, "Missing Targets")
             << "Some required event targets could not be found. "
             << "Parsing is proceeding as an abstract shot. Playing will not be possible. "
             << "Missing targets: \n";
@@ -645,7 +698,7 @@ void LocalEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& ne
 
 void LocalEventEngineScheduler::cancelAll()
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
 
     std::set<EngineJobID> ids;
     
@@ -700,7 +753,7 @@ void LocalEventEngineScheduler::clearAll()
 
 std::set<EngineJobID> LocalEventEngineScheduler::getJobIDs(const EventEngineJobList& jobListType) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
 
     std::set<EngineJobID> jobIDs;
     std::set<EngineJobID> seqJobIDs;
@@ -772,7 +825,7 @@ bool LocalEventEngineScheduler::getJob(const EngineJobID& id, std::shared_ptr<Ev
 
 void LocalEventEngineScheduler::cancelJob(const EngineJobID& jobID)
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     _cancelJob(jobID);
 }
 
@@ -785,13 +838,14 @@ void LocalEventEngineScheduler::_cancelJob(const EngineJobID& jobID)
 
     if (runningJobs.get(jobID, job) && job != 0) {
 
-        if (getManager(jobID, manager)) {
+        if (getManager(job, manager)) {
             manager->abortJob();
         }
 
         runningJobs.remove(jobID);
         job->markCancelled();
 
+        
         if (jobID.type == EventEngineJobType::Parse) {
             archivedJobValid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
         }
@@ -946,11 +1000,20 @@ void LocalEventEngineScheduler::assignPlayJobs(const std::set<EngineJobID>& queu
         //check if the associated parse job was canceled
         if (isCanceledJob(jobID.pid)) {
             _cancelJob(jobID);  //cancel play if parse was canceled
+            continue;
         }
 
         if (!findParsedEngine(jobID.pid, freeEngines, engineID)) {
-            _cancelJob(jobID);  //cancel play if no parsed engine available
-            continue; //no parsed engine available for this play job
+            EngineJobID parseJobID;
+            parseJobID.type = EventEngineJobType::Parse;
+            parseJobID.pid = jobID.pid;
+
+            if (queuedJobs.contains(parseJobID) || runningJobs.contains(parseJobID)) {
+                continue; //defer play while parse is queued or running
+            }
+
+            _cancelJob(jobID);  //cancel play if no parsed engine available and no pending parse
+            continue;
         }
     
         if (assignJob(jobID, engineID)) {
@@ -1302,17 +1365,31 @@ bool LocalEventEngineScheduler::getManager(const EngineJobID& jobID, std::shared
 {
     std::shared_ptr<EventEngineJob> job;
 
-    if (runningJobs.get(jobID, job) && job != 0
-        && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    // if (runningJobs.get(jobID, job) && job != 0
+    //     && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
+    //     return true;
+    // }
+
+    if (runningJobs.get(jobID, job) && job != 0) {
+        return getManager(job, manager);
+    }
+
+    return false;
+}
+
+bool LocalEventEngineScheduler::getManager(const std::shared_ptr<EventEngineJob>& job, std::shared_ptr<EventEngineManager>& manager)
+{
+    if (job != 0 && engineManagers.get(job->getEngineID(), manager) && manager != 0) {
         return true;
     }
 
     return false;
 }
 
+
 bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<EventEngineJob>& job) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     
     EngineJobID jobID;
     jobID.type = EventEngineJobType::Parse;
@@ -1332,7 +1409,7 @@ bool LocalEventEngineScheduler::findJob(const ParseID& parseID, std::shared_ptr<
 
 bool LocalEventEngineScheduler::findJob(const ShotID& shotID, std::shared_ptr<EventEngineJob>& job) const
 {
-    std::unique_lock<std::mutex> jobLock(jobMutex);
+    // std::unique_lock<std::mutex> jobLock(jobMutex);
     
     EngineJobID jobID;
     jobID.type = EventEngineJobType::Play;
@@ -1414,6 +1491,29 @@ bool LocalEventEngineScheduler::getParseResult(const ParseID& parseID, std::shar
     return success;
 }
 
+bool LocalEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const
+{
+    if (searchingShotResult) return false;
+
+    std::unique_lock<std::mutex> resultLock(shotResultMutex);
+    searchingShotResult = true;
+
+    std::shared_ptr<LocalEventEngine> engine;
+
+    bool success = false;
+
+    if (findRunningEngine(shotID, engine) || findCompletedEngine(shotID, engine)) {
+        success = engine->getShotResult(shotID, shotResult);
+    }
+
+    if (!success) {
+        success = persistenceManager != 0 && persistenceManager->getShotResult(shotID, shotResult);
+    }
+
+    searchingShotResult = false;
+    return success;
+}
+
 
 bool LocalEventEngineScheduler::findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const
 {
@@ -1456,3 +1556,29 @@ bool LocalEventEngineScheduler::findCompletedEngine(const ShotID& shotID, std::s
     return false;
 }
 
+void LocalEventEngineScheduler::definePlayMessageIDs()
+{
+	// playMessageIDs["Missing Channel"] 					= 30;
+	// playMessageIDs["Incorrect Output Type"]  			= 31;
+    playMessageIDs["Cannot Play Abstract Shot"]             = 70;
+    playMessageIDs["Bad engine state"]                      = 71;
+    playMessageIDs["Owned devices not PlayReady"]           = 72;
+    playMessageIDs["Not Parsed"]                            = 73;
+    playMessageIDs["Failed to contact owned device"]        = 74;
+    playMessageIDs["PlayReady message invalid"]             = 75;
+    playMessageIDs["PlayComplete message invalid"]          = 76;
+    playMessageIDs["Play called while not PlayReady"]       = 77;
+    playMessageIDs["Play parse ID mismatch"]                = 78;
+    playMessageIDs["Failed to enter WaitingForTrigger"]     = 79;
+    playMessageIDs["Failed to enter Playing"]               = 80;
+}
+
+const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()
+{
+    static std::once_flag initFlag;
+    std::call_once(initFlag, []() {
+        LocalEventEngineScheduler::definePlayMessageIDs();
+    });
+
+    return playMessageIDs;
+}

@@ -24,6 +24,9 @@
     <ClCompile Include="..\src\LegacyExperimentXMLBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\LegacyExperimentXMLReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\LegacySequenceXMLBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\LegacyExperimentXMLBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LegacyExperimentXMLReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

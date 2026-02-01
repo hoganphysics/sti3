@@ -21,7 +21,7 @@ class RemoteDeviceCollection : public STI::Device::DeviceCollection,
 {
 public:
 
-	RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_ptr deviceCollection);
+	RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_var deviceCollection);
 
 	bool add(const STI::Device::DeviceID& id, const std::shared_ptr<STI::Device::Device>& node);
 	bool remove(const STI::Device::DeviceID& id);

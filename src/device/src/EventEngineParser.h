@@ -47,6 +47,7 @@ public:
 	DeviceEventMap partnerEvents;
 
 	EngineParsingMessage& addParsingError(const std::string& name);
+	EngineParsingMessage& addParsingWarning(const std::string& name);
 
 	const std::vector<EngineParsingMessage>& getParsingMessages() const;
 

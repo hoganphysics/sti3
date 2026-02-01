@@ -18,6 +18,7 @@ namespace Engine
 class ResultsTicket;
 class ParsedDependencyTree;
 class ResultsCollectorFactory;
+class EnginePlayingMessage;
 
 
 class ResultsCollector
@@ -30,6 +31,7 @@ public:
 
     virtual bool addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer) = 0;
     virtual bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes) = 0;
+    virtual bool addMessages(const std::vector<EnginePlayingMessage>& messages) = 0;
 };
 
 

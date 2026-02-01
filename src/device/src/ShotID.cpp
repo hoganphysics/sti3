@@ -20,8 +20,9 @@ ShotID ShotID::generateUniqueID(const ParseID& pid, const EngineJobSourceID& job
 
     ShotID sid(pid, jobSourceID);
 
-    if (sid.submissionTime == lastSubmissionTime) {
-        //error: increment TimeStamp to ensure ShotID is unique!
+    if (sid.submissionTime <= lastSubmissionTime) {
+        //Ensure monotonic ShotID generation if clock resolution stalls or moves backward.
+        sid.submissionTime = lastSubmissionTime;
         sid.submissionTime.add_ns(1);
     }
 

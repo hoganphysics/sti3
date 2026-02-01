@@ -41,6 +41,7 @@ class EventCheckingDevice(stidevicepy.LocalDevice):
     def __init__(self, config, checker: EventChecker):
         stidevicepy.LocalDevice.__init__(self, config)
         self.checker = checker
+        self.addAttribute("Enable Trigger", "On", ["On", "Off"])
         return
     
     def writeChannel(self, channel, value):
@@ -60,7 +61,7 @@ hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 dev_config = {'Device Name': 'EventCheckingDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'}
+     'Target Server': 'sr-magis/2/Frame2'}
 
 
 checker = EventChecker(dev_config)

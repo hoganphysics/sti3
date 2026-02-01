@@ -15,8 +15,8 @@ using STI::Network::RemoteTask;
 
 
 
-RemoteTaskManager::RemoteTaskManager(::STI::TNetwork::TTaskManager_ptr manager)
-: TReferenceHolder<::STI::TNetwork::TTaskManager>(manager, taskMutex)
+RemoteTaskManager::RemoteTaskManager(::STI::TNetwork::TTaskManager_var manager)
+: TReferenceHolder<::STI::TNetwork::TTaskManager>(manager)
 {
 }
 

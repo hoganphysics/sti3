@@ -25,7 +25,7 @@ class RemoteDeviceHub : public STI::Network::Hub<STI::Device::DeviceID, STI::Dev
 {
 public:
 
-	RemoteDeviceHub(::STI::TNetwork::TDeviceHub_ptr deviceHub);
+	RemoteDeviceHub(::STI::TNetwork::TDeviceHub_var deviceHub);
 
 	bool addHub(const HubID& id, const std::shared_ptr<DeviceHub>& hub);
 	bool removeHub(const HubID& id);

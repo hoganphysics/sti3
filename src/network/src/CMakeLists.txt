@@ -151,6 +151,8 @@ add_library(stinetwork SHARED
     TResultsCollector_i.cpp
     TShotCallback_i.cpp
     TTaskManager_i.cpp
+    TTestNetwork_i.cpp
+    TestNetworkWrapper.cpp
     TTriggerCallback_i.cpp
 )
 

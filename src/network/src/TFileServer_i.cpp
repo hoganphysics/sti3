@@ -3,7 +3,6 @@
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileServer.h>
 
-#include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "RemoteFileHolder.h"
 #include "convert/Convert_File.h"
@@ -24,7 +23,6 @@ TFileServer_i::TFileServer_i(STI::Utils::FileServer* fileServer)
 
 TFileServer_i::~TFileServer_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -58,8 +56,11 @@ TFileServer_i::~TFileServer_i()
 {
     bool result = false;
 
-    if (localFileServer != 0) {
-        auto remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(destination);
+    if (localFileServer != 0 && !CORBA::is_nil(destination)) {
+        
+        STI::TNetwork::TFileHolder_var destination_var = STI::TNetwork::TFileHolder::_duplicate(destination);
+
+        auto remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(destination_var);
 		result = localFileServer->transferFile(
                 convert<TFileID, FileID>(source), 
                 remoteFile, 

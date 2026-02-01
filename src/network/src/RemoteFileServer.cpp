@@ -13,8 +13,8 @@ using STI::Network::TFileServerRefInterface;
 using STI::TNetwork::TFileServer;
 
 
-RemoteFileServer::RemoteFileServer(::STI::TNetwork::TFileServer_ptr fileServer)
-: STI::TNetwork::TReferenceHolder<TFileServer>(fileServer, fileServerMutex)
+RemoteFileServer::RemoteFileServer(::STI::TNetwork::TFileServer_var fileServer)
+: STI::TNetwork::TReferenceHolder<TFileServer>(fileServer)
 {
 }
 

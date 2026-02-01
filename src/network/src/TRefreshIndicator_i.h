@@ -9,7 +9,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TRefreshIndicator_i : public POA_STI::TNetwork::TRefreshIndicator
+class TRefreshIndicator_i : public POA_STI::TNetwork::TRefreshIndicator,
+							public PortableServer::RefCountServantBase
 {
 public:
 

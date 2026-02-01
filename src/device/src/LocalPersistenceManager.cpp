@@ -305,6 +305,9 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
         }        
     }
 
+    //Messages
+    success &= resultsCollector->addMessages(shotResult->messages);
+
     if (success) {
         record.recordStatus = STI::Engine::RecordStatus::Complete;
     }
@@ -479,6 +482,12 @@ bool LocalPersistenceManager::getShotResult(const STI::Engine::ShotID& sid, std:
 
     if (hasDelegate && delegate != 0) {
         if(delegate->getShotResult(sid, result)) {
+            return true;
+        }
+    }
+
+    if (auto observe = eventEngineScheduler.lock()) {
+        if (observe->getShotResult(sid, result)) {
             return true;
         }
     }
@@ -695,16 +704,14 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
 
     transferParseResult(fullShotResult->parseResult, resultsPaths.timingPath);
 
-    auto completeResult = std::make_shared<FullShotResult>();  
-    completeResult->parseResult = fullShotResult->parseResult;
-    completeResult->shotResult = collector->getResults();
+    fullShotResult->shotResult = collector->getResults();
 
-    // addToBuffer(completeResult);     //causes infinite recursion with call to saveShotLocal
+    // addToBuffer(fullShotResult);     //causes infinite recursion with call to saveShotLocal
 
-    bool success = repo->saveShot(sid, completeResult);
+    bool success = repo->saveShot(sid, fullShotResult);
 
     if (!success) {
-        success = defaultRepository->saveShot(sid, completeResult);
+        success = defaultRepository->saveShot(sid, fullShotResult);
     }
 
     if (isOwner && isPartial(fullShotResult->shotResult)) {
@@ -846,4 +853,3 @@ void LocalPersistenceManager::removePersistenceDelegate(const DeviceID& id)
         }
     }
 }
-

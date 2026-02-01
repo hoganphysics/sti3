@@ -52,6 +52,11 @@ void init_ParseID(py::module& m)
     py::class_<STI::Engine::ParseID>(m, "ParseID")
         .def(py::init<>())
         .def(py::init(
+            [](const std::string& pid) 
+            {
+                return STI::Engine::ParseID::fromString(pid);
+            } ), py::arg("parseID"))
+        .def(py::init(
             [](const STI::Engine::ParseID& parseID) 
             {
                 return STI::Engine::ParseID(parseID.parseTimestamp, parseID.jobSourceID, parseID.sequenceEntryID);

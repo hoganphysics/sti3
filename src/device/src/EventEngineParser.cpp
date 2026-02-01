@@ -171,6 +171,20 @@ EngineParsingMessage& EventEngineParser::addParsingError(const std::string& name
 	return messages.back();
 }
 
+EngineParsingMessage& EventEngineParser::addParsingWarning(const std::string& name)
+{
+	unsigned id = 0;	//default ID
+	auto it = errorIDs.find(name);
+
+	if (it != errorIDs.end()) {
+		id = it->second;
+	}
+
+	messages.emplace_back(localDeviceID, ParsingMessageType::Warning, id, name);
+	
+	return messages.back();
+}
+
 bool EventEngineParser::checkOutputType(const STI::Utils::MixedValueType& eventValueType, const STI::Utils::MixedValueType& channelType)
 {
 	if (channelType == MixedValueType::Any) return true;
@@ -540,6 +554,19 @@ bool EventEngineParser::maxErrorCheck(unsigned errorCount, unsigned maxErrors)
 
 void EventEngineParser::defineErrorIDs()
 {
+	errorIDs["Circular Dependency"] 				= 1;
+	errorIDs["Missing Root Group"] 					= 5;
+	errorIDs["Invalid sequence entry"] 				= 10;
+	errorIDs["Sequence not found"] 					= 11;
+	
+
+	errorIDs["Missing shot"] 						= 20;
+	errorIDs["Missing dependency tree"] 			= 21;
+	errorIDs["Null event group"] 					= 22;
+	errorIDs["Dependency count failed"] 			= 23;
+	errorIDs["Bad engine state"] 					= 24;
+	errorIDs["Missing engine reference"] 			= 25;
+
 	errorIDs["Missing Channel"] 					= 30;
 	errorIDs["Incorrect Output Type"]  				= 31;
 
@@ -563,6 +590,12 @@ void EventEngineParser::defineErrorIDs()
 
 	errorIDs["Null Measurement"] 					= 44;	
 	errorIDs["Unknown Parsing Exception"]			= 45;
+
+	//warning IDs
+
+	errorIDs["Abstract Shot"]						= 100;
+	errorIDs["Missing device"]						= 101;
+	errorIDs["Missing Targets"] 					= 102;
 
 }
 

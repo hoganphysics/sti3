@@ -71,6 +71,7 @@ public:
 	unsigned short getModule() const { return deviceIDBase->getModule(); }
 	const std::string& getID() const { return deviceIDBase->getID(); }
 	const std::string& getTargetServerID() const { return deviceIDBase->getTargetServerID(); }
+	bool empty() const;
 
 	
 	static bool stringToDeviceID(const std::string& deviceIDin, DeviceID& deviceIDout);

@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <mutex>
 
 namespace STI
 {
@@ -21,15 +22,45 @@ public:
 	HubTrace(const HubID& first) { addHubID(first); }
 	HubTrace(const HubTrace& src) { ids = src.ids; }
 
-	void addHubID(const HubID& id) { ids.push_back(id); }
-	bool includesHubID(const HubID& id) const { return std::find(ids.begin(), ids.end(), id) != ids.end(); }
-	const HubID& first() const { return ids.at(0); }  //consider returning HubID and making an empty HubID() in case the vector is empty
-	unsigned size() const { return static_cast<unsigned>(ids.size()); }
+	void addHubID(const HubID& id) 
+	{ 
+		std::lock_guard<std::mutex> lock(idsMutex);
+		ids.push_back(id); 
+	}
 
-	const std::vector<HubID>& getIDs() const { return ids; }
+	bool includesHubID(const HubID& id) const 
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
+		return std::find(ids.begin(), ids.end(), id) != ids.end();
+	}
+
+	const HubID first() const 
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
+
+		if (!ids.empty()) {
+			return ids.front(); 			
+		}
+
+		HubID id;	//empty
+		return id;
+	}
+
+	unsigned size() const 
+	{ 
+		std::lock_guard<std::mutex> lock(idsMutex);
+		return static_cast<unsigned>(ids.size()); 
+	}
+
+	void getIDs(std::vector<HubID>& hubIDs) const 
+	{
+		std::lock_guard<std::mutex> lock(idsMutex);
+		hubIDs = ids;
+	}
 
 private:
 	std::vector<HubID> ids;
+	mutable std::mutex idsMutex;
 };
 
 } //Network

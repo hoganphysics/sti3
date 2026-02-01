@@ -16,7 +16,10 @@ bool STI::Network::convert<HubTrace, TDeviceHubTrace>(const HubTrace& hubTrace, 
 {
 	using STI::TNetwork::TDeviceHubID;
 
-	return convert(hubTrace.getIDs(), (_CORBA_Unbounded_Sequence<TDeviceHubID>&) tHubTrace.ids);
+	std::vector<STI::Network::HubID> ids;
+	hubTrace.getIDs(ids);
+
+	return convert(ids, (_CORBA_Unbounded_Sequence<TDeviceHubID>&) tHubTrace.ids);
 }
 
 template<>

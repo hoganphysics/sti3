@@ -13,7 +13,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TDeviceMessageDispatcher_i : public POA_STI::TNetwork::TDeviceMessageDispatcher
+class TDeviceMessageDispatcher_i : public POA_STI::TNetwork::TDeviceMessageDispatcher,
+								   public PortableServer::RefCountServantBase
 {
 public:
 

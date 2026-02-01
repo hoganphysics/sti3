@@ -3,12 +3,12 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/EnginePlayingMessage.h>
 
 #include "NetworkConvert.h"
 #include "convert/Convert_Attribute.h"
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ResultsCollector.h"
-#include "ORBManager.h"
 
 #include "RemoteFileServer.h"
 
@@ -38,7 +38,6 @@ TResultsCollector_i::TResultsCollector_i(STI::Engine::ResultsCollector* resultsC
 
 TResultsCollector_i::~TResultsCollector_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -57,12 +56,13 @@ TShotID* TResultsCollector_i::getShotID()
 													  const ::STI::TNetwork::TMeasurementSeq& measurements,
 													  ::STI::TNetwork::TFileServer_ptr sourceFileServer)
 {
-    if (resultsCollector != 0) {
+    if (resultsCollector != 0 && !CORBA::is_nil(sourceFileServer)) {
 
         auto newMeasurements = STI::Engine::MeasurementVector();
 	    convert<TMeasurement, std::shared_ptr<Measurement>>(measurements, newMeasurements);
 
-		auto remoteFileServer = std::make_shared<STI::Network::RemoteFileServer>(sourceFileServer);
+		STI::TNetwork::TFileServer_var sourceFileServer_var = STI::TNetwork::TFileServer::_duplicate(sourceFileServer);
+		auto remoteFileServer = std::make_shared<STI::Network::RemoteFileServer>(sourceFileServer_var);
 
 		return resultsCollector->addMeasurements(convert<TDeviceID, DeviceID>(deviceID), newMeasurements, remoteFileServer);
 	}
@@ -82,3 +82,15 @@ TShotID* TResultsCollector_i::getShotID()
     return false;
 }
 
+::CORBA::Boolean TResultsCollector_i::addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages)
+{
+	if (resultsCollector != 0) {
+
+		std::vector<STI::Engine::EnginePlayingMessage> remoteMessages;
+
+	    convert<::STI::TNetwork::TEnginePlayingMessage, STI::Engine::EnginePlayingMessage>(messages, remoteMessages);
+
+		return resultsCollector->addMessages(remoteMessages);
+	}
+	return false;
+}

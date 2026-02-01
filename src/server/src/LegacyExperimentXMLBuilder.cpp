@@ -1,6 +1,7 @@
 
 #include "LegacyExperimentXMLBuilder.h"
 
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/ParsedDependencyTree.h>
@@ -67,6 +68,20 @@ std::filesystem::path parseFilePathForShot(const std::filesystem::path& shotPath
 
     std::filesystem::path parseDatePath = shotCachePath / pid.parseTimestamp.date_YYYY_MM_DD("/");
     return parseDatePath / "experiments" / makeParseFilename(pid);
+}
+
+std::string playingMessageTypeToString(const STI::Engine::PlayingMessageType& type)
+{
+    switch (type) {
+    case STI::Engine::PlayingMessageType::Error:
+        return "Error";
+    case STI::Engine::PlayingMessageType::Warning:
+        return "Warning";
+    case STI::Engine::PlayingMessageType::Information:
+        return "Information";
+    default:
+        return "Error";
+    }
 }
 
 } // namespace
@@ -230,6 +245,12 @@ void addMeasurements(tinyxml2::XMLElement* measurements, const STI::Engine::Meas
             measurement->SetAttribute("channel", meas->channel());
             measurement->SetAttribute("group", meas->groupName().c_str());
             LegacyExperimentXMLBuilder::addValue(measurement, meas->data(), shotFilename);
+
+            const auto& graphPath = meas->getMeasurementGraphPath();
+            if (!graphPath.empty()) {
+                auto graphPathElement = measurement->InsertNewChildElement("graphpath");
+                addDimlimitedVector(graphPathElement, &graphPath, ",", "UInt");
+            }
         }
     }
 }
@@ -327,6 +348,18 @@ void LegacyExperimentXMLBuilder::build()
 
         auto relativeParsePath = safeRelativePath(parsePath, shotPath.parent_path());
         parseFile->SetText(relativeParsePath.string().c_str());
+    }
+
+    {
+        auto messages = e->InsertNewChildElement("messages");
+        for (const auto& message : shotResult->messages) {
+            auto entry = messages->InsertNewChildElement("message");
+            entry->SetAttribute("type", playingMessageTypeToString(message.getType()).c_str());
+            entry->SetAttribute("source", message.getSourceID().getID().c_str());
+            entry->SetAttribute("id", static_cast<unsigned>(message.getIDCode()));
+            entry->SetAttribute("name", message.getName().c_str());
+            entry->SetText(message.getMessage().c_str());
+        }
     }
 
     auto devices = e->InsertNewChildElement("devices");

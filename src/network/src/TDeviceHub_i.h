@@ -15,7 +15,8 @@ namespace TNetwork
 {
 
 
-class TDeviceHub_i : public POA_STI::TNetwork::TDeviceHub
+class TDeviceHub_i : public POA_STI::TNetwork::TDeviceHub, 
+					 public PortableServer::RefCountServantBase
 {
 public:
 

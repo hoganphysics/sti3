@@ -21,7 +21,7 @@ class RemoteProfileManager : public STI::Device::ProfileManager,
 {
 public:
 
-    RemoteProfileManager(::STI::TNetwork::TProfileManager_ptr manager);
+    RemoteProfileManager(::STI::TNetwork::TProfileManager_var manager);
     ~RemoteProfileManager();
 
     void getProfiles(std::set<std::string>& names) const;

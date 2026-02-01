@@ -46,6 +46,8 @@ using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TEngineParsingMessage;
 using STI::Engine::EngineParsingMessage;
+using STI::TNetwork::TEnginePlayingMessage;
+using STI::Engine::EnginePlayingMessage;
 using STI::TNetwork::TStackTraceResult;
 using STI::Engine::StackTraceResult;
 using STI::TNetwork::TFullShotResult;
@@ -97,6 +99,7 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
             );
     }
 
+    convert<TEnginePlayingMessage, EnginePlayingMessage>(tShotResult.messages, shotResult->messages);
     convert<TShotResultRecord, ShotResultRecord>(tShotResult.shotResultRecord, shotResult->shotResultRecord);
 
     return true;
@@ -152,6 +155,7 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
         i++;
     }
 
+    convert<EnginePlayingMessage, TEnginePlayingMessage>(shotResult->messages, tShotResult.messages);
     convert<ShotResultRecord, TShotResultRecord>(shotResult->shotResultRecord, tShotResult.shotResultRecord);
 
     return true;
@@ -313,4 +317,3 @@ TParsedTag STI::Network::convert<ParsedTag, TParsedTag>(const ParsedTag& parsedT
     convert<ParsedTag, TParsedTag>(parsedTag, tParsedTag);
     return tParsedTag;
 }
-

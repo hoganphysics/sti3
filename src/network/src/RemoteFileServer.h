@@ -23,7 +23,7 @@ class RemoteFileServer : public STI::Utils::FileServer,
 {
 public:
 
-    RemoteFileServer(::STI::TNetwork::TFileServer_ptr fileServer);
+    RemoteFileServer(::STI::TNetwork::TFileServer_var fileServer);
     ~RemoteFileServer();
 
 	bool findFile(const STI::Utils::FileID& fileID);

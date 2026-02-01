@@ -6,6 +6,8 @@
 #include "TBinaryDataStreamTarget_i.h"
 #include "generated/deviceNet.h"
 
+#include "ServantHolder.h"
+
 #include <memory>
 
 
@@ -34,7 +36,8 @@ public:
 private:
 
     std::shared_ptr<STI::Utils::BinaryDataStreamTarget> localdataStreamTarget;
-    STI::TNetwork::TBinaryDataStreamTarget_i dataStreamTargetServant;
+    // STI::TNetwork::TBinaryDataStreamTarget_i dataStreamTargetServant;
+    ServantHolder<STI::TNetwork::TBinaryDataStreamTarget_i, STI::TNetwork::TBinaryDataStreamTarget> dataStreamTargetServantHolder;
 };
 
 

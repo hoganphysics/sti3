@@ -14,7 +14,8 @@ namespace TNetwork
 {
 
 
-class TProfileManager_i : public POA_STI::TNetwork::TProfileManager
+class TProfileManager_i : public POA_STI::TNetwork::TProfileManager, 
+                          public PortableServer::RefCountServantBase
 {
 public:
 

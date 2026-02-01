@@ -2,6 +2,7 @@
 #define STI_ENGINE_SYNCHRONOUSEVENT_H
 
 #include <sti/fwd/MixedValue_fwd.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/utils/FileHolder.h>
 
 #include <vector>
@@ -54,6 +55,15 @@ public:
 
 	bool operator<(const SynchronousEvent& rhs) const { return getTime() < rhs.getTime(); }
 
+	EnginePlayingMessage& addError(const std::string& name);
+	EnginePlayingMessage& addWarning(const std::string& name);
+	EnginePlayingMessage& addInfoMessage(const std::string& name);
+
+	const std::vector<EnginePlayingMessage>& getLoadMessages() const { return loadMessages; }
+	const std::vector<EnginePlayingMessage>& getPlayMessages() const { return playMessages; }
+	const std::vector<EnginePlayingMessage>& getMeasureMessages() const { return measureMessages; }
+	std::vector<EnginePlayingMessage>& getMessages();
+
 private:
 
 	virtual void loadEvent() = 0;
@@ -65,6 +75,8 @@ private:
 
 	void waitForPlayComplete();
 
+	EnginePlayingMessage& addMessage(const std::string& name, const PlayingMessageType& type);
+
 	bool played;
 	bool loaded;
 	bool stopped;
@@ -72,6 +84,10 @@ private:
 
 	double _time;
 	std::vector<std::shared_ptr<Measurement>> measurements;
+	std::vector<EnginePlayingMessage> loadMessages;
+	std::vector<EnginePlayingMessage> playMessages;
+	std::vector<EnginePlayingMessage> measureMessages;
+	std::vector<EnginePlayingMessage> messages;
 
 	mutable std::mutex evtMutex;
 	mutable std::condition_variable condition;
@@ -99,4 +115,3 @@ public:
 } //STI
 
 #endif
-

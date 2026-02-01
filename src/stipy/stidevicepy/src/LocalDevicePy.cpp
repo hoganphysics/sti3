@@ -144,7 +144,12 @@ void LocalDevicePy::addPartner(const STI::Device::DeviceID& id, const std::strin
 void LocalDevicePy::addEventTarget(const STI::Device::DeviceID& id)
 {
     device->addEventTarget(id);
-}    
+}
+
+void LocalDevicePy::addEventTarget(const STI::Device::DeviceID& id, const std::string& alias)
+{
+    device->addEventTarget(id, alias);
+}
 
 std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const std::string& key, const std::string& initialValue)
 {

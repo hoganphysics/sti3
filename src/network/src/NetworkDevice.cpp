@@ -11,10 +11,8 @@ using STI::Network::NetworkDevice;
 
 
 NetworkDevice::NetworkDevice(const std::shared_ptr<STI::Device::Device>& device)
-: localDevice(device), deviceServant(device) 
+: localDevice(device), deviceServantHolder(new STI::TNetwork::TDevice_i(device))
 {
-    STI::Network::ORBManager::ORBManager::activateServant(deviceServant);
-
     std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
     getMessageDispatcher(dispatcher);
     std::shared_ptr<STI::Device::ChannelManager> channels;

@@ -3,6 +3,7 @@
 #include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Measurement.h>
+#include <sti/engine/EnginePlayingMessage.h>
 
 #include "EventEngineDependencyTree.h"
 #include "TFileServerRefInterface.h"
@@ -21,10 +22,11 @@ using STI::TNetwork::TResultsCollector;
 using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
 using STI::Network::TFileServerRefInterface;
+using STI::Engine::EnginePlayingMessage;
 
 
-RemoteResultsCollector::RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector)
-: TReferenceHolder<TResultsCollector>(collector, collectorMutex)
+RemoteResultsCollector::RemoteResultsCollector(::STI::TNetwork::TResultsCollector_var collector)
+: TReferenceHolder<TResultsCollector>(collector)
 {
 }
 
@@ -123,3 +125,28 @@ bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID
     return success;
 }
 
+bool RemoteResultsCollector::addMessages(const std::vector<EnginePlayingMessage>& messages)
+{
+	std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+	
+	STI::TNetwork::TEnginePlayingMessageSeq_var tMessages(new STI::TNetwork::TEnginePlayingMessageSeq);
+
+	try {
+		convert<EnginePlayingMessage, STI::TNetwork::TEnginePlayingMessage>(messages, tMessages);
+
+		success = getTRef()->addMessages(tMessages);	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	
+	return success;
+}

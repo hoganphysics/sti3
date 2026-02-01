@@ -1,6 +1,5 @@
 #include "TDeviceMessageHandler_i.h"
 
-#include "ORBManager.h"
 #include "NetworkConvert.h"
 #include "convert/Convert_DeviceMessage.h"
 
@@ -22,8 +21,6 @@ TDeviceMessageHandler_i::TDeviceMessageHandler_i(const std::shared_ptr<STI::Devi
 TDeviceMessageHandler_i::~TDeviceMessageHandler_i()
 {
 	disableRefreshIndicator();
-
-	STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 void TDeviceMessageHandler_i::disableRefreshIndicator()
@@ -72,7 +69,12 @@ void TDeviceMessageHandler_i::setRefreshIndicator(::STI::TNetwork::TRefreshIndic
 {
 	std::unique_lock<std::mutex> handlerLock(refreshMutex);
 
-	tRefreshIndicatorHolder = std::make_unique<TReferenceHolder<TRefreshIndicator>>(refresher, refreshMutex);
+	if (CORBA::is_nil(refresher)) {
+		return;
+	}
+
+	STI::TNetwork::TRefreshIndicator_var refresher_var = STI::TNetwork::TRefreshIndicator::_duplicate(refresher);
+	tRefreshIndicatorHolder = std::make_unique<TReferenceHolder<TRefreshIndicator>>(refresher_var);
 
 	tRefreshIndicatorInstalled = tRefreshIndicatorHolder !=0 && !tRefreshIndicatorHolder->isDisabled();
 }

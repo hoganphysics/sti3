@@ -13,7 +13,8 @@ namespace TNetwork
 {
 
 
-class TResultsCollector_i : public POA_STI::TNetwork::TResultsCollector
+class TResultsCollector_i : public POA_STI::TNetwork::TResultsCollector,
+                            public PortableServer::RefCountServantBase
 {
 public:
 
@@ -26,6 +27,7 @@ public:
                                      const ::STI::TNetwork::TMeasurementSeq& measurements,
                                      ::STI::TNetwork::TFileServer_ptr sourceFileServer);
     ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
+    ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages);
 
 private:
 

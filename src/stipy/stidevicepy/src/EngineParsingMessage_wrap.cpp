@@ -17,9 +17,9 @@ namespace py = pybind11;
 void init_EngineParsingMessage(py::module& m) 
 {
     py::enum_<STI::Engine::ParsingMessageType>(m, "ParsingMessageType")
-        .value("Error", STI::Engine::ParsingMessageType::Error)
-        .value("Warning", STI::Engine::ParsingMessageType::Warning)
-        .value("Information", STI::Engine::ParsingMessageType::Information)
+        .value("ParsingError", STI::Engine::ParsingMessageType::Error)
+        .value("ParsingWarning", STI::Engine::ParsingMessageType::Warning)
+        .value("ParsingInformation", STI::Engine::ParsingMessageType::Information)
         ;
 
     py::class_<STI::Engine::EngineParsingMessage>(m, "EngineParsingMessage")

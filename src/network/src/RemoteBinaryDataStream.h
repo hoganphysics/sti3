@@ -19,7 +19,7 @@ class RemoteBinaryDataStream : public STI::Utils::BinaryDataStream,
 {
 public:
 
-    RemoteBinaryDataStream(::STI::TNetwork::TBinaryDataStream_ptr dataStream);
+    RemoteBinaryDataStream(::STI::TNetwork::TBinaryDataStream_var dataStream);
     ~RemoteBinaryDataStream();
 
     void transfer(const std::shared_ptr<STI::Utils::BinaryDataStreamTarget>& target);

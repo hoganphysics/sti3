@@ -11,7 +11,8 @@ namespace STI
 namespace TNetwork
 {
 
-class TBinaryDataStreamTarget_i : public POA_STI::TNetwork::TBinaryDataStreamTarget
+class TBinaryDataStreamTarget_i : public POA_STI::TNetwork::TBinaryDataStreamTarget,
+								  public PortableServer::RefCountServantBase
 {
 public:
 

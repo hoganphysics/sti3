@@ -140,3 +140,13 @@ bool ResultTicket::ensureCachedMeasurements()
 
     return false;
 }
+
+std::vector<STI::Engine::EnginePlayingMessage> ResultTicket::getMessages()
+{
+    if (ensureCachedShotResult()) {
+        return shotResult.get()->messages;
+    }
+
+    std::vector<STI::Engine::EnginePlayingMessage> emptyMessages;
+    return emptyMessages;
+}

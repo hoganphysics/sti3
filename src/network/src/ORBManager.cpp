@@ -205,48 +205,19 @@ ORBManager::ORBManager(const std::string& args)
 	delete[] argv;
 }
 
-
-
 ORBManager::~ORBManager()
 {
 	shutdown();
 }
 
-void ORBManager::activateServant(PortableServer::ServantBase& servant)
-{
-	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-		
-		orbManager->poa->activate_object(&servant);
-	}
+bool ORBManager::isPOAactive() const 
+{ 
+	return (!CORBA::is_nil(poa)) && poa_is_active; 
 }
 
-void ORBManager::deactivateServant(PortableServer::Servant p_servant)
+PortableServer::POA_ptr ORBManager::getPOA() const
 {
-	std::shared_ptr<ORBManager> orbManager = ORBManager::instance;
-
-	if (orbManager != 0 && !(CORBA::is_nil(orbManager->poa)) && orbManager->poa_is_active) {
-
-		auto realPoa = p_servant->_default_POA();
-		if (realPoa != orbManager->poa) {
-			// you're deactivating via the wrong POA
-			// std::cout << "ORBManager::deactivateServant:  you're deactivating via the wrong POA" << std::endl;
-		}
-
-
-		try {
-			auto objref = (orbManager->poa->servant_to_id(p_servant));
-
-			if (objref != 0) {
-
-				orbManager->poa->deactivate_object(*objref);
-			}	
-		}
-		catch (PortableServer::POA::ServantNotActive& e) {
-		}
-
-	}
+	return PortableServer::POA::_duplicate(poa);
 }
 
 bool ORBManager::running()
@@ -339,6 +310,7 @@ void ORBManager::shutdown()
 		signal(13, SIG_IGN);	//Note SIGPIPE=13 in linux; not defined in windows
 		// signal(SIGPIPE, signal_callback_handler);	//ignore SIGPIPE signals
 
+		orb->destroy();
 		// orb->destroy() causes error
 		// try {
 		// 	orb->destroy();
@@ -352,8 +324,6 @@ void ORBManager::shutdown()
 
 std::string ORBManager::printNameTree(const std::string& baseContext) const
 {
-	//CosNaming::NamingContext_var base(getNamingContext(baseContext));
-
 	CosNaming::NamingContext_var baseContextVar;
 	getNamingContext(baseContext, baseContextVar);
 	CosNaming::NamingContext_var base(baseContextVar);
@@ -368,7 +338,6 @@ void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const 
 {
 	CosNaming::NamingContext_var baseContextVar;
 
-	//CosNaming::NamingContext_var base(getNamingContext(baseContext));
 	getNamingContext(baseContext, baseContextVar);
 	CosNaming::NamingContext_var base(baseContextVar);
 
@@ -541,12 +510,12 @@ bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
 	return false;
 }
 
-bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref)
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_var& objref)
 {
 	return getObjectReference(objectFullPath, objref, std::cerr);
 }
 
-bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_ptr& objref, std::ostream& errorBuf)
+bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Object_var& objref, std::ostream& errorBuf)
 {
 	bool success = false;
 
@@ -557,7 +526,9 @@ bool ORBManager::getObjectReference(const std::string& objectFullPath, CORBA::Ob
 	}
 
 	CosNaming::NamingContext_var rootContext;
-	if (!getRootContext(rootContext)) return false;
+	if (!getRootContext(rootContext)) {
+		return false;
+	}
 
 	CosNaming::Name_var objectName =
 		omni::omniURI::stringToName(objectFullPath.c_str());

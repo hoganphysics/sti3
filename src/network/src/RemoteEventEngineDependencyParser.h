@@ -24,7 +24,7 @@ class RemoteEventEngineDependencyParser : public STI::Engine::EventEngineDepende
 {
 public:
 
-    RemoteEventEngineDependencyParser(::STI::TNetwork::TEventEngineDependencyParser_ptr dependencyParser);
+    RemoteEventEngineDependencyParser(::STI::TNetwork::TEventEngineDependencyParser_var dependencyParser);
     ~RemoteEventEngineDependencyParser();
 
     void getDependants(const std::set<STI::Device::DeviceID>& evtTargets, STI::Engine::EventEngineDependencyTree& tree, 

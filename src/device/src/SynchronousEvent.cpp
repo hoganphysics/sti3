@@ -4,9 +4,13 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/utils/MixedValue.h>
 
+#include "LocalEventEngineScheduler.h"
+
 using STI::Engine::SynchronousEvent;
 using STI::Engine::RawEvent;
 using STI::Engine::Measurement;
+using STI::Engine::PlayingMessageType;
+using STI::Engine::EnginePlayingMessage;
 
 
 SynchronousEvent::SynchronousEvent(double time) : _time(time)
@@ -128,6 +132,11 @@ void SynchronousEvent::reset()
 	played = false;
 	stopped = false;
 	paused = false;
+
+	loadMessages.clear();
+	playMessages.clear();
+	measureMessages.clear();
+	messages.clear();
 }
 
 void SynchronousEvent::pause()
@@ -146,4 +155,56 @@ void SynchronousEvent::unpause(bool retrigger)
 	paused = false;
 
 	unpauseEvent(retrigger);
+}
+
+std::vector<EnginePlayingMessage>& SynchronousEvent::getMessages()
+{
+	std::unique_lock<std::mutex> readLock(evtMutex);
+
+	messages.clear();
+	messages.insert(messages.end(), loadMessages.begin(), loadMessages.end());
+	messages.insert(messages.end(), playMessages.begin(), playMessages.end());
+	messages.insert(messages.end(), measureMessages.begin(), measureMessages.end());
+
+	return messages;
+}
+
+EnginePlayingMessage& SynchronousEvent::addError(const std::string& name)
+{
+	return addMessage(name, PlayingMessageType::Error);
+}
+
+EnginePlayingMessage& SynchronousEvent::addWarning(const std::string& name)
+{
+	return addMessage(name, PlayingMessageType::Warning);
+}
+
+EnginePlayingMessage& SynchronousEvent::addInfoMessage(const std::string& name)
+{
+	return addMessage(name, PlayingMessageType::Information);
+}
+
+EnginePlayingMessage& SynchronousEvent::addMessage(const std::string& name, const PlayingMessageType& type)
+{
+	unsigned id = 0;	//default ID
+	const auto& messageIDs = LocalEventEngineScheduler::getPlayMessageIDs();
+	auto it = messageIDs.find(name);
+
+	if (it != messageIDs.end()) {
+		id = it->second;
+	}
+
+    if (loaded) {
+        if (played) {
+            measureMessages.emplace_back(type, id, name);
+            return measureMessages.back();
+        }
+
+        playMessages.emplace_back(type, id, name);
+        return playMessages.back();
+    }
+
+    loadMessages.emplace_back(type, id, name);
+	
+	return loadMessages.back();
 }

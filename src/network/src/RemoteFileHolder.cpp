@@ -5,14 +5,14 @@
 
 
 using STI::Network::RemoteFileHolder;
-using ::STI::TNetwork::TFileHolder_ptr;
+using ::STI::TNetwork::TFileHolder_var;
 using ::STI::TNetwork::TFileHolder;
 using STI::Utils::FileHolder;
 using STI::Network::convertBuffer;
 
 
-RemoteFileHolder::RemoteFileHolder(TFileHolder_ptr fileHolder)
-: STI::TNetwork::TReferenceHolder<TFileHolder>(fileHolder, fileMutex)
+RemoteFileHolder::RemoteFileHolder(TFileHolder_var fileHolder)
+: STI::TNetwork::TReferenceHolder<TFileHolder>(fileHolder)
 {
 }
 

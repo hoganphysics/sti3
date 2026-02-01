@@ -10,6 +10,8 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/PlayJobStatus.h>
+#include <sti/engine/ParseResult.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Shot.h>
@@ -18,10 +20,10 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
-#include "ORBManager.h"
 #include "RemoteResultsCollector.h"
 
 #include <memory>
@@ -68,7 +70,7 @@ using STI::Engine::PlayJobStatus;
 using STI::TNetwork::TPlayJobStatus;
 using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
-
+using STI::TNetwork::TEngineState;
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -78,15 +80,13 @@ TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Devi
 	if (device != 0 
 		&& device->getEngineScheduler(engineScheduler) 
 		&& engineScheduler->getDependencyParser(dependencyParser)) {
-		
-		dependencyParserServant = std::make_shared<TEventEngineDependencyParser_i>(dependencyParser);
-		STI::Network::ORBManager::ORBManager::activateServant(*dependencyParserServant);
+	
+		dependencyParserServantHolder.emplace(dependencyParser);
     }
 }
 
 TEventEngineScheduler_i::~TEventEngineScheduler_i()
 {
-    STI::Network::ORBManager::ORBManager::deactivateServant(this);
 }
 
 
@@ -218,11 +218,7 @@ TEngineJobStatus TEventEngineScheduler_i::getStatusSeqID(const ::STI::TNetwork::
 
 TEventEngineDependencyParser_ptr TEventEngineScheduler_i::getDependencyParser()
 {
-	if (dependencyParserServant == 0) {
-		return TEventEngineDependencyParser::_nil();
-	}
-
-	return dependencyParserServant->_this();
+	return dependencyParserServantHolder.getRefPtr();
 }
 
 ::CORBA::Boolean TEventEngineScheduler_i::getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job)
@@ -314,6 +310,65 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 }
 
 
+void TEventEngineScheduler_i::getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs)
+{
+	std::set<STI::Engine::EngineID> ids;
+	engineIDs = new STI::TNetwork::TEngineIDSeq();
+
+	if (engineScheduler != 0) {
+		engineScheduler->getEngineIDs(ids);
+
+		STI::TNetwork::TEngineIDSeq_var tEngineIDseq_var(new STI::TNetwork::TEngineIDSeq);
+
+		convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(ids,
+			(_CORBA_Unbounded_Sequence<STI::TNetwork::TEngineID>&) tEngineIDseq_var);
+
+		(*engineIDs) = tEngineIDseq_var;
+	}
+}
+
+
+TEngineState TEventEngineScheduler_i::getEngineState(const ::STI::TNetwork::TEngineID& engineID)
+{
+	TEngineState tState = STI::TNetwork::TEngineState::EngineUnknown;
+
+	if (engineScheduler != 0) {
+		auto state = engineScheduler->getEngineState(convert<TEngineID, STI::Engine::EngineID>(engineID));
+		convert<STI::Engine::EngineState, TEngineState>(state, tState);
+	}
+	return tState;
+}
+
+void TEventEngineScheduler_i::getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates)
+{
+	engineStates = new STI::TNetwork::TEngineStateTupleSeq();
+
+	if (engineScheduler != 0) {
+		std::map<STI::Engine::EngineID, STI::Engine::EngineState> states;
+		engineScheduler->getEngineStates(states);
+
+		STI::TNetwork::TEngineStateTupleSeq_var tEngineStateTupleSeq_var(new STI::TNetwork::TEngineStateTupleSeq);
+
+		convert<std::map<STI::Engine::EngineID, STI::Engine::EngineState>, TEngineStateTupleSeq>(states, tEngineStateTupleSeq_var);
+
+		(*engineStates) = tEngineStateTupleSeq_var;
+	}
+}
+
+void TEventEngineScheduler_i::clearEngine(const ::STI::TNetwork::TEngineID& engineID) 
+{
+	if (engineScheduler != 0) {
+		engineScheduler->clearEngine(convert<TEngineID, STI::Engine::EngineID>(engineID));
+	}
+}
+
+void TEventEngineScheduler_i::stopEngine(const ::STI::TNetwork::TEngineID& engineID) 
+{
+	if (engineScheduler != 0) {
+		engineScheduler->stopEngine(convert<TEngineID, STI::Engine::EngineID>(engineID));
+	}
+}
+
 ::CORBA::Boolean TEventEngineScheduler_i::getParseResult(const ::STI::TNetwork::TParseID& parseID, 
 															::STI::TNetwork::TParseResult_out tParseResult)
 {
@@ -332,6 +387,29 @@ TEventEngineJobSeq* TEventEngineScheduler_i::getJobs(::STI::TNetwork::TEventEngi
 		success = convert<std::shared_ptr<ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);
 
 		(*tParseResult) = tParseResult_var;
+
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngineScheduler_i::getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult)
+{
+	bool success = false;
+	shotResult = new STI::TNetwork::TShotResult();
+
+	if (engineScheduler != 0) {
+
+		STI::TNetwork::TShotResult_var tShotResult_var(new STI::TNetwork::TShotResult);
+		std::shared_ptr<STI::Engine::ShotResult> localShotResult;
+
+		success = engineScheduler->getShotResult(
+			convert<TShotID, STI::Engine::ShotID>(shotID),
+			localShotResult);
+
+		success = convert<std::shared_ptr<STI::Engine::ShotResult>, ::STI::TNetwork::TShotResult>(localShotResult, tShotResult_var);
+
+		(*shotResult) = tShotResult_var;
 
 	}
 

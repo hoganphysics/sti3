@@ -24,7 +24,7 @@ class RemoteFileHolder : public STI::Utils::FileHolder,
 {
 public:
 
-    RemoteFileHolder(::STI::TNetwork::TFileHolder_ptr fileHolder);
+    RemoteFileHolder(::STI::TNetwork::TFileHolder_var fileHolder);
     ~RemoteFileHolder();
 
     STI::Utils::FileID getID() const;

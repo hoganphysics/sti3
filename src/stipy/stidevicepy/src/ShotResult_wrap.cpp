@@ -56,6 +56,19 @@ void init_ShotResult(py::module& m)
         .def_readonly("sid", &ShotResult::sid)
         .def_readonly("playTime", &ShotResult::playTime)
         .def_readonly("attributes", &ShotResult::attributes)
+        .def_readonly("messages", &ShotResult::messages)
+        .def("getAttributes",
+            [](ShotResult& self) {
+                py::dict attrs;
+                for (auto& dev : self.attributes) {
+                    py::dict devAttrs;
+                    for (auto& attr : dev.second) {
+                        devAttrs[py::str(attr.first)] = py::str(attr.second);
+                    }
+                    attrs[py::cast(dev.first)] = devAttrs;
+                }
+                return attrs;
+            })
         .def("getMeasurements",
             [](ShotResult& self) -> STI::Engine::MeasurementMap {
                 if (self.measurements != 0) {

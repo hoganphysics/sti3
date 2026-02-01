@@ -25,7 +25,7 @@ class RemoteEventEngineScheduler : public STI::Engine::EventEngineScheduler,
 {
 public:
 
-    RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler);
+    RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler);
     ~RemoteEventEngineScheduler();
 
     STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot);
@@ -58,7 +58,15 @@ public:
 
 	void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) {}
 	
+    void getEngineIDs(std::set<STI::Engine::EngineID>& engineIDs) const;
+    STI::Engine::EngineState getEngineState(const STI::Engine::EngineID& engineID) const;
+    void getEngineStates(std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates) const;
+
+    void clearEngine(const STI::Engine::EngineID& engineID);
+    void stopEngine(const STI::Engine::EngineID& engineID);
+
     bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
+    bool getShotResult(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const;
 
     bool ping() const;
 

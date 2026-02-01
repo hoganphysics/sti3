@@ -17,7 +17,7 @@ class RemoteTriggerCallback : public STI::Engine::TriggerCallback,
 {
 public:
 
-	RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_ptr trigger);
+	RemoteTriggerCallback(::STI::TNetwork::TTriggerCallback_var trigger);
     ~RemoteTriggerCallback();
 
 	void ready(const STI::Device::DeviceID& id);

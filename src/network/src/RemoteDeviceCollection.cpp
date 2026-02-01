@@ -17,8 +17,8 @@ using STI::TNetwork::TDeviceCollection;
 using STI::TNetwork::TReferenceHolder;
 
 
-RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_ptr deviceCollection)
-: TReferenceHolder<TDeviceCollection>(deviceCollection, collectionMutex)
+RemoteDeviceCollection::RemoteDeviceCollection(::STI::TNetwork::TDeviceCollection_var deviceCollection)
+: TReferenceHolder<TDeviceCollection>(deviceCollection)
 {
 }
 

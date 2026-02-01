@@ -21,13 +21,14 @@ class RemoteResultsCollector : public STI::Engine::ResultsCollector,
 {
 public:
 
-	RemoteResultsCollector(::STI::TNetwork::TResultsCollector_ptr collector);
+	RemoteResultsCollector(::STI::TNetwork::TResultsCollector_var collector);
     ~RemoteResultsCollector();
 
     STI::Engine::ShotID getShotID() const;
 
     bool addMeasurements(const STI::Device::DeviceID& deviceID, const STI::Engine::MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
+    bool addMessages(const std::vector<STI::Engine::EnginePlayingMessage>& messages);
 
 private:
 

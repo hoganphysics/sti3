@@ -21,7 +21,7 @@ class RemoteTaskManager : public STI::Device::TaskManager,
 {
 public:
 
-    RemoteTaskManager(::STI::TNetwork::TTaskManager_ptr manager);
+    RemoteTaskManager(::STI::TNetwork::TTaskManager_var manager);
     ~RemoteTaskManager();
 
     void getTaskIDs(std::set<std::string>& ids) const;

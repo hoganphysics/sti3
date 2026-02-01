@@ -61,6 +61,8 @@ using STI::TNetwork::TEventEngineJobList;
 using STI::Engine::EventEngineJobList;
 using STI::Engine::EngineParsingMessageCount;
 using STI::TNetwork::TEngineParsingMessageCount;
+using STI::Engine::EnginePlayingMessageCount;
+using STI::TNetwork::TEnginePlayingMessageCount;
 
 using STI::Engine::EventEngine;
 using STI::TNetwork::TEventEngine_var;
@@ -72,7 +74,9 @@ using STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EngineJobStatus;
 using STI::TNetwork::TParsedVar;
 using STI::Engine::ParsedVar;
-
+using STI::TNetwork::TEngineStateTupleSeq;
+using STI::Engine::EngineID;
+using STI::Engine::EngineState;
 
 
 template<>
@@ -464,6 +468,7 @@ bool STI::Network::convert<TEngineSchedulerMessage, std::shared_ptr<EngineSchedu
 		convert<STI::TNetwork::TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tMessage.upstreamPartnerEvents, deviceMessage->upstreamPartnerEvents);
 
 		convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tMessage.messages, deviceMessage->messages);
+		convert<STI::TNetwork::TEnginePlayingMessage, STI::Engine::EnginePlayingMessage>(tMessage.playMessages, deviceMessage->playMessages);
 		convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tMessage.engineState, deviceMessage->engineState);
 	}
 
@@ -493,6 +498,7 @@ bool STI::Network::convert<std::shared_ptr<EngineSchedulerMessage>, TEngineSched
 	convert<std::shared_ptr<STI::Engine::RawEventGroup>, STI::TNetwork::TRawEventGroup>(deviceMessage->upstreamPartnerEvents, tMessage.upstreamPartnerEvents);
 	tMessage.type = convert<STI::Device::EngineSchedulerMessage::SchedulerMessageType, STI::TNetwork::TSchedulerMessageType>(deviceMessage->schedulerMessageType);
 	convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(deviceMessage->messages, tMessage.messages);
+	convert<STI::Engine::EnginePlayingMessage, STI::TNetwork::TEnginePlayingMessage>(deviceMessage->playMessages, tMessage.playMessages);
 	convert<STI::Engine::EngineState, STI::TNetwork::TEngineState>(deviceMessage->engineState, tMessage.engineState);
 
 	STI::TNetwork::TEventEngine_var tEngine;
@@ -821,14 +827,15 @@ bool STI::Network::convert<TEngineStateMessage, std::shared_ptr<EngineStateMessa
 		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
 		);
 
-	for(unsigned i = 0; i < tMessage.engineStates.length(); ++i) {
+	// for(unsigned i = 0; i < tMessage.engineStates.length(); ++i) {
 
-		deviceMessage->engineStates.insert(
-			std::pair<EngineID, EngineState>(
-				convert<TEngineID, EngineID>(tMessage.engineStates[i].engineID),
-				convert<TEngineState, EngineState>(tMessage.engineStates[i].state)
-			));
-	}
+	// 	deviceMessage->engineStates.insert(
+	// 		std::pair<EngineID, EngineState>(
+	// 			convert<TEngineID, EngineID>(tMessage.engineStates[i].engineID),
+	// 			convert<TEngineState, EngineState>(tMessage.engineStates[i].state)
+	// 		));
+	// }
+	convert<TEngineStateTupleSeq, std::map<EngineID, EngineState>>(tMessage.engineStates, deviceMessage->engineStates);
 
 	return (deviceMessage != 0);
 }
@@ -841,19 +848,57 @@ bool STI::Network::convert<std::shared_ptr<EngineStateMessage>, TEngineStateMess
 		return false;
 	}
 
-	tMessage.engineStates.length( static_cast<unsigned>(deviceMessage->engineStates.size()) );
+	// tMessage.engineStates.length( static_cast<unsigned>(deviceMessage->engineStates.size()) );
+
+	// unsigned i = 0;
+	// for (auto& tuple : deviceMessage->engineStates) {
+	// 	if (i < tMessage.engineStates.length()) {
+	// 		tMessage.engineStates[i].engineID = convert<EngineID, TEngineID>(tuple.first);
+	// 		tMessage.engineStates[i].state = convert<EngineState, TEngineState>(tuple.second);
+	// 	}
+	// 	++i;
+	// }
+	return convert<std::map<EngineID, EngineState>, TEngineStateTupleSeq>(deviceMessage->engineStates, tMessage.engineStates);
+
+}
+
+
+//EngineState Map
+template<>
+bool STI::Network::convert<TEngineStateTupleSeq, std::map<EngineID, EngineState>>(
+	const TEngineStateTupleSeq& tEngineStateTupleSeq, std::map<EngineID, EngineState>& engineStates)
+{
+	engineStates.clear();
+
+	for(unsigned i = 0; i < tEngineStateTupleSeq.length(); ++i) {
+
+		engineStates.insert(
+			std::pair<EngineID, EngineState>(
+				convert<TEngineID, EngineID>(tEngineStateTupleSeq[i].engineID),
+				convert<TEngineState, EngineState>(tEngineStateTupleSeq[i].state)
+			));
+	}
+	return true;
+}
+
+template<>
+bool STI::Network::convert<std::map<EngineID, EngineState>, TEngineStateTupleSeq>(
+	const std::map<EngineID, EngineState>& engineStates, TEngineStateTupleSeq& tEngineStateTupleSeq)
+{
+	tEngineStateTupleSeq.length( static_cast<unsigned>(engineStates.size()) );
 
 	unsigned i = 0;
-	for (auto& tuple : deviceMessage->engineStates) {
-		if (i < tMessage.engineStates.length()) {
-			tMessage.engineStates[i].engineID = convert<EngineID, TEngineID>(tuple.first);
-			tMessage.engineStates[i].state = convert<EngineState, TEngineState>(tuple.second);
+	for (auto& tuple : engineStates) {
+		if (i < tEngineStateTupleSeq.length()) {
+			tEngineStateTupleSeq[i].engineID = convert<EngineID, TEngineID>(tuple.first);
+			tEngineStateTupleSeq[i].state = convert<EngineState, TEngineState>(tuple.second);
 		}
 		++i;
 	}
 
 	return true;
 }
+
 
 //EngineJobUpdateDeviceMessage
 template<>
@@ -881,6 +926,7 @@ bool STI::Network::convert<TEngineJobUpdateDeviceMessage, std::shared_ptr<Engine
 
     convert<TParsedVar, ParsedVar>(tMessage.overwrittenVars, deviceMessage->overwrittenVars);
 	convert<TEngineParsingMessageCount, EngineParsingMessageCount>(tMessage.parsingMessageCount, deviceMessage->parsingMessageCount);
+	convert<TEnginePlayingMessageCount, EnginePlayingMessageCount>(tMessage.playingMessageCount, deviceMessage->playingMessageCount);
 
 	return (deviceMessage != 0);
 }
@@ -903,6 +949,7 @@ bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngin
 	tMessage.engineID = convert<EngineID, TEngineID>(deviceMessage->engineID);
 	tMessage.shotConfig = convert<STI::Engine::ShotConfig, STI::TNetwork::TShotConfig>(deviceMessage->shotConfig);
 	convert<EngineParsingMessageCount, TEngineParsingMessageCount>(deviceMessage->parsingMessageCount, tMessage.parsingMessageCount);
+	convert<EnginePlayingMessageCount, TEnginePlayingMessageCount>(deviceMessage->playingMessageCount, tMessage.playingMessageCount);
 	convert<ParsedVar, TParsedVar>(deviceMessage->overwrittenVars, tMessage.overwrittenVars);
 
 	// return convert<std::shared_ptr<EventEngineJob>, TEventEngineJob>(deviceMessage->getEngineJob(), tMessage.engineJob);
@@ -963,4 +1010,3 @@ bool STI::Network::convert<std::shared_ptr<EngineJobUpdateDeviceMessage>, TEngin
 
 // 	return type;
 // }
-

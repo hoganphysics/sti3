@@ -1,6 +1,7 @@
 #include "LegacyShotRepository.h"
 
 #include "LegacyExperimentXMLBuilder.h"
+#include "LegacyExperimentXMLReader.h"
 #include "LegacyParseXMLBuilder.h"
 #include "LegacySequenceXMLBuilder.h"
 
@@ -143,17 +144,13 @@ bool LegacyShotRepository::getShotResult(const ShotID& id, std::shared_ptr<ShotR
 
     auto paths = makePaths(id.submissionTime);
 
-    // std::filesystem::path serializePath = paths.dataPath;
-    // serializePath /= archiveFilename;
     std::filesystem::path serializePath = paths.experimentPath;
     serializePath /= makeShotFilename(id);
-    {
-        // std::ifstream file( serializePath.string() );
-        // cereal::XMLInputArchive archive( file );  
-        
-        // shotResult = std::make_shared<STI::Engine::ShotResult>();
 
-        // archive(shotResult);
+    LegacyExperimentXMLReader reader(serializePath.string());
+    if (!reader.readShotResult(id, shotResult)) {
+        shotResult.reset();
+        return false;
     }
 
     return (shotResult != 0);

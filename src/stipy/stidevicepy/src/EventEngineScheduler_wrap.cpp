@@ -4,12 +4,14 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/EngineState.h>
 
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParsedDependencyTree.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventGroup.h>
@@ -18,6 +20,7 @@
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/device/DeviceIDIndexedGraph.h>
 
 #include "LocalShot.h"
@@ -28,6 +31,7 @@
 #include <sstream>
 #include <set>
 #include <vector>
+#include <map>
 
 // #include <iostream>
 
@@ -60,6 +64,8 @@ using STI::Engine::EventEngineJob;
 using STI::Engine::EngineState;
 using STI::Utils::DependencyTree;
 using STI::Device::DeviceID;
+using STI::Engine::EngineID;
+
 
 void init_EventEngineScheduler(py::module& m)
 {
@@ -228,6 +234,7 @@ void init_EventEngineScheduler(py::module& m)
         //         }
         //         return messageList;
         //     })
+        .def("getPlayMessages", &EventEngineJob::getPlayMessages)
         ;
 
     py::class_<STI::Engine::ParseJobStatus>(m, "ParseJobStatus")
@@ -317,6 +324,42 @@ void init_EventEngineScheduler(py::module& m)
                 }
 
                 return jobIDvec;
+            })
+        .def("getEngineState", &EventEngineScheduler::getEngineState)
+        .def("getEngineIDs",
+            [](EventEngineScheduler& self) {
+                std::set<EngineID> engineIDs;
+
+                self.getEngineIDs(engineIDs);
+                std::vector<EngineID> engineIDvec;
+
+                for(auto& id : engineIDs) {
+                    engineIDvec.push_back(id);
+                }
+
+                return engineIDvec;
+            })
+        .def("getEngineStates",
+            [](EventEngineScheduler& self) {
+                std::map<EngineID, EngineState> engineStates;
+
+                self.getEngineStates(engineStates);
+
+                return engineStates;
+            })
+        .def("clearEngine", &EventEngineScheduler::clearEngine)
+        .def("stopEngine", &EventEngineScheduler::stopEngine)
+        .def("getParseResult",
+            [](EventEngineScheduler& self, const STI::Engine::ParseID& parseID) {
+                std::shared_ptr<STI::Engine::ParseResult> parseResult;
+                bool found = self.getParseResult(parseID, parseResult);
+                return parseResult;
+            })
+        .def("getShotResult",
+            [](EventEngineScheduler& self, const STI::Engine::ShotID& shotID) {
+                std::shared_ptr<STI::Engine::ShotResult> shotResult;
+                bool found = self.getShotResult(shotID, shotResult);
+                return shotResult;
             })
         ;
 

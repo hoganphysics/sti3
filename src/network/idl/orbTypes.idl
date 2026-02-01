@@ -262,6 +262,7 @@ module TNetwork
 	{
 		long engineNumber;
 	};
+	typedef sequence<TEngineID> TEngineIDSeq;
 
 	enum TEngineState { EngineIdle, EngineParsing, EngineParsed, EnginePreparingPlay, EnginePlayReady, EngineWaitingForTrigger, EnginePlaying, EnginePaused, EngineUnknown, EngineMissing, EngineError };
 
@@ -522,6 +523,20 @@ module TNetwork
 
 	typedef sequence<TEngineParsingMessage> TEngineParsingMessageSeq;
 
+	enum TPlayingMessageType { PlayingError, PlayingWarning, PlayingInformation };
+	
+	struct TEnginePlayingMessage
+	{
+		TPlayingMessageType type;
+
+		TDeviceID sourceID;
+		short id_code;
+		string name;
+		string message;
+	};
+
+
+	typedef sequence<TEnginePlayingMessage> TEnginePlayingMessageSeq;
 
 	struct TEventEngineJob
 	{
@@ -537,6 +552,7 @@ module TNetwork
 		TDeviceIDSeq missingTargetIDs;
 
 		TEngineParsingMessageSeq messages;
+		TEnginePlayingMessageSeq playingMessages;
 	};
 	typedef sequence<TEventEngineJob> TEventEngineJobSeq;
 
@@ -561,6 +577,7 @@ module TNetwork
 		TRawEventGroup upstreamPartnerEvents;
 
 		TEngineParsingMessageSeq messages;
+		TEnginePlayingMessageSeq playMessages;
 
 		TEngineState engineState;
 	};
@@ -569,6 +586,13 @@ module TNetwork
 
 
 	struct TEngineParsingMessageCount
+	{
+		short errorCount;
+		short warningCount;
+		short infoCount;
+	};
+
+	struct TEnginePlayingMessageCount
 	{
 		short errorCount;
 		short warningCount;
@@ -591,6 +615,7 @@ module TNetwork
 		TParsedVarSeq overwrittenVars;
 
 		TEngineParsingMessageCount parsingMessageCount;
+		TEnginePlayingMessageCount playingMessageCount;
 	};
 
 	struct TAttributeTuple
@@ -714,6 +739,7 @@ module TNetwork
 		// TMeasurementSeq measurements;
 		TDeviceIDMeasurementsTupleSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
+		TEnginePlayingMessageSeq messages;
 
 		TShotResultRecord shotResultRecord;
 	};

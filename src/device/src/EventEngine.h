@@ -39,6 +39,8 @@ public:
 	virtual void pause() = 0;
 	virtual void unpause(bool retrigger) = 0;
 
+	virtual void clear() = 0;
+
     virtual STI::Device::DeviceID getDeviceID() const = 0;
 	virtual STI::Engine::EngineState getState() const = 0;
 

@@ -5,6 +5,7 @@
 #include "LocalResultsCollector.h"
 #include "TResultsCollector_i.h"
 #include "generated/deviceNet.h"
+#include "ServantHolder.h"
 
 #include <memory>
 
@@ -31,7 +32,8 @@ public:
 
 private:
 
-    STI::TNetwork::TResultsCollector_i resultsCollectorServant;
+    // STI::TNetwork::TResultsCollector_i resultsCollectorServant;
+    ServantHolder<STI::TNetwork::TResultsCollector_i, STI::TNetwork::TResultsCollector> resultsCollectorServantHolder;
 };
 
 

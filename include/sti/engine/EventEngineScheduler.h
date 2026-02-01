@@ -5,11 +5,13 @@
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/device/DeviceTrace.h>
 #include <sti/fwd/RawEvent_fwd.h>
+#include <sti/engine/EngineID.h>
+#include <sti/engine/EngineState.h>
 #include <sti/engine/EventEngineJobList.h>
 
 #include <memory>
 #include <set>
-
+#include <map>
 
 namespace STI
 {
@@ -24,6 +26,7 @@ class ParseID;
 class EngineJobID;
 class EventEngineFactory;
 class ShotID;
+class ShotResult;
 class EngineParsingMessage;
 class ResultsCollector;
 class ResultTicket;
@@ -73,7 +76,15 @@ public:
 
    	virtual void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) = 0;
 
+    virtual void getEngineIDs(std::set<EngineID>& engineIDs) const = 0;
+    virtual EngineState getEngineState(const EngineID& engineID) const = 0;
+    virtual void getEngineStates(std::map<EngineID, EngineState>& engineStates) const = 0;
+
+    virtual void clearEngine(const EngineID& engineID) = 0;
+    virtual void stopEngine(const EngineID& engineID) = 0;
+
     virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
+    virtual bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const = 0;
 
 };
 

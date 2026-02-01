@@ -18,7 +18,7 @@ class RemotePersistenceManager : public STI::Device::PersistenceManager,
 {
 public:
 
-	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_ptr manager);
+	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager);
     ~RemotePersistenceManager();
 
     bool findShot(const STI::Engine::ShotID& sid);

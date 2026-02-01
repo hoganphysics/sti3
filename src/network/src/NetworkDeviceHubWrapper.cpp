@@ -9,6 +9,7 @@
 #include "ORBManager.h"
 
 #include <memory>
+#include <iostream>
 
 using STI::Network::NetworkDevice;
 using STI::Network::NetworkDeviceHubWrapper;
@@ -20,10 +21,8 @@ using STI::Network::NodeWalker;
 
 
 NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDeviceHub>& hub)
-	: localHub(hub), deviceHubServant(hub)
+	: localHub(hub), deviceHubServantHolder(new STI::TNetwork::TDeviceHub_i(hub))
 {
-	STI::Network::ORBManager::ORBManager::activateServant(deviceHubServant);
-
 	//The LocalHub might have (local) nodes and hubs already attached that must be wrapped.
 	//For all hubs currently stored by localHub, replace with NetworkDeviceHubWrapper (this is recursive)
 
@@ -44,7 +43,6 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDevi
 				wrappedHub = std::make_shared<NetworkDeviceHubWrapper>(attachedLocalHub);	//recursive call
 				addHub(hubID, wrappedHub);	//replaces with new wrapped version
 			}
-
 		}
 	}
 
@@ -63,8 +61,6 @@ NetworkDeviceHubWrapper::NetworkDeviceHubWrapper(const std::shared_ptr<LocalDevi
 
 NetworkDeviceHubWrapper::~NetworkDeviceHubWrapper()
 {
-	//STI::TNetwork::TDeviceHub_i deviceHubServant;
-//	deviceHubServant._remove_ref();
 }
 
 bool NetworkDeviceHubWrapper::addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node)
@@ -158,7 +154,6 @@ void NetworkDeviceHubWrapper::walk(NodeWalker<STI::Device::DeviceID, STI::Device
 	localHub->walk(root, trace);
 }
 
-
 bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,
 	STI::TNetwork::TDeviceHub_var& tDeviceHub)
 {
@@ -170,9 +165,10 @@ bool NetworkDeviceHubWrapper::getTDeviceHubReference(const typename std::shared_
 
 	if (networkDeviceHubWrapper) {		//check dynamic_pointer_cast
 
-		tDeviceHub = networkDeviceHubWrapper->deviceHubServant._this();
+		tDeviceHub = networkDeviceHubWrapper->deviceHubServantHolder.getRefVar();
 		success = true;
 	}
 
 	return success && !CORBA::is_nil(tDeviceHub);
 }
+

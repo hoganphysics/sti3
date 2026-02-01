@@ -34,6 +34,7 @@ void init_ResultTicket(py::module& m)
         .def("measurements", py::overload_cast<const std::string&>(&STI::Python::PyResultTicket::measurements))
         .def("getParseResult", &STI::Python::PyResultTicket::getParseResult)
         .def("getShotResult", &STI::Python::PyResultTicket::getShotResult)
+        .def("getMessages", &STI::Python::PyResultTicket::getMessages)
         .def("__repr__",
             [](const PyResultTicket& self) {
                 std::stringstream s;

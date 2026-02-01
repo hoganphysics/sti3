@@ -2,6 +2,7 @@
 #include "SynchronousEventPy.h"
 #include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/utils/utils.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/Measurement.h>
 
@@ -34,6 +35,10 @@ void init_SynchronousEvent(py::module& m)
         .def("getTime", &SynchronousEventAdapter::getTime)
         .def("getMeasurements", &SynchronousEventAdapter::getMeasurements)
         .def("addMeasurement", &SynchronousEventAdapter::addMeasurement)    //py::call_guard<py::gil_scoped_release>()
+        .def("addError", &SynchronousEventAdapter::addError, py::return_value_policy::reference_internal)
+        .def("addWarning", &SynchronousEventAdapter::addWarning, py::return_value_policy::reference_internal)
+        .def("addInfoMessage", &SynchronousEventAdapter::addInfoMessage, py::return_value_policy::reference_internal)
+        .def("getMessages", &SynchronousEventAdapter::getMessages)
 
         .def("loadEvent", &SynchronousEventAdapter::loadEvent)
         .def("play", &SynchronousEventAdapter::play)

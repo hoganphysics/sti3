@@ -64,6 +64,7 @@ class EventEngineManager;
 class LocalEventEngine;
 class ParseID;
 class Shot;
+class ShotResult;
 class LocalEventEngineJob;
 class SequenceJob;
 class EngineConflictPolicy;
@@ -113,9 +114,18 @@ public:
  
     void addEngine(const EngineID& engineID, DeviceEventParser* deviceParser, EngineTriggerTarget* triggerTarget);
 
+    void getEngineIDs(std::set<EngineID>& engineIDs) const;
+    EngineState getEngineState(const EngineID& engineID) const;
+
+    void clearEngine(const EngineID& engineID);
+    void stopEngine(const EngineID& engineID);
+
+    void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
+
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
 
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
+    bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const;
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {
@@ -130,7 +140,12 @@ public:
     
     void parseJob(const std::shared_ptr<EventEngineJob>& job);
 
+    static void definePlayMessageIDs();
+    static const std::map<std::string, unsigned>& getPlayMessageIDs();
+
 private:
+
+    static std::map<std::string, unsigned> playMessageIDs;
 
     void addSequenceJob(const std::shared_ptr<SequenceJob>& job);
     void refreshSequenceJobs();
@@ -164,6 +179,7 @@ private:
     int getTargetPool(const EngineJobID& jobID);
     bool getParsedEngine(const ParseID& parseID, std::shared_ptr<LocalEventEngine>& engine) const;
     bool getManager(const EngineJobID& jobID, std::shared_ptr<EventEngineManager>& manager);
+    bool getManager(const std::shared_ptr<EventEngineJob>& job, std::shared_ptr<EventEngineManager>& manager);
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
@@ -193,6 +209,9 @@ private:
 
     mutable std::mutex parseResultMutex;
     mutable bool searchingParseResult;
+
+    mutable std::mutex shotResultMutex;
+    mutable bool searchingShotResult;
 
 
     class EngineSchedulerMessageListenerDelegate : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>

@@ -6,6 +6,7 @@
 #include "EventEngine.h"
 #include "TTriggerCallback_i.h"
 #include "TReferenceHolder.h"
+#include "ServantHolder.h"
 
 #include <memory>
 #include <mutex>
@@ -21,7 +22,7 @@ class RemoteEventEngine : public STI::Engine::EventEngine,
 {
 public:
 
-	RemoteEventEngine(::STI::TNetwork::TEventEngine_ptr engine);
+	RemoteEventEngine(::STI::TNetwork::TEventEngine_var engine);
     ~RemoteEventEngine();
 
 	void play(STI::Engine::EventEngineJob& job);
@@ -34,6 +35,8 @@ public:
 	void pause();
 	void unpause(bool retrigger);
 
+	void clear();
+
     STI::Device::DeviceID getDeviceID() const;
 
 	STI::Engine::EngineState getState() const;
@@ -44,7 +47,9 @@ public:
 
 private:
 
-    std::shared_ptr<STI::TNetwork::TTriggerCallback_i> triggerCallbackServant;
+    // std::shared_ptr<STI::TNetwork::TTriggerCallback_i> triggerCallbackServant;
+	// ServantHolder<STI::TNetwork::TTriggerCallback_i, STI::TNetwork::TTriggerCallback> triggerCallbackServantHolder;
+	ServantHolder<STI::TNetwork::TTriggerCallback_i, STI::TNetwork::TTriggerCallback> triggerCallbackServantHolder;
 
 	mutable std::mutex engineMutex;
 };

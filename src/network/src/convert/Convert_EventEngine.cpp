@@ -10,6 +10,8 @@
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/engine/EnginePlayingMessage.h>
+#include <sti/engine/EnginePlayingMessageCount.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/Measurement.h>
@@ -80,6 +82,12 @@ using STI::Engine::EngineParsingMessageCount;
 using STI::TNetwork::TEngineParsingMessageCount;
 using STI::Engine::ParsingMessageType;
 using STI::TNetwork::TParsingMessageType;
+using STI::Engine::EnginePlayingMessage;
+using STI::TNetwork::TEnginePlayingMessage;
+using STI::Engine::EnginePlayingMessageCount;
+using STI::TNetwork::TEnginePlayingMessageCount;
+using STI::Engine::PlayingMessageType;
+using STI::TNetwork::TPlayingMessageType;
 using STI::Engine::ParseID; 
 using STI::TNetwork::TParseID;
 using STI::Engine::ShotID;
@@ -602,7 +610,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     std::shared_ptr<Shot> shot;
     STI::TNetwork::TShot tShot;
 
-    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
+    ::STI::TNetwork::TShotCallback_var tShotCallback;
     
     bool shotMissing = engineJob.getStatus() == EngineJobStatus::NotFound || 
                        engineJob.getStatus() == EngineJobStatus::Archived;
@@ -630,6 +638,7 @@ bool STI::Network::convert<EventEngineJob, TEventEngineJob>(const EventEngineJob
     convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(engineJob.getMissingTargetIDs(), tEngineJob.missingTargetIDs);
 
     convert<STI::Engine::EngineParsingMessage, STI::TNetwork::TEngineParsingMessage>(engineJob.getParsingMessages(), tEngineJob.messages);
+    convert<STI::Engine::EnginePlayingMessage, STI::TNetwork::TEnginePlayingMessage>(engineJob.getPlayMessages(), tEngineJob.playingMessages);
 
     return true;
 }
@@ -694,6 +703,10 @@ bool STI::Network::convert<TEventEngineJob, std::shared_ptr<EventEngineJob>>(con
     std::vector<EngineParsingMessage> messages;
     convert<STI::TNetwork::TEngineParsingMessage, STI::Engine::EngineParsingMessage>(tEngineJob.messages, messages);
     engineJob->addMessages(messages);
+
+    std::vector<EnginePlayingMessage> playMessages;
+    convert<STI::TNetwork::TEnginePlayingMessage, STI::Engine::EnginePlayingMessage>(tEngineJob.playingMessages, playMessages);
+    engineJob->addPlayMessages(playMessages);
 
     return success && (engineJob != 0);
 }
@@ -1433,7 +1446,7 @@ bool STI::Network::convert<TShot, std::shared_ptr<Shot>>(const TShot& tShot, std
 template<>
 bool STI::Network::convert<std::shared_ptr<Shot>, TShot>(const std::shared_ptr<Shot>& shot, TShot& tShot)
 {
-    ::STI::TNetwork::TShotCallback_ptr tShotCallback;
+    ::STI::TNetwork::TShotCallback_var tShotCallback;
 
     if (shot != 0 && TShotRefInterface::getTShotReference(shot, tShotCallback)) {
 
@@ -1620,6 +1633,114 @@ ParsingMessageType STI::Network::convert<TParsingMessageType, ParsingMessageType
 }
 
 
+//EnginePlayingMessage
+template<>
+bool STI::Network::convert<EnginePlayingMessage, TEnginePlayingMessage>(const EnginePlayingMessage& playingMessage, TEnginePlayingMessage& tPlayingMessage)
+{
+    tPlayingMessage.type = convert<PlayingMessageType, TPlayingMessageType>(playingMessage.getType());
+    tPlayingMessage.id_code = static_cast<::CORBA::Short>(playingMessage.getIDCode());
+    tPlayingMessage.sourceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(playingMessage.getSourceID());
+    convert<std::string, ::CORBA::String_member>(playingMessage.getName(), tPlayingMessage.name);
+    convert<std::string, ::CORBA::String_member>(playingMessage.getMessage(), tPlayingMessage.message);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TEnginePlayingMessage, EnginePlayingMessage>(const TEnginePlayingMessage& tPlayingMessage, EnginePlayingMessage& playingMessage)
+{
+    playingMessage = convert<TEnginePlayingMessage, EnginePlayingMessage>(tPlayingMessage);
+
+    return true;
+}
+
+template<>
+EnginePlayingMessage STI::Network::convert<TEnginePlayingMessage, EnginePlayingMessage>(const TEnginePlayingMessage& tPlayingMessage)
+{
+    EnginePlayingMessage playingMessage(
+            convert<STI::TNetwork::TDeviceID, STI::Device::DeviceID>(tPlayingMessage.sourceID),
+            convert<TPlayingMessageType, PlayingMessageType>(tPlayingMessage.type),
+            static_cast<unsigned>(tPlayingMessage.id_code),
+            convert<::CORBA::String_member, std::string>(tPlayingMessage.name)
+            );
+
+    playingMessage.appendMessage( convert<::CORBA::String_member, std::string>(tPlayingMessage.message) );
+
+    return playingMessage;
+}
+
+
+//EnginePlayingMessageCount
+template<>
+bool STI::Network::convert<EnginePlayingMessageCount, TEnginePlayingMessageCount>(const EnginePlayingMessageCount& playingMessageCount, TEnginePlayingMessageCount& tPlayingMessageCount)
+{
+    tPlayingMessageCount.errorCount = static_cast<CORBA::Short>(playingMessageCount.errorCount);
+    tPlayingMessageCount.warningCount = static_cast<CORBA::Short>(playingMessageCount.warningCount);
+    tPlayingMessageCount.infoCount = static_cast<CORBA::Short>(playingMessageCount.infoCount);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TEnginePlayingMessageCount, EnginePlayingMessageCount>(const TEnginePlayingMessageCount& tPlayingMessageCount, EnginePlayingMessageCount& playingMessageCount)
+{
+    playingMessageCount.errorCount = static_cast<unsigned>(tPlayingMessageCount.errorCount);
+    playingMessageCount.warningCount = static_cast<unsigned>(tPlayingMessageCount.warningCount);
+    playingMessageCount.infoCount = static_cast<unsigned>(tPlayingMessageCount.infoCount);
+
+    return true;
+}
+
+
+//PlayingMessageType
+template<>
+TPlayingMessageType STI::Network::convert<PlayingMessageType, TPlayingMessageType>(const Engine::PlayingMessageType& messType)
+{
+    TPlayingMessageType tMessType;
+
+    switch (messType)
+    {
+    case PlayingMessageType::Error:
+        tMessType = TPlayingMessageType::PlayingError;
+        break;
+    case PlayingMessageType::Warning:
+        tMessType = TPlayingMessageType::PlayingWarning;
+        break;
+    case PlayingMessageType::Information:
+        tMessType = TPlayingMessageType::PlayingInformation;
+        break;
+    default:
+        tMessType = TPlayingMessageType::PlayingError;
+        break;
+    }
+
+    return tMessType;
+}
+
+template<>
+PlayingMessageType STI::Network::convert<TPlayingMessageType, PlayingMessageType>(const TNetwork::TPlayingMessageType& tMessType)
+{
+    PlayingMessageType messType;
+
+    switch (tMessType)
+    {
+    case TPlayingMessageType::PlayingError:
+        messType = PlayingMessageType::Error;
+        break;
+    case TPlayingMessageType::PlayingWarning:
+        messType = PlayingMessageType::Warning;
+        break;
+    case TPlayingMessageType::PlayingInformation:
+        messType = PlayingMessageType::Information;
+        break;
+    default:
+        messType = PlayingMessageType::Error;
+        break;
+    }
+
+    return messType;
+}
+
+
 //Measurement
 template<>
 bool STI::Network::convert<std::shared_ptr<Measurement>, TMeasurement>(
@@ -1707,5 +1828,3 @@ bool STI::Network::convert<std::shared_ptr<MeasurementMap>, TDeviceIDMeasurement
     }
     return true;
 }
-
-

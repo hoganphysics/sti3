@@ -9,6 +9,7 @@
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseResult.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/SequenceID.h>
@@ -17,6 +18,7 @@
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_DeviceMessage.h"
 
 #include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
@@ -70,8 +72,8 @@ using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
 
 
-RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_ptr scheduler)
-	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler, schedulerMutex)
+RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler)
+	: STI::TNetwork::TReferenceHolder<STI::TNetwork::TEventEngineScheduler>(scheduler)
 {
 	addDependent(remoteDependencyParser);
 }
@@ -528,6 +530,116 @@ std::vector<std::shared_ptr<EventEngineJob>> RemoteEventEngineScheduler::getJobs
 	return jobs;
 }
 
+
+void RemoteEventEngineScheduler::getEngineIDs(std::set<STI::Engine::EngineID>& engineIDs) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineIDSeq_var tEngineIDs(new STI::TNetwork::TEngineIDSeq);
+
+	try {
+		getTRef()->getEngineIDs(tEngineIDs);	//remote call
+
+		convert<STI::TNetwork::TEngineID, STI::Engine::EngineID>(tEngineIDs, engineIDs);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+STI::Engine::EngineState RemoteEventEngineScheduler::getEngineState(const STI::Engine::EngineID& engineID) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	STI::Engine::EngineState state = STI::Engine::EngineState::Unknown;
+
+	if (isDisabled()) return state;
+
+	try {
+		STI::TNetwork::TEngineState tEngineState = STI::TNetwork::TEngineState::EngineUnknown;
+
+		tEngineState = getTRef()->getEngineState(
+			convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(engineID));		//remote call
+
+        convert<STI::TNetwork::TEngineState, STI::Engine::EngineState>(tEngineState, state);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return state;
+}
+
+void RemoteEventEngineScheduler::getEngineStates(std::map<STI::Engine::EngineID, STI::Engine::EngineState>& engineStates) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TEngineStateTupleSeq_var tEngineStates(new STI::TNetwork::TEngineStateTupleSeq);
+
+	try {
+		getTRef()->getEngineStates(tEngineStates);	//remote call
+
+		convert<STI::TNetwork::TEngineStateTupleSeq, std::map<STI::Engine::EngineID, STI::Engine::EngineState>>(tEngineStates, engineStates);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::clearEngine(const STI::Engine::EngineID& engineID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->clearEngine(
+			convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(engineID));		//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::stopEngine(const STI::Engine::EngineID& engineID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	try {
+		getTRef()->stopEngine(
+			convert<STI::Engine::EngineID, STI::TNetwork::TEngineID>(engineID));		//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
 std::shared_ptr<Shot> RemoteEventEngineScheduler::createShot(const ShotConfig& shotConfig, 
 															 const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup)
 {
@@ -568,6 +680,37 @@ bool RemoteEventEngineScheduler::getParseResult(const ParseID& parseID, std::sha
 	return success;
 }
 
+bool RemoteEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TShotResult_var tShotResult(new STI::TNetwork::TShotResult);
+
+	bool success = false;
+
+	try {
+		success = getTRef()->getShotResult(convert<ShotID, TShotID>(shotID), tShotResult);		//remote call
+
+		success &= convert<STI::TNetwork::TShotResult, std::shared_ptr<STI::Engine::ShotResult>>(tShotResult, shotResult);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (!success) {
+		shotResult = std::make_shared<STI::Engine::ShotResult>();
+		shotResult->sid = shotID;
+	}
+
+	return success;
+}
+
 
 bool RemoteEventEngineScheduler::ping() const
 {
@@ -590,4 +733,3 @@ bool RemoteEventEngineScheduler::ping() const
 
 	return success;
 }
-

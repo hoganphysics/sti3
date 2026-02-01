@@ -27,7 +27,11 @@ template<>
 TDeviceTrace STI::Network::convert<DeviceTrace, TDeviceTrace>(const DeviceTrace& deviceTrace)
 {
     TDeviceTrace tTrace;
-    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceTrace.getIDs(), tTrace.ids);
+    
+    std::vector<STI::Device::DeviceID> ids;
+    deviceTrace.getIDs(ids);
+
+    convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(ids, tTrace.ids);
 	return tTrace;
 }
 
