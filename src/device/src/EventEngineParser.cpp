@@ -565,6 +565,7 @@ void EventEngineParser::defineErrorIDs()
 	errorIDs["Null event group"] 					= 22;
 	errorIDs["Dependency count failed"] 			= 23;
 	errorIDs["Bad engine state"] 					= 24;
+	errorIDs["Missing engine reference"] 			= 25;
 
 	errorIDs["Missing Channel"] 					= 30;
 	errorIDs["Incorrect Output Type"]  				= 31;

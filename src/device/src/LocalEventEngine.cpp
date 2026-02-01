@@ -34,7 +34,6 @@
 #include "LocalTriggerCallback.h"
 #include "MasterTrigger.h"
 
-#include <iostream>
 #include <memory>
 #include <thread>
 #include <iterator>
@@ -226,7 +225,6 @@ void LocalEventEngine::divideEvents(const std::shared_ptr<RawEventGroup>& eventG
 			else {
 				//abstract target
 				getAbstractTargetEventGroup( evt.getTarget().device() ).addEvent(evt);
-				// eventsByAbstractTarget[evt.getTarget().device()]->addEvent(evt);
 			}
 
 			if (handledEventGroup != 0) {
@@ -409,11 +407,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		parser.addParsingError("Bad engine state")
 			<< "Parsing aborted: The EventEngine was not able to change its state to Parsing. "
 			<< "EngineState: " << print(getState());
-		// job.addMessage(ParsingMessageType::Error, 24, "Bad engine state")
-		// 	<< "Parsing aborted: The EventEngine was not able to change its state to Parsing. "
-		// 	<< "EngineState: " << print(getState());
 		cancelParseJob(job);
-		// return;		//not recoverable
 	}
 
 	std::shared_ptr<Shot> shot;
@@ -422,10 +416,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		//Error: no parsed shot
 		parser.addParsingError("Missing shot")
 			<< "Parsing aborted: The submited EventEngineJob has a null Shot. There are no events to parse.";
-        // job.addMessage(ParsingMessageType::Error, 20, "Missing shot")
-        //     << "Parsing aborted: The submited EventEngineJob has a null Shot. There are no events to parse.";
 		cancelParseJob(job);
-		// return;		//not recoverable
 	}
 	else {
 		lastParseResult->shotConfig = shot->getShotConfig();
@@ -436,11 +427,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		parser.addParsingError("Missing dependency tree")
 			<< "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
 			<< "Cannot proceed without the event target dependency graph.";
-		// job.addMessage(ParsingMessageType::Error, 21, "Missing dependency graph")
-        //     << "Parsing aborted: The submited EventEngineJob has a null EventEngineDependencyTree. "
-		// 	<< "Cannot proceed without the event target dependency graph.";
 		cancelParseJob(job);
-		// return;		//not recoverable
 	}
 	else {
 		lastParseResult->parsedDevices = std::make_shared<ParsedDependencyTree>(dependencyTree);
@@ -498,8 +485,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	if (eventsByAbstractTarget.size() > 0) {
 		//Warning: Some event targets were not found. Parsing is abstract only; cannot be played.
-		// job.addMessage(ParsingMessageType::Warning, 1200, "Abstract Shot")
-		// << "Some event targets were not found. Parsing is abstract only; cannot be played.";
 		parser.addParsingWarning("Abstract Shot")
 		<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
 	}
@@ -526,10 +511,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 			parser.addParsingError("Dependency count failed")
 				<< "Failed to get dependency count for device '" << nextID->getID()
 				<< "'. The device was not found in the dependency graph.";
-			// 	<< "This should not happen and likely indicates a bug in the STI library.";
-			// job.addMessage(ParsingMessageType::Error, 23, "Dependency count failed")
-			// 	<< "Failed to get dependency count for device '" << nextID->getID()
-			// 	<< "'. The device was not found in the dependency graph. "
 			// 	<< "This should not happen and likely indicates a bug in the STI library.";
 		}
 
@@ -574,68 +555,25 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	// Collect all parsing messages
 
-	// lastParseResult->messages = job.getParsingMessages();
-	// lastParseResult->messages.insert(lastParseResult->messages.end(), parser.getParsingMessages().begin(), parser.getParsingMessages().end());
-	// job.addMessages(parser.getParsingMessages());
-
 	parsingMessages.insert(parsingMessages.end(), parser.getParsingMessages().begin(), parser.getParsingMessages().end());
 	lastParseResult->messages = job.getParsingMessages();
 	lastParseResult->messages.insert(lastParseResult->messages.end(), parsingMessages.begin(), parsingMessages.end());
 	job.addMessages(parsingMessages);
-	// lastParseResult->messages = parsingMessages;
 
-	// const std::vector<EngineParsingMessage>& jobMessages = job.getParsingMessages();
-	// lastParseResult->messages = jobMessages;
-
-	// bool errors = false;
-	// bool cancelJob = false;
-
-	// EngineParsingMessageCount msgCount(jobMessages);
-	// bool errors = (msgCount.errorCount > 0);
-
-	// for (auto& m : jobMessages) {
-	// 	if (m.getType() == STI::Engine::ParsingMessageType::Error) {
-	// 		errors = true;
-	// 		break;
-	// 	}
-	// }
-
-	// if (errors || !ownedDevicesParsed) {
-	// 	cancelJob = true;
-	// }
-	// else if (!setState(EngineState::Parsed)) {
-	// 	cancelJob = true;
-	// }
-
-	// if (cancelJob) {
-	// 	cancelParseJob(job);
-	// }
-
-	// if (errors || !ownedDevicesParsed || !setState(EngineState::Parsed)) {
-	// 	cancelParseJob(job);
-	// }
 
 	if (isJobOwner) {
 		// The job owner adds all handledPartnerEvents (collected from downstream) to the 
 		// top level eventsByTarget list stored locally.  This should then contains all generated partner events.
-		// divideEvents(handledPartnerEvents);
-		// handledPartnerEvents->clear();
-		// mergeAllEvents(lastParseResult->baseEventGroup);
+
 		addEventsToParseResult(handledPartnerEvents);
 		handledPartnerEvents->clear();
-		// lastParseResult->baseEventGroup->merge(*handledPartnerEvents);
-
-		// lastParseResult->baseEventGroup->merge(...);
 
 		//Any upstreamPartnerEvents at this point implies an abstract shot (targets not found in graph)
 		if (upstreamPartnerEvents != 0 && !upstreamPartnerEvents->eventsEmpty()) {
 			parser.addParsingWarning("Abstract Shot")
 			<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
-			// job.addMessage(ParsingMessageType::Warning, 1200, "Abstract Shot")
-			// << "Some event targets were not found. Parsing is abstract only; cannot be played.";
 		}
 		addEventsToParseResult(upstreamPartnerEvents);
-		// lastParseResult->baseEventGroup->merge(*upstreamPartnerEvents);
 	}
 
 	// Send message upstream indicating that this device (and all owned devices) has finished
@@ -704,9 +642,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 
 		mergePartnerEvents(parser.partnerEvents);
 
-		// auto& engineParserMessages = parser.getParsingMessages();
-		// parsingMessages.insert(parsingMessages.end(), engineParserMessages.begin(), engineParserMessages.end());
-
 		localSubtree->removeNode(localDeviceID);
 		parseCondition.notify_all();
 	}
@@ -726,12 +661,9 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 
-				//if is jobOwner and id is partner and id.targetServer is not in tree,
-				//then takeOwnershipOfPartners = true;
 
 				std::shared_ptr<Shot> jshot;
 				job.getShot(jshot);
-				// jshot->getShotConfig();
 
 				auto shot = scheduler->createShot(jshot->getShotConfig(), it->second);
 				
@@ -749,10 +681,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 			parser.addParsingWarning("Missing device")
 			<< "Could not contact device '" << id.getID()
 			<< "'. Parsing is abstract only and cannot be played.";
-			//
-			// job.addMessage(ParsingMessageType::Warning, 1100, "Missing device")
-			// << "Could not contact device '" << id.getID()
-			// << "'. Parsing is abstract only and cannot be played.";
 		}
 	}
 	else {
@@ -762,22 +690,6 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		localSubtree->removeNode(id);
 		parseCondition.notify_all();	//wake up event transfer loop
 	}
-	//else {
-	//	//The localDevice is not acting as the server for this id
-
-	//	job.addMessage(ParsingMessageType::Error, 60, "Wrong device server")
-	//		<< "Attempted to parse device '" << id.getID()
-	//		<< "' from server'" << localDeviceID.getID()
-	//		<< "'. This is not the correct acting server for '" << id.getID()
-	//		<< "'.";
-
-	//	auto it = eventsByTarget.find(id);
-	//	
-	//	if (it == eventsByTarget.end() || (it->second != 0 && it->second->eventsEmpty())) {
-	//		//no events for this device; skip this id
-	//		return;
-	//	}
-	//}
 }
 
 void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerMessage>& message)
@@ -799,17 +711,21 @@ void LocalEventEngine::handleParseMessage(const std::shared_ptr<EngineSchedulerM
 	std::shared_ptr<EventEngine> remoteEngine;
 	remoteEngine = message->getEngine();
 
-	if (remoteEngine == 0) {
-		//error
-		return;
-	}
-
 	auto it = std::find(ownedTargets.begin(), ownedTargets.end(), message->originalSourceID());
 
 	//only add engine if it is owned by this device
 	if (it != ownedTargets.end()) {
 		parsedOwnedTargets[message->originalSourceID()] = message->engineState;
-		engines[remoteEngine->getDeviceID()] = remoteEngine;
+		
+		if (remoteEngine != 0) {
+			engines[remoteEngine->getDeviceID()] = remoteEngine;
+		}
+		else {
+			//error
+			parser.addParsingError("Missing engine reference")
+				<< "Received a ParseComplete message with a null engine reference from "
+				<< message->originalSourceID().getID() << ".";
+		}
 	}
 
 	parsingMessages.insert(parsingMessages.end(), message->messages.begin(), message->messages.end());
@@ -891,11 +807,6 @@ void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSch
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
 
-	std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			  << "] handlePlayCompleteMessage received from deviceID="
-			  << message->originalSourceID().getID() << ". Play message count =" << message->playMessages.size()
-			  << "\n";
-
 	if (message == 0) {
 		std::vector<EnginePlayingMessage> warnings;
 		auto& msg = addPlayMessage(warnings, PlayingMessageType::Warning, "PlayComplete message invalid");
@@ -944,7 +855,6 @@ void LocalEventEngine::handlePlayCompleteMessage(const std::shared_ptr<EngineSch
 TimeStamp LocalEventEngine::getCurrentTimeStamp()
 {
 	TimeStamp ts;
-	// ts.timestamp = 0;
 	return ts;
 }
 
@@ -992,7 +902,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 	job.getShot(shot);
 
 	std::shared_ptr<TriggerCallback> localMasterTriggerCB;
-	// std::shared_ptr<EngineSchedulerMessage> playReadyMessage;
 	EnginePlayingMessageCount playReadyCount;
 	bool isJobOwnerLocal = false;
 
@@ -1005,32 +914,23 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 		if (!isState(EngineState::Parsed) && lastParseID != jobID.pid) {
 			//Error: this device is not parsed for this job. Should not happen because EngineScheduler should check.
-			//Send message upstream
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Not Parsed")
 				<< "The EventEngine cannot play the submitted job because it is not in the Parsed state for this job.";
 			cancelled = true;
-			// return;
 		}
 
 		if (eventsByAbstractTarget.size() > 0 || missingTargets.size() > 0) {
-			// job.addMessage(ParsingMessageType::Error, 70, "Cannot Play Abstract Shot")
-			//     << "The parsed shot is abstract and cannot be played.";
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Cannot Play Abstract Shot")
 				 << "The parsed shot is abstract and cannot be played.";
 			setState(EngineState::Error);
 		}
 
 		if (!setState(EngineState::PreparingPlay)) {
-			//error
-			// std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			// 		  << "] play cancel: failed to enter PreparingPlay (state=" << print(getState())
-			// 		  << ", sid=" << job.getJobID().sid.print() << ")\n";
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Bad engine state")
 				<< "[LocalEventEngine:" << localDeviceID.getID()
 				<< "] play cancel: failed to enter PreparingPlay (state=" << print(getState())
 				<< ", sid=" << job.getJobID().sid.print() << ")\n";
 			cancelled = true;
-			// return;
 		}
 
 		activePlayJobID = jobID;
@@ -1044,7 +944,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 		isJobOwnerLocal = isJobOwner;
 
 		if (isJobOwner) {
-			//playTime = getCurrentTimeStamp();
 			jobID.runTime = getCurrentTimeStamp();
 		}
 
@@ -1086,17 +985,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 					msg	<< " * " << tuple.first.getID() << " (EngineState = " << print(tuple.second) << ")\n";
 				}
 			}
-			// std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			// 		  << "] play cancel: owned devices not PlayReady (state=" << print(getState())
-			// 		  << ", sid=" << job.getJobID().sid.print() << ")\n";
-
-			// auto& err = job.addMessage(PlayingMessageType::Error, 1, "PlayReady")
-			// 	<< "The following devices failed to reach the PlayReady state: \n";
-			// for (auto& tuple : playReadyOwnedTargets) {
-			// 	if (tuple.second != EngineState::PlayReady) {
-			// 		err << tuple.first.getID() << " (EngineState = " << print(tuple.second) << ")\n";
-			// 	}
-			// }
 		}
 
 		if (!setState(EngineState::PlayReady)) {
@@ -1104,14 +992,10 @@ void LocalEventEngine::play(EventEngineJob& job)
 				<< "[LocalEventEngine:" << localDeviceID.getID()
 				<< "] play cancel: failed to enter PlayReady (state=" << print(getState())
 				<< ", sid=" << job.getJobID().sid.print() << ")\n";
-			// std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			// 		  << "] play cancel: failed to enter PlayReady (state=" << print(getState())
-			// 		  << ", sid=" << job.getJobID().sid.print() << ")\n";
 			setState(EngineState::Error);
 		}
 
 		// Setup trigger
-		// STI::Device::DeviceID triggerDeviceID = job.getJobOwner();	//temp!
 		masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
 		masterTrigger->arm(ownedTargets);
 
@@ -1163,17 +1047,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		play(jobID, localMasterTriggerCB, false);
 	}
 
-	std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			  << "] waiting for play complete. Play message count: " << localPlayMessages.size()
-			  << " (sid=" << job.getJobID().sid.print() << ") " << "state=" << print(getState())
-			  << std::endl;
-
 	waitForPlayComplete();	//so job doesn't finish until play finishes or is aborted
-	
-	std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			  << "] play complete done. Play message count: " << localPlayMessages.size()
-			  << " (sid=" << job.getJobID().sid.print() << ") " << "state=" << print(getState())
-			  << std::endl;
 
 	//save shot result
 	std::shared_ptr<FullShotResult> cachedShot;
@@ -1199,10 +1073,6 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playCompleteMessage->jobID.type = job.getJobID().type;
 	playCompleteMessage->engineState = getState();
 	playCompleteMessage->playMessages = localPlayMessages;
-
-	std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			  << "] play complete message. Play message count: " << localPlayMessages.size()
-			  << " (sid=" << job.getJobID().sid.print() << ")" << std::endl;
 
 	sendMessage(playCompleteMessage);
 
@@ -1263,7 +1133,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 			<< lastParseID.print() << ", received pid=" << jobID.pid.print() << ").";
 		appendPlayMessages(errors);
 		cancelPlayJob();
-		// stop();
 		setState(EngineState::Error);
 		return;
 	}
@@ -1307,9 +1176,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		(cachedShot->attributes)[localDeviceID] = attributes;
 	}
 
-	//cachedFullShot already in resultBuffer (or was just added above)
-
-
 	//Prepare local events
 	for (auto& synchEvent : synchedEvents) {
 		if (synchEvent == nullptr) {
@@ -1321,8 +1187,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 		
 		if (appendPlayMessages(synchEvent->getLoadMessages())) {
 			// error message found
-			std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-					  << "] play cancel: user error during load (sid=" << jobID.sid.print() << ")" << std::endl;
 			setState(EngineState::Error);
 			cancelPlayJob();
 			playCondition.notify_all();
@@ -1330,7 +1194,6 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	}
 
 	if (localPlayMsgCounter.errorCount > 0) {
-		std::cerr << "LocalEventEngine: localPlayMsgCounter.errorCount > 0 " << localDeviceID.getID() << std::endl;
 		cancelPlayJob();
 		stop();
 		return;
@@ -1405,12 +1268,7 @@ void LocalEventEngine::unload()
 
 void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 {
-	std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-			  << "] playShot started.\n";
 	if (!armTrigger(triggerCB)) {
-
-		// std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-		// 		  << "] play cancel: armTrigger failed (state=" << print(getState()) << ")\n";
 		stop();
 		masterTrigger->stop();
 		return;
@@ -1429,11 +1287,9 @@ void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 		stop();
 	}
 
-	// bool success = true;
 	if (isState(EngineState::Playing)) {
 		if (!setState(EngineState::Parsed)) {
 			setState(EngineState::Error);
-			// success = false;
 		}
 	}
 	
@@ -1536,8 +1392,6 @@ bool LocalEventEngine::playDeviceEvents()
 			<< "[LocalEventEngine:" << localDeviceID.getID()
 			<< "] play cancel: failed to enter Playing (state=" << print(getState()) << ")\n";
 		appendPlayMessages(errors);
-		// std::cerr << "[LocalEventEngine:" << localDeviceID.getID()
-		// 		  << "] play cancel: failed to enter Playing (state=" << print(getState()) << ")\n";
 		setState(EngineState::Error);
 		cancelled = true;
 		return false;
