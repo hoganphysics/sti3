@@ -63,6 +63,9 @@ module TNetwork
 
 		boolean hasNodeID(in TDeviceID devID);
 
+		boolean ping();
+		boolean isConnectedTo(in TDeviceHubID hubID);
+
 		void walk(inout TNodeWalker root, in TDeviceHubTrace trace);
 	};
 

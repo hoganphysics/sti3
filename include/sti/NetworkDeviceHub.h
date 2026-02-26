@@ -6,6 +6,7 @@
 #include <sti/device/Device.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/DeviceHub.h>
+#include <sti/network/HubID.h>
 #include <sti/utils/Configuration.h>
 #include <sti/fwd/TaskScheduler_fwd.h>
 
@@ -14,6 +15,8 @@
 #include <memory>
 #include <set>
 #include <iosfwd>
+#include <map>
+#include <string>
 
 
 namespace STI
@@ -89,6 +92,7 @@ private:
 	bool addNode(const STI::Device::DeviceID& id, const typename std::shared_ptr<STI::Device::Device>& node);
 
 	void connectToTargetHubs();
+	void refreshHubConnections();
 	
 	bool registerHubContext();
 	bool unregisterHubContext();
@@ -108,6 +112,8 @@ private:
 	std::shared_ptr<STI::Utils::TaskScheduler> refreshScheduler;
 
 	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
+
+	std::map<std::string, STI::Network::HubID> contextToHubID;
 
 	std::string _nameServiceAddress;
 	bool _usingDefaultHubID;

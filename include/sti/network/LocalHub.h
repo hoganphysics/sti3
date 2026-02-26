@@ -60,7 +60,7 @@ public:
 	bool removeHub(const HubID& id);
 	bool getHub(const HubID& id, typename std::shared_ptr<Hub<ID, T>>& hub) const
 	{
-		return hubs.get(id, hub);
+		return hubs.get(id, hub) && hub != nullptr;
 	}
 
 	//local and remote; trail tracked
@@ -84,6 +84,9 @@ public:
 
 	void disconnect(const HubID& hid);
 	void disconnect();
+
+	bool ping() const { return true; }
+	bool isConnectedTo(const HubID& id) const;
 
 	void walk(typename LocalHub<ID, T>::HubNodeWalker& root) const;
 	void walk(NodeWalker<ID, T>& root, const HubTrace& trace) const;
@@ -554,6 +557,12 @@ void STI::Network::LocalHub<ID, T>::disconnect()
 	for(const auto& hid : hids) {
 		disconnect(hid);
 	}
+}
+
+template<class ID, class T>
+bool STI::Network::LocalHub<ID, T>::isConnectedTo(const HubID& id) const
+{
+	return hubs.contains(id);
 }
 
 #endif

@@ -167,6 +167,27 @@ TDeviceHubID* TDeviceHub_i::deviceHubID()
 	return found;
 }
 
+::CORBA::Boolean TDeviceHub_i::ping()
+{
+	bool isAlive = false;
+	if (localHub != 0) {
+		isAlive = localHub->ping();
+	}
+	return isAlive;
+}
+
+::CORBA::Boolean TDeviceHub_i:: isConnectedTo(const ::STI::TNetwork::TDeviceHubID& hubID)
+{
+	bool connected = false;
+	if (localHub != 0) {
+
+		connected = localHub->isConnectedTo(
+			convert<TDeviceHubID, STI::Network::HubID>(hubID)
+		);
+	}
+	return connected;
+}
+
 void TDeviceHub_i::walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace)
 {
 	if (localHub != 0) {

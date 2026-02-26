@@ -16,11 +16,11 @@ int main(int argc, char** argv)
 		{"Device Name", "TestDevice"},
 		{"IP Address", "localhost"},
 		{"Module", "0"},
-		{"Target Server", "localhost/0/STI Server"} });
+		{"Target Server", "sr-magis/2/Frame2"} });
 
 	auto device = std::make_shared<TestDevice>(config);
 
-	std::string nameServiceAddr = "192.168.1.4:2809";   //OmniORB NameService
+	std::string nameServiceAddr = "192.168.1.109:2809";   //OmniORB NameService
 	auto hub = std::make_shared<NetworkDeviceHub>(nameServiceAddr);
 
 	hub->addDevice(device);

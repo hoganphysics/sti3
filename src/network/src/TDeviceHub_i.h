@@ -32,6 +32,8 @@ public:
 	::CORBA::Boolean removeNode(const ::STI::TNetwork::TDeviceID& devID, const ::STI::TNetwork::TDeviceHubTrace& trace);
 	TDeviceHubID* deviceHubID();
 	::CORBA::Boolean hasNodeID(const ::STI::TNetwork::TDeviceID& devID);
+	::CORBA::Boolean ping();
+    ::CORBA::Boolean isConnectedTo(const ::STI::TNetwork::TDeviceHubID& hubID);
 	void walk(::STI::TNetwork::TNodeWalker& root, const ::STI::TNetwork::TDeviceHubTrace& trace);
 
 private:

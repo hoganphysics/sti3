@@ -45,6 +45,9 @@ public:
 	
 	virtual const HubID& getID() const = 0;
 
+	virtual bool ping() const = 0;
+	virtual bool isConnectedTo(const HubID& id) const = 0;
+
 	typedef NodeWalker<ID, T> HubNodeWalker;
 
 	virtual void walk(HubNodeWalker& root, const HubTrace& trace) const = 0;

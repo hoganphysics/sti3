@@ -128,6 +128,10 @@ void TestDevice::TestDeviceOutputEvent::playEvent()
 	// This function will be called at time specified in the timing file.
 	// Use this function to control the hardware to implement the change on the requested channel.
 
+	int x;
+	std::cout << "Press enter to simulate hardware trigger..." << std::endl;
+	std::cin >> x;	//pause here to simulate wait for hard timing trigger
+
 	// Add hardware play code here...
 	for (auto& v : values) {
 		std::cout << "Playing channel #" << v.first << " with value " << v.second.getNumber() << "." << std::endl;
