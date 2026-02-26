@@ -43,6 +43,9 @@ public:
 	const HubID& getID() const;
 	bool hasNodeID(const STI::Device::DeviceID& id) const;
 
+	bool ping() const;
+	bool isConnectedTo(const HubID& id) const;
+
 	void walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const;
 
 	static bool getTDeviceHubReference(const typename std::shared_ptr<DeviceHub>& deviceHub,

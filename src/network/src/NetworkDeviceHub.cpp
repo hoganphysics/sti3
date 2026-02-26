@@ -103,7 +103,9 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	int refreshTime = 5;	//seconds
 	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>("refresh", refreshTime,
 		[this]() {
-			localHub->refresh();
+			// localHub->refresh();
+			refreshHubConnections();
+			connectToTargetHubs();
 
 			if (localHub->numberOfNodes() == 0) {
 				//Terminate hub if no nodes are left
@@ -476,6 +478,76 @@ void NetworkDeviceHub::run(bool block)
 	}
 }
 
+void NetworkDeviceHub::refreshHubConnections()
+{
+	// Find live registered Hubs that attempted to connect to this Hub. Attempt to reconnect.
+	std::vector<std::string> liveHubs;
+	std::stringstream errors;
+	
+	orbmanager->getAllLiveObjectContexts(hubContextPath, hubObjectName, liveHubs);
+	
+	std::shared_ptr<RemoteDeviceHub> remoteHub;
+
+	for (auto& hubContext : liveHubs) {
+		if (hubContext.compare(thisHubContext) == 0) {
+			continue;	//don't connect to self
+		}
+
+		auto it = contextToHubID.find(hubContext);
+		
+		if (it != contextToHubID.end()) {
+			//Already have this hubID cached
+			HubID knownHubID = it->second;
+
+			//Check if still connected
+			if (localHub->containsHub(knownHubID)) {
+				// std::cerr << "Debug: Already connected to hub " << knownHubID.getID() << std::endl;
+
+				
+				std::shared_ptr<STI::Network::Hub<STI::Device::DeviceID, STI::Device::Device>> hub;
+				if(localHub->getHub(knownHubID, hub) && hub != nullptr) {
+
+					if (hub->ping()) {
+						// std::cerr << "Debug: Hub " << knownHubID.getID() << " is alive." << std::endl;
+						continue;		//already connected and alive
+					}
+					else {
+						// std::cerr << "Debug: Hub " << knownHubID.getID() << " is not responding. Removing..." << std::endl;
+						localHub->disconnect(knownHubID);
+						continue;
+					}
+
+					// std::cerr << "Debug: Redistributing nodes to hub " << knownHubID.getID() << std::endl;
+					hub->distributeNodes(getID());
+				}
+				// std::set<STI::Device::DeviceID> nodeIDs;
+				// getDeviceIDs(nodeIDs);
+				
+				continue;		//already connected
+			}
+			else {
+				contextToHubID.erase(it);	//remove stale entry
+			}
+		}
+
+		if (!getRemoteHub(hubContext, remoteHub, errors)) {
+			// std::cerr << "Debug: Unable to get remote hub for context " << hubContext << std::endl;
+			continue;	//unable to getObjectReference
+		}
+		
+		contextToHubID[hubContext] = remoteHub->getID();
+
+		if (localHub->containsHub(remoteHub->getID())) {
+			// std::cerr << "Debug: Already connected to hub " << remoteHub->getID().getID() << ". Distributing nodes..." << std::endl;
+			remoteHub->distributeNodes(getID());
+			continue;		//already connected
+		}		
+		if (LocalDeviceHub::connect(remoteHub, deviceHubWrapper)) {
+			// std::cerr << "Debug: Reconnected to hub " << remoteHub->getID().getID() << std::endl;		
+		}
+	}
+}
+
 void NetworkDeviceHub::connectToTargetHubs()
 {
 	//Reconnect to target Hubs if they are live
@@ -483,6 +555,15 @@ void NetworkDeviceHub::connectToTargetHubs()
 
 		if (!localHub->containsHub(targetHubID)) {
 			connectRemoteHub( makeHubContext(stiContext, targetHubID) );
+		}
+		else {
+			// std::cerr << "Debug: Already connected to target hub " << targetHubID.getID() << ". Checking connection..." << std::endl;
+
+			std::shared_ptr<DeviceHub> remoteHub;
+			if(localHub->getHub(targetHubID, remoteHub) && !remoteHub->isConnectedTo(getID())) {
+				// std::cerr << "Debug: Target hub " << targetHubID.getID() << " is not connected back. Reconnecting..." << std::endl;
+				LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
+			}
 		}
 	}
 }

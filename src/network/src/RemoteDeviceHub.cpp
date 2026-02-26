@@ -280,6 +280,51 @@ bool RemoteDeviceHub::hasNodeID(const STI::Device::DeviceID& id) const
 	return found;
 }
 
+bool RemoteDeviceHub::ping() const
+{
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
+	bool isAlive = false;
+
+	try {
+		isAlive = getTRef()->ping();	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return isAlive;
+}
+
+bool RemoteDeviceHub::isConnectedTo(const HubID& id) const
+{
+	std::unique_lock<std::mutex> hubLock(hubMutex);
+
+	if (isDisabled()) return false;
+
+	bool connected = false;
+
+	try {
+		connected = getTRef()->isConnectedTo(
+			convert<STI::Network::HubID, STI::TNetwork::TDeviceHubID>(id)
+		);	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return connected;
+}
+
 void RemoteDeviceHub::walk(NodeWalker<STI::Device::DeviceID, STI::Device::Device>& root, const HubTrace& trace) const
 {
 	std::unique_lock<std::mutex> hubLock(hubMutex);
