@@ -19,7 +19,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceHubID[] = 
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceHubID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceHubID:1.0", "TDeviceHubID", _0RL_structmember_STI_mTNetwork_mTDeviceHubID, 3, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceHubID = _0RL_tc_STI_mTNetwork_mTDeviceHubID;
@@ -36,7 +36,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceHubID = _0RL_tc_STI_mTNetw
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceHubIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceHubIDSeq:1.0", "TDeviceHubIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceHubID, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceHubIDSeq = _0RL_tc_STI_mTNetwork_mTDeviceHubIDSeq;
@@ -56,7 +56,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceHubTrace[]
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceHubTrace = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceHubTrace:1.0", "TDeviceHubTrace", _0RL_structmember_STI_mTNetwork_mTDeviceHubTrace, 1, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceHubTrace = _0RL_tc_STI_mTNetwork_mTDeviceHubTrace;
@@ -78,7 +78,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceID[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceID:1.0", "TDeviceID", _0RL_structmember_STI_mTNetwork_mTDeviceID, 4, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceID = _0RL_tc_STI_mTNetwork_mTDeviceID;
@@ -95,7 +95,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceID = _0RL_tc_STI_mTNetwork
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceIDSeq:1.0", "TDeviceIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceID, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDSeq = _0RL_tc_STI_mTNetwork_mTDeviceIDSeq;
@@ -116,7 +116,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceIDVertex[]
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDVertex = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceIDVertex:1.0", "TDeviceIDVertex", _0RL_structmember_STI_mTNetwork_mTDeviceIDVertex, 2, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDVertex = _0RL_tc_STI_mTNetwork_mTDeviceIDVertex;
@@ -137,7 +137,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceIDVertex = _0RL_tc_STI_mTN
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDVertexSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceIDVertexSeq:1.0", "TDeviceIDVertexSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceIDVertex, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDVertexSeq = _0RL_tc_STI_mTNetwork_mTDeviceIDVertexSeq;
@@ -163,7 +163,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTTimeStamp[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTimeStamp = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TTimeStamp:1.0", "TTimeStamp", _0RL_structmember_STI_mTNetwork_mTTimeStamp, 9, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TTimeStamp = _0RL_tc_STI_mTNetwork_mTTimeStamp;
@@ -186,7 +186,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree = C
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEventEngineDependencyTree = _0RL_tc_STI_mTNetwork_mTEventEngineDependencyTree;
@@ -207,7 +207,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceTrace[] = 
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceTrace = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceTrace:1.0", "TDeviceTrace", _0RL_structmember_STI_mTNetwork_mTDeviceTrace, 1, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceTrace = _0RL_tc_STI_mTNetwork_mTDeviceTrace;
@@ -219,7 +219,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceTrace = _0RL_tc_STI_mTNetw
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTEngineJobStatus[] = { "JobNew", "JobRunning", "JobCompleted", "JobCanceled", "JobNotFound", "JobArchived", "JobDeferred" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobStatus = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TEngineJobStatus:1.0", "TEngineJobStatus", _0RL_enumMember_STI_mTNetwork_mTEngineJobStatus, 7, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobStatus = _0RL_tc_STI_mTNetwork_mTEngineJobStatus;
@@ -230,7 +230,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobStatus = _0RL_tc_STI_mT
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTRawEventType[] = { "RawEventPlay", "RawEventMeasurement", "RawEventWaveform", "RawEventPause", "RawEventJump" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TRawEventType:1.0", "TRawEventType", _0RL_enumMember_STI_mTNetwork_mTRawEventType, 5, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventType = _0RL_tc_STI_mTNetwork_mTRawEventType;
@@ -242,7 +242,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TRawEventType = _0RL_tc_STI_mTNet
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTGraphPathLabel = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TGraphPathLabel:1.0", "TGraphPathLabel", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_ulong_tc(), &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TGraphPathLabel = _0RL_tc_STI_mTNetwork_mTGraphPathLabel;
@@ -254,7 +254,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TGraphPathLabel = _0RL_tc_STI_mTN
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mOctetSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/OctetSeq:1.0", "OctetSeq", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_octet_tc(), &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_OctetSeq = _0RL_tc_STI_mTNetwork_mOctetSeq;
@@ -265,7 +265,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_OctetSeq = _0RL_tc_STI_mTNetwork_
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTFileTransferType[] = { "FileTransferBinary", "FileTransferString" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileTransferType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TFileTransferType:1.0", "TFileTransferType", _0RL_enumMember_STI_mTNetwork_mTFileTransferType, 2, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TFileTransferType = _0RL_tc_STI_mTNetwork_mTFileTransferType;
@@ -289,7 +289,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFileID[] = {
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFileID:1.0", "TFileID", _0RL_structmember_STI_mTNetwork_mTFileID, 5, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TFileID = _0RL_tc_STI_mTNetwork_mTFileID;
@@ -310,7 +310,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileID = _0RL_tc_STI_mTNetwork_m
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TFileIDSeq:1.0", "TFileIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTFileID, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TFileIDSeq = _0RL_tc_STI_mTNetwork_mTFileIDSeq;
@@ -322,7 +322,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileIDSeq = _0RL_tc_STI_mTNetwor
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileHolderSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TFileHolderSeq:1.0", "TFileHolderSeq", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_interface_tc("IDL:STI/TNetwork/TFileHolder:1.0", "TFileHolder", &_0RL_tcTrack), &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TFileHolderSeq = _0RL_tc_STI_mTNetwork_mTFileHolderSeq;
@@ -333,7 +333,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFileHolderSeq = _0RL_tc_STI_mTNe
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTBinaryType[] = { "BinaryChar", "BinaryUChar", "BinaryUShort", "BinaryShort", "BinaryULong", "BinaryLong", "BinaryFloat", "BinaryDouble", "BinaryStream" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTBinaryType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TBinaryType:1.0", "TBinaryType", _0RL_enumMember_STI_mTNetwork_mTBinaryType, 9, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TBinaryType = _0RL_tc_STI_mTNetwork_mTBinaryType;
@@ -357,7 +357,7 @@ static CORBA::PR_unionMember _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData[] 
 #  undef _0RL_tc_STI_mTNetwork_mTMixedBinaryData
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedBinaryData = CORBA::TypeCode::PR_union_tc("IDL:STI/TNetwork/TMixedBinaryData:1.0", "TMixedBinaryData", _0RL_tc_STI_mTNetwork_mTBinaryType, _0RL_unionMember_STI_mTNetwork_mTMixedBinaryData, 9, -1, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMixedBinaryData = _0RL_tc_STI_mTNetwork_mTMixedBinaryData;
@@ -377,7 +377,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTBinaryData[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTBinaryData = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TBinaryData:1.0", "TBinaryData", _0RL_structmember_STI_mTNetwork_mTBinaryData, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TBinaryData = _0RL_tc_STI_mTNetwork_mTBinaryData;
@@ -393,7 +393,7 @@ static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTImage = CORBA::TypeCode::PR_f
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTImageSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TImageSeq:1.0", "TImageSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTImage, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TImageSeq = _0RL_tc_STI_mTNetwork_mTImageSeq;
@@ -404,7 +404,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TImageSeq = _0RL_tc_STI_mTNetwork
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTImageDataType[] = { "ImageDataBinary", "ImageDataFile" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTImageDataType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TImageDataType:1.0", "TImageDataType", _0RL_enumMember_STI_mTNetwork_mTImageDataType, 2, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TImageDataType = _0RL_tc_STI_mTNetwork_mTImageDataType;
@@ -427,7 +427,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTImageData = CORBA::TypeCode::
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TImageData = _0RL_tc_STI_mTNetwork_mTImageData;
@@ -447,7 +447,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTStringPair[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStringPair = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TStringPair:1.0", "TStringPair", _0RL_structmember_STI_mTNetwork_mTStringPair, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStringPair = _0RL_tc_STI_mTNetwork_mTStringPair;
@@ -464,7 +464,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TStringPair = _0RL_tc_STI_mTNetwo
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStringPairSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TStringPairSeq:1.0", "TStringPairSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTStringPair, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStringPairSeq = _0RL_tc_STI_mTNetwork_mTStringPairSeq;
@@ -494,7 +494,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTImage = CORBA::TypeCode::PR_s
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TImage = _0RL_tc_STI_mTNetwork_mTImage;
@@ -510,7 +510,7 @@ static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTMixedValue = CORBA::TypeCode:
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValueSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMixedValueSeq:1.0", "TMixedValueSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMixedValue, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMixedValueSeq = _0RL_tc_STI_mTNetwork_mTMixedValueSeq;
@@ -521,7 +521,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMixedValueSeq = _0RL_tc_STI_mTNe
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTMixedValueType[] = { "MixedValueEmpty", "MixedValueBoolean", "MixedValueInt", "MixedValueDouble", "MixedValueString", "MixedValueVector", "MixedValueVectorInt", "MixedValueBinary", "MixedValueFile", "MixedValueImage", "MixedValueNumber", "MixedValueAny" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValueType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TMixedValueType:1.0", "TMixedValueType", _0RL_enumMember_STI_mTNetwork_mTMixedValueType, 12, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMixedValueType = _0RL_tc_STI_mTNetwork_mTMixedValueType;
@@ -560,7 +560,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMixedValue = CORBA::TypeCode:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMixedValue = _0RL_tc_STI_mTNetwork_mTMixedValue;
@@ -573,7 +573,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMixedValue = _0RL_tc_STI_mTNetwo
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStringSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TStringSeq:1.0", "TStringSeq", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack), &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStringSeq = _0RL_tc_STI_mTNetwork_mTStringSeq;
@@ -595,7 +595,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTAttribute[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAttribute = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TAttribute:1.0", "TAttribute", _0RL_structmember_STI_mTNetwork_mTAttribute, 5, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAttribute = _0RL_tc_STI_mTNetwork_mTAttribute;
@@ -612,7 +612,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAttribute = _0RL_tc_STI_mTNetwor
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAttributeSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TAttributeSeq:1.0", "TAttributeSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTAttribute, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAttributeSeq = _0RL_tc_STI_mTNetwork_mTAttributeSeq;
@@ -632,7 +632,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTStackFrame[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStackFrame = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TStackFrame:1.0", "TStackFrame", _0RL_structmember_STI_mTNetwork_mTStackFrame, 3, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStackFrame = _0RL_tc_STI_mTNetwork_mTStackFrame;
@@ -649,7 +649,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TStackFrame = _0RL_tc_STI_mTNetwo
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStackFrameSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TStackFrameSeq:1.0", "TStackFrameSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTStackFrame, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStackFrameSeq = _0RL_tc_STI_mTNetwork_mTStackFrameSeq;
@@ -671,7 +671,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTRawEventTargetDe
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventTargetDevice = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TRawEventTargetDevice:1.0", "TRawEventTargetDevice", _0RL_structmember_STI_mTNetwork_mTRawEventTargetDevice, 3, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventTargetDevice = _0RL_tc_STI_mTNetwork_mTRawEventTargetDevice;
@@ -692,7 +692,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTRawEventTargetCh
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventTargetChannel = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TRawEventTargetChannel:1.0", "TRawEventTargetChannel", _0RL_structmember_STI_mTNetwork_mTRawEventTargetChannel, 3, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventTargetChannel = _0RL_tc_STI_mTNetwork_mTRawEventTargetChannel;
@@ -718,7 +718,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventTarget = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventTarget = _0RL_tc_STI_mTNetwork_mTRawEventTarget;
@@ -742,7 +742,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParsedVar[] = {
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedVar = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedVar:1.0", "TParsedVar", _0RL_structmember_STI_mTNetwork_mTParsedVar, 4, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParsedVar = _0RL_tc_STI_mTNetwork_mTParsedVar;
@@ -763,7 +763,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParsedVar = _0RL_tc_STI_mTNetwor
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedVarSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TParsedVarSeq:1.0", "TParsedVarSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTParsedVar, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParsedVarSeq = _0RL_tc_STI_mTNetwork_mTParsedVarSeq;
@@ -803,7 +803,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEvent = CORBA::TypeCode::P
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEvent = _0RL_tc_STI_mTNetwork_mTRawEvent;
@@ -848,7 +848,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TRawEvent = _0RL_tc_STI_mTNetwork
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TRawEventSeq:1.0", "TRawEventSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTRawEvent, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventSeq = _0RL_tc_STI_mTNetwork_mTRawEventSeq;
@@ -873,7 +873,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMeasurement[] = 
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMeasurement = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMeasurement:1.0", "TMeasurement", _0RL_structmember_STI_mTNetwork_mTMeasurement, 6, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMeasurement = _0RL_tc_STI_mTNetwork_mTMeasurement;
@@ -894,7 +894,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMeasurement = _0RL_tc_STI_mTNetw
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMeasurementSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMeasurementSeq:1.0", "TMeasurementSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMeasurement, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TMeasurementSeq = _0RL_tc_STI_mTNetwork_mTMeasurementSeq;
@@ -919,7 +919,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTuple = C
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDMeasurementsTuple = _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTuple;
@@ -948,7 +948,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceIDMeasurementsTuple = _0RL
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceIDMeasurementsTupleSeq:1.0", "TDeviceIDMeasurementsTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDMeasurementsTupleSeq = _0RL_tc_STI_mTNetwork_mTDeviceIDMeasurementsTupleSeq;
@@ -966,7 +966,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineID[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineID:1.0", "TEngineID", _0RL_structmember_STI_mTNetwork_mTEngineID, 1, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineID = _0RL_tc_STI_mTNetwork_mTEngineID;
@@ -983,7 +983,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineID = _0RL_tc_STI_mTNetwork
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineIDSeq:1.0", "TEngineIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineID, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineIDSeq = _0RL_tc_STI_mTNetwork_mTEngineIDSeq;
@@ -994,7 +994,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineIDSeq = _0RL_tc_STI_mTNetw
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTEngineState[] = { "EngineIdle", "EngineParsing", "EngineParsed", "EnginePreparingPlay", "EnginePlayReady", "EngineWaitingForTrigger", "EnginePlaying", "EnginePaused", "EngineUnknown", "EngineMissing", "EngineError" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineState = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TEngineState:1.0", "TEngineState", _0RL_enumMember_STI_mTNetwork_mTEngineState, 11, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineState = _0RL_tc_STI_mTNetwork_mTEngineState;
@@ -1005,7 +1005,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineState = _0RL_tc_STI_mTNetw
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTEventEngineJobType[] = { "EngineJobParse", "EngineJobPlay", "EngineJobSequence" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJobType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TEventEngineJobType:1.0", "TEventEngineJobType", _0RL_enumMember_STI_mTNetwork_mTEventEngineJobType, 3, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEventEngineJobType = _0RL_tc_STI_mTNetwork_mTEventEngineJobType;
@@ -1024,7 +1024,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobSourceI
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobSourceID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobSourceID:1.0", "TEngineJobSourceID", _0RL_structmember_STI_mTNetwork_mTEngineJobSourceID, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobSourceID = _0RL_tc_STI_mTNetwork_mTEngineJobSourceID;
@@ -1036,7 +1036,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobSourceID = _0RL_tc_STI_
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTShotType[] = { "ShotTypeSingle", "ShotTypeSequence", "ShotTypeSingleUndocumented", "ShotTypeSequenceEntry" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TShotType:1.0", "TShotType", _0RL_enumMember_STI_mTNetwork_mTShotType, 4, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotType = _0RL_tc_STI_mTNetwork_mTShotType;
@@ -1055,7 +1055,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTSequenceIndex[] 
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceIndex = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TSequenceIndex:1.0", "TSequenceIndex", _0RL_structmember_STI_mTNetwork_mTSequenceIndex, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceIndex = _0RL_tc_STI_mTNetwork_mTSequenceIndex;
@@ -1079,7 +1079,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceID = CORBA::TypeCode:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceID = _0RL_tc_STI_mTNetwork_mTSequenceID;
@@ -1107,7 +1107,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntryID = CORBA::Type
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceEntryID = _0RL_tc_STI_mTNetwork_mTSequenceEntryID;
@@ -1132,7 +1132,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotConfig[] = {
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotConfig = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TShotConfig:1.0", "TShotConfig", _0RL_structmember_STI_mTNetwork_mTShotConfig, 5, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotConfig = _0RL_tc_STI_mTNetwork_mTShotConfig;
@@ -1168,7 +1168,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseID = CORBA::TypeCode::PR
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParseID = _0RL_tc_STI_mTNetwork_mTParseID;
@@ -1204,7 +1204,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseJobStatus = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParseJobStatus = _0RL_tc_STI_mTNetwork_mTParseJobStatus;
@@ -1245,7 +1245,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotID = CORBA::TypeCode::PR_
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotID = _0RL_tc_STI_mTNetwork_mTShotID;
@@ -1287,7 +1287,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTPlayJobStatus = CORBA::TypeCo
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TPlayJobStatus = _0RL_tc_STI_mTNetwork_mTPlayJobStatus;
@@ -1313,7 +1313,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAddSequenceStatus = CORBA::Ty
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAddSequenceStatus = _0RL_tc_STI_mTNetwork_mTAddSequenceStatus;
@@ -1379,7 +1379,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobID = CORBA::TypeCode
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobID = _0RL_tc_STI_mTNetwork_mTEngineJobID;
@@ -1484,7 +1484,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobID = _0RL_tc_STI_mTNetw
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobIDSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineJobIDSeq:1.0", "TEngineJobIDSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineJobID, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobIDSeq = _0RL_tc_STI_mTNetwork_mTEngineJobIDSeq;
@@ -1511,7 +1511,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStackTraceData = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStackTraceData = _0RL_tc_STI_mTNetwork_mTStackTraceData;
@@ -1553,7 +1553,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStackTraceResult = CORBA::Typ
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TStackTraceResult = _0RL_tc_STI_mTNetwork_mTStackTraceResult;
@@ -1576,7 +1576,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTParsedTag[] = {
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedTag = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TParsedTag:1.0", "TParsedTag", _0RL_structmember_STI_mTNetwork_mTParsedTag, 3, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParsedTag = _0RL_tc_STI_mTNetwork_mTParsedTag;
@@ -1597,7 +1597,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TParsedTag = _0RL_tc_STI_mTNetwor
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsedTagSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TParsedTagSeq:1.0", "TParsedTagSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTParsedTag, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParsedTagSeq = _0RL_tc_STI_mTNetwork_mTParsedTagSeq;
@@ -1616,7 +1616,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mRefPointPair[] = 
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mRefPointPair = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/RefPointPair:1.0", "RefPointPair", _0RL_structmember_STI_mTNetwork_mRefPointPair, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_RefPointPair = _0RL_tc_STI_mTNetwork_mRefPointPair;
@@ -1633,7 +1633,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_RefPointPair = _0RL_tc_STI_mTNetw
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mRefPointPairSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/RefPointPairSeq:1.0", "RefPointPairSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mRefPointPair, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_RefPointPairSeq = _0RL_tc_STI_mTNetwork_mRefPointPairSeq;
@@ -1648,7 +1648,7 @@ static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTRawEventGroup = CORBA::TypeCo
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventGroupSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TRawEventGroupSeq:1.0", "TRawEventGroupSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTRawEventGroup, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventGroupSeq = _0RL_tc_STI_mTNetwork_mTRawEventGroupSeq;
@@ -1712,7 +1712,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRawEventGroup = CORBA::TypeCo
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRawEventGroup = _0RL_tc_STI_mTNetwork_mTRawEventGroup;
@@ -1736,7 +1736,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShot = CORBA::TypeCode::PR_st
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShot = _0RL_tc_STI_mTNetwork_mTShot;
@@ -1748,7 +1748,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShot = _0RL_tc_STI_mTNetwork_mTS
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTEventEngineJobList[] = { "EngineJobListQueued", "EngineJobListRunning", "EngineJobListCompleted", "EngineJobListArchived" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJobList = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TEventEngineJobList:1.0", "TEventEngineJobList", _0RL_enumMember_STI_mTNetwork_mTEventEngineJobList, 4, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEventEngineJobList = _0RL_tc_STI_mTNetwork_mTEventEngineJobList;
@@ -1759,7 +1759,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJobList = _0RL_tc_STI
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTSequenceType[] = { "SequenceTypeOpen", "SequenceTypeClosed" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TSequenceType:1.0", "TSequenceType", _0RL_enumMember_STI_mTNetwork_mTSequenceType, 2, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceType = _0RL_tc_STI_mTNetwork_mTSequenceType;
@@ -1784,7 +1784,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntry = CORBA::TypeCo
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceEntry = _0RL_tc_STI_mTNetwork_mTSequenceEntry;
@@ -1814,7 +1814,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple = CORBA::T
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceEntryTuple = _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple;
@@ -1851,7 +1851,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceEntryTuple = _0RL_tc_STI
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceEntryTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TSequenceEntryTupleSeq:1.0", "TSequenceEntryTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTSequenceEntryTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceEntryTupleSeq = _0RL_tc_STI_mTNetwork_mTSequenceEntryTupleSeq;
@@ -1883,7 +1883,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequence = CORBA::TypeCode::P
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequence = _0RL_tc_STI_mTNetwork_mTSequence;
@@ -1905,7 +1905,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineJobStatusT
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobStatusTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineJobStatusTuple:1.0", "TEngineJobStatusTuple", _0RL_structmember_STI_mTNetwork_mTEngineJobStatusTuple, 2, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobStatusTuple = _0RL_tc_STI_mTNetwork_mTEngineJobStatusTuple;
@@ -1926,7 +1926,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineJobStatusTuple = _0RL_tc_S
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobStatusTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineJobStatusTupleSeq:1.0", "TEngineJobStatusTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineJobStatusTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobStatusTupleSeq = _0RL_tc_STI_mTNetwork_mTEngineJobStatusTupleSeq;
@@ -1969,7 +1969,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotIDTuple = CORBA::TypeCode
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotIDTuple = _0RL_tc_STI_mTNetwork_mTShotIDTuple;
@@ -2034,7 +2034,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TShotIDTuple = _0RL_tc_STI_mTNetw
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotIDTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TShotIDTupleSeq:1.0", "TShotIDTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTShotIDTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotIDTupleSeq = _0RL_tc_STI_mTNetwork_mTShotIDTupleSeq;
@@ -2105,7 +2105,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSequenceResult = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSequenceResult = _0RL_tc_STI_mTNetwork_mTSequenceResult;
@@ -2117,7 +2117,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceResult = _0RL_tc_STI_mTN
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType[] = { "MessageRefresh", "MessageCollectionUpdate", "MessageChannelUpdate", "MessageChannelsRefresh", "MessageAttributeUpdate", "MessageAttributesRefresh", "MessageMonitorUpdate", "MessageEngineScheduler", "MessageEngineStatus", "MessageEngineParser", "MessageEngineJobUpdate", "MessageUnknown" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TDeviceMessageType:1.0", "TDeviceMessageType", _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType, 12, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceMessageType = _0RL_tc_STI_mTNetwork_mTDeviceMessageType;
@@ -2129,7 +2129,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceMessageType = _0RL_tc_STI_
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceMessageTypeSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceMessageTypeSeq:1.0", "TDeviceMessageTypeSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceMessageType, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceMessageTypeSeq = _0RL_tc_STI_mTNetwork_mTDeviceMessageTypeSeq;
@@ -2148,7 +2148,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTAnyMessage[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAnyMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TAnyMessage:1.0", "TAnyMessage", _0RL_structmember_STI_mTNetwork_mTAnyMessage, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAnyMessage = _0RL_tc_STI_mTNetwork_mTAnyMessage;
@@ -2172,7 +2172,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceMessage = CORBA::TypeCo
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceMessage = _0RL_tc_STI_mTNetwork_mTDeviceMessage;
@@ -2197,7 +2197,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRefreshDeviceMessage = CORBA:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRefreshDeviceMessage = _0RL_tc_STI_mTNetwork_mTRefreshDeviceMessage;
@@ -2209,7 +2209,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TRefreshDeviceMessage = _0RL_tc_S
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTCollectionMessageType[] = { "CollectionMessageAdd", "CollectionMessageRemove", "CollectionMessageRefresh" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTCollectionMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TCollectionMessageType:1.0", "TCollectionMessageType", _0RL_enumMember_STI_mTNetwork_mTCollectionMessageType, 3, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TCollectionMessageType = _0RL_tc_STI_mTNetwork_mTCollectionMessageType;
@@ -2234,7 +2234,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTCollectionUpdateMessage = COR
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TCollectionUpdateMessage = _0RL_tc_STI_mTNetwork_mTCollectionUpdateMessage;
@@ -2246,7 +2246,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TCollectionUpdateMessage = _0RL_t
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTParsingMessageType[] = { "ParsingError", "ParsingWarning", "ParsingInformation" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParsingMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TParsingMessageType:1.0", "TParsingMessageType", _0RL_enumMember_STI_mTNetwork_mTParsingMessageType, 3, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParsingMessageType = _0RL_tc_STI_mTNetwork_mTParsingMessageType;
@@ -2287,7 +2287,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineParsingMessage = CORBA:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineParsingMessage = _0RL_tc_STI_mTNetwork_mTEngineParsingMessage;
@@ -2340,7 +2340,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessage = _0RL_tc_S
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineParsingMessageSeq:1.0", "TEngineParsingMessageSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineParsingMessage, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineParsingMessageSeq = _0RL_tc_STI_mTNetwork_mTEngineParsingMessageSeq;
@@ -2351,7 +2351,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParsingMessageSeq = _0RL_t
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTPlayingMessageType[] = { "PlayingError", "PlayingWarning", "PlayingInformation" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTPlayingMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TPlayingMessageType:1.0", "TPlayingMessageType", _0RL_enumMember_STI_mTNetwork_mTPlayingMessageType, 3, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TPlayingMessageType = _0RL_tc_STI_mTNetwork_mTPlayingMessageType;
@@ -2375,7 +2375,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEnginePlayingMes
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEnginePlayingMessage:1.0", "TEnginePlayingMessage", _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessage, 5, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessage = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage;
@@ -2396,7 +2396,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEnginePlayingMessage = _0RL_tc_S
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEnginePlayingMessageSeq:1.0", "TEnginePlayingMessageSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEnginePlayingMessage, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageSeq = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageSeq;
@@ -2510,7 +2510,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJob = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEventEngineJob = _0RL_tc_STI_mTNetwork_mTEventEngineJob;
@@ -2703,7 +2703,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJob = _0RL_tc_STI_mTN
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEventEngineJobSeq:1.0", "TEventEngineJobSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEventEngineJob, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEventEngineJobSeq = _0RL_tc_STI_mTNetwork_mTEventEngineJobSeq;
@@ -2714,7 +2714,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEventEngineJobSeq = _0RL_tc_STI_
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTSchedulerMessageType[] = { "SchedulerParseComplete", "SchedulerYieldParse", "SchedulerPartialParse", "SchedulerPlayReady", "SchedulerPlayComplete", "SchedulerYieldPlay" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTSchedulerMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TSchedulerMessageType:1.0", "TSchedulerMessageType", _0RL_enumMember_STI_mTNetwork_mTSchedulerMessageType, 6, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TSchedulerMessageType = _0RL_tc_STI_mTNetwork_mTSchedulerMessageType;
@@ -2931,7 +2931,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage = CORB
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineSchedulerMessage = _0RL_tc_STI_mTNetwork_mTEngineSchedulerMessage;
@@ -2952,7 +2952,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineParsingMes
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineParsingMessageCount = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineParsingMessageCount:1.0", "TEngineParsingMessageCount", _0RL_structmember_STI_mTNetwork_mTEngineParsingMessageCount, 3, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineParsingMessageCount = _0RL_tc_STI_mTNetwork_mTEngineParsingMessageCount;
@@ -2973,7 +2973,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEnginePlayingMes
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEnginePlayingMessageCount:1.0", "TEnginePlayingMessageCount", _0RL_structmember_STI_mTNetwork_mTEnginePlayingMessageCount, 3, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEnginePlayingMessageCount = _0RL_tc_STI_mTNetwork_mTEnginePlayingMessageCount;
@@ -3069,7 +3069,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage 
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineJobUpdateDeviceMessage = _0RL_tc_STI_mTNetwork_mTEngineJobUpdateDeviceMessage;
@@ -3089,7 +3089,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTAttributeTuple[]
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAttributeTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TAttributeTuple:1.0", "TAttributeTuple", _0RL_structmember_STI_mTNetwork_mTAttributeTuple, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAttributeTuple = _0RL_tc_STI_mTNetwork_mTAttributeTuple;
@@ -3106,7 +3106,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAttributeTuple = _0RL_tc_STI_mTN
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAttributeTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TAttributeTupleSeq:1.0", "TAttributeTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTAttributeTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAttributeTupleSeq = _0RL_tc_STI_mTNetwork_mTAttributeTupleSeq;
@@ -3133,7 +3133,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTAttributeUpdateMessage = CORB
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TAttributeUpdateMessage = _0RL_tc_STI_mTNetwork_mTAttributeUpdateMessage;
@@ -3145,7 +3145,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAttributeUpdateMessage = _0RL_tc
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTChannelUpdateMessageType[] = { "ChannelUpdataValue", "ChannelUpdateName" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelUpdateMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TChannelUpdateMessageType:1.0", "TChannelUpdateMessageType", _0RL_enumMember_STI_mTNetwork_mTChannelUpdateMessageType, 2, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelUpdateMessageType = _0RL_tc_STI_mTNetwork_mTChannelUpdateMessageType;
@@ -3164,7 +3164,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTChannelUpdateTup
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelUpdateTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TChannelUpdateTuple:1.0", "TChannelUpdateTuple", _0RL_structmember_STI_mTNetwork_mTChannelUpdateTuple, 2, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelUpdateTuple = _0RL_tc_STI_mTNetwork_mTChannelUpdateTuple;
@@ -3181,7 +3181,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TChannelUpdateTuple = _0RL_tc_STI
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelUpdateTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TChannelUpdateTupleSeq:1.0", "TChannelUpdateTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTChannelUpdateTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelUpdateTupleSeq = _0RL_tc_STI_mTNetwork_mTChannelUpdateTupleSeq;
@@ -3211,7 +3211,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelUpdateMessage = CORBA:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelUpdateMessage = _0RL_tc_STI_mTNetwork_mTChannelUpdateMessage;
@@ -3233,7 +3233,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTEngineStateTuple
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineStateTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TEngineStateTuple:1.0", "TEngineStateTuple", _0RL_structmember_STI_mTNetwork_mTEngineStateTuple, 2, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineStateTuple = _0RL_tc_STI_mTNetwork_mTEngineStateTuple;
@@ -3254,7 +3254,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineStateTuple = _0RL_tc_STI_m
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineStateTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TEngineStateTupleSeq:1.0", "TEngineStateTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTEngineStateTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineStateTupleSeq = _0RL_tc_STI_mTNetwork_mTEngineStateTupleSeq;
@@ -3283,7 +3283,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineStateMessage = CORBA::T
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineStateMessage = _0RL_tc_STI_mTNetwork_mTEngineStateMessage;
@@ -3346,7 +3346,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTEngineParserDeviceMessage = C
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TEngineParserDeviceMessage = _0RL_tc_STI_mTNetwork_mTEngineParserDeviceMessage;
@@ -3358,7 +3358,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TEngineParserDeviceMessage = _0RL
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTChannelType[] = { "TChannelOutput", "TChannelInput" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TChannelType:1.0", "TChannelType", _0RL_enumMember_STI_mTNetwork_mTChannelType, 2, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelType = _0RL_tc_STI_mTNetwork_mTChannelType;
@@ -3382,7 +3382,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTChannel[] = {
 #endif
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannel = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TChannel:1.0", "TChannel", _0RL_structmember_STI_mTNetwork_mTChannel, 7, &_0RL_tcTrack);
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannel = _0RL_tc_STI_mTNetwork_mTChannel;
@@ -3399,7 +3399,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TChannel = _0RL_tc_STI_mTNetwork_
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTChannelSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TChannelSeq:1.0", "TChannelSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTChannel, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TChannelSeq = _0RL_tc_STI_mTNetwork_mTChannelSeq;
@@ -3410,7 +3410,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TChannelSeq = _0RL_tc_STI_mTNetwo
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTRecordStatus[] = { "TRecordUnqueried", "TRecordComplete", "TRecordMissingDevice", "TRecordMissingResults", "TRecordError" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTRecordStatus = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TRecordStatus:1.0", "TRecordStatus", _0RL_enumMember_STI_mTNetwork_mTRecordStatus, 5, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TRecordStatus = _0RL_tc_STI_mTNetwork_mTRecordStatus;
@@ -3425,7 +3425,7 @@ static CORBA::TypeCode_ptr _0RL_ft_STI_mTNetwork_mTShotResultRecord = CORBA::Typ
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResultRecordSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TShotResultRecordSeq:1.0", "TShotResultRecordSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTShotResultRecord, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotResultRecordSeq = _0RL_tc_STI_mTNetwork_mTShotResultRecordSeq;
@@ -3447,7 +3447,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTShotResultRecord
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResultRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TShotResultRecord:1.0", "TShotResultRecord", _0RL_structmember_STI_mTNetwork_mTShotResultRecord, 3, &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotResultRecord = _0RL_tc_STI_mTNetwork_mTShotResultRecord;
@@ -3471,7 +3471,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTuple = COR
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDAttributesTuple = _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTuple;
@@ -3496,7 +3496,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceIDAttributesTuple = _0RL_t
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceIDAttributesTupleSeq:1.0", "TDeviceIDAttributesTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTuple, &_0RL_tcTrack), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TDeviceIDAttributesTupleSeq = _0RL_tc_STI_mTNetwork_mTDeviceIDAttributesTupleSeq;
@@ -3630,7 +3630,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTParseResult = CORBA::TypeCode
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TParseResult = _0RL_tc_STI_mTNetwork_mTParseResult;
@@ -3700,7 +3700,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTShotResult = CORBA::TypeCode:
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TShotResult = _0RL_tc_STI_mTNetwork_mTShotResult;
@@ -3878,7 +3878,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFullShotResult = CORBA::TypeC
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TFullShotResult = _0RL_tc_STI_mTNetwork_mTFullShotResult;
@@ -3890,7 +3890,7 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TFullShotResult = _0RL_tc_STI_mTN
 
 static const char* _0RL_enumMember_STI_mTNetwork_mTProfileType[] = { "ProfileAttribute", "ProfileChannel", "ProfileAll" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTProfileType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TProfileType:1.0", "TProfileType", _0RL_enumMember_STI_mTNetwork_mTProfileType, 3, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TProfileType = _0RL_tc_STI_mTNetwork_mTProfileType;
@@ -3916,7 +3916,7 @@ static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTProfile = CORBA::TypeCode::PR
 
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
   const ::CORBA::TypeCode_ptr _tc_TProfile = _0RL_tc_STI_mTNetwork_mTProfile;
