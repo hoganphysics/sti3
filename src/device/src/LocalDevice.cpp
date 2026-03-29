@@ -1,5 +1,6 @@
 #include <sti/LocalDevice.h>
 
+#include <sti/device/AutoMonitor.h>
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/DeviceMessageListener.h>
 #include <sti/device/DeviceMessageReceiver.h>
@@ -25,6 +26,7 @@
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineScheduler.h"
 #include "LocalLogManager.h"
+#include "LocalMonitorManager.h"
 #include "LocalPersistenceManager.h"
 #include "LocalProfileManager.h"
 #include "LocalTaskManager.h"
@@ -35,8 +37,10 @@
 #include <memory>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 using STI::Device::AttributeManager;
+using STI::Device::AutoMonitor;
 using STI::Device::ChannelManager;
 using STI::Device::CollectionUpdateMessage;
 using STI::Device::Device;
@@ -52,6 +56,10 @@ using STI::Device::LocalChannel;
 using STI::Device::LocalChannelManager;
 using STI::Device::LocalDevice;
 using STI::Device::LocalDeviceMessageDispatcher;
+using STI::Device::LocalMonitor;
+using STI::Device::LocalMonitorManager;
+using STI::Device::Monitor;
+using STI::Device::MonitorManager;
 using STI::Device::PartnerDevice;
 using STI::Device::LocalProfileManager;
 using STI::Device::TaskManager;
@@ -119,6 +127,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localProfileManager->addProfileTarget(localChannelManager);
 	
 	localTaskManager = std::make_shared<LocalTaskManager>();
+	localMonitorManager = std::make_shared<LocalMonitorManager>(id, deviceMessageDispatcher);
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
@@ -692,6 +701,72 @@ LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::str
 	return *attribute;
 }
 
+void LocalDevice::addMonitor(const std::shared_ptr<LocalMonitor>& monitor)
+{
+	if (localMonitorManager != 0 && monitor != 0) {
+		localMonitorManager->addMonitor(monitor);
+	}
+}
+
+void LocalDevice::addMonitor(const std::string& id, std::shared_ptr<LocalMonitor>& monitor)
+{
+	if (localMonitorManager == 0) {
+		monitor.reset();
+		return;
+	}
+
+	std::shared_ptr<Monitor> existing;
+	if (localMonitorManager->getMonitor(id, existing)) {
+		monitor = std::dynamic_pointer_cast<LocalMonitor>(existing);
+		return;
+	}
+
+	monitor = std::make_shared<LocalMonitor>(id);
+	localMonitorManager->addMonitor(monitor);
+}
+
+LocalMonitor& LocalDevice::addMonitor(const std::string& id)
+{
+	std::shared_ptr<LocalMonitor> monitor;
+	addMonitor(id, monitor);
+	return *monitor;
+}
+
+void LocalDevice::addAutoMonitor(
+	const std::string& id,
+	double updateInterval_s,
+	const std::function<STI::Utils::MixedValue(void)>& updater,
+	std::shared_ptr<AutoMonitor>& monitor)
+{
+	if (localMonitorManager == 0 || localTaskManager == 0) {
+		monitor.reset();
+		return;
+	}
+
+	std::shared_ptr<Monitor> existing;
+	if (localMonitorManager->getMonitor(id, existing)) {
+		monitor = std::dynamic_pointer_cast<AutoMonitor>(existing);
+
+		if (monitor == 0) {
+			throw std::runtime_error("Monitor with id '" + id + "' already exists and is not an AutoMonitor.");
+		}
+		return;
+	}
+
+	monitor = AutoMonitor::create(id, updateInterval_s, updater, localTaskManager);
+	localMonitorManager->addMonitor(monitor);
+}
+
+AutoMonitor& LocalDevice::addAutoMonitor(
+	const std::string& id,
+	double updateInterval_s,
+	const std::function<STI::Utils::MixedValue(void)>& updater)
+{
+	std::shared_ptr<AutoMonitor> monitor;
+	addAutoMonitor(id, updateInterval_s, updater, monitor);
+	return *monitor;
+}
+
 
 void LocalDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
@@ -749,9 +824,21 @@ bool LocalDevice::getTaskManager(std::shared_ptr<TaskManager>& manager)
 	return manager != 0;
 }
 
+bool LocalDevice::getMonitorManager(std::shared_ptr<MonitorManager>& manager)
+{
+	manager = localMonitorManager;
+	return manager != 0;
+}
+
 bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
 {
 	manager = localLogManager;
+	return manager != 0;
+}
+
+bool LocalDevice::getMonitorManager(std::shared_ptr<LocalMonitorManager>& manager)
+{
+	manager = localMonitorManager;
 	return manager != 0;
 }
 

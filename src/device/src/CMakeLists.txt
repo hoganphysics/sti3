@@ -46,6 +46,7 @@ set(STI_BASE_DIR ../../..)
 
 add_library(stidevice SHARED 
     AppointmentTask.cpp
+    AutoMonitor.cpp
     BinaryData.cpp
     CompressedStackTrace.cpp
     ConfigFile.cpp

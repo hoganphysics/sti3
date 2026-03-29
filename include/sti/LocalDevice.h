@@ -57,6 +57,10 @@ class LocalChannel;
 class LocalDevice;
 class LocalAttribute;
 class LocalAttributeManager;
+class LocalMonitor;
+class MonitorManager;
+class LocalMonitorManager;
+class AutoMonitor;
 class DeviceMessageListenerID;
 class LocalPersistenceManager;
 class LocalProfileManager;
@@ -92,11 +96,13 @@ public:
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 	bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
+	bool getMonitorManager(std::shared_ptr<MonitorManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
 
 	bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::LocalEventEngineScheduler>& scheduler);
+	bool getMonitorManager(std::shared_ptr<LocalMonitorManager>& manager);
 	bool getLogManager(std::shared_ptr<LocalLogManager>& manager);
 
 	void addEventEngine(const STI::Engine::EngineID& engineID);
@@ -115,6 +121,11 @@ public:
 
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
+
+    LocalMonitor& addMonitor(const std::string& id);
+
+    AutoMonitor& addAutoMonitor(const std::string& id, double updateInterval_s,
+        const std::function<STI::Utils::MixedValue(void)>& updater);
 
 	template<typename T>
 	LocalAttribute& addAttribute(const std::string& key, const T& initialValue)
@@ -180,6 +191,12 @@ private:
 
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 
+    void addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);
+    void addMonitor(const std::string& id, std::shared_ptr<STI::Device::LocalMonitor>& monitor);
+    void addAutoMonitor(const std::string& id, double updateInterval_s,
+        const std::function<STI::Utils::MixedValue(void)>& updater,
+        std::shared_ptr<STI::Device::AutoMonitor>& monitor);
+
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }
 
@@ -225,6 +242,7 @@ private:
 	std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
 	std::shared_ptr<LocalProfileManager> localProfileManager;
 	std::shared_ptr<LocalTaskManager> localTaskManager;
+	std::shared_ptr<LocalMonitorManager> localMonitorManager;
 	std::shared_ptr<LocalLogManager> localLogManager;
 
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
