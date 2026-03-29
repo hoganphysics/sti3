@@ -14,6 +14,7 @@ namespace Device
 
 typedef DeviceMessageRelayer<ChannelUpdateMessage, 
                              AttributeUpdateMessage,
+                             MonitorUpdateMessage,
                             //  EngineSchedulerMessage, 
                              RefreshDeviceMessage, 
                              CollectionUpdateMessage,

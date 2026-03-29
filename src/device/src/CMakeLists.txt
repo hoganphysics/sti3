@@ -76,6 +76,8 @@ add_library(stidevice SHARED
     LocalBinaryDataStream.cpp
     LocalChannel.cpp
     LocalChannelManager.cpp
+    LocalMonitor.cpp
+    LocalMonitorManager.cpp
     LocalDevice.cpp
     LocalDeviceMessageDispatcher.cpp
     LocalDeviceMessageHandler.cpp
@@ -263,4 +265,3 @@ else()
   # endif()
 
 endif()
-

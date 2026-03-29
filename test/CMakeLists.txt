@@ -30,6 +30,8 @@ add_executable(sti3_test_device
   device/evaluationbarrier_tests.cpp
   device/localattribute_tests.cpp
   device/localattributemanager_tests.cpp
+  device/localmonitor_tests.cpp
+  device/localmonitormanager_tests.cpp
   device/devicemessagelistener_tests.cpp
   device/devicemessagerelayer_tests.cpp
   device/localdevicemessagehandler_tests.cpp

@@ -267,6 +267,60 @@ public:
 };
 
 
+class MonitorUpdateMessage;
+
+
+class MonitorUpdateMessage : public DeviceMessage,
+							   public STI::Device::GroupableMessage<MonitorUpdateMessage>
+{
+public:
+
+	MonitorUpdateMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::MonitorUpdate) 
+	{
+	}
+
+	MonitorUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& id, const STI::Utils::MixedValue& value) 
+	: DeviceMessage(trace, DeviceMessageType::MonitorUpdate) 
+	{
+		updates[id] = value;
+	}
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::MonitorUpdate; }
+
+    bool appendMessage(const MonitorUpdateMessage& mess)
+	{
+        for (auto& pair : mess.updates) {
+            updates[pair.first] = pair.second;  //overwrites
+        }
+		return true;
+	}
+	
+	bool groupable() const
+	{
+		return true;
+	}
+
+    MonitorUpdateMessage& get()
+	{
+		return *this;
+	}
+
+	std::map<std::string, STI::Utils::MixedValue> updates;	//just {key, value} pairs
+
+	std::string toString() const
+	{
+		std::stringstream mess;
+		mess << "MonitorUpdate {\n";
+		
+		for (auto& pair : updates) {
+			mess << "\t" << pair.first << " -> " << pair.second.print() << "\n";
+		}
+		mess << "}";
+		return mess.str();
+	}
+};
+
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage
 {

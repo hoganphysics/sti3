@@ -69,6 +69,9 @@ public:
 		case DeviceMessageType::AttributeUpdate:
 			success = getListenerGroup(sourceDeviceID, attributeUpdateListeners, listenerGroup);
 			break;
+		case DeviceMessageType::MonitorUpdate:
+			success = getListenerGroup(sourceDeviceID, monitorUpdateListeners, listenerGroup);
+			break;
 		case DeviceMessageType::EngineScheduler:
 			success = getListenerGroup(sourceDeviceID, engineSchedulerListeners, listenerGroup);
 			break;
@@ -217,6 +220,7 @@ private:
 	ListenerGroupMap<RefreshDeviceMessage> refreshListeners;
 	ListenerGroupMap<ChannelUpdateMessage> channelUpdateListeners;
 	ListenerGroupMap<AttributeUpdateMessage> attributeUpdateListeners;
+	ListenerGroupMap<MonitorUpdateMessage> monitorUpdateListeners;
 	ListenerGroupMap<EngineSchedulerMessage> engineSchedulerListeners;
 	ListenerGroupMap<EngineParserDeviceMessage> engineParserListeners;
 	ListenerGroupMap<CollectionUpdateMessage> collectionUpdateListeners;
