@@ -715,6 +715,28 @@ STI::TNetwork::TAttribute::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TMonitor::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(id,0);
+  _n.marshalString(group,0);
+  status >>= _n;
+  (const TMixedValue&) value >>= _n;
+  (const TMixedValue&) metaData >>= _n;
+
+}
+
+void
+STI::TNetwork::TMonitor::operator<<= (cdrStream &_n)
+{
+  id = _n.unmarshalString(0);
+  group = _n.unmarshalString(0);
+  (TMonitorStatus&)status <<= _n;
+  (TMixedValue&)value <<= _n;
+  (TMixedValue&)metaData <<= _n;
+
+}
+
+void
 STI::TNetwork::TStackFrame::operator>>= (cdrStream &_n) const
 {
   file >>= _n;
@@ -1677,6 +1699,70 @@ STI::TNetwork::TAttributeUpdateMessage::operator<<= (cdrStream &_n)
 {
   (TDeviceMessage&)base <<= _n;
   (TAttributeTupleSeq&)attributes <<= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorUpdateTuple::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(id,0);
+  (const TMixedValue&) value >>= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorUpdateTuple::operator<<= (cdrStream &_n)
+{
+  id = _n.unmarshalString(0);
+  (TMixedValue&)value <<= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorUpdateMessage::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceMessage&) base >>= _n;
+  (const TMonitorUpdateTupleSeq&) updates >>= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorUpdateMessage::operator<<= (cdrStream &_n)
+{
+  (TDeviceMessage&)base <<= _n;
+  (TMonitorUpdateTupleSeq&)updates <<= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorStatusUpdateTuple::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(id,0);
+  status >>= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorStatusUpdateTuple::operator<<= (cdrStream &_n)
+{
+  id = _n.unmarshalString(0);
+  (TMonitorStatus&)status <<= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorStatusUpdateMessage::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceMessage&) base >>= _n;
+  (const TMonitorStatusUpdateTupleSeq&) updates >>= _n;
+
+}
+
+void
+STI::TNetwork::TMonitorStatusUpdateMessage::operator<<= (cdrStream &_n)
+{
+  (TDeviceMessage&)base <<= _n;
+  (TMonitorStatusUpdateTupleSeq&)updates <<= _n;
 
 }
 

@@ -13,6 +13,7 @@
 #include <sti/utils/MixedValue.h>
 // #include "EventEngineSchedulerPy.h"
 #include "AttributeManagerPy.h"
+#include "MonitorManagerPy.h"
 #include "PersistenceManagerPy.h"
 
 #include <pybind11/pybind11.h>
@@ -25,6 +26,8 @@ using STI::Python::DeviceCollectionPy;
 // using STI::Python::EventEngineSchedulerPy;
 using STI::Python::AttributeManagerPy;
 using STI::Device::AttributeManager;
+using STI::Python::MonitorManagerPy;
+using STI::Device::MonitorManager;
 using STI::Python::PersistenceManagerPy;
 using STI::Device::PersistenceManager;
 using STI::Engine::EventEngineScheduler;
@@ -148,6 +151,21 @@ std::shared_ptr<AttributeManagerPy> DevicePy::getAttributeManager()
     return wrapper;
 }
 
+std::shared_ptr<MonitorManagerPy> DevicePy::getMonitorManager()
+{
+    std::shared_ptr<MonitorManager> manager;
+
+    if (device_ != 0) {
+        device_->getMonitorManager(manager);
+    }
+
+    if (manager != 0) {
+        return std::make_shared<MonitorManagerPy>(manager);
+    }
+
+    return nullptr;
+}
+
 std::shared_ptr<PersistenceManagerPy> DevicePy::getPersistenceManager()
 {
     std::shared_ptr<STI::Device::PersistenceManager> manager;
@@ -263,4 +281,3 @@ bool DevicePy::setAttribute(const std::string& key, const std::string& value)
     }
     return false;
 }
-

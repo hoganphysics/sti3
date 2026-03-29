@@ -2,6 +2,7 @@
 #define STI_PYTHON_LOCALDEVICEPY_H
 
 #include <sti/LocalDevice.h>
+#include <sti/device/AutoMonitor.h>
 #include <sti/device/DeviceID.h>
 
 #include "DevicePy.h"
@@ -60,6 +61,12 @@ public:
 
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue);
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues);
+    std::shared_ptr<STI::Device::LocalMonitor> addMonitor(const std::string& id);
+    std::shared_ptr<STI::Device::LocalMonitor> addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);
+    std::shared_ptr<STI::Device::AutoMonitor> addAutoMonitor(
+        const std::string& id,
+        double updateInterval_s,
+        const std::function<pybind11::object(void)>& updater);
 
     void addTask(const std::shared_ptr<STI::Utils::Task>& task);
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task);
@@ -187,4 +194,3 @@ public:
 } //STI
 
 #endif
-

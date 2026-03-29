@@ -50,6 +50,20 @@ public:
         receiver->addListener<STI::Device::AttributeUpdateMessage>(sourceDeviceID, listenerName, handler);
     }
 
+    void addMonitorUpdateListener(const STI::Device::DeviceID& sourceDeviceID, const std::string& listenerName,
+        const std::function<void (const std::shared_ptr<STI::Device::MonitorUpdateMessage>&)>& handler)
+    {
+        if (receiver == 0) return;
+        receiver->addListener<STI::Device::MonitorUpdateMessage>(sourceDeviceID, listenerName, handler);
+    }
+
+    void addMonitorStatusUpdateListener(const STI::Device::DeviceID& sourceDeviceID, const std::string& listenerName,
+        const std::function<void (const std::shared_ptr<STI::Device::MonitorStatusUpdateMessage>&)>& handler)
+    {
+        if (receiver == 0) return;
+        receiver->addListener<STI::Device::MonitorStatusUpdateMessage>(sourceDeviceID, listenerName, handler);
+    }
+
     void addEngineJobUpdateListener(const STI::Device::DeviceID& sourceDeviceID, const std::string& listenerName, 
 		const std::function<void (const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>&)>& handler)
     {

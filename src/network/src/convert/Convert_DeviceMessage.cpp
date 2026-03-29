@@ -1,4 +1,5 @@
 #include "Convert_DeviceMessage.h"
+#include "Convert_Monitor.h"
 #include "Convert_EventEngine.h"
 #include "Convert_DeviceTrace.h"
 #include "Convert_RawEventGroup.h"
@@ -6,7 +7,9 @@
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
+#include <sti/device/Monitor.h>
 #include <sti/utils/MixedValue.h>
+
 
 #include "NetworkEventEngine.h"
 #include "RemoteEventEngine.h"
@@ -77,6 +80,12 @@ using STI::Engine::ParsedVar;
 using STI::TNetwork::TEngineStateTupleSeq;
 using STI::Engine::EngineID;
 using STI::Engine::EngineState;
+using STI::Device::MonitorUpdateMessage;
+using STI::TNetwork::TMonitorUpdateMessage;
+using STI::Device::MonitorStatusUpdateMessage;
+using STI::TNetwork::TMonitorStatusUpdateMessage;
+using STI::Device::MonitorStatus;
+using STI::TNetwork::TMonitorStatus;
 
 
 template<>
@@ -106,6 +115,9 @@ TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(
 			break;
 		case DeviceMessageType::MonitorUpdate:
 			tType = TDeviceMessageType::MessageMonitorUpdate;
+			break;
+		case DeviceMessageType::MonitorStatusUpdate:
+			tType = TDeviceMessageType::MessageMonitorStatusUpdate;
 			break;
 		case DeviceMessageType::EngineScheduler:
 			tType = TDeviceMessageType::MessageEngineScheduler;
@@ -154,6 +166,9 @@ DeviceMessageType STI::Network::convert<TDeviceMessageType, DeviceMessageType>(c
 			break;
 		case TDeviceMessageType::MessageMonitorUpdate:
 			type = DeviceMessageType::MonitorUpdate;
+			break;
+		case TDeviceMessageType::MessageMonitorStatusUpdate:
+			type = DeviceMessageType::MonitorStatusUpdate;
 			break;
 		case TDeviceMessageType::MessageEngineScheduler:
 			type = DeviceMessageType::EngineScheduler;
@@ -237,8 +252,6 @@ bool convertMessage(const std::shared_ptr<STI::Device::DeviceMessage>& deviceMes
 	return success;
 }
 
-
-
 template<>
 bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 					const std::shared_ptr<DeviceMessage>& deviceMessage, TAnyMessage& tAnyMessage)
@@ -262,6 +275,12 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 		break;
 	case DeviceMessageType::AttributeUpdate:
 		success = convertMessage<AttributeUpdateMessage, TAttributeUpdateMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::MonitorUpdate:
+		success = convertMessage<MonitorUpdateMessage, TMonitorUpdateMessage>(deviceMessage, tAnyMessage);
+		break;
+	case DeviceMessageType::MonitorStatusUpdate:
+		success = convertMessage<MonitorStatusUpdateMessage, TMonitorStatusUpdateMessage>(deviceMessage, tAnyMessage);
 		break;
 	case DeviceMessageType::ChannelUpdate:
 		success = convertMessage<ChannelUpdateMessage, TChannelUpdateMessage>(deviceMessage, tAnyMessage);
@@ -317,6 +336,9 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 		break;
 	case TDeviceMessageType::MessageAttributeUpdate:
 		success = extractMessage<TAttributeUpdateMessage, AttributeUpdateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageMonitorUpdate:
+		success = extractMessage<TMonitorUpdateMessage, MonitorUpdateMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	case TDeviceMessageType::MessageChannelUpdate:
 		success = extractMessage<TChannelUpdateMessage, ChannelUpdateMessage>(tAnyMessage.mess, deviceMessage);
@@ -777,8 +799,7 @@ bool STI::Network::convert<TAttributeUpdateMessage, std::shared_ptr<AttributeUpd
 	const TAttributeUpdateMessage& tMessage, std::shared_ptr<AttributeUpdateMessage>& deviceMessage)
 {
 	deviceMessage = std::make_shared<AttributeUpdateMessage>(
-		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
-//		convert<TDeviceID, DeviceID>(tMessage.base.sourceID)		
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)	
 		);
 
 	for(unsigned i = 0; i < tMessage.attributes.length(); ++i) {
@@ -815,6 +836,95 @@ bool STI::Network::convert<std::shared_ptr<AttributeUpdateMessage>, TAttributeUp
 	return true;
 }
 
+
+//MonitorUpdateMessage
+template<>
+bool STI::Network::convert<TMonitorUpdateMessage, std::shared_ptr<MonitorUpdateMessage>>(
+	const TMonitorUpdateMessage& tMessage, std::shared_ptr<MonitorUpdateMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<MonitorUpdateMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		);
+
+	for(unsigned i = 0; i < tMessage.updates.length(); ++i) {
+
+		deviceMessage->updates.insert(
+			std::pair<std::string, MixedValue>(
+				convert<CORBA::String_member, std::string>(tMessage.updates[i].id),
+				convert<TMixedValue, MixedValue>(tMessage.updates[i].value)
+			));
+
+	}
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<MonitorUpdateMessage>, TMonitorUpdateMessage>(
+	const std::shared_ptr<MonitorUpdateMessage>& deviceMessage, TMonitorUpdateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.updates.length( static_cast<unsigned>(deviceMessage->updates.size()) );
+
+	unsigned i = 0;
+	for (auto& update : deviceMessage->updates) {
+		if (i < tMessage.updates.length()) {
+			tMessage.updates[i].id = convert<std::string, CORBA::String_member>(update.first);
+			tMessage.updates[i].value = convert<MixedValue, TMixedValue>(update.second);
+		}
+		++i;
+	}
+
+	return true;
+}
+
+
+//MonitorStatusUpdateMessage
+template<>
+bool STI::Network::convert<TMonitorStatusUpdateMessage, std::shared_ptr<MonitorStatusUpdateMessage>>(
+	const TMonitorStatusUpdateMessage& tMessage, std::shared_ptr<MonitorStatusUpdateMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<MonitorStatusUpdateMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		);
+
+	for(unsigned i = 0; i < tMessage.updates.length(); ++i) {
+
+		deviceMessage->updates.insert(
+			std::pair<std::string, MonitorStatus>(
+				convert<CORBA::String_member, std::string>(tMessage.updates[i].id),
+				convert<TMonitorStatus, MonitorStatus>(tMessage.updates[i].status)
+			));
+
+	}
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<MonitorStatusUpdateMessage>, TMonitorStatusUpdateMessage>(
+	const std::shared_ptr<MonitorStatusUpdateMessage>& deviceMessage, TMonitorStatusUpdateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.updates.length( static_cast<unsigned>(deviceMessage->updates.size()) );
+
+	unsigned i = 0;
+	for (auto& update : deviceMessage->updates) {
+		if (i < tMessage.updates.length()) {
+			tMessage.updates[i].id = convert<std::string, CORBA::String_member>(update.first);
+			tMessage.updates[i].status = convert<MonitorStatus, TMonitorStatus>(update.second);
+		}
+		++i;
+	}
+
+	return true;
+}
 
 
 //EngineStateMessage

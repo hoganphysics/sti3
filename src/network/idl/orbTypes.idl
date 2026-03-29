@@ -181,6 +181,17 @@ module TNetwork
 	};
 	typedef sequence<TAttribute> TAttributeSeq;
 
+	enum TMonitorStatus { MonitorActive, MonitorInactive, MonitorMissing };
+
+	struct TMonitor
+	{
+		string id;
+		string group;
+		TMonitorStatus status;
+		TMixedValue value;
+		TMixedValue metaData;
+	};
+	typedef sequence<TMonitor> TMonitorSeq;
 
 	struct TStackFrame
 	{
@@ -478,7 +489,7 @@ module TNetwork
 	//DeviceMessage *************************//
 
 	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
-							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler,
+							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler,
 							MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown };
 	typedef sequence<TDeviceMessageType> TDeviceMessageTypeSeq;
 
@@ -631,6 +642,33 @@ module TNetwork
 		TAttributeTupleSeq attributes;		//{key, value} pairs
 	};
 
+	struct TMonitorUpdateTuple
+	{
+		string id;
+		TMixedValue value;
+	};
+	typedef sequence<TMonitorUpdateTuple> TMonitorUpdateTupleSeq;
+
+	struct TMonitorUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+		TMonitorUpdateTupleSeq updates;		//{key, value} pairs
+	};
+
+
+	struct TMonitorStatusUpdateTuple
+	{
+		string id;
+		TMonitorStatus status;
+	};
+	typedef sequence<TMonitorStatusUpdateTuple> TMonitorStatusUpdateTupleSeq;
+
+	struct TMonitorStatusUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+		TMonitorStatusUpdateTupleSeq updates;		//{key, value} pairs
+	};
+	
 	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };
 
 	struct TChannelUpdateTuple

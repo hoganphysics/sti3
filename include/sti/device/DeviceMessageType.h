@@ -12,7 +12,7 @@ enum class DeviceMessageType {
 	Refresh, CollectionUpdate, 
 	ChannelUpdate, ChannelsRefresh, 
 	AttributeUpdate, AttributesRefresh, 
-	MonitorUpdate, 
+	MonitorUpdate, MonitorStatusUpdate,
 	EngineJobUpdate,
 	EngineScheduler, 
 	EngineParser,

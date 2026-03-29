@@ -12,6 +12,7 @@ using STI::TNetwork::TPersistenceManager_ptr;
 using STI::TNetwork::TProfileManager_ptr;
 using STI::TNetwork::TTaskManager_ptr;
 using STI::TNetwork::TLogManager_ptr;
+using STI::TNetwork::TMonitorManager_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
 using STI::Network::convert;
@@ -28,7 +29,8 @@ attributeManagerServantHolder(new STI::TNetwork::TAttributeManager_i(device)),
 persistenceManagerServantHolder(new STI::TNetwork::TPersistenceManager_i(device)), 
 profileManagerServantHolder(new STI::TNetwork::TProfileManager_i(device)), 
 taskManagerServantHolder(new STI::TNetwork::TTaskManager_i(device)), 
-logManagerServantHolder(new STI::TNetwork::TLogManager_i(device))
+logManagerServantHolder(new STI::TNetwork::TLogManager_i(device)),
+monitorManagerServantHolder(new STI::TNetwork::TMonitorManager_i(device))
 {
 }
 
@@ -94,6 +96,11 @@ TTaskManager_ptr TDevice_i::getTaskManager()
 TLogManager_ptr TDevice_i::getLogManager()
 {
 	return logManagerServantHolder.getRefPtr();
+}
+
+TMonitorManager_ptr TDevice_i::getMonitorManager()
+{
+	return monitorManagerServantHolder.getRefPtr();
 }
 
 TDeviceID* TDevice_i::getID()

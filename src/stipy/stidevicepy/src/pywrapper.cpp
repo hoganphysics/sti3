@@ -18,6 +18,8 @@ void init_DeviceMessageDispatcher(py::module& m);
 void init_DeviceMessageReceiver(py::module& m);
 void init_Channel(py::module& m);
 void init_ChannelManager(py::module& m);
+void init_Monitor(py::module& m);
+void init_MonitorManager(py::module& m);
 void init_SynchronousEvent(py::module& m);
 void init_Device(py::module& m);
 void init_LocalDevice(py::module& m);
@@ -47,6 +49,8 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_DeviceMessageReceiver(m);
     init_Channel(m);
     init_ChannelManager(m);
+    init_Monitor(m);
+    init_MonitorManager(m);
     init_DeviceCollection(m);
     init_SynchronousEvent(m);
     init_Device(m);
@@ -64,4 +68,3 @@ int main(int argc, char *argv[])
 {
     return 0;
 }
-

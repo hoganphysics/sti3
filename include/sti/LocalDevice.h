@@ -126,6 +126,9 @@ public:
 
     AutoMonitor& addAutoMonitor(const std::string& id, double updateInterval_s,
         const std::function<STI::Utils::MixedValue(void)>& updater);
+    void addAutoMonitor(const std::string& id, double updateInterval_s,
+        const std::function<STI::Utils::MixedValue(void)>& updater,
+        std::shared_ptr<STI::Device::AutoMonitor>& monitor);
 
 	template<typename T>
 	LocalAttribute& addAttribute(const std::string& key, const T& initialValue)
@@ -189,13 +192,10 @@ public:
 
 private:
 
-	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
+    void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 
     void addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);
     void addMonitor(const std::string& id, std::shared_ptr<STI::Device::LocalMonitor>& monitor);
-    void addAutoMonitor(const std::string& id, double updateInterval_s,
-        const std::function<STI::Utils::MixedValue(void)>& updater,
-        std::shared_ptr<STI::Device::AutoMonitor>& monitor);
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }

@@ -66,6 +66,7 @@ add_library(sticommonpy STATIC
     DeviceCollectionPy.cpp
     DevicePy.cpp
     MixedValuePy.cpp
+    MonitorManagerPy.cpp
     NodeWalkerPy.cpp
     PartnerDevicePy.cpp
     PersistenceManagerPy.cpp
@@ -176,6 +177,8 @@ pybind11_add_module(stidevicepy
     PartnerDevice_wrap.cpp
     PersistenceManager_wrap.cpp
     ProfileManager_wrap.cpp
+    Monitor_wrap.cpp
+    MonitorManager_wrap.cpp
     pywrapper.cpp
     SynchronousEvent_wrap.cpp
     SynchronousEventPy.cpp

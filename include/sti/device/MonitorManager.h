@@ -28,7 +28,7 @@ public:
 
 	virtual MonitorStatus getStatus(const std::string& id) const = 0;
 
-	virtual STI::Utils::MixedValue getValue(const std::string& key) = 0;
+	virtual STI::Utils::MixedValue getValue(const std::string& id) = 0;
     // virtual bool setValue(const std::string& key, const std::string& value) = 0;
 
 	virtual void activate(const std::string& id) = 0;

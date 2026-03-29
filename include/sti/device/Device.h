@@ -24,6 +24,7 @@ class Device;
 class Attribute;
 class LogManager;
 class TaskManager;
+class MonitorManager;
 
 
 class Device : public STI::Network::Node<DeviceID, Device>
@@ -39,6 +40,7 @@ public:
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;
 	virtual void getChannelManager(std::shared_ptr<ChannelManager>& manager) = 0;
 	virtual void getAttributeManager(std::shared_ptr<AttributeManager>& manager) = 0;
+	virtual bool getMonitorManager(std::shared_ptr<MonitorManager>& manager) = 0;
 	virtual bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) = 0;
 	virtual bool getProfileManager(std::shared_ptr<ProfileManager>& manager) = 0;
 	virtual bool getTaskManager(std::shared_ptr<TaskManager>& manager) = 0;

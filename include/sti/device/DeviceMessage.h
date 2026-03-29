@@ -2,6 +2,7 @@
 #define STI_DEVICE_DEVICEMESSAGE_H
 
 #include <sti/device/DeviceID.h>
+#include <sti/device/Monitor.h>
 #include <sti/fwd/EventEngine_fwd.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/EngineJobID.h>
@@ -32,7 +33,7 @@ namespace Device
 // 	Refresh, CollectionUpdate, 
 // 	ChannelUpdate, ChannelsRefresh, 
 // 	AttributeUpdate, AttributesRefresh, 
-// 	MonitorUpdate, 
+// 	MonitorUpdate, MonitorStatusUpdate 
 // 	EngineJobUpdate,
 // 	EngineScheduler, 
 // 	EngineParser,
@@ -321,6 +322,73 @@ public:
 	}
 };
 
+
+class MonitorStatusUpdateMessage;
+
+
+class MonitorStatusUpdateMessage : public DeviceMessage,
+							   public STI::Device::GroupableMessage<MonitorStatusUpdateMessage>
+{
+public:
+
+	MonitorStatusUpdateMessage(const STI::Device::DeviceTrace& trace) 
+	: DeviceMessage(trace, DeviceMessageType::MonitorStatusUpdate) 
+	{
+	}
+
+	MonitorStatusUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& id, const STI::Device::MonitorStatus& status) 
+	: DeviceMessage(trace, DeviceMessageType::MonitorStatusUpdate) 
+	{
+		updates[id] = status;
+	}
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::MonitorStatusUpdate; }
+
+    bool appendMessage(const MonitorStatusUpdateMessage& mess)
+	{
+        for (auto& pair : mess.updates) {
+            updates[pair.first] = pair.second;  //overwrites
+        }
+		return true;
+	}
+	
+	bool groupable() const
+	{
+		return true;
+	}
+
+    MonitorStatusUpdateMessage& get()
+	{
+		return *this;
+	}
+
+	std::map<std::string, STI::Device::MonitorStatus> updates;	//just {key, value} pairs
+
+	std::string toString() const
+	{
+		const auto statusToString = [](const MonitorStatus& status) {
+			switch (status) {
+			case MonitorStatus::Active:
+				return "Active";
+			case MonitorStatus::Inactive:
+				return "Inactive";
+			case MonitorStatus::Missing:
+				return "Missing";
+			}
+
+			return "Missing";
+		};
+
+		std::stringstream mess;
+		mess << "MonitorStatusUpdate {\n";
+		
+		for (auto& pair : updates) {
+			mess << "\t" << pair.first << " -> " << statusToString(pair.second) << "\n";
+		}
+		mess << "}";
+		return mess.str();
+	}
+};
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage
 {

@@ -89,6 +89,14 @@ bool PartnerDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& m
 	return false;
 }
 
+bool PartnerDevice::getMonitorManager(std::shared_ptr<STI::Device::MonitorManager>& manager)
+{
+	if (device != 0) {
+		return device->getMonitorManager(manager);
+	}
+	return false;
+}
+
 bool PartnerDevice::getProfileManager(std::shared_ptr<ProfileManager>& manager)
 {
 	if (device != 0) {
@@ -206,4 +214,3 @@ bool PartnerDevice::getAttribute(const std::string& key, std::shared_ptr<Attribu
 	}
 	return false;
 }
-

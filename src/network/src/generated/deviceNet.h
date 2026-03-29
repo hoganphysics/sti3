@@ -2268,6 +2268,141 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TAttributeManager;
 
+#ifndef __STI_mTNetwork_mTMonitorManager__
+#define __STI_mTNetwork_mTMonitorManager__
+    class TMonitorManager;
+    class _objref_TMonitorManager;
+    class _impl_TMonitorManager;
+    
+    typedef _objref_TMonitorManager* TMonitorManager_ptr;
+    typedef TMonitorManager_ptr TMonitorManagerRef;
+
+    class TMonitorManager_Helper {
+    public:
+      typedef TMonitorManager_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TMonitorManager, TMonitorManager_Helper> TMonitorManager_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TMonitorManager,TMonitorManager_Helper > TMonitorManager_out;
+
+#endif
+
+    // interface TMonitorManager
+    class TMonitorManager {
+    public:
+      // Declarations for this interface type.
+      typedef TMonitorManager_ptr _ptr_type;
+      typedef TMonitorManager_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TMonitorManager :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      ::CORBA::Boolean getIDs(::STI::TNetwork::TStringSeq_out ids);
+      ::CORBA::Boolean getMonitor(const char* id, ::STI::TNetwork::TMonitor_out monitor);
+      ::CORBA::Boolean getMonitors(::STI::TNetwork::TMonitorSeq_out monitors);
+      TMonitorStatus getStatus(const char* id);
+      void getValue(const char* id, ::STI::TNetwork::TMixedValue_out value);
+      void activate(const char* id);
+      void deactivate(const char* id);
+      void activateAll();
+      void deactivateAll();
+      ::CORBA::Boolean ping();
+
+      // Constructors
+      inline _objref_TMonitorManager()  { _PR_setobj(0); }  // nil
+      _objref_TMonitorManager(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TMonitorManager();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TMonitorManager(const _objref_TMonitorManager&);
+      _objref_TMonitorManager& operator = (const _objref_TMonitorManager&);
+      // not implemented
+
+      friend class TMonitorManager;
+    };
+
+    class _pof_TMonitorManager : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TMonitorManager() : _OMNI_NS(proxyObjectFactory)(TMonitorManager::_PD_repoId) {}
+      virtual ~_pof_TMonitorManager();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TMonitorManager :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TMonitorManager();
+
+      virtual ::CORBA::Boolean getIDs(::STI::TNetwork::TStringSeq_out ids) = 0;
+      virtual ::CORBA::Boolean getMonitor(const char* id, ::STI::TNetwork::TMonitor_out monitor) = 0;
+      virtual ::CORBA::Boolean getMonitors(::STI::TNetwork::TMonitorSeq_out monitors) = 0;
+      virtual TMonitorStatus getStatus(const char* id) = 0;
+      virtual void getValue(const char* id, ::STI::TNetwork::TMixedValue_out value) = 0;
+      virtual void activate(const char* id) = 0;
+      virtual void deactivate(const char* id) = 0;
+      virtual void activateAll() = 0;
+      virtual void deactivateAll() = 0;
+      virtual ::CORBA::Boolean ping() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorManager;
+
 #ifndef __STI_mTNetwork_mTPersistenceManager__
 #define __STI_mTNetwork_mTPersistenceManager__
     class TPersistenceManager;
@@ -2776,6 +2911,7 @@ _CORBA_MODULE_BEG
       TProfileManager_ptr getProfileManager();
       TTaskManager_ptr getTaskManager();
       TLogManager_ptr getLogManager();
+      TMonitorManager_ptr getMonitorManager();
 
       // Constructors
       inline _objref_TDevice()  { _PR_setobj(0); }  // nil
@@ -2823,6 +2959,7 @@ _CORBA_MODULE_BEG
       virtual TProfileManager_ptr getProfileManager() = 0;
       virtual TTaskManager_ptr getTaskManager() = 0;
       virtual TLogManager_ptr getLogManager() = 0;
+      virtual TMonitorManager_ptr getMonitorManager() = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);
@@ -3512,6 +3649,18 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TMonitorManager :
+      public virtual STI::TNetwork::_impl_TMonitorManager,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TMonitorManager();
+
+      inline ::STI::TNetwork::TMonitorManager_ptr _this() {
+        return (::STI::TNetwork::TMonitorManager_ptr) _do_this(::STI::TNetwork::TMonitorManager::_PD_repoId);
+      }
+    };
+
     class TPersistenceManager :
       public virtual STI::TNetwork::_impl_TPersistenceManager,
       public virtual ::PortableServer::ServantBase
@@ -3712,6 +3861,10 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TAttributeManager_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorManager_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorManager_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorManager_ptr& _s);
+
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr& _s);
@@ -3813,6 +3966,11 @@ STI::TNetwork::TChannelManager::_marshalObjRef(::STI::TNetwork::TChannelManager_
 
 inline void
 STI::TNetwork::TAttributeManager::_marshalObjRef(::STI::TNetwork::TAttributeManager_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TMonitorManager::_marshalObjRef(::STI::TNetwork::TMonitorManager_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

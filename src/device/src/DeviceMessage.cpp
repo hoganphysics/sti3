@@ -78,6 +78,9 @@ std::string DeviceMessage::typeToString(const DeviceMessageType& type)
 	case DeviceMessageType::MonitorUpdate:
 		name = "MonitorUpdate";
 		break;
+	case DeviceMessageType::MonitorStatusUpdate:
+		name = "MonitorStatusUpdate";
+		break;
 	case DeviceMessageType::EngineScheduler:
 		name = "EngineScheduler";
 		break;

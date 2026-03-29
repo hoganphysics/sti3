@@ -26,6 +26,7 @@ class RemoteDeviceMessageDispatcher;
 class RemoteEventEngineScheduler;
 class RemoteChannelManager;
 class RemoteAttributeManager;
+class RemoteMonitorManager;
 class RemotePersistenceManager;
 class RemoteProfileManager;
 class RemoteTaskManager;
@@ -53,6 +54,7 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<STI::Device::AttributeManager>& manager);
+	bool getMonitorManager(std::shared_ptr<STI::Device::MonitorManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager);
 	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager);
 	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager);
@@ -85,6 +87,7 @@ private:
 	std::shared_ptr<RemoteEventEngineScheduler> remoteScheduler;
 	std::shared_ptr<RemoteChannelManager> remoteChannelManager;
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
+	std::shared_ptr<RemoteMonitorManager> remoteMonitorManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
 	std::shared_ptr<RemoteProfileManager> remoteProfileManager;
 	std::shared_ptr<RemoteTaskManager> remoteTaskManager;
@@ -102,4 +105,3 @@ private:
 
 
 #endif
-

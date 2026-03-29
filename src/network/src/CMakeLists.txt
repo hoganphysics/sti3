@@ -72,6 +72,7 @@ add_library(stinetwork SHARED
     convert/Convert_HubNodeWalker.cpp
     convert/Convert_HubTrace.cpp
     convert/Convert_Log.cpp
+    convert/Convert_Monitor.cpp
     convert/Convert_Profile.cpp
     convert/Convert_DeviceTrace.cpp
     convert/Convert_RawEventGroup.cpp
@@ -122,6 +123,8 @@ add_library(stinetwork SHARED
     RemoteFileHolder.cpp
     RemoteFileServer.cpp
     RemoteLogManager.cpp
+    RemoteMonitor.cpp
+    RemoteMonitorManager.cpp
     RemotePersistenceManager.cpp
     RemoteProfileManager.cpp
     RemoteResultsCollector.cpp
@@ -145,6 +148,7 @@ add_library(stinetwork SHARED
     TFileHolder_i.cpp
     TFileServer_i.cpp
     TLogManager_i.cpp
+    TMonitorManager_i.cpp
     TPersistenceManager_i.cpp
     TProfileManager_i.cpp
     TRefreshIndicator_i.cpp
@@ -395,5 +399,4 @@ else()
   #   )
   # endif()
 endif()
-
 

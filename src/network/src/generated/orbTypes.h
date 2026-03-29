@@ -2836,6 +2836,151 @@ _CORBA_MODULE_BEG
       TAttributeSeq_out& operator=(const TAttributeSeq_var&);
     };
 
+    enum TMonitorStatus { MonitorActive, MonitorInactive, MonitorMissing /*, __max_TMonitorStatus=0xffffffff */ };
+    typedef TMonitorStatus& TMonitorStatus_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatus;
+
+    struct TMonitor {
+      typedef _CORBA_ConstrType_Variable_Var<TMonitor> _var_type;
+
+      
+      ::CORBA::String_member id;
+
+      ::CORBA::String_member group;
+
+      TMonitorStatus status;
+
+      TMixedValue value;
+
+      TMixedValue metaData;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TMonitor::_var_type TMonitor_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitor,TMonitor_var > TMonitor_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitor;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorSeq;
+
+    class TMonitorSeq_var;
+
+    class TMonitorSeq : public _CORBA_Unbounded_Sequence< TMonitor >  {
+    public:
+      typedef TMonitorSeq_var _var_type;
+      inline TMonitorSeq() {}
+      inline TMonitorSeq(const TMonitorSeq& _s)
+        : _CORBA_Unbounded_Sequence< TMonitor > (_s) {}
+
+      inline TMonitorSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TMonitor > (_max) {}
+      inline TMonitorSeq(_CORBA_ULong _max, _CORBA_ULong _len, TMonitor* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TMonitor > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TMonitorSeq& operator = (const TMonitorSeq& _s) {
+        _CORBA_Unbounded_Sequence< TMonitor > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TMonitorSeq_out;
+
+    class TMonitorSeq_var {
+    public:
+      inline TMonitorSeq_var() : _pd_seq(0) {}
+      inline TMonitorSeq_var(TMonitorSeq* _s) : _pd_seq(_s) {}
+      inline TMonitorSeq_var(const TMonitorSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TMonitorSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TMonitorSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TMonitorSeq_var& operator = (TMonitorSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TMonitorSeq_var& operator = (const TMonitorSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TMonitorSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TMonitor& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TMonitorSeq* operator -> () { return _pd_seq; }
+      inline const TMonitorSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TMonitorSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TMonitorSeq& () const { return *_pd_seq; }
+      inline operator TMonitorSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TMonitorSeq& in() const { return *_pd_seq; }
+      inline TMonitorSeq&       inout()    { return *_pd_seq; }
+      inline TMonitorSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TMonitorSeq* _retn() { TMonitorSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TMonitorSeq_out;
+      
+    private:
+      TMonitorSeq* _pd_seq;
+    };
+
+    class TMonitorSeq_out {
+    public:
+      inline TMonitorSeq_out(TMonitorSeq*& _s) : _data(_s) { _data = 0; }
+      inline TMonitorSeq_out(TMonitorSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TMonitorSeq*) 0; }
+      inline TMonitorSeq_out(const TMonitorSeq_out& _s) : _data(_s._data) {}
+      inline TMonitorSeq_out& operator = (const TMonitorSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TMonitorSeq_out& operator = (TMonitorSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TMonitorSeq*&()  { return _data; }
+      inline TMonitorSeq*& ptr()       { return _data; }
+      inline TMonitorSeq* operator->() { return _data; }
+
+      inline TMonitor& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TMonitorSeq*& _data;
+
+    private:
+      TMonitorSeq_out();
+      TMonitorSeq_out& operator=(const TMonitorSeq_var&);
+    };
+
     struct TStackFrame {
       typedef _CORBA_ConstrType_Fix_Var<TStackFrame> _var_type;
 
@@ -5149,7 +5294,7 @@ _CORBA_MODULE_BEG
 
 #endif
 
-    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
+    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
     typedef TDeviceMessageType& TDeviceMessageType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceMessageType;
@@ -6097,6 +6242,314 @@ _CORBA_MODULE_BEG
     typedef _CORBA_ConstrType_Variable_OUT_arg< TAttributeUpdateMessage,TAttributeUpdateMessage_var > TAttributeUpdateMessage_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TAttributeUpdateMessage;
+
+    struct TMonitorUpdateTuple {
+      typedef _CORBA_ConstrType_Variable_Var<TMonitorUpdateTuple> _var_type;
+
+      
+      ::CORBA::String_member id;
+
+      TMixedValue value;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TMonitorUpdateTuple::_var_type TMonitorUpdateTuple_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitorUpdateTuple,TMonitorUpdateTuple_var > TMonitorUpdateTuple_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateTuple;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateTupleSeq;
+
+    class TMonitorUpdateTupleSeq_var;
+
+    class TMonitorUpdateTupleSeq : public _CORBA_Unbounded_Sequence< TMonitorUpdateTuple >  {
+    public:
+      typedef TMonitorUpdateTupleSeq_var _var_type;
+      inline TMonitorUpdateTupleSeq() {}
+      inline TMonitorUpdateTupleSeq(const TMonitorUpdateTupleSeq& _s)
+        : _CORBA_Unbounded_Sequence< TMonitorUpdateTuple > (_s) {}
+
+      inline TMonitorUpdateTupleSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TMonitorUpdateTuple > (_max) {}
+      inline TMonitorUpdateTupleSeq(_CORBA_ULong _max, _CORBA_ULong _len, TMonitorUpdateTuple* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TMonitorUpdateTuple > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TMonitorUpdateTupleSeq& operator = (const TMonitorUpdateTupleSeq& _s) {
+        _CORBA_Unbounded_Sequence< TMonitorUpdateTuple > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TMonitorUpdateTupleSeq_out;
+
+    class TMonitorUpdateTupleSeq_var {
+    public:
+      inline TMonitorUpdateTupleSeq_var() : _pd_seq(0) {}
+      inline TMonitorUpdateTupleSeq_var(TMonitorUpdateTupleSeq* _s) : _pd_seq(_s) {}
+      inline TMonitorUpdateTupleSeq_var(const TMonitorUpdateTupleSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TMonitorUpdateTupleSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TMonitorUpdateTupleSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TMonitorUpdateTupleSeq_var& operator = (TMonitorUpdateTupleSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TMonitorUpdateTupleSeq_var& operator = (const TMonitorUpdateTupleSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TMonitorUpdateTupleSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TMonitorUpdateTuple& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TMonitorUpdateTupleSeq* operator -> () { return _pd_seq; }
+      inline const TMonitorUpdateTupleSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TMonitorUpdateTupleSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TMonitorUpdateTupleSeq& () const { return *_pd_seq; }
+      inline operator TMonitorUpdateTupleSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TMonitorUpdateTupleSeq& in() const { return *_pd_seq; }
+      inline TMonitorUpdateTupleSeq&       inout()    { return *_pd_seq; }
+      inline TMonitorUpdateTupleSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TMonitorUpdateTupleSeq* _retn() { TMonitorUpdateTupleSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TMonitorUpdateTupleSeq_out;
+      
+    private:
+      TMonitorUpdateTupleSeq* _pd_seq;
+    };
+
+    class TMonitorUpdateTupleSeq_out {
+    public:
+      inline TMonitorUpdateTupleSeq_out(TMonitorUpdateTupleSeq*& _s) : _data(_s) { _data = 0; }
+      inline TMonitorUpdateTupleSeq_out(TMonitorUpdateTupleSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TMonitorUpdateTupleSeq*) 0; }
+      inline TMonitorUpdateTupleSeq_out(const TMonitorUpdateTupleSeq_out& _s) : _data(_s._data) {}
+      inline TMonitorUpdateTupleSeq_out& operator = (const TMonitorUpdateTupleSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TMonitorUpdateTupleSeq_out& operator = (TMonitorUpdateTupleSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TMonitorUpdateTupleSeq*&()  { return _data; }
+      inline TMonitorUpdateTupleSeq*& ptr()       { return _data; }
+      inline TMonitorUpdateTupleSeq* operator->() { return _data; }
+
+      inline TMonitorUpdateTuple& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TMonitorUpdateTupleSeq*& _data;
+
+    private:
+      TMonitorUpdateTupleSeq_out();
+      TMonitorUpdateTupleSeq_out& operator=(const TMonitorUpdateTupleSeq_var&);
+    };
+
+    struct TMonitorUpdateMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TMonitorUpdateMessage> _var_type;
+
+      
+      TDeviceMessage base;
+
+      TMonitorUpdateTupleSeq updates;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TMonitorUpdateMessage::_var_type TMonitorUpdateMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitorUpdateMessage,TMonitorUpdateMessage_var > TMonitorUpdateMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateMessage;
+
+    struct TMonitorStatusUpdateTuple {
+      typedef _CORBA_ConstrType_Variable_Var<TMonitorStatusUpdateTuple> _var_type;
+
+      
+      ::CORBA::String_member id;
+
+      TMonitorStatus status;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TMonitorStatusUpdateTuple::_var_type TMonitorStatusUpdateTuple_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitorStatusUpdateTuple,TMonitorStatusUpdateTuple_var > TMonitorStatusUpdateTuple_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateTuple;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateTupleSeq;
+
+    class TMonitorStatusUpdateTupleSeq_var;
+
+    class TMonitorStatusUpdateTupleSeq : public _CORBA_Unbounded_Sequence< TMonitorStatusUpdateTuple >  {
+    public:
+      typedef TMonitorStatusUpdateTupleSeq_var _var_type;
+      inline TMonitorStatusUpdateTupleSeq() {}
+      inline TMonitorStatusUpdateTupleSeq(const TMonitorStatusUpdateTupleSeq& _s)
+        : _CORBA_Unbounded_Sequence< TMonitorStatusUpdateTuple > (_s) {}
+
+      inline TMonitorStatusUpdateTupleSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TMonitorStatusUpdateTuple > (_max) {}
+      inline TMonitorStatusUpdateTupleSeq(_CORBA_ULong _max, _CORBA_ULong _len, TMonitorStatusUpdateTuple* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TMonitorStatusUpdateTuple > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TMonitorStatusUpdateTupleSeq& operator = (const TMonitorStatusUpdateTupleSeq& _s) {
+        _CORBA_Unbounded_Sequence< TMonitorStatusUpdateTuple > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TMonitorStatusUpdateTupleSeq_out;
+
+    class TMonitorStatusUpdateTupleSeq_var {
+    public:
+      inline TMonitorStatusUpdateTupleSeq_var() : _pd_seq(0) {}
+      inline TMonitorStatusUpdateTupleSeq_var(TMonitorStatusUpdateTupleSeq* _s) : _pd_seq(_s) {}
+      inline TMonitorStatusUpdateTupleSeq_var(const TMonitorStatusUpdateTupleSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TMonitorStatusUpdateTupleSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TMonitorStatusUpdateTupleSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TMonitorStatusUpdateTupleSeq_var& operator = (TMonitorStatusUpdateTupleSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TMonitorStatusUpdateTupleSeq_var& operator = (const TMonitorStatusUpdateTupleSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TMonitorStatusUpdateTupleSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TMonitorStatusUpdateTuple& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TMonitorStatusUpdateTupleSeq* operator -> () { return _pd_seq; }
+      inline const TMonitorStatusUpdateTupleSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TMonitorStatusUpdateTupleSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TMonitorStatusUpdateTupleSeq& () const { return *_pd_seq; }
+      inline operator TMonitorStatusUpdateTupleSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TMonitorStatusUpdateTupleSeq& in() const { return *_pd_seq; }
+      inline TMonitorStatusUpdateTupleSeq&       inout()    { return *_pd_seq; }
+      inline TMonitorStatusUpdateTupleSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TMonitorStatusUpdateTupleSeq* _retn() { TMonitorStatusUpdateTupleSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TMonitorStatusUpdateTupleSeq_out;
+      
+    private:
+      TMonitorStatusUpdateTupleSeq* _pd_seq;
+    };
+
+    class TMonitorStatusUpdateTupleSeq_out {
+    public:
+      inline TMonitorStatusUpdateTupleSeq_out(TMonitorStatusUpdateTupleSeq*& _s) : _data(_s) { _data = 0; }
+      inline TMonitorStatusUpdateTupleSeq_out(TMonitorStatusUpdateTupleSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TMonitorStatusUpdateTupleSeq*) 0; }
+      inline TMonitorStatusUpdateTupleSeq_out(const TMonitorStatusUpdateTupleSeq_out& _s) : _data(_s._data) {}
+      inline TMonitorStatusUpdateTupleSeq_out& operator = (const TMonitorStatusUpdateTupleSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TMonitorStatusUpdateTupleSeq_out& operator = (TMonitorStatusUpdateTupleSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TMonitorStatusUpdateTupleSeq*&()  { return _data; }
+      inline TMonitorStatusUpdateTupleSeq*& ptr()       { return _data; }
+      inline TMonitorStatusUpdateTupleSeq* operator->() { return _data; }
+
+      inline TMonitorStatusUpdateTuple& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TMonitorStatusUpdateTupleSeq*& _data;
+
+    private:
+      TMonitorStatusUpdateTupleSeq_out();
+      TMonitorStatusUpdateTupleSeq_out& operator=(const TMonitorStatusUpdateTupleSeq_var&);
+    };
+
+    struct TMonitorStatusUpdateMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TMonitorStatusUpdateMessage> _var_type;
+
+      
+      TDeviceMessage base;
+
+      TMonitorStatusUpdateTupleSeq updates;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TMonitorStatusUpdateMessage::_var_type TMonitorStatusUpdateMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitorStatusUpdateMessage,TMonitorStatusUpdateMessage_var > TMonitorStatusUpdateMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateMessage;
 
     enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName /*, __max_TChannelUpdateMessageType=0xffffffff */ };
     typedef TChannelUpdateMessageType& TChannelUpdateMessageType_out;
@@ -7268,6 +7721,35 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TAttributeSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TAttributeSeq*& _sp);
 
+inline void operator >>=(STI::TNetwork::TMonitorStatus _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TMonitorStatus& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::MonitorMissing) {
+    _e = (STI::TNetwork::TMonitorStatus) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatus _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatus& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitor& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitor* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitor*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitor*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorSeq*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TStackFrame& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TStackFrame* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TStackFrame*& _sp);
@@ -7772,6 +8254,36 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TAttributeUpdateM
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeUpdateMessage* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TAttributeUpdateMessage*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TAttributeUpdateMessage*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTuple& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTuple* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTuple*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTuple*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTupleSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTupleSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTupleSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTupleSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateMessage*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTuple& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTuple* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTuple*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTuple*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTupleSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTupleSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTupleSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTupleSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
 
 inline void operator >>=(STI::TNetwork::TChannelUpdateMessageType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);

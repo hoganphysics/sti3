@@ -13,6 +13,7 @@
 #include "TProfileManager_i.h"
 #include "TLogManager_i.h"
 #include "TTaskManager_i.h"
+#include "TMonitorManager_i.h"
 #include "ServantHolder.h"
 
 #include <memory>
@@ -43,6 +44,7 @@ public:
 	TProfileManager_ptr getProfileManager();
 	TTaskManager_ptr getTaskManager();
 	TLogManager_ptr getLogManager();
+	TMonitorManager_ptr getMonitorManager();
 	TDeviceID* getID();
 
 private:
@@ -66,6 +68,7 @@ private:
 	STI::Network::ServantHolder<TProfileManager_i, TProfileManager> profileManagerServantHolder;
 	STI::Network::ServantHolder<TTaskManager_i, TTaskManager> taskManagerServantHolder;
 	STI::Network::ServantHolder<TLogManager_i, TLogManager> logManagerServantHolder;
+	STI::Network::ServantHolder<TMonitorManager_i, TMonitorManager> monitorManagerServantHolder;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };

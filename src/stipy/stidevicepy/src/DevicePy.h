@@ -22,6 +22,7 @@ namespace Python
 class ChannelManagerPy;
 // class EventEngineSchedulerPy;
 class AttributeManagerPy;
+class MonitorManagerPy;
 class PersistenceManagerPy;
 
 
@@ -45,6 +46,7 @@ public:
     std::shared_ptr<STI::Engine::EventEngineScheduler> getEngineScheduler();
     std::shared_ptr<ChannelManagerPy> getChannelManager();
     std::shared_ptr<AttributeManagerPy> getAttributeManager();
+    std::shared_ptr<MonitorManagerPy> getMonitorManager();
     std::shared_ptr<PersistenceManagerPy> getPersistenceManager();
     std::shared_ptr<STI::Device::ProfileManager> getProfileManager();
     std::shared_ptr<STI::Device::TaskManager> getTaskManager();

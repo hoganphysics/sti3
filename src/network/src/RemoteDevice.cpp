@@ -10,6 +10,7 @@
 #include "RemoteChannelManager.h"
 #include "RemoteEventEngineScheduler.h"
 #include "RemoteLogManager.h"
+#include "RemoteMonitorManager.h"
 #include "RemotePersistenceManager.h"
 #include "RemoteProfileManager.h"
 #include "RemoteTaskManager.h"
@@ -336,6 +337,44 @@ void RemoteDevice::getAttributeManager(std::shared_ptr<STI::Device::AttributeMan
 	manager = remoteAttributeManager;
 }
 
+bool RemoteDevice::getMonitorManager(std::shared_ptr<STI::Device::MonitorManager>& manager)
+{
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remoteMonitorManager)) {
+		manager = remoteMonitorManager;
+		return (manager != 0);
+	}
+	else if (remoteMonitorManager != 0) {
+		remoteMonitorManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TMonitorManager_var tMonitorManager;	//remote reference
+
+	try {
+		tMonitorManager = getTRef()->getMonitorManager();	//remote call
+
+		if (!CORBA::is_nil(tMonitorManager)) {
+			remoteMonitorManager = std::make_shared<RemoteMonitorManager>(tMonitorManager, listenerForwarder, remoteID);
+			addDependent(remoteMonitorManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remoteMonitorManager;
+	return (manager != 0);
+}
+
 bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 {
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
@@ -556,4 +595,3 @@ bool RemoteDevice::getAttribute(const std::string& key, std::shared_ptr<STI::Dev
 	}
 	return false;
 }
-

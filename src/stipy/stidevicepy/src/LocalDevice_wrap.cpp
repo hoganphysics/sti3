@@ -8,15 +8,16 @@
 #include "AttributeManagerPy.h"
 #include "ChannelManagerPy.h"
 #include "DevicePy.h"
-#include "TaskPy.h"
 #include "LocalDevicePy.h"
 #include "MixedValuePy.h"
 #include "PersistenceManagerPy.h"
 #include "SynchronousEventPy.h"
+#include "TaskPy.h"
 
 #include <memory>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/cast.h>
 #include <pybind11/stl_bind.h>
@@ -91,6 +92,16 @@ void init_LocalDevice(py::module& m)
         .def("addAttribute", 
                 py::overload_cast<const std::string&, const std::string&, const std::vector<std::string>&>(&LocalDevicePy::addAttribute), 
                 py::return_value_policy::reference, py::arg("key"), py::arg("initialValue"), py::arg("allowedValues"))
+        .def("addMonitor",
+                py::overload_cast<const std::string&>(&LocalDevicePy::addMonitor),
+                py::return_value_policy::reference, py::arg("id"))
+        .def("addMonitor",
+                py::overload_cast<const std::shared_ptr<STI::Device::LocalMonitor>&>(&LocalDevicePy::addMonitor),
+                py::return_value_policy::reference, py::arg("monitor"))
+        .def("addAutoMonitor",
+                &LocalDevicePy::addAutoMonitor,
+                py::return_value_policy::reference,
+                py::arg("id"), py::arg("updateInterval_s"), py::arg("updater"))
         
         .def("__addTask_Base", py::overload_cast<const std::shared_ptr<Task>&>(&LocalDevicePy::addTask), py::arg("task"))
         // .def("addTask", py::overload_cast<const std::shared_ptr<TaskPy>&>(&LocalDevicePy::addTask), py::arg("task"))
@@ -105,4 +116,3 @@ void init_LocalDevice(py::module& m)
         ;
 
 }
-

@@ -65,6 +65,11 @@ public:
 		}
 	}
 
+	bool getMonitorManager(std::shared_ptr<STI::Device::MonitorManager>& manager)
+	{
+		return localDevice != 0 && localDevice->getMonitorManager(manager);
+	}
+
 	bool getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 	{
 		return localDevice != 0 && localDevice->getPersistenceManager(manager);
@@ -211,4 +216,3 @@ private:
 
 
 #endif
-

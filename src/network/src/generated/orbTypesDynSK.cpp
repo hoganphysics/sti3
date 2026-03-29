@@ -621,6 +621,56 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAttributeSeq = _0RL_tc_STI_mTNetwork_mTAttributeSeq;
 #endif
 
+static const char* _0RL_enumMember_STI_mTNetwork_mTMonitorStatus[] = { "MonitorActive", "MonitorInactive", "MonitorMissing" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorStatus = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TMonitorStatus:1.0", "TMonitorStatus", _0RL_enumMember_STI_mTNetwork_mTMonitorStatus, 3, &_0RL_tcTrack);
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorStatus = _0RL_tc_STI_mTNetwork_mTMonitorStatus;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorStatus = _0RL_tc_STI_mTNetwork_mTMonitorStatus;
+#endif
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMonitor[] = {
+  {"id", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"group", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"status", _0RL_tc_STI_mTNetwork_mTMonitorStatus},
+  {"value", _0RL_tc_STI_mTNetwork_mTMixedValue},
+  {"metaData", _0RL_tc_STI_mTNetwork_mTMixedValue}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTMonitor
+#  undef _0RL_tc_STI_mTNetwork_mTMonitor
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitor = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMonitor:1.0", "TMonitor", _0RL_structmember_STI_mTNetwork_mTMonitor, 5, &_0RL_tcTrack);
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitor = _0RL_tc_STI_mTNetwork_mTMonitor;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitor = _0RL_tc_STI_mTNetwork_mTMonitor;
+#endif
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMonitorSeq:1.0", "TMonitorSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMonitor, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorSeq = _0RL_tc_STI_mTNetwork_mTMonitorSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorSeq = _0RL_tc_STI_mTNetwork_mTMonitorSeq;
+#endif
+
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTStackFrame[] = {
   {"file", CORBA::TypeCode::PR_ulong_tc()},
   {"line", CORBA::TypeCode::PR_ulong_tc()},
@@ -2115,8 +2165,8 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TSequenceResult = _0RL_tc_STI_mTN
 #endif
 
 
-static const char* _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType[] = { "MessageRefresh", "MessageCollectionUpdate", "MessageChannelUpdate", "MessageChannelsRefresh", "MessageAttributeUpdate", "MessageAttributesRefresh", "MessageMonitorUpdate", "MessageEngineScheduler", "MessageEngineStatus", "MessageEngineParser", "MessageEngineJobUpdate", "MessageUnknown" };
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TDeviceMessageType:1.0", "TDeviceMessageType", _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType, 12, &_0RL_tcTrack);
+static const char* _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType[] = { "MessageRefresh", "MessageCollectionUpdate", "MessageChannelUpdate", "MessageChannelsRefresh", "MessageAttributeUpdate", "MessageAttributesRefresh", "MessageMonitorUpdate", "MessageMonitorStatusUpdate", "MessageEngineScheduler", "MessageEngineStatus", "MessageEngineParser", "MessageEngineJobUpdate", "MessageUnknown" };
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceMessageType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TDeviceMessageType:1.0", "TDeviceMessageType", _0RL_enumMember_STI_mTNetwork_mTDeviceMessageType, 13, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace STI { namespace TNetwork { 
@@ -3140,6 +3190,134 @@ namespace STI { namespace TNetwork {
 } } 
 #else
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TAttributeUpdateMessage = _0RL_tc_STI_mTNetwork_mTAttributeUpdateMessage;
+#endif
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMonitorUpdateTuple[] = {
+  {"id", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"value", _0RL_tc_STI_mTNetwork_mTMixedValue}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple
+#  undef _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMonitorUpdateTuple:1.0", "TMonitorUpdateTuple", _0RL_structmember_STI_mTNetwork_mTMonitorUpdateTuple, 2, &_0RL_tcTrack);
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateTuple = _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorUpdateTuple = _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple;
+#endif
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMonitorUpdateTupleSeq:1.0", "TMonitorUpdateTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateTupleSeq = _0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorUpdateTupleSeq = _0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq;
+#endif
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMonitorUpdateMessage[] = {
+  {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
+  {"updates", _0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage
+#  undef _0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMonitorUpdateMessage:1.0", "TMonitorUpdateMessage", _0RL_structmember_STI_mTNetwork_mTMonitorUpdateMessage, 2, &_0RL_tcTrack);
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorUpdateMessage = _0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorUpdateMessage = _0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage;
+#endif
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMonitorStatusUpdateTuple[] = {
+  {"id", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"status", _0RL_tc_STI_mTNetwork_mTMonitorStatus}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple
+#  undef _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMonitorStatusUpdateTuple:1.0", "TMonitorStatusUpdateTuple", _0RL_structmember_STI_mTNetwork_mTMonitorStatusUpdateTuple, 2, &_0RL_tcTrack);
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateTuple = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorStatusUpdateTuple = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple;
+#endif
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TMonitorStatusUpdateTupleSeq:1.0", "TMonitorStatusUpdateTupleSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateTupleSeq = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorStatusUpdateTupleSeq = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq;
+#endif
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTMonitorStatusUpdateMessage[] = {
+  {"base", _0RL_tc_STI_mTNetwork_mTDeviceMessage},
+  {"updates", _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage
+#  undef _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TMonitorStatusUpdateMessage:1.0", "TMonitorStatusUpdateMessage", _0RL_structmember_STI_mTNetwork_mTMonitorStatusUpdateMessage, 2, &_0RL_tcTrack);
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateMessage = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TMonitorStatusUpdateMessage = _0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage;
 #endif
 
 
@@ -5448,6 +5626,133 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeSeq* _sp)
                     _0RL_STI_mTNetwork_mTAttributeSeq_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TAttributeSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorStatus_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorStatus* _p = (STI::TNetwork::TMonitorStatus*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatus_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorStatus* _p = (STI::TNetwork::TMonitorStatus*)_v;
+  *_p <<= _s;
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatus _s)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatus,
+               _0RL_STI_mTNetwork_mTMonitorStatus_marshal_fn,
+               &_s);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatus& _s)
+{
+  return _a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorStatus,
+                       _0RL_STI_mTNetwork_mTMonitorStatus_unmarshal_fn,
+                       &_s);
+}
+
+static void _0RL_STI_mTNetwork_mTMonitor_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitor* _p = (STI::TNetwork::TMonitor*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitor_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitor* _p = new STI::TNetwork::TMonitor;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitor_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitor* _p = (STI::TNetwork::TMonitor*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitor& _s)
+{
+  STI::TNetwork::TMonitor* _p = new STI::TNetwork::TMonitor(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitor,
+               _0RL_STI_mTNetwork_mTMonitor_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitor_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitor* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitor,
+               _0RL_STI_mTNetwork_mTMonitor_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitor_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitor*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitor*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitor*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitor,
+                    _0RL_STI_mTNetwork_mTMonitor_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitor_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitor_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitor*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorSeq* _p = (STI::TNetwork::TMonitorSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorSeq* _p = new STI::TNetwork::TMonitorSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorSeq* _p = (STI::TNetwork::TMonitorSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorSeq& _s)
+{
+  STI::TNetwork::TMonitorSeq* _p = new STI::TNetwork::TMonitorSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorSeq,
+               _0RL_STI_mTNetwork_mTMonitorSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorSeq,
+               _0RL_STI_mTNetwork_mTMonitorSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorSeq,
+                    _0RL_STI_mTNetwork_mTMonitorSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorSeq*)_v;
     return 1;
   }
   return 0;
@@ -8911,6 +9216,312 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttributeUpdateMessage* _sp)
                     _0RL_STI_mTNetwork_mTAttributeUpdateMessage_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TAttributeUpdateMessage*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTuple_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorUpdateTuple* _p = (STI::TNetwork::TMonitorUpdateTuple*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTuple_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorUpdateTuple* _p = new STI::TNetwork::TMonitorUpdateTuple;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTuple_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorUpdateTuple* _p = (STI::TNetwork::TMonitorUpdateTuple*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTuple& _s)
+{
+  STI::TNetwork::TMonitorUpdateTuple* _p = new STI::TNetwork::TMonitorUpdateTuple(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTuple_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTuple_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTuple* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTuple_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTuple_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTuple*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorUpdateTuple*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTuple*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTuple,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTuple_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTuple_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTuple_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorUpdateTuple*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorUpdateTupleSeq* _p = (STI::TNetwork::TMonitorUpdateTupleSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorUpdateTupleSeq* _p = new STI::TNetwork::TMonitorUpdateTupleSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorUpdateTupleSeq* _p = (STI::TNetwork::TMonitorUpdateTupleSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTupleSeq& _s)
+{
+  STI::TNetwork::TMonitorUpdateTupleSeq* _p = new STI::TNetwork::TMonitorUpdateTupleSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTupleSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateTupleSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorUpdateTupleSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateTupleSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorUpdateTupleSeq,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateTupleSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorUpdateTupleSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorUpdateMessage_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorUpdateMessage* _p = (STI::TNetwork::TMonitorUpdateMessage*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateMessage_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorUpdateMessage* _p = new STI::TNetwork::TMonitorUpdateMessage;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorUpdateMessage_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorUpdateMessage* _p = (STI::TNetwork::TMonitorUpdateMessage*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateMessage& _s)
+{
+  STI::TNetwork::TMonitorUpdateMessage* _p = new STI::TNetwork::TMonitorUpdateMessage(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage,
+               _0RL_STI_mTNetwork_mTMonitorUpdateMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateMessage_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateMessage* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage,
+               _0RL_STI_mTNetwork_mTMonitorUpdateMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorUpdateMessage_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorUpdateMessage*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorUpdateMessage*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorUpdateMessage*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorUpdateMessage,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateMessage_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateMessage_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorUpdateMessage_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorUpdateMessage*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTuple* _p = (STI::TNetwork::TMonitorStatusUpdateTuple*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTuple* _p = new STI::TNetwork::TMonitorStatusUpdateTuple;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTuple* _p = (STI::TNetwork::TMonitorStatusUpdateTuple*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTuple& _s)
+{
+  STI::TNetwork::TMonitorStatusUpdateTuple* _p = new STI::TNetwork::TMonitorStatusUpdateTuple(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTuple* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTuple*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorStatusUpdateTuple*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTuple*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTuple,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTuple_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorStatusUpdateTuple*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTupleSeq* _p = (STI::TNetwork::TMonitorStatusUpdateTupleSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTupleSeq* _p = new STI::TNetwork::TMonitorStatusUpdateTupleSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateTupleSeq* _p = (STI::TNetwork::TMonitorStatusUpdateTupleSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTupleSeq& _s)
+{
+  STI::TNetwork::TMonitorStatusUpdateTupleSeq* _p = new STI::TNetwork::TMonitorStatusUpdateTupleSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTupleSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateTupleSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorStatusUpdateTupleSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateTupleSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateTupleSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorStatusUpdateTupleSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateMessage* _p = (STI::TNetwork::TMonitorStatusUpdateMessage*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateMessage* _p = new STI::TNetwork::TMonitorStatusUpdateMessage;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_destructor_fn(void* _v)
+{
+  STI::TNetwork::TMonitorStatusUpdateMessage* _p = (STI::TNetwork::TMonitorStatusUpdateMessage*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage& _s)
+{
+  STI::TNetwork::TMonitorStatusUpdateMessage* _p = new STI::TNetwork::TMonitorStatusUpdateMessage(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_marshal_fn,
+               _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TMonitorStatusUpdateMessage*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTMonitorStatusUpdateMessage,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_marshal_fn,
+                    _0RL_STI_mTNetwork_mTMonitorStatusUpdateMessage_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TMonitorStatusUpdateMessage*)_v;
     return 1;
   }
   return 0;

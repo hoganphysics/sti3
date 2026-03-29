@@ -3,6 +3,7 @@
 #include "AttributeManagerPy.h"
 #include "ChannelManagerPy.h"
 #include "MixedValuePy.h"
+#include "MonitorManagerPy.h"
 #include "PersistenceManagerPy.h"
 #include "SynchronousEventPy.h"
 
@@ -37,6 +38,7 @@ void init_Device(py::module& m)
         .def("getEngineScheduler", &DevicePy::getEngineScheduler)
         .def("getChannelManager", &DevicePy::getChannelManager)
         .def("getAttributeManager", &DevicePy::getAttributeManager)
+        .def("getMonitorManager", &DevicePy::getMonitorManager)
         .def("getPersistenceManager", &DevicePy::getPersistenceManager)
         .def("getProfileManager", &DevicePy::getProfileManager)
         .def("getTaskManager", &DevicePy::getTaskManager)        

@@ -240,6 +240,24 @@ module TNetwork
 		boolean ping();
 	};
 
+	interface TMonitorManager
+	{
+		boolean getIDs(out TStringSeq ids);
+		boolean getMonitor(in string id, out TMonitor monitor);
+		boolean getMonitors(out TMonitorSeq monitors);
+
+		TMonitorStatus getStatus(in string id);
+
+		void getValue(in string id, out TMixedValue value);
+
+		void activate(in string id);
+		void deactivate(in string id);
+
+		void activateAll();
+		void deactivateAll();
+
+		boolean ping();
+	};
 
 	interface TPersistenceManager
 	{
@@ -325,6 +343,7 @@ module TNetwork
 		TProfileManager getProfileManager();
 		TTaskManager getTaskManager();
 		TLogManager getLogManager();
+		TMonitorManager getMonitorManager();
 	};
 
 

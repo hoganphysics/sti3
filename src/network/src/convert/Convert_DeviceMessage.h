@@ -136,6 +136,22 @@ bool Network::convert<std::shared_ptr<Device::AttributeUpdateMessage>, TNetwork:
 	const std::shared_ptr<Device::AttributeUpdateMessage>& deviceMessage, TNetwork::TAttributeUpdateMessage& tMessage);
 
 
+//MonitorUpdateMessage
+template<>
+bool Network::convert<TNetwork::TMonitorUpdateMessage, std::shared_ptr<Device::MonitorUpdateMessage>>(
+	const TNetwork::TMonitorUpdateMessage& tMessage, std::shared_ptr<Device::MonitorUpdateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::MonitorUpdateMessage>, TNetwork::TMonitorUpdateMessage>(
+	const std::shared_ptr<Device::MonitorUpdateMessage>& deviceMessage, TNetwork::TMonitorUpdateMessage& tMessage);
+
+////MonitorStatusUpdateMessage
+template<>
+bool Network::convert<TNetwork::TMonitorStatusUpdateMessage, std::shared_ptr<Device::MonitorStatusUpdateMessage>>(
+	const TNetwork::TMonitorStatusUpdateMessage& tMessage, std::shared_ptr<Device::MonitorStatusUpdateMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::MonitorStatusUpdateMessage>, TNetwork::TMonitorStatusUpdateMessage>(
+	const std::shared_ptr<Device::MonitorStatusUpdateMessage>& deviceMessage, TNetwork::TMonitorStatusUpdateMessage& tMessage);
+
 //EngineStateMessage
 template<>
 bool Network::convert<TNetwork::TEngineStateMessage, std::shared_ptr<Device::EngineStateMessage>>(

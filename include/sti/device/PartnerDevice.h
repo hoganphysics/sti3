@@ -38,6 +38,7 @@ public:
 	bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
 	void getChannelManager(std::shared_ptr<ChannelManager>& manager);
 	void getAttributeManager(std::shared_ptr<AttributeManager>& manager);
+	bool getMonitorManager(std::shared_ptr<MonitorManager>& manager);
 	bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager);
 	bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);

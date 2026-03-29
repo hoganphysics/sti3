@@ -22,6 +22,8 @@ using STI::Device::AttributeUpdateMessage;
 using STI::Device::EngineJobUpdateDeviceMessage;
 using STI::Device::EngineSchedulerMessage;
 using STI::Device::EngineStateMessage;
+using STI::Device::MonitorUpdateMessage;
+using STI::Device::MonitorStatusUpdateMessage;
 using STI::Python::MixedValuePy;
 
 void init_DeviceMessage(py::module& m) 
@@ -35,6 +37,7 @@ void init_DeviceMessage(py::module& m)
         .value("AttributeUpdate", DeviceMessageType::AttributeUpdate)
         .value("AttributesRefresh", DeviceMessageType::AttributesRefresh)
         .value("MonitorUpdate", DeviceMessageType::MonitorUpdate)
+        .value("MonitorStatusUpdate", DeviceMessageType::MonitorStatusUpdate)
         .value("EngineJobUpdate", DeviceMessageType::EngineJobUpdate)
         .value("EngineScheduler", DeviceMessageType::EngineScheduler)
         .value("EngineParser", DeviceMessageType::EngineParser)
@@ -110,6 +113,48 @@ void init_DeviceMessage(py::module& m)
                     return new AttributeUpdateMessage(sourceID);
                 } ), py::arg("sourceID"))
         .def_readonly("attributes", &AttributeUpdateMessage::attributes)
+        ;
+
+    py::class_<MonitorUpdateMessage, DeviceMessage, std::shared_ptr<MonitorUpdateMessage>>(m, "MonitorUpdateMessage")
+        // .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") )
+        .def(py::init(
+            [](const STI::Device::DeviceID& sourceID) 
+                {
+                    return new MonitorUpdateMessage(sourceID);
+                } ), py::arg("sourceID"))
+        // .def_readonly("updates", &MonitorUpdateMessage::updates)
+        .def("updates",
+            [](const MonitorUpdateMessage& mess) {
+                py::dict values;
+                
+                for (auto& tuple : mess.updates) {
+                    MixedValuePy pyval(tuple.second);
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[py::str{tuple.first}] = pyval;
+                }
+                return values;
+            })
+        ;
+
+    py::class_<MonitorStatusUpdateMessage, DeviceMessage, std::shared_ptr<MonitorStatusUpdateMessage>>(m, "MonitorStatusUpdateMessage")
+        // .def(py::init<const STI::Device::DeviceID&>(), py::arg("source") )
+        .def(py::init(
+            [](const STI::Device::DeviceID& sourceID) 
+                {
+                    return new MonitorStatusUpdateMessage(sourceID);
+                } ), py::arg("sourceID"))
+        // .def_readonly("updates", &MonitorStatusUpdateMessage::updates)
+        .def("updates",
+            [](const MonitorStatusUpdateMessage& mess) {
+                py::dict values;
+                
+                for (auto& tuple : mess.updates) {
+                    // MixedValuePy pyval(tuple.second);
+                    // values[py::int_{tuple.first}] = pyval.getValue_py();
+                    values[py::str{tuple.first}] = tuple.second;
+                }
+                return values;
+            })
         ;
 
     py::class_<EngineJobUpdateDeviceMessage, DeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(m, "EngineJobUpdateDeviceMessage")

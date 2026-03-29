@@ -14,6 +14,10 @@ def addListener(self, type: DeviceMessageType, sourceDeviceID: DeviceID, listene
         return self.__addChannelUpdateListener(sourceDeviceID, listenerName, handler)
     elif type == DeviceMessageType.AttributeUpdate:
         return self.__addAttributeUpdateListener(sourceDeviceID, listenerName, handler)
+    elif type == DeviceMessageType.MonitorUpdate:
+        return self.__addMonitorUpdateListener(sourceDeviceID, listenerName, handler)
+    elif type == DeviceMessageType.MonitorStatusUpdate:
+        return self.__addMonitorStatusUpdateListener(sourceDeviceID, listenerName, handler)
     elif type == DeviceMessageType.EngineJobUpdate:
         return self.__addEngineJobUpdateDeviceListener(sourceDeviceID, listenerName, handler)
     elif type == DeviceMessageType.EngineScheduler:

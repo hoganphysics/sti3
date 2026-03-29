@@ -89,6 +89,10 @@ public:
     bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>&) override { return false; }
     void getChannelManager(std::shared_ptr<ChannelManager>& manager) override { manager.reset(); }
     void getAttributeManager(std::shared_ptr<AttributeManager>& manager) override { manager.reset(); }
+    bool getMonitorManager(std::shared_ptr<STI::Device::MonitorManager>& manager) override {
+        manager.reset();
+        return false;
+    }
     bool getPersistenceManager(std::shared_ptr<PersistenceManager>& manager) override {
         manager.reset();
         return false;

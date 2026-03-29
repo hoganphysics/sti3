@@ -2,6 +2,7 @@
 #include "DevicePy.h"
 #include "ChannelManagerPy.h"
 #include "LocalLogManager.h"
+#include "LocalMonitorManager.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/engine/SynchronousEvent.h>
@@ -9,16 +10,21 @@
 #include "SynchronousEventPy.h"
 #include "SynchronousEventPyManager.h"
 
+#include <stdexcept>
 #include <thread>
 
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
 using STI::Python::LocalDevicePy;
+using STI::Device::AutoMonitor;
 using STI::Device::LocalDevice;
 using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
+using STI::Device::LocalMonitor;
+using STI::Device::LocalMonitorManager;
+using STI::Device::Monitor;
 using STI::Utils::MixedValue;
 
 
@@ -163,6 +169,76 @@ std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const s
     std::shared_ptr<STI::Device::LocalAttribute> attribute;
     device->addAttribute(key, initialValue, allowedValues, attribute);
     return attribute;
+}
+
+std::shared_ptr<LocalMonitor> LocalDevicePy::addMonitor(const std::string& id)
+{
+    std::shared_ptr<LocalMonitorManager> manager;
+
+    if (device == 0 || !device->getMonitorManager(manager) || manager == 0) {
+        return nullptr;
+    }
+
+    device->addMonitor(id);
+
+    std::shared_ptr<Monitor> monitor;
+
+    if (!manager->getMonitor(id, monitor) || monitor == 0) {
+        return nullptr;
+    }
+
+    return std::dynamic_pointer_cast<LocalMonitor>(monitor);
+}
+
+std::shared_ptr<LocalMonitor> LocalDevicePy::addMonitor(const std::shared_ptr<LocalMonitor>& monitor)
+{
+    std::shared_ptr<LocalMonitorManager> manager;
+
+    if (device == 0 || monitor == 0 || !device->getMonitorManager(manager) || manager == 0) {
+        return nullptr;
+    }
+
+    const auto id = monitor->getID();
+
+    manager->addMonitor(monitor);
+
+    std::shared_ptr<Monitor> storedMonitor;
+
+    if (!manager->getMonitor(id, storedMonitor) || storedMonitor == 0) {
+        return nullptr;
+    }
+
+    return std::dynamic_pointer_cast<LocalMonitor>(storedMonitor);
+}
+
+std::shared_ptr<AutoMonitor> LocalDevicePy::addAutoMonitor(
+    const std::string& id,
+    double updateInterval_s,
+    const std::function<pybind11::object(void)>& updater)
+{
+    if (device == 0) {
+        return nullptr;
+    }
+    if (!updater) {
+        throw std::invalid_argument("AutoMonitor requires a valid updater function.");
+    }
+
+    auto gil_updater = [updater]() {
+        pybind11::gil_scoped_acquire acquire;
+
+        try {
+            MixedValuePy result(updater());
+            return STI::Utils::MixedValue(result.getMixedValue());
+        }
+        catch (pybind11::error_already_set& e) {
+            e.discard_as_unraisable("AutoMonitor updater");
+            return STI::Utils::MixedValue();
+        }
+    };
+
+    std::shared_ptr<AutoMonitor> monitor;
+    device->addAutoMonitor(id, updateInterval_s, gil_updater, monitor);
+    return monitor;
 }
 
 void LocalDevicePy::addTask(const std::shared_ptr<STI::Utils::Task>& task)
