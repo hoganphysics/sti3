@@ -124,6 +124,8 @@
 				"-DCMAKE_BUILD_TYPE=Debug",
 				"-DCMAKE_INSTALL_PREFIX:PATH=${STI_DEV_DIR}",
 				"-DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages",
+				"-DCMAKE_EXE_LINKER_FLAGS=-Wl,--no-as-needed -L/home/hogan/miniconda3/envs/sti3-build/lib -Wl,-rpath,/home/hogan/miniconda3/envs/sti3-build/lib -lcurl",
+				"-DCMAKE_SHARED_LINKER_FLAGS=-Wl,--no-as-needed -L/home/hogan/miniconda3/envs/sti3-build/lib -Wl,-rpath,/home/hogan/miniconda3/envs/sti3-build/lib -lcurl",
 				".."
 				// add extra -D options here if you actually need them
 			],
