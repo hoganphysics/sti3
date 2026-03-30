@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <thread>
 #include <vector>
 
 using task_test_support::DummyTask;
@@ -100,6 +101,28 @@ TEST_CASE("TaskScheduler: deactivate and activate toggle status") {
     REQUIRE(events.size() == 4);
     CHECK(events[2].first == TaskSchedulerEventType::Deactivate);
     CHECK(events[3].first == TaskSchedulerEventType::Activate);
+}
+
+TEST_CASE("TaskScheduler: activating an idle task wakes the background loop") {
+    using namespace std::chrono_literals;
+
+    TaskScheduler scheduler;
+    scheduler.setMinSleep(0.01);
+    scheduler.start();
+
+    auto task = std::make_shared<DummyTask>("wake-idle-loop", 100ms, false);
+    scheduler.addTask(task);
+
+    scheduler.deactivateTask(task->getID());
+    REQUIRE(task->getStatus() == TaskStatus::Inactive);
+
+    std::this_thread::sleep_for(150ms);
+
+    scheduler.activateTask(task->getID());
+    REQUIRE(task->waitForRuns(1, 150ms));
+
+    scheduler.stop();
+    CHECK(task->getStatus() == TaskStatus::Inactive);
 }
 
 TEST_CASE("TaskScheduler: clear removes all tasks and sets them inactive") {

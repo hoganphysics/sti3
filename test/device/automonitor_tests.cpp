@@ -6,10 +6,14 @@
 #include <sti/utils/Task.h>
 
 #include "../../src/device/src/LocalTaskManager.h"
+#include "task_tests_support.h"
 
+#include <atomic>
+#include <chrono>
 #include <memory>
 #include <set>
 #include <string>
+#include <thread>
 
 using STI::Device::AutoMonitor;
 using STI::Device::LocalDevice;
@@ -67,6 +71,38 @@ TEST_CASE("AutoMonitor: interval task updates value and follows monitor activati
 
     taskManager->runTask(taskID);
     CHECK(monitor->getValue() == MixedValue(2));
+}
+
+TEST_CASE("AutoMonitor: reactivation resumes scheduled updates") {
+    using namespace std::chrono_literals;
+
+    auto taskManager = std::make_shared<LocalTaskManager>();
+    std::atomic<int> counter{0};
+
+    auto monitor = AutoMonitor::create(
+        "Status/reactivate",
+        0.1,
+        [&]() { return MixedValue(counter.fetch_add(1) + 1); },
+        taskManager);
+
+    const auto taskID = std::string("Monitor:Status/reactivate:AutoUpdate");
+
+    REQUIRE(task_test_support::waitForAtomicCount(counter, 1, 300ms));
+    const auto valueBeforeDeactivate = monitor->getValue();
+
+    monitor->deactivate();
+    CHECK(taskManager->getTaskStatus(taskID) == TaskStatus::Inactive);
+
+    const auto updatesWhileActive = counter.load();
+    std::this_thread::sleep_for(200ms);
+    CHECK(counter.load() == updatesWhileActive);
+    CHECK(monitor->getValue() == valueBeforeDeactivate);
+
+    monitor->activate();
+    CHECK(taskManager->getTaskStatus(taskID) == TaskStatus::Active);
+
+    REQUIRE(task_test_support::waitForAtomicCount(counter, updatesWhileActive + 1, 300ms));
+    CHECK(monitor->getValue() != valueBeforeDeactivate);
 }
 
 TEST_CASE("AutoMonitor: destruction removes the associated task from the task manager") {

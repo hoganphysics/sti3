@@ -163,6 +163,8 @@ void TaskScheduler::activateTask(const std::string& taskID)
 			activeTasks.erase(it);
 		}
 	}
+
+	schedulerCondition.notify_all();
 }
 
 void TaskScheduler::deactivateTask(const std::string& taskID)
@@ -273,4 +275,3 @@ void TaskScheduler::taskLoop()
 		}
 	}
 }
-
