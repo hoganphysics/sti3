@@ -30,6 +30,13 @@ conda install -c conda-forge hoganlab::stipy
 ```bash
 conda install --use-local stipy
 ```
+- For local installation to work, first create a local channel pointing to the build environment directory:
+```bash
+conda config --add channels file://$(conda info --base)/envs/sti3-build/conda-bld
+```
+```cmd
+conda config --add channels file:///C:/Users/Jason/miniconda3/envs/sti3-build/conda-bld
+```
 - If the local build fails to install the newest build, try specifying the exact version and build number explicitly:
 ```bash
 conda install --use-local "stipy=3.0.1=py313h3fd9d12_46"

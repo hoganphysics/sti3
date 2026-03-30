@@ -18,8 +18,8 @@
 
 // #include "../../network/src/TTestNetwork_i.h"
 // #include "../../network/src/ORBManager.h"
-#include "TestNetworkWrapper.h"
-#include "generated/deviceNet.h"
+// #include "TestNetworkWrapper.h"
+// #include "generated/deviceNet.h"
 
 
 int main(int argc, char **argv)
@@ -76,18 +76,18 @@ int main(int argc, char **argv)
     bool enableActivate = (enableActivateAt == "1" || enableActivateAt == "true");
     bool enableDeactivate = (enableDeactivateAt == "1" || enableDeactivateAt == "true");
 
-    std::cout << "TestNetwork servant activate: " << (enableActivate ? "true" : "false") << ", deactivate: " << (enableDeactivate ? "true" : "false") << std::endl;
-    ::STI::TNetwork::TTestNetwork_var testRef;
+    // std::cout << "TestNetwork servant activate: " << (enableActivate ? "true" : "false") << ", deactivate: " << (enableDeactivate ? "true" : "false") << std::endl;
+    // ::STI::TNetwork::TTestNetwork_var testRef;
 
-    {
-        using STI::TNetwork::TestNetworkWrapper;
-        TestNetworkWrapper wrapper(enableActivate, enableDeactivate);
+    // {
+    //     using STI::TNetwork::TestNetworkWrapper;
+    //     TestNetworkWrapper wrapper(enableActivate, enableDeactivate);
 
-        wrapper.getTestNetworkReference(testRef);
-        // testRef->ping();
+    //     wrapper.getTestNetworkReference(testRef);
+    //     // testRef->ping();
 
-        // auto testRef = wrapper.test->_this();
-    }
+    //     // auto testRef = wrapper.test->_this();
+    // }
 
 
     // STI::Network::ORBManager::getInstance()->block();	//blocking
