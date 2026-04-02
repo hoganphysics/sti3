@@ -88,6 +88,7 @@ add_library(stidevice SHARED
     LocalEventEngineScheduler.cpp
     LocalFileHolder.cpp
     LocalFileServer.cpp
+    LocalLogRepository.cpp
     LocalPersistenceManager.cpp
     LocalResultsCollector.cpp
     LocalShot.cpp
@@ -95,6 +96,7 @@ add_library(stidevice SHARED
     LocalTaskManager.cpp
     Logger.cpp
     LogID.cpp
+    LogCatalogFile.cpp
     LogRecord.cpp
     LogRecordFile.cpp
     MasterTrigger.cpp

@@ -3,35 +3,41 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/Logger.h>
 #include <sti/LocalDevice.h>
+#include <sti/utils/utils.h>
 
-#include "LocalTaskManager.h"
-#include "LocalChannelManager.h"
 #include "LocalAttributeManager.h"
+#include "LocalChannelManager.h"
+#include "LocalLogRepository.h"
 #include "LocalPersistenceManager.h"
-#include "LogRecordFile.h"
+#include "LocalTaskManager.h"
 
-#include <algorithm>
-#include <filesystem>
-namespace fs = std::filesystem;
+#include <sstream>
 
+using STI::Device::DeviceID;
 using STI::Device::LocalLogManager;
-using STI::Device::Logger;
-using STI::Device::LogID;
+using STI::Device::LocalLogRepository;
+using STI::Device::LocalPersistenceManager;
 using STI::Device::LogFile;
 using STI::Device::LogFileFilter;
+using STI::Device::LogID;
+using STI::Device::LogManager;
 using STI::Device::LogRecord;
-using STI::Device::DeviceID;
-using STI::Device::LocalPersistenceManager;
+using STI::Device::Logger;
 using STI::Utils::TimeStamp;
 
 
-LocalLogManager::LocalLogManager(LocalDevice* localDevice, const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager)
-: localDevice(localDevice), localPersistenceManager(localPersistenceManager), logWriterMessageGrouper(this)
+LocalLogManager::LocalLogManager(
+    LocalDevice* localDevice,
+    const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager)
+: localDevice(localDevice),
+  localPersistenceManager(localPersistenceManager),
+  localLogRepository(std::make_unique<LocalLogRepository>(localDevice, localPersistenceManager)),
+  logWriterMessageGrouper(this)
 {
-    createLogger("");   //default log
+    createLogger("");   // default logger
 
-    logWriterMessageGrouper.setWarmup(1000);      //ms
-    logWriterMessageGrouper.setCooldown(1000);    //ms
+    logWriterMessageGrouper.setWarmup(1000);      // ms
+    logWriterMessageGrouper.setCooldown(1000);    // ms
     logWriterMessageGrouper.start();
 }
 
@@ -42,178 +48,75 @@ LocalLogManager::~LocalLogManager()
 
 void LocalLogManager::writeLog(const std::string& logName)
 {
-    std::string logBasePath;
+    if (localPersistenceManager == nullptr || localLogRepository == nullptr) {
+        return;
+    }
+
     std::string logDevicePath;
-    STI::Utils::TimeStamp timestamp;
+    TimeStamp timestamp;
 
-    if (!localPersistenceManager->makeLogPath(timestamp, logBasePath)) return;
-
-    //modify log record
-    std::shared_ptr<LogRecordFile> recordFile;
-    if (!getLogRecordFile(timestamp, recordFile, true)) return;
-    lastLogRecordFile = recordFile;
-    lastLogRecordFile->setLogStatus(localDevice->getID(), logName);
-    
-    if (!localPersistenceManager->makeLogPath(timestamp, localDevice->getID(), logDevicePath)) return;
+    if (!localPersistenceManager->makeLogPath(timestamp, localDevice->getID(), logDevicePath)) {
+        return;
+    }
 
     std::shared_ptr<Logger> logger;
-
-    if (loggers.get(logName, logger) && logger != 0) {
-        logger->save(logDevicePath);
-    }
-}
-
-
-bool LocalLogManager::getLogRecordFile(const STI::Utils::TimeStamp& timestamp, std::shared_ptr<LogRecordFile>& recordFile, bool autocreate)
-{
-    if (lastLogRecordFile != 0 && lastLogRecordFile->getRecord().timeStamp.isSameDate(timestamp)) {
-        recordFile = lastLogRecordFile;
-        return recordFile != 0 && recordFile->exists();
+    if (!loggers.get(logName, logger) || logger == nullptr) {
+        return;
     }
 
-    std::string recordFileName = "logRecord.ini";
-    std::string logBasePath;
-    
-    if (!localPersistenceManager->getLogBasePath(timestamp, logBasePath)) return false;
-
-    fs::path logRecordPath = logBasePath;
-    logRecordPath /= recordFileName;
-
-    recordFile = std::make_shared<LogRecordFile>(logRecordPath.string());
-    if (recordFile == 0) return false;
-
-    if (autocreate && !recordFile->exists()) {
-        recordFile->save();     //create file
+    if (!logger->save(logDevicePath)) {
+        return;
     }
 
-    return recordFile->exists();
+    localLogRepository->recordLocalWrite(timestamp, logger->logFilename);
 }
 
 bool LocalLogManager::getLogRecord(const std::string& date, LogRecord& record)
 {
-    std::shared_ptr<LogRecordFile> recordFile;
-    auto timestamp = TimeStamp::fromString(date);
-    
-    if (getLogRecordFile(timestamp, recordFile)) {
-        return recordFile->copyRecord(record);
+    if (localLogRepository == nullptr) {
+        return false;
     }
-    return false;
-}
 
+    return localLogRepository->getLogRecord(date, record);
+}
 
 void LocalLogManager::getLogNames(std::set<std::string>& names)
 {
-    loggers.getKeys(names);
+    if (localLogRepository == nullptr) {
+        names.clear();
+        return;
+    }
+
+    localLogRepository->getLogNames(names);
 }
 
 int LocalLogManager::getLogCount(const LogFileFilter& filter)
 {
-    return getLogCount(localDevice->getID(), filter);
+    if (localLogRepository == nullptr) {
+        return 0;
+    }
+
+    return localLogRepository->getLogCount(filter);
 }
 
 int LocalLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter& filter)
 {
-    auto date = TimeStamp::fromString(filter.startDate);
-    auto endDate = TimeStamp::fromString(filter.endDate);
-
-    int count = 0;
-    
-    std::map<std::string, int> counts;
-    do {
-        getLogCounts(date, deviceID, counts);
-        date.add_day();
-    } while (date <= endDate);
-
-    if (filter.logName == "*") {
-        //match any
-        int total = 0;
-        for (auto& m : counts) {
-            total += m.second;
-        }
-        return total;
+    if (localDevice == nullptr || deviceID != localDevice->getID()) {
+        return 0;
     }
 
-    if (counts.find(filter.logName) != counts.end()) {
-        return counts[filter.logName];
-    }
-
-    return 0;
-}
-
-bool LocalLogManager::getLogCounts(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, std::map<std::string, int>& counts)
-{
-    std::shared_ptr<LogRecordFile> recordFile;
-    
-    if (!getLogRecordFile(date, recordFile, false)) {
-        //no log record found on this day
-        return false;
-    }
-
-    auto& deviceLogRecords = recordFile->getRecord().deviceLogRecords;
-
-    auto it = deviceLogRecords.find(deviceID.getID());
-    if (it == deviceLogRecords.end()) return false;     //no log records for this device on this day
-
-    if (it->second.status != LogRecordStatus::LogsPresent) return false;
-
-    std::string logBasePath;
-    std::string logDevicePath;
-
-    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return false;
-    if (!localPersistenceManager->getLogBasePath(date, deviceID.getID(), logDevicePath)) return false;
-
-    //count all log files in path, grouping by logName
-    fs::path searchPath = logDevicePath;
-    for(auto& p : fs::directory_iterator(searchPath)) {
-        //check that the file has extension .log
-        if (p.path().has_extension() && p.path().extension().string() == ".log") {
-            auto filename = p.path().stem().string();    //filename, no path, no extension
-            
-            std::string logName;
-            int index;
-            if (getLogName(filename, logName, index)) {
-
-                if (counts.find(logName) == counts.end()) {
-                    //not found
-                    counts[logName] = 0;
-                }
-                counts[logName]++;
-            }
-        }
-    }
-    return true;
-}
-
-bool LocalLogManager::getLogName(const std::string& filenameStem, std::string& logName, int& index) const
-{
-    std::string separator = "_";    //sti_logName_# or just sti_#
-
-    auto startPos = filenameStem.find_first_of(separator);
-    auto endPos = filenameStem.find_last_of(separator);
-
-    if (startPos != std::string::npos && endPos != std::string::npos) {
-        if (startPos == endPos) {
-            logName = "";      //default log, no name
-        }
-        else {
-            logName = filenameStem.substr(startPos + 1, endPos - startPos - 1);
-        }
-        STI::Utils::stringToValue(filenameStem.substr(endPos + 1), index);
-        return true;
-    }
-    return false;
+    return getLogCount(filter);
 }
 
 std::string LocalLogManager::makeLogFilename(const std::string& logName, int index)
 {
-    std::string logbasename = "sti";
-    std::string extension = "log";
-    std::string separator = "_";    //sti_logName_index.log or just sti_index.log
+    const std::string logbasename = "sti";
+    const std::string extension = "log";
 
     std::stringstream filename;
 
     filename << logbasename;
-    if (logName != "") {
+    if (!logName.empty()) {
         filename << "_" << logName;
     }
     filename << "_" << STI::Utils::valueToString(index) << "." << extension;
@@ -223,124 +126,30 @@ std::string LocalLogManager::makeLogFilename(const std::string& logName, int ind
 
 void LocalLogManager::getLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids)
 {
-    return getLogIDs(localDevice->getID(), filter, ids);
+    if (localLogRepository == nullptr) {
+        ids.clear();
+        return;
+    }
+
+    localLogRepository->getLogIDs(filter, ids);
 }
 
 void LocalLogManager::getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids)
 {
-    auto date = TimeStamp::fromString(filter.startDate);
-    auto endDate = TimeStamp::fromString(filter.endDate);
-
-    std::set<std::string> logNames;
-    if (filter.logName == "*") {
-        //match all logNames
-        loggers.getKeys(logNames);
-    }
-    else {
-        logNames.insert(filter.logName);
-    }
-
-    do {
-        for (auto& logName : logNames) {
-            getLogIDs(date, deviceID, logName, filter.startIndex, filter.endIndex, ids);
-        }
-        date.add_day();
-    } while (date <= endDate);
-
-}
-
-void LocalLogManager::getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids)
-{
-    std::shared_ptr<LogRecordFile> recordFile;
-    
-    if (!getLogRecordFile(date, recordFile, false)) {
-        //no log record found on this day
+    if (localDevice == nullptr || deviceID != localDevice->getID()) {
         return;
     }
 
-    auto& deviceLogRecords = recordFile->getRecord().deviceLogRecords;
-
-    auto it = deviceLogRecords.find(deviceID.getID());
-    if (it == deviceLogRecords.end()) return;     //no log records for this device on this day
-
-    if (it->second.status != LogRecordStatus::LogsPresent) return;
-
-    std::string logBasePath;
-    std::string logDevicePath;
-
-    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return;
-    if (!localPersistenceManager->getLogBasePath(date, deviceID.getID(), logDevicePath)) return;
-
-    std::vector<int> indices;
-
-    //search directory, collecting all files in range
-    fs::path searchPath = logDevicePath;
-    for(auto& p : fs::directory_iterator(searchPath)) {
-        //ensure that the file has extension .log
-        if (!( p.path().has_extension() && p.path().extension().string() == ".log" )) continue;
-        
-        auto filename = p.path().stem().string();    //filename, no path, no extension
-        std::string name;
-        int index;
-
-        if (getLogName(filename, name, index) && name == logName) {
-            //logName match found
-            indices.push_back(index);
-        }
-    }
-    std::sort(indices.begin(), indices.end());
-    auto len = indices.size();
-    int iStart = startIndex;
-    int iEnd = endIndex;
-
-    if (startIndex < 0) {
-        iStart = len + startIndex;
-    }
-    if (iStart < 0) iStart = 0;
-    if (iStart >= len) iStart = len - 1;
-
-    if (endIndex < 0) {
-        iEnd = len + endIndex;
-    }
-    if (iEnd < 0) iEnd = 0;
-    if (iEnd >= len) iEnd = len - 1;
-
-    if (iStart > iEnd) {
-        std::swap(iStart, iEnd);
-    }
-
-    for (unsigned i = iStart; i <= iEnd; ++i) {        
-        LogID logID;
-        logID.date = date.date_YYYY_MM_DD("/");
-        logID.deviceID = deviceID;
-        logID.logName = logName;
-        logID.index = indices.at(i);
-
-        ids.push_back(logID);
-    }
+    getLogIDs(filter, ids);
 }
-
 
 bool LocalLogManager::getLog(const LogID& id, LogFile& logFile)
 {
-    auto date = TimeStamp::fromString(id.date);
+    if (localLogRepository == nullptr) {
+        return false;
+    }
 
-    std::string logBasePath;
-    std::string logDevicePath;
-
-    if (!localPersistenceManager->getLogBasePath(date, logBasePath)) return false;
-    if (!localPersistenceManager->getLogBasePath(date, localDevice->getID().getID(), logDevicePath)) return false;
-
-    std::string logFilename = makeLogFilename(id.logName, id.index);
-
-    fs::path logPath = logDevicePath;
-    logPath /= logFilename;
-
-    logFile.id = id;
-    logFile.type = LogFile::LogFileType::FileHolder;
-    logFile.fileHolder = localDevice->makeFileHolder(logPath.parent_path().string(), logPath.filename().string());
-    
-    return logFile.fileHolder != 0 && logFile.fileHolder->exists();
+    return localLogRepository->getLog(id, logFile);
 }
 
 bool LocalLogManager::getLog(const std::string& name, const std::string& date, unsigned index, LogFile& logFile)
@@ -354,47 +163,159 @@ bool LocalLogManager::getLog(const std::string& name, const std::string& date, u
     return getLog(logID, logFile);
 }
 
-
 bool LocalLogManager::getLogs(const LogFileFilter& filter, std::vector<LogFile>& files)
 {
-    std::vector<LogID> logIDs;
-    getLogIDs(filter, logIDs);
-
-    bool success = true;
-
-    for (auto& id : logIDs) {
-        LogFile logFile;
-        if (getLog(id, logFile)) {
-            files.push_back(logFile);
-        }
-        else {
-            success = false;
-        }
+    if (localLogRepository == nullptr) {
+        return false;
     }
 
-    return success;
+    return localLogRepository->getLogs(filter, files);
 }
 
 bool LocalLogManager::getLogs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogFile>& files)
 {
-    if (deviceID == localDevice->getID()) {
-        return getLogs(filter, files);
+    if (localDevice == nullptr || deviceID != localDevice->getID()) {
+        return false;
     }
+
+    return getLogs(filter, files);
+}
+
+void LocalLogManager::getNetworkLogNames(std::set<std::string>& names)
+{
+    getLogNames(names);
 
     std::shared_ptr<STI::Device::DeviceCollection> collection;
     localDevice->getCollection(collection);
 
-    if (collection == 0) return false;
-
-    std::shared_ptr<STI::Device::Device> device;
-    std::shared_ptr<STI::Device::LogManager> logManager;
-    if (collection->get(deviceID, device) && device != 0 && device->getLogManager(logManager)) {
-        return logManager->getLogs(filter, files);
+    if (collection == nullptr) {
+        return;
     }
 
-    return false;
+    std::set<DeviceID> deviceIDs;
+    collection->getIDs(deviceIDs);
+
+    for (const auto& deviceID : deviceIDs) {
+        if (deviceID == localDevice->getID()) {
+            continue;
+        }
+
+        std::shared_ptr<STI::Device::Device> device;
+        std::shared_ptr<LogManager> logManager;
+        if (!collection->get(deviceID, device) || device == nullptr) {
+            continue;
+        }
+        if (!device->getLogManager(logManager) || logManager == nullptr) {
+            continue;
+        }
+
+        std::set<std::string> remoteNames;
+        logManager->getLogNames(remoteNames);
+        names.insert(remoteNames.begin(), remoteNames.end());
+    }
 }
 
+int LocalLogManager::getNetworkLogCount(const LogFileFilter& filter)
+{
+    int count = getLogCount(filter);
+
+    std::shared_ptr<STI::Device::DeviceCollection> collection;
+    localDevice->getCollection(collection);
+
+    if (collection == nullptr) {
+        return count;
+    }
+
+    std::set<DeviceID> deviceIDs;
+    collection->getIDs(deviceIDs);
+
+    for (const auto& deviceID : deviceIDs) {
+        if (deviceID == localDevice->getID()) {
+            continue;
+        }
+
+        std::shared_ptr<STI::Device::Device> device;
+        std::shared_ptr<LogManager> logManager;
+        if (!collection->get(deviceID, device) || device == nullptr) {
+            continue;
+        }
+        if (!device->getLogManager(logManager) || logManager == nullptr) {
+            continue;
+        }
+
+        count += logManager->getLogCount(filter);
+    }
+
+    return count;
+}
+
+void LocalLogManager::getNetworkLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids)
+{
+    getLogIDs(filter, ids);
+
+    std::shared_ptr<STI::Device::DeviceCollection> collection;
+    localDevice->getCollection(collection);
+
+    if (collection == nullptr) {
+        return;
+    }
+
+    std::set<DeviceID> deviceIDs;
+    collection->getIDs(deviceIDs);
+
+    for (const auto& deviceID : deviceIDs) {
+        if (deviceID == localDevice->getID()) {
+            continue;
+        }
+
+        std::shared_ptr<STI::Device::Device> device;
+        std::shared_ptr<LogManager> logManager;
+        if (!collection->get(deviceID, device) || device == nullptr) {
+            continue;
+        }
+        if (!device->getLogManager(logManager) || logManager == nullptr) {
+            continue;
+        }
+
+        logManager->getLogIDs(filter, ids);
+    }
+}
+
+bool LocalLogManager::getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files)
+{
+    bool success = getLogs(filter, files);
+
+    std::shared_ptr<STI::Device::DeviceCollection> collection;
+    localDevice->getCollection(collection);
+
+    if (collection == nullptr) {
+        return success;
+    }
+
+    std::set<DeviceID> deviceIDs;
+    collection->getIDs(deviceIDs);
+
+    for (const auto& deviceID : deviceIDs) {
+        if (deviceID == localDevice->getID()) {
+            continue;
+        }
+
+        std::shared_ptr<STI::Device::Device> device;
+        std::shared_ptr<LogManager> logManager;
+        if (!collection->get(deviceID, device) || device == nullptr) {
+            success = false;
+            continue;
+        }
+        if (!device->getLogManager(logManager) || logManager == nullptr) {
+            success = false;
+            continue;
+        }
+
+        success &= logManager->getLogs(filter, files);
+    }
+
+    return success;
+}
 
 void LocalLogManager::createLogger(const std::string& name)
 {
@@ -424,4 +345,3 @@ Logger& LocalLogManager::log(const std::string& name)
     loggers.get(name, logger);
     return *logger;
 }
-

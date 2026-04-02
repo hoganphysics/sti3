@@ -23,8 +23,8 @@ class LocalTaskManager;
 class LocalAttributeManager;
 class LocalChannelManager;
 class LocalDevice;
+class LocalLogRepository;
 class LocalPersistenceManager;
-class LogRecordFile;
 
 
 class LocalLogManager : public LogManager
@@ -49,6 +49,11 @@ public:
 
     bool getLogRecord(const std::string& date, LogRecord& record);
 
+    void getNetworkLogNames(std::set<std::string>& names);
+    int getNetworkLogCount(const LogFileFilter& filter);
+    void getNetworkLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids);
+    bool getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files);
+
     void createLogger(const std::string& name);
     bool getLogger(const std::string& name, std::shared_ptr<Logger>& logger) const;
     
@@ -57,15 +62,9 @@ public:
 
 private:
 
-    bool getLogRecordFile(const STI::Utils::TimeStamp& timestamp, std::shared_ptr<LogRecordFile>& recordFile, bool autocreate=false);
-
-    bool getLogCounts(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, std::map<std::string, int>& counts);
-    void getLogIDs(const STI::Utils::TimeStamp& date, const DeviceID& deviceID, const std::string& logName, int startIndex, int endIndex, std::vector<LogID>& ids);
-
     void writeLog(const std::string& logName);      //save to disk
 
     std::string makeLogFilename(const std::string& logName, int index);
-    bool getLogName(const std::string& filenameStem, std::string& logName, int& index) const;
 
     class LogWriteMessage : public STI::Device::GroupableMessage<LogWriteMessage>
     {
@@ -132,12 +131,10 @@ private:
 
     LocalDevice* localDevice;
     std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
+    std::unique_ptr<LocalLogRepository> localLogRepository;
     LogWriterMessageGrouper logWriterMessageGrouper;
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Logger>> loggers;
-
-    std::string lastLogBasePath;
-    std::shared_ptr<LogRecordFile> lastLogRecordFile;
 
 };
 

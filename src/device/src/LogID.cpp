@@ -3,6 +3,9 @@
 
 #include <sti/utils/TimeStamp.h>
 
+#include "CerealArchives.h"
+#include <cereal/types/string.hpp>
+
 using STI::Device::LogID;
 
 
@@ -46,3 +49,17 @@ bool LogID::operator!=(const LogID& rhs) const
 {
     return !((*this) == rhs);
 }
+
+template<class Archive>
+void LogID::serialize(Archive& archive)
+{
+    archive(
+        cereal::make_nvp("deviceID", deviceID),
+        cereal::make_nvp("date", date),
+        cereal::make_nvp("logName", logName),
+        cereal::make_nvp("index", index)
+        );
+}
+
+template void LogID::serialize<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&);
+template void LogID::serialize<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
