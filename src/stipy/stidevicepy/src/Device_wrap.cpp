@@ -5,6 +5,7 @@
 #include "MixedValuePy.h"
 #include "MonitorManagerPy.h"
 #include "PersistenceManagerPy.h"
+#include "LogBrowser.h"
 #include "SynchronousEventPy.h"
 
 #include <sti/device/DeviceMessageDispatcher.h>
@@ -43,6 +44,11 @@ void init_Device(py::module& m)
         .def("getProfileManager", &DevicePy::getProfileManager)
         .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
+        .def("openLog",
+            [](DevicePy& self, const STI::Device::LogID& logID, std::size_t tailLines) {
+                py::gil_scoped_release release;
+                return STI::Python::openLog(self.getDevice(), logID, tailLines);
+            }, py::arg("logID"), py::arg("tail_lines") = 200)
         .def("write", py::overload_cast<short, const MixedValuePy&>(&DevicePy::write), py::arg("channelNumber"), py::arg("value"))
         .def("write", py::overload_cast<short, const pybind11::object&>(&DevicePy::write), py::arg("channelNumber"), py::arg("value"))
         .def("read", py::overload_cast<short>(&DevicePy::read), py::arg("channelNumber"))

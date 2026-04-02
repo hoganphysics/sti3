@@ -745,3 +745,79 @@ Follow-up validation for that pass:
 * add an end-to-end `stipy` notebook example that opens logs from another device
 * verify that repeated paging works without losing the remote source handle
 * verify that short logs, long logs, and missing-device cases all fail in a controlled way
+
+## Status Update After Python Browser Pass
+
+Status as of April 2, 2026:
+
+Implemented in this workspace:
+
+* the device-side redesign remains the source of truth for local log metadata and local-only browsing APIs
+* the network / IDL pass is in place:
+  * local-only `getLog...` methods remain local-only
+  * explicit `getNetwork...` methods aggregate across connected devices
+  * aggregated `LogID.deviceID` and `FileID` source identity are preserved
+  * `transferFilePartial()` and `TFileHolder::getFileSize()` are available through the network stack
+* `stipy` now exposes a wrapper-facing remote log browser API:
+  * `Device.openLog(logID, tail_lines=200)`
+  * `LogManager.openLog(logID, tail_lines=200)` as a Python convenience helper
+* the Python-facing browser object now exists:
+  * `LogBrowser`
+  * metadata: `logID`, `bytes`, `lineCount`, `firstEntryTime`, `lastEntryTime`
+  * browsing methods: `tail()`, `read()`, `pageBackward()`, `pageForward()`
+  * Python aliases: `page_backward()`, `page_forward()`, `refresh_metadata()`
+  * `save_local()` / `saveLocal()` to copy the full underlying log file locally
+* default open behavior is tail-oriented:
+  * open the last `N` lines first
+  * then page backward / forward by line count
+* the wrapper/browser path keeps live references to the originating source log manager and file server while the browser handle exists
+* aggregated queries still read content from the originating device, not from the aggregating server
+
+Current validation:
+
+* the `stidevicepy` wrapper builds successfully
+* targeted C++ tests pass for:
+  * `LocalFileServer`
+  * `LocalLogManager`
+* a Python smoke check against the built wrapper succeeded for:
+  * creating a log
+  * getting a `LogID`
+  * opening a `LogBrowser`
+  * reading tail text
+  * saving the full log locally
+
+Practical notebook readiness:
+
+* yes, this looks ready for an initial JupyterLab notebook test of remote log browsing
+* the intended notebook flow now exists:
+  1. query `getNetworkLogNames()` / `getNetworkLogIDs()`
+  2. choose a `LogID`
+  3. call `openLog(...)`
+  4. inspect the initial tail and page around
+* this should be treated as a first integration test, not the final polished UX pass
+
+Still missing / deferred:
+
+* no `getNetworkLogRecord(date)` yet
+* no committed end-to-end notebook example has been added yet
+* no dedicated automated Python test suite for the new browser API has been added yet
+* no richer notebook rendering beyond text / repr output yet
+* no explicit overwrite mode for `save_local()`
+* no log-specific direct-text RPC was added; the browser still uses the existing file-server transfer path under the hood
+
+Known constraints / issues:
+
+* `LogManager.openLog(...)` is a Python helper convenience and expects a `LogManager` obtained from `Device.getLogManager()`
+  * the helper stores a reference back to the owning device so the originating source device can be resolved later
+* the source device must still be reachable / present in the collection while browsing
+* paging is line-oriented and depends on the current `transferFilePartial()` semantics
+* `save_local()` copies the full file, not just the currently viewed page
+* `save_local()` currently fails if the target file already exists
+* an ad hoc manual Python module-loading smoke harness showed a segfault during interpreter teardown even without the browser path
+  * this looked like a pre-existing wrapper teardown issue in that harness, not a browser-specific failure
+  * a normal notebook import path still needs real-world validation
+
+Bottom line:
+
+* the new log system is far enough along to try a real JupyterLab notebook test of remote log discovery and browsing
+* the highest-value next step is an end-to-end notebook test against an actual remote device, followed by cleanup of any wrapper UX issues uncovered there

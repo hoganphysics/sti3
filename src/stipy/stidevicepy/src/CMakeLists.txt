@@ -65,6 +65,7 @@ add_library(sticommonpy STATIC
     ChannelManagerPy.cpp
     DeviceCollectionPy.cpp
     DevicePy.cpp
+    LogBrowser.cpp
     MixedValuePy.cpp
     MonitorManagerPy.cpp
     NodeWalkerPy.cpp
@@ -77,6 +78,8 @@ target_include_directories(sticommonpy PRIVATE
     ${WORKING_DIRECTORY}
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
+    ${STI_BASE_DIR}/src/network/src
+    ${STI_BASE_DIR}/src/network/src/generated
     ${pybind11_INCLUDE_DIRS}
 )
 
@@ -173,6 +176,7 @@ pybind11_add_module(stidevicepy
     # Exception_wrap.cpp
     LocalDevicePy.cpp
     LocalDevice_wrap.cpp
+    LogBrowser_wrap.cpp
     LogManager_wrap.cpp
     PartnerDevice_wrap.cpp
     PersistenceManager_wrap.cpp
@@ -193,6 +197,8 @@ target_include_directories(stidevicepy PRIVATE
     ${STI_BASE_DIR}/src/stipy/stidevicepy/src
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
+    ${STI_BASE_DIR}/src/network/src
+    ${STI_BASE_DIR}/src/network/src/generated
 )
 
 
@@ -222,6 +228,8 @@ target_include_directories(stipybase PRIVATE
     ${STI_BASE_DIR}/src/stipy/stidevicepy/src
     ${STI_BASE_DIR}/include
     ${STI_BASE_DIR}/src/device/src
+    ${STI_BASE_DIR}/src/network/src
+    ${STI_BASE_DIR}/src/network/src/generated
 )
 
 #https://github.com/pybind/cmake_example/issues/11

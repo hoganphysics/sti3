@@ -148,7 +148,7 @@ void init_LogManager(py::module& m)
             })
         ;
 
-    py::class_<LogManager, std::shared_ptr<LogManager>>(m, "LogManager")
+    py::class_<LogManager, std::shared_ptr<LogManager>>(m, "LogManager", py::dynamic_attr())
         .def("getLogNames", 
             [](LogManager& self) {
                 std::set<std::string> names;

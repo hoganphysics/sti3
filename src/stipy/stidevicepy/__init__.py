@@ -10,4 +10,4 @@ from stipy.stidevicepy.python.localdevice import EventConflictException
 from stipy.stidevicepy.python.messagereceiver import DeviceMessageReceiver
 
 from stipy.stidevicepy.python.logger import Logger
-
+from stipy.stidevicepy.python.logs import LogBrowser
