@@ -42,86 +42,6 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogRecordStatus = _0RL_tc_STI_mTNetwork_mTLogRecordStatus;
 #endif
 
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStringSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TStringSeq:1.0", "TStringSeq", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack), &_0RL_tcTrack), &_0RL_tcTrack);
-
-
-static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceLogRecord[] = {
-  {"deviceID", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"status", _0RL_tc_STI_mTNetwork_mTLogRecordStatus},
-  {"logNames", _0RL_tc_STI_mTNetwork_mTStringSeq}
-};
-
-#ifdef _0RL_tc_STI_mTNetwork_mTDeviceLogRecord
-#  undef _0RL_tc_STI_mTNetwork_mTDeviceLogRecord
-#endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceLogRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceLogRecord:1.0", "TDeviceLogRecord", _0RL_structmember_STI_mTNetwork_mTDeviceLogRecord, 3, &_0RL_tcTrack);
-
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-namespace STI { namespace TNetwork { 
-  const ::CORBA::TypeCode_ptr _tc_TDeviceLogRecord = _0RL_tc_STI_mTNetwork_mTDeviceLogRecord;
-} } 
-#else
-const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceLogRecord = _0RL_tc_STI_mTNetwork_mTDeviceLogRecord;
-#endif
-
-
-
-
-
-
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceLogRecordSeq:1.0", "TDeviceLogRecordSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceLogRecord, &_0RL_tcTrack), &_0RL_tcTrack);
-
-
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-namespace STI { namespace TNetwork { 
-  const ::CORBA::TypeCode_ptr _tc_TDeviceLogRecordSeq = _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq;
-} } 
-#else
-const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceLogRecordSeq = _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq;
-#endif
-
-static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTTimeStamp[] = {
-  {"year", CORBA::TypeCode::PR_long_tc()},
-  {"month", CORBA::TypeCode::PR_long_tc()},
-  {"day", CORBA::TypeCode::PR_long_tc()},
-  {"hour", CORBA::TypeCode::PR_long_tc()},
-  {"min", CORBA::TypeCode::PR_long_tc()},
-  {"sec", CORBA::TypeCode::PR_long_tc()},
-  {"millis", CORBA::TypeCode::PR_long_tc()},
-  {"micros", CORBA::TypeCode::PR_long_tc()},
-  {"nanos", CORBA::TypeCode::PR_long_tc()}
-};
-
-#ifdef _0RL_tc_STI_mTNetwork_mTTimeStamp
-#  undef _0RL_tc_STI_mTNetwork_mTTimeStamp
-#endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTimeStamp = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TTimeStamp:1.0", "TTimeStamp", _0RL_structmember_STI_mTNetwork_mTTimeStamp, 9, &_0RL_tcTrack);
-
-
-static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogRecord[] = {
-  {"timeStamp", _0RL_tc_STI_mTNetwork_mTTimeStamp},
-  {"deviceLogRecords", _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq}
-};
-
-#ifdef _0RL_tc_STI_mTNetwork_mTLogRecord
-#  undef _0RL_tc_STI_mTNetwork_mTLogRecord
-#endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TLogRecord:1.0", "TLogRecord", _0RL_structmember_STI_mTNetwork_mTLogRecord, 2, &_0RL_tcTrack);
-
-
-
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-namespace STI { namespace TNetwork { 
-  const ::CORBA::TypeCode_ptr _tc_TLogRecord = _0RL_tc_STI_mTNetwork_mTLogRecord;
-} } 
-#else
-const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogRecord = _0RL_tc_STI_mTNetwork_mTLogRecord;
-#endif
-
-
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceID[] = {
   {"deviceName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"address", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
@@ -138,7 +58,7 @@ static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogID[] = {
   {"deviceID", _0RL_tc_STI_mTNetwork_mTDeviceID},
   {"date", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
   {"logName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"index", CORBA::TypeCode::PR_long_tc()}
+  {"index", CORBA::TypeCode::PR_ulong_tc()}
 };
 
 #ifdef _0RL_tc_STI_mTNetwork_mTLogID
@@ -177,6 +97,335 @@ namespace STI { namespace TNetwork {
 const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogIDSeq = _0RL_tc_STI_mTNetwork_mTLogIDSeq;
 #endif
 
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTTimeStamp[] = {
+  {"year", CORBA::TypeCode::PR_long_tc()},
+  {"month", CORBA::TypeCode::PR_long_tc()},
+  {"day", CORBA::TypeCode::PR_long_tc()},
+  {"hour", CORBA::TypeCode::PR_long_tc()},
+  {"min", CORBA::TypeCode::PR_long_tc()},
+  {"sec", CORBA::TypeCode::PR_long_tc()},
+  {"millis", CORBA::TypeCode::PR_long_tc()},
+  {"micros", CORBA::TypeCode::PR_long_tc()},
+  {"nanos", CORBA::TypeCode::PR_long_tc()}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTTimeStamp
+#  undef _0RL_tc_STI_mTNetwork_mTTimeStamp
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTTimeStamp = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TTimeStamp:1.0", "TTimeStamp", _0RL_structmember_STI_mTNetwork_mTTimeStamp, 9, &_0RL_tcTrack);
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFileID[] = {
+  {"filename", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"path", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"origin", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"persistenceLocation", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"creationTime", _0RL_tc_STI_mTNetwork_mTTimeStamp}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTFileID
+#  undef _0RL_tc_STI_mTNetwork_mTFileID
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFileID:1.0", "TFileID", _0RL_structmember_STI_mTNetwork_mTFileID, 5, &_0RL_tcTrack);
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogFileRecord[] = {
+  {"id", _0RL_tc_STI_mTNetwork_mTLogID},
+  {"fileID", _0RL_tc_STI_mTNetwork_mTFileID},
+  {"bytes", CORBA::TypeCode::PR_ulonglong_tc()},
+  {"lineCount", CORBA::TypeCode::PR_ulonglong_tc()},
+  {"firstEntryTime", _0RL_tc_STI_mTNetwork_mTTimeStamp},
+  {"lastEntryTime", _0RL_tc_STI_mTNetwork_mTTimeStamp}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTLogFileRecord
+#  undef _0RL_tc_STI_mTNetwork_mTLogFileRecord
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogFileRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TLogFileRecord:1.0", "TLogFileRecord", _0RL_structmember_STI_mTNetwork_mTLogFileRecord, 6, &_0RL_tcTrack);
+
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TLogFileRecord = _0RL_tc_STI_mTNetwork_mTLogFileRecord;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogFileRecord = _0RL_tc_STI_mTNetwork_mTLogFileRecord;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogFileRecordSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TLogFileRecordSeq:1.0", "TLogFileRecordSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTLogFileRecord, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TLogFileRecordSeq = _0RL_tc_STI_mTNetwork_mTLogFileRecordSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogFileRecordSeq = _0RL_tc_STI_mTNetwork_mTLogFileRecordSeq;
+#endif
+
+
+
+
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogNameRecord[] = {
+  {"logName", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"files", _0RL_tc_STI_mTNetwork_mTLogFileRecordSeq},
+  {"totalBytes", CORBA::TypeCode::PR_ulonglong_tc()},
+  {"totalLines", CORBA::TypeCode::PR_ulonglong_tc()},
+  {"nextIndex", CORBA::TypeCode::PR_ulong_tc()},
+  {"lastUpdate", _0RL_tc_STI_mTNetwork_mTTimeStamp}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTLogNameRecord
+#  undef _0RL_tc_STI_mTNetwork_mTLogNameRecord
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogNameRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TLogNameRecord:1.0", "TLogNameRecord", _0RL_structmember_STI_mTNetwork_mTLogNameRecord, 6, &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TLogNameRecord = _0RL_tc_STI_mTNetwork_mTLogNameRecord;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogNameRecord = _0RL_tc_STI_mTNetwork_mTLogNameRecord;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogNameRecordSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TLogNameRecordSeq:1.0", "TLogNameRecordSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTLogNameRecord, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TLogNameRecordSeq = _0RL_tc_STI_mTNetwork_mTLogNameRecordSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogNameRecordSeq = _0RL_tc_STI_mTNetwork_mTLogNameRecordSeq;
+#endif
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTStringSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TStringSeq:1.0", "TStringSeq", CORBA::TypeCode::PR_sequence_tc(0, CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack), &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTDeviceLogRecord[] = {
+  {"deviceID", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
+  {"status", _0RL_tc_STI_mTNetwork_mTLogRecordStatus},
+  {"logNames", _0RL_tc_STI_mTNetwork_mTStringSeq},
+  {"logs", _0RL_tc_STI_mTNetwork_mTLogNameRecordSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTDeviceLogRecord
+#  undef _0RL_tc_STI_mTNetwork_mTDeviceLogRecord
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceLogRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TDeviceLogRecord:1.0", "TDeviceLogRecord", _0RL_structmember_STI_mTNetwork_mTDeviceLogRecord, 4, &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TDeviceLogRecord = _0RL_tc_STI_mTNetwork_mTDeviceLogRecord;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceLogRecord = _0RL_tc_STI_mTNetwork_mTDeviceLogRecord;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq = CORBA::TypeCode::PR_alias_tc("IDL:STI/TNetwork/TDeviceLogRecordSeq:1.0", "TDeviceLogRecordSeq", CORBA::TypeCode::PR_sequence_tc(0, _0RL_tc_STI_mTNetwork_mTDeviceLogRecord, &_0RL_tcTrack), &_0RL_tcTrack);
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TDeviceLogRecordSeq = _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TDeviceLogRecordSeq = _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq;
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogRecord[] = {
+  {"timeStamp", _0RL_tc_STI_mTNetwork_mTTimeStamp},
+  {"deviceLogRecords", _0RL_tc_STI_mTNetwork_mTDeviceLogRecordSeq}
+};
+
+#ifdef _0RL_tc_STI_mTNetwork_mTLogRecord
+#  undef _0RL_tc_STI_mTNetwork_mTLogRecord
+#endif
+static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogRecord = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TLogRecord:1.0", "TLogRecord", _0RL_structmember_STI_mTNetwork_mTLogRecord, 2, &_0RL_tcTrack);
+
+
+
+
+
+
+
+
+
+
+
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+namespace STI { namespace TNetwork { 
+  const ::CORBA::TypeCode_ptr _tc_TLogRecord = _0RL_tc_STI_mTNetwork_mTLogRecord;
+} } 
+#else
+const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogRecord = _0RL_tc_STI_mTNetwork_mTLogRecord;
+#endif
+
+
 static const char* _0RL_enumMember_STI_mTNetwork_mTLogFileType[] = { "LogFileFileID", "LogFileFileHolder", "LogFileString" };
 static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTLogFileType = CORBA::TypeCode::PR_enum_tc("IDL:STI/TNetwork/TLogFileType:1.0", "TLogFileType", _0RL_enumMember_STI_mTNetwork_mTLogFileType, 3, &_0RL_tcTrack);
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -191,18 +440,6 @@ const ::CORBA::TypeCode_ptr STI::TNetwork::_tc_TLogFileType = _0RL_tc_STI_mTNetw
 
 
 
-static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTFileID[] = {
-  {"filename", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"path", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"origin", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"persistenceLocation", CORBA::TypeCode::PR_string_tc(0, &_0RL_tcTrack)},
-  {"creationTime", _0RL_tc_STI_mTNetwork_mTTimeStamp}
-};
-
-#ifdef _0RL_tc_STI_mTNetwork_mTFileID
-#  undef _0RL_tc_STI_mTNetwork_mTFileID
-#endif
-static CORBA::TypeCode_ptr _0RL_tc_STI_mTNetwork_mTFileID = CORBA::TypeCode::PR_struct_tc("IDL:STI/TNetwork/TFileID:1.0", "TFileID", _0RL_structmember_STI_mTNetwork_mTFileID, 5, &_0RL_tcTrack);
 
 static CORBA::PR_structMember _0RL_structmember_STI_mTNetwork_mTLogFile[] = {
   {"logID", _0RL_tc_STI_mTNetwork_mTLogID},
@@ -337,6 +574,312 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogRecordStatus _s)
   return _a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogRecordStatus,
                        _0RL_STI_mTNetwork_mTLogRecordStatus_unmarshal_fn,
                        &_s);
+}
+
+static void _0RL_STI_mTNetwork_mTLogID_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogID* _p = (STI::TNetwork::TLogID*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogID_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogID* _p = new STI::TNetwork::TLogID;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogID_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogID* _p = (STI::TNetwork::TLogID*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogID& _s)
+{
+  STI::TNetwork::TLogID* _p = new STI::TNetwork::TLogID(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogID,
+               _0RL_STI_mTNetwork_mTLogID_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogID_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogID* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogID,
+               _0RL_STI_mTNetwork_mTLogID_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogID_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogID*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogID*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogID*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogID,
+                    _0RL_STI_mTNetwork_mTLogID_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogID_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogID_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogID*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogIDSeq* _p = (STI::TNetwork::TLogIDSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogIDSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogIDSeq* _p = new STI::TNetwork::TLogIDSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogIDSeq* _p = (STI::TNetwork::TLogIDSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq& _s)
+{
+  STI::TNetwork::TLogIDSeq* _p = new STI::TNetwork::TLogIDSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
+               _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogIDSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
+               _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogIDSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogIDSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
+                    _0RL_STI_mTNetwork_mTLogIDSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogIDSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTLogFileRecord_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogFileRecord* _p = (STI::TNetwork::TLogFileRecord*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogFileRecord_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogFileRecord* _p = new STI::TNetwork::TLogFileRecord;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogFileRecord_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogFileRecord* _p = (STI::TNetwork::TLogFileRecord*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogFileRecord& _s)
+{
+  STI::TNetwork::TLogFileRecord* _p = new STI::TNetwork::TLogFileRecord(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogFileRecord,
+               _0RL_STI_mTNetwork_mTLogFileRecord_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogFileRecord_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogFileRecord* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogFileRecord,
+               _0RL_STI_mTNetwork_mTLogFileRecord_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogFileRecord_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogFileRecord*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogFileRecord*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogFileRecord*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogFileRecord,
+                    _0RL_STI_mTNetwork_mTLogFileRecord_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogFileRecord_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogFileRecord_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogFileRecord*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTLogFileRecordSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogFileRecordSeq* _p = (STI::TNetwork::TLogFileRecordSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogFileRecordSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogFileRecordSeq* _p = new STI::TNetwork::TLogFileRecordSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogFileRecordSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogFileRecordSeq* _p = (STI::TNetwork::TLogFileRecordSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogFileRecordSeq& _s)
+{
+  STI::TNetwork::TLogFileRecordSeq* _p = new STI::TNetwork::TLogFileRecordSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogFileRecordSeq,
+               _0RL_STI_mTNetwork_mTLogFileRecordSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogFileRecordSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogFileRecordSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogFileRecordSeq,
+               _0RL_STI_mTNetwork_mTLogFileRecordSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogFileRecordSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogFileRecordSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogFileRecordSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogFileRecordSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogFileRecordSeq,
+                    _0RL_STI_mTNetwork_mTLogFileRecordSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogFileRecordSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogFileRecordSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogFileRecordSeq*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTLogNameRecord_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogNameRecord* _p = (STI::TNetwork::TLogNameRecord*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogNameRecord_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogNameRecord* _p = new STI::TNetwork::TLogNameRecord;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogNameRecord_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogNameRecord* _p = (STI::TNetwork::TLogNameRecord*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogNameRecord& _s)
+{
+  STI::TNetwork::TLogNameRecord* _p = new STI::TNetwork::TLogNameRecord(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogNameRecord,
+               _0RL_STI_mTNetwork_mTLogNameRecord_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogNameRecord_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogNameRecord* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogNameRecord,
+               _0RL_STI_mTNetwork_mTLogNameRecord_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogNameRecord_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogNameRecord*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogNameRecord*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogNameRecord*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogNameRecord,
+                    _0RL_STI_mTNetwork_mTLogNameRecord_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogNameRecord_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogNameRecord_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogNameRecord*)_v;
+    return 1;
+  }
+  return 0;
+}
+
+static void _0RL_STI_mTNetwork_mTLogNameRecordSeq_marshal_fn(cdrStream& _s, void* _v)
+{
+  STI::TNetwork::TLogNameRecordSeq* _p = (STI::TNetwork::TLogNameRecordSeq*)_v;
+  *_p >>= _s;
+}
+static void _0RL_STI_mTNetwork_mTLogNameRecordSeq_unmarshal_fn(cdrStream& _s, void*& _v)
+{
+  STI::TNetwork::TLogNameRecordSeq* _p = new STI::TNetwork::TLogNameRecordSeq;
+  *_p <<= _s;
+  _v = _p;
+}
+static void _0RL_STI_mTNetwork_mTLogNameRecordSeq_destructor_fn(void* _v)
+{
+  STI::TNetwork::TLogNameRecordSeq* _p = (STI::TNetwork::TLogNameRecordSeq*)_v;
+  delete _p;
+}
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogNameRecordSeq& _s)
+{
+  STI::TNetwork::TLogNameRecordSeq* _p = new STI::TNetwork::TLogNameRecordSeq(_s);
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogNameRecordSeq,
+               _0RL_STI_mTNetwork_mTLogNameRecordSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogNameRecordSeq_destructor_fn,
+               _p);
+}
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogNameRecordSeq* _sp)
+{
+  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogNameRecordSeq,
+               _0RL_STI_mTNetwork_mTLogNameRecordSeq_marshal_fn,
+               _0RL_STI_mTNetwork_mTLogNameRecordSeq_destructor_fn,
+               _sp);
+}
+
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogNameRecordSeq*& _sp)
+{
+  return _a >>= (const STI::TNetwork::TLogNameRecordSeq*&) _sp;
+}
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogNameRecordSeq*& _sp)
+{
+  void* _v;
+  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogNameRecordSeq,
+                    _0RL_STI_mTNetwork_mTLogNameRecordSeq_unmarshal_fn,
+                    _0RL_STI_mTNetwork_mTLogNameRecordSeq_marshal_fn,
+                    _0RL_STI_mTNetwork_mTLogNameRecordSeq_destructor_fn,
+                    _v)) {
+    _sp = (const STI::TNetwork::TLogNameRecordSeq*)_v;
+    return 1;
+  }
+  return 0;
 }
 
 static void _0RL_STI_mTNetwork_mTDeviceLogRecord_marshal_fn(cdrStream& _s, void* _v)
@@ -487,108 +1030,6 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogRecord* _sp)
                     _0RL_STI_mTNetwork_mTLogRecord_destructor_fn,
                     _v)) {
     _sp = (const STI::TNetwork::TLogRecord*)_v;
-    return 1;
-  }
-  return 0;
-}
-
-static void _0RL_STI_mTNetwork_mTLogID_marshal_fn(cdrStream& _s, void* _v)
-{
-  STI::TNetwork::TLogID* _p = (STI::TNetwork::TLogID*)_v;
-  *_p >>= _s;
-}
-static void _0RL_STI_mTNetwork_mTLogID_unmarshal_fn(cdrStream& _s, void*& _v)
-{
-  STI::TNetwork::TLogID* _p = new STI::TNetwork::TLogID;
-  *_p <<= _s;
-  _v = _p;
-}
-static void _0RL_STI_mTNetwork_mTLogID_destructor_fn(void* _v)
-{
-  STI::TNetwork::TLogID* _p = (STI::TNetwork::TLogID*)_v;
-  delete _p;
-}
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogID& _s)
-{
-  STI::TNetwork::TLogID* _p = new STI::TNetwork::TLogID(_s);
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogID,
-               _0RL_STI_mTNetwork_mTLogID_marshal_fn,
-               _0RL_STI_mTNetwork_mTLogID_destructor_fn,
-               _p);
-}
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogID* _sp)
-{
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogID,
-               _0RL_STI_mTNetwork_mTLogID_marshal_fn,
-               _0RL_STI_mTNetwork_mTLogID_destructor_fn,
-               _sp);
-}
-
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogID*& _sp)
-{
-  return _a >>= (const STI::TNetwork::TLogID*&) _sp;
-}
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogID*& _sp)
-{
-  void* _v;
-  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogID,
-                    _0RL_STI_mTNetwork_mTLogID_unmarshal_fn,
-                    _0RL_STI_mTNetwork_mTLogID_marshal_fn,
-                    _0RL_STI_mTNetwork_mTLogID_destructor_fn,
-                    _v)) {
-    _sp = (const STI::TNetwork::TLogID*)_v;
-    return 1;
-  }
-  return 0;
-}
-
-static void _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn(cdrStream& _s, void* _v)
-{
-  STI::TNetwork::TLogIDSeq* _p = (STI::TNetwork::TLogIDSeq*)_v;
-  *_p >>= _s;
-}
-static void _0RL_STI_mTNetwork_mTLogIDSeq_unmarshal_fn(cdrStream& _s, void*& _v)
-{
-  STI::TNetwork::TLogIDSeq* _p = new STI::TNetwork::TLogIDSeq;
-  *_p <<= _s;
-  _v = _p;
-}
-static void _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn(void* _v)
-{
-  STI::TNetwork::TLogIDSeq* _p = (STI::TNetwork::TLogIDSeq*)_v;
-  delete _p;
-}
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq& _s)
-{
-  STI::TNetwork::TLogIDSeq* _p = new STI::TNetwork::TLogIDSeq(_s);
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
-               _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
-               _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
-               _p);
-}
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogIDSeq* _sp)
-{
-  _a.PR_insert(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
-               _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
-               _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
-               _sp);
-}
-
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogIDSeq*& _sp)
-{
-  return _a >>= (const STI::TNetwork::TLogIDSeq*&) _sp;
-}
-::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq*& _sp)
-{
-  void* _v;
-  if (_a.PR_extract(_0RL_tc_STI_mTNetwork_mTLogIDSeq,
-                    _0RL_STI_mTNetwork_mTLogIDSeq_unmarshal_fn,
-                    _0RL_STI_mTNetwork_mTLogIDSeq_marshal_fn,
-                    _0RL_STI_mTNetwork_mTLogIDSeq_destructor_fn,
-                    _v)) {
-    _sp = (const STI::TNetwork::TLogIDSeq*)_v;
     return 1;
   }
   return 0;

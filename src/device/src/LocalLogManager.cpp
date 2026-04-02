@@ -11,6 +11,7 @@
 #include "LocalPersistenceManager.h"
 #include "LocalTaskManager.h"
 
+#include <algorithm>
 #include <sstream>
 
 using STI::Device::DeviceID;
@@ -279,6 +280,8 @@ void LocalLogManager::getNetworkLogIDs(const LogFileFilter& filter, std::vector<
 
         logManager->getLogIDs(filter, ids);
     }
+
+    std::sort(ids.begin(), ids.end());
 }
 
 bool LocalLogManager::getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files)
@@ -313,6 +316,11 @@ bool LocalLogManager::getNetworkLogs(const LogFileFilter& filter, std::vector<Lo
 
         success &= logManager->getLogs(filter, files);
     }
+
+    std::sort(files.begin(), files.end(),
+        [](const LogFile& lhs, const LogFile& rhs) {
+            return lhs.id < rhs.id;
+        });
 
     return success;
 }

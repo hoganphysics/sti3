@@ -37,11 +37,80 @@ STI::TNetwork::TLogFileFilter::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TLogID::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceID&) deviceID >>= _n;
+  _n.marshalString(date,0);
+  _n.marshalString(logName,0);
+  index >>= _n;
+
+}
+
+void
+STI::TNetwork::TLogID::operator<<= (cdrStream &_n)
+{
+  (TDeviceID&)deviceID <<= _n;
+  date = _n.unmarshalString(0);
+  logName = _n.unmarshalString(0);
+  (::CORBA::ULong&)index <<= _n;
+
+}
+
+void
+STI::TNetwork::TLogFileRecord::operator>>= (cdrStream &_n) const
+{
+  (const TLogID&) id >>= _n;
+  (const TFileID&) fileID >>= _n;
+  bytes >>= _n;
+  lineCount >>= _n;
+  (const TTimeStamp&) firstEntryTime >>= _n;
+  (const TTimeStamp&) lastEntryTime >>= _n;
+
+}
+
+void
+STI::TNetwork::TLogFileRecord::operator<<= (cdrStream &_n)
+{
+  (TLogID&)id <<= _n;
+  (TFileID&)fileID <<= _n;
+  (::CORBA::ULongLong&)bytes <<= _n;
+  (::CORBA::ULongLong&)lineCount <<= _n;
+  (TTimeStamp&)firstEntryTime <<= _n;
+  (TTimeStamp&)lastEntryTime <<= _n;
+
+}
+
+void
+STI::TNetwork::TLogNameRecord::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(logName,0);
+  (const TLogFileRecordSeq&) files >>= _n;
+  totalBytes >>= _n;
+  totalLines >>= _n;
+  nextIndex >>= _n;
+  (const TTimeStamp&) lastUpdate >>= _n;
+
+}
+
+void
+STI::TNetwork::TLogNameRecord::operator<<= (cdrStream &_n)
+{
+  logName = _n.unmarshalString(0);
+  (TLogFileRecordSeq&)files <<= _n;
+  (::CORBA::ULongLong&)totalBytes <<= _n;
+  (::CORBA::ULongLong&)totalLines <<= _n;
+  (::CORBA::ULong&)nextIndex <<= _n;
+  (TTimeStamp&)lastUpdate <<= _n;
+
+}
+
+void
 STI::TNetwork::TDeviceLogRecord::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(deviceID,0);
   status >>= _n;
   (const TStringSeq&) logNames >>= _n;
+  (const TLogNameRecordSeq&) logs >>= _n;
 
 }
 
@@ -51,6 +120,7 @@ STI::TNetwork::TDeviceLogRecord::operator<<= (cdrStream &_n)
   deviceID = _n.unmarshalString(0);
   (TLogRecordStatus&)status <<= _n;
   (TStringSeq&)logNames <<= _n;
+  (TLogNameRecordSeq&)logs <<= _n;
 
 }
 
@@ -67,26 +137,6 @@ STI::TNetwork::TLogRecord::operator<<= (cdrStream &_n)
 {
   (TTimeStamp&)timeStamp <<= _n;
   (TDeviceLogRecordSeq&)deviceLogRecords <<= _n;
-
-}
-
-void
-STI::TNetwork::TLogID::operator>>= (cdrStream &_n) const
-{
-  (const TDeviceID&) deviceID >>= _n;
-  _n.marshalString(date,0);
-  _n.marshalString(logName,0);
-  index >>= _n;
-
-}
-
-void
-STI::TNetwork::TLogID::operator<<= (cdrStream &_n)
-{
-  (TDeviceID&)deviceID <<= _n;
-  date = _n.unmarshalString(0);
-  logName = _n.unmarshalString(0);
-  (::CORBA::Long&)index <<= _n;
 
 }
 

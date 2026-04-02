@@ -21,11 +21,47 @@ module TNetwork
 
     enum TLogRecordStatus { LogRecordUnqueried, LogRecordLogsPresent, LogRecordNoLogs, LogRecordError };
 
+    struct TLogID
+    {
+        TDeviceID deviceID;
+        string date;
+        string logName;
+        unsigned long index;
+    };
+    typedef sequence<TLogID> TLogIDSeq;
+
+    struct TLogFileRecord
+    {
+        TLogID id;
+        TFileID fileID;
+
+        unsigned long long bytes;
+        unsigned long long lineCount;
+
+        TTimeStamp firstEntryTime;
+        TTimeStamp lastEntryTime;
+    };
+    typedef sequence<TLogFileRecord> TLogFileRecordSeq;
+
+    struct TLogNameRecord
+    {
+        string logName;
+        TLogFileRecordSeq files;
+
+        unsigned long long totalBytes;
+        unsigned long long totalLines;
+
+        unsigned long nextIndex;
+        TTimeStamp lastUpdate;
+    };
+    typedef sequence<TLogNameRecord> TLogNameRecordSeq;
+
     struct TDeviceLogRecord
     {
         string deviceID;
         TLogRecordStatus status;
         TStringSeq logNames;
+        TLogNameRecordSeq logs;
     };
     typedef sequence<TDeviceLogRecord> TDeviceLogRecordSeq;
 
@@ -34,15 +70,6 @@ module TNetwork
         TTimeStamp timeStamp;
         TDeviceLogRecordSeq deviceLogRecords;
     };
-
-	struct TLogID
-	{
-        TDeviceID deviceID;
-        string date;
-        string logName;
-        long index;
-	};
-    typedef sequence<TLogID> TLogIDSeq;
 
     enum TLogFileType { LogFileFileID, LogFileFileHolder, LogFileString };
 
@@ -62,4 +89,3 @@ module TNetwork
 };	//STI
 
 #endif
-

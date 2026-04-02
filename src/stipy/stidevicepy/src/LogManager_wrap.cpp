@@ -206,6 +206,25 @@ void init_LogManager(py::module& m)
                 self.getLogRecord(date, record);
                 return record;
             }, py::arg("date"))
+        .def("getNetworkLogNames",
+            [](LogManager& self) {
+                std::set<std::string> names;
+                self.getNetworkLogNames(names);
+                return names;
+            })
+        .def("getNetworkLogCount", &LogManager::getNetworkLogCount, py::arg("filter"))
+        .def("getNetworkLogIDs",
+            [](LogManager& self, const LogFileFilter& filter) {
+                std::vector<LogID> ids;
+                self.getNetworkLogIDs(filter, ids);
+                return ids;
+            }, py::arg("filter"))
+        .def("getNetworkLogs",
+            [](LogManager& self, const LogFileFilter& filter) {
+                std::vector<LogFile> files;
+                self.getNetworkLogs(filter, files);
+                return files;
+            }, py::arg("filter"))
 
         // .def("__repr__",
         //     [](const LogManager& record) {
@@ -215,25 +234,6 @@ void init_LogManager(py::module& m)
         ;
 
     py::class_<LocalLogManager, LogManager, std::shared_ptr<LocalLogManager>>(m, "LocalLogManager")
-        .def("getNetworkLogNames",
-            [](LocalLogManager& self) {
-                std::set<std::string> names;
-                self.getNetworkLogNames(names);
-                return names;
-            })
-        .def("getNetworkLogCount", &LocalLogManager::getNetworkLogCount, py::arg("filter"))
-        .def("getNetworkLogIDs",
-            [](LocalLogManager& self, const LogFileFilter& filter) {
-                std::vector<LogID> ids;
-                self.getNetworkLogIDs(filter, ids);
-                return ids;
-            }, py::arg("filter"))
-        .def("getNetworkLogs",
-            [](LocalLogManager& self, const LogFileFilter& filter) {
-                std::vector<LogFile> files;
-                self.getNetworkLogs(filter, files);
-                return files;
-            }, py::arg("filter"))
         .def("createLogger", &LocalLogManager::createLogger, py::arg("name"))
         ;
 

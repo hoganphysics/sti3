@@ -523,11 +523,19 @@ Implement:
 
 Current status:
 
-* `LocalFileServer::transferFilePartial()` is stubbed
-* `TFileServer_i::transferFilePartial()` is stubbed
-* `RemoteFileServer::transferFilePartial()` is stubbed
+* `LocalFileServer::transferFilePartial()` is now implemented
+* `TFileServer_i::transferFilePartial()` is now implemented
+* `RemoteFileServer::transferFilePartial()` is now implemented
+* `TFileHolder::getFileSize()` is now exposed over RPC
+* `RemoteFileHolder::getFileSize()` now calls the remote servant instead of returning `0`
 
-If the final partial-read path uses file servers, these must all be completed together.
+Current semantics used by the log path:
+
+* `transferFilePartial(source, destination, offset, lines)` is line-based
+* `offset >= 0` counts from the beginning of the file
+* `offset < 0` counts backward from the end of the file
+* the current implementation is text/log oriented, not a generic byte-slice API
+* this is sufficient for low-level remote log paging, but it is still awkward to expose directly to Python because the destination must provide a `TFileHolder` reference
 
 #### `src/network/src/TFileHolderRefInterface.h`
 #### `src/network/src/NetworkFileHolder.h`
@@ -640,3 +648,100 @@ Assume a coordinated upgrade:
 * update IDLs
 * regenerate stubs/skeletons
 * rebuild both client and server network code together
+
+## Status Update After Network / IDL Pass
+
+Status as of April 1, 2026:
+
+* `LogManager` now exposes the explicit network aggregation methods:
+  * `getNetworkLogNames`
+  * `getNetworkLogCount`
+  * `getNetworkLogIDs`
+  * `getNetworkLogs`
+* `logsNet.idl` now mirrors the richer device-side log metadata:
+  * `TLogFileRecord`
+  * `TLogNameRecord`
+  * `TDeviceLogRecord.logs`
+  * richer `TLogRecord`
+* `deviceNet.idl` now exposes the explicit network log RPCs and `TFileHolder::getFileSize()`
+* the network conversion layer now transports `LogRecord.logs` as the authoritative field
+* `logNames` still travels as a compatibility cache, but new code should treat `logs` as the source of truth
+* `RemoteLogManager` and `TLogManager_i` now preserve the intended semantics:
+  * existing methods remain local-only
+  * explicit `getNetwork...` methods perform aggregation
+* aggregated log ID / file ordering is now deterministic instead of depending on collection traversal order
+* the remote file transfer path needed for lazy log access is now present at the network layer:
+  * `TFileHolder::getFileSize()` is available
+  * `transferFilePartial()` works through local server, servant, and remote proxy
+* source identity is preserved on aggregated results:
+  * `LogID.deviceID` remains the originating device
+  * `FileID.origin` and `FileID.persistenceLocation` remain the originating device
+* `stipy` now exposes the new `getNetwork...` methods through the base `LogManager` wrapper, so remote `LogManager` objects can use them
+
+Still intentionally deferred in this pass:
+
+* `getNetworkLogRecord(date)`
+* a dedicated remote-open / text-browser API for Python and Jupyter
+* a higher-level wrapper UX for paging through remote logs
+
+## Next Steps: Remote Open / Browser API
+
+The next pass should focus on turning the new network plumbing into a usable remote log-opening workflow. The key point is that discovery is now in place, but opening and browsing still needs a wrapper-facing abstraction.
+
+Recommended next steps:
+
+* Define a wrapper-facing remote log handle instead of exposing raw `transferFilePartial()` directly.
+* Build that handle from the metadata that already exists:
+  * `LogID`
+  * `LogFileRecord.fileID`
+  * `bytes`
+  * `lineCount`
+* Keep a live reference to the originating device's remote file server for as long as the browser handle exists.
+* Make the default open behavior tail-oriented:
+  * open the last `N` lines first
+  * allow paging backward for older content
+  * allow refreshing the tail for live-ish inspection
+
+There are two viable API shapes for this wrapper pass:
+
+* Expose a servant-backed network `FileHolder` / destination-holder workflow to Python.
+* Add a simpler log/text paging RPC that returns text slices directly.
+
+Recommendation:
+
+* Prefer adding a log-specific text paging API for the Python/Jupyter-facing layer.
+* Keep the generic file-server partial transfer as the lower-level transport.
+* Avoid forcing notebook code to construct a destination `FileHolder` just to read a few lines of text.
+
+Suggested Python-side object model:
+
+* `LogManager.openLog(logID, tail_lines=200)` or equivalent helper that returns a remote log browser object
+* browser object exposes simple methods such as:
+  * `tail(lines=...)`
+  * `read(offset, lines)`
+  * `page_backward(lines=...)`
+  * `page_forward(lines=...)`
+  * `save_local(...)`
+* browser object also exposes metadata for UI display:
+  * `logID`
+  * `bytes`
+  * `lineCount`
+  * `firstEntryTime`
+  * `lastEntryTime`
+
+Wrapper / UX goals for that pass:
+
+* the common notebook path should be:
+  1. query `getNetworkLogNames()` / `getNetworkLogIDs()`
+  2. pick a `LogID`
+  3. open a browser handle
+  4. inspect the last page immediately
+* the browser should have a useful text representation in Python and Jupyter
+* paging operations should preserve the remote connection to the originating device
+* aggregated queries issued through a server must still read file content from the originating device, not from the aggregator
+
+Follow-up validation for that pass:
+
+* add an end-to-end `stipy` notebook example that opens logs from another device
+* verify that repeated paging works without losing the remote source handle
+* verify that short logs, long logs, and missing-device cases all fail in a controlled way

@@ -139,6 +139,22 @@ public:
         return false;
     }
 
+    void getNetworkLogNames(std::set<std::string>& names) override {
+        getLogNames(names);
+    }
+
+    int getNetworkLogCount(const LogFileFilter& filter) override {
+        return getLogCount(filter);
+    }
+
+    void getNetworkLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids) override {
+        getLogIDs(filter, ids);
+    }
+
+    bool getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files) override {
+        return getLogs(filter, files);
+    }
+
 private:
     bool matches(const LogFileFilter& filter) const {
         if (filter.logName != "*" && filter.logName != id_.logName) {

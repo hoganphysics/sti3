@@ -47,6 +47,7 @@ private:
 
     //Cached data is mutable because it's the servant's data that's const, not this remote reference.
     mutable STI::Utils::CachedValue<std::string> filename;
+    mutable STI::Utils::CachedValue<unsigned> fileSize;
     mutable STI::Utils::CachedValue<bool> fileExists;
     mutable STI::Utils::CachedValue<unsigned> bufferSize;
     mutable STI::Utils::CachedValue<std::string> checksum;

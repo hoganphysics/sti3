@@ -95,6 +95,428 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogRecordStatus;
 
+    struct TLogID {
+      typedef _CORBA_ConstrType_Variable_Var<TLogID> _var_type;
+
+      
+      TDeviceID deviceID;
+
+      ::CORBA::String_member date;
+
+      ::CORBA::String_member logName;
+
+      ::CORBA::ULong index;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TLogID::_var_type TLogID_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TLogID,TLogID_var > TLogID_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogID;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogIDSeq;
+
+    class TLogIDSeq_var;
+
+    class TLogIDSeq : public _CORBA_Unbounded_Sequence< TLogID >  {
+    public:
+      typedef TLogIDSeq_var _var_type;
+      inline TLogIDSeq() {}
+      inline TLogIDSeq(const TLogIDSeq& _s)
+        : _CORBA_Unbounded_Sequence< TLogID > (_s) {}
+
+      inline TLogIDSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TLogID > (_max) {}
+      inline TLogIDSeq(_CORBA_ULong _max, _CORBA_ULong _len, TLogID* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TLogID > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TLogIDSeq& operator = (const TLogIDSeq& _s) {
+        _CORBA_Unbounded_Sequence< TLogID > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TLogIDSeq_out;
+
+    class TLogIDSeq_var {
+    public:
+      inline TLogIDSeq_var() : _pd_seq(0) {}
+      inline TLogIDSeq_var(TLogIDSeq* _s) : _pd_seq(_s) {}
+      inline TLogIDSeq_var(const TLogIDSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TLogIDSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TLogIDSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TLogIDSeq_var& operator = (TLogIDSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TLogIDSeq_var& operator = (const TLogIDSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TLogIDSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TLogID& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TLogIDSeq* operator -> () { return _pd_seq; }
+      inline const TLogIDSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TLogIDSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TLogIDSeq& () const { return *_pd_seq; }
+      inline operator TLogIDSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TLogIDSeq& in() const { return *_pd_seq; }
+      inline TLogIDSeq&       inout()    { return *_pd_seq; }
+      inline TLogIDSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TLogIDSeq* _retn() { TLogIDSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TLogIDSeq_out;
+      
+    private:
+      TLogIDSeq* _pd_seq;
+    };
+
+    class TLogIDSeq_out {
+    public:
+      inline TLogIDSeq_out(TLogIDSeq*& _s) : _data(_s) { _data = 0; }
+      inline TLogIDSeq_out(TLogIDSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TLogIDSeq*) 0; }
+      inline TLogIDSeq_out(const TLogIDSeq_out& _s) : _data(_s._data) {}
+      inline TLogIDSeq_out& operator = (const TLogIDSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TLogIDSeq_out& operator = (TLogIDSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TLogIDSeq*&()  { return _data; }
+      inline TLogIDSeq*& ptr()       { return _data; }
+      inline TLogIDSeq* operator->() { return _data; }
+
+      inline TLogID& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TLogIDSeq*& _data;
+
+    private:
+      TLogIDSeq_out();
+      TLogIDSeq_out& operator=(const TLogIDSeq_var&);
+    };
+
+    struct TLogFileRecord {
+      typedef _CORBA_ConstrType_Variable_Var<TLogFileRecord> _var_type;
+
+      
+      TLogID id;
+
+      TFileID fileID;
+
+      ::CORBA::ULongLong bytes;
+
+      ::CORBA::ULongLong lineCount;
+
+      TTimeStamp firstEntryTime;
+
+      TTimeStamp lastEntryTime;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TLogFileRecord::_var_type TLogFileRecord_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TLogFileRecord,TLogFileRecord_var > TLogFileRecord_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogFileRecord;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogFileRecordSeq;
+
+    class TLogFileRecordSeq_var;
+
+    class TLogFileRecordSeq : public _CORBA_Unbounded_Sequence< TLogFileRecord >  {
+    public:
+      typedef TLogFileRecordSeq_var _var_type;
+      inline TLogFileRecordSeq() {}
+      inline TLogFileRecordSeq(const TLogFileRecordSeq& _s)
+        : _CORBA_Unbounded_Sequence< TLogFileRecord > (_s) {}
+
+      inline TLogFileRecordSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TLogFileRecord > (_max) {}
+      inline TLogFileRecordSeq(_CORBA_ULong _max, _CORBA_ULong _len, TLogFileRecord* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TLogFileRecord > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TLogFileRecordSeq& operator = (const TLogFileRecordSeq& _s) {
+        _CORBA_Unbounded_Sequence< TLogFileRecord > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TLogFileRecordSeq_out;
+
+    class TLogFileRecordSeq_var {
+    public:
+      inline TLogFileRecordSeq_var() : _pd_seq(0) {}
+      inline TLogFileRecordSeq_var(TLogFileRecordSeq* _s) : _pd_seq(_s) {}
+      inline TLogFileRecordSeq_var(const TLogFileRecordSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TLogFileRecordSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TLogFileRecordSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TLogFileRecordSeq_var& operator = (TLogFileRecordSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TLogFileRecordSeq_var& operator = (const TLogFileRecordSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TLogFileRecordSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TLogFileRecord& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TLogFileRecordSeq* operator -> () { return _pd_seq; }
+      inline const TLogFileRecordSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TLogFileRecordSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TLogFileRecordSeq& () const { return *_pd_seq; }
+      inline operator TLogFileRecordSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TLogFileRecordSeq& in() const { return *_pd_seq; }
+      inline TLogFileRecordSeq&       inout()    { return *_pd_seq; }
+      inline TLogFileRecordSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TLogFileRecordSeq* _retn() { TLogFileRecordSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TLogFileRecordSeq_out;
+      
+    private:
+      TLogFileRecordSeq* _pd_seq;
+    };
+
+    class TLogFileRecordSeq_out {
+    public:
+      inline TLogFileRecordSeq_out(TLogFileRecordSeq*& _s) : _data(_s) { _data = 0; }
+      inline TLogFileRecordSeq_out(TLogFileRecordSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TLogFileRecordSeq*) 0; }
+      inline TLogFileRecordSeq_out(const TLogFileRecordSeq_out& _s) : _data(_s._data) {}
+      inline TLogFileRecordSeq_out& operator = (const TLogFileRecordSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TLogFileRecordSeq_out& operator = (TLogFileRecordSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TLogFileRecordSeq*&()  { return _data; }
+      inline TLogFileRecordSeq*& ptr()       { return _data; }
+      inline TLogFileRecordSeq* operator->() { return _data; }
+
+      inline TLogFileRecord& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TLogFileRecordSeq*& _data;
+
+    private:
+      TLogFileRecordSeq_out();
+      TLogFileRecordSeq_out& operator=(const TLogFileRecordSeq_var&);
+    };
+
+    struct TLogNameRecord {
+      typedef _CORBA_ConstrType_Variable_Var<TLogNameRecord> _var_type;
+
+      
+      ::CORBA::String_member logName;
+
+      TLogFileRecordSeq files;
+
+      ::CORBA::ULongLong totalBytes;
+
+      ::CORBA::ULongLong totalLines;
+
+      ::CORBA::ULong nextIndex;
+
+      TTimeStamp lastUpdate;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TLogNameRecord::_var_type TLogNameRecord_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TLogNameRecord,TLogNameRecord_var > TLogNameRecord_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogNameRecord;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogNameRecordSeq;
+
+    class TLogNameRecordSeq_var;
+
+    class TLogNameRecordSeq : public _CORBA_Unbounded_Sequence< TLogNameRecord >  {
+    public:
+      typedef TLogNameRecordSeq_var _var_type;
+      inline TLogNameRecordSeq() {}
+      inline TLogNameRecordSeq(const TLogNameRecordSeq& _s)
+        : _CORBA_Unbounded_Sequence< TLogNameRecord > (_s) {}
+
+      inline TLogNameRecordSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TLogNameRecord > (_max) {}
+      inline TLogNameRecordSeq(_CORBA_ULong _max, _CORBA_ULong _len, TLogNameRecord* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TLogNameRecord > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TLogNameRecordSeq& operator = (const TLogNameRecordSeq& _s) {
+        _CORBA_Unbounded_Sequence< TLogNameRecord > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TLogNameRecordSeq_out;
+
+    class TLogNameRecordSeq_var {
+    public:
+      inline TLogNameRecordSeq_var() : _pd_seq(0) {}
+      inline TLogNameRecordSeq_var(TLogNameRecordSeq* _s) : _pd_seq(_s) {}
+      inline TLogNameRecordSeq_var(const TLogNameRecordSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TLogNameRecordSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TLogNameRecordSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TLogNameRecordSeq_var& operator = (TLogNameRecordSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TLogNameRecordSeq_var& operator = (const TLogNameRecordSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TLogNameRecordSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TLogNameRecord& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TLogNameRecordSeq* operator -> () { return _pd_seq; }
+      inline const TLogNameRecordSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TLogNameRecordSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TLogNameRecordSeq& () const { return *_pd_seq; }
+      inline operator TLogNameRecordSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TLogNameRecordSeq& in() const { return *_pd_seq; }
+      inline TLogNameRecordSeq&       inout()    { return *_pd_seq; }
+      inline TLogNameRecordSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TLogNameRecordSeq* _retn() { TLogNameRecordSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TLogNameRecordSeq_out;
+      
+    private:
+      TLogNameRecordSeq* _pd_seq;
+    };
+
+    class TLogNameRecordSeq_out {
+    public:
+      inline TLogNameRecordSeq_out(TLogNameRecordSeq*& _s) : _data(_s) { _data = 0; }
+      inline TLogNameRecordSeq_out(TLogNameRecordSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TLogNameRecordSeq*) 0; }
+      inline TLogNameRecordSeq_out(const TLogNameRecordSeq_out& _s) : _data(_s._data) {}
+      inline TLogNameRecordSeq_out& operator = (const TLogNameRecordSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TLogNameRecordSeq_out& operator = (TLogNameRecordSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TLogNameRecordSeq*&()  { return _data; }
+      inline TLogNameRecordSeq*& ptr()       { return _data; }
+      inline TLogNameRecordSeq* operator->() { return _data; }
+
+      inline TLogNameRecord& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TLogNameRecordSeq*& _data;
+
+    private:
+      TLogNameRecordSeq_out();
+      TLogNameRecordSeq_out& operator=(const TLogNameRecordSeq_var&);
+    };
+
     struct TDeviceLogRecord {
       typedef _CORBA_ConstrType_Variable_Var<TDeviceLogRecord> _var_type;
 
@@ -104,6 +526,8 @@ _CORBA_MODULE_BEG
       TLogRecordStatus status;
 
       TStringSeq logNames;
+
+      TLogNameRecordSeq logs;
 
     
 
@@ -250,144 +674,6 @@ _CORBA_MODULE_BEG
     typedef _CORBA_ConstrType_Variable_OUT_arg< TLogRecord,TLogRecord_var > TLogRecord_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogRecord;
-
-    struct TLogID {
-      typedef _CORBA_ConstrType_Variable_Var<TLogID> _var_type;
-
-      
-      TDeviceID deviceID;
-
-      ::CORBA::String_member date;
-
-      ::CORBA::String_member logName;
-
-      ::CORBA::Long index;
-
-    
-
-      void operator>>= (cdrStream &) const;
-      void operator<<= (cdrStream &);
-    };
-
-    typedef TLogID::_var_type TLogID_var;
-
-    typedef _CORBA_ConstrType_Variable_OUT_arg< TLogID,TLogID_var > TLogID_out;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogID;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TLogIDSeq;
-
-    class TLogIDSeq_var;
-
-    class TLogIDSeq : public _CORBA_Unbounded_Sequence< TLogID >  {
-    public:
-      typedef TLogIDSeq_var _var_type;
-      inline TLogIDSeq() {}
-      inline TLogIDSeq(const TLogIDSeq& _s)
-        : _CORBA_Unbounded_Sequence< TLogID > (_s) {}
-
-      inline TLogIDSeq(_CORBA_ULong _max)
-        : _CORBA_Unbounded_Sequence< TLogID > (_max) {}
-      inline TLogIDSeq(_CORBA_ULong _max, _CORBA_ULong _len, TLogID* _val, _CORBA_Boolean _rel=0)
-        : _CORBA_Unbounded_Sequence< TLogID > (_max, _len, _val, _rel) {}
-
-    
-
-      inline TLogIDSeq& operator = (const TLogIDSeq& _s) {
-        _CORBA_Unbounded_Sequence< TLogID > ::operator=(_s);
-        return *this;
-      }
-    };
-
-    class TLogIDSeq_out;
-
-    class TLogIDSeq_var {
-    public:
-      inline TLogIDSeq_var() : _pd_seq(0) {}
-      inline TLogIDSeq_var(TLogIDSeq* _s) : _pd_seq(_s) {}
-      inline TLogIDSeq_var(const TLogIDSeq_var& _s) {
-        if (_s._pd_seq)  _pd_seq = new TLogIDSeq(*_s._pd_seq);
-        else             _pd_seq = 0;
-      }
-      inline ~TLogIDSeq_var() { if (_pd_seq)  delete _pd_seq; }
-        
-      inline TLogIDSeq_var& operator = (TLogIDSeq* _s) {
-        if (_pd_seq)  delete _pd_seq;
-        _pd_seq = _s;
-        return *this;
-      }
-      inline TLogIDSeq_var& operator = (const TLogIDSeq_var& _s) {
-        if (&_s != this) {
-          if (_s._pd_seq) {
-            if (!_pd_seq)  _pd_seq = new TLogIDSeq;
-            *_pd_seq = *_s._pd_seq;
-          }
-          else if (_pd_seq) {
-            delete _pd_seq;
-            _pd_seq = 0;
-          }
-        }
-        return *this;
-      }
-      inline TLogID& operator [] (_CORBA_ULong _s) {
-        return (*_pd_seq)[_s];
-      }
-
-    
-
-      inline TLogIDSeq* operator -> () { return _pd_seq; }
-      inline const TLogIDSeq* operator -> () const { return _pd_seq; }
-#if defined(__GNUG__)
-      inline operator TLogIDSeq& () const { return *_pd_seq; }
-#else
-      inline operator const TLogIDSeq& () const { return *_pd_seq; }
-      inline operator TLogIDSeq& () { return *_pd_seq; }
-#endif
-        
-      inline const TLogIDSeq& in() const { return *_pd_seq; }
-      inline TLogIDSeq&       inout()    { return *_pd_seq; }
-      inline TLogIDSeq*&      out() {
-        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
-        return _pd_seq;
-      }
-      inline TLogIDSeq* _retn() { TLogIDSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
-        
-      friend class TLogIDSeq_out;
-      
-    private:
-      TLogIDSeq* _pd_seq;
-    };
-
-    class TLogIDSeq_out {
-    public:
-      inline TLogIDSeq_out(TLogIDSeq*& _s) : _data(_s) { _data = 0; }
-      inline TLogIDSeq_out(TLogIDSeq_var& _s)
-        : _data(_s._pd_seq) { _s = (TLogIDSeq*) 0; }
-      inline TLogIDSeq_out(const TLogIDSeq_out& _s) : _data(_s._data) {}
-      inline TLogIDSeq_out& operator = (const TLogIDSeq_out& _s) {
-        _data = _s._data;
-        return *this;
-      }
-      inline TLogIDSeq_out& operator = (TLogIDSeq* _s) {
-        _data = _s;
-        return *this;
-      }
-      inline operator TLogIDSeq*&()  { return _data; }
-      inline TLogIDSeq*& ptr()       { return _data; }
-      inline TLogIDSeq* operator->() { return _data; }
-
-      inline TLogID& operator [] (_CORBA_ULong _i) {
-        return (*_data)[_i];
-      }
-
-    
-
-      TLogIDSeq*& _data;
-
-    private:
-      TLogIDSeq_out();
-      TLogIDSeq_out& operator=(const TLogIDSeq_var&);
-    };
 
     enum TLogFileType { LogFileFileID, LogFileFileHolder, LogFileString /*, __max_TLogFileType=0xffffffff */ };
     typedef TLogFileType& TLogFileType_out;
@@ -619,6 +905,36 @@ inline void operator <<= (STI::TNetwork::TLogRecordStatus& _e, cdrStream& s) {
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogRecordStatus _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogRecordStatus& _s);
 
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogID& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogID* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogID*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogID*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogIDSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogIDSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogFileRecord& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogFileRecord* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogFileRecord*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogFileRecord*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogFileRecordSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogFileRecordSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogFileRecordSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogFileRecordSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogNameRecord& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogNameRecord* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogNameRecord*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogNameRecord*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogNameRecordSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogNameRecordSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogNameRecordSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogNameRecordSeq*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceLogRecord& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceLogRecord* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceLogRecord*& _sp);
@@ -633,16 +949,6 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogRecord& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogRecord* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogRecord*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogRecord*& _sp);
-
-extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogID& _s);
-extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogID* _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogID*& _sp);
-extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogID*& _sp);
-
-void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq& _s);
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TLogIDSeq* _sp);
-_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TLogIDSeq*& _sp);
-_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TLogIDSeq*& _sp);
 
 inline void operator >>=(STI::TNetwork::TLogFileType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);

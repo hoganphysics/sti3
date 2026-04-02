@@ -69,3 +69,35 @@ TEST_CASE("LocalFileServer: transfer and delete") {
     CHECK_FALSE(server.findFile(sourceID));
     CHECK_FALSE(server.deleteFile(sourceID)); // already gone
 }
+
+TEST_CASE("LocalFileServer: transferFilePartial returns line windows") {
+    TempDir td;
+    DeviceID localDevice = makeTestDeviceID();
+    LocalFileServer server(localDevice);
+
+    auto sourcePath = td.path / "src";
+    auto destPath = td.path / "dest";
+    std::filesystem::create_directories(sourcePath);
+
+    auto sourceFile = sourcePath / "payload.txt";
+    {
+        std::ofstream ofs(sourceFile);
+        ofs << "line-0\nline-1\nline-2\nline-3\nline-4\n";
+    }
+
+    FileID sourceID = makeFileID(localDevice, sourcePath, "payload.txt");
+
+    SECTION("positive offsets count from the beginning") {
+        auto destination = std::make_shared<LocalFileHolder>("dest-origin", destPath.string(), "slice-positive.txt");
+
+        REQUIRE(server.transferFilePartial(sourceID, destination, 1, 2));
+        CHECK(readFileToString(destination->getFilename()) == "line-1\nline-2\n");
+    }
+
+    SECTION("negative offsets count backward from the end") {
+        auto destination = std::make_shared<LocalFileHolder>("dest-origin", destPath.string(), "slice-negative.txt");
+
+        REQUIRE(server.transferFilePartial(sourceID, destination, -3, 2));
+        CHECK(readFileToString(destination->getFilename()) == "line-2\nline-3\n");
+    }
+}

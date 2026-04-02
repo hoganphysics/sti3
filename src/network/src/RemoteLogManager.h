@@ -37,6 +37,11 @@ public:
 
     bool getLogRecord(const std::string& date, STI::Device::LogRecord& record);
 
+    void getNetworkLogNames(std::set<std::string>& names);
+    int getNetworkLogCount(const STI::Device::LogFileFilter& filter);
+    void getNetworkLogIDs(const STI::Device::LogFileFilter& filter, std::vector<STI::Device::LogID>& ids);
+    bool getNetworkLogs(const STI::Device::LogFileFilter& filter, std::vector<STI::Device::LogFile>& files);
+
     bool ping() const;
     
 private:

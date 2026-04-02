@@ -71,7 +71,20 @@ TFileServer_i::~TFileServer_i()
 
 ::CORBA::Boolean TFileServer_i::transferFilePartial(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::CORBA::Long offset, ::CORBA::Long lines)
 {
-    return false;
+    bool result = false;
+
+    if (localFileServer != 0 && !CORBA::is_nil(destination)) {
+        STI::TNetwork::TFileHolder_var destination_var = STI::TNetwork::TFileHolder::_duplicate(destination);
+
+        auto remoteFile = std::make_shared<STI::Network::RemoteFileHolder>(destination_var);
+        result = localFileServer->transferFilePartial(
+                convert<TFileID, FileID>(source),
+                remoteFile,
+                static_cast<int>(offset),
+                static_cast<int>(lines));
+    }
+
+    return static_cast<::CORBA::Boolean>(result);
 }
 
 ::CORBA::Boolean TFileServer_i::deleteFile(const ::STI::TNetwork::TFileID& fileID)
