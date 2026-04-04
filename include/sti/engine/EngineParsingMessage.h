@@ -1,6 +1,7 @@
 #ifndef STI_ENGINE_ENGINEPARSINGMESSAGE_H
 #define STI_ENGINE_ENGINEPARSINGMESSAGE_H
 
+#include <sti/engine/RawEvent.h>
 #include <sti/utils/utils.h>
 #include <sti/device/DeviceID.h>
 
@@ -12,8 +13,6 @@ namespace STI
 {
 namespace Engine
 {
-
-class RawEvent;
 
 enum class ParsingMessageType { Error, Warning, Information };
 

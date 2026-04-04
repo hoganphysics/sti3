@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstdint>
 
 namespace STI
 {
@@ -31,8 +32,14 @@ class LocalLogManager : public LogManager
 {
 public:
 
-    LocalLogManager(LocalDevice* localDevice, const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager);
+    static constexpr std::uintmax_t DefaultMaxLogFileSizeBytes = 100 * 1024;
+
+    LocalLogManager(LocalDevice* localDevice, const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager,
+        std::uintmax_t maxLogFileSizeBytes = DefaultMaxLogFileSizeBytes);
     ~LocalLogManager();
+
+    void setMaxLogFileSizeBytes(std::uintmax_t maxLogFileSizeBytes);
+    std::uintmax_t getMaxLogFileSizeBytes() const;
 
     void getLogNames(std::set<std::string>& names);
 
@@ -133,6 +140,7 @@ private:
     std::shared_ptr<LocalPersistenceManager> localPersistenceManager;
     std::unique_ptr<LocalLogRepository> localLogRepository;
     LogWriterMessageGrouper logWriterMessageGrouper;
+    std::uintmax_t maxLogFileSizeBytes;
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Logger>> loggers;
 

@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
 #include <set>
@@ -36,6 +37,18 @@ Configuration makePersistenceConfig(const std::filesystem::path& rootPath, const
     config.set("PersistenceManager", "root path", rootPath.string());
     config.set("PersistenceManager", "device subdirectory", subdir);
     config.set("EngineManager", "Engine Count", 0);
+    return config;
+}
+
+Configuration makeSectionedDeviceConfig(const std::filesystem::path& rootPath, const std::string& subdir,
+    std::uintmax_t maxLogFileSizeBytes)
+{
+    auto config = makePersistenceConfig(rootPath, subdir);
+    config.set("TestDevice", "Device Name", "LoggerDevice");
+    config.set("TestDevice", "IP Address", "127.0.0.1");
+    config.set("TestDevice", "Module", 10);
+    config.set("TestDevice", "Target Server", "target");
+    config.set("Logs", "Max File Size Bytes", maxLogFileSizeBytes);
     return config;
 }
 
@@ -71,6 +84,47 @@ bool waitForLogFile(const std::filesystem::path& dir, std::filesystem::path& fou
         }
     }
     return false;
+}
+
+std::vector<std::filesystem::path> getLogFiles(const std::filesystem::path& dir) {
+    std::vector<std::filesystem::path> files;
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".log") {
+            files.push_back(entry.path());
+        }
+    }
+
+    std::sort(files.begin(), files.end());
+    return files;
+}
+
+bool waitForLogFileCount(const std::filesystem::path& dir, std::size_t expectedCount, std::chrono::milliseconds timeout) {
+    using namespace std::chrono_literals;
+    auto start = std::chrono::steady_clock::now();
+    while (std::chrono::steady_clock::now() - start < timeout) {
+        if (getLogFiles(dir).size() >= expectedCount) {
+            return true;
+        }
+        std::this_thread::sleep_for(50ms);
+    }
+
+    return getLogFiles(dir).size() >= expectedCount;
+}
+
+bool waitForFileSizeGreaterThan(const std::filesystem::path& path, std::uintmax_t sizeBytes,
+    std::chrono::milliseconds timeout)
+{
+    using namespace std::chrono_literals;
+    auto start = std::chrono::steady_clock::now();
+    while (std::chrono::steady_clock::now() - start < timeout) {
+        if (std::filesystem::exists(path) && std::filesystem::file_size(path) > sizeBytes) {
+            return true;
+        }
+        std::this_thread::sleep_for(50ms);
+    }
+
+    return std::filesystem::exists(path) && std::filesystem::file_size(path) > sizeBytes;
 }
 
 class LoggerTestDevice : public LocalDevice {
@@ -202,4 +256,66 @@ TEST_CASE("Logger addReadLogTask logs channel reads with value and channel metad
     CHECK(contents.find("|read|") != std::string::npos);
     CHECK(contents.find("temperature") != std::string::npos);
     CHECK(contents.find("123.45") != std::string::npos);
+}
+
+TEST_CASE("Logger default max log size stays above the legacy rollover threshold", "[log] [logger]") {
+    using namespace std::chrono_literals;
+
+    fileholder_test_support::TempDir tempDir;
+    auto config = makePersistenceConfig(tempDir.path, "logger-default-size");
+    auto device = std::make_shared<LocalDevice>("LoggerDevice", "127.0.0.1", 11, "target", config);
+
+    std::shared_ptr<LocalLogManager> logManager;
+    REQUIRE(device->getLogManager(logManager));
+    auto persistence = getPersistence(device);
+    REQUIRE(persistence);
+
+    TimeStamp now;
+    auto logDir = ensureLogDir(persistence, device->getID(), now);
+
+    auto& logger = logManager->log("sizedefault");
+    logger << std::string(6000, 'a');
+
+    std::filesystem::path logPath;
+    REQUIRE(waitForLogFile(logDir, logPath, 5s));
+    const auto firstSize = std::filesystem::file_size(logPath);
+    CHECK(firstSize > 0);
+
+    logger << std::string(6000, 'b');
+
+    REQUIRE(waitForFileSizeGreaterThan(logPath, firstSize, 5s));
+    CHECK(getLogFiles(logDir).size() == 1);
+    CHECK(std::filesystem::file_size(logPath) > 10000);
+}
+
+TEST_CASE("Logger honors [Logs] max file size from sectioned configuration", "[log] [logger]") {
+    using namespace std::chrono_literals;
+
+    fileholder_test_support::TempDir tempDir;
+    auto config = makeSectionedDeviceConfig(tempDir.path, "logger-config-size", 400);
+    auto device = std::make_shared<LocalDevice>(config, "TestDevice");
+
+    std::shared_ptr<LocalLogManager> logManager;
+    REQUIRE(device->getLogManager(logManager));
+    auto persistence = getPersistence(device);
+    REQUIRE(persistence);
+
+    TimeStamp now;
+    auto logDir = ensureLogDir(persistence, device->getID(), now);
+
+    auto& logger = logManager->log("config");
+    logger << std::string(250, 'x');
+
+    REQUIRE(waitForLogFileCount(logDir, 1, 5s));
+    auto logFiles = getLogFiles(logDir);
+    REQUIRE(logFiles.size() == 1);
+    CHECK(logFiles[0].filename() == "sti_config_0.log");
+
+    logger << std::string(250, 'y');
+
+    REQUIRE(waitForLogFileCount(logDir, 2, 5s));
+    logFiles = getLogFiles(logDir);
+    REQUIRE(logFiles.size() == 2);
+    CHECK(logFiles[0].filename() == "sti_config_0.log");
+    CHECK(logFiles[1].filename() == "sti_config_1.log");
 }

@@ -29,12 +29,16 @@ using STI::Utils::TimeStamp;
 
 LocalLogManager::LocalLogManager(
     LocalDevice* localDevice,
-    const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager)
+    const std::shared_ptr<LocalPersistenceManager>& localPersistenceManager,
+    std::uintmax_t maxLogFileSizeBytes)
 : localDevice(localDevice),
   localPersistenceManager(localPersistenceManager),
   localLogRepository(std::make_unique<LocalLogRepository>(localDevice, localPersistenceManager)),
-  logWriterMessageGrouper(this)
+  logWriterMessageGrouper(this),
+  maxLogFileSizeBytes(DefaultMaxLogFileSizeBytes)
 {
+    setMaxLogFileSizeBytes(maxLogFileSizeBytes);
+
     createLogger("");   // default logger
 
     logWriterMessageGrouper.setWarmup(1000);      // ms
@@ -45,6 +49,16 @@ LocalLogManager::LocalLogManager(
 LocalLogManager::~LocalLogManager()
 {
     logWriterMessageGrouper.stop();
+}
+
+void LocalLogManager::setMaxLogFileSizeBytes(std::uintmax_t maxLogFileSizeBytesIn)
+{
+    maxLogFileSizeBytes = (maxLogFileSizeBytesIn > 0) ? maxLogFileSizeBytesIn : DefaultMaxLogFileSizeBytes;
+}
+
+std::uintmax_t LocalLogManager::getMaxLogFileSizeBytes() const
+{
+    return maxLogFileSizeBytes;
 }
 
 void LocalLogManager::writeLog(const std::string& logName)

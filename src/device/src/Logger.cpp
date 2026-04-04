@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <filesystem>
+#include <cstdint>
 namespace fs = std::filesystem;
 
 using STI::Device::Logger;
@@ -322,7 +323,10 @@ std::string Logger::getNextLogFilename(const std::string& targetDirectory)
 
     bool fileCheck = false;
     unsigned i = 0;
-    int maxFileSize = 10000;    //bytes
+    const auto maxFileSize = (manager != nullptr)
+        ? manager->getMaxLogFileSizeBytes()
+        : LocalLogManager::DefaultMaxLogFileSizeBytes;
+    const auto pendingWriteSize = static_cast<std::uintmax_t>(log.str().size());
 
     do {
         auto filename = manager->makeLogFilename(name, i);
@@ -330,8 +334,9 @@ std::string Logger::getNextLogFilename(const std::string& targetDirectory)
         nextLogFilename = newLogFilenamePath / filename;
 
         if (fs::exists(nextLogFilename)) {
-            //make sure file doesn't exceed max size
-            fileCheck = fs::file_size(nextLogFilename) < maxFileSize;
+            // Keep each log file under the configured size after the pending buffer is appended.
+            const auto currentFileSize = fs::file_size(nextLogFilename);
+            fileCheck = currentFileSize + pendingWriteSize <= maxFileSize;
         }
         else {
             fileCheck = true;
