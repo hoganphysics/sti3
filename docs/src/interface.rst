@@ -1,363 +1,394 @@
 .. _deviceinterface:
 
+Device Interface
+================
 
-Device interface
-----------------
+The device interface is the API used after code has a reference to a device.
+The reference may be local, returned by ``connect()``, obtained from a hub, or
+looked up through another device's collection.  The same high-level operations
+are exposed by ``LocalDevice`` and by remote device references:
 
-The STI device API includes the following features:
+* inspect connected devices with the device collection
+* read and write channels
+* inspect and set attributes
+* subscribe to device messages
+* monitor live status values
+* inspect event engine and persistence results
+* save and load profiles
+* manage background tasks
+* read logs
 
-* Device collection
-* Channels
-* Attributes
-* Event engines
-* Device messages
-* Data persistence
-* Profiles
-* Logging
-* Asynchronous tasks
+Managers
+--------
 
-Connecting to a device on the network (or otherwise receiving a reference to a device) provides 
-remote access to all of these features for that device.
+Each device owns manager objects for a particular feature area.  In C++ the
+manager is returned through an output ``std::shared_ptr``.  In Python the
+binding returns the manager directly.
 
-Each feature is controlled through a dedicated manager class hosted by the device instance.
-Usage of these feature manager classes is described below.
+.. list-table::
+   :header-rows: 1
 
+   * - Feature
+     - C++ accessor
+     - Python accessor
+   * - Device collection
+     - ``getCollection(collection)``
+     - ``getCollection()``
+   * - Channels
+     - ``getChannelManager(manager)``
+     - ``getChannelManager()``
+   * - Attributes
+     - ``getAttributeManager(manager)``
+     - ``getAttributeManager()``
+   * - Messages
+     - ``getMessageReceiver(receiver)``
+     - ``getMessageReceiver()``
+   * - Event engines
+     - ``getEngineScheduler(scheduler)``
+     - ``getEngineScheduler()``
+   * - Persistence
+     - ``getPersistenceManager(manager)``
+     - ``getPersistenceManager()``
+   * - Profiles
+     - ``getProfileManager(manager)``
+     - ``getProfileManager()``
+   * - Monitors
+     - ``getMonitorManager(manager)``
+     - ``getMonitorManager()``
+   * - Tasks
+     - ``getTaskManager(manager)``
+     - ``getTaskManager()``
+   * - Logs
+     - ``getLogManager(manager)``
+     - ``getLogManager()``
 
 Device collection
-*****************
+-----------------
 
-A device can be connected to other devices on the network. Each device stores a list of device references that 
-it is connected to in its **device collection**.   The device's device collection can be used to inspect what
-DeviceIDs are connected to the device, or to retreive device references to connected devices.
+The device collection stores references to devices that are connected to this
+device.  Use it to discover available ``DeviceID`` values and to get another
+device reference.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        std::shared_ptr<STI::Device::DeviceCollection> collection;
-        getCollection(collection);
-    
-        std::set<DeviceID> ids;
-        collection->getIDs(ids);    //list of DeviceIDs that are connected to this device
+      std::shared_ptr<STI::Device::DeviceCollection> collection;
+      device->getCollection(collection);
 
-        std::shared_ptr<STI::Device::Device> device;    //new device reference
+      std::set<STI::Device::DeviceID> ids;
+      collection->getIDs(ids);
 
-        DeviceID id = ...               //DeviceID of desired device
-        collection->get(id, device);    //gets the device reference
-
-        device->...                     //use the new device reference
-
+      std::shared_ptr<STI::Device::Device> other;
+      STI::Device::DeviceID id("localhost/0/TestDevice");
+      if (collection->get(id, other)) {
+          other->write(0, 1.5);
+      }
 
    .. code-tab:: py
 
-         Python Main Function
+      collection = device.getCollection()
+      ids = collection.getIDs()
 
-   .. code-tab:: java
-
-        Java
-    
-
-
-
-
-.. .. tabs::
-
-..    .. code-tab:: c++
-
-..          C++ Main Function
-
-..    .. code-tab:: py
-
-..          Python Main Function
-
-..    .. code-tab:: java
-
-..         //Create and add a custom DeviceCollectionListener by implementing
-..         //the following methods (as needed)
-
-..         addCollectionListener(new DeviceCollectionListener() {
-..             public void add(DeviceID id) {
-..                 //...
-..             }
-..             public void remove(DeviceID id) {
-..                 //...
-..             }
-..             public void refresh() {
-..                 //...
-..             }
-..         });
-
-
-
+      other = collection.get("localhost/0/TestDevice")
+      if other is not None:
+          other.write(0, 1.5)
 
 Channels
-********
+--------
 
-An :ref:`example <deviceexamples>` of how to define channels (named `readWrite`) can be found in the *examples/* directory.
+Channels are the primary runtime I/O surface of a device.  Output channels
+accept values to send to hardware.  Input channels return measurements.  An
+input channel may also have an output value type, which means a read accepts an
+argument.
+
+The ``ChannelManager`` can list channel definitions, retrieve metadata, and
+perform read/write operations.  The convenience methods ``device.write()``,
+``device.read()``, and ``device.stopRW()`` call through to the same manager.
 
 .. tabs::
 
    .. code-tab:: c++
-    
-	    void getChannelManager(shared_ptr<ChannelManager>& manager);
+
+      std::shared_ptr<STI::Device::ChannelManager> channels;
+      device->getChannelManager(channels);
+
+      std::vector<std::shared_ptr<STI::Device::Channel>> defs;
+      channels->getChannels(defs);
+      for (const auto& ch : defs) {
+          std::cout << ch->getChannelNumber() << ": "
+                    << ch->getChannelName() << std::endl;
+      }
+
+      channels->writeChannel(0, STI::Utils::MixedValue(2.5));
+
+      STI::Utils::MixedValue result;
+      if (channels->readChannel(10, STI::Utils::MixedValue(), result)) {
+          std::cout << result.print() << std::endl;
+      }
 
    .. code-tab:: py
-        
-        getChannelManager() -> ChannelManager
 
-   .. code-tab:: java
+      channels = device.getChannelManager()
+      for ch in channels.getChannels():
+          print(ch.number(), ch.name(), ch.type(), ch.metadata())
 
-        public JChannelManager getChannelManager();
+      channels.writeChannel(0, 2.5)
+      result = channels.readChannel(10, None)
+      print(result)
 
+For quick access:
 
+.. tabs::
 
+   .. code-tab:: c++
 
+      device->write(0, 2.5);
+
+      STI::Utils::MixedValue data;
+      device->read(10, data);
+
+      STI::Utils::MixedValue args;
+      args.addValue(12);
+      args.addValue("hi");
+      device->read(11, args, data);
+
+   .. code-tab:: py
+
+      device.write(0, 2.5)
+      data = device.read(10)
+      data_with_args = device.read(11, [12, "hi"])
 
 Attributes
-**********
+----------
 
-An :ref:`example <deviceexamples>` of how to define attributes (named `attributes`) can be found in the *examples/* directory.
-
+Attributes are named string values used for configuration and operator-facing
+state.  They may expose allowed values and metadata.  Setting an attribute
+calls the device's setter callback if one was registered; refreshing or reading
+an attribute may call the refresher callback.
 
 .. tabs::
 
    .. code-tab:: c++
-    
-	    void getAttributeManager(shared_ptr<AttributeManager>& manager);
+
+      std::shared_ptr<STI::Device::AttributeManager> attributes;
+      device->getAttributeManager(attributes);
+
+      std::string mode = attributes->getValue("Mode");
+      attributes->setValue("TriggerSource", "Software");
+
+      std::vector<std::shared_ptr<STI::Device::Attribute>> defs;
+      attributes->getAttributes(defs);
+      for (const auto& attr : defs) {
+          std::cout << attr->getKey() << " = "
+                    << attr->getValue() << std::endl;
+      }
 
    .. code-tab:: py
-        
-        getAttributeManager() -> AttributeManager
 
-   .. code-tab:: java
+      attributes = device.getAttributeManager()
+      mode = attributes.getValue("Mode")
+      attributes.setValue("TriggerSource", "Software")
 
-        public JAttributeManager getAttributeManager();
+      for attr in attributes.getAttributes():
+          print(attr.key(), attr.value(), attr.getAllowedValues(), attr.metadata())
 
+The device object also has convenience methods:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::string height = device->getAttribute("Height");
+      bool ok = device->setAttribute("Downsample", "4");
+
+   .. code-tab:: py
+
+      height = device.getAttribute("Height")
+      ok = device.setAttribute("Downsample", "4")
+
+Messages and listeners
+----------------------
+
+Device messages publish changes such as channel updates, attribute updates,
+monitor updates, collection changes, and engine status changes.  Use the
+``DeviceMessageReceiver`` when code needs to react to updates instead of
+polling managers.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+      if (localDevice->getMessageReceiver(receiver)) {
+          STI::Device::DeviceID source = localDevice->getID();
+
+          receiver->addListener<STI::Device::AttributeUpdateMessage>(
+              source,
+              "AttributePrinter",
+              [](const std::shared_ptr<STI::Device::AttributeUpdateMessage>& mess) {
+                  for (const auto& item : mess->attributes) {
+                      std::cout << item.first << " = " << item.second << std::endl;
+                  }
+              });
+      }
+
+   .. code-tab:: py
+
+      receiver = device.getMessageReceiver()
+
+      def print_attribute_update(message):
+          for key, value in message.attributes:
+              print(key, value)
+
+      receiver.addListener(
+          stidevicepy.DeviceMessageType.AttributeUpdate,
+          device.getID(),
+          "AttributePrinter",
+          print_attribute_update,
+      )
+
+Monitors
+--------
+
+Monitors expose live values that are not part of shot timing.  They are useful
+for status, temperatures, lock states, counters, and other continuously updated
+readbacks.  A monitor has an ID, status, value, and metadata.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::shared_ptr<STI::Device::MonitorManager> monitors;
+      if (device->getMonitorManager(monitors)) {
+          std::vector<std::string> ids;
+          monitors->getIDs(ids);
+          for (const auto& id : ids) {
+              auto value = monitors->getValue(id);
+              std::cout << id << " = " << value.print() << std::endl;
+          }
+      }
+
+   .. code-tab:: py
+
+      monitors = device.getMonitorManager()
+      for monitor_id in monitors.getIDs():
+          print(monitor_id, monitors.getStatus(monitor_id), monitors.getValue(monitor_id))
+
+      monitors.activateAll()
 
 Event engine
-************
+------------
 
-Responsible for parsing and playing event sequences. Each device has multiple event engines, allowing multiple
-shots to be parsed. While only one shot can play at a time, during event playback the device can parse another 
-shot.  The **EventEngineScheduler** coordinates the event engines on devices across the network.
+The event engine parses timing sequences into device-specific
+``SynchronousEvent`` objects and plays them during a shot.  A device can host
+multiple event engines so one shot can be parsed while another is ready or
+playing.  Networked devices coordinate through the ``EventEngineScheduler``.
 
-
-Device Messages
-***************
-
-Devices can generate and receive messages to transmit device state. The **DeviceMessageDispatcher** accepts messages
-generated by the device and transmits them to the network.  Devices can register custom **DeviceMessageListener** instances
-in order to receive messages generated by other devices.
-
+Most user code interacts with the scheduler through higher-level STIPy shot and
+sequence APIs.  Device authors interact with the engine by implementing
+``parseEvents()`` and by throwing parse exceptions when a sequence requests an
+invalid hardware operation.
 
 Persistence
-***********
+-----------
 
-All data generated during shots is controlled by the **PersistenceManager**. 
-This includes the measurement results and metadata of the shot itself, as well as
-the parsed timing sequence results.  The API allows data to be retrieved from 
-the **PersistenceManager** as needed.
-
-Persistence output can be customized to support different file formats or database targets.
-
-
-.. tabs::
-
-   .. code-tab:: c++
-    
-	    bool getPersistenceManager(shared_ptr<PersistenceManager>& manager);
-
-   .. code-tab:: py
-        
-        getPersistenceManager() -> PersistenceManager
-
-   .. code-tab:: java
-
-        public JPersistenceManager getPersistenceManager();
-
-
-
+The ``PersistenceManager`` stores parse results, shot results, sequence results,
+measurements, and files produced by shots.  Use it when code needs to inspect
+results after parsing or playback.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        shared_ptr<PersistenceManager> persistenceManager;
-        getPersistenceManager(persistenceManager);
-        
-        ParseID pid;  //make valid ParseID somehow...
-
-        if (persistenceManager->getParseResult(pid, parsePesult)) {
-            //parsePesult found
-        }
-
-   .. code-tab:: py
-        
-        ParseID pid;  #make valid ParseID somehow...
-        parsePesult = getPersistenceManager().getParseResult(pid);
-
-   .. code-tab:: java
-
-        ParseID pid;  //make valid ParseID somehow...
-        ParseResult parsePesult = getPersistenceManager().getParseResult(pid);
-
-
-
-.. tabs::
-
-   .. code-tab:: c++
-    
-        bool getParseResult(const ParseID& pid, shared_ptr<ParseResult>& parseResult);
+      std::shared_ptr<STI::Device::PersistenceManager> persistence;
+      if (device->getPersistenceManager(persistence)) {
+          std::shared_ptr<STI::Engine::ShotResult> shot;
+          if (persistence->getShotResult(shotID, shot)) {
+              // inspect shot->measurements, status, and result metadata
+          }
+      }
 
    .. code-tab:: py
-        
-        getParseResult(pid: ParseID) -> ParseResult
 
-   .. code-tab:: java
-
-        public ParseResult getParseResult(ParseID pid);
-
-
-
-.. tabs::
-
-   .. code-tab:: c++
-    
-        bool getShotResult(const ShotID& sid, shared_ptr<ShotResult>& result);
-
-   .. code-tab:: py
-        
-        getShotResult(sid: ShotID) -> ShotResult
-
-   .. code-tab:: java
-
-        public ShotResult getShotResult(ShotID sid);
-
+      persistence = device.getPersistenceManager()
+      shot = persistence.getShotResult(shot_id)
+      measurements = persistence.getMeasurements(shot_id)
 
 Profiles
-********
+--------
 
-Profiles allow the state of a device's attributes and channels to be saved and later reloaded.
-This is useful for device initialization and safety. For example, an `startup` profile can be 
-defined that initializes all channels to desired values. A `safe` profile can be defined that
-puts all channels at safe values in case of an emergency stop.
+Profiles save and restore channel and attribute state.  Use profiles for
+startup states, safe states, and reproducible experiment configurations.
 
-Profiles are stored on disk as json files in the .sti directory of the device. Profiles may be 
-created and edited manually or using the STI API. Profiles are managed by the ProfileManager:
-
-.. tabs::
-
-   .. code-tab:: c++
-        
-        bool getProfileManager(std::shared_ptr<ProfileManager>& manager);
-
-   .. code-tab:: py
-        
-        getProfileManager() -> ProfileManager
-
-   .. code-tab:: java
-
-        public JProfileManager getProfileManager();
-
-To create a profile using STI, 
-
-.. tabs::
-
-   .. code-tab:: c++
-        
-        std::shared_ptr<ProfileManager> manager;
-        getProfileManager(manager);
-        manager->saveCurrentProfile("test", ProfileType::All, false);   //new profile named "test"
-
-   .. code-tab:: py
-        
-        getProfileManager().saveCurrentProfile("test", ProfileType.All, False) #new profile named "test"
-
-   .. code-tab:: java
-
-        public JProfileManager getProfileManager();
-
-
-The `saveCurrentProfile` function takes a snapshot of the current device state and saves it to a profile file.
-The `ProfileType` parameter is used to specify whether to save channels, attributes, or both. 
-
-In addition to the local device, profiles can capture the state of all dependent devices on the network.
-For example, for a server device that has a number of devices connected to it, the state of all devices
-can be saved to a profile. The profile for each dependent device is saved locally, using a common profile
-name, but can be reloaded later by the server device.  A device is considered dependent on another device (i.e., the server)
-when it declares this device as its *targetServer*.
-
-.. tabs::
-
-   .. code-tab:: c++
-        
-        //server device, with dependent devices
-        //std::shared_ptr<ProfileManager> manager;
-        manager->saveCurrentProfile("test", ProfileType::All, true);   //save dependent devices (recursive)
-
-   .. code-tab:: py
-        
-        getProfileManager().saveCurrentProfile("test", ProfileType.All, True) #save dependent devices (recursive)
-
-   .. code-tab:: java
-
-        public JProfileManager getProfileManager();
-
-The name of the profile can be used to reload the state at a later time:
+``ProfileType`` controls whether channels, attributes, or both are included.
+The dependent-device flag also saves or loads profiles on devices for which
+this device is the target server.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        //std::shared_ptr<ProfileManager> manager;
-        manager->loadProfile("test", ProfileType::All, false);   //loads profile named "test" locally
+      std::shared_ptr<STI::Device::ProfileManager> profiles;
+      if (device->getProfileManager(profiles)) {
+          profiles->saveCurrentProfile("startup", STI::Device::ProfileType::All, false);
+          profiles->loadProfile("startup", STI::Device::ProfileType::All, false);
 
-        manager->loadProfile("test", ProfileType::All, true);   //loads "test" locally and on all dependent devices
+          std::set<std::string> names;
+          profiles->getProfiles(names);
+      }
 
    .. code-tab:: py
-        
-        getProfileManager().saveCurrentProfile("test", ProfileType.All, False)  #loads profile named "test" locally
 
-        manager->loadProfile("test", ProfileType.All, True);   #loads "test" locally and on all dependent devices
+      profiles = device.getProfileManager()
+      profiles.saveCurrentProfile("startup", stidevicepy.ProfileType.All, False)
+      profiles.loadProfile("startup", stidevicepy.ProfileType.All, False)
+      names = profiles.getProfiles()
 
-   .. code-tab:: java
+Tasks
+-----
 
-        public JProfileManager getProfileManager();
-
-
-Logging
-*******
-
-Log files can be generated using the STI logging interface.  The API allows users to write to multiple named log files,
-as well as schedule regular logging events such as logged measurements of device channels. Log files are saved to 
-the `.sti` directory of the device, in a directory stucture sorted by day. Logs can be access remotely using the **LogManager** 
-interface.
-
-To append text to a log, use the device's `log()` command.
-
+The ``TaskManager`` exposes background tasks registered by a local device.
+Tasks can be activated, deactivated, run manually, or removed.  Common task
+types include interval tasks and appointment tasks.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        log() << "Test log message" << std::endl;   //write to the default log
-        log("mylog") << "Hello" << std::endl;       //write to a custom log named 'mylog'
+      std::shared_ptr<STI::Device::TaskManager> tasks;
+      if (device->getTaskManager(tasks)) {
+          std::set<std::string> ids;
+          tasks->getTaskIDs(ids);
+          tasks->deactivateTask("task#1");
+          tasks->runTask("task#2");
+      }
 
    .. code-tab:: py
-        
-        log().append("Test log message")
 
-   .. code-tab:: java
+      tasks = device.getTaskManager()
+      print(tasks.getTaskIDs())
+      tasks.deactivateTask("task#1")
+      tasks.runTask("task#2")
 
-        java
+Logs
+----
 
-.. Note::
+The log manager lists logs generated by a device and can retrieve local or
+network log files.  Device implementations write logs through ``log()``; client
+code reads them through ``LogManager``.
 
-    There is no need to define or register a custom logger.  Simply write to the new named log and it will be generated.
+.. tabs::
 
-Asynchronous tasks
-******************
+   .. code-tab:: c++
 
-Background tasks can be scheduled using the device's **TaskManager**.  Tasks can be defined that repeat at a predefined interval
-or that occur at a specifed time.
+      std::shared_ptr<STI::Device::LogManager> logs;
+      if (device->getLogManager(logs)) {
+          std::set<std::string> names;
+          logs->getLogNames(names);
+      }
 
+   .. code-tab:: py
+
+      logs = device.getLogManager()
+      names = logs.getLogNames()

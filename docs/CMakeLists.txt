@@ -14,12 +14,17 @@ set(STI_DIR "${PROJECT_SOURCE_DIR}/..")
 find_package(Doxygen REQUIRED)
 find_package(Sphinx REQUIRED)
 
-# Find all the public headers
-# get_target_property(TEST_PUBLIC_HEADER_DIR Test INTERFACE_INCLUDE_DIRECTORIES)
 set(STI_HEADER_DIR "${PROJECT_SOURCE_DIR}/../include")
-file(GLOB_RECURSE TEST_PUBLIC_HEADERS ${STI_HEADER_DIR}/sti/device/*.h)
+set(STI_DEVICE_SRC_DIR "${PROJECT_SOURCE_DIR}/../src/device/src")
+file(GLOB_RECURSE DOXYGEN_INPUT_FILES CONFIGURE_DEPENDS
+	${STI_HEADER_DIR}/*.h
+	${STI_HEADER_DIR}/*.hpp
+	${STI_DEVICE_SRC_DIR}/*.h
+	${STI_DEVICE_SRC_DIR}/*.cpp
+)
 
 set(DOXYGEN_INPUT_DIR ${STI_DIR}/include)
+set(DOXYGEN_DEVICE_SRC_DIR ${STI_DIR}/src/device/src)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/sti3docs/doxygen)
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
@@ -35,40 +40,11 @@ configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
 file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR}) #Doxygen won't create this for us
 
 # Only regenerate Doxygen when the Doxyfile or public headers change
-
-#add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-#                   DEPENDS ${TEST_PUBLIC_HEADERS}
-#                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
-#                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build
-#                   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
-#                   COMMENT "Generating doxygen docs")
-
-
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   COMMAND doxygen Doxyfile}
-                   COMMENT "Generating doxygen docs")
-
-
-
-#This will be the main output of our command
-set(DOXYGEN_INDEX_FILE ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html)
-
-add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   DEPENDS ${TEST_PUBLIC_HEADERS}
-                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT} #Doxyfile
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                #    MAIN_DEPENDENCY Doxyfile
-				   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
-                   COMMENT "Generating doxygen docs")
-
-                   
-
-message("TEST_PUBLIC_HEADERS: ")
-message(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   DEPENDS ${TEST_PUBLIC_HEADERS}
+                   DEPENDS ${DOXYGEN_INPUT_FILES}
                    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+				   MAIN_DEPENDENCY ${DOXYFILE_IN}
                    COMMENT "Generating doxygen docs")
 
 # Nice named target so we can run the job easily
@@ -79,9 +55,6 @@ set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(SPHINX_SRC ${SPHINX_SOURCE}/src)
 set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sti3docs/sphinx)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
-
-message("SPHINX_BUILD: ")
-message(${SPHINX_BUILD})
 
 set(SPHINX_FILES 
 	${CMAKE_CURRENT_SOURCE_DIR}/index.rst
@@ -95,10 +68,6 @@ set(SPHINX_FILES
 	${SPHINX_SRC}/stipy.rst
 	${SPHINX_SRC}/techstack.rst
 )
-
-message("SPHINX_FILES: ")
-message(${SPHINX_FILES})
-
 
 # Only regenerate Sphinx when:
 #  - Doxygen has rerun 
@@ -114,7 +83,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 	DEPENDS 
 		# Other docs files you want to track should go here (or in some variable)
 		${SPHINX_FILES}
-		# ${DOXYGEN_INDEX_FILE}
+		${DOXYGEN_INDEX_FILE}
 	MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
 	COMMENT "Generating documentation with Sphinx")
 

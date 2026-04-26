@@ -64,35 +64,35 @@ details on developing hard-timing device drivers.
 Setup
 -----
 
-STIPy is available on the public Python package repository PyPI. To install, run
+Install STIPy with the STI3 conda package:
 
-.. tabs::
+.. code-block:: bash
 
-   .. tab:: Linux
+    conda create -n sti3 python=3.13
+    conda activate sti3
+    conda install -c conda-forge hoganlab::stipy
 
-    .. code-block:: bash
+For an existing conda environment:
 
-        python3 -m pip install stipy
-        
-   .. tab:: Windows
+.. code-block:: bash
 
-    .. code-block:: bash
+    conda activate sti3
+    conda install -c conda-forge hoganlab::stipy
 
-        py -m pip install stipy
+The conda package includes the Python package, the C++ STI libraries, public
+headers, and examples.  See :doc:`setuptools` for full installation and C++
+project setup details.
 
-
-
-STIPy can be imported in python using
+STIPy can be imported in Python using:
 
 .. code-block:: py
 
     from stipy import *
 
-STIPy can also be run from a Jupyter notebook. For this to work, the notebook 
-server must have the STIPy package installed. In order to submit timing sequences, 
-the Jupyter server also requires access to the to an STI network. This can be 
-accomplished by running the notebook server on the same LAN as the STI device 
-network, for example.
+STIPy can also be run from a Jupyter notebook. The notebook server must be using
+the conda environment where ``stipy`` is installed.  To submit timing sequences
+for parsing or playback, the notebook process also needs network access to the
+STI device network.
 
 
 .. _stipytimingseqences:
@@ -182,10 +182,10 @@ Here ``channel`` is a ``TargetChannel`` object, ``time`` is a the floating point
 of the event (in nanoseconds), and ``value`` is the desired output value of the 
 channel.  The ``value`` field can have any basic type (float, string, list, etc), as 
 required by the ``TargetChannel`` of the event. The interpretation and use of the 
-``value`` field for any given channel is specified in the implementation the 
+``value`` field for any given channel is specified in the implementation the
 :ref:`device driver <devicelib>` for that channel. The optional ``group`` field 
 is a scoping construct that allows events to be grouped together in a hierarchical 
-structure for various purposes. See the ::ref:`Groups` section for more information.
+structure for various purposes. See the :ref:`stipygroups` section for more information.
 
 
 An input events is an event that makes a measurement on an input channel and stores 
@@ -210,61 +210,366 @@ channel interprets the ``value`` field depends on the device's implementation.
 Running shots
 -------------
 
-Make Shot
-+++++++++
+Connecting to a parser/player
++++++++++++++++++++++++++++++
+
+Parsing and playing require a device reference with access to an
+``EventEngineScheduler``.  Use ``connect()`` to create a local STIPy client
+device and connect it to a device on the STI network:
 
 .. code-block:: py
 
-    shot = makeshot()
+    from stipy import *
 
-Parse
-+++++
+    server = connect("localhost/0/STI Server", "192.168.1.4:2809")
+
+The first argument is the target device's ``DeviceID``.  The second argument is
+the omniORB name service address.  The target device does not have to be named
+``STI Server``.  Any STI device can be connected to, and any connected device
+can be used as the parser/player as long as that device has references to all
+devices targeted by the shot's event list.  This is useful for small tests, such
+as parsing and playing a shot that only targets a single device:
 
 .. code-block:: py
 
-    parseticket = server.parse(shot)
+    test_device = connect("localhost/0/TestDevice", "192.168.1.4:2809")
 
-Play
-++++
+If a configuration file contains the name service address in
+``NetworkHub/NameService``, pass the config and omit the second argument:
 
 .. code-block:: py
 
-    resultticket = server.play(parseticket)
+    config = ConfigFile("stipy.ini")
+    server = connect("localhost/0/STI Server", config=config)
+
+If the server device is hosted by a hub whose ``HubID`` is not the default hub
+derived from the device ID, pass ``serverHubID``:
+
+.. code-block:: py
+
+    server = connect(
+        "localhost/0/STI Server",
+        "192.168.1.4:2809",
+        serverHubID="localhost/0/STI Server Hub",
+    )
+
+Building a shot
++++++++++++++++
+
+The usual pattern is to write a Python function that declares events, then pass
+that function to ``server.makeshot()``:
+
+.. code-block:: py
+
+    camera = dev("Camera", "localhost", 0)
+    shutter = ch(camera, 0)
+    image = ch(camera, 1)
+
+    def shotmaker():
+        event(shutter, 0, True)
+        meas(image, 10_000_000)
+        event(shutter, 20_000_000, False)
+
+    shot = server.makeshot(shotmaker)
+
+``makeshot`` executes ``shotmaker`` in a shot-building context.  Global calls
+such as ``event()``, ``meas()``, ``setvar()``, ``settag()``, and ``group()`` add
+data to the shot currently being built.  These global helpers must be called
+inside a ``makeshot`` call.
+
+``makeshot`` can also take a Python filename.  In this form STIPy loads and
+executes the file while the shot-building context is active, so top-level calls
+to ``event()``, ``meas()``, ``setvar()``, ``settag()``, and ``group()`` in that
+file become part of the shot.
+
+.. code-block:: py
+
+    shot = server.makeshot("timing_files/mot_load.py")
+
+For example, ``timing_files/mot_load.py`` might contain:
+
+.. code-block:: py
+
+    from stipy import *
+
+    test_device = dev("TestDevice", "localhost", 0)
+    output0 = ch(test_device, 0)
+    input10 = ch(test_device, 10)
+
+    settag("MOT load")
+    setvar("bias", 2.5)
+    event(output0, 0, var("bias"))
+    meas(input10, 1_000_000)
+    event(output0, 2_000_000, 0.0)
+
+This is useful when timing files are maintained as standalone Python scripts.
+The file's directory is added to Python's import path before execution, so the
+timing file can import helper modules located beside it.
+
+Variable overrides can be supplied when making a shot from either a function or
+a file:
+
+.. code-block:: py
+
+    shot = server.makeshot("timing_files/mot_load.py", vars={"bias": 3.0})
+
+You can also create an empty shot and add to it directly:
+
+.. code-block:: py
+
+    shot = server.makeshot()
+    shot.event(shutter, 0, True)
+    shot.meas(image, 10_000_000)
+
+Parsing
++++++++
+
+Parsing validates the target devices and channels, resolves variables and
+groups, and asks each target device to convert raw timing events into
+device-specific synchronous events.
+
+.. code-block:: py
+
+    parse_ticket = server.parse(shot)
+    parse_ticket.wait()
+
+    for message in parse_ticket.messages():
+        print(message)
+
+``parse()`` returns a parse ticket immediately.  Call ``wait()`` when the code
+needs the final parse status before continuing.
+
+Playing
++++++++
+
+After a shot has parsed successfully, submit the parse ticket to ``play()``:
+
+.. code-block:: py
+
+    result_ticket = server.play(parse_ticket)
+    result_ticket.wait()
+
+    print(result_ticket.measurements())
+
+The result ticket can be used to inspect the shot ID, status, and measurement
+results.  Shot data is also available later through the connected device's
+``PersistenceManager``.
+
+Complete example
+++++++++++++++++
+
+.. code-block:: py
+
+    from stipy import *
+
+    server = connect("localhost/0/STI Server", "192.168.1.4:2809")
+
+    test_device = dev("TestDevice", "localhost", 0)
+    output0 = ch(test_device, 0)
+    input10 = ch(test_device, 10)
+
+    def single_shot():
+        settag("Example")
+        setvar("bias", 2.5)
+
+        event(output0, 0, var("bias"))
+        meas(input10, 1_000_000)
+        event(output0, 2_000_000, 0.0)
+
+    shot = server.makeshot(single_shot)
+    parse_ticket = server.parse(shot)
+    parse_ticket.wait()
+
+    result_ticket = server.play(parse_ticket)
+    result_ticket.wait()
+    print(result_ticket.measurements())
 
 
 Variables
 ---------
 
+Variables name values used while a shot is built.  They are recorded in the
+shot's event group data, which makes the shot easier to inspect and allows
+sequence entries to override selected values.
+
 .. code-block:: py
 
-    setvar(name, value, [group])
+    setvar("bias", 2.5)
+    event(output0, 0, var("bias"))
 
+Variables can be scoped to a group:
 
 .. code-block:: py
 
-    var(name)
+    setvar("detuning", -12.0, "MOT")
+    event(output0, 10_000, var("MOT/detuning"))
 
+    mot = group("MOT")
+    mot.setvar("duration", 20_000_000)
+    event(output0, mot.var("duration"), 0.0, mot)
+
+When a variable is bound, ``var("name")`` returns its value for normal Python
+use.  When a variable is declared as an overwritten variable for a sequence,
+``var("name")`` can remain symbolic while the sequence entry supplies the value.
+
+.. _stipygroups:
 
 Groups
 ------
 
+Groups are a scoping construct for timing files.  They provide namespace-like
+isolation for events, variables, and tags, which helps reuse code without name
+collisions and makes generated event tables easier to inspect.  Grouped events
+can be viewed together in the event table, so a timing sequence can be reasoned
+about in named pieces such as ``MOT``, ``Imaging``, or ``Cleanup``.
+
+A group can contain:
+
+* events and measurements
+* variables
+* tags
+* subgroups
+* metadata such as display color
+
+Creating groups
++++++++++++++++
+
 .. code-block:: py
 
-    group(name, [color])
+    mot = group("MOT")
+    imaging = group("Imaging", color="blue")
 
-
-.. code-block:: py
-
-    g = group("groupName")              #gets RawEventGroup object
-    g.event(channel, time, value)       #adds event to this group
-    
-    event(channel, time, value, "groupName")     #equivalent to above
-    event(channel, time, value, g)               #equivalent to above
+Nested groups use ``/`` in their full names or ``group()`` on an existing group:
 
 .. code-block:: py
 
-    group("groupName").setvar("varName", value)
+    shutter = group("Imaging/Shutter")
 
-    setvar("varName", value, "groupName")   #equivalent to above
-    setvar("groupName/varName", value)      #equivalent to above
+    imaging = group("Imaging")
+    shutter = imaging.group("Shutter")
 
+Adding events and measurements to groups
+++++++++++++++++++++++++++++++++++++++++
+
+There are several equivalent ways to add events to a group.
+
+Pass the group name to the global helper:
+
+.. code-block:: py
+
+    event(output0, 0, True, "MOT")
+    meas(input10, 5_000_000, group="MOT")
+
+Use the group object:
+
+.. code-block:: py
+
+    mot = group("MOT")
+    mot.event(output0, 0, True)
+    meas(input10, 5_000_000, group=mot.getFullName())
+
+Use the shot object when building manually:
+
+.. code-block:: py
+
+    shot = server.makeshot()
+    shot.event(output0, 0, True, "MOT")
+    shot.meas(input10, 5_000_000, group="MOT")
+
+For measurements with command arguments, pass the value before the group:
+
+.. code-block:: py
+
+    meas(input10, 5_000_000, [0.1, "fast"], "MOT")
+    mot.meas(input10, 5_000_000, [0.1, "fast"])
+
+Group variables
++++++++++++++++
+
+Variables inside a group are referenced by their full group path:
+
+.. code-block:: py
+
+    group("MOT").setvar("load_time", 25_000_000)
+    event(output0, var("MOT/load_time"), 0.0)
+
+These forms are equivalent:
+
+.. code-block:: py
+
+    mot = group("MOT")
+    mot.setvar("load_time", 25_000_000)
+
+    setvar("load_time", 25_000_000, "MOT")
+    setvar("MOT/load_time", 25_000_000)
+
+Tags
+++++
+
+Tags mark named points or regions in a shot.  They are recorded with stack trace
+information and group scope, making timing files easier to inspect and document.
+Use tags for labels such as ``MOT load``, ``Probe``, ``Camera exposure``, or
+``Cleanup``.
+
+Set a tag in the root group:
+
+.. code-block:: py
+
+    settag("MOT load")
+
+Set a tag in a named group:
+
+.. code-block:: py
+
+    settag("Open shutter", "Imaging")
+
+Use the group object:
+
+.. code-block:: py
+
+    imaging = group("Imaging")
+    imaging.settag("Open shutter")
+
+Like variables, tags can also use full group paths:
+
+.. code-block:: py
+
+    settag("Imaging/Open shutter")
+
+Reusable grouped code
++++++++++++++++++++++
+
+Groups are especially useful when a helper function emits a reusable block of
+timing events.  The helper can take a group name and keep its variables, tags,
+and events isolated from other uses of the same helper.
+
+.. code-block:: py
+
+    def pulse_block(name, target, start, duration, amplitude):
+        g = group(name)
+        g.settag("start")
+        g.setvar("amplitude", amplitude)
+        g.event(target, start, g.var("amplitude"))
+        g.event(target, start + duration, 0.0)
+        g.settag("end")
+
+    def shotmaker():
+        pulse_block("MOT/Coils", output0, 0, 10_000_000, 2.5)
+        pulse_block("Imaging/Coils", output0, 20_000_000, 2_000_000, 1.0)
+
+Inspecting groups
++++++++++++++++++
+
+After making a shot, inspect the root group and subgroups:
+
+.. code-block:: py
+
+    shot = server.makeshot(shotmaker)
+    root = shot.rootgroup()
+
+    print(root.getTotalStats())
+    for node in root.flatten():
+        print(node.name(), node.startTime(), node.endTime(), node.stats())
+
+Group inspection is useful for checking that a timing helper produced the
+expected events, variables, and tags before parsing the shot.
