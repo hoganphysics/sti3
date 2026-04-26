@@ -44,6 +44,7 @@ public:
     bool getSequenceResult(const STI::Engine::SequenceID& id, std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
 
     bool saveShot(const STI::Engine::ShotID& sid, const std::shared_ptr<STI::Engine::FullShotResult>& fullShotResult, bool isOwner);
+    bool saveSequenceParseResult(const STI::Engine::ParseID& pid, const std::shared_ptr<STI::Engine::ParseResult>& parseResult, const STI::Engine::EngineJobStatus& parseStatus, bool isOwner);
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector);
 

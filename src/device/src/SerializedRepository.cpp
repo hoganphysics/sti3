@@ -97,6 +97,11 @@ ResultsPaths SerializedRepository::preparePaths(const ShotID& sid)
     return preparePaths(sid.submissionTime);
 }
 
+ResultsPaths SerializedRepository::preparePaths(const ParseID& pid)
+{
+    return preparePaths(pid.parseTimestamp);
+}
+
 ResultsPaths SerializedRepository::preparePaths(const SequenceID& seqid)
 {
     ResultsPaths paths = makePaths(seqid.timestamp);
@@ -126,6 +131,7 @@ ResultsPaths SerializedRepository::preparePaths(const TimeStamp& timeStamp)
     makePathIfNew(paths.tempPath);
     makePathIfNew(paths.dataPath);
     makePathIfNew(paths.timingPath);
+    makePathIfNew(paths.parsePath);
     makePathIfNew(paths.experimentPath);
 
     return paths;
@@ -167,6 +173,25 @@ bool SerializedRepository::saveShot(const STI::Engine::ShotID& sid, const std::s
         cereal::XMLOutputArchive archive( file );
 
         archive( fullShotResult->shotResult );
+    }
+
+    return true;
+}
+
+bool SerializedRepository::saveSequenceParseResult(const SequenceEntryID& id, const std::shared_ptr<ParseResult>& parseResult, const EngineJobStatus& parseStatus)
+{
+    if (parseResult == 0) return false;
+
+    auto paths = preparePaths(parseResult->pid);
+
+    std::filesystem::path serializeParsePath = paths.parsePath;
+    serializeParsePath /= makeParseFilename(parseResult->pid);
+
+    if (!std::filesystem::exists(serializeParsePath)) {
+        std::ofstream file( serializeParsePath.string() );
+        cereal::XMLOutputArchive archive( file );
+
+        archive( parseResult );
     }
 
     return true;
@@ -325,6 +350,9 @@ ResultsPaths SerializedRepository::makePaths(const TimeStamp& timeStamp)
 
     auto timingPath = uniqueBasePath / "timing" / time;
     paths.timingPath = timingPath.string();
+
+    auto parsePath = uniqueBasePath / "experiments" / time;
+    paths.parsePath = parsePath.string();
 
     auto experimentPath = uniqueBasePath / "experiments" / time;
     paths.experimentPath = experimentPath.string();

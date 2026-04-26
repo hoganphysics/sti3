@@ -32,28 +32,37 @@ set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
 set(DOXYGEN_QUIET YES)
 
+set(STI_DOCS_SITE_ROOT ${CMAKE_CURRENT_BINARY_DIR}/sti3docs)
+set(SITE_INDEX_IN ${CMAKE_CURRENT_SOURCE_DIR}/site_index.html.in)
+set(SITE_INDEX_FILE ${STI_DOCS_SITE_ROOT}/index.html)
+
 
 
 #Replace variables inside @@ with the current values
+file(MAKE_DIRECTORY ${STI_DOCS_SITE_ROOT})
 configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
+configure_file(${SITE_INDEX_IN} ${SITE_INDEX_FILE} @ONLY)
 
 file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR}) #Doxygen won't create this for us
 
 # Only regenerate Doxygen when the Doxyfile or public headers change
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
                    DEPENDS ${DOXYGEN_INPUT_FILES}
+                   COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOXYGEN_OUTPUT_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
                    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 				   MAIN_DEPENDENCY ${DOXYFILE_IN}
                    COMMENT "Generating doxygen docs")
 
 # Nice named target so we can run the job easily
-add_custom_target(Doxygen ALL DEPENDS ${DOXYGEN_INDEX_FILE})
+add_custom_target(Doxygen DEPENDS ${DOXYGEN_INDEX_FILE})
+add_custom_target(SiteIndex DEPENDS ${SITE_INDEX_FILE})
 
 
 set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(SPHINX_SRC ${SPHINX_SOURCE}/src)
-set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sti3docs/sphinx)
+set(SPHINX_BUILD ${STI_DOCS_SITE_ROOT}/sphinx)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
 set(SPHINX_FILES 
@@ -74,7 +83,9 @@ set(SPHINX_FILES
 #  - Our doc files have been updated
 #  - The Sphinx config has been updated
 add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
-	COMMAND 
+	COMMAND ${CMAKE_COMMAND} -E rm -rf ${SPHINX_BUILD}
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${SPHINX_BUILD}
+	COMMAND
 		${SPHINX_EXECUTABLE} -b html
 		# Tell Breathe where to find the Doxygen output
 		-Dbreathe_projects.STI=${DOXYGEN_OUTPUT_DIR}/xml
@@ -88,7 +99,8 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 	COMMENT "Generating documentation with Sphinx")
 
 # Nice named target so we can run the job easily
-add_custom_target(Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} ${SPHINX_FILES})
+add_custom_target(Sphinx DEPENDS ${SPHINX_INDEX_FILE} ${SPHINX_FILES})
+add_custom_target(DocsSite ALL DEPENDS SiteIndex Sphinx)
 
 
 
@@ -102,17 +114,18 @@ set(zip_file_name "${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz")
 message(STATUS "Zip name: ${zip_file_name}")
 
 add_custom_command(OUTPUT ${zip_file_name}
-	COMMAND tar "cvfz" "${zip_file_name}" ${files_to_zip}
+	COMMAND tar "czf" "${zip_file_name}" ${files_to_zip}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 	DEPENDS 
-		${SPHINX_FILES}
+		${SITE_INDEX_FILE}
+		${SPHINX_INDEX_FILE}
 		${DOXYGEN_INDEX_FILE}
 	MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
 	COMMENT "Creating ${zip_file_name}")
 
-add_custom_target(Zip ALL DEPENDS ${zip_file_name})
+add_custom_target(Zip DEPENDS ${zip_file_name})
 
 
 include(GNUInstallDirs)
-install(DIRECTORY ${SPHINX_BUILD}
+install(DIRECTORY ${STI_DOCS_SITE_ROOT}
 	DESTINATION ${CMAKE_INSTALL_DOCDIR})

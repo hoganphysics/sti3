@@ -1,5 +1,8 @@
 #! /bin/bash
 
-# doxygen Doxyfile
+set -euo pipefail
 
-sphinx-build -a -Dbreathe_projects.STI=build/doxygen/xml/ . build/sphinx
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+cmake -S "${SCRIPT_DIR}" -B "${SCRIPT_DIR}/build"
+cmake --build "${SCRIPT_DIR}/build" --target DocsSite --parallel 8

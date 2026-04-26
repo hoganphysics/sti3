@@ -33,6 +33,7 @@
 #include "LocalEventEngineDependencyParser.h"
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineJob.h"
+#include "LocalPersistenceManager.h"
 #include "LocalShot.h"
 
 
@@ -82,6 +83,8 @@ using STI::Utils::VirtualFileHolder;
 using STI::Utils::VirtualFileServer;
 using STI::Engine::SequenceJob;
 using STI::Engine::EngineState;
+using STI::Engine::ParseResult;
+using STI::Device::LocalPersistenceManager;
 
 std::map<std::string, unsigned> LocalEventEngineScheduler::playMessageIDs;
 
@@ -943,6 +946,30 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
     }
 
     jobCondition.notify_all();
+}
+
+void LocalEventEngineScheduler::saveFailedSequenceParse(const std::shared_ptr<EventEngineJob>& job)
+{
+    if (job == 0) return;
+
+    auto jobID = job->getJobID();
+    if (jobID.type != EventEngineJobType::Parse) return;
+    if (jobID.pid.shotType != ShotType::SequenceEntry) return;
+
+    std::shared_ptr<EventEngine> eventEngine;
+    if (!job->getEngine(eventEngine) || eventEngine == 0) return;
+
+    std::shared_ptr<ParseResult> parseResult;
+    if (!eventEngine->getParseResult(jobID.pid, parseResult) || parseResult == 0) return;
+
+    auto localPersistenceManager = std::dynamic_pointer_cast<LocalPersistenceManager>(persistenceManager);
+    if (localPersistenceManager == 0) return;
+
+    localPersistenceManager->saveSequenceParseResult(
+        jobID.pid,
+        parseResult,
+        job->getStatus(),
+        job->getJobOwner() == localDeviceID);
 }
 
 void LocalEventEngineScheduler::refreshSequenceJobs()

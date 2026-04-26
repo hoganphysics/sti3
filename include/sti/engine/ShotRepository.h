@@ -33,6 +33,7 @@ struct ResultsPaths
     std::string basePath;
     std::string dataPath;
     std::string timingPath;
+    std::string parsePath;
     std::string experimentPath;
     std::string sequencePath;
 };
@@ -44,6 +45,7 @@ public:
     virtual ~ShotRepository() {}
 
     virtual std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate) = 0;
+    virtual ResultsPaths preparePaths(const ParseID& pid) = 0;
     virtual ResultsPaths preparePaths(const ShotID& sid) = 0;
     virtual ResultsPaths preparePaths(const SequenceID& seqid) = 0;
 
@@ -59,6 +61,7 @@ public:
 
     virtual bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult) = 0;
 
+    virtual bool saveSequenceParseResult(const SequenceEntryID& id, const std::shared_ptr<ParseResult>& parseResult, const EngineJobStatus& parseStatus) = 0;
     virtual bool updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus) = 0;
     virtual bool saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult) = 0;
 
@@ -69,4 +72,3 @@ public:
 } //STI
 
 #endif
-

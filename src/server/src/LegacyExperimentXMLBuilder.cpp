@@ -28,7 +28,7 @@ namespace {
 
 std::string makeParseFilename(const STI::Engine::ParseID& pid)
 {
-    return "parse_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
+    return "parse_" + pid.parseTimestamp.date_YYYY_MM_DD("-") + "_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
 }
 
 std::filesystem::path safeRelativePath(const std::filesystem::path& target,
@@ -67,7 +67,7 @@ std::filesystem::path parseFilePathForShot(const std::filesystem::path& shotPath
     }
 
     std::filesystem::path parseDatePath = shotCachePath / pid.parseTimestamp.date_YYYY_MM_DD("/");
-    return parseDatePath / "experiments" / makeParseFilename(pid);
+    return parseDatePath / "parse" / makeParseFilename(pid);
 }
 
 std::string playingMessageTypeToString(const STI::Engine::PlayingMessageType& type)

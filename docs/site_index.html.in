@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=sphinx/index.html">
+  <title>STI3 Documentation</title>
+  <style>
+    body {
+      color: #222;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      margin: 2rem;
+    }
+    a {
+      color: #246;
+    }
+  </style>
+</head>
+<body>
+  <h1>STI3 Documentation</h1>
+  <p>Redirecting to the Sphinx documentation.</p>
+  <ul>
+    <li><a href="sphinx/index.html">Sphinx documentation</a></li>
+    <li><a href="doxygen/html/index.html">Doxygen API reference</a></li>
+  </ul>
+</body>
+</html>

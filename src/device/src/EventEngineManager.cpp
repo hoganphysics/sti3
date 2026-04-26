@@ -181,6 +181,9 @@ void EventEngineManager::runJob()
     }
    
     if (engine->jobCancelled()) {
+        if (currentJob->getJobID().type == EventEngineJobType::Parse) {
+            scheduler->saveFailedSequenceParse(currentJob);
+        }
         scheduler->cancelJob(currentJob->getJobID());
     }
     else {
