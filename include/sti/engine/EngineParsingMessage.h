@@ -3,6 +3,7 @@
 
 #include <sti/utils/utils.h>
 #include <sti/device/DeviceID.h>
+#include <sti/engine/RawEvent.h>
 
 #include <string>
 #include <vector>
@@ -12,8 +13,6 @@ namespace STI
 {
 namespace Engine
 {
-
-class RawEvent;
 
 enum class ParsingMessageType { Error, Warning, Information };
 
