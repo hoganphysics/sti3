@@ -47,3 +47,7 @@ _conda_build/
 dev/
 build-ninja/
 build-tsan/
+src/network/src/generated/deviceNetDynSK.cpp
+src/network/src/generated/logsNetDynSK.cpp
+src/network/src/generated/orbTypesDynSK.cpp
+src/network/src/generated/tasksDynSK.cpp
