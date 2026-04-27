@@ -87,7 +87,26 @@ std::string RemoteFileHolder::getFilename() const
 
 unsigned RemoteFileHolder::getFileSize() const
 {
-	return 0;
+	std::unique_lock<std::mutex> fileLock(fileMutex);
+
+	if (fileSize.isCached()) return fileSize.get();
+
+	if (isDisabled()) return 0;
+
+	unsigned result = 0;
+
+	try {
+		result = static_cast<unsigned>(getTRef()->getFileSize());	//remote call
+		fileSize.set(result);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return result;
 }
 
 bool RemoteFileHolder::exists() const
@@ -252,4 +271,3 @@ void RemoteFileHolder::closeFile()
 	{
 	}
 }
-

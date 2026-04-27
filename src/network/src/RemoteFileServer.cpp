@@ -108,7 +108,33 @@ bool RemoteFileServer::transferFile(const FileID& source, const std::shared_ptr<
 
 bool RemoteFileServer::transferFilePartial(const FileID& source, const std::shared_ptr<STI::Utils::FileHolder>& destination, int offset, int lines)
 {
-    return false;
+    std::unique_lock<std::mutex> serverLock(fileServerMutex);
+
+	if (isDisabled()) return false;
+
+	bool result = false;
+
+    STI::TNetwork::TFileHolder_var tDestination;
+
+    if (!TFileHolderRefInterface::getTFileHolderReference(destination, tDestination)) {
+        return false;
+    }
+
+	try {
+		result = getTRef()->transferFilePartial(
+                                convert<FileID, TFileID>(source),
+                                tDestination,
+                                static_cast<CORBA::Long>(offset),
+                                static_cast<CORBA::Long>(lines));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	return result;
 }
 
 bool RemoteFileServer::deleteFile(const FileID& fileID)
@@ -131,4 +157,3 @@ bool RemoteFileServer::deleteFile(const FileID& fileID)
 	}
 	return result;
 }
-

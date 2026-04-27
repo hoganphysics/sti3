@@ -120,6 +120,11 @@ ResultsPaths TransientRepository::preparePaths(const ShotID& sid)
     return preparePaths();
 }
 
+ResultsPaths TransientRepository::preparePaths(const ParseID& pid)
+{
+    return preparePaths();
+}
+
 ResultsPaths TransientRepository::preparePaths(const SequenceID& seqid)
 {
     return preparePaths();
@@ -131,6 +136,7 @@ ResultsPaths TransientRepository::preparePaths()
 
     paths.basePath = tempResultsPath;
     paths.dataPath = tempResultsPath;
+    paths.parsePath = tempResultsPath;
     paths.experimentPath = tempResultsPath;
     paths.sequencePath = tempResultsPath;
     paths.tempPath = tempResultsPath;
@@ -151,6 +157,23 @@ bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid
     }
 
     return false;
+}
+
+bool TransientRepository::saveSequenceParseResult(const SequenceEntryID& id, const std::shared_ptr<ParseResult>& parseResult, const EngineJobStatus& parseStatus)
+{
+    if (parseResult == 0) return false;
+
+    std::shared_ptr<ParseResult> expiredParseResult;
+    if (parseBuffer.addAndRemove(parseResult->pid, parseResult, expiredParseResult) && expiredParseResult != 0) {
+        ParseResult::deleteFiles(*expiredParseResult, fileServer);
+    }
+
+    std::shared_ptr<SequenceResult> sequenceResult;
+    if (sequenceBuffer.get(id.seqID, sequenceResult) && sequenceResult != 0) {
+        sequenceResult->status[id.seqIndex] = parseStatus;
+    }
+
+    return findParseResult(parseResult->pid);
 }
 
 bool TransientRepository::updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus)
@@ -174,4 +197,3 @@ bool TransientRepository::saveSequence(const SequenceID& seqid, const std::share
     }
     return findSequenceResult(seqid);
 }
-

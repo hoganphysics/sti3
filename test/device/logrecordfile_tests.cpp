@@ -43,6 +43,8 @@ TEST_CASE("LogRecordFile saves status and merges log names", "[log] [logrecordfi
         CHECK(it->second.status == LogRecordStatus::LogsPresent);
         CHECK(it->second.logNames.count("") == 1);
         CHECK(it->second.logNames.count("custom") == 1);
+        CHECK(it->second.logs.count("") == 1);
+        CHECK(it->second.logs.count("custom") == 1);
     }
 
     {
@@ -56,7 +58,7 @@ TEST_CASE("LogRecordFile saves status and merges log names", "[log] [logrecordfi
         auto it = stored.deviceLogRecords.find(device.getID());
         REQUIRE(it != stored.deviceLogRecords.end());
         CHECK(it->second.logNames.size() == 2);
+        CHECK(it->second.logs.size() == 2);
         CHECK(it->second.status == LogRecordStatus::LogsPresent);
     }
 }
-

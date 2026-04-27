@@ -44,6 +44,17 @@ char* TFileHolder_i::getFilename()
     return tResult._retn();
 }
 
+::CORBA::ULong TFileHolder_i::getFileSize()
+{
+    unsigned result = 0;
+
+    if (localFileHolder != 0) {
+        result = localFileHolder->getFileSize();
+    }
+
+    return static_cast<::CORBA::ULong>(result);
+}
+
 ::CORBA::Boolean TFileHolder_i::exists()
 {
     bool result = false;

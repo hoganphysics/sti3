@@ -2766,11 +2766,15 @@ _CORBA_MODULE_BEG
     public:
       // IDL operations
       void getLogNames(::STI::TNetwork::TStringSeq_out names);
+      void getNetworkLogNames(::STI::TNetwork::TStringSeq_out names);
       ::CORBA::Long getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter);
+      ::CORBA::Long getNetworkLogCount(const ::STI::TNetwork::TLogFileFilter& filter);
       void getLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids);
+      void getNetworkLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids);
       void getDeviceLogIDs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids);
       ::CORBA::Boolean getLog(const ::STI::TNetwork::TLogID& logID, ::STI::TNetwork::TLogFile_out logFile);
       ::CORBA::Boolean getLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files);
+      ::CORBA::Boolean getNetworkLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files);
       ::CORBA::Boolean getDeviceLogs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files);
       ::CORBA::Boolean getLogRecord(const char* date, ::STI::TNetwork::TLogRecord_out record);
       ::CORBA::Boolean ping();
@@ -2809,11 +2813,15 @@ _CORBA_MODULE_BEG
       virtual ~_impl_TLogManager();
 
       virtual void getLogNames(::STI::TNetwork::TStringSeq_out names) = 0;
+      virtual void getNetworkLogNames(::STI::TNetwork::TStringSeq_out names) = 0;
       virtual ::CORBA::Long getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter) = 0;
+      virtual ::CORBA::Long getNetworkLogCount(const ::STI::TNetwork::TLogFileFilter& filter) = 0;
       virtual void getLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids) = 0;
+      virtual void getNetworkLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids) = 0;
       virtual void getDeviceLogIDs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids) = 0;
       virtual ::CORBA::Boolean getLog(const ::STI::TNetwork::TLogID& logID, ::STI::TNetwork::TLogFile_out logFile) = 0;
       virtual ::CORBA::Boolean getLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files) = 0;
+      virtual ::CORBA::Boolean getNetworkLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files) = 0;
       virtual ::CORBA::Boolean getDeviceLogs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files) = 0;
       virtual ::CORBA::Boolean getLogRecord(const char* date, ::STI::TNetwork::TLogRecord_out record) = 0;
       virtual ::CORBA::Boolean ping() = 0;
@@ -3043,6 +3051,7 @@ _CORBA_MODULE_BEG
       // IDL operations
       TFileID* getID();
       char* getFilename();
+      ::CORBA::ULong getFileSize();
       ::CORBA::Boolean exists();
       char* md5Checksum();
       ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination);
@@ -3086,6 +3095,7 @@ _CORBA_MODULE_BEG
 
       virtual TFileID* getID() = 0;
       virtual char* getFilename() = 0;
+      virtual ::CORBA::ULong getFileSize() = 0;
       virtual ::CORBA::Boolean exists() = 0;
       virtual char* md5Checksum() = 0;
       virtual ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination) = 0;

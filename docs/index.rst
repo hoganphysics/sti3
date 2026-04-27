@@ -19,9 +19,9 @@
    :maxdepth: 3
 
    src/network
+   src/interface
    src/device
    src/stipy
-   .. src/webconsole
 
 .. toctree::
    :hidden:
@@ -32,43 +32,7 @@
    src/examples
    src/api
    src/techstack
-   .. src/subtable
 
 
 
 .. include :: src/readme.rst
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
-
-.. Docs
-.. ====
-
-
-..    digraph foo {
-..       "bar" -> "baz";
-..    }
-
-.. ..
-   .. doxygenindex::
-
-.. .. inheritance-diagram:: sphinx.ext.inheritance_diagram.InheritanceDiagram
-..    :parts: 1
-
-
-.. .. inheritance-diagram:: STI::Engine::LocalEventEngine
-
-.. .. doxygenclass:: STI::Engine::LocalEventEngine
-..    :project: STI
-..    :members: parse, play, trigger
-
-.. .. doxygenclass:: STI::Engine::EventEngine
-..    :project: STI
-..    :members:

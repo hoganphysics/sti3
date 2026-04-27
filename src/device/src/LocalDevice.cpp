@@ -38,6 +38,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <cstdint>
 
 using STI::Device::AttributeManager;
 using STI::Device::AutoMonitor;
@@ -80,6 +81,24 @@ static auto constructorConfigError = [](const std::string& key) {
 	message << "Required parameter '" << key << "' was not found in the Configuration.";
 	throw std::runtime_error(message.str());
 };
+
+namespace {
+
+std::uintmax_t getLogMaxFileSizeBytes(const Configuration& config)
+{
+    auto maxFileSizeBytes = config.get<std::uintmax_t>(
+        "Logs",
+        "Max File Size Bytes",
+        config.get<std::uintmax_t>("Logs", "Max File Size", LocalLogManager::DefaultMaxLogFileSizeBytes).get()).get();
+
+    if (maxFileSizeBytes == 0) {
+        return LocalLogManager::DefaultMaxLogFileSizeBytes;
+    }
+
+    return maxFileSizeBytes;
+}
+
+} // namespace
 
 
 LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
@@ -181,7 +200,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(getID(), "ParseTicketManagerJobUpdate", parseTicketManager);
 	deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(getID(), "ResultTicketManagerJobUpdate", resultTicketManager);
 	
-	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager);
+	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager, getLogMaxFileSizeBytes(config));
 }
 
 LocalDevice::~LocalDevice()

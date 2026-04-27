@@ -1,166 +1,160 @@
-.. include global.rst
+===============
+Installing STI3
+===============
 
-=====
-Setup
-=====
+The recommended way to install STI3 is the ``stipy`` conda package.  The
+package includes the Python bindings, the C++ STI libraries, public headers,
+and the installed example code for both Python and C++.
 
-Setting up STI for the first time.
-
-Build using Docker
-------------------
-
-The easiest way to build the STI3 library is using Docker. The Dockerfile for
-building the library is located in the root directory: `sti3/Dockerfile`.
-From the root sti3 directory, run the following:
-
-.. code-block:: bash
-    
-    docker build -t sti3:v1 .
-
-The image name and version are optional.  In addition to installing all build dependencies,
-this Dockerfile will download and build omniORB before building STI3.
-
-
-Build from source (Linux)
--------------------------
-
-* Install `openSSL` and `curl`
-
-.. code-block:: bash
-
-    apt install libssl-dev openssl libcurl4-openssl-dev
-
-
-* Install `pybind11`
-
-.. code-block:: bash
-
-    pip3 install pybind11
-
-
-* Install `omniORB` from source
-
-.. code-block:: bash
-
-    # Download latest source zip
-    wget https://sourceforge.net/projects/omniorb/files/latest/download
-
-    # unzip; change to $OMNIORB_TOP (root directory of omniORB)
-    cd $OMNIORB_TOP
-    mkdir build
-    cd build
-
-    ../configure --with-openssl
-    make
-    make install
-
-* Install `STI3` from source
-
-.. code-block:: bash
-
-    # Download latest STI3 source zip
-
-    # Change to build directory
-    cd sti3/build
-
-    # Configure.  For debug builds, include option -DCMAKE_BUILD_TYPE=Debug
-    cmake ..
-
-    # Build
-    cmake --build . --parallel 4
-
-    # Install
-    make DESTDIR=/sti3 install
-
-
-
-Build from source (Windows)
+Install from Anaconda Cloud
 ---------------------------
 
-
-* Install `openSSL <https://www.openssl.org/>`_
-
-Prebuilt Windows binaries: `<https://slproweb.com/products/Win32OpenSSL.html>`_  (Win64, do not use Light)
-
-
-* Install `pybind11 <https://pybind11.readthedocs.io/en/stable/installing.html>`_
+Create an environment for using STI3 and install ``stipy`` from the Hogan Lab
+Anaconda channel:
 
 .. code-block:: bash
 
-    pip install pybind11
+   conda create -n sti3 python=3.13
+   conda activate sti3
+   conda install -c conda-forge hoganlab::stipy
 
-
-* Install `omniORB <https://omniorb.sourceforge.io/>`_
-  
-.. Note::
-    Building omniORB from source may be required if the available Windows binaries are not compatible with the build tools (e.g., Visual Studio version).
-    To build omniORB, first install: cygwin, python, openssl. Following the instructions in README.win32.txt, select and then modify the 
-    appropriate .mk file in in mk/platforms.
-    When installing cygwin, make sure to install GNU make.
-    To build, run 'make export' using the x64 Native cmd prompt for Visual Studio.
-    Make sure NOT to install openssl in the 'Program Files' directory, since the space in the name breaks the build!
-
-* Install `Boost <https://www.boost.org/users/download/>`_ (Header only libraries)
-
-.. Note::
-    STI requires only `Boost Graph Library <https://www.boost.org/doc/libs/1_82_0/libs/graph/doc/index.html>`_ (BGL). 
-    BGL is a header-only library and does not need to be built.
-
-* Define the following environment variables:
+For an existing environment:
 
 .. code-block:: bash
 
-    OPENSSL_ROOT_DIR
-    OMNIORB_ROOT_DIR
-    BOOST_ROOT
+   conda activate sti3
+   conda install -c conda-forge hoganlab::stipy
 
-These should be defined as their respective directories of these on the local computer.
-OPENSSL_ROOT_DIR should point to the root directory of openSSL.
-OMNIORB_ROOT_DIR should point to the root directory of omniORB.
-BOOST_ROOT should point to the root directory of boost.
+After installation, verify the Python package:
 
-.. Note:: 
-    These environment variables are also needed for building the python wheel.
+.. code-block:: bash
 
-* Build STI3 in Visual Studio
-  
-  * Open root directory 'sti3'; CMake config should automatically run to prepare the build.
-  * Select Debug or Release build target
-  * Build the project.  This will build the stidevice and stinetwork libraries.
-  * The compiled libraries for linking will be in sti3\\lib and the dlls will be in sti3\\bin. Debug libraries have a '_d' suffix.
+   python -c "import stipy; import stipy.stidevicepy; print(stipy.__file__)"
 
-.. warning:: 
-    For a CMake build, Visual Studio needs access to executables in the System32 directory. 
-    Without access, the CMake config step may give an error claiming to not find cmd.exe, for example.
-    One way to fix this is to append %SystemRoot%\\System32 to the Path environment variable.
+What gets installed
+-------------------
 
-Build STI3 Python (STIPy)
+The ``stipy`` package installs the full STI runtime needed by device applications:
+
+* Python modules: ``stipy`` and ``stipy.stidevicepy``.
+* C++ headers under the conda prefix include directory, for example
+  ``$CONDA_PREFIX/include/sti``.
+* C++ libraries and runtime binaries under the conda prefix library and binary
+  directories.
+* Example projects showing Python and C++ device drivers.
+
+Use the active conda environment as the install prefix.  On Linux and macOS
+this is ``$CONDA_PREFIX``.  On Windows this is ``%CONDA_PREFIX%`` in Command
+Prompt or ``$env:CONDA_PREFIX`` in PowerShell.
+
+Python device project
+---------------------
+
+A Python device can import ``stipy`` directly from the activated environment:
+
+.. code-block:: py
+
+   import stipy
+   import stipy.stidevicepy as stidevicepy
+
+   class SimpleDevice(stidevicepy.LocalDevice):
+       def __init__(self, config):
+           stidevicepy.LocalDevice.__init__(self, config)
+           self.addOutputChannel(0, stipy.MixedValueType.Double, "coil current")
+
+   config = stipy.Configuration({
+       "Device Name": "SimpleDevice",
+       "IP Address": "localhost",
+       "Module": "0",
+       "Target Server": "localhost/0/STI Server",
+   })
+
+   device = SimpleDevice(config)
+   hub = stidevicepy.NetworkDeviceHub("192.168.1.4:2809")
+   hub.addDevice(device)
+   hub.run()
+
+See ``examples/python/simpleDevice`` and the feature-specific examples under
+``examples/python`` for complete runnable files.
+
+C++ device project with CMake
+-----------------------------
+
+For a small out-of-tree C++ device project, point CMake at the active conda
+environment and link against the installed STI libraries.  The exact library
+target names can vary by package platform, so the most portable starting point
+is to add the conda include and library directories explicitly:
+
+.. code-block:: cmake
+
+   cmake_minimum_required(VERSION 3.20)
+   project(my_sti_device LANGUAGES CXX)
+
+   set(CMAKE_CXX_STANDARD 20)
+   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+   if(NOT DEFINED ENV{CONDA_PREFIX})
+       message(FATAL_ERROR "Activate the conda environment that contains stipy.")
+   endif()
+
+   set(STI_PREFIX "$ENV{CONDA_PREFIX}")
+
+   add_executable(my_sti_device main.cpp)
+   target_include_directories(my_sti_device PRIVATE "${STI_PREFIX}/include")
+   target_link_directories(my_sti_device PRIVATE "${STI_PREFIX}/lib")
+   target_link_libraries(my_sti_device PRIVATE stidevice stinetwork)
+
+On Windows with Visual Studio, use ``%CONDA_PREFIX%\include`` as an additional
+include directory, ``%CONDA_PREFIX%\Library\lib`` or ``%CONDA_PREFIX%\lib`` as
+an additional library directory depending on the package layout, and add the
+installed STI libraries to the linker input.  Put the conda binary directories
+on ``PATH`` when running the executable:
+
+.. code-block:: bat
+
+   conda activate sti3
+   set PATH=%CONDA_PREFIX%\Library\bin;%CONDA_PREFIX%\bin;%PATH%
+
+The installed C++ examples contain complete ``CMakeLists.txt`` files.  They are
+the best template when starting a new device driver.
+
+Build a conda package from source
+---------------------------------
+
+Most users should install from Anaconda Cloud.  Build from source only when
+developing STI3 itself or testing package changes.
+
+Create the build environment:
+
+.. code-block:: bash
+
+   conda create -n sti3-build python=3.13
+   conda activate sti3-build
+   conda install -c conda-forge conda-build anaconda-client setuptools pip catch2 cmake ninja
+
+Build from the repository root:
+
+.. code-block:: bash
+
+   conda activate sti3-build
+   conda build -c conda-forge .
+
+Install the local build into a target environment:
+
+.. code-block:: bash
+
+   conda activate sti3
+   conda install --use-local stipy
+
+If conda does not find the local package, add the local build channel first:
+
+.. code-block:: bash
+
+   conda config --add channels file://$(conda info --base)/envs/sti3-build/conda-bld
+
+Legacy source build notes
 -------------------------
 
-The build system for STIPy uses `setuptools` to create the python package.  The `setup.py` file in the 
-root directory configures the build. The python build will configure the package and call `cmake` to compile
-the C++ code for the core STI shared libraries. The output of the build is a platform-specific python wheel 
-(whl file) which contains the complied STI binaries. The following build instructions are platform independent.
-
-* Setup python virtual environment for the build (optional)
-* Install the required python packages for the build using `requirements.txt` in the root directory
-
-.. code-block:: bash
-
-    pip install -r requirements.txt
-
-
-* Build the wheel
-
-.. code-block:: bash
-
-    python -m build --wheel
-
-* The created whl file will be in the sti3/dist directory.
-
-* (Optional) Install STIPy wheel directly (in the desired virtual environment)
-
-.. code-block:: bash
-
-    pip install -I ./sti3/dist/<whl filename>
-
+The previous Docker, manual omniORB, and Python wheel instructions have been
+kept for reference in ``docs/src/setuptools_legacy.rst``.  They are no longer
+the recommended installation path.

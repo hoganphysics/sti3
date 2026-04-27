@@ -302,15 +302,19 @@ module TNetwork
 	interface TLogManager
 	{
 		void getLogNames(out TStringSeq names);
+		void getNetworkLogNames(out TStringSeq names);
 
 		long getLogCount(in TDeviceID deviceID, in TLogFileFilter filter);
+		long getNetworkLogCount(in TLogFileFilter filter);
 		void getLogIDs(in TLogFileFilter filter, out TLogIDSeq ids);
+		void getNetworkLogIDs(in TLogFileFilter filter, out TLogIDSeq ids);
 		void getDeviceLogIDs(in TDeviceID deviceID, in TLogFileFilter filter, out TLogIDSeq ids);
 
 		boolean getLog(in TLogID logID, out TLogFile logFile);
 		//boolean getLog(in string name, in string date, in long index, out TLogFile logFile);
 
 		boolean getLogs(in TLogFileFilter filter, out TLogFileSeq files);
+		boolean getNetworkLogs(in TLogFileFilter filter, out TLogFileSeq files);
 		boolean getDeviceLogs(in TDeviceID deviceID, in TLogFileFilter filter, out TLogFileSeq files);
 
 		boolean getLogRecord(in string date, out TLogRecord record);
@@ -351,6 +355,7 @@ module TNetwork
 	{
 		TFileID getID();
 		string getFilename();
+		unsigned long getFileSize();
 
 		boolean exists();
 		string md5Checksum();
@@ -410,4 +415,3 @@ module TNetwork
 };	//STI
 
 #endif
-

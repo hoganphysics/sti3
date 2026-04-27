@@ -19,6 +19,10 @@ using STI::TNetwork::TLogRecordStatus;
 using STI::Device::LogRecordStatus;
 using STI::TNetwork::TLogFileFilter;
 using STI::Device::LogFileFilter;
+using STI::TNetwork::TLogFileRecord;
+using STI::Device::LogFileRecord;
+using STI::TNetwork::TLogNameRecord;
+using STI::Device::LogNameRecord;
 using STI::TNetwork::TDeviceLogRecord;
 using STI::Device::DeviceLogRecord;
 using STI::TNetwork::TLogRecord;
@@ -65,7 +69,7 @@ bool STI::Network::convert<LogID, TLogID>(const LogID& logID, TLogID& tLogID)
     tLogID.deviceID = convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(logID.deviceID);
     tLogID.date = convert<std::string, CORBA::String_member>(logID.date);
     tLogID.logName = convert<std::string, CORBA::String_member>(logID.logName);
-    tLogID.index = static_cast<CORBA::Long>(logID.index);
+    tLogID.index = static_cast<CORBA::ULong>(logID.index);
     return true;
 }
 
@@ -129,6 +133,78 @@ TLogRecordStatus STI::Network::convert<LogRecordStatus, TLogRecordStatus>(const 
 }
 
 
+//LogFileRecord
+template<>
+bool STI::Network::convert<TLogFileRecord, LogFileRecord>(const TLogFileRecord& tLogFileRecord, LogFileRecord& logFileRecord)
+{
+    logFileRecord.id = convert<TLogID, LogID>(tLogFileRecord.id);
+    logFileRecord.fileID = convert<TFileID, FileID>(tLogFileRecord.fileID);
+    logFileRecord.bytes = static_cast<std::uint64_t>(tLogFileRecord.bytes);
+    logFileRecord.lineCount = static_cast<std::uint64_t>(tLogFileRecord.lineCount);
+    logFileRecord.firstEntryTime = convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tLogFileRecord.firstEntryTime);
+    logFileRecord.lastEntryTime = convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tLogFileRecord.lastEntryTime);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<LogFileRecord, TLogFileRecord>(const LogFileRecord& logFileRecord, TLogFileRecord& tLogFileRecord)
+{
+    tLogFileRecord.id = convert<LogID, TLogID>(logFileRecord.id);
+    tLogFileRecord.fileID = convert<FileID, TFileID>(logFileRecord.fileID);
+    tLogFileRecord.bytes = static_cast<CORBA::ULongLong>(logFileRecord.bytes);
+    tLogFileRecord.lineCount = static_cast<CORBA::ULongLong>(logFileRecord.lineCount);
+    tLogFileRecord.firstEntryTime = convert<STI::Utils::TimeStamp, STI::TNetwork::TTimeStamp>(logFileRecord.firstEntryTime);
+    tLogFileRecord.lastEntryTime = convert<STI::Utils::TimeStamp, STI::TNetwork::TTimeStamp>(logFileRecord.lastEntryTime);
+    return true;
+}
+
+
+//LogNameRecord
+template<>
+bool STI::Network::convert<TLogNameRecord, LogNameRecord>(const TLogNameRecord& tLogNameRecord, LogNameRecord& logNameRecord)
+{
+    logNameRecord.logName = convert<CORBA::String_member, std::string>(tLogNameRecord.logName);
+    logNameRecord.files.clear();
+
+    for (CORBA::ULong i = 0; i < tLogNameRecord.files.length(); ++i) {
+        LogFileRecord fileRecord;
+        convert<TLogFileRecord, LogFileRecord>(tLogNameRecord.files[i], fileRecord);
+        fileRecord.id.logName = logNameRecord.logName;
+        logNameRecord.files[fileRecord.id.index] = fileRecord;
+    }
+
+    logNameRecord.totalBytes = static_cast<std::uint64_t>(tLogNameRecord.totalBytes);
+    logNameRecord.totalLines = static_cast<std::uint64_t>(tLogNameRecord.totalLines);
+    logNameRecord.nextIndex = static_cast<unsigned>(tLogNameRecord.nextIndex);
+    logNameRecord.lastUpdate = convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tLogNameRecord.lastUpdate);
+
+    return true;
+}
+
+template<>
+bool STI::Network::convert<LogNameRecord, TLogNameRecord>(const LogNameRecord& logNameRecord, TLogNameRecord& tLogNameRecord)
+{
+    const std::string& logName = logNameRecord.logName;
+    tLogNameRecord.logName = convert<std::string, CORBA::String_member>(logName);
+    tLogNameRecord.files.length(static_cast<CORBA::ULong>(logNameRecord.files.size()));
+
+    CORBA::ULong i = 0;
+    for (const auto& fileEntry : logNameRecord.files) {
+        LogFileRecord fileRecord = fileEntry.second;
+        fileRecord.id.index = fileEntry.first;
+        fileRecord.id.logName = logName;
+        convert<LogFileRecord, TLogFileRecord>(fileRecord, tLogNameRecord.files[i]);
+        ++i;
+    }
+
+    tLogNameRecord.totalBytes = static_cast<CORBA::ULongLong>(logNameRecord.totalBytes);
+    tLogNameRecord.totalLines = static_cast<CORBA::ULongLong>(logNameRecord.totalLines);
+    tLogNameRecord.nextIndex = static_cast<CORBA::ULong>(logNameRecord.nextIndex);
+    tLogNameRecord.lastUpdate = convert<STI::Utils::TimeStamp, STI::TNetwork::TTimeStamp>(logNameRecord.lastUpdate);
+    return true;
+}
+
+
 //LogFileFilter
 
 template<>
@@ -178,10 +254,25 @@ bool STI::Network::convert<TDeviceLogRecord, DeviceLogRecord>(const TDeviceLogRe
 {
     deviceLogRecord.deviceID = convert<CORBA::String_member, std::string>(tDeviceLogRecord.deviceID);
     deviceLogRecord.status = convert<TLogRecordStatus, LogRecordStatus>(tDeviceLogRecord.status);
+    deviceLogRecord.logNames.clear();
+    deviceLogRecord.logs.clear();
 
     std::vector<std::string> logNamesVec;
 	convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(tDeviceLogRecord.logNames, logNamesVec);		//only vector<string> is available
 	deviceLogRecord.logNames.insert(logNamesVec.begin(), logNamesVec.end());		//deep copy
+
+    for (CORBA::ULong i = 0; i < tDeviceLogRecord.logs.length(); ++i) {
+        LogNameRecord logNameRecord;
+        convert<TLogNameRecord, LogNameRecord>(tDeviceLogRecord.logs[i], logNameRecord);
+        deviceLogRecord.logs[logNameRecord.logName] = logNameRecord;
+    }
+
+    if (!deviceLogRecord.logs.empty()) {
+        deviceLogRecord.logNames.clear();
+        for (const auto& entry : deviceLogRecord.logs) {
+            deviceLogRecord.logNames.insert(entry.first);
+        }
+    }
     return true;
 }
 
@@ -193,12 +284,28 @@ bool STI::Network::convert<DeviceLogRecord, TDeviceLogRecord>(const DeviceLogRec
     tDeviceLogRecord.status = convert<LogRecordStatus, TLogRecordStatus>(deviceLogRecord.status);
 
     std::vector<std::string> logNamesVec;
-
-    for (auto& name : deviceLogRecord.logNames) {
-        logNamesVec.push_back(name);
+    if (!deviceLogRecord.logs.empty()) {
+        for (const auto& entry : deviceLogRecord.logs) {
+            logNamesVec.push_back(entry.first);
+        }
+    }
+    else {
+        for (const auto& name : deviceLogRecord.logNames) {
+            logNamesVec.push_back(name);
+        }
     }
     
 	convert<std::vector<std::string>, STI::TNetwork::TStringSeq>(logNamesVec, tDeviceLogRecord.logNames);		//only vector<string> is available
+
+    tDeviceLogRecord.logs.length(static_cast<CORBA::ULong>(deviceLogRecord.logs.size()));
+
+    CORBA::ULong i = 0;
+    for (const auto& entry : deviceLogRecord.logs) {
+        LogNameRecord logNameRecord = entry.second;
+        logNameRecord.logName = entry.first;
+        convert<LogNameRecord, TLogNameRecord>(logNameRecord, tDeviceLogRecord.logs[i]);
+        ++i;
+    }
 
     return true;
 }
@@ -211,8 +318,9 @@ template<>
 bool STI::Network::convert<TLogRecord, LogRecord>(const TLogRecord& tLogRecord, LogRecord& logRecord)
 {
     logRecord.timeStamp = convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tLogRecord.timeStamp);
+    logRecord.deviceLogRecords.clear();
 
-    for (unsigned i = 0; i < tLogRecord.deviceLogRecords.length(); ++i) {
+    for (CORBA::ULong i = 0; i < tLogRecord.deviceLogRecords.length(); ++i) {
         DeviceLogRecord deviceLogRecord;
         convert<TDeviceLogRecord, DeviceLogRecord>(tLogRecord.deviceLogRecords[i], deviceLogRecord);
         logRecord.deviceLogRecords[deviceLogRecord.deviceID] = deviceLogRecord;
@@ -227,9 +335,9 @@ bool STI::Network::convert<LogRecord, TLogRecord>(const LogRecord& logRecord, TL
 {
     tLogRecord.timeStamp = convert<STI::Utils::TimeStamp, STI::TNetwork::TTimeStamp>(logRecord.timeStamp);
 
-    tLogRecord.deviceLogRecords.length(logRecord.deviceLogRecords.size());
+    tLogRecord.deviceLogRecords.length(static_cast<CORBA::ULong>(logRecord.deviceLogRecords.size()));
 
-    unsigned i = 0;
+    CORBA::ULong i = 0;
     for (auto& deviceRecordLog : logRecord.deviceLogRecords) {
         convert<DeviceLogRecord, TDeviceLogRecord>(deviceRecordLog.second, tLogRecord.deviceLogRecords[i]);
         i++;
@@ -335,5 +443,3 @@ bool STI::Network::convert<LogFile, TLogFile>(const LogFile& logFile, TLogFile& 
 
     return true;
 }
-
-

@@ -52,7 +52,13 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = [
+        '_build',
+        'Thumbs.db',
+        '.DS_Store',
+        'src/archive',
+        'src/setuptools_legacy.rst',
+        ]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -61,6 +67,15 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+        'collapse_navigation': False,
+        'navigation_depth': 4,
+        'titles_only': False,
+        }
+
+html_use_index = False
+html_domain_indices = False
 
 numfig = True
 

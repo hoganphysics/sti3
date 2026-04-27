@@ -65,6 +65,11 @@ ResultsPaths LegacyShotRepository::preparePaths(const ShotID& sid)
     return preparePaths(sid.submissionTime);
 }
 
+ResultsPaths LegacyShotRepository::preparePaths(const ParseID& pid)
+{
+    return preparePaths(pid.parseTimestamp);
+}
+
 ResultsPaths LegacyShotRepository::preparePaths(const SequenceID& seqid)
 {
     ResultsPaths paths = makePaths(seqid.timestamp);
@@ -79,7 +84,7 @@ bool LegacyShotRepository::findParseResult(const ParseID& pid)
 {
     auto paths = makePaths(pid.parseTimestamp);
 
-    std::filesystem::path parsePath = paths.experimentPath;
+    std::filesystem::path parsePath = paths.parsePath;
     parsePath /= makeParseFilename(pid);
 
     return std::filesystem::exists(parsePath);
@@ -112,7 +117,7 @@ bool LegacyShotRepository::getParseResult(const ParseID& id, std::shared_ptr<Par
 
     auto paths = makePaths(id.parseTimestamp);
 
-    std::filesystem::path serializePath = paths.experimentPath;
+    std::filesystem::path serializePath = paths.parsePath;
     serializePath /= makeParseFilename(id);
     {
         std::ifstream file(serializePath.string());
@@ -191,7 +196,7 @@ bool LegacyShotRepository::saveShot(const ShotID& sid, const std::shared_ptr<Ful
     auto parsePaths = preparePaths(sid.parseID.parseTimestamp);
     auto paths = preparePaths(sid);
 
-    std::filesystem::path targetParsePath = parsePaths.experimentPath;
+    std::filesystem::path targetParsePath = parsePaths.parsePath;
     std::filesystem::path targetShotPath = paths.experimentPath;
 
     targetParsePath /= makeParseFilename(sid.parseID);
@@ -218,6 +223,31 @@ bool LegacyShotRepository::saveShot(const ShotID& sid, const std::shared_ptr<Ful
 }
 
 
+bool LegacyShotRepository::saveSequenceParseResult(const SequenceEntryID& id, const std::shared_ptr<ParseResult>& parseResult, const EngineJobStatus& parseStatus)
+{
+    if (parseResult == 0) return false;
+    if (parseResult->pid.shotType != ShotType::SequenceEntry) return false;
+
+    auto parsePaths = preparePaths(parseResult->pid);
+    std::filesystem::path targetParsePath = parsePaths.parsePath;
+    targetParsePath /= makeParseFilename(parseResult->pid);
+
+    if (!std::filesystem::exists(targetParsePath)) {
+        LegacyParseXMLBuilder parseBuilder(targetParsePath.string(), parseResult);
+        parseBuilder.build();
+        parseBuilder.write();
+    }
+
+    std::shared_ptr<LegacySequenceXMLBuilder> builder;
+
+    if (cachedSequences.get(id.seqID, builder) && builder != 0) {
+        builder->addParseResult(targetParsePath.string(), id, parseStatus);
+        builder->write();
+    }
+
+    return true;
+}
+
 bool LegacyShotRepository::updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus)
 {
     std::shared_ptr<LegacySequenceXMLBuilder> builder;
@@ -228,7 +258,7 @@ bool LegacyShotRepository::updateSequence(const SequenceEntryID& id, const ShotI
         std::filesystem::path targetShotPath = paths.experimentPath;
         targetShotPath /= makeShotFilename(shotID);
 
-        builder->addShot(targetShotPath.string(), id);
+        builder->addShot(targetShotPath.string(), id, shotStatus);
         builder->write();
     }
 
@@ -259,17 +289,17 @@ bool LegacyShotRepository::saveSequence(const SequenceID& seqID, const std::shar
 
 std::string LegacyShotRepository::makeParseFilename(const ParseID& pid)
 {
-    return "parse_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
+    return "parse_" + pid.parseTimestamp.date_YYYY_MM_DD("-") + "_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
 }
 
 std::string LegacyShotRepository::makeShotFilename(const ShotID& sid)
 {
-    return "shot_" + sid.submissionTime.time_hh_mm_ss_mmmuuunnn() + ".xml";
+    return "shot_" + sid.submissionTime.date_YYYY_MM_DD("-") + "_" + sid.submissionTime.time_hh_mm_ss_mmmuuunnn() + ".xml";
 }
 
 std::string LegacyShotRepository::makeSequenceFilename(const SequenceID& seqid)
 {
-    return "seq_" + seqid.timestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
+    return "seq_" + seqid.timestamp.date_YYYY_MM_DD("-") + "_" + seqid.timestamp.time_hh_mm_ss_mmmuuunnn() + ".xml";
 }
 
 ResultsPaths LegacyShotRepository::makePaths(const TimeStamp& timeStamp)
@@ -297,6 +327,9 @@ ResultsPaths LegacyShotRepository::makePaths(const TimeStamp& timeStamp)
     auto timingPath = uniqueBasePath / "timing" / time;
     paths.timingPath = timingPath.string();
 
+    auto parsePath = uniqueBasePath / "parse";
+    paths.parsePath = parsePath.string();
+
     auto experimentPath = uniqueBasePath / "experiments";
     paths.experimentPath = experimentPath.string();
 
@@ -319,6 +352,7 @@ ResultsPaths LegacyShotRepository::preparePaths(const TimeStamp& timeStamp)
     makePathIfNew(paths.tempPath);
     makePathIfNew(paths.dataPath);
     makePathIfNew(paths.timingPath);
+    makePathIfNew(paths.parsePath);
     makePathIfNew(paths.experimentPath);
 
     return paths;

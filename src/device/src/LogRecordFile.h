@@ -27,6 +27,7 @@ public:
     bool copyRecord(LogRecord& record);
 
     LogRecord& getRecord();
+    const LogRecord& getRecord() const;
 
     void load();
     void save();

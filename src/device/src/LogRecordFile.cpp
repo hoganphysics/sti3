@@ -38,13 +38,20 @@ void LogRecordFile::setLogStatus(const DeviceID& id, const std::string& logName)
         auto& newRecord = records[id.getID()];
         newRecord.deviceID = id.getID();
         newRecord.logNames.insert(logName);
+        newRecord.logs[logName].logName = logName;
+        newRecord.logs[logName].lastUpdate = TimeStamp();
         newRecord.status = LogRecordStatus::LogsPresent;
+        newRecord.syncLogNamesFromLogs();
     }
     else {
         record->second.status = LogRecordStatus::LogsPresent;
         record->second.logNames.insert(logName);
+        record->second.logs[logName].logName = logName;
+        record->second.logs[logName].lastUpdate = TimeStamp();
+        record->second.syncLogNamesFromLogs();
     }
-    
+
+    logRecord.timeStamp = TimeStamp();
     save();
 }
 
@@ -90,6 +97,11 @@ LogRecord& LogRecordFile::getRecord()
     return logRecord;
 }
 
+const LogRecord& LogRecordFile::getRecord() const
+{
+    return logRecord;
+}
+
 bool LogRecordFile::copyRecord(LogRecord& record)
 {
     if (exists()) {
@@ -98,5 +110,3 @@ bool LogRecordFile::copyRecord(LogRecord& record)
     }
     return false;
 }
-
-

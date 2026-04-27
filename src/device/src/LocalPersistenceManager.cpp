@@ -571,6 +571,35 @@ bool LocalPersistenceManager::saveShot(const STI::Engine::ShotID& sid,
     return addToBuffer(fullShotResult);
 }
 
+bool LocalPersistenceManager::saveSequenceParseResult(const STI::Engine::ParseID& pid,
+                                                      const std::shared_ptr<STI::Engine::ParseResult>& parseResult,
+                                                      const STI::Engine::EngineJobStatus& parseStatus,
+                                                      bool isOwner)
+{
+    if (pid.shotType != ShotType::SequenceEntry) return false;
+    if (parseResult == 0) return false;
+    if (!isOwner) return false;
+
+    std::shared_ptr<STI::Engine::SequenceResult> sequenceResult;
+    if (sequenceBuffer.get(pid.sequenceEntryID.seqID, sequenceResult) && sequenceResult != 0) {
+        sequenceResult->status[pid.sequenceEntryID.seqIndex] = parseStatus;
+    }
+
+    std::shared_ptr<STI::Engine::ShotRepository> repo;
+    if (!getShotRepository(repo)) return false;
+
+    auto resultsPaths = repo->preparePaths(pid);
+    transferParseResult(parseResult, resultsPaths.timingPath);
+
+    bool success = repo->saveSequenceParseResult(pid.sequenceEntryID, parseResult, parseStatus);
+
+    if (!success) {
+        success = defaultRepository->saveSequenceParseResult(pid.sequenceEntryID, parseResult, parseStatus);
+    }
+
+    return success;
+}
+
 bool LocalPersistenceManager::updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, 
                                              const STI::Engine::EngineJobStatus& shotStatus, bool isOwner)
 {

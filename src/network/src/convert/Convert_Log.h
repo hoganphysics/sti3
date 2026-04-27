@@ -21,6 +21,8 @@ namespace Device
 {
     class LogID;
     class LogFileFilter;
+    struct LogFileRecord;
+    struct LogNameRecord;
     class DeviceLogRecord;
     class LogFile;
 
@@ -45,6 +47,20 @@ template<>
 Device::LogRecordStatus Network::convert<TNetwork::TLogRecordStatus, Device::LogRecordStatus>(const TNetwork::TLogRecordStatus& tStatus);
 template<>
 TNetwork::TLogRecordStatus Network::convert<Device::LogRecordStatus, TNetwork::TLogRecordStatus>(const Device::LogRecordStatus& status);
+
+
+//LogFileRecord
+template<>
+bool Network::convert<TNetwork::TLogFileRecord, Device::LogFileRecord>(const TNetwork::TLogFileRecord& tLogFileRecord, Device::LogFileRecord& logFileRecord);
+template<>
+bool Network::convert<Device::LogFileRecord, TNetwork::TLogFileRecord>(const Device::LogFileRecord& logFileRecord, TNetwork::TLogFileRecord& tLogFileRecord);
+
+
+//LogNameRecord
+template<>
+bool Network::convert<TNetwork::TLogNameRecord, Device::LogNameRecord>(const TNetwork::TLogNameRecord& tLogNameRecord, Device::LogNameRecord& logNameRecord);
+template<>
+bool Network::convert<Device::LogNameRecord, TNetwork::TLogNameRecord>(const Device::LogNameRecord& logNameRecord, TNetwork::TLogNameRecord& tLogNameRecord);
 
 
 //LogFileFilter
@@ -97,4 +113,3 @@ bool Network::convert<Device::LogFile, TNetwork::TLogFile>(const Device::LogFile
 } //STI
 
 #endif
-

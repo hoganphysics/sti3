@@ -21,6 +21,7 @@ void init_ChannelManager(py::module& m);
 void init_Monitor(py::module& m);
 void init_MonitorManager(py::module& m);
 void init_SynchronousEvent(py::module& m);
+void init_LogBrowser(py::module& m);
 void init_Device(py::module& m);
 void init_LocalDevice(py::module& m);
 void init_PartnerDevice(py::module& m);
@@ -53,6 +54,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_MonitorManager(m);
     init_DeviceCollection(m);
     init_SynchronousEvent(m);
+    init_LogBrowser(m);
     init_Device(m);
     init_PartnerDevice(m);
     init_LocalDevice(m);

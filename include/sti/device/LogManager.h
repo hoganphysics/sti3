@@ -41,6 +41,11 @@ public:
 
     virtual bool getLogRecord(const std::string& date, LogRecord& record) = 0;
 
+    virtual void getNetworkLogNames(std::set<std::string>& names) = 0;
+    virtual int getNetworkLogCount(const LogFileFilter& filter) = 0;
+    virtual void getNetworkLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids) = 0;
+    virtual bool getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files) = 0;
+
 };
 
 

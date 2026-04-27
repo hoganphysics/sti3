@@ -101,6 +101,7 @@ public:
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
     void cancelJob(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
+    void saveFailedSequenceParse(const std::shared_ptr<EventEngineJob>& job);
     void cancelAll();
     void stopAll();
     void clearAll();

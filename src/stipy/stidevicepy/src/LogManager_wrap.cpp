@@ -3,6 +3,7 @@
 #include <sti/device/LogRecord.h>
 #include <sti/device/Logger.h>
 
+#include "LocalLogManager.h"
 #include "MixedValuePy.h"
 
 #include <sstream>
@@ -21,10 +22,34 @@ using STI::Device::LogFile;
 using STI::Device::LogRecord;
 using STI::Device::DeviceID;
 using STI::Device::Logger;
+using STI::Device::LocalLogManager;
 
 
 void init_LogManager(py::module& m)
 {
+    py::enum_<LogFile::LogFileType>(m, "LogFileType")
+        .value("FileID", LogFile::LogFileType::FileID)
+        .value("FileHolder", LogFile::LogFileType::FileHolder)
+        .value("String", LogFile::LogFileType::String)
+        ;
+
+    py::class_<LogFile>(m, "LogFile")
+        .def(py::init<>())
+        .def_readwrite("id", &LogFile::id)
+        .def_readwrite("type", &LogFile::type)
+        .def_readwrite("fileID", &LogFile::fileID)
+        .def_readwrite("fileHolder", &LogFile::fileHolder)
+        .def_readwrite("logString", &LogFile::logString)
+        .def("__repr__",
+            [](const LogFile& logFile) {
+                std::stringstream s;
+                s << "<LogFile | " << logFile.id.logName
+                  << " | " << logFile.id.date
+                  << " | " << logFile.id.index << ">";
+                return s.str();
+            })
+        ;
+
     py::class_<LogFileFilter>(m, "LogFileFilter")
         .def(py::init<>())
         .def_readwrite("logName", &LogFileFilter::logName)
@@ -123,7 +148,7 @@ void init_LogManager(py::module& m)
             })
         ;
 
-    py::class_<LogManager, std::shared_ptr<LogManager>>(m, "LogManager")
+    py::class_<LogManager, std::shared_ptr<LogManager>>(m, "LogManager", py::dynamic_attr())
         .def("getLogNames", 
             [](LogManager& self) {
                 std::set<std::string> names;
@@ -140,12 +165,40 @@ void init_LogManager(py::module& m)
                 self.getLogIDs(filter, ids);
                 return ids;
             }, py::arg("filter"))
-        // .def("getLog", 
-        //     [](LogManager& self, const LogID& id) {
-        //         LogFile logFile;
-        //         self.getLog(id, logFile);
-        //         return logFile;
-        //     }, py::arg("logID"))
+        .def("getLogIDs",
+            [](LogManager& self, const DeviceID& deviceID, const LogFileFilter& filter) {
+                std::vector<LogID> ids;
+                self.getLogIDs(deviceID, filter, ids);
+                return ids;
+            }, py::arg("deviceID"), py::arg("filter"))
+        .def("getLog", 
+            [](LogManager& self, const LogID& id) -> py::object {
+                LogFile logFile;
+                if (!self.getLog(id, logFile)) {
+                    return py::none();
+                }
+                return py::cast(logFile);
+            }, py::arg("logID"))
+        .def("getLog",
+            [](LogManager& self, const std::string& name, const std::string& date, unsigned index) -> py::object {
+                LogFile logFile;
+                if (!self.getLog(name, date, index, logFile)) {
+                    return py::none();
+                }
+                return py::cast(logFile);
+            }, py::arg("name"), py::arg("date"), py::arg("index"))
+        .def("getLogs",
+            [](LogManager& self, const LogFileFilter& filter) {
+                std::vector<LogFile> files;
+                self.getLogs(filter, files);
+                return files;
+            }, py::arg("filter"))
+        .def("getLogs",
+            [](LogManager& self, const DeviceID& deviceID, const LogFileFilter& filter) {
+                std::vector<LogFile> files;
+                self.getLogs(deviceID, filter, files);
+                return files;
+            }, py::arg("deviceID"), py::arg("filter"))
         
         .def("getLogRecord", 
             [](LogManager& self, const std::string& date) {
@@ -153,6 +206,25 @@ void init_LogManager(py::module& m)
                 self.getLogRecord(date, record);
                 return record;
             }, py::arg("date"))
+        .def("getNetworkLogNames",
+            [](LogManager& self) {
+                std::set<std::string> names;
+                self.getNetworkLogNames(names);
+                return names;
+            })
+        .def("getNetworkLogCount", &LogManager::getNetworkLogCount, py::arg("filter"))
+        .def("getNetworkLogIDs",
+            [](LogManager& self, const LogFileFilter& filter) {
+                std::vector<LogID> ids;
+                self.getNetworkLogIDs(filter, ids);
+                return ids;
+            }, py::arg("filter"))
+        .def("getNetworkLogs",
+            [](LogManager& self, const LogFileFilter& filter) {
+                std::vector<LogFile> files;
+                self.getNetworkLogs(filter, files);
+                return files;
+            }, py::arg("filter"))
 
         // .def("__repr__",
         //     [](const LogManager& record) {
@@ -161,7 +233,9 @@ void init_LogManager(py::module& m)
         //     })
         ;
 
+    py::class_<LocalLogManager, LogManager, std::shared_ptr<LocalLogManager>>(m, "LocalLogManager")
+        .def("createLogger", &LocalLogManager::createLogger, py::arg("name"))
+        ;
 
 
 }
-

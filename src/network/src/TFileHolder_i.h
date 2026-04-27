@@ -19,8 +19,9 @@ public:
 	TFileHolder_i(STI::Utils::FileHolder* fileHolder);
 	~TFileHolder_i();
 	
-    TFileID* getID();
+	TFileID* getID();
     char* getFilename();
+    ::CORBA::ULong getFileSize();
     ::CORBA::Boolean exists();
     char* md5Checksum();
     ::CORBA::Boolean transferFile(::STI::TNetwork::TFileHolder_ptr destination);
@@ -40,4 +41,3 @@ private:
 
 
 #endif
-

@@ -8,12 +8,12 @@ config = stipy.Configuration(
     {'Device Name': 'TestDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
 
 testDevice = TestDevice(config)
 
 
-nameServiceAddr = "192.168.1.4:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(testDevice)

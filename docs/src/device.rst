@@ -4,503 +4,689 @@
 Device library
 ==============
 
-.. include:: interface.rst
-
+For controlling an existing device reference, see :ref:`deviceinterface`.
 
 
 Creating a device
 -----------------
 
-Each piece of hardware in the STI network is controlled by dedicated (stand-alone) device drivers.
-To create an STI device, you implement an extension of the LocalDevice class.  LocalDevice is part of
-the STI device library, and contains all funtionality needed to connect to the STI network and 
-receive events for timing sequences.
+An STI device driver is a standalone program that owns one or more
+``LocalDevice`` instances and attaches them to a ``NetworkDeviceHub``.  The
+driver defines channels, attributes, monitors, parsing behavior, tasks, logs,
+and any partner-device relationships needed by the hardware.
 
-The LocalDevice class may be used to create a new device in a variety of programming languages.
-In all cases, you create a derived class using LocalDevice as a base class. All custom behavior of 
-your device is then implemented by overriding function hooks provided by LocalDevice.
+The STI3 examples are organized by feature under ``examples/cpp`` and
+``examples/python``.  The snippets below follow the current C++ and Python
+interfaces used by those examples.
 
-.. Note::
-    Several :ref:`examples <deviceexamples>` of device drivers may be found in the *examples/* subdirectory in the 
-    STI source distribution.
-    
+Minimal device
+**************
 
-Creating a simple device can be done in a few lines of code.  In the example below, a minimal STI 
-device called **SimpleDevice** is defined:
-
-.. tabs::
-
-   .. code-tab:: c++
-
-        #include <sti/LocalDevice.h>
-
-        using STI::Device::LocalDevice;
-
-        class SimpleDevice : public LocalDevice
-        {
-        public:
-
-            SimpleDevice(const string& name, const string& address, unsigned short module, const string& targetServer) 
-            : LocalDevice(name, address, module, targetServer) 
-            {
-            }
-        };
-
-
-   .. code-tab:: py
-        
-        from stipy.stidevicepy import *
-
-        class SimpleDevice(LocalDevice):
-            def __init__(self, name, address, module, targetServer):
-                LocalDevice.__init__(self, name, address, module, targetServer)
-
-
-   .. code-tab:: java
-
-        import edu.stanford.sti.JLocalDevice;
-
-        public class SimpleDevice extends JLocalDevice {
-            
-            public SimpleDevice(String name, String address, int module, String targetServer) {
-                super(name, address, module, targetServer);
-            }
-        }
-
-
-
-Here the arguments of the *LocalDevice* constructor accept the *name*, *address*, *module*, and 
-*targetServer* of the device.  This information defines the device's 
-:ref:`DeviceID <devicenetworkDeviceID>` and :ref:`Target Server <devicenetworkTargetServer>`.
-Alternatively, this information can also be provided using configuration data which may be 
-defined in separate config file.
-
-Connecting to the network
-*************************
-
-Devices must connect to the STI network by attaching to a Hub.  To enable communcation over 
-TCP/IP, STI includes the NetworkDeviceHub class.  Each stand-alone executable must 
-contain an instance of NetworkDeviceHub, to which multiple device instances may be attached.
-After creating a NetworkDeviceHub, devices can be added using the **addDevice** function.
-Once all device have been attached, the NetworkDeviceHub can be activated using the **run** command.
-Calling **run** tells the hub to connect to the STI network and allows all attached devices to 
-connect to their respective target servers.
-
-Here is a minimal example of creating a NetworkDeviceHub 
-and attaching an instance of the SimpleDevice defined above:
+Every device derives from ``LocalDevice``.  The constructor can take explicit
+ID fields or a ``Configuration`` object.  The ID fields are the device name, IP
+address string, module number, and target server ``DeviceID``.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        #include <sti/sti.h>
-        #include <memory>
+      #include <sti/LocalDevice.h>
 
-        int main(int argc, char **argv)
-        {
-            auto device = std::make_shared<SimpleDevice>("Simple Device", "localhost", 0, "localhost/0/STI Server");
-
-            auto hub = std::make_shared<NetworkDeviceHub>("192.168.1.4:2809");
-
-            hub->addDevice(device);
-            hub->run();
-
-            return 0;
-        }
-
-
+      class SimpleDevice : public STI::Device::LocalDevice
+      {
+      public:
+          SimpleDevice(const STI::Utils::Configuration& config)
+              : STI::Device::LocalDevice(config)
+          {
+          }
+      };
 
    .. code-tab:: py
-        
-        device = SimpleDevice("Simple Device", "localhost", 0, "localhost/0/STI Server")
 
-        hub = NetworkDeviceHub("192.168.1.4:2809")
+      import stipy
+      import stipy.stidevicepy as stidevicepy
 
-        hub.addDevice(device)
-        hub.run()
+      class SimpleDevice(stidevicepy.LocalDevice):
+          def __init__(self, config):
+              stidevicepy.LocalDevice.__init__(self, config)
 
-   .. code-tab:: java
+Run the device by adding it to a hub:
 
-        import edu.stanford.sti.STIJava;
-        import edu.stanford.sti.JNetworkDeviceHub;
+.. tabs::
 
-        public class SimpleDeviceApplication {
+   .. code-tab:: c++
 
-            public static void main(String[] args) {
-                
-                STIJava.LoadLibrary();
+      #include <sti/NetworkDeviceHub.h>
 
-                SimpleDevice simpleDevice = new SimpleDevice("Simple Device", "localhost", 0, "localhost/0/STI Server");    
-                
-                JNetworkDeviceHub hub = new JNetworkDeviceHub("192.168.1.4:2809");
+      int main()
+      {
+          STI::Utils::Configuration config({
+              {"Device Name", "SimpleDevice"},
+              {"IP Address", "localhost"},
+              {"Module", "0"},
+              {"Target Server", "localhost/0/STI Server"},
+          });
 
-                hub.addNode(simpleDevice);
-                hub.run();
-            }
-        }
+          auto device = std::make_shared<SimpleDevice>(config);
+          auto hub = std::make_shared<STI::Network::NetworkDeviceHub>("192.168.1.4:2809");
 
+          hub->addDevice(device);
+          hub->run();
+      }
 
-.. Note::
-    To create the NetworkDeviceHub, you must specify the IP address and port number of the 
-    Name Service of the STI network.  Unlike the address field in a device's DeviceID, this 
-    IP address must point to a valid computer on the local network.
-    
-    The Name Service is a stand-alone service that 
-    provides object references required for the remote procedure calls over TCP/IP 
-    used by the STI network.
+   .. code-tab:: py
 
-By default, the *run* command is blocking.  The NetworkDeviceHub activates in a separate 
-thread and begins communicating over the network.  To prevent premature termination of the 
-program, the main thread is blocked by *run* until 
-all connected devices are killed. To override this behavior, *run* accepts a boolean value 
-that may be set to false to not block (default is true).  Calling *run(false)* activates the hub 
-and returns control to the main thread.
+      config = stipy.Configuration({
+          "Device Name": "SimpleDevice",
+          "IP Address": "localhost",
+          "Module": "0",
+          "Target Server": "localhost/0/STI Server",
+      })
 
-The above example is the minimum working device that can connect to the network, but it doesn't 
-have any additional functionality. In a realistic example, writing a device driver may also 
-require some or all of the following:
+      device = SimpleDevice(config)
+      hub = stidevicepy.NetworkDeviceHub("192.168.1.4:2809")
+      hub.addDevice(device)
+      hub.run()
 
-* Defining the device's input and output channels
-* Implementing device-specific event parsing
-* Defining device attributes (key value pairs) to customize behavior
-* Defining partner devices and event targets
-* Installing custom message listeners
+``NetworkDeviceHub`` needs the omniORB name service address.  ``run()`` blocks
+by default; pass ``false`` in C++ or ``False`` in Python to return immediately
+after starting the hub.
 
-Each of these features are described in the following sections.
+Configuration files
+*******************
 
+Examples in ``examples/cpp/configFile`` and ``examples/python/configFile`` show
+how to load device and network settings from an INI-style file.  This keeps
+deployment-specific values out of the driver source.
 
+.. tabs::
+
+   .. code-tab:: c++
+
+      STI::Utils::ConfigFile configFile("testDevice.ini");
+
+      auto device = std::make_shared<TestDevice>(configFile);
+      auto hub = std::make_shared<STI::Network::NetworkDeviceHub>(configFile);
+
+   .. code-tab:: py
+
+      config = stipy.ConfigFile("testDevice.ini")
+
+      device = TestDevice(config)
+      hub = stidevicepy.NetworkDeviceHub(config)
 
 Defining channels
 *****************
 
-.. tabs::
+Channels describe what the timing system and clients can read or write.
+``MixedValueType`` declares the value type accepted by the channel.
 
-   .. code-tab:: c++
-
-        LocalChannel& addChannel(unsigned short channelNumber, ChannelType type,
-                                 MixedValueType inputType, MixedValueType outputType, 
-                                 const string& defaultName);
-
-   .. code-tab:: py
-        
-        addChannel(channelNumber: int, type: ChannelType, inputType: MixedValueType, \
-                   outputType: MixedValueType, defaultName: str) -> LocalChannel
-
-
-   .. code-tab:: java
-
-        public LocalChannel addChannel(int channelNumber, ChannelType type, 
-                                       MixedValueType inputType, MixedValueType outputType, 
-                                       String defaultName);
-
-
+* Output channels receive values through ``write()`` or timing events.
+* Input channels produce measurements through ``read()`` or measurement events.
+* Input channels can also accept an output argument for parameterized reads.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        //in device constructor
+      using STI::Utils::MixedValueType;
 
-        //Output channel
-        addChannel(1, ChannelType::Output, MixedValueType::Empty, MixedValueType::Double, "name1");
+      addOutputChannel(0, MixedValueType::Double, "coil current");
+      addOutputChannel(1, MixedValueType::Int, "temperature setpoint");
+      addOutputChannel(3, MixedValueType::Vector, "list output")
+          .setVectorFormat({MixedValueType::Number,
+                            MixedValueType::String,
+                            MixedValueType::Boolean})
+          .setUnits("arb")
+          .setHelp("Vector format is [frequency, label, enable].");
 
-        //Input channel
-        addChannel(2, ChannelType::Input, MixedValueType::Double, MixedValueType::String, "name2");
-        addChannel(3, ChannelType::Input, MixedValueType::String, MixedValueType::Vector, "name3")
-            .addMetaData("key", "value");
-
-   .. code-tab:: py
-
-        #in device constructor
-
-        //Output channel
-        self.addChannel(1, ChannelType.Output, MixedValueType.Empty, MixedValueType.Double, "name1")
-        
-        //Input channel
-        self.addChannel(2, ChannelType.Input, MixedValueType.Double, MixedValueType.String, "name2")
-        self.addChannel(3, ChannelType.Input, MixedValueType.String, MixedValueType.Vector, "name3")
-            .addMetaData("key", "value");
-     
-   .. code-tab:: java
-
-        //in device constructor
-
-        //Output channel
-        addChannel(1, ChannelType.Output, MixedValueType.Empty, MixedValueType.Double, "name1");
-
-        //Input channel
-        addChannel(2, ChannelType.Input, MixedValueType.Double, MixedValueType.String, "name2");
-        addChannel(3, ChannelType.Input, MixedValueType.String, MixedValueType.Vector, "name3")
-            .addMetaData("key", "value");
-
-
-
-Parsing events
-**************
-
-
-High-level events are generate for the device from a :ref:`timing sequence <stipytimingseqences>`.
-These events must be parsed by the device and converted into hardware-level event instructions in 
-a device-specific way.  This conversion is done in the device's `parseEvents` function. 
-
-There are two event classes involved in parseEvents:
-
-* **RawEvent**: Event class containing a high-level description of the event information: (time, channel, value).
-* **SynchronousEvent**: User defined event class responsible for implementing the event on the hardware.
-
-The parseEvents function must convert the RawEvents generated by the timing sequence into a list of SynchronousEvents
-that are ready to play on the hardware.
-
-.. tabs::
-
-   .. code-tab:: c++
-    
-	    void parseEvents(const RawEventMap& events, SynchronousEventVector& synchedEvents)
-
-         // RawEventMap is of type std::map<double, std::vector<RawEvent>>
-         // SynchronousEventVector is of type std::vector<std::shared_ptr<SynchronousEvent>>
+      addInputChannel(10, MixedValueType::Number, "thermocouple voltage");
+      addInputChannel(11, MixedValueType::Number, MixedValueType::Vector, "vector args");
 
    .. code-tab:: py
-        
-        parseEvents(events: list, synchedEvents: list) -> None
 
-   .. code-tab:: java
+      ch = self.addOutputChannel(0, stipy.MixedValueType.Double, "coil current")
+      ch.setUnits("A").setMinValue(stipy.MixedValue(-10.0)).setMaxValue(stipy.MixedValue(10.0))
 
-        public void parseEvents(RawEventMap events, SynchronousEventVector synchedEvents);
+      self.addOutputChannel(1, stipy.MixedValueType.Int, "temperature setpoint")
 
+      ch = self.addOutputChannel(3, stipy.MixedValueType.Vector, "list output")
+      ch.setVectorFormat([
+          stipy.MixedValueType.Number,
+          stipy.MixedValueType.String,
+          stipy.MixedValueType.Boolean,
+      ]).setValueHint("[Frequency (MHz), name, enable]")
 
+      self.addInputChannel(10, stipy.MixedValueType.Number, "thermocouple voltage")
+      self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")
 
+Implementing read and write
+***************************
 
-.. tabs::
-
-   .. group-tab:: C++
-
-         **RawEventMap** is of type std::map<double, std::vector<RawEvent>>
-
-          The key of each map entry is the time (double) of the event(s). The value of each map entry is a 
-          vector of RawEvents that are scheduled to occur at this time.
-
-         **SynchronousEventVector** is of type std::vector<std::shared_ptr<SynchronousEvent>>
-
-   .. group-tab:: Python
-        
-        python
-
-   .. group-tab:: Java
-
-        java
-
-
-In general, multiple RawEvents can occur at the same time, as long as they are
-on different channels. This is why the RawEvents input to `parseEvents` are grouped by time.
-It is the job of the `parseEvents` function to parse this event information and generate a single hardware-level
-event (SynchronousEvent) for each time that is capable of implementing the desired changes on the channel(s) specified 
-by the RawEvent(s) scheduled at that time.
-
-.. Note::
-
-     **SynchronousEvent** is called 'synchronous' because all hardware changes on the channels are scheduled to occur at 
-     the same time for each SynchronousEvent. The grouping of RawEvent by their common time in the RawEvents input to 
-     `parseEvents` helps with this.
-
-**SynchronousEvent** is an abstract class, and so it first must be implemented by an appropriate derived class that  
-includes the hardware-specific implementation details. Instances of this custom derived class should then be generated 
-by the `parseEvents` function.
-
+Override ``writeChannel`` and ``readChannel`` for software-controlled channel
+I/O.  The public ``write`` and ``read`` methods validate against the channel
+definition and then call these hooks.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        class SynchronousEvent
-        {
-        public:
-            //...
-            virtual void loadEvent() = 0;
-            virtual void playEvent() = 0;
-            virtual void collectMeasurementData() = 0;
-            virtual void stopEvent() = 0;
-            virtual void pauseEvent() = 0;
-            virtual void unpauseEvent(bool retrigger) = 0;
-            //...
-        };
+      bool TestDevice::writeChannel(short channel, const STI::Utils::MixedValue& value)
+      {
+          switch (channel) {
+          case 0:
+              hardware.setCoilCurrent(value.getDouble());
+              return true;
+          case 3:
+              if (!value.isType({STI::Utils::MixedValueType::Number,
+                                 STI::Utils::MixedValueType::String,
+                                 STI::Utils::MixedValueType::Boolean})) {
+                  return false;
+              }
+              return hardware.sendVectorCommand(value.getVector());
+          default:
+              return false;
+          }
+      }
+
+      bool TestDevice::readChannel(short channel,
+                                   const STI::Utils::MixedValue& value,
+                                   STI::Utils::MixedValue& data)
+      {
+          if (channel == 10) {
+              data.setValue(hardware.readTemperature());
+              return true;
+          }
+          if (channel == 11 && value.isType({STI::Utils::MixedValueType::Number,
+                                             STI::Utils::MixedValueType::String})) {
+              data.setValue(hardware.readWithArgs(value.getVector()));
+              return true;
+          }
+          return false;
+      }
 
    .. code-tab:: py
 
-        class SynchronousEvent(SynchronousEventBase)
-            #...
-            loadEvent() -> None
-            playEvent() -> None
-            collectMeasurementData() -> None
-            stopEvent() -> None
-            pauseEvent() -> None
-            unpauseEvent(retrigger: bool) -> None
-        
-   .. code-tab:: java
+      def writeChannel(self, channel, value):
+          if channel == 0:
+              self.hardware.set_coil_current(value)
+              return True
+          if channel == 3:
+              mval = stipy.MixedValue()
+              mval.setValue(value)
+              if not mval.isType([
+                  stipy.MixedValueType.Number,
+                  stipy.MixedValueType.String,
+                  stipy.MixedValueType.Boolean,
+              ]):
+                  return False
+              self.hardware.send_vector_command(value)
+              return True
+          return False
 
-        public class SynchronousEventAdapter extends SynchronousEvent {
-            //...
-            public void loadEvent();
-            public void playEvent();
-            public void collectMeasurementData();
-            public void stopEvent();
-            public void pauseEvent();
-            public void unpauseEvent(boolean retrigger);
-        }
+      def readChannel(self, channel, value):
+          if channel == 10:
+              return self.hardware.read_temperature()
+          if channel == 11:
+              return self.hardware.read_with_args(value)
+          return None
 
-The function hooks of **SynchronousEvent** are used as follows:
-
-* **loadEvent()**:
-  This function is called at the beginning of each shot, before any events are played.
-  Use this function to setup the hardware to prepare for hard timing playback.
-  For example, if this device requires values to be preloaded into some buffer on the hardware
-  (e.g., an FPGA, or an arbitrary waveform generator), this can be done here.
-
-* **playEvent()**:
-  This function will be called at time specified in the timing file.
-  Use this function to control the hardware to implement the change on the requested channel.
-
-* **collectMeasurementData()**: 
-  This function is called after playEvent() and is used to retrieve any measurement data.
-  The new data is then attached to this event so it can later be saved at the end of the shot.
-
-* **stopEvent()**: 
-  Custom behavior for when "stop" is called. 
-  Use this to interrupt the hardware and put it back to the desired idle state.
-
-
-An example that implements a custom event class (named `parseEvents`) can be found under sti3/examples.
-
-
-
-
-Adding attributes
+Device attributes
 *****************
 
+Attributes are string-valued configuration fields.  Use setter callbacks to
+validate and apply a new value to hardware or member state.  Use refresher
+callbacks to synchronize the displayed value with current state.
 
 .. tabs::
 
    .. code-tab:: c++
 
-        LocalAttribute& addAttribute(const string& key, const string& initialValue);
-        LocalAttribute& addAttribute(const string& key, const string& initialValue, 
-                                     vector<string> allowedValues);
+      addAttribute("Downsample", 1)
+          .setSetter([this](const std::string& value) {
+              int ds = 0;
+              if (STI::Utils::stringToValue(value, ds) && ds > 0) {
+                  downsample = ds;
+                  return true;
+              }
+              return false;
+          })
+          .setRefresher([this]() {
+              return STI::Utils::valueToString(downsample);
+          });
 
-   .. code-tab:: py
-        
-        addAttribute(key: str, initialValue: str, allowedValues: str) -> LocalAttribute
-
-
-   .. code-tab:: java
-
-        public LocalAttribute addAttribute(String key, String initialValue);
-        public LocalAttribute addAttribute(String key, String initialValue, StringVector allowedValues);
-
-
-.. tabs::
-
-   .. tab:: C++
-    
-        Add callback functions for set/refresh
-
-   .. tab:: Python
-        
-        Add callback functions for set/refresh
-
-   .. tab:: Java
-
-        Define refresher/setter classes
-
-
-
-
-.. tabs::
-
-   .. code-tab:: c++
-
-        class TestDevice : public STI::Device::LocalDevice
-        {
-            //...
-
-            bool setTemperature(const std::string& value);
-            std::string getTemperature();
-        };
-
-        //in TestDevice constructor:
-        addAttribute("temperature", 57)                     //initial value is 57
-            .setSetter(&TestDevice::setTemperature, this)
-            .setRefresher(&TestDevice::getTemperature, this);
+      addAttribute("TriggerSource", "Hardware", {"Hardware", "Software"})
+          .setSetter([this](const std::string& value) {
+              hardwareTrigger = (value == "Hardware");
+              return true;
+          })
+          .addMetaData("help", "Selects the trigger source.");
 
    .. code-tab:: py
 
-        class TestDevice(stidevicepy.LocalDevice):
-            def __init__(self, ...):
-                #...
+      self.addAttribute("Downsample", "1") \
+          .setSetter(self.set_downsample) \
+          .setRefresher(lambda: str(self.downsample))
 
-                self.addAttribute("temperature", "57")      #initial value is "57"
-                    .setSetter(self.setTemperature)
-                    .setRefresher(self.getTemperature)
-        
-            def setTemperature(self, value):
-                #...
-            def getTemperature(self):
-                #...
+      self.addAttribute("TriggerSource", "Hardware", ["Hardware", "Software"]) \
+          .setSetter(self.set_trigger_source) \
+          .addMetadata("help", "Selects the trigger source.")
 
-   .. code-tab:: java
+      def set_downsample(self, value):
+          ds = int(value)
+          if ds <= 0:
+              return False
+          self.downsample = ds
+          return True
 
-        //in device constructor:
-        addAttribute("temperature", "57")                   //initial value is 57
-            .setRefresher( new AttributeRefresher() {
-                public String refresh() {
-                    String result;
-                    //...
-                    return result;
-                }
-            })
-            .setSetter(new AttributeSetter() {
-                public boolean set(String value) {
-                    //...
-                    return true;
-                }
-            });
+      def set_trigger_source(self, value):
+          self.hardware_trigger = (value == "Hardware")
+          return True
 
+Parsing timing events
+*********************
 
-Attributes can also have meta data.  Meta data consists of key-value pairs 
-of strings and may be used to describe things like formating instructions, units, 
-user interface details, etc.  One or more meta data entries may be added to an 
-attribute by chaining the *addMetaData* command during attribute construction.
+Timing files produce ``RawEvent`` objects grouped by event time.  A device
+turns those raw events into hardware-specific ``SynchronousEvent`` objects by
+overriding ``parseEvents``.
+
+During parsing:
+
+* validate requested channels, values, and hardware constraints
+* throw ``EventParsingException`` for invalid single events
+* throw ``EventConflictException`` when two events cannot coexist
+* call ``addMeasurement(rawEvent)`` on any synchronous event that will produce
+  measurement data
+* append each generated event to ``synchedEvents``
 
 .. tabs::
 
    .. code-tab:: c++
 
-        //in constructor
-        addAttribute(...)
-            .setSetter(...)
-            .setRefresher(...)
-            .addMetaData(key, value);
+      void TestDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn,
+                                   STI::Engine::SynchronousEventVector& synchedEvents)
+      {
+          for (const auto& [time, events] : eventsIn) {
+              bool hasInput = false;
+              for (const auto& event : events) {
+                  hasInput = hasInput || event.isMeasurementEvent();
+              }
+
+              if (hasInput && events.size() > 1) {
+                  throw STI::Engine::EventConflictException(
+                      events.at(0), events.at(1),
+                      "Input events must be scheduled by themselves.");
+              }
+
+              if (hasInput) {
+                  auto input = std::make_shared<InputEvent>(time);
+                  input->addMeasurement(events.front());
+                  synchedEvents.push_back(input);
+              }
+              else {
+                  auto output = std::make_shared<OutputEvent>(time);
+                  for (const auto& event : events) {
+                      if (event.value().getNumber() > 10) {
+                          throw STI::Engine::EventParsingException(
+                              event, "Requested value exceeds hardware limit.");
+                      }
+                      output->addValue(event.channel(), event.value());
+                  }
+                  synchedEvents.push_back(output);
+              }
+          }
+      }
 
    .. code-tab:: py
 
-        #in constructor
-        self.addAttribute(...)
-            .setSetter(...)
-            .setRefresher(...)
-            .addMetaData(key, value);
+      def parseEvents(self, eventsIn, synchedEvents):
+          for time, events in eventsIn.items():
+              has_input = any(evt.isMeasurementEvent() for evt in events)
 
-   .. code-tab:: java
+              if has_input and len(events) > 1:
+                  raise stipy.EventConflictException(
+                      events[0], events[1],
+                      "Input events must be scheduled by themselves.",
+                  )
 
-        //in constructor
-        addAttribute(...)
-            .setRefresher(...)
-            .setSetter(...)
-            .addMetaData(key, value);
+              if has_input:
+                  event = InputEvent(time)
+                  event.addMeasurement(events[0])
+                  synchedEvents.append(event)
+              else:
+                  event = OutputEvent(time)
+                  for raw in events:
+                      if raw.value().getValue() > 10:
+                          raise stipy.EventParsingException(
+                              raw, "Requested value exceeds hardware limit."
+                          )
+                      event.addValue(raw.channel(), raw.value())
+                  synchedEvents.append(event)
 
+Synchronous events
+******************
 
-.. Adding partner devices
-.. **********************
+``SynchronousEvent`` is the hardware-level event object played by the engine.
+Implement the hook methods that matter for the hardware.  ``loadEvent`` runs
+before playback, ``playEvent`` runs at the scheduled time, and
+``collectMeasurementData`` runs after playback to attach measurements.
 
+.. tabs::
 
-.. Message listeners
-.. *****************
+   .. code-tab:: c++
 
+      class OutputEvent : public STI::Engine::SynchronousEventAdapter
+      {
+      public:
+          explicit OutputEvent(double time)
+              : STI::Engine::SynchronousEventAdapter(time)
+          {
+          }
+
+          void addValue(short channel, const STI::Utils::MixedValue& value)
+          {
+              values[channel] = value;
+          }
+
+          void loadEvent() override
+          {
+              for (const auto& [channel, value] : values) {
+                  hardwareLoad(channel, value);
+              }
+          }
+
+          void playEvent() override
+          {
+              hardwareTrigger();
+          }
+
+      private:
+          std::map<short, STI::Utils::MixedValue> values;
+      };
+
+   .. code-tab:: py
+
+      class OutputEvent(stidevicepy.SynchronousEvent):
+          def __init__(self, time):
+              stidevicepy.SynchronousEvent.__init__(self, time)
+              self.values = {}
+
+          def addValue(self, channel, value):
+              self.values[channel] = value
+
+          def loadEvent(self):
+              for channel, value in self.values.items():
+                  hardware_load(channel, value)
+
+          def playEvent(self):
+              hardware_trigger()
+
+          def collectMeasurementData(self):
+              return
+
+          def stopEvent(self):
+              hardware_stop()
+
+          def pauseEvent(self):
+              return
+
+          def unpauseEvent(self, retrigger):
+              return
+
+For measurement events, set the measurement result during collection:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      void InputEvent::collectMeasurementData()
+      {
+          STI::Utils::MixedValue measured;
+          measured.setValue(hardwareRead());
+          setMeasurementResult(measured);
+      }
+
+   .. code-tab:: py
+
+      def collectMeasurementData(self):
+          for measurement in self.getMeasurements():
+              measurement.setMeasurementResult(hardware_read())
+
+Partner devices and partner events
+**********************************
+
+A device can declare partner devices by ``DeviceID``.  A partner can be used
+for normal channel and attribute I/O.  If the local device also declares the
+partner as an event target, ``parseEvents`` can add timing events for that
+partner while parsing local events.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      STI::Device::DeviceID supplyID("localhost/0/Supply");
+      addPartner(supplyID, "supply");
+      addEventTarget(supplyID, "supply");
+
+      partner("supply").write(0, 1.2);
+      partner("supply").setAttribute("Mode", "Remote");
+
+   .. code-tab:: py
+
+      supply_id = stipy.DeviceID("localhost/0/Supply")
+      self.addPartner(supply_id, "supply")
+      self.addEventTarget(supply_id, "supply")
+
+      self.partner("supply").write(0, 1.2)
+      self.partner("supply").setAttribute("Mode", "Remote")
+
+Device monitors
+***************
+
+Use monitors for live status values.  ``addMonitor`` creates a manually updated
+monitor.  ``addAutoMonitor`` creates a monitor whose callback runs on an
+interval.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      auto& state = addMonitor("Status/state")
+          .addMetaData("help", "Current device state.");
+      state.setValue("Idle");
+
+      addAutoMonitor("Status/temperatureC", 1.0, [this]() {
+          return STI::Utils::MixedValue(readTemperatureC());
+      }).addMetaData("units", "C");
+
+   .. code-tab:: py
+
+      self.stateMonitor = self.addMonitor("Status/state") \
+          .addMetadata("help", "Current device state.") \
+          .setValue("Idle")
+
+      self.temperatureMonitor = self.addAutoMonitor(
+          "Status/temperatureC",
+          1.0,
+          self.read_temperature_c,
+      ).addMetadata("units", "C")
+
+      def read_temperature_c(self):
+          return 22.0
+
+Device tasks
+************
+
+Tasks are background work owned by the device.  Use ``IntervalTask`` for fixed
+period work, ``AppointmentTask`` for a time-of-day task, or derive from
+``Task`` for custom scheduling.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      auto interval = std::make_shared<STI::Utils::IntervalTask>(
+          "field poll",
+          "00:00:02",
+          [this]() {
+              STI::Utils::MixedValue data;
+              read(11, data);
+              log("tasks") << "field = " << data.print() << std::endl;
+          });
+      addTask(interval);
+
+      auto appointment = std::make_shared<STI::Utils::AppointmentTask>(
+          "daily reset",
+          "08:00:00",
+          STI::Utils::AppointmentTask::AppointmentRepeatType::Everyday,
+          [this]() { write(0, 0.0); });
+      addTask(appointment);
+
+   .. code-tab:: py
+
+      def poll_field():
+          self.log("tasks").append(f"field = {self.read(11)}")
+
+      self.addTask(stipy.IntervalTask("field poll", "00:00:02", poll_field))
+
+      self.addTask(stipy.AppointmentTask(
+          "daily reset",
+          "08:00:00",
+          stipy.AppointmentRepeatType.Everyday,
+          lambda: self.write(0, 0.0),
+      ))
+
+Logging
+*******
+
+Use ``log()`` for the default log and ``log(name)`` for a named log.  Logs can
+also schedule recurring read, write, and attribute log tasks.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      log() << "Constructing TestDevice" << std::endl;
+      log("testing") << "A log comment" << std::endl;
+
+      log().addAttributeLogTask("x", "00:00:05");
+      log().addWriteLogTask(0, "00:00:06", STI::Utils::MixedValue(11.2));
+
+      STI::Utils::MixedValue args;
+      args.addValue(5.7);
+      args.addValue("example data");
+      log("testing").addReadLogTask(11, "00:00:02", args);
+
+   .. code-tab:: py
+
+      self.log().append("Constructing TestDevice")
+      self.log("testing").append("A log comment")
+
+      self.log().addAttributeLogTask("x", "00:00:05")
+      self.log().addWriteLogTask(0, "00:00:06", 11.2)
+      self.log("testing").addReadLogTask(11, "00:00:02", [5.7, "example data"])
+
+Device profiles
+***************
+
+Profiles save and restore the current channel and attribute state.  Device
+authors usually only need to define the channels and attributes correctly; the
+profile manager handles saving and loading.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::shared_ptr<STI::Device::ProfileManager> profiles;
+      if (getProfileManager(profiles)) {
+          profiles->saveCurrentProfile("safe", STI::Device::ProfileType::All, false);
+          profiles->loadProfile("safe", STI::Device::ProfileType::All, false);
+      }
+
+   .. code-tab:: py
+
+      profiles = self.getProfileManager()
+      profiles.saveCurrentProfile("safe", stidevicepy.ProfileType.All, False)
+      profiles.loadProfile("safe", stidevicepy.ProfileType.All, False)
+
+Message listeners
+*****************
+
+Local devices can listen to their own messages or to messages from partner
+devices.  The C++ API uses typed listeners.  The Python helper dispatches based
+on ``DeviceMessageType``.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::shared_ptr<STI::Device::DeviceMessageReceiver> receiver;
+      if (getMessageReceiver(receiver)) {
+          receiver->addListener<STI::Device::ChannelUpdateMessage>(
+              getID(),
+              "channel listener",
+              [](const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess) {
+                  for (const auto& update : mess->channelValues) {
+                      std::cout << update.first << " -> "
+                                << update.second.print() << std::endl;
+                  }
+              });
+      }
+
+   .. code-tab:: py
+
+      receiver = self.getMessageReceiver()
+
+      def on_channel_update(message):
+          for channel, value in message.channelValues:
+              print(channel, value)
+
+      receiver.addListener(
+          stidevicepy.DeviceMessageType.ChannelUpdate,
+          self.getID(),
+          "channel listener",
+          on_channel_update,
+      )
+
+File measurements
+*****************
+
+Measurement events can attach scalar data through ``setMeasurementResult``.
+For file-producing hardware, use the device persistence/file APIs to make a
+file holder and attach file-backed data to the result.  See
+``examples/cpp/fileMeasurement`` for the current C++ pattern.
+
+Example map
+***********
+
+Use these examples as starting points for specific device features:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Example
+     - Feature
+   * - ``simpleDevice``
+     - minimum ``LocalDevice`` and ``NetworkDeviceHub``
+   * - ``configFile``
+     - loading device and hub configuration from a file
+   * - ``readWrite``
+     - channel definitions, metadata, ``writeChannel``, and ``readChannel``
+   * - ``attributes``
+     - attribute setters, refreshers, allowed values, and metadata
+   * - ``parseEvents``
+     - ``RawEvent`` parsing, custom ``SynchronousEvent`` classes, parse errors
+   * - ``partnerEvents``
+     - event targets and partner-device timing
+   * - ``listeners``
+     - message receiver callbacks
+   * - ``monitors``
+     - manual monitors and automatic monitor updates
+   * - ``tasks``
+     - interval, appointment, and custom tasks
+   * - ``logging``
+     - device logs and recurring log tasks
+   * - ``profiles``
+     - saving and loading channel and attribute state
+   * - ``fileMeasurement``
+     - storing file-oriented measurement data

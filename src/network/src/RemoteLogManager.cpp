@@ -59,6 +59,30 @@ void RemoteLogManager::getLogNames(std::set<std::string>& names)
 	}
 }
 
+void RemoteLogManager::getNetworkLogNames(std::set<std::string>& names)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (isDisabled()) return;
+
+    STI::TNetwork::TStringSeq_var tNames(new STI::TNetwork::TStringSeq);
+
+    try {
+        getTRef()->getNetworkLogNames(tNames);    //remote call
+
+        std::vector<std::string> namesVec;
+        convert<STI::TNetwork::TStringSeq, std::vector<std::string>>(tNames, namesVec);
+
+        names.insert(namesVec.begin(), namesVec.end());
+    }
+    catch (CORBA::TRANSIENT&) {
+    }
+    catch (CORBA::SystemException&) {
+    }
+    catch (CORBA::Exception&) {
+    }
+}
+
 int RemoteLogManager::getLogCount(const LogFileFilter& filter)
 {
 	return getLogCount(remoteDeviceID, filter);
@@ -89,6 +113,28 @@ int RemoteLogManager::getLogCount(const DeviceID& deviceID, const LogFileFilter&
 	return count;
 }
 
+int RemoteLogManager::getNetworkLogCount(const LogFileFilter& filter)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (isDisabled()) return 0;
+
+    int count = 0;
+
+    try {
+        auto result = getTRef()->getNetworkLogCount(convert<LogFileFilter, TLogFileFilter>(filter));    //remote call
+        count = static_cast<int>(result);
+    }
+    catch (CORBA::TRANSIENT&) {
+    }
+    catch (CORBA::SystemException&) {
+    }
+    catch (CORBA::Exception&) {
+    }
+
+    return count;
+}
+
 void RemoteLogManager::getLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids)
 {
 	std::unique_lock<std::mutex> logLock(logMutex);
@@ -109,6 +155,27 @@ void RemoteLogManager::getLogIDs(const LogFileFilter& filter, std::vector<LogID>
 	catch (CORBA::Exception&)
 	{
 	}
+}
+
+void RemoteLogManager::getNetworkLogIDs(const LogFileFilter& filter, std::vector<LogID>& ids)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (isDisabled()) return;
+
+    STI::TNetwork::TLogIDSeq_var tIDs(new STI::TNetwork::TLogIDSeq);
+
+    try {
+        getTRef()->getNetworkLogIDs(convert<LogFileFilter, TLogFileFilter>(filter), tIDs);    //remote call
+
+        convert<TLogID, LogID>(tIDs, ids);
+    }
+    catch (CORBA::TRANSIENT&) {
+    }
+    catch (CORBA::SystemException&) {
+    }
+    catch (CORBA::Exception&) {
+    }
 }
 
 void RemoteLogManager::getLogIDs(const DeviceID& deviceID, const LogFileFilter& filter, std::vector<LogID>& ids)
@@ -199,7 +266,32 @@ bool RemoteLogManager::getLogs(const LogFileFilter& filter, std::vector<LogFile>
 	}
 	catch (CORBA::Exception&)
 	{
-	}
+    }
+    return success;
+}
+
+bool RemoteLogManager::getNetworkLogs(const LogFileFilter& filter, std::vector<LogFile>& files)
+{
+    std::unique_lock<std::mutex> logLock(logMutex);
+
+    if (isDisabled()) return false;
+
+    bool success = false;
+
+    STI::TNetwork::TLogFileSeq_var tLogFiles(new STI::TNetwork::TLogFileSeq);
+
+    try {
+        success = getTRef()->getNetworkLogs(convert<LogFileFilter, TLogFileFilter>(filter), tLogFiles);    //remote call
+
+        success &= convert<TLogFile, LogFile>(tLogFiles, files);
+    }
+    catch (CORBA::TRANSIENT&) {
+    }
+    catch (CORBA::SystemException&) {
+    }
+    catch (CORBA::Exception&) {
+    }
+
     return success;
 }
 
@@ -280,4 +372,3 @@ bool RemoteLogManager::ping() const
 
 	return success;
 }
-

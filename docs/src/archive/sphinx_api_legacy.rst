@@ -1,7 +1,11 @@
 
-====
-Test
-====
+=======================
+Legacy Sphinx API Test
+=======================
+
+This page was an early experiment for embedding Doxygen output directly into
+Sphinx with Breathe.  It is archived because the maintained API reference is
+the standalone Doxygen output linked from ``api.rst``.
 
 
 .. graphviz::
@@ -26,4 +30,3 @@ Test
 .. doxygenclass:: STI::Engine::EventEngine
    :project: STI
    :members:
-

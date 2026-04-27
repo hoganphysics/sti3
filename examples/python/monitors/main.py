@@ -23,7 +23,7 @@ print("Monitor IDs:", monitor_manager.getIDs())
 print("Temperature:", monitor_manager.getValue("Status/temperatureC"))
 print("State:", monitor_manager.getValue("Status/state"))
 
-nameServiceAddr = "192.168.1.109:2809"   # OmniORB NameService
+nameServiceAddr = "192.168.88.252:2809"   # OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)

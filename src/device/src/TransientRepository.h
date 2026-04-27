@@ -24,6 +24,7 @@ public:
     ~TransientRepository();
 
     std::string prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate);
+    ResultsPaths preparePaths(const ParseID& pid);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
 
@@ -39,6 +40,7 @@ public:
 
     bool saveShot(const ShotID& sid, const std::shared_ptr<FullShotResult>& fullShotResult);
 
+    bool saveSequenceParseResult(const SequenceEntryID& id, const std::shared_ptr<ParseResult>& parseResult, const EngineJobStatus& parseStatus);
     bool updateSequence(const SequenceEntryID& id, const ShotID& shotID, const EngineJobStatus& shotStatus);
     bool saveSequence(const SequenceID& seqid, const std::shared_ptr<SequenceResult>& sequenceResult);
 
@@ -61,7 +63,6 @@ private:
 } //STI
 
 #endif
-
 
 
 

@@ -20,6 +20,7 @@
   `cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" ..`
 - Build: `cd build-ninja && conda run --no-capture-output -n sti3-build cmake --build . --parallel 8`
 - Run tests: `ctest --test-dir build-ninja --output-on-failure`
+- The stinetwork library uses CORBA for rpc. The rpc interface is defined by the idl files in `src/network/idl/`. After changes are made to any idl file, the CORBA stubs need to be regenerated. This is done using a script `src/network/compileIDL.sh`, which should give no errors.
 
 ## C++ conventions
 
