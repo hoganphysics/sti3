@@ -6,7 +6,7 @@ source:
   path: ..
 
 build:
-  number: 128
+  number: 130
 
 requirements:
   build:
@@ -17,6 +17,7 @@ requirements:
     - python
     - pip
     - pybind11           # for headers/cmake config
+    - omniorb            # for omniidl during IDL stub generation
     - vs2022_win-64      # [win]
     # - openssl
   host:

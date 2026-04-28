@@ -9,6 +9,7 @@
 #include "NetworkFileHolder.h"
 #include "NetworkFileServer.h"
 #include "NetworkResultsCollector.h"
+#include <sti/utils/VirtualFileHolder.h>
 #include <sti/engine/RawEvent.h>
 
 
@@ -41,8 +42,9 @@ using ::STI::TNetwork::TEngineJobStatus;
 using ::STI::TNetwork::TFileServer_var;
 
 
-RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager)
-: TReferenceHolder<TPersistenceManager>(manager)
+RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager, const std::string& originID)
+: TReferenceHolder<TPersistenceManager>(manager),
+  fileFactory(std::make_shared<STI::Network::NetworkFileHolderFactory>(originID))
 {
 }
 
@@ -251,14 +253,30 @@ void RemotePersistenceManager::setFileHolderFactory(const std::shared_ptr<STI::U
 
 std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)
 {
-	std::shared_ptr<STI::Utils::FileHolder> fileHolder;	//null
-	return fileHolder;
+	if (fileFactory == 0) {
+		return std::shared_ptr<STI::Utils::FileHolder>();
+	}
+
+	return fileFactory->makeFileHolder(path, filename);
 }
 
 std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
 {
-	std::shared_ptr<STI::Utils::FileHolder> fileHolder; //null
-	return fileHolder;
+	if (fileFactory == 0) {
+		return std::shared_ptr<STI::Utils::FileHolder>();
+	}
+
+	return fileFactory->makeVirtualFileHolder(fileID);
+}
+
+std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFileHolder(
+	const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder)
+{
+	if (fileFactory == 0) {
+		return std::shared_ptr<STI::Utils::FileHolder>();
+	}
+
+	return fileFactory->makeVirtualFileHolder(backingHolder);
 }
 
 std::shared_ptr<STI::Utils::VirtualFileServer> RemotePersistenceManager::makeVirtualFileServer()

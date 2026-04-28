@@ -100,7 +100,7 @@ std::shared_ptr<STI::Utils::FileHolder> NetworkFileHolderFactory::makeFileHolder
 std::shared_ptr<STI::Utils::FileHolder> NetworkFileHolderFactory::makeVirtualFileHolder(const STI::Utils::FileID& fileID)
 {
     std::filesystem::path newPath = originID;   //prepend orignID before path of virtual files
-    newPath += fileID.path;
+    newPath /= fileID.path;
     STI::Utils::FileID newFileID = fileID;
     newFileID.path = newPath.string();
     
@@ -109,3 +109,13 @@ std::shared_ptr<STI::Utils::FileHolder> NetworkFileHolderFactory::makeVirtualFil
     return std::static_pointer_cast<STI::Utils::FileHolder>(holder);
 }
 
+std::shared_ptr<STI::Utils::FileHolder> NetworkFileHolderFactory::makeVirtualFileHolder(
+    const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder)
+{
+    if (backingHolder == 0) {
+        return std::shared_ptr<STI::Utils::FileHolder>();
+    }
+
+    auto holder = std::make_shared<NetworkFileHolder>(backingHolder->getID(), backingHolder);
+    return std::static_pointer_cast<STI::Utils::FileHolder>(holder);
+}

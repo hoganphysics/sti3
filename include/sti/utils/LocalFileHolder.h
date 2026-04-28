@@ -17,6 +17,7 @@ namespace Utils
 {
 
 class BinaryData;
+class VirtualFileHolder;
 
 class LocalFileHolder : public FileHolder
 {
@@ -81,6 +82,7 @@ public:
 
     std::shared_ptr<FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
     std::shared_ptr<FileHolder> makeVirtualFileHolder(const FileID& fileID);
+    std::shared_ptr<FileHolder> makeVirtualFileHolder(const std::shared_ptr<VirtualFileHolder>& backingHolder);
 
     std::string originID;
 };

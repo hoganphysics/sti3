@@ -13,6 +13,12 @@ export CMAKE_PREFIX_PATH="$PREFIX;$PREFIX/Library"
 # Point CMake to the host prefix (libs live here). This is cross-platform friendly.
 export OPENSSL_ROOT_DIR="$PREFIX"
 
+mkdir -p "$SRC_DIR/src/network/src/generated"
+(
+  cd "$SRC_DIR/src/network"
+  bash ./compileIDL.sh
+)
+
   # -DCMAKE_BUILD_TYPE=Debug \
   # -DCMAKE_CXX_FLAGS_DEBUG="-Og -g3 -fno-omit-frame-pointer" \
   

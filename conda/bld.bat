@@ -15,6 +15,16 @@ REM CMake needs to know where to look for deps
 set CMAKE_PREFIX_PATH=%PREFIX%;%PREFIX%\\Library
 set OPENSSL_ROOT_DIR=%PREFIX%\\Library
 
+REM Generate CORBA stubs from IDL before configuring CMake.
+if not exist "%SRC_DIR%\src\network\src\generated" mkdir "%SRC_DIR%\src\network\src\generated"
+pushd "%SRC_DIR%\src\network" || exit /b 1
+call compileIDL.bat
+if errorlevel 1 (
+  popd
+  exit /b 1
+)
+popd
+
 REM   -DCMAKE_BUILD_TYPE=Release ^
 
 REM Configure

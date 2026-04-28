@@ -13,6 +13,7 @@ namespace Utils
 
 class FileHolder;
 class FileID;
+class VirtualFileHolder;
 
 class FileHolderFactory
 {
@@ -21,6 +22,7 @@ public:
     
     virtual std::shared_ptr<FileHolder> makeFileHolder(const std::string& path, const std::string& filename) = 0;
     virtual std::shared_ptr<FileHolder> makeVirtualFileHolder(const FileID& fileID) = 0;
+    virtual std::shared_ptr<FileHolder> makeVirtualFileHolder(const std::shared_ptr<VirtualFileHolder>& backingHolder) = 0;
 
 };
 

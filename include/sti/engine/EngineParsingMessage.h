@@ -4,6 +4,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/utils/utils.h>
 #include <sti/device/DeviceID.h>
+#include <sti/engine/RawEvent.h>
 
 #include <string>
 #include <vector>

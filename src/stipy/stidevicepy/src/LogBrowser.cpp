@@ -2,11 +2,7 @@
 
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/PersistenceManager.h>
-#include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/VirtualFileHolder.h>
-
-#include "NetworkFileHolder.h"
-#include "RemoteFileServer.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -23,13 +19,11 @@ using STI::Device::LogID;
 using STI::Device::LogManager;
 using STI::Device::LogRecord;
 using STI::Device::PersistenceManager;
-using STI::Network::NetworkFileHolder;
-using STI::Network::RemoteFileServer;
 using STI::Python::LogBrowser;
 using STI::Utils::FileHolder;
+using STI::Utils::FileHolderFactory;
 using STI::Utils::FileServer;
 using STI::Utils::FileTransferType;
-using STI::Utils::LocalFileHolder;
 using STI::Utils::TimeStamp;
 using STI::Utils::VirtualFileHolder;
 
@@ -98,51 +92,6 @@ std::shared_ptr<Device> resolveSourceDevice(
     return sourceDevice;
 }
 
-bool isRemoteFileServer(const std::shared_ptr<FileServer>& fileServer)
-{
-    return std::dynamic_pointer_cast<RemoteFileServer>(fileServer) != nullptr;
-}
-
-std::shared_ptr<FileHolder> makeTransferDestination(
-    const std::shared_ptr<VirtualFileHolder>& virtualHolder,
-    const std::shared_ptr<FileServer>& sourceFileServer)
-{
-    if (virtualHolder == nullptr) {
-        return nullptr;
-    }
-
-    if (!isRemoteFileServer(sourceFileServer)) {
-        return virtualHolder;
-    }
-
-    try {
-        return std::make_shared<NetworkFileHolder>(virtualHolder->getID(), virtualHolder);
-    }
-    catch (const CORBA::Exception&) {
-        throw std::runtime_error("Failed to create a remote paging buffer for log browser.");
-    }
-}
-
-std::shared_ptr<FileHolder> makeSaveDestination(
-    const std::shared_ptr<LocalFileHolder>& localHolder,
-    const std::shared_ptr<FileServer>& sourceFileServer)
-{
-    if (localHolder == nullptr) {
-        return nullptr;
-    }
-
-    if (!isRemoteFileServer(sourceFileServer)) {
-        return localHolder;
-    }
-
-    try {
-        return std::make_shared<NetworkFileHolder>(localHolder->getID(), localHolder);
-    }
-    catch (const CORBA::Exception&) {
-        throw std::runtime_error("Failed to create a remote file destination for log browser save.");
-    }
-}
-
 std::string readVirtualHolderText(const std::shared_ptr<VirtualFileHolder>& virtualHolder)
 {
     if (virtualHolder == nullptr) {
@@ -189,9 +138,11 @@ int checkedOffset(std::size_t offset)
 
 LogBrowser::LogBrowser(const std::shared_ptr<LogManager>& sourceLogManager,
     const std::shared_ptr<FileServer>& sourceFileServer,
+    const std::shared_ptr<FileHolderFactory>& destinationFileHolderFactory,
     const LogFileRecord& logFileRecord)
 : sourceLogManager(sourceLogManager),
   sourceFileServer(sourceFileServer),
+  destinationFileHolderFactory(destinationFileHolderFactory),
   logFileRecord(logFileRecord)
 {
 }
@@ -282,11 +233,14 @@ std::string LogBrowser::transferText(int offset, int lines) const
     if (sourceFileServer == nullptr) {
         throw std::runtime_error("Log browser has no source file server.");
     }
+    if (destinationFileHolderFactory == nullptr) {
+        throw std::runtime_error("Log browser has no destination file holder factory.");
+    }
 
     auto virtualHolder = std::make_shared<VirtualFileHolder>(
         logFileRecord.id.deviceID.getID(),
         logFileRecord.fileID);
-    auto destination = makeTransferDestination(virtualHolder, sourceFileServer);
+    auto destination = destinationFileHolderFactory->makeVirtualFileHolder(virtualHolder);
 
     if (destination == nullptr) {
         throw std::runtime_error("Failed to allocate a log paging buffer.");
@@ -388,17 +342,18 @@ std::string LogBrowser::saveLocal(const std::string& path) const
     if (sourceFileServer == nullptr) {
         throw std::runtime_error("Log browser has no source file server.");
     }
+    if (destinationFileHolderFactory == nullptr) {
+        throw std::runtime_error("Log browser has no destination file holder factory.");
+    }
 
     fs::path outputPath(path);
     if (fs::exists(outputPath) && fs::is_directory(outputPath)) {
         outputPath /= logFileRecord.fileID.filename;
     }
 
-    auto localHolder = std::make_shared<LocalFileHolder>(
-        logFileRecord.id.deviceID.getID(),
+    auto destination = destinationFileHolderFactory->makeFileHolder(
         outputDirectoryForPath(outputPath),
         outputPath.filename().string());
-    auto destination = makeSaveDestination(localHolder, sourceFileServer);
 
     if (destination == nullptr) {
         throw std::runtime_error("Failed to allocate a destination file for saveLocal.");
@@ -469,7 +424,7 @@ std::shared_ptr<STI::Python::LogBrowser> STI::Python::openLog(
         throw std::runtime_error("Could not get the source file server for log: " + describeLogID(logID));
     }
 
-    auto browser = std::make_shared<LogBrowser>(sourceLogManager, sourceFileServer, logFileRecord);
+    auto browser = std::make_shared<LogBrowser>(sourceLogManager, sourceFileServer, persistenceManager, logFileRecord);
     browser->tail(tailLines);
     return browser;
 }

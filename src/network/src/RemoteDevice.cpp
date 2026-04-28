@@ -377,6 +377,8 @@ bool RemoteDevice::getMonitorManager(std::shared_ptr<STI::Device::MonitorManager
 
 bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::PersistenceManager>& manager)
 {
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
 	std::unique_lock<std::mutex> deviceLock(deviceMutex);
 
 	if (isLive(remotePersistenceManager)) {
@@ -396,7 +398,7 @@ bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 		tPersistenceManager = getTRef()->getPersistenceManager();	//remote call
 
 		if (!CORBA::is_nil(tPersistenceManager)) {
-			remotePersistenceManager = std::make_shared<RemotePersistenceManager>(tPersistenceManager);
+			remotePersistenceManager = std::make_shared<RemotePersistenceManager>(tPersistenceManager, remoteID.getID());
 			addDependent(remotePersistenceManager);
 		}
 	}

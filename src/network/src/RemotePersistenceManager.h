@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <mutex>
+#include <string>
 
 namespace STI
 {
@@ -18,7 +19,7 @@ class RemotePersistenceManager : public STI::Device::PersistenceManager,
 {
 public:
 
-	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager);
+	RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager, const std::string& originID);
     ~RemotePersistenceManager();
 
     bool findShot(const STI::Engine::ShotID& sid);
@@ -40,6 +41,7 @@ public:
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder);
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
 
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
