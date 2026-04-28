@@ -308,3 +308,11 @@ std::shared_ptr<FileHolder> LocalFileHolderFactory::makeVirtualFileHolder(const 
     return std::static_pointer_cast<FileHolder>(holder);
 }
 
+std::shared_ptr<FileHolder> LocalFileHolderFactory::makeVirtualFileHolder(const std::shared_ptr<VirtualFileHolder>& backingHolder)
+{
+    if (backingHolder == 0) {
+        return std::shared_ptr<FileHolder>();
+    }
+
+    return std::static_pointer_cast<FileHolder>(backingHolder);
+}

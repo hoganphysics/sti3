@@ -5,6 +5,7 @@
 #include <sti/device/LogID.h>
 #include <sti/device/LogManager.h>
 #include <sti/device/LogRecord.h>
+#include <sti/utils/FileHolderFactory.h>
 #include <sti/utils/FileServer.h>
 #include <sti/utils/TimeStamp.h>
 
@@ -24,6 +25,7 @@ public:
 
     LogBrowser(const std::shared_ptr<STI::Device::LogManager>& sourceLogManager,
         const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer,
+        const std::shared_ptr<STI::Utils::FileHolderFactory>& destinationFileHolderFactory,
         const STI::Device::LogFileRecord& logFileRecord);
     ~LogBrowser();
 
@@ -57,6 +59,7 @@ private:
     // Keep both handles alive so paging continues to talk to the origin device.
     std::shared_ptr<STI::Device::LogManager> sourceLogManager;
     std::shared_ptr<STI::Utils::FileServer> sourceFileServer;
+    std::shared_ptr<STI::Utils::FileHolderFactory> destinationFileHolderFactory;
 
     STI::Device::LogFileRecord logFileRecord;
 

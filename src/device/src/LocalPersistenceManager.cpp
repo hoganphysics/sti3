@@ -227,6 +227,17 @@ std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeVirtualFile
     return nullFile;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeVirtualFileHolder(
+    const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder)
+{
+    if (fileHolderFactory != 0) {
+        return fileHolderFactory->makeVirtualFileHolder(backingHolder);
+    }
+
+    std::shared_ptr<STI::Utils::FileHolder> nullFile;
+    return nullFile;
+}
+
 
 void LocalPersistenceManager::setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo)
 {

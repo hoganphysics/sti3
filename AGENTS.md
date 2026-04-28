@@ -5,10 +5,17 @@
 - This is a C++ library/application for sti3.
 - Code lives in `src/`; tests live in `test/`; public headers live in `include/`.
 - The core library is stidevice and lives in `src/device/src/`
-- The library providing network support is stinetwork and lives in `src/device/src/`
+- The library providing network support is stinetwork and lives in `src/network/src/`
 - There is a pybind11 wrapper library called stipy that lives in `src/stipy`
 - Documentation lives in `docs/`
 - Examples of C++ and python library usage live in `examples/`
+
+## Dependency boundaries
+
+- Keep CORBA, omniORB, generated IDL headers, and `src/network/src` implementation details encapsulated in `stinetwork`.
+- Do not add `stinetwork` headers or omniORB compile definitions to `stidevice`, `stidevicepy`, or shared utility code just so a caller can participate in network file transfer.
+- Prefer abstract interfaces from `include/sti`, such as `FileHolder`, `FileHolderFactory`, `FileServer`, and `PersistenceManager`. When code outside `stinetwork` needs a remote-capable transfer destination, ask the appropriate `PersistenceManager` or `FileHolderFactory` to create/wrap the destination holder and pass it around as `std::shared_ptr<FileHolder>`.
+- If a local object must remain readable after a transfer, keep the caller-owned local holder and add a narrow factory overload that wraps it as the transport-specific holder, rather than exposing `NetworkFileHolder` to the caller.
 
 ## Build & test for C++ libraries
 
