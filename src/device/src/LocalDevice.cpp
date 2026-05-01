@@ -278,7 +278,7 @@ PartnerDevice LocalDevice::partner(const DeviceID& id)
 	if (it != partnerDevices.end()) {
 		localCollection->get(id, device);
 	}
-	PartnerDevice partner(this, device);
+	PartnerDevice partner(this, id, device);
 	return partner;
 }
 

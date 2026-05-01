@@ -18,12 +18,20 @@ using STI::Device::ProfileManager;
 
 
 PartnerDevice::PartnerDevice(LocalDevice* localDevice, const std::shared_ptr<Device>& device)
-: localDevice(localDevice), device(device)
+: PartnerDevice(localDevice, device != 0 ? device->getID() : DeviceID(), device)
+{
+}
+
+PartnerDevice::PartnerDevice(LocalDevice* localDevice, const DeviceID& partnerID, const std::shared_ptr<Device>& device)
+: localDevice(localDevice), partnerID(partnerID), device(device)
 {
 }
 
 const DeviceID PartnerDevice::getID() const
 {
+	if (!partnerID.empty()) {
+		return partnerID;
+	}
 	if (device != 0) {
 		return device->getID();
 	}

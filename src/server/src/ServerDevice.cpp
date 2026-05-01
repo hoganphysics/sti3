@@ -32,9 +32,6 @@ ServerDevice::ServerDevice(const STI::Utils::Configuration& config)
 
 	addChannel(0, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
 
-	partnerID = STI::Device::DeviceID("TestDevice2", "localhost", 2, "sr-magis/2/Frame2");
-	addEventTarget(partnerID);
-
 	// std::shared_ptr<AttributeManager> attributeManager;
 	// getAttributeManager(attributeManager);
 	addAttribute("test", "45");
@@ -131,8 +128,6 @@ void ServerDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::En
 {
 	bool inputEvent;
 
-	STI::Engine::RawEventTargetChannel partnerCh(0);
-
 	for (auto& tuple : eventsIn) {
 		// Here 'tuple' is of type { time, vector<RawEvent> }, where the vector is the set of events at this time.
 		inputEvent = false;
@@ -165,11 +160,6 @@ void ServerDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::En
 					"The value " + rawEvent.value().print() + " exceeds the maximium allowed value for this channel. Max value is 10.");
 				}
 				testDeviceOutputEvent->addValue(rawEvent.channel(), rawEvent.value());	//attach values to event for use later
-
-				if (rawEvent.channel() == 0) {
-                	// Example of sending a partner event when this device has an output event on channel 0 
-                    partner(partnerID).addEvent(tuple.first, partnerCh, 3.2*rawEvent.value().getNumber(), rawEvent);
-				}
 
 			}
 			synchedEvents.push_back(testDeviceOutputEvent);
@@ -216,4 +206,3 @@ void ServerDevice::TestDeviceOutputEvent::playEvent()
 		std::cout << "Playing channel #" << v.first << " with value " << v.second.getNumber() << "." << std::endl;
 	}
 }
-

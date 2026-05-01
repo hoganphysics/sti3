@@ -21,8 +21,6 @@ public:
 
 	void parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engine::SynchronousEventVector& synchedEvents);
 
-	STI::Device::DeviceID partnerID;
-
 	//Custom event class for this device's output channels
 	class TestDeviceOutputEvent : public STI::Engine::SynchronousEvent
 	{
@@ -52,4 +50,3 @@ public:
 
 
 #endif
-

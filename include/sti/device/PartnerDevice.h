@@ -27,6 +27,7 @@ class PartnerDevice : public Device
 public:
 
 	PartnerDevice(LocalDevice* localDevice, const std::shared_ptr<Device>& partnerDevice);
+	PartnerDevice(LocalDevice* localDevice, const DeviceID& partnerID, const std::shared_ptr<Device>& partnerDevice);
 	virtual ~PartnerDevice() {}
 	
 	const DeviceID getID() const;
@@ -64,6 +65,7 @@ private:
 	void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) {}
 
 	LocalDevice* localDevice;
+	DeviceID partnerID;
 	std::shared_ptr<Device> device;
 };
 

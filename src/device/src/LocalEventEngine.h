@@ -147,6 +147,10 @@ private:
 	void mergePartnerEvents(const DeviceEventMap& events);
 
 	void addEventsToParseResult(const std::shared_ptr<RawEventGroup>& newEvents);
+	void addMissingTargetsFromEvents(const std::shared_ptr<RawEventGroup>& eventGroup);
+	void recordAbstractShotState(STI::Engine::EventEngineJob& job);
+	bool isAbstractShot() const;
+	void appendMissingTargets(EnginePlayingMessage& message) const;
 
 	void updateChannelValues(const RawEventVector& rawEvents);
 

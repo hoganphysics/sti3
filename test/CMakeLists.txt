@@ -55,6 +55,7 @@ add_executable(sti3_test_device
   device/taskscheduler_tests.cpp
   device/intervaltask_tests.cpp
   device/appointmenttask_tests.cpp
+  device/eventengine_missing_partner_tests.cpp
   device/distributer_tests.cpp
   device/locallogmanager_tests.cpp
   device/logger_tests.cpp

@@ -340,6 +340,65 @@ void LocalEventEngine::addEventsToParseResult(const std::shared_ptr<RawEventGrou
 	}
 }
 
+void LocalEventEngine::addMissingTargetsFromEvents(const std::shared_ptr<RawEventGroup>& eventGroup)
+{
+	if (eventGroup == 0) return;
+
+	auto events = eventGroup->getEvents();
+	if (events != 0) {
+		for (auto& evt : *events) {
+			if (!evt.target().isAbstract()) {
+				auto id = evt.target().device().deviceID();
+				if (!id.empty()) {
+					missingTargets.insert(id);
+				}
+			}
+		}
+	}
+
+	for (auto& subgroup : eventGroup->getSubgroups()) {
+		addMissingTargetsFromEvents(subgroup);
+	}
+}
+
+bool LocalEventEngine::isAbstractShot() const
+{
+	return eventsByAbstractTarget.size() > 0 || missingTargets.size() > 0;
+}
+
+void LocalEventEngine::recordAbstractShotState(STI::Engine::EventEngineJob& job)
+{
+	bool hasUpstreamPartnerEvents = false;
+	if (isJobOwner && upstreamPartnerEvents != 0 && !upstreamPartnerEvents->eventsEmpty()) {
+		hasUpstreamPartnerEvents = true;
+		addMissingTargetsFromEvents(upstreamPartnerEvents);
+	}
+
+	if (eventsByAbstractTarget.size() > 0 || hasUpstreamPartnerEvents || missingTargets.size() > 0) {
+		auto& warning = parser.addParsingWarning("Abstract Shot")
+			<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
+
+		if (missingTargets.size() > 0) {
+			warning << " Missing targets: \n";
+			for (auto& id : missingTargets) {
+				warning << "    " << id.getID() << "\n";
+			}
+		}
+	}
+
+	job.setMissingTargets(missingTargets);
+}
+
+void LocalEventEngine::appendMissingTargets(EnginePlayingMessage& message) const
+{
+	if (missingTargets.size() == 0) return;
+
+	message << " Missing targets: \n";
+	for (auto& id : missingTargets) {
+		message << "    " << id.getID() << "\n";
+	}
+}
+
 const STI::Engine::ParseID& LocalEventEngine::getLastParseID() const 
 {
 	std::unique_lock<std::mutex> parseLock(parseMutex);
@@ -483,12 +542,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		}
 	}
 
-	if (eventsByAbstractTarget.size() > 0) {
-		//Warning: Some event targets were not found. Parsing is abstract only; cannot be played.
-		parser.addParsingWarning("Abstract Shot")
-		<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
-	}
-
 	//Get the subtree with the localDeviceID as root (Note, the graph is already known to be a DAG)
 	localSubtree = std::make_shared<EventEngineDependencyTree>();
 	dependencyTree->getSubtree(localDeviceID, *localSubtree);
@@ -554,6 +607,7 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	}
 
 	// Collect all parsing messages
+	recordAbstractShotState(job);
 
 	parsingMessages.insert(parsingMessages.end(), parser.getParsingMessages().begin(), parser.getParsingMessages().end());
 	lastParseResult->messages = job.getParsingMessages();
@@ -568,11 +622,6 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 		addEventsToParseResult(handledPartnerEvents);
 		handledPartnerEvents->clear();
 
-		//Any upstreamPartnerEvents at this point implies an abstract shot (targets not found in graph)
-		if (upstreamPartnerEvents != 0 && !upstreamPartnerEvents->eventsEmpty()) {
-			parser.addParsingWarning("Abstract Shot")
-			<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
-		}
 		addEventsToParseResult(upstreamPartnerEvents);
 	}
 
@@ -647,8 +696,8 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 	}
 	else if (isActingServerForDevice(id)) {
 		//Start parse job on remote device
-	    std::shared_ptr<STI::Device::Device> device;
-    	std::shared_ptr<EventEngineScheduler> scheduler;
+		std::shared_ptr<STI::Device::Device> device;
+		std::shared_ptr<EventEngineScheduler> scheduler;
 
 		auto it = eventsByTarget.find(id);
 		if (it == eventsByTarget.end() || it->second->eventsEmpty() ) {
@@ -661,26 +710,28 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 		if (deviceCollection->get(id, device) && device != 0 
 			&& device->getEngineScheduler(scheduler)) {
 
+			std::shared_ptr<Shot> jshot;
+			job.getShot(jshot);
 
-				std::shared_ptr<Shot> jshot;
-				job.getShot(jshot);
+			auto shot = scheduler->createShot(jshot->getShotConfig(), it->second);
 
-				auto shot = scheduler->createShot(jshot->getShotConfig(), it->second);
-				
-				auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
-				newJob->setDependencies(dependencyTree);
-				newJob->setMissingTargets(job.getMissingTargetIDs());
-				
-				job.attachSubjob(newJob);	//needed to keep shot reference alive
+			auto newJob = std::make_shared<LocalEventEngineJob>(job.getJobID().pid, shot, job.getJobOwner());
+			newJob->setDependencies(dependencyTree);
+			newJob->setMissingTargets(job.getMissingTargetIDs());
 
-				scheduler->addJob(newJob);
-				ownedTargets.push_back(id);
+			job.attachSubjob(newJob);	//needed to keep shot reference alive
+
+			scheduler->addJob(newJob);
+			ownedTargets.push_back(id);
 		}
 		else {
 			//Warning: Could not contact device. Parsing is abstract only; cannot be played.
 			parser.addParsingWarning("Missing device")
 			<< "Could not contact device '" << id.getID()
 			<< "'. Parsing is abstract only and cannot be played.";
+			missingTargets.insert(id);
+			localSubtree->removeNode(id);
+			parseCondition.notify_all();
 		}
 	}
 	else {
@@ -919,10 +970,15 @@ void LocalEventEngine::play(EventEngineJob& job)
 			cancelled = true;
 		}
 
-		if (eventsByAbstractTarget.size() > 0 || missingTargets.size() > 0) {
-			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Cannot Play Abstract Shot")
+		if (isAbstractShot()) {
+			auto& message = addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Cannot Play Abstract Shot")
 				 << "The parsed shot is abstract and cannot be played.";
+			appendMissingTargets(message);
+			job.addPlayMessages(playReadyMessages);
+			job.markCancelled();
+			cancelled = true;
 			setState(EngineState::Error);
+			return;
 		}
 
 		if (!setState(EngineState::PreparingPlay)) {

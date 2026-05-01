@@ -409,6 +409,8 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
         }
     }
 
+    missingTargets.insert(diff.begin(), diff.end());
+
     //check for circular dependencies
     std::vector<DeviceID> orderedNodes;
     bool isDAG = tree->sortTree(orderedNodes);
@@ -433,7 +435,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     }
 
     job->setDependencies(tree);
-    job->setMissingTargets(diff);
+    job->setMissingTargets(missingTargets);
 
     //addJob(job);
 }
@@ -479,6 +481,9 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     EngineJobID jobID(playJobStatus.sid);
     auto job = std::make_shared<LocalEventEngineJob>(jobID, shot, localDeviceID);
     job->setDependencies(tree);
+    if (parseJob != 0) {
+        job->setMissingTargets(parseJob->getMissingTargetIDs());
+    }
 
     addJob(job);
 
