@@ -12,4 +12,8 @@ from stipy.python.shot import STIPyShot
 from stipy.python.server import STIPyServer
 from stipy.python.stiglobal import *
 
+try:
+    from stipy.stipy import __version__
+except ImportError:
+    __version__ = "unknown"
 

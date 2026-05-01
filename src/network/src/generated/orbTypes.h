@@ -1985,6 +1985,156 @@ _CORBA_MODULE_BEG
       TStringPairSeq_out& operator=(const TStringPairSeq_var&);
     };
 
+    struct TVersionInfo {
+      typedef _CORBA_ConstrType_Variable_Var<TVersionInfo> _var_type;
+
+      
+      ::CORBA::String_member componentName;
+
+      ::CORBA::String_member version;
+
+      ::CORBA::Long major;
+
+      ::CORBA::Long minor;
+
+      ::CORBA::Long patch;
+
+      ::CORBA::Long buildNumber;
+
+      ::CORBA::String_member buildString;
+
+      ::CORBA::String_member gitCommit;
+
+      ::CORBA::Boolean gitDirty;
+
+      TStringPairSeq metadata;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TVersionInfo::_var_type TVersionInfo_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TVersionInfo,TVersionInfo_var > TVersionInfo_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TVersionInfo;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TVersionInfoSeq;
+
+    class TVersionInfoSeq_var;
+
+    class TVersionInfoSeq : public _CORBA_Unbounded_Sequence< TVersionInfo >  {
+    public:
+      typedef TVersionInfoSeq_var _var_type;
+      inline TVersionInfoSeq() {}
+      inline TVersionInfoSeq(const TVersionInfoSeq& _s)
+        : _CORBA_Unbounded_Sequence< TVersionInfo > (_s) {}
+
+      inline TVersionInfoSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TVersionInfo > (_max) {}
+      inline TVersionInfoSeq(_CORBA_ULong _max, _CORBA_ULong _len, TVersionInfo* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TVersionInfo > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TVersionInfoSeq& operator = (const TVersionInfoSeq& _s) {
+        _CORBA_Unbounded_Sequence< TVersionInfo > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TVersionInfoSeq_out;
+
+    class TVersionInfoSeq_var {
+    public:
+      inline TVersionInfoSeq_var() : _pd_seq(0) {}
+      inline TVersionInfoSeq_var(TVersionInfoSeq* _s) : _pd_seq(_s) {}
+      inline TVersionInfoSeq_var(const TVersionInfoSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TVersionInfoSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TVersionInfoSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TVersionInfoSeq_var& operator = (TVersionInfoSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TVersionInfoSeq_var& operator = (const TVersionInfoSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TVersionInfoSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TVersionInfo& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TVersionInfoSeq* operator -> () { return _pd_seq; }
+      inline const TVersionInfoSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TVersionInfoSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TVersionInfoSeq& () const { return *_pd_seq; }
+      inline operator TVersionInfoSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TVersionInfoSeq& in() const { return *_pd_seq; }
+      inline TVersionInfoSeq&       inout()    { return *_pd_seq; }
+      inline TVersionInfoSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TVersionInfoSeq* _retn() { TVersionInfoSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TVersionInfoSeq_out;
+      
+    private:
+      TVersionInfoSeq* _pd_seq;
+    };
+
+    class TVersionInfoSeq_out {
+    public:
+      inline TVersionInfoSeq_out(TVersionInfoSeq*& _s) : _data(_s) { _data = 0; }
+      inline TVersionInfoSeq_out(TVersionInfoSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TVersionInfoSeq*) 0; }
+      inline TVersionInfoSeq_out(const TVersionInfoSeq_out& _s) : _data(_s._data) {}
+      inline TVersionInfoSeq_out& operator = (const TVersionInfoSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TVersionInfoSeq_out& operator = (TVersionInfoSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TVersionInfoSeq*&()  { return _data; }
+      inline TVersionInfoSeq*& ptr()       { return _data; }
+      inline TVersionInfoSeq* operator->() { return _data; }
+
+      inline TVersionInfo& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TVersionInfoSeq*& _data;
+
+    private:
+      TVersionInfoSeq_out();
+      TVersionInfoSeq_out& operator=(const TVersionInfoSeq_var&);
+    };
+
     struct TImage {
       typedef _CORBA_ConstrType_Variable_Var<TImage> _var_type;
 
@@ -7671,6 +7821,16 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TStringPairSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TStringPairSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TStringPairSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TStringPairSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TVersionInfo& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TVersionInfo* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TVersionInfo*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TVersionInfo*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TVersionInfoSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TVersionInfoSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TVersionInfoSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TVersionInfoSeq*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImage& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImage* _sp);

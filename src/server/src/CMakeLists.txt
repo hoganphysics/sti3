@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.14...3.26)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+endif()
 
 # set the project name
-project(STIServer VERSION 3.0.0 DESCRIPTION "STI Server" LANGUAGES CXX)
+project(STIServer VERSION ${STI3_VERSION} DESCRIPTION "STI Server" LANGUAGES CXX)
 
 include(GNUInstallDirs)
 

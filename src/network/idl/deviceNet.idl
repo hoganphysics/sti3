@@ -348,6 +348,7 @@ module TNetwork
 		TTaskManager getTaskManager();
 		TLogManager getLogManager();
 		TMonitorManager getMonitorManager();
+		void getVersions(out TVersionInfoSeq versions);
 	};
 
 

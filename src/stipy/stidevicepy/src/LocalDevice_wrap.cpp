@@ -2,6 +2,7 @@
 
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalAttribute.h>
+#include <sti/device/VersionInfo.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineScheduler.h>
 
@@ -106,6 +107,12 @@ void init_LocalDevice(py::module& m)
         .def("__addTask_Base", py::overload_cast<const std::shared_ptr<Task>&>(&LocalDevicePy::addTask), py::arg("task"))
         // .def("addTask", py::overload_cast<const std::shared_ptr<TaskPy>&>(&LocalDevicePy::addTask), py::arg("task"))
         .def("__addTask", py::overload_cast<const std::shared_ptr<STI::Python::TaskPy>&, const pybind11::object&>(&LocalDevicePy::addTask), py::arg("task"), py::arg("object"))
+        .def("addVersionInfo",
+                py::overload_cast<const STI::Device::VersionInfo&>(&LocalDevicePy::addVersionInfo),
+                py::arg("version"))
+        .def("addVersionInfo",
+                py::overload_cast<const std::string&, const std::string&>(&LocalDevicePy::addVersionInfo),
+                py::arg("component"), py::arg("version"))
 
         .def("log", py::overload_cast<>(&LocalDevicePy::log))
         .def("log", py::overload_cast<const std::string&>(&LocalDevicePy::log), py::arg("name"))

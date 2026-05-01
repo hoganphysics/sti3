@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/..")
+endif()
+
 # If you're already setting this in the top-level, you can omit it here.
 # project(STI3Tests LANGUAGES CXX)
-project(sti3_test_device VERSION 3.0.1 DESCRIPTION "sti3_test_device" LANGUAGES CXX)
+project(sti3_test_device VERSION ${STI3_VERSION} DESCRIPTION "sti3_test_device" LANGUAGES CXX)
 include(GNUInstallDirs)
 
 find_package(Catch2 3 CONFIG REQUIRED)
@@ -61,6 +66,7 @@ add_executable(sti3_test_device
   device/logger_tests.cpp
   device/logid_tests.cpp
   device/logrecordfile_tests.cpp
+  device/versionmanager_tests.cpp
   # add more device test .cpp files here
 )
 

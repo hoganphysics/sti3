@@ -1,5 +1,6 @@
 #include "stipy.h"
 
+#include <sti/device/VersionManager.h>
 #include <sti/engine/RawEventTarget.h>
 
 #include "StackTrace.h"
@@ -21,6 +22,13 @@ using STI::Engine::StackTrace;
 
 void init_stipy(py::module& m) 
 {
+    m.attr("__version__") = STI::Device::getSTILibraryVersionString();
+    m.def("version", &STI::Device::getSTILibraryVersionSummary, "Return STI version information");
+    m.def("printVersion", []() {
+        auto summary = STI::Device::getSTILibraryVersionSummary();
+        py::print(summary);
+        return summary;
+    }, "Print STI version information");
     
     m.def("connect", 
         py::overload_cast<const std::string&, 
@@ -114,4 +122,3 @@ void init_stipy(py::module& m)
 
 
 }
-

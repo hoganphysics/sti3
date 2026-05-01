@@ -44,6 +44,7 @@ void init_Device(py::module& m)
         .def("getProfileManager", &DevicePy::getProfileManager)
         .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
+        .def("getVersionManager", &DevicePy::getVersionManager)
         .def("openLog",
             [](DevicePy& self, const STI::Device::LogID& logID, std::size_t tailLines) {
                 py::gil_scoped_release release;

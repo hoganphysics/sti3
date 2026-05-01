@@ -1,7 +1,27 @@
 cmake_minimum_required(VERSION 3.14...3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+endif()
+
 # set the project name
-project(stidevice VERSION 3.0.0 DESCRIPTION "STI device library")
+project(stidevice VERSION ${STI3_VERSION} DESCRIPTION "STI device library")
+
+if(NOT DEFINED STI3_GENERATED_INCLUDE_DIR)
+  set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number")
+  set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
+  set(STI3_GIT_COMMIT "unknown" CACHE STRING "STI3 git commit for build metadata")
+  set(STI3_GIT_DIRTY_INT 0)
+  set(STI3_CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+  set(STI3_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
+  file(MAKE_DIRECTORY "${STI3_GENERATED_INCLUDE_DIR}/sti/device")
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/VersionBuildInfo.h.in
+    ${STI3_GENERATED_INCLUDE_DIR}/sti/device/VersionBuildInfo.h
+    @ONLY
+  )
+endif()
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -140,6 +160,7 @@ add_library(stidevice SHARED
     Ticket.cpp
     TransientRepository.cpp
     utils.cpp
+    VersionManager.cpp
     VirtualFileHolder.cpp
     VirtualFileServer.cpp
 )
@@ -213,6 +234,7 @@ endif()
 target_include_directories(stidevice 
   PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../include> 
+    $<BUILD_INTERFACE:${STI3_GENERATED_INCLUDE_DIR}> 
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> 
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

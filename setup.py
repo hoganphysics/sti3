@@ -2,6 +2,7 @@ import sys
 import os
 import glob
 import shutil
+import json
 
 
 try:
@@ -33,6 +34,9 @@ from setuptools import find_packages
 #from setuptools import find_namespace_packages
 
 OMNIORBBASE = os.environ.get("OMNIORB_ROOT_DIR", "").replace(os.sep, '/')
+
+with open(os.path.join(os.path.dirname(__file__), "sti3_version.json"), encoding="utf-8") as version_file:
+    STI3_VERSION = json.load(version_file)["version"]
 
 def copyOmniORBlinux():
     #glob.glob("/usr/local/lib/libomniORB*.so*")
@@ -94,7 +98,7 @@ else:
 # '-DCMAKE_GENERATOR=Ninja', '-DCMAKE_MAKE_PROGRAM=Ninja',
 setup(
     name="stipy",
-    version="3.0.1",
+    version=STI3_VERSION,
     description="STIPy",
     author="Jason Hogan",
     license="MIT",

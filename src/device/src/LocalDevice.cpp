@@ -7,6 +7,8 @@
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
 #include <sti/device/ServerMessageRelayer.h>
+#include <sti/device/VersionInfo.h>
+#include <sti/device/VersionManager.h>
 
 #include <sti/engine/Measurement.h>
 #include <sti/engine/ParseJobStatus.h>
@@ -67,6 +69,8 @@ using STI::Device::TaskManager;
 using STI::Device::LocalTaskManager;
 using STI::Device::LogManager;
 using STI::Device::LocalLogManager;
+using STI::Device::VersionInfo;
+using STI::Device::VersionManager;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -147,6 +151,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	
 	localTaskManager = std::make_shared<LocalTaskManager>();
 	localMonitorManager = std::make_shared<LocalMonitorManager>(id, deviceMessageDispatcher);
+	versionManager = STI::Device::makeVersionManager();
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
@@ -855,6 +860,12 @@ bool LocalDevice::getLogManager(std::shared_ptr<LogManager>& manager)
 	return manager != 0;
 }
 
+bool LocalDevice::getVersionManager(std::shared_ptr<VersionManager>& manager)
+{
+	manager = versionManager;
+	return manager != 0;
+}
+
 bool LocalDevice::getMonitorManager(std::shared_ptr<LocalMonitorManager>& manager)
 {
 	manager = localMonitorManager;
@@ -872,6 +883,16 @@ bool LocalDevice::getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileSer
 	if (localPersistenceManager == 0) return false;
 
 	return localPersistenceManager->getFileServer(fileServer);
+}
+
+bool LocalDevice::addVersionInfo(const VersionInfo& version)
+{
+	return versionManager != 0 && versionManager->addVersionInfo(version);
+}
+
+bool LocalDevice::addVersionInfo(const std::string& component, const std::string& version)
+{
+	return addVersionInfo(VersionInfo(component, version));
 }
 
 bool DeviceCollectionPolicy::include(const STI::Device::DeviceID& key) const 

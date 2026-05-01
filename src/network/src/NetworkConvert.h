@@ -175,6 +175,7 @@ namespace Device
 {
 
 class DeviceID;
+struct VersionInfo;
 
 
 } //Device
@@ -188,6 +189,17 @@ template<>
 bool Network::convert<Device::DeviceID, TNetwork::TDeviceID>(const Device::DeviceID& deviceID, TNetwork::TDeviceID& tDeviceID);
 template<>
 bool Network::convert<TNetwork::TDeviceID, Device::DeviceID>(const TNetwork::TDeviceID& tDeviceID, Device::DeviceID& deviceID);
+
+
+//VersionInfo
+template<>
+TNetwork::TVersionInfo Network::convert<Device::VersionInfo, TNetwork::TVersionInfo>(const Device::VersionInfo& version);
+template<>
+Device::VersionInfo Network::convert<TNetwork::TVersionInfo, Device::VersionInfo>(const TNetwork::TVersionInfo& tVersion);
+template<>
+bool Network::convert<Device::VersionInfo, TNetwork::TVersionInfo>(const Device::VersionInfo& version, TNetwork::TVersionInfo& tVersion);
+template<>
+bool Network::convert<TNetwork::TVersionInfo, Device::VersionInfo>(const TNetwork::TVersionInfo& tVersion, Device::VersionInfo& version);
 
 
 namespace Network
@@ -269,4 +281,3 @@ TNetwork::TImage Network::convert<std::shared_ptr<Utils::Image>, TNetwork::TImag
 } //STI
 
 #endif
-

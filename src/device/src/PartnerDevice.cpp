@@ -4,6 +4,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/device/ProfileManager.h>
 #include <sti/device/TaskManager.h>
+#include <sti/device/VersionManager.h>
 
 using STI::Device::PartnerDevice;
 using STI::Device::LocalDevice;
@@ -125,6 +126,14 @@ bool PartnerDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& mana
 {
 	if (device != 0) {
 		return device->getLogManager(manager);
+	}
+	return false;
+}
+
+bool PartnerDevice::getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager)
+{
+	if (device != 0) {
+		return device->getVersionManager(manager);
 	}
 	return false;
 }

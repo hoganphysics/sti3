@@ -8,6 +8,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/ProfileManager.h>
 #include <sti/device/LogManager.h>
+#include <sti/device/VersionManager.h>
 #include "DeviceCollectionPy.h"
 
 #include <memory>
@@ -51,6 +52,7 @@ public:
     std::shared_ptr<STI::Device::ProfileManager> getProfileManager();
     std::shared_ptr<STI::Device::TaskManager> getTaskManager();
     std::shared_ptr<STI::Device::LogManager> getLogManager();
+    std::shared_ptr<STI::Device::VersionManager> getVersionManager();
 
     bool write(short channel, const MixedValuePy& value);
     bool write(short channel, const pybind11::object& value);

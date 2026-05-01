@@ -90,6 +90,11 @@ public:
 		return localDevice != 0 && localDevice->getLogManager(manager);
 	}
 
+	bool getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager) override
+	{
+		return localDevice != 0 && localDevice->getVersionManager(manager);
+	}
+
 	const STI::Device::DeviceID getID() const 
 	{
 		if (localDevice != 0) {

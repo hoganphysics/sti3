@@ -94,6 +94,43 @@ the conda environment where ``stipy`` is installed.  To submit timing sequences
 for parsing or playback, the notebook process also needs network access to the
 STI device network.
 
+Checking versions
++++++++++++++++++
+
+STIPy exposes the STI package version directly from Python:
+
+.. code-block:: py
+
+    import stipy
+
+    print(stipy.__version__)
+    print(stipy.version())
+    stipy.printVersion()
+
+``stipy.__version__`` is the package version string.  ``stipy.version()``
+returns a summary string with the STI library version, build number, and git
+commit information when available.  ``stipy.printVersion()`` prints the same
+summary and also returns it.
+
+Connected devices expose their version records through the device
+``VersionManager``.  This includes the STI library version used by the device
+and any device-specific version records registered by the driver.
+
+.. code-block:: py
+
+    from stipy import *
+
+    server = connect("localhost/0/STI Server", "192.168.1.4:2809")
+    versions = server.getVersionManager()
+
+    print(versions.summary())
+
+    library = versions.getLibraryVersion()
+    print(library.version, library.buildNumber, library.gitCommit)
+
+    for info in versions.getVersions():
+        print(info.component, info.version)
+
 
 .. _stipytimingseqences:
 

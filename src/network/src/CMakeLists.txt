@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.10...3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+endif()
 
 # set the project name
-project(stinetwork VERSION 3.0.0 DESCRIPTION "STI network library")
+project(stinetwork VERSION ${STI3_VERSION} DESCRIPTION "STI network library")
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)  # version 20 causes compile error with omniORB in gcc build
@@ -81,6 +85,7 @@ add_library(stinetwork SHARED
     convert/Convert_ShotResult.cpp
     convert/Convert_StackTrace.cpp
     convert/Convert_Task.cpp
+    convert/Convert_VersionInfo.cpp
 
     generated/deviceNet.cpp
     generated/deviceNetDynSK.cpp
@@ -132,6 +137,7 @@ add_library(stinetwork SHARED
     RemoteTaskManager.cpp
     RemoteShot.cpp
     RemoteTriggerCallback.cpp
+    RemoteVersionManager.cpp
 
     TAttributeManager_i.cpp
     TBinaryDataStream_i.cpp
@@ -399,4 +405,3 @@ else()
   #   )
   # endif()
 endif()
-

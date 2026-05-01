@@ -17,6 +17,7 @@ are exposed by ``LocalDevice`` and by remote device references:
 * save and load profiles
 * manage background tasks
 * read logs
+* inspect STI and device-specific version information
 
 Managers
 --------
@@ -61,6 +62,61 @@ binding returns the manager directly.
    * - Logs
      - ``getLogManager(manager)``
      - ``getLogManager()``
+   * - Versions
+     - ``getVersionManager(manager)``
+     - ``getVersionManager()``
+
+Version information
+-------------------
+
+The ``VersionManager`` reports the STI library version used by the device and
+any additional version records that the device implementation registered.  The
+same API works for local devices and remote device references returned by
+``connect()`` or by a device collection.
+
+Each entry is a ``VersionInfo`` object.  The built-in STI entry uses component
+name ``sti3`` and includes the package version, build number, build string, git
+commit when it was available at build time, and a dirty-worktree flag.
+Device-specific entries can use any component name chosen by the device
+author.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      #include <sti/device/VersionManager.h>
+
+      std::shared_ptr<STI::Device::VersionManager> versions;
+      if (device->getVersionManager(versions)) {
+          STI::Device::VersionInfo library = versions->getLibraryVersion();
+          std::cout << "STI library: " << library.toString() << std::endl;
+
+          STI::Device::VersionInfo driver;
+          if (versions->getVersion("CameraDriver", driver)) {
+              std::cout << "Camera driver: " << driver.toString() << std::endl;
+          }
+
+          for (const auto& info : versions->getVersions()) {
+              std::cout << info.component << " " << info.version << std::endl;
+          }
+      }
+
+   .. code-tab:: py
+
+      versions = device.getVersionManager()
+
+      library = versions.getLibraryVersion()
+      print("STI library:", library.toString())
+
+      driver = versions.getVersion("CameraDriver")
+      if driver is not None:
+          print("Camera driver:", driver.toString())
+
+      for info in versions.getVersions():
+          print(info.component, info.version)
+
+``versions.summary()`` returns a newline-separated string with all registered
+version entries, which is convenient for logs and diagnostic output.
 
 Device collection
 -----------------

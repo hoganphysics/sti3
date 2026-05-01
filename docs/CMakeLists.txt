@@ -1,7 +1,12 @@
 cmake_minimum_required (VERSION 3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/..")
+endif()
+
 # project ("stidocs")
-project(stidocs VERSION 3.0.1 DESCRIPTION "STI library docs")
+project(stidocs VERSION ${STI3_VERSION} DESCRIPTION "STI library docs")
 
 # Add the cmake folder so the FindSphinx module is found
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})

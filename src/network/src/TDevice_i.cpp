@@ -1,5 +1,6 @@
 #include "TDevice_i.h"
 #include <sti/device/DeviceID.h>
+#include <sti/device/VersionManager.h>
 #include "NetworkConvert.h"
 
 using STI::TNetwork::TDevice_i;
@@ -103,6 +104,22 @@ TMonitorManager_ptr TDevice_i::getMonitorManager()
 	return monitorManagerServantHolder.getRefPtr();
 }
 
+void TDevice_i::getVersions(::STI::TNetwork::TVersionInfoSeq_out versions)
+{
+	STI::TNetwork::TVersionInfoSeq_var tVersions(new STI::TNetwork::TVersionInfoSeq);
+
+	if (localDevice != 0) {
+		std::shared_ptr<STI::Device::VersionManager> manager;
+		if (localDevice->getVersionManager(manager) && manager != 0) {
+			std::vector<STI::Device::VersionInfo> localVersions;
+			manager->getVersions(localVersions);
+			convert<STI::Device::VersionInfo, STI::TNetwork::TVersionInfo>(localVersions, tVersions);
+		}
+	}
+
+	versions = tVersions._retn();
+}
+
 TDeviceID* TDevice_i::getID()
 {
 	STI::TNetwork::TDeviceID_var tDevice(new STI::TNetwork::TDeviceID);
@@ -113,4 +130,3 @@ TDeviceID* TDevice_i::getID()
 
 	return tDevice._retn();
 }
-

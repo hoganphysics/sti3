@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+endif()
+
 # set the project name
-project(stijava VERSION 3.0.0 DESCRIPTION "STI Java wrapper library")
+project(stijava VERSION ${STI3_VERSION} DESCRIPTION "STI Java wrapper library")
 
 find_package(JNI REQUIRED)
 

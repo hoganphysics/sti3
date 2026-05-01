@@ -132,6 +132,21 @@ module TNetwork
 	};
 	typedef sequence<TStringPair> TStringPairSeq;
 
+	struct TVersionInfo
+	{
+		string componentName;
+		string version;
+		long major;
+		long minor;
+		long patch;
+		long buildNumber;
+		string buildString;
+		string gitCommit;
+		boolean gitDirty;
+		TStringPairSeq metadata;
+	};
+	typedef sequence<TVersionInfo> TVersionInfoSeq;
+
 
 	struct TImage
 	{
@@ -804,4 +819,3 @@ module TNetwork
 
 
 #endif
-

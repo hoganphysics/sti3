@@ -32,6 +32,7 @@ void init_ProfileManager(py::module& m);
 void init_LogManager(py::module& m);
 void init_TaskManager(py::module& m);
 void init_DeviceHub(py::module& m);
+void init_Version(py::module& m);
 
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<STI::Engine::Measurement>>);
@@ -52,6 +53,7 @@ PYBIND11_MODULE(stidevicepy, m) {
     init_ChannelManager(m);
     init_Monitor(m);
     init_MonitorManager(m);
+    init_Version(m);
     init_DeviceCollection(m);
     init_SynchronousEvent(m);
     init_LogBrowser(m);

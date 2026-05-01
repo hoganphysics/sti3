@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10...3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+endif()
+
 # set the project name
-project(stipy VERSION 3.0.0 DESCRIPTION "STIPy python wrapper" LANGUAGES CXX)
+project(stipy VERSION ${STI3_VERSION} DESCRIPTION "STIPy python wrapper" LANGUAGES CXX)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -164,5 +169,4 @@ else()
           FILES_MATCHING PATTERN "*.py")
   
 endif()
-
 

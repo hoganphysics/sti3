@@ -79,6 +79,7 @@ private:
 	bool getProfileManager(std::shared_ptr<STI::Device::ProfileManager>& manager);
 	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager);
+	bool getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager) override;
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, STI::Utils::MixedValue& data);

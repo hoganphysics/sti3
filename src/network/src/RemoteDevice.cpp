@@ -14,6 +14,7 @@
 #include "RemotePersistenceManager.h"
 #include "RemoteProfileManager.h"
 #include "RemoteTaskManager.h"
+#include "RemoteVersionManager.h"
 
 using STI::Network::RemoteDevice;
 using STI::Network::RemoteDeviceCollection;
@@ -524,6 +525,32 @@ bool RemoteDevice::getLogManager(std::shared_ptr<STI::Device::LogManager>& manag
 	}
 
 	manager = remoteLogManager;
+	return (manager != 0);
+}
+
+bool RemoteDevice::getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager)
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remoteVersionManager)) {
+		manager = remoteVersionManager;
+		return (manager != 0);
+	}
+	else if (remoteVersionManager != 0) {
+		remoteVersionManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TDevice_var tDevice;
+	if (!getTDeviceRef(tDevice)) {
+		return false;
+	}
+
+	remoteVersionManager = std::make_shared<RemoteVersionManager>(tDevice);
+	addDependent(remoteVersionManager);
+
+	manager = remoteVersionManager;
 	return (manager != 0);
 }
 

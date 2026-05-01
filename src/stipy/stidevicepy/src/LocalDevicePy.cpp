@@ -272,6 +272,16 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, co
     addTask(task);
 }
 
+bool LocalDevicePy::addVersionInfo(const STI::Device::VersionInfo& version)
+{
+    return device != 0 && device->addVersionInfo(version);
+}
+
+bool LocalDevicePy::addVersionInfo(const std::string& component, const std::string& version)
+{
+    return device != 0 && device->addVersionInfo(component, version);
+}
+
 std::shared_ptr<STI::Device::Logger> LocalDevicePy::log()
 {
     return log("");

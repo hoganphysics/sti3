@@ -450,6 +450,38 @@ STI::TNetwork::TStringPair::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TVersionInfo::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(componentName,0);
+  _n.marshalString(version,0);
+  major >>= _n;
+  minor >>= _n;
+  patch >>= _n;
+  buildNumber >>= _n;
+  _n.marshalString(buildString,0);
+  _n.marshalString(gitCommit,0);
+  _n.marshalBoolean(gitDirty);
+  (const TStringPairSeq&) metadata >>= _n;
+
+}
+
+void
+STI::TNetwork::TVersionInfo::operator<<= (cdrStream &_n)
+{
+  componentName = _n.unmarshalString(0);
+  version = _n.unmarshalString(0);
+  (::CORBA::Long&)major <<= _n;
+  (::CORBA::Long&)minor <<= _n;
+  (::CORBA::Long&)patch <<= _n;
+  (::CORBA::Long&)buildNumber <<= _n;
+  buildString = _n.unmarshalString(0);
+  gitCommit = _n.unmarshalString(0);
+  gitDirty = _n.unmarshalBoolean();
+  (TStringPairSeq&)metadata <<= _n;
+
+}
+
+void
 STI::TNetwork::TImage::operator>>= (cdrStream &_n) const
 {
   (const TImageData&) imageData >>= _n;

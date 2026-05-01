@@ -68,6 +68,8 @@ class PersistenceManager;
 class DeviceCollectionPolicy;
 class LocalTaskManager;
 class LocalLogManager;
+class VersionInfo;
+class VersionManager;
 
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
@@ -98,6 +100,7 @@ public:
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
 	bool getMonitorManager(std::shared_ptr<MonitorManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
+	bool getVersionManager(std::shared_ptr<VersionManager>& manager) override;
 
 	bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
@@ -153,6 +156,8 @@ public:
     Logger& log(const std::string& name);
 
 	void addTask(const std::shared_ptr<STI::Utils::Task>& task);
+	bool addVersionInfo(const VersionInfo& version);
+	bool addVersionInfo(const std::string& component, const std::string& version);
 
 	void sendMessage(const std::shared_ptr<DeviceMessage>& mess);
 
@@ -244,6 +249,7 @@ private:
 	std::shared_ptr<LocalTaskManager> localTaskManager;
 	std::shared_ptr<LocalMonitorManager> localMonitorManager;
 	std::shared_ptr<LocalLogManager> localLogManager;
+	std::shared_ptr<VersionManager> versionManager;
 
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 

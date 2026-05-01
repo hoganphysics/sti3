@@ -1,12 +1,14 @@
+{% set version_data = load_file_data('../sti3_version.json', from_recipe_dir=True) %}
+
 package:
   name: stipy
-  version: "3.0.1"
+  version: "{{ version_data.get('version') }}"
 
 source:
   path: ..
 
 build:
-  number: 130
+  number: {{ version_data.get('build_number', 0) | int }}
 
 requirements:
   build:

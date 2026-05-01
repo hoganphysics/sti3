@@ -2920,6 +2920,7 @@ _CORBA_MODULE_BEG
       TTaskManager_ptr getTaskManager();
       TLogManager_ptr getLogManager();
       TMonitorManager_ptr getMonitorManager();
+      void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions);
 
       // Constructors
       inline _objref_TDevice()  { _PR_setobj(0); }  // nil
@@ -2968,6 +2969,7 @@ _CORBA_MODULE_BEG
       virtual TTaskManager_ptr getTaskManager() = 0;
       virtual TLogManager_ptr getLogManager() = 0;
       virtual TMonitorManager_ptr getMonitorManager() = 0;
+      virtual void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions) = 0;
       
     public:  // Really protected, workaround for xlC
       virtual _CORBA_Boolean _dispatch(omniCallHandle&);

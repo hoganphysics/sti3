@@ -5,6 +5,7 @@
 #include <sti/device/TaskManager.h>
 #include <sti/device/LogManager.h>
 #include <sti/device/ProfileManager.h>
+#include <sti/device/VersionManager.h>
 #include <sti/device/Attribute.h>
 #include <sti/LocalDevice.h>
 
@@ -348,6 +349,14 @@ bool JDevice::getLogManager(std::shared_ptr<LogManager>& manager)
     return false;
 }
 
+bool JDevice::getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager)
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getVersionManager(manager);
+    }
+    return false;
+}
+
 bool JDevice::refresh()
 {
     if(wrappedDevice != 0) {
@@ -355,4 +364,3 @@ bool JDevice::refresh()
     }
     return false;
 }
-

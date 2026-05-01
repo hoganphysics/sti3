@@ -115,6 +115,69 @@ deployment-specific values out of the driver source.
       device = TestDevice(config)
       hub = stidevicepy.NetworkDeviceHub(config)
 
+Device-specific version information
+***********************************
+
+Every ``LocalDevice`` automatically reports the STI library version it is using.
+Device authors can add an additional record for the device driver, hardware
+support package, or firmware using ``addVersionInfo``.  Add this during device
+construction so clients can query it immediately after connecting.
+
+The short form is enough when the device only needs a component name and a
+semantic version string.  The version string is parsed into ``major``,
+``minor``, and ``patch`` fields when it has a ``major.minor.patch`` shape.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      #include <sti/device/VersionInfo.h>
+
+      class SimpleDevice : public STI::Device::LocalDevice
+      {
+      public:
+          SimpleDevice(const STI::Utils::Configuration& config)
+              : STI::Device::LocalDevice(config)
+          {
+              addVersionInfo("SimpleDevice", "1.4.0");
+          }
+      };
+
+   .. code-tab:: py
+
+      class SimpleDevice(stidevicepy.LocalDevice):
+          def __init__(self, config):
+              stidevicepy.LocalDevice.__init__(self, config)
+              self.addVersionInfo("SimpleDevice", "1.4.0")
+
+Use ``VersionInfo`` directly when the device has richer build metadata.  Entries
+with the same component name replace the previous entry, which lets a device
+refresh its own record without duplicating it.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      STI::Device::VersionInfo driver("CameraDriver", "2.1.3");
+      driver.buildNumber = 42;
+      driver.gitCommit = "8f12c0a";
+      driver.gitDirty = false;
+      driver.metadata["firmware"] = "5.7.0";
+      driver.metadata["board"] = "rev-c";
+
+      addVersionInfo(driver);
+
+   .. code-tab:: py
+
+      driver = stidevicepy.VersionInfo("CameraDriver", "2.1.3")
+      driver.buildNumber = 42
+      driver.gitCommit = "8f12c0a"
+      driver.gitDirty = False
+      driver.metadata["firmware"] = "5.7.0"
+      driver.metadata["board"] = "rev-c"
+
+      self.addVersionInfo(driver)
+
 Defining channels
 *****************
 

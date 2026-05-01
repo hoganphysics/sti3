@@ -1,7 +1,8 @@
 ## Building sti3 and stipy packages with conda-build
 
-- Adjust version numbers in `meta.yaml` files as needed.
-- Bump build number in `meta.yaml` file. Otherwise, conda install may skip the package if it detects no changes.
+- Adjust the version metadata in `sti3_version.json` as needed.
+  - Bump `version` for a new code release.
+  - Bump `build_number` for a packaging-only rebuild of the same code release. Otherwise, conda install may skip the package if it detects no changes.
 - Activate the conda environment for building if it exists:
 ```bash
 conda activate sti3-build
@@ -17,6 +18,9 @@ conda install -c conda-forge conda-build anaconda-client setuptools pip catch2 c
 conda activate sti3-build
 conda build -c conda-forge .
 ```
+The build detects git commit and dirty-worktree metadata from the copied source
+tree when git metadata is available. If it is not available, the package still
+builds and reports the git commit as `unknown`.
 
 ## Installing the built package
 - Switch to the target conda environment where you want to install the package (e.g., `sti3`).

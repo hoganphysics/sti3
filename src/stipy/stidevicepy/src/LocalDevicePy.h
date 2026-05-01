@@ -4,6 +4,7 @@
 #include <sti/LocalDevice.h>
 #include <sti/device/AutoMonitor.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/VersionInfo.h>
 
 #include "DevicePy.h"
 #include "TaskPy.h"
@@ -72,6 +73,8 @@ public:
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task);
 
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task, const pybind11::object& taskObj);
+    bool addVersionInfo(const STI::Device::VersionInfo& version);
+    bool addVersionInfo(const std::string& component, const std::string& version);
 
     std::shared_ptr<STI::Device::Logger> log();
     std::shared_ptr<STI::Device::Logger> log(const std::string& name);

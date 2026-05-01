@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10...3.20)
 
+if(NOT DEFINED STI3_VERSION)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/StiVersion.cmake")
+  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../../..")
+endif()
+
 # set the project name
-project(stidevicepy VERSION 3.0.0 DESCRIPTION "STI device lib python wrapper" LANGUAGES CXX)
+project(stidevicepy VERSION ${STI3_VERSION} DESCRIPTION "STI device lib python wrapper" LANGUAGES CXX)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -188,6 +193,7 @@ pybind11_add_module(stidevicepy
     SynchronousEventPy.cpp
     SynchronousEventPyManager.cpp
     TaskManager_wrap.cpp
+    Version_wrap.cpp
 )	
 
 add_dependencies(stidevicepy stipybase)

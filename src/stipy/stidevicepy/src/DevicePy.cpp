@@ -9,6 +9,7 @@
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/ProfileManager.h>
 #include <sti/device/TaskManager.h>
+#include <sti/device/VersionManager.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/utils/MixedValue.h>
 // #include "EventEngineSchedulerPy.h"
@@ -34,6 +35,7 @@ using STI::Engine::EventEngineScheduler;
 using STI::Utils::MixedValue;
 using STI::Device::ProfileManager;
 using STI::Device::LogManager;
+using STI::Device::VersionManager;
 
 
 DevicePy::DevicePy(const std::shared_ptr<STI::Device::Device>& device)
@@ -210,6 +212,17 @@ std::shared_ptr<STI::Device::LogManager> DevicePy::getLogManager()
 
     if (device_ != 0) {
         device_->getLogManager(manager);
+    }
+
+    return manager;
+}
+
+std::shared_ptr<STI::Device::VersionManager> DevicePy::getVersionManager()
+{
+    std::shared_ptr<VersionManager> manager;
+
+    if (device_ != 0) {
+        device_->getVersionManager(manager);
     }
 
     return manager;

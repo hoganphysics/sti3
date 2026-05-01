@@ -7,7 +7,9 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/FileServer.h>
 
+#include <functional>
 #include <memory>
+#include <string>
 
 namespace STI
 {
@@ -25,6 +27,7 @@ class Attribute;
 class LogManager;
 class TaskManager;
 class MonitorManager;
+class VersionManager;
 
 
 class Device : public STI::Network::Node<DeviceID, Device>
@@ -45,6 +48,7 @@ public:
 	virtual bool getProfileManager(std::shared_ptr<ProfileManager>& manager) = 0;
 	virtual bool getTaskManager(std::shared_ptr<TaskManager>& manager) = 0;
 	virtual bool getLogManager(std::shared_ptr<LogManager>& manager) = 0;
+	virtual bool getVersionManager(std::shared_ptr<VersionManager>& manager) { manager.reset(); return false; }
 
 	virtual void attachMessageListenerForwarder(const std::shared_ptr<DeviceMessageListenerForwarder>& forwarder) = 0;	//or localDevice?
 
