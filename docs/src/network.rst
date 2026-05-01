@@ -98,10 +98,15 @@ is still the server for `dev4`, so devices are arranged in a hierarchy of contro
 This is useful, since it allows `dev4` to control a subset of the devices, while at
 at the same time still allowing `dev1` to control the entire network.
 
-One device node is designated the **root server** of the network. This is the one 
-device at the top of the hierarchy that does not have a server above it.  In the 
-examples above, the blue device (`dev1`) is the root server. 
-The root server must be have ``targetServerID = root`` in its configuration.
+In a connected device hierarchy, one device node is designated the **root server**.
+This is the device at the top of the hierarchy that does not have a server above it.
+In the examples above, the blue device (`dev1`) is the root server.
+The root server must have ``targetServerID = root`` in its configuration.
+
+Multiple independent root servers can run in parallel on the same STI network by
+declaring ``targetServerID = root``. Each root server must still have a unique
+DeviceID. These servers form separate device hierarchies; use a common parent
+server instead when the devices need to be controlled as one connected hierarchy.
 
 .. Note::
     With the exception of the root server, all devices must specify a target server
@@ -245,4 +250,3 @@ the hub network and will contribute to the device network.
     Explicit HubID targets can be provided using ``setTargetHubs`` to avoid this. In particular,
     this is necessary in the (uncommon) case where multiple target servers are attached to the 
     same hub, since then the HubID will only match one of the servers.
-
