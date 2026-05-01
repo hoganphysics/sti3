@@ -29,6 +29,7 @@ TEST_CASE("VersionManager reports STI library build information", "[version][ver
     REQUIRE(libraryVersion.version == STI::Device::getSTILibraryVersionString());
     REQUIRE(libraryVersion.major >= 0);
     REQUIRE(libraryVersion.buildNumber >= 0);
+    REQUIRE(libraryVersion.buildString != "placeholder");
 
     STI::Device::VersionInfo found;
     REQUIRE(manager->getVersion("sti3", found));
