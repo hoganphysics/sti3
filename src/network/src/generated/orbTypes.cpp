@@ -2088,6 +2088,7 @@ STI::TNetwork::TShotResult::operator>>= (cdrStream &_n) const
   (const TDeviceIDMeasurementsTupleSeq&) measurements >>= _n;
   (const TDeviceIDAttributesTupleSeq&) attributes >>= _n;
   (const TEnginePlayingMessageSeq&) messages >>= _n;
+  status >>= _n;
   (const TShotResultRecord&) shotResultRecord >>= _n;
 
 }
@@ -2100,6 +2101,7 @@ STI::TNetwork::TShotResult::operator<<= (cdrStream &_n)
   (TDeviceIDMeasurementsTupleSeq&)measurements <<= _n;
   (TDeviceIDAttributesTupleSeq&)attributes <<= _n;
   (TEnginePlayingMessageSeq&)messages <<= _n;
+  (TShotResultStatus&)status <<= _n;
   (TShotResultRecord&)shotResultRecord <<= _n;
 
 }

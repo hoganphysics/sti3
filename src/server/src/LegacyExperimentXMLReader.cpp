@@ -18,6 +18,7 @@
 using STI::Engine::LegacyExperimentXMLReader;
 using STI::Engine::ShotID;
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultStatusFromString;
 using STI::Engine::Measurement;
 using STI::Engine::MeasurementMap;
 using STI::Engine::MeasurementVector;
@@ -385,6 +386,12 @@ bool LegacyExperimentXMLReader::readShotResult(const ShotID& shotID, std::shared
             if (parsePrintedTimestamp(dateText, parsed)) {
                 loadedResult->playTime = parsed;
             }
+        }
+    }
+
+    if (auto statusElement = experiment->FirstChildElement("status")) {
+        if (const char* statusText = statusElement->GetText()) {
+            loadedResult->status = ShotResultStatusFromString(statusText);
         }
     }
 

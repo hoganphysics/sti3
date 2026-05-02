@@ -23,9 +23,25 @@ class FullShotResult;
 class RawEventGroup;
 class ParsedVar;
 class ParsedTag;
+enum class ShotResultStatus;
 
 } //Engine
 
+
+//ShotResultStatus
+template<>
+bool Network::convert<Engine::ShotResultStatus, TNetwork::TShotResultStatus>(
+        const Engine::ShotResultStatus& status, TNetwork::TShotResultStatus& tStatus);
+template<>
+bool Network::convert<TNetwork::TShotResultStatus, Engine::ShotResultStatus>(
+        const TNetwork::TShotResultStatus& tStatus, Engine::ShotResultStatus& status);
+
+template<>
+TNetwork::TShotResultStatus Network::convert<Engine::ShotResultStatus, TNetwork::TShotResultStatus>(
+        const Engine::ShotResultStatus& status);
+template<>
+Engine::ShotResultStatus Network::convert<TNetwork::TShotResultStatus, Engine::ShotResultStatus>(
+        const TNetwork::TShotResultStatus& tStatus);
 
 
 //ShotResult
@@ -128,4 +144,3 @@ TNetwork::TParsedTag Network::convert<Engine::ParsedTag, TNetwork::TParsedTag>(
 } //STI
 
 #endif
-

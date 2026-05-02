@@ -157,8 +157,6 @@ void EventEngineManager::abortJob()
     if (running) {
         engine->stop();
     }
-
-    running = false;
 }
 
 void EventEngineManager::runJob()
@@ -184,7 +182,7 @@ void EventEngineManager::runJob()
         if (currentJob->getJobID().type == EventEngineJobType::Parse) {
             scheduler->saveFailedSequenceParse(currentJob);
         }
-        scheduler->cancelJob(currentJob->getJobID());
+        scheduler->jobCanceled(currentJob->getJobID());
     }
     else {
         scheduler->jobComplete(currentJob->getJobID());

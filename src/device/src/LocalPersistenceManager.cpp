@@ -42,6 +42,7 @@ using STI::Engine::ShotRepository;
 using STI::Engine::ResultTicket;
 using STI::Engine::ShotID;
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultStatus;
 using STI::Engine::SerializedRepository;
 using STI::Engine::TransientRepository;
 using STI::Engine::ShotResultRecord;
@@ -738,9 +739,13 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
     //happens on (remote) delegate, where data should be saved.
     ResultsPaths resultsPaths = repo->preparePaths(sid);    //e.g., make directory sturcture
     auto collector = resultsCollectorFactory->createResultsCollector(sid, resultsPaths, fileHolderFactory);
+    auto shotStatus = fullShotResult->shotResult != 0 ? fullShotResult->shotResult->status : ShotResultStatus::Unknown;
 
     auto shotRecord = transferResults(collector, fullShotResult->shotResult, isOwner);   //collector is passed on to all devices in shot
     collector->setRecord(shotRecord);
+    if (collector->getResults() != 0) {
+        collector->getResults()->status = shotStatus;
+    }
 
     transferParseResult(fullShotResult->parseResult, resultsPaths.timingPath);
 

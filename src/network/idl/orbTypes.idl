@@ -751,6 +751,15 @@ module TNetwork
 
 	enum TRecordStatus { TRecordUnqueried, TRecordComplete, TRecordMissingDevice, TRecordMissingResults, TRecordError };
 
+	enum TShotResultStatus {
+		TShotResultUnknown,
+		TShotResultSuccess,
+		TShotResultCompletedWithErrors,
+		TShotResultCanceledByUser,
+		TShotResultAbortedByError,
+		TShotResultAbortedByTimeout
+	};
+
 	struct TShotResultRecord;
 	typedef sequence<TShotResultRecord> TShotResultRecordSeq;
 
@@ -793,6 +802,7 @@ module TNetwork
 		TDeviceIDMeasurementsTupleSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
 		TEnginePlayingMessageSeq messages;
+		TShotResultStatus status;
 
 		TShotResultRecord shotResultRecord;
 	};

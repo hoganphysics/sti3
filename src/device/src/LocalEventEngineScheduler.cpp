@@ -209,7 +209,13 @@ void LocalEventEngineScheduler::stopEngine(const EngineID& engineID)
     std::shared_ptr<LocalEventEngine> engine;
 
     if (engineManagers.get(engineID, manager) && manager != 0 && manager->getEngine(engine) && engine != 0) {
-        engine->stop();
+        std::shared_ptr<EventEngineJob> job;
+        if (manager->getJob(job) && job != 0 && job->getStatus() == EngineJobStatus::Running) {
+            _cancelJob(job->getJobID());
+        }
+        else {
+            engine->stop();
+        }
     }
 }
 
@@ -953,6 +959,43 @@ void LocalEventEngineScheduler::jobComplete(const EngineJobID& jobID)
     jobCondition.notify_all();
 }
 
+void LocalEventEngineScheduler::jobCanceled(const EngineJobID& jobID)
+{
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
+    std::shared_ptr<EventEngineJob> job;
+    std::shared_ptr<EventEngineJob> archivedJob;
+    
+    if (runningJobs.get(jobID, job) && job != 0) {
+        runningJobs.remove(jobID);
+        job->markCancelled();
+        
+        bool valid = false;
+        if (jobID.type == EventEngineJobType::Parse) {
+            valid = completedParseJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Play) {
+            valid = completedPlayJobs.addAndRemove(jobID, job, archivedJob);
+        }
+        else if (jobID.type == EventEngineJobType::Sequence) {
+            //should not reach here - sequence jobs handled separately
+        }
+
+        auto message = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+        message->toCompleteList(job);
+        sendMessage(message);
+
+        if (valid) {
+            archivedJob->markArchived();
+            auto message2 = std::make_shared<STI::Device::EngineJobUpdateDeviceMessage>(localDeviceID);
+            message2->toArchive(archivedJob);
+            sendMessage(message2);
+        }
+    }
+
+    jobCondition.notify_all();
+}
+
 void LocalEventEngineScheduler::saveFailedSequenceParse(const std::shared_ptr<EventEngineJob>& job)
 {
     if (job == 0) return;
@@ -1603,6 +1646,7 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
     playMessageIDs["Play parse ID mismatch"]                = 78;
     playMessageIDs["Failed to enter WaitingForTrigger"]     = 79;
     playMessageIDs["Failed to enter Playing"]               = 80;
+    playMessageIDs["Play canceled"]                         = 81;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()

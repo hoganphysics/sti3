@@ -189,6 +189,8 @@ private:
 
 	bool appendPlayMessages(const std::vector<EnginePlayingMessage>& messages);
 	EnginePlayingMessage& addPlayMessage(std::vector<EnginePlayingMessage>& messages, const PlayingMessageType& type, const std::string& name);
+	void recordPlayCanceledMessage();
+	bool hasPlayMessage(const std::string& name) const;
 
 	STI::Device::DeviceMessageGrouper<STI::Device::EngineStateMessage> engineStateMessageGrouper;
 

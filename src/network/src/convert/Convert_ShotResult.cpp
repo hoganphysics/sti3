@@ -23,7 +23,9 @@ using STI::Network::convert;
 
 using STI::Engine::ParseID;
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultStatus;
 using STI::TNetwork::TShotResult;
+using STI::TNetwork::TShotResultStatus;
 using STI::TNetwork::TTimeStamp;
 using STI::Utils::TimeStamp;
 using STI::TNetwork::TShotResultRecord;
@@ -60,6 +62,82 @@ using STI::Engine::MeasurementVector;
 using STI::Engine::MeasurementMap;
 using STI::Engine::Measurement;
 using STI::Engine::ShotConfig;
+
+
+//ShotResultStatus
+template<>
+bool STI::Network::convert<ShotResultStatus, TShotResultStatus>(
+        const ShotResultStatus& status, TShotResultStatus& tStatus)
+{
+    switch (status) {
+    case ShotResultStatus::Success:
+        tStatus = TShotResultStatus::TShotResultSuccess;
+        break;
+    case ShotResultStatus::CompletedWithErrors:
+        tStatus = TShotResultStatus::TShotResultCompletedWithErrors;
+        break;
+    case ShotResultStatus::CanceledByUser:
+        tStatus = TShotResultStatus::TShotResultCanceledByUser;
+        break;
+    case ShotResultStatus::AbortedByError:
+        tStatus = TShotResultStatus::TShotResultAbortedByError;
+        break;
+    case ShotResultStatus::AbortedByTimeout:
+        tStatus = TShotResultStatus::TShotResultAbortedByTimeout;
+        break;
+    case ShotResultStatus::Unknown:
+    default:
+        tStatus = TShotResultStatus::TShotResultUnknown;
+        break;
+    }
+    return true;
+}
+
+template<>
+bool STI::Network::convert<TShotResultStatus, ShotResultStatus>(
+        const TShotResultStatus& tStatus, ShotResultStatus& status)
+{
+    switch (tStatus) {
+    case TShotResultStatus::TShotResultSuccess:
+        status = ShotResultStatus::Success;
+        break;
+    case TShotResultStatus::TShotResultCompletedWithErrors:
+        status = ShotResultStatus::CompletedWithErrors;
+        break;
+    case TShotResultStatus::TShotResultCanceledByUser:
+        status = ShotResultStatus::CanceledByUser;
+        break;
+    case TShotResultStatus::TShotResultAbortedByError:
+        status = ShotResultStatus::AbortedByError;
+        break;
+    case TShotResultStatus::TShotResultAbortedByTimeout:
+        status = ShotResultStatus::AbortedByTimeout;
+        break;
+    case TShotResultStatus::TShotResultUnknown:
+    default:
+        status = ShotResultStatus::Unknown;
+        break;
+    }
+    return true;
+}
+
+template<>
+TShotResultStatus STI::Network::convert<ShotResultStatus, TShotResultStatus>(
+        const ShotResultStatus& status)
+{
+    TShotResultStatus tStatus;
+    convert<ShotResultStatus, TShotResultStatus>(status, tStatus);
+    return tStatus;
+}
+
+template<>
+ShotResultStatus STI::Network::convert<TShotResultStatus, ShotResultStatus>(
+        const TShotResultStatus& tStatus)
+{
+    ShotResultStatus status;
+    convert<TShotResultStatus, ShotResultStatus>(tStatus, status);
+    return status;
+}
 
 
 //ShotResult
@@ -100,6 +178,7 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
     }
 
     convert<TEnginePlayingMessage, EnginePlayingMessage>(tShotResult.messages, shotResult->messages);
+    shotResult->status = convert<TShotResultStatus, ShotResultStatus>(tShotResult.status);
     convert<TShotResultRecord, ShotResultRecord>(tShotResult.shotResultRecord, shotResult->shotResultRecord);
 
     return true;
@@ -156,6 +235,7 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
     }
 
     convert<EnginePlayingMessage, TEnginePlayingMessage>(shotResult->messages, tShotResult.messages);
+    tShotResult.status = convert<ShotResultStatus, TShotResultStatus>(shotResult->status);
     convert<ShotResultRecord, TShotResultRecord>(shotResult->shotResultRecord, tShotResult.shotResultRecord);
 
     return true;

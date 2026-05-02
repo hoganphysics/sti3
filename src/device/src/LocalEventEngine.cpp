@@ -62,9 +62,52 @@ using STI::Engine::MasterTrigger;
 using STI::Engine::ResultsCollector;
 using STI::Engine::ParsedDependencyTree;
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultStatus;
 using STI::Engine::RawEventGroup;
 using STI::Engine::FullShotResult;
 using STI::Engine::EnginePlayingMessage;
+
+namespace {
+
+bool isPlayState(STI::Engine::EngineState state)
+{
+	return state == STI::Engine::EngineState::PreparingPlay
+		|| state == STI::Engine::EngineState::PlayReady
+		|| state == STI::Engine::EngineState::WaitingForTrigger
+		|| state == STI::Engine::EngineState::Playing;
+}
+
+bool hasErrorMessages(const std::vector<EnginePlayingMessage>& messages)
+{
+	EnginePlayingMessageCount count(messages);
+	return count.errorCount > 0;
+}
+
+bool hasMessageNamed(const std::vector<EnginePlayingMessage>& messages, const std::string& name)
+{
+	for (const auto& message : messages) {
+		if (message.getName() == name) {
+			return true;
+		}
+	}
+	return false;
+}
+
+ShotResultStatus shotStatusFromMessages(const std::vector<EnginePlayingMessage>& messages, bool cancelled)
+{
+	if (hasMessageNamed(messages, "Play canceled")) {
+		return ShotResultStatus::CanceledByUser;
+	}
+	if (cancelled) {
+		return ShotResultStatus::AbortedByError;
+	}
+	if (hasErrorMessages(messages)) {
+		return ShotResultStatus::CompletedWithErrors;
+	}
+	return ShotResultStatus::Success;
+}
+
+} // namespace
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
 // mainserver.triggerEvent(ch(server1,slow,4), 5.0)		//trigger entire system
@@ -1114,6 +1157,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 			mergedMessages.insert(mergedMessages.end(), playReadyMessages.begin(), playReadyMessages.end());
 			mergedMessages.insert(mergedMessages.end(), localPlayMessages.begin(), localPlayMessages.end());
 			cachedShot->shotResult->messages = std::move(mergedMessages);
+			cachedShot->shotResult->status = shotStatusFromMessages(cachedShot->shotResult->messages, isPlayCancelled());
 		}
 		
 		if (persistenceManager != 0 && persistenceManager->saveShot(jobID.sid, cachedShot, isJobOwner)) {
@@ -1585,6 +1629,30 @@ bool LocalEventEngine::appendPlayMessages(const std::vector<EnginePlayingMessage
 	return localPlayMsgCounter.errorCount > 0;
 }
 
+bool LocalEventEngine::hasPlayMessage(const std::string& name) const
+{
+	std::unique_lock<std::mutex> messageLock(playMessageMutex);
+
+	return hasMessageNamed(playReadyMessages, name) || hasMessageNamed(localPlayMessages, name);
+}
+
+void LocalEventEngine::recordPlayCanceledMessage()
+{
+	if (!activePlayJob || hasPlayMessage("Play canceled")) {
+		return;
+	}
+
+	if (hasErrorMessages(playReadyMessages) || localPlayMsgCounter.errorCount > 0) {
+		return;
+	}
+
+	std::vector<EnginePlayingMessage> messages;
+	auto& msg = addPlayMessage(messages, PlayingMessageType::Error, "Play canceled");
+	msg << "[LocalEventEngine:" << localDeviceID.getID()
+		<< "] play canceled by stop request.";
+	appendPlayMessages(messages);
+}
+
 void LocalEventEngine::measureData()
 {
 	for (auto& evt : synchedEvents) {
@@ -1607,11 +1675,16 @@ void LocalEventEngine::measureData()
 
 void LocalEventEngine::stop()
 {
+	EngineState state = getState();
+	if (isPlayState(state)) {
+		recordPlayCanceledMessage();
+	}
+
 	if (masterTrigger != nullptr) {
 		masterTrigger->stop();
 	}
 
-	switch (getState()) {
+	switch (state) {
 	case EngineState::Error:
 		cancelled = true;
 		break;

@@ -7196,6 +7196,11 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TRecordStatus;
 
+    enum TShotResultStatus { TShotResultUnknown, TShotResultSuccess, TShotResultCompletedWithErrors, TShotResultCanceledByUser, TShotResultAbortedByError, TShotResultAbortedByTimeout /*, __max_TShotResultStatus=0xffffffff */ };
+    typedef TShotResultStatus& TShotResultStatus_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TShotResultStatus;
+
     struct TShotResultRecord;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TShotResultRecordSeq;
@@ -7521,6 +7526,8 @@ _CORBA_MODULE_BEG
       TDeviceIDAttributesTupleSeq attributes;
 
       TEnginePlayingMessageSeq messages;
+
+      TShotResultStatus status;
 
       TShotResultRecord shotResultRecord;
 
@@ -8546,6 +8553,25 @@ inline void operator <<= (STI::TNetwork::TRecordStatus& _e, cdrStream& s) {
 
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TRecordStatus _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TRecordStatus& _s);
+
+inline void operator >>=(STI::TNetwork::TShotResultStatus _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TShotResultStatus& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::TShotResultAbortedByTimeout) {
+    _e = (STI::TNetwork::TShotResultStatus) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TShotResultStatus _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TShotResultStatus& _s);
 
 void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TShotResultRecordSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TShotResultRecordSeq* _sp);

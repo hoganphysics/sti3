@@ -13,12 +13,22 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <string>
 
 
 namespace STI
 {
 namespace Engine
 {
+
+enum class ShotResultStatus {
+    Unknown,
+    Success,
+    CompletedWithErrors,
+    CanceledByUser,
+    AbortedByError,
+    AbortedByTimeout
+};
 
 
 class ShotResult
@@ -35,6 +45,8 @@ public:
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
     std::vector<EnginePlayingMessage> messages;
 
+    ShotResultStatus status;
+
     //The result is stored by the device in a repository. Initially, only the local device data is available.
     //Data from other (owned) devices must be collected. If it isn't all collected, the result is a partial record.
     //This is the list of devices (owned by the local device) that have not been collected yet.
@@ -45,12 +57,17 @@ public:
     static void deleteFiles(ShotResult& shot, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
     template<class Archive>
-    void serialize(Archive& archive);
+    void save(Archive& archive) const;
+
+    template<class Archive>
+    void load(Archive& archive);
 };
+
+std::string ShotResultStatusToString(const ShotResultStatus& status);
+ShotResultStatus ShotResultStatusFromString(const std::string& status);
 
 
 } //Engine
 } //STI
 
 #endif
-

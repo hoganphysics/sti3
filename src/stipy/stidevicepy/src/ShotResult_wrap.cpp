@@ -11,6 +11,7 @@
 #include <sstream>
 
 using STI::Engine::ShotResult;
+using STI::Engine::ShotResultStatus;
 using STI::Engine::ShotResultRecord;
 using STI::Engine::RecordStatus;
 
@@ -35,6 +36,14 @@ void init_ShotResult(py::module& m)
         ;
         //.export_values();
 
+    py::enum_<ShotResultStatus>(m, "ShotResultStatus")
+        .value("Unknown", ShotResultStatus::Unknown)
+        .value("Success", ShotResultStatus::Success)
+        .value("CompletedWithErrors", ShotResultStatus::CompletedWithErrors)
+        .value("CanceledByUser", ShotResultStatus::CanceledByUser)
+        .value("AbortedByError", ShotResultStatus::AbortedByError)
+        .value("AbortedByTimeout", ShotResultStatus::AbortedByTimeout)
+        ;
 
     py::class_<ShotResultRecord>(m, "ShotResultRecord")
         .def("isPartialRecord", &ShotResultRecord::isPartialRecord)
@@ -57,6 +66,7 @@ void init_ShotResult(py::module& m)
         .def_readonly("playTime", &ShotResult::playTime)
         .def_readonly("attributes", &ShotResult::attributes)
         .def_readonly("messages", &ShotResult::messages)
+        .def_readonly("status", &ShotResult::status)
         .def("getAttributes",
             [](ShotResult& self) {
                 py::dict attrs;

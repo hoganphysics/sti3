@@ -101,11 +101,11 @@ config = stipy.Configuration(
      'Module': '0',
      'Target Server': 'sr-magis/2/Frame2'})
 
-config.set("NetworkHub", "NameService", "192.168.1.109:2809")
+config.set("NetworkHub", "NameService", "192.168.88.252:2809")
 
 config.set("omniORB", "traceLevel", "0")
-config.set("omniORB", "endPoint", "giop:tcp::2820")
-config.set("omniORB", "endPointPublish", "giop:tcp:192.168.1.109:2820")
+# config.set("omniORB", "endPoint", "giop:tcp::2820")
+# config.set("omniORB", "endPointPublish", "giop:tcp:192.168.1.109:2820")
 
 config.set("omniORB", "scanGranularity", "1")
 config.set("omniORB", "clientConnectTimeOutPeriod", "200")  # milliseconds

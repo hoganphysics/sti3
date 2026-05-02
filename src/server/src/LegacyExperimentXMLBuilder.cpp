@@ -22,6 +22,7 @@
 
 using STI::Engine::LegacyExperimentXMLBuilder;
 using STI::Engine::FullShotResult;
+using STI::Engine::ShotResultStatusToString;
 using STI::Device::DeviceID;
 
 namespace {
@@ -317,6 +318,9 @@ void LegacyExperimentXMLBuilder::build()
 
     auto date = e->InsertNewChildElement("date");
     date->SetText(shotResult->playTime.print().c_str());
+
+    auto status = e->InsertNewChildElement("status");
+    status->SetText(ShotResultStatusToString(shotResult->status).c_str());
     
     if (parseResult->shotConfig.shotType == ShotType::SequenceEntry) {
 
