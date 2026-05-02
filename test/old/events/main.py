@@ -71,6 +71,7 @@ dev_config['Device Name'] = 'Device1'
 device1 = EventCheckingDevice(stipy.Configuration(dev_config), checker)
 device1.addOutputChannel(0, stipy.MixedValueType.Double, "")
 device1.addOutputChannel(1, stipy.MixedValueType.Double, "")
+device1.addVersionInfo("Event Checking Device", "1.0.0")
 hub.addDevice(device1)
 
 dev_config['Device Name'] = 'Device2'

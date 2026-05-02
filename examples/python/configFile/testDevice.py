@@ -6,6 +6,8 @@ class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
 
+        self.addVersionInfo("TestDevice", "1.0.0")
+
         name = config.get("Device Name")
         print("Configuring " + name) 
 

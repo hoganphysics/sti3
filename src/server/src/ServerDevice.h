@@ -13,11 +13,7 @@ class ServerDevice : public STI::Device::LocalDevice
 {
 public:
 	ServerDevice(const STI::Utils::Configuration& config);
-    // ServerDevice(const std::string& name, const std::string& address, unsigned short module,
-	// 	const std::string& targetServer);
 	~ServerDevice();
-
-	// bool writeChannel(short channel, const STI::Utils::MixedValue& value);
 
 	void parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engine::SynchronousEventVector& synchedEvents);
 
