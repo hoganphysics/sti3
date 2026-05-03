@@ -40,17 +40,20 @@ public:
 	class TestDeviceInputEvent : public STI::Engine::SynchronousEventAdapter	//using SynchronousEventAdapter here for convenience
 	{
 	public:
-		TestDeviceInputEvent(double time);
+		TestDeviceInputEvent(double time, TestDevice* device, unsigned fileIndex);
 
 		//implementation of SynchronousEventAdapter (override only what is needed)
 		void collectMeasurementData();	//only need to override collectMeasurementData() in this example 
 
 		double exampleParameter;	//example event data...
 
+	private:
+
+		TestDevice* localDevice;
+		unsigned fileIndex;
 	};
 
 };
 
 
 #endif
-

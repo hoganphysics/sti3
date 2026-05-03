@@ -1,7 +1,14 @@
 
 #include "TestDevice.h"
 
+#include <sti/device/PersistenceManager.h>
+#include <sti/engine/Measurement.h>
+#include <sti/utils/FileID.h>
+
+#include <iomanip>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -18,6 +25,7 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 
 	// Input channels (make measurements that are recorded by the device)
 	addInputChannel(2, MixedValueType::Number, "thermocouple voltage");	//measures a number
+	addInputChannel(3, MixedValueType::File, "example text file");	//measures data saved as a file
 }
 
 
@@ -43,6 +51,7 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engi
 	// to the synchedEvents vector as shared_ptr's.
 
 	bool inputEvent;
+	unsigned fileMeasurementIndex = 0;
 
 	for (auto& tuple : eventsIn) {
 		// Here 'tuple' is of type { time, vector<RawEvent> }, where the vector is the set of events at this time.
@@ -82,7 +91,11 @@ void TestDevice::parseEvents(const STI::Engine::RawEventMap& eventsIn, STI::Engi
 		else {
 			//Input event
 			auto& rawEvent = tuple.second.front();	//There is only one event, since we enforced this rule (above) for input events.
-			auto testDeviceInputEvent = std::make_shared<TestDevice::TestDeviceInputEvent>(tuple.first);	//time
+			auto fileIndex = fileMeasurementIndex;
+			if (rawEvent.channel() == 3) {
+				fileMeasurementIndex++;
+			}
+			auto testDeviceInputEvent = std::make_shared<TestDevice::TestDeviceInputEvent>(tuple.first, this, fileIndex);	//time
 
 			testDeviceInputEvent->addMeasurement(rawEvent);	// REQUIRED: The source RawEvent must be attached to the input event for
 															// data to be properly saved later. Skipping this will result in a parse error.
@@ -160,8 +173,8 @@ void TestDevice::TestDeviceOutputEvent::stopEvent()
 // Note that the same event class can be used for both input and output events, if desired. In this 
 // example they are separated for clarity.
 
-TestDevice::TestDeviceInputEvent::TestDeviceInputEvent(double time)
-: STI::Engine::SynchronousEventAdapter(time)
+TestDevice::TestDeviceInputEvent::TestDeviceInputEvent(double time, TestDevice* device, unsigned fileIndex)
+: STI::Engine::SynchronousEventAdapter(time), localDevice(device), fileIndex(fileIndex)
 {
 }
 
@@ -170,8 +183,52 @@ void TestDevice::TestDeviceInputEvent::collectMeasurementData()
 	// This function is called after playEvent() and is used to retrieve any measurement data.
 	// The new data is then attached to this event so it can later be saved at the end of the shot.
 
+	if (getMeasurements().empty() || getMeasurements().front() == 0) {
+		return;
+	}
+
+	auto measurement = getMeasurements().front();
+
+	if (measurement->channel() == 3) {
+		std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+
+		if (localDevice == 0 || !localDevice->getPersistenceManager(persistenceManager) || persistenceManager == 0) {
+			addError("Unable to create virtual file");
+			return;
+		}
+
+		STI::Utils::FileID fileID;
+		fileID.origin = localDevice->getID().getID();
+		fileID.path = "parseEvents";
+		fileID.filename = "file_measurement_" + std::to_string(fileIndex) + ".txt";
+
+		auto file = persistenceManager->makeVirtualFileHolder(fileID);
+		if (file == 0 || !file->openFile()) {
+			addError("Unable to open virtual file");
+			return;
+		}
+
+		std::ostringstream text;
+		text << "Example file measurement from " << localDevice->getID().getID() << "\n";
+		text << "event time ns: " << std::fixed << std::setprecision(0) << getTime() << "\n";
+		text << "sample value: " << (3.6 * exampleParameter) << "\n";
+
+		const auto payload = text.str();
+		if (!file->write(payload.data(), static_cast<unsigned>(payload.size()))) {
+			file->closeFile();
+			addError("Unable to write virtual file");
+			return;
+		}
+
+		file->closeFile();
+		attachFile(file);
+
+		STI::Utils::MixedValue simulatedData(file->getID());
+		setMeasurementResult(simulatedData);
+		return;
+	}
+
 	STI::Utils::MixedValue simulatedData;
-	
 	simulatedData.setValue(3.6 * exampleParameter);	//This value should be set using the actual data retrieved from the hardware!
 
 	setMeasurementResult(simulatedData);

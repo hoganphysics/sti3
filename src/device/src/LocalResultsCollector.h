@@ -48,9 +48,13 @@ public:
 
 private:
 
-    bool transferValue(STI::Utils::MixedValue& data, std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
+    bool transferValue(STI::Utils::MixedValue& data,
+                       std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs,
+                       std::map<const void*, STI::Utils::FileID>& cachedBinaryDataIDs,
+                       const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
 
     std::shared_ptr<STI::Utils::FileHolder> makeLocalFileHandle(const std::string& basePath, const STI::Utils::FileID& remoteFileID);
+    std::shared_ptr<STI::Utils::FileHolder> makeLocalBinaryDataFileHandle(const std::string& basePath);
 
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     ResultsPaths resultsPaths;

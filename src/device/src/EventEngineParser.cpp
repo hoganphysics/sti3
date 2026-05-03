@@ -48,6 +48,7 @@ persistenceManager(persistenceManager), deviceParser(deviceParser)
 	clear();
 }
 
+
 EventEngineParser::~EventEngineParser()
 {
 }
@@ -277,17 +278,18 @@ bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, un
 	//add event
 	double eventTime = rawEvent.time();
 	rawEvents[eventTime].push_back(rawEvent);		//consider storing events by int time, or Time class
+	auto& storedRawEvent = rawEvents[eventTime].back();
 	
 	//Store pointers to all measurement RawEvents, indexed by their event graph identifier.  
 	//This is for fast reverse lookup in checkMeasurements(...)
-	if (rawEvent.isMeasurementEvent()) {
+	if (storedRawEvent.isMeasurementEvent()) {
 
 		//Entries in map: {GraphPathLabel, MeasurementCounter}
 		measurementEventGraph.insert(
-		{ rawEvent.getEventID(), MeasurementCounter( &(rawEvents[eventTime].back()) ) }
+		{ storedRawEvent.getEventID(), MeasurementCounter( &storedRawEvent ) }
 		);
 
-		rawEvent.attachFileServer(fileServer);
+		storedRawEvent.attachFileServer(fileServer);
 	}
 
 	auto& eventVec = rawEvents[eventTime];

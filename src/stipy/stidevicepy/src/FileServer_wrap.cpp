@@ -35,6 +35,10 @@ void init_FileServer(py::module& m)
         .def("maxBufferSize", &FileHolder::maxBufferSize)
         .def("md5Checksum", &FileHolder::md5Checksum)
         .def("write", &FileHolder::write, py::arg("buffer"), py::arg("length"))
+        .def("writeText",
+            [](FileHolder& self, const std::string& text) {
+                return self.write(text.data(), static_cast<unsigned>(text.size()));
+            }, py::arg("text"))
         .def("openFile", &FileHolder::openFile)
         .def("closeFile", &FileHolder::closeFile)
         .def("__eq__", &FileHolder::operator==)
@@ -75,4 +79,3 @@ void init_FileServer(py::module& m)
         ;
 
 }
-

@@ -3,10 +3,10 @@ from testDevice import *
 import time
 
 config = stipy.Configuration(
-    {'Device Name': 'TestDevice',
+    {'Device Name': 'TestParseDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
 
 device = TestDevice(config)
 
@@ -19,14 +19,15 @@ device = TestDevice(config)
 
 def f():
     stipy.meas(stipy.ch(stipy.dev("TestDevice", "localhost", 0), 2), 200*1000)
+    stipy.meas(stipy.ch(stipy.dev("TestDevice", "localhost", 0), 3), 300*1000)
 
-    stipy.event(stipy.ch(stipy.dev("TestDevice", "localhost", 0), 1), 200*1000 + 1*200*1000, 56.7)
+    stipy.event(stipy.ch(stipy.dev("TestDevice", "localhost", 0), 1), 200*1000 + 1*200*1000, 5.7)
     return
 
 
 
 
-nameServiceAddr = "192.168.1.4:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.88.252:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)
@@ -43,4 +44,3 @@ print("       Messages: " + str(tick.messages()))
 res = testDevice.play(tick)
 res.wait()
 print("       Results: " + str(res.measurements()))
-

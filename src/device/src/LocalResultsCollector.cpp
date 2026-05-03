@@ -11,10 +11,12 @@
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/ShotResultRecord.h>
 
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/Image.h>
 #include <sti/utils/utils.h>
 
 #include <filesystem>
+#include <limits>
 namespace fs = std::filesystem;
 
 using STI::Engine::LocalResultsCollector;
@@ -91,8 +93,9 @@ bool LocalResultsCollector::addMeasurements(const DeviceID& deviceID, const Meas
     bool success = true;
 
     //Need to cache FileIDs during transfer to make sure to only transfer each file
-    //and image data once, since Measurements can share references.
+    //and image/binary data once, since Measurements can share references.
     std::map<STI::Utils::FileID, STI::Utils::FileID> cachedIDs; 
+    std::map<const void*, STI::Utils::FileID> cachedBinaryDataIDs;
 
     for (auto& meas : measurements) {
 
@@ -100,20 +103,23 @@ bool LocalResultsCollector::addMeasurements(const DeviceID& deviceID, const Meas
 
         STI::Utils::MixedValue data;
         meas->extractMeasurementResult(data);
-        success &= transferValue(data, cachedIDs, sourceFileServer);
+        success &= transferValue(data, cachedIDs, cachedBinaryDataIDs, sourceFileServer);
         meas->setMeasurementResult(std::move(data));
     }
     return success;
 }
 
-bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data, std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer)
+bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data,
+                                          std::map<STI::Utils::FileID, STI::Utils::FileID>& cachedFileIDs,
+                                          std::map<const void*, STI::Utils::FileID>& cachedBinaryDataIDs,
+                                          const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer)
 {
     bool success = false;
 
     if (data.getType() == STI::Utils::MixedValueType::Vector) {
         success = true;
         for (auto& v : data.vec()) {
-            success &= transferValue(v, cachedFileIDs, sourceFileServer);
+            success &= transferValue(v, cachedFileIDs, cachedBinaryDataIDs, sourceFileServer);
         }
     }
     else if (data.getType() == STI::Utils::MixedValueType::File) {
@@ -169,6 +175,43 @@ bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data, std::map
             data.setValue(it->second);
         }        
     }
+    else if (data.getType() == STI::Utils::MixedValueType::Binary) {
+
+        auto binaryData = data.getBinary();
+
+        if (binaryData != 0) {
+            auto it = cachedBinaryDataIDs.find(binaryData.get());
+
+            if (it != cachedBinaryDataIDs.end()) {
+                success = true;
+                data.setValue(it->second);
+            }
+            else {
+                auto localFileHandle = makeLocalBinaryDataFileHandle(resultsPaths.dataPath);
+
+                if (localFileHandle != 0 &&
+                    binaryData->bytes() <= std::numeric_limits<unsigned>::max() &&
+                    localFileHandle->openFile())
+                {
+                    success = true;
+
+                    if (binaryData->bytes() > 0) {
+                        char* bytes = nullptr;
+                        success = binaryData->getBytes(bytes) &&
+                                  bytes != nullptr &&
+                                  localFileHandle->write(bytes, static_cast<unsigned>(binaryData->bytes()));
+                    }
+
+                    localFileHandle->closeFile();
+
+                    if (success) {
+                        cachedBinaryDataIDs[binaryData.get()] = localFileHandle->getID();
+                        data.setValue(localFileHandle->getID());
+                    }
+                }
+            }
+        }
+    }
     else {
         //do nothing for all other MixedValue types
         success = true;
@@ -194,6 +237,20 @@ std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalFileHand
     localPath /= remotePath.filename();
 
     auto uniqueLocalFilename = STI::Utils::makeUniquePath( localPath.string());
+    fs::path uniqueLocalPath = uniqueLocalFilename;
+    uniqueLocalPath.make_preferred();
+
+    auto localFileHandle = fileHolderFactory->makeFileHolder(uniqueLocalPath.parent_path().string(), uniqueLocalPath.filename().string());
+
+    return localFileHandle;
+}
+
+std::shared_ptr<STI::Utils::FileHolder> LocalResultsCollector::makeLocalBinaryDataFileHandle(const std::string& basePath)
+{
+    fs::path localPath = basePath;
+    localPath /= "binary_measurement.bin";
+
+    auto uniqueLocalFilename = STI::Utils::makeUniquePath(localPath.string());
     fs::path uniqueLocalPath = uniqueLocalFilename;
     uniqueLocalPath.make_preferred();
 

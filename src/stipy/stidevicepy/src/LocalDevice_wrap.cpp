@@ -118,6 +118,7 @@ void init_LocalDevice(py::module& m)
         .def("log", py::overload_cast<const std::string&>(&LocalDevicePy::log), py::arg("name"))
         .def("partner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::partner), py::arg("deviceID"))
         .def("partner", py::overload_cast<const std::string&>(&LocalDevicePy::partner), py::arg("alias"))
+        .def("makeVirtualFileHolder", &LocalDevicePy::makeVirtualFileHolder, py::arg("path"), py::arg("filename"))
 
         .def("getMessageReceiver", &LocalDevicePy::getMessageReceiver)
         ;

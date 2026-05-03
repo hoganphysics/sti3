@@ -5,6 +5,7 @@
 #include <sti/device/AutoMonitor.h>
 #include <sti/device/DeviceID.h>
 #include <sti/device/VersionInfo.h>
+#include <sti/utils/FileHolder.h>
 
 #include "DevicePy.h"
 #include "TaskPy.h"
@@ -81,6 +82,8 @@ public:
 
 	PartnerDevicePy partner(const STI::Device::DeviceID& id);
 	PartnerDevicePy partner(const std::string& alias);
+
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const std::string& path, const std::string& filename);
 
 	STI::Engine::EngineParsingMessage& addInfo(unsigned id, const std::string& name);
 	STI::Engine::EngineParsingMessage& addWarning(unsigned id, const std::string& name);

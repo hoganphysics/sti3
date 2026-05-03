@@ -126,6 +126,7 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 void MixedValuePy::setValue_py(const py::object& value)
 {
     if (setValueExtract<MixedValuePy, MixedValue>(value)) return;
+    if (setValueExtract<STI::Utils::FileID, STI::Utils::FileID>(value)) return;
 
     if (setValueExtract<py::float_, double>(value)) return;
     if (setValueExtract<py::bool_, bool>(value)) return;    //must be before int
@@ -150,6 +151,7 @@ void MixedValuePy::setValue_py(const py::object& value)
 void MixedValuePy::addValue_py(const py::handle& value)
 {
     if (addValueExtract<MixedValuePy, MixedValue>(value)) return;
+    if (addValueExtract<STI::Utils::FileID, STI::Utils::FileID>(value)) return;
 
     if (addValueExtract<py::float_, double>(value)) return;
     if (addValueExtract<py::bool_, bool>(value)) return;    //must be before int

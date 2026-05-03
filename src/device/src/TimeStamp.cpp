@@ -421,7 +421,7 @@ void serialize(Archive& archive, tm& timeinfo)
             cereal::make_nvp("mon", timeinfo.tm_mon),
             cereal::make_nvp("year", timeinfo.tm_year),
             cereal::make_nvp("wday", timeinfo.tm_wday),
-            cereal::make_nvp("year", timeinfo.tm_yday),
+            cereal::make_nvp("yday", timeinfo.tm_yday),
             cereal::make_nvp("isdst", timeinfo.tm_isdst));
 }
 

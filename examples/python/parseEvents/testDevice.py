@@ -16,6 +16,7 @@ class TestDevice(stidevicepy.LocalDevice):
 
         # Input channels (make measurements that are recorded by the device)
         self.addInputChannel(2, stipy.MixedValueType.Number, "thermocouple voltage")    #measures a number
+        self.addInputChannel(3, stipy.MixedValueType.File, "example text file")          #measures data saved as a file
 
         return
     
@@ -42,6 +43,8 @@ class TestDevice(stidevicepy.LocalDevice):
         # SynchronousEvent itself is an abstract class, and so it first must be implemented by an appropriate derived class that  
         # includes the hardware-specific implementation details. Instances of this custom derived class should then be added 
         # to the synchedEvents list.
+
+        fileMeasurementIndex = 0
 
         for time, events in eventsIn.items():
             # Here 'tuple' is of type { time, list[RawEvent] }, where the list is the set of events at this time.
@@ -78,7 +81,10 @@ class TestDevice(stidevicepy.LocalDevice):
                 synchedEvents.append(testDeviceOutputEvent)
 
             else:
-                testDeviceInputEvent = TestDeviceInputEvent(time)
+                fileIndex = fileMeasurementIndex
+                if events[0].channel() == 3:
+                    fileMeasurementIndex += 1
+                testDeviceInputEvent = TestDeviceInputEvent(time, self, fileIndex)
                 testDeviceInputEvent.addMeasurement(events[0])  # REQUIRED: The source RawEvent must be attached to the input event for
 															    # data to be properly saved later. Skipping this will result in a parse error.
                 
@@ -142,14 +148,37 @@ class TestDeviceOutputEvent(stidevicepy.SynchronousEvent):
 # example they are separated for clarity.
 
 class TestDeviceInputEvent(stidevicepy.SynchronousEvent):
-    def __init__(self, time):
+    def __init__(self, time, device, fileMeasurementIndex):
         stidevicepy.SynchronousEvent.__init__(self, time)
+        self.device = device
+        self.fileMeasurementIndex = fileMeasurementIndex
         self.exampleParameter = 0
 
     def collectMeasurementData(self):
         # This function is called after playEvent() and is used to retrieve any measurement data.
         # The new data is then attached to this event so it can later be saved at the end of the shot.
         for m in self.getMeasurements():
-            m.setMeasurementResult(3.6 * self.exampleParameter)
+            if m.channel() == 3:
+                filename = "file_measurement_" + str(self.fileMeasurementIndex) + ".txt"
+                fileHolder = self.device.makeVirtualFileHolder("parseEvents", filename)
 
+                if fileHolder is None or not fileHolder.openFile():
+                    self.addError("Unable to open virtual file")
+                    return
 
+                text = (
+                    "Example file measurement from " + self.device.getID().getID() + "\n"
+                    + "event time ns: " + str(self.getTime()) + "\n"
+                    + "sample value: " + str(3.6 * self.exampleParameter) + "\n"
+                )
+
+                if not fileHolder.writeText(text):
+                    fileHolder.closeFile()
+                    self.addError("Unable to write virtual file")
+                    return
+
+                fileHolder.closeFile()
+                self.attachFile(fileHolder)
+                m.setMeasurementResult(fileHolder.getID())
+            else:
+                m.setMeasurementResult(3.6 * self.exampleParameter)

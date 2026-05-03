@@ -54,6 +54,7 @@ add_executable(sti3_test_device
   device/localprofilemanager_tests.cpp
   device/binarydata_tests.cpp
   device/image_tests.cpp
+  device/measurement_file_tests.cpp
   device/virtualfileholder_tests.cpp
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp
@@ -70,6 +71,8 @@ add_executable(sti3_test_device
   device/logid_tests.cpp
   device/logrecordfile_tests.cpp
   device/versionmanager_tests.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/LegacyExperimentXMLBuilder.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/tinyxml/tinyxml2.cpp
   # add more device test .cpp files here
 )
 
@@ -78,6 +81,8 @@ add_executable(sti3_test_device
 
 target_include_directories(sti3_test_device PRIVATE
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/device/src>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src/tinyxml>
 )
 
 

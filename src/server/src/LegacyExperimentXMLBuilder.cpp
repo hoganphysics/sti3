@@ -190,8 +190,8 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
                 auto file = base->InsertNewChildElement("file");
 
                 std::filesystem::path shotPath = shotFilename;
-                std::filesystem::path absFilePath = value.getFileID().getFullFilename();
-                auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+                std::filesystem::path filePath = value.getFileID().getFullFilename();
+                auto relativeFilePath = safeRelativePath(filePath, shotPath.parent_path());
                 file->InsertNewChildElement("filename")->SetText(relativeFilePath.string().c_str());
         // timing->InsertNewChildElement("file")->SetText(relativeFilePath.string().c_str());
 
@@ -210,8 +210,8 @@ void LegacyExperimentXMLBuilder::addValue(tinyxml2::XMLElement* base, const STI:
                 if (value.getImage() != 0 && value.getImage()->getFile(fileHolder)) {
                     
                     std::filesystem::path shotPath = shotFilename;
-                    std::filesystem::path absFilePath = fileHolder->getID().getFullFilename();
-                    auto relativeFilePath = std::filesystem::relative(absFilePath, shotPath.parent_path());
+                    std::filesystem::path filePath = fileHolder->getID().getFullFilename();
+                    auto relativeFilePath = safeRelativePath(filePath, shotPath.parent_path());
 
                     file->InsertNewChildElement("filename")->SetText(relativeFilePath.string().c_str());
                     file->InsertNewChildElement("md5hash")->SetText(fileHolder->md5Checksum().c_str());

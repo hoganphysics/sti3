@@ -4,6 +4,8 @@
 #include "LocalLogManager.h"
 #include "LocalMonitorManager.h"
 #include <sti/device/DeviceMessageDispatcher.h>
+#include <sti/device/PersistenceManager.h>
+#include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/engine/SynchronousEvent.h>
 
@@ -310,6 +312,22 @@ STI::Python::PartnerDevicePy LocalDevicePy::partner(const std::string& alias)
 {
     PartnerDevicePy partner(device->partner(alias));
     return partner;
+}
+
+std::shared_ptr<STI::Utils::FileHolder> LocalDevicePy::makeVirtualFileHolder(const std::string& path, const std::string& filename)
+{
+    std::shared_ptr<STI::Device::PersistenceManager> manager;
+
+    if (device == 0 || !device->getPersistenceManager(manager) || manager == 0) {
+        return nullptr;
+    }
+
+    STI::Utils::FileID fileID;
+    fileID.origin = device->getID().getID();
+    fileID.path = path;
+    fileID.filename = filename;
+
+    return manager->makeVirtualFileHolder(fileID);
 }
 
 STI::Engine::EngineParsingMessage& LocalDevicePy::addInfo(unsigned id, const std::string& name)

@@ -1,5 +1,6 @@
 
 #include "SynchronousEventPy.h"
+#include "MixedValuePy.h"
 #include <sti/fwd/SynchronousEvent_fwd.h>
 #include <sti/utils/utils.h>
 #include <sti/engine/EnginePlayingMessage.h>
@@ -20,6 +21,7 @@ namespace py = pybind11;
 using STI::Python::SynchronousEventPy;
 using STI::Engine::SynchronousEvent;
 using STI::Engine::SynchronousEventAdapter;
+using STI::Python::MixedValuePy;
 
 void init_SynchronousEvent(py::module& m)
 {
@@ -35,6 +37,12 @@ void init_SynchronousEvent(py::module& m)
         .def("getTime", &SynchronousEventAdapter::getTime)
         .def("getMeasurements", &SynchronousEventAdapter::getMeasurements)
         .def("addMeasurement", &SynchronousEventAdapter::addMeasurement)    //py::call_guard<py::gil_scoped_release>()
+        .def("setMeasurementResult",
+            [](SynchronousEventAdapter& self, const py::object& obj) {
+                MixedValuePy result(obj);
+                return self.setMeasurementResult(result);
+            }, py::arg("result"))
+        .def("attachFile", &SynchronousEventAdapter::attachFile, py::arg("file"))
         .def("addError", &SynchronousEventAdapter::addError, py::return_value_policy::reference_internal)
         .def("addWarning", &SynchronousEventAdapter::addWarning, py::return_value_policy::reference_internal)
         .def("addInfoMessage", &SynchronousEventAdapter::addInfoMessage, py::return_value_policy::reference_internal)
