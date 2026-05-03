@@ -35,7 +35,7 @@ std::string ShotID::print() const
 {
 	std::stringstream sid;
 
-    sid << "sid:" << jobSourceID.print() << "#" << submissionTime.time_hh_mm_ss_mmmuuunnn();
+    sid << "sid:" << jobSourceID.toString() << "#" << submissionTime.toString();
 
     return sid.str();
 }
