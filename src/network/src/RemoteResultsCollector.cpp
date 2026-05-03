@@ -1,6 +1,7 @@
 #include "RemoteResultsCollector.h"
 
 #include <sti/engine/ParsedDependencyTree.h>
+#include <sti/device/VersionInfo.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/EnginePlayingMessage.h>
@@ -123,6 +124,34 @@ bool RemoteResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID
 	}
     
     return success;
+}
+
+bool RemoteResultsCollector::addVersionInfo(const STI::Device::DeviceID& deviceID, const std::vector<STI::Device::VersionInfo>& versions)
+{
+	std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+	
+	STI::TNetwork::TVersionInfoSeq_var tVersions(new STI::TNetwork::TVersionInfoSeq);
+
+	try {
+		convert<STI::Device::VersionInfo, STI::TNetwork::TVersionInfo>(versions, tVersions);
+
+		success = getTRef()->addVersionInfo(
+			convert<STI::Device::DeviceID, STI::TNetwork::TDeviceID>(deviceID),
+			tVersions);	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+	
+	return success;
 }
 
 bool RemoteResultsCollector::addMessages(const std::vector<EnginePlayingMessage>& messages)

@@ -2135,6 +2135,140 @@ _CORBA_MODULE_BEG
       TVersionInfoSeq_out& operator=(const TVersionInfoSeq_var&);
     };
 
+    struct TDeviceIDVersionsTuple {
+      typedef _CORBA_ConstrType_Variable_Var<TDeviceIDVersionsTuple> _var_type;
+
+      
+      TDeviceID id;
+
+      TVersionInfoSeq versions;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TDeviceIDVersionsTuple::_var_type TDeviceIDVersionsTuple_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TDeviceIDVersionsTuple,TDeviceIDVersionsTuple_var > TDeviceIDVersionsTuple_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceIDVersionsTuple;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceIDVersionsTupleSeq;
+
+    class TDeviceIDVersionsTupleSeq_var;
+
+    class TDeviceIDVersionsTupleSeq : public _CORBA_Unbounded_Sequence< TDeviceIDVersionsTuple >  {
+    public:
+      typedef TDeviceIDVersionsTupleSeq_var _var_type;
+      inline TDeviceIDVersionsTupleSeq() {}
+      inline TDeviceIDVersionsTupleSeq(const TDeviceIDVersionsTupleSeq& _s)
+        : _CORBA_Unbounded_Sequence< TDeviceIDVersionsTuple > (_s) {}
+
+      inline TDeviceIDVersionsTupleSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TDeviceIDVersionsTuple > (_max) {}
+      inline TDeviceIDVersionsTupleSeq(_CORBA_ULong _max, _CORBA_ULong _len, TDeviceIDVersionsTuple* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TDeviceIDVersionsTuple > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TDeviceIDVersionsTupleSeq& operator = (const TDeviceIDVersionsTupleSeq& _s) {
+        _CORBA_Unbounded_Sequence< TDeviceIDVersionsTuple > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TDeviceIDVersionsTupleSeq_out;
+
+    class TDeviceIDVersionsTupleSeq_var {
+    public:
+      inline TDeviceIDVersionsTupleSeq_var() : _pd_seq(0) {}
+      inline TDeviceIDVersionsTupleSeq_var(TDeviceIDVersionsTupleSeq* _s) : _pd_seq(_s) {}
+      inline TDeviceIDVersionsTupleSeq_var(const TDeviceIDVersionsTupleSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TDeviceIDVersionsTupleSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TDeviceIDVersionsTupleSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TDeviceIDVersionsTupleSeq_var& operator = (TDeviceIDVersionsTupleSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TDeviceIDVersionsTupleSeq_var& operator = (const TDeviceIDVersionsTupleSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TDeviceIDVersionsTupleSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TDeviceIDVersionsTuple& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TDeviceIDVersionsTupleSeq* operator -> () { return _pd_seq; }
+      inline const TDeviceIDVersionsTupleSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TDeviceIDVersionsTupleSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TDeviceIDVersionsTupleSeq& () const { return *_pd_seq; }
+      inline operator TDeviceIDVersionsTupleSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TDeviceIDVersionsTupleSeq& in() const { return *_pd_seq; }
+      inline TDeviceIDVersionsTupleSeq&       inout()    { return *_pd_seq; }
+      inline TDeviceIDVersionsTupleSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TDeviceIDVersionsTupleSeq* _retn() { TDeviceIDVersionsTupleSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TDeviceIDVersionsTupleSeq_out;
+      
+    private:
+      TDeviceIDVersionsTupleSeq* _pd_seq;
+    };
+
+    class TDeviceIDVersionsTupleSeq_out {
+    public:
+      inline TDeviceIDVersionsTupleSeq_out(TDeviceIDVersionsTupleSeq*& _s) : _data(_s) { _data = 0; }
+      inline TDeviceIDVersionsTupleSeq_out(TDeviceIDVersionsTupleSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TDeviceIDVersionsTupleSeq*) 0; }
+      inline TDeviceIDVersionsTupleSeq_out(const TDeviceIDVersionsTupleSeq_out& _s) : _data(_s._data) {}
+      inline TDeviceIDVersionsTupleSeq_out& operator = (const TDeviceIDVersionsTupleSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TDeviceIDVersionsTupleSeq_out& operator = (TDeviceIDVersionsTupleSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TDeviceIDVersionsTupleSeq*&()  { return _data; }
+      inline TDeviceIDVersionsTupleSeq*& ptr()       { return _data; }
+      inline TDeviceIDVersionsTupleSeq* operator->() { return _data; }
+
+      inline TDeviceIDVersionsTuple& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TDeviceIDVersionsTupleSeq*& _data;
+
+    private:
+      TDeviceIDVersionsTupleSeq_out();
+      TDeviceIDVersionsTupleSeq_out& operator=(const TDeviceIDVersionsTupleSeq_var&);
+    };
+
     struct TImage {
       typedef _CORBA_ConstrType_Variable_Var<TImage> _var_type;
 
@@ -7525,6 +7659,8 @@ _CORBA_MODULE_BEG
 
       TDeviceIDAttributesTupleSeq attributes;
 
+      TDeviceIDVersionsTupleSeq versions;
+
       TEnginePlayingMessageSeq messages;
 
       TShotResultStatus status;
@@ -7838,6 +7974,16 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TVersionInfoSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TVersionInfoSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TVersionInfoSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TVersionInfoSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceIDVersionsTuple& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceIDVersionsTuple* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceIDVersionsTuple*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceIDVersionsTuple*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TDeviceIDVersionsTupleSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TDeviceIDVersionsTupleSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TDeviceIDVersionsTupleSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TDeviceIDVersionsTupleSeq*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImage& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImage* _sp);

@@ -25,6 +25,7 @@ namespace Device
 class DeviceID;
 class PersistenceTarget;
 class PersistenceTargetHolder;
+class VersionManager;
 
 
 class LocalPersistenceManager : public PersistenceManager,
@@ -34,7 +35,8 @@ public:
 
     LocalPersistenceManager(const DeviceID& deviceID, const STI::Utils::Configuration& config, const std::string& basePath, 
         const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory, 
-        const std::shared_ptr<STI::Device::DeviceCollection>& collection);
+        const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+        const std::shared_ptr<STI::Device::VersionManager>& versionManager);
     ~LocalPersistenceManager();
 
     bool findShot(const STI::Engine::ShotID& sid);
@@ -130,6 +132,7 @@ private:
     std::shared_ptr<STI::Utils::FileHolderFactory> fileHolderFactory;
     std::shared_ptr<STI::Utils::FileServer> fileServer;
     std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
+    std::shared_ptr<STI::Device::VersionManager> versionManager;
 
     std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;
 

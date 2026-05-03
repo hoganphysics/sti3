@@ -1535,6 +1535,7 @@ _CORBA_MODULE_BEG
       TShotID* getShotID();
       ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer);
       ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
+      ::CORBA::Boolean addVersionInfo(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TVersionInfoSeq& versions);
       ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages);
 
       // Constructors
@@ -1573,6 +1574,7 @@ _CORBA_MODULE_BEG
       virtual TShotID* getShotID() = 0;
       virtual ::CORBA::Boolean addMeasurements(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TMeasurementSeq& measurements, ::STI::TNetwork::TFileServer_ptr sourceFileServer) = 0;
       virtual ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes) = 0;
+      virtual ::CORBA::Boolean addVersionInfo(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TVersionInfoSeq& versions) = 0;
       virtual ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages) = 0;
       
     public:  // Really protected, workaround for xlC

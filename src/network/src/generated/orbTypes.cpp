@@ -482,6 +482,22 @@ STI::TNetwork::TVersionInfo::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TDeviceIDVersionsTuple::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceID&) id >>= _n;
+  (const TVersionInfoSeq&) versions >>= _n;
+
+}
+
+void
+STI::TNetwork::TDeviceIDVersionsTuple::operator<<= (cdrStream &_n)
+{
+  (TDeviceID&)id <<= _n;
+  (TVersionInfoSeq&)versions <<= _n;
+
+}
+
+void
 STI::TNetwork::TImage::operator>>= (cdrStream &_n) const
 {
   (const TImageData&) imageData >>= _n;
@@ -2087,6 +2103,7 @@ STI::TNetwork::TShotResult::operator>>= (cdrStream &_n) const
   (const TTimeStamp&) playTime >>= _n;
   (const TDeviceIDMeasurementsTupleSeq&) measurements >>= _n;
   (const TDeviceIDAttributesTupleSeq&) attributes >>= _n;
+  (const TDeviceIDVersionsTupleSeq&) versions >>= _n;
   (const TEnginePlayingMessageSeq&) messages >>= _n;
   status >>= _n;
   (const TShotResultRecord&) shotResultRecord >>= _n;
@@ -2100,6 +2117,7 @@ STI::TNetwork::TShotResult::operator<<= (cdrStream &_n)
   (TTimeStamp&)playTime <<= _n;
   (TDeviceIDMeasurementsTupleSeq&)measurements <<= _n;
   (TDeviceIDAttributesTupleSeq&)attributes <<= _n;
+  (TDeviceIDVersionsTupleSeq&)versions <<= _n;
   (TEnginePlayingMessageSeq&)messages <<= _n;
   (TShotResultStatus&)status <<= _n;
   (TShotResultRecord&)shotResultRecord <<= _n;

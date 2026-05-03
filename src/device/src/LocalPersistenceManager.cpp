@@ -2,6 +2,7 @@
 
 #include <sti/utils/Configuration.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/VersionManager.h>
 
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineScheduler.h>
@@ -27,6 +28,7 @@
 #include "LocalFileServer.h"
 
 #include <filesystem>
+#include <vector>
 namespace fs = std::filesystem;
 
 using STI::Device::LocalPersistenceManager;
@@ -54,12 +56,14 @@ using STI::Engine::ShotType;
 
 LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const Configuration& config, const std::string& basePath, 
         const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
-        const std::shared_ptr<STI::Device::DeviceCollection>& collection)
+        const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+        const std::shared_ptr<STI::Device::VersionManager>& versionManager)
 : localDeviceID(deviceID), 
 fileHolderFactory(fileHolderFactory), 
 resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ), 
 sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ), 
 deviceCollection(collection),
+versionManager(versionManager),
 basePath(basePath)
 {
     auto server = std::make_shared<STI::Utils::LocalFileServer>(deviceID);
@@ -290,6 +294,12 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
     }
 
     bool success = true;
+
+    if (versionManager != 0) {
+        std::vector<STI::Device::VersionInfo> versions;
+        versionManager->getVersions(versions);
+        success &= resultsCollector->addVersionInfo(localDeviceID, versions);
+    }
 
     //Attributes
     for (auto& attribs : shotResult->attributes) {

@@ -27,6 +27,9 @@ struct VersionInfo
     std::string gitCommit;
     bool gitDirty;
     std::map<std::string, std::string> metadata;
+
+    template<class Archive>
+    void serialize(Archive& archive);
 };
 
 } //Device

@@ -131,6 +131,7 @@ module TNetwork
 
 		boolean addMeasurements(in TDeviceID deviceID, in TMeasurementSeq measurements, in TFileServer sourceFileServer);
 		boolean addAttributes(in TDeviceID deviceID, in TStringPairSeq attributes);
+		boolean addVersionInfo(in TDeviceID deviceID, in TVersionInfoSeq versions);
 		boolean addMessages(in TEnginePlayingMessageSeq messages);
 	};
 

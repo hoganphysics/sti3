@@ -147,6 +147,13 @@ module TNetwork
 	};
 	typedef sequence<TVersionInfo> TVersionInfoSeq;
 
+	struct TDeviceIDVersionsTuple
+	{
+		TDeviceID id;
+		TVersionInfoSeq versions;
+	};
+	typedef sequence<TDeviceIDVersionsTuple> TDeviceIDVersionsTupleSeq;
+
 
 	struct TImage
 	{
@@ -801,6 +808,7 @@ module TNetwork
 		// TMeasurementSeq measurements;
 		TDeviceIDMeasurementsTupleSeq measurements;
 		TDeviceIDAttributesTupleSeq attributes;
+		TDeviceIDVersionsTupleSeq versions;
 		TEnginePlayingMessageSeq messages;
 		TShotResultStatus status;
 

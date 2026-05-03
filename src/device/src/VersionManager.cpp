@@ -8,6 +8,10 @@
 #include <sstream>
 #include <vector>
 
+#include "CerealArchives.h"
+#include <cereal/types/map.hpp>
+#include <cereal/types/string.hpp>
+
 using STI::Device::VersionInfo;
 using STI::Device::VersionManager;
 
@@ -198,6 +202,23 @@ std::string VersionInfo::toString() const
     return stream.str();
 }
 
+template<class Archive>
+void VersionInfo::serialize(Archive& archive)
+{
+    archive(
+        cereal::make_nvp("component", component),
+        cereal::make_nvp("version", version),
+        cereal::make_nvp("major", major),
+        cereal::make_nvp("minor", minor),
+        cereal::make_nvp("patch", patch),
+        cereal::make_nvp("buildNumber", buildNumber),
+        cereal::make_nvp("buildString", buildString),
+        cereal::make_nvp("gitCommit", gitCommit),
+        cereal::make_nvp("gitDirty", gitDirty),
+        cereal::make_nvp("metadata", metadata)
+    );
+}
+
 std::vector<VersionInfo> VersionManager::getVersions() const
 {
     std::vector<VersionInfo> versions;
@@ -240,3 +261,6 @@ std::shared_ptr<VersionManager> STI::Device::makeVersionManager()
 {
     return std::make_shared<LocalVersionManager>();
 }
+
+template void VersionInfo::serialize<cereal::XMLOutputArchive>(cereal::XMLOutputArchive&);
+template void VersionInfo::serialize<cereal::XMLInputArchive>(cereal::XMLInputArchive&);

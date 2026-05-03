@@ -27,6 +27,7 @@ public:
                                      const ::STI::TNetwork::TMeasurementSeq& measurements,
                                      ::STI::TNetwork::TFileServer_ptr sourceFileServer);
     ::CORBA::Boolean addAttributes(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TStringPairSeq& attributes);
+    ::CORBA::Boolean addVersionInfo(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TVersionInfoSeq& versions);
     ::CORBA::Boolean addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages);
 
 private:
@@ -39,4 +40,3 @@ private:
 } //STI
 
 #endif
-

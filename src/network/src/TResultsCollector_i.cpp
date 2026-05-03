@@ -1,6 +1,7 @@
 #include "TResultsCollector_i.h"
 
 #include <sti/device/DeviceID.h>
+#include <sti/device/VersionInfo.h>
 #include <sti/engine/ResultsCollector.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/EnginePlayingMessage.h>
@@ -78,6 +79,19 @@ TShotID* TResultsCollector_i::getShotID()
 	    convert<::STI::TNetwork::TStringPairSeq, std::map<std::string, std::string>>(attributes, remoteAttributes);
 
 		return resultsCollector->addAttributes(convert<TDeviceID, DeviceID>(deviceID), remoteAttributes);
+	}
+    return false;
+}
+
+::CORBA::Boolean TResultsCollector_i::addVersionInfo(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TVersionInfoSeq& versions)
+{
+    if (resultsCollector != 0) {
+
+		std::vector<STI::Device::VersionInfo> remoteVersions;
+
+	    convert<::STI::TNetwork::TVersionInfo, STI::Device::VersionInfo>(versions, remoteVersions);
+
+		return resultsCollector->addVersionInfo(convert<TDeviceID, DeviceID>(deviceID), remoteVersions);
 	}
     return false;
 }

@@ -12,6 +12,7 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/StackTraceResult.h>
+#include <sti/device/VersionInfo.h>
 
 #include <sti/engine/ParsedTag.h>
 #include <sti/engine/RawEventGroup.h>
@@ -62,6 +63,8 @@ using STI::Engine::MeasurementVector;
 using STI::Engine::MeasurementMap;
 using STI::Engine::Measurement;
 using STI::Engine::ShotConfig;
+using STI::Device::VersionInfo;
+using STI::TNetwork::TVersionInfo;
 
 
 //ShotResultStatus
@@ -177,6 +180,13 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
             );
     }
 
+    for (unsigned i = 0; i < tShotResult.versions.length(); ++i) {
+        convert<TVersionInfo, VersionInfo>(
+                tShotResult.versions[i].versions,
+                (shotResult->versions)[convert<TDeviceID, DeviceID>(tShotResult.versions[i].id)]
+            );
+    }
+
     convert<TEnginePlayingMessage, EnginePlayingMessage>(tShotResult.messages, shotResult->messages);
     shotResult->status = convert<TShotResultStatus, ShotResultStatus>(tShotResult.status);
     convert<TShotResultRecord, ShotResultRecord>(tShotResult.shotResultRecord, shotResult->shotResultRecord);
@@ -232,6 +242,14 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
                 deviceAttributes.second, 
                 tShotResult.attributes[i].attributes);
         i++;
+    }
+
+    tShotResult.versions.length(shotResult->versions.size());
+    unsigned j = 0;
+    for (auto& deviceVersions : shotResult->versions) {
+        tShotResult.versions[j].id = convert<DeviceID, TDeviceID>(deviceVersions.first);
+        convert<VersionInfo, TVersionInfo>(deviceVersions.second, tShotResult.versions[j].versions);
+        j++;
     }
 
     convert<EnginePlayingMessage, TEnginePlayingMessage>(shotResult->messages, tShotResult.messages);

@@ -3900,10 +3900,10 @@ _0RL_lcfn_d8193061d7f864c6_a3000000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TResultsCollector::addMessages
+// Code for STI::TNetwork::TResultsCollector::addVersionInfo
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cSTI_mTNetwork_mTEnginePlayingMessageSeq
+//  _cboolean_i_cSTI_mTNetwork_mTDeviceID_i_cSTI_mTNetwork_mTVersionInfoSeq
 class _0RL_cd_d8193061d7f864c6_b3000000
   : public omniCallDescriptor
 {
@@ -3923,22 +3923,28 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TEnginePlayingMessageSeq_var arg_0_;
-  const STI::TNetwork::TEnginePlayingMessageSeq* arg_0;
+  STI::TNetwork::TDeviceID_var arg_0_;
+  const STI::TNetwork::TDeviceID* arg_0;
+  STI::TNetwork::TVersionInfoSeq_var arg_1_;
+  const STI::TNetwork::TVersionInfoSeq* arg_1;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_b3000000::marshalArguments(cdrStream& _n)
 {
-  (const STI::TNetwork::TEnginePlayingMessageSeq&) *arg_0 >>= _n;
+  (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
+  (const STI::TNetwork::TVersionInfoSeq&) *arg_1 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_b3000000::unmarshalArguments(cdrStream& _n)
 {
-  arg_0_ = new STI::TNetwork::TEnginePlayingMessageSeq;
-  (STI::TNetwork::TEnginePlayingMessageSeq&)arg_0_ <<= _n;
+  arg_0_ = new STI::TNetwork::TDeviceID;
+  (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
+  arg_1_ = new STI::TNetwork::TVersionInfoSeq;
+  (STI::TNetwork::TVersionInfoSeq&)arg_1_ <<= _n;
+  arg_1 = &arg_1_.in();
 
 }
 
@@ -3964,6 +3970,89 @@ _0RL_lcfn_d8193061d7f864c6_c3000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_b3000000* tcd = (_0RL_cd_d8193061d7f864c6_b3000000*)cd;
   STI::TNetwork::_impl_TResultsCollector* impl = (STI::TNetwork::_impl_TResultsCollector*) svnt->_ptrToInterface(STI::TNetwork::TResultsCollector::_PD_repoId);
+  tcd->result = impl->addVersionInfo(*tcd->arg_0, *tcd->arg_1);
+
+
+}
+
+::CORBA::Boolean STI::TNetwork::_objref_TResultsCollector::addVersionInfo(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TVersionInfoSeq& versions)
+{
+  _0RL_cd_d8193061d7f864c6_b3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c3000000, "addVersionInfo", 15);
+  _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) deviceID;
+  _call_desc.arg_1 = &(::STI::TNetwork::TVersionInfoSeq&) versions;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TResultsCollector::addMessages
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cSTI_mTNetwork_mTEnginePlayingMessageSeq
+class _0RL_cd_d8193061d7f864c6_d3000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_d3000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TEnginePlayingMessageSeq_var arg_0_;
+  const STI::TNetwork::TEnginePlayingMessageSeq* arg_0;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_d3000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TEnginePlayingMessageSeq&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_d3000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TEnginePlayingMessageSeq;
+  (STI::TNetwork::TEnginePlayingMessageSeq&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_d3000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_d3000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_d3000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_e3000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_d3000000* tcd = (_0RL_cd_d8193061d7f864c6_d3000000*)cd;
+  STI::TNetwork::_impl_TResultsCollector* impl = (STI::TNetwork::_impl_TResultsCollector*) svnt->_ptrToInterface(STI::TNetwork::TResultsCollector::_PD_repoId);
   tcd->result = impl->addMessages(*tcd->arg_0);
 
 
@@ -3971,7 +4060,7 @@ _0RL_lcfn_d8193061d7f864c6_c3000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TResultsCollector::addMessages(const ::STI::TNetwork::TEnginePlayingMessageSeq& messages)
 {
-  _0RL_cd_d8193061d7f864c6_b3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c3000000, "addMessages", 12);
+  _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e3000000, "addMessages", 12);
   _call_desc.arg_0 = &(::STI::TNetwork::TEnginePlayingMessageSeq&) messages;
 
   _invoke(_call_desc);
@@ -4033,9 +4122,17 @@ STI::TNetwork::_impl_TResultsCollector::_dispatch(omniCallHandle& _handle)
     return 1;
   }
 
+  if (omni::strMatch(op, "addVersionInfo")) {
+
+    _0RL_cd_d8193061d7f864c6_b3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c3000000, "addVersionInfo", 15, 1);
+    
+    _handle.upcall(this,_call_desc);
+    return 1;
+  }
+
   if (omni::strMatch(op, "addMessages")) {
 
-    _0RL_cd_d8193061d7f864c6_b3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c3000000, "addMessages", 12, 1);
+    _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e3000000, "addMessages", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4177,11 +4274,11 @@ STI::TNetwork::_objref_TEventEngine::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTEventEngineJob
-class _0RL_cd_d8193061d7f864c6_d3000000
+class _0RL_cd_d8193061d7f864c6_f3000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_d3000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_f3000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -4198,13 +4295,13 @@ public:
   const STI::TNetwork::TEventEngineJob* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_d3000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f3000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEventEngineJob&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_d3000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f3000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TEventEngineJob;
   (STI::TNetwork::TEventEngineJob&)arg_0_ <<= _n;
@@ -4212,15 +4309,15 @@ void _0RL_cd_d8193061d7f864c6_d3000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_d3000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_f3000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_e3000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_04000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_d3000000* tcd = (_0RL_cd_d8193061d7f864c6_d3000000*)cd;
+  _0RL_cd_d8193061d7f864c6_f3000000* tcd = (_0RL_cd_d8193061d7f864c6_f3000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
   impl->play(*tcd->arg_0);
 
@@ -4229,7 +4326,7 @@ _0RL_lcfn_d8193061d7f864c6_e3000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::play(const ::STI::TNetwork::TEventEngineJob& job)
 {
-  _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e3000000, "play", 5);
+  _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_04000000, "play", 5);
   _call_desc.arg_0 = &(::STI::TNetwork::TEventEngineJob&) job;
 
   _invoke(_call_desc);
@@ -4244,11 +4341,11 @@ void STI::TNetwork::_objref_TEventEngine::play(const ::STI::TNetwork::TEventEngi
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTEngineJobID_i_cSTI_mTNetwork_mTTriggerCallback_i_cboolean
-class _0RL_cd_d8193061d7f864c6_f3000000
+class _0RL_cd_d8193061d7f864c6_14000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_f3000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_14000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -4268,7 +4365,7 @@ public:
   ::CORBA::Boolean arg_2;
 };
 
-void _0RL_cd_d8193061d7f864c6_f3000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_14000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineJobID&) *arg_0 >>= _n;
   STI::TNetwork::TTriggerCallback::_marshalObjRef(arg_1,_n);
@@ -4276,7 +4373,7 @@ void _0RL_cd_d8193061d7f864c6_f3000000::marshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_f3000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_14000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TEngineJobID;
   (STI::TNetwork::TEngineJobID&)arg_0_ <<= _n;
@@ -4287,15 +4384,15 @@ void _0RL_cd_d8193061d7f864c6_f3000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_f3000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_14000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_04000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_24000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_f3000000* tcd = (_0RL_cd_d8193061d7f864c6_f3000000*)cd;
+  _0RL_cd_d8193061d7f864c6_14000000* tcd = (_0RL_cd_d8193061d7f864c6_14000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
   impl->playCB(*tcd->arg_0, tcd->arg_1, tcd->arg_2);
 
@@ -4304,7 +4401,7 @@ _0RL_lcfn_d8193061d7f864c6_04000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::playCB(const ::STI::TNetwork::TEngineJobID& jobID, ::STI::TNetwork::TTriggerCallback_ptr triggerCB, ::CORBA::Boolean debug)
 {
-  _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_04000000, "playCB", 7);
+  _0RL_cd_d8193061d7f864c6_14000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_24000000, "playCB", 7);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineJobID&) jobID;
   _call_desc.arg_1 = triggerCB;
   _call_desc.arg_2 = debug;
@@ -4321,7 +4418,7 @@ void STI::TNetwork::_objref_TEventEngine::playCB(const ::STI::TNetwork::TEngineJ
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_14000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_34000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
@@ -4332,7 +4429,7 @@ _0RL_lcfn_d8193061d7f864c6_14000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::trigger()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_14000000, "trigger", 8);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_34000000, "trigger", 8);
 
 
   _invoke(_call_desc);
@@ -4347,7 +4444,7 @@ void STI::TNetwork::_objref_TEventEngine::trigger()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_24000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_44000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_e2000000* tcd = (_0RL_cd_d8193061d7f864c6_e2000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
@@ -4358,7 +4455,7 @@ _0RL_lcfn_d8193061d7f864c6_24000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::triggerTarget(const ::STI::TNetwork::TDeviceID& target)
 {
-  _0RL_cd_d8193061d7f864c6_e2000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_24000000, "triggerTarget", 14);
+  _0RL_cd_d8193061d7f864c6_e2000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_44000000, "triggerTarget", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) target;
 
   _invoke(_call_desc);
@@ -4373,7 +4470,7 @@ void STI::TNetwork::_objref_TEventEngine::triggerTarget(const ::STI::TNetwork::T
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_34000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_54000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
@@ -4384,7 +4481,7 @@ _0RL_lcfn_d8193061d7f864c6_34000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::stop()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_34000000, "stop", 5);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_54000000, "stop", 5);
 
 
   _invoke(_call_desc);
@@ -4399,7 +4496,7 @@ void STI::TNetwork::_objref_TEventEngine::stop()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_44000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_64000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
@@ -4410,7 +4507,7 @@ _0RL_lcfn_d8193061d7f864c6_44000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::pause()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_44000000, "pause", 6);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_64000000, "pause", 6);
 
 
   _invoke(_call_desc);
@@ -4425,11 +4522,11 @@ void STI::TNetwork::_objref_TEventEngine::pause()
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cboolean
-class _0RL_cd_d8193061d7f864c6_54000000
+class _0RL_cd_d8193061d7f864c6_74000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_54000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_74000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -4445,27 +4542,27 @@ public:
   ::CORBA::Boolean arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_54000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_74000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalBoolean(arg_0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_54000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_74000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0 = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_54000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_74000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_64000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_84000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_54000000* tcd = (_0RL_cd_d8193061d7f864c6_54000000*)cd;
+  _0RL_cd_d8193061d7f864c6_74000000* tcd = (_0RL_cd_d8193061d7f864c6_74000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
   impl->unpause(tcd->arg_0);
 
@@ -4474,7 +4571,7 @@ _0RL_lcfn_d8193061d7f864c6_64000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::unpause(::CORBA::Boolean retrigger)
 {
-  _0RL_cd_d8193061d7f864c6_54000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_64000000, "unpause", 8);
+  _0RL_cd_d8193061d7f864c6_74000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_84000000, "unpause", 8);
   _call_desc.arg_0 = retrigger;
 
   _invoke(_call_desc);
@@ -4489,7 +4586,7 @@ void STI::TNetwork::_objref_TEventEngine::unpause(::CORBA::Boolean retrigger)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_74000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_94000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
@@ -4500,7 +4597,7 @@ _0RL_lcfn_d8193061d7f864c6_74000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngine::clear()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_74000000, "clear", 6);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_94000000, "clear", 6);
 
 
   _invoke(_call_desc);
@@ -4515,71 +4612,6 @@ void STI::TNetwork::_objref_TEventEngine::clear()
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTDeviceID
-class _0RL_cd_d8193061d7f864c6_84000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_84000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TDeviceID_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_84000000::marshalReturnedValues(cdrStream& _n)
-{
-  (const STI::TNetwork::TDeviceID&) result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_84000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = new STI::TNetwork::TDeviceID;
-  (STI::TNetwork::TDeviceID&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_84000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_94000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_84000000* tcd = (_0RL_cd_d8193061d7f864c6_84000000*)cd;
-  STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
-  tcd->result = impl->getDeviceID();
-
-
-}
-
-STI::TNetwork::TDeviceID* STI::TNetwork::_objref_TEventEngine::getDeviceID()
-{
-  _0RL_cd_d8193061d7f864c6_84000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_94000000, "getDeviceID", 12);
-
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TEventEngine::getState
-
-// Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEngineState
 class _0RL_cd_d8193061d7f864c6_a4000000
   : public omniCallDescriptor
 {
@@ -4597,18 +4629,19 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TEngineState result;
+  STI::TNetwork::TDeviceID_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_a4000000::marshalReturnedValues(cdrStream& _n)
 {
-  result >>= _n;
+  (const STI::TNetwork::TDeviceID&) result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_a4000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  (STI::TNetwork::TEngineState&)result <<= _n;
+  result = new STI::TNetwork::TDeviceID;
+  (STI::TNetwork::TDeviceID&)result <<= _n;
 
 }
 
@@ -4622,28 +4655,28 @@ _0RL_lcfn_d8193061d7f864c6_b4000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_a4000000* tcd = (_0RL_cd_d8193061d7f864c6_a4000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
-  tcd->result = impl->getState();
+  tcd->result = impl->getDeviceID();
 
 
 }
 
-STI::TNetwork::TEngineState STI::TNetwork::_objref_TEventEngine::getState()
+STI::TNetwork::TDeviceID* STI::TNetwork::_objref_TEventEngine::getDeviceID()
 {
-  _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b4000000, "getState", 9);
+  _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b4000000, "getDeviceID", 12);
 
 
   _invoke(_call_desc);
-  return _call_desc.result;
+  return _call_desc.result._retn();
 
 
 }
 
 
 //
-// Code for STI::TNetwork::TEventEngine::getParsedTree
+// Code for STI::TNetwork::TEventEngine::getState
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEventEngineDependencyTree
+//  _cSTI_mTNetwork_mTEngineState
 class _0RL_cd_d8193061d7f864c6_c4000000
   : public omniCallDescriptor
 {
@@ -4661,19 +4694,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TEventEngineDependencyTree_var result;
+  STI::TNetwork::TEngineState result;
 };
 
 void _0RL_cd_d8193061d7f864c6_c4000000::marshalReturnedValues(cdrStream& _n)
 {
-  (const STI::TNetwork::TEventEngineDependencyTree&) result >>= _n;
+  result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_c4000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = new STI::TNetwork::TEventEngineDependencyTree;
-  (STI::TNetwork::TEventEngineDependencyTree&)result <<= _n;
+  (STI::TNetwork::TEngineState&)result <<= _n;
 
 }
 
@@ -4687,6 +4719,71 @@ _0RL_lcfn_d8193061d7f864c6_d4000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_c4000000* tcd = (_0RL_cd_d8193061d7f864c6_c4000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
+  tcd->result = impl->getState();
+
+
+}
+
+STI::TNetwork::TEngineState STI::TNetwork::_objref_TEventEngine::getState()
+{
+  _0RL_cd_d8193061d7f864c6_c4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d4000000, "getState", 9);
+
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TEventEngine::getParsedTree
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTEventEngineDependencyTree
+class _0RL_cd_d8193061d7f864c6_e4000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_e4000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TEventEngineDependencyTree_var result;
+};
+
+void _0RL_cd_d8193061d7f864c6_e4000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TEventEngineDependencyTree&) result >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_e4000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = new STI::TNetwork::TEventEngineDependencyTree;
+  (STI::TNetwork::TEventEngineDependencyTree&)result <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_e4000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_f4000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_e4000000* tcd = (_0RL_cd_d8193061d7f864c6_e4000000*)cd;
+  STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
   tcd->result = impl->getParsedTree();
 
 
@@ -4694,7 +4791,7 @@ _0RL_lcfn_d8193061d7f864c6_d4000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TEventEngineDependencyTree* STI::TNetwork::_objref_TEventEngine::getParsedTree()
 {
-  _0RL_cd_d8193061d7f864c6_c4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d4000000, "getParsedTree", 14);
+  _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f4000000, "getParsedTree", 14);
 
 
   _invoke(_call_desc);
@@ -4709,11 +4806,11 @@ STI::TNetwork::TEventEngineDependencyTree* STI::TNetwork::_objref_TEventEngine::
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTParseID_o_cSTI_mTNetwork_mTParseResult
-class _0RL_cd_d8193061d7f864c6_e4000000
+class _0RL_cd_d8193061d7f864c6_05000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_e4000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_05000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -4734,13 +4831,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_e4000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_05000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TParseID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e4000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_05000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TParseID;
   (STI::TNetwork::TParseID&)arg_0_ <<= _n;
@@ -4748,14 +4845,14 @@ void _0RL_cd_d8193061d7f864c6_e4000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e4000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_05000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TParseResult&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e4000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_05000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TParseResult;
@@ -4763,15 +4860,15 @@ void _0RL_cd_d8193061d7f864c6_e4000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_e4000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_05000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_f4000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_15000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000* tcd = (_0RL_cd_d8193061d7f864c6_e4000000*)cd;
+  _0RL_cd_d8193061d7f864c6_05000000* tcd = (_0RL_cd_d8193061d7f864c6_05000000*)cd;
   STI::TNetwork::_impl_TEventEngine* impl = (STI::TNetwork::_impl_TEventEngine*) svnt->_ptrToInterface(STI::TNetwork::TEventEngine::_PD_repoId);
   tcd->result = impl->getParseResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -4780,7 +4877,7 @@ _0RL_lcfn_d8193061d7f864c6_f4000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngine::getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f4000000, "getParseResult", 15);
+  _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_15000000, "getParseResult", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) parseID;
 
   _invoke(_call_desc);
@@ -4821,7 +4918,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "play")) {
 
-    _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e3000000, "play", 5, 1);
+    _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_04000000, "play", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4829,7 +4926,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "playCB")) {
 
-    _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_04000000, "playCB", 7, 1);
+    _0RL_cd_d8193061d7f864c6_14000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_24000000, "playCB", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4837,7 +4934,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "trigger")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_14000000, "trigger", 8, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_34000000, "trigger", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4845,7 +4942,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "triggerTarget")) {
 
-    _0RL_cd_d8193061d7f864c6_e2000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_24000000, "triggerTarget", 14, 1);
+    _0RL_cd_d8193061d7f864c6_e2000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_44000000, "triggerTarget", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4853,7 +4950,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "stop")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_34000000, "stop", 5, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_54000000, "stop", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4861,7 +4958,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "pause")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_44000000, "pause", 6, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_64000000, "pause", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4869,7 +4966,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "unpause")) {
 
-    _0RL_cd_d8193061d7f864c6_54000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_64000000, "unpause", 8, 1);
+    _0RL_cd_d8193061d7f864c6_74000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_84000000, "unpause", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4877,7 +4974,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "clear")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_74000000, "clear", 6, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_94000000, "clear", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4885,7 +4982,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDeviceID")) {
 
-    _0RL_cd_d8193061d7f864c6_84000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_94000000, "getDeviceID", 12, 1);
+    _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b4000000, "getDeviceID", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4893,7 +4990,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getState")) {
 
-    _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b4000000, "getState", 9, 1);
+    _0RL_cd_d8193061d7f864c6_c4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d4000000, "getState", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4901,7 +4998,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getParsedTree")) {
 
-    _0RL_cd_d8193061d7f864c6_c4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d4000000, "getParsedTree", 14, 1);
+    _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f4000000, "getParsedTree", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -4909,7 +5006,7 @@ STI::TNetwork::_impl_TEventEngine::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getParseResult")) {
 
-    _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f4000000, "getParseResult", 15, 1);
+    _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_15000000, "getParseResult", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -5051,11 +5148,11 @@ STI::TNetwork::_objref_TEventEngineDependencyParser::_ptrToObjRef(const char* id
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTDeviceIDSeq_n_cSTI_mTNetwork_mTEventEngineDependencyTree_n_cSTI_mTNetwork_mTDeviceIDSeq_o_cSTI_mTNetwork_mTEngineParsingMessageSeq_i_cSTI_mTNetwork_mTDeviceTrace
-class _0RL_cd_d8193061d7f864c6_05000000
+class _0RL_cd_d8193061d7f864c6_25000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_05000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_25000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -5081,7 +5178,7 @@ public:
   const STI::TNetwork::TDeviceTrace* arg_4;
 };
 
-void _0RL_cd_d8193061d7f864c6_05000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_25000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TDeviceIDSeq&) *arg_0 >>= _n;
   (const STI::TNetwork::TEventEngineDependencyTree&) *arg_1 >>= _n;
@@ -5090,7 +5187,7 @@ void _0RL_cd_d8193061d7f864c6_05000000::marshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_05000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_25000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TDeviceIDSeq;
   (STI::TNetwork::TDeviceIDSeq&)arg_0_ <<= _n;
@@ -5107,7 +5204,7 @@ void _0RL_cd_d8193061d7f864c6_05000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_05000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_25000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TEventEngineDependencyTree&) *arg_1 >>= _n;
   (const STI::TNetwork::TDeviceIDSeq&) *arg_2 >>= _n;
@@ -5115,7 +5212,7 @@ void _0RL_cd_d8193061d7f864c6_05000000::marshalReturnedValues(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_05000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_25000000::unmarshalReturnedValues(cdrStream& _n)
 {
   (STI::TNetwork::TEventEngineDependencyTree&)*arg_1 <<= _n;
   (STI::TNetwork::TDeviceIDSeq&)*arg_2 <<= _n;
@@ -5124,15 +5221,15 @@ void _0RL_cd_d8193061d7f864c6_05000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_05000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_25000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_15000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_35000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_05000000* tcd = (_0RL_cd_d8193061d7f864c6_05000000*)cd;
+  _0RL_cd_d8193061d7f864c6_25000000* tcd = (_0RL_cd_d8193061d7f864c6_25000000*)cd;
   STI::TNetwork::_impl_TEventEngineDependencyParser* impl = (STI::TNetwork::_impl_TEventEngineDependencyParser*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineDependencyParser::_PD_repoId);
   impl->getDependants(*tcd->arg_0, *tcd->arg_1, *tcd->arg_2, tcd->arg_3.out(), *tcd->arg_4);
 
@@ -5141,7 +5238,7 @@ _0RL_lcfn_d8193061d7f864c6_15000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineDependencyParser::getDependants(const ::STI::TNetwork::TDeviceIDSeq& evtTargets, ::STI::TNetwork::TEventEngineDependencyTree& tree, ::STI::TNetwork::TDeviceIDSeq& missingTargets, ::STI::TNetwork::TEngineParsingMessageSeq_out messages, const ::STI::TNetwork::TDeviceTrace& trace)
 {
-  _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_15000000, "getDependants", 14);
+  _0RL_cd_d8193061d7f864c6_25000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_35000000, "getDependants", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TDeviceIDSeq&) evtTargets;
   _call_desc.arg_1 = &(::STI::TNetwork::TEventEngineDependencyTree&) tree;
   _call_desc.arg_2 = &(::STI::TNetwork::TDeviceIDSeq&) missingTargets;
@@ -5159,11 +5256,11 @@ void STI::TNetwork::_objref_TEventEngineDependencyParser::getDependants(const ::
 
 // Proxy call descriptor class. Mangled signature:
 //  void_n_cSTI_mTNetwork_mTEventEngineDependencyTree_o_cSTI_mTNetwork_mTEngineParsingMessageSeq_i_cSTI_mTNetwork_mTDeviceTrace
-class _0RL_cd_d8193061d7f864c6_25000000
+class _0RL_cd_d8193061d7f864c6_45000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_25000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_45000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -5185,14 +5282,14 @@ public:
   const STI::TNetwork::TDeviceTrace* arg_2;
 };
 
-void _0RL_cd_d8193061d7f864c6_25000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_45000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEventEngineDependencyTree&) *arg_0 >>= _n;
   (const STI::TNetwork::TDeviceTrace&) *arg_2 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_25000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_45000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TEventEngineDependencyTree;
   (STI::TNetwork::TEventEngineDependencyTree&)arg_0_ <<= _n;
@@ -5203,14 +5300,14 @@ void _0RL_cd_d8193061d7f864c6_25000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_25000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_45000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TEventEngineDependencyTree&) *arg_0 >>= _n;
   (const STI::TNetwork::TEngineParsingMessageSeq&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_25000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_45000000::unmarshalReturnedValues(cdrStream& _n)
 {
   (STI::TNetwork::TEventEngineDependencyTree&)*arg_0 <<= _n;
   arg_1 = new STI::TNetwork::TEngineParsingMessageSeq;
@@ -5218,15 +5315,15 @@ void _0RL_cd_d8193061d7f864c6_25000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_25000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_45000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_35000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_55000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_25000000* tcd = (_0RL_cd_d8193061d7f864c6_25000000*)cd;
+  _0RL_cd_d8193061d7f864c6_45000000* tcd = (_0RL_cd_d8193061d7f864c6_45000000*)cd;
   STI::TNetwork::_impl_TEventEngineDependencyParser* impl = (STI::TNetwork::_impl_TEventEngineDependencyParser*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineDependencyParser::_PD_repoId);
   impl->addDeviceEventTargets(*tcd->arg_0, tcd->arg_1.out(), *tcd->arg_2);
 
@@ -5235,7 +5332,7 @@ _0RL_lcfn_d8193061d7f864c6_35000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineDependencyParser::addDeviceEventTargets(::STI::TNetwork::TEventEngineDependencyTree& tree, ::STI::TNetwork::TEngineParsingMessageSeq_out messages, const ::STI::TNetwork::TDeviceTrace& trace)
 {
-  _0RL_cd_d8193061d7f864c6_25000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_35000000, "addDeviceEventTargets", 22);
+  _0RL_cd_d8193061d7f864c6_45000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_55000000, "addDeviceEventTargets", 22);
   _call_desc.arg_0 = &(::STI::TNetwork::TEventEngineDependencyTree&) tree;
   _call_desc.arg_2 = &(::STI::TNetwork::TDeviceTrace&) trace;
 
@@ -5251,7 +5348,7 @@ void STI::TNetwork::_objref_TEventEngineDependencyParser::addDeviceEventTargets(
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_45000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_65000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TEventEngineDependencyParser* impl = (STI::TNetwork::_impl_TEventEngineDependencyParser*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineDependencyParser::_PD_repoId);
@@ -5262,7 +5359,7 @@ _0RL_lcfn_d8193061d7f864c6_45000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngineDependencyParser::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_45000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_65000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -5302,7 +5399,7 @@ STI::TNetwork::_impl_TEventEngineDependencyParser::_dispatch(omniCallHandle& _ha
 
   if (omni::strMatch(op, "getDependants")) {
 
-    _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_15000000, "getDependants", 14, 1);
+    _0RL_cd_d8193061d7f864c6_25000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_35000000, "getDependants", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -5310,7 +5407,7 @@ STI::TNetwork::_impl_TEventEngineDependencyParser::_dispatch(omniCallHandle& _ha
 
   if (omni::strMatch(op, "addDeviceEventTargets")) {
 
-    _0RL_cd_d8193061d7f864c6_25000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_35000000, "addDeviceEventTargets", 22, 1);
+    _0RL_cd_d8193061d7f864c6_45000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_55000000, "addDeviceEventTargets", 22, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -5318,7 +5415,7 @@ STI::TNetwork::_impl_TEventEngineDependencyParser::_dispatch(omniCallHandle& _ha
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_45000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_65000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -5460,89 +5557,6 @@ STI::TNetwork::_objref_TEventEngineScheduler::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTParseJobStatus_i_cSTI_mTNetwork_mTShot
-class _0RL_cd_d8193061d7f864c6_55000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_55000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TShot_var arg_0_;
-  const STI::TNetwork::TShot* arg_0;
-  STI::TNetwork::TParseJobStatus_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_55000000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TShot&) *arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_55000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TShot;
-  (STI::TNetwork::TShot&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_55000000::marshalReturnedValues(cdrStream& _n)
-{
-  (const STI::TNetwork::TParseJobStatus&) result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_55000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = new STI::TNetwork::TParseJobStatus;
-  (STI::TNetwork::TParseJobStatus&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_55000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_65000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_55000000* tcd = (_0RL_cd_d8193061d7f864c6_55000000*)cd;
-  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
-  tcd->result = impl->parse(*tcd->arg_0);
-
-
-}
-
-STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::parse(const ::STI::TNetwork::TShot& shot)
-{
-  _0RL_cd_d8193061d7f864c6_55000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_65000000, "parse", 6);
-  _call_desc.arg_0 = &(::STI::TNetwork::TShot&) shot;
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TEventEngineScheduler::parseSeqEntry
-
-// Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTParseJobStatus_i_cSTI_mTNetwork_mTShot_i_cSTI_mTNetwork_mTSequenceEntryID
 class _0RL_cd_d8193061d7f864c6_75000000
   : public omniCallDescriptor
 {
@@ -5564,15 +5578,12 @@ public:
 
   STI::TNetwork::TShot_var arg_0_;
   const STI::TNetwork::TShot* arg_0;
-  STI::TNetwork::TSequenceEntryID_var arg_1_;
-  const STI::TNetwork::TSequenceEntryID* arg_1;
   STI::TNetwork::TParseJobStatus_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_75000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShot&) *arg_0 >>= _n;
-  (const STI::TNetwork::TSequenceEntryID&) *arg_1 >>= _n;
 
 }
 
@@ -5581,9 +5592,6 @@ void _0RL_cd_d8193061d7f864c6_75000000::unmarshalArguments(cdrStream& _n)
   arg_0_ = new STI::TNetwork::TShot;
   (STI::TNetwork::TShot&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
-  arg_1_ = new STI::TNetwork::TSequenceEntryID;
-  (STI::TNetwork::TSequenceEntryID&)arg_1_ <<= _n;
-  arg_1 = &arg_1_.in();
 
 }
 
@@ -5610,16 +5618,15 @@ _0RL_lcfn_d8193061d7f864c6_85000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_75000000* tcd = (_0RL_cd_d8193061d7f864c6_75000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
-  tcd->result = impl->parseSeqEntry(*tcd->arg_0, *tcd->arg_1);
+  tcd->result = impl->parse(*tcd->arg_0);
 
 
 }
 
-STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID)
+STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::parse(const ::STI::TNetwork::TShot& shot)
 {
-  _0RL_cd_d8193061d7f864c6_75000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_85000000, "parseSeqEntry", 14);
+  _0RL_cd_d8193061d7f864c6_75000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_85000000, "parse", 6);
   _call_desc.arg_0 = &(::STI::TNetwork::TShot&) shot;
-  _call_desc.arg_1 = &(::STI::TNetwork::TSequenceEntryID&) sequenceEntryID;
 
   _invoke(_call_desc);
   return _call_desc.result._retn();
@@ -5629,10 +5636,10 @@ STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::pa
 
 
 //
-// Code for STI::TNetwork::TEventEngineScheduler::parseSeq
+// Code for STI::TNetwork::TEventEngineScheduler::parseSeqEntry
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTParseJobStatus_i_cSTI_mTNetwork_mTShot_i_cSTI_mTNetwork_mTSequenceID
+//  _cSTI_mTNetwork_mTParseJobStatus_i_cSTI_mTNetwork_mTShot_i_cSTI_mTNetwork_mTSequenceEntryID
 class _0RL_cd_d8193061d7f864c6_95000000
   : public omniCallDescriptor
 {
@@ -5654,15 +5661,15 @@ public:
 
   STI::TNetwork::TShot_var arg_0_;
   const STI::TNetwork::TShot* arg_0;
-  STI::TNetwork::TSequenceID_var arg_1_;
-  const STI::TNetwork::TSequenceID* arg_1;
+  STI::TNetwork::TSequenceEntryID_var arg_1_;
+  const STI::TNetwork::TSequenceEntryID* arg_1;
   STI::TNetwork::TParseJobStatus_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_95000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShot&) *arg_0 >>= _n;
-  (const STI::TNetwork::TSequenceID&) *arg_1 >>= _n;
+  (const STI::TNetwork::TSequenceEntryID&) *arg_1 >>= _n;
 
 }
 
@@ -5671,8 +5678,8 @@ void _0RL_cd_d8193061d7f864c6_95000000::unmarshalArguments(cdrStream& _n)
   arg_0_ = new STI::TNetwork::TShot;
   (STI::TNetwork::TShot&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
-  arg_1_ = new STI::TNetwork::TSequenceID;
-  (STI::TNetwork::TSequenceID&)arg_1_ <<= _n;
+  arg_1_ = new STI::TNetwork::TSequenceEntryID;
+  (STI::TNetwork::TSequenceEntryID&)arg_1_ <<= _n;
   arg_1 = &arg_1_.in();
 
 }
@@ -5700,6 +5707,96 @@ _0RL_lcfn_d8193061d7f864c6_a5000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_95000000* tcd = (_0RL_cd_d8193061d7f864c6_95000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
+  tcd->result = impl->parseSeqEntry(*tcd->arg_0, *tcd->arg_1);
+
+
+}
+
+STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::parseSeqEntry(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceEntryID& sequenceEntryID)
+{
+  _0RL_cd_d8193061d7f864c6_95000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a5000000, "parseSeqEntry", 14);
+  _call_desc.arg_0 = &(::STI::TNetwork::TShot&) shot;
+  _call_desc.arg_1 = &(::STI::TNetwork::TSequenceEntryID&) sequenceEntryID;
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TEventEngineScheduler::parseSeq
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTParseJobStatus_i_cSTI_mTNetwork_mTShot_i_cSTI_mTNetwork_mTSequenceID
+class _0RL_cd_d8193061d7f864c6_b5000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_b5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TShot_var arg_0_;
+  const STI::TNetwork::TShot* arg_0;
+  STI::TNetwork::TSequenceID_var arg_1_;
+  const STI::TNetwork::TSequenceID* arg_1;
+  STI::TNetwork::TParseJobStatus_var result;
+};
+
+void _0RL_cd_d8193061d7f864c6_b5000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TShot&) *arg_0 >>= _n;
+  (const STI::TNetwork::TSequenceID&) *arg_1 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b5000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TShot;
+  (STI::TNetwork::TShot&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+  arg_1_ = new STI::TNetwork::TSequenceID;
+  (STI::TNetwork::TSequenceID&)arg_1_ <<= _n;
+  arg_1 = &arg_1_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b5000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TParseJobStatus&) result >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b5000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = new STI::TNetwork::TParseJobStatus;
+  (STI::TNetwork::TParseJobStatus&)result <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_b5000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_c5000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_b5000000* tcd = (_0RL_cd_d8193061d7f864c6_b5000000*)cd;
+  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->parseSeq(*tcd->arg_0, *tcd->arg_1);
 
 
@@ -5707,7 +5804,7 @@ _0RL_lcfn_d8193061d7f864c6_a5000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::parseSeq(const ::STI::TNetwork::TShot& shot, const ::STI::TNetwork::TSequenceID& sequenceID)
 {
-  _0RL_cd_d8193061d7f864c6_95000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a5000000, "parseSeq", 9);
+  _0RL_cd_d8193061d7f864c6_b5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c5000000, "parseSeq", 9);
   _call_desc.arg_0 = &(::STI::TNetwork::TShot&) shot;
   _call_desc.arg_1 = &(::STI::TNetwork::TSequenceID&) sequenceID;
 
@@ -5723,11 +5820,11 @@ STI::TNetwork::TParseJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::pa
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTPlayJobStatus_i_cSTI_mTNetwork_mTParseID_i_cSTI_mTNetwork_mTEngineJobSourceID
-class _0RL_cd_d8193061d7f864c6_b5000000
+class _0RL_cd_d8193061d7f864c6_d5000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_b5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_d5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -5749,14 +5846,14 @@ public:
   STI::TNetwork::TPlayJobStatus_var result;
 };
 
-void _0RL_cd_d8193061d7f864c6_b5000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_d5000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TParseID&) *arg_0 >>= _n;
   (const STI::TNetwork::TEngineJobSourceID&) *arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_b5000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_d5000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TParseID;
   (STI::TNetwork::TParseID&)arg_0_ <<= _n;
@@ -5767,28 +5864,28 @@ void _0RL_cd_d8193061d7f864c6_b5000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_b5000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_d5000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TPlayJobStatus&) result >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_b5000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_d5000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = new STI::TNetwork::TPlayJobStatus;
   (STI::TNetwork::TPlayJobStatus&)result <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_b5000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_d5000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_c5000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_e5000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_b5000000* tcd = (_0RL_cd_d8193061d7f864c6_b5000000*)cd;
+  _0RL_cd_d8193061d7f864c6_d5000000* tcd = (_0RL_cd_d8193061d7f864c6_d5000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->play(*tcd->arg_0, *tcd->arg_1);
 
@@ -5797,7 +5894,7 @@ _0RL_lcfn_d8193061d7f864c6_c5000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TPlayJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::play(const ::STI::TNetwork::TParseID& parseID, const ::STI::TNetwork::TEngineJobSourceID& source)
 {
-  _0RL_cd_d8193061d7f864c6_b5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c5000000, "play", 5);
+  _0RL_cd_d8193061d7f864c6_d5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e5000000, "play", 5);
   _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) parseID;
   _call_desc.arg_1 = &(::STI::TNetwork::TEngineJobSourceID&) source;
 
@@ -5813,11 +5910,11 @@ STI::TNetwork::TPlayJobStatus* STI::TNetwork::_objref_TEventEngineScheduler::pla
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTAddSequenceStatus_i_cSTI_mTNetwork_mTSequence_i_cSTI_mTNetwork_mTEngineJobSourceID
-class _0RL_cd_d8193061d7f864c6_d5000000
+class _0RL_cd_d8193061d7f864c6_f5000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_d5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_f5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -5839,14 +5936,14 @@ public:
   STI::TNetwork::TAddSequenceStatus_var result;
 };
 
-void _0RL_cd_d8193061d7f864c6_d5000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f5000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TSequence&) *arg_0 >>= _n;
   (const STI::TNetwork::TEngineJobSourceID&) *arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_d5000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f5000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TSequence;
   (STI::TNetwork::TSequence&)arg_0_ <<= _n;
@@ -5857,28 +5954,28 @@ void _0RL_cd_d8193061d7f864c6_d5000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_d5000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f5000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TAddSequenceStatus&) result >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_d5000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f5000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = new STI::TNetwork::TAddSequenceStatus;
   (STI::TNetwork::TAddSequenceStatus&)result <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_d5000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_f5000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_e5000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_06000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_d5000000* tcd = (_0RL_cd_d8193061d7f864c6_d5000000*)cd;
+  _0RL_cd_d8193061d7f864c6_f5000000* tcd = (_0RL_cd_d8193061d7f864c6_f5000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->addSequence(*tcd->arg_0, *tcd->arg_1);
 
@@ -5887,7 +5984,7 @@ _0RL_lcfn_d8193061d7f864c6_e5000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TAddSequenceStatus* STI::TNetwork::_objref_TEventEngineScheduler::addSequence(const ::STI::TNetwork::TSequence& sequenceData, const ::STI::TNetwork::TEngineJobSourceID& source)
 {
-  _0RL_cd_d8193061d7f864c6_d5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e5000000, "addSequence", 12);
+  _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_06000000, "addSequence", 12);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequence&) sequenceData;
   _call_desc.arg_1 = &(::STI::TNetwork::TEngineJobSourceID&) source;
 
@@ -5903,11 +6000,11 @@ STI::TNetwork::TAddSequenceStatus* STI::TNetwork::_objref_TEventEngineScheduler:
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTSequenceID
-class _0RL_cd_d8193061d7f864c6_f5000000
+class _0RL_cd_d8193061d7f864c6_16000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_f5000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_16000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -5924,13 +6021,13 @@ public:
   const STI::TNetwork::TSequenceID* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_f5000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_16000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TSequenceID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_f5000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_16000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TSequenceID;
   (STI::TNetwork::TSequenceID&)arg_0_ <<= _n;
@@ -5938,15 +6035,15 @@ void _0RL_cd_d8193061d7f864c6_f5000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_f5000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_16000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_06000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_26000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_f5000000* tcd = (_0RL_cd_d8193061d7f864c6_f5000000*)cd;
+  _0RL_cd_d8193061d7f864c6_16000000* tcd = (_0RL_cd_d8193061d7f864c6_16000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->closeSequence(*tcd->arg_0);
 
@@ -5955,7 +6052,7 @@ _0RL_lcfn_d8193061d7f864c6_06000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::closeSequence(const ::STI::TNetwork::TSequenceID& seqid)
 {
-  _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_06000000, "closeSequence", 14);
+  _0RL_cd_d8193061d7f864c6_16000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_26000000, "closeSequence", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceID&) seqid;
 
   _invoke(_call_desc);
@@ -5970,9 +6067,9 @@ void STI::TNetwork::_objref_TEventEngineScheduler::closeSequence(const ::STI::TN
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_16000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_36000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_f5000000* tcd = (_0RL_cd_d8193061d7f864c6_f5000000*)cd;
+  _0RL_cd_d8193061d7f864c6_16000000* tcd = (_0RL_cd_d8193061d7f864c6_16000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->cancelSequence(*tcd->arg_0);
 
@@ -5981,7 +6078,7 @@ _0RL_lcfn_d8193061d7f864c6_16000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::cancelSequence(const ::STI::TNetwork::TSequenceID& seqid)
 {
-  _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_16000000, "cancelSequence", 15);
+  _0RL_cd_d8193061d7f864c6_16000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_36000000, "cancelSequence", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceID&) seqid;
 
   _invoke(_call_desc);
@@ -5996,88 +6093,6 @@ void STI::TNetwork::_objref_TEventEngineScheduler::cancelSequence(const ::STI::T
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTEngineJobStatus_i_cSTI_mTNetwork_mTParseID
-class _0RL_cd_d8193061d7f864c6_26000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_26000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TParseID_var arg_0_;
-  const STI::TNetwork::TParseID* arg_0;
-  STI::TNetwork::TEngineJobStatus result;
-};
-
-void _0RL_cd_d8193061d7f864c6_26000000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TParseID&) *arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_26000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TParseID;
-  (STI::TNetwork::TParseID&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_26000000::marshalReturnedValues(cdrStream& _n)
-{
-  result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_26000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  (STI::TNetwork::TEngineJobStatus&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_26000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_36000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_26000000* tcd = (_0RL_cd_d8193061d7f864c6_26000000*)cd;
-  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
-  tcd->result = impl->getStatusPID(*tcd->arg_0);
-
-
-}
-
-STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::getStatusPID(const ::STI::TNetwork::TParseID& pid)
-{
-  _0RL_cd_d8193061d7f864c6_26000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_36000000, "getStatusPID", 13);
-  _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) pid;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TEventEngineScheduler::getStatusSID
-
-// Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEngineJobStatus_i_cSTI_mTNetwork_mTShotID
 class _0RL_cd_d8193061d7f864c6_46000000
   : public omniCallDescriptor
 {
@@ -6097,21 +6112,21 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TShotID_var arg_0_;
-  const STI::TNetwork::TShotID* arg_0;
+  STI::TNetwork::TParseID_var arg_0_;
+  const STI::TNetwork::TParseID* arg_0;
   STI::TNetwork::TEngineJobStatus result;
 };
 
 void _0RL_cd_d8193061d7f864c6_46000000::marshalArguments(cdrStream& _n)
 {
-  (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
+  (const STI::TNetwork::TParseID&) *arg_0 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_46000000::unmarshalArguments(cdrStream& _n)
 {
-  arg_0_ = new STI::TNetwork::TShotID;
-  (STI::TNetwork::TShotID&)arg_0_ <<= _n;
+  arg_0_ = new STI::TNetwork::TParseID;
+  (STI::TNetwork::TParseID&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
 
 }
@@ -6138,15 +6153,15 @@ _0RL_lcfn_d8193061d7f864c6_56000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_46000000* tcd = (_0RL_cd_d8193061d7f864c6_46000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
-  tcd->result = impl->getStatusSID(*tcd->arg_0);
+  tcd->result = impl->getStatusPID(*tcd->arg_0);
 
 
 }
 
-STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::getStatusSID(const ::STI::TNetwork::TShotID& sid)
+STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::getStatusPID(const ::STI::TNetwork::TParseID& pid)
 {
-  _0RL_cd_d8193061d7f864c6_46000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_56000000, "getStatusSID", 13);
-  _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
+  _0RL_cd_d8193061d7f864c6_46000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_56000000, "getStatusPID", 13);
+  _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) pid;
 
   _invoke(_call_desc);
   return _call_desc.result;
@@ -6156,10 +6171,10 @@ STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::ge
 
 
 //
-// Code for STI::TNetwork::TEventEngineScheduler::getStatusSeqID
+// Code for STI::TNetwork::TEventEngineScheduler::getStatusSID
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEngineJobStatus_i_cSTI_mTNetwork_mTSequenceID
+//  _cSTI_mTNetwork_mTEngineJobStatus_i_cSTI_mTNetwork_mTShotID
 class _0RL_cd_d8193061d7f864c6_66000000
   : public omniCallDescriptor
 {
@@ -6179,21 +6194,21 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TSequenceID_var arg_0_;
-  const STI::TNetwork::TSequenceID* arg_0;
+  STI::TNetwork::TShotID_var arg_0_;
+  const STI::TNetwork::TShotID* arg_0;
   STI::TNetwork::TEngineJobStatus result;
 };
 
 void _0RL_cd_d8193061d7f864c6_66000000::marshalArguments(cdrStream& _n)
 {
-  (const STI::TNetwork::TSequenceID&) *arg_0 >>= _n;
+  (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_66000000::unmarshalArguments(cdrStream& _n)
 {
-  arg_0_ = new STI::TNetwork::TSequenceID;
-  (STI::TNetwork::TSequenceID&)arg_0_ <<= _n;
+  arg_0_ = new STI::TNetwork::TShotID;
+  (STI::TNetwork::TShotID&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
 
 }
@@ -6220,6 +6235,88 @@ _0RL_lcfn_d8193061d7f864c6_76000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_66000000* tcd = (_0RL_cd_d8193061d7f864c6_66000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
+  tcd->result = impl->getStatusSID(*tcd->arg_0);
+
+
+}
+
+STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::getStatusSID(const ::STI::TNetwork::TShotID& sid)
+{
+  _0RL_cd_d8193061d7f864c6_66000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_76000000, "getStatusSID", 13);
+  _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TEventEngineScheduler::getStatusSeqID
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTEngineJobStatus_i_cSTI_mTNetwork_mTSequenceID
+class _0RL_cd_d8193061d7f864c6_86000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_86000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TSequenceID_var arg_0_;
+  const STI::TNetwork::TSequenceID* arg_0;
+  STI::TNetwork::TEngineJobStatus result;
+};
+
+void _0RL_cd_d8193061d7f864c6_86000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TSequenceID&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_86000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TSequenceID;
+  (STI::TNetwork::TSequenceID&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_86000000::marshalReturnedValues(cdrStream& _n)
+{
+  result >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_86000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  (STI::TNetwork::TEngineJobStatus&)result <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_86000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_96000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_86000000* tcd = (_0RL_cd_d8193061d7f864c6_86000000*)cd;
+  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getStatusSeqID(*tcd->arg_0);
 
 
@@ -6227,7 +6324,7 @@ _0RL_lcfn_d8193061d7f864c6_76000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::getStatusSeqID(const ::STI::TNetwork::TSequenceID& seqID)
 {
-  _0RL_cd_d8193061d7f864c6_66000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_76000000, "getStatusSeqID", 15);
+  _0RL_cd_d8193061d7f864c6_86000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_96000000, "getStatusSeqID", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceID&) seqID;
 
   _invoke(_call_desc);
@@ -6242,11 +6339,11 @@ STI::TNetwork::TEngineJobStatus STI::TNetwork::_objref_TEventEngineScheduler::ge
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTEventEngineDependencyParser
-class _0RL_cd_d8193061d7f864c6_86000000
+class _0RL_cd_d8193061d7f864c6_a6000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_86000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_a6000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6262,27 +6359,27 @@ public:
   STI::TNetwork::TEventEngineDependencyParser_var result;
 };
 
-void _0RL_cd_d8193061d7f864c6_86000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a6000000::marshalReturnedValues(cdrStream& _n)
 {
   STI::TNetwork::TEventEngineDependencyParser::_marshalObjRef(result,_n);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_86000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a6000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = STI::TNetwork::TEventEngineDependencyParser::_unmarshalObjRef(_n);
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_86000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_a6000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_96000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_b6000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_86000000* tcd = (_0RL_cd_d8193061d7f864c6_86000000*)cd;
+  _0RL_cd_d8193061d7f864c6_a6000000* tcd = (_0RL_cd_d8193061d7f864c6_a6000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getDependencyParser();
 
@@ -6291,7 +6388,7 @@ _0RL_lcfn_d8193061d7f864c6_96000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TEventEngineDependencyParser_ptr STI::TNetwork::_objref_TEventEngineScheduler::getDependencyParser()
 {
-  _0RL_cd_d8193061d7f864c6_86000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_96000000, "getDependencyParser", 20);
+  _0RL_cd_d8193061d7f864c6_a6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b6000000, "getDependencyParser", 20);
 
 
   _invoke(_call_desc);
@@ -6306,11 +6403,11 @@ STI::TNetwork::TEventEngineDependencyParser_ptr STI::TNetwork::_objref_TEventEng
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTEngineJobID_o_cSTI_mTNetwork_mTEventEngineJob
-class _0RL_cd_d8193061d7f864c6_a6000000
+class _0RL_cd_d8193061d7f864c6_c6000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_a6000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_c6000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6331,13 +6428,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_a6000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c6000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineJobID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a6000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c6000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TEngineJobID;
   (STI::TNetwork::TEngineJobID&)arg_0_ <<= _n;
@@ -6345,14 +6442,14 @@ void _0RL_cd_d8193061d7f864c6_a6000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a6000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c6000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TEventEngineJob&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a6000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c6000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TEventEngineJob;
@@ -6360,15 +6457,15 @@ void _0RL_cd_d8193061d7f864c6_a6000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_a6000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_c6000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_b6000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_d6000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_a6000000* tcd = (_0RL_cd_d8193061d7f864c6_a6000000*)cd;
+  _0RL_cd_d8193061d7f864c6_c6000000* tcd = (_0RL_cd_d8193061d7f864c6_c6000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getJob(*tcd->arg_0, tcd->arg_1.out());
 
@@ -6377,7 +6474,7 @@ _0RL_lcfn_d8193061d7f864c6_b6000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngineScheduler::getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job)
 {
-  _0RL_cd_d8193061d7f864c6_a6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b6000000, "getJob", 7);
+  _0RL_cd_d8193061d7f864c6_c6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d6000000, "getJob", 7);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineJobID&) id;
 
   _invoke(_call_desc);
@@ -6393,9 +6490,9 @@ _0RL_lcfn_d8193061d7f864c6_b6000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_c6000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_e6000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_d3000000* tcd = (_0RL_cd_d8193061d7f864c6_d3000000*)cd;
+  _0RL_cd_d8193061d7f864c6_f3000000* tcd = (_0RL_cd_d8193061d7f864c6_f3000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->addJob(*tcd->arg_0);
 
@@ -6404,7 +6501,7 @@ _0RL_lcfn_d8193061d7f864c6_c6000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::addJob(const ::STI::TNetwork::TEventEngineJob& newJob)
 {
-  _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c6000000, "addJob", 7);
+  _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e6000000, "addJob", 7);
   _call_desc.arg_0 = &(::STI::TNetwork::TEventEngineJob&) newJob;
 
   _invoke(_call_desc);
@@ -6419,11 +6516,11 @@ void STI::TNetwork::_objref_TEventEngineScheduler::addJob(const ::STI::TNetwork:
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTEngineJobID
-class _0RL_cd_d8193061d7f864c6_d6000000
+class _0RL_cd_d8193061d7f864c6_f6000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_d6000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_f6000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6440,13 +6537,13 @@ public:
   const STI::TNetwork::TEngineJobID* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_d6000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f6000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineJobID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_d6000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_f6000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TEngineJobID;
   (STI::TNetwork::TEngineJobID&)arg_0_ <<= _n;
@@ -6454,15 +6551,15 @@ void _0RL_cd_d8193061d7f864c6_d6000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_d6000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_f6000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_e6000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_07000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_d6000000* tcd = (_0RL_cd_d8193061d7f864c6_d6000000*)cd;
+  _0RL_cd_d8193061d7f864c6_f6000000* tcd = (_0RL_cd_d8193061d7f864c6_f6000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->cancelJob(*tcd->arg_0);
 
@@ -6471,7 +6568,7 @@ _0RL_lcfn_d8193061d7f864c6_e6000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::cancelJob(const ::STI::TNetwork::TEngineJobID& jobID)
 {
-  _0RL_cd_d8193061d7f864c6_d6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e6000000, "cancelJob", 10);
+  _0RL_cd_d8193061d7f864c6_f6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_07000000, "cancelJob", 10);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineJobID&) jobID;
 
   _invoke(_call_desc);
@@ -6486,7 +6583,7 @@ void STI::TNetwork::_objref_TEventEngineScheduler::cancelJob(const ::STI::TNetwo
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_f6000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_17000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
@@ -6497,7 +6594,7 @@ _0RL_lcfn_d8193061d7f864c6_f6000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::cancelAll()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f6000000, "cancelAll", 10);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_17000000, "cancelAll", 10);
 
 
   _invoke(_call_desc);
@@ -6512,86 +6609,6 @@ void STI::TNetwork::_objref_TEventEngineScheduler::cancelAll()
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTEngineJobIDSeq_i_cSTI_mTNetwork_mTEventEngineJobList
-class _0RL_cd_d8193061d7f864c6_07000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_07000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TEventEngineJobList arg_0;
-  STI::TNetwork::TEngineJobIDSeq_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_07000000::marshalArguments(cdrStream& _n)
-{
-  arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_07000000::unmarshalArguments(cdrStream& _n)
-{
-  (STI::TNetwork::TEventEngineJobList&)arg_0 <<= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_07000000::marshalReturnedValues(cdrStream& _n)
-{
-  (const STI::TNetwork::TEngineJobIDSeq&) result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_07000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = new STI::TNetwork::TEngineJobIDSeq;
-  (STI::TNetwork::TEngineJobIDSeq&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_07000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_17000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_07000000* tcd = (_0RL_cd_d8193061d7f864c6_07000000*)cd;
-  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
-  tcd->result = impl->getJobIDs(tcd->arg_0);
-
-
-}
-
-STI::TNetwork::TEngineJobIDSeq* STI::TNetwork::_objref_TEventEngineScheduler::getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType)
-{
-  _0RL_cd_d8193061d7f864c6_07000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_17000000, "getJobIDs", 10);
-  _call_desc.arg_0 = jobListType;
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TEventEngineScheduler::getJobs
-
-// Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEventEngineJobSeq_i_cSTI_mTNetwork_mTEventEngineJobList
 class _0RL_cd_d8193061d7f864c6_27000000
   : public omniCallDescriptor
 {
@@ -6612,7 +6629,7 @@ public:
   static const char* const _user_exns[];
 
   STI::TNetwork::TEventEngineJobList arg_0;
-  STI::TNetwork::TEventEngineJobSeq_var result;
+  STI::TNetwork::TEngineJobIDSeq_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_27000000::marshalArguments(cdrStream& _n)
@@ -6629,14 +6646,14 @@ void _0RL_cd_d8193061d7f864c6_27000000::unmarshalArguments(cdrStream& _n)
 
 void _0RL_cd_d8193061d7f864c6_27000000::marshalReturnedValues(cdrStream& _n)
 {
-  (const STI::TNetwork::TEventEngineJobSeq&) result >>= _n;
+  (const STI::TNetwork::TEngineJobIDSeq&) result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_27000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = new STI::TNetwork::TEventEngineJobSeq;
-  (STI::TNetwork::TEventEngineJobSeq&)result <<= _n;
+  result = new STI::TNetwork::TEngineJobIDSeq;
+  (STI::TNetwork::TEngineJobIDSeq&)result <<= _n;
 
 }
 
@@ -6650,6 +6667,86 @@ _0RL_lcfn_d8193061d7f864c6_37000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_27000000* tcd = (_0RL_cd_d8193061d7f864c6_27000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
+  tcd->result = impl->getJobIDs(tcd->arg_0);
+
+
+}
+
+STI::TNetwork::TEngineJobIDSeq* STI::TNetwork::_objref_TEventEngineScheduler::getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType)
+{
+  _0RL_cd_d8193061d7f864c6_27000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_37000000, "getJobIDs", 10);
+  _call_desc.arg_0 = jobListType;
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TEventEngineScheduler::getJobs
+
+// Proxy call descriptor class. Mangled signature:
+//  _cSTI_mTNetwork_mTEventEngineJobSeq_i_cSTI_mTNetwork_mTEventEngineJobList
+class _0RL_cd_d8193061d7f864c6_47000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_47000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TEventEngineJobList arg_0;
+  STI::TNetwork::TEventEngineJobSeq_var result;
+};
+
+void _0RL_cd_d8193061d7f864c6_47000000::marshalArguments(cdrStream& _n)
+{
+  arg_0 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_47000000::unmarshalArguments(cdrStream& _n)
+{
+  (STI::TNetwork::TEventEngineJobList&)arg_0 <<= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_47000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TEventEngineJobSeq&) result >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_47000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = new STI::TNetwork::TEventEngineJobSeq;
+  (STI::TNetwork::TEventEngineJobSeq&)result <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_47000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_57000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_47000000* tcd = (_0RL_cd_d8193061d7f864c6_47000000*)cd;
+  STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getJobs(tcd->arg_0);
 
 
@@ -6657,7 +6754,7 @@ _0RL_lcfn_d8193061d7f864c6_37000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TEventEngineJobSeq* STI::TNetwork::_objref_TEventEngineScheduler::getJobs(::STI::TNetwork::TEventEngineJobList jobListType)
 {
-  _0RL_cd_d8193061d7f864c6_27000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_37000000, "getJobs", 8);
+  _0RL_cd_d8193061d7f864c6_47000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_57000000, "getJobs", 8);
   _call_desc.arg_0 = jobListType;
 
   _invoke(_call_desc);
@@ -6672,11 +6769,11 @@ STI::TNetwork::TEventEngineJobSeq* STI::TNetwork::_objref_TEventEngineScheduler:
 
 // Proxy call descriptor class. Mangled signature:
 //  void_o_cSTI_mTNetwork_mTEngineIDSeq
-class _0RL_cd_d8193061d7f864c6_47000000
+class _0RL_cd_d8193061d7f864c6_67000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_47000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_67000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6692,28 +6789,28 @@ public:
   STI::TNetwork::TEngineIDSeq_var arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_47000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_67000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineIDSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_47000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_67000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_0 = new STI::TNetwork::TEngineIDSeq;
   (STI::TNetwork::TEngineIDSeq&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_47000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_67000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_57000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_77000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_47000000* tcd = (_0RL_cd_d8193061d7f864c6_47000000*)cd;
+  _0RL_cd_d8193061d7f864c6_67000000* tcd = (_0RL_cd_d8193061d7f864c6_67000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->getEngineIDs(tcd->arg_0.out());
 
@@ -6722,7 +6819,7 @@ _0RL_lcfn_d8193061d7f864c6_57000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::getEngineIDs(::STI::TNetwork::TEngineIDSeq_out engineIDs)
 {
-  _0RL_cd_d8193061d7f864c6_47000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_57000000, "getEngineIDs", 13);
+  _0RL_cd_d8193061d7f864c6_67000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_77000000, "getEngineIDs", 13);
 
 
   _invoke(_call_desc);
@@ -6737,11 +6834,11 @@ void STI::TNetwork::_objref_TEventEngineScheduler::getEngineIDs(::STI::TNetwork:
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTEngineState_i_cSTI_mTNetwork_mTEngineID
-class _0RL_cd_d8193061d7f864c6_67000000
+class _0RL_cd_d8193061d7f864c6_87000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_67000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_87000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6761,40 +6858,40 @@ public:
   STI::TNetwork::TEngineState result;
 };
 
-void _0RL_cd_d8193061d7f864c6_67000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_87000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_67000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_87000000::unmarshalArguments(cdrStream& _n)
 {
   (STI::TNetwork::TEngineID&)arg_0_ <<= _n;
   arg_0 = &arg_0_;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_67000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_87000000::marshalReturnedValues(cdrStream& _n)
 {
   result >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_67000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_87000000::unmarshalReturnedValues(cdrStream& _n)
 {
   (STI::TNetwork::TEngineState&)result <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_67000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_87000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_77000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_97000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_67000000* tcd = (_0RL_cd_d8193061d7f864c6_67000000*)cd;
+  _0RL_cd_d8193061d7f864c6_87000000* tcd = (_0RL_cd_d8193061d7f864c6_87000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getEngineState(*tcd->arg_0);
 
@@ -6803,7 +6900,7 @@ _0RL_lcfn_d8193061d7f864c6_77000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TEngineState STI::TNetwork::_objref_TEventEngineScheduler::getEngineState(const ::STI::TNetwork::TEngineID& engineID)
 {
-  _0RL_cd_d8193061d7f864c6_67000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_77000000, "getEngineState", 15);
+  _0RL_cd_d8193061d7f864c6_87000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_97000000, "getEngineState", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineID&) engineID;
 
   _invoke(_call_desc);
@@ -6818,11 +6915,11 @@ STI::TNetwork::TEngineState STI::TNetwork::_objref_TEventEngineScheduler::getEng
 
 // Proxy call descriptor class. Mangled signature:
 //  void_o_cSTI_mTNetwork_mTEngineStateTupleSeq
-class _0RL_cd_d8193061d7f864c6_87000000
+class _0RL_cd_d8193061d7f864c6_a7000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_87000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_a7000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6838,28 +6935,28 @@ public:
   STI::TNetwork::TEngineStateTupleSeq_var arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_87000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a7000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineStateTupleSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_87000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a7000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_0 = new STI::TNetwork::TEngineStateTupleSeq;
   (STI::TNetwork::TEngineStateTupleSeq&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_87000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_a7000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_97000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_b7000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_87000000* tcd = (_0RL_cd_d8193061d7f864c6_87000000*)cd;
+  _0RL_cd_d8193061d7f864c6_a7000000* tcd = (_0RL_cd_d8193061d7f864c6_a7000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->getEngineStates(tcd->arg_0.out());
 
@@ -6868,7 +6965,7 @@ _0RL_lcfn_d8193061d7f864c6_97000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::getEngineStates(::STI::TNetwork::TEngineStateTupleSeq_out engineStates)
 {
-  _0RL_cd_d8193061d7f864c6_87000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_97000000, "getEngineStates", 16);
+  _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b7000000, "getEngineStates", 16);
 
 
   _invoke(_call_desc);
@@ -6883,11 +6980,11 @@ void STI::TNetwork::_objref_TEventEngineScheduler::getEngineStates(::STI::TNetwo
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTEngineID
-class _0RL_cd_d8193061d7f864c6_a7000000
+class _0RL_cd_d8193061d7f864c6_c7000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_a7000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_c7000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -6904,28 +7001,28 @@ public:
   const STI::TNetwork::TEngineID* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_a7000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c7000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TEngineID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a7000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c7000000::unmarshalArguments(cdrStream& _n)
 {
   (STI::TNetwork::TEngineID&)arg_0_ <<= _n;
   arg_0 = &arg_0_;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_a7000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_c7000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_b7000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_d7000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_a7000000* tcd = (_0RL_cd_d8193061d7f864c6_a7000000*)cd;
+  _0RL_cd_d8193061d7f864c6_c7000000* tcd = (_0RL_cd_d8193061d7f864c6_c7000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->clearEngine(*tcd->arg_0);
 
@@ -6934,7 +7031,7 @@ _0RL_lcfn_d8193061d7f864c6_b7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::clearEngine(const ::STI::TNetwork::TEngineID& engineID)
 {
-  _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b7000000, "clearEngine", 12);
+  _0RL_cd_d8193061d7f864c6_c7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d7000000, "clearEngine", 12);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineID&) engineID;
 
   _invoke(_call_desc);
@@ -6949,9 +7046,9 @@ void STI::TNetwork::_objref_TEventEngineScheduler::clearEngine(const ::STI::TNet
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_c7000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_e7000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_a7000000* tcd = (_0RL_cd_d8193061d7f864c6_a7000000*)cd;
+  _0RL_cd_d8193061d7f864c6_c7000000* tcd = (_0RL_cd_d8193061d7f864c6_c7000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   impl->stopEngine(*tcd->arg_0);
 
@@ -6960,7 +7057,7 @@ _0RL_lcfn_d8193061d7f864c6_c7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TEventEngineScheduler::stopEngine(const ::STI::TNetwork::TEngineID& engineID)
 {
-  _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c7000000, "stopEngine", 11);
+  _0RL_cd_d8193061d7f864c6_c7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e7000000, "stopEngine", 11);
   _call_desc.arg_0 = &(::STI::TNetwork::TEngineID&) engineID;
 
   _invoke(_call_desc);
@@ -6975,9 +7072,9 @@ void STI::TNetwork::_objref_TEventEngineScheduler::stopEngine(const ::STI::TNetw
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_d7000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_f7000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000* tcd = (_0RL_cd_d8193061d7f864c6_e4000000*)cd;
+  _0RL_cd_d8193061d7f864c6_05000000* tcd = (_0RL_cd_d8193061d7f864c6_05000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getParseResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -6986,7 +7083,7 @@ _0RL_lcfn_d8193061d7f864c6_d7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngineScheduler::getParseResult(const ::STI::TNetwork::TParseID& parseID, ::STI::TNetwork::TParseResult_out parseResult)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d7000000, "getParseResult", 15);
+  _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f7000000, "getParseResult", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) parseID;
 
   _invoke(_call_desc);
@@ -7002,11 +7099,11 @@ _0RL_lcfn_d8193061d7f864c6_d7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTShotID_o_cSTI_mTNetwork_mTShotResult
-class _0RL_cd_d8193061d7f864c6_e7000000
+class _0RL_cd_d8193061d7f864c6_08000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_e7000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_08000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -7027,13 +7124,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_e7000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_08000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e7000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_08000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TShotID;
   (STI::TNetwork::TShotID&)arg_0_ <<= _n;
@@ -7041,14 +7138,14 @@ void _0RL_cd_d8193061d7f864c6_e7000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e7000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_08000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TShotResult&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_e7000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_08000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TShotResult;
@@ -7056,15 +7153,15 @@ void _0RL_cd_d8193061d7f864c6_e7000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_e7000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_08000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_f7000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_18000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_e7000000* tcd = (_0RL_cd_d8193061d7f864c6_e7000000*)cd;
+  _0RL_cd_d8193061d7f864c6_08000000* tcd = (_0RL_cd_d8193061d7f864c6_08000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
   tcd->result = impl->getShotResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -7073,7 +7170,7 @@ _0RL_lcfn_d8193061d7f864c6_f7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngineScheduler::getShotResult(const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TShotResult_out shotResult)
 {
-  _0RL_cd_d8193061d7f864c6_e7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f7000000, "getShotResult", 14);
+  _0RL_cd_d8193061d7f864c6_08000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_18000000, "getShotResult", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) shotID;
 
   _invoke(_call_desc);
@@ -7089,7 +7186,7 @@ _0RL_lcfn_d8193061d7f864c6_f7000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_08000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_28000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TEventEngineScheduler* impl = (STI::TNetwork::_impl_TEventEngineScheduler*) svnt->_ptrToInterface(STI::TNetwork::TEventEngineScheduler::_PD_repoId);
@@ -7100,7 +7197,7 @@ _0RL_lcfn_d8193061d7f864c6_08000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TEventEngineScheduler::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_08000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_28000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -7140,7 +7237,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "parse")) {
 
-    _0RL_cd_d8193061d7f864c6_55000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_65000000, "parse", 6, 1);
+    _0RL_cd_d8193061d7f864c6_75000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_85000000, "parse", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7148,7 +7245,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "parseSeqEntry")) {
 
-    _0RL_cd_d8193061d7f864c6_75000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_85000000, "parseSeqEntry", 14, 1);
+    _0RL_cd_d8193061d7f864c6_95000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a5000000, "parseSeqEntry", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7156,7 +7253,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "parseSeq")) {
 
-    _0RL_cd_d8193061d7f864c6_95000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a5000000, "parseSeq", 9, 1);
+    _0RL_cd_d8193061d7f864c6_b5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c5000000, "parseSeq", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7164,7 +7261,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "play")) {
 
-    _0RL_cd_d8193061d7f864c6_b5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c5000000, "play", 5, 1);
+    _0RL_cd_d8193061d7f864c6_d5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e5000000, "play", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7172,7 +7269,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "addSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_d5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e5000000, "addSequence", 12, 1);
+    _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_06000000, "addSequence", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7180,7 +7277,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "closeSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_06000000, "closeSequence", 14, 1);
+    _0RL_cd_d8193061d7f864c6_16000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_26000000, "closeSequence", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7188,7 +7285,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "cancelSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_f5000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_16000000, "cancelSequence", 15, 1);
+    _0RL_cd_d8193061d7f864c6_16000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_36000000, "cancelSequence", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7196,7 +7293,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getStatusPID")) {
 
-    _0RL_cd_d8193061d7f864c6_26000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_36000000, "getStatusPID", 13, 1);
+    _0RL_cd_d8193061d7f864c6_46000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_56000000, "getStatusPID", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7204,7 +7301,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getStatusSID")) {
 
-    _0RL_cd_d8193061d7f864c6_46000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_56000000, "getStatusSID", 13, 1);
+    _0RL_cd_d8193061d7f864c6_66000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_76000000, "getStatusSID", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7212,7 +7309,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getStatusSeqID")) {
 
-    _0RL_cd_d8193061d7f864c6_66000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_76000000, "getStatusSeqID", 15, 1);
+    _0RL_cd_d8193061d7f864c6_86000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_96000000, "getStatusSeqID", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7220,7 +7317,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDependencyParser")) {
 
-    _0RL_cd_d8193061d7f864c6_86000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_96000000, "getDependencyParser", 20, 1);
+    _0RL_cd_d8193061d7f864c6_a6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b6000000, "getDependencyParser", 20, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7228,7 +7325,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getJob")) {
 
-    _0RL_cd_d8193061d7f864c6_a6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b6000000, "getJob", 7, 1);
+    _0RL_cd_d8193061d7f864c6_c6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d6000000, "getJob", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7236,7 +7333,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "addJob")) {
 
-    _0RL_cd_d8193061d7f864c6_d3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c6000000, "addJob", 7, 1);
+    _0RL_cd_d8193061d7f864c6_f3000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e6000000, "addJob", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7244,7 +7341,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "cancelJob")) {
 
-    _0RL_cd_d8193061d7f864c6_d6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e6000000, "cancelJob", 10, 1);
+    _0RL_cd_d8193061d7f864c6_f6000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_07000000, "cancelJob", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7252,7 +7349,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "cancelAll")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f6000000, "cancelAll", 10, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_17000000, "cancelAll", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7260,7 +7357,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getJobIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_07000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_17000000, "getJobIDs", 10, 1);
+    _0RL_cd_d8193061d7f864c6_27000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_37000000, "getJobIDs", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7268,7 +7365,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getJobs")) {
 
-    _0RL_cd_d8193061d7f864c6_27000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_37000000, "getJobs", 8, 1);
+    _0RL_cd_d8193061d7f864c6_47000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_57000000, "getJobs", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7276,7 +7373,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getEngineIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_47000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_57000000, "getEngineIDs", 13, 1);
+    _0RL_cd_d8193061d7f864c6_67000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_77000000, "getEngineIDs", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7284,7 +7381,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getEngineState")) {
 
-    _0RL_cd_d8193061d7f864c6_67000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_77000000, "getEngineState", 15, 1);
+    _0RL_cd_d8193061d7f864c6_87000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_97000000, "getEngineState", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7292,7 +7389,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getEngineStates")) {
 
-    _0RL_cd_d8193061d7f864c6_87000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_97000000, "getEngineStates", 16, 1);
+    _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b7000000, "getEngineStates", 16, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7300,7 +7397,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "clearEngine")) {
 
-    _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b7000000, "clearEngine", 12, 1);
+    _0RL_cd_d8193061d7f864c6_c7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d7000000, "clearEngine", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7308,7 +7405,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "stopEngine")) {
 
-    _0RL_cd_d8193061d7f864c6_a7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c7000000, "stopEngine", 11, 1);
+    _0RL_cd_d8193061d7f864c6_c7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e7000000, "stopEngine", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7316,7 +7413,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getParseResult")) {
 
-    _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d7000000, "getParseResult", 15, 1);
+    _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f7000000, "getParseResult", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7324,7 +7421,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getShotResult")) {
 
-    _0RL_cd_d8193061d7f864c6_e7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f7000000, "getShotResult", 14, 1);
+    _0RL_cd_d8193061d7f864c6_08000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_18000000, "getShotResult", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7332,7 +7429,7 @@ STI::TNetwork::_impl_TEventEngineScheduler::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_08000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_28000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7474,11 +7571,11 @@ STI::TNetwork::_objref_TChannelManager::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_o_cSTI_mTNetwork_mTChannelSeq
-class _0RL_cd_d8193061d7f864c6_18000000
+class _0RL_cd_d8193061d7f864c6_38000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_18000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_38000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -7494,28 +7591,28 @@ public:
   STI::TNetwork::TChannelSeq_var arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_18000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_38000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TChannelSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_18000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_38000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_0 = new STI::TNetwork::TChannelSeq;
   (STI::TNetwork::TChannelSeq&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_18000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_38000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_28000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_48000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_18000000* tcd = (_0RL_cd_d8193061d7f864c6_18000000*)cd;
+  _0RL_cd_d8193061d7f864c6_38000000* tcd = (_0RL_cd_d8193061d7f864c6_38000000*)cd;
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
   impl->getChannels(tcd->arg_0.out());
 
@@ -7524,7 +7621,7 @@ _0RL_lcfn_d8193061d7f864c6_28000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TChannelManager::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 {
-  _0RL_cd_d8193061d7f864c6_18000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_28000000, "getChannels", 12);
+  _0RL_cd_d8193061d7f864c6_38000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_48000000, "getChannels", 12);
 
 
   _invoke(_call_desc);
@@ -7539,90 +7636,6 @@ void STI::TNetwork::_objref_TChannelManager::getChannels(::STI::TNetwork::TChann
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cshort_o_cSTI_mTNetwork_mTChannel
-class _0RL_cd_d8193061d7f864c6_38000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_38000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  ::CORBA::Short arg_0;
-  STI::TNetwork::TChannel_var arg_1;
-  ::CORBA::Boolean result;
-};
-
-void _0RL_cd_d8193061d7f864c6_38000000::marshalArguments(cdrStream& _n)
-{
-  arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_38000000::unmarshalArguments(cdrStream& _n)
-{
-  (::CORBA::Short&)arg_0 <<= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_38000000::marshalReturnedValues(cdrStream& _n)
-{
-  _n.marshalBoolean(result);
-  (const STI::TNetwork::TChannel&) arg_1 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_38000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = _n.unmarshalBoolean();
-  arg_1 = new STI::TNetwork::TChannel;
-  (STI::TNetwork::TChannel&)arg_1 <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_38000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_48000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_38000000* tcd = (_0RL_cd_d8193061d7f864c6_38000000*)cd;
-  STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
-  tcd->result = impl->getChannel(tcd->arg_0, tcd->arg_1.out());
-
-
-}
-
-::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::getChannel(::CORBA::Short channelNumber, ::STI::TNetwork::TChannel_out channel)
-{
-  _0RL_cd_d8193061d7f864c6_38000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_48000000, "getChannel", 11);
-  _call_desc.arg_0 = channelNumber;
-
-  _invoke(_call_desc);
-  channel = _call_desc.arg_1._retn();
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TChannelManager::setChannelName
-
-// Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cshort_i_cstring
 class _0RL_cd_d8193061d7f864c6_58000000
   : public omniCallDescriptor
 {
@@ -7643,35 +7656,34 @@ public:
   static const char* const _user_exns[];
 
   ::CORBA::Short arg_0;
-  ::CORBA::String_var arg_1_;
-  const char* arg_1;
+  STI::TNetwork::TChannel_var arg_1;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_58000000::marshalArguments(cdrStream& _n)
 {
   arg_0 >>= _n;
-  _n.marshalString(arg_1,0);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_58000000::unmarshalArguments(cdrStream& _n)
 {
   (::CORBA::Short&)arg_0 <<= _n;
-  arg_1_ = _n.unmarshalString(0);
-  arg_1 = arg_1_.in();
 
 }
 
 void _0RL_cd_d8193061d7f864c6_58000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
+  (const STI::TNetwork::TChannel&) arg_1 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_58000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
+  arg_1 = new STI::TNetwork::TChannel;
+  (STI::TNetwork::TChannel&)arg_1 <<= _n;
 
 }
 
@@ -7685,18 +7697,18 @@ _0RL_lcfn_d8193061d7f864c6_68000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_58000000* tcd = (_0RL_cd_d8193061d7f864c6_58000000*)cd;
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
-  tcd->result = impl->setChannelName(tcd->arg_0, tcd->arg_1);
+  tcd->result = impl->getChannel(tcd->arg_0, tcd->arg_1.out());
 
 
 }
 
-::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::setChannelName(::CORBA::Short channelNumber, const char* name)
+::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::getChannel(::CORBA::Short channelNumber, ::STI::TNetwork::TChannel_out channel)
 {
-  _0RL_cd_d8193061d7f864c6_58000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_68000000, "setChannelName", 15);
+  _0RL_cd_d8193061d7f864c6_58000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_68000000, "getChannel", 11);
   _call_desc.arg_0 = channelNumber;
-  _call_desc.arg_1 = name;
 
   _invoke(_call_desc);
+  channel = _call_desc.arg_1._retn();
   return _call_desc.result;
 
 
@@ -7704,10 +7716,10 @@ _0RL_lcfn_d8193061d7f864c6_68000000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TChannelManager::writeChannel
+// Code for STI::TNetwork::TChannelManager::setChannelName
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cshort_i_cSTI_mTNetwork_mTMixedValue
+//  _cboolean_i_cshort_i_cstring
 class _0RL_cd_d8193061d7f864c6_78000000
   : public omniCallDescriptor
 {
@@ -7728,24 +7740,23 @@ public:
   static const char* const _user_exns[];
 
   ::CORBA::Short arg_0;
-  STI::TNetwork::TMixedValue_var arg_1_;
-  const STI::TNetwork::TMixedValue* arg_1;
+  ::CORBA::String_var arg_1_;
+  const char* arg_1;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_78000000::marshalArguments(cdrStream& _n)
 {
   arg_0 >>= _n;
-  (const STI::TNetwork::TMixedValue&) *arg_1 >>= _n;
+  _n.marshalString(arg_1,0);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_78000000::unmarshalArguments(cdrStream& _n)
 {
   (::CORBA::Short&)arg_0 <<= _n;
-  arg_1_ = new STI::TNetwork::TMixedValue;
-  (STI::TNetwork::TMixedValue&)arg_1_ <<= _n;
-  arg_1 = &arg_1_.in();
+  arg_1_ = _n.unmarshalString(0);
+  arg_1 = arg_1_.in();
 
 }
 
@@ -7771,16 +7782,16 @@ _0RL_lcfn_d8193061d7f864c6_88000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_78000000* tcd = (_0RL_cd_d8193061d7f864c6_78000000*)cd;
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
-  tcd->result = impl->writeChannel(tcd->arg_0, *tcd->arg_1);
+  tcd->result = impl->setChannelName(tcd->arg_0, tcd->arg_1);
 
 
 }
 
-::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::writeChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value)
+::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::setChannelName(::CORBA::Short channelNumber, const char* name)
 {
-  _0RL_cd_d8193061d7f864c6_78000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_88000000, "writeChannel", 13);
-  _call_desc.arg_0 = channel;
-  _call_desc.arg_1 = &(::STI::TNetwork::TMixedValue&) value;
+  _0RL_cd_d8193061d7f864c6_78000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_88000000, "setChannelName", 15);
+  _call_desc.arg_0 = channelNumber;
+  _call_desc.arg_1 = name;
 
   _invoke(_call_desc);
   return _call_desc.result;
@@ -7790,10 +7801,10 @@ _0RL_lcfn_d8193061d7f864c6_88000000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TChannelManager::readChannel
+// Code for STI::TNetwork::TChannelManager::writeChannel
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cshort_i_cSTI_mTNetwork_mTMixedValue_o_cSTI_mTNetwork_mTMixedValue
+//  _cboolean_i_cshort_i_cSTI_mTNetwork_mTMixedValue
 class _0RL_cd_d8193061d7f864c6_98000000
   : public omniCallDescriptor
 {
@@ -7816,7 +7827,6 @@ public:
   ::CORBA::Short arg_0;
   STI::TNetwork::TMixedValue_var arg_1_;
   const STI::TNetwork::TMixedValue* arg_1;
-  STI::TNetwork::TMixedValue_var arg_2;
   ::CORBA::Boolean result;
 };
 
@@ -7839,15 +7849,12 @@ void _0RL_cd_d8193061d7f864c6_98000000::unmarshalArguments(cdrStream& _n)
 void _0RL_cd_d8193061d7f864c6_98000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
-  (const STI::TNetwork::TMixedValue&) arg_2 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_98000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
-  arg_2 = new STI::TNetwork::TMixedValue;
-  (STI::TNetwork::TMixedValue&)arg_2 <<= _n;
 
 }
 
@@ -7861,6 +7868,96 @@ _0RL_lcfn_d8193061d7f864c6_a8000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_98000000* tcd = (_0RL_cd_d8193061d7f864c6_98000000*)cd;
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
+  tcd->result = impl->writeChannel(tcd->arg_0, *tcd->arg_1);
+
+
+}
+
+::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::writeChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value)
+{
+  _0RL_cd_d8193061d7f864c6_98000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a8000000, "writeChannel", 13);
+  _call_desc.arg_0 = channel;
+  _call_desc.arg_1 = &(::STI::TNetwork::TMixedValue&) value;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TChannelManager::readChannel
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cshort_i_cSTI_mTNetwork_mTMixedValue_o_cSTI_mTNetwork_mTMixedValue
+class _0RL_cd_d8193061d7f864c6_b8000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_b8000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  ::CORBA::Short arg_0;
+  STI::TNetwork::TMixedValue_var arg_1_;
+  const STI::TNetwork::TMixedValue* arg_1;
+  STI::TNetwork::TMixedValue_var arg_2;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_b8000000::marshalArguments(cdrStream& _n)
+{
+  arg_0 >>= _n;
+  (const STI::TNetwork::TMixedValue&) *arg_1 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b8000000::unmarshalArguments(cdrStream& _n)
+{
+  (::CORBA::Short&)arg_0 <<= _n;
+  arg_1_ = new STI::TNetwork::TMixedValue;
+  (STI::TNetwork::TMixedValue&)arg_1_ <<= _n;
+  arg_1 = &arg_1_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b8000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+  (const STI::TNetwork::TMixedValue&) arg_2 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_b8000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+  arg_2 = new STI::TNetwork::TMixedValue;
+  (STI::TNetwork::TMixedValue&)arg_2 <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_b8000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_c8000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_b8000000* tcd = (_0RL_cd_d8193061d7f864c6_b8000000*)cd;
+  STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
   tcd->result = impl->readChannel(tcd->arg_0, *tcd->arg_1, tcd->arg_2.out());
 
 
@@ -7868,7 +7965,7 @@ _0RL_lcfn_d8193061d7f864c6_a8000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::readChannel(::CORBA::Short channel, const ::STI::TNetwork::TMixedValue& value, ::STI::TNetwork::TMixedValue_out data)
 {
-  _0RL_cd_d8193061d7f864c6_98000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a8000000, "readChannel", 12);
+  _0RL_cd_d8193061d7f864c6_b8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c8000000, "readChannel", 12);
   _call_desc.arg_0 = channel;
   _call_desc.arg_1 = &(::STI::TNetwork::TMixedValue&) value;
 
@@ -7885,7 +7982,7 @@ _0RL_lcfn_d8193061d7f864c6_a8000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_b8000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_d8000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
@@ -7896,7 +7993,7 @@ _0RL_lcfn_d8193061d7f864c6_b8000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TChannelManager::stop()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b8000000, "stop", 5);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d8000000, "stop", 5);
 
 
   _invoke(_call_desc);
@@ -7911,7 +8008,7 @@ void STI::TNetwork::_objref_TChannelManager::stop()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_c8000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_e8000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TChannelManager* impl = (STI::TNetwork::_impl_TChannelManager*) svnt->_ptrToInterface(STI::TNetwork::TChannelManager::_PD_repoId);
@@ -7922,7 +8019,7 @@ _0RL_lcfn_d8193061d7f864c6_c8000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TChannelManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c8000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e8000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -7962,7 +8059,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getChannels")) {
 
-    _0RL_cd_d8193061d7f864c6_18000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_28000000, "getChannels", 12, 1);
+    _0RL_cd_d8193061d7f864c6_38000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_48000000, "getChannels", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7970,7 +8067,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getChannel")) {
 
-    _0RL_cd_d8193061d7f864c6_38000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_48000000, "getChannel", 11, 1);
+    _0RL_cd_d8193061d7f864c6_58000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_68000000, "getChannel", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7978,7 +8075,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "setChannelName")) {
 
-    _0RL_cd_d8193061d7f864c6_58000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_68000000, "setChannelName", 15, 1);
+    _0RL_cd_d8193061d7f864c6_78000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_88000000, "setChannelName", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7986,7 +8083,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "writeChannel")) {
 
-    _0RL_cd_d8193061d7f864c6_78000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_88000000, "writeChannel", 13, 1);
+    _0RL_cd_d8193061d7f864c6_98000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a8000000, "writeChannel", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -7994,7 +8091,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "readChannel")) {
 
-    _0RL_cd_d8193061d7f864c6_98000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_a8000000, "readChannel", 12, 1);
+    _0RL_cd_d8193061d7f864c6_b8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c8000000, "readChannel", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8002,7 +8099,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "stop")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b8000000, "stop", 5, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d8000000, "stop", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8010,7 +8107,7 @@ STI::TNetwork::_impl_TChannelManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_c8000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e8000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8152,87 +8249,6 @@ STI::TNetwork::_objref_TAttributeManager::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cstring_i_cstring
-class _0RL_cd_d8193061d7f864c6_d8000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_d8000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  ::CORBA::String_var arg_0_;
-  const char* arg_0;
-  ::CORBA::String_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_d8000000::marshalArguments(cdrStream& _n)
-{
-  _n.marshalString(arg_0,0);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_d8000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = _n.unmarshalString(0);
-  arg_0 = arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_d8000000::marshalReturnedValues(cdrStream& _n)
-{
-  _n.marshalString(result,0);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_d8000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = _n.unmarshalString(0);
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_d8000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_e8000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_d8000000* tcd = (_0RL_cd_d8193061d7f864c6_d8000000*)cd;
-  STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
-  tcd->result = impl->getValue(tcd->arg_0);
-
-
-}
-
-char* STI::TNetwork::_objref_TAttributeManager::getValue(const char* key)
-{
-  _0RL_cd_d8193061d7f864c6_d8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e8000000, "getValue", 9);
-  _call_desc.arg_0 = key;
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TAttributeManager::setValue
-
-// Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cstring_i_cstring
 class _0RL_cd_d8193061d7f864c6_f8000000
   : public omniCallDescriptor
 {
@@ -8254,15 +8270,12 @@ public:
 
   ::CORBA::String_var arg_0_;
   const char* arg_0;
-  ::CORBA::String_var arg_1_;
-  const char* arg_1;
-  ::CORBA::Boolean result;
+  ::CORBA::String_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_f8000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
-  _n.marshalString(arg_1,0);
 
 }
 
@@ -8270,20 +8283,18 @@ void _0RL_cd_d8193061d7f864c6_f8000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
-  arg_1_ = _n.unmarshalString(0);
-  arg_1 = arg_1_.in();
 
 }
 
 void _0RL_cd_d8193061d7f864c6_f8000000::marshalReturnedValues(cdrStream& _n)
 {
-  _n.marshalBoolean(result);
+  _n.marshalString(result,0);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_f8000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = _n.unmarshalBoolean();
+  result = _n.unmarshalString(0);
 
 }
 
@@ -8297,6 +8308,92 @@ _0RL_lcfn_d8193061d7f864c6_09000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_f8000000* tcd = (_0RL_cd_d8193061d7f864c6_f8000000*)cd;
   STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
+  tcd->result = impl->getValue(tcd->arg_0);
+
+
+}
+
+char* STI::TNetwork::_objref_TAttributeManager::getValue(const char* key)
+{
+  _0RL_cd_d8193061d7f864c6_f8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_09000000, "getValue", 9);
+  _call_desc.arg_0 = key;
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TAttributeManager::setValue
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cstring_i_cstring
+class _0RL_cd_d8193061d7f864c6_19000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_19000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  ::CORBA::String_var arg_0_;
+  const char* arg_0;
+  ::CORBA::String_var arg_1_;
+  const char* arg_1;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_19000000::marshalArguments(cdrStream& _n)
+{
+  _n.marshalString(arg_0,0);
+  _n.marshalString(arg_1,0);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_19000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = _n.unmarshalString(0);
+  arg_0 = arg_0_.in();
+  arg_1_ = _n.unmarshalString(0);
+  arg_1 = arg_1_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_19000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_19000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_19000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_29000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_19000000* tcd = (_0RL_cd_d8193061d7f864c6_19000000*)cd;
+  STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
   tcd->result = impl->setValue(tcd->arg_0, tcd->arg_1);
 
 
@@ -8304,7 +8401,7 @@ _0RL_lcfn_d8193061d7f864c6_09000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TAttributeManager::setValue(const char* key, const char* value)
 {
-  _0RL_cd_d8193061d7f864c6_f8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_09000000, "setValue", 9);
+  _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_29000000, "setValue", 9);
   _call_desc.arg_0 = key;
   _call_desc.arg_1 = value;
 
@@ -8320,11 +8417,11 @@ _0RL_lcfn_d8193061d7f864c6_09000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cstring
-class _0RL_cd_d8193061d7f864c6_19000000
+class _0RL_cd_d8193061d7f864c6_39000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_19000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_39000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8341,28 +8438,28 @@ public:
   const char* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_19000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_39000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_19000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_39000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_19000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_39000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_29000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_49000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_19000000* tcd = (_0RL_cd_d8193061d7f864c6_19000000*)cd;
+  _0RL_cd_d8193061d7f864c6_39000000* tcd = (_0RL_cd_d8193061d7f864c6_39000000*)cd;
   STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
   impl->refreshValue(tcd->arg_0);
 
@@ -8371,7 +8468,7 @@ _0RL_lcfn_d8193061d7f864c6_29000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TAttributeManager::refreshValue(const char* key)
 {
-  _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_29000000, "refreshValue", 13);
+  _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_49000000, "refreshValue", 13);
   _call_desc.arg_0 = key;
 
   _invoke(_call_desc);
@@ -8386,11 +8483,11 @@ void STI::TNetwork::_objref_TAttributeManager::refreshValue(const char* key)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cstring_o_cSTI_mTNetwork_mTAttribute
-class _0RL_cd_d8193061d7f864c6_39000000
+class _0RL_cd_d8193061d7f864c6_59000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_39000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_59000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8411,27 +8508,27 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_39000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_59000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_39000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_59000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_39000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_59000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TAttribute&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_39000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_59000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TAttribute;
@@ -8439,15 +8536,15 @@ void _0RL_cd_d8193061d7f864c6_39000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_39000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_59000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_49000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_69000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_39000000* tcd = (_0RL_cd_d8193061d7f864c6_39000000*)cd;
+  _0RL_cd_d8193061d7f864c6_59000000* tcd = (_0RL_cd_d8193061d7f864c6_59000000*)cd;
   STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
   tcd->result = impl->getAttribute(tcd->arg_0, tcd->arg_1.out());
 
@@ -8456,7 +8553,7 @@ _0RL_lcfn_d8193061d7f864c6_49000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TAttributeManager::getAttribute(const char* key, ::STI::TNetwork::TAttribute_out attrib)
 {
-  _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_49000000, "getAttribute", 13);
+  _0RL_cd_d8193061d7f864c6_59000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_69000000, "getAttribute", 13);
   _call_desc.arg_0 = key;
 
   _invoke(_call_desc);
@@ -8472,11 +8569,11 @@ _0RL_lcfn_d8193061d7f864c6_49000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_o_cSTI_mTNetwork_mTAttributeSeq
-class _0RL_cd_d8193061d7f864c6_59000000
+class _0RL_cd_d8193061d7f864c6_79000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_59000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_79000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8492,28 +8589,28 @@ public:
   STI::TNetwork::TAttributeSeq_var arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_59000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_79000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TAttributeSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_59000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_79000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_0 = new STI::TNetwork::TAttributeSeq;
   (STI::TNetwork::TAttributeSeq&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_59000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_79000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_69000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_89000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_59000000* tcd = (_0RL_cd_d8193061d7f864c6_59000000*)cd;
+  _0RL_cd_d8193061d7f864c6_79000000* tcd = (_0RL_cd_d8193061d7f864c6_79000000*)cd;
   STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
   impl->getAttributes(tcd->arg_0.out());
 
@@ -8522,7 +8619,7 @@ _0RL_lcfn_d8193061d7f864c6_69000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TAttributeManager::getAttributes(::STI::TNetwork::TAttributeSeq_out attributes)
 {
-  _0RL_cd_d8193061d7f864c6_59000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_69000000, "getAttributes", 14);
+  _0RL_cd_d8193061d7f864c6_79000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_89000000, "getAttributes", 14);
 
 
   _invoke(_call_desc);
@@ -8537,7 +8634,7 @@ void STI::TNetwork::_objref_TAttributeManager::getAttributes(::STI::TNetwork::TA
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_79000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_99000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TAttributeManager* impl = (STI::TNetwork::_impl_TAttributeManager*) svnt->_ptrToInterface(STI::TNetwork::TAttributeManager::_PD_repoId);
@@ -8548,7 +8645,7 @@ _0RL_lcfn_d8193061d7f864c6_79000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TAttributeManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_79000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_99000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -8588,7 +8685,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getValue")) {
 
-    _0RL_cd_d8193061d7f864c6_d8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e8000000, "getValue", 9, 1);
+    _0RL_cd_d8193061d7f864c6_f8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_09000000, "getValue", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8596,7 +8693,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "setValue")) {
 
-    _0RL_cd_d8193061d7f864c6_f8000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_09000000, "setValue", 9, 1);
+    _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_29000000, "setValue", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8604,7 +8701,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "refreshValue")) {
 
-    _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_29000000, "refreshValue", 13, 1);
+    _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_49000000, "refreshValue", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8612,7 +8709,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getAttribute")) {
 
-    _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_49000000, "getAttribute", 13, 1);
+    _0RL_cd_d8193061d7f864c6_59000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_69000000, "getAttribute", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8620,7 +8717,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getAttributes")) {
 
-    _0RL_cd_d8193061d7f864c6_59000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_69000000, "getAttributes", 14, 1);
+    _0RL_cd_d8193061d7f864c6_79000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_89000000, "getAttributes", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8628,7 +8725,7 @@ STI::TNetwork::_impl_TAttributeManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_79000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_99000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -8770,11 +8867,11 @@ STI::TNetwork::_objref_TMonitorManager::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_o_cSTI_mTNetwork_mTStringSeq
-class _0RL_cd_d8193061d7f864c6_89000000
+class _0RL_cd_d8193061d7f864c6_a9000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_89000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_a9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8791,14 +8888,14 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_89000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a9000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TStringSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_89000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_a9000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_0 = new STI::TNetwork::TStringSeq;
@@ -8806,15 +8903,15 @@ void _0RL_cd_d8193061d7f864c6_89000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_89000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_a9000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_99000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_b9000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_89000000* tcd = (_0RL_cd_d8193061d7f864c6_89000000*)cd;
+  _0RL_cd_d8193061d7f864c6_a9000000* tcd = (_0RL_cd_d8193061d7f864c6_a9000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   tcd->result = impl->getIDs(tcd->arg_0.out());
 
@@ -8823,7 +8920,7 @@ _0RL_lcfn_d8193061d7f864c6_99000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TMonitorManager::getIDs(::STI::TNetwork::TStringSeq_out ids)
 {
-  _0RL_cd_d8193061d7f864c6_89000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_99000000, "getIDs", 7);
+  _0RL_cd_d8193061d7f864c6_a9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b9000000, "getIDs", 7);
 
 
   _invoke(_call_desc);
@@ -8839,11 +8936,11 @@ _0RL_lcfn_d8193061d7f864c6_99000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cstring_o_cSTI_mTNetwork_mTMonitor
-class _0RL_cd_d8193061d7f864c6_a9000000
+class _0RL_cd_d8193061d7f864c6_c9000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_a9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_c9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8864,27 +8961,27 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_a9000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c9000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a9000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c9000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a9000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c9000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TMonitor&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_a9000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_c9000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TMonitor;
@@ -8892,15 +8989,15 @@ void _0RL_cd_d8193061d7f864c6_a9000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_a9000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_c9000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_b9000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_d9000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_a9000000* tcd = (_0RL_cd_d8193061d7f864c6_a9000000*)cd;
+  _0RL_cd_d8193061d7f864c6_c9000000* tcd = (_0RL_cd_d8193061d7f864c6_c9000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   tcd->result = impl->getMonitor(tcd->arg_0, tcd->arg_1.out());
 
@@ -8909,7 +9006,7 @@ _0RL_lcfn_d8193061d7f864c6_b9000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TMonitorManager::getMonitor(const char* id, ::STI::TNetwork::TMonitor_out monitor)
 {
-  _0RL_cd_d8193061d7f864c6_a9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b9000000, "getMonitor", 11);
+  _0RL_cd_d8193061d7f864c6_c9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d9000000, "getMonitor", 11);
   _call_desc.arg_0 = id;
 
   _invoke(_call_desc);
@@ -8925,11 +9022,11 @@ _0RL_lcfn_d8193061d7f864c6_b9000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_o_cSTI_mTNetwork_mTMonitorSeq
-class _0RL_cd_d8193061d7f864c6_c9000000
+class _0RL_cd_d8193061d7f864c6_e9000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_c9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_e9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -8946,14 +9043,14 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_c9000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_e9000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TMonitorSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_c9000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_e9000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_0 = new STI::TNetwork::TMonitorSeq;
@@ -8961,15 +9058,15 @@ void _0RL_cd_d8193061d7f864c6_c9000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_c9000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_e9000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_d9000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_f9000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_c9000000* tcd = (_0RL_cd_d8193061d7f864c6_c9000000*)cd;
+  _0RL_cd_d8193061d7f864c6_e9000000* tcd = (_0RL_cd_d8193061d7f864c6_e9000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   tcd->result = impl->getMonitors(tcd->arg_0.out());
 
@@ -8978,7 +9075,7 @@ _0RL_lcfn_d8193061d7f864c6_d9000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TMonitorManager::getMonitors(::STI::TNetwork::TMonitorSeq_out monitors)
 {
-  _0RL_cd_d8193061d7f864c6_c9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d9000000, "getMonitors", 12);
+  _0RL_cd_d8193061d7f864c6_e9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f9000000, "getMonitors", 12);
 
 
   _invoke(_call_desc);
@@ -8994,87 +9091,6 @@ _0RL_lcfn_d8193061d7f864c6_d9000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTMonitorStatus_i_cstring
-class _0RL_cd_d8193061d7f864c6_e9000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_e9000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  ::CORBA::String_var arg_0_;
-  const char* arg_0;
-  STI::TNetwork::TMonitorStatus result;
-};
-
-void _0RL_cd_d8193061d7f864c6_e9000000::marshalArguments(cdrStream& _n)
-{
-  _n.marshalString(arg_0,0);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_e9000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = _n.unmarshalString(0);
-  arg_0 = arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_e9000000::marshalReturnedValues(cdrStream& _n)
-{
-  result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_e9000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  (STI::TNetwork::TMonitorStatus&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_e9000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_f9000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_e9000000* tcd = (_0RL_cd_d8193061d7f864c6_e9000000*)cd;
-  STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
-  tcd->result = impl->getStatus(tcd->arg_0);
-
-
-}
-
-STI::TNetwork::TMonitorStatus STI::TNetwork::_objref_TMonitorManager::getStatus(const char* id)
-{
-  _0RL_cd_d8193061d7f864c6_e9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f9000000, "getStatus", 10);
-  _call_desc.arg_0 = id;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TMonitorManager::getValue
-
-// Proxy call descriptor class. Mangled signature:
-//  void_i_cstring_o_cSTI_mTNetwork_mTMixedValue
 class _0RL_cd_d8193061d7f864c6_0a000000
   : public omniCallDescriptor
 {
@@ -9096,7 +9112,7 @@ public:
 
   ::CORBA::String_var arg_0_;
   const char* arg_0;
-  STI::TNetwork::TMixedValue_var arg_1;
+  STI::TNetwork::TMonitorStatus result;
 };
 
 void _0RL_cd_d8193061d7f864c6_0a000000::marshalArguments(cdrStream& _n)
@@ -9114,14 +9130,13 @@ void _0RL_cd_d8193061d7f864c6_0a000000::unmarshalArguments(cdrStream& _n)
 
 void _0RL_cd_d8193061d7f864c6_0a000000::marshalReturnedValues(cdrStream& _n)
 {
-  (const STI::TNetwork::TMixedValue&) arg_1 >>= _n;
+  result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_0a000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  arg_1 = new STI::TNetwork::TMixedValue;
-  (STI::TNetwork::TMixedValue&)arg_1 <<= _n;
+  (STI::TNetwork::TMonitorStatus&)result <<= _n;
 
 }
 
@@ -9135,6 +9150,88 @@ _0RL_lcfn_d8193061d7f864c6_1a000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_0a000000* tcd = (_0RL_cd_d8193061d7f864c6_0a000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
+  tcd->result = impl->getStatus(tcd->arg_0);
+
+
+}
+
+STI::TNetwork::TMonitorStatus STI::TNetwork::_objref_TMonitorManager::getStatus(const char* id)
+{
+  _0RL_cd_d8193061d7f864c6_0a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1a000000, "getStatus", 10);
+  _call_desc.arg_0 = id;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TMonitorManager::getValue
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cstring_o_cSTI_mTNetwork_mTMixedValue
+class _0RL_cd_d8193061d7f864c6_2a000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_2a000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  ::CORBA::String_var arg_0_;
+  const char* arg_0;
+  STI::TNetwork::TMixedValue_var arg_1;
+};
+
+void _0RL_cd_d8193061d7f864c6_2a000000::marshalArguments(cdrStream& _n)
+{
+  _n.marshalString(arg_0,0);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_2a000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = _n.unmarshalString(0);
+  arg_0 = arg_0_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_2a000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TMixedValue&) arg_1 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_2a000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  arg_1 = new STI::TNetwork::TMixedValue;
+  (STI::TNetwork::TMixedValue&)arg_1 <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_2a000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_3a000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_2a000000* tcd = (_0RL_cd_d8193061d7f864c6_2a000000*)cd;
+  STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   impl->getValue(tcd->arg_0, tcd->arg_1.out());
 
 
@@ -9142,7 +9239,7 @@ _0RL_lcfn_d8193061d7f864c6_1a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TMonitorManager::getValue(const char* id, ::STI::TNetwork::TMixedValue_out value)
 {
-  _0RL_cd_d8193061d7f864c6_0a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1a000000, "getValue", 9);
+  _0RL_cd_d8193061d7f864c6_2a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3a000000, "getValue", 9);
   _call_desc.arg_0 = id;
 
   _invoke(_call_desc);
@@ -9157,9 +9254,9 @@ void STI::TNetwork::_objref_TMonitorManager::getValue(const char* id, ::STI::TNe
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_2a000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_4a000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_19000000* tcd = (_0RL_cd_d8193061d7f864c6_19000000*)cd;
+  _0RL_cd_d8193061d7f864c6_39000000* tcd = (_0RL_cd_d8193061d7f864c6_39000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   impl->activate(tcd->arg_0);
 
@@ -9168,7 +9265,7 @@ _0RL_lcfn_d8193061d7f864c6_2a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TMonitorManager::activate(const char* id)
 {
-  _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2a000000, "activate", 9);
+  _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4a000000, "activate", 9);
   _call_desc.arg_0 = id;
 
   _invoke(_call_desc);
@@ -9183,9 +9280,9 @@ void STI::TNetwork::_objref_TMonitorManager::activate(const char* id)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_3a000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_5a000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_19000000* tcd = (_0RL_cd_d8193061d7f864c6_19000000*)cd;
+  _0RL_cd_d8193061d7f864c6_39000000* tcd = (_0RL_cd_d8193061d7f864c6_39000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
   impl->deactivate(tcd->arg_0);
 
@@ -9194,7 +9291,7 @@ _0RL_lcfn_d8193061d7f864c6_3a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TMonitorManager::deactivate(const char* id)
 {
-  _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3a000000, "deactivate", 11);
+  _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5a000000, "deactivate", 11);
   _call_desc.arg_0 = id;
 
   _invoke(_call_desc);
@@ -9209,7 +9306,7 @@ void STI::TNetwork::_objref_TMonitorManager::deactivate(const char* id)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_4a000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_6a000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
@@ -9220,7 +9317,7 @@ _0RL_lcfn_d8193061d7f864c6_4a000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TMonitorManager::activateAll()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4a000000, "activateAll", 12);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6a000000, "activateAll", 12);
 
 
   _invoke(_call_desc);
@@ -9235,7 +9332,7 @@ void STI::TNetwork::_objref_TMonitorManager::activateAll()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_5a000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_7a000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
@@ -9246,7 +9343,7 @@ _0RL_lcfn_d8193061d7f864c6_5a000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TMonitorManager::deactivateAll()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5a000000, "deactivateAll", 14);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7a000000, "deactivateAll", 14);
 
 
   _invoke(_call_desc);
@@ -9261,7 +9358,7 @@ void STI::TNetwork::_objref_TMonitorManager::deactivateAll()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_6a000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_8a000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TMonitorManager* impl = (STI::TNetwork::_impl_TMonitorManager*) svnt->_ptrToInterface(STI::TNetwork::TMonitorManager::_PD_repoId);
@@ -9272,7 +9369,7 @@ _0RL_lcfn_d8193061d7f864c6_6a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TMonitorManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6a000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8a000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -9312,7 +9409,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_89000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_99000000, "getIDs", 7, 1);
+    _0RL_cd_d8193061d7f864c6_a9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b9000000, "getIDs", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9320,7 +9417,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getMonitor")) {
 
-    _0RL_cd_d8193061d7f864c6_a9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b9000000, "getMonitor", 11, 1);
+    _0RL_cd_d8193061d7f864c6_c9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d9000000, "getMonitor", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9328,7 +9425,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getMonitors")) {
 
-    _0RL_cd_d8193061d7f864c6_c9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d9000000, "getMonitors", 12, 1);
+    _0RL_cd_d8193061d7f864c6_e9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f9000000, "getMonitors", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9336,7 +9433,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getStatus")) {
 
-    _0RL_cd_d8193061d7f864c6_e9000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f9000000, "getStatus", 10, 1);
+    _0RL_cd_d8193061d7f864c6_0a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1a000000, "getStatus", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9344,7 +9441,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getValue")) {
 
-    _0RL_cd_d8193061d7f864c6_0a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1a000000, "getValue", 9, 1);
+    _0RL_cd_d8193061d7f864c6_2a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3a000000, "getValue", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9352,7 +9449,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "activate")) {
 
-    _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2a000000, "activate", 9, 1);
+    _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4a000000, "activate", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9360,7 +9457,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "deactivate")) {
 
-    _0RL_cd_d8193061d7f864c6_19000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3a000000, "deactivate", 11, 1);
+    _0RL_cd_d8193061d7f864c6_39000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5a000000, "deactivate", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9368,7 +9465,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "activateAll")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4a000000, "activateAll", 12, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6a000000, "activateAll", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9376,7 +9473,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "deactivateAll")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5a000000, "deactivateAll", 14, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7a000000, "deactivateAll", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9384,7 +9481,7 @@ STI::TNetwork::_impl_TMonitorManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6a000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8a000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -9526,11 +9623,11 @@ STI::TNetwork::_objref_TPersistenceManager::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTShotID
-class _0RL_cd_d8193061d7f864c6_7a000000
+class _0RL_cd_d8193061d7f864c6_9a000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_7a000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_9a000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -9550,13 +9647,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_7a000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9a000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_7a000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9a000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TShotID;
   (STI::TNetwork::TShotID&)arg_0_ <<= _n;
@@ -9564,27 +9661,27 @@ void _0RL_cd_d8193061d7f864c6_7a000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_7a000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9a000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_7a000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9a000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_7a000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_9a000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_8a000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_aa000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_7a000000* tcd = (_0RL_cd_d8193061d7f864c6_7a000000*)cd;
+  _0RL_cd_d8193061d7f864c6_9a000000* tcd = (_0RL_cd_d8193061d7f864c6_9a000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->findShot(*tcd->arg_0);
 
@@ -9593,7 +9690,7 @@ _0RL_lcfn_d8193061d7f864c6_8a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::findShot(const ::STI::TNetwork::TShotID& sid)
 {
-  _0RL_cd_d8193061d7f864c6_7a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8a000000, "findShot", 9);
+  _0RL_cd_d8193061d7f864c6_9a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_aa000000, "findShot", 9);
   _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
 
   _invoke(_call_desc);
@@ -9608,9 +9705,9 @@ _0RL_lcfn_d8193061d7f864c6_8a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_9a000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ba000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000* tcd = (_0RL_cd_d8193061d7f864c6_e4000000*)cd;
+  _0RL_cd_d8193061d7f864c6_05000000* tcd = (_0RL_cd_d8193061d7f864c6_05000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->getParseResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -9619,7 +9716,7 @@ _0RL_lcfn_d8193061d7f864c6_9a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::getParseResult(const ::STI::TNetwork::TParseID& pid, ::STI::TNetwork::TParseResult_out parseResult)
 {
-  _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9a000000, "getParseResult", 15);
+  _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ba000000, "getParseResult", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TParseID&) pid;
 
   _invoke(_call_desc);
@@ -9635,9 +9732,9 @@ _0RL_lcfn_d8193061d7f864c6_9a000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_aa000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ca000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_e7000000* tcd = (_0RL_cd_d8193061d7f864c6_e7000000*)cd;
+  _0RL_cd_d8193061d7f864c6_08000000* tcd = (_0RL_cd_d8193061d7f864c6_08000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->getShotResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -9646,7 +9743,7 @@ _0RL_lcfn_d8193061d7f864c6_aa000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::getShotResult(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TShotResult_out shotResult)
 {
-  _0RL_cd_d8193061d7f864c6_e7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_aa000000, "getShotResult", 14);
+  _0RL_cd_d8193061d7f864c6_08000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ca000000, "getShotResult", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
 
   _invoke(_call_desc);
@@ -9662,11 +9759,11 @@ _0RL_lcfn_d8193061d7f864c6_aa000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTSequenceID_o_cSTI_mTNetwork_mTSequenceResult
-class _0RL_cd_d8193061d7f864c6_ba000000
+class _0RL_cd_d8193061d7f864c6_da000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_ba000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_da000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -9687,13 +9784,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_ba000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_da000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TSequenceID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ba000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_da000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TSequenceID;
   (STI::TNetwork::TSequenceID&)arg_0_ <<= _n;
@@ -9701,14 +9798,14 @@ void _0RL_cd_d8193061d7f864c6_ba000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ba000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_da000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TSequenceResult&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ba000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_da000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TSequenceResult;
@@ -9716,15 +9813,15 @@ void _0RL_cd_d8193061d7f864c6_ba000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_ba000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_da000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_ca000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ea000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_ba000000* tcd = (_0RL_cd_d8193061d7f864c6_ba000000*)cd;
+  _0RL_cd_d8193061d7f864c6_da000000* tcd = (_0RL_cd_d8193061d7f864c6_da000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->getSequenceResult(*tcd->arg_0, tcd->arg_1.out());
 
@@ -9733,7 +9830,7 @@ _0RL_lcfn_d8193061d7f864c6_ca000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::getSequenceResult(const ::STI::TNetwork::TSequenceID& seqid, ::STI::TNetwork::TSequenceResult_out sequenceResult)
 {
-  _0RL_cd_d8193061d7f864c6_ba000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ca000000, "getSequenceResult", 18);
+  _0RL_cd_d8193061d7f864c6_da000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ea000000, "getSequenceResult", 18);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceID&) seqid;
 
   _invoke(_call_desc);
@@ -9749,11 +9846,11 @@ _0RL_lcfn_d8193061d7f864c6_ca000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTShotID_i_cSTI_mTNetwork_mTFullShotResult_i_cboolean
-class _0RL_cd_d8193061d7f864c6_da000000
+class _0RL_cd_d8193061d7f864c6_fa000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_da000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_fa000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -9776,7 +9873,7 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_da000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_fa000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
   (const STI::TNetwork::TFullShotResult&) *arg_1 >>= _n;
@@ -9784,7 +9881,7 @@ void _0RL_cd_d8193061d7f864c6_da000000::marshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_da000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_fa000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TShotID;
   (STI::TNetwork::TShotID&)arg_0_ <<= _n;
@@ -9796,27 +9893,27 @@ void _0RL_cd_d8193061d7f864c6_da000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_da000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_fa000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_da000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_fa000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_da000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_fa000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_ea000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_0b000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_da000000* tcd = (_0RL_cd_d8193061d7f864c6_da000000*)cd;
+  _0RL_cd_d8193061d7f864c6_fa000000* tcd = (_0RL_cd_d8193061d7f864c6_fa000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->saveShot(*tcd->arg_0, *tcd->arg_1, tcd->arg_2);
 
@@ -9825,7 +9922,7 @@ _0RL_lcfn_d8193061d7f864c6_ea000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TFullShotResult& fullShotResult, ::CORBA::Boolean isOwner)
 {
-  _0RL_cd_d8193061d7f864c6_da000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ea000000, "saveShot", 9);
+  _0RL_cd_d8193061d7f864c6_fa000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0b000000, "saveShot", 9);
   _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
   _call_desc.arg_1 = &(::STI::TNetwork::TFullShotResult&) fullShotResult;
   _call_desc.arg_2 = isOwner;
@@ -9842,11 +9939,11 @@ _0RL_lcfn_d8193061d7f864c6_ea000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTShotResultRecord_i_cSTI_mTNetwork_mTResultsCollector
-class _0RL_cd_d8193061d7f864c6_fa000000
+class _0RL_cd_d8193061d7f864c6_1b000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_fa000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_1b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -9866,41 +9963,41 @@ public:
   STI::TNetwork::TShotResultRecord_var result;
 };
 
-void _0RL_cd_d8193061d7f864c6_fa000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_1b000000::marshalArguments(cdrStream& _n)
 {
   STI::TNetwork::TResultsCollector::_marshalObjRef(arg_0,_n);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_fa000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = STI::TNetwork::TResultsCollector::_unmarshalObjRef(_n);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_fa000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_1b000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TShotResultRecord&) result >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_fa000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = new STI::TNetwork::TShotResultRecord;
   (STI::TNetwork::TShotResultRecord&)result <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_fa000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_1b000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_0b000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_2b000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_fa000000* tcd = (_0RL_cd_d8193061d7f864c6_fa000000*)cd;
+  _0RL_cd_d8193061d7f864c6_1b000000* tcd = (_0RL_cd_d8193061d7f864c6_1b000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->transferResults(tcd->arg_0);
 
@@ -9909,7 +10006,7 @@ _0RL_lcfn_d8193061d7f864c6_0b000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TShotResultRecord* STI::TNetwork::_objref_TPersistenceManager::transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector)
 {
-  _0RL_cd_d8193061d7f864c6_fa000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0b000000, "transferResults", 16);
+  _0RL_cd_d8193061d7f864c6_1b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2b000000, "transferResults", 16);
   _call_desc.arg_0 = resultsCollector;
 
   _invoke(_call_desc);
@@ -9924,11 +10021,11 @@ STI::TNetwork::TShotResultRecord* STI::TNetwork::_objref_TPersistenceManager::tr
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTShotID_o_cSTI_mTNetwork_mTDeviceIDMeasurementsTupleSeq
-class _0RL_cd_d8193061d7f864c6_1b000000
+class _0RL_cd_d8193061d7f864c6_3b000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_1b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_3b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -9949,13 +10046,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_1b000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3b000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TShotID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3b000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TShotID;
   (STI::TNetwork::TShotID&)arg_0_ <<= _n;
@@ -9963,14 +10060,14 @@ void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1b000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3b000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TDeviceIDMeasurementsTupleSeq&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3b000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TDeviceIDMeasurementsTupleSeq;
@@ -9978,15 +10075,15 @@ void _0RL_cd_d8193061d7f864c6_1b000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_1b000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_3b000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_2b000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_4b000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_1b000000* tcd = (_0RL_cd_d8193061d7f864c6_1b000000*)cd;
+  _0RL_cd_d8193061d7f864c6_3b000000* tcd = (_0RL_cd_d8193061d7f864c6_3b000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->getMeasurements(*tcd->arg_0, tcd->arg_1.out());
 
@@ -9995,7 +10092,7 @@ _0RL_lcfn_d8193061d7f864c6_2b000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements)
 {
-  _0RL_cd_d8193061d7f864c6_1b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2b000000, "getMeasurements", 16);
+  _0RL_cd_d8193061d7f864c6_3b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4b000000, "getMeasurements", 16);
   _call_desc.arg_0 = &(::STI::TNetwork::TShotID&) sid;
 
   _invoke(_call_desc);
@@ -10011,11 +10108,11 @@ _0RL_lcfn_d8193061d7f864c6_2b000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTFileServer
-class _0RL_cd_d8193061d7f864c6_3b000000
+class _0RL_cd_d8193061d7f864c6_5b000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_3b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_5b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -10031,27 +10128,27 @@ public:
   STI::TNetwork::TFileServer_var result;
 };
 
-void _0RL_cd_d8193061d7f864c6_3b000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5b000000::marshalReturnedValues(cdrStream& _n)
 {
   STI::TNetwork::TFileServer_Helper::marshalObjRef(result,_n);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_3b000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5b000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = STI::TNetwork::TFileServer_Helper::unmarshalObjRef(_n);
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_3b000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_5b000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_4b000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_6b000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_3b000000* tcd = (_0RL_cd_d8193061d7f864c6_3b000000*)cd;
+  _0RL_cd_d8193061d7f864c6_5b000000* tcd = (_0RL_cd_d8193061d7f864c6_5b000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->getFileServer();
 
@@ -10060,7 +10157,7 @@ _0RL_lcfn_d8193061d7f864c6_4b000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TFileServer_ptr STI::TNetwork::_objref_TPersistenceManager::getFileServer()
 {
-  _0RL_cd_d8193061d7f864c6_3b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4b000000, "getFileServer", 14);
+  _0RL_cd_d8193061d7f864c6_5b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6b000000, "getFileServer", 14);
 
 
   _invoke(_call_desc);
@@ -10075,11 +10172,11 @@ STI::TNetwork::TFileServer_ptr STI::TNetwork::_objref_TPersistenceManager::getFi
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTSequenceResult
-class _0RL_cd_d8193061d7f864c6_5b000000
+class _0RL_cd_d8193061d7f864c6_7b000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_5b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_7b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -10096,13 +10193,13 @@ public:
   const STI::TNetwork::TSequenceResult* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_5b000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7b000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TSequenceResult&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_5b000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7b000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TSequenceResult;
   (STI::TNetwork::TSequenceResult&)arg_0_ <<= _n;
@@ -10110,15 +10207,15 @@ void _0RL_cd_d8193061d7f864c6_5b000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_5b000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_7b000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_6b000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_8b000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_5b000000* tcd = (_0RL_cd_d8193061d7f864c6_5b000000*)cd;
+  _0RL_cd_d8193061d7f864c6_7b000000* tcd = (_0RL_cd_d8193061d7f864c6_7b000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   impl->addSequence(*tcd->arg_0);
 
@@ -10127,7 +10224,7 @@ _0RL_lcfn_d8193061d7f864c6_6b000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TPersistenceManager::addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult)
 {
-  _0RL_cd_d8193061d7f864c6_5b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6b000000, "addSequence", 12);
+  _0RL_cd_d8193061d7f864c6_7b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8b000000, "addSequence", 12);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceResult&) sequenceResult;
 
   _invoke(_call_desc);
@@ -10142,11 +10239,11 @@ void STI::TNetwork::_objref_TPersistenceManager::addSequence(const ::STI::TNetwo
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTSequenceEntryID_i_cSTI_mTNetwork_mTShotID_i_cSTI_mTNetwork_mTEngineJobStatus_i_cboolean
-class _0RL_cd_d8193061d7f864c6_7b000000
+class _0RL_cd_d8193061d7f864c6_9b000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_7b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_9b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -10170,7 +10267,7 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_7b000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9b000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TSequenceEntryID&) *arg_0 >>= _n;
   (const STI::TNetwork::TShotID&) *arg_1 >>= _n;
@@ -10179,7 +10276,7 @@ void _0RL_cd_d8193061d7f864c6_7b000000::marshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_7b000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_9b000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TSequenceEntryID;
   (STI::TNetwork::TSequenceEntryID&)arg_0_ <<= _n;
@@ -10189,94 +10286,6 @@ void _0RL_cd_d8193061d7f864c6_7b000000::unmarshalArguments(cdrStream& _n)
   arg_1 = &arg_1_.in();
   (STI::TNetwork::TEngineJobStatus&)arg_2 <<= _n;
   arg_3 = _n.unmarshalBoolean();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_7b000000::marshalReturnedValues(cdrStream& _n)
-{
-  _n.marshalBoolean(result);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_7b000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = _n.unmarshalBoolean();
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_7b000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_8b000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_7b000000* tcd = (_0RL_cd_d8193061d7f864c6_7b000000*)cd;
-  STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
-  tcd->result = impl->updateSequence(*tcd->arg_0, *tcd->arg_1, tcd->arg_2, tcd->arg_3);
-
-
-}
-
-::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner)
-{
-  _0RL_cd_d8193061d7f864c6_7b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8b000000, "updateSequence", 15);
-  _call_desc.arg_0 = &(::STI::TNetwork::TSequenceEntryID&) id;
-  _call_desc.arg_1 = &(::STI::TNetwork::TShotID&) shotID;
-  _call_desc.arg_2 = shotStatus;
-  _call_desc.arg_3 = isOwner;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TPersistenceManager::saveSequence
-
-// Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cSTI_mTNetwork_mTSequenceResult_i_cboolean
-class _0RL_cd_d8193061d7f864c6_9b000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_9b000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TSequenceResult_var arg_0_;
-  const STI::TNetwork::TSequenceResult* arg_0;
-  ::CORBA::Boolean arg_1;
-  ::CORBA::Boolean result;
-};
-
-void _0RL_cd_d8193061d7f864c6_9b000000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TSequenceResult&) *arg_0 >>= _n;
-  _n.marshalBoolean(arg_1);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_9b000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TSequenceResult;
-  (STI::TNetwork::TSequenceResult&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
-  arg_1 = _n.unmarshalBoolean();
 
 }
 
@@ -10302,6 +10311,94 @@ _0RL_lcfn_d8193061d7f864c6_ab000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_9b000000* tcd = (_0RL_cd_d8193061d7f864c6_9b000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
+  tcd->result = impl->updateSequence(*tcd->arg_0, *tcd->arg_1, tcd->arg_2, tcd->arg_3);
+
+
+}
+
+::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner)
+{
+  _0RL_cd_d8193061d7f864c6_9b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ab000000, "updateSequence", 15);
+  _call_desc.arg_0 = &(::STI::TNetwork::TSequenceEntryID&) id;
+  _call_desc.arg_1 = &(::STI::TNetwork::TShotID&) shotID;
+  _call_desc.arg_2 = shotStatus;
+  _call_desc.arg_3 = isOwner;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TPersistenceManager::saveSequence
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cSTI_mTNetwork_mTSequenceResult_i_cboolean
+class _0RL_cd_d8193061d7f864c6_bb000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_bb000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TSequenceResult_var arg_0_;
+  const STI::TNetwork::TSequenceResult* arg_0;
+  ::CORBA::Boolean arg_1;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_bb000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TSequenceResult&) *arg_0 >>= _n;
+  _n.marshalBoolean(arg_1);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_bb000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TSequenceResult;
+  (STI::TNetwork::TSequenceResult&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+  arg_1 = _n.unmarshalBoolean();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_bb000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_bb000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_bb000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_cb000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_bb000000* tcd = (_0RL_cd_d8193061d7f864c6_bb000000*)cd;
+  STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
   tcd->result = impl->saveSequence(*tcd->arg_0, tcd->arg_1);
 
 
@@ -10309,7 +10406,7 @@ _0RL_lcfn_d8193061d7f864c6_ab000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::saveSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult, ::CORBA::Boolean isOwner)
 {
-  _0RL_cd_d8193061d7f864c6_9b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ab000000, "saveSequence", 13);
+  _0RL_cd_d8193061d7f864c6_bb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cb000000, "saveSequence", 13);
   _call_desc.arg_0 = &(::STI::TNetwork::TSequenceResult&) sequenceResult;
   _call_desc.arg_1 = isOwner;
 
@@ -10325,7 +10422,7 @@ _0RL_lcfn_d8193061d7f864c6_ab000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_bb000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_db000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TPersistenceManager* impl = (STI::TNetwork::_impl_TPersistenceManager*) svnt->_ptrToInterface(STI::TNetwork::TPersistenceManager::_PD_repoId);
@@ -10336,7 +10433,7 @@ _0RL_lcfn_d8193061d7f864c6_bb000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TPersistenceManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bb000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_db000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -10376,7 +10473,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "findShot")) {
 
-    _0RL_cd_d8193061d7f864c6_7a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8a000000, "findShot", 9, 1);
+    _0RL_cd_d8193061d7f864c6_9a000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_aa000000, "findShot", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10384,7 +10481,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getParseResult")) {
 
-    _0RL_cd_d8193061d7f864c6_e4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9a000000, "getParseResult", 15, 1);
+    _0RL_cd_d8193061d7f864c6_05000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ba000000, "getParseResult", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10392,7 +10489,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getShotResult")) {
 
-    _0RL_cd_d8193061d7f864c6_e7000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_aa000000, "getShotResult", 14, 1);
+    _0RL_cd_d8193061d7f864c6_08000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ca000000, "getShotResult", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10400,7 +10497,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getSequenceResult")) {
 
-    _0RL_cd_d8193061d7f864c6_ba000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ca000000, "getSequenceResult", 18, 1);
+    _0RL_cd_d8193061d7f864c6_da000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ea000000, "getSequenceResult", 18, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10408,7 +10505,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "saveShot")) {
 
-    _0RL_cd_d8193061d7f864c6_da000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ea000000, "saveShot", 9, 1);
+    _0RL_cd_d8193061d7f864c6_fa000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0b000000, "saveShot", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10416,7 +10513,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "transferResults")) {
 
-    _0RL_cd_d8193061d7f864c6_fa000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0b000000, "transferResults", 16, 1);
+    _0RL_cd_d8193061d7f864c6_1b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2b000000, "transferResults", 16, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10424,7 +10521,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getMeasurements")) {
 
-    _0RL_cd_d8193061d7f864c6_1b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2b000000, "getMeasurements", 16, 1);
+    _0RL_cd_d8193061d7f864c6_3b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4b000000, "getMeasurements", 16, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10432,7 +10529,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getFileServer")) {
 
-    _0RL_cd_d8193061d7f864c6_3b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4b000000, "getFileServer", 14, 1);
+    _0RL_cd_d8193061d7f864c6_5b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6b000000, "getFileServer", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10440,7 +10537,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "addSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_5b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6b000000, "addSequence", 12, 1);
+    _0RL_cd_d8193061d7f864c6_7b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8b000000, "addSequence", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10448,7 +10545,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "updateSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_7b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8b000000, "updateSequence", 15, 1);
+    _0RL_cd_d8193061d7f864c6_9b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ab000000, "updateSequence", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10456,7 +10553,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "saveSequence")) {
 
-    _0RL_cd_d8193061d7f864c6_9b000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ab000000, "saveSequence", 13, 1);
+    _0RL_cd_d8193061d7f864c6_bb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cb000000, "saveSequence", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10464,7 +10561,7 @@ STI::TNetwork::_impl_TPersistenceManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bb000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_db000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -10606,11 +10703,11 @@ STI::TNetwork::_objref_TProfileManager::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_o_cSTI_mTNetwork_mTStringSeq
-class _0RL_cd_d8193061d7f864c6_cb000000
+class _0RL_cd_d8193061d7f864c6_eb000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_cb000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_eb000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -10626,28 +10723,28 @@ public:
   STI::TNetwork::TStringSeq_var arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_cb000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_eb000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TStringSeq&) arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_cb000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_eb000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_0 = new STI::TNetwork::TStringSeq;
   (STI::TNetwork::TStringSeq&)arg_0 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_cb000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_eb000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_db000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_fb000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000* tcd = (_0RL_cd_d8193061d7f864c6_cb000000*)cd;
+  _0RL_cd_d8193061d7f864c6_eb000000* tcd = (_0RL_cd_d8193061d7f864c6_eb000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
   impl->getProfiles(tcd->arg_0.out());
 
@@ -10656,7 +10753,7 @@ _0RL_lcfn_d8193061d7f864c6_db000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TProfileManager::getProfiles(::STI::TNetwork::TStringSeq_out names)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_db000000, "getProfiles", 12);
+  _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fb000000, "getProfiles", 12);
 
 
   _invoke(_call_desc);
@@ -10671,11 +10768,11 @@ void STI::TNetwork::_objref_TProfileManager::getProfiles(::STI::TNetwork::TStrin
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cstring_o_cSTI_mTNetwork_mTProfile
-class _0RL_cd_d8193061d7f864c6_eb000000
+class _0RL_cd_d8193061d7f864c6_0c000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_eb000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_0c000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -10696,27 +10793,27 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_eb000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_0c000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_eb000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_0c000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_eb000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_0c000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TProfile&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_eb000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_0c000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TProfile;
@@ -10724,15 +10821,15 @@ void _0RL_cd_d8193061d7f864c6_eb000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_eb000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_0c000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_fb000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_1c000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_eb000000* tcd = (_0RL_cd_d8193061d7f864c6_eb000000*)cd;
+  _0RL_cd_d8193061d7f864c6_0c000000* tcd = (_0RL_cd_d8193061d7f864c6_0c000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
   tcd->result = impl->getProfile(tcd->arg_0, tcd->arg_1.out());
 
@@ -10741,7 +10838,7 @@ _0RL_lcfn_d8193061d7f864c6_fb000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::getProfile(const char* name, ::STI::TNetwork::TProfile_out profile)
 {
-  _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fb000000, "getProfile", 11);
+  _0RL_cd_d8193061d7f864c6_0c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1c000000, "getProfile", 11);
   _call_desc.arg_0 = name;
 
   _invoke(_call_desc);
@@ -10757,88 +10854,6 @@ _0RL_lcfn_d8193061d7f864c6_fb000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTProfile
-class _0RL_cd_d8193061d7f864c6_0c000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_0c000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TProfile_var arg_0_;
-  const STI::TNetwork::TProfile* arg_0;
-  ::CORBA::Boolean result;
-};
-
-void _0RL_cd_d8193061d7f864c6_0c000000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TProfile&) *arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_0c000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TProfile;
-  (STI::TNetwork::TProfile&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_0c000000::marshalReturnedValues(cdrStream& _n)
-{
-  _n.marshalBoolean(result);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_0c000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = _n.unmarshalBoolean();
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_0c000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_1c000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_0c000000* tcd = (_0RL_cd_d8193061d7f864c6_0c000000*)cd;
-  STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
-  tcd->result = impl->saveProfile(*tcd->arg_0);
-
-
-}
-
-::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::saveProfile(const ::STI::TNetwork::TProfile& profile)
-{
-  _0RL_cd_d8193061d7f864c6_0c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1c000000, "saveProfile", 12);
-  _call_desc.arg_0 = &(::STI::TNetwork::TProfile&) profile;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TProfileManager::setReadOnly
-
-// Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cstring_i_cboolean
 class _0RL_cd_d8193061d7f864c6_2c000000
   : public omniCallDescriptor
 {
@@ -10858,24 +10873,22 @@ public:
   
   static const char* const _user_exns[];
 
-  ::CORBA::String_var arg_0_;
-  const char* arg_0;
-  ::CORBA::Boolean arg_1;
+  STI::TNetwork::TProfile_var arg_0_;
+  const STI::TNetwork::TProfile* arg_0;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_2c000000::marshalArguments(cdrStream& _n)
 {
-  _n.marshalString(arg_0,0);
-  _n.marshalBoolean(arg_1);
+  (const STI::TNetwork::TProfile&) *arg_0 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_2c000000::unmarshalArguments(cdrStream& _n)
 {
-  arg_0_ = _n.unmarshalString(0);
-  arg_0 = arg_0_.in();
-  arg_1 = _n.unmarshalBoolean();
+  arg_0_ = new STI::TNetwork::TProfile;
+  (STI::TNetwork::TProfile&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
 
 }
 
@@ -10901,16 +10914,15 @@ _0RL_lcfn_d8193061d7f864c6_3c000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_2c000000* tcd = (_0RL_cd_d8193061d7f864c6_2c000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
-  tcd->result = impl->setReadOnly(tcd->arg_0, tcd->arg_1);
+  tcd->result = impl->saveProfile(*tcd->arg_0);
 
 
 }
 
-::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile)
+::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::saveProfile(const ::STI::TNetwork::TProfile& profile)
 {
-  _0RL_cd_d8193061d7f864c6_2c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3c000000, "setReadOnly", 12);
-  _call_desc.arg_0 = name;
-  _call_desc.arg_1 = readOnlyProfile;
+  _0RL_cd_d8193061d7f864c6_2c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3c000000, "saveProfile", 12);
+  _call_desc.arg_0 = &(::STI::TNetwork::TProfile&) profile;
 
   _invoke(_call_desc);
   return _call_desc.result;
@@ -10920,10 +10932,10 @@ _0RL_lcfn_d8193061d7f864c6_3c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TProfileManager::loadProfile
+// Code for STI::TNetwork::TProfileManager::setReadOnly
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cstring_i_cSTI_mTNetwork_mTProfileType_i_cboolean
+//  _cboolean_i_cstring_i_cboolean
 class _0RL_cd_d8193061d7f864c6_4c000000
   : public omniCallDescriptor
 {
@@ -10945,16 +10957,14 @@ public:
 
   ::CORBA::String_var arg_0_;
   const char* arg_0;
-  STI::TNetwork::TProfileType arg_1;
-  ::CORBA::Boolean arg_2;
+  ::CORBA::Boolean arg_1;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_4c000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
-  arg_1 >>= _n;
-  _n.marshalBoolean(arg_2);
+  _n.marshalBoolean(arg_1);
 
 }
 
@@ -10962,8 +10972,7 @@ void _0RL_cd_d8193061d7f864c6_4c000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
-  (STI::TNetwork::TProfileType&)arg_1 <<= _n;
-  arg_2 = _n.unmarshalBoolean();
+  arg_1 = _n.unmarshalBoolean();
 
 }
 
@@ -10989,6 +10998,94 @@ _0RL_lcfn_d8193061d7f864c6_5c000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_4c000000* tcd = (_0RL_cd_d8193061d7f864c6_4c000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
+  tcd->result = impl->setReadOnly(tcd->arg_0, tcd->arg_1);
+
+
+}
+
+::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::setReadOnly(const char* name, ::CORBA::Boolean readOnlyProfile)
+{
+  _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5c000000, "setReadOnly", 12);
+  _call_desc.arg_0 = name;
+  _call_desc.arg_1 = readOnlyProfile;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TProfileManager::loadProfile
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cstring_i_cSTI_mTNetwork_mTProfileType_i_cboolean
+class _0RL_cd_d8193061d7f864c6_6c000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_6c000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  ::CORBA::String_var arg_0_;
+  const char* arg_0;
+  STI::TNetwork::TProfileType arg_1;
+  ::CORBA::Boolean arg_2;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_6c000000::marshalArguments(cdrStream& _n)
+{
+  _n.marshalString(arg_0,0);
+  arg_1 >>= _n;
+  _n.marshalBoolean(arg_2);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_6c000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = _n.unmarshalString(0);
+  arg_0 = arg_0_.in();
+  (STI::TNetwork::TProfileType&)arg_1 <<= _n;
+  arg_2 = _n.unmarshalBoolean();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_6c000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_6c000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_6c000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_7c000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_6c000000* tcd = (_0RL_cd_d8193061d7f864c6_6c000000*)cd;
+  STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
   tcd->result = impl->loadProfile(tcd->arg_0, tcd->arg_1, tcd->arg_2);
 
 
@@ -10996,7 +11093,7 @@ _0RL_lcfn_d8193061d7f864c6_5c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::loadProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean loadDependentDevices)
 {
-  _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5c000000, "loadProfile", 12);
+  _0RL_cd_d8193061d7f864c6_6c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7c000000, "loadProfile", 12);
   _call_desc.arg_0 = name;
   _call_desc.arg_1 = type;
   _call_desc.arg_2 = loadDependentDevices;
@@ -11013,9 +11110,9 @@ _0RL_lcfn_d8193061d7f864c6_5c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_6c000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_8c000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_4c000000* tcd = (_0RL_cd_d8193061d7f864c6_4c000000*)cd;
+  _0RL_cd_d8193061d7f864c6_6c000000* tcd = (_0RL_cd_d8193061d7f864c6_6c000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
   tcd->result = impl->saveCurrentProfile(tcd->arg_0, tcd->arg_1, tcd->arg_2);
 
@@ -11024,7 +11121,7 @@ _0RL_lcfn_d8193061d7f864c6_6c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::saveCurrentProfile(const char* name, ::STI::TNetwork::TProfileType type, ::CORBA::Boolean saveDependentDevices)
 {
-  _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6c000000, "saveCurrentProfile", 19);
+  _0RL_cd_d8193061d7f864c6_6c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8c000000, "saveCurrentProfile", 19);
   _call_desc.arg_0 = name;
   _call_desc.arg_1 = type;
   _call_desc.arg_2 = saveDependentDevices;
@@ -11041,7 +11138,7 @@ _0RL_lcfn_d8193061d7f864c6_6c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_7c000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_9c000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TProfileManager* impl = (STI::TNetwork::_impl_TProfileManager*) svnt->_ptrToInterface(STI::TNetwork::TProfileManager::_PD_repoId);
@@ -11052,7 +11149,7 @@ _0RL_lcfn_d8193061d7f864c6_7c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TProfileManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7c000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9c000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -11092,7 +11189,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getProfiles")) {
 
-    _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_db000000, "getProfiles", 12, 1);
+    _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fb000000, "getProfiles", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11100,7 +11197,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getProfile")) {
 
-    _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fb000000, "getProfile", 11, 1);
+    _0RL_cd_d8193061d7f864c6_0c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1c000000, "getProfile", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11108,7 +11205,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "saveProfile")) {
 
-    _0RL_cd_d8193061d7f864c6_0c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1c000000, "saveProfile", 12, 1);
+    _0RL_cd_d8193061d7f864c6_2c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3c000000, "saveProfile", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11116,7 +11213,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "setReadOnly")) {
 
-    _0RL_cd_d8193061d7f864c6_2c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_3c000000, "setReadOnly", 12, 1);
+    _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5c000000, "setReadOnly", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11124,7 +11221,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "loadProfile")) {
 
-    _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_5c000000, "loadProfile", 12, 1);
+    _0RL_cd_d8193061d7f864c6_6c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7c000000, "loadProfile", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11132,7 +11229,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "saveCurrentProfile")) {
 
-    _0RL_cd_d8193061d7f864c6_4c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6c000000, "saveCurrentProfile", 19, 1);
+    _0RL_cd_d8193061d7f864c6_6c000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8c000000, "saveCurrentProfile", 19, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11140,7 +11237,7 @@ STI::TNetwork::_impl_TProfileManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7c000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9c000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -11282,9 +11379,9 @@ STI::TNetwork::_objref_TLogManager::_ptrToObjRef(const char* id)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_8c000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ac000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000* tcd = (_0RL_cd_d8193061d7f864c6_cb000000*)cd;
+  _0RL_cd_d8193061d7f864c6_eb000000* tcd = (_0RL_cd_d8193061d7f864c6_eb000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   impl->getLogNames(tcd->arg_0.out());
 
@@ -11293,7 +11390,7 @@ _0RL_lcfn_d8193061d7f864c6_8c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TLogManager::getLogNames(::STI::TNetwork::TStringSeq_out names)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8c000000, "getLogNames", 12);
+  _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ac000000, "getLogNames", 12);
 
 
   _invoke(_call_desc);
@@ -11308,9 +11405,9 @@ void STI::TNetwork::_objref_TLogManager::getLogNames(::STI::TNetwork::TStringSeq
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_9c000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_bc000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000* tcd = (_0RL_cd_d8193061d7f864c6_cb000000*)cd;
+  _0RL_cd_d8193061d7f864c6_eb000000* tcd = (_0RL_cd_d8193061d7f864c6_eb000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   impl->getNetworkLogNames(tcd->arg_0.out());
 
@@ -11319,7 +11416,7 @@ _0RL_lcfn_d8193061d7f864c6_9c000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TLogManager::getNetworkLogNames(::STI::TNetwork::TStringSeq_out names)
 {
-  _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9c000000, "getNetworkLogNames", 19);
+  _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bc000000, "getNetworkLogNames", 19);
 
 
   _invoke(_call_desc);
@@ -11334,11 +11431,11 @@ void STI::TNetwork::_objref_TLogManager::getNetworkLogNames(::STI::TNetwork::TSt
 
 // Proxy call descriptor class. Mangled signature:
 //  _clong_i_cSTI_mTNetwork_mTDeviceID_i_cSTI_mTNetwork_mTLogFileFilter
-class _0RL_cd_d8193061d7f864c6_ac000000
+class _0RL_cd_d8193061d7f864c6_cc000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_ac000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_cc000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -11360,14 +11457,14 @@ public:
   ::CORBA::Long result;
 };
 
-void _0RL_cd_d8193061d7f864c6_ac000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cc000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
   (const STI::TNetwork::TLogFileFilter&) *arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ac000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cc000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TDeviceID;
   (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
@@ -11375,89 +11472,6 @@ void _0RL_cd_d8193061d7f864c6_ac000000::unmarshalArguments(cdrStream& _n)
   arg_1_ = new STI::TNetwork::TLogFileFilter;
   (STI::TNetwork::TLogFileFilter&)arg_1_ <<= _n;
   arg_1 = &arg_1_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_ac000000::marshalReturnedValues(cdrStream& _n)
-{
-  result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_ac000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  (::CORBA::Long&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_ac000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_bc000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_ac000000* tcd = (_0RL_cd_d8193061d7f864c6_ac000000*)cd;
-  STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
-  tcd->result = impl->getLogCount(*tcd->arg_0, *tcd->arg_1);
-
-
-}
-
-::CORBA::Long STI::TNetwork::_objref_TLogManager::getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter)
-{
-  _0RL_cd_d8193061d7f864c6_ac000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bc000000, "getLogCount", 12);
-  _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) deviceID;
-  _call_desc.arg_1 = &(::STI::TNetwork::TLogFileFilter&) filter;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TLogManager::getNetworkLogCount
-
-// Proxy call descriptor class. Mangled signature:
-//  _clong_i_cSTI_mTNetwork_mTLogFileFilter
-class _0RL_cd_d8193061d7f864c6_cc000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_cc000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TLogFileFilter_var arg_0_;
-  const STI::TNetwork::TLogFileFilter* arg_0;
-  ::CORBA::Long result;
-};
-
-void _0RL_cd_d8193061d7f864c6_cc000000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TLogFileFilter&) *arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_cc000000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TLogFileFilter;
-  (STI::TNetwork::TLogFileFilter&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
 
 }
 
@@ -11483,15 +11497,16 @@ _0RL_lcfn_d8193061d7f864c6_dc000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_cc000000* tcd = (_0RL_cd_d8193061d7f864c6_cc000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
-  tcd->result = impl->getNetworkLogCount(*tcd->arg_0);
+  tcd->result = impl->getLogCount(*tcd->arg_0, *tcd->arg_1);
 
 
 }
 
-::CORBA::Long STI::TNetwork::_objref_TLogManager::getNetworkLogCount(const ::STI::TNetwork::TLogFileFilter& filter)
+::CORBA::Long STI::TNetwork::_objref_TLogManager::getLogCount(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter)
 {
-  _0RL_cd_d8193061d7f864c6_cc000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dc000000, "getNetworkLogCount", 19);
-  _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
+  _0RL_cd_d8193061d7f864c6_cc000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dc000000, "getLogCount", 12);
+  _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) deviceID;
+  _call_desc.arg_1 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
   _invoke(_call_desc);
   return _call_desc.result;
@@ -11501,10 +11516,10 @@ _0RL_lcfn_d8193061d7f864c6_dc000000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TLogManager::getLogIDs
+// Code for STI::TNetwork::TLogManager::getNetworkLogCount
 
 // Proxy call descriptor class. Mangled signature:
-//  void_i_cSTI_mTNetwork_mTLogFileFilter_o_cSTI_mTNetwork_mTLogIDSeq
+//  _clong_i_cSTI_mTNetwork_mTLogFileFilter
 class _0RL_cd_d8193061d7f864c6_ec000000
   : public omniCallDescriptor
 {
@@ -11526,7 +11541,7 @@ public:
 
   STI::TNetwork::TLogFileFilter_var arg_0_;
   const STI::TNetwork::TLogFileFilter* arg_0;
-  STI::TNetwork::TLogIDSeq_var arg_1;
+  ::CORBA::Long result;
 };
 
 void _0RL_cd_d8193061d7f864c6_ec000000::marshalArguments(cdrStream& _n)
@@ -11545,14 +11560,13 @@ void _0RL_cd_d8193061d7f864c6_ec000000::unmarshalArguments(cdrStream& _n)
 
 void _0RL_cd_d8193061d7f864c6_ec000000::marshalReturnedValues(cdrStream& _n)
 {
-  (const STI::TNetwork::TLogIDSeq&) arg_1 >>= _n;
+  result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_ec000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  arg_1 = new STI::TNetwork::TLogIDSeq;
-  (STI::TNetwork::TLogIDSeq&)arg_1 <<= _n;
+  (::CORBA::Long&)result <<= _n;
 
 }
 
@@ -11566,6 +11580,89 @@ _0RL_lcfn_d8193061d7f864c6_fc000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_ec000000* tcd = (_0RL_cd_d8193061d7f864c6_ec000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
+  tcd->result = impl->getNetworkLogCount(*tcd->arg_0);
+
+
+}
+
+::CORBA::Long STI::TNetwork::_objref_TLogManager::getNetworkLogCount(const ::STI::TNetwork::TLogFileFilter& filter)
+{
+  _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fc000000, "getNetworkLogCount", 19);
+  _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TLogManager::getLogIDs
+
+// Proxy call descriptor class. Mangled signature:
+//  void_i_cSTI_mTNetwork_mTLogFileFilter_o_cSTI_mTNetwork_mTLogIDSeq
+class _0RL_cd_d8193061d7f864c6_0d000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_0d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TLogFileFilter_var arg_0_;
+  const STI::TNetwork::TLogFileFilter* arg_0;
+  STI::TNetwork::TLogIDSeq_var arg_1;
+};
+
+void _0RL_cd_d8193061d7f864c6_0d000000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TLogFileFilter&) *arg_0 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_0d000000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TLogFileFilter;
+  (STI::TNetwork::TLogFileFilter&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+
+}
+
+void _0RL_cd_d8193061d7f864c6_0d000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TLogIDSeq&) arg_1 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_0d000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  arg_1 = new STI::TNetwork::TLogIDSeq;
+  (STI::TNetwork::TLogIDSeq&)arg_1 <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_0d000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_1d000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_0d000000* tcd = (_0RL_cd_d8193061d7f864c6_0d000000*)cd;
+  STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   impl->getLogIDs(*tcd->arg_0, tcd->arg_1.out());
 
 
@@ -11573,7 +11670,7 @@ _0RL_lcfn_d8193061d7f864c6_fc000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TLogManager::getLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids)
 {
-  _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fc000000, "getLogIDs", 10);
+  _0RL_cd_d8193061d7f864c6_0d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1d000000, "getLogIDs", 10);
   _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
   _invoke(_call_desc);
@@ -11588,9 +11685,9 @@ void STI::TNetwork::_objref_TLogManager::getLogIDs(const ::STI::TNetwork::TLogFi
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_0d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_2d000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_ec000000* tcd = (_0RL_cd_d8193061d7f864c6_ec000000*)cd;
+  _0RL_cd_d8193061d7f864c6_0d000000* tcd = (_0RL_cd_d8193061d7f864c6_0d000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   impl->getNetworkLogIDs(*tcd->arg_0, tcd->arg_1.out());
 
@@ -11599,7 +11696,7 @@ _0RL_lcfn_d8193061d7f864c6_0d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TLogManager::getNetworkLogIDs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids)
 {
-  _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0d000000, "getNetworkLogIDs", 17);
+  _0RL_cd_d8193061d7f864c6_0d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2d000000, "getNetworkLogIDs", 17);
   _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
   _invoke(_call_desc);
@@ -11614,11 +11711,11 @@ void STI::TNetwork::_objref_TLogManager::getNetworkLogIDs(const ::STI::TNetwork:
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTDeviceID_i_cSTI_mTNetwork_mTLogFileFilter_o_cSTI_mTNetwork_mTLogIDSeq
-class _0RL_cd_d8193061d7f864c6_1d000000
+class _0RL_cd_d8193061d7f864c6_3d000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_1d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_3d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -11640,14 +11737,14 @@ public:
   STI::TNetwork::TLogIDSeq_var arg_2;
 };
 
-void _0RL_cd_d8193061d7f864c6_1d000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3d000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
   (const STI::TNetwork::TLogFileFilter&) *arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1d000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TDeviceID;
   (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
@@ -11658,28 +11755,28 @@ void _0RL_cd_d8193061d7f864c6_1d000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1d000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3d000000::marshalReturnedValues(cdrStream& _n)
 {
   (const STI::TNetwork::TLogIDSeq&) arg_2 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_1d000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalReturnedValues(cdrStream& _n)
 {
   arg_2 = new STI::TNetwork::TLogIDSeq;
   (STI::TNetwork::TLogIDSeq&)arg_2 <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_1d000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_3d000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_2d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_4d000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_1d000000* tcd = (_0RL_cd_d8193061d7f864c6_1d000000*)cd;
+  _0RL_cd_d8193061d7f864c6_3d000000* tcd = (_0RL_cd_d8193061d7f864c6_3d000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   impl->getDeviceLogIDs(*tcd->arg_0, *tcd->arg_1, tcd->arg_2.out());
 
@@ -11688,7 +11785,7 @@ _0RL_lcfn_d8193061d7f864c6_2d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TLogManager::getDeviceLogIDs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogIDSeq_out ids)
 {
-  _0RL_cd_d8193061d7f864c6_1d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2d000000, "getDeviceLogIDs", 16);
+  _0RL_cd_d8193061d7f864c6_3d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4d000000, "getDeviceLogIDs", 16);
   _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) deviceID;
   _call_desc.arg_1 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
@@ -11704,11 +11801,11 @@ void STI::TNetwork::_objref_TLogManager::getDeviceLogIDs(const ::STI::TNetwork::
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTLogID_o_cSTI_mTNetwork_mTLogFile
-class _0RL_cd_d8193061d7f864c6_3d000000
+class _0RL_cd_d8193061d7f864c6_5d000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_3d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_5d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -11729,13 +11826,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_3d000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5d000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TLogID&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TLogID;
   (STI::TNetwork::TLogID&)arg_0_ <<= _n;
@@ -11743,14 +11840,14 @@ void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_3d000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5d000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TLogFile&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TLogFile;
@@ -11758,15 +11855,15 @@ void _0RL_cd_d8193061d7f864c6_3d000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_3d000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_5d000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_4d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_6d000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_3d000000* tcd = (_0RL_cd_d8193061d7f864c6_3d000000*)cd;
+  _0RL_cd_d8193061d7f864c6_5d000000* tcd = (_0RL_cd_d8193061d7f864c6_5d000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   tcd->result = impl->getLog(*tcd->arg_0, tcd->arg_1.out());
 
@@ -11775,7 +11872,7 @@ _0RL_lcfn_d8193061d7f864c6_4d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::getLog(const ::STI::TNetwork::TLogID& logID, ::STI::TNetwork::TLogFile_out logFile)
 {
-  _0RL_cd_d8193061d7f864c6_3d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4d000000, "getLog", 7);
+  _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6d000000, "getLog", 7);
   _call_desc.arg_0 = &(::STI::TNetwork::TLogID&) logID;
 
   _invoke(_call_desc);
@@ -11791,11 +11888,11 @@ _0RL_lcfn_d8193061d7f864c6_4d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTLogFileFilter_o_cSTI_mTNetwork_mTLogFileSeq
-class _0RL_cd_d8193061d7f864c6_5d000000
+class _0RL_cd_d8193061d7f864c6_7d000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_5d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_7d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -11816,13 +11913,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_5d000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7d000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TLogFileFilter&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7d000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TLogFileFilter;
   (STI::TNetwork::TLogFileFilter&)arg_0_ <<= _n;
@@ -11830,14 +11927,14 @@ void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_5d000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7d000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TLogFileSeq&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_7d000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TLogFileSeq;
@@ -11845,15 +11942,15 @@ void _0RL_cd_d8193061d7f864c6_5d000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_5d000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_7d000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_6d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_8d000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_5d000000* tcd = (_0RL_cd_d8193061d7f864c6_5d000000*)cd;
+  _0RL_cd_d8193061d7f864c6_7d000000* tcd = (_0RL_cd_d8193061d7f864c6_7d000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   tcd->result = impl->getLogs(*tcd->arg_0, tcd->arg_1.out());
 
@@ -11862,7 +11959,7 @@ _0RL_lcfn_d8193061d7f864c6_6d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::getLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files)
 {
-  _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6d000000, "getLogs", 8);
+  _0RL_cd_d8193061d7f864c6_7d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8d000000, "getLogs", 8);
   _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
   _invoke(_call_desc);
@@ -11878,9 +11975,9 @@ _0RL_lcfn_d8193061d7f864c6_6d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_7d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_9d000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_5d000000* tcd = (_0RL_cd_d8193061d7f864c6_5d000000*)cd;
+  _0RL_cd_d8193061d7f864c6_7d000000* tcd = (_0RL_cd_d8193061d7f864c6_7d000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   tcd->result = impl->getNetworkLogs(*tcd->arg_0, tcd->arg_1.out());
 
@@ -11889,7 +11986,7 @@ _0RL_lcfn_d8193061d7f864c6_7d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::getNetworkLogs(const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files)
 {
-  _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7d000000, "getNetworkLogs", 15);
+  _0RL_cd_d8193061d7f864c6_7d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9d000000, "getNetworkLogs", 15);
   _call_desc.arg_0 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
   _invoke(_call_desc);
@@ -11905,11 +12002,11 @@ _0RL_lcfn_d8193061d7f864c6_7d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTDeviceID_i_cSTI_mTNetwork_mTLogFileFilter_o_cSTI_mTNetwork_mTLogFileSeq
-class _0RL_cd_d8193061d7f864c6_8d000000
+class _0RL_cd_d8193061d7f864c6_ad000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_8d000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_ad000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -11932,14 +12029,14 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_8d000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_ad000000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TDeviceID&) *arg_0 >>= _n;
   (const STI::TNetwork::TLogFileFilter&) *arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_8d000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_ad000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TDeviceID;
   (STI::TNetwork::TDeviceID&)arg_0_ <<= _n;
@@ -11950,14 +12047,14 @@ void _0RL_cd_d8193061d7f864c6_8d000000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_8d000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_ad000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TLogFileSeq&) arg_2 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_8d000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_ad000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_2 = new STI::TNetwork::TLogFileSeq;
@@ -11965,15 +12062,15 @@ void _0RL_cd_d8193061d7f864c6_8d000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_8d000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_ad000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_9d000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_bd000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_8d000000* tcd = (_0RL_cd_d8193061d7f864c6_8d000000*)cd;
+  _0RL_cd_d8193061d7f864c6_ad000000* tcd = (_0RL_cd_d8193061d7f864c6_ad000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   tcd->result = impl->getDeviceLogs(*tcd->arg_0, *tcd->arg_1, tcd->arg_2.out());
 
@@ -11982,7 +12079,7 @@ _0RL_lcfn_d8193061d7f864c6_9d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::getDeviceLogs(const ::STI::TNetwork::TDeviceID& deviceID, const ::STI::TNetwork::TLogFileFilter& filter, ::STI::TNetwork::TLogFileSeq_out files)
 {
-  _0RL_cd_d8193061d7f864c6_8d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9d000000, "getDeviceLogs", 14);
+  _0RL_cd_d8193061d7f864c6_ad000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bd000000, "getDeviceLogs", 14);
   _call_desc.arg_0 = &(::STI::TNetwork::TDeviceID&) deviceID;
   _call_desc.arg_1 = &(::STI::TNetwork::TLogFileFilter&) filter;
 
@@ -11999,11 +12096,11 @@ _0RL_lcfn_d8193061d7f864c6_9d000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cstring_o_cSTI_mTNetwork_mTLogRecord
-class _0RL_cd_d8193061d7f864c6_ad000000
+class _0RL_cd_d8193061d7f864c6_cd000000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_ad000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_cd000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -12024,27 +12121,27 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_ad000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cd000000::marshalArguments(cdrStream& _n)
 {
   _n.marshalString(arg_0,0);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ad000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cd000000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = _n.unmarshalString(0);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ad000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cd000000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
   (const STI::TNetwork::TLogRecord&) arg_1 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ad000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_cd000000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
   arg_1 = new STI::TNetwork::TLogRecord;
@@ -12052,15 +12149,15 @@ void _0RL_cd_d8193061d7f864c6_ad000000::unmarshalReturnedValues(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_ad000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_cd000000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_bd000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_dd000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_ad000000* tcd = (_0RL_cd_d8193061d7f864c6_ad000000*)cd;
+  _0RL_cd_d8193061d7f864c6_cd000000* tcd = (_0RL_cd_d8193061d7f864c6_cd000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
   tcd->result = impl->getLogRecord(tcd->arg_0, tcd->arg_1.out());
 
@@ -12069,7 +12166,7 @@ _0RL_lcfn_d8193061d7f864c6_bd000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::getLogRecord(const char* date, ::STI::TNetwork::TLogRecord_out record)
 {
-  _0RL_cd_d8193061d7f864c6_ad000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bd000000, "getLogRecord", 13);
+  _0RL_cd_d8193061d7f864c6_cd000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dd000000, "getLogRecord", 13);
   _call_desc.arg_0 = date;
 
   _invoke(_call_desc);
@@ -12085,7 +12182,7 @@ _0RL_lcfn_d8193061d7f864c6_bd000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_cd000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ed000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TLogManager* impl = (STI::TNetwork::_impl_TLogManager*) svnt->_ptrToInterface(STI::TNetwork::TLogManager::_PD_repoId);
@@ -12096,7 +12193,7 @@ _0RL_lcfn_d8193061d7f864c6_cd000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TLogManager::ping()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cd000000, "ping", 5);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ed000000, "ping", 5);
 
 
   _invoke(_call_desc);
@@ -12136,7 +12233,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogNames")) {
 
-    _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8c000000, "getLogNames", 12, 1);
+    _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ac000000, "getLogNames", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12144,7 +12241,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getNetworkLogNames")) {
 
-    _0RL_cd_d8193061d7f864c6_cb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9c000000, "getNetworkLogNames", 19, 1);
+    _0RL_cd_d8193061d7f864c6_eb000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bc000000, "getNetworkLogNames", 19, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12152,7 +12249,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogCount")) {
 
-    _0RL_cd_d8193061d7f864c6_ac000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bc000000, "getLogCount", 12, 1);
+    _0RL_cd_d8193061d7f864c6_cc000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dc000000, "getLogCount", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12160,7 +12257,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getNetworkLogCount")) {
 
-    _0RL_cd_d8193061d7f864c6_cc000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dc000000, "getNetworkLogCount", 19, 1);
+    _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fc000000, "getNetworkLogCount", 19, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12168,7 +12265,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fc000000, "getLogIDs", 10, 1);
+    _0RL_cd_d8193061d7f864c6_0d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1d000000, "getLogIDs", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12176,7 +12273,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getNetworkLogIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_ec000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0d000000, "getNetworkLogIDs", 17, 1);
+    _0RL_cd_d8193061d7f864c6_0d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2d000000, "getNetworkLogIDs", 17, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12184,7 +12281,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDeviceLogIDs")) {
 
-    _0RL_cd_d8193061d7f864c6_1d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2d000000, "getDeviceLogIDs", 16, 1);
+    _0RL_cd_d8193061d7f864c6_3d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4d000000, "getDeviceLogIDs", 16, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12192,7 +12289,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLog")) {
 
-    _0RL_cd_d8193061d7f864c6_3d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4d000000, "getLog", 7, 1);
+    _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6d000000, "getLog", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12200,7 +12297,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogs")) {
 
-    _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6d000000, "getLogs", 8, 1);
+    _0RL_cd_d8193061d7f864c6_7d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8d000000, "getLogs", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12208,7 +12305,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getNetworkLogs")) {
 
-    _0RL_cd_d8193061d7f864c6_5d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_7d000000, "getNetworkLogs", 15, 1);
+    _0RL_cd_d8193061d7f864c6_7d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9d000000, "getNetworkLogs", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12216,7 +12313,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDeviceLogs")) {
 
-    _0RL_cd_d8193061d7f864c6_8d000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_9d000000, "getDeviceLogs", 14, 1);
+    _0RL_cd_d8193061d7f864c6_ad000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bd000000, "getDeviceLogs", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12224,7 +12321,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogRecord")) {
 
-    _0RL_cd_d8193061d7f864c6_ad000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bd000000, "getLogRecord", 13, 1);
+    _0RL_cd_d8193061d7f864c6_cd000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dd000000, "getLogRecord", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12232,7 +12329,7 @@ STI::TNetwork::_impl_TLogManager::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "ping")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cd000000, "ping", 5, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ed000000, "ping", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -12374,7 +12471,7 @@ STI::TNetwork::_objref_TDevice::_ptrToObjRef(const char* id)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_dd000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_fd000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
@@ -12385,7 +12482,7 @@ _0RL_lcfn_d8193061d7f864c6_dd000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TDevice::refresh()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dd000000, "refresh", 8);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fd000000, "refresh", 8);
 
 
   _invoke(_call_desc);
@@ -12400,7 +12497,7 @@ _0RL_lcfn_d8193061d7f864c6_dd000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_ed000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_0e000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
@@ -12411,7 +12508,7 @@ _0RL_lcfn_d8193061d7f864c6_ed000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TDevice::kill()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ed000000, "kill", 5);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0e000000, "kill", 5);
 
 
   _invoke(_call_desc);
@@ -12426,7 +12523,7 @@ void STI::TNetwork::_objref_TDevice::kill()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_fd000000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_1e000000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
@@ -12437,7 +12534,7 @@ _0RL_lcfn_d8193061d7f864c6_fd000000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TDevice::disable()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fd000000, "disable", 8);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1e000000, "disable", 8);
 
 
   _invoke(_call_desc);
@@ -12452,9 +12549,9 @@ void STI::TNetwork::_objref_TDevice::disable()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_0e000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_2e000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_84000000* tcd = (_0RL_cd_d8193061d7f864c6_84000000*)cd;
+  _0RL_cd_d8193061d7f864c6_a4000000* tcd = (_0RL_cd_d8193061d7f864c6_a4000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
   tcd->result = impl->getID();
 
@@ -12463,7 +12560,7 @@ _0RL_lcfn_d8193061d7f864c6_0e000000(omniCallDescriptor* cd, omniServant* svnt)
 
 STI::TNetwork::TDeviceID* STI::TNetwork::_objref_TDevice::getID()
 {
-  _0RL_cd_d8193061d7f864c6_84000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0e000000, "getID", 6);
+  _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2e000000, "getID", 6);
 
 
   _invoke(_call_desc);
@@ -12478,70 +12575,6 @@ STI::TNetwork::TDeviceID* STI::TNetwork::_objref_TDevice::getID()
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTDeviceCollection
-class _0RL_cd_d8193061d7f864c6_1e000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_1e000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TDeviceCollection_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_1e000000::marshalReturnedValues(cdrStream& _n)
-{
-  STI::TNetwork::TDeviceCollection::_marshalObjRef(result,_n);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_1e000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = STI::TNetwork::TDeviceCollection::_unmarshalObjRef(_n);
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_1e000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_2e000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_1e000000* tcd = (_0RL_cd_d8193061d7f864c6_1e000000*)cd;
-  STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getDeviceCollection();
-
-
-}
-
-STI::TNetwork::TDeviceCollection_ptr STI::TNetwork::_objref_TDevice::getDeviceCollection()
-{
-  _0RL_cd_d8193061d7f864c6_1e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2e000000, "getDeviceCollection", 20);
-
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TDevice::getMessageDispatcher
-
-// Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTDeviceMessageDispatcher
 class _0RL_cd_d8193061d7f864c6_3e000000
   : public omniCallDescriptor
 {
@@ -12559,18 +12592,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TDeviceMessageDispatcher_var result;
+  STI::TNetwork::TDeviceCollection_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_3e000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TDeviceMessageDispatcher::_marshalObjRef(result,_n);
+  STI::TNetwork::TDeviceCollection::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_3e000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TDeviceMessageDispatcher::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TDeviceCollection::_unmarshalObjRef(_n);
 
 }
 
@@ -12584,14 +12617,14 @@ _0RL_lcfn_d8193061d7f864c6_4e000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_3e000000* tcd = (_0RL_cd_d8193061d7f864c6_3e000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getMessageDispatcher();
+  tcd->result = impl->getDeviceCollection();
 
 
 }
 
-STI::TNetwork::TDeviceMessageDispatcher_ptr STI::TNetwork::_objref_TDevice::getMessageDispatcher()
+STI::TNetwork::TDeviceCollection_ptr STI::TNetwork::_objref_TDevice::getDeviceCollection()
 {
-  _0RL_cd_d8193061d7f864c6_3e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4e000000, "getMessageDispatcher", 21);
+  _0RL_cd_d8193061d7f864c6_3e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4e000000, "getDeviceCollection", 20);
 
 
   _invoke(_call_desc);
@@ -12602,10 +12635,10 @@ STI::TNetwork::TDeviceMessageDispatcher_ptr STI::TNetwork::_objref_TDevice::getM
 
 
 //
-// Code for STI::TNetwork::TDevice::getEngineScheduler
+// Code for STI::TNetwork::TDevice::getMessageDispatcher
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTEventEngineScheduler
+//  _cSTI_mTNetwork_mTDeviceMessageDispatcher
 class _0RL_cd_d8193061d7f864c6_5e000000
   : public omniCallDescriptor
 {
@@ -12623,18 +12656,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TEventEngineScheduler_var result;
+  STI::TNetwork::TDeviceMessageDispatcher_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_5e000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TEventEngineScheduler::_marshalObjRef(result,_n);
+  STI::TNetwork::TDeviceMessageDispatcher::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_5e000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TEventEngineScheduler::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TDeviceMessageDispatcher::_unmarshalObjRef(_n);
 
 }
 
@@ -12648,14 +12681,14 @@ _0RL_lcfn_d8193061d7f864c6_6e000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_5e000000* tcd = (_0RL_cd_d8193061d7f864c6_5e000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getEngineScheduler();
+  tcd->result = impl->getMessageDispatcher();
 
 
 }
 
-STI::TNetwork::TEventEngineScheduler_ptr STI::TNetwork::_objref_TDevice::getEngineScheduler()
+STI::TNetwork::TDeviceMessageDispatcher_ptr STI::TNetwork::_objref_TDevice::getMessageDispatcher()
 {
-  _0RL_cd_d8193061d7f864c6_5e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6e000000, "getEngineScheduler", 19);
+  _0RL_cd_d8193061d7f864c6_5e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6e000000, "getMessageDispatcher", 21);
 
 
   _invoke(_call_desc);
@@ -12666,10 +12699,10 @@ STI::TNetwork::TEventEngineScheduler_ptr STI::TNetwork::_objref_TDevice::getEngi
 
 
 //
-// Code for STI::TNetwork::TDevice::getChannelManager
+// Code for STI::TNetwork::TDevice::getEngineScheduler
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTChannelManager
+//  _cSTI_mTNetwork_mTEventEngineScheduler
 class _0RL_cd_d8193061d7f864c6_7e000000
   : public omniCallDescriptor
 {
@@ -12687,18 +12720,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TChannelManager_var result;
+  STI::TNetwork::TEventEngineScheduler_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_7e000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TChannelManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TEventEngineScheduler::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_7e000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TChannelManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TEventEngineScheduler::_unmarshalObjRef(_n);
 
 }
 
@@ -12712,14 +12745,14 @@ _0RL_lcfn_d8193061d7f864c6_8e000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_7e000000* tcd = (_0RL_cd_d8193061d7f864c6_7e000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getChannelManager();
+  tcd->result = impl->getEngineScheduler();
 
 
 }
 
-STI::TNetwork::TChannelManager_ptr STI::TNetwork::_objref_TDevice::getChannelManager()
+STI::TNetwork::TEventEngineScheduler_ptr STI::TNetwork::_objref_TDevice::getEngineScheduler()
 {
-  _0RL_cd_d8193061d7f864c6_7e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8e000000, "getChannelManager", 18);
+  _0RL_cd_d8193061d7f864c6_7e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8e000000, "getEngineScheduler", 19);
 
 
   _invoke(_call_desc);
@@ -12730,10 +12763,10 @@ STI::TNetwork::TChannelManager_ptr STI::TNetwork::_objref_TDevice::getChannelMan
 
 
 //
-// Code for STI::TNetwork::TDevice::getAttributeManager
+// Code for STI::TNetwork::TDevice::getChannelManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTAttributeManager
+//  _cSTI_mTNetwork_mTChannelManager
 class _0RL_cd_d8193061d7f864c6_9e000000
   : public omniCallDescriptor
 {
@@ -12751,18 +12784,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TAttributeManager_var result;
+  STI::TNetwork::TChannelManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_9e000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TAttributeManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TChannelManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_9e000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TAttributeManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TChannelManager::_unmarshalObjRef(_n);
 
 }
 
@@ -12776,14 +12809,14 @@ _0RL_lcfn_d8193061d7f864c6_ae000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_9e000000* tcd = (_0RL_cd_d8193061d7f864c6_9e000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getAttributeManager();
+  tcd->result = impl->getChannelManager();
 
 
 }
 
-STI::TNetwork::TAttributeManager_ptr STI::TNetwork::_objref_TDevice::getAttributeManager()
+STI::TNetwork::TChannelManager_ptr STI::TNetwork::_objref_TDevice::getChannelManager()
 {
-  _0RL_cd_d8193061d7f864c6_9e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ae000000, "getAttributeManager", 20);
+  _0RL_cd_d8193061d7f864c6_9e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ae000000, "getChannelManager", 18);
 
 
   _invoke(_call_desc);
@@ -12794,10 +12827,10 @@ STI::TNetwork::TAttributeManager_ptr STI::TNetwork::_objref_TDevice::getAttribut
 
 
 //
-// Code for STI::TNetwork::TDevice::getPersistenceManager
+// Code for STI::TNetwork::TDevice::getAttributeManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTPersistenceManager
+//  _cSTI_mTNetwork_mTAttributeManager
 class _0RL_cd_d8193061d7f864c6_be000000
   : public omniCallDescriptor
 {
@@ -12815,18 +12848,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TPersistenceManager_var result;
+  STI::TNetwork::TAttributeManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_be000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TPersistenceManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TAttributeManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_be000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TPersistenceManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TAttributeManager::_unmarshalObjRef(_n);
 
 }
 
@@ -12840,14 +12873,14 @@ _0RL_lcfn_d8193061d7f864c6_ce000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_be000000* tcd = (_0RL_cd_d8193061d7f864c6_be000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getPersistenceManager();
+  tcd->result = impl->getAttributeManager();
 
 
 }
 
-STI::TNetwork::TPersistenceManager_ptr STI::TNetwork::_objref_TDevice::getPersistenceManager()
+STI::TNetwork::TAttributeManager_ptr STI::TNetwork::_objref_TDevice::getAttributeManager()
 {
-  _0RL_cd_d8193061d7f864c6_be000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ce000000, "getPersistenceManager", 22);
+  _0RL_cd_d8193061d7f864c6_be000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ce000000, "getAttributeManager", 20);
 
 
   _invoke(_call_desc);
@@ -12858,10 +12891,10 @@ STI::TNetwork::TPersistenceManager_ptr STI::TNetwork::_objref_TDevice::getPersis
 
 
 //
-// Code for STI::TNetwork::TDevice::getProfileManager
+// Code for STI::TNetwork::TDevice::getPersistenceManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTProfileManager
+//  _cSTI_mTNetwork_mTPersistenceManager
 class _0RL_cd_d8193061d7f864c6_de000000
   : public omniCallDescriptor
 {
@@ -12879,18 +12912,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TProfileManager_var result;
+  STI::TNetwork::TPersistenceManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_de000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TProfileManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TPersistenceManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_de000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TProfileManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TPersistenceManager::_unmarshalObjRef(_n);
 
 }
 
@@ -12904,14 +12937,14 @@ _0RL_lcfn_d8193061d7f864c6_ee000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_de000000* tcd = (_0RL_cd_d8193061d7f864c6_de000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getProfileManager();
+  tcd->result = impl->getPersistenceManager();
 
 
 }
 
-STI::TNetwork::TProfileManager_ptr STI::TNetwork::_objref_TDevice::getProfileManager()
+STI::TNetwork::TPersistenceManager_ptr STI::TNetwork::_objref_TDevice::getPersistenceManager()
 {
-  _0RL_cd_d8193061d7f864c6_de000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ee000000, "getProfileManager", 18);
+  _0RL_cd_d8193061d7f864c6_de000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ee000000, "getPersistenceManager", 22);
 
 
   _invoke(_call_desc);
@@ -12922,10 +12955,10 @@ STI::TNetwork::TProfileManager_ptr STI::TNetwork::_objref_TDevice::getProfileMan
 
 
 //
-// Code for STI::TNetwork::TDevice::getTaskManager
+// Code for STI::TNetwork::TDevice::getProfileManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTTaskManager
+//  _cSTI_mTNetwork_mTProfileManager
 class _0RL_cd_d8193061d7f864c6_fe000000
   : public omniCallDescriptor
 {
@@ -12943,18 +12976,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TTaskManager_var result;
+  STI::TNetwork::TProfileManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_fe000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TTaskManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TProfileManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_fe000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TTaskManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TProfileManager::_unmarshalObjRef(_n);
 
 }
 
@@ -12968,14 +13001,14 @@ _0RL_lcfn_d8193061d7f864c6_0f000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_fe000000* tcd = (_0RL_cd_d8193061d7f864c6_fe000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getTaskManager();
+  tcd->result = impl->getProfileManager();
 
 
 }
 
-STI::TNetwork::TTaskManager_ptr STI::TNetwork::_objref_TDevice::getTaskManager()
+STI::TNetwork::TProfileManager_ptr STI::TNetwork::_objref_TDevice::getProfileManager()
 {
-  _0RL_cd_d8193061d7f864c6_fe000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0f000000, "getTaskManager", 15);
+  _0RL_cd_d8193061d7f864c6_fe000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0f000000, "getProfileManager", 18);
 
 
   _invoke(_call_desc);
@@ -12986,10 +13019,10 @@ STI::TNetwork::TTaskManager_ptr STI::TNetwork::_objref_TDevice::getTaskManager()
 
 
 //
-// Code for STI::TNetwork::TDevice::getLogManager
+// Code for STI::TNetwork::TDevice::getTaskManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTLogManager
+//  _cSTI_mTNetwork_mTTaskManager
 class _0RL_cd_d8193061d7f864c6_1f000000
   : public omniCallDescriptor
 {
@@ -13007,18 +13040,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TLogManager_var result;
+  STI::TNetwork::TTaskManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_1f000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TLogManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TTaskManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_1f000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TLogManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TTaskManager::_unmarshalObjRef(_n);
 
 }
 
@@ -13032,14 +13065,14 @@ _0RL_lcfn_d8193061d7f864c6_2f000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_1f000000* tcd = (_0RL_cd_d8193061d7f864c6_1f000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getLogManager();
+  tcd->result = impl->getTaskManager();
 
 
 }
 
-STI::TNetwork::TLogManager_ptr STI::TNetwork::_objref_TDevice::getLogManager()
+STI::TNetwork::TTaskManager_ptr STI::TNetwork::_objref_TDevice::getTaskManager()
 {
-  _0RL_cd_d8193061d7f864c6_1f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2f000000, "getLogManager", 14);
+  _0RL_cd_d8193061d7f864c6_1f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2f000000, "getTaskManager", 15);
 
 
   _invoke(_call_desc);
@@ -13050,10 +13083,10 @@ STI::TNetwork::TLogManager_ptr STI::TNetwork::_objref_TDevice::getLogManager()
 
 
 //
-// Code for STI::TNetwork::TDevice::getMonitorManager
+// Code for STI::TNetwork::TDevice::getLogManager
 
 // Proxy call descriptor class. Mangled signature:
-//  _cSTI_mTNetwork_mTMonitorManager
+//  _cSTI_mTNetwork_mTLogManager
 class _0RL_cd_d8193061d7f864c6_3f000000
   : public omniCallDescriptor
 {
@@ -13071,18 +13104,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TMonitorManager_var result;
+  STI::TNetwork::TLogManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_3f000000::marshalReturnedValues(cdrStream& _n)
 {
-  STI::TNetwork::TMonitorManager::_marshalObjRef(result,_n);
+  STI::TNetwork::TLogManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_3f000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = STI::TNetwork::TMonitorManager::_unmarshalObjRef(_n);
+  result = STI::TNetwork::TLogManager::_unmarshalObjRef(_n);
 
 }
 
@@ -13096,14 +13129,14 @@ _0RL_lcfn_d8193061d7f864c6_4f000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_3f000000* tcd = (_0RL_cd_d8193061d7f864c6_3f000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
-  tcd->result = impl->getMonitorManager();
+  tcd->result = impl->getLogManager();
 
 
 }
 
-STI::TNetwork::TMonitorManager_ptr STI::TNetwork::_objref_TDevice::getMonitorManager()
+STI::TNetwork::TLogManager_ptr STI::TNetwork::_objref_TDevice::getLogManager()
 {
-  _0RL_cd_d8193061d7f864c6_3f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4f000000, "getMonitorManager", 18);
+  _0RL_cd_d8193061d7f864c6_3f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4f000000, "getLogManager", 14);
 
 
   _invoke(_call_desc);
@@ -13114,10 +13147,10 @@ STI::TNetwork::TMonitorManager_ptr STI::TNetwork::_objref_TDevice::getMonitorMan
 
 
 //
-// Code for STI::TNetwork::TDevice::getVersions
+// Code for STI::TNetwork::TDevice::getMonitorManager
 
 // Proxy call descriptor class. Mangled signature:
-//  void_o_cSTI_mTNetwork_mTVersionInfoSeq
+//  _cSTI_mTNetwork_mTMonitorManager
 class _0RL_cd_d8193061d7f864c6_5f000000
   : public omniCallDescriptor
 {
@@ -13135,19 +13168,18 @@ public:
   
   static const char* const _user_exns[];
 
-  STI::TNetwork::TVersionInfoSeq_var arg_0;
+  STI::TNetwork::TMonitorManager_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_5f000000::marshalReturnedValues(cdrStream& _n)
 {
-  (const STI::TNetwork::TVersionInfoSeq&) arg_0 >>= _n;
+  STI::TNetwork::TMonitorManager::_marshalObjRef(result,_n);
 
 }
 
 void _0RL_cd_d8193061d7f864c6_5f000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  arg_0 = new STI::TNetwork::TVersionInfoSeq;
-  (STI::TNetwork::TVersionInfoSeq&)arg_0 <<= _n;
+  result = STI::TNetwork::TMonitorManager::_unmarshalObjRef(_n);
 
 }
 
@@ -13161,6 +13193,71 @@ _0RL_lcfn_d8193061d7f864c6_6f000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_5f000000* tcd = (_0RL_cd_d8193061d7f864c6_5f000000*)cd;
   STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
+  tcd->result = impl->getMonitorManager();
+
+
+}
+
+STI::TNetwork::TMonitorManager_ptr STI::TNetwork::_objref_TDevice::getMonitorManager()
+{
+  _0RL_cd_d8193061d7f864c6_5f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6f000000, "getMonitorManager", 18);
+
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TDevice::getVersions
+
+// Proxy call descriptor class. Mangled signature:
+//  void_o_cSTI_mTNetwork_mTVersionInfoSeq
+class _0RL_cd_d8193061d7f864c6_7f000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_7f000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TVersionInfoSeq_var arg_0;
+};
+
+void _0RL_cd_d8193061d7f864c6_7f000000::marshalReturnedValues(cdrStream& _n)
+{
+  (const STI::TNetwork::TVersionInfoSeq&) arg_0 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_7f000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  arg_0 = new STI::TNetwork::TVersionInfoSeq;
+  (STI::TNetwork::TVersionInfoSeq&)arg_0 <<= _n;
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_7f000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_8f000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_7f000000* tcd = (_0RL_cd_d8193061d7f864c6_7f000000*)cd;
+  STI::TNetwork::_impl_TDevice* impl = (STI::TNetwork::_impl_TDevice*) svnt->_ptrToInterface(STI::TNetwork::TDevice::_PD_repoId);
   impl->getVersions(tcd->arg_0.out());
 
 
@@ -13168,7 +13265,7 @@ _0RL_lcfn_d8193061d7f864c6_6f000000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TDevice::getVersions(::STI::TNetwork::TVersionInfoSeq_out versions)
 {
-  _0RL_cd_d8193061d7f864c6_5f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6f000000, "getVersions", 12);
+  _0RL_cd_d8193061d7f864c6_7f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8f000000, "getVersions", 12);
 
 
   _invoke(_call_desc);
@@ -13208,7 +13305,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "refresh")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_dd000000, "refresh", 8, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fd000000, "refresh", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13216,7 +13313,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "kill")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ed000000, "kill", 5, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0e000000, "kill", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13224,7 +13321,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "disable")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fd000000, "disable", 8, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_1e000000, "disable", 8, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13232,7 +13329,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getID")) {
 
-    _0RL_cd_d8193061d7f864c6_84000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0e000000, "getID", 6, 1);
+    _0RL_cd_d8193061d7f864c6_a4000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2e000000, "getID", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13240,7 +13337,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getDeviceCollection")) {
 
-    _0RL_cd_d8193061d7f864c6_1e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2e000000, "getDeviceCollection", 20, 1);
+    _0RL_cd_d8193061d7f864c6_3e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4e000000, "getDeviceCollection", 20, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13248,7 +13345,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getMessageDispatcher")) {
 
-    _0RL_cd_d8193061d7f864c6_3e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4e000000, "getMessageDispatcher", 21, 1);
+    _0RL_cd_d8193061d7f864c6_5e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6e000000, "getMessageDispatcher", 21, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13256,7 +13353,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getEngineScheduler")) {
 
-    _0RL_cd_d8193061d7f864c6_5e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6e000000, "getEngineScheduler", 19, 1);
+    _0RL_cd_d8193061d7f864c6_7e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8e000000, "getEngineScheduler", 19, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13264,7 +13361,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getChannelManager")) {
 
-    _0RL_cd_d8193061d7f864c6_7e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8e000000, "getChannelManager", 18, 1);
+    _0RL_cd_d8193061d7f864c6_9e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ae000000, "getChannelManager", 18, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13272,7 +13369,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getAttributeManager")) {
 
-    _0RL_cd_d8193061d7f864c6_9e000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ae000000, "getAttributeManager", 20, 1);
+    _0RL_cd_d8193061d7f864c6_be000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ce000000, "getAttributeManager", 20, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13280,7 +13377,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getPersistenceManager")) {
 
-    _0RL_cd_d8193061d7f864c6_be000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ce000000, "getPersistenceManager", 22, 1);
+    _0RL_cd_d8193061d7f864c6_de000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ee000000, "getPersistenceManager", 22, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13288,7 +13385,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getProfileManager")) {
 
-    _0RL_cd_d8193061d7f864c6_de000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ee000000, "getProfileManager", 18, 1);
+    _0RL_cd_d8193061d7f864c6_fe000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0f000000, "getProfileManager", 18, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13296,7 +13393,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getTaskManager")) {
 
-    _0RL_cd_d8193061d7f864c6_fe000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_0f000000, "getTaskManager", 15, 1);
+    _0RL_cd_d8193061d7f864c6_1f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2f000000, "getTaskManager", 15, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13304,7 +13401,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getLogManager")) {
 
-    _0RL_cd_d8193061d7f864c6_1f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_2f000000, "getLogManager", 14, 1);
+    _0RL_cd_d8193061d7f864c6_3f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4f000000, "getLogManager", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13312,7 +13409,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getMonitorManager")) {
 
-    _0RL_cd_d8193061d7f864c6_3f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_4f000000, "getMonitorManager", 18, 1);
+    _0RL_cd_d8193061d7f864c6_5f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6f000000, "getMonitorManager", 18, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13320,7 +13417,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getVersions")) {
 
-    _0RL_cd_d8193061d7f864c6_5f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_6f000000, "getVersions", 12, 1);
+    _0RL_cd_d8193061d7f864c6_7f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8f000000, "getVersions", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13462,71 +13559,6 @@ STI::TNetwork::_objref_TFileHolder::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cSTI_mTNetwork_mTFileID
-class _0RL_cd_d8193061d7f864c6_7f000000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_7f000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TFileID_var result;
-};
-
-void _0RL_cd_d8193061d7f864c6_7f000000::marshalReturnedValues(cdrStream& _n)
-{
-  (const STI::TNetwork::TFileID&) result >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_7f000000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = new STI::TNetwork::TFileID;
-  (STI::TNetwork::TFileID&)result <<= _n;
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_7f000000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_8f000000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_7f000000* tcd = (_0RL_cd_d8193061d7f864c6_7f000000*)cd;
-  STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
-  tcd->result = impl->getID();
-
-
-}
-
-STI::TNetwork::TFileID* STI::TNetwork::_objref_TFileHolder::getID()
-{
-  _0RL_cd_d8193061d7f864c6_7f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8f000000, "getID", 6);
-
-
-  _invoke(_call_desc);
-  return _call_desc.result._retn();
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TFileHolder::getFilename
-
-// Proxy call descriptor class. Mangled signature:
-//  _cstring
 class _0RL_cd_d8193061d7f864c6_9f000000
   : public omniCallDescriptor
 {
@@ -13544,18 +13576,19 @@ public:
   
   static const char* const _user_exns[];
 
-  ::CORBA::String_var result;
+  STI::TNetwork::TFileID_var result;
 };
 
 void _0RL_cd_d8193061d7f864c6_9f000000::marshalReturnedValues(cdrStream& _n)
 {
-  _n.marshalString(result,0);
+  (const STI::TNetwork::TFileID&) result >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_9f000000::unmarshalReturnedValues(cdrStream& _n)
 {
-  result = _n.unmarshalString(0);
+  result = new STI::TNetwork::TFileID;
+  (STI::TNetwork::TFileID&)result <<= _n;
 
 }
 
@@ -13569,6 +13602,70 @@ _0RL_lcfn_d8193061d7f864c6_af000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_9f000000* tcd = (_0RL_cd_d8193061d7f864c6_9f000000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
+  tcd->result = impl->getID();
+
+
+}
+
+STI::TNetwork::TFileID* STI::TNetwork::_objref_TFileHolder::getID()
+{
+  _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_af000000, "getID", 6);
+
+
+  _invoke(_call_desc);
+  return _call_desc.result._retn();
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TFileHolder::getFilename
+
+// Proxy call descriptor class. Mangled signature:
+//  _cstring
+class _0RL_cd_d8193061d7f864c6_bf000000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_bf000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  ::CORBA::String_var result;
+};
+
+void _0RL_cd_d8193061d7f864c6_bf000000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalString(result,0);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_bf000000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalString(0);
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_bf000000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_cf000000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_bf000000* tcd = (_0RL_cd_d8193061d7f864c6_bf000000*)cd;
+  STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
   tcd->result = impl->getFilename();
 
 
@@ -13576,7 +13673,7 @@ _0RL_lcfn_d8193061d7f864c6_af000000(omniCallDescriptor* cd, omniServant* svnt)
 
 char* STI::TNetwork::_objref_TFileHolder::getFilename()
 {
-  _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_af000000, "getFilename", 12);
+  _0RL_cd_d8193061d7f864c6_bf000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cf000000, "getFilename", 12);
 
 
   _invoke(_call_desc);
@@ -13591,7 +13688,7 @@ char* STI::TNetwork::_objref_TFileHolder::getFilename()
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_bf000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_df000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_a1000000* tcd = (_0RL_cd_d8193061d7f864c6_a1000000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
@@ -13602,7 +13699,7 @@ _0RL_lcfn_d8193061d7f864c6_bf000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::ULong STI::TNetwork::_objref_TFileHolder::getFileSize()
 {
-  _0RL_cd_d8193061d7f864c6_a1000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bf000000, "getFileSize", 12);
+  _0RL_cd_d8193061d7f864c6_a1000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_df000000, "getFileSize", 12);
 
 
   _invoke(_call_desc);
@@ -13617,7 +13714,7 @@ _0RL_lcfn_d8193061d7f864c6_bf000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_cf000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ef000000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
@@ -13628,7 +13725,7 @@ _0RL_lcfn_d8193061d7f864c6_cf000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileHolder::exists()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cf000000, "exists", 7);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ef000000, "exists", 7);
 
 
   _invoke(_call_desc);
@@ -13643,9 +13740,9 @@ _0RL_lcfn_d8193061d7f864c6_cf000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_df000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_ff000000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_9f000000* tcd = (_0RL_cd_d8193061d7f864c6_9f000000*)cd;
+  _0RL_cd_d8193061d7f864c6_bf000000* tcd = (_0RL_cd_d8193061d7f864c6_bf000000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
   tcd->result = impl->md5Checksum();
 
@@ -13654,7 +13751,7 @@ _0RL_lcfn_d8193061d7f864c6_df000000(omniCallDescriptor* cd, omniServant* svnt)
 
 char* STI::TNetwork::_objref_TFileHolder::md5Checksum()
 {
-  _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_df000000, "md5Checksum", 12);
+  _0RL_cd_d8193061d7f864c6_bf000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ff000000, "md5Checksum", 12);
 
 
   _invoke(_call_desc);
@@ -13669,11 +13766,11 @@ char* STI::TNetwork::_objref_TFileHolder::md5Checksum()
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTFileHolder
-class _0RL_cd_d8193061d7f864c6_ef000000
+class _0RL_cd_d8193061d7f864c6_00100000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_ef000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_00100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -13693,40 +13790,40 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_ef000000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_00100000::marshalArguments(cdrStream& _n)
 {
   STI::TNetwork::TFileHolder_Helper::marshalObjRef(arg_0,_n);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ef000000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_00100000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = STI::TNetwork::TFileHolder_Helper::unmarshalObjRef(_n);
   arg_0 = arg_0_.in();
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ef000000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_00100000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_ef000000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_00100000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_ef000000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_00100000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_ff000000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_10100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_ef000000* tcd = (_0RL_cd_d8193061d7f864c6_ef000000*)cd;
+  _0RL_cd_d8193061d7f864c6_00100000* tcd = (_0RL_cd_d8193061d7f864c6_00100000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
   tcd->result = impl->transferFile(tcd->arg_0);
 
@@ -13735,7 +13832,7 @@ _0RL_lcfn_d8193061d7f864c6_ff000000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileHolder::transferFile(::STI::TNetwork::TFileHolder_ptr destination)
 {
-  _0RL_cd_d8193061d7f864c6_ef000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ff000000, "transferFile", 13);
+  _0RL_cd_d8193061d7f864c6_00100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_10100000, "transferFile", 13);
   _call_desc.arg_0 = destination;
 
   _invoke(_call_desc);
@@ -13750,11 +13847,11 @@ _0RL_lcfn_d8193061d7f864c6_ff000000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _clong
-class _0RL_cd_d8193061d7f864c6_00100000
+class _0RL_cd_d8193061d7f864c6_20100000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_00100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_20100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -13770,27 +13867,27 @@ public:
   ::CORBA::Long result;
 };
 
-void _0RL_cd_d8193061d7f864c6_00100000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_20100000::marshalReturnedValues(cdrStream& _n)
 {
   result >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_00100000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_20100000::unmarshalReturnedValues(cdrStream& _n)
 {
   (::CORBA::Long&)result <<= _n;
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_00100000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_20100000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_10100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_30100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_00100000* tcd = (_0RL_cd_d8193061d7f864c6_00100000*)cd;
+  _0RL_cd_d8193061d7f864c6_20100000* tcd = (_0RL_cd_d8193061d7f864c6_20100000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
   tcd->result = impl->maxBufferSize();
 
@@ -13799,7 +13896,7 @@ _0RL_lcfn_d8193061d7f864c6_10100000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Long STI::TNetwork::_objref_TFileHolder::maxBufferSize()
 {
-  _0RL_cd_d8193061d7f864c6_00100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_10100000, "maxBufferSize", 14);
+  _0RL_cd_d8193061d7f864c6_20100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_30100000, "maxBufferSize", 14);
 
 
   _invoke(_call_desc);
@@ -13814,11 +13911,11 @@ _0RL_lcfn_d8193061d7f864c6_10100000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mOctetSeq
-class _0RL_cd_d8193061d7f864c6_20100000
+class _0RL_cd_d8193061d7f864c6_40100000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_20100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_40100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -13838,13 +13935,13 @@ public:
   ::CORBA::Boolean result;
 };
 
-void _0RL_cd_d8193061d7f864c6_20100000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_40100000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::OctetSeq&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_20100000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_40100000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::OctetSeq;
   (STI::TNetwork::OctetSeq&)arg_0_ <<= _n;
@@ -13852,27 +13949,27 @@ void _0RL_cd_d8193061d7f864c6_20100000::unmarshalArguments(cdrStream& _n)
 
 }
 
-void _0RL_cd_d8193061d7f864c6_20100000::marshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_40100000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_20100000::unmarshalReturnedValues(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_40100000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_20100000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_40100000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_30100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_50100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_20100000* tcd = (_0RL_cd_d8193061d7f864c6_20100000*)cd;
+  _0RL_cd_d8193061d7f864c6_40100000* tcd = (_0RL_cd_d8193061d7f864c6_40100000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
   tcd->result = impl->write(*tcd->arg_0);
 
@@ -13881,7 +13978,7 @@ _0RL_lcfn_d8193061d7f864c6_30100000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileHolder::write(const ::STI::TNetwork::OctetSeq& buffer)
 {
-  _0RL_cd_d8193061d7f864c6_20100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_30100000, "write", 6);
+  _0RL_cd_d8193061d7f864c6_40100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_50100000, "write", 6);
   _call_desc.arg_0 = &(::STI::TNetwork::OctetSeq&) buffer;
 
   _invoke(_call_desc);
@@ -13896,7 +13993,7 @@ _0RL_lcfn_d8193061d7f864c6_30100000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_40100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_60100000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_00000000* tcd = (_0RL_cd_d8193061d7f864c6_00000000*)cd;
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
@@ -13907,7 +14004,7 @@ _0RL_lcfn_d8193061d7f864c6_40100000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileHolder::openFile()
 {
-  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_40100000, "openFile", 9);
+  _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_60100000, "openFile", 9);
 
 
   _invoke(_call_desc);
@@ -13922,7 +14019,7 @@ _0RL_lcfn_d8193061d7f864c6_40100000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_50100000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_70100000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TFileHolder* impl = (STI::TNetwork::_impl_TFileHolder*) svnt->_ptrToInterface(STI::TNetwork::TFileHolder::_PD_repoId);
@@ -13933,7 +14030,7 @@ _0RL_lcfn_d8193061d7f864c6_50100000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TFileHolder::closeFile()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_50100000, "closeFile", 10);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_70100000, "closeFile", 10);
 
 
   _invoke(_call_desc);
@@ -13973,7 +14070,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getID")) {
 
-    _0RL_cd_d8193061d7f864c6_7f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_8f000000, "getID", 6, 1);
+    _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_af000000, "getID", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13981,7 +14078,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getFilename")) {
 
-    _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_af000000, "getFilename", 12, 1);
+    _0RL_cd_d8193061d7f864c6_bf000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cf000000, "getFilename", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13989,7 +14086,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getFileSize")) {
 
-    _0RL_cd_d8193061d7f864c6_a1000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_bf000000, "getFileSize", 12, 1);
+    _0RL_cd_d8193061d7f864c6_a1000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_df000000, "getFileSize", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -13997,7 +14094,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "exists")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_cf000000, "exists", 7, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ef000000, "exists", 7, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14005,7 +14102,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "md5Checksum")) {
 
-    _0RL_cd_d8193061d7f864c6_9f000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_df000000, "md5Checksum", 12, 1);
+    _0RL_cd_d8193061d7f864c6_bf000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ff000000, "md5Checksum", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14013,7 +14110,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "transferFile")) {
 
-    _0RL_cd_d8193061d7f864c6_ef000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_ff000000, "transferFile", 13, 1);
+    _0RL_cd_d8193061d7f864c6_00100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_10100000, "transferFile", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14021,7 +14118,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "maxBufferSize")) {
 
-    _0RL_cd_d8193061d7f864c6_00100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_10100000, "maxBufferSize", 14, 1);
+    _0RL_cd_d8193061d7f864c6_20100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_30100000, "maxBufferSize", 14, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14029,7 +14126,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "write")) {
 
-    _0RL_cd_d8193061d7f864c6_20100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_30100000, "write", 6, 1);
+    _0RL_cd_d8193061d7f864c6_40100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_50100000, "write", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14037,7 +14134,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "openFile")) {
 
-    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_40100000, "openFile", 9, 1);
+    _0RL_cd_d8193061d7f864c6_00000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_60100000, "openFile", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14045,7 +14142,7 @@ STI::TNetwork::_impl_TFileHolder::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "closeFile")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_50100000, "closeFile", 10, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_70100000, "closeFile", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14187,88 +14284,6 @@ STI::TNetwork::_objref_TFileServer::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  _cboolean_i_cSTI_mTNetwork_mTFileID
-class _0RL_cd_d8193061d7f864c6_60100000
-  : public omniCallDescriptor
-{
-public:
-  inline _0RL_cd_d8193061d7f864c6_60100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
-  {
-    
-  }
-  
-  void marshalArguments(cdrStream&);
-  void unmarshalArguments(cdrStream&);
-
-  void unmarshalReturnedValues(cdrStream&);
-  void marshalReturnedValues(cdrStream&);
-  
-  
-  static const char* const _user_exns[];
-
-  STI::TNetwork::TFileID_var arg_0_;
-  const STI::TNetwork::TFileID* arg_0;
-  ::CORBA::Boolean result;
-};
-
-void _0RL_cd_d8193061d7f864c6_60100000::marshalArguments(cdrStream& _n)
-{
-  (const STI::TNetwork::TFileID&) *arg_0 >>= _n;
-
-}
-
-void _0RL_cd_d8193061d7f864c6_60100000::unmarshalArguments(cdrStream& _n)
-{
-  arg_0_ = new STI::TNetwork::TFileID;
-  (STI::TNetwork::TFileID&)arg_0_ <<= _n;
-  arg_0 = &arg_0_.in();
-
-}
-
-void _0RL_cd_d8193061d7f864c6_60100000::marshalReturnedValues(cdrStream& _n)
-{
-  _n.marshalBoolean(result);
-
-}
-
-void _0RL_cd_d8193061d7f864c6_60100000::unmarshalReturnedValues(cdrStream& _n)
-{
-  result = _n.unmarshalBoolean();
-
-}
-
-const char* const _0RL_cd_d8193061d7f864c6_60100000::_user_exns[] = {
-  0
-};
-
-// Local call call-back function.
-static void
-_0RL_lcfn_d8193061d7f864c6_70100000(omniCallDescriptor* cd, omniServant* svnt)
-{
-  _0RL_cd_d8193061d7f864c6_60100000* tcd = (_0RL_cd_d8193061d7f864c6_60100000*)cd;
-  STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
-  tcd->result = impl->findFile(*tcd->arg_0);
-
-
-}
-
-::CORBA::Boolean STI::TNetwork::_objref_TFileServer::findFile(const ::STI::TNetwork::TFileID& fileID)
-{
-  _0RL_cd_d8193061d7f864c6_60100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_70100000, "findFile", 9);
-  _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) fileID;
-
-  _invoke(_call_desc);
-  return _call_desc.result;
-
-
-}
-
-
-//
-// Code for STI::TNetwork::TFileServer::getFileSize
-
-// Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cSTI_mTNetwork_mTFileID_o_clong
 class _0RL_cd_d8193061d7f864c6_80100000
   : public omniCallDescriptor
 {
@@ -14290,7 +14305,6 @@ public:
 
   STI::TNetwork::TFileID_var arg_0_;
   const STI::TNetwork::TFileID* arg_0;
-  ::CORBA::Long arg_1;
   ::CORBA::Boolean result;
 };
 
@@ -14311,14 +14325,12 @@ void _0RL_cd_d8193061d7f864c6_80100000::unmarshalArguments(cdrStream& _n)
 void _0RL_cd_d8193061d7f864c6_80100000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
-  arg_1 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_80100000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
-  (::CORBA::Long&)arg_1 <<= _n;
 
 }
 
@@ -14332,18 +14344,17 @@ _0RL_lcfn_d8193061d7f864c6_90100000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_80100000* tcd = (_0RL_cd_d8193061d7f864c6_80100000*)cd;
   STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
-  tcd->result = impl->getFileSize(*tcd->arg_0, tcd->arg_1);
+  tcd->result = impl->findFile(*tcd->arg_0);
 
 
 }
 
-::CORBA::Boolean STI::TNetwork::_objref_TFileServer::getFileSize(const ::STI::TNetwork::TFileID& fileID, ::CORBA::Long& fileSize)
+::CORBA::Boolean STI::TNetwork::_objref_TFileServer::findFile(const ::STI::TNetwork::TFileID& fileID)
 {
-  _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_90100000, "getFileSize", 12);
+  _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_90100000, "findFile", 9);
   _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) fileID;
 
   _invoke(_call_desc);
-  fileSize = _call_desc.arg_1;
   return _call_desc.result;
 
 
@@ -14351,10 +14362,10 @@ _0RL_lcfn_d8193061d7f864c6_90100000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TFileServer::transferFile
+// Code for STI::TNetwork::TFileServer::getFileSize
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cSTI_mTNetwork_mTFileID_i_cSTI_mTNetwork_mTFileHolder_i_cSTI_mTNetwork_mTFileTransferType
+//  _cboolean_i_cSTI_mTNetwork_mTFileID_o_clong
 class _0RL_cd_d8193061d7f864c6_a0100000
   : public omniCallDescriptor
 {
@@ -14376,17 +14387,13 @@ public:
 
   STI::TNetwork::TFileID_var arg_0_;
   const STI::TNetwork::TFileID* arg_0;
-  STI::TNetwork::TFileHolder_var arg_1_;
-  STI::TNetwork::TFileHolder_ptr arg_1;
-  STI::TNetwork::TFileTransferType arg_2;
+  ::CORBA::Long arg_1;
   ::CORBA::Boolean result;
 };
 
 void _0RL_cd_d8193061d7f864c6_a0100000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TFileID&) *arg_0 >>= _n;
-  STI::TNetwork::TFileHolder_Helper::marshalObjRef(arg_1,_n);
-  arg_2 >>= _n;
 
 }
 
@@ -14395,21 +14402,20 @@ void _0RL_cd_d8193061d7f864c6_a0100000::unmarshalArguments(cdrStream& _n)
   arg_0_ = new STI::TNetwork::TFileID;
   (STI::TNetwork::TFileID&)arg_0_ <<= _n;
   arg_0 = &arg_0_.in();
-  arg_1_ = STI::TNetwork::TFileHolder_Helper::unmarshalObjRef(_n);
-  arg_1 = arg_1_.in();
-  (STI::TNetwork::TFileTransferType&)arg_2 <<= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_a0100000::marshalReturnedValues(cdrStream& _n)
 {
   _n.marshalBoolean(result);
+  arg_1 >>= _n;
 
 }
 
 void _0RL_cd_d8193061d7f864c6_a0100000::unmarshalReturnedValues(cdrStream& _n)
 {
   result = _n.unmarshalBoolean();
+  (::CORBA::Long&)arg_1 <<= _n;
 
 }
 
@@ -14423,19 +14429,18 @@ _0RL_lcfn_d8193061d7f864c6_b0100000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_a0100000* tcd = (_0RL_cd_d8193061d7f864c6_a0100000*)cd;
   STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
-  tcd->result = impl->transferFile(*tcd->arg_0, tcd->arg_1, tcd->arg_2);
+  tcd->result = impl->getFileSize(*tcd->arg_0, tcd->arg_1);
 
 
 }
 
-::CORBA::Boolean STI::TNetwork::_objref_TFileServer::transferFile(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::STI::TNetwork::TFileTransferType type)
+::CORBA::Boolean STI::TNetwork::_objref_TFileServer::getFileSize(const ::STI::TNetwork::TFileID& fileID, ::CORBA::Long& fileSize)
 {
-  _0RL_cd_d8193061d7f864c6_a0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b0100000, "transferFile", 13);
-  _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) source;
-  _call_desc.arg_1 = destination;
-  _call_desc.arg_2 = type;
+  _0RL_cd_d8193061d7f864c6_a0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b0100000, "getFileSize", 12);
+  _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) fileID;
 
   _invoke(_call_desc);
+  fileSize = _call_desc.arg_1;
   return _call_desc.result;
 
 
@@ -14443,10 +14448,10 @@ _0RL_lcfn_d8193061d7f864c6_b0100000(omniCallDescriptor* cd, omniServant* svnt)
 
 
 //
-// Code for STI::TNetwork::TFileServer::transferFilePartial
+// Code for STI::TNetwork::TFileServer::transferFile
 
 // Proxy call descriptor class. Mangled signature:
-//  _cboolean_i_cSTI_mTNetwork_mTFileID_i_cSTI_mTNetwork_mTFileHolder_i_clong_i_clong
+//  _cboolean_i_cSTI_mTNetwork_mTFileID_i_cSTI_mTNetwork_mTFileHolder_i_cSTI_mTNetwork_mTFileTransferType
 class _0RL_cd_d8193061d7f864c6_c0100000
   : public omniCallDescriptor
 {
@@ -14470,8 +14475,7 @@ public:
   const STI::TNetwork::TFileID* arg_0;
   STI::TNetwork::TFileHolder_var arg_1_;
   STI::TNetwork::TFileHolder_ptr arg_1;
-  ::CORBA::Long arg_2;
-  ::CORBA::Long arg_3;
+  STI::TNetwork::TFileTransferType arg_2;
   ::CORBA::Boolean result;
 };
 
@@ -14480,7 +14484,6 @@ void _0RL_cd_d8193061d7f864c6_c0100000::marshalArguments(cdrStream& _n)
   (const STI::TNetwork::TFileID&) *arg_0 >>= _n;
   STI::TNetwork::TFileHolder_Helper::marshalObjRef(arg_1,_n);
   arg_2 >>= _n;
-  arg_3 >>= _n;
 
 }
 
@@ -14491,8 +14494,7 @@ void _0RL_cd_d8193061d7f864c6_c0100000::unmarshalArguments(cdrStream& _n)
   arg_0 = &arg_0_.in();
   arg_1_ = STI::TNetwork::TFileHolder_Helper::unmarshalObjRef(_n);
   arg_1 = arg_1_.in();
-  (::CORBA::Long&)arg_2 <<= _n;
-  (::CORBA::Long&)arg_3 <<= _n;
+  (STI::TNetwork::TFileTransferType&)arg_2 <<= _n;
 
 }
 
@@ -14518,6 +14520,101 @@ _0RL_lcfn_d8193061d7f864c6_d0100000(omniCallDescriptor* cd, omniServant* svnt)
 {
   _0RL_cd_d8193061d7f864c6_c0100000* tcd = (_0RL_cd_d8193061d7f864c6_c0100000*)cd;
   STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
+  tcd->result = impl->transferFile(*tcd->arg_0, tcd->arg_1, tcd->arg_2);
+
+
+}
+
+::CORBA::Boolean STI::TNetwork::_objref_TFileServer::transferFile(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::STI::TNetwork::TFileTransferType type)
+{
+  _0RL_cd_d8193061d7f864c6_c0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d0100000, "transferFile", 13);
+  _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) source;
+  _call_desc.arg_1 = destination;
+  _call_desc.arg_2 = type;
+
+  _invoke(_call_desc);
+  return _call_desc.result;
+
+
+}
+
+
+//
+// Code for STI::TNetwork::TFileServer::transferFilePartial
+
+// Proxy call descriptor class. Mangled signature:
+//  _cboolean_i_cSTI_mTNetwork_mTFileID_i_cSTI_mTNetwork_mTFileHolder_i_clong_i_clong
+class _0RL_cd_d8193061d7f864c6_e0100000
+  : public omniCallDescriptor
+{
+public:
+  inline _0RL_cd_d8193061d7f864c6_e0100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+    : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
+  {
+    
+  }
+  
+  void marshalArguments(cdrStream&);
+  void unmarshalArguments(cdrStream&);
+
+  void unmarshalReturnedValues(cdrStream&);
+  void marshalReturnedValues(cdrStream&);
+  
+  
+  static const char* const _user_exns[];
+
+  STI::TNetwork::TFileID_var arg_0_;
+  const STI::TNetwork::TFileID* arg_0;
+  STI::TNetwork::TFileHolder_var arg_1_;
+  STI::TNetwork::TFileHolder_ptr arg_1;
+  ::CORBA::Long arg_2;
+  ::CORBA::Long arg_3;
+  ::CORBA::Boolean result;
+};
+
+void _0RL_cd_d8193061d7f864c6_e0100000::marshalArguments(cdrStream& _n)
+{
+  (const STI::TNetwork::TFileID&) *arg_0 >>= _n;
+  STI::TNetwork::TFileHolder_Helper::marshalObjRef(arg_1,_n);
+  arg_2 >>= _n;
+  arg_3 >>= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_e0100000::unmarshalArguments(cdrStream& _n)
+{
+  arg_0_ = new STI::TNetwork::TFileID;
+  (STI::TNetwork::TFileID&)arg_0_ <<= _n;
+  arg_0 = &arg_0_.in();
+  arg_1_ = STI::TNetwork::TFileHolder_Helper::unmarshalObjRef(_n);
+  arg_1 = arg_1_.in();
+  (::CORBA::Long&)arg_2 <<= _n;
+  (::CORBA::Long&)arg_3 <<= _n;
+
+}
+
+void _0RL_cd_d8193061d7f864c6_e0100000::marshalReturnedValues(cdrStream& _n)
+{
+  _n.marshalBoolean(result);
+
+}
+
+void _0RL_cd_d8193061d7f864c6_e0100000::unmarshalReturnedValues(cdrStream& _n)
+{
+  result = _n.unmarshalBoolean();
+
+}
+
+const char* const _0RL_cd_d8193061d7f864c6_e0100000::_user_exns[] = {
+  0
+};
+
+// Local call call-back function.
+static void
+_0RL_lcfn_d8193061d7f864c6_f0100000(omniCallDescriptor* cd, omniServant* svnt)
+{
+  _0RL_cd_d8193061d7f864c6_e0100000* tcd = (_0RL_cd_d8193061d7f864c6_e0100000*)cd;
+  STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
   tcd->result = impl->transferFilePartial(*tcd->arg_0, tcd->arg_1, tcd->arg_2, tcd->arg_3);
 
 
@@ -14525,7 +14622,7 @@ _0RL_lcfn_d8193061d7f864c6_d0100000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileServer::transferFilePartial(const ::STI::TNetwork::TFileID& source, ::STI::TNetwork::TFileHolder_ptr destination, ::CORBA::Long offset, ::CORBA::Long lines)
 {
-  _0RL_cd_d8193061d7f864c6_c0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d0100000, "transferFilePartial", 20);
+  _0RL_cd_d8193061d7f864c6_e0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f0100000, "transferFilePartial", 20);
   _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) source;
   _call_desc.arg_1 = destination;
   _call_desc.arg_2 = offset;
@@ -14543,9 +14640,9 @@ _0RL_lcfn_d8193061d7f864c6_d0100000(omniCallDescriptor* cd, omniServant* svnt)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_e0100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_01100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_60100000* tcd = (_0RL_cd_d8193061d7f864c6_60100000*)cd;
+  _0RL_cd_d8193061d7f864c6_80100000* tcd = (_0RL_cd_d8193061d7f864c6_80100000*)cd;
   STI::TNetwork::_impl_TFileServer* impl = (STI::TNetwork::_impl_TFileServer*) svnt->_ptrToInterface(STI::TNetwork::TFileServer::_PD_repoId);
   tcd->result = impl->deleteFile(*tcd->arg_0);
 
@@ -14554,7 +14651,7 @@ _0RL_lcfn_d8193061d7f864c6_e0100000(omniCallDescriptor* cd, omniServant* svnt)
 
 ::CORBA::Boolean STI::TNetwork::_objref_TFileServer::deleteFile(const ::STI::TNetwork::TFileID& fileID)
 {
-  _0RL_cd_d8193061d7f864c6_60100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e0100000, "deleteFile", 11);
+  _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_01100000, "deleteFile", 11);
   _call_desc.arg_0 = &(::STI::TNetwork::TFileID&) fileID;
 
   _invoke(_call_desc);
@@ -14594,7 +14691,7 @@ STI::TNetwork::_impl_TFileServer::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "findFile")) {
 
-    _0RL_cd_d8193061d7f864c6_60100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_70100000, "findFile", 9, 1);
+    _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_90100000, "findFile", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14602,7 +14699,7 @@ STI::TNetwork::_impl_TFileServer::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "getFileSize")) {
 
-    _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_90100000, "getFileSize", 12, 1);
+    _0RL_cd_d8193061d7f864c6_a0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b0100000, "getFileSize", 12, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14610,7 +14707,7 @@ STI::TNetwork::_impl_TFileServer::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "transferFile")) {
 
-    _0RL_cd_d8193061d7f864c6_a0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_b0100000, "transferFile", 13, 1);
+    _0RL_cd_d8193061d7f864c6_c0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d0100000, "transferFile", 13, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14618,7 +14715,7 @@ STI::TNetwork::_impl_TFileServer::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "transferFilePartial")) {
 
-    _0RL_cd_d8193061d7f864c6_c0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_d0100000, "transferFilePartial", 20, 1);
+    _0RL_cd_d8193061d7f864c6_e0100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f0100000, "transferFilePartial", 20, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14626,7 +14723,7 @@ STI::TNetwork::_impl_TFileServer::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "deleteFile")) {
 
-    _0RL_cd_d8193061d7f864c6_60100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_e0100000, "deleteFile", 11, 1);
+    _0RL_cd_d8193061d7f864c6_80100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_01100000, "deleteFile", 11, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14768,7 +14865,7 @@ STI::TNetwork::_objref_TBinaryDataStreamTarget::_ptrToObjRef(const char* id)
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_f0100000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_11100000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
@@ -14779,7 +14876,7 @@ _0RL_lcfn_d8193061d7f864c6_f0100000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TBinaryDataStreamTarget::start()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f0100000, "start", 6);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_11100000, "start", 6);
 
 
   _invoke(_call_desc);
@@ -14794,11 +14891,11 @@ void STI::TNetwork::_objref_TBinaryDataStreamTarget::start()
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTBinaryData
-class _0RL_cd_d8193061d7f864c6_01100000
+class _0RL_cd_d8193061d7f864c6_21100000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_01100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_21100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -14815,13 +14912,13 @@ public:
   const STI::TNetwork::TBinaryData* arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_01100000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_21100000::marshalArguments(cdrStream& _n)
 {
   (const STI::TNetwork::TBinaryData&) *arg_0 >>= _n;
 
 }
 
-void _0RL_cd_d8193061d7f864c6_01100000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_21100000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = new STI::TNetwork::TBinaryData;
   (STI::TNetwork::TBinaryData&)arg_0_ <<= _n;
@@ -14829,15 +14926,15 @@ void _0RL_cd_d8193061d7f864c6_01100000::unmarshalArguments(cdrStream& _n)
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_01100000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_21100000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_11100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_31100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_01100000* tcd = (_0RL_cd_d8193061d7f864c6_01100000*)cd;
+  _0RL_cd_d8193061d7f864c6_21100000* tcd = (_0RL_cd_d8193061d7f864c6_21100000*)cd;
   STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
   impl->writeNext(*tcd->arg_0);
 
@@ -14846,7 +14943,7 @@ _0RL_lcfn_d8193061d7f864c6_11100000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TBinaryDataStreamTarget::writeNext(const ::STI::TNetwork::TBinaryData& data)
 {
-  _0RL_cd_d8193061d7f864c6_01100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_11100000, "writeNext", 10);
+  _0RL_cd_d8193061d7f864c6_21100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_31100000, "writeNext", 10);
   _call_desc.arg_0 = &(::STI::TNetwork::TBinaryData&) data;
 
   _invoke(_call_desc);
@@ -14861,7 +14958,7 @@ void STI::TNetwork::_objref_TBinaryDataStreamTarget::writeNext(const ::STI::TNet
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_21100000(omniCallDescriptor*, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_41100000(omniCallDescriptor*, omniServant* svnt)
 {
   
   STI::TNetwork::_impl_TBinaryDataStreamTarget* impl = (STI::TNetwork::_impl_TBinaryDataStreamTarget*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStreamTarget::_PD_repoId);
@@ -14872,7 +14969,7 @@ _0RL_lcfn_d8193061d7f864c6_21100000(omniCallDescriptor*, omniServant* svnt)
 
 void STI::TNetwork::_objref_TBinaryDataStreamTarget::stop()
 {
-  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_21100000, "stop", 5);
+  _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_41100000, "stop", 5);
 
 
   _invoke(_call_desc);
@@ -14912,7 +15009,7 @@ STI::TNetwork::_impl_TBinaryDataStreamTarget::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "start")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_f0100000, "start", 6, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_11100000, "start", 6, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14920,7 +15017,7 @@ STI::TNetwork::_impl_TBinaryDataStreamTarget::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "writeNext")) {
 
-    _0RL_cd_d8193061d7f864c6_01100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_11100000, "writeNext", 10, 1);
+    _0RL_cd_d8193061d7f864c6_21100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_31100000, "writeNext", 10, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -14928,7 +15025,7 @@ STI::TNetwork::_impl_TBinaryDataStreamTarget::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "stop")) {
 
-    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_21100000, "stop", 5, 1);
+    _0RL_cd_d8193061d7f864c6_02000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_41100000, "stop", 5, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;
@@ -15070,11 +15167,11 @@ STI::TNetwork::_objref_TBinaryDataStream::_ptrToObjRef(const char* id)
 
 // Proxy call descriptor class. Mangled signature:
 //  void_i_cSTI_mTNetwork_mTBinaryDataStreamTarget
-class _0RL_cd_d8193061d7f864c6_31100000
+class _0RL_cd_d8193061d7f864c6_51100000
   : public omniCallDescriptor
 {
 public:
-  inline _0RL_cd_d8193061d7f864c6_31100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
+  inline _0RL_cd_d8193061d7f864c6_51100000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
     
@@ -15091,28 +15188,28 @@ public:
   STI::TNetwork::TBinaryDataStreamTarget_ptr arg_0;
 };
 
-void _0RL_cd_d8193061d7f864c6_31100000::marshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_51100000::marshalArguments(cdrStream& _n)
 {
   STI::TNetwork::TBinaryDataStreamTarget::_marshalObjRef(arg_0,_n);
 
 }
 
-void _0RL_cd_d8193061d7f864c6_31100000::unmarshalArguments(cdrStream& _n)
+void _0RL_cd_d8193061d7f864c6_51100000::unmarshalArguments(cdrStream& _n)
 {
   arg_0_ = STI::TNetwork::TBinaryDataStreamTarget::_unmarshalObjRef(_n);
   arg_0 = arg_0_.in();
 
 }
 
-const char* const _0RL_cd_d8193061d7f864c6_31100000::_user_exns[] = {
+const char* const _0RL_cd_d8193061d7f864c6_51100000::_user_exns[] = {
   0
 };
 
 // Local call call-back function.
 static void
-_0RL_lcfn_d8193061d7f864c6_41100000(omniCallDescriptor* cd, omniServant* svnt)
+_0RL_lcfn_d8193061d7f864c6_61100000(omniCallDescriptor* cd, omniServant* svnt)
 {
-  _0RL_cd_d8193061d7f864c6_31100000* tcd = (_0RL_cd_d8193061d7f864c6_31100000*)cd;
+  _0RL_cd_d8193061d7f864c6_51100000* tcd = (_0RL_cd_d8193061d7f864c6_51100000*)cd;
   STI::TNetwork::_impl_TBinaryDataStream* impl = (STI::TNetwork::_impl_TBinaryDataStream*) svnt->_ptrToInterface(STI::TNetwork::TBinaryDataStream::_PD_repoId);
   impl->transfer(tcd->arg_0);
 
@@ -15121,7 +15218,7 @@ _0RL_lcfn_d8193061d7f864c6_41100000(omniCallDescriptor* cd, omniServant* svnt)
 
 void STI::TNetwork::_objref_TBinaryDataStream::transfer(::STI::TNetwork::TBinaryDataStreamTarget_ptr target)
 {
-  _0RL_cd_d8193061d7f864c6_31100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_41100000, "transfer", 9);
+  _0RL_cd_d8193061d7f864c6_51100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_61100000, "transfer", 9);
   _call_desc.arg_0 = target;
 
   _invoke(_call_desc);
@@ -15161,7 +15258,7 @@ STI::TNetwork::_impl_TBinaryDataStream::_dispatch(omniCallHandle& _handle)
 
   if (omni::strMatch(op, "transfer")) {
 
-    _0RL_cd_d8193061d7f864c6_31100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_41100000, "transfer", 9, 1);
+    _0RL_cd_d8193061d7f864c6_51100000 _call_desc(_0RL_lcfn_d8193061d7f864c6_61100000, "transfer", 9, 1);
     
     _handle.upcall(this,_call_desc);
     return 1;

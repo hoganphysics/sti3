@@ -15,6 +15,7 @@ class TestDevice(stidevicepy.LocalDevice):
         ch.setMaxValue(stipy.MixedValue(10.0))   #set maximum value
         ch.setColor("blue")    #set color for GUI representation
         ch.setValueHint("[-10.0 to 10.0 A]")   #set value hints for GUI representation
+        ch.setHelp("Set the coil current. Value must be between -10.0 and 10.0 Amperes.")   #set help string for GUI representation
         
         self.addOutputChannel(1, stipy.MixedValueType.Int, "temperature setpoint")  #channel 1, must be an integer
         self.addOutputChannel(2, stipy.MixedValueType.Number, "supply voltage")		#channel 2, any numeric type
@@ -23,6 +24,7 @@ class TestDevice(stidevicepy.LocalDevice):
         ch.setVectorFormat([stipy.MixedValueType.Number, stipy.MixedValueType.String, stipy.MixedValueType.Boolean])  #set allowed types for vector elements
         ch.setColor("green")  #set color for GUI representation
         ch.setValueHint("[Frequency (MHz), name, enable]")   #set value hints for GUI representation
+        ch.setHelp("Set the list output. Value must be a vector of the form [Frequency (MHz), name, enable].")   #set help string for GUI representation
 
         self.addOutputChannel(4, stipy.MixedValueType.String, "string output")
         self.addOutputChannel(5, stipy.MixedValueType.Boolean, "enable current")      #channel 5, boolean output

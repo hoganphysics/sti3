@@ -36,6 +36,7 @@ public:
 
     bool addMeasurements(const STI::Device::DeviceID& deviceID, const MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
+    bool addVersionInfo(const STI::Device::DeviceID& deviceID, const std::vector<STI::Device::VersionInfo>& versions);
     bool addMessages(const std::vector<EnginePlayingMessage>& messages);
 
     std::shared_ptr<MeasurementMap> getMeasurements();

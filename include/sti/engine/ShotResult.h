@@ -5,6 +5,7 @@
 #include <sti/fwd/Measurement_fwd.h>
 #include <sti/engine/ShotID.h>
 #include <sti/device/Attribute.h>
+#include <sti/device/VersionInfo.h>
 #include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/Measurement.h>
 #include <sti/engine/ShotResultRecord.h>
@@ -43,6 +44,7 @@ public:
 
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;
+    std::map<STI::Device::DeviceID, std::vector<STI::Device::VersionInfo>> versions;
     std::vector<EnginePlayingMessage> messages;
 
     ShotResultStatus status;

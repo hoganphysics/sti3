@@ -56,6 +56,7 @@ void ShotResult::save(Archive& archive) const
         cereal::make_nvp("measurements", measurements),
         cereal::make_nvp("messages", messages),
         cereal::make_nvp("status", status),
+        cereal::make_nvp("versions", versions),
         cereal::make_nvp("shotResultRecord", shotResultRecord)
         );
 }
@@ -77,6 +78,14 @@ void ShotResult::load(Archive& archive)
     }
     catch (const cereal::Exception&) {
         status = ShotResultStatus::Unknown;
+    }
+
+    versions.clear();
+    try {
+        archive(cereal::make_nvp("versions", versions));
+    }
+    catch (const cereal::Exception&) {
+        versions.clear();
     }
 
     archive(cereal::make_nvp("shotResultRecord", shotResultRecord));

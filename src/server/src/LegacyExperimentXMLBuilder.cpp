@@ -124,6 +124,31 @@ void addAttributes(tinyxml2::XMLElement* attributes, const std::map<std::string,
     }
 }
 
+void addVersionInfo(tinyxml2::XMLElement* versionElement, const std::vector<STI::Device::VersionInfo>& versions)
+{
+    for (const auto& version : versions) {
+        auto entry = versionElement->InsertNewChildElement("entry");
+        entry->SetAttribute("component", version.component.c_str());
+        entry->SetAttribute("version", version.version.c_str());
+        entry->SetAttribute("major", version.major);
+        entry->SetAttribute("minor", version.minor);
+        entry->SetAttribute("patch", version.patch);
+        entry->SetAttribute("buildnumber", version.buildNumber);
+        entry->SetAttribute("buildstring", version.buildString.c_str());
+        entry->SetAttribute("gitcommit", version.gitCommit.c_str());
+        entry->SetAttribute("gitdirty", version.gitDirty);
+
+        if (!version.metadata.empty()) {
+            auto metadata = entry->InsertNewChildElement("metadata");
+            for (const auto& item : version.metadata) {
+                auto meta = metadata->InsertNewChildElement("entry");
+                meta->SetAttribute("key", item.first.c_str());
+                meta->SetAttribute("value", item.second.c_str());
+            }
+        }
+    }
+}
+
 template<class T>
 void addDimlimitedVector(tinyxml2::XMLElement* base, const std::vector<T>* values, const std::string& delimiter, const std::string& type)
 {
@@ -316,11 +341,20 @@ void LegacyExperimentXMLBuilder::build()
     std::filesystem::path shotPath = filename;
     title->SetText(shotPath.stem().c_str());
 
+    auto shotID = e->InsertNewChildElement("shotid");
+    shotID->SetText(shotResult->sid.print().c_str());
+
     auto date = e->InsertNewChildElement("date");
     date->SetText(shotResult->playTime.print().c_str());
 
     auto status = e->InsertNewChildElement("status");
     status->SetText(ShotResultStatusToString(shotResult->status).c_str());
+
+    auto version = e->InsertNewChildElement("version");
+    auto serverVersions = shotResult->versions.find(shotResult->shotResultRecord.deviceID);
+    if (serverVersions != shotResult->versions.end()) {
+        addVersionInfo(version, serverVersions->second);
+    }
     
     if (parseResult->shotConfig.shotType == ShotType::SequenceEntry) {
 
@@ -346,6 +380,9 @@ void LegacyExperimentXMLBuilder::build()
     //parse
     {
         auto parse = e->InsertNewChildElement("parse");
+        auto parseID = parse->InsertNewChildElement("parseid");
+        parseID->SetText(parseResult->pid.print().c_str());
+
         auto parseFile = parse->InsertNewChildElement("file");
 
         std::filesystem::path parsePath = parseFilePathForShot(shotPath, parseResult->pid);
@@ -383,6 +420,12 @@ void LegacyExperimentXMLBuilder::build()
         device->SetAttribute("devicename", id.getName().c_str());
         device->SetAttribute("ipaddress", id.getAddress().c_str());
         device->SetAttribute("module", id.getModule());
+
+        auto version = device->InsertNewChildElement("version");
+        auto versionsIt = shotResult->versions.find(id);
+        if (versionsIt != shotResult->versions.end()) {
+            addVersionInfo(version, versionsIt->second);
+        }
 
         auto attributes = device->InsertNewChildElement("attributes");
 

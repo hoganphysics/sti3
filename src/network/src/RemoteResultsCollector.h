@@ -9,6 +9,7 @@
 #include <mutex>
 #include <string>
 #include <map>
+#include <vector>
 
 
 namespace STI
@@ -28,6 +29,7 @@ public:
 
     bool addMeasurements(const STI::Device::DeviceID& deviceID, const STI::Engine::MeasurementVector& measurements, const std::shared_ptr<STI::Utils::FileServer>& sourceFileServer);
     bool addAttributes(const STI::Device::DeviceID& deviceID, const std::map<std::string, std::string>& attributes);
+    bool addVersionInfo(const STI::Device::DeviceID& deviceID, const std::vector<STI::Device::VersionInfo>& versions);
     bool addMessages(const std::vector<STI::Engine::EnginePlayingMessage>& messages);
 
 private:
@@ -42,4 +44,3 @@ private:
 
 
 #endif
-

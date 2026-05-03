@@ -213,6 +213,16 @@ bool LocalResultsCollector::addAttributes(const STI::Device::DeviceID& deviceID,
     return true;
 }
 
+bool LocalResultsCollector::addVersionInfo(const STI::Device::DeviceID& deviceID, const std::vector<STI::Device::VersionInfo>& versions)
+{
+    std::unique_lock<std::mutex> collectorLock(collectorMutex);
+
+    if (fullShotResult == 0 || fullShotResult->shotResult == 0) return false;
+
+    (fullShotResult->shotResult->versions)[deviceID] = versions;
+    return true;
+}
+
 bool LocalResultsCollector::addMessages(const std::vector<EnginePlayingMessage>& messages)
 {
     std::unique_lock<std::mutex> collectorLock(collectorMutex);

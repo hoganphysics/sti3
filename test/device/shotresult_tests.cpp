@@ -6,6 +6,8 @@
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
+#include <sti/device/DeviceID.h>
+#include <sti/device/VersionInfo.h>
 
 #include "SerializedRepository.h"
 
@@ -25,6 +27,8 @@ using STI::Engine::ShotResult;
 using STI::Engine::ShotResultStatus;
 using STI::Engine::ShotResultStatusFromString;
 using STI::Engine::ShotResultStatusToString;
+using STI::Device::DeviceID;
+using STI::Device::VersionInfo;
 
 namespace {
 
@@ -87,6 +91,40 @@ TEST_CASE("SerializedRepository round trips ShotResult status", "[shotresult][re
     REQUIRE(repository.getShotResult(sid, loaded));
     REQUIRE(loaded != nullptr);
     CHECK(loaded->status == ShotResultStatus::CanceledByUser);
+}
+
+TEST_CASE("SerializedRepository round trips ShotResult device versions", "[shotresult] [repository] [version]")
+{
+    auto fullShotResult = makeFullShotResult(ShotResultStatus::Success);
+    auto sid = fullShotResult->shotResult->sid;
+
+    DeviceID deviceID("test-device", "localhost", 1);
+    VersionInfo libraryVersion("sti3", "3.1.0-test");
+    libraryVersion.buildNumber = 12;
+    libraryVersion.buildString = "test-build";
+    libraryVersion.gitCommit = "abcdef";
+    libraryVersion.gitDirty = true;
+    libraryVersion.metadata["package"] = "test";
+
+    VersionInfo deviceVersion("test-device", "0.2.0");
+    fullShotResult->shotResult->versions[deviceID] = {libraryVersion, deviceVersion};
+
+    SerializedRepository repository(makeRepositoryPath("versions_round_trip").string());
+    REQUIRE(repository.saveShot(sid, fullShotResult));
+
+    std::shared_ptr<ShotResult> loaded;
+    REQUIRE(repository.getShotResult(sid, loaded));
+    REQUIRE(loaded != nullptr);
+
+    auto versionsIt = loaded->versions.find(deviceID);
+    REQUIRE(versionsIt != loaded->versions.end());
+    REQUIRE(versionsIt->second.size() == 2);
+    CHECK(versionsIt->second[0].component == "sti3");
+    CHECK(versionsIt->second[0].version == "3.1.0-test");
+    CHECK(versionsIt->second[0].buildNumber == 12);
+    CHECK(versionsIt->second[0].metadata.at("package") == "test");
+    CHECK(versionsIt->second[1].component == "test-device");
+    CHECK(versionsIt->second[1].version == "0.2.0");
 }
 
 TEST_CASE("SerializedRepository loads old ShotResult files without status", "[shotresult][repository]")

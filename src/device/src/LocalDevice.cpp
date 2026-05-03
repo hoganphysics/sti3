@@ -154,7 +154,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	versionManager = STI::Device::makeVersionManager();
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
-	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection);
+	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection, versionManager);
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
