@@ -48,9 +48,34 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.1.1 - Shot result and measurement fixes
+
+Patch release for fixes and integration follow-up after the initial
+VersionManager support.
+
+Fixes:
+
+* Clear placeholder build strings from CMake-generated version metadata.
+* Cancel stopped event-engine play jobs cleanly and persist shot status through
+  local, network, XML, and Python result paths.
+* Include the date when printing `ShotID` values.
+* Transfer file and binary measurement attachments through result collection,
+  persistence, XML output, and Python bindings.
+
+Version reporting:
+
+* Register STI library version information in the TestDevice and
+  EventCheckingDevice examples.
+* Collect per-device version information in `ShotResult` records and legacy XML
+  output.
+
 ### 3.1.0 - VersionManager support
 
 Planned first release under this versioning policy.
+
+This release was followed by `3.1.1`, which completes the version-reporting
+integration and fixes shot-result persistence details without introducing a new
+feature-release line.
 
 Features:
 
