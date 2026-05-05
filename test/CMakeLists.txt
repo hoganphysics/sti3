@@ -11,6 +11,7 @@ project(sti3_test_device VERSION ${STI3_VERSION} DESCRIPTION "sti3_test_device" 
 include(GNUInstallDirs)
 
 find_package(Catch2 3 CONFIG REQUIRED)
+find_package(Boost 1.70 REQUIRED)
 
 if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
@@ -91,6 +92,7 @@ target_link_libraries(sti3_test_device
   PRIVATE
     Catch2::Catch2WithMain
     sti3::stidevice
+    Boost::headers
     # link your device lib target here:
     # sti3_device
 )
