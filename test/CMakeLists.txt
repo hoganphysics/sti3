@@ -12,6 +12,7 @@ include(GNUInstallDirs)
 
 find_package(Catch2 3 CONFIG REQUIRED)
 find_package(Boost 1.70 REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
 
 if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
@@ -72,6 +73,8 @@ add_executable(sti3_test_device
   device/logid_tests.cpp
   device/logrecordfile_tests.cpp
   device/versionmanager_tests.cpp
+  device/stidevicepy_parseevents_tests.cpp
+  device/stidevicepy_parseevents_tests_support.cpp
   ${CMAKE_SOURCE_DIR}/src/server/src/LegacyExperimentXMLBuilder.cpp
   ${CMAKE_SOURCE_DIR}/src/server/src/tinyxml/tinyxml2.cpp
   # add more device test .cpp files here
@@ -82,6 +85,7 @@ add_executable(sti3_test_device
 
 target_include_directories(sti3_test_device PRIVATE
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/device/src>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/stipy/stidevicepy/src>
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src>
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src/tinyxml>
 )
@@ -93,6 +97,7 @@ target_link_libraries(sti3_test_device
     Catch2::Catch2WithMain
     sti3::stidevice
     Boost::headers
+    pybind11::embed
     # link your device lib target here:
     # sti3_device
 )
