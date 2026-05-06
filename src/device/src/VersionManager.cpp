@@ -243,6 +243,7 @@ VersionInfo STI::Device::getSTILibraryVersion()
     version.gitCommit = STI3_GIT_COMMIT;
     version.gitDirty = (STI3_GIT_DIRTY != 0);
     version.metadata["cmake_build_type"] = STI3_CMAKE_BUILD_TYPE;
+    version.metadata["conda_build_string"] = STI3_BUILD_STRING;
     version.metadata["package"] = "stipy";
     return version;
 }

@@ -40,6 +40,9 @@ _skbuild/
 .vs/
 .sti/
 stipy.egg-info/
+dist/
+lib/
+bin/
 env/
 build_env/
 env1/

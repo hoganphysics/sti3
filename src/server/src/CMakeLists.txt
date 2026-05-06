@@ -207,3 +207,11 @@ install(TARGETS STIServer
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}  # exe/.dll launcher on Windows; exe on Linux/macOS
   BUNDLE  DESTINATION ${CMAKE_INSTALL_BINDIR}  # harmless elsewhere
 )
+
+if(MSVC AND STI3_INSTALL_PDBS)
+  install(FILES
+    $<TARGET_PDB_FILE:STIServer>
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    OPTIONAL
+  )
+endif()

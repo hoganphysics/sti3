@@ -398,10 +398,11 @@ else()
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
           )
 
-  # if(MSVC)
-  #   install(FILES
-  #     $<TARGET_PDB_FILE:stinetwork>
-  #     DESTINATION ${CMAKE_INSTALL_BINDIR}  # or ${CMAKE_INSTALL_LIBDIR} or a subdir like debug/
-  #   )
-  # endif()
+  if(MSVC AND STI3_INSTALL_PDBS)
+    install(FILES
+      $<TARGET_PDB_FILE:stinetwork>
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      OPTIONAL
+    )
+  endif()
 endif()

@@ -13,6 +13,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 option(STI3_BUILD_TESTS "Build STI3 unit tests" ON)
 
+set(STI3_INSTALL_PDBS_DEFAULT OFF)
+if(MSVC AND ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
+  set(STI3_INSTALL_PDBS_DEFAULT ON)
+endif()
+option(STI3_INSTALL_PDBS "Install MSVC PDB symbol files" ${STI3_INSTALL_PDBS_DEFAULT})
+
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 

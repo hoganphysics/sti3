@@ -324,6 +324,13 @@ else()
     # On Windows with pybind11, a MODULE may be an import library + dll; this covers the .pyd
     RUNTIME DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy/stidevicepy
   )
+  if(MSVC AND STI3_INSTALL_PDBS)
+    install(FILES
+      $<TARGET_PDB_FILE:stidevicepy>
+      DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy/stidevicepy
+      OPTIONAL
+    )
+  endif()
 
   # conda build
   install(TARGETS stipybase
@@ -332,6 +339,13 @@ else()
     # On Windows with pybind11, a MODULE may be an import library + dll; this covers the .pyd
     RUNTIME DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy/stipybase
   )
+  if(MSVC AND STI3_INSTALL_PDBS)
+    install(FILES
+      $<TARGET_PDB_FILE:stipybase>
+      DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy/stipybase
+      OPTIONAL
+    )
+  endif()
   # install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../
   #         DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/stipy
   #         # FILES_MATCHING PATTERN "*.py")

@@ -11,6 +11,9 @@ project(stidevice VERSION ${STI3_VERSION} DESCRIPTION "STI device library")
 if(NOT DEFINED STI3_GENERATED_INCLUDE_DIR)
   set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number")
   set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
+  if(DEFINED ENV{PKG_BUILD_STRING} AND "${STI3_BUILD_STRING}" STREQUAL "")
+    set(STI3_BUILD_STRING "$ENV{PKG_BUILD_STRING}")
+  endif()
   if("${STI3_BUILD_STRING}" STREQUAL "placeholder")
     set(STI3_BUILD_STRING "")
   endif()
@@ -285,11 +288,12 @@ else()
           )
           # FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hxx")
   
-  # if(MSVC)
-  #   install(FILES
-  #     $<TARGET_PDB_FILE:stidevice>
-  #     DESTINATION ${CMAKE_INSTALL_BINDIR}  # or ${CMAKE_INSTALL_LIBDIR} or a subdir like debug/
-  #   )
-  # endif()
+  if(MSVC AND STI3_INSTALL_PDBS)
+    install(FILES
+      $<TARGET_PDB_FILE:stidevice>
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      OPTIONAL
+    )
+  endif()
 
 endif()

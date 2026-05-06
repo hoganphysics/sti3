@@ -1,4 +1,8 @@
 {% set version_data = load_file_data('../sti3_version.json', from_recipe_dir=True) %}
+{% set requested_build_type = environ.get('STI3_CONDA_BUILD_TYPE', 'Release') %}
+{% set requested_build_type_lower = requested_build_type | lower %}
+{% set build_flavor = 'rdbg' if requested_build_type_lower == 'relwithdebinfo' else 'release' %}
+{% set build_number = version_data.get('build_number', 0) | int %}
 
 package:
   name: stipy
@@ -8,7 +12,10 @@ source:
   path: ..
 
 build:
-  number: {{ version_data.get('build_number', 0) | int }}
+  number: {{ build_number }}
+  string: "{{ build_flavor }}_py{{ py }}h{{ PKG_HASH }}_{{ build_number }}"
+  script_env:
+    - STI3_CONDA_BUILD_TYPE
 
 requirements:
   build:

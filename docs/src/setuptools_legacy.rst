@@ -127,7 +127,7 @@ BOOST_ROOT should point to the root directory of boost.
   * Open root directory 'sti3'; CMake config should automatically run to prepare the build.
   * Select Debug or Release build target
   * Build the project.  This will build the stidevice and stinetwork libraries.
-  * The compiled libraries for linking will be in sti3\\lib and the dlls will be in sti3\\bin. Debug libraries have a '_d' suffix.
+  * The old local build placed compiled libraries for linking in generated ``sti3\\lib`` and dlls in ``sti3\\bin``. Debug libraries had a ``_d`` suffix.
 
 .. warning:: 
     For a CMake build, Visual Studio needs access to executables in the System32 directory. 
@@ -137,17 +137,17 @@ BOOST_ROOT should point to the root directory of boost.
 Build STI3 Python (STIPy)
 -------------------------
 
-The build system for STIPy uses `setuptools` to create the python package.  The `setup.py` file in the 
-root directory configures the build. The python build will configure the package and call `cmake` to compile
-the C++ code for the core STI shared libraries. The output of the build is a platform-specific python wheel 
-(whl file) which contains the complied STI binaries. The following build instructions are platform independent.
+This legacy wheel build path is archived and no longer supported. The former wheel build files now live in
+``docs/legacy/wheel-build/``. The old ``setup.py`` configured the build, called ``cmake`` to compile the C++
+code for the core STI shared libraries, and produced a platform-specific Python wheel (whl file) containing
+the compiled STI binaries. The following build instructions are kept only as historical reference.
 
 * Setup python virtual environment for the build (optional)
-* Install the required python packages for the build using `requirements.txt` in the root directory
+* Install the required python packages for the archived wheel build using ``docs/legacy/wheel-build/requirements.txt``
 
 .. code-block:: bash
 
-    pip install -r requirements.txt
+    pip install -r docs/legacy/wheel-build/requirements.txt
 
 
 * Build the wheel
@@ -156,7 +156,7 @@ the C++ code for the core STI shared libraries. The output of the build is a pla
 
     python -m build --wheel
 
-* The created whl file will be in the sti3/dist directory.
+* The old build created the whl file in the generated ``sti3/dist`` directory.
 
 * (Optional) Install STIPy wheel directly (in the desired virtual environment)
 
