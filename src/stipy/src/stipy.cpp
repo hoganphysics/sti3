@@ -33,12 +33,13 @@ using STI::Engine::StackTrace;
 
 std::shared_ptr<STIPyShot> STI::Python::makeShot()
 {
-    return makeShot("");
+    return makeShot(STI::Engine::ShotType::Single);
 }
 
-std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const STI::Engine::ShotType& shotType)
 {
     STI::Engine::ShotConfig shotConfig;
+    shotConfig.shotType = shotType;
 
     std::shared_ptr<STI::Utils::FileHolderFactory> fileFactory;
 
@@ -55,9 +56,24 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name)
     return pyShot;
 }
 
-std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::string& name, const std::function<void(void)>& func)
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType)
 {
-    auto shot = makeShot(name);
+    auto shot = makeShot(shotType);
+
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->makeShot(shot, func);
+    }
+
+    return shot;
+}
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType)
+{
+    auto shot = makeShot(shotType);
+
+    shot->group()->bindVars(vars);
 
     auto stipy = STIPyGlobal::getInstance();
 

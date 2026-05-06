@@ -2,6 +2,7 @@
 
 #include <sti/device/VersionManager.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/ShotConfig.h>
 
 #include "StackTrace.h"
 #include "STIPyServer.h"
@@ -9,6 +10,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/stl.h>
 
 
 namespace py = pybind11;
@@ -66,10 +68,12 @@ void init_stipy(py::module& m)
     m.def("printNetwork", &STI::Python::printNetwork, "Print the STI network tree");
 
     m.def("makeshot", py::overload_cast<>(&STI::Python::makeShot));
-    m.def("makeshot", py::overload_cast<const std::string&>(&STI::Python::makeShot), 
-                    py::arg("name"));
-    m.def("makeshot", py::overload_cast<const std::string&, const std::function<void(void)>&>(&STI::Python::makeShot), 
-                    py::arg("name"), py::arg("func"));
+    m.def("makeshot", py::overload_cast<const STI::Engine::ShotType&>(&STI::Python::makeShot),
+                    py::arg("shotType"));
+    m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
+                    py::arg("func"), py::arg("shotType"));
+    m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
+                    py::arg("func"), py::arg("vars"), py::arg("shotType"));
 
     m.def("group", &STI::Python::group, 
                     py::arg("name"));

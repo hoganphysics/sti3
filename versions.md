@@ -48,6 +48,23 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.1.2 - STIPy makeshot API alignment
+
+Patch release for STIPy shot-construction API cleanup.
+
+Fixes:
+
+* Add a package-level `stipy.makeshot()` wrapper that supports the same source
+  forms as `STIPyServer.makeshot()`: empty shots, callables, and Python timing
+  files.
+* Support variable overrides for both callable and filename-based shot creation
+  in the global and server-based `makeshot` paths.
+* Remove the ambiguous global string-name overload from the low-level pybind
+  `makeshot` API so strings consistently mean Python timing filenames in the
+  public package-level wrapper.
+* Document global and server-based `makeshot` usage, including `vars` and
+  `shot_type`.
+
 ### 3.1.1 - Shot result and measurement fixes
 
 Patch release for fixes and integration follow-up after the initial

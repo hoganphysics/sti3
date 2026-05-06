@@ -1,142 +1,24 @@
+from collections.abc import Callable
+
 from stipy.stipy import STIPyServer
-from stipy.stipybase.stipybase import Sequence
-from stipy.stipybase.stipybase import SequenceType
-from stipy.stipy import ParsedVar
-from stipy.stipybase.stipybase import RawEventGroup
 from stipy.stipybase.stipybase import SequenceEntryID
 from stipy.stipybase.stipybase import SequenceID
 from stipy.stipybase.stipybase import ShotType
 from stipy.stipybase.python.sequence import STIPySequence
+from stipy.python.makeshot import make_shot
 
-from collections.abc import Callable
-import importlib.util, sys, pathlib
 
 _makeshot = STIPyServer.makeshot
 
-# _makesequence = STIPyServer.makesequence
-
-# def makesequence(varsTable=None):
-#     seq = _makesequence()
-#     seq.repeats = 0
-
-#     if varsTable == None:
-#         return seq
-    
-#     if (not (type(varsTable) is list)):
-#         raise ValueError("Sequence table must be a list.")
-    
-#     seq.type = SequenceType.Closed
-
-#     for entry in varsTable:
-#         if (type(entry) is dict):
-#             g = RawEventGroup()
-#             for key in entry.keys():
-#                 g.setvar(key, entry[key])
-#                 # v = ParsedVar(key, entry[key])
-#                 # vars.add(v)
-#             seq.append(set(g.getVars()))
-#         elif (type(entry) is set):
-#             seq.append(entry)
-#         else:
-#             raise ValueError("Sequence table entries must be a set or a dictionary.")
-#     return seq
-
-# class SequenceTicket:
-#     def __init__(self):
-#         return
-
-# setattr(STIPyServer, 'makesequence', makesequence)
-
-
-
-def load_module2(path, name=None):
-    spec  = importlib.util.spec_from_file_location(name or pathlib.Path(path).stem, path)
-    mod   = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = mod
-    spec.loader.exec_module(mod)
-    return mod
-
-def load_module(path, name=None):
-    path = pathlib.Path(path).resolve()
-
-    # 1️⃣  Make the file’s directory importable
-    dir_path = str(path.parent)
-    if dir_path not in sys.path:          # avoid duplicates
-        sys.path.insert(0, dir_path)      # search first, like real scripts
-
-    # 2️⃣  Load the file as a proper module
-    spec   = importlib.util.spec_from_file_location(name or path.stem, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module       # so future plain ‘import name’ works
-    spec.loader.exec_module(module)
-    return module
-
-def _makeshot_file(self, filename, vars, shot_type):
-
-    # def execute_file():
-    #     with open(filename) as file:
-    #         code = compile(file.read(), filename, 'exec')
-    #         exec(code, globals(), locals())
-    
-    # def execute_file():
-    #     namespace = {
-    #         '__name__': '__main__',
-    #         '__file__': filename,
-    #         '__package__': None,
-    #         '__cached__': None,
-    #     }
-    #     with open(filename, 'r', encoding='utf-8') as file:
-    #         code = compile(file.read(), filename, 'exec')
-    #         exec(code, namespace, namespace)
-    
-    def execute_file():
-        load_module(filename)
-
-    if vars == None:
-        return _makeshot(self, execute_file, shot_type)
-    else:
-        return _makeshotVars(self, execute_file, vars, shot_type)
-
-def _makeshotVars(self, shotmaker, vars, shot_type):
-    g = RawEventGroup()
-
-    if (type(vars) is dict):
-        [g.bindvar(k, v) for k,v in vars.items()]
-    elif (type(vars) is set):
-        [g.bindvar(v.name, v.value()) for v in vars]
-    
-    return _makeshot(self, shotmaker, g.overwrittenVars(), shot_type)
 
 def makeshot(self, source=None, vars=None, shot_type=None):
-    if shot_type is None:
-        shot_type = ShotType.Single
-    if source == None and vars == None:
-        # return self.makeshot()
-        return _makeshot(self, shot_type)
-    elif type(source) == str:
-        return _makeshot_file(self, source, vars, shot_type)
-    elif callable(source):
-        if vars == None:
-            return _makeshot(self, source, shot_type)
-        else:
-            return _makeshotVars(self, source, vars, shot_type)
-    else:
-        raise ValueError("Source must be a string filename or a callable.")
+    return make_shot(_makeshot, self, source, vars, shot_type)
 
 
 def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: Callable[[int, int], None] = None):
-    
-    # # ensure sequence has a lock
-    # if not hasattr(sequence, "_table_lock"):
-    #     sequence._table_lock = threading.RLock()
-
-    # take a snapshot of keys while holding the lock
-    getKeyAttempts = 3  # try a few times to avoid RuntimeError from dict size change
+    getKeyAttempts = 3
     while getKeyAttempts > 0:
         try:
-            # We can't garantee the dict won't change size between calling keys() and list(),
-            # so we retry a few times if that happens. This because the STI library
-            # doesn't provide a way to lock the sequenceTable while we read it.
             keys = list(sequence.sequenceTable.keys())
         except RuntimeError:
             getKeyAttempts -= 1
@@ -148,16 +30,12 @@ def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: C
     shot_number = 0
 
     for key in keys:
-
-        # Fetch the current entry under the lock; sequenceTable might have changed
         entry = sequence.sequenceTable.get(key)
 
         if entry is None:
-            # entry was removed
             continue
 
         shot = makeshot(self, sequence.shotmaker, entry.overwritten, shot_type=ShotType.SequenceEntry)
-        # shots.append(shot)
 
         seqEntryID = SequenceEntryID()
         seqEntryID.seqID = sequenceID
@@ -173,41 +51,12 @@ def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: C
             shot_number += 1
             progress(shot_number, len(sequence.sequenceTable))
 
-    return
 
 def run(self, sequence: STIPySequence, progress: Callable[[int, int], None] = None):
-
     sequenceID = self.addSequence(sequence)
-    # print(sequence.sequenceTable)
-    # print(sequenceID)
-
     run_shots(self, sequence, sequenceID, progress)
 
-    # shots = []
-    # shot_number = 0
-    
 
-    # for key in sequence.sequenceTable.keys():
-    #     shot = makeshot(self, sequence.shotmaker, sequence.sequenceTable[key].overwritten, shot_type=ShotType.SequenceEntry)
-    #     # shots.append(shot)
-
-    #     seqEntryID = SequenceEntryID()
-    #     seqEntryID.seqID = sequenceID
-    #     seqEntryID.seqIndex = key
-
-    #     parseTick = self.parse(shot, seqEntryID)
-    #     parseTick.wait()
-
-    #     resultTick = self.play(parseTick)
-    #     resultTick.wait()
-
-    #     if progress is not None:
-    #         shot_number += 1
-    #         progress(shot_number, len(sequence.sequenceTable))
-
-    # return
-
-
-setattr(STIPyServer, 'run', run)
-setattr(STIPyServer, 'run_shots', run_shots)
-setattr(STIPyServer, 'makeshot', makeshot)
+setattr(STIPyServer, "run", run)
+setattr(STIPyServer, "run_shots", run_shots)
+setattr(STIPyServer, "makeshot", makeshot)

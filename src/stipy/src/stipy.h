@@ -4,12 +4,15 @@
 #include <sti/engine/CompressedStackTrace.h>
 #include <sti/engine/RawEventTarget.h>
 #include <sti/engine/RawEventGroup.h>
+#include <sti/engine/ShotConfig.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/HubID.h>
 #include <sti/utils/Configuration.h>
 #include "StackTrace.h"
 
 #include <memory>
+#include <functional>
+#include <set>
 #include <string>
 
 #include <pybind11/pybind11.h>
@@ -42,8 +45,9 @@ std::string printNetwork(const std::string& nameServerAddress, const std::string
 
 
 std::shared_ptr<STIPyShot> makeShot();
-std::shared_ptr<STIPyShot> makeShot(const std::string& name);
-std::shared_ptr<STIPyShot> makeShot(const std::string& name, const std::function<void(void)>& func);
+std::shared_ptr<STIPyShot> makeShot(const STI::Engine::ShotType& shotType);
+std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType);
+std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType);
 
 STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace);
 

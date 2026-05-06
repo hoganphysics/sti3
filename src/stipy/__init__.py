@@ -11,6 +11,7 @@ from stipy.python.group import RawEventGroup, RawEventGroupNode
 from stipy.python.shot import STIPyShot
 from stipy.python.server import STIPyServer
 from stipy.python.stiglobal import *
+from stipy.python.makeshot import makeshot
 
 try:
     from stipy.stipy import __version__

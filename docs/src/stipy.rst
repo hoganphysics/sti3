@@ -294,7 +294,7 @@ Building a shot
 +++++++++++++++
 
 The usual pattern is to write a Python function that declares events, then pass
-that function to ``server.makeshot()``:
+that function to ``makeshot()`` or ``server.makeshot()``:
 
 .. code-block:: py
 
@@ -307,12 +307,38 @@ that function to ``server.makeshot()``:
         meas(image, 10_000_000)
         event(shutter, 20_000_000, False)
 
-    shot = server.makeshot(shotmaker)
+    shot = makeshot(shotmaker)
 
 ``makeshot`` executes ``shotmaker`` in a shot-building context.  Global calls
 such as ``event()``, ``meas()``, ``setvar()``, ``settag()``, and ``group()`` add
 data to the shot currently being built.  These global helpers must be called
 inside a ``makeshot`` call.
+
+The global ``makeshot()`` form builds a local shot without requiring a connected
+server.  This is useful for constructing or inspecting a shot before deciding
+where to parse it.  Parsing and playing still require a connected server:
+
+.. code-block:: py
+
+    shot = makeshot(shotmaker)
+    parse_ticket = server.parse(shot)
+
+``server.makeshot()`` accepts the same Python arguments, but creates the shot
+through the connected server interface and records server-related shot
+configuration such as the submitting host and user.
+
+The first argument is called ``source``.  It may be omitted, a callable, or a
+Python filename:
+
+.. code-block:: py
+
+    empty_shot = makeshot()
+    function_shot = makeshot(shotmaker)
+    file_shot = makeshot("timing_files/mot_load.py")
+
+    server_empty_shot = server.makeshot()
+    server_function_shot = server.makeshot(shotmaker)
+    server_file_shot = server.makeshot("timing_files/mot_load.py")
 
 ``makeshot`` can also take a Python filename.  In this form STIPy loads and
 executes the file while the shot-building context is active, so top-level calls
@@ -321,7 +347,7 @@ file become part of the shot.
 
 .. code-block:: py
 
-    shot = server.makeshot("timing_files/mot_load.py")
+    shot = makeshot("timing_files/mot_load.py")
 
 For example, ``timing_files/mot_load.py`` might contain:
 
@@ -344,11 +370,24 @@ The file's directory is added to Python's import path before execution, so the
 timing file can import helper modules located beside it.
 
 Variable overrides can be supplied when making a shot from either a function or
-a file:
+a file.  Pass a dictionary from variable name to value, or a set of
+``ParsedVar`` objects:
 
 .. code-block:: py
 
+    shot = makeshot(shotmaker, vars={"bias": 3.0})
+    shot = makeshot("timing_files/mot_load.py", vars={"bias": 3.0})
+
+    shot = server.makeshot(shotmaker, vars={"bias": 3.0})
     shot = server.makeshot("timing_files/mot_load.py", vars={"bias": 3.0})
+
+By default, shots are created with ``ShotType.Single``.  Use ``shot_type`` when
+building shots for sequence entries or other scheduler-specific contexts:
+
+.. code-block:: py
+
+    shot = makeshot(shotmaker, vars={"bias": 3.0}, shot_type=ShotType.SequenceEntry)
+    shot = server.makeshot(shotmaker, vars={"bias": 3.0}, shot_type=ShotType.SequenceEntry)
 
 You can also create an empty shot and add to it directly:
 
