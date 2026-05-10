@@ -120,7 +120,7 @@ bool convert(const _CORBA_Unbounded_Sequence_Forward<In>& input, std::vector<Out
 }
 
 bool convertBuffer(const char* buffer, unsigned length, ::STI::TNetwork::OctetSeq& tBuffer);
-bool convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer);
+bool convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, const char*& buffer);
 
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);

@@ -10,6 +10,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/TimeStamp.h>
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -101,6 +102,37 @@ TEST_CASE("NetworkConvert: attribute maps round trip through CORBA tuple sequenc
     CHECK(roundTrip == attributes);
 }
 
+TEST_CASE("NetworkConvert: convertBuffer copies char buffers into CORBA octet sequences")
+{
+    const std::array<char, 6> source = {'s', 't', 'i', '\0', '3', '!'};
+
+    STI::TNetwork::OctetSeq tBuffer;
+    REQUIRE(STI::Network::convertBuffer(source.data(), static_cast<unsigned>(source.size()), tBuffer));
+
+    REQUIRE(tBuffer.length() == source.size());
+    for (CORBA::ULong i = 0; i < tBuffer.length(); ++i) {
+        CHECK(tBuffer[i] == static_cast<CORBA::Octet>(source.at(i)));
+    }
+}
+
+TEST_CASE("NetworkConvert: convertBuffer exposes CORBA octet sequences as char buffers")
+{
+    const std::array<char, 6> expected = {'n', 'e', 't', '\0', 'o', 'k'};
+    STI::TNetwork::OctetSeq tBuffer;
+    tBuffer.length(static_cast<CORBA::ULong>(expected.size()));
+    for (CORBA::ULong i = 0; i < tBuffer.length(); ++i) {
+        tBuffer[i] = static_cast<CORBA::Octet>(expected.at(i));
+    }
+
+    const char* output = nullptr;
+    REQUIRE(STI::Network::convertBuffer(tBuffer, output));
+
+    REQUIRE(output != nullptr);
+    for (std::size_t i = 0; i < expected.size(); ++i) {
+        CHECK(output[i] == expected.at(i));
+    }
+}
+
 TEST_CASE("NetworkConvert: MixedValue scalar types round trip")
 {
     {
@@ -130,6 +162,40 @@ TEST_CASE("NetworkConvert: MixedValue scalar types round trip")
             STI::Network::convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(value));
         CHECK(roundTrip.getString() == "ready");
     }
+}
+
+TEST_CASE("NetworkConvert: MixedValue VectorInt converts to CORBA valuesInt")
+{
+    const std::vector<int> expected = {1, -2, 3, 5};
+    STI::Utils::MixedValue value;
+    value.setValue(expected);
+
+    auto tValue = STI::Network::convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(value);
+
+    REQUIRE(tValue._d() == STI::TNetwork::TMixedValueType::MixedValueVectorInt);
+    REQUIRE(tValue.valuesInt().length() == expected.size());
+    for (CORBA::ULong i = 0; i < tValue.valuesInt().length(); ++i) {
+        CHECK(tValue.valuesInt()[i] == expected.at(i));
+    }
+}
+
+TEST_CASE("NetworkConvert: CORBA MixedValue valuesInt converts to MixedValue VectorInt")
+{
+    const std::vector<int> expected = {8, 13, -21, 34};
+    STI::TNetwork::TMixedValue tValue;
+    tValue.valuesInt(STI::TNetwork::TMixedValue::_valuesInt_seq());
+    tValue.valuesInt().length(static_cast<CORBA::ULong>(expected.size()));
+    for (CORBA::ULong i = 0; i < tValue.valuesInt().length(); ++i) {
+        tValue.valuesInt()[i] = expected.at(i);
+    }
+
+    auto value = STI::Network::convert<STI::TNetwork::TMixedValue, STI::Utils::MixedValue>(tValue);
+
+    REQUIRE(value.getType() == STI::Utils::MixedValueType::VectorInt);
+    const std::vector<int>* values = nullptr;
+    REQUIRE(value.getFlatVector(values));
+    REQUIRE(values != nullptr);
+    CHECK(*values == expected);
 }
 
 TEST_CASE("NetworkConvert: MixedValue vectors and file IDs round trip")

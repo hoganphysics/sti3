@@ -104,6 +104,7 @@ char* TFileHolder_i::md5Checksum()
     bool result = false;
 
     if (localFileHolder != 0) {
+        // TODO: Switch this local conversion to convertBuffer after TFileHolder_i::write has direct tests.
         unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(buffer).get_buffer();    //no deep copy
         char* dataC = reinterpret_cast<char*>(data);
         result = localFileHolder->write(dataC, buffer.length());
