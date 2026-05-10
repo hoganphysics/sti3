@@ -32,10 +32,9 @@ if(DEFINED ENV{PKG_BUILDNUM} AND NOT "$ENV{PKG_BUILDNUM}" STREQUAL "${STI3_BUILD
   message(FATAL_ERROR "Conda PKG_BUILDNUM=$ENV{PKG_BUILDNUM} does not match sti3_version.json build_number=${STI3_BUILD_NUMBER}")
 endif()
 
-set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number")
-if(NOT "${STI3_PACKAGE_BUILD_NUMBER}" STREQUAL "${STI3_BUILD_NUMBER}")
-  message(FATAL_ERROR "STI3_PACKAGE_BUILD_NUMBER=${STI3_PACKAGE_BUILD_NUMBER} does not match sti3_version.json build_number=${STI3_BUILD_NUMBER}")
-endif()
+# This value is derived metadata. Force-refresh it so existing local build trees
+# follow sti3_version.json after a version/build-number bump.
+set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number" FORCE)
 
 set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
 if(DEFINED ENV{PKG_BUILD_STRING} AND "${STI3_BUILD_STRING}" STREQUAL "")
