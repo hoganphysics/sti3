@@ -175,7 +175,7 @@ namespace Device
 {
 
 class DeviceID;
-struct VersionInfo;
+class VersionInfo;
 
 
 } //Device

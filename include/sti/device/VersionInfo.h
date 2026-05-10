@@ -9,8 +9,9 @@ namespace STI
 namespace Device
 {
 
-struct VersionInfo
+class VersionInfo
 {
+public:
     VersionInfo();
     VersionInfo(const std::string& component, const std::string& version);
 
