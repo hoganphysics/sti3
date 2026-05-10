@@ -26,6 +26,7 @@ add_executable(sti3_test_device
   device/mixedvalue_tests.cpp
   device/configuration_tests.cpp
   device/configfile_tests.cpp
+  device/dependencytree_tests.cpp
   device/cachedvalue_tests.cpp
   device/synchronizedmap_tests.cpp
   device/metadata_tests.cpp
@@ -50,6 +51,7 @@ add_executable(sti3_test_device
   device/channelmanager_tests.cpp
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
+  device/localdevicehub_tests.cpp
   device/localfileholder_tests.cpp
   device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp

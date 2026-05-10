@@ -73,3 +73,26 @@ TEST_CASE("VectorMap: merge and clear") {
     left.clear();
     CHECK(left.getVec().empty());
 }
+
+TEST_CASE("VectorMap: wrapped vector reflects map edits", "[vectormap][utils]") {
+    std::vector<std::string> backing;
+    VectorMap<std::string, std::string> map(backing);
+
+    map.add("k1", "q1");
+    map.add("k2", "q2");
+    map.prepend("k0", "q0");
+
+    CHECK(backing == std::vector<std::string>{"q0", "q1", "q2"});
+    CHECK(map.getIndexMap().at("k0") == 0);
+    CHECK(map.getIndexMap().at("k1") == 1);
+    CHECK(map.getIndexMap().at("k2") == 2);
+
+    VectorMap<std::string, std::string> other;
+    other.add("a", "alpha");
+    other.add("b", "beta");
+
+    REQUIRE(map.merge(other));
+    CHECK(backing == std::vector<std::string>{"q0", "q1", "q2", "alpha", "beta"});
+    CHECK(map.getIndexMap().at("a") == 3);
+    CHECK(map.getIndexMap().at("b") == 4);
+}
