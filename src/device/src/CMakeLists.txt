@@ -1,31 +1,20 @@
 cmake_minimum_required(VERSION 3.14...3.20)
 
+set(_sti3_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+
 if(NOT DEFINED STI3_VERSION)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/StiVersion.cmake")
-  sti3_load_version("${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+  include("${_sti3_root_dir}/cmake/StiVersion.cmake")
+  sti3_load_version("${_sti3_root_dir}")
 endif()
 
 # set the project name
 project(stidevice VERSION ${STI3_VERSION} DESCRIPTION "STI device library")
 
 if(NOT DEFINED STI3_GENERATED_INCLUDE_DIR)
-  set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number")
-  set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
-  if(DEFINED ENV{PKG_BUILD_STRING} AND "${STI3_BUILD_STRING}" STREQUAL "")
-    set(STI3_BUILD_STRING "$ENV{PKG_BUILD_STRING}")
-  endif()
-  if("${STI3_BUILD_STRING}" STREQUAL "placeholder")
-    set(STI3_BUILD_STRING "")
-  endif()
-  set(STI3_GIT_COMMIT "unknown" CACHE STRING "STI3 git commit for build metadata")
-  set(STI3_GIT_DIRTY_INT 0)
-  set(STI3_CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
-  set(STI3_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
-  file(MAKE_DIRECTORY "${STI3_GENERATED_INCLUDE_DIR}/sti/device")
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/VersionBuildInfo.h.in
-    ${STI3_GENERATED_INCLUDE_DIR}/sti/device/VersionBuildInfo.h
-    @ONLY
+  include("${_sti3_root_dir}/cmake/StiBuildInfo.cmake")
+  sti3_configure_build_info(
+    ROOT_DIR "${_sti3_root_dir}"
+    GENERATED_INCLUDE_DIR_VAR STI3_GENERATED_INCLUDE_DIR
   )
 endif()
 
