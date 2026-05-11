@@ -485,11 +485,7 @@ bool NetworkDeviceHub::refresh()
 	bool success = true;
 
 	if (orbmanager != 0 && localHub != 0) {
-		refreshHubConnections();
-		connectToTargetHubs();
-
 		success &= localHub->refresh(HubTrace());
-		success &= localHub->redistributeNodes(HubTrace());
 	}
 	else {
 		success = false;
