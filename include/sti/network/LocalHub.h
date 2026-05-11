@@ -373,6 +373,7 @@ bool STI::Network::LocalHub<ID, T>::refreshNodeReferences(const ID& id, const ty
 				&& nodeRef->refresh();		//check that the reference is alive
 
 			if (!success) {
+				collection->remove(refID);
 				removeNode(refID, HubTrace());		//remove broken reference from network
 			}
 		}

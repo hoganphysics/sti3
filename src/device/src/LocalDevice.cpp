@@ -388,28 +388,7 @@ void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalC
 
 bool LocalDevice::refresh()
 {
-	if (localCollection == 0) {
-		return true;
-	}
-
-	return true;
-
-	std::set<DeviceID> ids;
-	localCollection->getIDs(ids);
-	const auto selfID = getID();
-
-	for (auto& id : ids) {
-		if (id == selfID) {
-			continue;
-		}
-
-		std::shared_ptr<Device> node;
-		bool alive = localCollection->get(id, node) && node != 0 && node->refresh();
-		if (!alive) {
-			localCollection->remove(id);
-		}
-	}
-
+	// Local devices are live while their owning hub can call them; graph cleanup happens in LocalHub::refresh().
 	return true;
 }
 

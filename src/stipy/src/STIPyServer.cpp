@@ -405,6 +405,20 @@ void STIPyServer::cancelAll()
     }
 }
 
+bool STIPyServer::refresh()
+{
+    bool success = true;
+
+    if (libDeviceHub != 0) {
+        success &= libDeviceHub->refresh();
+    }
+    else {
+        success = false;
+    }
+
+    return DevicePy::refresh() && success;
+}
+
 void STIPyServer::setUserName(const std::string& name)
 {
     username = name;

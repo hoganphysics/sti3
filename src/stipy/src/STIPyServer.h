@@ -128,6 +128,8 @@ public:
     void cancelJob(const STI::Engine::EngineJobID& jobID);
     void cancelAll();
 
+    bool refresh();
+
     std::string printNetwork();
     std::string printNetwork(const std::string& baseContext);
 
@@ -159,4 +161,3 @@ private:
 } //STI
 
 #endif
-

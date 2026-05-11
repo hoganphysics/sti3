@@ -193,3 +193,27 @@ TEST_CASE("LocalDeviceHub propagates node removal across connected hubs", "[loca
     CHECK_FALSE(dev3->active);
     CHECK(dev3->disableCount >= 1);
 }
+
+TEST_CASE("LocalDeviceHub refresh removes dead references from collected devices", "[localdevicehub][network]")
+{
+    auto hub1 = std::make_shared<LocalDeviceHub>(HubID("Hub1", "127.0.0.1", 1));
+    auto hub2 = std::make_shared<LocalDeviceHub>(HubID("Hub2", "127.0.0.1", 2));
+
+    auto dev1 = std::make_shared<HubTestDevice>(makeDeviceID("dev1", 1));
+    auto dev2 = std::make_shared<HubTestDevice>(makeDeviceID("dev2", 2));
+
+    REQUIRE(hub1->addNode(dev1->getID(), dev1));
+    REQUIRE(hub2->addNode(dev2->getID(), dev2));
+    REQUIRE(Hub<DeviceID, Device>::connect(hub1, hub2));
+
+    REQUIRE(dev1->collectionContains(dev2->getID()));
+
+    dev2->alive = false;
+
+    REQUIRE(hub1->refresh());
+
+    CHECK_FALSE(dev1->collectionContains(dev2->getID()));
+    CHECK_FALSE(hub2->hasNodeID(dev2->getID()));
+    CHECK_FALSE(dev2->active);
+    CHECK(dev2->disableCount >= 1);
+}

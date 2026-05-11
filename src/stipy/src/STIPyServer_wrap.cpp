@@ -42,6 +42,10 @@ void init_STIPyServer(py::module& m)
 
         .def("cancelJob", &STIPyServer::cancelJob)
         .def("cancelAll", &STIPyServer::cancelAll)
+        .def("refresh", [](STIPyServer& self) {
+            py::gil_scoped_release release;
+            return self.refresh();
+        })
         
         .def("setUsername", &STIPyServer::setUserName, py::arg("name"))
         .def("username", &STIPyServer::getUserName)
@@ -56,4 +60,3 @@ void init_STIPyServer(py::module& m)
         ;
 
 }
-
