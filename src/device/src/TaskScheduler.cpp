@@ -34,10 +34,11 @@ void TaskScheduler::start()
 
 void TaskScheduler::stop()
 {
-	if (!running) return;
-
 	{
 		std::unique_lock<std::mutex> writeLock(schedulerMutex);
+
+		if (!running) return;
+
 		running = false;
 		schedulerCondition.notify_all();
 	}
@@ -61,6 +62,13 @@ void TaskScheduler::sendEvent(const TaskSchedulerEventType& type, const std::str
 	}
 }
 
+void TaskScheduler::sendEvents(const PendingEvents& events)
+{
+	for (auto& event : events) {
+		sendEvent(event.first, event.second);
+	}
+}
+
 void TaskScheduler::getIDs(std::set<std::string>& ids) const
 {
 	tasks.getKeys(ids);
@@ -80,21 +88,26 @@ void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 {
 	if (task == 0) return;
 
-	std::unique_lock<std::mutex> writeLock(schedulerMutex);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> writeLock(schedulerMutex);
 
-	tasks.add(task->getID(), task);
-	task->setStatus(TaskStatus::Active);
-	sendEvent(TaskSchedulerEventType::Add, task->getID());
+		tasks.add(task->getID(), task);
+		task->setStatus(TaskStatus::Active);
+		events.emplace_back(TaskSchedulerEventType::Add, task->getID());
 
-	auto it = findActiveTask(task->getID());
-	if (it != activeTasks.end()) {
-		//already added; replace
-		activeTasks.erase(it);
+		auto it = findActiveTask(task->getID());
+		if (it != activeTasks.end()) {
+			//already added; replace
+			activeTasks.erase(it);
+		}
+		activeTasks.push_back(task);
+		events.emplace_back(TaskSchedulerEventType::Activate, task->getID());
+
+		schedulerCondition.notify_all();
 	}
-	activeTasks.push_back(task);
-	sendEvent(TaskSchedulerEventType::Activate, task->getID());
 
-	schedulerCondition.notify_all();
+	sendEvents(events);
 }
 
 
@@ -111,98 +124,123 @@ void TaskScheduler::sortActiveTasks()
 
 void TaskScheduler::removeTask(const std::string& taskID)
 {
-	std::unique_lock<std::mutex> writeLock(schedulerMutex);
-	removeTask_(taskID);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> writeLock(schedulerMutex);
+		removeTask_(taskID, events);
+		schedulerCondition.notify_all();
+	}
+
+	sendEvents(events);
 }
 
-void TaskScheduler::removeTask_(const std::string& taskID)
+void TaskScheduler::removeTask_(const std::string& taskID, PendingEvents& events)
 {
-	deactivateTask_(taskID);
+	deactivateTask_(taskID, events);
 	tasks.remove(taskID);
-	sendEvent(TaskSchedulerEventType::Remove, taskID);
+	events.emplace_back(TaskSchedulerEventType::Remove, taskID);
 }
 
 void TaskScheduler::clear()
 {
-	std::unique_lock<std::mutex> writeLock(schedulerMutex);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> writeLock(schedulerMutex);
 
-	std::vector<std::shared_ptr<Task>> allTasks;
-	tasks.getValues(allTasks);
-	
-	for (auto& task : allTasks) {
-		if (task != 0) {
-			task->setStatus(TaskStatus::Inactive);
+		std::vector<std::shared_ptr<Task>> allTasks;
+		tasks.getValues(allTasks);
+		
+		for (auto& task : allTasks) {
+			if (task != 0) {
+				task->setStatus(TaskStatus::Inactive);
+			}
 		}
+
+		tasks.clear();
+		activeTasks.clear();
+		events.emplace_back(TaskSchedulerEventType::Refresh, "");
+
+		schedulerCondition.notify_all();
 	}
 
-	tasks.clear();
-	activeTasks.clear();
-	sendEvent(TaskSchedulerEventType::Refresh, "");
-
-	schedulerCondition.notify_all();
+	sendEvents(events);
 }
 
 void TaskScheduler::activateTask(const std::string& taskID)
 {
-	std::unique_lock<std::mutex> writeLock(schedulerMutex);
-	
-	std::shared_ptr<Task> task;
-	auto it = findActiveTask(taskID);
-
-	if (tasks.get(taskID, task) && task != 0) {
-		task->setStatus(TaskStatus::Active);
-		sendEvent(TaskSchedulerEventType::Activate, taskID);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> writeLock(schedulerMutex);
 		
-		if (it == activeTasks.end()) {
-			activeTasks.push_back(task);
+		std::shared_ptr<Task> task;
+		auto it = findActiveTask(taskID);
+
+		if (tasks.get(taskID, task) && task != 0) {
+			task->setStatus(TaskStatus::Active);
+			events.emplace_back(TaskSchedulerEventType::Activate, taskID);
+			
+			if (it == activeTasks.end()) {
+				activeTasks.push_back(task);
+			}
 		}
-	}
-	else {
-		//not found in map; should not be in activeTasks either
-		if (it != activeTasks.end()) {
-			activeTasks.erase(it);
+		else {
+			//not found in map; should not be in activeTasks either
+			if (it != activeTasks.end()) {
+				activeTasks.erase(it);
+			}
 		}
+
+		schedulerCondition.notify_all();
 	}
 
-	schedulerCondition.notify_all();
+	sendEvents(events);
 }
 
 void TaskScheduler::deactivateTask(const std::string& taskID)
 {
-	std::unique_lock<std::mutex> writeLock(schedulerMutex);
-	deactivateTask_(taskID);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> writeLock(schedulerMutex);
+		deactivateTask_(taskID, events);
+		schedulerCondition.notify_all();
+	}
+
+	sendEvents(events);
 }
 
-void TaskScheduler::deactivateTask_(const std::string& taskID)
+void TaskScheduler::deactivateTask_(const std::string& taskID, PendingEvents& events)
 {
 	std::shared_ptr<Task> task;
 	auto it = findActiveTask(taskID);
 
 	if (tasks.get(taskID, task) && task != 0) {
 		task->setStatus(TaskStatus::Inactive);
-		sendEvent(TaskSchedulerEventType::Deactivate, taskID);
+		events.emplace_back(TaskSchedulerEventType::Deactivate, taskID);
 	}
 
 	if (it != activeTasks.end()) {
 		activeTasks.erase(it);
 	}
-
-	schedulerCondition.notify_all();
 }
 
 void TaskScheduler::runNow(const std::string& taskID)
 {
-	std::unique_lock<std::mutex> taskLock(schedulerMutex);
+	PendingEvents events;
+	{
+		std::unique_lock<std::mutex> taskLock(schedulerMutex);
 
-	std::shared_ptr<Task> task;
-	
-	if (getTask(taskID, task)) {
-		run(task);
-		schedulerCondition.notify_all();
+		std::shared_ptr<Task> task;
+		
+		if (getTask(taskID, task)) {
+			run(task, events);
+			schedulerCondition.notify_all();
+		}
 	}
+
+	sendEvents(events);
 }
 
-void TaskScheduler::run(std::shared_ptr<Task>& task)
+void TaskScheduler::run(std::shared_ptr<Task>& task, PendingEvents& events)
 {
 	if (task == 0) return;
 
@@ -214,7 +252,7 @@ void TaskScheduler::run(std::shared_ptr<Task>& task)
 	}
 
 	if (!task->repeat()) {
-		deactivateTask_(task->getID());
+		deactivateTask_(task->getID(), events);
 	}
 }
 
@@ -230,23 +268,40 @@ void TaskScheduler::taskLoop()
 	double coarseSleep = 10;		//boundary (in seconds) between using seconds vs milliseconds to specify sleep
 	double nextSleep = maxSleep;	//seconds
 
-	while (running)
+	while (true)
 	{
+		PendingEvents events;
 		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+
+		if (!running) {
+			break;
+		}
 
 		sortActiveTasks();
 
-		//run tasks
+		std::vector<std::shared_ptr<Task>> readyTasks;
 		for (auto& task : activeTasks) {
 			if (task != 0 && task->secondsToNextRun() <= 0) {
-				run(task);
+				readyTasks.push_back(task);
 			}
 			else {
 				break;	//the rest of the tasks have positive waits
 			}
 		}
 
+		for (auto& task : readyTasks) {
+			if (task != 0 && findActiveTask(task->getID()) != activeTasks.end()) {
+				run(task, events);
+			}
+		}
+
 		sortActiveTasks();	//resort so recently run task are at the back
+
+		if (!events.empty()) {
+			taskLock.unlock();
+			sendEvents(events);
+			continue;
+		}
 		
 		if (activeTasks.size() > 0) {
 			nextSleep = activeTasks.at(0)->secondsToNextRun();	//first task is the next to run

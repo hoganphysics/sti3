@@ -43,6 +43,36 @@ TEST_CASE("TaskScheduler: addTask stores and activates tasks") {
     CHECK(events[1].second == "task-1");
 }
 
+TEST_CASE("TaskScheduler: listener callbacks can update tasks") {
+    class DeactivatingListener : public STI::Utils::TaskSchedulerListener {
+    public:
+        explicit DeactivatingListener(TaskScheduler& scheduler)
+            : scheduler(scheduler) {}
+
+        void handleEvent(const STI::Utils::TaskSchedulerEvent& evt) override {
+            if (evt.type == TaskSchedulerEventType::Add) {
+                scheduler.deactivateTask(evt.taskID);
+                deactivated = true;
+            }
+        }
+
+        bool deactivated{false};
+
+    private:
+        TaskScheduler& scheduler;
+    };
+
+    TaskScheduler scheduler;
+    DeactivatingListener listener(scheduler);
+    scheduler.addListener(&listener);
+
+    auto task = std::make_shared<DummyTask>("listener-update");
+    scheduler.addTask(task);
+
+    CHECK(listener.deactivated);
+    CHECK(task->getStatus() == TaskStatus::Inactive);
+}
+
 TEST_CASE("TaskScheduler: runNow executes ready non-repeating task and deactivates") {
     TaskScheduler scheduler;
     RecordingListener listener;
