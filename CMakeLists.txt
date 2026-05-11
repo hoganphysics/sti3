@@ -55,19 +55,26 @@ if("${STI3_GIT_DIRTY}" STREQUAL "" AND DEFINED ENV{STI3_GIT_DIRTY})
   set(STI3_GIT_DIRTY "$ENV{STI3_GIT_DIRTY}")
 endif()
 
-if("${STI3_GIT_COMMIT}" STREQUAL "" AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   find_package(Git QUIET)
   if(Git_FOUND)
-    execute_process(
-      COMMAND "${GIT_EXECUTABLE}" rev-parse --short=12 HEAD
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      OUTPUT_VARIABLE STI3_GIT_COMMIT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      ERROR_QUIET
-    )
+    if("${STI3_GIT_COMMIT}" STREQUAL "")
+      execute_process(
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --short=12 HEAD
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE STI3_GIT_COMMIT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+      )
+    endif()
     if("${STI3_GIT_DIRTY}" STREQUAL "")
       execute_process(
-        COMMAND "${GIT_EXECUTABLE}" status --porcelain
+        COMMAND "${GIT_EXECUTABLE}" update-index -q --refresh
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        ERROR_QUIET
+      )
+      execute_process(
+        COMMAND "${GIT_EXECUTABLE}" status --porcelain --untracked-files=no
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         OUTPUT_VARIABLE _sti3_git_status
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -78,6 +85,55 @@ if("${STI3_GIT_COMMIT}" STREQUAL "" AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git
       else()
         set(STI3_GIT_DIRTY "1")
       endif()
+    endif()
+
+    set(_sti3_git_configure_deps)
+    foreach(_sti3_git_path_name IN ITEMS HEAD index packed-refs)
+      execute_process(
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --git-path "${_sti3_git_path_name}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE _sti3_git_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+      )
+      if(NOT "${_sti3_git_path}" STREQUAL "")
+        if(NOT IS_ABSOLUTE "${_sti3_git_path}")
+          set(_sti3_git_path "${CMAKE_CURRENT_SOURCE_DIR}/${_sti3_git_path}")
+        endif()
+        if(EXISTS "${_sti3_git_path}")
+          list(APPEND _sti3_git_configure_deps "${_sti3_git_path}")
+        endif()
+      endif()
+    endforeach()
+
+    execute_process(
+      COMMAND "${GIT_EXECUTABLE}" symbolic-ref -q HEAD
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      OUTPUT_VARIABLE _sti3_git_head_ref
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if(NOT "${_sti3_git_head_ref}" STREQUAL "")
+      execute_process(
+        COMMAND "${GIT_EXECUTABLE}" rev-parse --git-path "${_sti3_git_head_ref}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE _sti3_git_head_ref_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+      )
+      if(NOT "${_sti3_git_head_ref_path}" STREQUAL "")
+        if(NOT IS_ABSOLUTE "${_sti3_git_head_ref_path}")
+          set(_sti3_git_head_ref_path "${CMAKE_CURRENT_SOURCE_DIR}/${_sti3_git_head_ref_path}")
+        endif()
+        if(EXISTS "${_sti3_git_head_ref_path}")
+          list(APPEND _sti3_git_configure_deps "${_sti3_git_head_ref_path}")
+        endif()
+      endif()
+    endif()
+
+    if(_sti3_git_configure_deps)
+      list(REMOVE_DUPLICATES _sti3_git_configure_deps)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${_sti3_git_configure_deps})
     endif()
   endif()
 endif()
