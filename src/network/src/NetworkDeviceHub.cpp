@@ -2,6 +2,7 @@
 #include <sti/LocalDeviceHub.h>
 #include <sti/device/DeviceID.h>
 #include <sti/network/DeviceHub.h>
+#include <sti/network/HubTrace.h>
 
 #include <sti/utils/TaskScheduler.h>
 #include <sti/utils/IntervalTask.h>
@@ -19,6 +20,7 @@ using STI::Device::DeviceID;
 using STI::Network::LocalDeviceHub;
 using STI::Network::ORBManager;
 using STI::Network::DeviceHub;
+using STI::Network::HubTrace;
 
 
 unsigned NetworkDeviceHub::hubNumber = 0;
@@ -478,6 +480,20 @@ void NetworkDeviceHub::run(bool block)
 	}
 }
 
+bool NetworkDeviceHub::refresh()
+{
+	bool success = true;
+
+	if (orbmanager != 0 && localHub != 0) {
+		success &= localHub->refresh(HubTrace());
+	}
+	else {
+		success = false;
+	}
+
+	return success;
+}
+
 void NetworkDeviceHub::refreshHubConnections()
 {
 	// Find live registered Hubs that attempted to connect to this Hub. Attempt to reconnect.
@@ -622,4 +638,3 @@ void NetworkDeviceHub::walk(LocalDeviceHub::HubNodeWalker& root) const
 		localHub->walk(root);
 	}
 }
-

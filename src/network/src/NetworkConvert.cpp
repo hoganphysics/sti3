@@ -140,16 +140,10 @@ bool STI::Network::convertBuffer(const char* buffer, unsigned length, ::STI::TNe
 
 }
 
-bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, char* buffer)
+bool STI::Network::convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, const char*& buffer)
 {
-	//for (unsigned i = 0; i < tBuffer.length(); ++i) {
-	//	buffer[i] = tBuffer[i];
-	//}
-	//return true;
-
-	bool release = tBuffer.release();
-	unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(tBuffer).get_buffer(release);	//orphan if release = true
-	buffer = reinterpret_cast<char*>(data);
+	unsigned char* data = const_cast<STI::TNetwork::OctetSeq&>(tBuffer).get_buffer();	//no deep copy
+	buffer = reinterpret_cast<const char*>(data);
 	return true;
 
 }
@@ -844,4 +838,3 @@ bool STI::Network::convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel&
 
     return true;
 }
-

@@ -26,6 +26,7 @@ add_executable(sti3_test_device
   device/mixedvalue_tests.cpp
   device/configuration_tests.cpp
   device/configfile_tests.cpp
+  device/dependencytree_tests.cpp
   device/cachedvalue_tests.cpp
   device/synchronizedmap_tests.cpp
   device/metadata_tests.cpp
@@ -50,6 +51,7 @@ add_executable(sti3_test_device
   device/channelmanager_tests.cpp
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
+  device/localdevicehub_tests.cpp
   device/localfileholder_tests.cpp
   device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp
@@ -126,19 +128,46 @@ catch_discover_tests(sti3_test_device
 
 # catch_discover_tests(sti3_test_device)
 
-# # ---- Network tests ----
-# add_executable(sti3_test_network
-#   network/test_network_example.cpp
-#   # add more network test .cpp files here
-# )
+# ---- Network tests ----
+add_executable(sti3_test_network
+  network/convert/basic_convert_tests.cpp
+  network/convert/enum_convert_tests.cpp
+  network/convert/record_convert_tests.cpp
+)
 
-# target_link_libraries(sti3_test_network
-#   PRIVATE
-#     Catch2::Catch2WithMain
-#     # link your network lib target here:
-#     # sti3_network
-# )
+set_target_properties(sti3_test_network PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED TRUE
+  BUILD_RPATH "\$ORIGIN/../src/network/src;\$ORIGIN/../src/device/src"
+  BUILD_RPATH_USE_ORIGIN TRUE
+)
 
-# target_compile_features(sti3_test_network PRIVATE cxx_std_17)
+target_include_directories(sti3_test_network PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/network/src>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/network/src/convert>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/network/src/generated>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/device/src>
+  $<BUILD_INTERFACE:${OMNIORB_INCLUDE_DIR}>
+)
 
-# catch_discover_tests(sti3_test_network)
+target_link_libraries(sti3_test_network
+  PRIVATE
+    Catch2::Catch2WithMain
+    sti3::stinetwork
+    sti3::stidevice
+    Boost::headers
+)
+
+if(TARGET OmniORB::omniORB4)
+  target_link_libraries(sti3_test_network PRIVATE OmniORB::omniORB4)
+endif()
+
+foreach(_sti3_omni_lib IN ITEMS OMNITHREAD_LIB OMNIORB_LIB OMNIDYNAMIC_LIB)
+  if(${_sti3_omni_lib})
+    target_link_libraries(sti3_test_network PRIVATE ${${_sti3_omni_lib}})
+  endif()
+endforeach()
+
+catch_discover_tests(sti3_test_network
+  DISCOVERY_MODE PRE_TEST
+)

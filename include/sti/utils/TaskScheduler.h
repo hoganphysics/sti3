@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <utility>
 
 
 namespace STI
@@ -52,11 +53,13 @@ public:
 	void setMinSleep(double sleep);		//in seconds
 
 private:
+	using PendingEvent = std::pair<TaskSchedulerEventType, std::string>;
+	using PendingEvents = std::vector<PendingEvent>;
 	
-	void run(std::shared_ptr<Task>& task);
+	void run(std::shared_ptr<Task>& task, PendingEvents& events);
 	
-	void removeTask_(const std::string& taskID);
-	void deactivateTask_(const std::string& taskID);
+	void removeTask_(const std::string& taskID, PendingEvents& events);
+	void deactivateTask_(const std::string& taskID, PendingEvents& events);
 
 	void taskLoop();
 	
@@ -67,6 +70,7 @@ private:
 	std::vector<std::shared_ptr<Task>> activeTasks;
 
 	void sendEvent(const TaskSchedulerEventType& task, const std::string& taskID);
+	void sendEvents(const PendingEvents& events);
 	std::vector<TaskSchedulerListener*> listeners;
 
 	std::thread taskThread;

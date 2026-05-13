@@ -67,6 +67,7 @@ public:
 	void setNameServiceAddress(const std::string& nameServiceAddress) { _nameServiceAddress = nameServiceAddress; }
 
 	void run(bool block = true);
+	bool refresh();
 	void shutdown();
 	void disconnect();
 
@@ -142,4 +143,3 @@ private:
 
 
 #endif
-

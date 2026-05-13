@@ -131,6 +131,10 @@ void init_DeviceHub(py::module& m)
             return ids;
         })
         .def("numberOfNodes", &LocalDeviceHub::numberOfNodes)
+        .def("refresh", [](LocalDeviceHub& self) {
+            py::gil_scoped_release release;
+            return self.refresh();
+        })
         .def("getID", &LocalDeviceHub::getID)
         .def("getHubIDs", [](const LocalDeviceHub& self){
             std::set<HubID> ids;
@@ -224,6 +228,10 @@ void init_DeviceHub(py::module& m)
                 py::gil_scoped_release release;
                 return self.run(block);
             })
+        .def("refresh", [](NetworkDeviceHub& self) {
+            py::gil_scoped_release release;
+            return self.refresh();
+        })
         .def("shutdown", &NetworkDeviceHub::shutdown)
         .def("disconnect", &NetworkDeviceHub::disconnect)
         .def("walk", [](NetworkDeviceHub& self) {
@@ -236,4 +244,3 @@ void init_DeviceHub(py::module& m)
         ;
 
 }
-

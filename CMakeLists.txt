@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.20...3.22)
 
 include(cmake/StiVersion.cmake)
+include(cmake/StiBuildInfo.cmake)
 sti3_load_version(${CMAKE_CURRENT_SOURCE_DIR})
 
 project(sti3 VERSION ${STI3_VERSION} DESCRIPTION "sti3")
+
+sti3_configure_build_info(
+  ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
+  GENERATED_INCLUDE_DIR_VAR STI3_GENERATED_INCLUDE_DIR
+)
 
 set(STI_BASE_DIR ${sti3_SOURCE_DIR})
 message("STI_BASE_DIR: ${STI_BASE_DIR}")
@@ -23,86 +29,6 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
-
-if(DEFINED ENV{PKG_VERSION} AND NOT "$ENV{PKG_VERSION}" STREQUAL "${STI3_VERSION}")
-  message(FATAL_ERROR "Conda PKG_VERSION=$ENV{PKG_VERSION} does not match sti3_version.json version=${STI3_VERSION}")
-endif()
-
-if(DEFINED ENV{PKG_BUILDNUM} AND NOT "$ENV{PKG_BUILDNUM}" STREQUAL "${STI3_BUILD_NUMBER}")
-  message(FATAL_ERROR "Conda PKG_BUILDNUM=$ENV{PKG_BUILDNUM} does not match sti3_version.json build_number=${STI3_BUILD_NUMBER}")
-endif()
-
-# This value is derived metadata. Force-refresh it so existing local build trees
-# follow sti3_version.json after a version/build-number bump.
-set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number" FORCE)
-
-set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
-if(DEFINED ENV{PKG_BUILD_STRING} AND "${STI3_BUILD_STRING}" STREQUAL "")
-  set(STI3_BUILD_STRING "$ENV{PKG_BUILD_STRING}")
-endif()
-if("${STI3_BUILD_STRING}" STREQUAL "placeholder")
-  set(STI3_BUILD_STRING "")
-endif()
-
-set(STI3_GIT_COMMIT "" CACHE STRING "STI3 git commit for build metadata")
-if("${STI3_GIT_COMMIT}" STREQUAL "" AND DEFINED ENV{STI3_GIT_COMMIT})
-  set(STI3_GIT_COMMIT "$ENV{STI3_GIT_COMMIT}")
-endif()
-
-set(STI3_GIT_DIRTY "" CACHE STRING "STI3 git dirty flag for build metadata")
-if("${STI3_GIT_DIRTY}" STREQUAL "" AND DEFINED ENV{STI3_GIT_DIRTY})
-  set(STI3_GIT_DIRTY "$ENV{STI3_GIT_DIRTY}")
-endif()
-
-if("${STI3_GIT_COMMIT}" STREQUAL "" AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-  find_package(Git QUIET)
-  if(Git_FOUND)
-    execute_process(
-      COMMAND "${GIT_EXECUTABLE}" rev-parse --short=12 HEAD
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      OUTPUT_VARIABLE STI3_GIT_COMMIT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      ERROR_QUIET
-    )
-    if("${STI3_GIT_DIRTY}" STREQUAL "")
-      execute_process(
-        COMMAND "${GIT_EXECUTABLE}" status --porcelain
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE _sti3_git_status
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-      )
-      if("${_sti3_git_status}" STREQUAL "")
-        set(STI3_GIT_DIRTY "0")
-      else()
-        set(STI3_GIT_DIRTY "1")
-      endif()
-    endif()
-  endif()
-endif()
-
-if("${STI3_GIT_COMMIT}" STREQUAL "")
-  set(STI3_GIT_COMMIT "unknown")
-endif()
-
-string(TOLOWER "${STI3_GIT_DIRTY}" _sti3_git_dirty_lower)
-if(_sti3_git_dirty_lower STREQUAL "1" OR
-   _sti3_git_dirty_lower STREQUAL "true" OR
-   _sti3_git_dirty_lower STREQUAL "yes" OR
-   _sti3_git_dirty_lower STREQUAL "dirty")
-  set(STI3_GIT_DIRTY_INT 1)
-else()
-  set(STI3_GIT_DIRTY_INT 0)
-endif()
-
-set(STI3_CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
-set(STI3_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
-file(MAKE_DIRECTORY "${STI3_GENERATED_INCLUDE_DIR}/sti/device")
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VersionBuildInfo.h.in
-  ${STI3_GENERATED_INCLUDE_DIR}/sti/device/VersionBuildInfo.h
-  @ONLY
-)
 
 # # Find pybind11 cmake directory
 # execute_process(

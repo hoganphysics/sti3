@@ -85,6 +85,48 @@ offset = 2
     CHECK(offsets[1] == "3");
 }
 
+TEST_CASE("ConfigFile extraction keeps data from nested relative sections", "[config] [configfile]") {
+    fileholder_test_support::TempDir tempDir("configfile-extract-");
+    const std::string contents = R"([Test]
+p1 = Hello
+p2 = [1, 2, entry, 4,5]
+p3 = Simple
+
+[.STI]
+parser = off
+
+[.Persistence]
+logdir = home/test
+
+[Numbers]
+ui = [h , s,98]
+
+[Numbers.STI]
+another = 56
+)";
+    auto configPath = writeConfig(tempDir.path, "legacy.ini", contents);
+
+    ConfigFile config(configPath.string());
+    REQUIRE(config.isParsed());
+
+    CHECK(config.get<std::string>("Test", "p2", "missing").get() == "[1, 2, entry, 4,5]");
+    CHECK(config.isList("Test", "p2"));
+
+    config.addToList("Test", "p1", "[95]");
+    auto updated = config.getList("Test", "p1");
+    REQUIRE(updated.size() == 2);
+    CHECK(updated[0] == "Hello");
+    CHECK(updated[1] == "[95]");
+
+    auto testConfig = config.extract("Test");
+    CHECK(testConfig.get<std::string>("", "p3", "missing").get() == "Simple");
+    CHECK(testConfig.get<std::string>("STI", "parser", "missing").get() == "off");
+    CHECK(testConfig.get<std::string>("STI.Persistence", "logdir", "missing").get() == "home/test");
+
+    auto numbersConfig = config.extract("Numbers.STI");
+    CHECK(numbersConfig.get<int>("", "another", 0).get() == 56);
+}
+
 TEST_CASE("ConfigFile stops parsing on malformed lines", "[config] [configfile]") {
     fileholder_test_support::TempDir tempDir("configfile-malformed-");
     const std::string contents = R"(good = 1
