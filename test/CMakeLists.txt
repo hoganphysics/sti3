@@ -118,8 +118,16 @@ set_target_properties(sti3_test_device PROPERTIES
 # Catch2 provides a CMake helper to auto-register tests with ctest
 include(Catch)
 
+set(_sti3_test_device_runtime_dirs)
+if(TARGET stidevice)
+  list(APPEND _sti3_test_device_runtime_dirs "$<TARGET_FILE_DIR:stidevice>")
+elseif(TARGET sti3::stidevice)
+  list(APPEND _sti3_test_device_runtime_dirs "$<TARGET_FILE_DIR:sti3::stidevice>")
+endif()
+
 catch_discover_tests(sti3_test_device
   DISCOVERY_MODE PRE_TEST
+  DL_PATHS ${_sti3_test_device_runtime_dirs}
 )
 
 
@@ -150,6 +158,18 @@ target_include_directories(sti3_test_network PRIVATE
   $<BUILD_INTERFACE:${OMNIORB_INCLUDE_DIR}>
 )
 
+if(MSVC)
+  target_compile_definitions(sti3_test_network PRIVATE
+    __WIN32__
+    __x86__
+    _WIN32_WINNT=0x0400
+    __NT__
+    __OSVERSION__=4
+    _WINDOWS
+    _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+  )
+endif()
+
 target_link_libraries(sti3_test_network
   PRIVATE
     Catch2::Catch2WithMain
@@ -170,4 +190,5 @@ endforeach()
 
 catch_discover_tests(sti3_test_network
   DISCOVERY_MODE PRE_TEST
+  DL_PATHS ${_sti3_test_device_runtime_dirs} $<TARGET_FILE_DIR:sti3::stinetwork>
 )

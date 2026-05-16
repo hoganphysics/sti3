@@ -18,8 +18,9 @@ TEST_CASE("FileID: equality, ordering, and paths") {
     FileID fidB = fidA;
     CHECK(fidA == fidB);
     CHECK_FALSE(fidA != fidB);
-    CHECK(fidA.getFullFilename() == "/data/file.txt");
-    CHECK(fidA.print() == "<origin=origin1, file=/data/file.txt>");
+    const auto expectedFullFilename = (std::filesystem::path("/data") / "file.txt").string();
+    CHECK(fidA.getFullFilename() == expectedFullFilename);
+    CHECK(fidA.print() == "<origin=origin1, file=" + expectedFullFilename + ">");
 
     FileID fidC = fidA;
     fidC.filename = "z.txt";
