@@ -81,7 +81,9 @@ void LocalEventEngineDependencyParser::addDeviceEventTargets(EventEngineDependen
     localDevice->getEventTargets(targetIDs);
         
     //Add local event targets (the local device can generate events for these)
-    for (auto& targetID : targetIDs) {
+    for (auto& rawTargetID : targetIDs) {
+
+        auto targetID = findCanonicalDeviceID(rawTargetID);
 
         subtree.clear();
 
@@ -110,26 +112,40 @@ void LocalEventEngineDependencyParser::addDeviceEventTargets(EventEngineDependen
 
 std::string LocalEventEngineDependencyParser::findTargetServerID(const STI::Device::DeviceID& deviceID)
 {
-    auto targetServerID = deviceID.getTargetServerID();
+    auto localID = findCanonicalDeviceID(deviceID);
+    auto targetServerID = localID.getTargetServerID();
 
     if (targetServerID.compare("") == 0) {
-        //no target server ID specified; attempt to lookup in local device collection
-
-        std::set<DeviceID> ids;
-        localCollection->getIDs(ids);
-
-        auto found_it = ids.find(deviceID);
-
-        if (found_it != ids.end()) {
-            targetServerID = found_it->getTargetServerID();     //replace with value from collection
-        }
+        targetServerID = deviceID.getTargetServerID();
     }
 
     return targetServerID;
 }
 
+DeviceID LocalEventEngineDependencyParser::findCanonicalDeviceID(const STI::Device::DeviceID& deviceID) const
+{
+    if (localCollection == 0) {
+        return deviceID;
+    }
+
+    std::set<DeviceID> ids;
+    localCollection->getIDs(ids);
+
+    auto found_it = ids.find(deviceID);
+    if (found_it != ids.end()) {
+        return *found_it;
+    }
+
+    if (localDevice->isEventTarget(deviceID) && deviceID.getTargetServerID().empty()) {
+        return DeviceID(deviceID.getName(), deviceID.getAddress(), deviceID.getModule(), localDeviceID.getID());
+    }
+
+    return deviceID;
+}
+
 bool LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<DeviceID>& targets, 
-    const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer, std::set<DeviceID>& upstreamTargets)
+    const EventEngineDependencyTree& tree, std::map<std::string, std::set<DeviceID>>& targetsByServer, std::set<DeviceID>& upstreamTargets,
+    bool allowLocalPartnerOwnership)
 {
     bool changes = false;
     //Sort (by server) all targets that are below this device in the graph.
@@ -137,16 +153,26 @@ bool LocalEventEngineDependencyParser::addToTargetsByServer(const std::set<Devic
     //is not responsible for those targets.
 
     //Note: if the id is not in the tree, it will be trivially added to set
-    for (auto& id : targets) {
+    for (auto& rawID : targets) {
+        auto id = findCanonicalDeviceID(rawID);
+        auto targetServerID = findTargetServerID(id);
+
         if (id == localDeviceID) continue;
 
         if (tree.hasBranchToTarget(id, localDeviceID)) {    //Found path: id -> ... -> ... -> localDevicID
             //this id has no path to the localDeviceID (it is not above localDeviceID in the tree).
             upstreamTargets.insert(id);
         }
-        else if (!tree.hasBranchToTarget(DeviceID(id.getTargetServerID()), id)) {    //Query path: id.targetServerID -> ... -> ... -> id
+        else if (allowLocalPartnerOwnership
+            && targetServerID != localDeviceID.getID()
+            && tree.hasGraphBranchToTarget(localDeviceID, id)) {
+            //The root parser can act as server for its declared partner/event-target edge
+            //when the target's declared server is elsewhere. Recursive parsers must keep
+            //the targetServerID route so normal server-owned parsing can distribute events.
+        }
+        else if (!tree.hasBranchToTarget(DeviceID(targetServerID), id)) {    //Query path: id.targetServerID -> ... -> ... -> id
             //id's targretServerID is not in the tree, or is not connected to id
-            targetsByServer[findTargetServerID(id)].insert(id);
+            targetsByServer[targetServerID].insert(id);
             changes = true;
         }
     }
@@ -235,6 +261,8 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
                                                 std::set<STI::Device::DeviceID>& missingTargets, std::vector<EngineParsingMessage>& messages,
                                                 const STI::Device::DeviceTrace& trace)
 {
+    bool allowLocalPartnerOwnership = (trace.size() == 0);
+
 	STI::Device::DeviceTrace newTrace;
     if (loopDetected(trace, newTrace)) {
         return;     //avoid infinite recursion if the network graph has a loop
@@ -242,8 +270,19 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
 
     //*** (1) Check for events targeting the local device ***//
 
-    //If there are local events, add this device's event targets (partners)
-    if (evtTargets.contains(localDeviceID)) {
+    //If there are local events or events for a declared local event target, add this device's
+    //event targets (partners). The local device can act as the server for those targets.
+    bool includeLocalEventTargets = evtTargets.contains(localDeviceID);
+    if (!includeLocalEventTargets) {
+        for (auto& id : evtTargets) {
+            if (localDevice->isEventTarget(id)) {
+                includeLocalEventTargets = true;
+                break;
+            }
+        }
+    }
+
+    if (includeLocalEventTargets) {
         EventEngineDependencyTree subtree;
         addDeviceEventTargets(subtree, messages, STI::Device::DeviceTrace());
         tree.addTree(subtree);
@@ -259,11 +298,11 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
     std::set<DeviceID> upstreamTargets;
 
     std::map<std::string, std::set<DeviceID>> targetsByServer;   // ["server", {devices}]
-    addToTargetsByServer(evtTargets, tree, targetsByServer, upstreamTargets);
+    addToTargetsByServer(evtTargets, tree, targetsByServer, upstreamTargets, allowLocalPartnerOwnership);
 
     std::set<DeviceID> localTargets;    //for targets originating from addDeviceEventTargets above that may have a different targetServerID
     tree.getNodes(localTargets);
-    addToTargetsByServer(localTargets, tree, targetsByServer, upstreamTargets);
+    addToTargetsByServer(localTargets, tree, targetsByServer, upstreamTargets, allowLocalPartnerOwnership);
 
    
     //*** (3) Pass targets down the server chain, including localDeviceID if it is a targetServer ***//
@@ -314,7 +353,7 @@ void LocalEventEngineDependencyParser::getDependants(const std::set<DeviceID>& e
 
         if (unownedIDs.size() != 0) {
             //Any unownedIDs may be new and might require another pass
-            if (addToTargetsByServer(unownedIDs, tree, targetsByServer, upstreamTargets)) {
+            if (addToTargetsByServer(unownedIDs, tree, targetsByServer, upstreamTargets, allowLocalPartnerOwnership)) {
                 //Tree has changed => new server found; start over
                 it = targetsByServer.begin();
             }

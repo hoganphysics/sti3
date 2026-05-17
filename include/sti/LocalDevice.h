@@ -197,6 +197,8 @@ public:
 
 private:
 
+	DeviceID normalizeEventTargetID(const DeviceID& id) const;
+
     void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
 
     void addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);

@@ -16,6 +16,7 @@
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/SynchronousEvent.h>
+#include <sti/utils/Distributer.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/MixedValue.h>
 
@@ -57,6 +58,7 @@ using STI::Engine::ShotID;
 using STI::Engine::SynchronousEvent;
 using STI::Engine::SynchronousEventVector;
 using STI::Utils::Configuration;
+using STI::Utils::Distributer;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
@@ -116,13 +118,27 @@ public:
         for (auto& tuple : eventsIn) {
             synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first, loadCount, playCount));
 
-            for (auto& rawEvent : tuple.second) {
-                partner(partnerID).addEvent(tuple.first, partnerChannel, rawEvent.value(), rawEvent);
+            if (!partnerID.empty()) {
+                for (auto& rawEvent : tuple.second) {
+                    if (useDirectRawPartnerEvents) {
+                        RawEvent partnerEvent(
+                            RawEventTarget(partnerID, partnerChannel),
+                            tuple.first,
+                            rawEvent.value(),
+                            0,
+                            rawEvent.type());
+                        addEvent(partnerEvent, rawEvent);
+                    }
+                    else {
+                        partner(partnerID).addEvent(tuple.first, partnerChannel, rawEvent.value(), rawEvent);
+                    }
+                }
             }
         }
     }
 
     DeviceID partnerID;
+    bool useDirectRawPartnerEvents = false;
     int loadCount = 0;
     int playCount = 0;
 };
@@ -145,6 +161,15 @@ std::shared_ptr<STI::Engine::Shot> makeShot(LocalEventEngineScheduler& scheduler
     group->addEvent(RawEventTarget(targetID, 0), 10.0, MixedValue(1.0), RawEventType::Play);
 
     return scheduler.createShot(config, group);
+}
+
+std::unique_ptr<Distributer<DeviceID, Device>> distributeDevices(std::initializer_list<std::shared_ptr<PartnerGeneratingDevice>> devices)
+{
+    auto distributer = std::make_unique<Distributer<DeviceID, Device>>();
+    for (auto& device : devices) {
+        REQUIRE(distributer->add(device->getID(), device));
+    }
+    return distributer;
 }
 
 EngineJobStatus waitForParseTerminal(LocalEventEngineScheduler& scheduler, const ParseID& pid)
@@ -218,6 +243,21 @@ void requireAbstractParse(LocalEventEngineScheduler& scheduler, const ParseID& p
 	CHECK(parseJob->getMissingTargetIDs().contains(missingID));
 }
 
+void requireConcreteParse(LocalEventEngineScheduler& scheduler, const ParseID& pid)
+{
+    std::shared_ptr<ParseResult> parseResult;
+    REQUIRE(scheduler.getParseResult(pid, parseResult));
+    REQUIRE(parseResult != nullptr);
+
+    CHECK(countParsingMessages(parseResult->messages, "Abstract Shot") == 0);
+
+	std::shared_ptr<EventEngineJob> parseJob;
+	REQUIRE(scheduler.getJob(EngineJobID(pid), parseJob));
+	REQUIRE(parseJob != nullptr);
+	CHECK(countParsingMessages(parseJob->getParsingMessages(), "Abstract Shot") == 0);
+	CHECK(parseJob->getMissingTargetIDs().empty());
+}
+
 } // namespace
 
 TEST_CASE("Declared missing partner keeps its target ID without entering the device collection")
@@ -236,6 +276,23 @@ TEST_CASE("Declared missing partner keeps its target ID without entering the dev
     std::set<DeviceID> ids;
     collection->getIDs(ids);
     CHECK(ids.empty());
+}
+
+TEST_CASE("Event target declared without target server is owned by local device")
+{
+    PartnerGeneratingDevice server("Server", 2, "root");
+    DeviceID targetWithoutServer("NoServerTarget", "127.0.0.1", 7);
+
+    server.setPartnerTarget(targetWithoutServer);
+
+    std::set<DeviceID> eventTargets;
+    server.getEventTargets(eventTargets);
+    REQUIRE(eventTargets.size() == 1);
+
+    auto declaredTarget = *eventTargets.begin();
+    CHECK(declaredTarget.getID() == targetWithoutServer.getID());
+    CHECK(declaredTarget.getTargetServerID() == server.getID().getID());
+    CHECK(server.partner(targetWithoutServer).getID().getTargetServerID() == server.getID().getID());
 }
 
 TEST_CASE("Missing partner-generated target makes parse abstract and blocks play")
@@ -284,4 +341,149 @@ TEST_CASE("Missing partner remains abstract when its target server differs from 
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Cannot Play Abstract Shot"));
     CHECK(server.playCount == 0);
+}
+
+TEST_CASE("Connected partner-generated target resolves when target server differs from parsing device")
+{
+    DeviceID serverID("Server1", "127.0.0.1", 50, "root");
+    auto dev1 = std::make_shared<PartnerGeneratingDevice>("Dev1", 51, serverID.getID());
+    auto dev2 = std::make_shared<PartnerGeneratingDevice>("Dev2", 52, serverID.getID());
+    dev1->setPartnerTarget(dev2->getID());
+
+    auto distributer = distributeDevices({dev1, dev2});
+
+    std::shared_ptr<DeviceCollection> collection;
+    dev1->getCollection(collection);
+    REQUIRE(collection != nullptr);
+    CHECK(collection->contains(dev2->getID()));
+
+    auto scheduler = schedulerFor(*dev1);
+    auto shot = makeShot(*scheduler, dev1->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(dev1->loadCount == 1);
+    CHECK(dev1->playCount == 1);
+    CHECK(dev2->loadCount == 1);
+    CHECK(dev2->playCount == 1);
+}
+
+TEST_CASE("Server-owned partner-generated target resolves through normal target server")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("UsualServer1", 70, "root");
+    auto dev1 = std::make_shared<PartnerGeneratingDevice>("UsualDev1", 71, server->getID().getID());
+    auto dev2 = std::make_shared<PartnerGeneratingDevice>("UsualDev2", 72, server->getID().getID());
+    dev1->setPartnerTarget(dev2->getID());
+
+    auto distributer = distributeDevices({server, dev1, dev2});
+
+    std::shared_ptr<DeviceCollection> collection;
+    server->getCollection(collection);
+    REQUIRE(collection != nullptr);
+    CHECK(collection->contains(dev1->getID()));
+    CHECK(collection->contains(dev2->getID()));
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, dev1->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(server->loadCount == 0);
+    CHECK(server->playCount == 0);
+    CHECK(dev1->loadCount == 1);
+    CHECK(dev1->playCount == 1);
+    CHECK(dev2->loadCount == 1);
+    CHECK(dev2->playCount == 1);
+}
+
+TEST_CASE("Connected event target can be declared without target server ID")
+{
+    DeviceID serverID("Server1", "127.0.0.1", 55, "root");
+    auto dev1 = std::make_shared<PartnerGeneratingDevice>("NoServerDev1", 56, serverID.getID());
+    auto dev2 = std::make_shared<PartnerGeneratingDevice>("NoServerDev2", 57, serverID.getID());
+    DeviceID dev2WithoutServer(dev2->getID().getName(), dev2->getID().getAddress(), dev2->getID().getModule());
+    dev1->setPartnerTarget(dev2WithoutServer);
+
+    std::set<DeviceID> eventTargets;
+    dev1->getEventTargets(eventTargets);
+    REQUIRE(eventTargets.size() == 1);
+    CHECK(eventTargets.begin()->getTargetServerID() == dev1->getID().getID());
+
+    auto distributer = distributeDevices({dev1, dev2});
+
+    CHECK(dev1->partner(dev2WithoutServer).getID().getTargetServerID() == serverID.getID());
+
+    auto scheduler = schedulerFor(*dev1);
+    auto shot = makeShot(*scheduler, dev1->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(dev1->playCount == 1);
+    CHECK(dev2->playCount == 1);
+}
+
+TEST_CASE("Direct raw partner events resolve without target server ID")
+{
+    DeviceID serverID("Server1", "127.0.0.1", 58, "root");
+    auto dev1 = std::make_shared<PartnerGeneratingDevice>("DirectRawDev1", 59, serverID.getID());
+    auto dev2 = std::make_shared<PartnerGeneratingDevice>("DirectRawDev2", 60, serverID.getID());
+    DeviceID dev2WithoutServer(dev2->getID().getName(), dev2->getID().getAddress(), dev2->getID().getModule());
+    dev1->setPartnerTarget(dev2WithoutServer);
+    dev1->useDirectRawPartnerEvents = true;
+
+    auto distributer = distributeDevices({dev1, dev2});
+
+    auto scheduler = schedulerFor(*dev1);
+    auto shot = makeShot(*scheduler, dev1->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(dev1->playCount == 1);
+    CHECK(dev2->playCount == 1);
+}
+
+TEST_CASE("Nested connected partner-generated targets resolve through acting partner servers")
+{
+    DeviceID serverID("Server1", "127.0.0.1", 60, "root");
+    auto dev1 = std::make_shared<PartnerGeneratingDevice>("NestedDev1", 61, serverID.getID());
+    auto dev2 = std::make_shared<PartnerGeneratingDevice>("NestedDev2", 62, serverID.getID());
+    auto dev3 = std::make_shared<PartnerGeneratingDevice>("NestedDev3", 63, serverID.getID());
+    dev1->setPartnerTarget(dev2->getID());
+    dev2->setPartnerTarget(dev3->getID());
+
+    auto distributer = distributeDevices({dev1, dev2, dev3});
+
+    auto scheduler = schedulerFor(*dev1);
+    auto shot = makeShot(*scheduler, dev1->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(dev1->playCount == 1);
+    CHECK(dev2->playCount == 1);
+    CHECK(dev3->playCount == 1);
 }

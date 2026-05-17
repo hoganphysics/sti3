@@ -30,11 +30,11 @@ PartnerDevice::PartnerDevice(LocalDevice* localDevice, const DeviceID& partnerID
 
 const DeviceID PartnerDevice::getID() const
 {
-	if (!partnerID.empty()) {
-		return partnerID;
-	}
 	if (device != 0) {
 		return device->getID();
+	}
+	if (!partnerID.empty()) {
+		return partnerID;
 	}
 	return DeviceID();
 }

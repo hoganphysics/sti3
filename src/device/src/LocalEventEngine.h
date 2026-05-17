@@ -144,6 +144,11 @@ private:
 	RawEventGroup& getTargetEventGroup(const STI::Device::DeviceID& deviceTarget);
 	RawEventGroup& getAbstractTargetEventGroup(const RawEventTargetDevice& deviceTarget);
 
+	STI::Device::DeviceID findCanonicalDeviceID(const STI::Device::DeviceID& deviceID) const;
+	RawEvent canonicalizeEventTarget(const RawEvent& evt) const;
+	std::shared_ptr<RawEventGroup> canonicalizeEventGroupTargets(const std::shared_ptr<RawEventGroup>& eventGroup) const;
+	void copyCanonicalEvents(const RawEventGroup& source, RawEventGroup& target) const;
+
 	void mergePartnerEvents(const DeviceEventMap& events);
 
 	void addEventsToParseResult(const std::shared_ptr<RawEventGroup>& newEvents);

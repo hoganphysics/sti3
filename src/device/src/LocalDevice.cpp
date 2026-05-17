@@ -251,16 +251,26 @@ void LocalDevice::setRemoveCB(const std::function<void(void)>& remover)
 	removerCallback = remover;
 }
 
+DeviceID LocalDevice::normalizeEventTargetID(const DeviceID& id) const
+{
+	if (!id.empty() && id.getTargetServerID().empty()) {
+		return DeviceID(id.getName(), id.getAddress(), id.getModule(), getID().getID());
+	}
+	return id;
+}
+
 void LocalDevice::addEventTarget(const DeviceID& id, const std::string& alias)
 {
-	addPartner(id, alias);	//an event target must be a partner
-	addEventTarget(id);
+	auto targetID = normalizeEventTargetID(id);
+	addPartner(targetID, alias);	//an event target must be a partner
+	eventTargets.insert(targetID);
 }
 
 void LocalDevice::addEventTarget(const DeviceID& id)
 {
-	addPartner(id);	//an event target must be a partner
-	eventTargets.insert(id);
+	auto targetID = normalizeEventTargetID(id);
+	addPartner(targetID);	//an event target must be a partner
+	eventTargets.insert(targetID);
 }
 
 
@@ -278,12 +288,14 @@ bool LocalDevice::isEventTarget(const DeviceID& id)
 PartnerDevice LocalDevice::partner(const DeviceID& id)
 {
 	std::shared_ptr<STI::Device::Device> device;
+	DeviceID partnerID = id;
 
 	auto it = partnerDevices.find(id);
 	if (it != partnerDevices.end()) {
-		localCollection->get(id, device);
+		partnerID = *it;
+		localCollection->get(partnerID, device);
 	}
-	PartnerDevice partner(this, id, device);
+	PartnerDevice partner(this, partnerID, device);
 	return partner;
 }
 

@@ -49,7 +49,8 @@ private:
 
 
     bool addToTargetsByServer(const std::set<STI::Device::DeviceID>& targets, const EventEngineDependencyTree& tree, 
-                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer, std::set<STI::Device::DeviceID>& upstreamTargets);
+                                std::map<std::string, std::set<STI::Device::DeviceID>>& targetsByServer, std::set<STI::Device::DeviceID>& upstreamTargets,
+                                bool allowLocalPartnerOwnership);
     
     void getDownstreamIDs(const std::map<std::string, std::set<STI::Device::DeviceID>> targetsByServer, const EventEngineDependencyTree& tree, 
                             std::set<STI::Device::DeviceID>& downstreamIDs);
@@ -60,6 +61,7 @@ private:
 
 
     std::string findTargetServerID(const STI::Device::DeviceID& deviceID);
+    STI::Device::DeviceID findCanonicalDeviceID(const STI::Device::DeviceID& deviceID) const;
 
     STI::Device::LocalDevice* localDevice;
     STI::Device::DeviceID localDeviceID;

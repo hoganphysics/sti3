@@ -47,6 +47,7 @@ using STI::Engine::DeviceEventParser;
 using STI::Engine::EngineState;
 using STI::Engine::LocalEventEngine;
 using STI::Engine::ParseID;
+using STI::Engine::RawEvent;
 using STI::Engine::RawEventVector;
 using STI::Engine::TriggerCallback;
 using STI::Engine::DeviceEventMap;
@@ -286,28 +287,30 @@ void LocalEventEngine::addEvent(const RawEvent& evt, const std::string& subgroup
 								std::shared_ptr<RawEventGroup>& handledEventGroup)
 {
 	STI::Device::DeviceID branchID;
+	auto canonicalEvent = canonicalizeEventTarget(evt);
+	auto eventTargetID = canonicalEvent.target().device().deviceID();
 
-	auto it = ownedIDs.find(evt.target().device().deviceID());
+	auto it = ownedIDs.find(eventTargetID);
 
-	if (localDeviceID == evt.target().device().deviceID() || it != ownedIDs.end()) {
+	if (localDeviceID == eventTargetID || it != ownedIDs.end()) {
 		//Event target is this device or is directly owned by this device
-		getTargetEventGroup( evt.target().device().deviceID() ).addEvent(evt, subgroupName);
+		getTargetEventGroup(eventTargetID).addEvent(canonicalEvent, subgroupName);
 		
 		if (handledEventGroup != 0) {
-			handledEventGroup->addEvent(evt, subgroupName);
+			handledEventGroup->addEvent(canonicalEvent, subgroupName);
 		}
 	}
-	else if (dependencyTree->getBranchToTarget(localDeviceID, evt.target().device().deviceID(), branchID)) {
+	else if (dependencyTree->getBranchToTarget(localDeviceID, eventTargetID, branchID)) {
 		//Event target is in the subgraph under branchID
-		getTargetEventGroup(branchID).addEvent(evt, subgroupName);
+		getTargetEventGroup(branchID).addEvent(canonicalEvent, subgroupName);
 		
 		if (handledEventGroup != 0) {
-			handledEventGroup->addEvent(evt, subgroupName);
+			handledEventGroup->addEvent(canonicalEvent, subgroupName);
 		}
 	}
 	else if (upstreamPartnerEvents != 0) {
 		//Event target not in this subgraph; these events will handled elsewhere
-		unhandledEventGroup->addEvent(evt, subgroupName);
+		unhandledEventGroup->addEvent(canonicalEvent, subgroupName);
 	}
 }
 
@@ -331,6 +334,74 @@ RawEventGroup& LocalEventEngine::getAbstractTargetEventGroup(const RawEventTarge
 	return *(it->second);
 }
 
+DeviceID LocalEventEngine::findCanonicalDeviceID(const STI::Device::DeviceID& deviceID) const
+{
+	if (deviceID == localDeviceID) {
+		return localDeviceID;
+	}
+
+	if (deviceCollection != 0) {
+		std::set<DeviceID> ids;
+		deviceCollection->getIDs(ids);
+
+		auto found = ids.find(deviceID);
+		if (found != ids.end()) {
+			return *found;
+		}
+	}
+
+	if (deviceParser != 0 && deviceParser->isEventTarget(deviceID) && deviceID.getTargetServerID().empty()) {
+		return DeviceID(deviceID.getName(), deviceID.getAddress(), deviceID.getModule(), localDeviceID.getID());
+	}
+
+	return deviceID;
+}
+
+RawEvent LocalEventEngine::canonicalizeEventTarget(const RawEvent& evt) const
+{
+	if (evt.target().device().isAbstract()) {
+		return evt;
+	}
+
+	auto canonicalID = findCanonicalDeviceID(evt.target().device().deviceID());
+	if (canonicalID == evt.target().device().deviceID()
+		&& canonicalID.getTargetServerID() == evt.target().device().deviceID().getTargetServerID()) {
+		return evt;
+	}
+
+	RawEvent canonicalEvent = evt;
+	canonicalEvent.getTarget().getDevice().setTargetDeviceID(canonicalID);
+	return canonicalEvent;
+}
+
+std::shared_ptr<RawEventGroup> LocalEventEngine::canonicalizeEventGroupTargets(const std::shared_ptr<RawEventGroup>& eventGroup) const
+{
+	if (eventGroup == 0) {
+		return {};
+	}
+
+	auto canonicalGroup = std::make_shared<RawEventGroup>(eventGroup->getName(), eventGroup->getParentGroupName(), eventGroup->getStackTraceData());
+	copyCanonicalEvents(*eventGroup, *canonicalGroup);
+	return canonicalGroup;
+}
+
+void LocalEventEngine::copyCanonicalEvents(const RawEventGroup& source, RawEventGroup& target) const
+{
+	auto events = source.getEvents();
+	if (events != 0) {
+		for (auto& evt : *events) {
+			target.addEvent(canonicalizeEventTarget(evt));
+		}
+	}
+
+	for (auto& subgroup : source.getSubgroups()) {
+		if (subgroup != 0) {
+			auto targetSubgroup = target.group(subgroup->getName());
+			copyCanonicalEvents(*subgroup, *targetSubgroup);
+		}
+	}
+}
+
 void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 {
 	std::set<STI::Device::DeviceID> ownedIDs;
@@ -340,8 +411,11 @@ void LocalEventEngine::mergePartnerEvents(const DeviceEventMap& eventMap)
 
 	for (auto& e : eventMap) {
 		
-		const STI::Device::DeviceID& id = e.first;
-		auto& evtGroup = e.second;
+		auto id = findCanonicalDeviceID(e.first);
+		auto evtGroup = canonicalizeEventGroupTargets(e.second);
+		if (evtGroup == 0) {
+			continue;
+		}
 		auto it = ownedIDs.find(id);
 
 		if (localDeviceID == id || it != ownedIDs.end()) {
