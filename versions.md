@@ -48,6 +48,23 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.1.4 - Partner dependency routing fix
+
+Patch release for LocalEventEngine partner-event dependency routing.
+
+Fixes:
+
+* Resolve partner event targets by canonical device identity so partner devices
+  can be found even when the raw event target omits `targetServerID` or names a
+  different server.
+* Allow a device acting as a job owner to route events to its declared partner
+  devices without requiring those partners to declare the device as their target
+  server.
+* Preserve the normal server-owned parse/play path where a shared server owns
+  both the source device and partner target devices.
+* Add regression coverage for missing partners, direct device-as-server partner
+  routing, nested partner routing, and normal server-owned partner routing.
+
 ### 3.1.2 - STIPy makeshot API alignment
 
 Patch release for STIPy shot-construction API cleanup.
