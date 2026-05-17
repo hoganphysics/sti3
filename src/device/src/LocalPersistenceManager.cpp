@@ -28,6 +28,7 @@
 #include "LocalFileServer.h"
 
 #include <filesystem>
+#include <system_error>
 #include <vector>
 namespace fs = std::filesystem;
 
@@ -115,16 +116,18 @@ void LocalPersistenceManager::loadPersistenceTargets()
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate)
 {
     std::filesystem::path root(rootPath);
+    std::error_code ec;
 
-    if (!std::filesystem::exists(root) && autocreate) {
-        std::filesystem::create_directory(root);
+    if (autocreate && !std::filesystem::exists(root, ec) && !ec) {
+        std::filesystem::create_directories(root, ec);
     }
 
     std::string forbidden = "<>:\"\\|?*";
     auto devicePath = root / STI::Utils::replaceChars(deviceID, forbidden, "_");
 
-    if (!std::filesystem::exists(devicePath) && autocreate) {
-        std::filesystem::create_directories(devicePath);
+    ec.clear();
+    if (autocreate && !std::filesystem::exists(devicePath, ec) && !ec) {
+        std::filesystem::create_directories(devicePath, ec);
     }
 
     return devicePath.string();

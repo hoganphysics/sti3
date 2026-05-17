@@ -13,6 +13,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <system_error>
 
 #include "CerealArchives.h"
 #include <cereal/types/map.hpp>
@@ -140,8 +141,18 @@ ResultsPaths SerializedRepository::preparePaths(const TimeStamp& timeStamp)
 void SerializedRepository::makePathIfNew(const std::string& pathName)
 {
     std::filesystem::path newPath = pathName;
-    if (!std::filesystem::exists(newPath)) {
-        std::filesystem::create_directories(newPath);
+    if (newPath.empty()) {
+        return;
+    }
+
+    std::error_code ec;
+    bool pathExists = std::filesystem::exists(newPath, ec);
+    if (ec) {
+        return;
+    }
+
+    if (!pathExists) {
+        std::filesystem::create_directories(newPath, ec);
     }
 }
 

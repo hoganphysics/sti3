@@ -9,6 +9,7 @@
 #include <sti/utils/utils.h>
 
 #include <filesystem>
+#include <system_error>
 
 using STI::Engine::TransientRepository;
 using STI::Engine::ResultsPaths;
@@ -24,6 +25,33 @@ using STI::Engine::SequenceEntryID;
 using STI::Engine::EngineJobStatus;
 using STI::Engine::SequenceResult;
 
+namespace {
+
+bool ensureDirectoryExists(const std::string& pathName)
+{
+    std::filesystem::path path = pathName;
+    if (path.empty()) {
+        return false;
+    }
+
+    std::error_code ec;
+    bool exists = std::filesystem::exists(path, ec);
+    if (ec) {
+        return false;
+    }
+
+    if (!exists) {
+        std::filesystem::create_directories(path, ec);
+        if (ec) {
+            return false;
+        }
+    }
+
+    return std::filesystem::is_directory(path, ec) && !ec;
+}
+
+} // namespace
+
 
 
 TransientRepository::TransientRepository(const std::string& tempBasePath, const std::shared_ptr<STI::Utils::FileServer>& fileServer)
@@ -36,23 +64,17 @@ TransientRepository::TransientRepository(const std::string& tempBasePath, const 
     uniqueBasePath /= "transient_cache";
     uniqueBasePath /= "tmp";
 
-    //The directory will be cleared regularly, so we need to make sure to use a unique path.
-    tempResultsPath = uniqueBasePath.string();  //Fix: using fixed path for now to avoid many tmp directories
-    std::filesystem::path repoPath = tempResultsPath;
-
-    if (!std::filesystem::exists(repoPath)) {
-        std::filesystem::create_directories(repoPath);
-    }
+    // Keep one stable path and create it lazily only when a FileHolder opens a file.
+    tempResultsPath = uniqueBasePath.string();
 }
 
 TransientRepository::~TransientRepository()
 {
     std::filesystem::path repoPath = tempResultsPath;
-    
+
     //Delete the temporary directory and all contents
-    if (std::filesystem::exists(repoPath)) {
-        std::filesystem::remove_all(repoPath);
-    }
+    std::error_code ec;
+    std::filesystem::remove_all(repoPath, ec);
 }
 
 bool TransientRepository::findParseResult(const ParseID& pid)
@@ -97,7 +119,9 @@ bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<Full
     std::shared_ptr<FullShotResult> expiredResult;  //the oldest result in the buffer; ready to delete
     if (resultBuffer.addAndRemove(sid, fullShotResult, expiredResult) && expiredResult != 0) {
         //The buffer was full. Need to delete the old result;
-        ShotResult::deleteFiles(*expiredResult->shotResult, fileServer);
+        if (expiredResult->shotResult != 0) {
+            ShotResult::deleteFiles(*expiredResult->shotResult, fileServer);
+        }
     }
 
     std::shared_ptr<ParseResult> expiredParseResult;  //the oldest result in the buffer; ready to delete
@@ -112,6 +136,9 @@ bool TransientRepository::saveShot(const ShotID& sid, const std::shared_ptr<Full
 std::string TransientRepository::prepareLogPath(const STI::Utils::TimeStamp& timeStamp, bool autocreate)
 {
     auto paths = preparePaths();
+    if (autocreate) {
+        ensureDirectoryExists(paths.basePath);
+    }
     return paths.basePath;
 }
 
@@ -146,7 +173,7 @@ ResultsPaths TransientRepository::preparePaths()
 }
 
 
-bool TransientRepository::TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements)
+bool TransientRepository::getMeasurements(const ShotID& sid, std::shared_ptr<MeasurementMap>& measurements)
 {
     std::shared_ptr<FullShotResult> fullShotResult;
 

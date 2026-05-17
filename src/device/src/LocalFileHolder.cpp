@@ -11,6 +11,7 @@
 #include <sstream> 
 #include <iomanip> 
 #include <filesystem>
+#include <system_error>
 
 
 using STI::Utils::FileHolder;
@@ -185,8 +186,23 @@ bool LocalFileHolder::openFile()
 
     std::filesystem::path filepath(fileID.path);
 
-    if (!std::filesystem::exists(filepath)) {
-        std::filesystem::create_directories(filepath);
+    if (!filepath.empty()) {
+        std::error_code ec;
+        bool pathExists = std::filesystem::exists(filepath, ec);
+        if (ec) {
+            return false;
+        }
+
+        if (!pathExists) {
+            std::filesystem::create_directories(filepath, ec);
+            if (ec) {
+                return false;
+            }
+        }
+
+        if (!std::filesystem::is_directory(filepath, ec) || ec) {
+            return false;
+        }
     }
 
     ofs = std::make_unique<std::ofstream>(getFilename(), std::ifstream::binary);

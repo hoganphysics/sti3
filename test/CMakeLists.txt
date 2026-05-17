@@ -51,6 +51,7 @@ add_executable(sti3_test_device
   device/channelmanager_tests.cpp
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
+  device/localdevice_write_tests.cpp
   device/localdevicehub_tests.cpp
   device/localfileholder_tests.cpp
   device/localbinarydatastream_tests.cpp
