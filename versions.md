@@ -48,6 +48,32 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.2.0 - Event engine last-result access
+
+Feature release for retrieving recent event-engine results and tightening local
+hub distribution behavior.
+
+Features:
+
+* Add `EventEngineScheduler::getLastParseResult()` and
+  `EventEngineScheduler::getLastShotResult()` so callers can retrieve the most
+  recent parse or shot result for a specific engine ID.
+* Implement last-result lookup for local event engines and schedulers, including
+  access to the newest buffered shot result.
+* Expose last-result lookup through the CORBA scheduler interface and remote
+  scheduler implementation.
+* Add STIPy bindings for the new scheduler last-result APIs.
+
+Fixes:
+
+* Avoid duplicate local collection add events when `LocalHub::addNode()` forwards
+  a newly added node to connected hubs.
+
+Tests:
+
+* Add regression coverage for scheduler last-result lookup and duplicate
+  `LocalDeviceHub` add-event prevention.
+
 ### 3.1.4 - Partner dependency routing fix
 
 Patch release for LocalEventEngine partner-event dependency routing.

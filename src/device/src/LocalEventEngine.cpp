@@ -558,6 +558,29 @@ bool LocalEventEngine::getShotResult(const ShotID& shotID, std::shared_ptr<ShotR
 	return false;
 }
 
+bool LocalEventEngine::getLastParseResult(std::shared_ptr<ParseResult>& parseResult) const
+{
+	std::unique_lock<std::mutex> parseLock(parseMutex);
+
+	if (lastParseResult != 0 && lastParseResult->pid == lastParseID) {
+		parseResult = lastParseResult;
+		return true;
+	}
+
+	return false;
+}
+
+bool LocalEventEngine::getLastShotResult(std::shared_ptr<ShotResult>& shotResult) const
+{
+	std::shared_ptr<FullShotResult> fullShotResult;
+	if (resultBuffer.getFirst(fullShotResult) && fullShotResult != 0) {
+		shotResult = fullShotResult->shotResult;
+		return (shotResult != 0);
+	}
+
+	return false;
+}
+
 std::shared_ptr<ParsedDependencyTree> LocalEventEngine::getParsedTree() const 
 {
 	if (lastParseResult == 0) {

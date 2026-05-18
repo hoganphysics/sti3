@@ -67,6 +67,8 @@ public:
 
     bool getParseResult(const STI::Engine::ParseID& parseID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
     bool getShotResult(const STI::Engine::ShotID& shotID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const;
+    bool getLastParseResult(const STI::Engine::EngineID& engineID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const;
+    bool getLastShotResult(const STI::Engine::EngineID& engineID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const;
 
     bool ping() const;
 

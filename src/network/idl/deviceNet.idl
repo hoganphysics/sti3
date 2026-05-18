@@ -207,6 +207,8 @@ module TNetwork
 
 		boolean getParseResult(in TParseID parseID, out TParseResult parseResult);
 		boolean getShotResult(in TShotID shotID, out TShotResult shotResult);
+		boolean getLastParseResult(in TEngineID engineID, out TParseResult parseResult);
+		boolean getLastShotResult(in TEngineID engineID, out TShotResult shotResult);
 
 		boolean ping();
 	};

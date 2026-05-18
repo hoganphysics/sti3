@@ -9,6 +9,7 @@
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventGroup.h>
@@ -39,6 +40,7 @@ using STI::Engine::EngineState;
 using STI::Engine::EventEngineJobList;
 using STI::Engine::LocalEventEngineScheduler;
 using STI::Engine::ParseID;
+using STI::Engine::ParseResult;
 using STI::Engine::RawEventGroup;
 using STI::Engine::RawEventMap;
 using STI::Engine::RawEventTarget;
@@ -235,4 +237,41 @@ TEST_CASE("stopEngine cancels active play job and releases scheduler", "[eventen
 
     std::shared_ptr<ShotResult> completedResult;
     REQUIRE(waitForShotResultStatus(*scheduler, nextPlay.sid, ShotResultStatus::Success, completedResult));
+}
+
+TEST_CASE("scheduler returns last parse and shot results by engine ID", "[eventengine][scheduler][results]")
+{
+    TimedEventDevice device("LastResultDevice", 22);
+    auto scheduler = schedulerFor(device);
+    EngineID syncEngineID(1);
+
+    std::shared_ptr<ParseResult> missingParse;
+    std::shared_ptr<ShotResult> missingShot;
+    CHECK_FALSE(scheduler->getLastParseResult(syncEngineID, missingParse));
+    CHECK_FALSE(scheduler->getLastShotResult(syncEngineID, missingShot));
+
+    auto firstShot = makeShot(*scheduler, device.getID(), 1'000.0);
+    auto firstParse = scheduler->parse(firstShot);
+    REQUIRE(waitForParseTerminal(*scheduler, firstParse.pid) == EngineJobStatus::Completed);
+
+    std::shared_ptr<ParseResult> lastParse;
+    REQUIRE(scheduler->getLastParseResult(syncEngineID, lastParse));
+    REQUIRE(lastParse != nullptr);
+    CHECK(lastParse->pid == firstParse.pid);
+
+    auto firstPlay = scheduler->play(firstParse.pid, firstShot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, firstPlay.sid) == EngineJobStatus::Completed);
+
+    std::shared_ptr<ShotResult> lastShot;
+    REQUIRE(scheduler->getLastShotResult(syncEngineID, lastShot));
+    REQUIRE(lastShot != nullptr);
+    CHECK(lastShot->sid == firstPlay.sid);
+
+    auto secondShot = makeShot(*scheduler, device.getID(), 1'000.0);
+    auto secondParse = scheduler->parse(secondShot);
+    REQUIRE(waitForParseTerminal(*scheduler, secondParse.pid) == EngineJobStatus::Completed);
+
+    REQUIRE(scheduler->getLastParseResult(syncEngineID, lastParse));
+    REQUIRE(lastParse != nullptr);
+    CHECK(lastParse->pid == secondParse.pid);
 }

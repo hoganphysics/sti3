@@ -94,6 +94,7 @@ public:
 private:
 
 	bool refreshNodeReferences(const ID& id, const typename std::shared_ptr<T>& node);
+	bool distributeToConnectedHubs(const ID& id, const typename std::shared_ptr<T>& node, const HubTrace& trace, const HubID& first);
 
 	STI::Utils::Distributer<ID, T> nodeDistributer;		///< The hub is built around a NodeDistributer.
 
@@ -216,7 +217,8 @@ bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::sh
 	} );
 
 	if (success) {
-		return distribute(id, node, HubTrace(), getID()); //includes redundant local distribute...
+		std::unique_lock<std::mutex> distributerLock(distributerMutex);
+		return distributeToConnectedHubs(id, node, HubTrace(), getID());
 	}
 	return false;
 }
@@ -433,6 +435,12 @@ bool STI::Network::LocalHub<ID, T>::distribute(const ID& id, const typename std:
 	//Also, offer all owned Nodes to this Node.
 	nodeDistributer.distributeNode(id, node);
 
+	return distributeToConnectedHubs(id, node, trace, first);
+}
+
+template<class ID, class T>
+bool STI::Network::LocalHub<ID, T>::distributeToConnectedHubs(const ID& id, const typename std::shared_ptr<T>& node, const HubTrace& trace, const HubID& first)
+{
 	//Forward call to network (with appended trace)
 	HubTrace newTrace = trace;
 	newTrace.addHubID(getID());		//ensures this Hub will not respond again

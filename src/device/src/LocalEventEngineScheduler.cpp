@@ -1589,6 +1589,42 @@ bool LocalEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared_
     return success;
 }
 
+bool LocalEventEngineScheduler::getLastParseResult(const EngineID& engineID, std::shared_ptr<ParseResult>& parseResult) const
+{
+    if (searchingParseResult) return false;
+
+    std::unique_lock<std::mutex> resultLock(parseResultMutex);
+    searchingParseResult = true;
+
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    bool success = engineManagers.get(engineID, manager) && manager != 0
+        && manager->getEngine(engine) && engine != 0
+        && engine->getLastParseResult(parseResult);
+
+    searchingParseResult = false;
+    return success;
+}
+
+bool LocalEventEngineScheduler::getLastShotResult(const EngineID& engineID, std::shared_ptr<ShotResult>& shotResult) const
+{
+    if (searchingShotResult) return false;
+
+    std::unique_lock<std::mutex> resultLock(shotResultMutex);
+    searchingShotResult = true;
+
+    std::shared_ptr<EventEngineManager> manager;
+    std::shared_ptr<LocalEventEngine> engine;
+
+    bool success = engineManagers.get(engineID, manager) && manager != 0
+        && manager->getEngine(engine) && engine != 0
+        && engine->getLastShotResult(shotResult);
+
+    searchingShotResult = false;
+    return success;
+}
+
 
 bool LocalEventEngineScheduler::findRunningEngine(const ShotID& shotID, std::shared_ptr<LocalEventEngine>& engine) const
 {

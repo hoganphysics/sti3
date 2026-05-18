@@ -128,6 +128,8 @@ public:
 
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
     bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const;
+    bool getLastParseResult(const EngineID& engineID, std::shared_ptr<ParseResult>& parseResult) const;
+    bool getLastShotResult(const EngineID& engineID, std::shared_ptr<ShotResult>& shotResult) const;
 
     std::shared_ptr<STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>> getMessageListener() const
     {

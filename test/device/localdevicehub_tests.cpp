@@ -7,8 +7,11 @@
 #include <sti/utils/LocalCollection.h>
 #include <sti/utils/MixedValue.h>
 
+#include <chrono>
+#include <condition_variable>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <string>
 
@@ -29,6 +32,7 @@ using STI::Network::HubID;
 using STI::Network::LocalDeviceHub;
 using STI::Utils::Collection;
 using STI::Utils::LocalCollection;
+using STI::Utils::LocalCollectionListener;
 using STI::Utils::MixedValue;
 
 namespace {
@@ -116,6 +120,10 @@ public:
     void getCollection(std::shared_ptr<Collection<DeviceID, Device>>& out) override { out = collection; }
 
     bool collectionContains(const DeviceID& otherID) const { return collection->contains(otherID); }
+    void addCollectionListener(const std::shared_ptr<LocalCollectionListener<DeviceID>>& listener)
+    {
+        collection->addListener(listener);
+    }
 
     bool alive = true;
     bool active = false;
@@ -129,7 +137,63 @@ private:
     std::shared_ptr<LocalCollection<DeviceID, Device>> collection;
 };
 
+class RecordingCollectionListener : public LocalCollectionListener<DeviceID> {
+public:
+    void add(const DeviceID&) override
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            ++addCount_;
+        }
+        cv.notify_all();
+    }
+
+    void remove(const DeviceID&) override {}
+    void refresh() override {}
+
+    bool waitForAddCount(unsigned expected, std::chrono::milliseconds timeout)
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        return cv.wait_for(lock, timeout, [&] { return addCount_ >= expected; });
+    }
+
+    unsigned addCount() const
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        return addCount_;
+    }
+
+private:
+    mutable std::mutex mutex;
+    std::condition_variable cv;
+    unsigned addCount_ = 0;
+};
+
 } // namespace
+
+TEST_CASE("LocalDeviceHub addNode forwards to connected hubs without duplicate local add events", "[localdevicehub][network]")
+{
+    auto hub = std::make_shared<LocalDeviceHub>(HubID("Hub", "127.0.0.1", 1));
+
+    auto dev1 = std::make_shared<HubTestDevice>(makeDeviceID("dev1", 1));
+    auto dev2 = std::make_shared<HubTestDevice>(makeDeviceID("dev2", 2));
+
+    auto dev1Listener = std::make_shared<RecordingCollectionListener>();
+    auto dev2Listener = std::make_shared<RecordingCollectionListener>();
+    dev1->addCollectionListener(dev1Listener);
+    dev2->addCollectionListener(dev2Listener);
+
+    REQUIRE(hub->addNode(dev1->getID(), dev1));
+    REQUIRE(hub->addNode(dev2->getID(), dev2));
+
+    REQUIRE(dev1Listener->waitForAddCount(1, std::chrono::milliseconds(500)));
+    REQUIRE(dev2Listener->waitForAddCount(1, std::chrono::milliseconds(500)));
+
+    CHECK_FALSE(dev1Listener->waitForAddCount(2, std::chrono::milliseconds(100)));
+    CHECK_FALSE(dev2Listener->waitForAddCount(2, std::chrono::milliseconds(100)));
+    CHECK(dev1Listener->addCount() == 1);
+    CHECK(dev2Listener->addCount() == 1);
+}
 
 TEST_CASE("LocalDeviceHub distributes devices across connected hubs", "[localdevicehub][network]")
 {

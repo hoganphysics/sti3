@@ -70,6 +70,8 @@ using STI::Engine::PlayJobStatus;
 using STI::TNetwork::TPlayJobStatus;
 using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
+using STI::Engine::EngineID;
+using STI::TNetwork::TEngineID;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler)
@@ -706,6 +708,70 @@ bool RemoteEventEngineScheduler::getShotResult(const ShotID& shotID, std::shared
 	if (!success) {
 		shotResult = std::make_shared<STI::Engine::ShotResult>();
 		shotResult->sid = shotID;
+	}
+
+	return success;
+}
+
+bool RemoteEventEngineScheduler::getLastParseResult(const EngineID& engineID, std::shared_ptr<STI::Engine::ParseResult>& parseResult) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TParseResult_var tParseResult(new STI::TNetwork::TParseResult);
+
+	bool success = false;
+
+	try {
+		success = getTRef()->getLastParseResult(convert<EngineID, TEngineID>(engineID), tParseResult);		//remote call
+
+		if (success) {
+			success = convert<STI::TNetwork::TParseResult, std::shared_ptr<STI::Engine::ParseResult>>(tParseResult, parseResult);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (!success) {
+		parseResult = std::make_shared<STI::Engine::ParseResult>();
+	}
+
+	return success;
+}
+
+bool RemoteEventEngineScheduler::getLastShotResult(const EngineID& engineID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return false;
+
+	STI::TNetwork::TShotResult_var tShotResult(new STI::TNetwork::TShotResult);
+
+	bool success = false;
+
+	try {
+		success = getTRef()->getLastShotResult(convert<EngineID, TEngineID>(engineID), tShotResult);		//remote call
+
+		if (success) {
+			success = convert<STI::TNetwork::TShotResult, std::shared_ptr<STI::Engine::ShotResult>>(tShotResult, shotResult);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	if (!success) {
+		shotResult = std::make_shared<STI::Engine::ShotResult>();
 	}
 
 	return success;

@@ -361,6 +361,18 @@ void init_EventEngineScheduler(py::module& m)
                 bool found = self.getShotResult(shotID, shotResult);
                 return shotResult;
             })
+        .def("getLastParseResult",
+            [](EventEngineScheduler& self, const STI::Engine::EngineID& engineID) {
+                std::shared_ptr<STI::Engine::ParseResult> parseResult;
+                bool found = self.getLastParseResult(engineID, parseResult);
+                return parseResult;
+            })
+        .def("getLastShotResult",
+            [](EventEngineScheduler& self, const STI::Engine::EngineID& engineID) {
+                std::shared_ptr<STI::Engine::ShotResult> shotResult;
+                bool found = self.getLastShotResult(engineID, shotResult);
+                return shotResult;
+            })
         ;
 
 }

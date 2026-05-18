@@ -71,6 +71,7 @@ using STI::TNetwork::TPlayJobStatus;
 using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
 using STI::TNetwork::TEngineState;
+using STI::TNetwork::TEngineID;
 
 
 TEventEngineScheduler_i::TEventEngineScheduler_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -416,8 +417,55 @@ void TEventEngineScheduler_i::stopEngine(const ::STI::TNetwork::TEngineID& engin
 	return success;
 }
 
+::CORBA::Boolean TEventEngineScheduler_i::getLastParseResult(const ::STI::TNetwork::TEngineID& engineID,
+															 ::STI::TNetwork::TParseResult_out tParseResult)
+{
+	bool success = false;
+	tParseResult = new STI::TNetwork::TParseResult();
+
+	if (engineScheduler != 0) {
+
+		STI::TNetwork::TParseResult_var tParseResult_var(new STI::TNetwork::TParseResult);
+		std::shared_ptr<ParseResult> parseResult;
+
+		success = engineScheduler->getLastParseResult(
+			convert<TEngineID, STI::Engine::EngineID>(engineID),
+			parseResult);
+
+		if (success) {
+			success = convert<std::shared_ptr<ParseResult>, ::STI::TNetwork::TParseResult>(parseResult, tParseResult_var);
+			(*tParseResult) = tParseResult_var;
+		}
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TEventEngineScheduler_i::getLastShotResult(const ::STI::TNetwork::TEngineID& engineID,
+															::STI::TNetwork::TShotResult_out shotResult)
+{
+	bool success = false;
+	shotResult = new STI::TNetwork::TShotResult();
+
+	if (engineScheduler != 0) {
+
+		STI::TNetwork::TShotResult_var tShotResult_var(new STI::TNetwork::TShotResult);
+		std::shared_ptr<STI::Engine::ShotResult> localShotResult;
+
+		success = engineScheduler->getLastShotResult(
+			convert<TEngineID, STI::Engine::EngineID>(engineID),
+			localShotResult);
+
+		if (success) {
+			success = convert<std::shared_ptr<STI::Engine::ShotResult>, ::STI::TNetwork::TShotResult>(localShotResult, tShotResult_var);
+			(*shotResult) = tShotResult_var;
+		}
+	}
+
+	return success;
+}
+
 ::CORBA::Boolean TEventEngineScheduler_i::ping()
 {
 	return true;
 }
-

@@ -54,6 +54,7 @@ public:
 	bool contains(const Key& key) const;
 
 	bool get(const Key& key, T& item) const;
+	bool getFirst(T& item) const;
 	void getKeys(std::set<Key>& keys) const;
 	void getValues(std::vector<T>& values) const;
 	void getValues(const std::set<Key>& keys, std::vector<T>& values) const;
@@ -121,6 +122,18 @@ template<class Key, class T>
 bool STI::Utils::OrderedBufferMap<Key, T>::get(const Key& key, T& item) const
 {
 	return buffer.get(key, item);
+}
+
+template<class Key, class T>
+bool STI::Utils::OrderedBufferMap<Key, T>::getFirst(T& item) const
+{
+	std::unique_lock<std::mutex> readLock(dequeMutex);
+
+	if (buffer_keys.empty()) {
+		return false;
+	}
+
+	return buffer.get(buffer_keys.front(), item);
 }
 
 template<class Key, class T>

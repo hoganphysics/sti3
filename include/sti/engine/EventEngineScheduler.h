@@ -85,6 +85,8 @@ public:
 
     virtual bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const = 0;
     virtual bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const = 0;
+    virtual bool getLastParseResult(const EngineID& engineID, std::shared_ptr<ParseResult>& parseResult) const = 0;
+    virtual bool getLastShotResult(const EngineID& engineID, std::shared_ptr<ShotResult>& shotResult) const = 0;
 
 };
 
