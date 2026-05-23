@@ -17,7 +17,7 @@ def group(self, name, color="") :
     return g
 
 def setcolor(self, color) :
-    self.addMetaData("color", color)
+    self.addMetadata("color", color)
 
 def var(self, fullVarName) :
     v = _var(self, fullVarName, makeStackTrace())
