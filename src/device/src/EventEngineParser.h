@@ -59,6 +59,7 @@ private:
 	bool parseEvents(SynchronousEventVector& synchedEvents, const ParseID& parseID);
 	bool checkMeasurements(SynchronousEventVector& synchedEvents);
 	bool checkOutputType(const STI::Utils::MixedValueType& eventValueType, const STI::Utils::MixedValueType& channelType);
+	void normalizeOutputValue(RawEvent& rawEvent, const STI::Utils::MixedValueType& channelType);
 
 	struct MeasurementCounter
 	{

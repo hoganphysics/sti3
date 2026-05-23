@@ -60,6 +60,7 @@ add_executable(sti3_test_device
   device/binarydata_tests.cpp
   device/image_tests.cpp
   device/measurement_file_tests.cpp
+  device/eventengine_value_type_tests.cpp
   device/virtualfileholder_tests.cpp
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp

@@ -197,7 +197,20 @@ bool EventEngineParser::checkOutputType(const STI::Utils::MixedValueType& eventV
 			|| eventValueType == MixedValueType::Int;
 	}
 
+	if (channelType == MixedValueType::Double) {
+		return eventValueType == MixedValueType::Double
+			|| eventValueType == MixedValueType::Int;
+	}
+
 	return eventValueType == channelType;
+}
+
+void EventEngineParser::normalizeOutputValue(RawEvent& rawEvent, const STI::Utils::MixedValueType& channelType)
+{
+	if (channelType == MixedValueType::Double
+		&& rawEvent.value().getType() == MixedValueType::Int) {
+		rawEvent.setValue(MixedValue(rawEvent.value().getDouble()));
+	}
 }
 
 bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, unsigned maxErrors)
@@ -277,7 +290,9 @@ bool EventEngineParser::addRawEvent(RawEvent& rawEvent, unsigned& errorCount, un
 	//To do: Try std::move from input vector to map?
 	//add event
 	double eventTime = rawEvent.time();
-	rawEvents[eventTime].push_back(rawEvent);		//consider storing events by int time, or Time class
+	RawEvent storedEvent = rawEvent;
+	normalizeOutputValue(storedEvent, channel->getOutputType());
+	rawEvents[eventTime].push_back(storedEvent);		//consider storing events by int time, or Time class
 	auto& storedRawEvent = rawEvents[eventTime].back();
 	
 	//Store pointers to all measurement RawEvents, indexed by their event graph identifier.  
@@ -600,4 +615,3 @@ void EventEngineParser::defineErrorIDs()
 	errorIDs["Missing Targets"] 					= 102;
 
 }
-
