@@ -4,6 +4,7 @@
 #include <sti/device/DeviceCollection.h>
 #include <sti/device/DeviceID.h>
 #include <sti/engine/EngineJobID.h>
+#include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
 #include <sti/engine/ParseJobStatus.h>
@@ -37,6 +38,7 @@ using STI::Device::DeviceCollection;
 using STI::Device::DeviceID;
 using STI::Device::LocalDevice;
 using STI::Engine::EngineJobID;
+using STI::Engine::EngineID;
 using STI::Engine::EngineJobStatus;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::EnginePlayingMessage;
@@ -404,6 +406,38 @@ TEST_CASE("Server-owned partner-generated target resolves through normal target 
     CHECK(dev1->playCount == 1);
     CHECK(dev2->loadCount == 1);
     CHECK(dev2->playCount == 1);
+}
+
+TEST_CASE("Server cancels play when owned target loses parsed engine before play")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("RobustServer", 80, "root");
+    auto target = std::make_shared<PartnerGeneratingDevice>("RobustTarget", 81, server->getID().getID());
+
+    auto distributer = distributeDevices({server, target});
+
+    std::shared_ptr<DeviceCollection> collection;
+    server->getCollection(collection);
+    REQUIRE(collection != nullptr);
+    REQUIRE(collection->contains(target->getID()));
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto targetScheduler = schedulerFor(*target);
+    targetScheduler->clearEngine(EngineID(1));
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+
+    auto playJob = findCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device state invalid"));
+    CHECK(target->loadCount == 0);
+    CHECK(target->playCount == 0);
 }
 
 TEST_CASE("Connected event target can be declared without target server ID")

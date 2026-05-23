@@ -31,6 +31,7 @@
 #include <memory>
 #include <mutex>
 #include <condition_variable>
+#include <utility>
 
 
 namespace STI
@@ -158,6 +159,7 @@ private:
 	void recordAbstractShotState(STI::Engine::EventEngineJob& job);
 	bool isAbstractShot() const;
 	void appendMissingTargets(EnginePlayingMessage& message) const;
+	bool validateOwnedTargetsReadyForPlay(std::vector<std::pair<STI::Device::DeviceID, STI::Engine::EngineState>>& invalidTargets) const;
 
 	void updateChannelValues(const RawEventVector& rawEvents);
 

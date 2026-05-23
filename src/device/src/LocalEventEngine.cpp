@@ -1049,6 +1049,26 @@ TimeStamp LocalEventEngine::getCurrentTimeStamp()
 	return ts;
 }
 
+bool LocalEventEngine::validateOwnedTargetsReadyForPlay(std::vector<std::pair<DeviceID, EngineState>>& invalidTargets) const
+{
+	invalidTargets.clear();
+
+	for (const auto& id : ownedTargets) {
+		EngineState state = EngineState::Missing;
+		auto engine = engines.find(id);
+
+		if (engine != engines.end() && engine->second != nullptr) {
+			state = engine->second->getState();
+		}
+
+		if (state != EngineState::Parsed) {
+			invalidTargets.emplace_back(id, state);
+		}
+	}
+
+	return invalidTargets.empty();
+}
+
 void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const std::shared_ptr<Shot>& shot, const DeviceID& jobOwner)
 {
 	if (ownedTargets.size() == 0) {
@@ -1095,6 +1115,8 @@ void LocalEventEngine::play(EventEngineJob& job)
 	std::shared_ptr<TriggerCallback> localMasterTriggerCB;
 	EnginePlayingMessageCount playReadyCount;
 	bool isJobOwnerLocal = false;
+	std::vector<std::pair<DeviceID, EngineState>> invalidTargets;
+	bool ownedTargetsReadyForPlay = validateOwnedTargetsReadyForPlay(invalidTargets);
 
 	{
 		std::unique_lock<std::mutex> playLock(playMutex);
@@ -1102,8 +1124,10 @@ void LocalEventEngine::play(EventEngineJob& job)
 		playReadyMessages.clear();
 		localPlayMessages.clear();
 		localPlayMsgCounter.clearCounts();
+		masterTriggerCB.reset();
+		masterTrigger.reset();
 
-		if (!isState(EngineState::Parsed) && lastParseID != jobID.pid) {
+		if (!isState(EngineState::Parsed) || lastParseID != jobID.pid) {
 			//Error: this device is not parsed for this job. Should not happen because EngineScheduler should check.
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Not Parsed")
 				<< "The EventEngine cannot play the submitted job because it is not in the Parsed state for this job.";
@@ -1121,7 +1145,18 @@ void LocalEventEngine::play(EventEngineJob& job)
 			return;
 		}
 
-		if (!setState(EngineState::PreparingPlay)) {
+		if (!ownedTargetsReadyForPlay) {
+			auto& message = addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Owned device state invalid")
+				<< "Cannot play because one or more owned devices are not parsed and ready for this shot: \n";
+
+			for (auto& target : invalidTargets) {
+				message << " * " << target.first.getID()
+					<< " (EngineState = " << print(target.second) << ")\n";
+			}
+			cancelled = true;
+		}
+
+		if (!cancelled && !setState(EngineState::PreparingPlay)) {
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Bad engine state")
 				<< "[LocalEventEngine:" << localDeviceID.getID()
 				<< "] play cancel: failed to enter PreparingPlay (state=" << print(getState())
@@ -1159,10 +1194,12 @@ void LocalEventEngine::play(EventEngineJob& job)
 			resultBuffer.add(jobID.sid, fullShot);
 		}
 
-		scheduleAllPlayJobs(jobID, shot, job.getJobOwner());
+		if (!cancelled) {
+			scheduleAllPlayJobs(jobID, shot, job.getJobOwner());
+		}
 
 		//Wait for all owned target devices to reach PlayReady state
-		if (ownedTargets.size() > 0) {
+		if (!cancelled && ownedTargets.size() > 0) {
 			// This device is a server; wait for owned devices to send PlayReady messages.
 			while (isState(EngineState::PreparingPlay) && playReadyOwnedTargets.size() != ownedTargets.size()) {
 				playCondition.wait(playLock);
@@ -1172,7 +1209,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		// Check that owned devices are PlayReady
 		bool ownedDevicesPlayReady = allEngineStateCheck(playReadyOwnedTargets, EngineState::PlayReady);
 
-		if (!ownedDevicesPlayReady) {
+		if (!cancelled && !ownedDevicesPlayReady) {
 			auto& msg = addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Owned devices not PlayReady")
 				<< "The following devices failed to reach the PlayReady state: \n";
 
@@ -1181,27 +1218,31 @@ void LocalEventEngine::play(EventEngineJob& job)
 					msg	<< " * " << tuple.first.getID() << " (EngineState = " << print(tuple.second) << ")\n";
 				}
 			}
+			cancelled = true;
 		}
 
-		if (!setState(EngineState::PlayReady)) {
+		if (!cancelled && !setState(EngineState::PlayReady)) {
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Bad engine state")
 				<< "[LocalEventEngine:" << localDeviceID.getID()
 				<< "] play cancel: failed to enter PlayReady (state=" << print(getState())
 				<< ", sid=" << job.getJobID().sid.print() << ")\n";
 			setState(EngineState::Error);
+			cancelled = true;
 		}
 
 		// Setup trigger
-		masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
-		masterTrigger->arm(ownedTargets);
+		if (!cancelled) {
+			masterTrigger = std::make_shared<MasterTrigger>(triggerDeviceID);
+			masterTrigger->arm(ownedTargets);
 
-		if (isJobOwner || ownedTargets.size() > 0) {
-			masterTriggerCB = std::make_shared<LocalTriggerCallback>(masterTrigger.get());
+			if (isJobOwner || ownedTargets.size() > 0) {
+				masterTriggerCB = std::make_shared<LocalTriggerCallback>(masterTrigger.get());
+			}
 		}
 
 		localMasterTriggerCB = masterTriggerCB;
 
-		if (!isState(EngineState::PlayReady)) {
+		if (!cancelled && !isState(EngineState::PlayReady)) {
 			// an error occurred, or play was aborted
 			addPlayMessage(playReadyMessages, PlayingMessageType::Error, "Bad engine state")
 				<< "[LocalEventEngine:" << localDeviceID.getID()

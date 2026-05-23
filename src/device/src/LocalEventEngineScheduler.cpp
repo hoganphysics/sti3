@@ -1683,6 +1683,7 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
     playMessageIDs["Failed to enter WaitingForTrigger"]     = 79;
     playMessageIDs["Failed to enter Playing"]               = 80;
     playMessageIDs["Play canceled"]                         = 81;
+    playMessageIDs["Owned device state invalid"]            = 82;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()
