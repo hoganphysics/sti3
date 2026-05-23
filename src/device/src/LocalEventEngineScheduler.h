@@ -23,6 +23,7 @@
 #include "utils/OrderedBufferMap.h"
 #include <sti/utils/VirtualFileServer.h>
 
+#include <chrono>
 #include <list>
 #include <map>
 #include <mutex>
@@ -53,6 +54,11 @@ Implements prioritized parallel distributed scheduling:
 
 namespace STI
 {
+namespace Utils
+{
+class Configuration;
+}
+
 namespace Engine
 {
 
@@ -76,6 +82,11 @@ class LocalEventEngineScheduler : public EventEngineScheduler,
 public:
     
     LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
+                                const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
+                                const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
+                                const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager,
+                                const STI::Utils::Configuration& config);
+    LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice,
                                 const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
                                 const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
                                 const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager);
@@ -193,6 +204,10 @@ private:
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;
     std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
     std::shared_ptr<EngineConflictPolicy> conflictPolicy;
+
+    std::chrono::milliseconds ownedDevicePlayReadyTimeout;
+    std::chrono::milliseconds ownedDeviceTriggerTimeout;
+    std::chrono::milliseconds ownedDevicePlayCompleteGrace;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;  
 

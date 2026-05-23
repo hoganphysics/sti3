@@ -62,6 +62,10 @@ class LocalEventEngine : public EventEngine, public STI::Device::MessageGenerato
 {
 public:
 
+	inline static constexpr std::chrono::milliseconds DefaultOwnedDevicePlayReadyTimeout{2000};
+	inline static constexpr std::chrono::milliseconds DefaultOwnedDeviceTriggerTimeout{2000};
+	inline static constexpr std::chrono::milliseconds DefaultOwnedDevicePlayCompleteGrace{2000};
+
 	LocalEventEngine(
 		const EngineID& engineID,
 		const STI::Device::DeviceID& localID, 
@@ -73,6 +77,10 @@ public:
 		const std::shared_ptr<STI::Device::DeviceCollection>& collection,
 		const std::shared_ptr<STI::Device::PersistenceManager>& persistence);
 	virtual ~LocalEventEngine();
+
+	void setPlaybackTimeouts(std::chrono::milliseconds playReadyTimeout,
+		std::chrono::milliseconds triggerTimeout,
+		std::chrono::milliseconds playCompleteGrace);
 
 	void clear();
 	void unload();
@@ -265,6 +273,10 @@ private:
 	std::map<STI::Device::DeviceID, std::shared_ptr<EventEngine>> engines;
 
 	std::thread playThread;
+
+	std::chrono::milliseconds ownedDevicePlayReadyTimeout = DefaultOwnedDevicePlayReadyTimeout;
+	std::chrono::milliseconds ownedDeviceTriggerTimeout = DefaultOwnedDeviceTriggerTimeout;
+	std::chrono::milliseconds ownedDevicePlayCompleteGrace = DefaultOwnedDevicePlayCompleteGrace;
 
 	bool cancelled;
 	bool isJobOwner;

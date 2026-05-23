@@ -162,9 +162,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localPersistenceManager->addPersistenceTarget(localTaskManager);
 
 
-    auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher, 
+	auto engineFactory = std::make_shared<LocalEventEngineFactory>(getID(), localChannelManager, localAttributeManager, deviceMessageDispatcher,
 																	localCollection, localPersistenceManager);
-	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher, localPersistenceManager);
+	eventEngineScheduler = std::make_shared<LocalEventEngineScheduler>(this, engineFactory, deviceMessageDispatcher, localPersistenceManager, config);
 	localPersistenceManager->attachEngineScheduler(eventEngineScheduler);
 
 	listenerForwarder = std::make_shared<STI::Device::DeviceMessageListenerForwarder>(this);

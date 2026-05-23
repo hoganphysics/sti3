@@ -112,10 +112,6 @@ ShotResultStatus shotStatusFromMessages(const std::vector<EnginePlayingMessage>&
 	return ShotResultStatus::Success;
 }
 
-constexpr auto kOwnedDevicePlayReadyTimeout = std::chrono::seconds(2);
-constexpr auto kOwnedDeviceTriggerTimeout = std::chrono::seconds(2);
-constexpr auto kOwnedDevicePlayCompleteGrace = std::chrono::seconds(2);
-
 } // namespace
 
 // server1.triggerEvent(ch(server1,slow,4), 5.0)		//trigger just server1
@@ -159,6 +155,21 @@ LocalEventEngine::~LocalEventEngine()
 	engineStateMessageGrouper.stop();
 	clear();
 	resetPlayThread();
+}
+
+void LocalEventEngine::setPlaybackTimeouts(std::chrono::milliseconds playReadyTimeout,
+	std::chrono::milliseconds triggerTimeout,
+	std::chrono::milliseconds playCompleteGrace)
+{
+	if (playReadyTimeout.count() > 0) {
+		ownedDevicePlayReadyTimeout = playReadyTimeout;
+	}
+	if (triggerTimeout.count() > 0) {
+		ownedDeviceTriggerTimeout = triggerTimeout;
+	}
+	if (playCompleteGrace.count() > 0) {
+		ownedDevicePlayCompleteGrace = playCompleteGrace;
+	}
 }
 
 void LocalEventEngine::clear()
@@ -1152,7 +1163,7 @@ bool LocalEventEngine::waitForOwnedTargetsPlayReady(std::unique_lock<std::mutex>
 		return true;
 	}
 
-	const auto deadline = std::chrono::steady_clock::now() + kOwnedDevicePlayReadyTimeout;
+	const auto deadline = std::chrono::steady_clock::now() + ownedDevicePlayReadyTimeout;
 
 	while (!cancelled
 		&& isState(EngineState::PreparingPlay)
@@ -1680,7 +1691,7 @@ bool LocalEventEngine::waitForTriggerArm(const std::string& timeoutContext)
 	}
 
 	std::vector<DeviceID> pendingTargets;
-	if (masterTrigger->waitForArmFor(kOwnedDeviceTriggerTimeout, pendingTargets)) {
+	if (masterTrigger->waitForArmFor(ownedDeviceTriggerTimeout, pendingTargets)) {
 		return true;
 	}
 
@@ -1743,7 +1754,7 @@ std::chrono::nanoseconds LocalEventEngine::ownedTargetsPlayCompleteTimeout() con
 	const int64_t elapsed = engineClock.getTime();
 	const int64_t remaining = std::max<int64_t>(0, latestOwnedEventTime - elapsed);
 
-	return std::chrono::nanoseconds(remaining) + kOwnedDevicePlayCompleteGrace;
+	return std::chrono::nanoseconds(remaining) + ownedDevicePlayCompleteGrace;
 }
 
 bool LocalEventEngine::waitForPlayAll()

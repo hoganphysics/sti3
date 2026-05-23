@@ -38,10 +38,20 @@ Completed in second implementation pass:
 - Verified:
   - `ctest --test-dir build-ninja --output-on-failure -R "MasterTrigger bounded arm wait|Server cancels play when owned target|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
 
+Completed in third implementation pass:
+
+- Made playback timeout values configurable in the existing `EngineManager` config section:
+  - `PlayReady Timeout ms`;
+  - `Trigger Timeout ms`;
+  - `PlayComplete Grace ms`.
+- `LocalEventEngineScheduler` now owns the configured values and applies them to every `LocalEventEngine` it creates, including engines recreated through `setEngineFactory()`.
+- Added an integration regression for a target that reports `PlayReady` but never arms for trigger.
+- Updated timeout regressions to use short configured values and assert they cancel quickly.
+- Verified:
+  - `ctest --test-dir build-ninja --output-on-failure -R "Server cancels play when owned target never reports PlayReady|Server cancels play when owned target never reports PlayComplete|Server cancels play when owned target reports PlayReady but never arms|MasterTrigger bounded arm wait"`
+
 Not started:
 
-- Configuration support for timeout values.
-- Integration regression for a child that reports `PlayReady` but never arms for trigger.
 - Per-device completion grace tuning based on real hardware behavior.
 
 ## Problem

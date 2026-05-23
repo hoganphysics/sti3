@@ -24,6 +24,7 @@
 #include <sti/engine/ShotID.h>
 #include <sti/engine/StackTraceData.h>
 
+#include <sti/utils/Configuration.h>
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/utils/VirtualFileHolder.h>
 #include <sti/utils/VirtualFileServer.h>
@@ -85,15 +86,48 @@ using STI::Engine::SequenceJob;
 using STI::Engine::EngineState;
 using STI::Engine::ParseResult;
 using STI::Device::LocalPersistenceManager;
+using STI::Utils::Configuration;
 
 std::map<std::string, unsigned> LocalEventEngineScheduler::playMessageIDs;
+
+namespace {
+
+std::chrono::milliseconds getPositiveMilliseconds(
+    const Configuration& config,
+    const std::string& key,
+    std::chrono::milliseconds defaultValue)
+{
+    auto value = config.get<int>("EngineManager", key, static_cast<int>(defaultValue.count())).get();
+    if (value <= 0) {
+        return defaultValue;
+    }
+    return std::chrono::milliseconds(value);
+}
+
+} // namespace
 
 
 LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice, 
                                                     const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
                                                     const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
                                                     const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager)
-: MessageGenerator(dispatcher), completedParseJobs(3), completedPlayJobs(3), completedSequenceJobs(3), persistenceManager(persistenceManager)
+: LocalEventEngineScheduler(localDevice, engineFactory, dispatcher, persistenceManager, Configuration())
+{
+}
+
+LocalEventEngineScheduler::LocalEventEngineScheduler(STI::Device::LocalDevice* localDevice,
+                                                    const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory,
+                                                    const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher,
+                                                    const std::shared_ptr<STI::Device::PersistenceManager>& persistenceManager,
+                                                    const Configuration& config)
+: MessageGenerator(dispatcher),
+completedParseJobs(3),
+completedPlayJobs(3),
+completedSequenceJobs(3),
+persistenceManager(persistenceManager),
+ownedDevicePlayReadyTimeout(getPositiveMilliseconds(config, "PlayReady Timeout ms", LocalEventEngine::DefaultOwnedDevicePlayReadyTimeout)),
+ownedDeviceTriggerTimeout(getPositiveMilliseconds(config, "Trigger Timeout ms", LocalEventEngine::DefaultOwnedDeviceTriggerTimeout)),
+ownedDevicePlayCompleteGrace(getPositiveMilliseconds(config, "PlayComplete Grace ms", LocalEventEngine::DefaultOwnedDevicePlayCompleteGrace))
 {
     completedParseJobs.setMaxSize(3);
     completedPlayJobs.setMaxSize(6);
@@ -171,6 +205,7 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
     if (eventEngineFactory != 0) {
  
         std::shared_ptr<LocalEventEngine> engine = eventEngineFactory->createEngine(engineID, deviceParser, triggerTarget);
+        engine->setPlaybackTimeouts(ownedDevicePlayReadyTimeout, ownedDeviceTriggerTimeout, ownedDevicePlayCompleteGrace);
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
         engineManagers.add(engineID, manager);        
