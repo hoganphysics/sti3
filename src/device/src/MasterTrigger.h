@@ -4,6 +4,7 @@
 #include "TriggerCallback.h"
 #include <sti/device/DeviceID.h>
 
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <condition_variable>
@@ -28,6 +29,7 @@ public:
     void arm(const STI::Device::DeviceID& id);
     void arm(const std::vector<STI::Device::DeviceID>& ids);
     void waitForArm();
+    bool waitForArmFor(std::chrono::milliseconds timeout, std::vector<STI::Device::DeviceID>& pending);
     void stop();
     bool allStatusMatch(const TriggerStatus& target);
 

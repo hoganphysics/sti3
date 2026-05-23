@@ -5,8 +5,10 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineID.h>
+#include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/EventEngineJob.h>
 #include <sti/engine/EventEngineJobList.h>
+#include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/PlayJobStatus.h>
@@ -16,16 +18,20 @@
 #include <sti/engine/RawEventTargetChannel.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/SequenceID.h>
 #include <sti/engine/SynchronousEvent.h>
 #include <sti/utils/Distributer.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/MixedValue.h>
 
 #include "LocalEventEngineScheduler.h"
+#include "MasterTrigger.h"
 
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <filesystem>
+#include <mutex>
 #include <memory>
 #include <set>
 #include <string>
@@ -42,10 +48,12 @@ using STI::Engine::EngineID;
 using STI::Engine::EngineJobStatus;
 using STI::Engine::EngineParsingMessage;
 using STI::Engine::EnginePlayingMessage;
+using STI::Engine::EventEngineScheduler;
 using STI::Engine::EventEngineJob;
 using STI::Engine::EventEngineJobList;
 using STI::Engine::EventEngineJobType;
 using STI::Engine::LocalEventEngineScheduler;
+using STI::Engine::MasterTrigger;
 using STI::Engine::ParseID;
 using STI::Engine::ParseResult;
 using STI::Engine::PlayingMessageType;
@@ -98,6 +106,152 @@ private:
     int& playCount;
 };
 
+class BlockingBeforePlayEvent : public SynchronousEvent
+{
+public:
+    BlockingBeforePlayEvent(double time, int& loadCount, int& playCount)
+        : SynchronousEvent(time), loadCount(loadCount), playCount(playCount) {}
+
+    void waitBeforePlay() override
+    {
+        std::unique_lock<std::mutex> lock(blockMutex);
+        blockCondition.wait(lock, [this]() { return stopRequested; });
+    }
+
+    void loadEvent() override { ++loadCount; }
+    void playEvent() override { ++playCount; }
+    void collectMeasurementData() override {}
+    void stopEvent() override
+    {
+        std::unique_lock<std::mutex> lock(blockMutex);
+        stopRequested = true;
+        blockCondition.notify_all();
+    }
+    void pauseEvent() override {}
+    void unpauseEvent(bool) override {}
+
+private:
+    int& loadCount;
+    int& playCount;
+    bool stopRequested = false;
+    std::mutex blockMutex;
+    std::condition_variable blockCondition;
+};
+
+class StallingScheduler : public EventEngineScheduler
+{
+public:
+    explicit StallingScheduler(const std::shared_ptr<LocalEventEngineScheduler>& realScheduler)
+        : realScheduler(realScheduler) {}
+
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot) override
+    {
+        return realScheduler->parse(shot);
+    }
+
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Engine::SequenceEntryID& sequenceEntryID) override
+    {
+        return realScheduler->parse(shot, sequenceEntryID);
+    }
+
+    STI::Engine::ParseJobStatus parse(const std::shared_ptr<STI::Engine::Shot>& shot, const STI::Engine::SequenceID& sequenceID) override
+    {
+        return realScheduler->parse(shot, sequenceID);
+    }
+
+    STI::Engine::PlayJobStatus play(const ParseID& parseID, const STI::Engine::EngineJobSourceID& source) override
+    {
+        return realScheduler->play(parseID, source);
+    }
+
+    STI::Engine::AddSequenceStatus addSequence(const std::shared_ptr<STI::Engine::Sequence>& sequence, const STI::Engine::EngineJobSourceID& source) override
+    {
+        return realScheduler->addSequence(sequence, source);
+    }
+
+    void closeSequence(const STI::Engine::SequenceID& seqid) override { realScheduler->closeSequence(seqid); }
+    void cancelSequence(const STI::Engine::SequenceID& seqid) override { realScheduler->cancelSequence(seqid); }
+
+    EngineJobStatus getStatus(const ParseID& pid) override { return realScheduler->getStatus(pid); }
+    EngineJobStatus getStatus(const ShotID& sid) override { return realScheduler->getStatus(sid); }
+    EngineJobStatus getStatus(const STI::Engine::SequenceID& seqID) override { return realScheduler->getStatus(seqID); }
+
+    bool getDependencyParser(std::shared_ptr<STI::Engine::EventEngineDependencyParser>& dependencyParser) override
+    {
+        return realScheduler->getDependencyParser(dependencyParser);
+    }
+
+    bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const override
+    {
+        return realScheduler->getJob(id, job);
+    }
+
+    void addJob(const std::shared_ptr<EventEngineJob>& newJob) override
+    {
+        if (stallPlayJobs && newJob != nullptr && newJob->getJobID().type == EventEngineJobType::Play) {
+            stalledJobs.push_back(newJob);
+            return;
+        }
+
+        realScheduler->addJob(newJob);
+    }
+
+    void cancelJob(const EngineJobID& jobID) override { realScheduler->cancelJob(jobID); }
+    void cancelAll() override { realScheduler->cancelAll(); }
+
+    std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const override
+    {
+        return realScheduler->getJobIDs(jobListType);
+    }
+
+    std::vector<std::shared_ptr<EventEngineJob>> getJobs(const EventEngineJobList& jobListType) const override
+    {
+        return realScheduler->getJobs(jobListType);
+    }
+
+    std::shared_ptr<STI::Engine::Shot> createShot(const ShotConfig& shotConfig, const std::shared_ptr<RawEventGroup>& eventGroup) override
+    {
+        return realScheduler->createShot(shotConfig, eventGroup);
+    }
+
+    void setEngineFactory(const std::shared_ptr<STI::Engine::EventEngineFactory>& engineFactory) override
+    {
+        realScheduler->setEngineFactory(engineFactory);
+    }
+
+    void getEngineIDs(std::set<EngineID>& engineIDs) const override { realScheduler->getEngineIDs(engineIDs); }
+    STI::Engine::EngineState getEngineState(const EngineID& engineID) const override { return realScheduler->getEngineState(engineID); }
+    void getEngineStates(std::map<EngineID, STI::Engine::EngineState>& engineStates) const override { realScheduler->getEngineStates(engineStates); }
+    void clearEngine(const EngineID& engineID) override { realScheduler->clearEngine(engineID); }
+    void stopEngine(const EngineID& engineID) override { realScheduler->stopEngine(engineID); }
+
+    bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const override
+    {
+        return realScheduler->getParseResult(parseID, parseResult);
+    }
+
+    bool getShotResult(const ShotID& shotID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const override
+    {
+        return realScheduler->getShotResult(shotID, shotResult);
+    }
+
+    bool getLastParseResult(const EngineID& engineID, std::shared_ptr<ParseResult>& parseResult) const override
+    {
+        return realScheduler->getLastParseResult(engineID, parseResult);
+    }
+
+    bool getLastShotResult(const EngineID& engineID, std::shared_ptr<STI::Engine::ShotResult>& shotResult) const override
+    {
+        return realScheduler->getLastShotResult(engineID, shotResult);
+    }
+
+    bool stallPlayJobs = false;
+    std::vector<std::shared_ptr<EventEngineJob>> stalledJobs;
+
+private:
+    std::shared_ptr<LocalEventEngineScheduler> realScheduler;
+};
+
 class PartnerGeneratingDevice : public LocalDevice
 {
 public:
@@ -118,7 +272,12 @@ public:
         RawEventTargetChannel partnerChannel(0);
 
         for (auto& tuple : eventsIn) {
-            synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first, loadCount, playCount));
+            if (blockBeforePlay) {
+                synchedEvents.push_back(std::make_shared<BlockingBeforePlayEvent>(tuple.first, loadCount, playCount));
+            }
+            else {
+                synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first, loadCount, playCount));
+            }
 
             if (!partnerID.empty()) {
                 for (auto& rawEvent : tuple.second) {
@@ -141,8 +300,40 @@ public:
 
     DeviceID partnerID;
     bool useDirectRawPartnerEvents = false;
+    bool blockBeforePlay = false;
     int loadCount = 0;
     int playCount = 0;
+};
+
+class PlayReadyStallDevice : public PartnerGeneratingDevice
+{
+public:
+    PlayReadyStallDevice(const std::string& name, unsigned short module, const std::string& targetServer)
+        : PartnerGeneratingDevice(name, module, targetServer) {}
+
+    using PartnerGeneratingDevice::getEngineScheduler;
+
+    bool getEngineScheduler(std::shared_ptr<EventEngineScheduler>& scheduler) override
+    {
+        if (!stallPlayScheduling) {
+            return LocalDevice::getEngineScheduler(scheduler);
+        }
+
+        if (stallingScheduler == nullptr) {
+            std::shared_ptr<LocalEventEngineScheduler> realScheduler;
+            if (!LocalDevice::getEngineScheduler(realScheduler) || realScheduler == nullptr) {
+                return false;
+            }
+            stallingScheduler = std::make_shared<StallingScheduler>(realScheduler);
+        }
+
+        stallingScheduler->stallPlayJobs = true;
+        scheduler = stallingScheduler;
+        return true;
+    }
+
+    bool stallPlayScheduling = false;
+    std::shared_ptr<StallingScheduler> stallingScheduler;
 };
 
 std::shared_ptr<LocalEventEngineScheduler> schedulerFor(PartnerGeneratingDevice& device)
@@ -188,7 +379,7 @@ EngineJobStatus waitForParseTerminal(LocalEventEngineScheduler& scheduler, const
 
 EngineJobStatus waitForShotTerminal(LocalEventEngineScheduler& scheduler, const ShotID& sid)
 {
-    for (int i = 0; i < 200; ++i) {
+    for (int i = 0; i < 500; ++i) {
         auto status = scheduler.getStatus(sid);
         if (status == EngineJobStatus::Completed || status == EngineJobStatus::Canceled) {
             return status;
@@ -230,6 +421,19 @@ std::shared_ptr<EventEngineJob> findCompletedPlayJob(LocalEventEngineScheduler& 
     return {};
 }
 
+std::shared_ptr<EventEngineJob> waitForCompletedPlayJob(LocalEventEngineScheduler& scheduler, const ShotID& sid)
+{
+    for (int i = 0; i < 500; ++i) {
+        auto job = findCompletedPlayJob(scheduler, sid);
+        if (job != nullptr) {
+            return job;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    return findCompletedPlayJob(scheduler, sid);
+}
+
 void requireAbstractParse(LocalEventEngineScheduler& scheduler, const ParseID& pid, const DeviceID& missingID)
 {
     std::shared_ptr<ParseResult> parseResult;
@@ -261,6 +465,24 @@ void requireConcreteParse(LocalEventEngineScheduler& scheduler, const ParseID& p
 }
 
 } // namespace
+
+TEST_CASE("MasterTrigger bounded arm wait reports pending devices")
+{
+    DeviceID triggerID("Trigger", "127.0.0.1", 200, "root");
+    DeviceID readyID("Ready", "127.0.0.1", 201, "root");
+    DeviceID pendingID("Pending", "127.0.0.1", 202, "root");
+
+    MasterTrigger trigger(triggerID);
+    trigger.arm(std::vector<DeviceID>{readyID, pendingID});
+    trigger.ready(readyID);
+
+    std::vector<DeviceID> pending;
+    CHECK_FALSE(trigger.waitForArmFor(std::chrono::milliseconds(20), pending));
+    REQUIRE(pending.size() == 1);
+    CHECK(pending.front() == pendingID);
+
+    trigger.stop();
+}
 
 TEST_CASE("Declared missing partner keeps its target ID without entering the device collection")
 {
@@ -437,6 +659,57 @@ TEST_CASE("Server cancels play when owned target loses parsed engine before play
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device state invalid"));
     CHECK(target->loadCount == 0);
+    CHECK(target->playCount == 0);
+}
+
+TEST_CASE("Server cancels play when owned target never reports PlayReady")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("PlayReadyTimeoutServer", 90, "root");
+    auto target = std::make_shared<PlayReadyStallDevice>("PlayReadyTimeoutTarget", 91, server->getID().getID());
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    target->stallPlayScheduling = true;
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device PlayReady timeout"));
+    CHECK(target->loadCount == 0);
+    CHECK(target->playCount == 0);
+}
+
+TEST_CASE("Server cancels play when owned target never reports PlayComplete")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("PlayCompleteTimeoutServer", 92, "root");
+    auto target = std::make_shared<PartnerGeneratingDevice>("PlayCompleteTimeoutTarget", 93, server->getID().getID());
+    target->blockBeforePlay = true;
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
+    CHECK(target->loadCount == 1);
     CHECK(target->playCount == 0);
 }
 

@@ -40,6 +40,29 @@ void MasterTrigger::waitForArm()
 	}
 }
 
+bool MasterTrigger::waitForArmFor(std::chrono::milliseconds timeout, std::vector<DeviceID>& pending)
+{
+	pending.clear();
+
+	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);
+	running = true;
+
+	const auto ready = [this]() {
+		return !running || _allStatusMatch(MasterTrigger::TriggerStatus::Waiting);
+	};
+
+	if (!mtriggerCondition.wait_for(mtriggerLock, timeout, ready)) {
+		for (auto& s : status) {
+			if (s.second != MasterTrigger::TriggerStatus::Waiting) {
+				pending.push_back(s.first);
+			}
+		}
+		return false;
+	}
+
+	return running && _allStatusMatch(MasterTrigger::TriggerStatus::Waiting);
+}
+
 bool MasterTrigger::allStatusMatch(const MasterTrigger::TriggerStatus& target)
 {
 	std::unique_lock<std::mutex> mtriggerLock(mtriggerMutex);

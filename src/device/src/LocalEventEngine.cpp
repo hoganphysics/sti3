@@ -34,6 +34,9 @@
 #include "LocalTriggerCallback.h"
 #include "MasterTrigger.h"
 
+#include <algorithm>
+#include <chrono>
+#include <exception>
 #include <memory>
 #include <thread>
 #include <iterator>
@@ -67,6 +70,7 @@ using STI::Engine::ShotResultStatus;
 using STI::Engine::RawEventGroup;
 using STI::Engine::FullShotResult;
 using STI::Engine::EnginePlayingMessage;
+using STI::Engine::EventEngine;
 
 namespace {
 
@@ -107,6 +111,10 @@ ShotResultStatus shotStatusFromMessages(const std::vector<EnginePlayingMessage>&
 	}
 	return ShotResultStatus::Success;
 }
+
+constexpr auto kOwnedDevicePlayReadyTimeout = std::chrono::seconds(2);
+constexpr auto kOwnedDeviceTriggerTimeout = std::chrono::seconds(2);
+constexpr auto kOwnedDevicePlayCompleteGrace = std::chrono::seconds(2);
 
 } // namespace
 
@@ -1069,6 +1077,117 @@ bool LocalEventEngine::validateOwnedTargetsReadyForPlay(std::vector<std::pair<De
 	return invalidTargets.empty();
 }
 
+std::vector<DeviceID> LocalEventEngine::pendingOwnedTargets(const std::map<DeviceID, EngineState>& observedTargets) const
+{
+	std::vector<DeviceID> pending;
+
+	for (const auto& id : ownedTargets) {
+		if (observedTargets.find(id) == observedTargets.end()) {
+			pending.push_back(id);
+		}
+	}
+
+	return pending;
+}
+
+std::vector<std::pair<DeviceID, std::shared_ptr<EventEngine>>> LocalEventEngine::snapshotOwnedTargetEngines(const std::vector<DeviceID>& targets) const
+{
+	std::vector<std::pair<DeviceID, std::shared_ptr<EventEngine>>> snapshot;
+	snapshot.reserve(targets.size());
+
+	for (const auto& id : targets) {
+		std::shared_ptr<EventEngine> engine;
+		auto it = engines.find(id);
+		if (it != engines.end()) {
+			engine = it->second;
+		}
+		snapshot.emplace_back(id, engine);
+	}
+
+	return snapshot;
+}
+
+std::vector<std::pair<DeviceID, EngineState>> LocalEventEngine::queryOwnedTargetStates(const std::vector<std::pair<DeviceID, std::shared_ptr<EventEngine>>>& targets) const
+{
+	std::vector<std::pair<DeviceID, EngineState>> states;
+	states.reserve(targets.size());
+
+	for (const auto& target : targets) {
+		EngineState state = EngineState::Missing;
+
+		if (target.second != nullptr) {
+			try {
+				state = target.second->getState();
+			}
+			catch (const std::exception&) {
+				state = EngineState::Unknown;
+			}
+			catch (...) {
+				state = EngineState::Unknown;
+			}
+		}
+
+		states.emplace_back(target.first, state);
+	}
+
+	return states;
+}
+
+EnginePlayingMessage& LocalEventEngine::addOwnedTargetTimeoutMessage(std::vector<EnginePlayingMessage>& messages, const std::string& name, const std::string& expectedState, const std::vector<std::pair<DeviceID, EngineState>>& targets)
+{
+	auto& msg = addPlayMessage(messages, PlayingMessageType::Error, name)
+		<< "Timed out waiting for owned devices to reach " << expectedState << ": \n";
+
+	for (const auto& target : targets) {
+		msg << " * " << target.first.getID()
+			<< " (EngineState = " << print(target.second) << ")\n";
+	}
+
+	return msg;
+}
+
+bool LocalEventEngine::waitForOwnedTargetsPlayReady(std::unique_lock<std::mutex>& playLock)
+{
+	if (ownedTargets.size() == 0) {
+		return true;
+	}
+
+	const auto deadline = std::chrono::steady_clock::now() + kOwnedDevicePlayReadyTimeout;
+
+	while (!cancelled
+		&& isState(EngineState::PreparingPlay)
+		&& playReadyOwnedTargets.size() != ownedTargets.size()) {
+		if (playCondition.wait_until(playLock, deadline) == std::cv_status::timeout) {
+			break;
+		}
+	}
+
+	if (playReadyOwnedTargets.size() == ownedTargets.size()) {
+		return true;
+	}
+
+	if (cancelled || !isState(EngineState::PreparingPlay)) {
+		return false;
+	}
+
+	auto pendingTargets = pendingOwnedTargets(playReadyOwnedTargets);
+	auto targetEngines = snapshotOwnedTargetEngines(pendingTargets);
+
+	playLock.unlock();
+	auto targetStates = queryOwnedTargetStates(targetEngines);
+	playLock.lock();
+
+	if (playReadyOwnedTargets.size() != ownedTargets.size()
+		&& !cancelled
+		&& isState(EngineState::PreparingPlay)) {
+		addOwnedTargetTimeoutMessage(playReadyMessages, "Owned device PlayReady timeout", "PlayReady", targetStates);
+		cancelled = true;
+		return false;
+	}
+
+	return playReadyOwnedTargets.size() == ownedTargets.size();
+}
+
 void LocalEventEngine::scheduleAllPlayJobs(const EngineJobID& jobID, const std::shared_ptr<Shot>& shot, const DeviceID& jobOwner)
 {
 	if (ownedTargets.size() == 0) {
@@ -1200,10 +1319,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 
 		//Wait for all owned target devices to reach PlayReady state
 		if (!cancelled && ownedTargets.size() > 0) {
-			// This device is a server; wait for owned devices to send PlayReady messages.
-			while (isState(EngineState::PreparingPlay) && playReadyOwnedTargets.size() != ownedTargets.size()) {
-				playCondition.wait(playLock);
-			}
+			waitForOwnedTargetsPlayReady(playLock);
 		}
 
 		// Check that owned devices are PlayReady
@@ -1443,7 +1559,9 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	}
 	
 	//need to wait for owned device to arm before entering playShot to arm locally
-	masterTrigger->waitForArm();		//wait for all owned devices to enter WaitingForTrigger state
+	if (!waitForTriggerArm("owned devices")) {		//wait for all owned devices to enter WaitingForTrigger state
+		return;
+	}
 	if (isPlayCancelled() || !isState(EngineState::PlayReady)) {
 		return;
 	}
@@ -1455,7 +1573,9 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	//Only the job owner actually calls trigger, even if the trigger is delegated to another device
 	if (isJobOwner) {
 		
-		masterTrigger->waitForArm();		//waits for the local device to enter WaitingForTrigger
+		if (!waitForTriggerArm("local device")) {		//waits for the local device to enter WaitingForTrigger
+			return;
+		}
 
 		trigger(masterTrigger->triggerID());
 	}
@@ -1519,9 +1639,9 @@ void LocalEventEngine::playShot(TriggerCallback& triggerCB)
 												//that the rest of the system should now be triggered.
 
 	bool playedOk = playDeviceEvents();		//actually play the events on the device
-	waitForPlayAll();		//wait until all owned devices complete play
+	bool ownedDevicesPlayed = waitForPlayAll();		//wait until all owned devices complete play
 
-	if (!playedOk || localPlayMsgCounter.errorCount > 0) {
+	if (!playedOk || !ownedDevicesPlayed || localPlayMsgCounter.errorCount > 0) {
 		stop();
 	}
 
@@ -1553,6 +1673,51 @@ bool LocalEventEngine::armTrigger(TriggerCallback& triggerCB)
 	return true;
 }
 
+bool LocalEventEngine::waitForTriggerArm(const std::string& timeoutContext)
+{
+	if (masterTrigger == nullptr) {
+		return true;
+	}
+
+	std::vector<DeviceID> pendingTargets;
+	if (masterTrigger->waitForArmFor(kOwnedDeviceTriggerTimeout, pendingTargets)) {
+		return true;
+	}
+
+	if (pendingTargets.empty() && (isPlayCancelled() || !isState(EngineState::PlayReady))) {
+		return false;
+	}
+
+	std::vector<std::pair<DeviceID, EngineState>> targetStates;
+	std::vector<DeviceID> remoteTargets;
+
+	for (const auto& id : pendingTargets) {
+		if (id == localDeviceID) {
+			targetStates.emplace_back(id, getState());
+		}
+		else {
+			remoteTargets.push_back(id);
+		}
+	}
+
+	std::vector<std::pair<DeviceID, std::shared_ptr<EventEngine>>> targetEngines;
+	{
+		std::unique_lock<std::mutex> playLock(playMutex);
+		targetEngines = snapshotOwnedTargetEngines(remoteTargets);
+	}
+
+	auto remoteStates = queryOwnedTargetStates(targetEngines);
+	targetStates.insert(targetStates.end(), remoteStates.begin(), remoteStates.end());
+
+	std::vector<EnginePlayingMessage> errors;
+	addOwnedTargetTimeoutMessage(errors, "Owned device trigger timeout", "WaitingForTrigger", targetStates)
+		<< "Timeout context: " << timeoutContext << ".";
+	appendPlayMessages(errors);
+	cancelPlayJob();
+	stop();
+	return false;
+}
+
 
 void LocalEventEngine::waitForTrigger() const
 {
@@ -1564,20 +1729,66 @@ void LocalEventEngine::waitForTrigger() const
 }
 
 
-void LocalEventEngine::waitForPlayAll()
+std::chrono::nanoseconds LocalEventEngine::ownedTargetsPlayCompleteTimeout() const
+{
+	int64_t latestOwnedEventTime = 0;
+
+	for (const auto& id : ownedTargets) {
+		auto events = eventsByTarget.find(id);
+		if (events != eventsByTarget.end() && events->second != nullptr && !events->second->eventsEmpty()) {
+			latestOwnedEventTime = std::max(latestOwnedEventTime, static_cast<int64_t>(events->second->endTime()));
+		}
+	}
+
+	const int64_t elapsed = engineClock.getTime();
+	const int64_t remaining = std::max<int64_t>(0, latestOwnedEventTime - elapsed);
+
+	return std::chrono::nanoseconds(remaining) + kOwnedDevicePlayCompleteGrace;
+}
+
+bool LocalEventEngine::waitForPlayAll()
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
 	
 	//Wait for all owned target devices to finish play
 	if (ownedTargets.size() > 0) {
 		// This device is a server; wait for owned devices to send ready messages
-		while (isState(EngineState::Playing) && playedOwnedTargets.size() < ownedTargets.size()) {
+		const auto deadline = std::chrono::steady_clock::now() + ownedTargetsPlayCompleteTimeout();
 
-			playCondition.wait(playLock);
+		while (isState(EngineState::Playing) && playedOwnedTargets.size() < ownedTargets.size()) {
+			if (playCondition.wait_until(playLock, deadline) == std::cv_status::timeout) {
+				break;
+			}
 		}
 	}
 
 	// allEngineStateCheck(playedOwnedTargets, EngineState::Parsed);
+	if (playedOwnedTargets.size() == ownedTargets.size()) {
+		return true;
+	}
+
+	if (!isState(EngineState::Playing)) {
+		return false;
+	}
+
+	auto pendingTargets = pendingOwnedTargets(playedOwnedTargets);
+	auto targetEngines = snapshotOwnedTargetEngines(pendingTargets);
+
+	playLock.unlock();
+	auto targetStates = queryOwnedTargetStates(targetEngines);
+	playLock.lock();
+
+	if (playedOwnedTargets.size() != ownedTargets.size()
+		&& !cancelled
+		&& isState(EngineState::Playing)) {
+		std::vector<EnginePlayingMessage> errors;
+		addOwnedTargetTimeoutMessage(errors, "Owned device PlayComplete timeout", "PlayComplete", targetStates);
+		appendPlayMessages(errors);
+		cancelled = true;
+		return false;
+	}
+
+	return playedOwnedTargets.size() == ownedTargets.size();
 }
 
 

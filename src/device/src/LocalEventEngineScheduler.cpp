@@ -1684,6 +1684,9 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
     playMessageIDs["Failed to enter Playing"]               = 80;
     playMessageIDs["Play canceled"]                         = 81;
     playMessageIDs["Owned device state invalid"]            = 82;
+    playMessageIDs["Owned device PlayReady timeout"]        = 83;
+    playMessageIDs["Owned device trigger timeout"]          = 84;
+    playMessageIDs["Owned device PlayComplete timeout"]     = 85;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()

@@ -28,6 +28,7 @@
 #include "MessageGenerator.h"
 #include "utils/OrderedBufferMap.h"
 
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <condition_variable>
@@ -164,6 +165,11 @@ private:
 	void updateChannelValues(const RawEventVector& rawEvents);
 
 	void scheduleAllPlayJobs(const EngineJobID& jobID, const std::shared_ptr<Shot>& shot, const STI::Device::DeviceID& jobOwner);
+	bool waitForOwnedTargetsPlayReady(std::unique_lock<std::mutex>& playLock);
+	std::vector<STI::Device::DeviceID> pendingOwnedTargets(const std::map<STI::Device::DeviceID, STI::Engine::EngineState>& observedTargets) const;
+	std::vector<std::pair<STI::Device::DeviceID, std::shared_ptr<EventEngine>>> snapshotOwnedTargetEngines(const std::vector<STI::Device::DeviceID>& targets) const;
+	std::vector<std::pair<STI::Device::DeviceID, STI::Engine::EngineState>> queryOwnedTargetStates(const std::vector<std::pair<STI::Device::DeviceID, std::shared_ptr<EventEngine>>>& targets) const;
+	EnginePlayingMessage& addOwnedTargetTimeoutMessage(std::vector<EnginePlayingMessage>& messages, const std::string& name, const std::string& expectedState, const std::vector<std::pair<STI::Device::DeviceID, STI::Engine::EngineState>>& targets);
 
 	void playAll(const EngineJobID& jobID, const std::shared_ptr<TriggerCallback>& triggerCB, bool debug);
 	void playShot(TriggerCallback& triggerCB);
@@ -171,9 +177,11 @@ private:
 	void resetPlayThread();
 	void waitForPlayComplete();
 	void waitForPlayComplete(std::unique_lock<std::mutex>& playLock);
-	void waitForPlayAll();
+	bool waitForPlayAll();
+	std::chrono::nanoseconds ownedTargetsPlayCompleteTimeout() const;
 
 	bool armTrigger(TriggerCallback& triggerCB);
+	bool waitForTriggerArm(const std::string& timeoutContext);
 	void waitForTrigger() const;
 	void triggerOwnedDevices();
 

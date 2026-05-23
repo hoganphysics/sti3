@@ -20,10 +20,29 @@ Completed in first implementation pass:
   - `ctest --test-dir build-ninja --output-on-failure -R "Server cancels play when owned target loses parsed engine before play|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
   - `ctest --test-dir build-ninja --output-on-failure`
 
+Completed in second implementation pass:
+
+- Added bounded waits for:
+  - owned devices reaching `PlayReady`;
+  - trigger arming through `MasterTrigger`;
+  - owned devices sending `PlayComplete`.
+- Added play errors for timeout paths:
+  - `Owned device PlayReady timeout`;
+  - `Owned device trigger timeout`;
+  - `Owned device PlayComplete timeout`.
+- `PlayComplete` waiting now uses the expected end time of owned target event groups plus a conservative grace interval.
+- Added regressions for:
+  - the bounded `MasterTrigger` wait API reporting pending devices;
+  - an owned target accepting a play job but never reporting `PlayReady`;
+  - an owned target entering play but never reporting `PlayComplete`.
+- Verified:
+  - `ctest --test-dir build-ninja --output-on-failure -R "MasterTrigger bounded arm wait|Server cancels play when owned target|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
+
 Not started:
 
-- Timeout-based recovery for missing `PlayReady`, trigger-ready, or `PlayComplete` messages.
-- Regression tests for device loss after child play job scheduling, trigger arming, or active play.
+- Configuration support for timeout values.
+- Integration regression for a child that reports `PlayReady` but never arms for trigger.
+- Per-device completion grace tuning based on real hardware behavior.
 
 ## Problem
 
