@@ -48,6 +48,34 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.3.0 - Robust event-engine playback
+
+Feature release for making event-engine playback recover cleanly when required
+devices disappear or stop responding after parse.
+
+Features:
+
+* Add configurable playback wait settings in the `EngineManager` config section:
+  `PlayReady Timeout ms`, `Trigger Timeout ms`, and `PlayComplete Grace ms`.
+* Apply configured playback wait values to local event engines created by the
+  scheduler, including engines recreated after a factory replacement.
+
+Fixes:
+
+* Validate owned target engines immediately before play so parsed shots are
+  canceled if a required device is missing or no longer parsed.
+* Bound server waits for owned-device `PlayReady`, trigger arming, and
+  `PlayComplete` messages so playback jobs do not hang indefinitely.
+* Report timeout failures as stable play errors with the affected device IDs and
+  observed engine states.
+* Stop the owned-device subtree when a child times out during playback.
+
+Tests:
+
+* Add regression coverage for missing parsed targets, missing `PlayReady`,
+  missing trigger arming, missing `PlayComplete`, and bounded master-trigger
+  arm waits.
+
 ### 3.2.0 - Event engine last-result access
 
 Feature release for retrieving recent event-engine results and tightening local
