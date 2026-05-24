@@ -60,6 +60,37 @@ def sti_nameservice_mode(pytestconfig):
 
 
 @pytest.fixture
+def resolved_sti_nameservice_mode(pytestconfig):
+    mode = pytestconfig.getoption("--sti-nameservice-mode")
+    nameservice = pytestconfig.getoption("--sti-nameservice")
+    observe = bool(pytestconfig.getoption("--observe"))
+
+    if mode != "auto":
+        return mode
+    if nameservice:
+        return "external"
+    if observe:
+        return "external"
+    return "spawn"
+
+
+@pytest.fixture
+def external_sti_nameservice(sti_nameservice, resolved_sti_nameservice_mode):
+    if resolved_sti_nameservice_mode != "external":
+        pytest.skip("test requires an external omniORB name service")
+    if not sti_nameservice:
+        pytest.skip("pass --sti-nameservice host:port to use an external omniORB name service")
+    return sti_nameservice
+
+
+@pytest.fixture
+def stipy_modules():
+    stipy = pytest.importorskip("stipy")
+    stidevicepy = pytest.importorskip("stipy.stidevicepy")
+    return stipy, stidevicepy
+
+
+@pytest.fixture
 def observe_enabled(pytestconfig):
     return bool(pytestconfig.getoption("--observe"))
 

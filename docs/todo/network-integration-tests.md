@@ -11,6 +11,23 @@ The suite should support two modes:
 
 This should live under `test/`, not `examples/`, because the primary purpose is validation, failure injection, and regression coverage. Examples can later reuse polished scenarios from the harness, but the harness itself should be test-focused.
 
+## Implementation status
+
+Completed in the initial harness pass:
+
+- Added the `test/integration/` directory layout with Python and C++ subdirectories.
+- Added pytest marker and option registration, including name-service mode selection and observe-mode skipping.
+- Added reusable Python harness modules for simulated devices, in-process topology setup, shot builders, and bounded waits.
+- Added an opt-in smoke test that builds one server and one generated device against an external name service, then parses and plays one generated event.
+- Added an opt-in observe test that keeps a small generated in-process topology alive and prints frontend connection parameters.
+
+Deferred:
+
+- Starting and cleaning up a dedicated spawned omniORB name service.
+- Running generated devices in separate child processes.
+- Automated delegated-trigger, scheduler-contention, overlap, hierarchy, and stress scenarios.
+- Frontend integration beyond manual observe-mode connection parameters.
+
 ## Recommended directory name
 
 Use `test/integration/` as the top-level directory.
