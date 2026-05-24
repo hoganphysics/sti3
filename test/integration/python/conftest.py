@@ -12,6 +12,13 @@ def pytest_addoption(parser):
         help="Attach tests to an existing omniORB name service, such as 127.0.0.1:2809.",
     )
     group.addoption(
+        "--sti-nameservice-mode",
+        action="store",
+        default="auto",
+        choices=("auto", "external", "spawn"),
+        help="Select name-service handling: auto, external, or spawn.",
+    )
+    group.addoption(
         "--observe",
         action="store_true",
         default=False,
@@ -45,6 +52,11 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture
 def sti_nameservice(pytestconfig):
     return pytestconfig.getoption("--sti-nameservice")
+
+
+@pytest.fixture
+def sti_nameservice_mode(pytestconfig):
+    return pytestconfig.getoption("--sti-nameservice-mode")
 
 
 @pytest.fixture

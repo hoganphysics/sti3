@@ -77,13 +77,13 @@ Core pieces:
 - A topology builder that can create servers, sub-servers, shared devices, trigger devices, and partner-event relationships.
 - Shot builders for common timing patterns: single-device shots, shared-resource shots, delegated-trigger shots, overlapping parse/play shots, and variable-override shots.
 - Wait/assert helpers that poll scheduler state, parse tickets, result tickets, engine messages, and shot results with bounded timeouts.
-- A name-service strategy that can either start an isolated test name service on a temporary port or attach to one provided by an environment variable.
+- A name-service strategy that can either start an isolated test name service on a temporary port or attach to an externally managed name service.
 - An observe mode, for example a pytest option such as `--observe`, that leaves the network running or pauses at a known point so the frontend can connect.
 
 Prefer a staged realism model:
 
 1. Single Python process with a `NetworkDeviceHub` and generated devices for fast smoke tests.
-2. Multiple Python processes/hubs for tests that need actual process isolation, device loss, restart, or frontend observation.
+2. Multiple Python processes/hubs for most network realism tests, especially tests that need actual process isolation, device loss, restart, or frontend observation.
 3. C++ integration binaries only where Python cannot represent the timing, lifetime, or network failure mode cleanly.
 
 ## Detailed plan for the first Python harness pieces
@@ -97,11 +97,18 @@ Add `test/integration/python/pytest.ini` with markers for `integration`, `slow`,
 Add `test/integration/python/conftest.py` with command-line options:
 
 - `--sti-nameservice`: attach to an existing omniORB name service, for example `127.0.0.1:2809`.
+- `--sti-nameservice-mode`: choose how the harness obtains a name service: `auto`, `external`, or `spawn`.
 - `--observe`: enable frontend-observation mode for tests marked `observe`.
 - `--observe-timeout`: maximum time to keep an observable topology alive before pytest exits.
 - `--keep-network-alive`: leave spawned test processes alive for manual inspection after setup.
 
 The first pass should only register options and fixtures. It should not auto-start a name service until the process-management behavior is understood and cleanup is reliable.
+
+Name-service policy:
+
+- Observe mode should attach to an externally managed name service by default, usually the developer's normal instance on port `2809`, so the frontend can use known connection settings.
+- Automated non-observe tests should eventually default to spawning a dedicated name service on an unused non-default port. This avoids interfering with the developer's hand-test name service on `2809`.
+- `auto` should mean: use `external` when `--sti-nameservice` is supplied; otherwise use `spawn` for automated tests. Observe tests should require explicit external connection details unless a test intentionally documents a spawned connection string.
 
 ### 2. Test-network package
 
@@ -140,12 +147,13 @@ Add a topology builder that can run in two phases:
 1. In-process topology: one Python process, one `NetworkDeviceHub`, generated devices, fastest cleanup.
 2. Process topology: child Python processes for devices/hubs, needed for crash/restart, stale object references, and frontend-observation scenarios.
 
-The first implementation should complete the in-process path and define the process-topology interface without fully implementing it.
+The first implementation should complete the in-process path and define the process-topology interface without fully implementing it. Most later integration scenarios should use one generated device per process for realism. In-process topologies remain useful for fast smoke tests and for stress comparisons between shared-hub and one-process-per-device layouts.
 
 Every topology handle should expose:
 
 - device IDs and server IDs;
 - name-service address;
+- frontend connection details: name-service IP, name-service port, server device name, server address, server module, and full server `DeviceID`;
 - references to local objects when running in-process;
 - `start()`, `shutdown()`, and context-manager cleanup;
 - a textual network summary suitable for debugging and frontend connection instructions.
@@ -197,11 +205,13 @@ Add one opt-in `observe` test only after cleanup and smoke-test behavior are rel
 The first observable topology should:
 
 - start one server and several generated devices;
-- print the name-service address and network summary;
+- print the name-service IP/port, server `DeviceID`, and network summary;
 - keep the network alive while the frontend connects;
 - optionally run a slow parse/play loop so engine and scheduler state changes are visible.
 
 This should never run in normal automated test selection.
+
+For now, the frontend is connected manually through its settings dialog. The observe-mode output should therefore use stable, readable server IDs and print exactly the connection values a user needs to enter.
 
 ## Initial test list
 
@@ -243,10 +253,17 @@ This area depends on planned `stipy` support for parsing the same timing file ag
 
 - Generate a large number of simulated devices and verify discovery, parse, play, and shutdown remain bounded.
 - Generate a single device with a large number of events and verify parse/play/result handling.
+- Compare shared-hub and one-process-per-device layouts for the same generated network.
 - Run rapid parse/play cycles and watch for leaked jobs, stale engine state, stale CORBA objects, or persistence/log buildup.
 - Run repeated startup/shutdown cycles for hubs and devices.
 - Run repeated parse failures and play cancellations to verify recovery.
 - Run concurrent STIPy clients submitting work to the same server.
+
+## Resolved design decisions
+
+- Name-service handling should support both externally managed and spawned name services. Observe mode should normally use an existing name service with known connection details. Automated non-observe tests should eventually spawn a dedicated name service on an unused non-default port.
+- Frontend observation should be manual for now. Observe-mode tests should print a well-known set of connection parameters: name-service IP, name-service port, and the server `DeviceID` fields needed by the frontend settings dialog.
+- Most realistic integration scenarios should run one generated device per process. Shared-hub/in-process topologies should remain available for fast smoke tests and for stress comparisons.
 
 ## Additional useful scenarios
 
@@ -292,8 +309,5 @@ pytest test/integration/python -m observe --observe
 
 ## Open questions
 
-- Should the harness start its own omniORB name service, or should tests attach to an externally managed name service by default?
-- What is the canonical way for the frontend to discover a test network: environment variable, temporary config file, printed connection string, or fixed local port?
 - Which tests should run in CI or regular developer validation, and which should remain opt-in because they are slow or interactive?
-- Should generated devices share one hub process by default, or should the default topology use one process per device/server for realism?
 - What minimum `stipy` API changes are required before the server-hierarchy tests can be implemented cleanly?
