@@ -1,0 +1,62 @@
+"""Pytest configuration for STI network integration tests."""
+
+import pytest
+
+
+def pytest_addoption(parser):
+    group = parser.getgroup("sti integration")
+    group.addoption(
+        "--sti-nameservice",
+        action="store",
+        default=None,
+        help="Attach tests to an existing omniORB name service, such as 127.0.0.1:2809.",
+    )
+    group.addoption(
+        "--observe",
+        action="store_true",
+        default=False,
+        help="Enable tests marked observe for frontend inspection.",
+    )
+    group.addoption(
+        "--observe-timeout",
+        action="store",
+        type=float,
+        default=300.0,
+        help="Maximum seconds to keep an observe-mode topology alive.",
+    )
+    group.addoption(
+        "--keep-network-alive",
+        action="store_true",
+        default=False,
+        help="Leave spawned test network processes alive after setup for manual inspection.",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--observe"):
+        return
+
+    skip_observe = pytest.mark.skip(reason="observe-mode tests require --observe")
+    for item in items:
+        if "observe" in item.keywords:
+            item.add_marker(skip_observe)
+
+
+@pytest.fixture
+def sti_nameservice(pytestconfig):
+    return pytestconfig.getoption("--sti-nameservice")
+
+
+@pytest.fixture
+def observe_enabled(pytestconfig):
+    return bool(pytestconfig.getoption("--observe"))
+
+
+@pytest.fixture
+def observe_timeout(pytestconfig):
+    return float(pytestconfig.getoption("--observe-timeout"))
+
+
+@pytest.fixture
+def keep_network_alive(pytestconfig):
+    return bool(pytestconfig.getoption("--keep-network-alive"))
