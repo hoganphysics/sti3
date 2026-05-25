@@ -4,6 +4,7 @@
 #include "../../src/device/src/ProfileTarget.h"
 #include <sti/device/Device.h>
 #include <sti/utils/LocalCollection.h>
+#include <sti/utils/MetaData.h>
 #include <sti/utils/MixedValue.h>
 
 #include "fileholder_tests_support.h"
@@ -109,6 +110,8 @@ public:
 
     const DeviceID getID() const override { return id; }
     void kill() override {}
+    const STI::Utils::MixedValue& getMetaData() const override { return metaData.getMetaData(); }
+    STI::Utils::MixedValue getMetaData(const std::string& key) const override { return metaData.getMetaData(key); }
     void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>&) override {}
     bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>&) override { return false; }
     void getChannelManager(std::shared_ptr<STI::Device::ChannelManager>&) override {}
@@ -143,6 +146,7 @@ public:
 private:
     DeviceID id;
     std::shared_ptr<ProfileManager> profileManager;
+    STI::Utils::MetaData metaData;
 };
 
 DeviceID makeDeviceID(const std::string& name = "Device", const std::string& address = "127.0.0.1",

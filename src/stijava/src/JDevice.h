@@ -5,6 +5,7 @@
 #include <sti/device/DeviceCollection.h>
 #include "JEventEngineScheduler.h"
 #include <sti/utils/FileHolderFactory.h>
+#include <sti/utils/MetaData.h>
 
 #include <memory>
 #include <string>
@@ -47,6 +48,8 @@ public:
 	void kill();
 	void activate();
 	void disable();
+	const STI::Utils::MixedValue& getMetaData() const override;
+	STI::Utils::MixedValue getMetaData(const std::string& key) const override;
 
 	//Device
 	bool refresh();
@@ -92,6 +95,7 @@ private:
 	void setFileHolderFactory(const std::shared_ptr<STI::Utils::FileHolderFactory>& factory) {}
 
     std::shared_ptr<Device> wrappedDevice;
+	STI::Utils::MetaData metaData;
 
 };
 

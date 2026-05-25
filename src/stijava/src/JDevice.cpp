@@ -88,6 +88,22 @@ void JDevice::disable()
     }
 }
 
+const STI::Utils::MixedValue& JDevice::getMetaData() const
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getMetaData();
+    }
+    return metaData.getMetaData();
+}
+
+STI::Utils::MixedValue JDevice::getMetaData(const std::string& key) const
+{
+    if(wrappedDevice != 0) {
+        return wrappedDevice->getMetaData(key);
+    }
+    return metaData.getMetaData(key);
+}
+
 std::shared_ptr<STI::Device::JDeviceCollection> JDevice::getCollection()
 {
     std::shared_ptr<STI::Device::JDeviceCollection> jCollection;

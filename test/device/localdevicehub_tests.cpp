@@ -5,6 +5,7 @@
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/utils/LocalCollection.h>
+#include <sti/utils/MetaData.h>
 #include <sti/utils/MixedValue.h>
 
 #include <chrono>
@@ -49,6 +50,8 @@ public:
 
     const DeviceID getID() const override { return id; }
     void kill() override { alive = false; }
+    const MixedValue& getMetaData() const override { return metaData.getMetaData(); }
+    MixedValue getMetaData(const std::string& key) const override { return metaData.getMetaData(key); }
 
     void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher) override { dispatcher.reset(); }
     bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) override
@@ -135,6 +138,7 @@ public:
 private:
     DeviceID id;
     std::shared_ptr<LocalCollection<DeviceID, Device>> collection;
+    STI::Utils::MetaData metaData;
 };
 
 class RecordingCollectionListener : public LocalCollectionListener<DeviceID> {

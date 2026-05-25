@@ -33,6 +33,7 @@ using STI::Python::PersistenceManagerPy;
 using STI::Device::PersistenceManager;
 using STI::Engine::EventEngineScheduler;
 using STI::Utils::MixedValue;
+using STI::Utils::MixedValueType;
 using STI::Device::ProfileManager;
 using STI::Device::LogManager;
 using STI::Device::VersionManager;
@@ -269,6 +270,48 @@ void DevicePy::stopRW()
     if (device_ != 0) {
         device_->stopRW();
     }
+}
+
+pybind11::dict DevicePy::metadata() const
+{
+    pybind11::dict values;
+
+    if (device_ == 0) {
+        return values;
+    }
+
+    const auto& metaData = device_->getMetaData();
+
+    if (!metaData.isType(MixedValueType::Vector)) {
+        return values;
+    }
+
+    for (const auto& tuple : metaData.getVector()) {
+        if (!tuple.isType(MixedValueType::Vector)) {
+            continue;
+        }
+
+        const auto& entry = tuple.getVector();
+
+        if (entry.size() != 2 || !entry.at(0).isType(MixedValueType::String)) {
+            continue;
+        }
+
+        MixedValuePy value(entry.at(1));
+        values[entry.at(0).getString().c_str()] = value.getValue_py();
+    }
+
+    return values;
+}
+
+pybind11::object DevicePy::metadata(const std::string& key) const
+{
+    if (device_ != 0) {
+        MixedValuePy value(device_->getMetaData(key));
+        return value.getValue_py();
+    }
+
+    return pybind11::none();
 }
 
 std::string DevicePy::getAttribute(const std::string& key)

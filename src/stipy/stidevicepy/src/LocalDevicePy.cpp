@@ -274,6 +274,35 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, co
     addTask(task);
 }
 
+void LocalDevicePy::addMetadata(const std::string& key, const pybind11::object& value)
+{
+    if (device == 0) return;
+
+    MixedValuePy mixedValue(value);
+    device->addMetaData(key, mixedValue.getMixedValue());
+}
+
+void LocalDevicePy::setColor(const std::string& color)
+{
+    if (device != 0) {
+        device->setColor(color);
+    }
+}
+
+void LocalDevicePy::setDescription(const std::string& description)
+{
+    if (device != 0) {
+        device->setDescription(description);
+    }
+}
+
+void LocalDevicePy::setHelp(const std::string& help)
+{
+    if (device != 0) {
+        device->setHelp(help);
+    }
+}
+
 bool LocalDevicePy::addVersionInfo(const STI::Device::VersionInfo& version)
 {
     return device != 0 && device->addVersionInfo(version);

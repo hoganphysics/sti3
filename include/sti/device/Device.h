@@ -38,6 +38,10 @@ public:
 
 	virtual const DeviceID getID() const = 0;
 	virtual void kill() = 0;
+
+	//Metadata can be used for GUI layout, tooltips, device hints, etc.
+	virtual const STI::Utils::MixedValue& getMetaData() const = 0;
+	virtual STI::Utils::MixedValue getMetaData(const std::string& key) const = 0;
 	
 	virtual void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher) = 0;
 	virtual bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) = 0;

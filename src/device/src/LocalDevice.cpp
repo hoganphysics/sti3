@@ -459,6 +459,46 @@ const DeviceID LocalDevice::getID() const
 	return id;
 }
 
+const STI::Utils::MixedValue& LocalDevice::getMetaData() const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+	return metaData.getMetaData();
+}
+
+STI::Utils::MixedValue LocalDevice::getMetaData(const std::string& key) const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+	return metaData.getMetaData(key);
+}
+
+LocalDevice& LocalDevice::addMetaData(const std::string& key, const STI::Utils::MixedValue& value)
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+	metaData.addMetaData(key, value);
+	return *this;
+}
+
+LocalDevice& LocalDevice::addMetaDataList(const std::string& key, const std::vector<std::string>& values)
+{
+	STI::Utils::MixedValue value(values);
+	return addMetaData(key, value);
+}
+
+LocalDevice& LocalDevice::setColor(const std::string& color)
+{
+	return addMetaData("color", STI::Utils::MixedValue(color));
+}
+
+LocalDevice& LocalDevice::setDescription(const std::string& description)
+{
+	return addMetaData("description", STI::Utils::MixedValue(description));
+}
+
+LocalDevice& LocalDevice::setHelp(const std::string& help)
+{
+	return addMetaData("help", STI::Utils::MixedValue(help));
+}
+
 
 bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 {

@@ -45,6 +45,8 @@ void init_Device(py::module& m)
         .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
         .def("getVersionManager", &DevicePy::getVersionManager)
+        .def("metadata", py::overload_cast<>(&DevicePy::metadata, py::const_))
+        .def("metadata", py::overload_cast<const std::string&>(&DevicePy::metadata, py::const_), py::arg("key"))
         .def("openLog",
             [](DevicePy& self, const STI::Device::LogID& logID, std::size_t tailLines) {
                 py::gil_scoped_release release;

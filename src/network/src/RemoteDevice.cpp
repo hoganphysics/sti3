@@ -27,6 +27,7 @@ using STI::Network::RemoteAttributeManager;
 using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TProfileManager;
 using STI::Network::RemoteLogManager;
+using STI::Utils::MixedValue;
 
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_var device)
@@ -139,6 +140,38 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 	}
 
 	return deviceID;
+}
+
+void RemoteDevice::updateMetaData() const
+{
+	if (isDisabled()) return;
+
+	try {
+		STI::TNetwork::TMixedValue_var tMetaData;
+		getTRef()->getMetaData(tMetaData);	//remote call
+		metaData_ = STI::Utils::MetaData(convert<STI::TNetwork::TMixedValue, MixedValue>(tMetaData));
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+const STI::Utils::MixedValue& RemoteDevice::getMetaData() const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+	updateMetaData();
+	return metaData_.getMetaData();
+}
+
+STI::Utils::MixedValue RemoteDevice::getMetaData(const std::string& key) const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+	updateMetaData();
+	return metaData_.getMetaData(key);
 }
 
 

@@ -2916,6 +2916,7 @@ _CORBA_MODULE_BEG
       void kill();
       void disable();
       TDeviceID* getID();
+      void getMetaData(::STI::TNetwork::TMixedValue_out metaData);
       TDeviceCollection_ptr getDeviceCollection();
       TDeviceMessageDispatcher_ptr getMessageDispatcher();
       TEventEngineScheduler_ptr getEngineScheduler();
@@ -2965,6 +2966,7 @@ _CORBA_MODULE_BEG
       virtual void kill() = 0;
       virtual void disable() = 0;
       virtual TDeviceID* getID() = 0;
+      virtual void getMetaData(::STI::TNetwork::TMixedValue_out metaData) = 0;
       virtual TDeviceCollection_ptr getDeviceCollection() = 0;
       virtual TDeviceMessageDispatcher_ptr getMessageDispatcher() = 0;
       virtual TEventEngineScheduler_ptr getEngineScheduler() = 0;

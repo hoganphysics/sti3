@@ -35,6 +35,7 @@
 
 #include <sti/utils/Configuration.h>
 #include <sti/utils/LocalCollection.h>
+#include <sti/utils/MetaData.h>
 #include <sti/utils/MixedValue.h>
 
 #include <map>
@@ -84,6 +85,14 @@ public:
 	virtual ~LocalDevice();
 
 	const DeviceID getID() const;
+
+	const STI::Utils::MixedValue& getMetaData() const override;
+	STI::Utils::MixedValue getMetaData(const std::string& key) const override;
+	LocalDevice& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
+	LocalDevice& addMetaDataList(const std::string& key, const std::vector<std::string>& values);
+	LocalDevice& setColor(const std::string& color);
+	LocalDevice& setDescription(const std::string& description);
+	LocalDevice& setHelp(const std::string& help);
 
 	bool refresh() override;
 	void kill();
@@ -233,6 +242,7 @@ private:
 	bool isTargetServerOf(const DeviceID& id);
 
 	DeviceID id;
+	STI::Utils::MetaData metaData;
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 	bool usingParseDefault;
 	bool usingRWdefault;

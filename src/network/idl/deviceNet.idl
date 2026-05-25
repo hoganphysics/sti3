@@ -334,6 +334,7 @@ module TNetwork
 
 		//Device interface
 		TDeviceID getID();
+		void getMetaData(out TMixedValue metaData);
 
 		//Device collector interface
 		TDeviceCollection getDeviceCollection();

@@ -54,6 +54,22 @@ bool PartnerDevice::refresh()
 	return false;
 }
 
+const STI::Utils::MixedValue& PartnerDevice::getMetaData() const
+{
+	if (device != 0) {
+		return device->getMetaData();
+	}
+	return metaData.getMetaData();
+}
+
+STI::Utils::MixedValue PartnerDevice::getMetaData(const std::string& key) const
+{
+	if (device != 0) {
+		return device->getMetaData(key);
+	}
+	return metaData.getMetaData(key);
+}
+
 void PartnerDevice::getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection)
 {
 	if (device != 0) {

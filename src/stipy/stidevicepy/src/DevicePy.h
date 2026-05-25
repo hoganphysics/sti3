@@ -61,7 +61,8 @@ public:
     pybind11::object read(short channel, const pybind11::object& value);
     void stopRW();
 
-    
+    pybind11::dict metadata() const;
+    pybind11::object metadata(const std::string& key) const;
 
     std::string getAttribute(const std::string& key);
     bool getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute);

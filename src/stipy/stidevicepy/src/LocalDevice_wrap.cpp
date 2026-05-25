@@ -107,6 +107,26 @@ void init_LocalDevice(py::module& m)
         .def("__addTask_Base", py::overload_cast<const std::shared_ptr<Task>&>(&LocalDevicePy::addTask), py::arg("task"))
         // .def("addTask", py::overload_cast<const std::shared_ptr<TaskPy>&>(&LocalDevicePy::addTask), py::arg("task"))
         .def("__addTask", py::overload_cast<const std::shared_ptr<STI::Python::TaskPy>&, const pybind11::object&>(&LocalDevicePy::addTask), py::arg("task"), py::arg("object"))
+        .def("addMetadata",
+            [](std::shared_ptr<LocalDevicePy>& self, const std::string& key, const pybind11::object& value) {
+                self->addMetadata(key, value);
+                return self;
+            }, py::arg("key"), py::arg("value"))
+        .def("setColor",
+            [](std::shared_ptr<LocalDevicePy>& self, const std::string& color) {
+                self->setColor(color);
+                return self;
+            }, py::arg("color"))
+        .def("setDescription",
+            [](std::shared_ptr<LocalDevicePy>& self, const std::string& description) {
+                self->setDescription(description);
+                return self;
+            }, py::arg("description"))
+        .def("setHelp",
+            [](std::shared_ptr<LocalDevicePy>& self, const std::string& help) {
+                self->setHelp(help);
+                return self;
+            }, py::arg("help"))
         .def("addVersionInfo",
                 py::overload_cast<const STI::Device::VersionInfo&>(&LocalDevicePy::addVersionInfo),
                 py::arg("version"))

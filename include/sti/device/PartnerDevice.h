@@ -10,6 +10,7 @@
 #include <sti/engine/RawEventTargetChannel.h>
 
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/MetaData.h>
 
 #include <string>
 #include <memory>
@@ -33,6 +34,9 @@ public:
 	const DeviceID getID() const;
 	void kill();
 	bool refresh();
+
+	const STI::Utils::MixedValue& getMetaData() const override;
+	STI::Utils::MixedValue getMetaData(const std::string& key) const override;
 
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& dispatcher);
@@ -68,6 +72,7 @@ private:
 	LocalDevice* localDevice;
 	DeviceID partnerID;
 	std::shared_ptr<Device> device;
+	STI::Utils::MetaData metaData;
 };
 
 

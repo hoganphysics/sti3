@@ -48,6 +48,26 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.4.0 - Device metadata support
+
+Feature release for attaching metadata directly to STI devices.
+
+Features:
+
+* Add `Device::getMetaData()` and keyed `Device::getMetaData()` accessors for
+  device-level metadata.
+* Store device metadata on `LocalDevice` using the existing `MetaData` utility,
+  including helper methods for color, description, and help text.
+* Transport device metadata through the CORBA device interface so remote devices
+  can expose the same metadata as local devices.
+* Expose device metadata access and local-device metadata registration through
+  STIPy.
+
+Tests:
+
+* Add regression coverage for `LocalDevice` metadata storage and retrieval.
+* Update test device stubs for the expanded `Device` API.
+
 ### 3.3.0 - Robust event-engine playback
 
 Feature release for making event-engine playback recover cleanly when required

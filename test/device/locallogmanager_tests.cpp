@@ -6,6 +6,7 @@
 #include <sti/device/LogManager.h>
 #include <sti/device/LogRecord.h>
 #include <sti/utils/LocalCollection.h>
+#include <sti/utils/MetaData.h>
 
 #include "LocalLogManager.h"
 #include "LocalPersistenceManager.h"
@@ -173,6 +174,8 @@ public:
 
     const DeviceID getID() const override { return id_; }
     void kill() override {}
+    const STI::Utils::MixedValue& getMetaData() const override { return metaData_.getMetaData(); }
+    STI::Utils::MixedValue getMetaData(const std::string& key) const override { return metaData_.getMetaData(key); }
 
     void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher) override { dispatcher.reset(); }
     bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler) override {
@@ -226,6 +229,7 @@ public:
 private:
     DeviceID id_;
     std::shared_ptr<LogManager> logManager_;
+    STI::Utils::MetaData metaData_;
 };
 
 } // namespace

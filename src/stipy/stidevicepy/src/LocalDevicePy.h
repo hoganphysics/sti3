@@ -75,6 +75,10 @@ public:
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task);
 
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task, const pybind11::object& taskObj);
+    void addMetadata(const std::string& key, const pybind11::object& value);
+    void setColor(const std::string& color);
+    void setDescription(const std::string& description);
+    void setHelp(const std::string& help);
     bool addVersionInfo(const STI::Device::VersionInfo& version);
     bool addVersionInfo(const std::string& component, const std::string& version);
 

@@ -104,6 +104,18 @@ TMonitorManager_ptr TDevice_i::getMonitorManager()
 	return monitorManagerServantHolder.getRefPtr();
 }
 
+void TDevice_i::getMetaData(::STI::TNetwork::TMixedValue_out metaData)
+{
+	metaData = new STI::TNetwork::TMixedValue();
+	STI::Utils::MixedValue data;
+
+	if (localDevice != 0) {
+		data = localDevice->getMetaData();
+	}
+
+	(*metaData) = convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(data);
+}
+
 void TDevice_i::getVersions(::STI::TNetwork::TVersionInfoSeq_out versions)
 {
 	STI::TNetwork::TVersionInfoSeq_var tVersions(new STI::TNetwork::TVersionInfoSeq);

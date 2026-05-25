@@ -5,6 +5,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/PersistenceManager.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/utils/MetaData.h>
 
 #include "DeviceMessageListenerForwarder.h"
 #include "NetworkEventEngineFactory.h"
@@ -106,6 +107,22 @@ public:
 	}
 
 	bool refresh() { return localDevice != 0 && localDevice->refresh(); }
+
+	const STI::Utils::MixedValue& getMetaData() const override
+	{
+		if (localDevice != 0) {
+			return localDevice->getMetaData();
+		}
+		return metaData.getMetaData();
+	}
+
+	STI::Utils::MixedValue getMetaData(const std::string& key) const override
+	{
+		if (localDevice != 0) {
+			return localDevice->getMetaData(key);
+		}
+		return metaData.getMetaData(key);
+	}
 
 	void kill() 
 	{
@@ -211,6 +228,7 @@ private:
 	}
 
 	std::shared_ptr<STI::Device::Device> localDevice;
+	STI::Utils::MetaData metaData;
 	// STI::TNetwork::TDevice_i deviceServant;
 	ServantHolder<STI::TNetwork::TDevice_i, STI::TNetwork::TDevice> deviceServantHolder;
 };

@@ -8,6 +8,7 @@
 #include <sti/device/DeviceMessageHandler.h>
 #include <sti/device/DeviceID.h>
 #include <sti/utils/LocalCollection.h>
+#include <sti/utils/MetaData.h>
 #include <sti/network/HubID.h>
 
 #include "../../src/device/src/LocalDeviceMessageDispatcher.h"
@@ -84,6 +85,8 @@ public:
 
     const DeviceID getID() const override { return id; }
     void kill() override {}
+    const STI::Utils::MixedValue& getMetaData() const override { return metaData.getMetaData(); }
+    STI::Utils::MixedValue getMetaData(const std::string& key) const override { return metaData.getMetaData(key); }
 
     void getMessageDispatcher(std::shared_ptr<DeviceMessageDispatcher>& out) override { out = dispatcher; }
     bool getEngineScheduler(std::shared_ptr<STI::Engine::EventEngineScheduler>&) override { return false; }
@@ -137,6 +140,7 @@ public:
 private:
     DeviceID id;
     std::shared_ptr<DeviceMessageDispatcher> dispatcher;
+    STI::Utils::MetaData metaData;
 };
 
 } // namespace

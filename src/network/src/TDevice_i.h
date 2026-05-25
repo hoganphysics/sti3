@@ -45,6 +45,7 @@ public:
 	TTaskManager_ptr getTaskManager();
 	TLogManager_ptr getLogManager();
 	TMonitorManager_ptr getMonitorManager();
+	void getMetaData(::STI::TNetwork::TMixedValue_out metaData);
 	void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions);
 	TDeviceID* getID();
 

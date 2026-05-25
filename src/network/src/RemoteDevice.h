@@ -9,6 +9,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include "fwd/ChannelManager_fwd.h"
 #include <sti/utils/CachedValue.h>
+#include <sti/utils/MetaData.h>
 
 #include "TReferenceHolder.h"
 
@@ -49,6 +50,9 @@ public:
 	void disable();
 	
 	const STI::Device::DeviceID getID() const;	//use locally stored value
+
+	const STI::Utils::MixedValue& getMetaData() const override;
+	STI::Utils::MixedValue getMetaData(const std::string& key) const override;
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);
 	void getMessageDispatcher(std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher);
@@ -79,6 +83,7 @@ private:
 	}
 
 	void attachMessageListenerForwarder(const std::shared_ptr<STI::Device::DeviceMessageListenerForwarder>& forwarder);
+	void updateMetaData() const;
 
 	bool getTDeviceRef(STI::TNetwork::TDevice_var& tDevice);
 
@@ -97,6 +102,7 @@ private:
 	std::shared_ptr<RemoteVersionManager> remoteVersionManager;
 
 	mutable STI::Utils::CachedValue<STI::Device::DeviceID> cachedDeviceID;
+	mutable STI::Utils::MetaData metaData_;
 
 	mutable std::mutex deviceMutex;
 
