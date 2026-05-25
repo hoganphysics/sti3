@@ -23,10 +23,20 @@ def multi_device_output(events):
 
 
 def delegated_trigger_output(trigger_device_id, event_device_id, channel=0, time_ns=1000, value=1.0):
+    return delegated_trigger_events(
+        trigger_device_id,
+        [(event_device_id, channel, time_ns, value)],
+    )
+
+
+def delegated_trigger_events(trigger_device_id, events):
+    normalized = list(events)
+
     def shot():
         stipy, _ = require_stipy()
         stipy.set_trigger(stipy.dev(trigger_device_id))
-        stipy.event(stipy.ch(stipy.dev(event_device_id), channel), time_ns, value)
+        for device_id, channel, time_ns, value in normalized:
+            stipy.event(stipy.ch(stipy.dev(device_id), channel), time_ns, value)
 
     return shot
 

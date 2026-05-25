@@ -78,6 +78,7 @@ done
 
 export PYTHONPATH="$(join_by_colon "${pythonpath_entries[@]}")${PYTHONPATH:+:${PYTHONPATH}}"
 export LD_LIBRARY_PATH="$(join_by_colon "${ld_library_entries[@]}")${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+export PYTHONDONTWRITEBYTECODE=1
 
 print_env() {
   printf 'Repository: %s\n' "${repo_root}"

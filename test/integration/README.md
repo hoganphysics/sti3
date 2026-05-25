@@ -9,9 +9,11 @@ Current status: initial Python harness. The C++ integration targets are intentio
 - `python/`: pytest-based integration harness and scenario tests.
 - `cpp/`: future C++ integration targets for cases that need lower-level scheduler, network, or lifetime control.
 
+The Python harness supports both in-process topologies and process topologies. `ProcessTopology` runs the server hub in the pytest process and each generated target device in its own child Python process; child devices write JSON-line event records under the topology's temporary persistence root for assertions and diagnostics.
+
 ## Intended use
 
-Normal unit-test runs should continue to use the existing CTest/Catch2 flow. Integration tests should be opt-in, especially scenarios marked `slow`, `stress`, or `observe`.
+Normal unit-test runs should continue to use the existing CTest/Catch2 flow. Integration tests should be opt-in. Scenarios marked `slow`, `stress`, or `observe` are skipped unless explicitly selected.
 
 Planned Python entry points:
 
@@ -21,10 +23,18 @@ test/integration/run-python-tests.sh -m stress
 test/integration/run-python-tests.sh -m observe --observe
 ```
 
-The smoke test needs a running omniORB name service and a Python environment that can import `stipy` plus `pytest`:
+To attach the smoke test to an existing omniORB name service, pass its address explicitly:
 
 ```bash
 test/integration/run-python-tests.sh test/integration/python/test_smoke.py --sti-nameservice 192.168.88.252:2809 -q -s
+```
+
+Without `--sti-nameservice`, automated tests use `--sti-nameservice-mode=auto`, which spawns a temporary `omniNames` on a non-default local port and removes its data directory after the test. Use `--sti-nameservice-mode=external` with `--sti-nameservice host:port` to attach to an existing service, or `--sti-nameservice-mode=spawn` to force a spawned service.
+
+Observe-mode tests still require an external name service so the frontend can connect with stable settings:
+
+```bash
+test/integration/run-python-tests.sh -m observe --observe --sti-nameservice 192.168.88.252:2809 -s
 ```
 
 The runner defaults to `build-ninja` and the `sti3-build` conda environment. It prepends:

@@ -7,6 +7,7 @@ from .devices import EventRecord
 from .devices import SimulatedDevice
 from .devices import make_device_spec
 from .devices import make_server_spec
+from .shots import delegated_trigger_events
 from .shots import delegated_trigger_output
 from .shots import generated_output_events
 from .shots import multi_device_output

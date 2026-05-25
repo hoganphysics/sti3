@@ -24,12 +24,14 @@ Completed in the initial harness pass:
 - Added temporary persistence-root isolation and cleanup for in-process topologies.
 - Added timeout diagnostics hooks that can report connection info, known devices, network summary, and simulated event records.
 - Added `test/integration/run-python-tests.sh` to run the Python harness against build-tree `stipy` with the required `PYTHONPATH` and `LD_LIBRARY_PATH`.
+- Added a spawned `omniNames` manager for automated non-observe tests on temporary non-default ports.
+- Added `ProcessTopology` support for one generated target device per child Python process, including JSON-line event records.
+- Added an opt-in overlapping parse/play expected-failure scenario.
+- Added opt-in stress/slow marker skipping and a generated-device stress smoke scenario.
 
 Deferred:
 
-- Starting and cleaning up a dedicated spawned omniORB name service.
-- Running generated devices in separate child processes.
-- Automated delegated-trigger, scheduler-contention, overlap, hierarchy, and stress scenarios.
+- Automated delegated-trigger completion, scheduler-contention, overlap, hierarchy, and stress-comparison scenarios.
 - Frontend integration beyond manual observe-mode connection parameters.
 
 ## Progress checklist
@@ -55,9 +57,9 @@ Deferred:
 
 ### Next harness work
 
-- [ ] Add a dedicated name-service manager for automated non-observe tests on an unused non-default port.
-- [ ] Add process topology support for one generated device per process.
-- [ ] Add robust cleanup for spawned name-service and device processes.
+- [x] Add a dedicated name-service manager for automated non-observe tests on an unused non-default port.
+- [x] Add process topology support for one generated device per process.
+- [x] Add robust cleanup for spawned name-service and device processes.
 - [ ] Add a helper for stable frontend observe-mode connection parameters and printed instructions.
 - [x] Add a documented test-runner environment or helper script so the local build-tree `stipy` package and pytest are available together.
 
@@ -67,7 +69,7 @@ Deferred:
 - [ ] Add delegated-trigger missing/error trigger-device tests.
 - [ ] Add multiple-server shared-resource scheduler contention test.
 - [ ] Add overlapping parse/play smoke test.
-- [ ] Add generated-device stress smoke test.
+- [x] Add generated-device stress smoke test.
 - [ ] Add shared-hub versus one-process-per-device comparison stress test.
 - [ ] Add server-hierarchy tests after the required `stipy` APIs exist.
 
@@ -371,3 +373,6 @@ pytest test/integration/python -m observe --observe
 
 - Which tests should run in CI or regular developer validation, and which should remain opt-in because they are slow or interactive?
 - What minimum `stipy` API changes are required before the server-hierarchy tests can be implemented cleanly?
+- Delegated-trigger play currently reaches the trigger/target device, but the result ticket remains `Running`; `test_delegated_trigger.py` captures this as an opt-in `slow` expected failure until the runtime completion behavior is fixed.
+- Overlap parse/play can record `play` on both devices while a result ticket still reports `Canceled`; `test_overlap_parse_play.py` captures this as an opt-in `slow` expected failure until the runtime completion behavior is fixed.
+- Should a delegated trigger device that is separate from other shot target devices trigger the rest of the shot? A trial with a trigger device plus a target device completed the trigger device play event but left the target loaded and the result ticket running.

@@ -15,6 +15,12 @@ conda activate sti3-build
 conda install -c conda-forge conda-build anaconda-client setuptools pip catch2 cmake ninja
 ```
 
+The Python integration test runner also needs `pytest` in this environment:
+
+```bash
+conda install -n sti3-build -c conda-forge pytest
+```
+
 The recipe is controlled by `STI3_CONDA_BUILD_TYPE`. Valid values are `Release` and `RelWithDebInfo`. If it is unset, the recipe builds `Release`.
 
 The build string includes the flavor:

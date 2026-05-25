@@ -3,6 +3,20 @@
 import pytest
 
 
+def _resolve_nameservice_mode(config):
+    mode = config.getoption("--sti-nameservice-mode")
+    nameservice = config.getoption("--sti-nameservice")
+    observe = bool(config.getoption("--observe"))
+
+    if mode != "auto":
+        return mode
+    if nameservice:
+        return "external"
+    if observe:
+        return "external"
+    return "spawn"
+
+
 @pytest.fixture(autouse=True)
 def cleanup_integration_persistence_roots():
     yield
@@ -50,13 +64,22 @@ def pytest_addoption(parser):
 
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--observe"):
-        return
+    markexpr = config.option.markexpr or ""
+    skip_slow = pytest.mark.skip(reason="slow integration tests require an explicit slow marker selection")
+    skip_stress = pytest.mark.skip(reason="stress integration tests require -m stress")
 
-    skip_observe = pytest.mark.skip(reason="observe-mode tests require --observe")
+    if config.getoption("--observe"):
+        skip_observe = None
+    else:
+        skip_observe = pytest.mark.skip(reason="observe-mode tests require --observe")
+
     for item in items:
-        if "observe" in item.keywords:
+        if skip_observe is not None and "observe" in item.keywords:
             item.add_marker(skip_observe)
+        if "slow" in item.keywords and "slow" not in markexpr:
+            item.add_marker(skip_slow)
+        if "stress" in item.keywords and "stress" not in markexpr:
+            item.add_marker(skip_stress)
 
 
 @pytest.fixture
@@ -71,17 +94,26 @@ def sti_nameservice_mode(pytestconfig):
 
 @pytest.fixture
 def resolved_sti_nameservice_mode(pytestconfig):
-    mode = pytestconfig.getoption("--sti-nameservice-mode")
-    nameservice = pytestconfig.getoption("--sti-nameservice")
-    observe = bool(pytestconfig.getoption("--observe"))
+    return _resolve_nameservice_mode(pytestconfig)
 
-    if mode != "auto":
-        return mode
-    if nameservice:
-        return "external"
-    if observe:
-        return "external"
-    return "spawn"
+
+@pytest.fixture(scope="session")
+def spawned_sti_nameservice(pytestconfig):
+    if _resolve_nameservice_mode(pytestconfig) != "spawn":
+        yield None
+        return
+
+    from sti_testnet.nameservice import SpawnedNameService
+
+    service = SpawnedNameService()
+    service.start()
+    try:
+        yield service.address
+    finally:
+        if bool(pytestconfig.getoption("--keep-network-alive")):
+            print("\n" + service.keep_alive_note())
+        else:
+            service.shutdown()
 
 
 @pytest.fixture
@@ -91,6 +123,20 @@ def external_sti_nameservice(sti_nameservice, resolved_sti_nameservice_mode):
     if not sti_nameservice:
         pytest.skip("pass --sti-nameservice host:port to use an external omniORB name service")
     return sti_nameservice
+
+
+@pytest.fixture
+def sti_nameservice_address(sti_nameservice, resolved_sti_nameservice_mode, spawned_sti_nameservice):
+    if resolved_sti_nameservice_mode == "external":
+        if not sti_nameservice:
+            pytest.skip("pass --sti-nameservice host:port to use an external omniORB name service")
+        yield sti_nameservice
+        return
+
+    if resolved_sti_nameservice_mode != "spawn":
+        pytest.skip("unsupported STI name-service mode: {0}".format(resolved_sti_nameservice_mode))
+
+    yield spawned_sti_nameservice
 
 
 @pytest.fixture

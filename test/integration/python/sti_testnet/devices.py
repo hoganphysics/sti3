@@ -1,5 +1,7 @@
 """Simulated Python devices for STI network integration tests."""
 
+import json
+import os
 import threading
 import time
 
@@ -28,6 +30,14 @@ class ChannelSpec(object):
         self.value_type = value_type
         self.direction = direction
 
+    def to_dict(self):
+        return {
+            "number": self.number,
+            "name": self.name,
+            "value_type": self.value_type,
+            "direction": self.direction,
+        }
+
 
 class DeviceBehavior(object):
     def __init__(
@@ -52,6 +62,19 @@ class DeviceBehavior(object):
         self.collect_error = collect_error
         self.measurement_value = measurement_value
 
+    def to_dict(self):
+        return {
+            "parse_delay_s": self.parse_delay_s,
+            "load_delay_s": self.load_delay_s,
+            "play_delay_s": self.play_delay_s,
+            "collect_delay_s": self.collect_delay_s,
+            "parse_error": self.parse_error,
+            "load_error": self.load_error,
+            "play_error": self.play_error,
+            "collect_error": self.collect_error,
+            "measurement_value": self.measurement_value,
+        }
+
 
 class DeviceSpec(object):
     def __init__(
@@ -67,6 +90,7 @@ class DeviceSpec(object):
         partners=None,
         persistence_root=None,
         device_subdirectory=None,
+        record_path=None,
     ):
         self.name = name
         self.address = address
@@ -83,6 +107,7 @@ class DeviceSpec(object):
         self.partners = list(partners or [])
         self.persistence_root = persistence_root
         self.device_subdirectory = device_subdirectory
+        self.record_path = record_path
 
     def device_id(self):
         require_stipy()
@@ -101,6 +126,22 @@ class DeviceSpec(object):
             config.set("PersistenceManager", "device subdirectory", self.device_subdirectory)
         return config
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "address": self.address,
+            "module": self.module,
+            "target_server_id": self.target_server_id,
+            "output_channels": [channel.to_dict() for channel in self.output_channels],
+            "input_channels": [channel.to_dict() for channel in self.input_channels],
+            "behavior": self.behavior.to_dict(),
+            "event_targets": [_device_id_text(target) for target in self.event_targets],
+            "partners": [_device_id_text(partner) for partner in self.partners],
+            "persistence_root": self.persistence_root,
+            "device_subdirectory": self.device_subdirectory,
+            "record_path": self.record_path,
+        }
+
 
 class EventRecord(object):
     def __init__(self, phase, time_ns, channel=None, value=None):
@@ -116,6 +157,83 @@ class EventRecord(object):
             self.channel,
             self.value,
         )
+
+    def to_dict(self):
+        return {
+            "phase": self.phase,
+            "time_ns": self.time_ns,
+            "channel": self.channel,
+            "value": _jsonable_value(self.value),
+        }
+
+
+def channel_spec_from_dict(data):
+    return ChannelSpec(
+        data["number"],
+        name=data.get("name"),
+        value_type=data.get("value_type", "Number"),
+        direction=data.get("direction", "output"),
+    )
+
+
+def behavior_from_dict(data):
+    data = data or {}
+    return DeviceBehavior(
+        parse_delay_s=data.get("parse_delay_s", 0.0),
+        load_delay_s=data.get("load_delay_s", 0.0),
+        play_delay_s=data.get("play_delay_s", 0.0),
+        collect_delay_s=data.get("collect_delay_s", 0.0),
+        parse_error=data.get("parse_error"),
+        load_error=data.get("load_error"),
+        play_error=data.get("play_error"),
+        collect_error=data.get("collect_error"),
+        measurement_value=data.get("measurement_value", 1.0),
+    )
+
+
+def device_spec_from_dict(data):
+    return DeviceSpec(
+        name=data["name"],
+        address=data.get("address", "localhost"),
+        module=data.get("module", 0),
+        target_server_id=data.get("target_server_id", ""),
+        output_channels=[channel_spec_from_dict(item) for item in data.get("output_channels", [])],
+        input_channels=[channel_spec_from_dict(item) for item in data.get("input_channels", [])],
+        behavior=behavior_from_dict(data.get("behavior")),
+        event_targets=[_device_id_from_text(item) for item in data.get("event_targets", [])],
+        partners=[_device_id_from_text(item) for item in data.get("partners", [])],
+        persistence_root=data.get("persistence_root"),
+        device_subdirectory=data.get("device_subdirectory"),
+        record_path=data.get("record_path"),
+    )
+
+
+def event_record_from_dict(data):
+    return EventRecord(
+        data.get("phase"),
+        data.get("time_ns"),
+        channel=data.get("channel"),
+        value=data.get("value"),
+    )
+
+
+def _device_id_text(device_id):
+    if hasattr(device_id, "getID"):
+        return device_id.getID()
+    return str(device_id)
+
+
+def _device_id_from_text(device_id_text):
+    require_stipy()
+    return stipy.DeviceID(device_id_text)
+
+
+def _jsonable_value(value):
+    try:
+        json.dumps(value)
+        return value
+    except TypeError:
+        return repr(value)
 
 
 def make_server_spec(name="STI Server", address="localhost", module=0):
@@ -246,8 +364,11 @@ if stidevicepy is not None:
                 self.addPartner(partner)
 
         def record(self, phase, event_time, channel=None, value=None):
+            record = EventRecord(phase, event_time, channel, value)
             with self._records_lock:
-                self.records.append(EventRecord(phase, event_time, channel, value))
+                self.records.append(record)
+                if self.spec.record_path is not None:
+                    self._append_record(record)
 
         def records_for(self, phase):
             with self._records_lock:
@@ -256,6 +377,14 @@ if stidevicepy is not None:
         def clear_records(self):
             with self._records_lock:
                 self.records = []
+
+        def _append_record(self, record):
+            directory = os.path.dirname(self.spec.record_path)
+            if directory:
+                os.makedirs(directory, exist_ok=True)
+            with open(self.spec.record_path, "a") as handle:
+                handle.write(json.dumps(record.to_dict(), sort_keys=True))
+                handle.write("\n")
 
         def parseEvents(self, eventsIn, synchedEvents):
             behavior = self.spec.behavior
