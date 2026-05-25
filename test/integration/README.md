@@ -16,15 +16,34 @@ Normal unit-test runs should continue to use the existing CTest/Catch2 flow. Int
 Planned Python entry points:
 
 ```bash
-pytest test/integration/python -m "integration and not slow and not observe"
-pytest test/integration/python -m stress
-pytest test/integration/python -m observe --observe
+test/integration/run-python-tests.sh -m "integration and not slow and not observe"
+test/integration/run-python-tests.sh -m stress
+test/integration/run-python-tests.sh -m observe --observe
 ```
 
 The smoke test needs a running omniORB name service and a Python environment that can import `stipy` plus `pytest`:
 
 ```bash
-python -m pytest test/integration/python/test_smoke.py --sti-nameservice 192.168.88.252:2809 -q -s
+test/integration/run-python-tests.sh test/integration/python/test_smoke.py --sti-nameservice 192.168.88.252:2809 -q -s
 ```
 
-When testing directly from `build-ninja` before `stipy` is installed into the active Python environment, add `build-ninja/Lib/site-packages` to `PYTHONPATH` and put the conda environment library directory before system libraries in `LD_LIBRARY_PATH`.
+The runner defaults to `build-ninja` and the `sti3-build` conda environment. It prepends:
+
+- `build-ninja/Lib/site-packages` and `test/integration/python` to `PYTHONPATH`;
+- the selected Python environment's `lib` directory, then the build-tree STI library directories, to `LD_LIBRARY_PATH`.
+
+Useful runner checks:
+
+```bash
+test/integration/run-python-tests.sh --print-env
+test/integration/run-python-tests.sh --check-env
+```
+
+Override defaults with:
+
+- `STI3_BUILD_DIR=/path/to/build`
+- `STI3_CONDA_ENV=sti3-build`
+- `STI3_CONDA_PREFIX=/path/to/conda/env`
+- `STI3_INTEGRATION_PYTHON=/path/to/python`
+
+`pytest` must be installed in the selected Python environment. If the default conda environment can import local `stipy` but not `pytest`, install pytest there or point `STI3_INTEGRATION_PYTHON` at a compatible Python environment.

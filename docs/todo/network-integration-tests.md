@@ -23,6 +23,7 @@ Completed in the initial harness pass:
 - Verified the smoke path against the external name service at `192.168.88.252:2809` using the local `build-ninja` Python package.
 - Added temporary persistence-root isolation and cleanup for in-process topologies.
 - Added timeout diagnostics hooks that can report connection info, known devices, network summary, and simulated event records.
+- Added `test/integration/run-python-tests.sh` to run the Python harness against build-tree `stipy` with the required `PYTHONPATH` and `LD_LIBRARY_PATH`.
 
 Deferred:
 
@@ -58,7 +59,7 @@ Deferred:
 - [ ] Add process topology support for one generated device per process.
 - [ ] Add robust cleanup for spawned name-service and device processes.
 - [ ] Add a helper for stable frontend observe-mode connection parameters and printed instructions.
-- [ ] Add a documented test-runner environment or helper script so the local build-tree `stipy` package and pytest are available together.
+- [x] Add a documented test-runner environment or helper script so the local build-tree `stipy` package and pytest are available together.
 
 ### First scenario tests
 
