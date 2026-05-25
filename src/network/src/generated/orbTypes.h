@@ -7635,6 +7635,8 @@ _CORBA_MODULE_BEG
 
       TStackTraceResult stackTraceResult;
 
+      TDeviceID jobOwner;
+
     
 
       void operator>>= (cdrStream &) const;
@@ -7666,6 +7668,8 @@ _CORBA_MODULE_BEG
       TShotResultStatus status;
 
       TShotResultRecord shotResultRecord;
+
+      TDeviceID jobOwner;
 
     
 

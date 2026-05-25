@@ -258,6 +258,7 @@ TEST_CASE("scheduler returns last parse and shot results by engine ID", "[evente
     REQUIRE(scheduler->getLastParseResult(syncEngineID, lastParse));
     REQUIRE(lastParse != nullptr);
     CHECK(lastParse->pid == firstParse.pid);
+    CHECK(lastParse->jobOwner == device.getID());
 
     auto firstPlay = scheduler->play(firstParse.pid, firstShot->getShotConfig().jobSourceID);
     REQUIRE(waitForShotTerminal(*scheduler, firstPlay.sid) == EngineJobStatus::Completed);
@@ -266,6 +267,7 @@ TEST_CASE("scheduler returns last parse and shot results by engine ID", "[evente
     REQUIRE(scheduler->getLastShotResult(syncEngineID, lastShot));
     REQUIRE(lastShot != nullptr);
     CHECK(lastShot->sid == firstPlay.sid);
+    CHECK(lastShot->jobOwner == device.getID());
 
     auto secondShot = makeShot(*scheduler, device.getID(), 1'000.0);
     auto secondParse = scheduler->parse(secondShot);
@@ -274,4 +276,5 @@ TEST_CASE("scheduler returns last parse and shot results by engine ID", "[evente
     REQUIRE(scheduler->getLastParseResult(syncEngineID, lastParse));
     REQUIRE(lastParse != nullptr);
     CHECK(lastParse->pid == secondParse.pid);
+    CHECK(lastParse->jobOwner == device.getID());
 }

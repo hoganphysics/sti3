@@ -395,6 +395,12 @@ bool LegacyExperimentXMLReader::readShotResult(const ShotID& shotID, std::shared
         }
     }
 
+    if (auto jobOwnerElement = experiment->FirstChildElement("jobowner")) {
+        if (const char* jobOwnerText = jobOwnerElement->GetText()) {
+            loadedResult->jobOwner = DeviceID(jobOwnerText);
+        }
+    }
+
     loadedResult->measurements = std::make_shared<MeasurementMap>();
 
     std::filesystem::path shotPath(filename);

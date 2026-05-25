@@ -5,6 +5,7 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/EngineParsingMessage.h>
+#include <sti/device/DeviceID.h>
 #include <sti/fwd/RawEvent_fwd.h>
 #include <sti/utils/FileServer.h>
 
@@ -30,6 +31,7 @@ public:
 
     ParseID pid;
     ShotConfig shotConfig;
+    STI::Device::DeviceID jobOwner;
 
     std::shared_ptr<RawEventGroup> baseEventGroup;
     std::shared_ptr<ParsedDependencyTree> parsedDevices;
@@ -39,7 +41,10 @@ public:
     static void deleteFiles(ParseResult& parsedResult, const std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
     template<class Archive>
-    void serialize(Archive& archive);
+    void save(Archive& archive) const;
+
+    template<class Archive>
+    void load(Archive& archive);
 
 };
 
@@ -48,4 +53,3 @@ public:
 } //STI
 
 #endif
-

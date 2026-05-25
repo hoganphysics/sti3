@@ -48,6 +48,34 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.4.1 - Result job ownership
+
+Patch release for recording which device acted as the server for parse and play
+jobs without opening a new feature-release line.
+
+Features:
+
+* Add `jobOwner` to `ParseResult` and `ShotResult` so saved and returned
+  results identify the `DeviceID` that owned the parse or play job.
+* Populate result job ownership from the `EventEngineJob` running in the local
+  event engine.
+* Transport result job ownership through the CORBA `TParseResult` and
+  `TShotResult` API structures.
+* Expose `ParseResult.jobOwner` and `ShotResult.jobOwner` through STIPy.
+* Include shot job ownership in legacy experiment XML output and reload it when
+  reading legacy XML.
+
+Compatibility:
+
+* Keep older serialized parse and shot result XML readable when the `jobOwner`
+  field is absent.
+
+Tests:
+
+* Add regression coverage for scheduler-generated result ownership,
+  serialized-result round trips, backward-compatible result loading, and network
+  conversion round trips.
+
 ### 3.4.0 - Device metadata support
 
 Feature release for attaching metadata directly to STI devices.

@@ -41,7 +41,7 @@ void ParseResult::deleteFiles(ParseResult& parsedResult, const std::shared_ptr<S
 }
 
 template<class Archive>
-void ParseResult::serialize(Archive& archive)
+void ParseResult::save(Archive& archive) const
 {
     archive( 
         cereal::make_nvp("pid", pid),
@@ -49,10 +49,31 @@ void ParseResult::serialize(Archive& archive)
         cereal::make_nvp("baseEventGroup", baseEventGroup), 
         cereal::make_nvp("parsedDevices", parsedDevices),
         cereal::make_nvp("messages", messages),
-        cereal::make_nvp("stackTraceResult", stackTraceResult)
+        cereal::make_nvp("stackTraceResult", stackTraceResult),
+        cereal::make_nvp("jobOwner", jobOwner)
         );
 }
 
+template<class Archive>
+void ParseResult::load(Archive& archive)
+{
+    archive(
+        cereal::make_nvp("pid", pid),
+        cereal::make_nvp("shotConfig", shotConfig),
+        cereal::make_nvp("baseEventGroup", baseEventGroup),
+        cereal::make_nvp("parsedDevices", parsedDevices),
+        cereal::make_nvp("messages", messages),
+        cereal::make_nvp("stackTraceResult", stackTraceResult)
+        );
 
-template void ParseResult::serialize<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& );
-template void ParseResult::serialize<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
+    jobOwner = STI::Device::DeviceID();
+    try {
+        archive(cereal::make_nvp("jobOwner", jobOwner));
+    }
+    catch (const cereal::Exception&) {
+        jobOwner = STI::Device::DeviceID();
+    }
+}
+
+template void ParseResult::save<cereal::XMLOutputArchive>( cereal::XMLOutputArchive& ) const;
+template void ParseResult::load<cereal::XMLInputArchive>( cereal::XMLInputArchive& );

@@ -344,6 +344,9 @@ void LegacyExperimentXMLBuilder::build()
     auto shotID = e->InsertNewChildElement("shotid");
     shotID->SetText(shotResult->sid.print().c_str());
 
+    auto jobOwner = e->InsertNewChildElement("jobowner");
+    jobOwner->SetText(shotResult->jobOwner.getID().c_str());
+
     auto date = e->InsertNewChildElement("date");
     date->SetText(shotResult->playTime.print().c_str());
 

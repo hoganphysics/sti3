@@ -797,6 +797,7 @@ module TNetwork
 		TEventEngineDependencyTree parsedDevices;
 		TEngineParsingMessageSeq messages;
 		TStackTraceResult stackTraceResult;
+		TDeviceID jobOwner;
 	};
 
 
@@ -813,6 +814,7 @@ module TNetwork
 		TShotResultStatus status;
 
 		TShotResultRecord shotResultRecord;
+		TDeviceID jobOwner;
 	};
 
 	struct TFullShotResult

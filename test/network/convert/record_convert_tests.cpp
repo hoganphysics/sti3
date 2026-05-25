@@ -6,6 +6,7 @@
 #include "convert/Convert_Log.h"
 #include "convert/Convert_Profile.h"
 #include "convert/Convert_SequenceResult.h"
+#include "convert/Convert_ShotResult.h"
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/LogID.h>
@@ -14,16 +15,21 @@
 #include <sti/device/VersionInfo.h>
 #include <sti/engine/EngineJobID.h>
 #include <sti/engine/EngineJobSourceID.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/SequenceID.h>
 #include <sti/engine/ShotConfig.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/ShotResultRecord.h>
+#include <sti/engine/StackTraceData.h>
+#include <sti/engine/StackTraceResult.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/TimeStamp.h>
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -337,4 +343,46 @@ TEST_CASE("NetworkConvert: ShotConfig and ShotResultRecord round trip")
     CHECK(roundTrip.dependencies.at(0).recordStatus == root.dependencies.at(0).recordStatus);
     checkDeviceID(roundTrip.dependencies.at(1).deviceID, root.dependencies.at(1).deviceID);
     CHECK(roundTrip.dependencies.at(1).recordStatus == root.dependencies.at(1).recordStatus);
+}
+
+TEST_CASE("NetworkConvert: ParseResult and ShotResult carry jobOwner")
+{
+    const auto sourceID = makeSourceID();
+    const auto jobOwner = makeDeviceID("server", "control-host", 0);
+    const auto parseID = STI::Engine::ParseID::generateUniqueID(sourceID);
+    const auto shotID = STI::Engine::ShotID::generateUniqueID(parseID, sourceID);
+
+    STI::Engine::ParseResult parseResult;
+    parseResult.pid = parseID;
+    parseResult.shotConfig = STI::Engine::ShotConfig(
+        STI::Engine::ShotType::Single, sourceID, 3, "shot.py", "job owner test");
+    parseResult.jobOwner = jobOwner;
+    parseResult.stackTraceResult = std::make_shared<STI::Engine::StackTraceResult>(parseID);
+    parseResult.stackTraceResult->stackTraceData = std::make_shared<STI::Engine::StackTraceData>();
+
+    STI::TNetwork::TParseResult tParseResult;
+    REQUIRE(STI::Network::convert<STI::Engine::ParseResult, STI::TNetwork::TParseResult>(
+        parseResult, tParseResult));
+
+    STI::Engine::ParseResult parseRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TParseResult, STI::Engine::ParseResult>(
+        tParseResult, parseRoundTrip));
+    checkDeviceID(parseRoundTrip.jobOwner, jobOwner);
+
+    auto shotResult = std::make_shared<STI::Engine::ShotResult>();
+    shotResult->sid = shotID;
+    shotResult->playTime = makeTimeStamp(40);
+    shotResult->jobOwner = jobOwner;
+    shotResult->status = STI::Engine::ShotResultStatus::Success;
+    shotResult->shotResultRecord.deviceID = makeDeviceID("device", "experiment-host", 2);
+
+    STI::TNetwork::TShotResult tShotResult;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Engine::ShotResult>, STI::TNetwork::TShotResult>(
+        shotResult, tShotResult));
+
+    std::shared_ptr<STI::Engine::ShotResult> shotRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TShotResult, std::shared_ptr<STI::Engine::ShotResult>>(
+        tShotResult, shotRoundTrip));
+    REQUIRE(shotRoundTrip != nullptr);
+    checkDeviceID(shotRoundTrip->jobOwner, jobOwner);
 }

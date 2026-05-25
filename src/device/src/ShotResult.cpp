@@ -26,6 +26,7 @@ ShotResult::ShotResult(const STI::Device::DeviceID& deviceID, std::set<STI::Devi
 {
     measurements = std::make_shared<STI::Engine::MeasurementMap>();
 
+    jobOwner = deviceID;
     shotResultRecord.deviceID = deviceID;
     for (auto& id : ownedIDs) {
         shotResultRecord.dependencies.push_back(id);    
@@ -57,7 +58,8 @@ void ShotResult::save(Archive& archive) const
         cereal::make_nvp("messages", messages),
         cereal::make_nvp("status", status),
         cereal::make_nvp("versions", versions),
-        cereal::make_nvp("shotResultRecord", shotResultRecord)
+        cereal::make_nvp("shotResultRecord", shotResultRecord),
+        cereal::make_nvp("jobOwner", jobOwner)
         );
 }
 
@@ -89,6 +91,14 @@ void ShotResult::load(Archive& archive)
     }
 
     archive(cereal::make_nvp("shotResultRecord", shotResultRecord));
+
+    jobOwner = shotResultRecord.deviceID;
+    try {
+        archive(cereal::make_nvp("jobOwner", jobOwner));
+    }
+    catch (const cereal::Exception&) {
+        jobOwner = shotResultRecord.deviceID;
+    }
 }
 
 std::string STI::Engine::ShotResultStatusToString(const ShotResultStatus& status)

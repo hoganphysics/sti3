@@ -758,6 +758,9 @@ bool LocalPersistenceManager::saveShotLocal(const STI::Engine::ShotID& sid,
     collector->setRecord(shotRecord);
     if (collector->getResults() != 0) {
         collector->getResults()->status = shotStatus;
+        if (fullShotResult->shotResult != 0) {
+            collector->getResults()->jobOwner = fullShotResult->shotResult->jobOwner;
+        }
     }
 
     transferParseResult(fullShotResult->parseResult, resultsPaths.timingPath);

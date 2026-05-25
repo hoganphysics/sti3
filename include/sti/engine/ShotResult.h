@@ -41,6 +41,7 @@ public:
 
     ShotID sid;
 	STI::Utils::TimeStamp playTime;
+    STI::Device::DeviceID jobOwner;
 
     std::shared_ptr<STI::Engine::MeasurementMap> measurements;
     std::map<STI::Device::DeviceID, std::map<std::string, std::string>> attributes;

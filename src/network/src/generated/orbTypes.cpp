@@ -2081,6 +2081,7 @@ STI::TNetwork::TParseResult::operator>>= (cdrStream &_n) const
   (const TEventEngineDependencyTree&) parsedDevices >>= _n;
   (const TEngineParsingMessageSeq&) messages >>= _n;
   (const TStackTraceResult&) stackTraceResult >>= _n;
+  (const TDeviceID&) jobOwner >>= _n;
 
 }
 
@@ -2093,6 +2094,7 @@ STI::TNetwork::TParseResult::operator<<= (cdrStream &_n)
   (TEventEngineDependencyTree&)parsedDevices <<= _n;
   (TEngineParsingMessageSeq&)messages <<= _n;
   (TStackTraceResult&)stackTraceResult <<= _n;
+  (TDeviceID&)jobOwner <<= _n;
 
 }
 
@@ -2107,6 +2109,7 @@ STI::TNetwork::TShotResult::operator>>= (cdrStream &_n) const
   (const TEnginePlayingMessageSeq&) messages >>= _n;
   status >>= _n;
   (const TShotResultRecord&) shotResultRecord >>= _n;
+  (const TDeviceID&) jobOwner >>= _n;
 
 }
 
@@ -2121,6 +2124,7 @@ STI::TNetwork::TShotResult::operator<<= (cdrStream &_n)
   (TEnginePlayingMessageSeq&)messages <<= _n;
   (TShotResultStatus&)status <<= _n;
   (TShotResultRecord&)shotResultRecord <<= _n;
+  (TDeviceID&)jobOwner <<= _n;
 
 }
 

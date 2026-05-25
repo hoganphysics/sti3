@@ -45,19 +45,45 @@ std::shared_ptr<FullShotResult> makeFullShotResult(ShotResultStatus status)
     EngineJobSourceID source("shotresult-test", "localhost");
     ParseID pid = ParseID::generateUniqueID(source);
     ShotID sid = ShotID::generateUniqueID(pid, source);
+    DeviceID jobOwner("job-owner", "localhost", 9);
 
     auto parseResult = std::make_shared<ParseResult>();
     parseResult->pid = pid;
+    parseResult->jobOwner = jobOwner;
 
     auto shotResult = std::make_shared<ShotResult>();
     shotResult->sid = sid;
+    shotResult->jobOwner = jobOwner;
     shotResult->status = status;
+    shotResult->shotResultRecord.deviceID = jobOwner;
 
     auto fullShotResult = std::make_shared<FullShotResult>();
     fullShotResult->parseResult = parseResult;
     fullShotResult->shotResult = shotResult;
 
     return fullShotResult;
+}
+
+void checkDeviceID(const DeviceID& actual, const DeviceID& expected)
+{
+    CHECK(actual.getName() == expected.getName());
+    CHECK(actual.getAddress() == expected.getAddress());
+    CHECK(actual.getModule() == expected.getModule());
+    CHECK(actual.getTargetServerID() == expected.getTargetServerID());
+    CHECK(actual.getID() == expected.getID());
+}
+
+bool eraseXmlElement(std::string& xml, const std::string& elementName)
+{
+    auto start = xml.find("<" + elementName + ">");
+    auto end = xml.find("</" + elementName + ">");
+    if (start == std::string::npos || end == std::string::npos) {
+        return false;
+    }
+
+    end += elementName.size() + 3;
+    xml.erase(start, end - start);
+    return true;
 }
 
 } // namespace
@@ -91,6 +117,27 @@ TEST_CASE("SerializedRepository round trips ShotResult status", "[shotresult][re
     REQUIRE(repository.getShotResult(sid, loaded));
     REQUIRE(loaded != nullptr);
     CHECK(loaded->status == ShotResultStatus::CanceledByUser);
+}
+
+TEST_CASE("SerializedRepository round trips result job owners", "[shotresult][parseresult][repository]")
+{
+    auto fullShotResult = makeFullShotResult(ShotResultStatus::Success);
+    auto pid = fullShotResult->parseResult->pid;
+    auto sid = fullShotResult->shotResult->sid;
+    auto expectedOwner = fullShotResult->shotResult->jobOwner;
+
+    SerializedRepository repository(makeRepositoryPath("job_owner_round_trip").string());
+    REQUIRE(repository.saveShot(sid, fullShotResult));
+
+    std::shared_ptr<ParseResult> loadedParse;
+    REQUIRE(repository.getParseResult(pid, loadedParse));
+    REQUIRE(loadedParse != nullptr);
+    checkDeviceID(loadedParse->jobOwner, expectedOwner);
+
+    std::shared_ptr<ShotResult> loadedShot;
+    REQUIRE(repository.getShotResult(sid, loadedShot));
+    REQUIRE(loadedShot != nullptr);
+    checkDeviceID(loadedShot->jobOwner, expectedOwner);
 }
 
 TEST_CASE("SerializedRepository round trips ShotResult device versions", "[shotresult] [repository] [version]")
@@ -159,4 +206,52 @@ TEST_CASE("SerializedRepository loads old ShotResult files without status", "[sh
     REQUIRE(repository.getShotResult(sid, loaded));
     REQUIRE(loaded != nullptr);
     CHECK(loaded->status == ShotResultStatus::Unknown);
+}
+
+TEST_CASE("SerializedRepository loads old result files without jobOwner", "[shotresult][parseresult][repository]")
+{
+    auto fullShotResult = makeFullShotResult(ShotResultStatus::Success);
+    auto pid = fullShotResult->parseResult->pid;
+    auto sid = fullShotResult->shotResult->sid;
+
+    SerializedRepository repository(makeRepositoryPath("missing_job_owner").string());
+    REQUIRE(repository.saveShot(sid, fullShotResult));
+
+    auto parsePaths = repository.preparePaths(pid);
+    auto parsePath = std::filesystem::path(parsePaths.experimentPath)
+        / ("parse_" + pid.parseTimestamp.time_hh_mm_ss_mmmuuunnn() + ".xml");
+
+    std::ifstream parseIn(parsePath);
+    REQUIRE(parseIn.good());
+    std::string parseXml((std::istreambuf_iterator<char>(parseIn)), std::istreambuf_iterator<char>());
+    REQUIRE(eraseXmlElement(parseXml, "jobOwner"));
+
+    std::ofstream parseOut(parsePath, std::ios::trunc);
+    REQUIRE(parseOut.good());
+    parseOut << parseXml;
+    parseOut.close();
+
+    auto shotPaths = repository.preparePaths(sid);
+    auto shotPath = std::filesystem::path(shotPaths.experimentPath)
+        / ("shot_" + sid.submissionTime.time_hh_mm_ss_mmmuuunnn() + ".xml");
+
+    std::ifstream shotIn(shotPath);
+    REQUIRE(shotIn.good());
+    std::string shotXml((std::istreambuf_iterator<char>(shotIn)), std::istreambuf_iterator<char>());
+    REQUIRE(eraseXmlElement(shotXml, "jobOwner"));
+
+    std::ofstream shotOut(shotPath, std::ios::trunc);
+    REQUIRE(shotOut.good());
+    shotOut << shotXml;
+    shotOut.close();
+
+    std::shared_ptr<ParseResult> loadedParse;
+    REQUIRE(repository.getParseResult(pid, loadedParse));
+    REQUIRE(loadedParse != nullptr);
+    CHECK(loadedParse->jobOwner.empty());
+
+    std::shared_ptr<ShotResult> loadedShot;
+    REQUIRE(repository.getShotResult(sid, loadedShot));
+    REQUIRE(loadedShot != nullptr);
+    checkDeviceID(loadedShot->jobOwner, loadedShot->shotResultRecord.deviceID);
 }

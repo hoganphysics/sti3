@@ -152,6 +152,7 @@ bool STI::Network::convert<TShotResult, std::shared_ptr<ShotResult>>(
 
     shotResult->sid = convert<TShotID, ShotID>(tShotResult.sid);
     shotResult->playTime = convert<TTimeStamp, TimeStamp>(tShotResult.playTime);
+    shotResult->jobOwner = convert<TDeviceID, DeviceID>(tShotResult.jobOwner);
 
     // shotResult->measurements = std::make_shared<STI::Engine::MeasurementVector>();
     // convert<STI::TNetwork::TMeasurement, std::shared_ptr<STI::Engine::Measurement>>(tShotResult.measurements, *(shotResult->measurements));
@@ -202,6 +203,7 @@ bool STI::Network::convert<std::shared_ptr<ShotResult>, TShotResult>(
 
     tShotResult.sid = convert<ShotID, TShotID>(shotResult->sid);
     tShotResult.playTime = convert<TimeStamp, TTimeStamp>(shotResult->playTime);
+    tShotResult.jobOwner = convert<DeviceID, TDeviceID>(shotResult->jobOwner);
 
     // if (shotResult->measurements != 0) {
     //     convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(*(shotResult->measurements), tShotResult.measurements);        
@@ -268,6 +270,7 @@ bool STI::Network::convert<TParseResult, ParseResult>(
 {
     convert<STI::TNetwork::TParseID, ParseID>(tParseResult.parseID, parseResult.pid);
     parseResult.shotConfig = convert<STI::TNetwork::TShotConfig, ShotConfig>(tParseResult.shotConfig);
+    parseResult.jobOwner = convert<TDeviceID, DeviceID>(tParseResult.jobOwner);
     convert<TRawEventGroup, std::shared_ptr<STI::Engine::RawEventGroup>>(tParseResult.baseEventGroup, parseResult.baseEventGroup);
     convert<TEventEngineDependencyTree, std::shared_ptr<ParsedDependencyTree>>(tParseResult.parsedDevices, parseResult.parsedDevices);
     convert<TEngineParsingMessage, EngineParsingMessage>(tParseResult.messages, parseResult.messages);
@@ -283,6 +286,7 @@ bool STI::Network::convert<ParseResult, TParseResult>(
 
     convert<ParseID, STI::TNetwork::TParseID>(parseResult.pid, tParseResult.parseID);
     tParseResult.shotConfig = convert<ShotConfig, STI::TNetwork::TShotConfig>(parseResult.shotConfig);
+    tParseResult.jobOwner = convert<DeviceID, TDeviceID>(parseResult.jobOwner);
     convert<std::shared_ptr<STI::Engine::RawEventGroup>, TRawEventGroup>(parseResult.baseEventGroup, tParseResult.baseEventGroup);
     convert<std::shared_ptr<ParsedDependencyTree>, TEventEngineDependencyTree>(parseResult.parsedDevices, tParseResult.parsedDevices);
     convert<EngineParsingMessage, TEngineParsingMessage>(parseResult.messages, tParseResult.messages);
