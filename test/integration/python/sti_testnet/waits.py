@@ -17,7 +17,7 @@ def status_name(status):
     return text
 
 
-def wait_for(predicate, timeout_s=5.0, interval_s=0.05, describe=None):
+def wait_for(predicate, timeout_s=5.0, interval_s=0.05, describe=None, diagnostics=None):
     deadline = time.time() + timeout_s
     last_error = None
 
@@ -34,10 +34,12 @@ def wait_for(predicate, timeout_s=5.0, interval_s=0.05, describe=None):
     detail = describe() if describe is not None else "condition was not met"
     if last_error is not None:
         detail = "{0}; last error: {1}".format(detail, last_error)
+    if diagnostics is not None:
+        detail = "{0}\n\nDiagnostics:\n{1}".format(detail, diagnostics())
     raise WaitTimeout("Timed out after {0:.3f}s: {1}".format(timeout_s, detail))
 
 
-def wait_for_ticket(ticket, timeout_s=10.0, interval_s=0.05, complete_statuses=None, terminal_statuses=None):
+def wait_for_ticket(ticket, timeout_s=10.0, interval_s=0.05, complete_statuses=None, terminal_statuses=None, diagnostics=None):
     complete_statuses = set(complete_statuses or ["Complete"])
     terminal_statuses = set(terminal_statuses or ["Complete", "Canceled", "NotFound"])
     observed = []
@@ -55,10 +57,10 @@ def wait_for_ticket(ticket, timeout_s=10.0, interval_s=0.05, complete_statuses=N
         last = observed[-1] if observed else "<none>"
         return "ticket did not reach {0}; last status: {1}".format(sorted(complete_statuses), last)
 
-    return wait_for(poll, timeout_s=timeout_s, interval_s=interval_s, describe=describe)
+    return wait_for(poll, timeout_s=timeout_s, interval_s=interval_s, describe=describe, diagnostics=diagnostics)
 
 
-def wait_for_device_ids(hub, expected_ids, timeout_s=5.0, interval_s=0.05):
+def wait_for_device_ids(hub, expected_ids, timeout_s=5.0, interval_s=0.05, diagnostics=None):
     expected = set([_device_id_text(device_id) for device_id in expected_ids])
     observed = []
 
@@ -71,7 +73,7 @@ def wait_for_device_ids(hub, expected_ids, timeout_s=5.0, interval_s=0.05):
         last = observed[-1] if observed else []
         return "missing device IDs {0}; observed: {1}".format(sorted(expected), last)
 
-    return wait_for(poll, timeout_s=timeout_s, interval_s=interval_s, describe=describe)
+    return wait_for(poll, timeout_s=timeout_s, interval_s=interval_s, describe=describe, diagnostics=diagnostics)
 
 
 def _device_id_text(device_id):

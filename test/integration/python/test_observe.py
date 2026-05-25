@@ -26,6 +26,7 @@ def test_observe_basic_in_process_network(external_sti_nameservice, observe_time
             topology.hub,
             [server_id] + [spec.device_id() for spec in device_specs],
             timeout_s=5.0,
+            diagnostics=topology.diagnostics,
         )
         print("\n" + topology.summary())
         time.sleep(observe_timeout)

@@ -20,6 +20,9 @@ Completed in the initial harness pass:
 - Added reusable Python harness modules for simulated devices, in-process topology setup, shot builders, and bounded waits.
 - Added an opt-in smoke test that builds one server and one generated device against an external name service, then parses and plays one generated event.
 - Added an opt-in observe test that keeps a small generated in-process topology alive and prints frontend connection parameters.
+- Verified the smoke path against the external name service at `192.168.88.252:2809` using the local `build-ninja` Python package.
+- Added temporary persistence-root isolation and cleanup for in-process topologies.
+- Added timeout diagnostics hooks that can report connection info, known devices, network summary, and simulated event records.
 
 Deferred:
 
@@ -27,6 +30,45 @@ Deferred:
 - Running generated devices in separate child processes.
 - Automated delegated-trigger, scheduler-contention, overlap, hierarchy, and stress scenarios.
 - Frontend integration beyond manual observe-mode connection parameters.
+
+## Progress checklist
+
+### Harness foundation
+
+- [x] Create `test/integration/` with Python and C++ subdirectories.
+- [x] Add pytest markers for `integration`, `slow`, `stress`, `observe`, and `requires_nameservice`.
+- [x] Add pytest options for external name-service attachment, name-service mode, observe mode, observe timeout, and keeping networks alive.
+- [x] Add `sti_testnet` package for shared Python harness code.
+- [x] Add simulated device specs, behavior specs, and configurable `SimulatedDevice`.
+- [x] Add simulated output and measurement events with load/play/collect recording.
+- [x] Add in-process topology lifecycle support.
+- [x] Add frontend connection-summary output for observe mode.
+- [x] Add bounded wait helpers for tickets and device discovery.
+- [x] Add reusable STIPy shot builders.
+- [x] Add opt-in smoke test against an external name service.
+- [x] Add opt-in observe-mode topology test.
+- [x] Verify pytest collection and default skip behavior.
+- [x] Run the smoke test against an external name service and fix exposed runtime assumptions.
+- [x] Add diagnostics capture on timeout: network summary, known devices, ticket status, and recent simulated event records.
+- [x] Add persistence/log root isolation so integration tests do not write into the developer's normal `.sti` tree.
+
+### Next harness work
+
+- [ ] Add a dedicated name-service manager for automated non-observe tests on an unused non-default port.
+- [ ] Add process topology support for one generated device per process.
+- [ ] Add robust cleanup for spawned name-service and device processes.
+- [ ] Add a helper for stable frontend observe-mode connection parameters and printed instructions.
+- [ ] Add a documented test-runner environment or helper script so the local build-tree `stipy` package and pytest are available together.
+
+### First scenario tests
+
+- [ ] Add delegated-trigger success test.
+- [ ] Add delegated-trigger missing/error trigger-device tests.
+- [ ] Add multiple-server shared-resource scheduler contention test.
+- [ ] Add overlapping parse/play smoke test.
+- [ ] Add generated-device stress smoke test.
+- [ ] Add shared-hub versus one-process-per-device comparison stress test.
+- [ ] Add server-hierarchy tests after the required `stipy` APIs exist.
 
 ## Recommended directory name
 

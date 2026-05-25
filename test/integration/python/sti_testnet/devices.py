@@ -65,28 +65,41 @@ class DeviceSpec(object):
         behavior=None,
         event_targets=None,
         partners=None,
+        persistence_root=None,
+        device_subdirectory=None,
     ):
         self.name = name
         self.address = address
         self.module = int(module)
         self.target_server_id = target_server_id
-        self.output_channels = list(output_channels or [ChannelSpec(0, "output 0", "Number", "output")])
-        self.input_channels = list(input_channels or [])
+        if output_channels is None:
+            output_channels = [ChannelSpec(0, "output 0", "Number", "output")]
+        if input_channels is None:
+            input_channels = []
+        self.output_channels = list(output_channels)
+        self.input_channels = list(input_channels)
         self.behavior = behavior or DeviceBehavior()
         self.event_targets = list(event_targets or [])
         self.partners = list(partners or [])
+        self.persistence_root = persistence_root
+        self.device_subdirectory = device_subdirectory
 
     def device_id(self):
         require_stipy()
         return stipy.DeviceID(self.name, self.address, self.module, self.target_server_id)
 
     def config(self):
-        return {
-            "Device Name": self.name,
-            "IP Address": self.address,
-            "Module": str(self.module),
-            "Target Server": self.target_server_id,
-        }
+        require_stipy()
+        config = stipy.Configuration()
+        config.set("Device Name", self.name)
+        config.set("IP Address", self.address)
+        config.set("Module", str(self.module))
+        config.set("Target Server", self.target_server_id)
+        if self.persistence_root is not None:
+            config.set("PersistenceManager", "root path", self.persistence_root)
+        if self.device_subdirectory is not None:
+            config.set("PersistenceManager", "device subdirectory", self.device_subdirectory)
+        return config
 
 
 class EventRecord(object):

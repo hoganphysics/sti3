@@ -3,6 +3,16 @@
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def cleanup_integration_persistence_roots():
+    yield
+    try:
+        from sti_testnet.topology import cleanup_registered_persistence_roots
+        cleanup_registered_persistence_roots()
+    except Exception:
+        pass
+
+
 def pytest_addoption(parser):
     group = parser.getgroup("sti integration")
     group.addoption(

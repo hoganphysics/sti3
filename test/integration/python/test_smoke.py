@@ -24,17 +24,17 @@ def test_in_process_single_device_parse_play_smoke(external_sti_nameservice, sti
     )
 
     with InProcessTopology(external_sti_nameservice, server_spec, [device_spec]) as topology:
-        wait_for_device_ids(topology.hub, [server_id, device_spec.device_id()], timeout_s=5.0)
+        wait_for_device_ids(topology.hub, [server_id, device_spec.device_id()], timeout_s=5.0, diagnostics=topology.diagnostics)
 
         server = topology.connect_stipy()
         assert server is not None, topology.summary()
 
         shot = server.makeshot(single_device_output(device_spec.device_id(), channel=0, time_ns=1000, value=2.5))
         parse_ticket = server.parse(shot)
-        wait_for_ticket(parse_ticket, timeout_s=10.0)
+        wait_for_ticket(parse_ticket, timeout_s=10.0, diagnostics=topology.diagnostics)
 
         result_ticket = server.play(parse_ticket)
-        wait_for_ticket(result_ticket, timeout_s=10.0)
+        wait_for_ticket(result_ticket, timeout_s=10.0, diagnostics=topology.diagnostics)
 
         device = topology.devices[0]
         assert device.records_for("load")
