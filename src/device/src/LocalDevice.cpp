@@ -36,6 +36,8 @@
 #include "PseudoSynchronousEvent.h"
 
 #include <filesystem>
+#include <algorithm>
+#include <cctype>
 #include <memory>
 #include <iostream>
 #include <sstream>
@@ -102,6 +104,44 @@ std::uintmax_t getLogMaxFileSizeBytes(const Configuration& config)
     return maxFileSizeBytes;
 }
 
+Configuration makeDeviceScopedConfig(const Configuration& config, const std::string& section)
+{
+	if (section.empty()) {
+		return config;
+	}
+
+	auto deviceConfig = config.extract(section);
+	deviceConfig.append(config);
+	return deviceConfig;
+}
+
+std::string toLowerAscii(std::string value)
+{
+	std::transform(value.begin(), value.end(), value.begin(),
+		[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+	return value;
+}
+
+void applyConfiguredMetaData(LocalDevice& device, const Configuration& config)
+{
+	for (const auto& [key, value] : config.getParameters("Metadata")) {
+		const auto normalizedKey = toLowerAscii(key);
+
+		if (normalizedKey == "color") {
+			device.setColor(value);
+		}
+		else if (normalizedKey == "description") {
+			device.setDescription(value);
+		}
+		else if (normalizedKey == "help") {
+			device.setHelp(value);
+		}
+		else {
+			device.addMetaData(key, STI::Utils::MixedValue(value));
+		}
+	}
+}
+
 } // namespace
 
 
@@ -116,7 +156,7 @@ LocalDevice::LocalDevice(const Configuration& config, const std::string& section
 	config.getOrThrow<std::string>(section, "IP Address", constructorConfigError), 
 	config.getOrThrow<unsigned short>(section, "Module", constructorConfigError),
 	config.getOrThrow<std::string>(section, "Target Server", constructorConfigError),
-	config)
+	makeDeviceScopedConfig(config, section))
 {
 }
 
@@ -125,6 +165,8 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 : STI::Engine::DeviceEventParser(), id(name, address, module, targetServer), usingParseDefault(false), usingRWdefault(false)
 
 {
+	applyConfiguredMetaData(*this, config);
+
 	std::shared_ptr<DeviceCollectionPolicy> policy = std::make_shared<DeviceCollectionPolicy>(this);;
 	localCollection = std::make_shared<STI::Utils::LocalCollection<DeviceID, Device>>(policy);
 

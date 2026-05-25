@@ -48,6 +48,25 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.4.2 - Configured device metadata
+
+Patch release for allowing device metadata to be configured without recompiling
+device code.
+
+Features:
+
+* Add an optional `Metadata` configuration section for `LocalDevice`.
+* Apply configured `Color`, `Description`, and `Help` entries through the
+  existing `LocalDevice` metadata helper methods.
+* Store arbitrary key-value pairs from the `Metadata` section as device
+  metadata.
+* Support nested metadata sections when constructing a device from a sectioned
+  config, such as `DeviceName.Metadata`.
+
+Tests:
+
+* Add regression coverage for direct and sectioned device metadata config.
+
 ### 3.4.1 - Result job ownership
 
 Patch release for recording which device acted as the server for parse and play
