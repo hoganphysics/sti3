@@ -63,6 +63,39 @@ TEST_CASE("LocalAttributeManager: setValue updates known attributes only") {
     CHECK_FALSE(manager.setValue("missing", "value"));
 }
 
+TEST_CASE("LocalAttributeManager: refreshValue syncs member-backed attributes", "[localattributemanager][attribute]") {
+    auto dispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
+    LocalAttributeManager manager(makeDeviceID(), dispatcher);
+
+    int alpha = 1;
+    int beta = 10;
+
+    auto attrAlpha = std::make_shared<LocalAttribute>("alpha", std::to_string(alpha));
+    auto attrBeta = std::make_shared<LocalAttribute>("beta", std::to_string(beta));
+    attrAlpha->setRefresher([&]() { return std::to_string(alpha); });
+    attrBeta->setRefresher([&]() { return std::to_string(beta); });
+
+    REQUIRE(manager.addAttribute(attrAlpha));
+    REQUIRE(manager.addAttribute(attrBeta));
+
+    alpha = 2;
+    beta = 11;
+
+    CHECK(manager.getValue("alpha") == "1");
+    CHECK(manager.getValue("beta") == "10");
+
+    CHECK(manager.refreshValue("alpha"));
+    CHECK(manager.getValue("alpha") == "2");
+    CHECK(manager.getValue("beta") == "10");
+    CHECK_FALSE(manager.refreshValue("missing"));
+
+    alpha = 3;
+    manager.refreshValues();
+
+    CHECK(manager.getValue("alpha") == "3");
+    CHECK(manager.getValue("beta") == "11");
+}
+
 TEST_CASE("LocalAttributeManager: profile load/save round trip") {
     auto dispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
     LocalAttributeManager manager(makeDeviceID(), dispatcher);

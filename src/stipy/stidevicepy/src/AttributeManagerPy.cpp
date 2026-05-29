@@ -31,6 +31,21 @@ bool AttributeManagerPy::setValue(const std::string& key, const std::string& val
     return false;
 }
 
+bool AttributeManagerPy::refreshValue(const std::string& key)
+{
+    if (attributeManager != 0) {
+        return attributeManager->refreshValue(key);
+    }
+    return false;
+}
+
+void AttributeManagerPy::refreshValues()
+{
+    if (attributeManager != 0) {
+        attributeManager->refreshValues();
+    }
+}
+
 std::shared_ptr<STI::Device::Attribute> AttributeManagerPy::getAttribute(const std::string& key)
 {
     std::shared_ptr<STI::Device::Attribute> attribute;

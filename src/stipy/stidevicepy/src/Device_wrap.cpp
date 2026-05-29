@@ -61,6 +61,8 @@ void init_Device(py::module& m)
         .def("getAttribute",
             py::overload_cast<const std::string&>(&DevicePy::getAttribute), py::arg("key"))
         .def("setAttribute", &DevicePy::setAttribute, py::arg("key"), py::arg("value"))
+        .def("refreshAttribute", &DevicePy::refreshAttribute, py::arg("key"))
+        .def("refreshAttributes", &DevicePy::refreshAttributes)
         .def("__repr__", [](const DevicePy& self) {
                 return self.getID().getID();
             })

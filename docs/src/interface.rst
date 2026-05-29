@@ -220,8 +220,10 @@ Attributes
 
 Attributes are named string values used for configuration and operator-facing
 state.  They may expose allowed values and metadata.  Setting an attribute
-calls the device's setter callback if one was registered; refreshing or reading
-an attribute may call the refresher callback.
+calls the device's setter callback if one was registered.  A successful set
+also refreshes the cached string value.  Reading an attribute returns the
+cached string; call refresh explicitly when local member state changes outside
+the attribute setter path.
 
 .. tabs::
 
@@ -232,6 +234,8 @@ an attribute may call the refresher callback.
 
       std::string mode = attributes->getValue("Mode");
       attributes->setValue("TriggerSource", "Software");
+      attributes->refreshValue("Height");
+      attributes->refreshValues();
 
       std::vector<std::shared_ptr<STI::Device::Attribute>> defs;
       attributes->getAttributes(defs);
@@ -245,23 +249,31 @@ an attribute may call the refresher callback.
       attributes = device.getAttributeManager()
       mode = attributes.getValue("Mode")
       attributes.setValue("TriggerSource", "Software")
+      attributes.refreshValue("Height")
+      attributes.refreshValues()
 
       for attr in attributes.getAttributes():
           print(attr.key(), attr.value(), attr.getAllowedValues(), attr.metadata())
 
-The device object also has convenience methods:
+The device object also has get/set convenience methods.  Local devices add
+refresh convenience methods for syncing cached attributes after local member
+state changes:
 
 .. tabs::
 
    .. code-tab:: c++
 
-      std::string height = device->getAttribute("Height");
-      bool ok = device->setAttribute("Downsample", "4");
+      std::string height = localDevice->getAttribute("Height");
+      bool ok = localDevice->setAttribute("Downsample", "4");
+      localDevice->refreshAttribute("Height");
+      localDevice->refreshAttributes();
 
    .. code-tab:: py
 
       height = device.getAttribute("Height")
       ok = device.setAttribute("Downsample", "4")
+      device.refreshAttribute("Height")
+      device.refreshAttributes()
 
 Messages and listeners
 ----------------------

@@ -717,6 +717,27 @@ bool LocalDevice::setAttribute(const std::string& key, const std::string& value)
 	return false;
 }
 
+bool LocalDevice::refreshAttribute(const std::string& key)
+{
+	std::shared_ptr<AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		return manager->refreshValue(key);
+	}
+	return false;
+}
+
+void LocalDevice::refreshAttributes()
+{
+	std::shared_ptr<AttributeManager> manager;
+	getAttributeManager(manager);
+
+	if (manager != 0) {
+		manager->refreshValues();
+	}
+}
+
 bool LocalDevice::getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute)
 {
 	std::shared_ptr<AttributeManager> manager;

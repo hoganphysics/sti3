@@ -201,6 +201,8 @@ public:
 
 	std::string getAttribute(const std::string& key);
 	bool setAttribute(const std::string& key, const std::string& value);
+	bool refreshAttribute(const std::string& key);
+	void refreshAttributes();
 	bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
 
 

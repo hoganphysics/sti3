@@ -299,7 +299,8 @@ Device attributes
 
 Attributes are string-valued configuration fields.  Use setter callbacks to
 validate and apply a new value to hardware or member state.  Use refresher
-callbacks to synchronize the displayed value with current state.
+callbacks to synchronize the displayed value with current state after a
+successful set or an explicit refresh.
 
 .. tabs::
 
@@ -345,6 +346,29 @@ callbacks to synchronize the displayed value with current state.
       def set_trigger_source(self, value):
           self.hardware_trigger = (value == "Hardware")
           return True
+
+Refresher callbacks are not automatic watchers on member variables.
+``getAttribute`` and ``getValue`` return the cached string.  If member state
+changes outside ``setAttribute`` / ``setValue``, refresh the affected attribute
+or all attributes explicitly:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      height = 6.2;
+      refreshAttribute("Height");
+
+      downsample = 8;
+      refreshAttributes();
+
+   .. code-tab:: py
+
+      self.height = 6.2
+      self.refreshAttribute("Height")
+
+      self.downsample = 8
+      self.refreshAttributes()
 
 Parsing timing events
 *********************

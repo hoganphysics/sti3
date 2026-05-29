@@ -2,8 +2,11 @@
 
 #include <sti/LocalDevice.h>
 #include <sti/device/Device.h>
+#include <sti/device/LocalAttribute.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/MixedValue.h>
+
+#include <string>
 
 using STI::Device::Device;
 using STI::Device::LocalDevice;
@@ -97,6 +100,38 @@ TEST_CASE("LocalDevice: section constructor applies nested Metadata configuratio
 
     CHECK(base.getMetaData("color").getString() == "orange");
     CHECK(base.getMetaData("Location").getString() == "Optics Table");
+
+    device.disable();
+}
+
+TEST_CASE("LocalDevice: refreshAttribute syncs member-backed attributes", "[localdevice][attribute]")
+{
+    LocalDevice device("AttributeRefreshDevice", "127.0.0.1", 1, "target", makeMetadataDeviceConfig());
+
+    int alpha = 1;
+    int beta = 10;
+
+    device.addAttribute("alpha", std::to_string(alpha))
+        .setRefresher([&]() { return std::to_string(alpha); });
+    device.addAttribute("beta", std::to_string(beta))
+        .setRefresher([&]() { return std::to_string(beta); });
+
+    alpha = 2;
+    beta = 11;
+
+    CHECK(device.getAttribute("alpha") == "1");
+    CHECK(device.getAttribute("beta") == "10");
+
+    CHECK(device.refreshAttribute("alpha"));
+    CHECK(device.getAttribute("alpha") == "2");
+    CHECK(device.getAttribute("beta") == "10");
+    CHECK_FALSE(device.refreshAttribute("missing"));
+
+    alpha = 3;
+    device.refreshAttributes();
+
+    CHECK(device.getAttribute("alpha") == "3");
+    CHECK(device.getAttribute("beta") == "11");
 
     device.disable();
 }

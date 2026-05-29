@@ -126,6 +126,50 @@ bool RemoteAttributeManager::setValue(const std::string& key, const std::string&
     return success;
 }
 
+bool RemoteAttributeManager::refreshValue(const std::string& key)
+{
+	std::unique_lock<std::mutex> managerLock(managerMutex);
+
+	if (isDisabled()) return false;
+
+	try {
+		auto tKey = convert<std::string, CORBA::String_member>(key);
+		STI::TNetwork::TAttribute_var tAttribute(new STI::TNetwork::TAttribute);
+
+		if (!getTRef()->getAttribute(tKey, tAttribute)) {
+			return false;
+		}
+
+		getTRef()->refreshValue(tKey);	//remote call
+
+		auto tValue = getTRef()->getValue(tKey);	//remote call
+		attributeData[key] = convert<CORBA::String_member, std::string>(tValue);
+
+		return true;
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	return false;
+}
+
+void RemoteAttributeManager::refreshValues()
+{
+	std::vector<std::shared_ptr<Attribute>> attributes;
+	getAttributes(attributes);
+
+	for (auto& attribute : attributes) {
+		if (attribute != 0) {
+			refreshValue(attribute->getKey());
+		}
+	}
+}
+
 bool RemoteAttributeManager::getAttribute(const std::string& key, std::shared_ptr<STI::Device::Attribute>& attribute)
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);

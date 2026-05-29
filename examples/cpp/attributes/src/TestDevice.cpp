@@ -5,7 +5,7 @@
 
 
 TestDevice::TestDevice(const STI::Utils::Configuration& config)
-: STI::Device::LocalDevice(config), hardwareTrigger(true)
+: STI::Device::LocalDevice(config), hardwareTrigger(true), downsample(1), height(4.6)
 {
 	// *** Define attributes *** //
 
@@ -56,6 +56,15 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 	// *** Attribute I/O examples *** //
 	std::string modeResult = getAttribute("Mode");
 	setAttribute("Downsample", "4");
+
+	// If member state changes outside setAttribute(), explicitly refresh the
+	// attribute cache to publish the new string value.
+	height = 6.2;
+	refreshAttribute("Height");
+
+	downsample = 2;
+	hardwareTrigger = false;
+	refreshAttributes();
 
 }
 
