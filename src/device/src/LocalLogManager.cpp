@@ -365,5 +365,6 @@ Logger& LocalLogManager::log(const std::string& name)
 
     std::shared_ptr<Logger> logger;
     loggers.get(name, logger);
+    logger->startNextStreamEntry();
     return *logger;
 }

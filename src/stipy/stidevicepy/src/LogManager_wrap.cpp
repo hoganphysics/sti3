@@ -143,7 +143,7 @@ void init_LogManager(py::module& m)
         .def("addAttributeLogTask", &Logger::addAttributeLogTask, py::arg("key"), py::arg("timeInterval"))
         .def("append", 
             [](const std::shared_ptr<Logger>& self, const std::string& message) {
-                (*self) << message;
+                self->append(message);
                 return self;
             })
         ;

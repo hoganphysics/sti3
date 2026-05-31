@@ -34,6 +34,8 @@ public:
 
     std::string getName() const;
 
+    void append(const std::string& input);
+
     void addLogTask(const std::string& timeInterval, const std::function<std::string(void)>& runFunc);
     void addReadLogTask(short channel, const std::string& timeInterval);
 
@@ -68,7 +70,7 @@ public:
     Logger& operator<<(const T& input)
     {
         std::unique_lock<std::mutex> loglock(logMutex);
-        auto mess = std::make_shared<LogStreamMessage>(STI::Utils::valueToString(input));
+        auto mess = std::make_shared<LogStreamMessage>(STI::Utils::valueToString(input), consumeNextStreamEntry());
         messageGrouper.addMessage(mess);
 
         return (*this);
@@ -91,19 +93,23 @@ private:
     {
     public:
 
-        LogStreamMessage(const std::string& message)
+        LogStreamMessage(const std::string& message, bool startsNewEntry)
+            : startsNewEntry(startsNewEntry)
         {
             groupedLogs << message;
         }
-        LogStreamMessage(manip1 fp)
+        LogStreamMessage(manip1 fp, bool startsNewEntry)
+            : startsNewEntry(startsNewEntry)
         {
             groupedLogs << fp;
         }
-        LogStreamMessage(manip2 fp)
+        LogStreamMessage(manip2 fp, bool startsNewEntry)
+            : startsNewEntry(startsNewEntry)
         {
             groupedLogs << fp;
         }
-        LogStreamMessage(manip3 fp)
+        LogStreamMessage(manip3 fp, bool startsNewEntry)
+            : startsNewEntry(startsNewEntry)
         {
             groupedLogs << fp;
         }
@@ -112,6 +118,10 @@ private:
         std::string getMessage() const { return groupedLogs.str(); }
         bool appendMessage(const LogStreamMessage& mess)
         {
+            auto current = groupedLogs.str();
+            if (mess.startsNewEntry && !current.empty() && current.back() != '\n') {
+                groupedLogs << "\n";
+            }
             groupedLogs << mess.getMessage();
             return true;
         }
@@ -120,6 +130,7 @@ private:
 
     private:
         std::stringstream groupedLogs;
+        bool startsNewEntry;
     };
 
     class LogMessageGrouper : public MessageGrouper<LogStreamMessage>
@@ -142,7 +153,6 @@ private:
         append(prefix, STI::Utils::valueToString(input));
     }
     void append(const std::string& prefix, const std::string& input);
-    void append(const std::string& input);
 
 
     std::string extract();
@@ -155,6 +165,9 @@ private:
     std::string makePrefix(const STI::Utils::TimeStamp& timeStamp, const std::vector<std::string>& annotations);
 
     std::string getNextLogFilename(const std::string& targetDirectory);
+
+    void startNextStreamEntry();
+    bool consumeNextStreamEntry();
 
     friend class LocalLogManager;
     bool save(const std::string& targetDirectory);
@@ -176,6 +189,7 @@ private:
     LogMessageGrouper messageGrouper;
 
     LocalLogManager* manager;
+    bool nextStreamInsertionStartsEntry;
 
     mutable std::mutex logMutex;
 };
