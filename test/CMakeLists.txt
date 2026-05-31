@@ -70,6 +70,7 @@ add_executable(sti3_test_device
   device/appointmenttask_tests.cpp
   device/eventengine_missing_partner_tests.cpp
   device/eventengine_stop_engine_tests.cpp
+  device/eventengine_sequence_mode_tests.cpp
   device/shotid_tests.cpp
   device/shotresult_tests.cpp
   device/distributer_tests.cpp

@@ -30,6 +30,7 @@ namespace Utils
 	std::string replaceChars(const std::string& input, const std::string& removedChars, const std::string& replacementChar);
 
 	std::string trim(const std::string& input, std::string white = " \n\r\t");
+	std::string normalizeStringForLookup(std::string input);
 
 	template<typename T> 
 	bool stringToValue(const std::string& inString, T& outValue, std::ios::fmtflags numBase=std::ios::dec, std::streamsize precision=9)
@@ -105,4 +106,3 @@ namespace Utils
 
 
 #endif
-

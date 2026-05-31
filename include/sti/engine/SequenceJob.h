@@ -39,6 +39,8 @@ public:
     bool allShotsDone() const;
     bool isDone();
     bool hasPriority(const std::set<EngineJobID>& jobsIDs);
+    void markJobSubmitted();
+    bool hasSubmittedJobs() const;
 
     std::shared_ptr<Sequence> sequence;
     std::shared_ptr<SequenceResult> sequenceResult;
@@ -54,7 +56,7 @@ public:
 private:
 
     EngineJobStatus jobStatus;
-    bool prioritySet;
+    bool jobSubmitted;
 
     void refreshJobStatus();
 };

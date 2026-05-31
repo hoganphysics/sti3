@@ -3,6 +3,8 @@
 
 //#include <stdlib.h>
 //#include <ctype.h>
+#include <algorithm>
+#include <cctype>
 #include <vector>
 #include <sstream>
 #include <time.h>
@@ -243,9 +245,23 @@ std::string trim(const std::string& input, std::string white)
 	return input.substr(start, end - start + 1);
 }
 
+std::string normalizeStringForLookup(std::string input)
+{
+	input.erase(
+		std::remove_if(input.begin(), input.end(), [](unsigned char c) {
+			return std::isspace(c) || c == '-' || c == '_';
+		}),
+		input.end());
+
+	std::transform(input.begin(), input.end(), input.begin(), [](unsigned char c) {
+		return static_cast<char>(std::tolower(c));
+	});
+
+	return input;
+}
+
 
 
 
 }// Utils
 }// STI
-
