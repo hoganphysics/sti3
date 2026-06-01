@@ -298,6 +298,20 @@ class ProcessTopology(object):
                 return handle.records()
         return []
 
+    def stop_device(self, spec_or_id):
+        device_id_text = _device_id_text(spec_or_id)
+        for handle in list(self.device_processes):
+            if handle.device_id_text == device_id_text:
+                handle.shutdown()
+                self.device_processes.remove(handle)
+                return True
+        return False
+
+    def start_device(self, spec):
+        handle = self._start_device_process(len(self.device_processes), spec)
+        self.device_processes.append(handle)
+        return handle
+
     def _apply_persistence_root(self):
         specs = [self.server_spec] + self.device_specs
         for spec in specs:
