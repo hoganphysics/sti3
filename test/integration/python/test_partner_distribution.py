@@ -258,10 +258,6 @@ def test_partial_partner_id_distribution_on_common_hub_orderings(sti_nameservice
         _wait_for_partner_reference(topology, server, controller_spec, partner_spec, timeout_s=3.0)
 
 
-@pytest.mark.xfail(
-    reason="partner references are not reliably redistributed to a process device after its partner rejoins",
-    strict=False,
-)
 def test_partial_partner_id_distribution_after_partner_process_rejoins(sti_nameservice_address, stipy_modules):
     stipy, _ = stipy_modules
     server_spec = make_server_spec(name="Partner Rejoin Server", address="localhost", module=50)
@@ -332,10 +328,6 @@ def test_partial_partner_id_distribution_across_two_hubs_same_process(
 @pytest.mark.parametrize(
     "order",
     ["partner-before-controller", "controller-before-partner"],
-)
-@pytest.mark.xfail(
-    reason="process-hub partner reference distribution is intermittent across startup orders",
-    strict=False,
 )
 def test_partial_partner_id_distribution_across_process_hubs(sti_nameservice_address, stipy_modules, order):
     stipy, _ = stipy_modules
