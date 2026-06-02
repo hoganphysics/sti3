@@ -73,9 +73,8 @@ bool STI::Network::Hub<ID, T>::connect(const std::shared_ptr<Hub<ID, T>>& hub1, 
 		&& hub2->addHub(hub1->getID(), hub1)) {
 
 		//mutual link established.  Distribute nodes.
-		//Either of these options is equivalent; both are redundant.
 		hub1->distributeNodes(hub2->getID());// , HubTrace());
-		//hub2->distributeNodes(hub1->getID());// , HubTrace());	//including this works, but it's redundant
+		hub2->distributeNodes(hub1->getID());// , HubTrace());
 		return true;
 	}
 	return false;
@@ -97,4 +96,3 @@ bool STI::Network::Hub<ID, T>::connect(const std::shared_ptr<Hub<ID, T>>& hub1, 
 // }
 
 #endif
-
