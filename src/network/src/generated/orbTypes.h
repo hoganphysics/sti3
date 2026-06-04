@@ -6984,6 +6984,8 @@ _CORBA_MODULE_BEG
 
       TChannelUpdateTupleSeq channelValues;
 
+      TChannelUpdateTupleSeq measurementValues;
+
       ::CORBA::Short channelNumber;
 
       ::CORBA::String_member channelName;
@@ -7196,6 +7198,8 @@ _CORBA_MODULE_BEG
       TMixedValueType outputType;
 
       TMixedValue lastValue;
+
+      TMixedValue lastMeasurement;
 
       TMixedValue metaData;
 

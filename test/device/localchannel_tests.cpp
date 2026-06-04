@@ -45,6 +45,15 @@ TEST_CASE("LocalChannel: refresh listeners receive value and name updates") {
     CHECK(recorderA.refreshEvents.front().first == 9);
     CHECK(recorderA.refreshEvents.front().second == MixedValue(42));
 
+    MixedValue measurement(7);
+    channel.saveLastMeasurement(measurement);
+
+    REQUIRE(recorderA.measurementEvents.size() == 1);
+    REQUIRE(recorderB.measurementEvents.size() == 1);
+    CHECK(recorderA.measurementEvents.front().first == 9);
+    CHECK(recorderA.measurementEvents.front().second == MixedValue(7));
+    CHECK(channel.getLastMeasurement() == MixedValue(7));
+
     channel.setChannelName("updated");
     REQUIRE(recorderA.nameEvents.size() == 1);
     REQUIRE(recorderB.nameEvents.size() == 1);
@@ -55,6 +64,7 @@ TEST_CASE("LocalChannel: metadata helpers store and retrieve values") {
     LocalChannel channel(1, ChannelType::Output, MixedValueType::Empty, MixedValueType::Double, "meta");
 
     channel.addMetaData("units", MixedValue("V"));
+    channel.setMeasurementUnits("Hz");
     std::vector<std::string> labels = {"one", "two"};
     channel.addMetaDataList("labels", labels);
 
@@ -62,6 +72,7 @@ TEST_CASE("LocalChannel: metadata helpers store and retrieve values") {
     CHECK(allMeta.getType() == MixedValueType::Vector);
 
     CHECK(channel.getMetaData("units").getString() == "V");
+    CHECK(channel.getMetaData("measurementUnits").getString() == "Hz");
     auto missing = channel.getMetaData("missing");
     CHECK(missing.getType() == MixedValueType::Empty);
 }

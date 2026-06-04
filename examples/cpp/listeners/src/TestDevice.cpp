@@ -17,7 +17,10 @@ public:
 	void handleMessage(const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess)
 	{
 		for (auto& updates : mess->channelValues) {
-			std::cout << "Update channel " << updates.first << " to " << updates.second.print() << std::endl;
+			std::cout << "Update channel value " << updates.first << " to " << updates.second.print() << std::endl;
+		}
+		for (auto& updates : mess->measurementValues) {
+			std::cout << "Update channel measurement " << updates.first << " to " << updates.second.print() << std::endl;
 		}
 	}
 };

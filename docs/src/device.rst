@@ -649,6 +649,16 @@ also schedule recurring read, write, and attribute log tasks.
       self.log().addWriteLogTask(0, "00:00:06", 11.2)
       self.log("testing").addReadLogTask(11, "00:00:02", [5.7, "example data"])
 
+Channel cached state
+********************
+
+Channels keep two lifetime-scoped cached values.  ``lastValue`` is the
+output-side value: the most recent output write, or for input channels with a
+non-empty output type, the most recent read argument/configuration value.
+Input channels with ``MixedValueType::Empty`` output type intentionally keep
+``lastValue`` empty.  ``lastMeasurement`` is the most recent data returned by
+an input channel measurement.  Output channels keep ``lastMeasurement`` empty.
+
 Device profiles
 ***************
 
@@ -690,7 +700,11 @@ on ``DeviceMessageType``.
               "channel listener",
               [](const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess) {
                   for (const auto& update : mess->channelValues) {
-                      std::cout << update.first << " -> "
+                      std::cout << "value " << update.first << " -> "
+                                << update.second.print() << std::endl;
+                  }
+                  for (const auto& update : mess->measurementValues) {
+                      std::cout << "measurement " << update.first << " -> "
                                 << update.second.print() << std::endl;
                   }
               });
@@ -701,8 +715,10 @@ on ``DeviceMessageType``.
       receiver = self.getMessageReceiver()
 
       def on_channel_update(message):
-          for channel, value in message.channelValues:
-              print(channel, value)
+          for channel, value in message.channelValues().items():
+              print("value", channel, value)
+          for channel, value in message.measurementValues().items():
+              print("measurement", channel, value)
 
       receiver.addListener(
           stidevicepy.DeviceMessageType.ChannelUpdate,

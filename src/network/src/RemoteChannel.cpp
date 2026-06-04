@@ -11,13 +11,14 @@ using STI::Network::ChannelDataTuple;
 RemoteChannel::RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
         const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
-        const STI::Utils::MixedValue& metaData)
+        const STI::Utils::MixedValue& lastMeasurement, const STI::Utils::MixedValue& metaData)
 : channelNumber_(channelNumber), type_(type), inputType_(inputType), outputType_(outputType), 
-metaData_(metaData)
+metaData_(metaData), remoteManager(nullptr)
 {
     channelData = std::make_shared<ChannelDataTuple>();
     channelData->name = channelName;
     channelData->value = lastValue;
+    channelData->measurement = lastMeasurement;
 }
 
 
@@ -63,6 +64,9 @@ std::string RemoteChannel::getChannelName() const
     if (remoteManager != 0) {
         name = remoteManager->getChannelName(channelNumber_);
     }
+    else if (channelData != 0) {
+        name = channelData->name;
+    }
     return name;
 }
 
@@ -81,6 +85,11 @@ void RemoteChannel::saveLastValue(const STI::Utils::MixedValue& value)
     // lastValue = value;
 }
 
+void RemoteChannel::saveLastMeasurement(const STI::Utils::MixedValue& value)
+{
+    // lastMeasurement = value;
+}
+
 const STI::Utils::MixedValue RemoteChannel::getLastValue() const
 {
     STI::Utils::MixedValue lastValue;
@@ -88,8 +97,25 @@ const STI::Utils::MixedValue RemoteChannel::getLastValue() const
     if (remoteManager != 0) {
         lastValue = remoteManager->getLastValue(channelNumber_);
     }
+    else if (channelData != 0) {
+        lastValue = channelData->value;
+    }
 
     return lastValue;
+}
+
+const STI::Utils::MixedValue RemoteChannel::getLastMeasurement() const
+{
+    STI::Utils::MixedValue lastMeasurement;
+    
+    if (remoteManager != 0) {
+        lastMeasurement = remoteManager->getLastMeasurement(channelNumber_);
+    }
+    else if (channelData != 0) {
+        lastMeasurement = channelData->measurement;
+    }
+
+    return lastMeasurement;
 }
 
 
@@ -102,4 +128,3 @@ STI::Utils::MixedValue RemoteChannel::getMetaData(const std::string& key) const
 {
     return metaData_.getMetaData(key);
 }
-

@@ -1836,6 +1836,7 @@ STI::TNetwork::TChannelUpdateMessage::operator>>= (cdrStream &_n) const
   (const TDeviceMessage&) base >>= _n;
   channelUpdateType >>= _n;
   (const TChannelUpdateTupleSeq&) channelValues >>= _n;
+  (const TChannelUpdateTupleSeq&) measurementValues >>= _n;
   channelNumber >>= _n;
   _n.marshalString(channelName,0);
 
@@ -1847,6 +1848,7 @@ STI::TNetwork::TChannelUpdateMessage::operator<<= (cdrStream &_n)
   (TDeviceMessage&)base <<= _n;
   (TChannelUpdateMessageType&)channelUpdateType <<= _n;
   (TChannelUpdateTupleSeq&)channelValues <<= _n;
+  (TChannelUpdateTupleSeq&)measurementValues <<= _n;
   (::CORBA::Short&)channelNumber <<= _n;
   channelName = _n.unmarshalString(0);
 
@@ -1911,6 +1913,7 @@ STI::TNetwork::TChannel::operator>>= (cdrStream &_n) const
   inputType >>= _n;
   outputType >>= _n;
   (const TMixedValue&) lastValue >>= _n;
+  (const TMixedValue&) lastMeasurement >>= _n;
   (const TMixedValue&) metaData >>= _n;
 
 }
@@ -1924,6 +1927,7 @@ STI::TNetwork::TChannel::operator<<= (cdrStream &_n)
   (TMixedValueType&)inputType <<= _n;
   (TMixedValueType&)outputType <<= _n;
   (TMixedValue&)lastValue <<= _n;
+  (TMixedValue&)lastMeasurement <<= _n;
   (TMixedValue&)metaData <<= _n;
 
 }

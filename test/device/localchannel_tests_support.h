@@ -23,6 +23,12 @@ public:
         cv.notify_all();
     }
 
+    void handleChannelMeasurementRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value) override {
+        std::lock_guard<std::mutex> lock(mutex);
+        measurementEvents.push_back({channelNumber, value});
+        cv.notify_all();
+    }
+
     void handleChannelNameRefreshEvent(short channelNumber, const std::string& name) override {
         std::lock_guard<std::mutex> lock(mutex);
         nameEvents.push_back({channelNumber, name});
@@ -35,6 +41,7 @@ public:
     }
 
     std::vector<std::pair<short, STI::Utils::MixedValue>> refreshEvents;
+    std::vector<std::pair<short, STI::Utils::MixedValue>> measurementEvents;
     std::vector<std::pair<short, std::string>> nameEvents;
 
 private:

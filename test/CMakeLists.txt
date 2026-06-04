@@ -43,6 +43,7 @@ add_executable(sti3_test_device
   device/localmonitormanager_tests.cpp
   device/devicemessagelistener_tests.cpp
   device/devicemessagerelayer_tests.cpp
+  device/devicemessage_tests.cpp
   device/localdevicemessagehandler_tests.cpp
   device/localdevicemessagedispatcher_tests.cpp
   device/devicemessagereceiver_tests.cpp

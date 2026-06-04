@@ -176,6 +176,14 @@ public:
 		channelValues[channel] = value;
 	}
 
+	static std::shared_ptr<ChannelUpdateMessage> makeMeasurementMessage(
+		const STI::Device::DeviceTrace& trace, short channel, const STI::Utils::MixedValue& value)
+	{
+		auto message = std::make_shared<ChannelUpdateMessage>(trace);
+		message->measurementValues[channel] = value;
+		return message;
+	}
+
 	ChannelUpdateMessage(const STI::Device::DeviceTrace& trace, short channel, const std::string& name) 
 	: DeviceMessage(trace, DeviceMessageType::ChannelUpdate) 
 	{
@@ -190,6 +198,9 @@ public:
 	{
         for (auto& pair : mess.channelValues) {
             channelValues[pair.first] = pair.second;  //overwrites
+        }
+        for (auto& pair : mess.measurementValues) {
+            measurementValues[pair.first] = pair.second;  //overwrites
         }
 		return true;
 	}
@@ -206,6 +217,7 @@ public:
 
 	ChannelUpdateMessageType channelUpdateType;
 	std::map<short, STI::Utils::MixedValue> channelValues;	//just {channel, value} pairs
+	std::map<short, STI::Utils::MixedValue> measurementValues;	//just {channel, measurement} pairs
 
 	//only used for ChannelName messages
 	short channelNumber;

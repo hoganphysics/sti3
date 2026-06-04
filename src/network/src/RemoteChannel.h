@@ -25,7 +25,7 @@ public:
 	RemoteChannel(unsigned short channelNumber, STI::Device::ChannelType type,
 		STI::Utils::MixedValueType inputType, STI::Utils::MixedValueType outputType, 
         const std::string& channelName, const STI::Utils::MixedValue& lastValue, 
-		const STI::Utils::MixedValue& metaData);
+		const STI::Utils::MixedValue& lastMeasurement, const STI::Utils::MixedValue& metaData);
 
     void attachManager(RemoteChannelManager* manager);
 
@@ -40,6 +40,8 @@ public:
 
 	void saveLastValue(const STI::Utils::MixedValue& value);
 	const STI::Utils::MixedValue getLastValue() const;
+	void saveLastMeasurement(const STI::Utils::MixedValue& value);
+	const STI::Utils::MixedValue getLastMeasurement() const;
 
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
@@ -71,4 +73,3 @@ private:
 } //STI
 
 #endif
-

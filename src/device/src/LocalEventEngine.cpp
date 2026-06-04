@@ -17,6 +17,7 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/EngineTriggerTarget.h>
 #include <sti/engine/FullShotResult.h>
+#include <sti/engine/Measurement.h>
 #include <sti/engine/ParsedDependencyTree.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/RawEventGroup.h>
@@ -86,6 +87,11 @@ bool hasErrorMessages(const std::vector<EnginePlayingMessage>& messages)
 {
 	EnginePlayingMessageCount count(messages);
 	return count.errorCount > 0;
+}
+
+bool mixedValueMatchesType(const STI::Utils::MixedValue& value, STI::Utils::MixedValueType expectedType)
+{
+	return expectedType == STI::Utils::MixedValueType::Any || value.isType(expectedType);
 }
 
 bool hasMessageNamed(const std::vector<EnginePlayingMessage>& messages, const std::string& name)
@@ -1934,6 +1940,10 @@ void LocalEventEngine::updateChannelValues(const RawEventVector& rawEvents)
 
 	for (unsigned i = 0; i < rawEvents.size(); ++i) {
 		if (localChannels->getChannel(rawEvents.at(i).channel(), channel)) {
+			if (channel->getType() == STI::Device::ChannelType::Input
+				&& channel->getOutputType() == STI::Utils::MixedValueType::Empty) {
+				continue;
+			}
 			channel->saveLastValue(rawEvents.at(i).value());
 		}
 	}	
@@ -2031,6 +2041,32 @@ void LocalEventEngine::measureData()
 
 		evt->collectData();
 
+		for (const auto& measurement : evt->getMeasurements()) {
+			if (measurement == nullptr || !measurement->dataReady()) {
+				continue;
+			}
+
+			std::shared_ptr<STI::Device::Channel> channel;
+			if (!localChannels->getChannel(static_cast<short>(measurement->channel()), channel) || channel == nullptr) {
+				continue;
+			}
+
+			if (channel->getType() != STI::Device::ChannelType::Input) {
+				continue;
+			}
+
+			if (mixedValueMatchesType(measurement->data(), channel->getInputType())) {
+				channel->saveLastMeasurement(measurement->data());
+			}
+			else {
+				evt->addError("Incorrect Measurement Type")
+					<< "Incorrect measurement type found for channel #" << measurement->channel()
+					<< ". Expected type '" << STI::Utils::MixedValue::TypeToString(channel->getInputType())
+					<< "', got type '" << STI::Utils::MixedValue::TypeToString(measurement->data().getType())
+					<< "'.";
+			}
+		}
+
 		if (appendPlayMessages(evt->getMeasureMessages())) {
 			// error message found
 			setState(EngineState::Error);
@@ -2056,6 +2092,9 @@ void LocalEventEngine::stop()
 	switch (state) {
 	case EngineState::Error:
 		cancelled = true;
+		releaseTriggerLock();
+		releasePlayLock();
+		stopDeviceEvents();
 		break;
 	case EngineState::Parsing:
 		parser.addParsingError("Parsing Aborted")

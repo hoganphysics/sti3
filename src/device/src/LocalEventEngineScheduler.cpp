@@ -1890,6 +1890,7 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
     playMessageIDs["Owned device PlayReady timeout"]        = 83;
     playMessageIDs["Owned device trigger timeout"]          = 84;
     playMessageIDs["Owned device PlayComplete timeout"]     = 85;
+    playMessageIDs["Incorrect Measurement Type"]            = 86;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()

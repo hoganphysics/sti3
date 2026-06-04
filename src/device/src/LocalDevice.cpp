@@ -142,6 +142,11 @@ void applyConfiguredMetaData(LocalDevice& device, const Configuration& config)
 	}
 }
 
+bool mixedValueMatchesType(const STI::Utils::MixedValue& value, STI::Utils::MixedValueType expectedType)
+{
+	return expectedType == STI::Utils::MixedValueType::Any || value.isType(expectedType);
+}
+
 } // namespace
 
 
@@ -549,9 +554,12 @@ bool LocalDevice::write(short channel, const STI::Utils::MixedValue& value)
 	//type check
 	if (localChannelManager->getChannel(channel, ch) 
 		&& ch->getType() == STI::Device::ChannelType::Output 
-		&& value.isType(ch->getOutputType())) {
+		&& mixedValueMatchesType(value, ch->getOutputType())) {
 		
-		return writeChannel(channel, value);
+		if (writeChannel(channel, value)) {
+			ch->saveLastValue(value);
+			return true;
+		}
 	}
 	return false;	//value has wrong type	
 }
@@ -568,9 +576,15 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 	//type check
 	if (localChannelManager->getChannel(channel, ch)
 		&& ch->getType() == STI::Device::ChannelType::Input
-		&& value.isType(ch->getOutputType())) {
+		&& mixedValueMatchesType(value, ch->getOutputType())) {
 		
-		return readChannel(channel, value, data);
+		if (readChannel(channel, value, data) && mixedValueMatchesType(data, ch->getInputType())) {
+			if (ch->getOutputType() != STI::Utils::MixedValueType::Empty) {
+				ch->saveLastValue(value);
+			}
+			ch->saveLastMeasurement(data);
+			return true;
+		}
 	}
 	return false;	//value has wrong type	
 }

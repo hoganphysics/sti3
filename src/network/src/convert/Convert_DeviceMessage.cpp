@@ -706,6 +706,7 @@ bool STI::Network::convert<TChannelUpdateMessage, std::shared_ptr<ChannelUpdateM
 		}	*/
 
 		convert<TChannelUpdateTupleSeq, std::map<short, MixedValue>>(tMessage.channelValues, deviceMessage->channelValues);
+		convert<TChannelUpdateTupleSeq, std::map<short, MixedValue>>(tMessage.measurementValues, deviceMessage->measurementValues);
 	}
 	else {
 		//channel name message
@@ -742,6 +743,7 @@ bool STI::Network::convert<std::shared_ptr<ChannelUpdateMessage>, TChannelUpdate
 	//}
 
 	convert<std::map<short, MixedValue>, TChannelUpdateTupleSeq>(deviceMessage->channelValues, tMessage.channelValues);
+	convert<std::map<short, MixedValue>, TChannelUpdateTupleSeq>(deviceMessage->measurementValues, tMessage.measurementValues);
 
 	tMessage.channelNumber = static_cast<CORBA::Short>(deviceMessage->channelNumber);
 	tMessage.channelName = convert<std::string, CORBA::String_member>(deviceMessage->channelName);

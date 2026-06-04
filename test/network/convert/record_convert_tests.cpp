@@ -1,6 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "NetworkConvert.h"
+#include "RemoteChannel.h"
+#include "convert/Convert_Channel.h"
+#include "convert/Convert_DeviceMessage.h"
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_File.h"
 #include "convert/Convert_Log.h"
@@ -9,6 +12,8 @@
 #include "convert/Convert_ShotResult.h"
 
 #include <sti/device/DeviceID.h>
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/LocalChannel.h>
 #include <sti/device/LogID.h>
 #include <sti/device/LogRecord.h>
 #include <sti/device/Profile.h>
@@ -24,6 +29,7 @@
 #include <sti/engine/ShotResultRecord.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/engine/StackTraceResult.h>
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/TimeStamp.h>
@@ -214,6 +220,63 @@ TEST_CASE("NetworkConvert: Profile round trips attributes and channel values")
     REQUIRE(roundTrip.channelData.size() == profile.channelData.size());
     CHECK(roundTrip.channelData.at(1).getDouble() == profile.channelData.at(1).getDouble());
     CHECK(roundTrip.channelData.at(2).getString() == profile.channelData.at(2).getString());
+}
+
+TEST_CASE("NetworkConvert: Channel snapshot round trips last value and measurement", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        4, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Double, STI::Utils::MixedValueType::Int, "input");
+    channel->saveLastValue(STI::Utils::MixedValue(7));
+    channel->saveLastMeasurement(STI::Utils::MixedValue(3.5));
+
+    STI::TNetwork::TChannel tChannel;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, tChannel));
+
+    auto remote = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(tChannel);
+    REQUIRE(remote != nullptr);
+    CHECK(remote->getLastValue() == STI::Utils::MixedValue(7));
+    CHECK(remote->getLastMeasurement() == STI::Utils::MixedValue(3.5));
+}
+
+TEST_CASE("NetworkConvert: Channel snapshot suppresses heavy last measurement payloads", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        5, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Binary, STI::Utils::MixedValueType::Empty, "binary");
+    channel->saveLastMeasurement(STI::Utils::MixedValue(std::make_shared<STI::Utils::BinaryData>()));
+
+    STI::TNetwork::TChannel tChannel;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, tChannel));
+
+    auto remote = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(tChannel);
+    REQUIRE(remote != nullptr);
+    CHECK(remote->getLastMeasurement().isEmpty());
+}
+
+TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurement maps", "[network][convert][channel]")
+{
+    auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(makeDeviceID(), 1, STI::Utils::MixedValue(11));
+    message->channelValues[2] = STI::Utils::MixedValue(22);
+    message->measurementValues[1] = STI::Utils::MixedValue(1.5);
+    message->measurementValues[3] = STI::Utils::MixedValue("done");
+
+    STI::TNetwork::TChannelUpdateMessage tMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::DeviceMessage>, STI::TNetwork::TDeviceMessage>(
+        std::static_pointer_cast<STI::Device::DeviceMessage>(message), tMessage.base));
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::ChannelUpdateMessage>, STI::TNetwork::TChannelUpdateMessage>(
+        message, tMessage));
+
+    std::shared_ptr<STI::Device::ChannelUpdateMessage> roundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TChannelUpdateMessage, std::shared_ptr<STI::Device::ChannelUpdateMessage>>(
+        tMessage, roundTrip));
+    REQUIRE(roundTrip != nullptr);
+
+    REQUIRE(roundTrip->channelValues.size() == 2);
+    CHECK(roundTrip->channelValues.at(1) == STI::Utils::MixedValue(11));
+    CHECK(roundTrip->channelValues.at(2) == STI::Utils::MixedValue(22));
+
+    REQUIRE(roundTrip->measurementValues.size() == 2);
+    CHECK(roundTrip->measurementValues.at(1) == STI::Utils::MixedValue(1.5));
+    CHECK(roundTrip->measurementValues.at(3) == STI::Utils::MixedValue("done"));
 }
 
 TEST_CASE("NetworkConvert: log records round trip nested file records")

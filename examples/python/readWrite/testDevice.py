@@ -33,7 +33,8 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addInputChannel(10, stipy.MixedValueType.Double, "thermocouple voltage")   # measures a double
 
         # Input/Output channels
-        self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
+        ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
+        ch.setMeasurementUnits("Hz")
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
 
         return
