@@ -658,6 +658,9 @@ non-empty output type, the most recent read argument/configuration value.
 Input channels with ``MixedValueType::Empty`` output type intentionally keep
 ``lastValue`` empty.  ``lastMeasurement`` is the most recent data returned by
 an input channel measurement.  Output channels keep ``lastMeasurement`` empty.
+Remote ``lastMeasurement`` values that contain binary or image data may be
+delivered as lazy stream-backed values.  See :ref:`lazy_payloads` for the C++
+and Python APIs used to inspect, pull, and save those payloads.
 
 Device profiles
 ***************
@@ -734,6 +737,269 @@ Measurement events can attach scalar data through ``setMeasurementResult``.
 For file-producing hardware, use the device persistence/file APIs to make a
 file holder and attach file-backed data to the result.  See
 ``examples/cpp/fileMeasurement`` for the current C++ pattern.
+
+.. _lazy_payloads:
+
+Lazy binary and image payloads
+******************************
+
+Binary and image measurements can be large enough that copying them into every
+channel update is wasteful.  For remote channel state, STI keeps the public API
+value intact but may defer the actual bytes until the client asks for them.
+
+This applies to heavy ``lastMeasurement`` values delivered through remote
+channel snapshots and channel update messages:
+
+* ``MixedValueType::Binary`` / ``stipy.MixedValueType.Binary``
+* ``MixedValueType::Image`` / ``stipy.MixedValueType.Image`` when the image
+  contains inline binary image data
+
+Remote clients receive a lightweight ``BinaryData`` or ``Image`` object for
+these values.  Metadata such as total byte count, element length, word size,
+image width, image height, and file ID is available before the bytes are
+pulled.
+
+Normal device-driver code should use the public utility types from
+``include/sti``.  Transport details are internal to the network layer; C++
+device, STIPy, and utility code do not need network-specific headers to publish
+or consume these payloads.
+
+When data is pulled
++++++++++++++++++++
+
+A lazy ``BinaryData`` has stream metadata but no local byte buffer.  The bytes
+are transferred when code explicitly materializes it, saves it, or asks for the
+byte buffer through an API that requires local data.
+
+Use the metadata methods first when possible:
+
+* ``length()`` is the element count.
+* ``wordsize()`` is the byte size of each element.
+* ``bytes()`` is ``length() * wordsize()``.
+* ``hasStream()`` means the object can pull from a deferred source.
+* ``hasLocalData()`` / ``isMaterialized()`` means the bytes are already local.
+
+Stream-backed payloads are transferred as byte chunks.  The original
+``wordsize()`` is preserved so callers can interpret typed payloads, but the
+materialized buffer should be treated as byte-addressable data.
+
+Lazy references depend on the source data still being available.  Pull the data
+before the producing device exits, disconnects, or replaces the channel's last
+measurement if the client needs a durable local copy.
+
+C++ client access
++++++++++++++++++
+
+Use ``MixedValue::getBinary()`` and ``MixedValue::getImage()`` when the caller
+wants explicit control over the transfer.
+
+.. code-block:: c++
+
+   #include <sti/device/Channel.h>
+   #include <sti/utils/BinaryData.h>
+   #include <sti/utils/FileHolder.h>
+   #include <sti/utils/Image.h>
+   #include <sti/utils/MixedValue.h>
+
+   using STI::Utils::MixedValueType;
+
+   auto measurement = channel->getLastMeasurement();
+
+   if (measurement.getType() == MixedValueType::Binary) {
+       auto binary = measurement.getBinary();
+
+       if (binary != nullptr) {
+           auto totalBytes = binary->bytes();
+           auto wordSize = binary->wordsize();
+
+           if (binary->hasStream() && !binary->isMaterialized()) {
+               if (!binary->materialize()) {
+                   // The source was not available or the transfer failed.
+                   return;
+               }
+           }
+
+           char* bytes = nullptr;
+           if (binary->getBytes(bytes)) {
+               processBytes(bytes, totalBytes, wordSize);
+           }
+       }
+   }
+
+For image measurements, inspect the image metadata first.  Inline image data is
+available through ``Image::getData()`` as ``BinaryData`` and follows the same
+lazy materialization rules.
+
+.. code-block:: c++
+
+   auto measurement = channel->getLastMeasurement();
+
+   if (measurement.getType() == MixedValueType::Image) {
+       auto image = measurement.getImage();
+
+       if (image != nullptr) {
+           auto width = image->getWidth();
+           auto height = image->getHeight();
+           auto fileID = image->getFileID();
+
+           std::shared_ptr<STI::Utils::BinaryData> imageData;
+           if (image->getData(imageData) && imageData != nullptr) {
+               if (imageData->materialize()) {
+                   char* bytes = nullptr;
+                   if (imageData->getBytes(bytes)) {
+                       processImageBytes(bytes, imageData->bytes(), width, height);
+                   }
+               }
+           }
+
+           std::shared_ptr<STI::Utils::FileHolder> imageFile;
+           if (image->getFile(imageFile) && imageFile != nullptr) {
+               processImageFile(imageFile->getID());
+           }
+       }
+   }
+
+``BinaryData::getBytes()`` also materializes a lazy stream if one is attached,
+so existing byte-oriented code continues to work.  Prefer calling
+``materialize()`` first when the code needs to distinguish transfer failure from
+normal empty data.
+
+Code that wants to copy a payload into another storage target can call
+``BinaryData::transferTo()`` with a ``BinaryDataStreamTarget``.  This streams
+from either local data or a lazy source without exposing network implementation
+details.
+
+C++ device output
++++++++++++++++++
+
+Device authors publish binary and image measurements by setting a
+``MixedValue`` to the public utility objects.  No special lazy API is required
+on the producing side.
+
+.. code-block:: c++
+
+   #include <algorithm>
+   #include <memory>
+   #include <vector>
+
+   #include <sti/utils/BinaryData.h>
+   #include <sti/utils/Image.h>
+   #include <sti/utils/MixedValue.h>
+
+   bool CameraDevice::readChannel(short channel,
+                                  const STI::Utils::MixedValue& value,
+                                  STI::Utils::MixedValue& data)
+   {
+       if (channel == 0) {
+           std::vector<char> frame = camera.readRawFrame();
+
+           auto binary = std::make_shared<STI::Utils::BinaryData>();
+           char* bytes = binary->allocate<char>(frame.size());
+           std::copy(frame.begin(), frame.end(), bytes);
+
+           data.setValue(binary);
+           return true;
+       }
+
+       if (channel == 1) {
+           std::vector<char> frame = camera.readRawFrame();
+
+           auto binary = std::make_shared<STI::Utils::BinaryData>();
+           char* bytes = binary->allocate<char>(frame.size());
+           std::copy(frame.begin(), frame.end(), bytes);
+
+           auto image = std::make_shared<STI::Utils::Image>();
+           image->setWidth(camera.width()).setHeight(camera.height());
+           image->setImageData(binary);
+
+           data.setValue(image);
+           return true;
+       }
+
+       return false;
+   }
+
+When these measurements become remote channel state, the network layer decides
+whether to send them eagerly or as lazy references.
+
+Python client access
+++++++++++++++++++++
+
+Python clients use the same ``MixedValue`` entry points.  ``getBinary()`` and
+``getImage()`` return wrapper objects that expose explicit pull and save
+methods.
+
+.. code-block:: py
+
+   measurement = channel.getLastMeasurement()
+
+   if measurement.getType() == stipy.MixedValueType.Binary:
+       binary = measurement.getBinary()
+
+       print(binary.bytes(), binary.length(), binary.wordsize())
+       print(binary.hasStream(), binary.isMaterialized())
+
+       if binary.pull():
+           payload = binary.getBytes()
+           binary.save("results/frame.bin")
+
+For images, use ``getImage()`` and then pull the embedded binary data when the
+image contains inline bytes.
+
+.. code-block:: py
+
+   measurement = channel.getLastMeasurement()
+
+   if measurement.getType() == stipy.MixedValueType.Image:
+       image = measurement.getImage()
+
+       print(image.getWidth(), image.getHeight(), image.getFileID())
+
+       if image.hasData():
+           data = image.getData()
+           if data.pull():
+               pixels = data.getBytes()
+
+       saved = image.save("results/frame.img")
+
+``BinaryData.getBytes()``, ``BinaryData.save()``, ``Image.pullData()``, and
+``Image.save()`` pull inline lazy data as needed.  ``Image.hasFile()`` reports
+whether the image already has an accessible file holder; ``Image.getFileID()``
+reports file identity metadata.  ``MixedValue.getValue()`` also returns Python
+``bytes`` for binary values, which materializes the payload implicitly.  Use
+``getBinary()`` when the code needs to inspect metadata or control when the
+transfer occurs.
+
+Python device output
+++++++++++++++++++++
+
+Python device code can publish binary measurements with ``stipy.BinaryData``.
+
+.. code-block:: py
+
+   def readChannel(self, channel, value):
+       if channel == 0:
+           payload = self.camera.read_raw_frame()
+           return stipy.BinaryData(payload)
+       return None
+
+``stipy.BinaryData`` expects a Python ``bytes`` object and stores it with
+``wordsize() == 1``.  Python clients can read image measurements produced by
+C++ devices; image construction is exposed through the C++ ``Image`` API.
+
+Shot results and persistence
+++++++++++++++++++++++++++++
+
+Live channel state is allowed to contain lazy remote references.  Completed shot
+results are not.  During result collection, the server pulls lazy binary and
+image measurement data and rewrites it to server-local file or image
+references.  Code that reads archived ``ShotResult`` measurements should not
+depend on the original producing device still being online.
+
+For C++ persistence code that needs to copy an image into a durable holder, use
+``Image::write(sourceFileServer, destinationFileHolder)``.  It handles both
+file-backed images and inline ``BinaryData`` images, including lazy binary data
+that must be pulled before writing.
 
 Example map
 ***********
