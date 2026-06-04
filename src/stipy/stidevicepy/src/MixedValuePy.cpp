@@ -1,6 +1,7 @@
 
 #include "MixedValuePy.h"
 
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/Image.h>
 
 using STI::Python::MixedValuePy;
@@ -8,6 +9,25 @@ using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
 namespace py = pybind11;
+
+namespace
+{
+template<typename T, typename Setter>
+bool setSharedValue(const py::handle& value, Setter setter)
+{
+    try {
+        auto ptr = value.cast<std::shared_ptr<T>>();
+        if (ptr != 0) {
+            setter(ptr);
+            return true;
+        }
+    }
+    catch (py::cast_error&) {
+    }
+
+    return false;
+}
+} // namespace
 
 
 MixedValuePy::MixedValuePy()
@@ -138,6 +158,12 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
 void MixedValuePy::setValue_py(const py::object& value)
 {
     if (setValueExtract<MixedValuePy, MixedValue>(value)) return;
+    if (setSharedValue<STI::Utils::BinaryData>(value, [this](const std::shared_ptr<STI::Utils::BinaryData>& binary) {
+            MixedValue::setValue(binary);
+        })) return;
+    if (setSharedValue<STI::Utils::Image>(value, [this](const std::shared_ptr<STI::Utils::Image>& image) {
+            MixedValue::setValue(image);
+        })) return;
     if (setValueExtract<STI::Utils::FileID, STI::Utils::FileID>(value)) return;
 
     if (setValueExtract<py::float_, double>(value)) return;
@@ -163,6 +189,12 @@ void MixedValuePy::setValue_py(const py::object& value)
 void MixedValuePy::addValue_py(const py::handle& value)
 {
     if (addValueExtract<MixedValuePy, MixedValue>(value)) return;
+    if (setSharedValue<STI::Utils::BinaryData>(value, [this](const std::shared_ptr<STI::Utils::BinaryData>& binary) {
+            MixedValue::addValue(binary);
+        })) return;
+    if (setSharedValue<STI::Utils::Image>(value, [this](const std::shared_ptr<STI::Utils::Image>& image) {
+            MixedValue::addValue(image);
+        })) return;
     if (addValueExtract<STI::Utils::FileID, STI::Utils::FileID>(value)) return;
 
     if (addValueExtract<py::float_, double>(value)) return;

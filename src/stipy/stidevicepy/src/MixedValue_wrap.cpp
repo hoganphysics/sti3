@@ -5,9 +5,11 @@
 #include <sti/utils/Image.h>
 #include "MixedValuePy.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <system_error>
+#include <string>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -22,6 +24,19 @@ using STI::Python::MixedValuePy;
 
 namespace
 {
+std::shared_ptr<BinaryData> makeBinaryData(const py::bytes& payload)
+{
+    std::string bytes = payload;
+    auto data = std::make_shared<BinaryData>();
+    char* rawData = nullptr;
+    if (!bytes.empty()) {
+        rawData = new char[bytes.size()];
+        std::copy(bytes.begin(), bytes.end(), rawData);
+    }
+    data->assign(rawData, bytes.size(), true);
+    return data;
+}
+
 py::object binaryDataBytes(BinaryData& data)
 {
     char* rawData = nullptr;
@@ -99,6 +114,7 @@ void init_MixedValue(py::module& m)
 
     py::class_<BinaryData, std::shared_ptr<BinaryData>>(m, "BinaryData")
         .def(py::init<>())
+        .def(py::init(&makeBinaryData), py::arg("data"))
         .def("length", &BinaryData::length)
         .def("bytes", &BinaryData::bytes)
         .def("wordsize", &BinaryData::wordsize)

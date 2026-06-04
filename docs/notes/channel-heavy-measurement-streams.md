@@ -94,26 +94,27 @@ immediately pulling the remote stream into local `BinaryData`. This is useful
 for normal RPC return values, but it does not solve the channel update problem:
 message delivery still performs the heavy transfer eagerly.
 
-## Current Heavy-Payload Guard
+## Removed Heavy-Payload Guard
 
-The last-measurement implementation currently uses
+The old last-measurement implementation used a public helper named
 `makeLightweightChannelMeasurementValue()` from `include/sti/device/ChannelState.h`.
 
-It treats these as heavy:
+It treated these as heavy:
 
 - `MixedValueType::Binary`
 - `MixedValueType::Image`
 - vectors containing either of the above
 
-For heavy values it returns `MixedValueType::Empty`. This is safe but lossy.
+For heavy values it returned `MixedValueType::Empty`. This was safe but lossy.
 
-The two primary call sites are:
+The two primary call sites were:
 
 - `LocalChannelManager::handleChannelMeasurementRefreshEvent()`
 - `Convert_Channel.cpp` when building `TChannel.lastMeasurement`
 
-The goal of this plan is to replace those call sites with a stream-backed
-lightweight value, not a data-dropping value.
+The lazy stream implementation replaced those call sites with stream-backed
+lightweight values, and the obsolete public `ChannelState.h` helper was
+removed.
 
 ## Desired Semantics
 
@@ -519,6 +520,56 @@ For backwards compatibility, `MixedValue.getValue()` may continue returning
 `bytes` for binary data, but document that this can trigger a pull. Prefer the
 explicit `getBinary()` API in frontend code.
 
+## Frontend Handoff
+
+Remote channel `lastMeasurement` values can now contain lazy heavy payloads
+instead of `Empty`.
+
+Python clients should use the explicit accessors when inspecting channel state:
+
+```python
+import stipy
+
+value = channel.getLastMeasurement()
+
+if value.getType() == stipy.MixedValueType.Binary:
+    binary = value.getBinary()
+    size_bytes = binary.bytes()
+    wordsize = binary.wordsize()
+    already_local = binary.isMaterialized()
+
+    if binary.pull():
+        payload = binary.getBytes()
+        binary.save("/tmp/measurement.bin")
+
+if value.getType() == stipy.MixedValueType.Image:
+    image = value.getImage()
+    width = image.getWidth()
+    height = image.getHeight()
+
+    if image.hasData():
+        image.pullData()
+    image.save("/tmp/measurement.raw")
+```
+
+`MixedValue.getValue()` remains backwards-compatible for binary values and
+returns Python `bytes`, but that call can pull a lazy remote stream. Frontend
+code that wants to display type or size without downloading the payload should
+prefer `getBinary()`/`getImage()` and inspect `bytes()`, `wordsize()`,
+`hasStream()`, and `isMaterialized()`.
+
+Stream references are best-effort live references. They are expected to remain
+valid while the source channel still holds the same `lastMeasurement` and the
+source device process remains connected. Replacing the channel measurement,
+clearing it, disconnecting the device, or shutting down the device can make an
+old lazy reference fail to pull.
+
+Python producers can also create binary measurements explicitly:
+
+```python
+measurement.setMeasurementResult(stipy.BinaryData(b"payload bytes"))
+```
+
 ## Lifetime And Failure Semantics
 
 The stream reference is only valid while the source object remains alive on the
@@ -659,12 +710,14 @@ Status updated: 2026-06-04.
   - Completed `ShotResult` measurements do not retain lazy remote stream
     references after successful archival.
 
-- [ ] Add dedicated stidevicepy runtime coverage.
-  - The Python bindings compile and expose explicit pull/save APIs.
-  - A Python-level integration test for inspecting and explicitly pulling a
-    lazy remote channel measurement is still a useful follow-up.
+- [x] Add dedicated stidevicepy runtime coverage.
+  - Added `test/integration/python/test_stidevicepy_binary_payloads.py`.
+  - Covers a Python-produced binary measurement observed through remote channel
+    state as a lazy `BinaryData`.
+  - Confirms Python can inspect metadata, explicitly pull bytes, use
+    backwards-compatible `getValue()`, and save the payload.
 
-- [ ] Update frontend handoff documentation.
+- [x] Update frontend handoff documentation.
   - Explain that `lastMeasurement` may contain lazy heavy payloads.
   - Explain how Python clients detect and pull binary/image data.
   - Explain stream lifetime: valid until replaced, cleared, device exits, or
@@ -682,19 +735,13 @@ Status updated: 2026-06-04.
    server result collection pulls lazy binary/image measurements into
    server-local files.
 7. Add Python wrappers for explicit binary/image pull.
-8. Remove or bypass `makeLightweightChannelMeasurementValue()` only after lazy
-   channel update and snapshot tests pass.
+8. Remove `makeLightweightChannelMeasurementValue()` after lazy channel update
+   and snapshot tests pass.
 
-## Open Questions
+## Remaining Questions
 
-- Should `TBinaryData` add both `length` and `bytes`, or is one enough?
-- Should `MixedValue.getValue()` in Python preserve backwards-compatible eager
-  binary conversion, or should it return a `BinaryData` wrapper for binary
-  values?
-- Should local in-process message listeners receive the original heavy value or
-  a local lazy reference?
 - Do any C++ callers rely on typed binary array reconstruction after network
   streaming, or are byte chunks sufficient for all practical heavy measurement
   consumers?
-- Should stale stream pulls return false, throw, or set an error object/message
-  for frontend display?
+- Should stale stream pulls expose a richer frontend error object/message, or
+  is the current boolean/`None` style sufficient?
