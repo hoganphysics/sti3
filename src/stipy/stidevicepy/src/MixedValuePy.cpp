@@ -145,7 +145,7 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
         break;
     case MixedValueType::Image:
         {
-            
+            obj = py::cast(value.getImage());
         }
         break;
     default:

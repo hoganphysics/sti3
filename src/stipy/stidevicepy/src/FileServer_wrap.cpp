@@ -4,6 +4,7 @@
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/VirtualFileHolder.h>
 
+#include <sstream>
 #include <string>
 
 #include <pybind11/pybind11.h>
@@ -39,6 +40,14 @@ void init_FileServer(py::module& m)
             [](FileHolder& self, const std::string& text) {
                 return self.write(text.data(), static_cast<unsigned>(text.size()));
             }, py::arg("text"))
+        .def("writeBytes",
+            [](FileHolder& self, const py::bytes& payload) {
+                std::string bytes = payload;
+                if (bytes.empty()) {
+                    return true;
+                }
+                return self.write(bytes.data(), static_cast<unsigned>(bytes.size()));
+            }, py::arg("data"))
         .def("openFile", &FileHolder::openFile)
         .def("closeFile", &FileHolder::closeFile)
         .def("__eq__", &FileHolder::operator==)

@@ -973,7 +973,8 @@ transfer occurs.
 Python device output
 ++++++++++++++++++++
 
-Python device code can publish binary measurements with ``stipy.BinaryData``.
+Python device code can publish binary measurements with ``stipy.BinaryData``
+and image measurements with ``stipy.Image``.
 
 .. code-block:: py
 
@@ -981,11 +982,25 @@ Python device code can publish binary measurements with ``stipy.BinaryData``.
        if channel == 0:
            payload = self.camera.read_raw_frame()
            return stipy.BinaryData(payload)
+       if channel == 1:
+           payload = self.camera.read_raw_frame()
+           return stipy.Image(stipy.BinaryData(payload), width=10, height=10)
+       if channel == 2:
+           payload = self.camera.read_raw_frame()
+           file_holder = self.makeVirtualFileHolder("", "frame.raw")
+           if file_holder is None or not file_holder.openFile():
+               return None
+           try:
+               if not file_holder.writeBytes(payload):
+                   return None
+           finally:
+               file_holder.closeFile()
+           return stipy.Image(file_holder, width=10, height=10)
        return None
 
 ``stipy.BinaryData`` expects a Python ``bytes`` object and stores it with
-``wordsize() == 1``.  Python clients can read image measurements produced by
-C++ devices; image construction is exposed through the C++ ``Image`` API.
+``wordsize() == 1``.  ``stipy.Image`` can be constructed from Python ``bytes``,
+``BinaryData``, ``FileHolder``, or ``FileID`` objects.
 
 Shot results and persistence
 ++++++++++++++++++++++++++++

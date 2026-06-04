@@ -1,10 +1,18 @@
+import itertools
+import random
+
 import stipy
 import stipy.stidevicepy as stidevicepy
 
 
 class TestDevice(stidevicepy.LocalDevice):
+    IMAGE_WIDTH = 10
+    IMAGE_HEIGHT = 10
+    IMAGE_BYTES_PER_PIXEL = 1
+
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
+        self.image_measurement_index = itertools.count()
 
         # *** Define channels *** #
 
@@ -31,6 +39,8 @@ class TestDevice(stidevicepy.LocalDevice):
 
         # Input channel (make measurements that are recorded by the device)
         self.addInputChannel(10, stipy.MixedValueType.Double, "thermocouple voltage")   # measures a double
+        self.addInputChannel(13, stipy.MixedValueType.Image, "random image (BinaryData)")   # measures an Image backed by BinaryData
+        self.addInputChannel(14, stipy.MixedValueType.Image, "random image (FileHolder)")   # measures an Image backed by FileHolder
 
         # Input/Output channels
         ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
@@ -38,6 +48,33 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
 
         return
+
+    def random_image_bytes(self):
+        length = self.IMAGE_WIDTH * self.IMAGE_HEIGHT * self.IMAGE_BYTES_PER_PIXEL
+        return bytes(random.getrandbits(8) for _ in range(length))
+
+    def binary_data_backed_image(self):
+        return stipy.Image(
+            stipy.BinaryData(self.random_image_bytes()),
+            self.IMAGE_WIDTH,
+            self.IMAGE_HEIGHT,
+        )
+
+    def file_holder_backed_image(self):
+        payload = self.random_image_bytes()
+        filename = "readWrite-random-image-" + str(next(self.image_measurement_index)) + ".raw"
+        file_holder = self.makeVirtualFileHolder("", filename)
+
+        if file_holder is None or not file_holder.openFile():
+            return None
+
+        try:
+            if not file_holder.writeBytes(payload):
+                return None
+        finally:
+            file_holder.closeFile()
+
+        return stipy.Image(file_holder, self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
     
     def writeChannel(self, channel, value):
         success = False
@@ -92,6 +129,12 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 12:
             print("Read ch 12: " + str(value))
             return [3.2 * value, "example string result", True]   #vector measurement (input)
+        elif channel == 13:
+            print("Read ch 13: random image (BinaryData)")
+            return self.binary_data_backed_image()
+        elif channel == 14:
+            print("Read ch 14: random image (FileHolder)")
+            return self.file_holder_backed_image()
 
         return None
 
@@ -132,6 +175,12 @@ print("Measurement 2: " + str(data))
 
 data = device.read(12, 23.4)
 print("Measurement 3: " + str(data))
+
+data = device.read(13)
+print("Measurement 4: " + str(data))
+
+data = device.read(14)
+print("Measurement 5: " + str(data))
 
 
 nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
