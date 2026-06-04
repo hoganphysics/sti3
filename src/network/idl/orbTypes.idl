@@ -110,6 +110,8 @@ module TNetwork
 	struct TBinaryData
 	{
 		short wordsize;
+		unsigned long length;
+		unsigned long bytes;
 		TMixedBinaryData data;
 	};
 

@@ -14,6 +14,7 @@ namespace Utils
 
 class BinaryData;
 class BinaryDataStream;
+class BinaryDataStreamTarget;
 
 
 class BinaryData
@@ -38,6 +39,10 @@ public:
     size_t bytes() const;
     size_t wordsize() const;
 
+    bool hasLocalData() const;
+    bool hasStream() const;
+    bool isMaterialized() const;
+
     template<typename T>
     bool isType() const;
 
@@ -61,14 +66,21 @@ public:
 
     void swap(BinaryData& other);
 
+    void setMetadata(size_t length, size_t wordsize);
+    void attachStream(const std::shared_ptr<BinaryDataStream>& stream);
+    void attachStream(const std::shared_ptr<BinaryDataStream>& stream,
+                      size_t length,
+                      size_t wordsize);
+
+    bool materialize();
+    bool transferTo(const std::shared_ptr<BinaryDataStreamTarget>& target);
+
 	template<class Archive>
 	void save(Archive& archive) const;
 
     template<class Archive>
     void load(Archive& archive);
     
-    void attachStream(const std::shared_ptr<BinaryDataStream>& stream);
-
 private:  
 
     bool isOwner;
@@ -90,6 +102,7 @@ private:
 
 template<typename T>
 STI::Utils::BinaryData::BinaryData(T*& data, size_t length)
+: BinaryData()
 {
     assign(data, length);
 }
@@ -125,6 +138,8 @@ bool STI::Utils::BinaryData::get(T*& data) const
 template<typename T>
 void STI::Utils::BinaryData::assign(T*& data, size_t length, bool takeOwnership)
 {
+    clear();
+
     isOwner = takeOwnership;
     data_ = static_cast<void*>(data);
     wordSize_ = sizeof(T);

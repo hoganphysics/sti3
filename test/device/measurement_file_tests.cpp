@@ -18,7 +18,9 @@
 #include <sti/engine/ShotResult.h>
 #include <sti/engine/SynchronousEvent.h>
 #include <sti/utils/BinaryData.h>
+#include <sti/utils/BinaryDataStream.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/Image.h>
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/VirtualFileHolder.h>
 #include <sti/utils/VirtualFileServer.h>
@@ -31,10 +33,12 @@
 #include <tinyxml2.h>
 
 #include <algorithm>
+#include <cstring>
 #include <filesystem>
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 using fileholder_test_support::TempDir;
@@ -80,6 +84,9 @@ using STI::Utils::FileHolderFactory;
 using STI::Utils::FileID;
 using STI::Utils::FileServer;
 using STI::Utils::BinaryData;
+using STI::Utils::BinaryDataStream;
+using STI::Utils::BinaryDataStreamTarget;
+using STI::Utils::Image;
 using STI::Utils::LocalFileHolderFactory;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -227,6 +234,45 @@ public:
 
 private:
     DeviceID deviceID;
+};
+
+class PayloadStream : public BinaryDataStream
+{
+public:
+    explicit PayloadStream(std::string payload)
+        : payload(std::move(payload))
+    {
+    }
+
+    void transfer(const std::shared_ptr<BinaryDataStreamTarget>& target) override
+    {
+        ++transferCount;
+        if (target == nullptr) {
+            return;
+        }
+
+        auto chunk = std::make_shared<BinaryData>();
+        auto* buffer = new char[payload.size()];
+        std::memcpy(buffer, payload.data(), payload.size());
+        chunk->assign(buffer, payload.size());
+
+        target->start();
+        target->writeNext(chunk);
+        target->stop();
+    }
+
+    std::string payload;
+    unsigned transferCount{0};
+};
+
+class DummyFileServer : public FileServer
+{
+public:
+    bool findFile(const FileID&) override { return false; }
+    int getFileSize(const FileID&) override { return 0; }
+    bool transferFile(const FileID&, const std::shared_ptr<FileHolder>&, STI::Utils::FileTransferType) override { return false; }
+    bool transferFilePartial(const FileID&, const std::shared_ptr<FileHolder>&, int, int) override { return false; }
+    bool deleteFile(const FileID&) override { return false; }
 };
 
 ShotID makeShotID()
@@ -378,4 +424,95 @@ TEST_CASE("Measurement BinaryData results are written as raw binary files and do
 
     auto expectedXmlFilename = (std::filesystem::path("..") / "data" / transferredFileID.filename).string();
     CHECK(std::string(filenameElement->GetText()) == expectedXmlFilename);
+}
+
+TEST_CASE("Measurement lazy BinaryData results are pulled into server-local files", "[measurement][binary][lazy]")
+{
+    const DeviceID deviceID("MeasurementDevice", "127.0.0.1", 1);
+    auto measurement = std::make_shared<Measurement>(10.0, 7, deviceID, STI::Utils::GraphPathLabel{}, "root");
+
+    const std::string payload = "lazy-binary-measurement";
+    auto stream = std::make_shared<PayloadStream>(payload);
+    auto binaryData = std::make_shared<BinaryData>();
+    binaryData->attachStream(stream, payload.size(), 1);
+    measurement->setMeasurementResult(binaryData);
+
+    MeasurementVector measurements{measurement};
+
+    TempDir tempDir("measurement-lazy-binary-transfer-");
+    auto dataPath = tempDir.path / "shot" / "data";
+
+    ResultsPaths paths;
+    paths.dataPath = dataPath.string();
+
+    auto collectorFactory = std::make_shared<LocalFileHolderFactory>("collector");
+    LocalResultsCollector collector(makeShotID(), paths, collectorFactory);
+
+    std::shared_ptr<FileServer> sourceFileServer;
+    REQUIRE(collector.addMeasurements(deviceID, measurements, sourceFileServer));
+    CHECK(stream->transferCount == 1);
+
+    auto collectedMeasurements = collector.getMeasurements();
+    REQUIRE(collectedMeasurements != nullptr);
+    auto deviceMeasurements = collectedMeasurements->find(deviceID);
+    REQUIRE(deviceMeasurements != collectedMeasurements->end());
+    REQUIRE(deviceMeasurements->second.size() == 1);
+
+    const auto& collectedData = deviceMeasurements->second.front()->data();
+    REQUIRE(collectedData.getType() == MixedValueType::File);
+
+    auto transferredFileID = collectedData.getFileID();
+    CHECK(std::filesystem::path(transferredFileID.path) == dataPath);
+    CHECK(readFileToString(std::filesystem::path(transferredFileID.getFullFilename())) == payload);
+}
+
+TEST_CASE("Measurement lazy binary-backed Image results are pulled into server-local image files", "[measurement][image][lazy]")
+{
+    const DeviceID deviceID("MeasurementDevice", "127.0.0.1", 1);
+    auto measurement = std::make_shared<Measurement>(10.0, 7, deviceID, STI::Utils::GraphPathLabel{}, "root");
+
+    const std::string payload = "lazy-image-measurement";
+    auto stream = std::make_shared<PayloadStream>(payload);
+    auto binaryData = std::make_shared<BinaryData>();
+    binaryData->attachStream(stream, payload.size(), 1);
+
+    TempDir tempDir("measurement-lazy-image-transfer-");
+    auto image = std::make_shared<Image>("device-origin", (tempDir.path / "source" / "frame.raw").string());
+    image->setHeight(12).setWidth(34);
+    image->setImageData(binaryData);
+    measurement->setMeasurementResult(image);
+
+    MeasurementVector measurements{measurement};
+
+    auto dataPath = tempDir.path / "shot" / "data";
+
+    ResultsPaths paths;
+    paths.dataPath = dataPath.string();
+
+    auto collectorFactory = std::make_shared<LocalFileHolderFactory>("collector");
+    LocalResultsCollector collector(makeShotID(), paths, collectorFactory);
+
+    auto sourceFileServer = std::make_shared<DummyFileServer>();
+    REQUIRE(collector.addMeasurements(deviceID, measurements, sourceFileServer));
+    CHECK(stream->transferCount == 1);
+
+    auto collectedMeasurements = collector.getMeasurements();
+    REQUIRE(collectedMeasurements != nullptr);
+    auto deviceMeasurements = collectedMeasurements->find(deviceID);
+    REQUIRE(deviceMeasurements != collectedMeasurements->end());
+    REQUIRE(deviceMeasurements->second.size() == 1);
+
+    const auto& collectedData = deviceMeasurements->second.front()->data();
+    REQUIRE(collectedData.getType() == MixedValueType::Image);
+
+    auto collectedImage = collectedData.getImage();
+    REQUIRE(collectedImage != nullptr);
+
+    std::shared_ptr<BinaryData> cachedData;
+    CHECK_FALSE(collectedImage->getData(cachedData));
+
+    std::shared_ptr<FileHolder> cachedFile;
+    REQUIRE(collectedImage->getFile(cachedFile));
+    CHECK(std::filesystem::path(cachedFile->getID().path) == dataPath);
+    CHECK(readFileToString(cachedFile->getFilename()) == payload);
 }

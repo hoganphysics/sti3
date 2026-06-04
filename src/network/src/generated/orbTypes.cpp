@@ -269,6 +269,8 @@ void
 STI::TNetwork::TBinaryData::operator>>= (cdrStream &_n) const
 {
   wordsize >>= _n;
+  length >>= _n;
+  bytes >>= _n;
   (const TMixedBinaryData&) data >>= _n;
 
 }
@@ -277,6 +279,8 @@ void
 STI::TNetwork::TBinaryData::operator<<= (cdrStream &_n)
 {
   (::CORBA::Short&)wordsize <<= _n;
+  (::CORBA::ULong&)length <<= _n;
+  (::CORBA::ULong&)bytes <<= _n;
   (TMixedBinaryData&)data <<= _n;
 
 }

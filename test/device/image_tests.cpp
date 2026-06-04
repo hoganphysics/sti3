@@ -2,6 +2,7 @@
 
 #include <sti/utils/Image.h>
 #include <sti/utils/BinaryData.h>
+#include <sti/utils/BinaryDataStream.h>
 #include <sti/utils/FileServer.h>
 #include <sti/utils/LocalFileHolder.h>
 
@@ -11,11 +12,14 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <utility>
 
 using fileholder_test_support::TempDir;
 using fileholder_test_support::readFileToString;
 
 using STI::Utils::BinaryData;
+using STI::Utils::BinaryDataStream;
+using STI::Utils::BinaryDataStreamTarget;
 using STI::Utils::FileHolder;
 using STI::Utils::FileServer;
 using STI::Utils::FileTransferType;
@@ -43,6 +47,30 @@ public:
     std::shared_ptr<FileHolder> lastDestination;
     FileTransferType lastType{FileTransferType::Binary};
     bool transferResult{true};
+};
+
+class PayloadStream : public BinaryDataStream {
+public:
+    explicit PayloadStream(std::string payload) : payload(std::move(payload)) {}
+
+    void transfer(const std::shared_ptr<BinaryDataStreamTarget>& target) override {
+        ++transferCount;
+        if (target == nullptr) {
+            return;
+        }
+
+        auto chunk = std::make_shared<BinaryData>();
+        auto* buffer = new char[payload.size()];
+        std::memcpy(buffer, payload.data(), payload.size());
+        chunk->assign(buffer, payload.size());
+
+        target->start();
+        target->writeNext(chunk);
+        target->stop();
+    }
+
+    std::string payload;
+    unsigned transferCount{0};
 };
 
 } // namespace
@@ -136,6 +164,34 @@ TEST_CASE("Image: write writes BinaryData into destination FileHolder and update
     std::shared_ptr<FileHolder> cached;
     REQUIRE(image.getFile(cached));
     CHECK(cached == destination);
+}
+
+TEST_CASE("Image: write pulls lazy BinaryData and clears cached stream data") {
+    TempDir td;
+    auto destPath = td.path / "out";
+    const std::string payload = "lazy-image-payload";
+
+    auto stream = std::make_shared<PayloadStream>(payload);
+    auto data = std::make_shared<BinaryData>();
+    data->attachStream(stream, payload.size(), 1);
+
+    Image image("source-origin", (td.path / "source" / "ignored.bin").string());
+    image.setImageData(data);
+
+    auto destination = std::make_shared<LocalFileHolder>("dest-origin", destPath.string(), "image.bin");
+    auto fileServer = std::make_shared<RecordingFileServer>();
+
+    REQUIRE(image.write(fileServer, destination));
+
+    CHECK(stream->transferCount == 1);
+    CHECK(readFileToString(destination->getFilename()) == payload);
+
+    std::shared_ptr<BinaryData> cachedData;
+    CHECK_FALSE(image.getData(cachedData));
+
+    std::shared_ptr<FileHolder> cachedFile;
+    REQUIRE(image.getFile(cachedFile));
+    CHECK(cachedFile == destination);
 }
 
 TEST_CASE("Image: write delegates to FileServer when FileHolder is cached") {

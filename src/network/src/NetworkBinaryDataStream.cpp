@@ -38,7 +38,11 @@ bool NetworkBinaryDataStream::getTBinaryDataStreamRef(const typename std::shared
 
 	if (networkDataStream == 0) return false;		//check dynamic_pointer_cast
 
-	tdataStream = networkDataStream->dataStreamServantHolder.getRefVar();
+	auto ref = networkDataStream->dataStreamServantHolder.getRefVar();
+	if (CORBA::is_nil(ref)) {
+		return false;
+	}
+
+	tdataStream = ref._retn();
 	return !CORBA::is_nil(tdataStream);
 }
-

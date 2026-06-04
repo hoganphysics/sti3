@@ -564,101 +564,107 @@ change.
 
 ## Implementation Todo
 
-- [ ] Add tests around the current stream conversion bug.
-  - Create or force a `TBinaryData(BinaryStream)`.
-  - Confirm eager conversion returns `true`.
-  - Confirm eager conversion materializes data.
+Status updated: 2026-06-04.
 
-- [ ] Fix `convert<TBinaryData, std::shared_ptr<BinaryData>>()`.
-  - Set `success = true` for successful `BinaryStream` conversion.
-  - Preserve `wordsize` for stream-backed data.
-  - Add focused tests.
+- [x] Add tests around the current stream conversion bug.
+  - Added focused `TBinaryData(BinaryStream)` coverage in
+    `test/network/convert/record_convert_tests.cpp`.
+  - Confirmed eager conversion returns `true`, materializes data, and preserves
+    `wordsize`.
 
-- [ ] Decide the exact stream metadata fields.
-  - Keep and use existing `TBinaryData.wordsize`.
-  - Add `length` and/or `bytes` to `TBinaryData` if the front end should show
-    size before pulling.
-  - Regenerate IDL stubs if fields are added.
+- [x] Fix `convert<TBinaryData, std::shared_ptr<BinaryData>>()`.
+  - Successful eager `BinaryStream` conversion now reports success.
+  - Stream-backed receive preserves `length`, `bytes`, and `wordsize` metadata.
+  - CORBA sequence ownership and stream object-reference lifetime issues found
+    by the new tests were fixed.
 
-- [ ] Extend `BinaryData`.
-  - Add query methods for local data and stream availability.
-  - Add lazy stream attachment with `length` and `wordsize` metadata.
-  - Add `materialize()` or `pull()` method.
-  - Add `transferTo(BinaryDataStreamTarget)` method.
-  - Keep `stinetwork` types out of `include/sti/utils`.
+- [x] Decide the exact stream metadata fields.
+  - Kept and populated `TBinaryData.wordsize`.
+  - Added `length` and `bytes` to `TBinaryData`.
+  - Regenerated IDL stubs with `src/network/compileIDL.sh`.
 
-- [ ] Make byte chunking robust.
-  - Ensure `LocalBinaryDataStream` can stream any `BinaryData` via `getBytes()`.
-  - It is acceptable for chunks to be byte chunks.
-  - Preserve original `wordsize` as metadata.
-  - Add tests for non-char source data if preserving typed data matters.
+- [x] Extend `BinaryData`.
+  - Added query methods for local data and stream availability.
+  - Added lazy stream attachment with `length` and `wordsize` metadata.
+  - Added `materialize()` and `transferTo(BinaryDataStreamTarget)`.
+  - Kept `stinetwork` types out of `include/sti/utils`.
 
-- [ ] Add explicit conversion policy in `stinetwork`.
-  - Keep existing eager conversion for normal RPC paths.
-  - Add lazy conversion for channel snapshots and channel update messages.
-  - Avoid changing all `convert<TMixedValue, MixedValue>` behavior globally.
+- [x] Make byte chunking robust.
+  - `LocalBinaryDataStream` can stream local data as raw byte chunks.
+  - Lazy stream-backed data can forward directly into a stream target.
+  - Materialized lazy payloads retain the original `wordsize` metadata.
+  - Added non-char source data coverage.
 
-- [ ] Update channel update conversion.
-  - Convert `ChannelUpdateMessage.measurementValues` with lazy heavy payloads.
-  - Preserve vectors containing binary/image children.
-  - Stop replacing heavy measurement values with `Empty` on remote message
+- [x] Add explicit conversion policy in `stinetwork`.
+  - Added `BinaryPayloadPolicy`.
+  - Kept normal conversions eager by default.
+  - Added lazy stream-reference conversion for channel snapshots and channel
+    update messages.
+
+- [x] Update channel update conversion.
+  - `ChannelUpdateMessage.measurementValues` now uses lazy stream references for
+    heavy binary/image payloads.
+  - Vectors containing binary/image children are preserved recursively.
+  - Remote message conversion no longer replaces heavy measurement values with
+    `Empty`.
+
+- [x] Update channel snapshot conversion.
+  - `TChannel.lastMeasurement` now uses lazy stream references for heavy
+    binary/image payloads.
+  - Snapshot conversion no longer replaces heavy measurement values with
+    `Empty`.
+
+- [x] Revisit local message behavior.
+  - Local in-process listeners receive the real `MixedValue`.
+  - Remote transport applies the lazy policy inside `stinetwork`.
+  - A non-network local lazy reference policy remains a possible follow-up only
+    if local frontends need the same protection.
+
+- [x] Extend `Image` behavior.
+  - File-backed images continue using the existing file path/reference flow.
+  - Binary-backed images use stream-backed `TBinaryData` in lazy channel
     conversion.
+  - `Image::write()` now pulls lazy binary image data before writing to a
+    destination `FileHolder`.
+  - Image metadata, width, height, and file ID are preserved.
 
-- [ ] Update channel snapshot conversion.
-  - Convert `TChannel.lastMeasurement` with lazy heavy payloads.
-  - Stop replacing heavy snapshot measurement values with `Empty`.
+- [x] Update `LocalResultsCollector` result archival.
+  - Result collection is an eager pull boundary for lazy heavy payloads.
+  - Lazy `BinaryData` is materialized or transferred through the existing
+    server-local file write path.
+  - Lazy binary-backed `Image` values are pulled and written to server-local
+    image files through `Image::write()`.
+  - Successfully transferred binary/image measurements are rewritten to
+    server-local file references, not remote stream references.
+  - The implementation uses abstract `include/sti` interfaces and does not add
+    `stinetwork` dependencies to `stidevice`.
 
-- [ ] Revisit local message behavior.
-  - Local in-process listeners can initially receive the real `MixedValue`.
-  - If this is too heavy for local frontends, add a non-network lazy local
-    reference policy later.
+- [x] Extend stidevicepy.
+  - Bound `BinaryData` and `Image` wrapper APIs.
+  - Added `MixedValue.getBinary()` and `MixedValue.getImage()`.
+  - Added explicit pull/save methods for heavy data.
+  - `MixedValue.getValue()` keeps backwards-compatible eager binary behavior.
 
-- [ ] Extend `Image` behavior.
-  - For file-backed images, continue using the existing file path/reference.
-  - For binary-backed images, use stream-backed `TBinaryData`.
-  - Add pull/save helpers if not already available.
-  - Ensure `Image::write()` handles lazy/stream-backed binary image data by
-    materializing or streaming it before writing to a destination `FileHolder`.
-  - Preserve image metadata, width, height, and file ID.
-
-- [ ] Update `LocalResultsCollector` result archival.
-  - Treat result collection as an eager pull boundary for lazy heavy payloads.
-  - In `transferValue()`, materialize or stream lazy `BinaryData` before writing
-    the server-local `binary_measurement*.bin` file.
-  - In `transferValue()`, ensure lazy binary-backed `Image` values are pulled
-    and written to the server-local image file.
-  - Rewrite successfully transferred binary/image measurements to server-local
-    file references, not remote stream references.
-  - Preserve existing caching so shared file/image/binary references are
-    transferred once per `addMeasurements()` call.
-  - Keep the implementation in terms of abstract `include/sti` interfaces, not
-    `stinetwork` classes.
-
-- [ ] Extend stidevicepy.
-  - Bind `BinaryData` or add `MixedValue.getBinary()`.
-  - Bind `Image` or add `MixedValue.getImage()`.
-  - Add explicit pull/save methods for heavy data.
-  - Document that `MixedValue.getValue()` may pull binary data if kept for
-    backwards compatibility.
-
-- [ ] Add focused tests.
+- [x] Add focused C++ tests.
   - `BinaryData` lazy stream attachment and materialization.
   - `LocalBinaryDataStream` byte chunking.
-  - `NetworkConvert` eager `BinaryStream` conversion.
-  - `NetworkConvert` lazy `BinaryStream` conversion.
-  - `MixedValue(Binary)` lazy channel update round trip.
-  - `MixedValue(Image)` lazy channel update round trip.
-  - `TChannel.lastMeasurement` lazy snapshot round trip.
-  - Remote channel cache stores lazy measurements.
+  - `NetworkConvert` eager and lazy `BinaryStream` conversion.
+  - `MixedValue(Binary)` and `MixedValue(Image)` lazy channel update conversion.
+  - `TChannel.lastMeasurement` lazy snapshot conversion.
+  - Remote channel cache lazy measurement behavior.
   - `LocalResultsCollector::addMeasurements()` pulls lazy `BinaryData` and
     stores a server-local `FileID`.
   - `LocalResultsCollector::addMeasurements()` pulls lazy binary-backed `Image`
     data and stores a server-local image/file reference.
-  - Result collection does not leave lazy remote stream references in completed
-    `ShotResult` measurements.
-  - stidevicepy can inspect and explicitly pull a lazy binary measurement.
+  - Completed `ShotResult` measurements do not retain lazy remote stream
+    references after successful archival.
 
-- [ ] Update docs and frontend handoff.
+- [ ] Add dedicated stidevicepy runtime coverage.
+  - The Python bindings compile and expose explicit pull/save APIs.
+  - A Python-level integration test for inspecting and explicitly pulling a
+    lazy remote channel measurement is still a useful follow-up.
+
+- [ ] Update frontend handoff documentation.
   - Explain that `lastMeasurement` may contain lazy heavy payloads.
   - Explain how Python clients detect and pull binary/image data.
   - Explain stream lifetime: valid until replaced, cleared, device exits, or

@@ -1,7 +1,6 @@
 #include "LocalChannelManager.h"
 
 #include <sti/LocalDevice.h>
-#include <sti/device/ChannelState.h>
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalChannel.h>
@@ -102,7 +101,7 @@ void LocalChannelManager::handleChannelRefreshEvent(short channelNumber, const S
 void LocalChannelManager::handleChannelMeasurementRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value)
 {
     auto message = STI::Device::ChannelUpdateMessage::makeMeasurementMessage(
-        localDevice->getID(), channelNumber, STI::Device::makeLightweightChannelMeasurementValue(value));
+        localDevice->getID(), channelNumber, value);
     messageGrouper.addMessage(message);
 }
 

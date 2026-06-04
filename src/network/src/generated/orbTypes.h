@@ -1534,6 +1534,10 @@ _CORBA_MODULE_BEG
       
       ::CORBA::Short wordsize;
 
+      ::CORBA::ULong length;
+
+      ::CORBA::ULong bytes;
+
       TMixedBinaryData data;
 
     

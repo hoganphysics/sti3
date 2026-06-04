@@ -1,7 +1,6 @@
 #include "Convert_Channel.h"
 #include "RemoteChannel.h"
 
-#include <sti/device/ChannelState.h>
 #include <sti/utils/MixedValue.h>
 
 #include "generated/orbTypes.h"
@@ -33,8 +32,8 @@ bool STI::Network::convert<std::shared_ptr<Channel>, TChannel>(const std::shared
         tChannel.type = convert<ChannelType, TChannelType>(channel->getType());
         tChannel.metaData = convert<MixedValue, TMixedValue>(channel->getMetaData());
         tChannel.lastValue = convert<MixedValue, TMixedValue>(channel->getLastValue());
-        tChannel.lastMeasurement = convert<MixedValue, TMixedValue>(
-            STI::Device::makeLightweightChannelMeasurementValue(channel->getLastMeasurement()));
+        STI::Network::convertMixedValue(channel->getLastMeasurement(), tChannel.lastMeasurement,
+            STI::Network::BinaryPayloadPolicy::PreferStreamReference);
 
         success = true;
     }
@@ -59,7 +58,9 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
     // const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
 
     MixedValue lastValue = convert<TMixedValue, MixedValue>(tChannel.lastValue);
-    MixedValue lastMeasurement = convert<TMixedValue, MixedValue>(tChannel.lastMeasurement);
+    MixedValue lastMeasurement;
+    STI::Network::convertMixedValue(tChannel.lastMeasurement, lastMeasurement,
+        STI::Network::BinaryPayloadPolicy::PreserveStreamReference);
 
     auto remoteChannel = std::make_shared<STI::Network::RemoteChannel>(
                             static_cast<short>(tChannel.channelNumber),

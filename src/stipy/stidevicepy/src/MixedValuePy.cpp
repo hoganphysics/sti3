@@ -1,6 +1,8 @@
 
 #include "MixedValuePy.h"
 
+#include <sti/utils/Image.h>
+
 using STI::Python::MixedValuePy;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -45,6 +47,16 @@ STI::Utils::MixedValue& MixedValuePy::getMixedValue()
 pybind11::object MixedValuePy::getValue_py() const
 {
     return convertValue(*this);
+}
+
+std::shared_ptr<STI::Utils::BinaryData> MixedValuePy::getBinary_py() const
+{
+    return getBinary();
+}
+
+std::shared_ptr<STI::Utils::Image> MixedValuePy::getImage_py() const
+{
+    return getImage();
 }
 
 pybind11::object MixedValuePy::convertValue(const MixedValue& value)

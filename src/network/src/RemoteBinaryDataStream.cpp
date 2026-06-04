@@ -26,10 +26,11 @@ void RemoteBinaryDataStream::transfer(const std::shared_ptr<STI::Utils::BinaryDa
 	try {
 
 		STI::TNetwork::TBinaryDataStreamTarget_var tTarget;
+		std::shared_ptr<STI::Network::NetworkBinaryDataStreamTarget> networkTarget;
 		if (!NetworkBinaryDataStreamTarget::getTBinaryDataStreamTargetRef(target, tTarget)) {
 			//failed
 
-			auto networkTarget = std::make_shared<STI::Network::NetworkBinaryDataStreamTarget>(target);	//wrap
+			networkTarget = std::make_shared<STI::Network::NetworkBinaryDataStreamTarget>(target);	//wrap
 			
 			if (!NetworkBinaryDataStreamTarget::getTBinaryDataStreamTargetRef(networkTarget, tTarget)) {
 				return;		//failed again
@@ -46,4 +47,3 @@ void RemoteBinaryDataStream::transfer(const std::shared_ptr<STI::Utils::BinaryDa
 	{
 	}
 }
-

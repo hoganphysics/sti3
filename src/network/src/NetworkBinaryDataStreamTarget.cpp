@@ -54,7 +54,11 @@ bool NetworkBinaryDataStreamTarget::getTBinaryDataStreamTargetRef(
 
 	if (networkStreamTarget == 0) return false;		//check dynamic_pointer_cast
 
-	tStreamTarget = networkStreamTarget->dataStreamTargetServantHolder.getRefVar();
+	auto ref = networkStreamTarget->dataStreamTargetServantHolder.getRefVar();
+	if (CORBA::is_nil(ref)) {
+		return false;
+	}
+
+	tStreamTarget = ref._retn();
 	return !CORBA::is_nil(tStreamTarget);
 }
-
