@@ -39,6 +39,7 @@ void init_PersistenceManager(py::module& m)
         .def("getShotResult", &PersistenceManagerPy::getShotResult, py::arg("shotID"))
         .def("getSequenceResult", &PersistenceManagerPy::getSequenceResult, py::arg("sequenceID"))
         .def("getMeasurements", &PersistenceManagerPy::getMeasurements, py::arg("shotID"))
+        .def("getFileServer", &PersistenceManagerPy::getFileServer)
         ;
 
 }
