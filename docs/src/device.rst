@@ -658,9 +658,10 @@ non-empty output type, the most recent read argument/configuration value.
 Input channels with ``MixedValueType::Empty`` output type intentionally keep
 ``lastValue`` empty.  ``lastMeasurement`` is the most recent data returned by
 an input channel measurement.  Output channels keep ``lastMeasurement`` empty.
-Remote ``lastMeasurement`` values that contain binary or image data may be
-delivered as lazy stream-backed values.  See :ref:`lazy_payloads` for the C++
-and Python APIs used to inspect, pull, and save those payloads.
+Remote ``lastMeasurement`` values and remote read results that contain binary
+or image data may be delivered as lazy stream-backed values.  See
+:ref:`lazy_payloads` for the C++ and Python APIs used to inspect, pull, and
+save those payloads.
 
 Device profiles
 ***************
@@ -744,11 +745,12 @@ Lazy binary and image payloads
 ******************************
 
 Binary and image measurements can be large enough that copying them into every
-channel update is wasteful.  For remote channel state, STI keeps the public API
-value intact but may defer the actual bytes until the client asks for them.
+remote read response or channel update is wasteful.  For remote clients, STI
+keeps the public API value intact but may defer the actual bytes until the
+client asks for them.
 
-This applies to heavy ``lastMeasurement`` values delivered through remote
-channel snapshots and channel update messages:
+This applies to heavy values delivered through remote read calls, remote
+channel snapshots, and channel update messages:
 
 * ``MixedValueType::Binary`` / ``stipy.MixedValueType.Binary``
 * ``MixedValueType::Image`` / ``stipy.MixedValueType.Image`` when the image
@@ -790,8 +792,9 @@ measurement if the client needs a durable local copy.
 C++ client access
 +++++++++++++++++
 
-Use ``MixedValue::getBinary()`` and ``MixedValue::getImage()`` when the caller
-wants explicit control over the transfer.
+Use ``MixedValue::getBinary()`` and ``MixedValue::getImage()`` on remote read
+results or cached measurements when the caller wants explicit control over the
+transfer.
 
 .. code-block:: c++
 
@@ -803,7 +806,12 @@ wants explicit control over the transfer.
 
    using STI::Utils::MixedValueType;
 
-   auto measurement = channel->getLastMeasurement();
+   STI::Utils::MixedValue measurement;
+   if (!device->read(0, measurement)) {
+       return;
+   }
+
+   // The same pattern applies to channel->getLastMeasurement().
 
    if (measurement.getType() == MixedValueType::Binary) {
        auto binary = measurement.getBinary();
@@ -919,8 +927,8 @@ on the producing side.
        return false;
    }
 
-When these measurements become remote channel state, the network layer decides
-whether to send them eagerly or as lazy references.
+When these measurements are returned across the network by ``read()`` or become
+remote channel state, the network layer sends them as lazy references.
 
 Python client access
 ++++++++++++++++++++
@@ -928,6 +936,34 @@ Python client access
 Python clients use the same ``MixedValue`` entry points.  ``getBinary()`` and
 ``getImage()`` return wrapper objects that expose explicit pull and save
 methods.
+
+For a direct remote read, binary channels return ``BinaryData`` and image
+channels return ``Image``.  The returned object exposes metadata before the
+payload is pulled.
+
+.. code-block:: py
+
+   binary = device.read(0)
+
+   print(binary.bytes(), binary.length(), binary.wordsize())
+   print(binary.hasStream(), binary.isMaterialized())
+
+   if binary.pull():
+       payload = binary.getBytes()
+       binary.save("results/frame.bin")
+
+   image = device.read(1)
+
+   print(image.getWidth(), image.getHeight(), image.getFileID())
+
+   if image.hasData():
+       data = image.getData()
+       print(data.bytes(), data.hasLocalData())
+       if data.pull():
+           pixels = data.getBytes()
+
+For cached channel measurements, access the ``MixedValue`` first and then pull
+the embedded payload explicitly.
 
 .. code-block:: py
 
@@ -965,10 +1001,10 @@ image contains inline bytes.
 ``BinaryData.getBytes()``, ``BinaryData.save()``, ``Image.pullData()``, and
 ``Image.save()`` pull inline lazy data as needed.  ``Image.hasFile()`` reports
 whether the image already has an accessible file holder; ``Image.getFileID()``
-reports file identity metadata.  ``MixedValue.getValue()`` also returns Python
-``bytes`` for binary values, which materializes the payload implicitly.  Use
-``getBinary()`` when the code needs to inspect metadata or control when the
-transfer occurs.
+reports file identity metadata.  ``MixedValue.getValue()`` returns Python
+``bytes`` for binary mixed values, which materializes the payload implicitly.
+Use direct read return objects or ``getBinary()`` when the code needs to
+inspect metadata or control when the transfer occurs.
 
 Python device output
 ++++++++++++++++++++

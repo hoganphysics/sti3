@@ -319,6 +319,74 @@ TEST_CASE("NetworkConvert: BinaryData can be preserved as a lazy stream referenc
     CHECK(lazy->isMaterialized());
 }
 
+TEST_CASE("NetworkConvert: read results can preserve lazy binary streams", "[network][convert][binary]")
+{
+    const std::string payload = "read-result-binary";
+    auto binary = makeBinaryData(payload);
+    STI::Utils::MixedValue source(binary);
+
+    STI::TNetwork::TMixedValue tValue;
+    REQUIRE(STI::Network::convertMixedValue(
+        source, tValue, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+
+    REQUIRE(tValue._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    CHECK(tValue.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(tValue.valueBin().bytes == binary->bytes());
+
+    STI::Utils::MixedValue remote;
+    REQUIRE(STI::Network::convertMixedValue(
+        tValue, remote, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+
+    REQUIRE(remote.getType() == STI::Utils::MixedValueType::Binary);
+    auto lazy = remote.getBinary();
+    REQUIRE(lazy != nullptr);
+    CHECK_FALSE(lazy->isMaterialized());
+    CHECK(lazy->hasStream());
+    CHECK_FALSE(lazy->hasLocalData());
+    CHECK(lazy->bytes() == binary->bytes());
+    CHECK(lazy->wordsize() == binary->wordsize());
+    CHECK(binaryBytes(lazy) == payload);
+}
+
+TEST_CASE("NetworkConvert: read results can preserve lazy binary-backed images", "[network][convert][binary]")
+{
+    const std::string payload = "read-result-image";
+    auto binary = makeBinaryData(payload);
+    auto image = std::make_shared<STI::Utils::Image>();
+    image->setWidth(10).setHeight(10);
+    image->setImageData(binary);
+
+    STI::Utils::MixedValue source(image);
+
+    STI::TNetwork::TMixedValue tValue;
+    REQUIRE(STI::Network::convertMixedValue(
+        source, tValue, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+
+    REQUIRE(tValue._d() == STI::TNetwork::TMixedValueType::MixedValueImage);
+    REQUIRE(tValue.value_image().imageData._d() == STI::TNetwork::TImageDataType::ImageDataBinary);
+    CHECK(tValue.value_image().imageData.binary().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(tValue.value_image().imageData.binary().bytes == binary->bytes());
+
+    STI::Utils::MixedValue remote;
+    REQUIRE(STI::Network::convertMixedValue(
+        tValue, remote, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+
+    REQUIRE(remote.getType() == STI::Utils::MixedValueType::Image);
+    auto remoteImage = remote.getImage();
+    REQUIRE(remoteImage != nullptr);
+    CHECK(remoteImage->getWidth() == 10);
+    CHECK(remoteImage->getHeight() == 10);
+
+    std::shared_ptr<STI::Utils::BinaryData> lazy;
+    REQUIRE(remoteImage->getData(lazy));
+    REQUIRE(lazy != nullptr);
+    CHECK_FALSE(lazy->isMaterialized());
+    CHECK(lazy->hasStream());
+    CHECK_FALSE(lazy->hasLocalData());
+    CHECK(lazy->bytes() == binary->bytes());
+    CHECK(binaryBytes(lazy) == payload);
+}
+
 TEST_CASE("NetworkConvert: Channel snapshot sends heavy last measurement payloads as lazy streams", "[network][convert][channel]")
 {
     auto channel = std::make_shared<STI::Device::LocalChannel>(

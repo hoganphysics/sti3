@@ -434,10 +434,12 @@ results.  Shot data is also available later through the connected device's
 Binary and image measurements
 +++++++++++++++++++++++++++++
 
-Remote channel state can expose large binary and image measurements as lazy
-values.  Use ``MixedValue.getBinary()`` or ``MixedValue.getImage()`` when Python
-code needs to inspect metadata, explicitly pull bytes, or save the payload
-without relying on implicit conversion through ``MixedValue.getValue()``.  See
+Remote reads and remote channel state can expose large binary and image
+measurements as lazy values.  Direct binary reads return ``BinaryData`` and
+direct image reads return ``Image`` so Python code can inspect metadata,
+explicitly pull bytes, or save the payload.  Use ``MixedValue.getBinary()`` or
+``MixedValue.getImage()`` for cached channel measurements without relying on
+implicit conversion through ``MixedValue.getValue()``.  See
 :ref:`lazy_payloads` for the full C++ and Python API.
 
 Complete example

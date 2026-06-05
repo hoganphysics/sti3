@@ -36,6 +36,7 @@ public:
     // pybind11::object flatten() const;
 
     static pybind11::object convertValue(const MixedValue& value);
+    static pybind11::object convertReadResult(const MixedValue& value);
 
 private:
 

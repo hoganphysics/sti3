@@ -155,6 +155,19 @@ pybind11::object MixedValuePy::convertValue(const MixedValue& value)
     return obj;
 }
 
+pybind11::object MixedValuePy::convertReadResult(const MixedValue& value)
+{
+    switch (value.getType())
+    {
+    case MixedValueType::Binary:
+        return py::cast(value.getBinary());
+    case MixedValueType::Image:
+        return py::cast(value.getImage());
+    default:
+        return convertValue(value);
+    }
+}
+
 void MixedValuePy::setValue_py(const py::object& value)
 {
     if (setValueExtract<MixedValuePy, MixedValue>(value)) return;

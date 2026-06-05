@@ -58,6 +58,29 @@ class BinaryMeasurementDevice(object):
         return _BinaryMeasurementDevice()
 
 
+class LazyReadDevice(object):
+    def __new__(cls, stidevicepy, spec, payload):
+        class _LazyReadDevice(stidevicepy.LocalDevice):
+            def __init__(self):
+                self.spec = spec
+                self.payload = payload
+                stidevicepy.LocalDevice.__init__(self, spec.config())
+                for channel in spec.input_channels:
+                    self.addInputChannel(channel.number, channel.value_type, channel.name)
+
+            def readChannel(self, channel, value):
+                import stipy
+
+                binary = stipy.BinaryData(self.payload)
+                if channel == 0:
+                    return binary
+                if channel == 1:
+                    return stipy.Image(binary, width=10, height=10)
+                return None
+
+        return _LazyReadDevice()
+
+
 def test_stidevicepy_can_explicitly_pull_lazy_binary_channel_measurement(
     sti_nameservice_address,
     stipy_modules,
@@ -126,3 +149,69 @@ def test_stidevicepy_can_explicitly_pull_lazy_binary_channel_measurement(
         output_path = tmp_path / "measurement.bin"
         assert binary.save(str(output_path))
         assert output_path.read_bytes() == payload
+
+
+def test_stidevicepy_read_returns_lazy_binary_and_image_payloads(
+    sti_nameservice_address,
+    stipy_modules,
+):
+    stipy, stidevicepy = stipy_modules
+
+    payload = b"lazy-read-binary-payload\x00with-nul"
+    server_spec = make_server_spec(name="stidevicepy Lazy Read Server", address="localhost", module=52)
+    server_id = server_spec.device_id()
+    device_spec = DeviceSpec(
+        name="stidevicepy Lazy Read Device",
+        address="localhost",
+        module=53,
+        target_server_id=server_id.getID(),
+        output_channels=[],
+        input_channels=[
+            ChannelSpec(0, name="binary read", value_type=stipy.MixedValueType.Binary, direction="input"),
+            ChannelSpec(1, name="image read", value_type=stipy.MixedValueType.Image, direction="input"),
+        ],
+    )
+
+    with InProcessTopology(sti_nameservice_address, server_spec, []) as topology:
+        device = LazyReadDevice(stidevicepy, device_spec, payload)
+        topology.devices.append(device)
+        topology.hub.addDevice(device)
+
+        wait_for_device_ids(
+            topology.hub,
+            [server_id, device_spec.device_id()],
+            timeout_s=5.0,
+            diagnostics=topology.diagnostics,
+        )
+
+        server = topology.connect_stipy()
+        assert server is not None, topology.summary()
+        remote_device = server.getDeviceCollection().get(device_spec.device_id())
+
+        binary = remote_device.read(0)
+        assert isinstance(binary, stipy.BinaryData)
+        assert binary.bytes() == len(payload)
+        assert binary.wordsize() == 1
+        assert binary.hasStream()
+        assert not binary.hasLocalData()
+        assert not binary.isMaterialized()
+
+        assert binary.pull()
+        assert binary.hasLocalData()
+        assert binary.getBytes() == payload
+
+        image = remote_device.read(1)
+        assert isinstance(image, stipy.Image)
+        assert image.getWidth() == 10
+        assert image.getHeight() == 10
+        assert image.hasData()
+
+        image_data = image.getData()
+        assert image_data.bytes() == len(payload)
+        assert image_data.hasStream()
+        assert not image_data.hasLocalData()
+        assert not image_data.isMaterialized()
+
+        assert image_data.pull()
+        assert image_data.hasLocalData()
+        assert image_data.getBytes() == payload

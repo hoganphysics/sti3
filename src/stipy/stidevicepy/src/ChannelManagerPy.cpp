@@ -55,7 +55,7 @@ py::object ChannelManagerPy::readChannelPy(short channel, const pybind11::object
     bool success = readChannel(channel, val, data);
 
     if (success) {
-        return data.getValue_py();
+        return MixedValuePy::convertReadResult(data);
     }
 
     return py::none();
@@ -99,4 +99,3 @@ bool ChannelManagerPy::readChannel(short channel, const STI::Utils::MixedValue& 
     }
     return false;
 }
-

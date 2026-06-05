@@ -2,8 +2,10 @@
 #include <sti/device/ChannelManager.h>
 
 #include "convert/Convert_Channel.h"
+#include "NetworkConvert.h"
 
 using STI::Network::convert;
+using STI::Network::BinaryPayloadPolicy;
 using STI::TNetwork::TChannelManager_i;
 using STI::TNetwork::TChannelSeq;
 using STI::TNetwork::TMixedValue;
@@ -101,8 +103,7 @@ void TChannelManager_i::getChannels(::STI::TNetwork::TChannelSeq_out channels)
 	}
 
     if (success) {
-        
-        (*data) = convert<MixedValue, TMixedValue>(dataOut);
+        success = STI::Network::convertMixedValue(dataOut, *data, BinaryPayloadPolicy::PreferStreamReference);
     }
 
     return success;
@@ -119,4 +120,3 @@ void TChannelManager_i::stop()
 {
     return true;
 }
-

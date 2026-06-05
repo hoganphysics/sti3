@@ -9,6 +9,7 @@
 
 using STI::Network::RemoteChannelManager;
 using STI::Network::convert;
+using STI::Network::BinaryPayloadPolicy;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValue;
 using STI::TNetwork::TChannel;
@@ -175,7 +176,7 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
 	}
 
     if (success) {
-        return convert<TMixedValue, MixedValue>(tData, data);
+        return STI::Network::convertMixedValue(tData, data, BinaryPayloadPolicy::PreserveStreamReference);
     }
 
     return success;

@@ -89,13 +89,7 @@ pybind11::object LocalDevicePy::readChannel(short channel, const pybind11::objec
     }
 
     if (success) {
-
-        MixedValuePy pydata;
-        pydata.setValue(data);
-
-        pybind11::object obj = pydata.getValue_py();
-
-        return obj;
+        return MixedValuePy::convertReadResult(data);
     }
     return py::none();
 }

@@ -66,8 +66,8 @@ Features:
   length, total byte count, and word size, before the bytes are materialized.
 * Add public `BinaryData` stream-query and materialization APIs so clients can
   inspect lightweight metadata and explicitly pull binary bytes when needed.
-* Keep normal RPC conversions eager while preserving lazy references for channel
-  state and channel measurement update paths.
+* Return heavy `BinaryData` and binary-backed `Image` read results as lazy
+  references so clients can inspect size metadata before pulling bytes.
 * Pull lazy binary and image measurements during local shot-result collection so
   completed `ShotResult` measurements reference server-local archived data.
 * Add `Normal` and `Interleaved` sequence scheduling modes, including the
@@ -78,6 +78,8 @@ Python and examples:
 * Expose explicit STIPy accessors for binary and image mixed values, including
   `getBinary()`, `getImage()`, `BinaryData.pull()`, `BinaryData.getBytes()`,
   and save helpers.
+* Return `BinaryData` and `Image` wrapper objects from direct STIPy reads so
+  Python clients can inspect lazy metadata before pulling payload bytes.
 * Support constructing STIPy `BinaryData` from Python bytes and `Image` from
   bytes, `BinaryData`, `FileHolder`, or `FileID`.
 * Add `FileHolder.writeBytes()` for Python device code that creates file-backed
