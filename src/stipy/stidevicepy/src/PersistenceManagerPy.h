@@ -5,6 +5,7 @@
 #include <sti/device/PersistenceManager.h>
 
 #include <memory>
+#include <string>
 
 
 
@@ -24,6 +25,11 @@ public:
     std::shared_ptr<STI::Engine::ParseResult> getParseResult(const STI::Engine::ParseID& pid);
     std::shared_ptr<STI::Engine::ShotResult> getShotResult(const STI::Engine::ShotID& sid);
     std::shared_ptr<STI::Engine::SequenceResult> getSequenceResult(const STI::Engine::SequenceID& id);
+    std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
+    std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(
+        const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder);
+    std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
     std::shared_ptr<STI::Utils::FileServer> getFileServer();
 
 	STI::Engine::MeasurementMap getMeasurements(const STI::Engine::ShotID& sid);
@@ -38,4 +44,3 @@ private:
 } //STI
 
 #endif
-

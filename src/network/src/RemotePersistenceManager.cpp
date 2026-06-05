@@ -281,8 +281,7 @@ std::shared_ptr<STI::Utils::FileHolder> RemotePersistenceManager::makeVirtualFil
 
 std::shared_ptr<STI::Utils::VirtualFileServer> RemotePersistenceManager::makeVirtualFileServer()
 {
-	auto fileServer = std::shared_ptr<STI::Network::NetworkVirtualFileServer>();
-	return fileServer;
+	return std::make_shared<STI::Network::NetworkVirtualFileServer>();
 }
 
 bool RemotePersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) 

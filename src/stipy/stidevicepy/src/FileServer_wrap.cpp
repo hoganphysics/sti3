@@ -3,6 +3,7 @@
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/VirtualFileHolder.h>
+#include <sti/utils/VirtualFileServer.h>
 
 #include <sstream>
 #include <string>
@@ -15,6 +16,7 @@ using STI::Utils::FileID;
 using STI::Utils::FileHolder;
 using STI::Utils::LocalFileHolder;
 using STI::Utils::VirtualFileHolder;
+using STI::Utils::VirtualFileServer;
 using STI::Utils::FileServer;
 using STI::Utils::FileTransferType;
 
@@ -69,6 +71,11 @@ void init_FileServer(py::module& m)
     py::class_<VirtualFileHolder, LocalFileHolder, std::shared_ptr<VirtualFileHolder>>(m, "VirtualFileHolder")
         .def(py::init<const std::string&, const FileID&>(), 
              py::arg("originID"), py::arg("fileID"))
+        .def("getBytes",
+            [](const VirtualFileHolder& self) {
+                const auto bytes = self.getBytes();
+                return py::bytes(bytes);
+            })
         ;
 
     py::class_<FileServer, std::shared_ptr<FileServer>>(m, "FileServer")
@@ -85,6 +92,11 @@ void init_FileServer(py::module& m)
                 s << "<FileServer>";
                 return s.str();
             })
+        ;
+
+    py::class_<VirtualFileServer, FileServer, std::shared_ptr<VirtualFileServer>>(m, "VirtualFileServer")
+        .def(py::init<>())
+        .def("addFile", &VirtualFileServer::addFile, py::arg("file"))
         ;
 
 }

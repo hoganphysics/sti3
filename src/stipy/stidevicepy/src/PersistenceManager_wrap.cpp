@@ -1,6 +1,8 @@
 
 #include "PersistenceManagerPy.h"
 
+#include <sti/utils/VirtualFileHolder.h>
+
 #include <sti/engine/Measurement.h>
 #include "MixedValuePy.h"
 #include <sti/engine/ShotResult.h>
@@ -39,6 +41,14 @@ void init_PersistenceManager(py::module& m)
         .def("getShotResult", &PersistenceManagerPy::getShotResult, py::arg("shotID"))
         .def("getSequenceResult", &PersistenceManagerPy::getSequenceResult, py::arg("sequenceID"))
         .def("getMeasurements", &PersistenceManagerPy::getMeasurements, py::arg("shotID"))
+        .def("makeFileHolder", &PersistenceManagerPy::makeFileHolder, py::arg("path"), py::arg("filename"))
+        .def("makeVirtualFileHolder",
+            py::overload_cast<const STI::Utils::FileID&>(&PersistenceManagerPy::makeVirtualFileHolder),
+            py::arg("fileID"))
+        .def("makeVirtualFileHolder",
+            py::overload_cast<const std::shared_ptr<STI::Utils::VirtualFileHolder>&>(&PersistenceManagerPy::makeVirtualFileHolder),
+            py::arg("backingHolder"))
+        .def("makeVirtualFileServer", &PersistenceManagerPy::makeVirtualFileServer)
         .def("getFileServer", &PersistenceManagerPy::getFileServer)
         ;
 
