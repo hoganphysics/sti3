@@ -16,8 +16,6 @@
 
 #include <sti/utils/SynchronizedMap.h>
 
-#include "EventEngineDependencyTree.h"
-#include "LocalEventEngine.h"
 #include "MessageGenerator.h"
 #include <sti/engine/Shot.h>
 #include "utils/OrderedBufferMap.h"
@@ -25,11 +23,15 @@
 
 #include <chrono>
 #include <atomic>
+#include <condition_variable>
 #include <list>
 #include <map>
+#include <memory>
 #include <mutex>
+#include <set>
 #include <thread>
 #include <string>
+#include <vector>
 
 /*
 Implements prioritized parallel distributed scheduling:

@@ -43,7 +43,7 @@ namespace
 CORBA::ULong toCorbaULong(size_t value)
 {
 	return static_cast<CORBA::ULong>(
-		std::min(value, static_cast<size_t>(std::numeric_limits<CORBA::ULong>::max())));
+		(std::min)(value, static_cast<size_t>((std::numeric_limits<CORBA::ULong>::max)())));
 }
 
 size_t binaryTypeWordsize(STI::TNetwork::TBinaryType type)

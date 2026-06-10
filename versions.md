@@ -48,6 +48,20 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.5.3 - Windows build fixes
+
+Patch release for restoring the Windows build after recent scheduler and
+network conversion changes.
+
+Fixes:
+
+* Avoid Windows `min`/`max` macro expansion when clamping CORBA sequence
+  lengths in network conversion.
+* Keep event-engine implementation headers out of `LocalEventEngineScheduler.h`
+  so `STIServer` does not require private Boost.Graph include paths.
+* Make `LocalEventEngineFactory.h` include the concrete engine type it
+  constructs instead of relying on scheduler-header transitive includes.
+
 ### 3.5.2 - Add-node network refresh
 
 Patch release for pruning stale device references opportunistically when new
