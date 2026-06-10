@@ -80,7 +80,8 @@ public:
     void addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target);
     void loadPersistenceTargets();
 
-    std::string getBasePath() const;
+    std::string getBasePath() const override;
+    std::string getTemporaryPath() const override;
 
     static std::string makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate = true);
 

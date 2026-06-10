@@ -33,6 +33,10 @@ TEST_CASE("Channel: basic getters, setters, and metadata") {
     channel.saveLastValue(last);
     CHECK(channel.getLastValue() == MixedValue("payload"));
 
+    MixedValue measurement(5.5);
+    channel.saveLastMeasurement(measurement);
+    CHECK(channel.getLastMeasurement() == MixedValue(5.5));
+
     // Metadata retrieval falls back gracefully when the key is missing.
     auto missing = channel.getMetaData("not_set");
     CHECK(missing.getType() == MixedValueType::Empty);

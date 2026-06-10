@@ -20,7 +20,7 @@ SequenceJob::SequenceJob(const EngineJobID& jobID, const STI::Device::DeviceID& 
     const std::shared_ptr<Sequence>& sequence, const std::shared_ptr<SequenceResult>& sequenceResult)
 : jobID(jobID), jobOwner(jobOwner), jobStatus(EngineJobStatus::New), sequence(sequence), sequenceResult(sequenceResult)
 {
-    prioritySet = true;
+    jobSubmitted = false;
 }
 
 void SequenceJob::refreshJobStatus()
@@ -107,49 +107,31 @@ void SequenceJob::cancel()
 
 bool SequenceJob::hasPriority(const std::set<EngineJobID>& jobsIDs)
 {
-    std::vector<std::shared_ptr<EventEngineJob>> jobs;
-    runningJobs.getValues(jobs);
-
-    for (const auto& job : jobs) {
-        if (job != 0 && job->getStatus() == EngineJobStatus::Running) {
-            prioritySet = true;
-            return true;
-        }
-    }
-
-    if (prioritySet) {
-        //has priority, for now
-        prioritySet = false;
-        STI::Utils::TimeStamp now;
-        lastJobTimestamp = now;
-        lastJobTimestamp.add_ms(200); //give it a 200 ms buffer
-        return true;
-    }
-
-    bool found = false;
-    //check if any of the jobs in the set is part of this sequence job
-    for (const auto& jid : jobsIDs) {
-        if (isMemberOfSequence(jid)) {
-            prioritySet = true;
-            return true;
-        }
-        else if (lastJobTimestamp < jid.runTime) {
-            //if the job is newer than the last job timestamp+buffer, the sequence losses priority
-            found = true;
-        }
-    }
-
-    if (found) {
-        return false;
-    }
-
-    return true; //no newer jobs found, so the sequence retains priority
+    (void)jobsIDs;
+    return hasSubmittedJobs();
 }
 
 bool SequenceJob::isMemberOfSequence(const EngineJobID& jid)
 {
-    return (jid.pid.sequenceEntryID.seqID == jobID.seqid ||
-            jid.sid.parseID.sequenceEntryID.seqID == jobID.seqid);
+    if (jid.type == EventEngineJobType::Parse && jid.pid.shotType == ShotType::SequenceEntry) {
+        return jid.pid.sequenceEntryID.seqID == jobID.seqid;
+    }
+
+    if (jid.type == EventEngineJobType::Play && jid.sid.parseID.shotType == ShotType::SequenceEntry) {
+        return jid.sid.parseID.sequenceEntryID.seqID == jobID.seqid;
+    }
+
+    return false;
+}
+
+void SequenceJob::markJobSubmitted()
+{
+    jobSubmitted = true;
+}
+
+bool SequenceJob::hasSubmittedJobs() const
+{
+    return jobSubmitted;
 }
 
 void SequenceJob::filter(const std::set<EngineJobID>& queued, std::set<EngineJobID>& filtered)

@@ -47,7 +47,9 @@ std::string printNetwork(const std::string& nameServerAddress, const std::string
 std::shared_ptr<STIPyShot> makeShot();
 std::shared_ptr<STIPyShot> makeShot(const STI::Engine::ShotType& shotType);
 std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType);
+std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const std::string& mainFile, const STI::Engine::ShotType& shotType);
 std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType);
+std::shared_ptr<STIPyShot> makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const std::string& mainFile, const STI::Engine::ShotType& shotType);
 
 STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace);
 
@@ -78,4 +80,3 @@ STI::Engine::RawEventTarget ch(const std::string& channelName);    //abstract ch
 } //STI
 
 #endif
-

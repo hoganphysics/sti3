@@ -193,6 +193,24 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 	return ::STI::TNetwork::TFileServer::_nil();
 }
 
+char* TPersistenceManager_i::getBasePath()
+{
+	if (persistenceManager != 0) {
+		return CORBA::string_dup(persistenceManager->getBasePath().c_str());
+	}
+
+	return CORBA::string_dup("");
+}
+
+char* TPersistenceManager_i::getTemporaryPath()
+{
+	if (persistenceManager != 0) {
+		return CORBA::string_dup(persistenceManager->getTemporaryPath().c_str());
+	}
+
+	return CORBA::string_dup("");
+}
+
 void TPersistenceManager_i::addSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult)
 {
 	std::shared_ptr<SequenceResult> sequenceResult;
@@ -238,4 +256,3 @@ void TPersistenceManager_i::addSequence(const ::STI::TNetwork::TSequenceResult& 
 {
     return true;
 }
-

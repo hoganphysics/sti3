@@ -1,13 +1,17 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <sti/utils/BinaryData.h>
+#include <sti/utils/BinaryDataStream.h>
 
 #include <cstring>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 using STI::Utils::BinaryData;
+using STI::Utils::BinaryDataStream;
+using STI::Utils::BinaryDataStreamTarget;
 
 namespace
 {
@@ -22,6 +26,35 @@ struct CountingStruct
 };
 
 int CountingStruct::destructCount = 0;
+
+class PayloadStream : public BinaryDataStream
+{
+public:
+    explicit PayloadStream(std::string payload)
+        : payload(std::move(payload))
+    {
+    }
+
+    void transfer(const std::shared_ptr<BinaryDataStreamTarget>& target) override
+    {
+        ++transferCount;
+        if (target == nullptr) {
+            return;
+        }
+
+        auto chunk = std::make_shared<BinaryData>();
+        auto* buffer = new char[payload.size()];
+        std::memcpy(buffer, payload.data(), payload.size());
+        chunk->assign(buffer, payload.size());
+
+        target->start();
+        target->writeNext(chunk);
+        target->stop();
+    }
+
+    std::string payload;
+    unsigned transferCount{0};
+};
 } // namespace
 
 TEST_CASE("BinaryData stores typed buffers and exposes metadata")
@@ -121,4 +154,62 @@ TEST_CASE("BinaryData splits and merges byte buffers")
     char* mergedBytes = nullptr;
     REQUIRE(merged.getBytes(mergedBytes));
     CHECK(std::string(mergedBytes, merged.bytes()) == text);
+}
+
+TEST_CASE("BinaryData materializes attached streams lazily and preserves metadata")
+{
+    const std::string payload = "abcdefghijkl";
+    auto stream = std::make_shared<PayloadStream>(payload);
+
+    BinaryData data;
+    data.attachStream(stream, 3, sizeof(int));
+
+    CHECK_FALSE(data.hasLocalData());
+    CHECK(data.hasStream());
+    CHECK_FALSE(data.isMaterialized());
+    CHECK(data.length() == 3);
+    CHECK(data.wordsize() == sizeof(int));
+    CHECK(data.bytes() == payload.size());
+
+    char* bytes = nullptr;
+    REQUIRE(data.getBytes(bytes));
+    CHECK(stream->transferCount == 1);
+    CHECK(data.hasLocalData());
+    CHECK_FALSE(data.hasStream());
+    CHECK(data.isMaterialized());
+    CHECK(data.length() == 3);
+    CHECK(data.wordsize() == sizeof(int));
+    CHECK(data.bytes() == payload.size());
+    CHECK(std::string(bytes, data.bytes()) == payload);
+
+    REQUIRE(data.getBytes(bytes));
+    CHECK(stream->transferCount == 1);
+}
+
+TEST_CASE("BinaryData splits typed buffers into byte chunks")
+{
+    BinaryData data;
+    auto* values = new int[3]{0x01020304, 0x11121314, 0x21222324};
+    data.assign(values, 3);
+
+    std::vector<std::shared_ptr<BinaryData>> chunks;
+    data.split(chunks, 5);
+
+    REQUIRE(chunks.size() == 3);
+
+    size_t totalBytes = 0;
+    for (const auto& chunk : chunks) {
+        CHECK(chunk->isType<char*>());
+        totalBytes += chunk->bytes();
+    }
+    CHECK(totalBytes == data.bytes());
+
+    BinaryData merged;
+    merged.merge(chunks);
+
+    char* sourceBytes = nullptr;
+    char* mergedBytes = nullptr;
+    REQUIRE(data.getBytes(sourceBytes));
+    REQUIRE(merged.getBytes(mergedBytes));
+    CHECK(std::string(mergedBytes, merged.bytes()) == std::string(sourceBytes, data.bytes()));
 }

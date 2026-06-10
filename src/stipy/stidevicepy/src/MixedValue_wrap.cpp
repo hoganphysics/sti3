@@ -1,6 +1,16 @@
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/FileID.h>
+#include <sti/utils/FileHolder.h>
+#include <sti/utils/Image.h>
 #include "MixedValuePy.h"
+
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <system_error>
+#include <string>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -9,7 +19,119 @@ namespace py = pybind11;
 
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
+using STI::Utils::BinaryData;
+using STI::Utils::Image;
 using STI::Python::MixedValuePy;
+
+namespace
+{
+std::shared_ptr<BinaryData> makeBinaryData(const py::bytes& payload)
+{
+    std::string bytes = payload;
+    auto data = std::make_shared<BinaryData>();
+    char* rawData = nullptr;
+    if (!bytes.empty()) {
+        rawData = new char[bytes.size()];
+        std::copy(bytes.begin(), bytes.end(), rawData);
+    }
+    data->assign(rawData, bytes.size(), true);
+    return data;
+}
+
+std::shared_ptr<Image> makeImageFromBinaryData(
+    const std::shared_ptr<BinaryData>& data,
+    unsigned width,
+    unsigned height)
+{
+    auto image = std::make_shared<Image>();
+    image->setWidth(width).setHeight(height);
+    image->setImageData(data);
+    return image;
+}
+
+std::shared_ptr<Image> makeImageFromBytes(
+    const py::bytes& payload,
+    unsigned width,
+    unsigned height)
+{
+    return makeImageFromBinaryData(makeBinaryData(payload), width, height);
+}
+
+std::shared_ptr<Image> makeImageFromFileHolder(
+    const std::shared_ptr<STI::Utils::FileHolder>& file,
+    unsigned width,
+    unsigned height)
+{
+    auto image = std::make_shared<Image>();
+    image->setWidth(width).setHeight(height);
+    image->setImageData(file);
+    return image;
+}
+
+std::shared_ptr<Image> makeImageFromFileID(
+    const STI::Utils::FileID& fileID,
+    unsigned width,
+    unsigned height)
+{
+    auto image = std::make_shared<Image>(fileID);
+    image->setWidth(width).setHeight(height);
+    return image;
+}
+
+py::object binaryDataBytes(BinaryData& data)
+{
+    char* rawData = nullptr;
+    if (!data.getBytes(rawData)) {
+        return py::none();
+    }
+    return py::bytes(rawData, data.bytes());
+}
+
+bool saveBinaryData(BinaryData& data, const std::string& path)
+{
+    char* rawData = nullptr;
+    if (!data.getBytes(rawData)) {
+        return false;
+    }
+
+    auto outputPath = std::filesystem::path(path);
+    if (!outputPath.parent_path().empty()) {
+        std::filesystem::create_directories(outputPath.parent_path());
+    }
+
+    std::ofstream output(path, std::ios::binary);
+    if (!output.is_open()) {
+        return false;
+    }
+
+    if (data.bytes() > 0) {
+        output.write(rawData, static_cast<std::streamsize>(data.bytes()));
+    }
+    return output.good();
+}
+
+bool saveImage(Image& image, const std::string& path)
+{
+    std::shared_ptr<BinaryData> data;
+    if (image.getData(data) && data != 0) {
+        return saveBinaryData(*data, path);
+    }
+
+    std::shared_ptr<STI::Utils::FileHolder> file;
+    if (image.getFile(file) && file != 0 && file->exists()) {
+        auto outputPath = std::filesystem::path(path);
+        if (!outputPath.parent_path().empty()) {
+            std::filesystem::create_directories(outputPath.parent_path());
+        }
+        std::error_code ec;
+        return std::filesystem::copy_file(
+                   file->getFilename(), outputPath,
+                   std::filesystem::copy_options::overwrite_existing, ec) && !ec;
+    }
+
+    return false;
+}
+} // namespace
 
 
 void init_MixedValue(py::module& m) 
@@ -31,10 +153,104 @@ void init_MixedValue(py::module& m)
         .value("Any", MixedValueType::Any)
         ;
 
+    py::class_<BinaryData, std::shared_ptr<BinaryData>>(m, "BinaryData")
+        .def(py::init<>())
+        .def(py::init(&makeBinaryData), py::arg("data"))
+        .def("length", &BinaryData::length)
+        .def("bytes", &BinaryData::bytes)
+        .def("wordsize", &BinaryData::wordsize)
+        .def("hasLocalData", &BinaryData::hasLocalData)
+        .def("hasStream", &BinaryData::hasStream)
+        .def("isMaterialized", &BinaryData::isMaterialized)
+        .def("pull", &BinaryData::materialize)
+        .def("getBytes", &binaryDataBytes)
+        .def("save", &saveBinaryData, py::arg("path"))
+        ;
+
+    py::class_<Image, std::shared_ptr<Image>>(m, "Image")
+        .def(py::init<>())
+        .def(py::init(&makeImageFromBytes),
+            py::arg("data"), py::arg("width") = 0, py::arg("height") = 0)
+        .def(py::init(&makeImageFromBinaryData),
+            py::arg("data"), py::arg("width") = 0, py::arg("height") = 0)
+        .def(py::init(&makeImageFromFileHolder),
+            py::arg("file"), py::arg("width") = 0, py::arg("height") = 0)
+        .def(py::init(&makeImageFromFileID),
+            py::arg("fileID"), py::arg("width") = 0, py::arg("height") = 0)
+        .def("getFileID", &Image::getFileID)
+        .def("getHeight", &Image::getHeight)
+        .def("getWidth", &Image::getWidth)
+        .def("setWidth",
+            [](std::shared_ptr<Image>& self, unsigned width) {
+                self->setWidth(width);
+                return self;
+            }, py::arg("width"))
+        .def("setHeight",
+            [](std::shared_ptr<Image>& self, unsigned height) {
+                self->setHeight(height);
+                return self;
+            }, py::arg("height"))
+        .def("setFileID", &Image::setFileID, py::arg("fileID"))
+        .def("setData",
+            [](std::shared_ptr<Image>& self, const std::shared_ptr<BinaryData>& data) {
+                self->setImageData(data);
+                return self;
+            }, py::arg("data"))
+        .def("setBytes",
+            [](std::shared_ptr<Image>& self, const py::bytes& payload) {
+                self->setImageData(makeBinaryData(payload));
+                return self;
+            }, py::arg("data"))
+        .def("setFile",
+            [](std::shared_ptr<Image>& self, const std::shared_ptr<STI::Utils::FileHolder>& file) {
+                self->setImageData(file);
+                return self;
+            }, py::arg("file"))
+        .def("hasData",
+            [](const Image& image) {
+                std::shared_ptr<BinaryData> data;
+                return image.getData(data);
+            })
+        .def("hasFile",
+            [](const Image& image) {
+                std::shared_ptr<STI::Utils::FileHolder> file;
+                return image.getFile(file);
+            })
+        .def("getData",
+            [](const Image& image) {
+                std::shared_ptr<BinaryData> data;
+                image.getData(data);
+                return data;
+            })
+        .def("pullData",
+            [](const Image& image) {
+                std::shared_ptr<BinaryData> data;
+                return image.getData(data) && data != 0 && data->materialize();
+            })
+        .def("save", &saveImage, py::arg("path"))
+        .def("__repr__",
+            [](const Image& image) {
+                std::stringstream s;
+                s << "<Image | " << image.getWidth() << "x" << image.getHeight();
+                std::shared_ptr<BinaryData> data;
+                if (image.getData(data) && data != 0) {
+                    s << " | " << data->bytes() << " bytes";
+                }
+                std::shared_ptr<STI::Utils::FileHolder> file;
+                if (image.getFile(file) && file != 0) {
+                    s << " | " << file->getID().print();
+                }
+                s << ">";
+                return s.str();
+            })
+        ;
+
     py::class_<MixedValuePy>(m, "MixedValue")
         .def(py::init<>())
         .def(py::init<const py::object&>(), py::arg("value"))
         .def("getValue", &MixedValuePy::getValue_py)
+        .def("getBinary", &MixedValuePy::getBinary_py)
+        .def("getImage", &MixedValuePy::getImage_py)
         // .def("getValue",
         //     [](const MixedValuePy& val) {
         //         if (val.getType() == MixedValueType::File) {
@@ -94,4 +310,3 @@ void init_MixedValue(py::module& m)
         ;
 
 }
-

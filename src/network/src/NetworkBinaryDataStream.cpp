@@ -13,6 +13,12 @@ NetworkBinaryDataStream::NetworkBinaryDataStream(STI::Utils::BinaryData* data, s
 	localdataStreamTarget = std::make_shared<STI::Utils::LocalBinaryDataStream>(data, chunkSize);
 }
 
+NetworkBinaryDataStream::NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryData>& data, size_t chunkSize)
+: NetworkBinaryDataStream(data.get(), chunkSize)
+{
+	ownedData = data;
+}
+
 NetworkBinaryDataStream::NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryDataStream>& dataStream)
 : dataStreamServantHolder(new STI::TNetwork::TBinaryDataStream_i(this))
 {
@@ -38,7 +44,11 @@ bool NetworkBinaryDataStream::getTBinaryDataStreamRef(const typename std::shared
 
 	if (networkDataStream == 0) return false;		//check dynamic_pointer_cast
 
-	tdataStream = networkDataStream->dataStreamServantHolder.getRefVar();
+	auto ref = networkDataStream->dataStreamServantHolder.getRefVar();
+	if (CORBA::is_nil(ref)) {
+		return false;
+	}
+
+	tdataStream = ref._retn();
 	return !CORBA::is_nil(tdataStream);
 }
-

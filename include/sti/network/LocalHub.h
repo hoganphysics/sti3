@@ -217,8 +217,15 @@ bool STI::Network::LocalHub<ID, T>::addNode(const ID& id, const typename std::sh
 	} );
 
 	if (success) {
-		std::unique_lock<std::mutex> distributerLock(distributerMutex);
-		return distributeToConnectedHubs(id, node, HubTrace(), getID());
+		{
+			std::unique_lock<std::mutex> distributerLock(distributerMutex);
+			success = distributeToConnectedHubs(id, node, HubTrace(), getID());
+		}
+
+		if (success) {
+			refresh(HubTrace());
+		}
+		return success;
 	}
 	return false;
 }

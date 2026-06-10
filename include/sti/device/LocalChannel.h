@@ -35,6 +35,7 @@ public:
 	std::string getChannelName() const;
 
 	const STI::Utils::MixedValue getLastValue() const;
+	const STI::Utils::MixedValue getLastMeasurement() const;
 
 	const STI::Utils::MixedValue& getMetaData() const;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const;
@@ -42,6 +43,7 @@ public:
 
 	void setChannelName(const std::string& name);
 	void saveLastValue(const STI::Utils::MixedValue& value);
+	void saveLastMeasurement(const STI::Utils::MixedValue& value);
 	
 	template<typename T>
 	void saveLastValue(const T& value)
@@ -51,11 +53,20 @@ public:
 		saveLastValue(mixedVal);
 	}
 
+	template<typename T>
+	void saveLastMeasurement(const T& value)
+	{
+		STI::Utils::MixedValue mixedVal;
+		mixedVal.setValue(value);
+		saveLastMeasurement(mixedVal);
+	}
+
 	LocalChannel& addMetaData(const std::string& key, const STI::Utils::MixedValue& value);
 	LocalChannel& addMetaDataList(const std::string& key, const std::vector<std::string>& values);
 
 	LocalChannel& setColor(const std::string& color);
 	LocalChannel& setUnits(const std::string& units);
+	LocalChannel& setMeasurementUnits(const std::string& units);
 	LocalChannel& setMinValue(const STI::Utils::MixedValue& value);
 	LocalChannel& setMaxValue(const STI::Utils::MixedValue& value);
 	LocalChannel& setVectorFormat(const std::vector<STI::Utils::MixedValueType>& types);
@@ -76,6 +87,7 @@ public:
 private:
 
     void _fireRefreshChannelEvent();
+	void _fireRefreshChannelMeasurementEvent();
 	void _fireRefreshChannelNameEvent();
 
 	short channelNumber;
@@ -86,6 +98,7 @@ private:
 	STI::Utils::MixedValueType outputType;
 	
 	STI::Utils::MixedValue lastValue;
+	STI::Utils::MixedValue lastMeasurement;
 //	STI::Utils::MixedValue lastInValue;
 
 	std::vector<ChannelRefreshListener*> listeners;	
@@ -101,4 +114,3 @@ private:
 } //STI
 
 #endif
-

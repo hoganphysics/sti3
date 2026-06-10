@@ -26,6 +26,8 @@ public:
 
     void saveLastValue(const STI::Utils::MixedValue& value) override { lastValue = value; }
     const STI::Utils::MixedValue getLastValue() const override { return lastValue; }
+    void saveLastMeasurement(const STI::Utils::MixedValue& value) override { lastMeasurement = value; }
+    const STI::Utils::MixedValue getLastMeasurement() const override { return lastMeasurement; }
 
     const STI::Utils::MixedValue& getMetaData() const override { return metaData.getMetaData(); }
     STI::Utils::MixedValue getMetaData(const std::string& key) const override { return metaData.getMetaData(key); }
@@ -39,6 +41,7 @@ private:
     STI::Utils::MixedValueType outputType;
     std::string channelName;
     STI::Utils::MixedValue lastValue;
+    STI::Utils::MixedValue lastMeasurement;
     STI::Utils::MetaData metaData;
 };
 

@@ -228,6 +228,21 @@ def _device_id_from_text(device_id_text):
     return stipy.DeviceID(device_id_text)
 
 
+def _same_device_identity(left, right):
+    return (
+        left.name() == right.name()
+        and left.address() == right.address()
+        and left.module() == right.module()
+    )
+
+
+def _matching_collected_device_id(declared_id, collected_ids):
+    for collected_id in collected_ids:
+        if _same_device_identity(declared_id, collected_id):
+            return collected_id
+    return None
+
+
 def _jsonable_value(value):
     try:
         json.dumps(value)
@@ -378,6 +393,20 @@ if stidevicepy is not None:
             with self._records_lock:
                 self.records = []
 
+        def record_partner_reference_state(self):
+            if not self.spec.partners:
+                return
+
+            collection = self.getDeviceCollection()
+            collected_ids = collection.getIDs() if collection is not None else []
+
+            for partner in self.spec.partners:
+                match = _matching_collected_device_id(partner, collected_ids)
+                if match is not None:
+                    self.record("partner-reference", 0, value=match.getID())
+                else:
+                    self.record("partner-missing", 0, value=_device_id_text(partner))
+
         def _append_record(self, record):
             directory = os.path.dirname(self.spec.record_path)
             if directory:
@@ -390,6 +419,8 @@ if stidevicepy is not None:
             behavior = self.spec.behavior
             if behavior.parse_delay_s > 0:
                 time.sleep(behavior.parse_delay_s)
+
+            self.record_partner_reference_state()
 
             event_groups = list(eventsIn.items())
             if behavior.parse_error:

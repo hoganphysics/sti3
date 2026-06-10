@@ -24,6 +24,7 @@
 #include <sti/utils/VirtualFileServer.h>
 
 #include <chrono>
+#include <atomic>
 #include <list>
 #include <map>
 #include <mutex>
@@ -74,6 +75,8 @@ class ShotResult;
 class LocalEventEngineJob;
 class SequenceJob;
 class EngineConflictPolicy;
+
+enum class SequenceSchedulingMode { Normal, Interleaved };
 
 
 class LocalEventEngineScheduler : public EventEngineScheduler,
@@ -136,6 +139,11 @@ public:
     void getEngineStates(std::map<EngineID, EngineState>& engineStates) const;
 
     void setEngineConflictPolicy(const std::shared_ptr<EngineConflictPolicy>& policy);
+    void setSequenceSchedulingMode(SequenceSchedulingMode mode);
+    SequenceSchedulingMode getSequenceSchedulingMode() const;
+
+    static std::string sequenceSchedulingModeToString(SequenceSchedulingMode mode);
+    static bool parseSequenceSchedulingMode(const std::string& value, SequenceSchedulingMode& mode);
 
     bool getParseResult(const ParseID& parseID, std::shared_ptr<ParseResult>& parseResult) const;
     bool getShotResult(const ShotID& shotID, std::shared_ptr<ShotResult>& shotResult) const;
@@ -163,7 +171,16 @@ private:
     static std::map<std::string, unsigned> playMessageIDs;
 
     void addSequenceJob(const std::shared_ptr<SequenceJob>& job);
-    void refreshSequenceJobs();
+    void refreshSequenceJobs(const std::set<EngineJobID>& queuedJobIDs);
+    void refreshQueuedSequenceJobs();
+    bool getSequenceIDForJob(const EngineJobID& jobID, SequenceID& seqid) const;
+    bool getActiveSequenceJob(const SequenceID& seqid, std::shared_ptr<SequenceJob>& job) const;
+    bool getSequenceJob(const SequenceID& seqid, std::shared_ptr<SequenceJob>& job) const;
+    bool getSequenceJobForQueuedJob(const EngineJobID& queuedJobID, std::shared_ptr<SequenceJob>& job) const;
+    void markSequenceJobSubmitted(const EngineJobID& jobID);
+    void promoteSequenceJob(const std::shared_ptr<SequenceJob>& job);
+    void completeSequenceJob(const std::shared_ptr<SequenceJob>& job);
+    void updateSequenceJobStatus(const EngineJobID& jobID, const EngineJobStatus& status);
 
 
     // void play(const ShotID& shotID, const std::shared_ptr<Shot>& shot);
@@ -208,6 +225,7 @@ private:
     std::chrono::milliseconds ownedDevicePlayReadyTimeout;
     std::chrono::milliseconds ownedDeviceTriggerTimeout;
     std::chrono::milliseconds ownedDevicePlayCompleteGrace;
+    std::atomic<SequenceSchedulingMode> sequenceSchedulingMode;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;  
 

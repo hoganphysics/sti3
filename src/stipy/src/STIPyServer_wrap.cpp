@@ -26,7 +26,9 @@ void init_STIPyServer(py::module& m)
 
         .def("makeshot", py::overload_cast<const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("shotType"))
         .def("makeshot", py::overload_cast<const std::function<void(void)>&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("shotType"))
+        .def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::string&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("mainFile"), py::arg("shotType"))
         .def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("vars"), py::arg("shotType"))
+        .def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const std::string&, const STI::Engine::ShotType&>(&STIPyServer::makeshot), py::arg("func"), py::arg("vars"), py::arg("mainFile"), py::arg("shotType"))
         // .def("makesequence", py::overload_cast<>(&STIPyServer::makesequence))
         
         .def("parse", py::overload_cast<const std::shared_ptr<STIPyShot>&>(&STIPyServer::parse), py::arg("shot"))

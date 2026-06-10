@@ -28,6 +28,11 @@ public:
     std::ostream* getostream();
     bool getistream(std::shared_ptr<std::istream>& istream);
 
+    unsigned getFileSize() const;
+    bool exists() const;
+    std::string md5Checksum();
+    std::string getBytes() const;
+
     bool openFile();
     void closeFile();
 
@@ -53,6 +58,7 @@ private:
     FileID fileID;
 
     std::shared_ptr<std::stringstream> data;
+    bool hasFile;
 
     mutable std::mutex fileMutex;
 };

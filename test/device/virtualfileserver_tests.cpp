@@ -28,7 +28,7 @@ TEST_CASE("VirtualFileServer: add, find, size, and delete") {
     REQUIRE(localHolder->openFile());
     REQUIRE(localHolder->write(payload.data(), static_cast<unsigned>(payload.size())));
     localHolder->closeFile();
-    server.addFile(localHolder);
+    REQUIRE(server.addFile(localHolder));
     auto fid = localHolder->getID();
 
     CHECK(server.findFile(fid));
@@ -45,7 +45,7 @@ TEST_CASE("VirtualFileServer: transfer stored virtual file to local file") {
     auto source = std::make_shared<VirtualFileHolder>(device.getID(), fid);
     source->openFile();
     (*source) << "payload";
-    server.addFile(source);
+    REQUIRE(server.addFile(source));
 
     TempDir td;
     auto destination = std::make_shared<LocalFileHolder>("dest", td.path.string(), "out.bin");

@@ -46,6 +46,12 @@ TEST_CASE("Utils: trim") {
     REQUIRE(trimmedCustom == "Custom");
 }
 
+TEST_CASE("Utils: normalizeStringForLookup") {
+    REQUIRE(STI::Utils::normalizeStringForLookup(" Interleaved ") == "interleaved");
+    REQUIRE(STI::Utils::normalizeStringForLookup("sequence-mode_value") == "sequencemodevalue");
+    REQUIRE(STI::Utils::normalizeStringForLookup("AlreadyNormalized") == "alreadynormalized");
+}
+
 TEST_CASE("Utils: replaceChar and replaceChars") {
     std::string original = "banana";
     std::string replacedChar = STI::Utils::replaceChar(original, "a", "o");
@@ -101,4 +107,3 @@ TEST_CASE("Utils: printTimeFormated") {
     formatted = STI::Utils::printTimeFormated(time_ns);
     REQUIRE(formatted == "33ns");
 }
-

@@ -25,6 +25,7 @@ struct ChannelDataTuple
 {
 	std::string name;
 	STI::Utils::MixedValue value;
+	STI::Utils::MixedValue measurement;
 };
 
 
@@ -50,6 +51,7 @@ public:
 
 	std::string getChannelName(short channel) const;
 	STI::Utils::MixedValue getLastValue(short channel) const;
+	STI::Utils::MixedValue getLastMeasurement(short channel) const;
 
 private:
 	
@@ -65,6 +67,7 @@ private:
     void setChannelData(const std::shared_ptr<RemoteChannel>& channel);
 
     STI::Utils::MixedValue _getLastValue(short channel) const;
+    STI::Utils::MixedValue _getLastMeasurement(short channel) const;
     std::string _getChannelName(short channel) const;
 
     friend class ChannelUpdater;
@@ -106,4 +109,3 @@ private:
 } //STI
 
 #endif
-

@@ -2485,6 +2485,8 @@ _CORBA_MODULE_BEG
       TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
       ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
       TFileServer_ptr getFileServer();
+      char* getBasePath();
+      char* getTemporaryPath();
       void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult);
       ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner);
       ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult, ::CORBA::Boolean isOwner);
@@ -2531,6 +2533,8 @@ _CORBA_MODULE_BEG
       virtual TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector) = 0;
       virtual ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements) = 0;
       virtual TFileServer_ptr getFileServer() = 0;
+      virtual char* getBasePath() = 0;
+      virtual char* getTemporaryPath() = 0;
       virtual void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult) = 0;
       virtual ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner) = 0;
       virtual ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult, ::CORBA::Boolean isOwner) = 0;

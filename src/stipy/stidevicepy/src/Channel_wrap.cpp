@@ -44,6 +44,10 @@ void init_Channel(py::module& m)
                 MixedValuePy value(self.getLastValue());
                 return value;
             })
+        .def("getLastMeasurement", [](Channel& self) {
+                MixedValuePy value(self.getLastMeasurement());
+                return value;
+            })
 //        .def("getMetaData", &Channel::getMetaData)
         // .def("getMetaData", py::overload_cast<>(&Channel::getMetaData, py::const_))
         // .def("getMetaData", py::overload_cast<const std::string&>(&Channel::getMetaData, py::const_))
@@ -100,6 +104,11 @@ void init_Channel(py::module& m)
                 self->setUnits(units);
                 return self;
             }, py::arg("units") )
+        .def("setMeasurementUnits",
+            [](std::shared_ptr<STI::Device::LocalChannel>& self, const std::string& units) {
+                self->setMeasurementUnits(units);
+                return self;
+            }, py::arg("units") )
         .def("setMinValue", 
             [](std::shared_ptr<STI::Device::LocalChannel>& self, const MixedValuePy& value) {
                 const MixedValue& v = static_cast<const MixedValue&>(value);
@@ -131,4 +140,3 @@ void init_Channel(py::module& m)
 
 
 }
-

@@ -530,16 +530,12 @@ void NetworkDeviceHub::refreshHubConnections()
 					else {
 						// std::cerr << "Debug: Hub " << knownHubID.getID() << " is not responding. Removing..." << std::endl;
 						localHub->disconnect(knownHubID);
-						continue;
+						contextToHubID.erase(it);
 					}
 
-					// std::cerr << "Debug: Redistributing nodes to hub " << knownHubID.getID() << std::endl;
-					hub->distributeNodes(getID());
 				}
 				// std::set<STI::Device::DeviceID> nodeIDs;
 				// getDeviceIDs(nodeIDs);
-				
-				continue;		//already connected
 			}
 			else {
 				contextToHubID.erase(it);	//remove stale entry
@@ -553,11 +549,6 @@ void NetworkDeviceHub::refreshHubConnections()
 		
 		contextToHubID[hubContext] = remoteHub->getID();
 
-		if (localHub->containsHub(remoteHub->getID())) {
-			// std::cerr << "Debug: Already connected to hub " << remoteHub->getID().getID() << ". Distributing nodes..." << std::endl;
-			remoteHub->distributeNodes(getID());
-			continue;		//already connected
-		}		
 		if (LocalDeviceHub::connect(remoteHub, deviceHubWrapper)) {
 			// std::cerr << "Debug: Reconnected to hub " << remoteHub->getID().getID() << std::endl;		
 		}

@@ -1534,6 +1534,10 @@ _CORBA_MODULE_BEG
       
       ::CORBA::Short wordsize;
 
+      ::CORBA::ULong length;
+
+      ::CORBA::ULong bytes;
+
       TMixedBinaryData data;
 
     
@@ -6984,6 +6988,8 @@ _CORBA_MODULE_BEG
 
       TChannelUpdateTupleSeq channelValues;
 
+      TChannelUpdateTupleSeq measurementValues;
+
       ::CORBA::Short channelNumber;
 
       ::CORBA::String_member channelName;
@@ -7196,6 +7202,8 @@ _CORBA_MODULE_BEG
       TMixedValueType outputType;
 
       TMixedValue lastValue;
+
+      TMixedValue lastMeasurement;
 
       TMixedValue metaData;
 

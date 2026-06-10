@@ -24,7 +24,7 @@ using STI::Utils::MixedValue;
 
 
 Logger::Logger(const std::string& name, LocalLogManager* manager)
-: name(name), manager(manager), messageGrouper(this), logTaskNumber(0)
+: name(name), logTaskNumber(0), messageGrouper(this), manager(manager), nextStreamInsertionStartsEntry(false)
 {
     messageGrouper.setWarmup(1000);      //ms
     messageGrouper.setCooldown(1000);    //ms
@@ -263,7 +263,7 @@ std::string Logger::getLog() const
 Logger& Logger::operator<<(manip1 fp)
 {
     std::unique_lock<std::mutex> loglock(logMutex);
-    auto mess = std::make_shared<LogStreamMessage>(fp);
+    auto mess = std::make_shared<LogStreamMessage>(fp, consumeNextStreamEntry());
     messageGrouper.addMessage(mess);
     return *this;
 }
@@ -271,7 +271,7 @@ Logger& Logger::operator<<(manip1 fp)
 Logger& Logger::operator<<(manip2 fp)
 {
     std::unique_lock<std::mutex> loglock(logMutex);
-    auto mess = std::make_shared<LogStreamMessage>(fp);
+    auto mess = std::make_shared<LogStreamMessage>(fp, consumeNextStreamEntry());
     messageGrouper.addMessage(mess);
     return *this;
 }
@@ -279,7 +279,7 @@ Logger& Logger::operator<<(manip2 fp)
 Logger& Logger::operator<<(manip3 fp)
 {
     std::unique_lock<std::mutex> loglock(logMutex);
-    auto mess = std::make_shared<LogStreamMessage>(fp);
+    auto mess = std::make_shared<LogStreamMessage>(fp, consumeNextStreamEntry());
     messageGrouper.addMessage(mess);
     return *this;
 }
@@ -303,11 +303,46 @@ void Logger::append(const std::string& input)
 void Logger::append(const std::string& prefix, const std::string& input)
 {
     std::unique_lock<std::mutex> loglock(logMutex);
-    log << prefix << " ";
-    log << input;
-    log << std::endl;
+    nextStreamInsertionStartsEntry = false;
+
+    if (input.empty()) {
+        log << prefix << " " << std::endl;
+    }
+    else {
+        std::string::size_type start = 0;
+        while (start < input.size()) {
+            const auto end = input.find('\n', start);
+            const auto line = input.substr(start, end == std::string::npos ? std::string::npos : end - start);
+
+            log << prefix << " ";
+            log << line;
+            log << std::endl;
+
+            if (end == std::string::npos) {
+                break;
+            }
+
+            start = end + 1;
+            if (start == input.size()) {
+                break;
+            }
+        }
+    }
 
     sendLogWriteMessage();
+}
+
+void Logger::startNextStreamEntry()
+{
+    std::unique_lock<std::mutex> loglock(logMutex);
+    nextStreamInsertionStartsEntry = true;
+}
+
+bool Logger::consumeNextStreamEntry()
+{
+    const bool result = nextStreamInsertionStartsEntry;
+    nextStreamInsertionStartsEntry = false;
+    return result;
 }
 
 void Logger::sendLogWriteMessage()

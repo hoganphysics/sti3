@@ -259,8 +259,7 @@ pybind11::object DevicePy::read(short channel, const MixedValuePy& valuepy)
 
     if (success) {
         pybind11::gil_scoped_acquire acquire;
-        MixedValuePy pydata(data);
-        return pydata.getValue_py();
+        return MixedValuePy::convertReadResult(data);
     }
     return py::none();
 }

@@ -5,6 +5,7 @@
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/SynchronizedMap.h>
 
 #include <sti/device/DeviceID.h>
 
@@ -22,9 +23,10 @@ class LocalFileServer : public STI::Utils::FileServer
 {
 public:
 
-    LocalFileServer(const STI::Device::DeviceID& localID);
+	LocalFileServer(const STI::Device::DeviceID& localID);
 	~LocalFileServer();
 
+    bool addFile(const std::shared_ptr<FileHolder>& file) override;
 	bool findFile(const FileID& fileID);
 	int getFileSize(const FileID& fileID);
 	bool transferFile(const FileID& source, const std::shared_ptr<FileHolder>& destination, FileTransferType type);
@@ -36,6 +38,7 @@ private:
     STI::Device::DeviceID localID;
 
     LocalFileHolderFactory localFileHolderFactory;
+    SynchronizedMap<FileID, std::shared_ptr<FileHolder>> registeredFiles;
 };
 
 
@@ -43,4 +46,3 @@ private:
 } //STI
 
 #endif
-

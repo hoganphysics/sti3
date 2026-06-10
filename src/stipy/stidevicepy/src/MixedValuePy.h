@@ -24,6 +24,8 @@ public:
     const STI::Utils::MixedValue& getMixedValue() const;
     STI::Utils::MixedValue& getMixedValue();
     pybind11::object getValue_py() const;
+    std::shared_ptr<STI::Utils::BinaryData> getBinary_py() const;
+    std::shared_ptr<STI::Utils::Image> getImage_py() const;
 
     void setValue_py(const pybind11::object& value);
     void addValue_py(const pybind11::handle& value);
@@ -34,6 +36,7 @@ public:
     // pybind11::object flatten() const;
 
     static pybind11::object convertValue(const MixedValue& value);
+    static pybind11::object convertReadResult(const MixedValue& value);
 
 private:
 
@@ -79,4 +82,3 @@ private:
 } //STI
 
 #endif
-

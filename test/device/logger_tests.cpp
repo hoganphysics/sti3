@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -149,6 +150,20 @@ std::string readLogFile(const std::filesystem::path& path) {
     return fileholder_test_support::readFileToString(path);
 }
 
+std::vector<std::string> readNonEmptyLines(const std::filesystem::path& path) {
+    std::stringstream stream(readLogFile(path));
+    std::vector<std::string> lines;
+    std::string line;
+
+    while (std::getline(stream, line)) {
+        if (!line.empty()) {
+            lines.push_back(line);
+        }
+    }
+
+    return lines;
+}
+
 } // namespace
 
 TEST_CASE("Logger streams group messages and persist to log file") {
@@ -175,6 +190,90 @@ TEST_CASE("Logger streams group messages and persist to log file") {
     auto contents = readLogFile(logPath);
     CHECK(contents.find("alpha") != std::string::npos);
     CHECK(contents.find("beta") != std::string::npos);
+}
+
+TEST_CASE("Logger append writes rapid messages as separate timestamped lines", "[log] [logger]") {
+    using namespace std::chrono_literals;
+
+    fileholder_test_support::TempDir tempDir;
+    auto config = makePersistenceConfig(tempDir.path, "logger-append-lines");
+    auto device = std::make_shared<LoggerTestDevice>(config, "logger-append-lines");
+
+    std::shared_ptr<LocalLogManager> logManager;
+    REQUIRE(device->getLogManager(logManager));
+    auto persistence = getPersistence(device);
+    REQUIRE(persistence);
+
+    TimeStamp now;
+    auto logDir = ensureLogDir(persistence, device->getID(), now);
+
+    auto& logger = logManager->log("append");
+    logger.append("alpha");
+    logger.append("beta");
+
+    std::filesystem::path logPath;
+    REQUIRE(waitForLogFile(logDir, logPath, 5s));
+    auto lines = readNonEmptyLines(logPath);
+
+    REQUIRE(lines.size() == 2);
+    CHECK(lines[0].front() == '<');
+    CHECK(lines[1].front() == '<');
+    CHECK(lines[0].find("> alpha") != std::string::npos);
+    CHECK(lines[1].find("> beta") != std::string::npos);
+}
+
+TEST_CASE("Logger repeated stream entries keep timestamps when grouped", "[log] [logger]") {
+    using namespace std::chrono_literals;
+
+    fileholder_test_support::TempDir tempDir;
+    auto config = makePersistenceConfig(tempDir.path, "logger-stream-lines");
+    auto device = std::make_shared<LoggerTestDevice>(config, "logger-stream-lines");
+
+    std::shared_ptr<LocalLogManager> logManager;
+    REQUIRE(device->getLogManager(logManager));
+    auto persistence = getPersistence(device);
+    REQUIRE(persistence);
+
+    TimeStamp now;
+    auto logDir = ensureLogDir(persistence, device->getID(), now);
+
+    logManager->log("stream-lines") << "alpha";
+    logManager->log("stream-lines") << "beta";
+
+    std::filesystem::path logPath;
+    REQUIRE(waitForLogFile(logDir, logPath, 5s));
+    auto lines = readNonEmptyLines(logPath);
+
+    REQUIRE(lines.size() == 2);
+    CHECK(lines[0].front() == '<');
+    CHECK(lines[1].front() == '<');
+    CHECK(lines[0].find("> alpha") != std::string::npos);
+    CHECK(lines[1].find("> beta") != std::string::npos);
+}
+
+TEST_CASE("Logger chained stream insertions stay on one log line", "[log] [logger]") {
+    using namespace std::chrono_literals;
+
+    fileholder_test_support::TempDir tempDir;
+    auto config = makePersistenceConfig(tempDir.path, "logger-stream-chain");
+    auto device = std::make_shared<LoggerTestDevice>(config, "logger-stream-chain");
+
+    std::shared_ptr<LocalLogManager> logManager;
+    REQUIRE(device->getLogManager(logManager));
+    auto persistence = getPersistence(device);
+    REQUIRE(persistence);
+
+    TimeStamp now;
+    auto logDir = ensureLogDir(persistence, device->getID(), now);
+
+    logManager->log("stream-chain") << "alpha " << "beta";
+
+    std::filesystem::path logPath;
+    REQUIRE(waitForLogFile(logDir, logPath, 5s));
+    auto lines = readNonEmptyLines(logPath);
+
+    REQUIRE(lines.size() == 1);
+    CHECK(lines[0].find("> alpha beta") != std::string::npos);
 }
 
 TEST_CASE("Logger addLogTask registers task and writes output") {

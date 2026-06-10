@@ -36,6 +36,26 @@ TEST_CASE("LocalBinaryDataStream transfers chunks into target BinaryData")
     CHECK(targetBytes != sourceBytes); // merged data is a deep copy
 }
 
+TEST_CASE("LocalBinaryDataStream transfers typed source data as bytes")
+{
+    BinaryData source;
+    auto* values = new int[3]{10, 20, 30};
+    source.assign(values, 3);
+
+    auto target = std::make_shared<BinaryData>();
+
+    LocalBinaryDataStream stream(&source, 5);
+    auto targetStream = std::make_shared<LocalBinaryDataStreamTarget>(target);
+
+    stream.transfer(targetStream);
+
+    char* sourceBytes = nullptr;
+    char* targetBytes = nullptr;
+    REQUIRE(source.getBytes(sourceBytes));
+    REQUIRE(target->getBytes(targetBytes));
+    CHECK(std::string(targetBytes, target->bytes()) == std::string(sourceBytes, source.bytes()));
+}
+
 TEST_CASE("LocalBinaryDataStream is a no-op when data or target is null")
 {
     BinaryData source;

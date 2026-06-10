@@ -2,6 +2,7 @@
 
 #include "../../src/device/src/LocalFileServer.h"
 #include <sti/utils/LocalFileHolder.h>
+#include <sti/utils/VirtualFileHolder.h>
 
 #include "fileholder_tests_support.h"
 
@@ -19,6 +20,7 @@ using STI::Device::DeviceID;
 using STI::Utils::FileID;
 using STI::Utils::LocalFileHolder;
 using STI::Utils::LocalFileServer;
+using STI::Utils::VirtualFileHolder;
 
 TEST_CASE("LocalFileServer: find and size honor persistence location") {
     TempDir td;
@@ -68,6 +70,37 @@ TEST_CASE("LocalFileServer: transfer and delete") {
     CHECK(server.deleteFile(sourceID));
     CHECK_FALSE(server.findFile(sourceID));
     CHECK_FALSE(server.deleteFile(sourceID)); // already gone
+}
+
+TEST_CASE("LocalFileServer: registered virtual file transfers by FileID") {
+    TempDir td;
+    DeviceID localDevice = makeTestDeviceID();
+    LocalFileServer server(localDevice);
+
+    FileID sourceID = makeFileID(localDevice, td.path / "virtual", "payload.txt");
+    auto source = std::make_shared<VirtualFileHolder>(localDevice.getID(), sourceID);
+    const std::string payload = "registered virtual payload\nline 2\n";
+
+    REQUIRE(source->openFile());
+    REQUIRE(source->write(payload.data(), static_cast<unsigned>(payload.size())));
+    source->closeFile();
+
+    REQUIRE(server.addFile(source));
+
+    CHECK_FALSE(std::filesystem::exists(sourceID.getFullFilename()));
+    REQUIRE(server.findFile(sourceID));
+    CHECK(server.getFileSize(sourceID) == static_cast<int>(payload.size()));
+
+    auto destination = std::make_shared<LocalFileHolder>("dest-origin", td.path.string(), "copy.txt");
+    REQUIRE(server.transferFile(sourceID, destination, STI::Utils::FileTransferType::Binary));
+    CHECK(readFileToString(destination->getFilename()) == payload);
+
+    auto partialDestination = std::make_shared<LocalFileHolder>("dest-origin", td.path.string(), "partial.txt");
+    REQUIRE(server.transferFilePartial(sourceID, partialDestination, 1, 1));
+    CHECK(readFileToString(partialDestination->getFilename()) == "line 2\n");
+
+    CHECK(server.deleteFile(sourceID));
+    CHECK_FALSE(server.findFile(sourceID));
 }
 
 TEST_CASE("LocalFileServer: transferFilePartial returns line windows") {

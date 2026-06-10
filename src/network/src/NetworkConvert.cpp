@@ -15,6 +15,8 @@
 #include "generated/orbTypes.h"
 
 #include <omniORB4/internal/orbParameters.h>
+#include <algorithm>
+#include <limits>
 #include <vector>
 
 
@@ -35,6 +37,108 @@ using STI::TNetwork::TFileID;
 using STI::Network::RemoteBinaryDataStream;
 using STI::Network::NetworkBinaryDataStreamTarget;
 using STI::Network::NetworkBinaryDataStream;
+
+namespace
+{
+CORBA::ULong toCorbaULong(size_t value)
+{
+	return static_cast<CORBA::ULong>(
+		std::min(value, static_cast<size_t>(std::numeric_limits<CORBA::ULong>::max())));
+}
+
+size_t binaryTypeWordsize(STI::TNetwork::TBinaryType type)
+{
+	using STI::TNetwork::TBinaryType;
+	switch (type)
+	{
+	case TBinaryType::BinaryUShort:
+	case TBinaryType::BinaryShort:
+		return sizeof(CORBA::Short);
+	case TBinaryType::BinaryULong:
+	case TBinaryType::BinaryLong:
+		return sizeof(CORBA::Long);
+	case TBinaryType::BinaryFloat:
+		return sizeof(CORBA::Float);
+	case TBinaryType::BinaryDouble:
+		return sizeof(CORBA::Double);
+	case TBinaryType::BinaryUChar:
+	case TBinaryType::BinaryChar:
+	case TBinaryType::BinaryStream:
+	default:
+		return sizeof(char);
+	}
+}
+
+size_t sequenceLength(const TBinaryData& tBin)
+{
+	using STI::TNetwork::TBinaryType;
+	switch (tBin.data._d())
+	{
+	case TBinaryType::BinaryUChar:
+		return tBin.data.data_uchar().length();
+	case TBinaryType::BinaryChar:
+		return tBin.data.data_char().length();
+	case TBinaryType::BinaryUShort:
+		return tBin.data.data_ushort().length();
+	case TBinaryType::BinaryShort:
+		return tBin.data.data_short().length();
+	case TBinaryType::BinaryULong:
+		return tBin.data.data_ulong().length();
+	case TBinaryType::BinaryLong:
+		return tBin.data.data_long().length();
+	case TBinaryType::BinaryFloat:
+		return tBin.data.data_float().length();
+	case TBinaryType::BinaryDouble:
+		return tBin.data.data_double().length();
+	case TBinaryType::BinaryStream:
+	default:
+		return 0;
+	}
+}
+
+size_t binaryLengthMetadata(const TBinaryData& tBin)
+{
+	if (tBin.length != 0 || tBin.bytes == 0) {
+		return static_cast<size_t>(tBin.length);
+	}
+	return sequenceLength(tBin);
+}
+
+size_t binaryWordsizeMetadata(const TBinaryData& tBin)
+{
+	if (tBin.wordsize > 0) {
+		return static_cast<size_t>(tBin.wordsize);
+	}
+	return binaryTypeWordsize(tBin.data._d());
+}
+
+void setBinaryMetadata(const std::shared_ptr<BinaryData>& bin, const TBinaryData& tBin)
+{
+	if (bin == 0) {
+		return;
+	}
+
+	bin->setMetadata(binaryLengthMetadata(tBin), binaryWordsizeMetadata(tBin));
+}
+
+template<typename T>
+T* copyBuffer(const T* data, size_t length)
+{
+	auto* copy = new T[length];
+	std::copy(data, data + length, copy);
+	return copy;
+}
+
+template<typename OutT, typename InT>
+OutT* copyBufferAs(const InT* data, size_t length)
+{
+	auto* copy = new OutT[length];
+	for (size_t i = 0; i < length; ++i) {
+		copy[i] = static_cast<OutT>(data[i]);
+	}
+	return copy;
+}
+} // namespace
 
 
 template<>
@@ -178,6 +282,14 @@ TMixedValue STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& val
 template<>
 bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMixedValue& tValue)
 {
+	return convertMixedValue(value, tValue, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertMixedValue(
+	const MixedValue& value,
+	TMixedValue& tValue,
+	BinaryPayloadPolicy policy)
+{
 	// tValue.type = convert<MixedValueType, TMixedValueType>(value.getType());
 
 	switch (value.getType())
@@ -199,14 +311,15 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 		break;
 	case MixedValueType::Vector:
 		tValue.values(STI::TNetwork::TMixedValueSeq());
-		convert<MixedValue, TMixedValue>(value.getVector(), tValue.values());
+		{
+			const auto& values = value.getVector();
+			auto& tValues = tValue.values();
+			tValues.length(static_cast<CORBA::ULong>(values.size()));
 
-		// const std::vector<MixedValue>& values = value.getVector();
-		// tValue.values.length(values.size());
-		
-		// for (unsigned i = 0; i < values.size(); ++i) {
-		// 	tValue.values[i] = convert<MixedValue, TMixedValue>(values.at(i));
-		// }
+			for (CORBA::ULong i = 0; i < tValues.length() && i < values.size(); ++i) {
+				convertMixedValue(values.at(i), tValues[i], policy);
+			}
+		}
 
 		break;
 	case MixedValueType::VectorInt:
@@ -237,7 +350,9 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 			auto bin = value.getBinary();
 
 			if (bin != 0 ) {
-				convert<std::shared_ptr<BinaryData>, TBinaryData>(bin, tValue.valueBin());
+				TBinaryData tBin;
+				convertBinaryData(bin, tBin, policy);
+				tValue.valueBin(tBin);
 
 				// valueBinRef.wordsize = static_cast<CORBA::Short>(bin->wordsize());
 
@@ -266,7 +381,7 @@ bool STI::Network::convert<MixedValue, TMixedValue>(const MixedValue& value, TMi
 			STI::TNetwork::TImage tImage;
 
 			if (value.getImage() != 0) {
-				convert<Image, TImage>(*(value.getImage()), tImage);
+				convertImage(*(value.getImage()), tImage, policy);
 			}
 			
 			tValue.value_image(tImage);
@@ -304,6 +419,14 @@ MixedValue STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tVa
 template<>
 bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, MixedValue& value)
 {
+	return convertMixedValue(tValue, value, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertMixedValue(
+	const TMixedValue& tValue,
+	MixedValue& value,
+	BinaryPayloadPolicy policy)
+{
 	// value = convert<TMixedValue, MixedValue>(tValue);
 
 	switch (tValue._d())
@@ -326,7 +449,9 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	case TMixedValueType::MixedValueVector:
 
 		for (unsigned i = 0; i < tValue.values().length(); ++i) {
-			value.addValue(convert<TMixedValue, MixedValue>(tValue.values()[i]));
+			MixedValue child;
+			convertMixedValue(tValue.values()[i], child, policy);
+			value.addValue(child);
 		}
 
 		break;
@@ -362,7 +487,7 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 			value.setValue(bin);
 
 			if (bin != 0 ) {
-				convert<TBinaryData, std::shared_ptr<BinaryData>>(tValue.valueBin(), bin);
+				convertBinaryData(tValue.valueBin(), bin, policy);
 			}
 		}
 		break;
@@ -376,7 +501,7 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	case TMixedValueType::MixedValueImage:
 		{
 			auto image = std::make_shared<Image>();
-			convert<TImage, Image>(tValue.value_image(), *image);
+			convertImage(tValue.value_image(), *image, policy);
 			value.setValue(image);
 		}
 		break;
@@ -389,21 +514,63 @@ bool STI::Network::convert<TMixedValue, MixedValue>(const TMixedValue& tValue, M
 	return true;
 }
 
+bool STI::Network::convertChannelUpdateMap(
+	const std::map<short, MixedValue>& values,
+	STI::TNetwork::TChannelUpdateTupleSeq& tValues,
+	BinaryPayloadPolicy policy)
+{
+	tValues.length(static_cast<CORBA::ULong>(values.size()));
+
+	auto it = values.begin();
+	for (CORBA::ULong i = 0; i < tValues.length() && it != values.end(); ++i, ++it) {
+		tValues[i].channelNumber = static_cast<CORBA::Short>(it->first);
+		convertMixedValue(it->second, tValues[i].value, policy);
+	}
+
+	return values.size() == tValues.length();
+}
+
+bool STI::Network::convertChannelUpdateMap(
+	const STI::TNetwork::TChannelUpdateTupleSeq& tValues,
+	std::map<short, MixedValue>& values,
+	BinaryPayloadPolicy policy)
+{
+	values.clear();
+
+	for (CORBA::ULong i = 0; i < tValues.length(); ++i) {
+		MixedValue value;
+		convertMixedValue(tValues[i].value, value, policy);
+		values[static_cast<short>(tValues[i].channelNumber)] = value;
+	}
+
+	return values.size() == tValues.length();
+}
+
 template<>
 bool STI::Network::convert<std::shared_ptr<BinaryData>, TBinaryData>(const std::shared_ptr<BinaryData>& bin, TBinaryData& tBin)
+{
+	return convertBinaryData(bin, tBin, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertBinaryData(
+	const std::shared_ptr<BinaryData>& bin,
+	TBinaryData& tBin,
+	BinaryPayloadPolicy policy)
 {
 	if (bin == 0) return false;
 
 	bool success = false;
 
 	tBin.wordsize = static_cast<CORBA::Short>(bin->wordsize());
+	tBin.length = toCorbaULong(bin->length());
+	tBin.bytes = toCorbaULong(bin->bytes());
 
 	size_t maxNetworkMessage = omni::orbParameters::giopMaxMsgSize;
 
 	//size_t maxNetworkMessage = 1000000;
 
-	if (bin->bytes() > maxNetworkMessage) {
-		auto networkDataStream = std::make_shared<NetworkBinaryDataStream>(bin.get(), maxNetworkMessage);
+	if (policy == BinaryPayloadPolicy::PreferStreamReference || bin->bytes() > maxNetworkMessage) {
+		auto networkDataStream = std::make_shared<NetworkBinaryDataStream>(bin, maxNetworkMessage);
 		bin->attachStream(networkDataStream);
 		STI::TNetwork::TBinaryDataStream_var tDataStream;
 
@@ -412,6 +579,15 @@ bool STI::Network::convert<std::shared_ptr<BinaryData>, TBinaryData>(const std::
 		}
 		tBin.data.data_stream(tDataStream);
 		return true;
+	}
+
+	if (!bin->hasLocalData() && bin->hasStream()) {
+		if (!bin->materialize()) {
+			return false;
+		}
+		tBin.wordsize = static_cast<CORBA::Short>(bin->wordsize());
+		tBin.length = toCorbaULong(bin->length());
+		tBin.bytes = toCorbaULong(bin->bytes());
 	}
 
 	//Here replace() sets the pointer in the underlying corba sequence to raw data. We use release_=false when
@@ -501,11 +677,25 @@ bool STI::Network::convert<std::shared_ptr<BinaryData>, TBinaryData>(const std::
 			success = true;
 		}
 	}
+	else if (bin->bytes() == 0) {
+		auto seq = STI::TNetwork::TMixedBinaryData::_data_char_seq();
+		tBin.data.data_char(seq);
+		tBin.data.data_char().length(0);
+		success = true;
+	}
 	return success;
 }
 
 template<>
 bool STI::Network::convert<TBinaryData, std::shared_ptr<BinaryData>>(const TBinaryData& tBin, std::shared_ptr<BinaryData>& bin)
+{
+	return convertBinaryData(tBin, bin, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertBinaryData(
+	const TBinaryData& tBin,
+	std::shared_ptr<BinaryData>& bin,
+	BinaryPayloadPolicy policy)
 {
 	if (bin == 0) return false;
 
@@ -522,91 +712,126 @@ bool STI::Network::convert<TBinaryData, std::shared_ptr<BinaryData>>(const TBina
 	{
 	case TBinaryType::BinaryUChar:
 		{
-			release = tBin.data.data_uchar().release();
-			length = tBin.data.data_uchar().length();
-			unsigned char* data = const_cast<TBinaryData&>(tBin).data.data_uchar().get_buffer(release);	//orphan if release = true
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_uchar();
+			release = seq.release();
+			length = seq.length();
+			unsigned char* buffer = seq.get_buffer(release);	//orphan if release = true
+			unsigned char* data = release ? buffer : copyBuffer(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryChar:
 		{
-			release = tBin.data.data_char().release();
-			length = tBin.data.data_char().length();
-			unsigned char* data = const_cast<TBinaryData&>(tBin).data.data_char().get_buffer(release);	//orphan if release = true
-			char* dataChar = reinterpret_cast<char*>(data);
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_char();
+			release = seq.release();
+			length = seq.length();
+			unsigned char* buffer = seq.get_buffer(release);	//orphan if release = true
+			char* dataChar = release ? reinterpret_cast<char*>(buffer) : copyBufferAs<char>(buffer, length);
 			bin->assign(dataChar, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryUShort:
 		{
-			release = tBin.data.data_ushort().release();
-			length = tBin.data.data_ushort().length();
-			unsigned short* data = const_cast<TBinaryData&>(tBin).data.data_ushort().get_buffer(release);	//orphan if release = true
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_ushort();
+			release = seq.release();
+			length = seq.length();
+			unsigned short* buffer = seq.get_buffer(release);	//orphan if release = true
+			unsigned short* data = release ? buffer : copyBuffer(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryShort:
 		{
-			release = tBin.data.data_short().release();
-			length = tBin.data.data_short().length();
-			short* data = const_cast<TBinaryData&>(tBin).data.data_short().get_buffer(release);	//orphan if release = true
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_short();
+			release = seq.release();
+			length = seq.length();
+			short* buffer = seq.get_buffer(release);	//orphan if release = true
+			short* data = release ? buffer : copyBuffer(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryULong:
 		{
 			CORBA::ULong x;
-			release = tBin.data.data_ulong().release();
-			length = tBin.data.data_ulong().length();
-			unsigned int* data = reinterpret_cast<unsigned int*>(
-				const_cast<TBinaryData&>(tBin).data.data_ulong().get_buffer(release)	//orphan if release = true
-				);
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_ulong();
+			release = seq.release();
+			length = seq.length();
+			CORBA::ULong* buffer = seq.get_buffer(release);	//orphan if release = true
+			unsigned int* data = release ? reinterpret_cast<unsigned int*>(buffer) : copyBufferAs<unsigned int>(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryLong:
 		{
-			release = tBin.data.data_long().release();
-			length = tBin.data.data_long().length();
-			int* data = reinterpret_cast<int*>(
-				const_cast<TBinaryData&>(tBin).data.data_long().get_buffer(release)		//orphan if release = true
-				);
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_long();
+			release = seq.release();
+			length = seq.length();
+			CORBA::Long* buffer = seq.get_buffer(release);		//orphan if release = true
+			int* data = release ? reinterpret_cast<int*>(buffer) : copyBufferAs<int>(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryFloat:
 		{
-			release = tBin.data.data_float().release();
-			length = tBin.data.data_float().length();
-			float* data = const_cast<TBinaryData&>(tBin).data.data_float().get_buffer(release);	//orphan if release = true
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_float();
+			release = seq.release();
+			length = seq.length();
+			float* buffer = seq.get_buffer(release);	//orphan if release = true
+			float* data = release ? buffer : copyBuffer(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryDouble:
 		{
-			release = tBin.data.data_double().release();
-			length = tBin.data.data_double().length();
-			double* data = const_cast<TBinaryData&>(tBin).data.data_double().get_buffer(release);	//orphan if release = true
+			auto& seq = const_cast<TBinaryData&>(tBin).data.data_double();
+			release = seq.release();
+			length = seq.length();
+			double* buffer = seq.get_buffer(release);	//orphan if release = true
+			double* data = release ? buffer : copyBuffer(buffer, length);
 			bin->assign(data, length);
+			setBinaryMetadata(bin, tBin);
 			success = true;
 		}
 		break;
 	case TBinaryType::BinaryStream:
 		{
+			STI::TNetwork::TBinaryDataStream_var streamRef =
+				STI::TNetwork::TBinaryDataStream::_duplicate(tBin.data.data_stream());
 			std::shared_ptr<STI::Utils::BinaryDataStream> remoteDataStream 
-				= std::make_shared<RemoteBinaryDataStream>(tBin.data.data_stream());
+				= std::make_shared<RemoteBinaryDataStream>(streamRef);
 
-			std::shared_ptr<STI::Network::NetworkBinaryDataStreamTarget> networkTarget
-				= std::make_shared<NetworkBinaryDataStreamTarget>(bin);
+			if (policy == BinaryPayloadPolicy::PreserveStreamReference) {
+				bin->attachStream(remoteDataStream, binaryLengthMetadata(tBin), binaryWordsizeMetadata(tBin));
+				success = true;
+			}
+			else {
+				std::shared_ptr<STI::Network::NetworkBinaryDataStreamTarget> networkTarget
+					= std::make_shared<NetworkBinaryDataStreamTarget>(bin);
 
-			remoteDataStream->transfer(networkTarget);
+				remoteDataStream->transfer(networkTarget);
+				setBinaryMetadata(bin, tBin);
+
+				if (!bin->hasLocalData() && tBin.bytes == 0) {
+					bin->allocate<char>(0);
+					setBinaryMetadata(bin, tBin);
+				}
+
+				success = bin->hasLocalData() || tBin.bytes == 0;
+			}
 		}
 		break;
 	default:
@@ -620,6 +845,11 @@ bool STI::Network::convert<TBinaryData, std::shared_ptr<BinaryData>>(const TBina
 
 template<>
 bool STI::Network::convert<Image, TImage>(const Image& image, TImage& tImage)
+{
+	return convertImage(image, tImage, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertImage(const Image& image, TImage& tImage, BinaryPayloadPolicy policy)
 {
 	tImage.fileID = convert<FileID, TFileID>(image.getFileID());
 
@@ -649,14 +879,14 @@ bool STI::Network::convert<Image, TImage>(const Image& image, TImage& tImage)
 	}
 	else if (image.getData(bin)) {
 		TBinaryData tBin;
-		convert<std::shared_ptr<BinaryData>, TBinaryData>(bin, tBin);	//no deep copy
+		convertBinaryData(bin, tBin, policy);	//no deep copy unless policy requires eager materialization
 		tImage.imageData.binary(tBin);
 	}
 	else {
 		//bin is null
 		bin = std::make_shared<BinaryData>();
 		TBinaryData tBin;
-		convert<std::shared_ptr<BinaryData>, TBinaryData>(bin, tBin);
+		convertBinaryData(bin, tBin, policy);
 
 		tImage.imageData.binary(tBin);
 	}
@@ -684,6 +914,11 @@ TImage STI::Network::convert<std::shared_ptr<Image>, TImage>(const std::shared_p
 template<>
 bool STI::Network::convert<TImage, Image>(const TImage& tImage, Image& image)
 {
+	return convertImage(tImage, image, BinaryPayloadPolicy::InlineOrEagerStream);
+}
+
+bool STI::Network::convertImage(const TImage& tImage, Image& image, BinaryPayloadPolicy policy)
+{
 	image.setFileID(convert<TFileID, FileID>(tImage.fileID));
 
 	image.setHeight( static_cast<unsigned>(tImage.height) );
@@ -705,7 +940,7 @@ bool STI::Network::convert<TImage, Image>(const TImage& tImage, Image& image)
 			image.setImageData(bin);
 
 			if (bin != 0) {
-				convert<TBinaryData, std::shared_ptr<BinaryData>>(tImage.imageData.binary(), bin);
+				convertBinaryData(tImage.imageData.binary(), bin, policy);
 			}
 		}
 		break;

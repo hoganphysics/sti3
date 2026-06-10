@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <limits>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -131,23 +132,35 @@ bool Image::write(const std::shared_ptr<FileServer>& sourceFileServer, const std
     if (fileHolder.isCached() && fileHolder.get() != 0) {
         
         success = sourceFileServer->transferFile(fileHolder.get()->getID(), destination, STI::Utils::FileTransferType::Binary);
+        if (success) {
+            imageData.reset();
+        }
     }
     else if (imageData.isCached() && imageData.get() != 0) {
-        destination->openFile();
+        auto data = imageData.get();
 
-        char* data;
-        imageData.get()->getBytes(data, false);  //keep ownership
-        success = destination->write(data, imageData.get()->bytes());
+        if (data->bytes() <= std::numeric_limits<unsigned>::max() && destination->openFile()) {
+            char* bytes = nullptr;
+            success = data->getBytes(bytes, false);  //keep ownership
 
-        destination->closeFile();
-        
-        auto destinationFileID = destination->getID();
-        
-        fileID.filename = destinationFileID.filename;
-        fileID.path = destinationFileID.path;
-        fileID.persistenceLocation = destinationFileID.persistenceLocation;
-        
-        fileHolder.set(destination);
+            if (success && data->bytes() > 0) {
+                success = bytes != nullptr &&
+                          destination->write(bytes, static_cast<unsigned>(data->bytes()));
+            }
+
+            destination->closeFile();
+        }
+
+        if (success) {
+            auto destinationFileID = destination->getID();
+
+            fileID.filename = destinationFileID.filename;
+            fileID.path = destinationFileID.path;
+            fileID.persistenceLocation = destinationFileID.persistenceLocation;
+
+            fileHolder.set(destination);
+            imageData.reset();
+        }
     }
     return success;
 }
@@ -242,4 +255,3 @@ void Image::load(Archive& archive)
 
 template void Image::load<cereal::XMLInputArchive>(cereal::XMLInputArchive&);
 template void Image::load<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
-

@@ -11,6 +11,7 @@
 #include <sstream> 
 #include <iomanip> 
 #include <filesystem>
+#include <limits>
 #include <system_error>
 
 
@@ -256,11 +257,18 @@ bool LocalFileHolder::write(const char* buffer, unsigned length)
 bool LocalFileHolder::write(const std::shared_ptr<BinaryData>& data)
 {
     if (data == 0) return false;
+    if (data->bytes() > std::numeric_limits<unsigned>::max()) return false;
 
-    char* cData;
-    data->getBytes(cData);
+    char* cData = nullptr;
+    if (!data->getBytes(cData)) {
+        return data->bytes() == 0;
+    }
 
-    return write(cData, data->bytes());
+    if (data->bytes() == 0) {
+        return true;
+    }
+
+    return write(cData, static_cast<unsigned>(data->bytes()));
 }
 
 void LocalFileHolder::closeFile()

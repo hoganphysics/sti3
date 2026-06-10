@@ -59,6 +59,7 @@ private:
 
     //ChannelRefreshListener
     void handleChannelRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value);
+    void handleChannelMeasurementRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value);
     void handleChannelNameRefreshEvent(short channelNumber, const std::string& name);
 
     LocalDevice* localDevice;
@@ -78,4 +79,3 @@ private:
 } //STI
 
 #endif
-

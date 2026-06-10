@@ -131,9 +131,12 @@ public:
 	std::shared_ptr<VirtualFileServer> makeVirtualFileServer() override
 	{
 		return std::make_shared<VirtualFileServer>();
-	}
+		}
 
-	void addSequence(const std::shared_ptr<SequenceResult>&) override {}
+		std::string getBasePath() const override { return ""; }
+		std::string getTemporaryPath() const override { return ""; }
+
+		void addSequence(const std::shared_ptr<SequenceResult>&) override {}
 	bool updateSequence(const SequenceEntryID&, const ShotID&, const EngineJobStatus&, bool) override { return false; }
 	bool saveSequence(const std::shared_ptr<SequenceResult>&, bool) override { return false; }
 

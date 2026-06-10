@@ -101,6 +101,16 @@ void init_DeviceMessage(py::module& m)
                 }
                 return values;
             })
+        .def("measurementValues",
+            [](const ChannelUpdateMessage& mess) {
+                py::dict values;
+                
+                for (auto& tuple : mess.measurementValues) {
+                    MixedValuePy pyval(tuple.second);
+                    values[py::int_{tuple.first}] = pyval;
+                }
+                return values;
+            })
         .def_readonly("channelNumber", &ChannelUpdateMessage::channelNumber, "Only for ChannelName messages")
         .def_readonly("channelName", &ChannelUpdateMessage::channelName)
         ;
@@ -196,4 +206,3 @@ void init_DeviceMessage(py::module& m)
         ;
 
 }
-

@@ -42,6 +42,11 @@ std::shared_ptr<STIPyGlobal> STIPyGlobal::getInstance()
 
 void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func)
 {
+    makeShot(shot, func, "");
+}
+
+void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func, const std::string& mainFile)
+{
     {
         std::unique_lock<std::mutex> shotLock(shotMutex);
 
@@ -80,7 +85,9 @@ void STIPyGlobal::makeShot(const std::shared_ptr<STIPyShot>& shot, const std::fu
     STI::Engine::ShotConfig& sc2 = const_cast<STI::Engine::ShotConfig&>(sc);    //temp
     auto& files = shot->group()->getStackTraceData()->getTimingFiles();
 
-    if (!files.empty()) {
+    if (!mainFile.empty()) {
+        sc2.file = mainFile;
+    } else if (!files.empty()) {
         sc2.file = files[0].getFullFilename();
     } else {
         sc2.file = "default.shot";

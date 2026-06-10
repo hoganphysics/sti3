@@ -89,8 +89,7 @@ bool Measurement::attachFile(const std::shared_ptr<STI::Utils::FileHolder>& file
 {
 	if (fileServer == 0) return false;
 
-	fileServer->addFile(file);
-	return true;
+	return fileServer->addFile(file);
 }
 
 bool Measurement::dataReady() const

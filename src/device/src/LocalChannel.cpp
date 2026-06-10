@@ -73,6 +73,19 @@ const STI::Utils::MixedValue LocalChannel::getLastValue() const
 	return lastValue;
 }
 
+void LocalChannel::saveLastMeasurement(const STI::Utils::MixedValue& value)
+{
+    std::unique_lock<std::mutex> channelLock(chMutex);
+	lastMeasurement = value;
+	_fireRefreshChannelMeasurementEvent();
+}
+
+const STI::Utils::MixedValue LocalChannel::getLastMeasurement() const
+{
+    std::unique_lock<std::mutex> channelLock(chMutex);
+	return lastMeasurement;
+}
+
 LocalChannel& LocalChannel::addMetaData(const std::string& key, const STI::Utils::MixedValue& value)
 {
     std::unique_lock<std::mutex> channelLock(chMutex);
@@ -96,6 +109,11 @@ LocalChannel& LocalChannel::setColor(const std::string& color)
 LocalChannel& LocalChannel::setUnits(const std::string& units)
 {
     return addMetaData("units", STI::Utils::MixedValue(units));
+}
+
+LocalChannel& LocalChannel::setMeasurementUnits(const std::string& units)
+{
+    return addMetaData("measurementUnits", STI::Utils::MixedValue(units));
 }
 
 LocalChannel& LocalChannel::setMinValue(const STI::Utils::MixedValue& value)
@@ -157,6 +175,15 @@ void LocalChannel::_fireRefreshChannelEvent()
     }
 }
 
+void LocalChannel::_fireRefreshChannelMeasurementEvent()
+{
+    for (auto& listener : listeners) {
+        if (listener != 0) {
+            listener->handleChannelMeasurementRefreshEvent(channelNumber, lastMeasurement);
+        }
+    }
+}
+
 void LocalChannel::_fireRefreshChannelNameEvent()
 {
     for (auto& listener : listeners) {
@@ -165,4 +192,3 @@ void LocalChannel::_fireRefreshChannelNameEvent()
         }
     }
 }
-

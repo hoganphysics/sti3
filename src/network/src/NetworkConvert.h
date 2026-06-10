@@ -6,11 +6,19 @@
 #include <sti/fwd/MixedValue_fwd.h>
 #include <sti/utils/GraphPathLabel.h>
 
+#include <map>
 #include <memory>
 #include <type_traits>
 
 namespace STI
 {
+namespace Utils
+{
+class BinaryData;
+class Image;
+class MixedValue;
+} //Utils
+
 namespace Network
 {
 
@@ -125,6 +133,53 @@ bool convertBuffer(const STI::TNetwork::OctetSeq& tBuffer, const char*& buffer);
 
 bool convertEventGraphPath(const STI::Utils::GraphPathLabel& graphPath, ::STI::TNetwork::TGraphPathLabel& tGraphPath);
 bool convertEventGraphPath(const ::STI::TNetwork::TGraphPathLabel& tGraphPath, STI::Utils::GraphPathLabel& graphPath);
+
+enum class BinaryPayloadPolicy
+{
+	InlineOrEagerStream,
+	PreferStreamReference,
+	PreserveStreamReference
+};
+
+bool convertBinaryData(
+	const std::shared_ptr<STI::Utils::BinaryData>& bin,
+	STI::TNetwork::TBinaryData& tBin,
+	BinaryPayloadPolicy policy);
+
+bool convertBinaryData(
+	const STI::TNetwork::TBinaryData& tBin,
+	std::shared_ptr<STI::Utils::BinaryData>& bin,
+	BinaryPayloadPolicy policy);
+
+bool convertImage(
+	const STI::Utils::Image& image,
+	STI::TNetwork::TImage& tImage,
+	BinaryPayloadPolicy policy);
+
+bool convertImage(
+	const STI::TNetwork::TImage& tImage,
+	STI::Utils::Image& image,
+	BinaryPayloadPolicy policy);
+
+bool convertMixedValue(
+	const STI::Utils::MixedValue& value,
+	STI::TNetwork::TMixedValue& tValue,
+	BinaryPayloadPolicy policy);
+
+bool convertMixedValue(
+	const STI::TNetwork::TMixedValue& tValue,
+	STI::Utils::MixedValue& value,
+	BinaryPayloadPolicy policy);
+
+bool convertChannelUpdateMap(
+	const std::map<short, STI::Utils::MixedValue>& values,
+	STI::TNetwork::TChannelUpdateTupleSeq& tValues,
+	BinaryPayloadPolicy policy);
+
+bool convertChannelUpdateMap(
+	const STI::TNetwork::TChannelUpdateTupleSeq& tValues,
+	std::map<short, STI::Utils::MixedValue>& values,
+	BinaryPayloadPolicy policy);
 
 
 } //Network

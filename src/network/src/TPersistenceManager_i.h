@@ -30,6 +30,8 @@ public:
     TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector);
     ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
     ::STI::TNetwork::TFileServer_ptr getFileServer();
+    char* getBasePath();
+    char* getTemporaryPath();
     void addSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult);
     ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner);
     ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult, ::CORBA::Boolean isOwner);
@@ -46,7 +48,5 @@ private:
 } //STI
 
 #endif
-
-
 
 

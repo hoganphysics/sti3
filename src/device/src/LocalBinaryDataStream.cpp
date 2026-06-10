@@ -54,15 +54,19 @@ void LocalBinaryDataStream::transfer(const std::shared_ptr<BinaryDataStreamTarge
 	if (data == 0) return;
 	if (target == 0) return;
 
-	std::vector<std::shared_ptr<BinaryData>> chunks;
-	data->split(chunks, chunkSize);
+	if (data->hasLocalData()) {
+		std::vector<std::shared_ptr<BinaryData>> chunks;
+		data->split(chunks, chunkSize);
 
-	target->start();
+		target->start();
 
-	for (auto& chunk : chunks) {
-		target->writeNext(chunk);
+		for (auto& chunk : chunks) {
+			target->writeNext(chunk);
+		}
+
+		target->stop();
 	}
-
-	target->stop();
+	else {
+		data->transferTo(target);
+	}
 }
-

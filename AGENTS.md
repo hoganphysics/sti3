@@ -34,6 +34,7 @@
 - Use C++20
 - Prefer `std::unique_ptr` / `std::shared_ptr` over raw owning pointers.
 - Follow existing naming in this file for new code.
+- Before adding one-off string, path, or formatting helpers, check `include/sti/utils/utils.h` for existing common utility functions; consider adding broadly useful helpers there instead of keeping them file-local.
 
 ## C++ header files
 
@@ -69,4 +70,3 @@
 - Use short, imperative commit messages, e.g.:
   - `test: add Catch2 tests for Foo`
   - `test: expand coverage for Bar error paths`
-

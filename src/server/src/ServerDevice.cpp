@@ -1,11 +1,22 @@
 
 #include "ServerDevice.h"
 
+#include "LocalEventEngineScheduler.h"
 
 #include <sti/device/DeviceMessageReceiver.h>
 #include <iostream>
+#include <memory>
+#include <vector>
 
 using STI::Device::ServerDevice;
+using STI::Engine::LocalEventEngineScheduler;
+using STI::Engine::SequenceSchedulingMode;
+
+namespace {
+
+const std::string SequenceModeAttribute = "Sequence Mode";
+
+} // namespace
 
 
 ServerDevice::ServerDevice(const STI::Utils::Configuration& config)
@@ -14,6 +25,45 @@ ServerDevice::ServerDevice(const STI::Utils::Configuration& config)
 	addChannel(0, STI::Device::ChannelType::Output, STI::Utils::MixedValueType::Empty, STI::Utils::MixedValueType::Double, "testch");
 
 	addAttribute("test", "45");
+
+	std::shared_ptr<LocalEventEngineScheduler> scheduler;
+	if (getEngineScheduler(scheduler) && scheduler != 0) {
+		auto currentMode = LocalEventEngineScheduler::sequenceSchedulingModeToString(
+			scheduler->getSequenceSchedulingMode());
+
+		std::shared_ptr<STI::Device::LocalAttribute> sequenceModeAttribute;
+		addAttribute(SequenceModeAttribute, currentMode, {"Normal", "Interleaved"}, sequenceModeAttribute);
+
+		if (sequenceModeAttribute != 0) {
+			std::weak_ptr<LocalEventEngineScheduler> weakScheduler = scheduler;
+
+			sequenceModeAttribute->setSetter(
+				[weakScheduler](const std::string& value) {
+					auto scheduler = weakScheduler.lock();
+					if (scheduler == 0) return false;
+
+					SequenceSchedulingMode mode;
+					if (!LocalEventEngineScheduler::parseSequenceSchedulingMode(value, mode)) {
+						return false;
+					}
+
+					scheduler->setSequenceSchedulingMode(mode);
+					return true;
+				});
+
+			sequenceModeAttribute->setRefresher(
+				[weakScheduler]() {
+					auto scheduler = weakScheduler.lock();
+					if (scheduler == 0) {
+						return LocalEventEngineScheduler::sequenceSchedulingModeToString(
+							SequenceSchedulingMode::Normal);
+					}
+
+					return LocalEventEngineScheduler::sequenceSchedulingModeToString(
+						scheduler->getSequenceSchedulingMode());
+				});
+		}
+	}
 }
 
 ServerDevice::~ServerDevice()

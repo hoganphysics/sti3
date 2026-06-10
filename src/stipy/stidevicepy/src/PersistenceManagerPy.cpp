@@ -112,6 +112,46 @@ std::shared_ptr<STI::Engine::SequenceResult> PersistenceManagerPy::getSequenceRe
     return sequenceResult;
 }
 
+std::shared_ptr<STI::Utils::FileHolder> PersistenceManagerPy::makeFileHolder(
+    const std::string& path,
+    const std::string& filename)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->makeFileHolder(path, filename);
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<STI::Utils::FileHolder> PersistenceManagerPy::makeVirtualFileHolder(
+    const STI::Utils::FileID& fileID)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->makeVirtualFileHolder(fileID);
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<STI::Utils::FileHolder> PersistenceManagerPy::makeVirtualFileHolder(
+    const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->makeVirtualFileHolder(backingHolder);
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<STI::Utils::VirtualFileServer> PersistenceManagerPy::makeVirtualFileServer()
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->makeVirtualFileServer();
+    }
+
+    return nullptr;
+}
+
 std::shared_ptr<STI::Utils::FileServer> PersistenceManagerPy::getFileServer()
 {
     std::shared_ptr<STI::Utils::FileServer> fileServer;
@@ -124,4 +164,22 @@ std::shared_ptr<STI::Utils::FileServer> PersistenceManagerPy::getFileServer()
     // fileServer = std::make_shared<STI::Utils::FileServer>();
     // return fileServer;
     throw py::value_error("FileServer not found.");
+}
+
+std::string PersistenceManagerPy::getBasePath() const
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->getBasePath();
+    }
+
+    return "";
+}
+
+std::string PersistenceManagerPy::getTemporaryPath() const
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->getTemporaryPath();
+    }
+
+    return "";
 }

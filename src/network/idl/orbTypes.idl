@@ -110,6 +110,8 @@ module TNetwork
 	struct TBinaryData
 	{
 		short wordsize;
+		unsigned long length;
+		unsigned long bytes;
 		TMixedBinaryData data;
 	};
 
@@ -707,6 +709,7 @@ module TNetwork
 		TChannelUpdateMessageType channelUpdateType;
 
 		TChannelUpdateTupleSeq channelValues;	//{channel, value} pairs
+		TChannelUpdateTupleSeq measurementValues;	//{channel, measurement} pairs
 
 		//only used for ChannelName messages
 		short channelNumber;
@@ -750,6 +753,7 @@ module TNetwork
 		TMixedValueType outputType;
 		
 		TMixedValue lastValue;
+		TMixedValue lastMeasurement;
 
 		TMixedValue metaData;
 	};

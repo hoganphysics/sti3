@@ -1,16 +1,59 @@
 #include <sti/utils/BinaryData.h>
+#include <sti/utils/BinaryDataStream.h>
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
 
 using STI::Utils::BinaryData;
 
+namespace
+{
+class MaterializingBinaryDataStreamTarget : public STI::Utils::BinaryDataStreamTarget
+{
+public:
+    explicit MaterializingBinaryDataStreamTarget(const std::shared_ptr<BinaryData>& target)
+        : target(target)
+    {
+    }
+
+    void start() override
+    {
+        started = true;
+        stopped = false;
+        chunks.clear();
+    }
+
+    void writeNext(const std::shared_ptr<BinaryData>& data) override
+    {
+        if (data != 0) {
+            chunks.push_back(data);
+        }
+    }
+
+    void stop() override
+    {
+        if (target != 0) {
+            target->merge(chunks);
+        }
+        stopped = true;
+    }
+
+    bool started{false};
+    bool stopped{false};
+
+private:
+    std::shared_ptr<BinaryData> target;
+    std::vector<std::shared_ptr<BinaryData>> chunks;
+};
+} // namespace
+
 
 BinaryData::BinaryData()
-: isOwner(false), length_(0), wordSize_(0)
+: isOwner(false), length_(0), wordSize_(0), data_(nullptr)
 {
 }
 
@@ -23,8 +66,14 @@ void BinaryData::clear()
 {
     if (isOwner && clearer) {
         clearer();
-        isOwner = false;
     }
+    isOwner = false;
+    length_ = 0;
+    wordSize_ = 0;
+    data_ = nullptr;
+    streams.clear();
+    clearer = nullptr;
+    getType = nullptr;
 }
 
 bool BinaryData::operator==(const BinaryData& other) const
@@ -52,12 +101,29 @@ size_t BinaryData::wordsize() const
     return wordSize_;
 }
 
+bool BinaryData::hasLocalData() const
+{
+    return data_ != nullptr;
+}
+
+bool BinaryData::hasStream() const
+{
+    return std::any_of(streams.begin(), streams.end(),
+                       [](const auto& stream) { return stream != nullptr; });
+}
+
+bool BinaryData::isMaterialized() const
+{
+    return hasLocalData();
+}
+
 void BinaryData::swap(BinaryData& other)
 {
     std::swap(isOwner, other.isOwner);
     std::swap(length_, other.length_);
     std::swap(wordSize_, other.wordSize_);
     std::swap(data_, other.data_);
+    std::swap(streams, other.streams);
 
     std::swap(clearer, other.clearer);
     std::swap(getType, other.getType);
@@ -65,6 +131,9 @@ void BinaryData::swap(BinaryData& other)
 
 bool BinaryData::getBytes(char*& data) const
 {
+    if (data_ == nullptr && hasStream()) {
+        const_cast<BinaryData*>(this)->materialize();
+    }
     data = static_cast<char*>(data_);
     return (data != 0);
 }
@@ -86,39 +155,12 @@ void BinaryData::merge(std::vector<std::shared_ptr<BinaryData>>& chunks)
 {
     size_t totalSize = 0;
     for (auto& chunk : chunks) {
-        totalSize += chunk->bytes();
+        if (chunk != 0) {
+            totalSize += chunk->bytes();
+        }
     }
 
-    if (isType<char*>()) {
-        allocate<char>(totalSize);
-    }
-    else if (isType<unsigned char*>()) {
-        allocate<unsigned char>(totalSize);
-    }
-    else if (isType<signed char*>()) {
-        allocate<signed char>(totalSize);
-    }
-    else if (isType<unsigned short*>()) {
-        allocate<unsigned short>(totalSize);
-    }
-    else if (isType<short*>()) {
-        allocate<short>(totalSize);
-    }
-    else if (isType<unsigned int*>()) {
-        allocate<unsigned int>(totalSize);
-    }
-    else if (isType<int*>()) {
-        allocate<int>(totalSize);
-    }
-    else if (isType<float*>()) {
-        allocate<float>(totalSize);
-    }
-    else if (isType<double*>()) {
-        allocate<double>(totalSize);
-    }
-    else {
-        allocate<char>(totalSize);
-    }
+    allocate<char>(totalSize);
 
     char* next;
     char* data;
@@ -129,11 +171,15 @@ void BinaryData::merge(std::vector<std::shared_ptr<BinaryData>>& chunks)
 
     //deep copy
     for (auto& chunk : chunks) {
-        chunk->getBytes(next);
-        chunkLength = chunk->bytes();
+        if (chunk == 0 || !chunk->getBytes(next)) {
+            continue;
+        }
 
-        std::copy(next, next + chunkLength, data + pos);
-        pos += chunkLength;
+        chunkLength = chunk->bytes();
+        if (chunkLength > 0) {
+            std::copy(next, next + chunkLength, data + pos);
+            pos += chunkLength;
+        }
     }
 }
 
@@ -141,39 +187,115 @@ void BinaryData::split(std::vector<std::shared_ptr<BinaryData>>& chunks, size_t 
 {
     chunks.clear();
 
-    size_t nChunks = std::ceil((1.0 * bytes()) / maxBytes);     //number of chunks
-    size_t maxChunk = std::ceil((1.0 * maxBytes) / wordsize()); //maximum of words per chunk
-
-    size_t pos = 0;
-    size_t chunkLength = 0;         //in words
-    size_t remaining = length();    //in words
+    if (maxBytes == 0) {
+        return;
+    }
 
     char* data;
-    getBytes(data);
+    if (!getBytes(data)) {
+        return;
+    }
 
-    bool first = true;
+    size_t pos = 0;
+    size_t remaining = bytes();
 
-    for (unsigned i = 0; i < nChunks && remaining > 0; ++i) {
+    while (remaining > 0) {
         auto chunk = std::make_shared<BinaryData>();
 
-        chunkLength = std::min(maxChunk, remaining);
+        size_t chunkLength = std::min(maxBytes, remaining);
+        char* dataStart = static_cast<char*>(data + pos);
+        chunk->assign(dataStart, chunkLength, false);
 
-        if (isType<char*>()) {
-            char* dataStart = static_cast<char*>(data + pos);
-            chunk->assign(dataStart, chunkLength, false);   //first owns the set: isOwner && transferOwnership && first
-        }
-
-        pos += (chunkLength * wordsize());
+        pos += chunkLength;
         remaining -= chunkLength;
-        first = false;
-
         chunks.push_back(chunk);
     }
 }
 
+void BinaryData::setMetadata(size_t length, size_t wordsize)
+{
+    length_ = length;
+    wordSize_ = wordsize;
+}
+
 void BinaryData::attachStream(const std::shared_ptr<BinaryDataStream>& stream)
 {
-    streams.push_back(stream);
+    if (stream != 0) {
+        streams.push_back(stream);
+    }
+}
+
+void BinaryData::attachStream(const std::shared_ptr<BinaryDataStream>& stream,
+                              size_t length,
+                              size_t wordsize)
+{
+    setMetadata(length, wordsize);
+    attachStream(stream);
+}
+
+bool BinaryData::materialize()
+{
+    if (hasLocalData()) {
+        return true;
+    }
+    if (!hasStream()) {
+        return false;
+    }
+
+    auto localData = std::make_shared<BinaryData>();
+    auto target = std::make_shared<MaterializingBinaryDataStreamTarget>(localData);
+
+    auto stream = streams.back();
+    if (stream == 0) {
+        return false;
+    }
+
+    stream->transfer(target);
+
+    if (!target->stopped) {
+        return false;
+    }
+
+    if (!localData->hasLocalData()) {
+        if (bytes() != 0) {
+            return false;
+        }
+        localData->allocate<char>(0);
+    }
+
+    localData->setMetadata(length_, wordSize_);
+    swap(*localData);
+    return true;
+}
+
+bool BinaryData::transferTo(const std::shared_ptr<BinaryDataStreamTarget>& target)
+{
+    if (target == 0) {
+        return false;
+    }
+
+    if (hasLocalData()) {
+        std::vector<std::shared_ptr<BinaryData>> chunks;
+        split(chunks, bytes() == 0 ? 1 : bytes());
+
+        target->start();
+        for (auto& chunk : chunks) {
+            target->writeNext(chunk);
+        }
+        target->stop();
+        return true;
+    }
+
+    if (hasStream()) {
+        auto stream = streams.back();
+        if (stream == 0) {
+            return false;
+        }
+        stream->transfer(target);
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -218,4 +340,3 @@ void BinaryData::load(Archive& archive)
 
 template void BinaryData::load<cereal::XMLInputArchive>( cereal::XMLInputArchive& );
 template void BinaryData::load<cereal::JSONInputArchive>( cereal::JSONInputArchive& );
-

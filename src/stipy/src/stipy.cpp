@@ -58,18 +58,28 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const STI::Engine::ShotType& sh
 
 std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType)
 {
+    return makeShot(func, "", shotType);
+}
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const std::string& mainFile, const STI::Engine::ShotType& shotType)
+{
     auto shot = makeShot(shotType);
 
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->makeShot(shot, func);
+        stipy->makeShot(shot, func, mainFile);
     }
 
     return shot;
 }
 
 std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType)
+{
+    return makeShot(func, vars, "", shotType);
+}
+
+std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const std::string& mainFile, const STI::Engine::ShotType& shotType)
 {
     auto shot = makeShot(shotType);
 
@@ -78,7 +88,7 @@ std::shared_ptr<STIPyShot> STI::Python::makeShot(const std::function<void(void)>
     auto stipy = STIPyGlobal::getInstance();
 
     if (stipy != 0) {
-        stipy->makeShot(shot, func);
+        stipy->makeShot(shot, func, mainFile);
     }
 
     return shot;

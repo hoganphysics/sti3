@@ -431,6 +431,17 @@ The result ticket can be used to inspect the shot ID, status, and measurement
 results.  Shot data is also available later through the connected device's
 ``PersistenceManager``.
 
+Binary and image measurements
++++++++++++++++++++++++++++++
+
+Remote reads and remote channel state can expose large binary and image
+measurements as lazy values.  Direct binary reads return ``BinaryData`` and
+direct image reads return ``Image`` so Python code can inspect metadata,
+explicitly pull bytes, or save the payload.  Use ``MixedValue.getBinary()`` or
+``MixedValue.getImage()`` for cached channel measurements without relying on
+implicit conversion through ``MixedValue.getValue()``.  See
+:ref:`lazy_payloads` for the full C++ and Python API.
+
 Complete example
 ++++++++++++++++
 

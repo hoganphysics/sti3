@@ -59,7 +59,6 @@ bool LocalChannelManager::writeChannel(short channel, const MixedValue& value)
     std::shared_ptr<Channel> ch;
 
     if (channelMap.get(channel, ch) && ch != 0 && localDevice->write(channel, value)) {
-        ch->saveLastValue(value);
         return true;
     }
     return false;
@@ -70,7 +69,6 @@ bool LocalChannelManager::readChannel(short channel, const MixedValue& value, Mi
     std::shared_ptr<Channel> ch;
 
     if (channelMap.get(channel, ch) && ch != 0 && localDevice->read(channel, value, data)) {
-        ch->saveLastValue(data);
         return true;
     }
     return false;
@@ -100,6 +98,13 @@ void LocalChannelManager::handleChannelRefreshEvent(short channelNumber, const S
     messageGrouper.addMessage(message);
 }
 
+void LocalChannelManager::handleChannelMeasurementRefreshEvent(short channelNumber, const STI::Utils::MixedValue& value)
+{
+    auto message = STI::Device::ChannelUpdateMessage::makeMeasurementMessage(
+        localDevice->getID(), channelNumber, value);
+    messageGrouper.addMessage(message);
+}
+
 void LocalChannelManager::handleChannelNameRefreshEvent(short channelNumber, const std::string& name)
 {
     auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(localDevice->getID(), channelNumber, name);
@@ -126,7 +131,21 @@ bool LocalChannelManager::loadProfile(const std::shared_ptr<Profile>& profile)
     bool success = true;
 
     for (auto& channel : profile->channelData) {
-        success &= writeChannel(channel.first, channel.second);
+        std::shared_ptr<Channel> ch;
+        if (!getChannel(channel.first, ch) || ch == 0) {
+            success = false;
+            continue;
+        }
+
+        if (ch->getType() == ChannelType::Output) {
+            success &= writeChannel(channel.first, channel.second);
+        }
+        else if (ch->getOutputType() != STI::Utils::MixedValueType::Empty) {
+            ch->saveLastValue(channel.second);
+        }
+        else if (!channel.second.isEmpty()) {
+            success = false;
+        }
     }
 
     return success;
@@ -144,7 +163,8 @@ bool LocalChannelManager::saveProfile(const std::shared_ptr<Profile>& profile)
     profile->channelData.clear();
 
     for (auto& ch : channels) {
-        if (ch->getType() == ChannelType::Output) {
+        if (ch->getType() == ChannelType::Output
+            || (ch->getType() == ChannelType::Input && ch->getOutputType() != STI::Utils::MixedValueType::Empty)) {
             profile->channelData[ch->getChannelNumber()] = ch->getLastValue();
         }
     }

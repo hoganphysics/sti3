@@ -104,7 +104,9 @@ public:
     // std::shared_ptr<STIPyShot> makeshot();
     std::shared_ptr<STIPyShot> makeshot(const STI::Engine::ShotType& shotType);
     std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const STI::Engine::ShotType& shotType);
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::string& mainFile, const STI::Engine::ShotType& shotType);
     std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const STI::Engine::ShotType& shotType);    //uses dictionary vars to override servars
+    std::shared_ptr<STIPyShot> makeshot(const std::function<void(void)>& func, const std::set<STI::Engine::ParsedVar>& vars, const std::string& mainFile, const STI::Engine::ShotType& shotType);    //uses dictionary vars to override servars
 
     // std::shared_ptr<STI::Engine::Sequence> makesequence(const std::function<void(void)>& func);
     // std::shared_ptr<STI::Engine::Sequence> makesequence(const pybind11::set& vars);

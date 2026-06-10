@@ -9,6 +9,7 @@
 
 using STI::Network::RemoteChannelManager;
 using STI::Network::convert;
+using STI::Network::BinaryPayloadPolicy;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValue;
 using STI::TNetwork::TChannel;
@@ -175,7 +176,7 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
 	}
 
     if (success) {
-        return convert<TMixedValue, MixedValue>(tData, data);
+        return STI::Network::convertMixedValue(tData, data, BinaryPayloadPolicy::PreserveStreamReference);
     }
 
     return success;
@@ -282,6 +283,24 @@ STI::Utils::MixedValue RemoteChannelManager::_getLastValue(short channel) const
 	return empty;
 }
 
+STI::Utils::MixedValue RemoteChannelManager::getLastMeasurement(short channel) const
+{
+	std::unique_lock<std::mutex> managerLock(managerMutex);
+	return _getLastMeasurement(channel);
+}
+
+STI::Utils::MixedValue RemoteChannelManager::_getLastMeasurement(short channel) const
+{
+	auto it = channelData.find(channel);
+
+	if (it != channelData.end()) {
+		return it->second->measurement;
+	}
+
+	STI::Utils::MixedValue empty;
+	return empty;
+}
+
 void RemoteChannelManager::handleMessage(const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess)
 {
 	std::unique_lock<std::mutex> managerLock(managerMutex);
@@ -291,16 +310,27 @@ void RemoteChannelManager::handleMessage(const std::shared_ptr<STI::Device::Chan
 	if (mess->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue) {
 		for (auto& tuple : mess->channelValues) {
 			auto ch = channelData[tuple.first];
-			if (ch != 0) {
-				ch->value = tuple.second;
+			if (ch == 0) {
+				ch = std::make_shared<ChannelDataTuple>();
+				channelData[tuple.first] = ch;
 			}
+			ch->value = tuple.second;
+		}
+		for (auto& tuple : mess->measurementValues) {
+			auto ch = channelData[tuple.first];
+			if (ch == 0) {
+				ch = std::make_shared<ChannelDataTuple>();
+				channelData[tuple.first] = ch;
+			}
+			ch->measurement = tuple.second;
 		}
 	}
 	else if (mess->channelUpdateType == ChannelUpdateMessage::ChannelUpdateMessageType::ChannelName) {
 		auto ch = channelData[mess->channelNumber];
-		if (ch != 0) {
-			ch->name = mess->channelName;
+		if (ch == 0) {
+			ch = std::make_shared<ChannelDataTuple>();
+			channelData[mess->channelNumber] = ch;
 		}
+		ch->name = mess->channelName;
 	}
 }
-

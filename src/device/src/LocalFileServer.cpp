@@ -1,9 +1,12 @@
 
 #include "LocalFileServer.h"
 
+#include <sti/utils/VirtualFileHolder.h>
+
 #include <filesystem>
 #include <deque>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 namespace fs = std::filesystem;
@@ -11,6 +14,7 @@ namespace fs = std::filesystem;
 using STI::Utils::LocalFileServer;
 using STI::Utils::FileTransferType;
 using STI::Utils::FileID;
+using STI::Utils::VirtualFileHolder;
 
 namespace {
 
@@ -95,8 +99,20 @@ LocalFileServer::~LocalFileServer()
 {
 }
 
+bool LocalFileServer::addFile(const std::shared_ptr<STI::Utils::FileHolder>& file)
+{
+    if (file == nullptr) return false;
+
+    return registeredFiles.add(file->getID(), file);
+}
+
 bool LocalFileServer::findFile(const FileID& fileID)
 {
+    std::shared_ptr<STI::Utils::FileHolder> registeredFile;
+    if (registeredFiles.get(fileID, registeredFile) && registeredFile != nullptr) {
+        return registeredFile->exists();
+    }
+
     if (fileID.persistenceLocation != localID.getID()) return false;
 
     fs::path filePath = fileID.path;
@@ -107,6 +123,11 @@ bool LocalFileServer::findFile(const FileID& fileID)
 
 int LocalFileServer::getFileSize(const FileID& fileID)
 {
+    std::shared_ptr<STI::Utils::FileHolder> registeredFile;
+    if (registeredFiles.get(fileID, registeredFile) && registeredFile != nullptr) {
+        return registeredFile->exists() ? static_cast<int>(registeredFile->getFileSize()) : 0;
+    }
+
     if (!findFile(fileID)) return false;
 
     fs::path filePath = fileID.path;
@@ -119,6 +140,12 @@ int LocalFileServer::getFileSize(const FileID& fileID)
 bool LocalFileServer::transferFile(const FileID& source, const std::shared_ptr<STI::Utils::FileHolder>& destination, FileTransferType type)
 {
     if (destination == 0) return false;
+
+    std::shared_ptr<STI::Utils::FileHolder> registeredFile;
+    if (registeredFiles.get(source, registeredFile) && registeredFile != nullptr) {
+        return registeredFile->exists() && registeredFile->transferFile(destination);
+    }
+
     if (!findFile(source)) return false;    //could not find source file on local machine
 
     auto localFile = localFileHolderFactory.makeFileHolder(source.path, source.filename);
@@ -129,6 +156,18 @@ bool LocalFileServer::transferFile(const FileID& source, const std::shared_ptr<S
 bool LocalFileServer::transferFilePartial(const FileID& source, const std::shared_ptr<STI::Utils::FileHolder>& destination, int offset, int lines)
 {
     if (destination == nullptr) return false;
+
+    std::shared_ptr<STI::Utils::FileHolder> registeredFile;
+    if (registeredFiles.get(source, registeredFile) && registeredFile != nullptr) {
+        auto virtualFile = std::dynamic_pointer_cast<VirtualFileHolder>(registeredFile);
+        if (virtualFile == nullptr || !virtualFile->exists()) {
+            return false;
+        }
+
+        std::istringstream stream(virtualFile->getBytes());
+        return writeLinesToDestination(stream, destination, offset, lines);
+    }
+
     if (!findFile(source)) return false;
 
     fs::path filePath = source.path;
@@ -144,6 +183,11 @@ bool LocalFileServer::transferFilePartial(const FileID& source, const std::share
 
 bool LocalFileServer::deleteFile(const FileID& fileID)
 {
+    std::shared_ptr<STI::Utils::FileHolder> registeredFile;
+    if (registeredFiles.get(fileID, registeredFile) && registeredFile != nullptr) {
+        return registeredFiles.remove(fileID);
+    }
+
     if (!findFile(fileID)) return false;
 
     fs::path filePath = fileID.path;
@@ -151,4 +195,3 @@ bool LocalFileServer::deleteFile(const FileID& fileID)
 
     return std::filesystem::remove(filePath);
 }
-

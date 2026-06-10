@@ -33,6 +33,10 @@ bool RemoteFileServer::getTFileServerRef(STI::TNetwork::TFileServer_var& tFileSe
 	return !CORBA::is_nil(tFileServer);
 }
 
+bool RemoteFileServer::addFile(const std::shared_ptr<STI::Utils::FileHolder>&)
+{
+	return false;
+}
 
 bool RemoteFileServer::findFile(const FileID& fileID)
 {

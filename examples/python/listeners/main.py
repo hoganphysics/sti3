@@ -29,7 +29,8 @@ class TestListenerDevice(stidevicepy.LocalDevice):
     
     def channelUpdateListener(self, message) :
         print("Channel update!")
-        print(message.channelValues())
+        print("values:", message.channelValues())
+        print("measurements:", message.measurementValues())
     
     def attributesUpdateListener(self, message) :
         print("Attribute update!")

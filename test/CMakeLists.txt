@@ -43,6 +43,7 @@ add_executable(sti3_test_device
   device/localmonitormanager_tests.cpp
   device/devicemessagelistener_tests.cpp
   device/devicemessagerelayer_tests.cpp
+  device/devicemessage_tests.cpp
   device/localdevicemessagehandler_tests.cpp
   device/localdevicemessagedispatcher_tests.cpp
   device/devicemessagereceiver_tests.cpp
@@ -70,6 +71,7 @@ add_executable(sti3_test_device
   device/appointmenttask_tests.cpp
   device/eventengine_missing_partner_tests.cpp
   device/eventengine_stop_engine_tests.cpp
+  device/eventengine_sequence_mode_tests.cpp
   device/shotid_tests.cpp
   device/shotresult_tests.cpp
   device/distributer_tests.cpp
