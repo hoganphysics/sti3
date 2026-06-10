@@ -72,8 +72,12 @@ void init_stipy(py::module& m)
                     py::arg("shotType"));
     m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
                     py::arg("func"), py::arg("shotType"));
+    m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::string&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
+                    py::arg("func"), py::arg("mainFile"), py::arg("shotType"));
     m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
                     py::arg("func"), py::arg("vars"), py::arg("shotType"));
+    m.def("makeshot", py::overload_cast<const std::function<void(void)>&, const std::set<STI::Engine::ParsedVar>&, const std::string&, const STI::Engine::ShotType&>(&STI::Python::makeShot),
+                    py::arg("func"), py::arg("vars"), py::arg("mainFile"), py::arg("shotType"));
 
     m.def("group", &STI::Python::group, 
                     py::arg("name"));

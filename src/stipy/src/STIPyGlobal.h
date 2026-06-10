@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <string>
 
 #include <pybind11/pybind11.h>
 
@@ -35,6 +36,7 @@ public:
     static std::shared_ptr<STIPyGlobal> getInstance();
 
     void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func);
+    void makeShot(const std::shared_ptr<STIPyShot>& shot, const std::function<void(void)>& func, const std::string& mainFile);
 
     STI::Engine::ParsedVar var(const std::string& fullVarName, const STI::Engine::StackTrace& stackTrace);
 
@@ -81,4 +83,3 @@ struct Concrete_STIPyGlobal : public STIPyGlobal
 } //STI
 
 #endif
-

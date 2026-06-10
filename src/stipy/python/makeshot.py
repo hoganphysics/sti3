@@ -51,10 +51,14 @@ def _makeshot_callable(raw_makeshot, owner, shotmaker, vars, shot_type):
 
 
 def _makeshot_file(raw_makeshot, owner, filename, vars, shot_type):
-    def execute_file():
-        load_module(filename)
+    main_file = str(pathlib.Path(filename).resolve())
 
-    return _makeshot_callable(raw_makeshot, owner, execute_file, vars, shot_type)
+    def execute_file():
+        load_module(main_file)
+
+    if vars is None:
+        return _call_makeshot(raw_makeshot, owner, execute_file, main_file, shot_type)
+    return _call_makeshot(raw_makeshot, owner, execute_file, _overwritten_vars(vars), main_file, shot_type)
 
 
 def make_shot(raw_makeshot, owner=None, source=None, vars=None, shot_type=None):
