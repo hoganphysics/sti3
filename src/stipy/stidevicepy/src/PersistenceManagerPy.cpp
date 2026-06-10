@@ -165,3 +165,21 @@ std::shared_ptr<STI::Utils::FileServer> PersistenceManagerPy::getFileServer()
     // return fileServer;
     throw py::value_error("FileServer not found.");
 }
+
+std::string PersistenceManagerPy::getBasePath() const
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->getBasePath();
+    }
+
+    return "";
+}
+
+std::string PersistenceManagerPy::getTemporaryPath() const
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->getTemporaryPath();
+    }
+
+    return "";
+}

@@ -16,10 +16,10 @@ VirtualFileServer::~VirtualFileServer()
 {
 }
 
-void VirtualFileServer::addFile(const std::shared_ptr<FileHolder>& file)
+bool VirtualFileServer::addFile(const std::shared_ptr<FileHolder>& file)
 {
-    if (file == 0) return;
-    files.add(file->getID(), file);
+    if (file == 0) return false;
+    return files.add(file->getID(), file);
 }
 
 bool VirtualFileServer::findFile(const FileID& fileID)
@@ -56,5 +56,4 @@ bool VirtualFileServer::deleteFile(const FileID& fileID)
 {
     return files.remove(fileID);
 }
-
 

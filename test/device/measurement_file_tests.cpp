@@ -160,6 +160,9 @@ public:
         return std::make_shared<VirtualFileServer>();
     }
 
+    std::string getBasePath() const override { return ""; }
+    std::string getTemporaryPath() const override { return ""; }
+
     void addSequence(const std::shared_ptr<SequenceResult>&) override {}
     bool updateSequence(const SequenceEntryID&, const ShotID&, const EngineJobStatus&, bool) override { return false; }
     bool saveSequence(const std::shared_ptr<SequenceResult>&, bool) override { return false; }
@@ -268,6 +271,7 @@ public:
 class DummyFileServer : public FileServer
 {
 public:
+    bool addFile(const std::shared_ptr<FileHolder>&) override { return false; }
     bool findFile(const FileID&) override { return false; }
     int getFileSize(const FileID&) override { return 0; }
     bool transferFile(const FileID&, const std::shared_ptr<FileHolder>&, STI::Utils::FileTransferType) override { return false; }

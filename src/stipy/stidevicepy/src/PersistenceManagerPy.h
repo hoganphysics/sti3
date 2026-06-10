@@ -31,6 +31,8 @@ public:
         const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder);
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
     std::shared_ptr<STI::Utils::FileServer> getFileServer();
+    std::string getBasePath() const;
+    std::string getTemporaryPath() const;
 
 	STI::Engine::MeasurementMap getMeasurements(const STI::Engine::ShotID& sid);
 

@@ -13,6 +13,7 @@
 #include <sti/utils/VirtualFileServer.h>
 
 #include <memory>
+#include <string>
 
 
 namespace STI
@@ -47,6 +48,8 @@ public:
     virtual void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) = 0;
     virtual bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) = 0;
     virtual std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer() = 0;
+    virtual std::string getBasePath() const = 0;
+    virtual std::string getTemporaryPath() const = 0;
 
     virtual void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult) = 0;
     virtual bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner) = 0;

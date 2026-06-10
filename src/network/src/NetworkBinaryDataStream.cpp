@@ -13,6 +13,12 @@ NetworkBinaryDataStream::NetworkBinaryDataStream(STI::Utils::BinaryData* data, s
 	localdataStreamTarget = std::make_shared<STI::Utils::LocalBinaryDataStream>(data, chunkSize);
 }
 
+NetworkBinaryDataStream::NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryData>& data, size_t chunkSize)
+: NetworkBinaryDataStream(data.get(), chunkSize)
+{
+	ownedData = data;
+}
+
 NetworkBinaryDataStream::NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryDataStream>& dataStream)
 : dataStreamServantHolder(new STI::TNetwork::TBinaryDataStream_i(this))
 {

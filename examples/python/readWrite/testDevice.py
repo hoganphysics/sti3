@@ -14,6 +14,8 @@ class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
         self.image_measurement_index = itertools.count()
+        self.file_measurement_index = itertools.count()
+        self.virtual_file_measurement_index = itertools.count()
 
         # *** Define channels *** #
 
@@ -43,6 +45,9 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addInputChannel(13, stipy.MixedValueType.Image, "random image (BinaryData)")   # measures an Image backed by BinaryData
         self.addInputChannel(14, stipy.MixedValueType.Image, "random raw image (FileHolder)")   # measures an Image backed by a raw FileHolder
         self.addInputChannel(15, stipy.MixedValueType.Image, "random TIF image (FileHolder)")   # measures an Image backed by a TIF FileHolder
+        self.addInputChannel(16, stipy.MixedValueType.File, "example text file (FileHolder)")   # measures a plain text file
+        self.addInputChannel(17, stipy.MixedValueType.Binary, "example binary data")   # measures BinaryData that is not an Image
+        self.addInputChannel(18, stipy.MixedValueType.File, "example virtual text file (VirtualFileHolder)")   # measures a virtual plain text file
 
         # Input/Output channels
         ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
@@ -94,7 +99,8 @@ class TestDevice(stidevicepy.LocalDevice):
 
     def file_holder_backed_image(self, payload, extension):
         filename = "readWrite-random-image-" + str(next(self.image_measurement_index)) + extension
-        file_holder = self.makeVirtualFileHolder("", filename)
+        persistence = self.getPersistenceManager()
+        file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
 
         if file_holder is None or not file_holder.openFile():
             return None
@@ -114,6 +120,55 @@ class TestDevice(stidevicepy.LocalDevice):
 
     def tif_file_holder_backed_image(self):
         return self.file_holder_backed_image(self.random_tif_image_bytes(), ".tif")
+
+    def text_file_holder_measurement(self):
+        filename = "readWrite-text-file-" + str(next(self.file_measurement_index)) + ".txt"
+        persistence = self.getPersistenceManager()
+        file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
+
+        if file_holder is None or not file_holder.openFile():
+            return None
+
+        try:
+            text = (
+                "readWrite plain text FileHolder payload\n"
+                "This channel returns a MixedValueType.File value, not an Image.\n"
+            )
+            if not file_holder.writeText(text):
+                return None
+        finally:
+            file_holder.closeFile()
+
+        return file_holder.getID()
+
+    def plain_binary_data_measurement(self):
+        payload = (
+            b"readWrite plain BinaryData payload\n"
+            b"This channel returns BinaryData that is not an Image.\n"
+        )
+        return stipy.BinaryData(payload)
+
+    def virtual_text_file_measurement(self):
+        filename = "readWrite-virtual-text-file-" + str(next(self.virtual_file_measurement_index)) + ".txt"
+        persistence = self.getPersistenceManager()
+        file_holder = self.makeVirtualFileHolder("readWrite", filename)
+
+        if file_holder is None or not file_holder.openFile():
+            return None
+
+        try:
+            text = (
+                "readWrite virtual text FileHolder payload\n"
+                "This channel returns a MixedValueType.File value without writing the source file to disk.\n"
+            )
+            if not file_holder.writeText(text):
+                return None
+        finally:
+            file_holder.closeFile()
+
+        if not persistence.getFileServer().addFile(file_holder):
+            return None
+        return file_holder.getID()
     
     def writeChannel(self, channel, value):
         success = False
@@ -177,6 +232,15 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 15:
             print("Read ch 15: random TIF image (FileHolder)")
             return self.tif_file_holder_backed_image()
+        elif channel == 16:
+            print("Read ch 16: example text file (FileHolder)")
+            return self.text_file_holder_measurement()
+        elif channel == 17:
+            print("Read ch 17: example BinaryData")
+            return self.plain_binary_data_measurement()
+        elif channel == 18:
+            print("Read ch 18: example virtual text file (VirtualFileHolder)")
+            return self.virtual_text_file_measurement()
 
         return None
 
@@ -226,6 +290,15 @@ print("Measurement 5: " + str(data))
 
 data = device.read(15)
 print("Measurement 6: " + str(data))
+
+data = device.read(16)
+print("Measurement 7: " + str(data))
+
+data = device.read(17)
+print("Measurement 8: " + str(data))
+
+data = device.read(18)
+print("Measurement 9: " + str(data))
 
 
 nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService

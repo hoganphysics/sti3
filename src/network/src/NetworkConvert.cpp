@@ -570,7 +570,7 @@ bool STI::Network::convertBinaryData(
 	//size_t maxNetworkMessage = 1000000;
 
 	if (policy == BinaryPayloadPolicy::PreferStreamReference || bin->bytes() > maxNetworkMessage) {
-		auto networkDataStream = std::make_shared<NetworkBinaryDataStream>(bin.get(), maxNetworkMessage);
+		auto networkDataStream = std::make_shared<NetworkBinaryDataStream>(bin, maxNetworkMessage);
 		bin->attachStream(networkDataStream);
 		STI::TNetwork::TBinaryDataStream_var tDataStream;
 

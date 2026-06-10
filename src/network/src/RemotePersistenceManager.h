@@ -46,6 +46,8 @@ public:
 
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
     bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
+    std::string getBasePath() const override;
+    std::string getTemporaryPath() const override;
 
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);
@@ -66,4 +68,3 @@ private:
 
 
 #endif
-

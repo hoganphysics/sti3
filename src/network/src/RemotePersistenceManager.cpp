@@ -306,6 +306,46 @@ bool RemotePersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileSer
     return success;
 }
 
+std::string RemotePersistenceManager::getBasePath() const
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return "";
+
+	try {
+		CORBA::String_var basePath = getTRef()->getBasePath();	//remote call
+		return basePath.in();
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+	return "";
+}
+
+std::string RemotePersistenceManager::getTemporaryPath() const
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return "";
+
+	try {
+		CORBA::String_var temporaryPath = getTRef()->getTemporaryPath();	//remote call
+		return temporaryPath.in();
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+	return "";
+}
+
 void RemotePersistenceManager::addSequence(const std::shared_ptr<SequenceResult>& sequenceResult)
 {
 	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);

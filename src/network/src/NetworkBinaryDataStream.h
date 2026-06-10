@@ -22,6 +22,7 @@ class NetworkBinaryDataStream : public STI::Utils::BinaryDataStream
 public:
 
     NetworkBinaryDataStream(STI::Utils::BinaryData* data, size_t chunkSize);
+    NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryData>& data, size_t chunkSize);
     NetworkBinaryDataStream(const std::shared_ptr<STI::Utils::BinaryDataStream>& dataStream);
     ~NetworkBinaryDataStream();
 
@@ -33,6 +34,8 @@ public:
 private:
 
     std::shared_ptr<STI::Utils::BinaryDataStream> localdataStreamTarget;
+    // Keeps exported CORBA stream payloads alive after conversion locals go out of scope.
+    std::shared_ptr<STI::Utils::BinaryData> ownedData;
     // STI::TNetwork::TBinaryDataStream_i dataStreamServant;
     ServantHolder<STI::TNetwork::TBinaryDataStream_i, STI::TNetwork::TBinaryDataStream> dataStreamServantHolder;
 };

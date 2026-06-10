@@ -30,6 +30,7 @@ namespace {
 
 class RecordingFileServer : public FileServer {
 public:
+    bool addFile(const std::shared_ptr<FileHolder>&) override { return false; }
     bool findFile(const STI::Utils::FileID&) override { return false; }
     int getFileSize(const STI::Utils::FileID&) override { return 0; }
     bool transferFile(const STI::Utils::FileID& source, const std::shared_ptr<FileHolder>& destination, FileTransferType type) override {

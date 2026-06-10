@@ -79,6 +79,7 @@ void init_FileServer(py::module& m)
         ;
 
     py::class_<FileServer, std::shared_ptr<FileServer>>(m, "FileServer")
+        .def("addFile", &FileServer::addFile, py::arg("file"))
         .def("findFile", &FileServer::findFile, py::arg("fileID"))
         .def("getFileSize", &FileServer::getFileSize, py::arg("fileID"))
         .def("transferFile", &FileServer::transferFile, 
@@ -96,7 +97,6 @@ void init_FileServer(py::module& m)
 
     py::class_<VirtualFileServer, FileServer, std::shared_ptr<VirtualFileServer>>(m, "VirtualFileServer")
         .def(py::init<>())
-        .def("addFile", &VirtualFileServer::addFile, py::arg("file"))
         ;
 
 }

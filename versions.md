@@ -48,6 +48,46 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.5.1 - File-backed payload materialization
+
+Patch release for materializing lazy file-backed payloads from Python clients
+and avoiding process-working-directory files for generated read measurements.
+
+Features:
+
+* Expose `PersistenceManager.getFileServer()` through STIPy so Python clients
+  can transfer `FileID`-backed payloads through the device file server.
+* Add virtual file transfer support to the public file-server path, including
+  Python access to virtual file holders and virtual file servers.
+* Add `PersistenceManager.getBasePath()` and `getTemporaryPath()` to the C++,
+  CORBA, remote persistence, and STIPy APIs.
+* Back `getTemporaryPath()` with the transient repository cache directory so
+  device read methods can create temporary file-backed measurements without
+  polluting the device base path.
+* Extend the Python `readWrite` example with file-backed image, plain file,
+  plain binary, and virtual-file measurement channels.
+* Update the lazy image notebook with file-backed image and virtual file
+  transfer examples.
+
+Fixes:
+
+* Materialize FileID-backed images through the exposed file server instead of
+  requiring inline image data or a cached `FileHolder`.
+* Preserve lazy `BinaryData` stream ownership during network conversion so
+  remote binary reads do not crash the server process.
+* Return failure from unsupported remote `FileServer.addFile()` calls and make
+  file-server add semantics explicit through the abstract interface.
+
+Tests:
+
+* Add C++ coverage for local and virtual file-server registration, transfer,
+  image file-server writes, and measurement file handling.
+* Add STIPy integration coverage for file-backed image reads, virtual file
+  transfer, temporary path access, remote persistence paths, and binary channel
+  reads through an STIServer proxy.
+* Add network conversion regression coverage for lazy binary and image payload
+  ownership.
+
 ### 3.5.0 - Lazy channel measurement payloads
 
 Feature release for live channel measurement state, lazy transfer of heavy

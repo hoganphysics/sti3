@@ -24,7 +24,7 @@ public:
     VirtualFileServer();
 	~VirtualFileServer();
 
-    void addFile(const std::shared_ptr<FileHolder>& destination);
+    bool addFile(const std::shared_ptr<FileHolder>& destination) override;
 
 	bool findFile(const FileID& fileID);
 	int getFileSize(const FileID& fileID);
@@ -64,4 +64,3 @@ public:
 } //STI
 
 #endif
-

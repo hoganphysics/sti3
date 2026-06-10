@@ -319,6 +319,26 @@ TEST_CASE("NetworkConvert: BinaryData can be preserved as a lazy stream referenc
     CHECK(lazy->isMaterialized());
 }
 
+TEST_CASE("NetworkConvert: exported BinaryData stream owns source payload", "[network][convert][binary]")
+{
+    const std::string payload = "scoped-read-result-binary";
+    STI::TNetwork::TBinaryData tBinary;
+
+    {
+        auto source = makeBinaryData(payload);
+        REQUIRE(STI::Network::convertBinaryData(source, tBinary, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+        REQUIRE(tBinary.data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    }
+
+    auto lazy = std::make_shared<STI::Utils::BinaryData>();
+    REQUIRE(STI::Network::convertBinaryData(tBinary, lazy, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+
+    CHECK_FALSE(lazy->isMaterialized());
+    CHECK(lazy->hasStream());
+    CHECK(lazy->bytes() == payload.size());
+    CHECK(binaryBytes(lazy) == payload);
+}
+
 TEST_CASE("NetworkConvert: read results can preserve lazy binary streams", "[network][convert][binary]")
 {
     const std::string payload = "read-result-binary";

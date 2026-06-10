@@ -23,9 +23,10 @@ class RemoteFileServer : public STI::Utils::FileServer,
 {
 public:
 
-    RemoteFileServer(::STI::TNetwork::TFileServer_var fileServer);
+	RemoteFileServer(::STI::TNetwork::TFileServer_var fileServer);
     ~RemoteFileServer();
 
+	bool addFile(const std::shared_ptr<STI::Utils::FileHolder>& file) override;
 	bool findFile(const STI::Utils::FileID& fileID);
 	int getFileSize(const STI::Utils::FileID& fileID);
 	bool transferFile(const STI::Utils::FileID& source, const std::shared_ptr<STI::Utils::FileHolder>& destination, STI::Utils::FileTransferType type);
@@ -44,5 +45,4 @@ private:
 } //STI
 
 #endif
-
 

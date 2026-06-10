@@ -64,7 +64,7 @@ TransientRepository::TransientRepository(const std::string& tempBasePath, const 
     uniqueBasePath /= "transient_cache";
     uniqueBasePath /= "tmp";
 
-    // Keep one stable path and create it lazily only when a FileHolder opens a file.
+    // Keep one stable path and create it lazily when requested or when a FileHolder opens a file.
     tempResultsPath = uniqueBasePath.string();
 }
 
@@ -170,6 +170,15 @@ ResultsPaths TransientRepository::preparePaths()
     paths.timingPath = tempResultsPath;
 
     return paths;
+}
+
+std::string TransientRepository::getTemporaryPath() const
+{
+    if (!ensureDirectoryExists(tempResultsPath)) {
+        return "";
+    }
+
+    return tempResultsPath;
 }
 
 

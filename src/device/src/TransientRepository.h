@@ -27,6 +27,7 @@ public:
     ResultsPaths preparePaths(const ParseID& pid);
     ResultsPaths preparePaths(const ShotID& sid);
     ResultsPaths preparePaths(const SequenceID& seqid);
+    std::string getTemporaryPath() const;
 
     bool findParseResult(const ParseID& pid);
     bool findShotResult(const ShotID& sid);
@@ -63,7 +64,6 @@ private:
 } //STI
 
 #endif
-
 
 
 

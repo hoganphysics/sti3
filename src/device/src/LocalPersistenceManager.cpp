@@ -116,6 +116,11 @@ void LocalPersistenceManager::loadPersistenceTargets()
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate)
 {
     std::filesystem::path root(rootPath);
+    if (root.empty()) {
+        root = std::filesystem::current_path() / ".sti";
+    }
+    root = std::filesystem::absolute(root).lexically_normal();
+
     std::error_code ec;
 
     if (autocreate && !std::filesystem::exists(root, ec) && !ec) {
@@ -130,13 +135,25 @@ std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, c
         std::filesystem::create_directories(devicePath, ec);
     }
 
-    return devicePath.string();
+    return devicePath.lexically_normal().string();
 }
 
 std::string LocalPersistenceManager::getBasePath() const
 {
     //basePath = .sti/address/module/name
     return basePath;
+}
+
+std::string LocalPersistenceManager::getTemporaryPath() const
+{
+    if (transientRepository != 0) {
+        auto transient = std::dynamic_pointer_cast<TransientRepository>(transientRepository);
+        if (transient != 0) {
+            return transient->getTemporaryPath();
+        }
+    }
+
+    return "";
 }
 
 bool LocalPersistenceManager::getLogBasePath(const STI::Utils::TimeStamp& timestamp, std::string& logBasePath)

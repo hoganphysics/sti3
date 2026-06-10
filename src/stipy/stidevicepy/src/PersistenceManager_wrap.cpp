@@ -50,6 +50,8 @@ void init_PersistenceManager(py::module& m)
             py::arg("backingHolder"))
         .def("makeVirtualFileServer", &PersistenceManagerPy::makeVirtualFileServer)
         .def("getFileServer", &PersistenceManagerPy::getFileServer)
+        .def("getBasePath", &PersistenceManagerPy::getBasePath)
+        .def("getTemporaryPath", &PersistenceManagerPy::getTemporaryPath)
         ;
 
 }

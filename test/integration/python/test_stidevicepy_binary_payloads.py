@@ -1,5 +1,8 @@
 """stidevicepy runtime coverage for lazy binary channel measurements."""
 
+import os
+from pathlib import Path
+import subprocess
 import struct
 
 import pytest
@@ -8,11 +11,119 @@ from sti_testnet.devices import ChannelSpec
 from sti_testnet.devices import DeviceSpec
 from sti_testnet.devices import make_server_spec
 from sti_testnet.topology import InProcessTopology
+from sti_testnet.waits import wait_for
 from sti_testnet.waits import wait_for_device_ids
 from sti_testnet.waits import wait_for_ticket
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.requires_nameservice]
+
+
+def _repo_root():
+    return Path(__file__).resolve().parents[3]
+
+
+def _build_dir():
+    return Path(os.environ.get("STI3_BUILD_DIR", _repo_root() / "build-ninja")).resolve()
+
+
+def _stiserver_binary():
+    binary = _build_dir() / "src" / "server" / "src" / "STIServer"
+    if not binary.exists():
+        pytest.skip("STIServer binary is not built: {0}".format(binary))
+    return binary
+
+
+def _server_config(tmp_path, nameservice_address, name, address, module):
+    config_path = tmp_path / "stiserver.ini"
+    config_path.write_text(
+        "\n".join(
+            [
+                "Device Name = {0}".format(name),
+                "IP Address = {0}".format(address),
+                "Module = {0}".format(module),
+                "Target Server = root",
+                "EnableActivate = true",
+                "EnableDeactivate = true",
+                "",
+                "[NetworkHub]",
+                "NameService = {0}".format(nameservice_address),
+                "",
+                "[omniORB]",
+                "traceLevel = 0",
+                "",
+                "[Shot Repository]",
+                "Path = {0}".format(tmp_path / "server-shots"),
+                "",
+            ]
+        )
+    )
+    return config_path
+
+
+class StiServerProcess(object):
+    def __init__(self, binary, config_path, nameservice_address):
+        self.binary = binary
+        self.config_path = config_path
+        self.nameservice_address = nameservice_address
+        self.process = None
+        self.stdout = ""
+        self.stderr = ""
+
+    def start(self):
+        self.process = subprocess.Popen(
+            [
+                str(self.binary),
+                "--file",
+                str(self.config_path),
+                "--NameService",
+                self.nameservice_address,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            close_fds=True,
+        )
+        return self
+
+    def shutdown(self):
+        process = self.process
+        self.process = None
+        if process is None:
+            return
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=2.0)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=2.0)
+        self._collect_output(process)
+
+    def assert_running(self):
+        if self.process is not None and self.process.poll() is not None:
+            self._collect_output(self.process)
+            raise AssertionError("STIServer exited unexpectedly\n{0}".format(self.diagnostics()))
+        return True
+
+    def diagnostics(self):
+        return "\n".join(
+            [
+                "STIServer binary: {0}".format(self.binary),
+                "STIServer config: {0}".format(self.config_path),
+                "STIServer returncode: {0}".format(None if self.process is None else self.process.poll()),
+                "stdout:\n{0}".format(self.stdout),
+                "stderr:\n{0}".format(self.stderr),
+            ]
+        )
+
+    def _collect_output(self, process):
+        try:
+            stdout, stderr = process.communicate(timeout=0.1)
+        except subprocess.TimeoutExpired:
+            return
+        self.stdout += stdout or ""
+        self.stderr += stderr or ""
 
 
 class BinaryMeasurementEvent(object):
@@ -83,6 +194,26 @@ class LazyReadDevice(object):
         return _LazyReadDevice()
 
 
+class ReadWriteBinaryChannelDevice(object):
+    def __new__(cls, stidevicepy, spec, payload):
+        class _ReadWriteBinaryChannelDevice(stidevicepy.LocalDevice):
+            def __init__(self):
+                self.spec = spec
+                self.payload = payload
+                stidevicepy.LocalDevice.__init__(self, spec.config())
+                channel = spec.input_channels[0]
+                self.addInputChannel(channel.number, channel.value_type, channel.name)
+
+            def readChannel(self, channel, value):
+                import stipy
+
+                if channel == 17:
+                    return stipy.BinaryData(self.payload)
+                return None
+
+        return _ReadWriteBinaryChannelDevice()
+
+
 class FileBackedImageReadDevice(object):
     IMAGE_WIDTH = 10
     IMAGE_HEIGHT = 10
@@ -139,7 +270,7 @@ class FileBackedImageReadDevice(object):
                 self.image_measurement_index += 1
                 filename = "readWrite-random-image-{0}{1}".format(self.image_measurement_index, extension)
                 persistence = self.getPersistenceManager()
-                file_holder = persistence.makeFileHolder("", filename)
+                file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
 
                 if file_holder is None or not file_holder.openFile():
                     return None
@@ -203,7 +334,7 @@ def receive_image_file_to_virtual_server(stipy, remote_device, image):
 
     assert file_server.transferFile(source_file_id, destination, stipy.FileTransferType.Binary)
 
-    virtual_file_server.addFile(backing_destination)
+    assert virtual_file_server.addFile(backing_destination)
     received_file_id = backing_destination.getID()
     received_bytes = backing_destination.getBytes()
 
@@ -354,6 +485,146 @@ def test_stidevicepy_read_returns_lazy_binary_and_image_payloads(
         assert image_data.pull()
         assert image_data.hasLocalData()
         assert image_data.getBytes() == payload
+
+
+def test_stidevicepy_readwrite_channel_17_binary_read_does_not_crash_server(
+    sti_nameservice_address,
+    stipy_modules,
+):
+    stipy, stidevicepy = stipy_modules
+
+    payload = (
+        b"readWrite plain BinaryData payload\n"
+        b"This channel returns BinaryData that is not an Image.\n"
+    )
+    server_spec = make_server_spec(name="stidevicepy ReadWrite Binary Server", address="localhost", module=54)
+    server_id = server_spec.device_id()
+    device_spec = DeviceSpec(
+        name="TestDevice",
+        address="localhost",
+        module=0,
+        target_server_id=server_id.getID(),
+        output_channels=[],
+        input_channels=[
+            ChannelSpec(17, name="example binary data", value_type=stipy.MixedValueType.Binary, direction="input"),
+        ],
+    )
+
+    with InProcessTopology(sti_nameservice_address, server_spec, []) as topology:
+        device = ReadWriteBinaryChannelDevice(stidevicepy, device_spec, payload)
+        topology.devices.append(device)
+        topology.hub.addDevice(device)
+
+        wait_for_device_ids(
+            topology.hub,
+            [server_id, device_spec.device_id()],
+            timeout_s=5.0,
+            diagnostics=topology.diagnostics,
+        )
+
+        server = topology.connect_stipy()
+        assert server is not None, topology.summary()
+        remote_device = server.getDeviceCollection().get(device_spec.device_id())
+
+        binary = remote_device.read(17)
+        assert isinstance(binary, stipy.BinaryData)
+        assert binary.bytes() == len(payload)
+        assert binary.wordsize() == 1
+        assert binary.hasStream()
+        assert not binary.hasLocalData()
+
+        assert binary.pull()
+        assert binary.getBytes() == payload
+
+
+def test_stiserver_proxy_readwrite_channel_17_binary_read_does_not_crash_server(
+    sti_nameservice_address,
+    stipy_modules,
+    tmp_path,
+):
+    stipy, stidevicepy = stipy_modules
+
+    payload = (
+        b"readWrite plain BinaryData payload\n"
+        b"This channel returns BinaryData that is not an Image.\n"
+    )
+    server_name = "stidevicepy STIServer Binary Server"
+    server_address = "localhost"
+    server_module = 59
+    server_id = stipy.DeviceID(server_name, server_address, server_module)
+    config_path = _server_config(tmp_path, sti_nameservice_address, server_name, server_address, server_module)
+
+    stiserver = StiServerProcess(_stiserver_binary(), config_path, sti_nameservice_address).start()
+    device_hub = None
+    try:
+        server_ref = {"device": None}
+
+        def connect_server():
+            stiserver.assert_running()
+            server_ref["device"] = stipy.connect(server_id, sti_nameservice_address)
+            return server_ref["device"] is not None
+
+        wait_for(
+            connect_server,
+            timeout_s=10.0,
+            describe=lambda: "STIServer was not reachable",
+            diagnostics=stiserver.diagnostics,
+        )
+
+        device_spec = DeviceSpec(
+            name="TestDevice",
+            address="localhost",
+            module=0,
+            target_server_id=server_id.getID(),
+            output_channels=[],
+            input_channels=[
+                ChannelSpec(17, name="example binary data", value_type=stipy.MixedValueType.Binary, direction="input"),
+            ],
+        )
+        device = ReadWriteBinaryChannelDevice(stidevicepy, device_spec, payload)
+        device_hub = stidevicepy.NetworkDeviceHub(sti_nameservice_address)
+        device_hub.addDevice(device)
+        device_hub.run(False)
+
+        wait_for_device_ids(
+            device_hub,
+            [device_spec.device_id()],
+            timeout_s=10.0,
+            diagnostics=stiserver.diagnostics,
+        )
+
+        server = server_ref["device"]
+        wait_for(
+            lambda: server.getDeviceCollection().contains(device_spec.device_id()),
+            timeout_s=10.0,
+            describe=lambda: "STIServer did not collect TestDevice",
+            diagnostics=stiserver.diagnostics,
+        )
+
+        remote_device = server.getDeviceCollection().get(device_spec.device_id())
+        binary = remote_device.read(17)
+        stiserver.assert_running()
+
+        assert isinstance(binary, stipy.BinaryData)
+        assert binary.bytes() == len(payload)
+        assert binary.wordsize() == 1
+        assert binary.hasStream()
+        assert not binary.hasLocalData()
+
+        assert binary.pull()
+        stiserver.assert_running()
+        assert binary.getBytes() == payload
+    finally:
+        if device_hub is not None:
+            try:
+                device_hub.shutdown()
+            except Exception:
+                pass
+            try:
+                device_hub.disconnect()
+            except Exception:
+                pass
+        stiserver.shutdown()
 
 
 def test_stidevicepy_can_save_file_backed_image_last_measurements(
