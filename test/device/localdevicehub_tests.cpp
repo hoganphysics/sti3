@@ -30,6 +30,7 @@ using STI::Device::ProfileManager;
 using STI::Device::TaskManager;
 using STI::Network::Hub;
 using STI::Network::HubID;
+using STI::Network::HubTrace;
 using STI::Network::LocalDeviceHub;
 using STI::Utils::Collection;
 using STI::Utils::LocalCollection;
@@ -173,6 +174,47 @@ private:
     unsigned addCount_ = 0;
 };
 
+class RecordingHub : public Hub<DeviceID, Device> {
+public:
+    RecordingHub(const HubID& id, const HubID& sourceHubID)
+        : id_(id), sourceHubID_(sourceHubID) {}
+
+    bool addHub(const HubID&, const std::shared_ptr<Hub<DeviceID, Device>>&) override { return true; }
+    bool removeHub(const HubID&) override { return true; }
+    bool hasNodeID(const DeviceID&) const override { return false; }
+
+    bool refresh(const HubTrace& trace) override
+    {
+        ++refreshCount;
+        refreshTraceIncludedSource = trace.includesHubID(sourceHubID_);
+        return true;
+    }
+
+    bool distribute(const DeviceID&, const std::shared_ptr<Device>&, const HubTrace&, const HubID&) override
+    {
+        ++distributeCount;
+        refreshCountAtFirstDistribute = refreshCount;
+        return true;
+    }
+
+    bool distributeNodes(const HubID&) override { return true; }
+    bool redistributeNodes(const HubTrace&) override { return true; }
+    bool removeNode(const DeviceID&, const HubTrace&) override { return true; }
+    const HubID& getID() const override { return id_; }
+    bool ping() const override { return true; }
+    bool isConnectedTo(const HubID&) const override { return false; }
+    void walk(HubNodeWalker&, const HubTrace&) const override {}
+
+    unsigned distributeCount = 0;
+    unsigned refreshCount = 0;
+    unsigned refreshCountAtFirstDistribute = 0;
+    bool refreshTraceIncludedSource = false;
+
+private:
+    HubID id_;
+    HubID sourceHubID_;
+};
+
 } // namespace
 
 TEST_CASE("LocalDeviceHub addNode forwards to connected hubs without duplicate local add events", "[localdevicehub][network]")
@@ -197,6 +239,23 @@ TEST_CASE("LocalDeviceHub addNode forwards to connected hubs without duplicate l
     CHECK_FALSE(dev2Listener->waitForAddCount(2, std::chrono::milliseconds(100)));
     CHECK(dev1Listener->addCount() == 1);
     CHECK(dev2Listener->addCount() == 1);
+}
+
+TEST_CASE("LocalDeviceHub addNode refreshes connected hubs after distribution", "[localdevicehub][network]")
+{
+    auto hub = std::make_shared<LocalDeviceHub>(HubID("Hub", "127.0.0.1", 1));
+    auto remoteHubID = HubID("RemoteHub", "127.0.0.1", 2);
+    auto remoteHub = std::make_shared<RecordingHub>(remoteHubID, hub->getID());
+    auto dev = std::make_shared<HubTestDevice>(makeDeviceID("dev", 1));
+
+    REQUIRE(hub->addHub(remoteHubID, remoteHub));
+    REQUIRE(hub->addNode(dev->getID(), dev));
+
+    CHECK(remoteHub->distributeCount == 1);
+    CHECK(remoteHub->refreshCountAtFirstDistribute == 0);
+    CHECK(remoteHub->refreshCount == 1);
+    CHECK(remoteHub->refreshTraceIncludedSource);
+    CHECK(dev->refreshCount == 1);
 }
 
 TEST_CASE("LocalDeviceHub distributes devices across connected hubs", "[localdevicehub][network]")
@@ -260,6 +319,31 @@ TEST_CASE("LocalDeviceHub propagates node removal across connected hubs", "[loca
     CHECK_FALSE(dev2->collectionContains(dev3->getID()));
     CHECK_FALSE(dev3->active);
     CHECK(dev3->disableCount >= 1);
+}
+
+TEST_CASE("LocalDeviceHub addNode refresh removes stale device references", "[localdevicehub][network]")
+{
+    auto hub1 = std::make_shared<LocalDeviceHub>(HubID("Hub1", "127.0.0.1", 1));
+    auto hub2 = std::make_shared<LocalDeviceHub>(HubID("Hub2", "127.0.0.1", 2));
+
+    auto dev1 = std::make_shared<HubTestDevice>(makeDeviceID("dev1", 1));
+    auto dev2 = std::make_shared<HubTestDevice>(makeDeviceID("dev2", 2));
+    auto dev3 = std::make_shared<HubTestDevice>(makeDeviceID("dev3", 3));
+
+    REQUIRE(hub1->addNode(dev1->getID(), dev1));
+    REQUIRE(hub2->addNode(dev2->getID(), dev2));
+    REQUIRE(Hub<DeviceID, Device>::connect(hub1, hub2));
+    REQUIRE(dev1->collectionContains(dev2->getID()));
+
+    dev2->alive = false;
+
+    REQUIRE(hub1->addNode(dev3->getID(), dev3));
+
+    CHECK_FALSE(dev1->collectionContains(dev2->getID()));
+    CHECK_FALSE(dev3->collectionContains(dev2->getID()));
+    CHECK_FALSE(hub2->hasNodeID(dev2->getID()));
+    CHECK_FALSE(dev2->active);
+    CHECK(dev2->disableCount >= 1);
 }
 
 TEST_CASE("LocalDeviceHub refresh removes dead references from collected devices", "[localdevicehub][network]")

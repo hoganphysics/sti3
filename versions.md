@@ -48,6 +48,22 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.5.2 - Add-node network refresh
+
+Patch release for pruning stale device references opportunistically when new
+devices join a hub.
+
+Fixes:
+
+* Refresh the LocalHub network after a successful `addNode()` distribution so
+  dead device references are removed without requiring a manual refresh call or
+  a periodic device-ping task.
+
+Tests:
+
+* Add LocalDeviceHub coverage for add-node-triggered network refresh and stale
+  reference cleanup across connected hubs.
+
 ### 3.5.1 - File-backed payload materialization
 
 Patch release for materializing lazy file-backed payloads from Python clients
