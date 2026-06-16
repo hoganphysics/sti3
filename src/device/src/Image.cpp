@@ -20,10 +20,14 @@ using STI::Utils::FileServer;
 
 
 Image::Image()
+: height_(0),
+  width_(0)
 {
 }
 
 Image::Image(const std::string& orginID, const std::string& filename)
+: height_(0),
+  width_(0)
 {
     std::filesystem::path filepath = filename;
 
@@ -35,7 +39,9 @@ Image::Image(const std::string& orginID, const std::string& filename)
 
 
 Image::Image(const FileID& fileID)
-: fileID(fileID)
+: fileID(fileID),
+  height_(0),
+  width_(0)
 {
 }
 
@@ -109,10 +115,7 @@ void Image::setImageData(const std::shared_ptr<FileHolder>& file)
 
     fileHolder.set(file);
 
-    auto id = file->getID();
-    fileID.origin = id.origin;
-    fileID.persistenceLocation = id.persistenceLocation;
-    fileID.path = id.path;
+    fileID = file->getID();
 }
 
 void Image::setImageData(const std::shared_ptr<BinaryData>& data)

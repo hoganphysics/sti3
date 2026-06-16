@@ -56,6 +56,7 @@ class TestDevice(stidevicepy.LocalDevice):
         ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
         ch.setMeasurementUnits("Hz")
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
+        self.addInputChannel(19, stipy.MixedValueType.Image, stipy.MixedValueType.Image, "inverted image")    #measures an Image (input), accepts an Image argument (output)
 
         return
 
@@ -130,6 +131,22 @@ class TestDevice(stidevicepy.LocalDevice):
             self.IMAGE_WIDTH,
             self.IMAGE_HEIGHT,
         )
+
+    def invert_image_measurement(self, image):
+        if image is None:
+            return None
+
+        image_data = image.getData()
+        if image_data is None or not image_data.pull():
+            print("Read ch 19: input image does not have readable BinaryData")
+            return None
+
+        pixels = image_data.getBytes()
+        if pixels is None:
+            return None
+
+        inverted_pixels = bytes(255 - pixel for pixel in pixels)
+        return stipy.Image(inverted_pixels, image.getWidth(), image.getHeight())
 
     def file_holder_backed_image(self, payload, extension, width=None, height=None):
         width = self.IMAGE_WIDTH if width is None else width
@@ -282,6 +299,9 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 18:
             print("Read ch 18: example virtual text file (VirtualFileHolder)")
             return self.virtual_text_file_measurement()
+        elif channel == 19:
+            print("Read ch 19: invert image")
+            return self.invert_image_measurement(value)
 
         return None
 
@@ -342,8 +362,12 @@ print("Measurement 7: " + str(data))
 data = device.read(18)
 print("Measurement 9: " + str(data))
 
+input_image = stipy.Image(device.random_image_bytes(), device.IMAGE_WIDTH, device.IMAGE_HEIGHT)
+data = device.read(19, input_image)
+print("Measurement 10: " + str(data))
 
-nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
+
+# nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
 # hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 hub = stidevicepy.NetworkDeviceHub(config)
 
