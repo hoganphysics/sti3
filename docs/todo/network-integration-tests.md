@@ -376,3 +376,8 @@ pytest test/integration/python -m observe --observe
 - Delegated-trigger play currently reaches the trigger/target device, but the result ticket remains `Running`; `test_delegated_trigger.py` captures this as an opt-in `slow` expected failure until the runtime completion behavior is fixed.
 - Overlap parse/play can record `play` on both devices while a result ticket still reports `Canceled`; `test_overlap_parse_play.py` captures this as an opt-in `slow` expected failure until the runtime completion behavior is fixed.
 - Should a delegated trigger device that is separate from other shot target devices trigger the rest of the shot? A trial with a trigger device plus a target device completed the trigger device play event but left the target loaded and the result ticket running.
+- Intermittent partner distribution flake observed on 2026-06-18 while running the full Python integration suite during STIPy `makeshot()` performance work:
+  `test_partner_distribution.py::test_partial_partner_id_distribution_across_two_hubs_same_process[controller-before-partner]`.
+  The first full-suite run timed out waiting for the parse ticket to reach `Complete`; the ticket reached terminal status `Canceled`.
+  Diagnostics showed the controller recorded a `partner-reference` for `localhost/61/Partner Two Hub Peer controller-before-partner`, but the partner records were empty.
+  An immediate targeted rerun of the same test passed, so this should be investigated as a race/order-dependent network integration failure rather than treated as a deterministic makeshot regression.
