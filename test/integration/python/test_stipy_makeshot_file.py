@@ -167,6 +167,39 @@ def test_file_makeshot_keeps_stable_modules_in_sys_modules(stipy_modules, tmp_pa
         assert sys.modules["numpy"] is numpy_module
 
 
+def test_file_makeshot_import_tracking_does_not_scan_all_modules_per_import(
+    stipy_modules, tmp_path, monkeypatch
+):
+    stipy, _ = stipy_modules
+    makeshot_module = __import__("stipy.python.makeshot", fromlist=["_module_is_under_roots"])
+    original_module_is_under_roots = makeshot_module._module_is_under_roots
+    call_count = 0
+
+    def counting_module_is_under_roots(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        return original_module_is_under_roots(*args, **kwargs)
+
+    monkeypatch.setattr(makeshot_module, "_module_is_under_roots", counting_module_is_under_roots)
+
+    _, main_name = _module_names()
+    main_file = tmp_path / "{0}.py".format(main_name)
+    _write(
+        main_file,
+        [
+            "from stipy import *",
+            *["import math" for _ in range(100)],
+            "setvar('helper_var', 1)",
+        ],
+    )
+    starting_module_count = len(sys.modules)
+
+    shot = stipy.makeshot(str(main_file))
+
+    assert shot.rootgroup().var("helper_var") == 1
+    assert call_count < starting_module_count * 4
+
+
 def test_file_makeshot_reexecutes_helpers_from_extra_import_roots(stipy_modules, tmp_path):
     stipy, _ = stipy_modules
     timing_dir = tmp_path / "timing"

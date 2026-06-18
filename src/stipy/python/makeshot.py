@@ -61,8 +61,8 @@ def _protected_roots():
     return _unique_paths(roots)
 
 
-def _is_protected_path(path):
-    return any(_is_relative_to(path, root) for root in _protected_roots())
+def _is_protected_path(path, protected_roots):
+    return any(_is_relative_to(path, root) for root in protected_roots)
 
 
 def _module_path(path):
@@ -103,9 +103,9 @@ def _module_paths(module):
     return _unique_paths(paths)
 
 
-def _module_is_under_roots(module, roots):
+def _module_is_under_roots(module, roots, protected_roots):
     for path in _module_paths(module):
-        if _is_protected_path(path):
+        if _is_protected_path(path, protected_roots):
             continue
         if any(_is_relative_to(path, root) for root in roots):
             return True
@@ -125,7 +125,8 @@ class _IsolatedTimingImports:
     def __init__(self, main_file, import_roots):
         self.main_file = pathlib.Path(main_file).resolve()
         self.roots = _import_root_paths(self.main_file, import_roots)
-        self.loaded_timing_modules = set()
+        self.protected_roots = _protected_roots()
+        self.start_module_names = set()
         self.outside_root_stipy_imports = set()
         self.original_import = None
         self.original_sys_path = None
@@ -137,7 +138,8 @@ class _IsolatedTimingImports:
             self.original_sys_path = list(sys.path)
             self._prepend_import_roots()
             importlib.invalidate_caches()
-            self._remove_timing_modules()
+            self._remove_timing_modules(sys.modules.keys())
+            self.start_module_names = set(sys.modules)
             builtins.__import__ = self._import
             return self
         except Exception:
@@ -150,7 +152,8 @@ class _IsolatedTimingImports:
         try:
             try:
                 self._restore_import()
-                self._remove_timing_modules()
+                new_module_names = set(sys.modules) - self.start_module_names
+                self._remove_timing_modules(new_module_names)
             finally:
                 self._restore_sys_path()
             self._warn_outside_root_stipy_imports()
@@ -174,10 +177,7 @@ class _IsolatedTimingImports:
 
     def _import(self, name, globals=None, locals=None, fromlist=(), level=0):
         self._record_outside_root_stipy_import(name, globals, level)
-        try:
-            return self.original_import(name, globals, locals, fromlist, level)
-        finally:
-            self._record_timing_modules()
+        return self.original_import(name, globals, locals, fromlist, level)
 
     def _record_outside_root_stipy_import(self, name, globals, level):
         if level != 0 or name.split(".", 1)[0] != "stipy":
@@ -186,20 +186,16 @@ class _IsolatedTimingImports:
         caller_file = _module_path((globals or {}).get("__file__"))
         if caller_file is None:
             return
-        if _is_protected_path(caller_file) or _path_is_under_roots(caller_file, self.roots):
+        if _is_protected_path(caller_file, self.protected_roots) or _path_is_under_roots(caller_file, self.roots):
             return
 
         self.outside_root_stipy_imports.add(caller_file)
 
-    def _record_timing_modules(self):
-        for name, module in list(sys.modules.items()):
-            if _module_is_under_roots(module, self.roots):
-                self.loaded_timing_modules.add(name)
-
-    def _remove_timing_modules(self):
-        names_to_remove = set(self.loaded_timing_modules)
-        for name, module in list(sys.modules.items()):
-            if _module_is_under_roots(module, self.roots):
+    def _remove_timing_modules(self, module_names):
+        names_to_remove = set()
+        for name in list(module_names):
+            module = sys.modules.get(name)
+            if _module_is_under_roots(module, self.roots, self.protected_roots):
                 names_to_remove.add(name)
 
         for name in names_to_remove:
