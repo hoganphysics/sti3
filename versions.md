@@ -48,6 +48,77 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.5.4 - STIPy makeshot fixes
+
+Patch release for deterministic file-backed shot generation and clearer STIPy
+variable declaration errors.
+
+Fixes:
+
+* Isolate imports for file-backed `stipy.makeshot(...)` and
+  `server.makeshot(...)` calls so helper timing modules are re-executed for each
+  shot instead of being reused from `sys.modules`.
+* Pick up edited helper timing files on the next file-backed `makeshot()` call
+  without restarting Python.
+* Execute submitted timing files under private module names and remove timing
+  modules from `sys.modules` after shot creation so timing-file globals do not
+  leak into later shots or the caller's namespace.
+* Raise a Python `ValueError` when `setvar(...)` declares the same variable name
+  more than once in a shot, instead of silently keeping the first value.
+* Preserve the intended `makeshot(..., vars={...})` override behavior for the
+  first `setvar(...)` declaration of an overridden variable.
+
+Python API:
+
+* Add the optional `import_roots` keyword for file-backed local and server
+  `makeshot()` calls so helper timing modules outside the submitted file's
+  directory can be refreshed with the shot.
+
+Documentation:
+
+* Document file-backed `makeshot()` import isolation and `import_roots` usage.
+* Add design notes for the STIPy file-backed import isolation behavior.
+
+Tests:
+
+* Add STIPy integration coverage for repeated file-backed shots, edited helper
+  modules, stale pre-imported helpers, timing-module cleanup, private main-file
+  globals, extra import roots, and server-backed file shots.
+* Add STIPy regression coverage for duplicate `setvar(...)` declarations and
+  preserved variable override behavior.
+
+### 3.5.3 - Python image helpers
+
+Patch release for constructing, inspecting, and round-tripping STIPy images from
+Python.
+
+Python and examples:
+
+* Export `STI_Image` from `stipy` star imports as the preferred Python image
+  alias, while avoiding a collision with Pillow's `Image` symbol.
+* Add `STI_Image.from_file()`, `STI_Image.from_path()`, and
+  `STI_Image.from_pil()` helpers for constructing STIPy images from Python files
+  and Pillow images.
+* Add `STI_Image.to_pil()` for converting readable STIPy image payloads back to
+  Pillow images when Pillow is installed.
+* Expose Python image metadata helpers and preserve source, storage, format, and
+  encoding metadata on constructed images.
+* Extend the Python `readWrite` example and notebooks with STIPy image
+  construction and round-trip examples.
+
+Fixes:
+
+* Preserve arbitrary Python bytes exactly when creating `BinaryData` from
+  `bytes`, including payloads with embedded null bytes.
+* Initialize default image dimensions consistently and preserve the complete
+  `FileID` when constructing images from file holders.
+
+Tests:
+
+* Add STIPy integration coverage for `STI_Image` exports, file-backed image
+  construction, file-holder-backed image IDs, Pillow construction, and Pillow
+  round-trip conversion.
+
 ### 3.5.2 - Add-node network refresh
 
 Patch release for pruning stale device references opportunistically when new
