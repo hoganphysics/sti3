@@ -11,8 +11,8 @@ from stipy.python.makeshot import make_shot
 _makeshot = STIPyServer.makeshot
 
 
-def makeshot(self, source=None, vars=None, shot_type=None):
-    return make_shot(_makeshot, self, source, vars, shot_type)
+def makeshot(self, source=None, vars=None, shot_type=None, import_roots=None):
+    return make_shot(_makeshot, self, source, vars, shot_type, import_roots=import_roots)
 
 
 def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: Callable[[int, int], None] = None):
