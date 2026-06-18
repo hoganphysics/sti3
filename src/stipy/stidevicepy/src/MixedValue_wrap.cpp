@@ -5,7 +5,7 @@
 #include <sti/utils/Image.h>
 #include "MixedValuePy.h"
 
-#include <algorithm>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -27,14 +27,19 @@ namespace
 {
 std::shared_ptr<BinaryData> makeBinaryData(const py::bytes& payload)
 {
-    std::string bytes = payload;
+    char* source = nullptr;
+    Py_ssize_t size = 0;
+    if (PyBytes_AsStringAndSize(payload.ptr(), &source, &size) != 0) {
+        throw py::error_already_set();
+    }
+
     auto data = std::make_shared<BinaryData>();
     char* rawData = nullptr;
-    if (!bytes.empty()) {
-        rawData = new char[bytes.size()];
-        std::copy(bytes.begin(), bytes.end(), rawData);
+    if (size > 0) {
+        rawData = new char[static_cast<size_t>(size)];
+        std::memcpy(rawData, source, static_cast<size_t>(size));
     }
-    data->assign(rawData, bytes.size(), true);
+    data->assign(rawData, static_cast<size_t>(size), true);
     return data;
 }
 

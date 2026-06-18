@@ -65,9 +65,12 @@ def test_sti_image_from_pil_when_pillow_is_available(stipy_modules):
     assert image.metadata("format") == "PNG"
     assert image.getData().getBytes().startswith(b"\x89PNG")
 
+    converted = image.to_pil()
+    assert converted.size == (2, 1)
+    assert converted.getpixel((0, 0)) == (1, 2, 3)
+
     constructed = stipy.STI_Image(pil_image)
     assert constructed.getWidth() == 2
     assert constructed.getHeight() == 1
     assert constructed.metadata("source") == "PIL.Image"
     assert constructed.getData().getBytes().startswith(b"\x89PNG")
-

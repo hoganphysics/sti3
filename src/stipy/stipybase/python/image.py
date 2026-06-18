@@ -1,5 +1,6 @@
 from pathlib import Path
 import io
+import tempfile
 
 from ..stipybase import Image as _Image
 
@@ -119,11 +120,50 @@ def _image_from_pil(cls, image, *, format=None, **save_kwargs):
     )
 
 
+def _image_to_pil(self):
+    try:
+        from PIL import Image as PILImage
+    except ImportError as exc:
+        raise ImportError(
+            "Pillow is optional. Install Pillow to convert STI_Image to PIL.Image."
+        ) from exc
+
+    data = self.getData() if self.hasData() else None
+    if data is not None:
+        data.pull()
+        payload = data.getBytes()
+        if payload is None:
+            raise ValueError("STI_Image BinaryData has no readable bytes")
+
+        image = PILImage.open(io.BytesIO(payload))
+        image.load()
+        return image
+
+    suffix = ""
+    if hasattr(self, "metadata"):
+        try:
+            image_format = self.metadata("format")
+        except Exception:
+            image_format = None
+        if image_format:
+            suffix = "." + str(image_format).lower()
+
+    with tempfile.NamedTemporaryFile(suffix=suffix) as preview_file:
+        if not self.save(preview_file.name):
+            raise ValueError(
+                "STI_Image has neither readable BinaryData nor a saveable file payload"
+            )
+
+        image = PILImage.open(preview_file.name)
+        image.load()
+        return image
+
+
 def _install_image_helpers():
     setattr(STI_Image, "from_file", classmethod(_image_from_file))
     setattr(STI_Image, "from_path", classmethod(_image_from_file))
     setattr(STI_Image, "from_pil", classmethod(_image_from_pil))
+    setattr(STI_Image, "to_pil", _image_to_pil)
 
 
 _install_image_helpers()
-
