@@ -1,6 +1,7 @@
 from collections.abc import Callable
 import builtins
 import importlib.util
+import os
 from os import PathLike
 import pathlib
 import sys
@@ -23,6 +24,43 @@ def _is_relative_to(path, root):
     except ValueError:
         return False
     return True
+
+
+def _normalized_path_text(path):
+    if path is None:
+        return None
+    if not isinstance(path, (str, bytes, PathLike)):
+        return None
+
+    path_text = os.fspath(path)
+    if isinstance(path_text, bytes):
+        path_text = os.fsdecode(path_text)
+    if path_text in {"built-in", "frozen"} or path_text.startswith("<"):
+        return None
+
+    return os.path.normcase(os.path.abspath(os.path.expanduser(path_text)))
+
+
+def _path_texts(paths):
+    texts = []
+    for path in paths:
+        path_text = _normalized_path_text(path)
+        if path_text is not None and path_text not in texts:
+            texts.append(path_text)
+    return tuple(texts)
+
+
+def _path_text_is_under_roots(path_text, root_texts):
+    if path_text is None:
+        return False
+
+    for root_text in root_texts:
+        if path_text == root_text:
+            return True
+        root_prefix = root_text if root_text.endswith(os.path.sep) else root_text + os.path.sep
+        if path_text.startswith(root_prefix):
+            return True
+    return False
 
 
 def _resolved_path(path):
@@ -103,7 +141,48 @@ def _module_paths(module):
     return _unique_paths(paths)
 
 
-def _module_is_under_roots(module, roots, protected_roots):
+def _module_path_texts(module):
+    if module is None:
+        return []
+
+    paths = []
+
+    def append_path(path):
+        path_text = _normalized_path_text(path)
+        if path_text is not None and path_text not in paths:
+            paths.append(path_text)
+
+    append_path(getattr(module, "__file__", None))
+
+    spec = getattr(module, "__spec__", None)
+    if spec is not None:
+        append_path(getattr(spec, "origin", None))
+
+    module_path = getattr(module, "__path__", None)
+    if module_path is not None:
+        for entry in module_path:
+            append_path(entry)
+
+    return paths
+
+
+def _module_is_under_roots(module, roots, protected_roots, root_texts=None, protected_root_texts=None):
+    if root_texts is None:
+        root_texts = _path_texts(roots)
+    if protected_root_texts is None:
+        protected_root_texts = _path_texts(protected_roots)
+
+    needs_resolved_check = False
+    for path_text in _module_path_texts(module):
+        if _path_text_is_under_roots(path_text, protected_root_texts):
+            continue
+        if _path_text_is_under_roots(path_text, root_texts):
+            return True
+        needs_resolved_check = True
+
+    if not needs_resolved_check:
+        return False
+
     for path in _module_paths(module):
         if _is_protected_path(path, protected_roots):
             continue
@@ -126,6 +205,8 @@ class _IsolatedTimingImports:
         self.main_file = pathlib.Path(main_file).resolve()
         self.roots = _import_root_paths(self.main_file, import_roots)
         self.protected_roots = _protected_roots()
+        self.root_texts = _path_texts(self.roots)
+        self.protected_root_texts = _path_texts(self.protected_roots)
         self.start_module_names = set()
         self.outside_root_stipy_imports = set()
         self.original_import = None
@@ -195,7 +276,13 @@ class _IsolatedTimingImports:
         names_to_remove = set()
         for name in list(module_names):
             module = sys.modules.get(name)
-            if _module_is_under_roots(module, self.roots, self.protected_roots):
+            if _module_is_under_roots(
+                module,
+                self.roots,
+                self.protected_roots,
+                self.root_texts,
+                self.protected_root_texts,
+            ):
                 names_to_remove.add(name)
 
         for name in names_to_remove:

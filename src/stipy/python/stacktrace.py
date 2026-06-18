@@ -1,5 +1,8 @@
-from inspect import getframeinfo, stack
+import sys
+
 from stipy.stipybase.stipybase import StackTrace as _StackTrace
+
+_LAST_FRAME_FUNCTIONS = {"execute_file", "makeshot", "_call_with_frames_removed", "load_module"}
 
 def isFilename(name):
     if isinstance(name, str) :
@@ -21,25 +24,23 @@ def isFunctionName(name):
 #     return False
 
 def foundLastFrame(functionName):
-    return functionName in ["execute_file", "makeshot", "_call_with_frames_removed", "load_module"]
+    return functionName in _LAST_FRAME_FUNCTIONS
 
 def makeStackTrace():
     trace = _StackTrace()
 
-    rawFrames = stack()
-    startFrame = 2  # drop event(), etc
+    try:
+        frame = sys._getframe(2)  # drop makeStackTrace() and event(), setvar(), etc.
+    except ValueError:
+        return trace
 
-    if len(rawFrames) > 2:
-        for i in range(startFrame, len(rawFrames)) :
-            info = getframeinfo(rawFrames[i][0])
-            if foundLastFrame(info.function):
-                break
-            # if not isFilename(info.filename) :
-            #     break
-            # if not isFunctionName(info.function):
-            #     break
-            trace.appendFrame(info.filename, info.lineno, info.function)
+    while frame is not None:
+        code = frame.f_code
+        function = code.co_name
+        if foundLastFrame(function):
+            break
+        trace.appendFrame(code.co_filename, frame.f_lineno, function)
+        frame = frame.f_back
 
     return trace
-
 

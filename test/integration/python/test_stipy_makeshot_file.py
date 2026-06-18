@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import types
 import uuid
 
 import pytest
@@ -198,6 +199,50 @@ def test_file_makeshot_import_tracking_does_not_scan_all_modules_per_import(
 
     assert shot.rootgroup().var("helper_var") == 1
     assert call_count < starting_module_count * 4
+
+
+def test_file_makeshot_stacktrace_does_not_use_inspect_stack(
+    stipy_modules, tmp_path, monkeypatch
+):
+    stipy, _ = stipy_modules
+    stacktrace_module = __import__("stipy.python.stacktrace", fromlist=["stack"])
+    _, main_name = _module_names()
+    main_file = tmp_path / "{0}.py".format(main_name)
+    _write(
+        main_file,
+        [
+            "from stipy import *",
+            "setvar('fast_var', 1)",
+        ],
+    )
+
+    def forbidden_stack(*args, **kwargs):
+        raise AssertionError("file-backed makeshot should not call inspect.stack()")
+
+    monkeypatch.setattr(stacktrace_module, "stack", forbidden_stack, raising=False)
+
+    shot = stipy.makeshot(str(main_file))
+
+    assert shot.rootgroup().var("fast_var") == 1
+
+
+def test_makeshot_module_classification_skips_resolve_for_protected_modules(
+    stipy_modules, tmp_path, monkeypatch
+):
+    makeshot_module = __import__("stipy.python.makeshot", fromlist=["_module_is_under_roots"])
+    protected_module = types.ModuleType("_stipy_test_protected_module")
+    protected_module.__file__ = str(Path(sys.prefix) / "lib" / "python-protected-module.py")
+
+    def forbidden_module_paths(module):
+        raise AssertionError("protected module classification should not resolve module paths")
+
+    monkeypatch.setattr(makeshot_module, "_module_paths", forbidden_module_paths)
+
+    assert not makeshot_module._module_is_under_roots(
+        protected_module,
+        [tmp_path.resolve()],
+        makeshot_module._protected_roots(),
+    )
 
 
 def test_file_makeshot_reexecutes_helpers_from_extra_import_roots(stipy_modules, tmp_path):

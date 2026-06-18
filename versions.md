@@ -60,11 +60,21 @@ Fixes:
   only modules added during the shot at context exit.
 * Cache protected import roots within each file-backed shot isolation context so
   module path classification avoids repeated environment-root resolution.
+* Build STIPy stack traces by walking Python frames directly instead of using
+  `inspect.stack()` and `inspect.getframeinfo()` for every variable, event, and
+  measurement call in a timing file.
+* Avoid resolved path classification for protected Python environment modules
+  during file-backed import cleanup, keeping `makeshot()` latency stable in
+  Jupyter kernels with many loaded modules.
 
 Tests:
 
 * Add regression coverage that verifies file-backed import tracking does not
   scale as a full `sys.modules` scan per import.
+* Add regression coverage that fails if file-backed `makeshot()` returns to the
+  expensive `inspect.stack()` path.
+* Add regression coverage for protected-module classification without resolved
+  path scans.
 
 ### 3.5.4 - STIPy makeshot fixes
 
