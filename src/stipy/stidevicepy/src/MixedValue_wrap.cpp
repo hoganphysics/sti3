@@ -5,7 +5,7 @@
 #include <sti/utils/Image.h>
 #include "MixedValuePy.h"
 
-#include <algorithm>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -27,14 +27,19 @@ namespace
 {
 std::shared_ptr<BinaryData> makeBinaryData(const py::bytes& payload)
 {
-    std::string bytes = payload;
+    char* source = nullptr;
+    Py_ssize_t size = 0;
+    if (PyBytes_AsStringAndSize(payload.ptr(), &source, &size) != 0) {
+        throw py::error_already_set();
+    }
+
     auto data = std::make_shared<BinaryData>();
     char* rawData = nullptr;
-    if (!bytes.empty()) {
-        rawData = new char[bytes.size()];
-        std::copy(bytes.begin(), bytes.end(), rawData);
+    if (size > 0) {
+        rawData = new char[static_cast<size_t>(size)];
+        std::memcpy(rawData, source, static_cast<size_t>(size));
     }
-    data->assign(rawData, bytes.size(), true);
+    data->assign(rawData, static_cast<size_t>(size), true);
     return data;
 }
 
@@ -75,6 +80,57 @@ std::shared_ptr<Image> makeImageFromFileID(
 {
     auto image = std::make_shared<Image>(fileID);
     image->setWidth(width).setHeight(height);
+    return image;
+}
+
+std::string imageFormatFromPythonObject(const py::object& image)
+{
+    std::string imageFormat = "PNG";
+
+    py::object formatObject = image.attr("format");
+    if (!formatObject.is_none()) {
+        imageFormat = py::str(formatObject).cast<std::string>();
+        if (imageFormat.empty()) {
+            imageFormat = "PNG";
+        }
+    }
+
+    return imageFormat;
+}
+
+std::shared_ptr<Image> makeImageFromPythonObject(const py::object& value)
+{
+    py::object pilImageType;
+    try {
+        pilImageType = py::module_::import("PIL.Image").attr("Image");
+    }
+    catch (const py::error_already_set& error) {
+        if (error.matches(PyExc_ImportError)) {
+            throw py::type_error(
+                "Expected a PIL.Image.Image object. Install Pillow to construct "
+                "an STI Image from a Python image object, or pass bytes, BinaryData, "
+                "FileHolder, or FileID.");
+        }
+        throw;
+    }
+
+    if (!py::isinstance(value, pilImageType)) {
+        throw py::type_error("Expected a PIL.Image.Image object");
+    }
+
+    const auto width = py::cast<unsigned>(value.attr("width"));
+    const auto height = py::cast<unsigned>(value.attr("height"));
+    const auto imageFormat = imageFormatFromPythonObject(value);
+
+    py::object bytesIO = py::module_::import("io").attr("BytesIO")();
+    value.attr("save")(bytesIO, py::arg("format") = imageFormat);
+
+    py::bytes payload = bytesIO.attr("getvalue")();
+    auto image = makeImageFromBytes(payload, width, height);
+    image->setMetaData("source", MixedValue("PIL.Image"));
+    image->setMetaData("format", MixedValue(imageFormat));
+    image->setMetaData("storage", MixedValue("BinaryData"));
+    image->setMetaData("encoding", MixedValue(imageFormat));
     return image;
 }
 
@@ -131,6 +187,31 @@ bool saveImage(Image& image, const std::string& path)
 
     return false;
 }
+
+py::dict metadataDict(const MixedValue& metadata)
+{
+    py::dict values;
+
+    if (!metadata.isType(MixedValueType::Vector)) {
+        return values;
+    }
+
+    for (const auto& tuple : metadata.getVector()) {
+        if (!tuple.isType(MixedValueType::Vector)) {
+            continue;
+        }
+
+        const auto& entry = tuple.getVector();
+        if (entry.size() != 2 || !entry.at(0).isType(MixedValueType::String)) {
+            continue;
+        }
+
+        MixedValuePy value(entry.at(1));
+        values[entry.at(0).getString().c_str()] = value.getValue_py();
+    }
+
+    return values;
+}
 } // namespace
 
 
@@ -177,9 +258,33 @@ void init_MixedValue(py::module& m)
             py::arg("file"), py::arg("width") = 0, py::arg("height") = 0)
         .def(py::init(&makeImageFromFileID),
             py::arg("fileID"), py::arg("width") = 0, py::arg("height") = 0)
+        .def(py::init(&makeImageFromPythonObject), py::arg("image"))
         .def("getFileID", &Image::getFileID)
         .def("getHeight", &Image::getHeight)
         .def("getWidth", &Image::getWidth)
+        .def("setMetaData",
+            [](std::shared_ptr<Image>& self, const std::string& key, const py::object& value) {
+                MixedValuePy mixedValue(value);
+                self->setMetaData(key, mixedValue.getMixedValue());
+                return self;
+            }, py::arg("key"), py::arg("value"))
+        .def("getMetaData",
+            [](const Image& image) {
+                return MixedValuePy(image.metaData.getMetaData());
+            })
+        .def("getMetaData",
+            [](const Image& image, const std::string& key) {
+                return MixedValuePy(image.metaData.getMetaData(key));
+            }, py::arg("key"))
+        .def("metadata",
+            [](const Image& image) {
+                return metadataDict(image.metaData.getMetaData());
+            })
+        .def("metadata",
+            [](const Image& image, const std::string& key) {
+                MixedValuePy value(image.metaData.getMetaData(key));
+                return value.getValue_py();
+            }, py::arg("key"))
         .def("setWidth",
             [](std::shared_ptr<Image>& self, unsigned width) {
                 self->setWidth(width);

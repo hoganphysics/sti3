@@ -26,7 +26,8 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addAttribute("Downsample", "1").setSetter(ds_setter).setRefresher(lambda: str(self.downsample))
 
         #String attribute with list of allowed values
-        self.addAttribute("TriggerSource", "Hardware", ["Hardware", "Software"])
+        #This attribute has an attibute group specified with a prefix of "Trigger::" 
+        self.addAttribute("Trigger::TriggerSource", "Hardware", ["Hardware", "Software"])
 
         #Attribute with meta data
         def setMode(value):
@@ -38,7 +39,8 @@ class TestDevice(stidevicepy.LocalDevice):
             .addMetadata("type", "string attribute") #example meta data
         
         # self.addAttribute("Enable Trigger", "True", ["True", "False"])
-        self.addAttribute("Enable Trigger", "On", ["On", "Off"])
+        #Another attribute in the same group as the TriggerSource attribute 
+        self.addAttribute("Trigger::Enable Trigger", "On", ["On", "Off"])
 
         return
 
@@ -62,10 +64,12 @@ config = stipy.Configuration(
      'Module': '0',
      'Target Server': 'sr-magis/2/Frame2'})
 
+config.set("NetworkHub", "NameService", "192.168.88.252:2809")
+
 device = TestDevice(config)
 
-nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
-hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
+# nameServiceAddr = "192.168.22.254:2809"   #OmniORB NameService
+hub = stidevicepy.NetworkDeviceHub(config)
 
 hub.addDevice(device)
 
@@ -102,9 +106,9 @@ print("Downsample = " + device.getAttribute("Downsample"))
 print("*****")
 
 
-print("TriggerSource = " + device.getAttribute("TriggerSource"))
-device.setAttribute("TriggerSource", "Software")
-print("TriggerSource = " + device.getAttribute("TriggerSource"))
+print("TriggerSource = " + device.getAttribute("Trigger::TriggerSource"))
+device.setAttribute("Trigger::TriggerSource", "Software")
+print("TriggerSource = " + device.getAttribute("Trigger::TriggerSource"))
 print("*****")
 
 at = device.getAttributeManager().getAttribute("Mode")

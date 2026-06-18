@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <sti/device/DeviceMessage.h>
 #include <sti/device/MessageGrouper.h>
 
 #include <condition_variable>
@@ -56,6 +57,32 @@ private:
     std::vector<DummyMessage> dispatched_;
 };
 
+class RecordingChannelUpdateGrouper : public STI::Device::MessageGrouper<STI::Device::ChannelUpdateMessage> {
+public:
+    void dispatchMessage(const std::shared_ptr<STI::Device::ChannelUpdateMessage>& mess) override {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            dispatched_.push_back(*mess);
+        }
+        cv_.notify_all();
+    }
+
+    bool waitForDispatches(std::size_t expected, std::chrono::milliseconds timeout) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        return cv_.wait_for(lock, timeout, [&] { return dispatched_.size() >= expected; });
+    }
+
+    std::vector<STI::Device::ChannelUpdateMessage> dispatched() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return dispatched_;
+    }
+
+private:
+    mutable std::mutex mutex_;
+    std::condition_variable cv_;
+    std::vector<STI::Device::ChannelUpdateMessage> dispatched_;
+};
+
 } // namespace
 
 TEST_CASE("MessageGrouper dispatches non-groupable messages immediately", "[device] [messagegrouper]") {
@@ -92,6 +119,49 @@ TEST_CASE("MessageGrouper groups messages during warmup", "[device] [messagegrou
     REQUIRE(dispatched.size() == 1);
     CHECK(dispatched[0].value == 3);
     CHECK(dispatched[0].appended == 1);
+
+    grouper.stop();
+}
+
+TEST_CASE("MessageGrouper keeps the newest channel value in grouped channel updates", "[device] [messagegrouper]") {
+    RecordingChannelUpdateGrouper grouper;
+    grouper.setWarmup(40);
+    grouper.setCooldown(30);
+    grouper.start();
+
+    STI::Device::DeviceID source("MessageGrouperDevice", "127.0.0.1", 1);
+
+    grouper.addMessage(std::make_shared<STI::Device::ChannelUpdateMessage>(source, 1, STI::Utils::MixedValue(10)));
+    grouper.addMessage(std::make_shared<STI::Device::ChannelUpdateMessage>(source, 2, STI::Utils::MixedValue(20)));
+    grouper.addMessage(std::make_shared<STI::Device::ChannelUpdateMessage>(source, 1, STI::Utils::MixedValue(30)));
+    grouper.addMessage(STI::Device::ChannelUpdateMessage::makeMeasurementMessage(source, 1, STI::Utils::MixedValue(100)));
+    grouper.addMessage(STI::Device::ChannelUpdateMessage::makeMeasurementMessage(source, 1, STI::Utils::MixedValue(300)));
+
+    REQUIRE(grouper.waitForDispatches(1, std::chrono::milliseconds(300)));
+    auto dispatched = grouper.dispatched();
+    REQUIRE(dispatched.size() == 1);
+
+    const auto& message = dispatched[0];
+    REQUIRE(message.channelUpdateType == STI::Device::ChannelUpdateMessage::ChannelUpdateMessageType::ChannelValue);
+
+    REQUIRE(message.channelValues.size() == 2);
+    CHECK(message.channelValues.at(1) == STI::Utils::MixedValue(30));
+    CHECK(message.channelValues.at(2) == STI::Utils::MixedValue(20));
+
+    REQUIRE(message.measurementValues.size() == 1);
+    CHECK(message.measurementValues.at(1) == STI::Utils::MixedValue(300));
+
+    grouper.addMessage(std::make_shared<STI::Device::ChannelUpdateMessage>(source, 1, STI::Utils::MixedValue(40)));
+    grouper.addMessage(std::make_shared<STI::Device::ChannelUpdateMessage>(source, 1, STI::Utils::MixedValue(50)));
+
+    REQUIRE(grouper.waitForDispatches(2, std::chrono::milliseconds(500)));
+    dispatched = grouper.dispatched();
+    REQUIRE(dispatched.size() == 2);
+
+    const auto& secondMessage = dispatched[1];
+    REQUIRE(secondMessage.channelValues.size() == 1);
+    CHECK(secondMessage.channelValues.at(1) == STI::Utils::MixedValue(50));
+    CHECK(secondMessage.measurementValues.empty());
 
     grouper.stop();
 }

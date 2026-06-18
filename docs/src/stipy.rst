@@ -369,6 +369,32 @@ This is useful when timing files are maintained as standalone Python scripts.
 The file's directory is added to Python's import path before execution, so the
 timing file can import helper modules located beside it.
 
+File-backed shots use isolated timing imports.  Each call executes the submitted
+file and helper modules under that file's directory from a fresh import state,
+then removes those timing modules from ``sys.modules`` when the shot is built.
+This lets repeated ``makeshot("timing_files/mot_load.py")`` calls pick up
+top-level ``setvar()``, ``settag()``, and event declarations from helper files
+without restarting Python.  Stable modules such as ``stipy``, standard-library
+modules, and installed packages are shared normally.
+
+If timing helpers live outside the submitted file's directory, pass their
+directories with ``import_roots``:
+
+.. code-block:: py
+
+    shot = makeshot(
+        "timing_files/mot_load.py",
+        import_roots=["timing_files", "shared_timing"],
+    )
+    shot = server.makeshot(
+        "timing_files/mot_load.py",
+        import_roots=["timing_files", "shared_timing"],
+    )
+
+The submitted file is executed in private module globals, so variables assigned
+at top level in the timing file do not become globals in the calling notebook or
+script.
+
 Variable overrides can be supplied when making a shot from either a function or
 a file.  Pass a dictionary from variable name to value, or a set of
 ``ParsedVar`` objects:

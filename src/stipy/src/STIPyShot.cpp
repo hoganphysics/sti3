@@ -52,7 +52,11 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value,
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
-    group()->addvar(name, mixedValue, stackTrace);
+    auto result = group()->addvar(name, mixedValue, stackTrace);
+
+    if (!result.success) {
+        throw py::value_error(result.errorMessage);
+    }
 }
 
 
@@ -61,7 +65,11 @@ void STIPyShot::setvar(const std::string& name, const pybind11::object& value,
 {
     MixedValuePy mixedValue;
     mixedValue.setValue_py(value);
-    group(scope)->addvar(name, mixedValue, stackTrace);
+    auto result = group(scope)->addvar(name, mixedValue, stackTrace);
+
+    if (!result.success) {
+        throw py::value_error(result.errorMessage);
+    }
 }
 
 
@@ -175,4 +183,3 @@ std::shared_ptr<STI::Engine::RawEventGroup> STIPyShot::group(const std::string& 
     }
     return g;
 }
-

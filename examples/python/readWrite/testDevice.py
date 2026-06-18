@@ -10,6 +10,9 @@ class TestDevice(stidevicepy.LocalDevice):
     IMAGE_WIDTH = 10
     IMAGE_HEIGHT = 10
     IMAGE_BYTES_PER_PIXEL = 1
+    TIF_IMAGE_WIDTH = 100
+    TIF_IMAGE_HEIGHT = 100
+    TIF_PANE_COUNT = 3
 
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
@@ -44,7 +47,7 @@ class TestDevice(stidevicepy.LocalDevice):
         self.addInputChannel(10, stipy.MixedValueType.Double, "thermocouple voltage")   # measures a double
         self.addInputChannel(13, stipy.MixedValueType.Image, "random image (BinaryData)")   # measures an Image backed by BinaryData
         self.addInputChannel(14, stipy.MixedValueType.Image, "random raw image (FileHolder)")   # measures an Image backed by a raw FileHolder
-        self.addInputChannel(15, stipy.MixedValueType.Image, "random TIF image (FileHolder)")   # measures an Image backed by a TIF FileHolder
+        self.addInputChannel(15, stipy.MixedValueType.Image, "random multi-pane TIF image (FileHolder)")   # measures an Image backed by a TIF FileHolder
         self.addInputChannel(16, stipy.MixedValueType.File, "example text file (FileHolder)")   # measures a plain text file
         self.addInputChannel(17, stipy.MixedValueType.Binary, "example binary data")   # measures BinaryData that is not an Image
         self.addInputChannel(18, stipy.MixedValueType.File, "example virtual text file (VirtualFileHolder)")   # measures a virtual plain text file
@@ -53,42 +56,74 @@ class TestDevice(stidevicepy.LocalDevice):
         ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
         ch.setMeasurementUnits("Hz")
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
+        self.addInputChannel(19, stipy.MixedValueType.Image, stipy.MixedValueType.Image, "inverted image")    #measures an Image (input), accepts an Image argument (output)
 
         return
 
-    def random_image_bytes(self):
-        length = self.IMAGE_WIDTH * self.IMAGE_HEIGHT * self.IMAGE_BYTES_PER_PIXEL
+    def random_image_bytes(self, width=None, height=None, bytes_per_pixel=None):
+        width = self.IMAGE_WIDTH if width is None else width
+        height = self.IMAGE_HEIGHT if height is None else height
+        bytes_per_pixel = self.IMAGE_BYTES_PER_PIXEL if bytes_per_pixel is None else bytes_per_pixel
+        length = width * height * bytes_per_pixel
         return bytes(random.getrandbits(8) for _ in range(length))
 
     def random_tif_image_bytes(self):
-        pixels = self.random_image_bytes()
-        ifd_entry_count = 10
+        panes = [
+            self.random_image_bytes(
+                self.TIF_IMAGE_WIDTH,
+                self.TIF_IMAGE_HEIGHT,
+                self.IMAGE_BYTES_PER_PIXEL,
+            )
+            for _ in range(self.TIF_PANE_COUNT)
+        ]
+        ifd_entry_count = 12
         ifd_offset = 8
-        image_offset = ifd_offset + 2 + (ifd_entry_count * 12) + 4
+        ifd_size = 2 + (ifd_entry_count * 12) + 4
+        image_offset = ifd_offset + (ifd_size * len(panes))
 
         def ifd_entry(tag, field_type, count, value):
-            if field_type == 3 and count == 1:
-                value_bytes = struct.pack("<H", value) + b"\x00\x00"
+            if field_type == 3:
+                if count == 1:
+                    value_bytes = struct.pack("<H", value) + b"\x00\x00"
+                elif count == 2:
+                    value_bytes = struct.pack("<HH", *value)
+                else:
+                    value_bytes = struct.pack("<I", value)
             else:
                 value_bytes = struct.pack("<I", value)
             return struct.pack("<HHI", tag, field_type, count) + value_bytes
 
-        entries = [
-            ifd_entry(256, 4, 1, self.IMAGE_WIDTH),       # ImageWidth, LONG
-            ifd_entry(257, 4, 1, self.IMAGE_HEIGHT),      # ImageLength, LONG
-            ifd_entry(258, 3, 1, 8),                      # BitsPerSample, SHORT
-            ifd_entry(259, 3, 1, 1),                      # Compression: none
-            ifd_entry(262, 3, 1, 1),                      # PhotometricInterpretation: BlackIsZero
-            ifd_entry(273, 4, 1, image_offset),           # StripOffsets, LONG
-            ifd_entry(277, 3, 1, 1),                      # SamplesPerPixel, SHORT
-            ifd_entry(278, 4, 1, self.IMAGE_HEIGHT),      # RowsPerStrip, LONG
-            ifd_entry(279, 4, 1, len(pixels)),            # StripByteCounts, LONG
-            ifd_entry(284, 3, 1, 1),                      # PlanarConfiguration: chunky
-        ]
+        ifds = []
+        pane_offset = image_offset
+        for pane_index, pixels in enumerate(panes):
+            next_ifd_offset = ifd_offset + ifd_size * (pane_index + 1)
+            if pane_index == len(panes) - 1:
+                next_ifd_offset = 0
+
+            entries = [
+                ifd_entry(254, 4, 1, 2),                         # NewSubfileType: one page of a multi-page image
+                ifd_entry(256, 4, 1, self.TIF_IMAGE_WIDTH),       # ImageWidth, LONG
+                ifd_entry(257, 4, 1, self.TIF_IMAGE_HEIGHT),      # ImageLength, LONG
+                ifd_entry(258, 3, 1, 8),                          # BitsPerSample, SHORT
+                ifd_entry(259, 3, 1, 1),                          # Compression: none
+                ifd_entry(262, 3, 1, 1),                          # PhotometricInterpretation: BlackIsZero
+                ifd_entry(273, 4, 1, pane_offset),                # StripOffsets, LONG
+                ifd_entry(277, 3, 1, 1),                          # SamplesPerPixel, SHORT
+                ifd_entry(278, 4, 1, self.TIF_IMAGE_HEIGHT),      # RowsPerStrip, LONG
+                ifd_entry(279, 4, 1, len(pixels)),                # StripByteCounts, LONG
+                ifd_entry(284, 3, 1, 1),                          # PlanarConfiguration: chunky
+                ifd_entry(297, 3, 2, (pane_index, len(panes))),   # PageNumber, SHORT[2]
+            ]
+
+            ifds.append(
+                struct.pack("<H", ifd_entry_count)
+                + b"".join(entries)
+                + struct.pack("<I", next_ifd_offset)
+            )
+            pane_offset += len(pixels)
 
         header = struct.pack("<2sHI", b"II", 42, ifd_offset)
-        ifd = struct.pack("<H", ifd_entry_count) + b"".join(entries) + struct.pack("<I", 0)
-        return header + ifd + pixels
+        return header + b"".join(ifds) + b"".join(panes)
 
     def binary_data_backed_image(self):
         return stipy.Image(
@@ -97,7 +132,25 @@ class TestDevice(stidevicepy.LocalDevice):
             self.IMAGE_HEIGHT,
         )
 
-    def file_holder_backed_image(self, payload, extension):
+    def invert_image_measurement(self, image):
+        if image is None:
+            return None
+
+        image_data = image.getData()
+        if image_data is None or not image_data.pull():
+            print("Read ch 19: input image does not have readable BinaryData")
+            return None
+
+        pixels = image_data.getBytes()
+        if pixels is None:
+            return None
+
+        inverted_pixels = bytes(255 - pixel for pixel in pixels)
+        return stipy.Image(inverted_pixels, image.getWidth(), image.getHeight())
+
+    def file_holder_backed_image(self, payload, extension, width=None, height=None):
+        width = self.IMAGE_WIDTH if width is None else width
+        height = self.IMAGE_HEIGHT if height is None else height
         filename = "readWrite-random-image-" + str(next(self.image_measurement_index)) + extension
         persistence = self.getPersistenceManager()
         file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
@@ -111,7 +164,7 @@ class TestDevice(stidevicepy.LocalDevice):
         finally:
             file_holder.closeFile()
 
-        image = stipy.Image(file_holder, self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
+        image = stipy.Image(file_holder, width, height)
         image.setFileID(file_holder.getID())
         return image
 
@@ -119,7 +172,12 @@ class TestDevice(stidevicepy.LocalDevice):
         return self.file_holder_backed_image(self.random_image_bytes(), ".raw")
 
     def tif_file_holder_backed_image(self):
-        return self.file_holder_backed_image(self.random_tif_image_bytes(), ".tif")
+        return self.file_holder_backed_image(
+            self.random_tif_image_bytes(),
+            ".tif",
+            self.TIF_IMAGE_WIDTH,
+            self.TIF_IMAGE_HEIGHT,
+        )
 
     def text_file_holder_measurement(self):
         filename = "readWrite-text-file-" + str(next(self.file_measurement_index)) + ".txt"
@@ -241,6 +299,9 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 18:
             print("Read ch 18: example virtual text file (VirtualFileHolder)")
             return self.virtual_text_file_measurement()
+        elif channel == 19:
+            print("Read ch 19: invert image")
+            return self.invert_image_measurement(value)
 
         return None
 
@@ -294,14 +355,19 @@ print("Measurement 6: " + str(data))
 data = device.read(16)
 print("Measurement 7: " + str(data))
 
-data = device.read(17)
-print("Measurement 8: " + str(data))
+# Causes segmentation fault in server at startup!
+# data = device.read(17)
+# print("Measurement 8: " + str(data))
 
 data = device.read(18)
 print("Measurement 9: " + str(data))
 
+input_image = stipy.Image(device.random_image_bytes(), device.IMAGE_WIDTH, device.IMAGE_HEIGHT)
+data = device.read(19, input_image)
+print("Measurement 10: " + str(data))
 
-nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
+
+# nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
 # hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 hub = stidevicepy.NetworkDeviceHub(config)
 
