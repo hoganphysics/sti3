@@ -17,6 +17,23 @@ RemoteBinaryDataStream::~RemoteBinaryDataStream()
 {
 }
 
+bool RemoteBinaryDataStream::getTBinaryDataStreamRef(
+	const std::shared_ptr<STI::Utils::BinaryDataStream>& dataStream,
+	STI::TNetwork::TBinaryDataStream_var& tdataStream)
+{
+	auto remoteDataStream = std::dynamic_pointer_cast<RemoteBinaryDataStream>(dataStream);
+
+	if (remoteDataStream == 0 || remoteDataStream->isDisabled()) return false;
+
+	auto ref = remoteDataStream->getTRef();
+	if (CORBA::is_nil(ref)) {
+		return false;
+	}
+
+	tdataStream = STI::TNetwork::TBinaryDataStream::_duplicate(ref);
+	return !CORBA::is_nil(tdataStream);
+}
+
 void RemoteBinaryDataStream::transfer(const std::shared_ptr<STI::Utils::BinaryDataStreamTarget>& target)
 {
 	std::unique_lock<std::mutex> streamLock(streamMutex);

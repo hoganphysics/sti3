@@ -74,10 +74,11 @@ Documentation and examples:
 
 * Document the file argument import workflow for `device.read()` and
   `device.write()`.
-* Add a Python read/write notebook that imports a caller-owned file and passes
-  the imported `FileID` to example channels.
-* Extend the Python read/write example device with channels that accept
-  `FileID` values.
+* Add Python fileTransfer notebooks that demonstrate lazy image reads and
+  importing a caller-owned file before passing the imported `FileID` to example
+  channels.
+* Add C++ and Python fileTransfer example devices with file, binary, image,
+  virtual-file, and imported `FileID` channels.
 
 Tests:
 

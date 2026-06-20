@@ -72,6 +72,7 @@ void BinaryData::clear()
     wordSize_ = 0;
     data_ = nullptr;
     streams.clear();
+    retainedStreams.clear();
     clearer = nullptr;
     getType = nullptr;
 }
@@ -124,6 +125,7 @@ void BinaryData::swap(BinaryData& other)
     std::swap(wordSize_, other.wordSize_);
     std::swap(data_, other.data_);
     std::swap(streams, other.streams);
+    std::swap(retainedStreams, other.retainedStreams);
 
     std::swap(clearer, other.clearer);
     std::swap(getType, other.getType);
@@ -233,6 +235,20 @@ void BinaryData::attachStream(const std::shared_ptr<BinaryDataStream>& stream,
     attachStream(stream);
 }
 
+std::shared_ptr<STI::Utils::BinaryDataStream> BinaryData::getStream() const
+{
+    auto it = std::find_if(streams.rbegin(), streams.rend(),
+                           [](const auto& stream) { return stream != nullptr; });
+    return it == streams.rend() ? nullptr : *it;
+}
+
+void BinaryData::retainStream(const std::shared_ptr<BinaryDataStream>& stream)
+{
+    if (stream != 0) {
+        retainedStreams.push_back(stream);
+    }
+}
+
 bool BinaryData::materialize()
 {
     if (hasLocalData()) {
@@ -245,7 +261,7 @@ bool BinaryData::materialize()
     auto localData = std::make_shared<BinaryData>();
     auto target = std::make_shared<MaterializingBinaryDataStreamTarget>(localData);
 
-    auto stream = streams.back();
+    auto stream = getStream();
     if (stream == 0) {
         return false;
     }
@@ -287,7 +303,7 @@ bool BinaryData::transferTo(const std::shared_ptr<BinaryDataStreamTarget>& targe
     }
 
     if (hasStream()) {
-        auto stream = streams.back();
+        auto stream = getStream();
         if (stream == 0) {
             return false;
         }

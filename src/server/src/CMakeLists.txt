@@ -10,6 +10,16 @@ project(STIServer VERSION ${STI3_VERSION} DESCRIPTION "STI Server" LANGUAGES CXX
 
 include(GNUInstallDirs)
 
+get_filename_component(STI3_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../.." ABSOLUTE)
+set(STI3_LOCAL_BUILD_DIR "${STI3_SOURCE_ROOT}/build-ninja" CACHE PATH
+  "Path to the local sti3 build tree used by standalone STIServer builds"
+)
+
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 OLD)
+endif()
+find_package(Boost 1.70 REQUIRED)
+
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)  # omniORB headers use 'requires' identifier, incompatible with C++20
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -21,26 +31,176 @@ if (MSVC)
 endif (MSVC)
 
 
-# ---- Find / reference sti3 libs ----
-# If building as part of the same superbuild, the targets already exist
-# (stidevice, stinetwork). If not, find the installed config.
-# if(NOT TARGET sti3::stidevice OR NOT TARGET sti3::stinetwork)
-#   find_package(sti3 CONFIG REQUIRED)  # looks for sti3Config.cmake you already install
-# endif()
+function(sti3_find_first_existing_file out_var)
+  foreach(_path IN LISTS ARGN)
+    if(EXISTS "${_path}")
+      set(${out_var} "${_path}" PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
+endfunction()
 
-# If building inside the superbuild, the targets already exist.
-# Create ALIAS targets with the installed namespace.
+function(sti3_import_local_build_targets)
+  if(NOT IS_ABSOLUTE "${STI3_LOCAL_BUILD_DIR}")
+    get_filename_component(_sti3_local_build_dir
+      "${STI3_SOURCE_ROOT}/${STI3_LOCAL_BUILD_DIR}" ABSOLUTE)
+  else()
+    set(_sti3_local_build_dir "${STI3_LOCAL_BUILD_DIR}")
+  endif()
 
+  sti3_find_first_existing_file(_stidevice_library
+    "${_sti3_local_build_dir}/src/device/src/libstidevice.so"
+    "${_sti3_local_build_dir}/lib/libstidevice.so"
+  )
+  sti3_find_first_existing_file(_stinetwork_library
+    "${_sti3_local_build_dir}/src/network/src/libstinetwork.so"
+    "${_sti3_local_build_dir}/lib/libstinetwork.so"
+  )
 
-# if(TARGET stidevice AND TARGET stinetwork)
-#   add_library(sti3::stidevice ALIAS stidevice)
-#   add_library(sti3::stinetwork ALIAS stinetwork)
-# else()
-#   # Standalone / consumer build (after sti3 is installed)
-#   find_package(sti3 CONFIG REQUIRED)
-# endif()
+  if(NOT (_stidevice_library AND _stinetwork_library))
+    message(STATUS "Local sti3 libraries not found in ${_sti3_local_build_dir}")
+    return()
+  endif()
 
-message("CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+  set(_sti3_include_dirs "${STI3_SOURCE_ROOT}/include")
+  if(EXISTS "${_sti3_local_build_dir}/generated/include")
+    list(APPEND _sti3_include_dirs "${_sti3_local_build_dir}/generated/include")
+  endif()
+
+  if(NOT TARGET sti3::stidevice)
+    add_library(sti3::stidevice SHARED IMPORTED)
+    set_target_properties(sti3::stidevice PROPERTIES
+      IMPORTED_LOCATION "${_stidevice_library}"
+      INTERFACE_INCLUDE_DIRECTORIES "${_sti3_include_dirs}"
+    )
+  endif()
+
+  if(NOT TARGET sti3::stinetwork)
+    add_library(sti3::stinetwork SHARED IMPORTED)
+    set_target_properties(sti3::stinetwork PROPERTIES
+      IMPORTED_LOCATION "${_stinetwork_library}"
+      INTERFACE_INCLUDE_DIRECTORIES "${_sti3_include_dirs}"
+      INTERFACE_LINK_LIBRARIES sti3::stidevice
+    )
+  endif()
+
+  get_filename_component(_stidevice_library_dir "${_stidevice_library}" DIRECTORY)
+  get_filename_component(_stinetwork_library_dir "${_stinetwork_library}" DIRECTORY)
+  set(_dependency_library_dirs "")
+
+  foreach(_prefix IN ITEMS "$ENV{CONDA_PREFIX}" "$ENV{PREFIX}")
+    if(NOT "${_prefix}" STREQUAL "" AND EXISTS "${_prefix}/lib")
+      list(APPEND _dependency_library_dirs "${_prefix}/lib")
+    endif()
+  endforeach()
+
+  if(EXISTS "${_sti3_local_build_dir}/CMakeCache.txt")
+    file(STRINGS "${_sti3_local_build_dir}/CMakeCache.txt" _omniorb_lib_line
+      REGEX "^OMNIORB_LIB:FILEPATH="
+    )
+    if(_omniorb_lib_line)
+      string(REGEX REPLACE "^[^=]+=" "" _omniorb_lib "${_omniorb_lib_line}")
+      get_filename_component(_omniorb_library_dir "${_omniorb_lib}" DIRECTORY)
+      list(APPEND _dependency_library_dirs "${_omniorb_library_dir}")
+    endif()
+
+    file(STRINGS "${_sti3_local_build_dir}/CMakeCache.txt" _exe_link_flags_line
+      REGEX "^CMAKE_EXE_LINKER_FLAGS:STRING="
+    )
+    if(_exe_link_flags_line)
+      string(REGEX REPLACE "^[^=]+=" "" _exe_link_flags "${_exe_link_flags_line}")
+      string(REGEX MATCHALL "(^| )-L[^ ]+" _link_dir_flags "${_exe_link_flags}")
+      foreach(_link_dir_flag IN LISTS _link_dir_flags)
+        string(STRIP "${_link_dir_flag}" _link_dir_flag)
+        string(REGEX REPLACE "^-L" "" _link_dir "${_link_dir_flag}")
+        if(EXISTS "${_link_dir}")
+          list(APPEND _dependency_library_dirs "${_link_dir}")
+        endif()
+      endforeach()
+    endif()
+  endif()
+
+  if(_dependency_library_dirs)
+    list(REMOVE_DUPLICATES _dependency_library_dirs)
+  endif()
+
+  set(STI3_USING_LOCAL_BUILD_TARGETS ON PARENT_SCOPE)
+  set(STI3_LOCAL_RUNTIME_LIBRARY_DIRS
+    "${_stinetwork_library_dir};${_stidevice_library_dir}" PARENT_SCOPE)
+  set(STI3_LOCAL_DEPENDENCY_LIBRARY_DIRS
+    "${_dependency_library_dirs}" PARENT_SCOPE)
+
+  message(STATUS "Using local sti3 libraries from ${_sti3_local_build_dir}")
+endfunction()
+
+function(sti3_import_installed_targets)
+  set(_sti3_prefix_hints "")
+
+  foreach(_prefix IN ITEMS "$ENV{CONDA_PREFIX}" "$ENV{PREFIX}")
+    if(NOT "${_prefix}" STREQUAL "")
+      list(APPEND _sti3_prefix_hints "${_prefix}")
+    endif()
+  endforeach()
+
+  foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
+    if(NOT "${_prefix}" STREQUAL "")
+      list(APPEND _sti3_prefix_hints "${_prefix}")
+    endif()
+  endforeach()
+
+  if(_sti3_prefix_hints)
+    list(REMOVE_DUPLICATES _sti3_prefix_hints)
+  endif()
+
+  find_path(STI3_INSTALLED_INCLUDE_DIR
+    NAMES sti/sti.h
+    HINTS ${_sti3_prefix_hints}
+    PATH_SUFFIXES include
+  )
+  find_library(STI3_STIDEVICE_LIBRARY
+    NAMES stidevice
+    HINTS ${_sti3_prefix_hints}
+    PATH_SUFFIXES lib
+  )
+  find_library(STI3_STINETWORK_LIBRARY
+    NAMES stinetwork
+    HINTS ${_sti3_prefix_hints}
+    PATH_SUFFIXES lib
+  )
+
+  if(STI3_INSTALLED_INCLUDE_DIR AND STI3_STIDEVICE_LIBRARY AND STI3_STINETWORK_LIBRARY)
+    if(NOT TARGET sti3::stidevice)
+      add_library(sti3::stidevice SHARED IMPORTED)
+      set_target_properties(sti3::stidevice PROPERTIES
+        IMPORTED_LOCATION "${STI3_STIDEVICE_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${STI3_INSTALLED_INCLUDE_DIR}"
+      )
+    endif()
+
+    if(NOT TARGET sti3::stinetwork)
+      add_library(sti3::stinetwork SHARED IMPORTED)
+      set_target_properties(sti3::stinetwork PROPERTIES
+        IMPORTED_LOCATION "${STI3_STINETWORK_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${STI3_INSTALLED_INCLUDE_DIR}"
+        INTERFACE_LINK_LIBRARIES sti3::stidevice
+      )
+    endif()
+
+    get_filename_component(_sti3_installed_library_dir "${STI3_STINETWORK_LIBRARY}" DIRECTORY)
+    set(STI3_USING_INSTALLED_TARGETS ON PARENT_SCOPE)
+    message(STATUS "Using installed sti3 libraries from ${_sti3_installed_library_dir}")
+  endif()
+endfunction()
+
+message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+
+if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
+  sti3_import_local_build_targets()
+endif()
+
+if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
+  sti3_import_installed_targets()
+endif()
 
 if(NOT (TARGET sti3::stidevice AND TARGET sti3::stinetwork))
   find_package(sti3 CONFIG REQUIRED)
@@ -135,10 +295,34 @@ target_include_directories(STIServer
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../network/src/generated/
 )
 
+if(Boost_INCLUDE_DIRS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  foreach(_boost_include_dir IN LISTS Boost_INCLUDE_DIRS)
+    get_filename_component(_boost_include_realpath "${_boost_include_dir}" REALPATH)
+    set(_boost_include_is_implicit OFF)
+
+    foreach(_implicit_include_dir IN LISTS CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
+      if(EXISTS "${_implicit_include_dir}")
+        get_filename_component(_implicit_include_realpath
+          "${_implicit_include_dir}" REALPATH)
+        if(_boost_include_realpath STREQUAL _implicit_include_realpath)
+          set(_boost_include_is_implicit ON)
+        endif()
+      endif()
+    endforeach()
+
+    if(NOT _boost_include_is_implicit)
+      target_compile_options(STIServer PRIVATE
+        "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-idirafter ${_boost_include_dir}>"
+      )
+    endif()
+  endforeach()
+endif()
+
 target_link_libraries(STIServer
   PRIVATE
     sti3::stidevice
     sti3::stinetwork
+    Boost::headers
 )
 
 # if(TARGET OmniORB::omnithread AND TARGET OmniORB::omniORB4 AND TARGET OmniORB::omniDynamic4)
@@ -176,12 +360,30 @@ target_link_libraries(STIServer
 if(APPLE)
   set_target_properties(STIServer PROPERTIES
     INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
-    BUILD_WITH_INSTALL_RPATH ON
+    BUILD_WITH_INSTALL_RPATH OFF
   )
 elseif(UNIX)
   set_target_properties(STIServer PROPERTIES
     INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-    BUILD_WITH_INSTALL_RPATH ON
+    BUILD_WITH_INSTALL_RPATH OFF
+  )
+endif()
+
+if(UNIX AND STI3_USING_INSTALLED_TARGETS)
+  set_target_properties(STIServer PROPERTIES
+    SKIP_BUILD_RPATH ON
+  )
+endif()
+
+if(UNIX AND STI3_USING_LOCAL_BUILD_TARGETS)
+  if(STI3_LOCAL_DEPENDENCY_LIBRARY_DIRS)
+    target_link_options(STIServer PRIVATE "-Wl,--no-as-needed")
+    target_link_directories(STIServer PRIVATE ${STI3_LOCAL_DEPENDENCY_LIBRARY_DIRS})
+    target_link_libraries(STIServer PRIVATE curl)
+  endif()
+
+  set_target_properties(STIServer PROPERTIES
+    BUILD_RPATH "${STI3_LOCAL_RUNTIME_LIBRARY_DIRS};${STI3_LOCAL_DEPENDENCY_LIBRARY_DIRS}"
   )
 endif()
 

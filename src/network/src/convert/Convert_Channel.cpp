@@ -31,7 +31,8 @@ bool STI::Network::convert<std::shared_ptr<Channel>, TChannel>(const std::shared
         tChannel.outputType = convert<MixedValueType, TMixedValueType>(channel->getOutputType());
         tChannel.type = convert<ChannelType, TChannelType>(channel->getType());
         tChannel.metaData = convert<MixedValue, TMixedValue>(channel->getMetaData());
-        tChannel.lastValue = convert<MixedValue, TMixedValue>(channel->getLastValue());
+        STI::Network::convertMixedValue(channel->getLastValue(), tChannel.lastValue,
+            STI::Network::BinaryPayloadPolicy::PreferStreamReference);
         STI::Network::convertMixedValue(channel->getLastMeasurement(), tChannel.lastMeasurement,
             STI::Network::BinaryPayloadPolicy::PreferStreamReference);
 
@@ -57,7 +58,9 @@ std::shared_ptr<RemoteChannel> STI::Network::convert<TChannel, std::shared_ptr<R
     MixedValue metaData = convert<TMixedValue, MixedValue>(tChannel.metaData);
     // const STI::Utils::MixedValueVector& metaValues = metaData.getVector();
 
-    MixedValue lastValue = convert<TMixedValue, MixedValue>(tChannel.lastValue);
+    MixedValue lastValue;
+    STI::Network::convertMixedValue(tChannel.lastValue, lastValue,
+        STI::Network::BinaryPayloadPolicy::PreserveStreamReference);
     MixedValue lastMeasurement;
     STI::Network::convertMixedValue(tChannel.lastMeasurement, lastMeasurement,
         STI::Network::BinaryPayloadPolicy::PreserveStreamReference);

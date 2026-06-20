@@ -258,6 +258,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 LocalDevice::~LocalDevice()
 {
 	// disable();
+	if (localPersistenceManager != 0) {
+		localPersistenceManager->closePersistenceTargets();
+	}
 	localCollection->clear();
 }
 

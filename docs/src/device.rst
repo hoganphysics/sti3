@@ -1173,6 +1173,9 @@ Use these examples as starting points for specific device features:
      - loading device and hub configuration from a file
    * - ``readWrite``
      - channel definitions, metadata, ``writeChannel``, and ``readChannel``
+   * - ``fileTransfer``
+     - file/image channel values, lazy payload reads, and imported ``FileID``
+       read/write arguments
    * - ``attributes``
      - attribute setters, refreshers, allowed values, and metadata
    * - ``parseEvents``

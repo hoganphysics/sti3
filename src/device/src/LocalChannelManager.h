@@ -2,6 +2,7 @@
 #define STI_DEVICE_LOCALCHANNELMANAGER_H
 
 #include <sti/device/ChannelManager.h>
+#include <sti/device/DeviceID.h>
 #include <sti/utils/SynchronizedMap.h>
 #include <sti/fwd/ConfigFile_fwd.h>
 
@@ -63,6 +64,7 @@ private:
     void handleChannelNameRefreshEvent(short channelNumber, const std::string& name);
 
     LocalDevice* localDevice;
+    STI::Device::DeviceID localDeviceID;
 
     STI::Utils::SynchronizedMap<short, std::shared_ptr<Channel>> channelMap;
 

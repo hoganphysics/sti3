@@ -85,6 +85,7 @@ public:
     void attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler);
     void addPersistenceTarget(const std::shared_ptr<PersistenceTarget>& target);
     void loadPersistenceTargets();
+    void closePersistenceTargets();
 
     std::string getBasePath() const override;
     std::string getTemporaryPath() const override;
@@ -146,6 +147,7 @@ private:
     std::shared_ptr<STI::Device::VersionManager> versionManager;
 
     std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;
+    bool persistenceTargetsClosed = false;
 
     std::shared_ptr<STI::Utils::VirtualFileServerFactory> virtualFileServerFactory;
     std::shared_ptr<ImportRegistryState> importRegistry;

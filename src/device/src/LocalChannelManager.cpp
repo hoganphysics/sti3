@@ -21,7 +21,10 @@ using STI::Utils::ConfigFile;
 using STI::Utils::Configuration;
 
 LocalChannelManager::LocalChannelManager(LocalDevice* localDevice, const std::shared_ptr<DeviceMessageDispatcher>& dispatcher)
- : localDevice(localDevice), messageGrouper(dispatcher), loading(false)
+ : localDevice(localDevice),
+   localDeviceID(localDevice != nullptr ? localDevice->getID() : STI::Device::DeviceID()),
+   messageGrouper(dispatcher),
+   loading(false)
 {
     messageGrouper.setWarmup(100);   //ms
     messageGrouper.setCooldown(500); //ms
@@ -182,13 +185,11 @@ std::string LocalChannelManager::getFilename()
 
 std::string LocalChannelManager::getHeader()
 {
-    auto localID = localDevice->getID();
-
     std::stringstream header;
-    header << "Channel information for " << localID.getID() << std::endl;
-    header << "  Name: " << localID.getName() << std::endl;
-    header << "  Address: " << localID.getAddress() << std::endl;
-    header << "  Module: " << localID.getModule() << std::endl;
+    header << "Channel information for " << localDeviceID.getID() << std::endl;
+    header << "  Name: " << localDeviceID.getName() << std::endl;
+    header << "  Address: " << localDeviceID.getAddress() << std::endl;
+    header << "  Module: " << localDeviceID.getModule() << std::endl;
 
     STI::Utils::TimeStamp timestamp;
     header << "Last saved: " << timestamp.print() << std::endl;

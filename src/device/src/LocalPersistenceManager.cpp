@@ -175,14 +175,7 @@ importMaxBytes(config.get<unsigned>("PersistenceManager", "importMaxBytes", defa
 
 LocalPersistenceManager::~LocalPersistenceManager()
 {
-    //serialize all shots in memory
-
-    //save all persistence targets
-    for (auto& holder : persistenceTargetHolders) {
-        if (holder != 0) {
-            holder->save();
-        }
-    }
+    closePersistenceTargets();
 }
 
 void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
@@ -195,6 +188,7 @@ void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<Persist
     if (target != 0) {
         auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
         persistenceTargetHolders.push_back(holder);
+        persistenceTargetsClosed = false;
     }
 }
 
@@ -205,6 +199,22 @@ void LocalPersistenceManager::loadPersistenceTargets()
             holder->load();
         }
     }
+}
+
+void LocalPersistenceManager::closePersistenceTargets()
+{
+    if (persistenceTargetsClosed) {
+        return;
+    }
+
+    for (auto& holder : persistenceTargetHolders) {
+        if (holder != 0) {
+            holder->save();
+        }
+    }
+
+    persistenceTargetHolders.clear();
+    persistenceTargetsClosed = true;
 }
 
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate)

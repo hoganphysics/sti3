@@ -368,6 +368,36 @@ TEST_CASE("NetworkConvert: read results can preserve lazy binary streams", "[net
     CHECK(binaryBytes(lazy) == payload);
 }
 
+TEST_CASE("NetworkConvert: re-exporting lazy BinaryData relays the existing stream reference", "[network][convert][binary]")
+{
+    const std::string payload = "relay-binary-stream";
+    auto source = makeBinaryData(payload);
+
+    STI::TNetwork::TBinaryData sourceRef;
+    REQUIRE(STI::Network::convertBinaryData(
+        source, sourceRef, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+    REQUIRE(sourceRef.data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+
+    auto serverSideLazy = std::make_shared<STI::Utils::BinaryData>();
+    REQUIRE(STI::Network::convertBinaryData(
+        sourceRef, serverSideLazy, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+    REQUIRE_FALSE(serverSideLazy->hasLocalData());
+    REQUIRE(serverSideLazy->hasStream());
+
+    STI::TNetwork::TBinaryData relayedRef;
+    REQUIRE(STI::Network::convertBinaryData(
+        serverSideLazy, relayedRef, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+    REQUIRE(relayedRef.data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(relayedRef.data.data_stream()->_is_equivalent(sourceRef.data.data_stream()));
+    CHECK_FALSE(serverSideLazy->hasLocalData());
+
+    auto clientSideLazy = std::make_shared<STI::Utils::BinaryData>();
+    REQUIRE(STI::Network::convertBinaryData(
+        relayedRef, clientSideLazy, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+    CHECK(binaryBytes(clientSideLazy) == payload);
+    CHECK_FALSE(serverSideLazy->hasLocalData());
+}
+
 TEST_CASE("NetworkConvert: read results can preserve lazy binary-backed images", "[network][convert][binary]")
 {
     const std::string payload = "read-result-image";
@@ -470,6 +500,73 @@ TEST_CASE("NetworkConvert: Channel snapshot sends binary-backed images as lazy s
     CHECK(remoteBinary->hasStream());
     CHECK(remoteBinary->bytes() == binary->bytes());
     CHECK(binaryBytes(remoteBinary) == payload);
+}
+
+TEST_CASE("NetworkConvert: Channel snapshot sends heavy last value payloads as lazy streams", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        7, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Binary, STI::Utils::MixedValueType::Binary, "binary-argument");
+    const std::string payload = "snapshot-last-value-binary";
+    auto binary = makeBinaryData(payload);
+    channel->saveLastValue(STI::Utils::MixedValue(binary));
+
+    STI::TNetwork::TChannel tChannel;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, tChannel));
+    REQUIRE(tChannel.lastValue._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    CHECK(tChannel.lastValue.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(tChannel.lastValue.valueBin().bytes == binary->bytes());
+
+    auto remote = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(tChannel);
+    REQUIRE(remote != nullptr);
+    auto value = remote->getLastValue();
+    REQUIRE(value.getType() == STI::Utils::MixedValueType::Binary);
+
+    auto remoteBinary = value.getBinary();
+    REQUIRE(remoteBinary != nullptr);
+    CHECK_FALSE(remoteBinary->isMaterialized());
+    CHECK(remoteBinary->hasStream());
+    CHECK(remoteBinary->bytes() == binary->bytes());
+    CHECK(binaryBytes(remoteBinary) == payload);
+}
+
+TEST_CASE("NetworkConvert: Channel snapshot re-export relays lazy last measurement stream references", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        8, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Binary, STI::Utils::MixedValueType::Empty, "relayed-binary");
+    const std::string payload = "snapshot-relayed-binary";
+    auto binary = makeBinaryData(payload);
+    channel->saveLastMeasurement(STI::Utils::MixedValue(binary));
+
+    STI::TNetwork::TChannel sourceSnapshot;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, sourceSnapshot));
+    REQUIRE(sourceSnapshot.lastMeasurement._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    REQUIRE(sourceSnapshot.lastMeasurement.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+
+    auto serverSideChannel = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(sourceSnapshot);
+    REQUIRE(serverSideChannel != nullptr);
+    auto serverSideMeasurement = serverSideChannel->getLastMeasurement();
+    REQUIRE(serverSideMeasurement.getType() == STI::Utils::MixedValueType::Binary);
+    auto serverSideBinary = serverSideMeasurement.getBinary();
+    REQUIRE(serverSideBinary != nullptr);
+    REQUIRE_FALSE(serverSideBinary->hasLocalData());
+    REQUIRE(serverSideBinary->hasStream());
+
+    STI::TNetwork::TChannel relayedSnapshot;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(
+        std::static_pointer_cast<STI::Device::Channel>(serverSideChannel), relayedSnapshot));
+    REQUIRE(relayedSnapshot.lastMeasurement._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    REQUIRE(relayedSnapshot.lastMeasurement.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(relayedSnapshot.lastMeasurement.valueBin().data.data_stream()->_is_equivalent(
+        sourceSnapshot.lastMeasurement.valueBin().data.data_stream()));
+    CHECK_FALSE(serverSideBinary->hasLocalData());
+
+    auto clientSideChannel = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(relayedSnapshot);
+    REQUIRE(clientSideChannel != nullptr);
+    auto clientSideMeasurement = clientSideChannel->getLastMeasurement();
+    auto clientSideBinary = clientSideMeasurement.getBinary();
+    REQUIRE(clientSideBinary != nullptr);
+    CHECK(binaryBytes(clientSideBinary) == payload);
+    CHECK_FALSE(serverSideBinary->hasLocalData());
 }
 
 TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurement maps", "[network][convert][channel]")
