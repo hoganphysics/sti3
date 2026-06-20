@@ -163,6 +163,42 @@ STI::TNetwork::TFileID::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TImportFileOptions::operator>>= (cdrStream &_n) const
+{
+  storage >>= _n;
+  collision >>= _n;
+  lifetime >>= _n;
+  ttlSeconds >>= _n;
+
+}
+
+void
+STI::TNetwork::TImportFileOptions::operator<<= (cdrStream &_n)
+{
+  (TImportStorage&)storage <<= _n;
+  (TImportCollisionPolicy&)collision <<= _n;
+  (TImportLifetime&)lifetime <<= _n;
+  (::CORBA::ULong&)ttlSeconds <<= _n;
+
+}
+
+void
+STI::TNetwork::TImportedFile::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(importID,0);
+  (const TFileID&) fileID >>= _n;
+
+}
+
+void
+STI::TNetwork::TImportedFile::operator<<= (cdrStream &_n)
+{
+  importID = _n.unmarshalString(0);
+  (TFileID&)fileID <<= _n;
+
+}
+
+void
 STI::TNetwork::TMixedBinaryData::operator>>= (cdrStream& _n) const
 {
   _pd__d >>= _n;

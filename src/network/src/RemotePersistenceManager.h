@@ -44,10 +44,15 @@ public:
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder);
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
 
-    void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
-    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
-    std::string getBasePath() const override;
-    std::string getTemporaryPath() const override;
+	    void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) {}
+	    bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
+	    std::shared_ptr<STI::Device::ImportedFile> importFile(
+	        const STI::Utils::FileID& sourceID,
+	        const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+	        const STI::Device::ImportFileOptions& options = STI::Device::ImportFileOptions()) override;
+	    bool releaseImportedFile(const std::string& importID) override;
+	    std::string getBasePath() const override;
+	    std::string getTemporaryPath() const override;
 
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
     bool updateSequence(const STI::Engine::SequenceEntryID& id, const STI::Engine::ShotID& shotID, const STI::Engine::EngineJobStatus& shotStatus, bool isOwner);

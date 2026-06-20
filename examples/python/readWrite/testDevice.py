@@ -19,6 +19,8 @@ class TestDevice(stidevicepy.LocalDevice):
         self.image_measurement_index = itertools.count()
         self.file_measurement_index = itertools.count()
         self.virtual_file_measurement_index = itertools.count()
+        self.last_imported_file_id = None
+        self.last_imported_file_size = None
 
         # *** Define channels *** #
 
@@ -42,6 +44,7 @@ class TestDevice(stidevicepy.LocalDevice):
 
         self.addOutputChannel(4, stipy.MixedValueType.String, "string output")
         self.addOutputChannel(5, stipy.MixedValueType.Boolean, "enable current")      #channel 5, boolean output
+        self.addOutputChannel(6, stipy.MixedValueType.File, "uploaded file (FileID)")  #channel 6, FileID output
 
         # Input channel (make measurements that are recorded by the device)
         self.addInputChannel(10, stipy.MixedValueType.Double, "thermocouple voltage")   # measures a double
@@ -57,6 +60,7 @@ class TestDevice(stidevicepy.LocalDevice):
         ch.setMeasurementUnits("Hz")
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
         self.addInputChannel(19, stipy.MixedValueType.Image, stipy.MixedValueType.Image, "inverted image")    #measures an Image (input), accepts an Image argument (output)
+        self.addInputChannel(20, stipy.MixedValueType.Int, stipy.MixedValueType.File, "uploaded file size")    #measures an int (input), accepts a FileID argument (output)
 
         return
 
@@ -227,6 +231,17 @@ class TestDevice(stidevicepy.LocalDevice):
         if not persistence.getFileServer().addFile(file_holder):
             return None
         return file_holder.getID()
+
+    def imported_file_size(self, file_id):
+        if file_id is None:
+            return None
+
+        persistence = self.getPersistenceManager()
+        file_server = persistence.getFileServer()
+        if file_server is None or not file_server.findFile(file_id):
+            return None
+
+        return file_server.getFileSize(file_id)
     
     def writeChannel(self, channel, value):
         success = False
@@ -261,6 +276,16 @@ class TestDevice(stidevicepy.LocalDevice):
             #enable current (Boolean)
             print("Ch:" + str(channel) + ", " + "enable current: " + str(value))
             success = True
+        elif channel == 6:
+            #uploaded file (FileID)
+            file_size = self.imported_file_size(value)
+            if file_size is not None:
+                self.last_imported_file_id = value
+                self.last_imported_file_size = file_size
+                print("Ch:" + str(channel) + ", " + "uploaded file: " + str(file_size) + " bytes")
+                success = True
+            else:
+                print("Ch:" + str(channel) + ", " + "uploaded file is not available: " + str(value))
 
         return success
     
@@ -302,6 +327,9 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 19:
             print("Read ch 19: invert image")
             return self.invert_image_measurement(value)
+        elif channel == 20:
+            print("Read ch 20: uploaded file size")
+            return self.imported_file_size(value)
 
         return None
 

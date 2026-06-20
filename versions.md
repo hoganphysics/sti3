@@ -48,6 +48,42 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.0 - FileID import for device read/write
+
+Feature release for passing caller-owned files to device channels that accept
+`MixedValueType::File` values.
+
+Features:
+
+* Add `PersistenceManager::importFile(...)` and `ImportedFile` handles for
+  eagerly copying files from a source `FileServer` into the target device's
+  persistence namespace.
+* Support temporary disk imports by default, using the target persistence
+  manager's temporary directory, and virtual imports backed by the target virtual
+  file server.
+* Add import collision policies for unique names, fail-if-exists, and replace.
+* Add handle-scoped import lifetime cleanup through `ImportedFile::close()`
+  and the STIPy context manager.
+* Add a target-side import size limit, configured as
+  `PersistenceManager.importMaxBytes` and defaulting to 10 MB.
+* Extend CORBA, remote persistence managers, and STIPy bindings so remote
+  callers can import a file and pass the returned target-side `FileID` to
+  `device.read()` or `device.write()`.
+
+Documentation and examples:
+
+* Document the file argument import workflow for `device.read()` and
+  `device.write()`.
+* Add a Python read/write notebook that imports a caller-owned file and passes
+  the imported `FileID` to example channels.
+* Extend the Python read/write example device with channels that accept
+  `FileID` values.
+
+Tests:
+
+* Add C++ coverage for disk temporary imports, repeated imports with the same
+  source ID, import size limits, and virtual import cleanup.
+
 ### 3.5.5 - File-backed makeshot performance
 
 Patch release for a performance regression in file-backed STIPy shot creation.

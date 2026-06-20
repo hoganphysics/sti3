@@ -77,12 +77,30 @@ module TNetwork
 		string origin;	//where file was created
 		string persistenceLocation;
 		TTimeStamp creationTime;
-	};
-	typedef sequence<TFileID> TFileIDSeq;
+		};
+		typedef sequence<TFileID> TFileIDSeq;
 
-	// struct TFileHolder
-	// {
-	// 	TFileID fileID;
+		enum TImportStorage { ImportStorageDiskTemporary, ImportStorageVirtual };
+		enum TImportCollisionPolicy { ImportCollisionUnique, ImportCollisionFailIfExists, ImportCollisionReplace };
+		enum TImportLifetime { ImportLifetimeHandle };
+
+		struct TImportFileOptions
+		{
+			TImportStorage storage;
+			TImportCollisionPolicy collision;
+			TImportLifetime lifetime;
+			unsigned long ttlSeconds;
+		};
+
+		struct TImportedFile
+		{
+			string importID;
+			TFileID fileID;
+		};
+
+		// struct TFileHolder
+		// {
+		// 	TFileID fileID;
 	// 	TFileServer fileServer;
 	// };
 	

@@ -215,6 +215,12 @@ For quick access:
       data = device.read(10)
       data_with_args = device.read(11, [12, "hi"])
 
+When passing a file as a ``MixedValueType.File`` value to ``device.write()`` or
+as the argument to a parameterized ``device.read()``, import the source file into
+the target device's ``PersistenceManager`` first and pass the returned
+target-side ``FileID``.  See :ref:`devicelib` for the full file argument import
+pattern and lifetime rules.
+
 Attributes
 ----------
 

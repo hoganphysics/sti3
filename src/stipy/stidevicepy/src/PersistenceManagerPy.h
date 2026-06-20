@@ -29,9 +29,14 @@ public:
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(
         const std::shared_ptr<STI::Utils::VirtualFileHolder>& backingHolder);
-    std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
-    std::shared_ptr<STI::Utils::FileServer> getFileServer();
-    std::string getBasePath() const;
+	    std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
+	    std::shared_ptr<STI::Utils::FileServer> getFileServer();
+	    std::shared_ptr<STI::Device::ImportedFile> importFile(
+	        const STI::Utils::FileID& sourceID,
+	        const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+	        const STI::Device::ImportFileOptions& options);
+	    bool releaseImportedFile(const std::string& importID);
+	    std::string getBasePath() const;
     std::string getTemporaryPath() const;
 
 	STI::Engine::MeasurementMap getMeasurements(const STI::Engine::ShotID& sid);

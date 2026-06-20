@@ -4,8 +4,12 @@
 #include "fwd/PersistenceManager_fwd.h"
 #include "generated/deviceNet.h"
 #include <sti/device/Device.h>
+#include <sti/device/ImportedFile.h>
 
+#include <map>
 #include <memory>
+#include <mutex>
+#include <string>
 
 
 namespace STI
@@ -28,10 +32,12 @@ public:
     ::CORBA::Boolean getSequenceResult(const ::STI::TNetwork::TSequenceID& seqid, ::STI::TNetwork::TSequenceResult_out tSequenceResult);
     ::CORBA::Boolean saveShot(const ::STI::TNetwork::TShotID& sid, const ::STI::TNetwork::TFullShotResult& tFullShotResult, ::CORBA::Boolean isOwner);
     TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr tResultsCollector);
-    ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
-    ::STI::TNetwork::TFileServer_ptr getFileServer();
-    char* getBasePath();
-    char* getTemporaryPath();
+	    ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
+	    ::STI::TNetwork::TFileServer_ptr getFileServer();
+	    ::CORBA::Boolean importFile(const ::STI::TNetwork::TFileID& sourceID, ::STI::TNetwork::TFileServer_ptr sourceServer, const ::STI::TNetwork::TImportFileOptions& options, ::STI::TNetwork::TImportedFile_out importedFile);
+	    ::CORBA::Boolean releaseImportedFile(const char* importID);
+	    char* getBasePath();
+	    char* getTemporaryPath();
     void addSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult);
     ::CORBA::Boolean updateSequence(const ::STI::TNetwork::TSequenceEntryID& id, const ::STI::TNetwork::TShotID& shotID, ::STI::TNetwork::TEngineJobStatus shotStatus, ::CORBA::Boolean isOwner);
     ::CORBA::Boolean saveSequence(const ::STI::TNetwork::TSequenceResult& tSequenceResult, ::CORBA::Boolean isOwner);
@@ -39,14 +45,14 @@ public:
 
 private:
 
-    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+	    std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
+	    std::mutex importedFilesMutex;
+	    std::map<std::string, std::shared_ptr<STI::Device::ImportedFile>> importedFiles;
 
-};
+	};
 
 
 } //TNetwork
 } //STI
 
 #endif
-
-

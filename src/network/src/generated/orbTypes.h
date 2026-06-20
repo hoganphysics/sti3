@@ -940,6 +940,65 @@ _CORBA_MODULE_BEG
       TFileIDSeq_out& operator=(const TFileIDSeq_var&);
     };
 
+    enum TImportStorage { ImportStorageDiskTemporary, ImportStorageVirtual /*, __max_TImportStorage=0xffffffff */ };
+    typedef TImportStorage& TImportStorage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportStorage;
+
+    enum TImportCollisionPolicy { ImportCollisionUnique, ImportCollisionFailIfExists, ImportCollisionReplace /*, __max_TImportCollisionPolicy=0xffffffff */ };
+    typedef TImportCollisionPolicy& TImportCollisionPolicy_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportCollisionPolicy;
+
+    enum TImportLifetime { ImportLifetimeHandle /*, __max_TImportLifetime=0xffffffff */ };
+    typedef TImportLifetime& TImportLifetime_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportLifetime;
+
+    struct TImportFileOptions {
+      typedef _CORBA_ConstrType_Fix_Var<TImportFileOptions> _var_type;
+
+      
+      TImportStorage storage;
+
+      TImportCollisionPolicy collision;
+
+      TImportLifetime lifetime;
+
+      ::CORBA::ULong ttlSeconds;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TImportFileOptions::_var_type TImportFileOptions_var;
+
+    typedef TImportFileOptions& TImportFileOptions_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportFileOptions;
+
+    struct TImportedFile {
+      typedef _CORBA_ConstrType_Variable_Var<TImportedFile> _var_type;
+
+      
+      ::CORBA::String_member importID;
+
+      TFileID fileID;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TImportedFile::_var_type TImportedFile_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TImportedFile,TImportedFile_var > TImportedFile_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportedFile;
+
 #ifndef __STI_mTNetwork_mTFileHolder__
 #define __STI_mTNetwork_mTFileHolder__
     class TFileHolder;
@@ -7903,6 +7962,73 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileIDSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileIDSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileIDSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TFileIDSeq*& _sp);
+
+inline void operator >>=(STI::TNetwork::TImportStorage _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportStorage& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportStorageVirtual) {
+    _e = (STI::TNetwork::TImportStorage) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportStorage _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportStorage& _s);
+
+inline void operator >>=(STI::TNetwork::TImportCollisionPolicy _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportCollisionPolicy& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportCollisionReplace) {
+    _e = (STI::TNetwork::TImportCollisionPolicy) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportCollisionPolicy _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportCollisionPolicy& _s);
+
+inline void operator >>=(STI::TNetwork::TImportLifetime _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportLifetime& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportLifetimeHandle) {
+    _e = (STI::TNetwork::TImportLifetime) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportLifetime _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportLifetime& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImportFileOptions& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportFileOptions* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportFileOptions*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TImportFileOptions*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImportedFile& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportedFile* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportedFile*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TImportedFile*& _sp);
 
 void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileHolderSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolderSeq* _sp);

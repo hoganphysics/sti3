@@ -58,6 +58,7 @@ add_executable(sti3_test_device
   device/localfileholder_tests.cpp
   device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp
+  device/persistence_import_tests.cpp
   device/localprofilemanager_tests.cpp
   device/binarydata_tests.cpp
   device/image_tests.cpp

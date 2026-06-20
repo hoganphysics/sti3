@@ -9,6 +9,7 @@
 #include <sti/engine/SequenceResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResultRecord.h>
+#include <sti/device/ImportedFile.h>
 #include <sti/utils/FileHolderFactory.h>
 #include <sti/utils/VirtualFileServer.h>
 
@@ -48,6 +49,11 @@ public:
     virtual void setFileServer(const std::shared_ptr<STI::Utils::FileServer>& server) = 0;
     virtual bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server) = 0;
     virtual std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer() = 0;
+    virtual std::shared_ptr<ImportedFile> importFile(
+        const STI::Utils::FileID& sourceID,
+        const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+        const ImportFileOptions& options = ImportFileOptions()) = 0;
+    virtual bool releaseImportedFile(const std::string& importID) = 0;
     virtual std::string getBasePath() const = 0;
     virtual std::string getTemporaryPath() const = 0;
 

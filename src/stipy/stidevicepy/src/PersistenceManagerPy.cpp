@@ -166,6 +166,27 @@ std::shared_ptr<STI::Utils::FileServer> PersistenceManagerPy::getFileServer()
     throw py::value_error("FileServer not found.");
 }
 
+std::shared_ptr<STI::Device::ImportedFile> PersistenceManagerPy::importFile(
+    const STI::Utils::FileID& sourceID,
+    const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+    const STI::Device::ImportFileOptions& options)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->importFile(sourceID, sourceServer, options);
+    }
+
+    return nullptr;
+}
+
+bool PersistenceManagerPy::releaseImportedFile(const std::string& importID)
+{
+    if (persistenceManager != 0) {
+        return persistenceManager->releaseImportedFile(importID);
+    }
+
+    return false;
+}
+
 std::string PersistenceManagerPy::getBasePath() const
 {
     if (persistenceManager != 0) {

@@ -15,6 +15,7 @@
 #include <sti/utils/Configuration.h>
 
 #include <memory>
+#include <mutex>
 
 
 namespace STI
@@ -61,6 +62,11 @@ public:
     bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& server);
 
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer();
+    std::shared_ptr<ImportedFile> importFile(
+        const STI::Utils::FileID& sourceID,
+        const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+        const ImportFileOptions& options = ImportFileOptions());
+    bool releaseImportedFile(const std::string& importID);
 
     std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const STI::Utils::FileID& fileID);
@@ -92,6 +98,7 @@ public:
     bool makeLogPath(const STI::Utils::TimeStamp& timestamp, const DeviceID& deviceID, std::string& logPath);
 
 private:
+    struct ImportRegistryState;
 
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
@@ -108,6 +115,9 @@ private:
 
     STI::Engine::ShotResultRecord transferResults(const std::shared_ptr<STI::Engine::ResultsCollector>& resultsCollector, 
                          const std::shared_ptr<STI::Engine::ShotResult>& shotResult, bool transferDependents);
+    static bool releaseImportedFileRecord(
+        const std::shared_ptr<ImportRegistryState>& registry,
+        const std::string& importID);
 
     bool addToBuffer(const std::shared_ptr<STI::Engine::FullShotResult>& shotResult);
     bool addToBuffer(const std::shared_ptr<STI::Engine::SequenceResult>& sequenceResult);
@@ -138,9 +148,11 @@ private:
     std::vector<std::shared_ptr<PersistenceTargetHolder>> persistenceTargetHolders;
 
     std::shared_ptr<STI::Utils::VirtualFileServerFactory> virtualFileServerFactory;
+    std::shared_ptr<ImportRegistryState> importRegistry;
 
     DeviceID localDeviceID;
     std::string basePath;
+    std::size_t importMaxBytes;
 };
 
 

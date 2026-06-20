@@ -2485,6 +2485,8 @@ _CORBA_MODULE_BEG
       TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector);
       ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements);
       TFileServer_ptr getFileServer();
+      ::CORBA::Boolean importFile(const ::STI::TNetwork::TFileID& sourceID, ::STI::TNetwork::TFileServer_ptr sourceServer, const ::STI::TNetwork::TImportFileOptions& options, ::STI::TNetwork::TImportedFile_out importedFile);
+      ::CORBA::Boolean releaseImportedFile(const char* importID);
       char* getBasePath();
       char* getTemporaryPath();
       void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult);
@@ -2533,6 +2535,8 @@ _CORBA_MODULE_BEG
       virtual TShotResultRecord* transferResults(::STI::TNetwork::TResultsCollector_ptr resultsCollector) = 0;
       virtual ::CORBA::Boolean getMeasurements(const ::STI::TNetwork::TShotID& sid, ::STI::TNetwork::TDeviceIDMeasurementsTupleSeq_out measurements) = 0;
       virtual TFileServer_ptr getFileServer() = 0;
+      virtual ::CORBA::Boolean importFile(const ::STI::TNetwork::TFileID& sourceID, ::STI::TNetwork::TFileServer_ptr sourceServer, const ::STI::TNetwork::TImportFileOptions& options, ::STI::TNetwork::TImportedFile_out importedFile) = 0;
+      virtual ::CORBA::Boolean releaseImportedFile(const char* importID) = 0;
       virtual char* getBasePath() = 0;
       virtual char* getTemporaryPath() = 0;
       virtual void addSequence(const ::STI::TNetwork::TSequenceResult& sequenceResult) = 0;

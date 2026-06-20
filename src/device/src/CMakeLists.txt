@@ -86,6 +86,7 @@ add_library(stidevice SHARED
     FileID.cpp
     FullShotResult.cpp
     Image.cpp
+    ImportedFile.cpp
     IntervalTask.cpp
     LocalAttribute.cpp
     LocalAttributeManager.cpp
