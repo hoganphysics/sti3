@@ -74,3 +74,39 @@ def test_sti_image_from_pil_when_pillow_is_available(stipy_modules):
     assert constructed.getHeight() == 1
     assert constructed.metadata("source") == "PIL.Image"
     assert constructed.getData().getBytes().startswith(b"\x89PNG")
+
+
+def test_sti_image_to_pil_infers_raw_grayscale_binary_payload(stipy_modules):
+    pytest.importorskip("PIL.Image")
+    stipy, _ = stipy_modules
+
+    image = stipy.STI_Image(bytes([0, 127, 255, 64]), width=2, height=2)
+
+    converted = image.to_pil()
+
+    assert converted.mode == "L"
+    assert converted.size == (2, 2)
+    assert converted.getpixel((0, 0)) == 0
+    assert converted.getpixel((1, 0)) == 127
+    assert converted.getpixel((0, 1)) == 255
+    assert converted.getpixel((1, 1)) == 64
+
+
+def test_sti_image_to_pil_uses_raw_mode_metadata(stipy_modules):
+    pytest.importorskip("PIL.Image")
+    stipy, _ = stipy_modules
+
+    image = stipy.STI_Image(
+        bytes([1, 2, 3, 4, 5, 6]),
+        width=2,
+        height=1,
+    )
+    image.setMetaData("encoding", "raw")
+    image.setMetaData("mode", "RGB")
+
+    converted = image.to_pil()
+
+    assert converted.mode == "RGB"
+    assert converted.size == (2, 1)
+    assert converted.getpixel((0, 0)) == (1, 2, 3)
+    assert converted.getpixel((1, 0)) == (4, 5, 6)

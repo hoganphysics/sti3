@@ -55,6 +55,95 @@ def _normalized_format(format_name):
     return format_name.upper()
 
 
+def _metadata_value(image, key):
+    if not hasattr(image, "metadata"):
+        return None
+
+    try:
+        return image.metadata(key)
+    except Exception:
+        return None
+
+
+def _is_raw_encoding(encoding):
+    encoding = _normalized_format(encoding)
+    return encoding in {"RAW", "PIXELS", "BYTES"}
+
+
+def _positive_dimension(value):
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return None
+
+    return value if value > 0 else None
+
+
+def _infer_raw_mode(payload_size, width, height):
+    pixel_count = width * height
+    if pixel_count <= 0:
+        return None
+
+    bytes_per_pixel = {
+        1: "L",
+        3: "RGB",
+        4: "RGBA",
+    }
+    return bytes_per_pixel.get(payload_size // pixel_count) if payload_size % pixel_count == 0 else None
+
+
+def _raw_mode_payload_size(mode, width, height):
+    mode = str(mode)
+    if mode == "1":
+        return ((width + 7) // 8) * height
+
+    bytes_per_pixel = {
+        "L": 1,
+        "P": 1,
+        "LA": 2,
+        "I;16": 2,
+        "I;16L": 2,
+        "I;16B": 2,
+        "RGB": 3,
+        "RGBA": 4,
+        "CMYK": 4,
+        "I": 4,
+        "F": 4,
+    }.get(mode)
+
+    return None if bytes_per_pixel is None else width * height * bytes_per_pixel
+
+
+def _raw_payload_to_pil(payload, width, height, mode=None):
+    from PIL import Image as PILImage
+
+    width = _positive_dimension(width)
+    height = _positive_dimension(height)
+    if width is None or height is None:
+        raise ValueError(
+            "Raw STI_Image BinaryData needs positive width and height metadata"
+        )
+
+    if mode is not None:
+        mode = str(mode)
+        expected_size = _raw_mode_payload_size(mode, width, height)
+        if expected_size is not None and expected_size != len(payload):
+            raise ValueError(
+                "Raw STI_Image payload size does not match mode, width, and height"
+            )
+    else:
+        mode = _infer_raw_mode(len(payload), width, height)
+        if mode is None:
+            raise ValueError(
+                "Raw STI_Image BinaryData needs mode metadata when payload size "
+                "does not imply L, RGB, or RGBA pixels"
+            )
+
+    image = PILImage.frombytes(mode, (width, height), payload)
+    image.load()
+    return image
+
+
 def _image_from_file(
     cls,
     path,
@@ -116,6 +205,7 @@ def _image_from_pil(cls, image, *, format=None, **save_kwargs):
             "format": image_format,
             "storage": "BinaryData",
             "encoding": image_format,
+            "mode": image.mode,
         },
     )
 
@@ -135,18 +225,33 @@ def _image_to_pil(self):
         if payload is None:
             raise ValueError("STI_Image BinaryData has no readable bytes")
 
-        image = PILImage.open(io.BytesIO(payload))
-        image.load()
-        return image
+        encoding = _metadata_value(self, "encoding") or _metadata_value(self, "format")
+        if _is_raw_encoding(encoding):
+            return _raw_payload_to_pil(
+                payload,
+                self.getWidth(),
+                self.getHeight(),
+                _metadata_value(self, "mode"),
+            )
+
+        try:
+            image = PILImage.open(io.BytesIO(payload))
+            image.load()
+            return image
+        except Exception:
+            if encoding:
+                raise
+            return _raw_payload_to_pil(
+                payload,
+                self.getWidth(),
+                self.getHeight(),
+                _metadata_value(self, "mode"),
+            )
 
     suffix = ""
-    if hasattr(self, "metadata"):
-        try:
-            image_format = self.metadata("format")
-        except Exception:
-            image_format = None
-        if image_format:
-            suffix = "." + str(image_format).lower()
+    image_format = _metadata_value(self, "format") or _metadata_value(self, "encoding")
+    if image_format:
+        suffix = "." + str(image_format).lower()
 
     with tempfile.NamedTemporaryFile(suffix=suffix) as preview_file:
         if not self.save(preview_file.name):
@@ -154,9 +259,27 @@ def _image_to_pil(self):
                 "STI_Image has neither readable BinaryData nor a saveable file payload"
             )
 
-        image = PILImage.open(preview_file.name)
-        image.load()
-        return image
+        if _is_raw_encoding(image_format):
+            return _raw_payload_to_pil(
+                Path(preview_file.name).read_bytes(),
+                self.getWidth(),
+                self.getHeight(),
+                _metadata_value(self, "mode"),
+            )
+
+        try:
+            image = PILImage.open(preview_file.name)
+            image.load()
+            return image
+        except Exception:
+            if image_format:
+                raise
+            return _raw_payload_to_pil(
+                Path(preview_file.name).read_bytes(),
+                self.getWidth(),
+                self.getHeight(),
+                _metadata_value(self, "mode"),
+            )
 
 
 def _install_image_helpers():

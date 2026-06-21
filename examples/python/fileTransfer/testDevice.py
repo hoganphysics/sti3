@@ -1,4 +1,5 @@
 import itertools
+import io
 import random
 import struct
 import tempfile
@@ -15,6 +16,7 @@ class FileTransferDevice(stidevicepy.LocalDevice):
     TIF_IMAGE_WIDTH = 100
     TIF_IMAGE_HEIGHT = 100
     TIF_PANE_COUNT = 3
+    RAW_ENCODINGS = {"RAW", "PIXELS", "BYTES"}
 
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
@@ -48,6 +50,53 @@ class FileTransferDevice(stidevicepy.LocalDevice):
         bytes_per_pixel = self.IMAGE_BYTES_PER_PIXEL if bytes_per_pixel is None else bytes_per_pixel
         length = width * height * bytes_per_pixel
         return bytes(random.getrandbits(8) for _ in range(length))
+
+    def normalized_image_format(self, value):
+        if value is None:
+            return None
+
+        value = str(value).strip().upper()
+        if value == "":
+            return None
+        if value == "TIF":
+            return "TIFF"
+        if value == "JPG":
+            return "JPEG"
+        return value
+
+    def image_metadata(self, image, key):
+        if image is None or not hasattr(image, "metadata"):
+            return None
+
+        try:
+            return image.metadata(key)
+        except Exception:
+            return None
+
+    def encoded_image_format(self, image):
+        for key in ("encoding", "format"):
+            image_format = self.normalized_image_format(self.image_metadata(image, key))
+            if image_format is not None and image_format not in self.RAW_ENCODINGS:
+                return image_format
+        return None
+
+    def raw_mode_from_payload(self, width, height, payload):
+        pixel_count = width * height
+        if pixel_count <= 0 or len(payload) % pixel_count != 0:
+            return None
+
+        return {
+            1: "L",
+            3: "RGB",
+            4: "RGBA",
+        }.get(len(payload) // pixel_count)
+
+    def annotate_raw_image(self, image, mode=None):
+        image.setMetaData("storage", "BinaryData")
+        image.setMetaData("encoding", "raw")
+        if mode is not None:
+            image.setMetaData("mode", mode)
+        return image
 
     def random_tif_image_bytes(self):
         panes = [
@@ -108,10 +157,15 @@ class FileTransferDevice(stidevicepy.LocalDevice):
         return header + b"".join(ifds) + b"".join(panes)
 
     def binary_data_backed_image(self):
-        return stipy.Image(
-            stipy.BinaryData(self.random_image_bytes()),
+        payload = self.random_image_bytes()
+        image = stipy.Image(
+            stipy.BinaryData(payload),
             self.IMAGE_WIDTH,
             self.IMAGE_HEIGHT,
+        )
+        return self.annotate_raw_image(
+            image,
+            self.raw_mode_from_payload(self.IMAGE_WIDTH, self.IMAGE_HEIGHT, payload),
         )
 
     def invert_image_measurement(self, image):
@@ -127,8 +181,63 @@ class FileTransferDevice(stidevicepy.LocalDevice):
         if pixels is None:
             return None
 
+        encoded_format = self.encoded_image_format(image)
+        encoded_result = self.invert_encoded_image(pixels, encoded_format)
+        if encoded_result is not None:
+            return encoded_result
+        if encoded_format is not None:
+            return None
+
         inverted_pixels = bytes(255 - pixel for pixel in pixels)
-        return stipy.Image(inverted_pixels, image.getWidth(), image.getHeight())
+        result = stipy.Image(inverted_pixels, image.getWidth(), image.getHeight())
+        mode = self.image_metadata(image, "mode") or self.raw_mode_from_payload(
+            image.getWidth(),
+            image.getHeight(),
+            inverted_pixels,
+        )
+        return self.annotate_raw_image(result, mode)
+
+    def invert_encoded_image(self, payload, expected_format=None):
+        try:
+            from PIL import Image as PILImage
+            from PIL import ImageOps
+        except ImportError:
+            if expected_format is not None:
+                print("Read ch 19: Pillow is required to invert encoded image data")
+            return None
+
+        try:
+            with PILImage.open(io.BytesIO(payload)) as pil_image:
+                pil_image.load()
+                image_format = (
+                    self.normalized_image_format(expected_format)
+                    or self.normalized_image_format(pil_image.format)
+                    or "PNG"
+                )
+                inverted = self.invert_pil_image(pil_image, ImageOps)
+                if image_format == "JPEG" and inverted.mode in {"RGBA", "LA", "P"}:
+                    inverted = inverted.convert("RGB")
+                return stipy.STI_Image.from_pil(inverted, format=image_format)
+        except Exception:
+            if expected_format is not None:
+                print("Read ch 19: encoded image data could not be decoded")
+            return None
+
+    def invert_pil_image(self, pil_image, image_ops):
+        from PIL import Image as PILImage
+
+        if pil_image.mode == "RGBA":
+            inverted = image_ops.invert(pil_image.convert("RGB"))
+            inverted.putalpha(pil_image.getchannel("A"))
+            return inverted
+        if pil_image.mode == "LA":
+            luminance, alpha = pil_image.split()
+            return PILImage.merge("LA", (image_ops.invert(luminance), alpha))
+        if pil_image.mode == "P":
+            return self.invert_pil_image(pil_image.convert("RGBA"), image_ops)
+        if pil_image.mode not in {"L", "RGB"}:
+            pil_image = pil_image.convert("RGB")
+        return image_ops.invert(pil_image)
 
     def file_holder_backed_image(self, payload, extension, width=None, height=None):
         width = self.IMAGE_WIDTH if width is None else width
@@ -148,6 +257,16 @@ class FileTransferDevice(stidevicepy.LocalDevice):
 
         image = stipy.Image(file_holder, width, height)
         image.setFileID(file_holder.getID())
+        if extension.lower() == ".raw":
+            image.setMetaData("storage", "FileHolder")
+            image.setMetaData("encoding", "raw")
+            mode = self.raw_mode_from_payload(width, height, payload)
+            if mode is not None:
+                image.setMetaData("mode", mode)
+        elif extension.lower() in {".tif", ".tiff"}:
+            image.setMetaData("storage", "FileHolder")
+            image.setMetaData("format", "TIFF")
+            image.setMetaData("encoding", "TIFF")
         return image
 
     def raw_file_holder_backed_image(self):
