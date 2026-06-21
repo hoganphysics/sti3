@@ -3043,6 +3043,142 @@ _CORBA_MODULE_BEG
       TStringSeq_out& operator=(const TStringSeq_var&);
     };
 
+    struct TPartnerDeviceInfo {
+      typedef _CORBA_ConstrType_Variable_Var<TPartnerDeviceInfo> _var_type;
+
+
+      TDeviceID deviceID;
+
+      TStringSeq aliases;
+
+      ::CORBA::Boolean eventTarget;
+
+
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPartnerDeviceInfo::_var_type TPartnerDeviceInfo_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPartnerDeviceInfo,TPartnerDeviceInfo_var > TPartnerDeviceInfo_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPartnerDeviceInfo;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPartnerDeviceInfoSeq;
+
+    class TPartnerDeviceInfoSeq_var;
+
+    class TPartnerDeviceInfoSeq : public _CORBA_Unbounded_Sequence< TPartnerDeviceInfo >  {
+    public:
+      typedef TPartnerDeviceInfoSeq_var _var_type;
+      inline TPartnerDeviceInfoSeq() {}
+      inline TPartnerDeviceInfoSeq(const TPartnerDeviceInfoSeq& _s)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_s) {}
+
+      inline TPartnerDeviceInfoSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_max) {}
+      inline TPartnerDeviceInfoSeq(_CORBA_ULong _max, _CORBA_ULong _len, TPartnerDeviceInfo* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_max, _len, _val, _rel) {}
+
+
+
+      inline TPartnerDeviceInfoSeq& operator = (const TPartnerDeviceInfoSeq& _s) {
+        _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TPartnerDeviceInfoSeq_out;
+
+    class TPartnerDeviceInfoSeq_var {
+    public:
+      inline TPartnerDeviceInfoSeq_var() : _pd_seq(0) {}
+      inline TPartnerDeviceInfoSeq_var(TPartnerDeviceInfoSeq* _s) : _pd_seq(_s) {}
+      inline TPartnerDeviceInfoSeq_var(const TPartnerDeviceInfoSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TPartnerDeviceInfoSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TPartnerDeviceInfoSeq_var() { if (_pd_seq)  delete _pd_seq; }
+
+      inline TPartnerDeviceInfoSeq_var& operator = (TPartnerDeviceInfoSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TPartnerDeviceInfoSeq_var& operator = (const TPartnerDeviceInfoSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TPartnerDeviceInfoSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TPartnerDeviceInfo& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+
+
+      inline TPartnerDeviceInfoSeq* operator -> () { return _pd_seq; }
+      inline const TPartnerDeviceInfoSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TPartnerDeviceInfoSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TPartnerDeviceInfoSeq& () const { return *_pd_seq; }
+      inline operator TPartnerDeviceInfoSeq& () { return *_pd_seq; }
+#endif
+
+      inline const TPartnerDeviceInfoSeq& in() const { return *_pd_seq; }
+      inline TPartnerDeviceInfoSeq&       inout()    { return *_pd_seq; }
+      inline TPartnerDeviceInfoSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TPartnerDeviceInfoSeq* _retn() { TPartnerDeviceInfoSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+
+      friend class TPartnerDeviceInfoSeq_out;
+
+    private:
+      TPartnerDeviceInfoSeq* _pd_seq;
+    };
+
+    class TPartnerDeviceInfoSeq_out {
+    public:
+      inline TPartnerDeviceInfoSeq_out(TPartnerDeviceInfoSeq*& _s) : _data(_s) { _data = 0; }
+      inline TPartnerDeviceInfoSeq_out(TPartnerDeviceInfoSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TPartnerDeviceInfoSeq*) 0; }
+      inline TPartnerDeviceInfoSeq_out(const TPartnerDeviceInfoSeq_out& _s) : _data(_s._data) {}
+      inline TPartnerDeviceInfoSeq_out& operator = (const TPartnerDeviceInfoSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TPartnerDeviceInfoSeq_out& operator = (TPartnerDeviceInfoSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TPartnerDeviceInfoSeq*&()  { return _data; }
+      inline TPartnerDeviceInfoSeq*& ptr()       { return _data; }
+      inline TPartnerDeviceInfoSeq* operator->() { return _data; }
+
+      inline TPartnerDeviceInfo& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+
+
+      TPartnerDeviceInfoSeq*& _data;
+
+    private:
+      TPartnerDeviceInfoSeq_out();
+      TPartnerDeviceInfoSeq_out& operator=(const TPartnerDeviceInfoSeq_var&);
+    };
+
     struct TAttribute {
       typedef _CORBA_ConstrType_Variable_Var<TAttribute> _var_type;
 
@@ -8161,6 +8297,16 @@ void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TStringSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TStringSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TStringSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TStringSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfo& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfo* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfo*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfo*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfoSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfoSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfoSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfoSeq*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TAttribute& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttribute* _sp);

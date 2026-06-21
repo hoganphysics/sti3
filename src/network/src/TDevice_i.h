@@ -46,6 +46,7 @@ public:
 	TLogManager_ptr getLogManager();
 	TMonitorManager_ptr getMonitorManager();
 	void getMetaData(::STI::TNetwork::TMixedValue_out metaData);
+	void getPartnerDevices(::STI::TNetwork::TPartnerDeviceInfoSeq_out partners);
 	void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions);
 	TDeviceID* getID();
 

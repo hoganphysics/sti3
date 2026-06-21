@@ -781,6 +781,24 @@ STI::TNetwork::TMixedValue::operator<<= (cdrStream& _n)
 }
 
 void
+STI::TNetwork::TPartnerDeviceInfo::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceID&) deviceID >>= _n;
+  (const TStringSeq&) aliases >>= _n;
+  _n.marshalBoolean(eventTarget);
+
+}
+
+void
+STI::TNetwork::TPartnerDeviceInfo::operator<<= (cdrStream &_n)
+{
+  (TDeviceID&)deviceID <<= _n;
+  (TStringSeq&)aliases <<= _n;
+  eventTarget = _n.unmarshalBoolean();
+
+}
+
+void
 STI::TNetwork::TAttribute::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(key,0);

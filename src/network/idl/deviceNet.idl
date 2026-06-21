@@ -336,11 +336,12 @@ module TNetwork
 		void kill();
 		void disable();
 
-		//Device interface
-		TDeviceID getID();
-		void getMetaData(out TMixedValue metaData);
+			//Device interface
+			TDeviceID getID();
+			void getPartnerDevices(out TPartnerDeviceInfoSeq partners);
+			void getMetaData(out TMixedValue metaData);
 
-		//Device collector interface
+			//Device collector interface
 		TDeviceCollection getDeviceCollection();
 
 		//Device message passing

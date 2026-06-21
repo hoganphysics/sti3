@@ -125,6 +125,12 @@ The device collection stores references to devices that are connected to this
 device.  Use it to discover available ``DeviceID`` values and to get another
 device reference.
 
+Declared partner relationships are queried separately with
+``Device::getPartnerDevices()`` or Python ``device.getPartnerDevices()``. The
+returned ``PartnerDeviceInfo`` entries include the partner ``DeviceID``, any
+aliases declared for that partner, and whether the partner is an event target.
+This list can include partners that are not currently connected.
+
 .. tabs::
 
    .. code-tab:: c++
@@ -141,14 +147,20 @@ device reference.
           other->write(0, 1.5);
       }
 
+      std::vector<STI::Device::PartnerDeviceInfo> partners;
+      device->getPartnerDevices(partners);
+
    .. code-tab:: py
 
-      collection = device.getCollection()
+      collection = device.getDeviceCollection()
       ids = collection.getIDs()
 
       other = collection.get("localhost/0/TestDevice")
       if other is not None:
           other.write(0, 1.5)
+
+      for partner in device.getPartnerDevices():
+          print(partner.deviceID.getID(), partner.aliases, partner.eventTarget)
 
 Channels
 --------

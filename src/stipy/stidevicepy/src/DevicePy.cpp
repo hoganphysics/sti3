@@ -68,6 +68,17 @@ const STI::Device::DeviceID DevicePy::getID() const
     return dummy;
 }
 
+std::vector<STI::Device::PartnerDeviceInfo> DevicePy::getPartnerDevices() const
+{
+    std::vector<STI::Device::PartnerDeviceInfo> partners;
+
+    if (device_ != 0) {
+        device_->getPartnerDevices(partners);
+    }
+
+    return partners;
+}
+
 void DevicePy::kill()
 {
     if (device_ != 0) {

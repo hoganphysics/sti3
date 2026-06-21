@@ -17,6 +17,7 @@
 #include <sti/device/LocalChannel.h>
 #include <sti/device/LogID.h>
 #include <sti/device/LogRecord.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include <sti/device/Profile.h>
 #include <sti/device/VersionInfo.h>
 #include <sti/engine/EngineJobID.h>
@@ -224,6 +225,24 @@ TEST_CASE("NetworkConvert: DeviceID, VersionInfo, and FileID round trip")
     auto tFileID = STI::Network::convert<STI::Utils::FileID, STI::TNetwork::TFileID>(fileID);
     auto fileIDRoundTrip = STI::Network::convert<STI::TNetwork::TFileID, STI::Utils::FileID>(tFileID);
     checkFileID(fileIDRoundTrip, fileID);
+}
+
+TEST_CASE("NetworkConvert: PartnerDeviceInfo round trips declared partner metadata", "[network][convert][partner]")
+{
+    STI::Device::PartnerDeviceInfo partner;
+    partner.deviceID = makeDeviceID("supply", "192.168.1.20", 3);
+    partner.aliases = {"supply", "laser-supply"};
+    partner.eventTarget = true;
+
+    auto tPartner = STI::Network::convert<STI::Device::PartnerDeviceInfo, STI::TNetwork::TPartnerDeviceInfo>(partner);
+    CHECK(std::string(tPartner.aliases[0]) == "supply");
+    CHECK(std::string(tPartner.aliases[1]) == "laser-supply");
+    CHECK(static_cast<bool>(tPartner.eventTarget));
+
+    auto roundTrip = STI::Network::convert<STI::TNetwork::TPartnerDeviceInfo, STI::Device::PartnerDeviceInfo>(tPartner);
+    checkDeviceID(roundTrip.deviceID, partner.deviceID);
+    CHECK(roundTrip.aliases == partner.aliases);
+    CHECK(roundTrip.eventTarget == partner.eventTarget);
 }
 
 TEST_CASE("NetworkConvert: Profile round trips attributes and channel values")

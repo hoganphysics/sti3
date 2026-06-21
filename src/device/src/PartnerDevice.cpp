@@ -54,6 +54,14 @@ bool PartnerDevice::refresh()
 	return false;
 }
 
+void PartnerDevice::getPartnerDevices(std::vector<STI::Device::PartnerDeviceInfo>& partners) const
+{
+	partners.clear();
+	if (device != 0) {
+		device->getPartnerDevices(partners);
+	}
+}
+
 const STI::Utils::MixedValue& PartnerDevice::getMetaData() const
 {
 	if (device != 0) {

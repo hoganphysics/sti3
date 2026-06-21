@@ -49,9 +49,10 @@ public:
 	void activate();
 	void disable();
 	
-	const STI::Device::DeviceID getID() const;	//use locally stored value
+		const STI::Device::DeviceID getID() const;	//use locally stored value
+		void getPartnerDevices(std::vector<STI::Device::PartnerDeviceInfo>& partners) const override;
 
-	const STI::Utils::MixedValue& getMetaData() const override;
+		const STI::Utils::MixedValue& getMetaData() const override;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const override;
 	
 	void getCollection(std::shared_ptr<STI::Device::DeviceCollection>& collection);

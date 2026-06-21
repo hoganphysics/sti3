@@ -648,6 +648,27 @@ partner while parsing local events.
       self.partner("supply").write(0, 1.2)
       self.partner("supply").setAttribute("Mode", "Remote")
 
+The declared partner list can be inspected separately from the live device
+collection:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::vector<STI::Device::PartnerDeviceInfo> partners;
+      device->getPartnerDevices(partners);
+
+      for (const auto& info : partners) {
+          std::cout << info.deviceID.getID()
+                    << " event target: " << info.eventTarget
+                    << std::endl;
+      }
+
+   .. code-tab:: py
+
+      for info in device.getPartnerDevices():
+          print(info.deviceID.getID(), info.aliases, info.eventTarget)
+
 Device monitors
 ***************
 

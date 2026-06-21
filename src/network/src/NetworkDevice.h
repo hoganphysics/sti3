@@ -96,7 +96,7 @@ public:
 		return localDevice != 0 && localDevice->getVersionManager(manager);
 	}
 
-	const STI::Device::DeviceID getID() const 
+	const STI::Device::DeviceID getID() const
 	{
 		if (localDevice != 0) {
 			return localDevice->getID();
@@ -104,6 +104,14 @@ public:
 
 		STI::Device::DeviceID missing;
 		return missing;
+	}
+
+	void getPartnerDevices(std::vector<STI::Device::PartnerDeviceInfo>& partners) const override
+	{
+		partners.clear();
+		if (localDevice != 0) {
+			localDevice->getPartnerDevices(partners);
+		}
 	}
 
 	bool refresh() { return localDevice != 0 && localDevice->refresh(); }

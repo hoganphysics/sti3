@@ -211,10 +211,18 @@ module TNetwork
 		case MixedValueImage:		TImage			value_image;
 	};
 
-	typedef sequence<string> TStringSeq;
+		typedef sequence<string> TStringSeq;
 
-	struct TAttribute
-	{
+		struct TPartnerDeviceInfo
+		{
+			TDeviceID deviceID;
+			TStringSeq aliases;
+			boolean eventTarget;
+		};
+		typedef sequence<TPartnerDeviceInfo> TPartnerDeviceInfoSeq;
+
+		struct TAttribute
+		{
 		string key;
 		string value;
 		string group;
