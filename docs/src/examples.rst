@@ -48,6 +48,9 @@ Recommended Starting Points
    * - ``tasks``
      - C++, Python
      - Interval tasks, appointment tasks, and custom background tasks.
+   * - ``postProcess``
+     - C++, Python
+     - Registering post-processing targets that run analysis after a shot plays.
    * - ``profiles``
      - C++
      - Saving and loading channel and attribute state with the profile manager.
@@ -95,6 +98,8 @@ Use these when building with ``stipy.stidevicepy``:
 * ``parseEvents`` for custom Python ``SynchronousEvent`` classes.
 * ``tasks`` and ``logging`` for recurring background work.
 * ``monitors`` for live status values shown through the monitor manager.
+* ``postProcess`` for registering analysis targets that run after a shot plays.
+  See :ref:`stipypostprocessing` for the timing-file side that requests them.
 
 How To Use The Examples
 -----------------------

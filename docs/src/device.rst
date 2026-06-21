@@ -742,7 +742,8 @@ Targets are reached through the abstract ``Device`` interface, so a device's
 
 Timing files request post-processing against these targets with
 ``postTarget()`` and ``postProcess()``.  See :ref:`stipypostprocessing` for the
-client-side timing-file API.
+client-side timing-file API.  A complete runnable device is in
+``examples/cpp/postProcess`` and ``examples/python/postProcess``.
 
 Implementation notes for device authors:
 
@@ -1217,6 +1218,8 @@ Use these examples as starting points for specific device features:
      - manual monitors and automatic monitor updates
    * - ``tasks``
      - interval, appointment, and custom tasks
+   * - ``postProcess``
+     - registering post-processing targets that run analysis after a shot plays
    * - ``logging``
      - device logs and recurring log tasks
    * - ``profiles``
