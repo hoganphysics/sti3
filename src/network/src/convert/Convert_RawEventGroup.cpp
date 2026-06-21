@@ -5,8 +5,13 @@
 
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/RawEventTargetDevice.h>
 
 #include <sti/engine/RawEventGroup.h>
+#include <sti/engine/PostProcessRequest.h>
+#include <sti/engine/PostProcessTarget.h>
+#include <sti/engine/CompressedStackTrace.h>
+#include <sti/utils/MetaData.h>
 
 #include <set>
 
@@ -22,6 +27,14 @@ using STI::TNetwork::TRawEvent;
 using STI::Engine::RawEvent;
 using STI::TNetwork::TMixedValue;
 using STI::Utils::MixedValue;
+using STI::Utils::MetaData;
+using STI::Engine::PostProcessRequest;
+using STI::Engine::PostProcessTarget;
+using STI::Engine::RawEventTargetDevice;
+using STI::Engine::CompressedStackTrace;
+using STI::TNetwork::TPostProcessRequest;
+using STI::TNetwork::TRawEventTargetDevice;
+using STI::TNetwork::TStackFrameSeq;
 
 
 //RawEventGroup
@@ -94,6 +107,19 @@ bool STI::Network::convertGroup(const std::shared_ptr<RawEventGroup>& rawEventGr
         k++;
     }
 
+    const auto& postProcessRequests = rawEventGroup->postProcessRequests();
+    tRawEventGroup.postProcessRequests.length(postProcessRequests.size());
+    unsigned p = 0;
+    for (auto& request : postProcessRequests) {
+        TPostProcessRequest& tRequest = tRawEventGroup.postProcessRequests[p];
+        tRequest.target.isAbstract = request.target().isAbstract();
+        tRequest.target.name = convert<std::string, CORBA::String_member>(request.target().name());
+        convert<RawEventTargetDevice, TRawEventTargetDevice>(request.target().device(), tRequest.target.device);
+        tRequest.options = convert<MixedValue, TMixedValue>(request.options().getMetaData());
+        convert<CompressedStackTrace, TStackFrameSeq>(request.trace(), tRequest.trace);
+        p++;
+    }
+
     return true;
 }
 
@@ -149,8 +175,24 @@ bool STI::Network::convertGroup(const TRawEventGroup& tRawEventGroup, std::share
             convert<CORBA::String_member, std::string>(tSubgroups[i].name));
 
             // tSubgroups[i].parentName
-        
+
         convertGroup(tSubgroups[i], g);
+    }
+
+    auto& tPostProcessRequests = tRawEventGroup.postProcessRequests;
+    for (unsigned i = 0; i < tPostProcessRequests.length(); ++i) {
+        const TPostProcessRequest& tRequest = tPostProcessRequests[i];
+
+        PostProcessTarget target(
+            convert<TRawEventTargetDevice, RawEventTargetDevice>(tRequest.target.device),
+            convert<CORBA::String_member, std::string>(tRequest.target.name));
+
+        MetaData options(convert<TMixedValue, MixedValue>(tRequest.options));
+
+        CompressedStackTrace trace;
+        convert<TStackFrameSeq, CompressedStackTrace>(tRequest.trace, trace);
+
+        rawEventGroup->addPostProcessRequest(PostProcessRequest(target, options, trace));
     }
 
     return true;

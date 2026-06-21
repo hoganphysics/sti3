@@ -17,6 +17,8 @@
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ResultTicket.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/PostProcessRequest.h>
+#include <sti/engine/PostProcessTarget.h>
 #include <sti/engine/EnginePlayingMessage.h>
 #include <sti/utils/TimeStamp.h>
 
@@ -166,6 +168,15 @@ private:
 	void addEventsToParseResult(const std::shared_ptr<RawEventGroup>& newEvents);
 	void addMissingTargetsFromEvents(const std::shared_ptr<RawEventGroup>& eventGroup);
 	void recordAbstractShotState(STI::Engine::EventEngineJob& job);
+
+	//Resolve post-processing requests (side-list, never hard-timed) against the
+	//network and stash the resolved list on the job for the PlayComplete dispatch.
+	//A missing target produces a non-fatal warning, never an abstract-shot error.
+	void resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup, STI::Engine::EventEngineJob& job);
+	void collectPostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup,
+									std::vector<STI::Engine::PostProcessRequest>& requests) const;
+	bool resolvePostProcessDevice(const RawEventTargetDevice& target, STI::Device::DeviceID& resolvedID) const;
+
 	bool isAbstractShot() const;
 	void appendMissingTargets(EnginePlayingMessage& message) const;
 	bool validateOwnedTargetsReadyForPlay(std::vector<std::pair<STI::Device::DeviceID, STI::Engine::EngineState>>& invalidTargets) const;
@@ -266,6 +277,7 @@ private:
 
 	std::vector<STI::Device::DeviceID> ownedTargets;
 	std::set<STI::Device::DeviceID> missingTargets;
+	std::set<STI::Engine::PostProcessTarget> missingPostProcessingTargets;   //non-fatal; never feeds isAbstractShot()
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> parsedOwnedTargets;
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playReadyOwnedTargets;
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playedOwnedTargets;

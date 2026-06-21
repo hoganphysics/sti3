@@ -2552,6 +2552,127 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPersistenceManager;
 
+#ifndef __STI_mTNetwork_mTPostProcessingManager__
+#define __STI_mTNetwork_mTPostProcessingManager__
+    class TPostProcessingManager;
+    class _objref_TPostProcessingManager;
+    class _impl_TPostProcessingManager;
+    
+    typedef _objref_TPostProcessingManager* TPostProcessingManager_ptr;
+    typedef TPostProcessingManager_ptr TPostProcessingManagerRef;
+
+    class TPostProcessingManager_Helper {
+    public:
+      typedef TPostProcessingManager_ptr _ptr_type;
+
+      static _ptr_type _nil();
+      static _CORBA_Boolean is_nil(_ptr_type);
+      static void release(_ptr_type);
+      static void duplicate(_ptr_type);
+      static void marshalObjRef(_ptr_type, cdrStream&);
+      static _ptr_type unmarshalObjRef(cdrStream&);
+    };
+
+    typedef _CORBA_ObjRef_Var<_objref_TPostProcessingManager, TPostProcessingManager_Helper> TPostProcessingManager_var;
+    typedef _CORBA_ObjRef_OUT_arg<_objref_TPostProcessingManager,TPostProcessingManager_Helper > TPostProcessingManager_out;
+
+#endif
+
+    // interface TPostProcessingManager
+    class TPostProcessingManager {
+    public:
+      // Declarations for this interface type.
+      typedef TPostProcessingManager_ptr _ptr_type;
+      typedef TPostProcessingManager_var _var_type;
+
+      static _ptr_type _duplicate(_ptr_type);
+      static _ptr_type _narrow(::CORBA::Object_ptr);
+      static _ptr_type _unchecked_narrow(::CORBA::Object_ptr);
+      
+      static _ptr_type _nil();
+
+      static inline void _marshalObjRef(_ptr_type, cdrStream&);
+
+      static inline _ptr_type _unmarshalObjRef(cdrStream& s) {
+        omniObjRef* o = omniObjRef::_unMarshal(_PD_repoId,s);
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static inline _ptr_type _fromObjRef(omniObjRef* o) {
+        if (o)
+          return (_ptr_type) o->_ptrToObjRef(_PD_repoId);
+        else
+          return _nil();
+      }
+
+      static _core_attr const char* _PD_repoId;
+
+      // Other IDL defined within this scope.
+      
+    };
+
+    class _objref_TPostProcessingManager :
+      public virtual ::CORBA::Object,
+      public virtual omniObjRef
+    {
+    public:
+      // IDL operations
+      ::CORBA::Boolean requestPostProcessing(const char* name, const ::STI::TNetwork::TShotID& shotID, const ::STI::TNetwork::TDeviceID& shotOwnerID, const ::STI::TNetwork::TMixedValue& options);
+      void getTargets(::STI::TNetwork::TPostProcessingTargetInfoSeq_out targets);
+      ::CORBA::Boolean ping();
+
+      // Constructors
+      inline _objref_TPostProcessingManager()  { _PR_setobj(0); }  // nil
+      _objref_TPostProcessingManager(omniIOR*, omniIdentity*);
+
+    protected:
+      virtual ~_objref_TPostProcessingManager();
+
+      
+    private:
+      virtual void* _ptrToObjRef(const char*);
+
+      _objref_TPostProcessingManager(const _objref_TPostProcessingManager&);
+      _objref_TPostProcessingManager& operator = (const _objref_TPostProcessingManager&);
+      // not implemented
+
+      friend class TPostProcessingManager;
+    };
+
+    class _pof_TPostProcessingManager : public _OMNI_NS(proxyObjectFactory) {
+    public:
+      inline _pof_TPostProcessingManager() : _OMNI_NS(proxyObjectFactory)(TPostProcessingManager::_PD_repoId) {}
+      virtual ~_pof_TPostProcessingManager();
+
+      virtual omniObjRef* newObjRef(omniIOR*,omniIdentity*);
+      virtual _CORBA_Boolean is_a(const char*) const;
+    };
+
+    class _impl_TPostProcessingManager :
+      public virtual omniServant
+    {
+    public:
+      virtual ~_impl_TPostProcessingManager();
+
+      virtual ::CORBA::Boolean requestPostProcessing(const char* name, const ::STI::TNetwork::TShotID& shotID, const ::STI::TNetwork::TDeviceID& shotOwnerID, const ::STI::TNetwork::TMixedValue& options) = 0;
+      virtual void getTargets(::STI::TNetwork::TPostProcessingTargetInfoSeq_out targets) = 0;
+      virtual ::CORBA::Boolean ping() = 0;
+      
+    public:  // Really protected, workaround for xlC
+      virtual _CORBA_Boolean _dispatch(omniCallHandle&);
+
+    private:
+      virtual void* _ptrToInterface(const char*);
+      virtual const char* _mostDerivedRepoId();
+      
+    };
+
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessingManager;
+
 #ifndef __STI_mTNetwork_mTProfileManager__
 #define __STI_mTNetwork_mTProfileManager__
     class TProfileManager;
@@ -2931,6 +3052,7 @@ _CORBA_MODULE_BEG
       TTaskManager_ptr getTaskManager();
       TLogManager_ptr getLogManager();
       TMonitorManager_ptr getMonitorManager();
+      TPostProcessingManager_ptr getPostProcessingManager();
       void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions);
 
       // Constructors
@@ -2981,6 +3103,7 @@ _CORBA_MODULE_BEG
       virtual TTaskManager_ptr getTaskManager() = 0;
       virtual TLogManager_ptr getLogManager() = 0;
       virtual TMonitorManager_ptr getMonitorManager() = 0;
+      virtual TPostProcessingManager_ptr getPostProcessingManager() = 0;
       virtual void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions) = 0;
       
     public:  // Really protected, workaround for xlC
@@ -3697,6 +3820,18 @@ _CORBA_MODULE_BEG
       }
     };
 
+    class TPostProcessingManager :
+      public virtual STI::TNetwork::_impl_TPostProcessingManager,
+      public virtual ::PortableServer::ServantBase
+    {
+    public:
+      virtual ~TPostProcessingManager();
+
+      inline ::STI::TNetwork::TPostProcessingManager_ptr _this() {
+        return (::STI::TNetwork::TPostProcessingManager_ptr) _do_this(::STI::TNetwork::TPostProcessingManager::_PD_repoId);
+      }
+    };
+
     class TProfileManager :
       public virtual STI::TNetwork::_impl_TProfileManager,
       public virtual ::PortableServer::ServantBase
@@ -3893,6 +4028,10 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPersistenceManager_ptr& _s);
 
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingManager_ptr _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingManager_ptr* _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessingManager_ptr& _s);
+
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr* _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TProfileManager_ptr& _s);
@@ -4000,6 +4139,11 @@ STI::TNetwork::TMonitorManager::_marshalObjRef(::STI::TNetwork::TMonitorManager_
 
 inline void
 STI::TNetwork::TPersistenceManager::_marshalObjRef(::STI::TNetwork::TPersistenceManager_ptr obj, cdrStream& s) {
+  omniObjRef::_marshal(obj->_PR_getobj(),s);
+}
+
+inline void
+STI::TNetwork::TPostProcessingManager::_marshalObjRef(::STI::TNetwork::TPostProcessingManager_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

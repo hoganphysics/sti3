@@ -48,6 +48,75 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.0 - Asynchronous post-shot post-processing
+
+Feature release.  Adds asynchronous post-shot post-processing so a device can
+run analysis code after a shot plays without blocking the parsing or playback of
+later shots.  Additional 3.6.0 features are recorded alongside this entry.
+
+Features:
+
+* Add a `PostProcessingManager` device subsystem, with a
+  `LocalPostProcessingManager` that runs registered analysis targets on a single
+  per-device background worker thread (started lazily on the first target).
+* Add `LocalDevice::addPostProcessingTarget()` for registering named targets and
+  their callbacks, and `Device::getPostProcessingManager()` so local and remote
+  device references can reach a device's targets.
+* Add the `PostProcessTarget` and `PostProcessRequest` engine types and a
+  non-hard-timed post-processing request side-list on `RawEventGroup`, parallel
+  to (not part of) the hard-timed event table.
+* Resolve post-processing targets during parsing; a target that cannot be found
+  produces a non-fatal "Missing post-processing target" parse warning and is
+  skipped, instead of making the shot abstract and blocking playback.
+* Dispatch resolved requests after a shot's `PlayComplete` notification, off the
+  scheduler's play-critical path, so the analysis routine reads already-persisted
+  shot results.
+* Broadcast a `PostProcessingCompleteMessage` with the results, or an error
+  message when the routine raises, so other devices and clients can subscribe to
+  completed analyses.
+
+Network:
+
+* Carry the post-processing request side-list across CORBA in the
+  `TRawEventGroup` structure and `Convert_RawEventGroup` conversion.
+* Add a `TPostProcessingManager` interface and a
+  `TDevice::getPostProcessingManager()` accessor, a `RemotePostProcessingManager`
+  proxy, and a `TPostProcessingManager_i` servant.
+* Add a `TPostProcessingCompleteMessage` structure and device-message conversion
+  so completion messages relay over the network.
+
+Python and examples:
+
+* Add `postTarget()` and `postProcess()` STIPy helpers for declaring
+  post-processing requests in timing files, with global, shot, and group forms,
+  a dictionary of options, and no time argument.
+* Add `LocalDevice.addPostProcessingTarget()` for registering targets backed by a
+  Python callable, and `Device.getPostProcessingTargets()` for discovering the
+  targets a local or connected device offers.
+* Wrap `PostProcessTarget` and `PostProcessRequest`, and expose
+  `RawEventGroup.postProcessRequests()` for inspecting a shot's requests.
+
+Fixes:
+
+* Fix the templated `MetaData::addMetaData<T>` overload to store the converted
+  value instead of reinterpreting the original argument, avoiding a spurious
+  "Unsupported type" message and incorrect storage for non-`MixedValue` values.
+
+Documentation:
+
+* Document the post-processing manager and target registration in the device
+  library guide, and the `postTarget()`/`postProcess()` and discovery API in the
+  STIPy guide.
+
+Tests:
+
+* Add C++ coverage for `PostProcessTarget`, `LocalPostProcessingManager` success
+  and exception paths, and event-engine integration covering a resolvable target,
+  a missing target warning that still plays, and a regression that a missing
+  hard-timed device still hard-errors.
+* Add network conversion round-trip coverage for the post-processing request
+  side-list and the completion message.
+
 ### 3.5.5 - File-backed makeshot performance
 
 Patch release for a performance regression in file-backed STIPy shot creation.

@@ -5,8 +5,10 @@
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/PostProcessTarget.h>
 #include <sti/engine/StackTraceData.h>
 #include <sti/utils/utils.h>
+#include <sti/utils/MetaData.h>
 
 #include "MixedValuePy.h"
 #include "StackTrace.h"
@@ -156,6 +158,24 @@ void init_RawEventGroup(py::module& m)
                 self.addEvent(target, time, mixedValue, RawEventType::Measurement, stackTrace);
             }, py::arg("target"), py::arg("time"), py::arg("value"), py::arg("stackTrace"))
 
+        .def("_addPostProcessRequest", //name overriden to 'postProcess' in python
+            [](RawEventGroup& self, const STI::Engine::PostProcessTarget& target,
+                const py::dict& options, const StackTrace& stackTrace) {
+
+                STI::Utils::MetaData metaData;
+                for (auto item : options) {
+                    MixedValuePy value;
+                    value.setValue_py(py::reinterpret_borrow<py::object>(item.second));
+                    //Pass as the base MixedValue& so MetaData's non-template addMetaData
+                    //overload is selected; the templated one would route the derived
+                    //MixedValuePy through MixedValue's catch-all setValue<T> (prints an error).
+                    metaData.addMetaData(py::str(item.first).cast<std::string>(),
+                                         static_cast<const STI::Utils::MixedValue&>(value));
+                }
+
+                self.addPostProcessRequest(target, metaData, stackTrace);
+            }, py::arg("target"), py::arg("options"), py::arg("stackTrace"))
+
         .def("bindvar", [](RawEventGroup& self, const std::string& fullVarName, 
                         const pybind11::object& value) {
 
@@ -191,6 +211,7 @@ void init_RawEventGroup(py::module& m)
 
         .def("vars", &RawEventGroup::getVars)
         .def("tags", &RawEventGroup::getTags)
+        .def("postProcessRequests", &RawEventGroup::postProcessRequests, py::return_value_policy::reference_internal)
         .def("overwrittenVars", &RawEventGroup::getOverwrittenVars)
 
         .def("getStackTraceData", &RawEventGroup::getStackTraceData)

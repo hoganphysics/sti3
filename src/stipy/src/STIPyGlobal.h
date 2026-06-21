@@ -5,6 +5,7 @@
 #include <sti/engine/CompressedStackTrace.h>
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/PostProcessTarget.h>
 #include <sti/engine/ParsedVar.h>
 
 #include <functional>
@@ -54,6 +55,9 @@ public:
                 const STI::Engine::StackTrace& stackTrace, const std::string& scope);
 
     void set_trigger(const STI::Device::DeviceID& deviceID, const STI::Engine::StackTrace& stackTrace);
+
+    void postProcess(const STI::Engine::PostProcessTarget& target, const pybind11::object& options,
+                const STI::Engine::StackTrace& stackTrace);
 
     std::shared_ptr<STI::Engine::RawEventGroup> group(const std::string& name);
 

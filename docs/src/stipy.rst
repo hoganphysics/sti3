@@ -686,3 +686,140 @@ After making a shot, inspect the root group and subgroups:
 
 Group inspection is useful for checking that a timing helper produced the
 expected events, variables, and tags before parsing the shot.
+
+.. _stipypostprocessing:
+
+Post-processing
+---------------
+
+Post-processing runs analysis code after a shot finishes playing, without
+blocking the parsing or playback of later shots.  A typical use is a lightweight
+"analysis" device on the STI network that fits or reduces a shot's measurement
+data (for example, counting atoms from an absorption image or fitting a
+resonance scan) on a background worker thread, then broadcasts the results so
+other clients can subscribe to them.
+
+A post-processing **target** is a named analysis routine registered on a device.
+See :ref:`devicepostprocessing` for how a device author registers a target.  A
+timing file requests post-processing against a target much like it declares an
+event target, but with no ``time`` argument: a ``postProcess()`` request is
+deliberately **not** hard-timed.
+
+Post-processing targets
++++++++++++++++++++++++
+
+Name a target with ``postTarget()``:
+
+.. code-block:: py
+
+    postTarget(device, name)
+
+``device`` is the analysis device (a device name string, or a ``TargetDevice``
+from ``dev()``) and ``name`` is the registered target name on that device.
+``postTarget()`` returns a ``PostProcessTarget`` object.  Like ``dev()`` and
+``ch()``, it works with no live connection, so abstract, name-only targets can
+be written in a standalone timing file:
+
+.. code-block:: py
+
+    analysis = postTarget("Analysis", "atom number")
+
+Requesting post-processing
+++++++++++++++++++++++++++
+
+Use ``postProcess()`` inside a shot to request that a target process the shot
+when it finishes playing:
+
+.. code-block:: py
+
+    postProcess(target, options=None)
+
+``target`` is a ``PostProcessTarget``.  ``options`` is an optional dictionary of
+named parameters passed to the analysis routine, such as a region of interest or
+a fit model.  Note the deliberate absence of a ``time`` argument: this is the
+visible signal, right in the call shape, that a ``postProcess()`` request is not
+hard-timed, unlike ``event(target, time, value)`` and
+``meas(target, time, value)``.
+
+.. code-block:: py
+
+    camera = dev("Camera", "localhost", 0)
+    shutter = ch(camera, 0)
+    image = ch(camera, 1)
+
+    def shotmaker():
+        event(shutter, 0, True)
+        meas(image, 10_000_000)
+        event(shutter, 20_000_000, False)
+
+        # Run analysis after the shot plays; not hard-timed, so no time argument.
+        postProcess(postTarget("Analysis", "atom number"),
+                    {"roi": [10, 20, 100, 100], "model": "gaussian"})
+
+    shot = makeshot(shotmaker)
+
+Like ``event()`` and ``meas()``, ``postProcess()`` is a global helper that
+applies to the shot currently being built, and there are equivalent forms on the
+shot and group objects:
+
+.. code-block:: py
+
+    shot = server.makeshot()
+    shot.postProcess(postTarget("Analysis", "atom number"))
+
+    mot = group("MOT")
+    mot.postProcess(postTarget("Analysis", "MOT fit"), {"roi": [0, 0, 50, 50]})
+
+More than one request may target the same analysis device in a single shot, and
+the same target may be requested more than once; each request is queued and
+processed independently.
+
+A request whose target device cannot be found on the network produces a
+non-fatal parse **warning** and is skipped; the shot still parses and plays
+normally.  This is different from a missing hard-timed event target, which makes
+the shot abstract and blocks playback.
+
+How results are delivered
++++++++++++++++++++++++++
+
+When the shot finishes playing, the owning server dispatches each resolved
+request to its target device.  The target pulls the shot's measurement data,
+runs the registered routine on a background worker thread, and broadcasts a
+``PostProcessingComplete`` device message with the results, or with an error
+message if the routine raised an exception.  Because dispatch happens after the
+shot's results are persisted, the routine can reliably read the shot's
+measurements by ``ShotID``.
+
+Discovering targets
++++++++++++++++++++
+
+A connected device reports its registered targets:
+
+.. code-block:: py
+
+    analysis = connect("localhost/0/Analysis", "192.168.1.4:2809")
+
+    for name, description in analysis.getPostProcessingTargets():
+        print(name, description)
+
+``getPostProcessingTargets()`` returns a list of ``(name, description)`` pairs.
+This is the live, network-resolved companion to writing ``postTarget(name,
+...)`` in a standalone timing file: a script can be authored against named
+targets offline, and an interactive session or frontend can list the targets a
+device actually offers.
+
+Inspecting requests
++++++++++++++++++++
+
+Post-processing requests are carried alongside the shot's event group as
+metadata, not in the hard-timed event table.  Inspect them after building a
+shot:
+
+.. code-block:: py
+
+    shot = makeshot(shotmaker)
+    for request in shot.rootgroup().postProcessRequests():
+        print(request.target().name(), request.options())
+
+``request.options()`` returns the options dictionary supplied at the
+``postProcess()`` call site.

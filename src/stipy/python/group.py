@@ -1,5 +1,5 @@
 
-from stipy.stipybase.stipybase import RawEventGroup
+from stipy.stipybase.stipybase import RawEventGroup, PostProcessTarget
 from stipy.python.stacktrace import makeStackTrace
 
 _group = RawEventGroup.group
@@ -8,6 +8,7 @@ _addvar = RawEventGroup._addvar
 _addtag = RawEventGroup._addtag
 _addEvent = RawEventGroup._addEvent
 _addMeas = RawEventGroup._addMeas
+_addPostProcessRequest = RawEventGroup._addPostProcessRequest
 
 
 def group(self, name, color="") :
@@ -35,6 +36,13 @@ def event(self, target, time, value) :
 def meas(self, target, time, value) :
     return _addMeas(self, target, time, value, makeStackTrace())
 
+# Post-processing: deliberately no time argument -- a postProcess() request is not
+# hard-timed (unlike event()/meas()). options is a dict of named parameters.
+def postTarget(device, name) :
+    return PostProcessTarget(device, name)
+def postProcess(self, target, options=None) :
+    return _addPostProcessRequest(self, target, options or {}, makeStackTrace())
+
 
 
 setattr(RawEventGroup, 'group', group)
@@ -45,6 +53,7 @@ setattr(RawEventGroup, 'setvar', setvar)
 setattr(RawEventGroup, 'settag', settag)
 setattr(RawEventGroup, 'event', event)
 setattr(RawEventGroup, 'meas', meas)
+setattr(RawEventGroup, 'postProcess', postProcess)
 
 
 class RawEventGroupNode:

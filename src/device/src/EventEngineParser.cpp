@@ -613,5 +613,6 @@ void EventEngineParser::defineErrorIDs()
 	errorIDs["Abstract Shot"]						= 100;
 	errorIDs["Missing device"]						= 101;
 	errorIDs["Missing Targets"] 					= 102;
+	errorIDs["Missing post-processing target"]		= 103;
 
 }

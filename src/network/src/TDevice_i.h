@@ -14,6 +14,7 @@
 #include "TLogManager_i.h"
 #include "TTaskManager_i.h"
 #include "TMonitorManager_i.h"
+#include "TPostProcessingManager_i.h"
 #include "ServantHolder.h"
 
 #include <memory>
@@ -45,6 +46,7 @@ public:
 	TTaskManager_ptr getTaskManager();
 	TLogManager_ptr getLogManager();
 	TMonitorManager_ptr getMonitorManager();
+	TPostProcessingManager_ptr getPostProcessingManager();
 	void getMetaData(::STI::TNetwork::TMixedValue_out metaData);
 	void getVersions(::STI::TNetwork::TVersionInfoSeq_out versions);
 	TDeviceID* getID();
@@ -71,6 +73,7 @@ private:
 	STI::Network::ServantHolder<TTaskManager_i, TTaskManager> taskManagerServantHolder;
 	STI::Network::ServantHolder<TLogManager_i, TLogManager> logManagerServantHolder;
 	STI::Network::ServantHolder<TMonitorManager_i, TMonitorManager> monitorManagerServantHolder;
+	STI::Network::ServantHolder<TPostProcessingManager_i, TPostProcessingManager> postProcessingManagerServantHolder;
 
 	std::shared_ptr<STI::Device::Device> localDevice;	//All calls to servant are forwared to this reference.
 };

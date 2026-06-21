@@ -20,6 +20,8 @@
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/SequenceJob.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotID.h>
+#include <sti/utils/MetaData.h>
 
 #include <sstream>
 
@@ -657,6 +659,32 @@ public:
 	}
 
 	std::map<STI::Engine::EngineID, STI::Engine::EngineState> engineStates;
+
+};
+
+
+enum class PostProcessingStatus { Success, Failed };
+
+
+//Broadcast (pub-sub) when a post-processing target finishes running. Interested
+//devices subscribe via addFilter<PostProcessingCompleteMessage> and import the
+//results. See docs/notes/postProcess.md, decision 3.
+class PostProcessingCompleteMessage : public DeviceMessage
+{
+public:
+
+	PostProcessingCompleteMessage(const STI::Device::DeviceTrace& trace)
+	: DeviceMessage(trace, DeviceMessageType::PostProcessingComplete), status(PostProcessingStatus::Success)
+	{
+	}
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::PostProcessingComplete; }
+
+	STI::Engine::ShotID shotID;
+	std::string targetName;
+	PostProcessingStatus status;
+	STI::Utils::MetaData results;     //empty when status == Failed
+	std::string errorMessage;         //empty when status == Success
 
 };
 

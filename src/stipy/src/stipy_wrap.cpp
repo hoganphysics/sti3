@@ -103,6 +103,8 @@ void init_stipy(py::module& m)
     m.def("set_trigger", py::overload_cast<const STI::Device::DeviceID&, const StackTrace&>(&STI::Python::set_trigger), py::arg("deviceID"), py::arg("stackTrace"));
     m.def("set_trigger", py::overload_cast<const STI::Engine::RawEventTargetDevice&, const StackTrace&>(&STI::Python::set_trigger), py::arg("device"), py::arg("stackTrace"));
 
+    m.def("postProcess", &STI::Python::postProcess, py::arg("target"), py::arg("options"), py::arg("stackTrace"));
+
     m.def("dev", 
         py::overload_cast<const std::string&>(
             &STI::Python::dev), py::arg("deviceName"), "Create abstract STIPy device ID");

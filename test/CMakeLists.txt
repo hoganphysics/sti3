@@ -80,6 +80,9 @@ add_executable(sti3_test_device
   device/logid_tests.cpp
   device/logrecordfile_tests.cpp
   device/versionmanager_tests.cpp
+  device/postprocesstarget_tests.cpp
+  device/postprocessingmanager_tests.cpp
+  device/eventengine_postprocessing_tests.cpp
   device/stidevicepy_parseevents_tests.cpp
   device/stidevicepy_parseevents_tests_support.cpp
   ${CMAKE_SOURCE_DIR}/src/server/src/LegacyExperimentXMLBuilder.cpp
@@ -95,6 +98,7 @@ target_include_directories(sti3_test_device PRIVATE
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/stipy/stidevicepy/src>
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src>
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/server/src/tinyxml>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/sti/extern>
 )
 
 
@@ -146,6 +150,7 @@ add_executable(sti3_test_network
   network/convert/basic_convert_tests.cpp
   network/convert/enum_convert_tests.cpp
   network/convert/record_convert_tests.cpp
+  network/convert/postprocess_convert_tests.cpp
 )
 
 set_target_properties(sti3_test_network PROPERTIES

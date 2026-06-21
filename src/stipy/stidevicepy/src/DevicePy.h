@@ -12,8 +12,12 @@
 #include "DeviceCollectionPy.h"
 
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace STI
 {
@@ -53,6 +57,8 @@ public:
     std::shared_ptr<STI::Device::TaskManager> getTaskManager();
     std::shared_ptr<STI::Device::LogManager> getLogManager();
     std::shared_ptr<STI::Device::VersionManager> getVersionManager();
+
+    std::vector<std::pair<std::string, std::string>> getPostProcessingTargets();
 
     bool write(short channel, const MixedValuePy& value);
     bool write(short channel, const pybind11::object& value);

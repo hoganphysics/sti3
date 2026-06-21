@@ -3,8 +3,10 @@
 #include <sti/device/DeviceID.h>
 #include <sti/engine/RawEventTargetDevice.h>
 #include <sti/engine/StackTraceData.h>
+#include <sti/utils/MetaData.h>
 
 #include "StackTrace.h"
+#include "MixedValuePy.h"
 
 #include <stdexcept>
 
@@ -142,6 +144,41 @@ void STIPyGlobal::settag(const std::string& name, const STI::Engine::StackTrace&
     if (currentShot != 0) {
         currentShot->settag(name, stackTrace, scope);
     }
+}
+
+void STIPyGlobal::postProcess(const STI::Engine::PostProcessTarget& target, const pybind11::object& options,
+                             const STI::Engine::StackTrace& stackTrace)
+{
+    std::unique_lock<std::mutex> shotLock(shotMutex);
+
+    if (!makingShot) {
+        std::runtime_error ex("No associated shot. Global 'postProcess(...)' cannot be called outside a call to makeshot.");
+        throw ex;
+        return;
+    }
+
+    if (currentShot == 0) {
+        return;
+    }
+
+    auto rootGroup = currentShot->group();
+    if (rootGroup == 0) {
+        return;
+    }
+
+    //Build a MetaData from the options dict (empty dict -> empty options).
+    STI::Utils::MetaData metaData;
+    if (!options.is_none() && pybind11::isinstance<pybind11::dict>(options)) {
+        for (auto item : options.cast<pybind11::dict>()) {
+            STI::Python::MixedValuePy value;
+            value.setValue_py(pybind11::reinterpret_borrow<pybind11::object>(item.second));
+            //base MixedValue& so MetaData's non-template addMetaData overload is chosen
+            metaData.addMetaData(pybind11::str(item.first).cast<std::string>(),
+                                 static_cast<const STI::Utils::MixedValue&>(value));
+        }
+    }
+
+    rootGroup->addPostProcessRequest(target, metaData, stackTrace);
 }
 
 std::shared_ptr<STI::Engine::RawEventGroup> STIPyGlobal::group(const std::string& name)

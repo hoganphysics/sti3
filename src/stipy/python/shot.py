@@ -22,6 +22,8 @@ def meas(self, target, time, value=MixedValue(), group="") :
         return _meas(self, target, time, _makeStackTrace(), group)
     else:
         return _meas(self, target, time, value, _makeStackTrace(), group)
+def postProcess(self, target, options=None) :
+    return self.rootgroup().postProcess(target, options)
 
 
 setattr(STIPyShot, 'var', var)
@@ -30,3 +32,4 @@ setattr(STIPyShot, 'setvar', setvar)
 setattr(STIPyShot, 'settag', settag)
 setattr(STIPyShot, 'event', event)
 setattr(STIPyShot, 'meas', meas)
+setattr(STIPyShot, 'postProcess', postProcess)

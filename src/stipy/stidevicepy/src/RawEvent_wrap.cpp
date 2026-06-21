@@ -1,8 +1,11 @@
 
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/RawEventTarget.h>
+#include <sti/engine/PostProcessTarget.h>
+#include <sti/engine/PostProcessRequest.h>
 
 #include <sti/device/DeviceID.h>
+#include <sti/utils/MetaData.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/utils.h>
 #include "MixedValuePy.h"
@@ -21,6 +24,8 @@ using STI::Python::MixedValuePy;
 using STI::Engine::RawEventTarget;
 using STI::Engine::RawEventTargetChannel;
 using STI::Engine::RawEventTargetDevice;
+using STI::Engine::PostProcessTarget;
+using STI::Engine::PostProcessRequest;
 
 
 void init_RawEvent(py::module& m) 
@@ -70,6 +75,45 @@ void init_RawEvent(py::module& m)
                 else {
                     s << self.deviceID().getID() << ")";
                 }
+                return s.str();
+            })
+        ;
+
+    py::class_<PostProcessTarget>(m, "PostProcessTarget")
+        .def(py::init<const std::string&, const std::string&>(), py::arg("deviceName"), py::arg("name"))
+        .def(py::init<const RawEventTargetDevice&, const std::string&>(), py::arg("device"), py::arg("name"))
+
+        .def("isAbstract", &PostProcessTarget::isAbstract)
+        .def("name", &PostProcessTarget::name)
+        .def("device", &PostProcessTarget::device)
+        .def("__repr__",
+            [](const STI::Engine::PostProcessTarget& self) {
+                std::stringstream s;
+                s << "postTarget(" << self.device().name() << ", " << self.name() << ")";
+                if (self.isAbstract()) {
+                    s << " <Abstract>";
+                }
+                return s.str();
+            })
+        ;
+
+    py::class_<PostProcessRequest>(m, "PostProcessRequest")
+        .def("target", &PostProcessRequest::target)
+        .def("options",
+            [](const PostProcessRequest& self) {
+                py::dict options;
+                const auto& metaData = self.options();
+                for (const auto& key : metaData.keys()) {
+                    MixedValuePy value(metaData.getMetaData(key));
+                    options[key.c_str()] = value.getValue_py();
+                }
+                return options;
+            })
+        .def("__repr__",
+            [](const PostProcessRequest& self) {
+                std::stringstream s;
+                s << "PostProcessRequest(" << self.target().device().name()
+                  << " :: " << self.target().name() << ")";
                 return s.str();
             })
         ;

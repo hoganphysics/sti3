@@ -643,6 +643,119 @@ period work, ``AppointmentTask`` for a time-of-day task, or derive from
           lambda: self.write(0, 0.0),
       ))
 
+.. _devicepostprocessing:
+
+Post-processing targets
+***********************
+
+A device can register named **post-processing targets**.  A post-processing
+target is an analysis routine that runs after a shot finishes playing, on a
+background worker thread, without blocking parsing or playback of later shots.
+Typical uses are reducing or fitting a shot's measurement data, such as counting
+atoms from an absorption image or fitting a resonance scan.
+
+A common pattern is a small, dedicated "analysis" device on the STI network
+whose only job is to host post-processing targets.  Any device can host targets,
+but giving an analysis routine its own device is the recommended way to get
+parallelism, because each device runs a single shared post-processing worker.
+
+Register targets during device construction with ``addPostProcessingTarget``.
+The callback receives the completed shot's ``ShotID`` and the per-request
+options, and returns a result that is broadcast to interested clients.  The
+worker thread runs after the shot's results are persisted, so the callback can
+reliably pull the shot's measurement data by ``ShotID``.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      #include <sti/device/PostProcessingManager.h>
+      #include <sti/engine/ShotID.h>
+      #include <sti/utils/MetaData.h>
+
+      class AnalysisDevice : public STI::Device::LocalDevice
+      {
+      public:
+          AnalysisDevice(const STI::Utils::Configuration& config)
+              : STI::Device::LocalDevice(config)
+          {
+              addPostProcessingTarget(
+                  "atom number",
+                  [this](const STI::Engine::ShotID& shotID,
+                         const STI::Utils::MetaData& options) {
+                      STI::Utils::MetaData results;
+                      results.addMetaData("N", STI::Utils::MixedValue(countAtoms(shotID, options)));
+                      return results;
+                  },
+                  "Counts atoms from an absorption image.");
+          }
+      };
+
+   .. code-tab:: py
+
+      class AnalysisDevice(stidevicepy.LocalDevice):
+          def __init__(self, config):
+              stidevicepy.LocalDevice.__init__(self, config)
+
+              self.addPostProcessingTarget(
+                  "atom number",
+                  self.count_atoms,
+                  "Counts atoms from an absorption image.",
+              )
+
+          def count_atoms(self, shot_id, options):
+              roi = options.get("roi")
+              # ... pull shot data and analyze ...
+              return {"N": 1.0e6}
+
+``addPostProcessingTarget(name, function, description="")`` takes the target
+name, the analysis callback, and an optional human-readable description.  In
+Python, the callback receives the ``ShotID`` and an ``options`` dict and returns
+a results dict (or ``None`` for no results).  If the callback raises, the
+failure is reported in the completion message instead of crashing the worker.
+
+When the analysis finishes, the device broadcasts a ``PostProcessingComplete``
+device message containing the ``ShotID``, target name, a success/failure status,
+the results, and an error message on failure.  Other devices and clients
+subscribe to ``PostProcessingCompleteMessage`` the same way they subscribe to
+channel updates (see `Message listeners`_ above), so a frontend or a downstream
+device can import results as they become available.
+
+Targets are reached through the abstract ``Device`` interface, so a device's
+``PostProcessingManager`` is available to local and remote callers alike:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::shared_ptr<STI::Device::PostProcessingManager> manager;
+      if (device->getPostProcessingManager(manager) && manager != nullptr) {
+          for (const auto& info : manager->getPostProcessingTargets()) {
+              std::cout << info.name << ": " << info.description << std::endl;
+          }
+      }
+
+   .. code-tab:: py
+
+      for name, description in device.getPostProcessingTargets():
+          print(name, description)
+
+Timing files request post-processing against these targets with
+``postTarget()`` and ``postProcess()``.  See :ref:`stipypostprocessing` for the
+client-side timing-file API.
+
+Implementation notes for device authors:
+
+* Each device runs a single post-processing worker thread, started lazily on the
+  first registered target.  Devices that never register a target carry no extra
+  thread.
+* Post-processing requests never enter the hard-timed event table, so a
+  post-processing device is never pulled into a shot's parse/play gating.  A
+  request whose target cannot be resolved produces a non-fatal parse warning, not
+  a play-time error.
+* Target registration is expected during device construction, before the device
+  is served.  Register all targets up front.
+
 Logging
 *******
 

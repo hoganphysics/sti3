@@ -89,7 +89,10 @@ public:
 			break;
 		case DeviceMessageType::EngineJobUpdate:
 			success = getListenerGroup(sourceDeviceID, engineJobUpdateListeners, listenerGroup);
-			break;			
+			break;
+		case DeviceMessageType::PostProcessingComplete:
+			success = getListenerGroup(sourceDeviceID, postProcessingCompleteListeners, listenerGroup);
+			break;
 		}
 
 
@@ -230,6 +233,7 @@ private:
 	ListenerGroupMap<CollectionUpdateMessage> collectionUpdateListeners;
 	ListenerGroupMap<EngineStateMessage> engineStateListeners;
 	ListenerGroupMap<EngineJobUpdateDeviceMessage> engineJobUpdateListeners;
+	ListenerGroupMap<PostProcessingCompleteMessage> postProcessingCompleteListeners;
 	//...
 
 	/**

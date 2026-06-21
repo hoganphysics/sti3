@@ -177,6 +177,20 @@ template<>
 bool Network::convert<std::shared_ptr<Device::EngineJobUpdateDeviceMessage>, TNetwork::TEngineJobUpdateDeviceMessage>(
 	const std::shared_ptr<Device::EngineJobUpdateDeviceMessage>& deviceMessage, TNetwork::TEngineJobUpdateDeviceMessage& tMessage);
 
+//PostProcessingCompleteMessage
+template<>
+bool Network::convert<TNetwork::TPostProcessingCompleteMessage, std::shared_ptr<Device::PostProcessingCompleteMessage>>(
+	const TNetwork::TPostProcessingCompleteMessage& tMessage, std::shared_ptr<Device::PostProcessingCompleteMessage>& deviceMessage);
+template<>
+bool Network::convert<std::shared_ptr<Device::PostProcessingCompleteMessage>, TNetwork::TPostProcessingCompleteMessage>(
+	const std::shared_ptr<Device::PostProcessingCompleteMessage>& deviceMessage, TNetwork::TPostProcessingCompleteMessage& tMessage);
+
+//PostProcessingStatus
+template<>
+TNetwork::TPostProcessingStatus Network::convert<Device::PostProcessingStatus, TNetwork::TPostProcessingStatus>(const Device::PostProcessingStatus& status);
+template<>
+Device::PostProcessingStatus Network::convert<TNetwork::TPostProcessingStatus, Device::PostProcessingStatus>(const TNetwork::TPostProcessingStatus& tStatus);
+
 // //EngineJobUpdateTarget
 // template<>
 // TNetwork::TEngineJobUpdateTarget Network::convert

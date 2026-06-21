@@ -14,9 +14,10 @@ enum class DeviceMessageType {
 	AttributeUpdate, AttributesRefresh, 
 	MonitorUpdate, MonitorStatusUpdate,
 	EngineJobUpdate,
-	EngineScheduler, 
+	EngineScheduler,
 	EngineParser,
 	EngineStatus,
+	PostProcessingComplete,
 	Unknown };
 
 //Adding a new DeviceMessageType:

@@ -5,6 +5,7 @@
 #include <sti/fwd/MixedValue_fwd.h>
 #include <sti/engine/ParsedTag.h>
 #include <sti/engine/ParsedVar.h>
+#include <sti/engine/PostProcessRequest.h>
 #include <sti/utils/VectorMap.h>
 #include <sti/utils/MetaData.h>
 
@@ -96,6 +97,14 @@ public:
 
     void addEvents(const RawEventVector& newEvents);
 
+    //Post-processing requests are carried alongside the group as metadata, parallel
+    //to (never part of) the hard-timed event list, so they never enter the sequence
+    //table or pull the post-processing device into the engine state-machine gating.
+    void addPostProcessRequest(const PostProcessTarget& target, const STI::Utils::MetaData& options,
+                                const StackTrace& stackTrace);
+    void addPostProcessRequest(const PostProcessRequest& request);   //add a fully-formed request (network deserialization)
+    const std::vector<PostProcessRequest>& postProcessRequests() const;
+
     ParsedVar var(const std::string& fullVarName, const StackTrace& stackTrace);   //the value of the var, or an unbound var
 
     //for overwritten vars
@@ -182,7 +191,8 @@ private:
     std::set<ParsedVar> overwrittenVars;
 
     std::vector<ParsedVar> parsedVars;
-    std::vector<ParsedTag> parsedTags; 
+    std::vector<ParsedTag> parsedTags;
+    std::vector<PostProcessRequest> postProcessReqs;   //side-list: not hard-timed, not in the event table
     std::vector<std::shared_ptr<RawEventGroup>> subgroups;
 
     typedef STI::Utils::VectorMap<std::string, std::shared_ptr<RawEventGroup>> VectorMapRawEventGroup;

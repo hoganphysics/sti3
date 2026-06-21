@@ -131,6 +131,7 @@ add_library(stinetwork SHARED
     RemoteMonitor.cpp
     RemoteMonitorManager.cpp
     RemotePersistenceManager.cpp
+    RemotePostProcessingManager.cpp
     RemoteProfileManager.cpp
     RemoteResultsCollector.cpp
     RemoteTask.cpp
@@ -156,6 +157,7 @@ add_library(stinetwork SHARED
     TLogManager_i.cpp
     TMonitorManager_i.cpp
     TPersistenceManager_i.cpp
+    TPostProcessingManager_i.cpp
     TProfileManager_i.cpp
     TRefreshIndicator_i.cpp
     TResultsCollector_i.cpp

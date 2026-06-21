@@ -704,6 +704,31 @@ void RawEventGroup::addEvents(const RawEventVector& newEvents)
     refreshMinMax();
 }
 
+void RawEventGroup::addPostProcessRequest(const PostProcessTarget& target, const STI::Utils::MetaData& options,
+                                            const StackTrace& stackTrace)
+{
+    std::unique_lock groupLock(groupMutex);
+
+    //mirror addtag(): register the source location with the group's shared trace data
+    CompressedStackTrace trace;
+    if (stackTraceData != 0) {
+        trace = stackTraceData->addStackTrace(stackTrace);
+    }
+
+    postProcessReqs.emplace_back(target, options, trace);
+}
+
+void RawEventGroup::addPostProcessRequest(const PostProcessRequest& request)
+{
+    std::unique_lock groupLock(groupMutex);
+    postProcessReqs.push_back(request);
+}
+
+const std::vector<STI::Engine::PostProcessRequest>& RawEventGroup::postProcessRequests() const
+{
+    return postProcessReqs;
+}
+
 bool RawEventGroup::eventsEmpty() const
 {
     std::unique_lock groupLock(groupMutex);
@@ -757,6 +782,7 @@ void RawEventGroup::clear()
 
     parsedVars.clear();
     parsedTags.clear();
+    postProcessReqs.clear();
 
     for (auto& g : subgroups) {
         if (g != 0) {

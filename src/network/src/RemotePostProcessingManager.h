@@ -1,0 +1,54 @@
+#ifndef STI_NETWORK_REMOTEPOSTPROCESSINGMANAGER_H
+#define STI_NETWORK_REMOTEPOSTPROCESSINGMANAGER_H
+
+#include "generated/deviceNet.h"
+#include <sti/device/PostProcessingManager.h>
+#include "TReferenceHolder.h"
+
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
+
+namespace STI
+{
+namespace Network
+{
+
+//Client-side proxy: forwards requestPostProcessing()/getPostProcessingTargets()
+//to a remote device's TPostProcessingManager over CORBA. addPostProcessingTarget()
+//is local-registration only (a callback cannot be registered remotely) and is a
+//no-op here; completion results arrive as broadcast PostProcessingCompleteMessages.
+class RemotePostProcessingManager : public STI::Device::PostProcessingManager,
+                                    public STI::TNetwork::TReferenceHolder<STI::TNetwork::TPostProcessingManager>	//mixin
+{
+public:
+
+    RemotePostProcessingManager(::STI::TNetwork::TPostProcessingManager_var manager, const std::string& originID);
+    ~RemotePostProcessingManager();
+
+    void addPostProcessingTarget(const std::string& name,
+                                 STI::Device::PostProcessingFunction function,
+                                 const std::string& description = "") override;
+
+    std::vector<STI::Device::PostProcessingTargetInfo> getPostProcessingTargets() const override;
+
+    bool requestPostProcessing(const std::string& name,
+                               const STI::Engine::ShotID& shotID,
+                               const STI::Device::DeviceID& shotOwnerID,
+                               const STI::Utils::MetaData& options) override;
+
+    void stop() override;
+
+    bool ping() const;
+
+private:
+
+    mutable std::mutex postProcessingMutex;
+};
+
+
+} //Network
+} //STI
+
+#endif

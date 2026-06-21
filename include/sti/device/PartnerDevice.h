@@ -49,6 +49,7 @@ public:
 	bool getTaskManager(std::shared_ptr<TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
 	bool getVersionManager(std::shared_ptr<VersionManager>& manager) override;
+	bool getPostProcessingManager(std::shared_ptr<PostProcessingManager>& manager) override;
 
 	void addEvent(const STI::Engine::RawEvent& evt, const STI::Engine::RawEvent& referenceEvent);
 	void addEvent(double time, const STI::Engine::RawEventTargetChannel& channel, const STI::Utils::MixedValue& value, const STI::Engine::RawEvent& referenceEvent);

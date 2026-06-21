@@ -14,6 +14,7 @@
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/LocalChannel.h>
 #include <sti/device/PartnerDevice.h>
+#include <sti/device/PostProcessingManager.h>
 #include <sti/device/ProfileManager.h>
 #include <sti/device/ServerMessageRelayer.h>
 #include <sti/device/TaskManager.h>
@@ -71,6 +72,8 @@ class LocalTaskManager;
 class LocalLogManager;
 class VersionInfo;
 class VersionManager;
+class LocalPostProcessingManager;
+class PostProcessingDispatcher;
 
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
@@ -110,6 +113,7 @@ public:
 	bool getMonitorManager(std::shared_ptr<MonitorManager>& manager);
 	bool getLogManager(std::shared_ptr<LogManager>& manager);
 	bool getVersionManager(std::shared_ptr<VersionManager>& manager) override;
+	bool getPostProcessingManager(std::shared_ptr<PostProcessingManager>& manager) override;
 
 	bool getFileServer(std::shared_ptr<STI::Utils::FileServer>& fileServer);
 
@@ -165,6 +169,8 @@ public:
     Logger& log(const std::string& name);
 
 	void addTask(const std::shared_ptr<STI::Utils::Task>& task);
+	void addPostProcessingTarget(const std::string& name, STI::Device::PostProcessingFunction function,
+		const std::string& description = "");
 	bool addVersionInfo(const VersionInfo& version);
 	bool addVersionInfo(const std::string& component, const std::string& version);
 
@@ -264,6 +270,8 @@ private:
 	std::shared_ptr<LocalMonitorManager> localMonitorManager;
 	std::shared_ptr<LocalLogManager> localLogManager;
 	std::shared_ptr<VersionManager> versionManager;
+	std::shared_ptr<LocalPostProcessingManager> localPostProcessingManager;
+	std::shared_ptr<PostProcessingDispatcher> postProcessingDispatcher;
 
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 

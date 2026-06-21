@@ -75,6 +75,14 @@ public:
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task);
 
     void addTask(const std::shared_ptr<STI::Python::TaskPy>& task, const pybind11::object& taskObj);
+
+    //Register a named post-processing target backed by a Python callable. The
+    //callable receives (shotID, optionsDict) and returns a dict of results; it is
+    //invoked on the post-processing worker thread, so the wrapper acquires the GIL.
+    void addPostProcessingTarget(const std::string& name,
+                                 const std::function<pybind11::object(STI::Engine::ShotID, pybind11::object)>& function,
+                                 const std::string& description = "");
+
     void addMetadata(const std::string& key, const pybind11::object& value);
     void setColor(const std::string& color);
     void setDescription(const std::string& description);

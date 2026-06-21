@@ -5,6 +5,7 @@
 #include <sti/device/ProfileManager.h>
 #include <sti/device/TaskManager.h>
 #include <sti/device/VersionManager.h>
+#include <sti/device/PostProcessingManager.h>
 
 using STI::Device::PartnerDevice;
 using STI::Device::LocalDevice;
@@ -16,6 +17,7 @@ using STI::Device::AttributeManager;
 using STI::Device::ChannelManager;
 using STI::Device::PersistenceManager;
 using STI::Device::ProfileManager;
+using STI::Device::PostProcessingManager;
 
 
 PartnerDevice::PartnerDevice(LocalDevice* localDevice, const std::shared_ptr<Device>& device)
@@ -110,6 +112,14 @@ bool PartnerDevice::getPersistenceManager(std::shared_ptr<PersistenceManager>& m
 {
 	if (device != 0) {
 		return device->getPersistenceManager(manager);
+	}
+	return false;
+}
+
+bool PartnerDevice::getPostProcessingManager(std::shared_ptr<PostProcessingManager>& manager)
+{
+	if (device != 0) {
+		return device->getPostProcessingManager(manager);
 	}
 	return false;
 }

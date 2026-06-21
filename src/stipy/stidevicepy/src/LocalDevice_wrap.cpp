@@ -107,6 +107,8 @@ void init_LocalDevice(py::module& m)
         .def("__addTask_Base", py::overload_cast<const std::shared_ptr<Task>&>(&LocalDevicePy::addTask), py::arg("task"))
         // .def("addTask", py::overload_cast<const std::shared_ptr<TaskPy>&>(&LocalDevicePy::addTask), py::arg("task"))
         .def("__addTask", py::overload_cast<const std::shared_ptr<STI::Python::TaskPy>&, const pybind11::object&>(&LocalDevicePy::addTask), py::arg("task"), py::arg("object"))
+        .def("addPostProcessingTarget", &LocalDevicePy::addPostProcessingTarget,
+                py::arg("name"), py::arg("function"), py::arg("description") = "")
         .def("addMetadata",
             [](std::shared_ptr<LocalDevicePy>& self, const std::string& key, const pybind11::object& value) {
                 self->addMetadata(key, value);

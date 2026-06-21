@@ -45,6 +45,7 @@ void init_Device(py::module& m)
         .def("getTaskManager", &DevicePy::getTaskManager)        
         .def("getLogManager", &DevicePy::getLogManager)
         .def("getVersionManager", &DevicePy::getVersionManager)
+        .def("getPostProcessingTargets", &DevicePy::getPostProcessingTargets)
         .def("metadata", py::overload_cast<>(&DevicePy::metadata, py::const_))
         .def("metadata", py::overload_cast<const std::string&>(&DevicePy::metadata, py::const_), py::arg("key"))
         .def("openLog",

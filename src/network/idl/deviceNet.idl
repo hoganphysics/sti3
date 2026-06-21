@@ -287,6 +287,14 @@ module TNetwork
 		boolean ping();
 	};
 
+	interface TPostProcessingManager
+	{
+		boolean requestPostProcessing(in string name, in TShotID shotID, in TDeviceID shotOwnerID, in TMixedValue options);
+		void getTargets(out TPostProcessingTargetInfoSeq targets);
+
+		boolean ping();
+	};
+
 	interface TProfileManager
 	{
 		void getProfiles(out TStringSeq names);
@@ -354,6 +362,7 @@ module TNetwork
 		TTaskManager getTaskManager();
 		TLogManager getLogManager();
 		TMonitorManager getMonitorManager();
+		TPostProcessingManager getPostProcessingManager();
 		void getVersions(out TVersionInfoSeq versions);
 	};
 

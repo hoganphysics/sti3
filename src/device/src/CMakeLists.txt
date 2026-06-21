@@ -105,6 +105,7 @@ add_library(stidevice SHARED
     LocalFileServer.cpp
     LocalLogRepository.cpp
     LocalPersistenceManager.cpp
+    LocalPostProcessingManager.cpp
     LocalResultsCollector.cpp
     LocalShot.cpp
     LocalLogManager.cpp
@@ -121,6 +122,9 @@ add_library(stidevice SHARED
     ParsedDependencyTree.cpp
     ParsedTag.cpp
     ParsedVar.cpp
+    PostProcessingDispatcher.cpp
+    PostProcessRequest.cpp
+    PostProcessTarget.cpp
     ParseID.cpp
     ParseResult.cpp
     ParseTicket.cpp  

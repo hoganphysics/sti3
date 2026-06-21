@@ -136,6 +136,16 @@ void LocalEventEngineJob::setMissingTargets(const std::set<STI::Device::DeviceID
     missingTargetIDs = missingTargets;
 }
 
+std::vector<STI::Engine::PostProcessRequest> LocalEventEngineJob::getPostProcessRequests() const
+{
+    return postProcessRequests;
+}
+
+void LocalEventEngineJob::setPostProcessRequests(const std::vector<PostProcessRequest>& requests)
+{
+    postProcessRequests = requests;
+}
+
 void LocalEventEngineJob::addMessages(const std::vector<EngineParsingMessage>& messages)
 {
     parsingMessages.insert(parsingMessages.end(), messages.begin(), messages.end());

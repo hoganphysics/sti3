@@ -33,6 +33,7 @@ class RemoteProfileManager;
 class RemoteTaskManager;
 class RemoteLogManager;
 class RemoteVersionManager;
+class RemotePostProcessingManager;
 
 
 class RemoteDevice : public STI::Device::Device, 
@@ -65,6 +66,7 @@ public:
 	bool getTaskManager(std::shared_ptr<STI::Device::TaskManager>& manager);
 	bool getLogManager(std::shared_ptr<STI::Device::LogManager>& manager);
 	bool getVersionManager(std::shared_ptr<STI::Device::VersionManager>& manager) override;
+	bool getPostProcessingManager(std::shared_ptr<STI::Device::PostProcessingManager>& manager) override;
 
 	bool write(short channel, const STI::Utils::MixedValue& value);
 	bool read(short channel, STI::Utils::MixedValue& data);
@@ -96,6 +98,7 @@ private:
 	std::shared_ptr<RemoteAttributeManager> remoteAttributeManager;
 	std::shared_ptr<RemoteMonitorManager> remoteMonitorManager;
 	std::shared_ptr<RemotePersistenceManager> remotePersistenceManager;
+	std::shared_ptr<RemotePostProcessingManager> remotePostProcessingManager;
 	std::shared_ptr<RemoteProfileManager> remoteProfileManager;
 	std::shared_ptr<RemoteTaskManager> remoteTaskManager;
 	std::shared_ptr<RemoteLogManager> remoteLogManager;

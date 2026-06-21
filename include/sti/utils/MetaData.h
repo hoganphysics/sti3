@@ -28,7 +28,7 @@ public:
     {
         MixedValue mixedValue;
         mixedValue.setValue(value);
-        addMetaData(key, (const STI::Utils::MixedValue&) value);
+        addMetaData(key, mixedValue);
     }
 
     void addMetaData(const std::string& key, const STI::Utils::MixedValue& value);

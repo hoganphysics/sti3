@@ -417,6 +417,29 @@ module TNetwork
 	typedef sequence<TParsedTag> TParsedTagSeq;
 
 
+	struct TPostProcessTarget
+	{
+		boolean isAbstract;
+		TRawEventTargetDevice device;
+		string name;
+	};
+
+	struct TPostProcessRequest
+	{
+		TPostProcessTarget target;
+		TMixedValue options;
+		TStackFrameSeq trace;
+	};
+	typedef sequence<TPostProcessRequest> TPostProcessRequestSeq;
+
+	struct TPostProcessingTargetInfo
+	{
+		string name;
+		string description;
+	};
+	typedef sequence<TPostProcessingTargetInfo> TPostProcessingTargetInfoSeq;
+
+
 	struct RefPointPair
 	{
 		string name;
@@ -448,6 +471,8 @@ module TNetwork
 		TRawEventGroupSeq subgroups;
 
 		TMixedValue metaData;
+
+		TPostProcessRequestSeq postProcessRequests;   //side-list: not hard-timed, not in the event table
 	};
 
 
@@ -512,9 +537,9 @@ module TNetwork
 
 	//DeviceMessage *************************//
 
-	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
+	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh,
 							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler,
-							MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown };
+							MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessagePostProcessingComplete, MessageUnknown };
 	typedef sequence<TDeviceMessageType> TDeviceMessageTypeSeq;
 
 	struct TAnyMessage
@@ -714,6 +739,20 @@ module TNetwork
 		//only used for ChannelName messages
 		short channelNumber;
 		string channelName;
+	};
+
+
+	enum TPostProcessingStatus { PostProcessingSuccess, PostProcessingFailed };
+
+	struct TPostProcessingCompleteMessage
+	{
+		TDeviceMessage base;	//base class data
+
+		TShotID shotID;
+		string targetName;
+		TPostProcessingStatus status;
+		TMixedValue results;		//MetaData carried as a single MixedValue; empty when Failed
+		string errorMessage;		//empty when Success
 	};
 
 

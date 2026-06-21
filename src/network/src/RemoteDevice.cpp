@@ -12,6 +12,7 @@
 #include "RemoteLogManager.h"
 #include "RemoteMonitorManager.h"
 #include "RemotePersistenceManager.h"
+#include "RemotePostProcessingManager.h"
 #include "RemoteProfileManager.h"
 #include "RemoteTaskManager.h"
 #include "RemoteVersionManager.h"
@@ -445,6 +446,45 @@ bool RemoteDevice::getPersistenceManager(std::shared_ptr<STI::Device::Persistenc
 	}
 
 	manager = remotePersistenceManager;
+	return (manager != 0);
+}
+
+bool RemoteDevice::getPostProcessingManager(std::shared_ptr<STI::Device::PostProcessingManager>& manager)
+{
+	auto remoteID = getID();	//Need to get this first to avoid deadlock with getID()
+
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	if (isLive(remotePostProcessingManager)) {
+		manager = remotePostProcessingManager;
+		return (manager != 0);
+	}
+	else if (remotePostProcessingManager != 0) {
+		//non-null but not live for some reason; disable
+		remotePostProcessingManager->disable();
+	}
+
+	if (isDisabled()) return false;
+
+	::STI::TNetwork::TPostProcessingManager_var tPostProcessingManager;	//remote reference
+
+	try {
+		tPostProcessingManager = getTRef()->getPostProcessingManager();	//remote call
+
+		if (!CORBA::is_nil(tPostProcessingManager)) {
+			remotePostProcessingManager = std::make_shared<RemotePostProcessingManager>(tPostProcessingManager, remoteID.getID());
+			addDependent(remotePostProcessingManager);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+
+	manager = remotePostProcessingManager;
 	return (manager != 0);
 }
 

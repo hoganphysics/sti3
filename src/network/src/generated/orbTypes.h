@@ -4760,6 +4760,298 @@ _CORBA_MODULE_BEG
       TParsedTagSeq_out& operator=(const TParsedTagSeq_var&);
     };
 
+    struct TPostProcessTarget {
+      typedef _CORBA_ConstrType_Variable_Var<TPostProcessTarget> _var_type;
+
+      
+      ::CORBA::Boolean isAbstract;
+
+      TRawEventTargetDevice device;
+
+      ::CORBA::String_member name;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPostProcessTarget::_var_type TPostProcessTarget_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPostProcessTarget,TPostProcessTarget_var > TPostProcessTarget_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessTarget;
+
+    struct TPostProcessRequest {
+      typedef _CORBA_ConstrType_Variable_Var<TPostProcessRequest> _var_type;
+
+      
+      TPostProcessTarget target;
+
+      TMixedValue options;
+
+      TStackFrameSeq trace;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPostProcessRequest::_var_type TPostProcessRequest_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPostProcessRequest,TPostProcessRequest_var > TPostProcessRequest_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessRequest;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessRequestSeq;
+
+    class TPostProcessRequestSeq_var;
+
+    class TPostProcessRequestSeq : public _CORBA_Unbounded_Sequence< TPostProcessRequest >  {
+    public:
+      typedef TPostProcessRequestSeq_var _var_type;
+      inline TPostProcessRequestSeq() {}
+      inline TPostProcessRequestSeq(const TPostProcessRequestSeq& _s)
+        : _CORBA_Unbounded_Sequence< TPostProcessRequest > (_s) {}
+
+      inline TPostProcessRequestSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TPostProcessRequest > (_max) {}
+      inline TPostProcessRequestSeq(_CORBA_ULong _max, _CORBA_ULong _len, TPostProcessRequest* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TPostProcessRequest > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TPostProcessRequestSeq& operator = (const TPostProcessRequestSeq& _s) {
+        _CORBA_Unbounded_Sequence< TPostProcessRequest > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TPostProcessRequestSeq_out;
+
+    class TPostProcessRequestSeq_var {
+    public:
+      inline TPostProcessRequestSeq_var() : _pd_seq(0) {}
+      inline TPostProcessRequestSeq_var(TPostProcessRequestSeq* _s) : _pd_seq(_s) {}
+      inline TPostProcessRequestSeq_var(const TPostProcessRequestSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TPostProcessRequestSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TPostProcessRequestSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TPostProcessRequestSeq_var& operator = (TPostProcessRequestSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TPostProcessRequestSeq_var& operator = (const TPostProcessRequestSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TPostProcessRequestSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TPostProcessRequest& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TPostProcessRequestSeq* operator -> () { return _pd_seq; }
+      inline const TPostProcessRequestSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TPostProcessRequestSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TPostProcessRequestSeq& () const { return *_pd_seq; }
+      inline operator TPostProcessRequestSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TPostProcessRequestSeq& in() const { return *_pd_seq; }
+      inline TPostProcessRequestSeq&       inout()    { return *_pd_seq; }
+      inline TPostProcessRequestSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TPostProcessRequestSeq* _retn() { TPostProcessRequestSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TPostProcessRequestSeq_out;
+      
+    private:
+      TPostProcessRequestSeq* _pd_seq;
+    };
+
+    class TPostProcessRequestSeq_out {
+    public:
+      inline TPostProcessRequestSeq_out(TPostProcessRequestSeq*& _s) : _data(_s) { _data = 0; }
+      inline TPostProcessRequestSeq_out(TPostProcessRequestSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TPostProcessRequestSeq*) 0; }
+      inline TPostProcessRequestSeq_out(const TPostProcessRequestSeq_out& _s) : _data(_s._data) {}
+      inline TPostProcessRequestSeq_out& operator = (const TPostProcessRequestSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TPostProcessRequestSeq_out& operator = (TPostProcessRequestSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TPostProcessRequestSeq*&()  { return _data; }
+      inline TPostProcessRequestSeq*& ptr()       { return _data; }
+      inline TPostProcessRequestSeq* operator->() { return _data; }
+
+      inline TPostProcessRequest& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TPostProcessRequestSeq*& _data;
+
+    private:
+      TPostProcessRequestSeq_out();
+      TPostProcessRequestSeq_out& operator=(const TPostProcessRequestSeq_var&);
+    };
+
+    struct TPostProcessingTargetInfo {
+      typedef _CORBA_ConstrType_Variable_Var<TPostProcessingTargetInfo> _var_type;
+
+      
+      ::CORBA::String_member name;
+
+      ::CORBA::String_member description;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPostProcessingTargetInfo::_var_type TPostProcessingTargetInfo_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPostProcessingTargetInfo,TPostProcessingTargetInfo_var > TPostProcessingTargetInfo_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessingTargetInfo;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessingTargetInfoSeq;
+
+    class TPostProcessingTargetInfoSeq_var;
+
+    class TPostProcessingTargetInfoSeq : public _CORBA_Unbounded_Sequence< TPostProcessingTargetInfo >  {
+    public:
+      typedef TPostProcessingTargetInfoSeq_var _var_type;
+      inline TPostProcessingTargetInfoSeq() {}
+      inline TPostProcessingTargetInfoSeq(const TPostProcessingTargetInfoSeq& _s)
+        : _CORBA_Unbounded_Sequence< TPostProcessingTargetInfo > (_s) {}
+
+      inline TPostProcessingTargetInfoSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TPostProcessingTargetInfo > (_max) {}
+      inline TPostProcessingTargetInfoSeq(_CORBA_ULong _max, _CORBA_ULong _len, TPostProcessingTargetInfo* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TPostProcessingTargetInfo > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TPostProcessingTargetInfoSeq& operator = (const TPostProcessingTargetInfoSeq& _s) {
+        _CORBA_Unbounded_Sequence< TPostProcessingTargetInfo > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TPostProcessingTargetInfoSeq_out;
+
+    class TPostProcessingTargetInfoSeq_var {
+    public:
+      inline TPostProcessingTargetInfoSeq_var() : _pd_seq(0) {}
+      inline TPostProcessingTargetInfoSeq_var(TPostProcessingTargetInfoSeq* _s) : _pd_seq(_s) {}
+      inline TPostProcessingTargetInfoSeq_var(const TPostProcessingTargetInfoSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TPostProcessingTargetInfoSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TPostProcessingTargetInfoSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TPostProcessingTargetInfoSeq_var& operator = (TPostProcessingTargetInfoSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TPostProcessingTargetInfoSeq_var& operator = (const TPostProcessingTargetInfoSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TPostProcessingTargetInfoSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TPostProcessingTargetInfo& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TPostProcessingTargetInfoSeq* operator -> () { return _pd_seq; }
+      inline const TPostProcessingTargetInfoSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TPostProcessingTargetInfoSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TPostProcessingTargetInfoSeq& () const { return *_pd_seq; }
+      inline operator TPostProcessingTargetInfoSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TPostProcessingTargetInfoSeq& in() const { return *_pd_seq; }
+      inline TPostProcessingTargetInfoSeq&       inout()    { return *_pd_seq; }
+      inline TPostProcessingTargetInfoSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TPostProcessingTargetInfoSeq* _retn() { TPostProcessingTargetInfoSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TPostProcessingTargetInfoSeq_out;
+      
+    private:
+      TPostProcessingTargetInfoSeq* _pd_seq;
+    };
+
+    class TPostProcessingTargetInfoSeq_out {
+    public:
+      inline TPostProcessingTargetInfoSeq_out(TPostProcessingTargetInfoSeq*& _s) : _data(_s) { _data = 0; }
+      inline TPostProcessingTargetInfoSeq_out(TPostProcessingTargetInfoSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TPostProcessingTargetInfoSeq*) 0; }
+      inline TPostProcessingTargetInfoSeq_out(const TPostProcessingTargetInfoSeq_out& _s) : _data(_s._data) {}
+      inline TPostProcessingTargetInfoSeq_out& operator = (const TPostProcessingTargetInfoSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TPostProcessingTargetInfoSeq_out& operator = (TPostProcessingTargetInfoSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TPostProcessingTargetInfoSeq*&()  { return _data; }
+      inline TPostProcessingTargetInfoSeq*& ptr()       { return _data; }
+      inline TPostProcessingTargetInfoSeq* operator->() { return _data; }
+
+      inline TPostProcessingTargetInfo& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TPostProcessingTargetInfoSeq*& _data;
+
+    private:
+      TPostProcessingTargetInfoSeq_out();
+      TPostProcessingTargetInfoSeq_out& operator=(const TPostProcessingTargetInfoSeq_var&);
+    };
+
     struct RefPointPair {
       typedef _CORBA_ConstrType_Variable_Var<RefPointPair> _var_type;
 
@@ -5045,6 +5337,8 @@ _CORBA_MODULE_BEG
       TRawEventGroupSeq subgroups;
 
       TMixedValue metaData;
+
+      TPostProcessRequestSeq postProcessRequests;
 
     
 
@@ -5582,7 +5876,7 @@ _CORBA_MODULE_BEG
 
 #endif
 
-    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
+    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessagePostProcessingComplete, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
     typedef TDeviceMessageType& TDeviceMessageType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceMessageType;
@@ -7006,6 +7300,39 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TChannelUpdateMessage;
 
+    enum TPostProcessingStatus { PostProcessingSuccess, PostProcessingFailed /*, __max_TPostProcessingStatus=0xffffffff */ };
+    typedef TPostProcessingStatus& TPostProcessingStatus_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessingStatus;
+
+    struct TPostProcessingCompleteMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TPostProcessingCompleteMessage> _var_type;
+
+      
+      TDeviceMessage base;
+
+      TShotID shotID;
+
+      ::CORBA::String_member targetName;
+
+      TPostProcessingStatus status;
+
+      TMixedValue results;
+
+      ::CORBA::String_member errorMessage;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPostProcessingCompleteMessage::_var_type TPostProcessingCompleteMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPostProcessingCompleteMessage,TPostProcessingCompleteMessage_var > TPostProcessingCompleteMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPostProcessingCompleteMessage;
+
     struct TEngineStateTuple {
       typedef _CORBA_ConstrType_Fix_Var<TEngineStateTuple> _var_type;
 
@@ -8287,6 +8614,31 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TParsedTagSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TParsedTagSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TParsedTagSeq*& _sp);
 
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessTarget& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessTarget* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessTarget*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessTarget*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessRequest& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessRequest* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessRequest*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessRequest*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessRequestSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessRequestSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessRequestSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessRequestSeq*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessingTargetInfo& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingTargetInfo* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessingTargetInfo*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessingTargetInfo*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessingTargetInfoSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingTargetInfoSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessingTargetInfoSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessingTargetInfoSeq*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::RefPointPair& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::RefPointPair* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::RefPointPair*& _sp);
@@ -8643,6 +8995,30 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TChannelUpdateMes
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TChannelUpdateMessage* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TChannelUpdateMessage*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TChannelUpdateMessage*& _sp);
+
+inline void operator >>=(STI::TNetwork::TPostProcessingStatus _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TPostProcessingStatus& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::PostProcessingFailed) {
+    _e = (STI::TNetwork::TPostProcessingStatus) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingStatus _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessingStatus& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPostProcessingCompleteMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPostProcessingCompleteMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPostProcessingCompleteMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPostProcessingCompleteMessage*& _sp);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TEngineStateTuple& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TEngineStateTuple* _sp);

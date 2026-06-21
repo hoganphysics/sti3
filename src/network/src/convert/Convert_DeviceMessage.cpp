@@ -88,6 +88,15 @@ using STI::Device::MonitorStatusUpdateMessage;
 using STI::TNetwork::TMonitorStatusUpdateMessage;
 using STI::Device::MonitorStatus;
 using STI::TNetwork::TMonitorStatus;
+using STI::Device::PostProcessingCompleteMessage;
+using STI::TNetwork::TPostProcessingCompleteMessage;
+using STI::Device::PostProcessingStatus;
+using STI::TNetwork::TPostProcessingStatus;
+using STI::TNetwork::TShotID;
+using STI::Engine::ShotID;
+using STI::TNetwork::TMixedValue;
+using STI::Utils::MixedValue;
+using STI::Utils::MetaData;
 
 
 template<>
@@ -132,6 +141,9 @@ TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(
 			break;
 		case DeviceMessageType::EngineJobUpdate:
 			tType = TDeviceMessageType::MessageEngineJobUpdate;
+			break;
+		case DeviceMessageType::PostProcessingComplete:
+			tType = TDeviceMessageType::MessagePostProcessingComplete;
 			break;
 		default:
 			tType = TDeviceMessageType::MessageUnknown;
@@ -183,7 +195,10 @@ DeviceMessageType STI::Network::convert<TDeviceMessageType, DeviceMessageType>(c
 			break;
 		case TDeviceMessageType::MessageEngineJobUpdate:
 			type = DeviceMessageType::EngineJobUpdate;
-			break;		
+			break;
+		case TDeviceMessageType::MessagePostProcessingComplete:
+			type = DeviceMessageType::PostProcessingComplete;
+			break;
 		default:
 			type = DeviceMessageType::Unknown;
 			break;
@@ -296,6 +311,9 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 	case DeviceMessageType::EngineJobUpdate:
 		success = convertMessage<EngineJobUpdateDeviceMessage, TEngineJobUpdateDeviceMessage>(deviceMessage, tAnyMessage);
 		break;
+	case DeviceMessageType::PostProcessingComplete:
+		success = convertMessage<PostProcessingCompleteMessage, TPostProcessingCompleteMessage>(deviceMessage, tAnyMessage);
+		break;
 	}
 
 	return success;
@@ -353,6 +371,9 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 		break;
 	case TDeviceMessageType::MessageEngineJobUpdate:
 		success = extractMessage<TEngineJobUpdateDeviceMessage, EngineJobUpdateDeviceMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessagePostProcessingComplete:
+		success = extractMessage<TPostProcessingCompleteMessage, PostProcessingCompleteMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	}
 
@@ -753,6 +774,57 @@ bool STI::Network::convert<std::shared_ptr<ChannelUpdateMessage>, TChannelUpdate
 	tMessage.channelName = convert<std::string, CORBA::String_member>(deviceMessage->channelName);
 
 	return true;
+}
+
+//PostProcessingCompleteMessage
+template<>
+bool STI::Network::convert<TPostProcessingCompleteMessage, std::shared_ptr<PostProcessingCompleteMessage>>(
+	const TPostProcessingCompleteMessage& tMessage, std::shared_ptr<PostProcessingCompleteMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<PostProcessingCompleteMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace));
+
+	deviceMessage->shotID = convert<TShotID, ShotID>(tMessage.shotID);
+	deviceMessage->targetName = convert<CORBA::String_member, std::string>(tMessage.targetName);
+	deviceMessage->status = convert<TPostProcessingStatus, PostProcessingStatus>(tMessage.status);
+	deviceMessage->results = MetaData(convert<TMixedValue, MixedValue>(tMessage.results));
+	deviceMessage->errorMessage = convert<CORBA::String_member, std::string>(tMessage.errorMessage);
+
+	return (deviceMessage != 0);
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<PostProcessingCompleteMessage>, TPostProcessingCompleteMessage>(
+	const std::shared_ptr<PostProcessingCompleteMessage>& deviceMessage, TPostProcessingCompleteMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.shotID = convert<ShotID, TShotID>(deviceMessage->shotID);
+	tMessage.targetName = convert<std::string, CORBA::String_member>(deviceMessage->targetName);
+	tMessage.status = convert<PostProcessingStatus, TPostProcessingStatus>(deviceMessage->status);
+	tMessage.results = convert<MixedValue, TMixedValue>(deviceMessage->results.getMetaData());
+	tMessage.errorMessage = convert<std::string, CORBA::String_member>(deviceMessage->errorMessage);
+
+	return true;
+}
+
+//PostProcessingStatus
+template<>
+TPostProcessingStatus STI::Network::convert<PostProcessingStatus, TPostProcessingStatus>(const PostProcessingStatus& status)
+{
+	return (status == PostProcessingStatus::Failed)
+		? TPostProcessingStatus::PostProcessingFailed
+		: TPostProcessingStatus::PostProcessingSuccess;
+}
+
+template<>
+PostProcessingStatus STI::Network::convert<TPostProcessingStatus, PostProcessingStatus>(const TPostProcessingStatus& tStatus)
+{
+	return (tStatus == TPostProcessingStatus::PostProcessingFailed)
+		? PostProcessingStatus::Failed
+		: PostProcessingStatus::Success;
 }
 
 //ChannelUpdateMessageType

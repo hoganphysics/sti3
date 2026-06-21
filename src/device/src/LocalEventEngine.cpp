@@ -191,6 +191,7 @@ void LocalEventEngine::clear()
 	handledPartnerEvents = 0;
 	unhandledEvents = 0;
 	missingTargets.clear();
+	missingPostProcessingTargets.clear();
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
 	playReadyOwnedTargets.clear();
@@ -531,6 +532,99 @@ void LocalEventEngine::recordAbstractShotState(STI::Engine::EventEngineJob& job)
 	job.setMissingTargets(missingTargets);
 }
 
+void LocalEventEngine::collectPostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup,
+												  std::vector<STI::Engine::PostProcessRequest>& requests) const
+{
+	if (eventGroup == 0) return;
+
+	const auto& groupRequests = eventGroup->postProcessRequests();
+	requests.insert(requests.end(), groupRequests.begin(), groupRequests.end());
+
+	for (auto& subgroup : eventGroup->getSubgroups()) {
+		collectPostProcessRequests(subgroup, requests);
+	}
+}
+
+bool LocalEventEngine::resolvePostProcessDevice(const RawEventTargetDevice& target, STI::Device::DeviceID& resolvedID) const
+{
+	if (!target.isAbstract()) {
+		//Concrete device ID supplied; canonicalize and confirm reachability.
+		DeviceID canonicalID = findCanonicalDeviceID(target.deviceID());
+		if (canonicalID == localDeviceID) {
+			resolvedID = canonicalID;
+			return true;
+		}
+		if (deviceCollection != 0) {
+			std::shared_ptr<STI::Device::Device> device;
+			if (deviceCollection->get(canonicalID, device) && device != 0) {
+				resolvedID = canonicalID;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	//Abstract (name-only): match by device name against the live network.
+	const std::string name = target.name();
+	if (name == localDeviceID.getName()) {
+		resolvedID = localDeviceID;
+		return true;
+	}
+	if (deviceCollection != 0) {
+		std::set<DeviceID> ids;
+		deviceCollection->getIDs(ids);
+		for (auto& id : ids) {
+			if (id.getName() == name) {
+				resolvedID = id;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void LocalEventEngine::resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup, STI::Engine::EventEngineJob& job)
+{
+	//Only the job owner dispatches post-processing (it owns the play job and the
+	//PlayComplete signal), so only the owner needs to resolve the side-list.
+	if (!isJobOwner || eventGroup == 0) {
+		return;
+	}
+
+	std::vector<STI::Engine::PostProcessRequest> rawRequests;
+	collectPostProcessRequests(eventGroup, rawRequests);
+
+	if (rawRequests.empty()) {
+		return;
+	}
+
+	std::vector<STI::Engine::PostProcessRequest> resolvedRequests;
+
+	for (auto& request : rawRequests) {
+		DeviceID resolvedID;
+		if (resolvePostProcessDevice(request.target().device(), resolvedID)) {
+			STI::Engine::PostProcessTarget resolvedTarget(RawEventTargetDevice(resolvedID), request.target().name());
+			resolvedRequests.emplace_back(resolvedTarget, request.options(), request.trace());
+		}
+		else {
+			//Non-fatal: record separately and warn. Never touches missingTargets /
+			//isAbstractShot(), so the shot still plays.
+			missingPostProcessingTargets.insert(request.target());
+		}
+	}
+
+	if (!missingPostProcessingTargets.empty()) {
+		auto& warning = parser.addParsingWarning("Missing post-processing target")
+			<< "Some post-processing targets were not found on the network. "
+			<< "These post-processing requests are skipped; the shot still plays.";
+		for (auto& target : missingPostProcessingTargets) {
+			warning << "\n    " << target.device().name() << " :: " << target.name();
+		}
+	}
+
+	job.setPostProcessRequests(resolvedRequests);
+}
+
 void LocalEventEngine::appendMissingTargets(EnginePlayingMessage& message) const
 {
 	if (missingTargets.size() == 0) return;
@@ -774,6 +868,10 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 
 	// Collect all parsing messages
 	recordAbstractShotState(job);
+
+	//Post-processing requests are a side-list (not hard-timed): resolve them and stash
+	//the resolved list on the job. A missing target warns but never blocks play.
+	resolvePostProcessRequests(eventGroup, job);
 
 	parsingMessages.insert(parsingMessages.end(), parser.getParsingMessages().begin(), parser.getParsingMessages().end());
 	lastParseResult->messages = job.getParsingMessages();

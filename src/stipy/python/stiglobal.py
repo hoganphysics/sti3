@@ -3,6 +3,7 @@ from stipy.stipy import var as _var
 from stipy.stipy import settag as _settag
 from stipy.stipy import event as _event
 from stipy.stipy import meas as _meas
+from stipy.stipy import postProcess as _postProcess
 from stipy.stipy import set_trigger as _set_trigger
 from stipy.stipy import group as _group
 from stipy.stipy import connect as _connect
@@ -107,6 +108,9 @@ def meas(channel, time, value=None, group="") :
         return _meas(channel, time, value, _makeStackTrace(), group)
 #def meas(channel, time, group="") :
 #    return _meas(channel, time, _makeStackTrace(), group)
+
+def postProcess(target, options=None) :
+    return _postProcess(target, options or {}, _makeStackTrace())
 
 def set_trigger(device):
     return _set_trigger(device, _makeStackTrace())

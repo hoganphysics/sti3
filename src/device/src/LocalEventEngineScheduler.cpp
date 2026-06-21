@@ -580,11 +580,35 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     job->setDependencies(tree);
     if (parseJob != 0) {
         job->setMissingTargets(parseJob->getMissingTargetIDs());
+        //Carry resolved post-processing requests from the parse job to the play job,
+        //and stash them keyed by sid so the PlayComplete listener can reach them even
+        //if the play job is evicted from the bounded completedPlayJobs cache.
+        job->setPostProcessRequests(parseJob->getPostProcessRequests());
+
+        auto requests = job->getPostProcessRequests();
+        if (!requests.empty()) {
+            std::unique_lock<std::mutex> ppLock(postProcessMutex);
+            resolvedPostProcessRequests[playJobStatus.sid] = std::move(requests);
+        }
     }
 
     addJob(job);
 
     return playJobStatus;
+}
+
+bool LocalEventEngineScheduler::takePostProcessRequests(const ShotID& sid, std::vector<PostProcessRequest>& requests)
+{
+    std::unique_lock<std::mutex> ppLock(postProcessMutex);
+
+    auto it = resolvedPostProcessRequests.find(sid);
+    if (it == resolvedPostProcessRequests.end()) {
+        return false;
+    }
+
+    requests = std::move(it->second);
+    resolvedPostProcessRequests.erase(it);
+    return true;
 }
 
 // void LocalEventEngineScheduler::play(const ShotID& shotID, const std::shared_ptr<Shot>& shot)

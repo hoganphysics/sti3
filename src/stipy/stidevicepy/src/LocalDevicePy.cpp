@@ -5,12 +5,15 @@
 #include "LocalMonitorManager.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/PersistenceManager.h>
+#include <sti/device/PostProcessingManager.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
-#include <sti/engine/SynchronousEvent.h>
+#include <sti/utils/MetaData.h>
+#include <sti/engine/ShotID.h>
 
 #include "SynchronousEventPy.h"
 #include "SynchronousEventPyManager.h"
+#include "MixedValuePy.h"
 
 #include <stdexcept>
 #include <thread>
@@ -266,6 +269,55 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, co
     pybind11::gil_scoped_acquire acquire;
     task->task_object = taskObj;
     addTask(task);
+}
+
+void LocalDevicePy::addPostProcessingTarget(const std::string& name,
+    const std::function<pybind11::object(STI::Engine::ShotID, pybind11::object)>& function,
+    const std::string& description)
+{
+    if (device == 0) {
+        return;
+    }
+    if (!function) {
+        throw std::invalid_argument("addPostProcessingTarget requires a valid callable.");
+    }
+
+    //Bridge the Python callable into the C++ PostProcessingFunction. The worker
+    //thread runs without the GIL, so acquire it around the callback and translate
+    //a Python exception into a C++ exception (the manager reports it as Failed).
+    auto gil_function = [function](const STI::Engine::ShotID& shotID,
+                                   const STI::Utils::MetaData& options) -> STI::Utils::MetaData {
+        pybind11::gil_scoped_acquire acquire;
+
+        py::dict optionsDict;
+        for (const auto& key : options.keys()) {
+            STI::Python::MixedValuePy value(options.getMetaData(key));
+            optionsDict[key.c_str()] = value.getValue_py();
+        }
+
+        try {
+            py::object result = function(shotID, optionsDict);
+
+            STI::Utils::MetaData resultMetaData;
+            if (!result.is_none() && py::isinstance<py::dict>(result)) {
+                for (auto item : result.cast<py::dict>()) {
+                    STI::Python::MixedValuePy value;
+                    value.setValue_py(py::reinterpret_borrow<py::object>(item.second));
+                    //base MixedValue& so MetaData's non-template addMetaData overload is chosen
+                    resultMetaData.addMetaData(py::str(item.first).cast<std::string>(),
+                                               static_cast<const STI::Utils::MixedValue&>(value));
+                }
+            }
+            return resultMetaData;
+        }
+        catch (py::error_already_set& e) {
+            std::string message = e.what();
+            e.discard_as_unraisable("PostProcessing callback");
+            throw std::runtime_error(message);
+        }
+    };
+
+    device->addPostProcessingTarget(name, gil_function, description);
 }
 
 void LocalDevicePy::addMetadata(const std::string& key, const pybind11::object& value)

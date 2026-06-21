@@ -10,7 +10,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-static const char* _0RL_library_version = omniORB_4_3;
+OMNI_MAYBE_UNUSED static const char* _0RL_library_version = omniORB_4_3;
 
 
 
@@ -1207,6 +1207,58 @@ STI::TNetwork::TParsedTag::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TPostProcessTarget::operator>>= (cdrStream &_n) const
+{
+  _n.marshalBoolean(isAbstract);
+  (const TRawEventTargetDevice&) device >>= _n;
+  _n.marshalString(name,0);
+
+}
+
+void
+STI::TNetwork::TPostProcessTarget::operator<<= (cdrStream &_n)
+{
+  isAbstract = _n.unmarshalBoolean();
+  (TRawEventTargetDevice&)device <<= _n;
+  name = _n.unmarshalString(0);
+
+}
+
+void
+STI::TNetwork::TPostProcessRequest::operator>>= (cdrStream &_n) const
+{
+  (const TPostProcessTarget&) target >>= _n;
+  (const TMixedValue&) options >>= _n;
+  (const TStackFrameSeq&) trace >>= _n;
+
+}
+
+void
+STI::TNetwork::TPostProcessRequest::operator<<= (cdrStream &_n)
+{
+  (TPostProcessTarget&)target <<= _n;
+  (TMixedValue&)options <<= _n;
+  (TStackFrameSeq&)trace <<= _n;
+
+}
+
+void
+STI::TNetwork::TPostProcessingTargetInfo::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(name,0);
+  _n.marshalString(description,0);
+
+}
+
+void
+STI::TNetwork::TPostProcessingTargetInfo::operator<<= (cdrStream &_n)
+{
+  name = _n.unmarshalString(0);
+  description = _n.unmarshalString(0);
+
+}
+
+void
 STI::TNetwork::RefPointPair::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
@@ -1346,6 +1398,7 @@ STI::TNetwork::TRawEventGroup::operator>>= (cdrStream &_n) const
   (const TParsedTagSeq&) parsedTags >>= _n;
   (const TRawEventGroupSeq&) subgroups >>= _n;
   (const TMixedValue&) metaData >>= _n;
+  (const TPostProcessRequestSeq&) postProcessRequests >>= _n;
 
 }
 
@@ -1363,6 +1416,7 @@ STI::TNetwork::TRawEventGroup::operator<<= (cdrStream &_n)
   (TParsedTagSeq&)parsedTags <<= _n;
   (TRawEventGroupSeq&)subgroups <<= _n;
   (TMixedValue&)metaData <<= _n;
+  (TPostProcessRequestSeq&)postProcessRequests <<= _n;
 
 }
 
@@ -1855,6 +1909,30 @@ STI::TNetwork::TChannelUpdateMessage::operator<<= (cdrStream &_n)
   (TChannelUpdateTupleSeq&)measurementValues <<= _n;
   (::CORBA::Short&)channelNumber <<= _n;
   channelName = _n.unmarshalString(0);
+
+}
+
+void
+STI::TNetwork::TPostProcessingCompleteMessage::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceMessage&) base >>= _n;
+  (const TShotID&) shotID >>= _n;
+  _n.marshalString(targetName,0);
+  status >>= _n;
+  (const TMixedValue&) results >>= _n;
+  _n.marshalString(errorMessage,0);
+
+}
+
+void
+STI::TNetwork::TPostProcessingCompleteMessage::operator<<= (cdrStream &_n)
+{
+  (TDeviceMessage&)base <<= _n;
+  (TShotID&)shotID <<= _n;
+  targetName = _n.unmarshalString(0);
+  (TPostProcessingStatus&)status <<= _n;
+  (TMixedValue&)results <<= _n;
+  errorMessage = _n.unmarshalString(0);
 
 }
 

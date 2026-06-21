@@ -260,6 +260,15 @@ void STI::Python::set_trigger(const STI::Device::DeviceID& deviceID, const Stack
     }
 }
 
+void STI::Python::postProcess(const STI::Engine::PostProcessTarget& target, const pybind11::object& options, const StackTrace& stackTrace)
+{
+    auto stipy = STIPyGlobal::getInstance();
+
+    if (stipy != 0) {
+        stipy->postProcess(target, options, stackTrace);
+    }
+}
+
 void STI::Python::set_trigger(const STI::Engine::RawEventTargetDevice& device, const STI::Engine::StackTrace& stackTrace)
 {
     STI::Python::set_trigger(device.deviceID(), stackTrace);

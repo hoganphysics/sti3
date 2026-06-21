@@ -30,9 +30,11 @@
 #include "LocalLogManager.h"
 #include "LocalMonitorManager.h"
 #include "LocalPersistenceManager.h"
+#include "LocalPostProcessingManager.h"
 #include "LocalProfileManager.h"
 #include "LocalTaskManager.h"
 #include "LocalShot.h"
+#include "PostProcessingDispatcher.h"
 #include "PseudoSynchronousEvent.h"
 
 #include <filesystem>
@@ -73,6 +75,10 @@ using STI::Device::LogManager;
 using STI::Device::LocalLogManager;
 using STI::Device::VersionInfo;
 using STI::Device::VersionManager;
+using STI::Device::PostProcessingManager;
+using STI::Device::LocalPostProcessingManager;
+using STI::Device::PostProcessingDispatcher;
+using STI::Device::PostProcessingFunction;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -253,6 +259,16 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	deviceMessageReceiver->addListener<STI::Device::EngineJobUpdateDeviceMessage>(getID(), "ResultTicketManagerJobUpdate", resultTicketManager);
 	
 	localLogManager = std::make_shared<LocalLogManager>(this, localPersistenceManager, getLogMaxFileSizeBytes(config));
+
+	//Post-processing: one shared worker per device, dispatched off the PlayComplete
+	//notification (the same signal ResultTicketManager uses), never under jobMutex.
+	localPostProcessingManager = std::make_shared<LocalPostProcessingManager>(
+		getID(), deviceMessageDispatcher, localCollection, localPersistenceManager, &log());
+
+	postProcessingDispatcher = std::make_shared<PostProcessingDispatcher>(
+		getID(), eventEngineScheduler, localCollection, localPostProcessingManager, &log());
+
+	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "PostProcessingDispatcherScheduler", postProcessingDispatcher);
 }
 
 LocalDevice::~LocalDevice()
@@ -270,6 +286,12 @@ void LocalDevice::activate()
 
 void LocalDevice::disable()
 {
+	if (localPostProcessingManager != 0) {
+		//Stop accepting/draining post-processing work before tearing down the
+		//scheduler and listeners; a long user callback cannot wedge shutdown.
+		localPostProcessingManager->stop();
+	}
+
 	if (eventEngineScheduler != 0) {
 		eventEngineScheduler->cancelAll();
 		eventEngineScheduler->stopAll();
@@ -435,6 +457,14 @@ void LocalDevice::addTask(const std::shared_ptr<STI::Utils::Task>& task)
 {
 	if (localTaskManager != 0) {
 		localTaskManager->addTask(task);
+	}
+}
+
+void LocalDevice::addPostProcessingTarget(const std::string& name, PostProcessingFunction function,
+	const std::string& description)
+{
+	if (localPostProcessingManager != 0) {
+		localPostProcessingManager->addPostProcessingTarget(name, std::move(function), description);
 	}
 }
 
@@ -959,6 +989,12 @@ bool LocalDevice::getTaskManager(std::shared_ptr<TaskManager>& manager)
 bool LocalDevice::getMonitorManager(std::shared_ptr<MonitorManager>& manager)
 {
 	manager = localMonitorManager;
+	return manager != 0;
+}
+
+bool LocalDevice::getPostProcessingManager(std::shared_ptr<PostProcessingManager>& manager)
+{
+	manager = localPostProcessingManager;
 	return manager != 0;
 }
 

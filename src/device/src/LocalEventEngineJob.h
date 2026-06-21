@@ -9,11 +9,13 @@
 #include <sti/engine/EngineJobStatus.h>
 
 #include <sti/engine/Shot.h>
+#include <sti/engine/PostProcessRequest.h>
 
 #include <set>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 
 namespace STI
@@ -68,6 +70,9 @@ public:
     void setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree);
     void setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets);
 
+    std::vector<PostProcessRequest> getPostProcessRequests() const;
+    void setPostProcessRequests(const std::vector<PostProcessRequest>& requests);
+
     void addMessages(const std::vector<EngineParsingMessage>& messages);
     EngineParsingMessage& addMessage(const EngineParsingMessage& message);
     EngineParsingMessage& addMessage(const ParsingMessageType& type, unsigned id, const std::string& name);
@@ -86,6 +91,7 @@ private:
     std::shared_ptr<Shot> shot_;
     std::shared_ptr<EventEngineDependencyTree> dependencies;
     std::set<STI::Device::DeviceID> missingTargetIDs;
+    std::vector<PostProcessRequest> postProcessRequests;
 
     EngineJobID jobID;
     EngineID engineID;
