@@ -48,10 +48,10 @@ than only incrementing the conda build number.
 
 ## Release History
 
-### 3.6.0 - FileID import for device read/write
+### 3.6.0 - FileID import and partner metadata
 
 Feature release for passing caller-owned files to device channels that accept
-`MixedValueType::File` values.
+`MixedValueType::File` values and exposing declared partner-device metadata.
 
 Features:
 
@@ -69,6 +69,11 @@ Features:
 * Extend CORBA, remote persistence managers, and STIPy bindings so remote
   callers can import a file and pass the returned target-side `FileID` to
   `device.read()` or `device.write()`.
+* Add `Device::getPartnerDevices()` and Python `device.getPartnerDevices()` to
+  expose each device's declared partner list, including partner `DeviceID`,
+  aliases registered through `addPartner(...)`, and whether the partner is an
+  event target. The same composite partner metadata is available over the
+  network API.
 
 Documentation and examples:
 
