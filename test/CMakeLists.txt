@@ -69,6 +69,7 @@ add_executable(sti3_test_device
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp
   device/taskscheduler_tests.cpp
+  device/localtaskmanager_tests.cpp
   device/intervaltask_tests.cpp
   device/appointmenttask_tests.cpp
   device/eventengine_missing_partner_tests.cpp

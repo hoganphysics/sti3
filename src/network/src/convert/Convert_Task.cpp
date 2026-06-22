@@ -71,8 +71,11 @@ TaskStatus STI::Network::convert<TTaskStatus, TaskStatus>(const TTaskStatus& tSt
     case TTaskStatus::TaskInactive:
         status = TaskStatus::Inactive;
         break;
+    case TTaskStatus::TaskMissing:
+        status = TaskStatus::Missing;
+        break;
     default:
-        status = TaskStatus::Inactive;
+        status = TaskStatus::Missing;
         break;
     }
     return status;
@@ -91,10 +94,12 @@ TTaskStatus STI::Network::convert<TaskStatus, TTaskStatus>(const TaskStatus& sta
     case TaskStatus::Inactive:
         tStatus = TTaskStatus::TaskInactive;
         break;
+    case TaskStatus::Missing:
+        tStatus = TTaskStatus::TaskMissing;
+        break;
     default:
-        tStatus = TTaskStatus::TaskInactive;
+        tStatus = TTaskStatus::TaskMissing;
         break;
     }
     return tStatus;
 }
-

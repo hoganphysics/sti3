@@ -11,6 +11,7 @@
 #include "convert/Convert_Profile.h"
 #include "convert/Convert_SequenceResult.h"
 #include "convert/Convert_ShotResult.h"
+#include "convert/Convert_Task.h"
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
@@ -613,6 +614,47 @@ TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurem
     REQUIRE(roundTrip->measurementValues.size() == 2);
     CHECK(roundTrip->measurementValues.at(1) == STI::Utils::MixedValue(1.5));
     CHECK(roundTrip->measurementValues.at(3) == STI::Utils::MixedValue("done"));
+}
+
+TEST_CASE("NetworkConvert: TaskUpdateMessage round trips through TAnyMessage", "[network][convert][task]")
+{
+    using STI::Device::DeviceMessage;
+    using STI::Device::TaskUpdateMessage;
+    using STI::Utils::TaskStatus;
+
+    auto statusMessage = std::make_shared<TaskUpdateMessage>(
+        makeDeviceID(), "camera-warmup", TaskStatus::Inactive);
+
+    STI::TNetwork::TAnyMessage tStatusMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
+        std::static_pointer_cast<DeviceMessage>(statusMessage), tStatusMessage));
+    CHECK(tStatusMessage.type == STI::TNetwork::TDeviceMessageType::MessageTaskUpdate);
+
+    std::shared_ptr<DeviceMessage> statusBase;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TAnyMessage, std::shared_ptr<DeviceMessage>>(
+        tStatusMessage, statusBase));
+    auto statusRoundTrip = std::dynamic_pointer_cast<TaskUpdateMessage>(statusBase);
+    REQUIRE(statusRoundTrip != nullptr);
+    CHECK(statusRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Status);
+    CHECK(statusRoundTrip->taskID == "camera-warmup");
+    CHECK(statusRoundTrip->taskStatus == TaskStatus::Inactive);
+    CHECK(statusRoundTrip->timestamp.empty());
+
+    auto runMessage = std::make_shared<TaskUpdateMessage>(
+        makeDeviceID(), "camera-warmup", "2026/05/09|14:30:12.123.456.789");
+
+    STI::TNetwork::TAnyMessage tRunMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
+        std::static_pointer_cast<DeviceMessage>(runMessage), tRunMessage));
+
+    std::shared_ptr<DeviceMessage> runBase;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TAnyMessage, std::shared_ptr<DeviceMessage>>(
+        tRunMessage, runBase));
+    auto runRoundTrip = std::dynamic_pointer_cast<TaskUpdateMessage>(runBase);
+    REQUIRE(runRoundTrip != nullptr);
+    CHECK(runRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Run);
+    CHECK(runRoundTrip->taskID == "camera-warmup");
+    CHECK(runRoundTrip->timestamp == "2026/05/09|14:30:12.123.456.789");
 }
 
 TEST_CASE("NetworkConvert: ChannelUpdateMessage measurement values preserve lazy binary streams", "[network][convert][channel]")

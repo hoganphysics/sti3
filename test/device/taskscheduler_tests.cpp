@@ -87,9 +87,14 @@ TEST_CASE("TaskScheduler: runNow executes ready non-repeating task and deactivat
     CHECK(task->getStatus() == TaskStatus::Inactive);
 
     auto events = listener.snapshot();
-    REQUIRE(events.size() >= 3);
-    CHECK(events[2].first == TaskSchedulerEventType::Deactivate);
+    auto timestamps = listener.timestampSnapshot();
+    REQUIRE(events.size() >= 4);
+    CHECK(events[2].first == TaskSchedulerEventType::Run);
     CHECK(events[2].second == "run-once");
+    REQUIRE(timestamps.size() >= 4);
+    CHECK_FALSE(timestamps[2].empty());
+    CHECK(events[3].first == TaskSchedulerEventType::Deactivate);
+    CHECK(events[3].second == "run-once");
 }
 
 TEST_CASE("TaskScheduler: runNow skips when task is not ready") {

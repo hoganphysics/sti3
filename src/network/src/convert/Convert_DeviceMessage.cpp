@@ -4,6 +4,7 @@
 #include "Convert_DeviceTrace.h"
 #include "Convert_RawEventGroup.h"
 #include "Convert_ShotResult.h"
+#include "Convert_Task.h"
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
@@ -88,6 +89,11 @@ using STI::Device::MonitorStatusUpdateMessage;
 using STI::TNetwork::TMonitorStatusUpdateMessage;
 using STI::Device::MonitorStatus;
 using STI::TNetwork::TMonitorStatus;
+using STI::Device::TaskUpdateMessage;
+using STI::TNetwork::TTaskUpdateMessage;
+using STI::TNetwork::TTaskUpdateMessageType;
+using STI::Utils::TaskStatus;
+using STI::TNetwork::TTaskStatus;
 
 
 template<>
@@ -120,6 +126,9 @@ TDeviceMessageType STI::Network::convert<DeviceMessageType, TDeviceMessageType>(
 			break;
 		case DeviceMessageType::MonitorStatusUpdate:
 			tType = TDeviceMessageType::MessageMonitorStatusUpdate;
+			break;
+		case DeviceMessageType::TaskUpdate:
+			tType = TDeviceMessageType::MessageTaskUpdate;
 			break;
 		case DeviceMessageType::EngineScheduler:
 			tType = TDeviceMessageType::MessageEngineScheduler;
@@ -171,6 +180,9 @@ DeviceMessageType STI::Network::convert<TDeviceMessageType, DeviceMessageType>(c
 			break;
 		case TDeviceMessageType::MessageMonitorStatusUpdate:
 			type = DeviceMessageType::MonitorStatusUpdate;
+			break;
+		case TDeviceMessageType::MessageTaskUpdate:
+			type = DeviceMessageType::TaskUpdate;
 			break;
 		case TDeviceMessageType::MessageEngineScheduler:
 			type = DeviceMessageType::EngineScheduler;
@@ -284,6 +296,9 @@ bool STI::Network::convert<std::shared_ptr<DeviceMessage>, TAnyMessage>(
 	case DeviceMessageType::MonitorStatusUpdate:
 		success = convertMessage<MonitorStatusUpdateMessage, TMonitorStatusUpdateMessage>(deviceMessage, tAnyMessage);
 		break;
+	case DeviceMessageType::TaskUpdate:
+		success = convertMessage<TaskUpdateMessage, TTaskUpdateMessage>(deviceMessage, tAnyMessage);
+		break;
 	case DeviceMessageType::ChannelUpdate:
 		success = convertMessage<ChannelUpdateMessage, TChannelUpdateMessage>(deviceMessage, tAnyMessage);
 		break;
@@ -341,6 +356,12 @@ bool STI::Network::convert<TAnyMessage, std::shared_ptr<STI::Device::DeviceMessa
 		break;
 	case TDeviceMessageType::MessageMonitorUpdate:
 		success = extractMessage<TMonitorUpdateMessage, MonitorUpdateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageMonitorStatusUpdate:
+		success = extractMessage<TMonitorStatusUpdateMessage, MonitorStatusUpdateMessage>(tAnyMessage.mess, deviceMessage);
+		break;
+	case TDeviceMessageType::MessageTaskUpdate:
+		success = extractMessage<TTaskUpdateMessage, TaskUpdateMessage>(tAnyMessage.mess, deviceMessage);
 		break;
 	case TDeviceMessageType::MessageChannelUpdate:
 		success = extractMessage<TChannelUpdateMessage, ChannelUpdateMessage>(tAnyMessage.mess, deviceMessage);
@@ -930,6 +951,88 @@ bool STI::Network::convert<std::shared_ptr<MonitorStatusUpdateMessage>, TMonitor
 	}
 
 	return true;
+}
+
+//TaskUpdateMessage
+template<>
+bool STI::Network::convert<TTaskUpdateMessage, std::shared_ptr<TaskUpdateMessage>>(
+	const TTaskUpdateMessage& tMessage, std::shared_ptr<TaskUpdateMessage>& deviceMessage)
+{
+	deviceMessage = std::make_shared<TaskUpdateMessage>(
+		convert<TDeviceTrace, DeviceTrace>(tMessage.base.sourceTrace)
+		);
+
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	deviceMessage->updateType = convert<TTaskUpdateMessageType, TaskUpdateMessage::TaskUpdateType>(tMessage.updateType);
+	deviceMessage->taskID = convert<CORBA::String_member, std::string>(tMessage.taskID);
+	deviceMessage->taskStatus = convert<TTaskStatus, TaskStatus>(tMessage.taskStatus);
+	deviceMessage->timestamp = convert<CORBA::String_member, std::string>(tMessage.timestamp);
+
+	return true;
+}
+
+template<>
+bool STI::Network::convert<std::shared_ptr<TaskUpdateMessage>, TTaskUpdateMessage>(
+	const std::shared_ptr<TaskUpdateMessage>& deviceMessage, TTaskUpdateMessage& tMessage)
+{
+	if (deviceMessage == 0) {
+		return false;
+	}
+
+	tMessage.updateType = convert<TaskUpdateMessage::TaskUpdateType, TTaskUpdateMessageType>(deviceMessage->updateType);
+	tMessage.taskID = convert<std::string, CORBA::String_member>(deviceMessage->taskID);
+	tMessage.taskStatus = convert<TaskStatus, TTaskStatus>(deviceMessage->taskStatus);
+	tMessage.timestamp = convert<std::string, CORBA::String_member>(deviceMessage->timestamp);
+
+	return true;
+}
+
+//TaskUpdateMessageType
+template<>
+TTaskUpdateMessageType STI::Network::convert<TaskUpdateMessage::TaskUpdateType, TTaskUpdateMessageType>(
+	const TaskUpdateMessage::TaskUpdateType& type)
+{
+	TTaskUpdateMessageType tType;
+
+	switch (type)
+	{
+	case TaskUpdateMessage::TaskUpdateType::Status:
+		tType = TTaskUpdateMessageType::TaskUpdateStatus;
+		break;
+	case TaskUpdateMessage::TaskUpdateType::Run:
+		tType = TTaskUpdateMessageType::TaskUpdateRun;
+		break;
+	default:
+		tType = TTaskUpdateMessageType::TaskUpdateStatus;
+		break;
+	}
+
+	return tType;
+}
+
+template<>
+TaskUpdateMessage::TaskUpdateType STI::Network::convert<TTaskUpdateMessageType, TaskUpdateMessage::TaskUpdateType>(
+	const TTaskUpdateMessageType& tType)
+{
+	TaskUpdateMessage::TaskUpdateType type;
+
+	switch (tType)
+	{
+	case TTaskUpdateMessageType::TaskUpdateStatus:
+		type = TaskUpdateMessage::TaskUpdateType::Status;
+		break;
+	case TTaskUpdateMessageType::TaskUpdateRun:
+		type = TaskUpdateMessage::TaskUpdateType::Run;
+		break;
+	default:
+		type = TaskUpdateMessage::TaskUpdateType::Status;
+		break;
+	}
+
+	return type;
 }
 
 

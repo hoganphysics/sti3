@@ -114,12 +114,18 @@ public:
     void handleEvent(const STI::Utils::TaskSchedulerEvent& evt) override {
         std::lock_guard<std::mutex> lock(mutex);
         events.emplace_back(evt.type, evt.taskID);
+        timestamps.push_back(evt.timestamp);
         cv.notify_all();
     }
 
     std::vector<std::pair<STI::Utils::TaskSchedulerEventType, std::string>> snapshot() const {
         std::lock_guard<std::mutex> lock(mutex);
         return events;
+    }
+
+    std::vector<std::string> timestampSnapshot() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return timestamps;
     }
 
     bool waitForEvents(std::size_t expected, std::chrono::milliseconds timeout) {
@@ -129,6 +135,7 @@ public:
 
 private:
     std::vector<std::pair<STI::Utils::TaskSchedulerEventType, std::string>> events;
+    std::vector<std::string> timestamps;
     mutable std::mutex mutex;
     std::condition_variable cv;
 };

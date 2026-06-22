@@ -197,7 +197,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localProfileManager->addProfileTarget(localAttributeManager);
 	localProfileManager->addProfileTarget(localChannelManager);
 	
-	localTaskManager = std::make_shared<LocalTaskManager>();
+	localTaskManager = std::make_shared<LocalTaskManager>(getID(), deviceMessageDispatcher);
 	localMonitorManager = std::make_shared<LocalMonitorManager>(id, deviceMessageDispatcher);
 	versionManager = STI::Device::makeVersionManager();
 

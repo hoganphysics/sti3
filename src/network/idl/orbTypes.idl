@@ -232,6 +232,7 @@ module TNetwork
 	typedef sequence<TAttribute> TAttributeSeq;
 
 	enum TMonitorStatus { MonitorActive, MonitorInactive, MonitorMissing };
+	enum TTaskStatus { TaskActive, TaskInactive, TaskMissing };
 
 	struct TMonitor
 	{
@@ -539,8 +540,8 @@ module TNetwork
 	//DeviceMessage *************************//
 
 	enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, 
-							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler,
-							MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown };
+							MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageTaskUpdate,
+							MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown };
 	typedef sequence<TDeviceMessageType> TDeviceMessageTypeSeq;
 
 	struct TAnyMessage
@@ -717,6 +718,17 @@ module TNetwork
 	{
 		TDeviceMessage base;	//base class data
 		TMonitorStatusUpdateTupleSeq updates;		//{key, value} pairs
+	};
+
+	enum TTaskUpdateMessageType { TaskUpdateStatus, TaskUpdateRun };
+
+	struct TTaskUpdateMessage
+	{
+		TDeviceMessage base;	//base class data
+		TTaskUpdateMessageType updateType;
+		string taskID;
+		TTaskStatus taskStatus;
+		string timestamp;
 	};
 	
 	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };

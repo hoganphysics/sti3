@@ -24,6 +24,7 @@ using STI::Device::EngineSchedulerMessage;
 using STI::Device::EngineStateMessage;
 using STI::Device::MonitorUpdateMessage;
 using STI::Device::MonitorStatusUpdateMessage;
+using STI::Device::TaskUpdateMessage;
 using STI::Python::MixedValuePy;
 
 void init_DeviceMessage(py::module& m) 
@@ -38,6 +39,7 @@ void init_DeviceMessage(py::module& m)
         .value("AttributesRefresh", DeviceMessageType::AttributesRefresh)
         .value("MonitorUpdate", DeviceMessageType::MonitorUpdate)
         .value("MonitorStatusUpdate", DeviceMessageType::MonitorStatusUpdate)
+        .value("TaskUpdate", DeviceMessageType::TaskUpdate)
         .value("EngineJobUpdate", DeviceMessageType::EngineJobUpdate)
         .value("EngineScheduler", DeviceMessageType::EngineScheduler)
         .value("EngineParser", DeviceMessageType::EngineParser)
@@ -165,6 +167,18 @@ void init_DeviceMessage(py::module& m)
                 }
                 return values;
             })
+        ;
+
+    py::enum_<TaskUpdateMessage::TaskUpdateType>(m, "TaskUpdateMessageType")
+        .value("Status", TaskUpdateMessage::TaskUpdateType::Status)
+        .value("Run", TaskUpdateMessage::TaskUpdateType::Run)
+        ;
+
+    py::class_<TaskUpdateMessage, DeviceMessage, std::shared_ptr<TaskUpdateMessage>>(m, "TaskUpdateMessage")
+        .def_readonly("updateType", &TaskUpdateMessage::updateType)
+        .def_readonly("taskID", &TaskUpdateMessage::taskID)
+        .def_readonly("taskStatus", &TaskUpdateMessage::taskStatus)
+        .def_readonly("timestamp", &TaskUpdateMessage::timestamp)
         ;
 
     py::class_<EngineJobUpdateDeviceMessage, DeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(m, "EngineJobUpdateDeviceMessage")

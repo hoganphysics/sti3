@@ -64,11 +64,6 @@ _CORBA_MODULE_BEG
 
   _CORBA_MODULE_BEG
 
-    enum TTaskStatus { TaskActive, TaskInactive, TaskMissing /*, __max_TTaskStatus=0xffffffff */ };
-    typedef TTaskStatus& TTaskStatus_out;
-
-    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskStatus;
-
     struct TTask {
       typedef _CORBA_ConstrType_Variable_Var<TTask> _var_type;
 
@@ -390,25 +385,6 @@ _CORBA_MODULE_END
 
 #undef _core_attr
 #undef _dyn_attr
-
-inline void operator >>=(STI::TNetwork::TTaskStatus _e, cdrStream& s) {
-  ::operator>>=((::CORBA::ULong)_e, s);
-}
-
-inline void operator <<= (STI::TNetwork::TTaskStatus& _e, cdrStream& s) {
-  ::CORBA::ULong _0RL_e;
-  ::operator<<=(_0RL_e,s);
-  if (_0RL_e <= STI::TNetwork::TaskMissing) {
-    _e = (STI::TNetwork::TTaskStatus) _0RL_e;
-  }
-  else {
-    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
-                  (::CORBA::CompletionStatus)s.completion());
-  }
-}
-
-void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskStatus _s);
-_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskStatus& _s);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TTask& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTask* _sp);

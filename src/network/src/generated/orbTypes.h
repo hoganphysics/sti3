@@ -3324,6 +3324,11 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatus;
 
+    enum TTaskStatus { TaskActive, TaskInactive, TaskMissing /*, __max_TTaskStatus=0xffffffff */ };
+    typedef TTaskStatus& TTaskStatus_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskStatus;
+
     struct TMonitor {
       typedef _CORBA_ConstrType_Variable_Var<TMonitor> _var_type;
 
@@ -5777,7 +5782,7 @@ _CORBA_MODULE_BEG
 
 #endif
 
-    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
+    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageTaskUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
     typedef TDeviceMessageType& TDeviceMessageType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceMessageType;
@@ -5945,10 +5950,10 @@ _CORBA_MODULE_BEG
     struct TRefreshDeviceMessage {
       typedef _CORBA_ConstrType_Variable_Var<TRefreshDeviceMessage> _var_type;
 
-      
+
       TDeviceMessage base;
 
-    
+
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -5968,12 +5973,12 @@ _CORBA_MODULE_BEG
     struct TCollectionUpdateMessage {
       typedef _CORBA_ConstrType_Variable_Var<TCollectionUpdateMessage> _var_type;
 
-      
+
       TDeviceMessage base;
 
       TCollectionMessageType collectionUpdateType;
 
-    
+
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -6459,7 +6464,6 @@ _CORBA_MODULE_BEG
     struct TEngineSchedulerMessage {
       typedef _CORBA_ConstrType_Variable_Var<TEngineSchedulerMessage> _var_type;
 
-      
       TDeviceMessage base;
 
       TSchedulerMessageType type;
@@ -6479,8 +6483,6 @@ _CORBA_MODULE_BEG
       TEnginePlayingMessageSeq playMessages;
 
       TEngineState engineState;
-
-    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -7033,6 +7035,34 @@ _CORBA_MODULE_BEG
     typedef _CORBA_ConstrType_Variable_OUT_arg< TMonitorStatusUpdateMessage,TMonitorStatusUpdateMessage_var > TMonitorStatusUpdateMessage_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateMessage;
+
+    enum TTaskUpdateMessageType { TaskUpdateStatus, TaskUpdateRun /*, __max_TTaskUpdateMessageType=0xffffffff */ };
+    typedef TTaskUpdateMessageType& TTaskUpdateMessageType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskUpdateMessageType;
+
+    struct TTaskUpdateMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TTaskUpdateMessage> _var_type;
+
+      TDeviceMessage base;
+
+      TTaskUpdateMessageType updateType;
+
+      ::CORBA::String_member taskID;
+
+      TTaskStatus taskStatus;
+
+      ::CORBA::String_member timestamp;
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TTaskUpdateMessage::_var_type TTaskUpdateMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TTaskUpdateMessage,TTaskUpdateMessage_var > TTaskUpdateMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskUpdateMessage;
 
     enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName /*, __max_TChannelUpdateMessageType=0xffffffff */ };
     typedef TChannelUpdateMessageType& TChannelUpdateMessageType_out;
@@ -8337,6 +8367,25 @@ inline void operator <<= (STI::TNetwork::TMonitorStatus& _e, cdrStream& s) {
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatus _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatus& _s);
 
+inline void operator >>=(STI::TNetwork::TTaskStatus _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TTaskStatus& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::TaskMissing) {
+    _e = (STI::TNetwork::TTaskStatus) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskStatus _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskStatus& _s);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitor& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitor* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitor*& _sp);
@@ -8882,6 +8931,30 @@ extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMes
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
 
+inline void operator >>=(STI::TNetwork::TTaskUpdateMessageType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TTaskUpdateMessageType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::TaskUpdateRun) {
+    _e = (STI::TNetwork::TTaskUpdateMessageType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessageType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessageType& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TTaskUpdateMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TTaskUpdateMessage*& _sp);
+
 inline void operator >>=(STI::TNetwork::TChannelUpdateMessageType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);
 }
@@ -9080,4 +9153,3 @@ extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::T
 #endif
 
 #endif  // __orbTypes_hh__
-

@@ -9,8 +9,6 @@ module STI
 {
 module TNetwork
 {
-    enum TTaskStatus { TaskActive, TaskInactive, TaskMissing };
-
     struct TTask
     {
         string taskID;
@@ -48,4 +46,3 @@ module TNetwork
 };	//STI
 
 #endif
-

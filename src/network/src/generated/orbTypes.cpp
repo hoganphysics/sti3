@@ -1873,6 +1873,28 @@ STI::TNetwork::TMonitorStatusUpdateMessage::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TTaskUpdateMessage::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceMessage&) base >>= _n;
+  updateType >>= _n;
+  _n.marshalString(taskID,0);
+  taskStatus >>= _n;
+  _n.marshalString(timestamp,0);
+
+}
+
+void
+STI::TNetwork::TTaskUpdateMessage::operator<<= (cdrStream &_n)
+{
+  (TDeviceMessage&)base <<= _n;
+  (TTaskUpdateMessageType&)updateType <<= _n;
+  taskID = _n.unmarshalString(0);
+  (TTaskStatus&)taskStatus <<= _n;
+  timestamp = _n.unmarshalString(0);
+
+}
+
+void
 STI::TNetwork::TChannelUpdateTuple::operator>>= (cdrStream &_n) const
 {
   channelNumber >>= _n;

@@ -64,6 +64,13 @@ public:
         receiver->addListener<STI::Device::MonitorStatusUpdateMessage>(sourceDeviceID, listenerName, handler);
     }
 
+    void addTaskUpdateListener(const STI::Device::DeviceID& sourceDeviceID, const std::string& listenerName,
+        const std::function<void (const std::shared_ptr<STI::Device::TaskUpdateMessage>&)>& handler)
+    {
+        if (receiver == 0) return;
+        receiver->addListener<STI::Device::TaskUpdateMessage>(sourceDeviceID, listenerName, handler);
+    }
+
     void addEngineJobUpdateListener(const STI::Device::DeviceID& sourceDeviceID, const std::string& listenerName, 
 		const std::function<void (const std::shared_ptr<STI::Device::EngineJobUpdateDeviceMessage>&)>& handler)
     {
@@ -111,4 +118,3 @@ private:
 } //STI
 
 #endif
-

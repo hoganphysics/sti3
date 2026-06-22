@@ -20,6 +20,7 @@
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/SequenceJob.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/utils/Task.h>
 
 #include <sstream>
 
@@ -400,6 +401,46 @@ public:
 		mess << "}";
 		return mess.str();
 	}
+};
+
+class TaskUpdateMessage : public DeviceMessage
+{
+public:
+
+	enum class TaskUpdateType { Status, Run };
+
+	TaskUpdateMessage(const STI::Device::DeviceTrace& trace)
+	: DeviceMessage(trace, DeviceMessageType::TaskUpdate),
+	  updateType(TaskUpdateType::Status),
+	  taskStatus(STI::Utils::TaskStatus::Missing)
+	{
+	}
+
+	TaskUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& taskID,
+		const STI::Utils::TaskStatus& taskStatus)
+	: DeviceMessage(trace, DeviceMessageType::TaskUpdate),
+	  updateType(TaskUpdateType::Status),
+	  taskID(taskID),
+	  taskStatus(taskStatus)
+	{
+	}
+
+	TaskUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& taskID,
+		const std::string& timestamp)
+	: DeviceMessage(trace, DeviceMessageType::TaskUpdate),
+	  updateType(TaskUpdateType::Run),
+	  taskID(taskID),
+	  taskStatus(STI::Utils::TaskStatus::Missing),
+	  timestamp(timestamp)
+	{
+	}
+
+	static DeviceMessageType getMessageClassType() { return DeviceMessageType::TaskUpdate; }
+
+	TaskUpdateType updateType;
+	std::string taskID;
+	STI::Utils::TaskStatus taskStatus;
+	std::string timestamp;
 };
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage
