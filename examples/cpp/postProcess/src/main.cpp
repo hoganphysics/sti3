@@ -21,12 +21,17 @@ int main(int argc, char** argv)
 
 	auto device = std::make_shared<AnalysisDevice>(config);
 
-	// Discovery: list the post-processing targets the device offers.
+	// Discovery: list the post-processing targets the device offers, each with its
+	// name, description, and declared option hints.
 	std::shared_ptr<STI::Device::PostProcessingManager> postProcessing;
 	if (device->getPostProcessingManager(postProcessing) && postProcessing != 0) {
 		for (const auto& target : postProcessing->getPostProcessingTargets()) {
 			std::cout << "post-processing target: " << target.name
 			          << " - " << target.description << std::endl;
+			for (const auto& option : target.options) {
+				std::cout << "    option: " << option.name
+				          << " - " << option.description << std::endl;
+			}
 		}
 	}
 
