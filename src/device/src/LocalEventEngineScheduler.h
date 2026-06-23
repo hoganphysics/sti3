@@ -14,7 +14,6 @@
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ShotID.h>
-#include <sti/engine/PostProcessRequest.h>
 
 #include <sti/utils/SynchronizedMap.h>
 
@@ -167,12 +166,6 @@ public:
     
     void parseJob(const std::shared_ptr<EventEngineJob>& job);
 
-    //Hand off (and erase) the resolved post-processing requests stashed for a
-    //play job at creation time. Decoupled from the size-bounded completedPlayJobs
-    //cache so a fast sequence cannot silently evict them before the PlayComplete
-    //listener consumes them (see docs/notes/postProcess.md).
-    bool takePostProcessRequests(const ShotID& sid, std::vector<PostProcessRequest>& requests);
-
     static void definePlayMessageIDs();
     static const std::map<std::string, unsigned>& getPlayMessageIDs();
 
@@ -197,6 +190,7 @@ private:
     void stop();
 
     void findEventTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& eventTargets);
+    void findPostProcessTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<STI::Device::DeviceID>& ppTargets);
     void transferTimingFiles(StackTraceData& stackTraceData, STI::Utils::FileServer& remoteFileSever, STI::Utils::VirtualFileServer& targetFileServer);
    
     void assignJobs();
@@ -259,10 +253,6 @@ private:
 
     mutable std::mutex shotResultMutex;
     mutable bool searchingShotResult;
-
-    //sid -> resolved post-processing requests, populated when the play job is created.
-    std::map<ShotID, std::vector<PostProcessRequest>> resolvedPostProcessRequests;
-    mutable std::mutex postProcessMutex;
 
 
     class EngineSchedulerMessageListenerDelegate : public STI::Device::DeviceMessageListener<STI::Device::EngineSchedulerMessage>

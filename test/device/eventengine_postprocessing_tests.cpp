@@ -265,7 +265,9 @@ TEST_CASE("Resolvable post-processing target plays normally and dispatches the c
 
     auto scheduler = schedulerFor(*player);
 
-    PostProcessTarget target(analysis->getID().getName(), "fit");
+    //Concrete target (resolved device ID). Abstract/name-only targets are not yet
+    //concretized (binding is WIP) and take the warning-and-skip path instead.
+    PostProcessTarget target(STI::Engine::RawEventTargetDevice(analysis->getID()), "fit");
     auto shot = makeShot(*scheduler, player->getID(), &target);
 
     auto parseStatus = scheduler->parse(shot);

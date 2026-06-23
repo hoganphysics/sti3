@@ -1,5 +1,6 @@
 #include "PostProcessingDispatcher.h"
 #include "LocalEventEngineScheduler.h"
+#include "LocalEventEngine.h"
 
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/PostProcessingManager.h>
@@ -43,8 +44,16 @@ void PostProcessingDispatcher::handleMessage(const std::shared_ptr<EngineSchedul
 
     const ShotID& sid = mess->jobID.sid;
 
-    std::vector<PostProcessRequest> requests;
-    if (!scheduler->takePostProcessRequests(sid, requests)) {
+    //The resolved post-processing side-list lives on the engine that parsed and
+    //played this shot (job owner only). Pull it off the engine the PlayComplete
+    //message carried; non-owner engines have an empty list, so this is a no-op.
+    auto engine = std::dynamic_pointer_cast<STI::Engine::LocalEventEngine>(mess->getEngine());
+    if (engine == 0) {
+        return;
+    }
+
+    std::vector<PostProcessRequest> requests = engine->takeResolvedPostProcessRequests();
+    if (requests.empty()) {
         return;   //no post-processing requests for this shot
     }
 

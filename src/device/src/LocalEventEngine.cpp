@@ -192,6 +192,7 @@ void LocalEventEngine::clear()
 	unhandledEvents = 0;
 	missingTargets.clear();
 	missingPostProcessingTargets.clear();
+	resolvedPostProcessRequests.clear();
 	ownedTargets.clear();
 	parsedOwnedTargets.clear();
 	playReadyOwnedTargets.clear();
@@ -224,6 +225,24 @@ void LocalEventEngine::getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedI
 	for(auto& id : ids) {
 		if(isActingServerForDevice(id)) {
 			ownedIDs.insert(id);
+		}
+	}
+}
+
+void LocalEventEngine::getResultDependencyIDs(std::set<STI::Device::DeviceID>& ownedIDs)
+{
+	getOwnedDeviceIDs(ownedIDs);
+
+	//Post-process targets were added to the dependency tree for routing, so a
+	//directly-owned analysis device can surface in getOwnedDeviceIDs. Such a device
+	//produces no measurements, so it must not become a ShotResult result-collection
+	//dependency (saveShot would pull a non-existent result from it). Drop any resolved
+	//post-process target that is not also a hard-timed event owner (ownedTargets); a
+	//device that is both an event owner and a post-process target stays.
+	for (auto& request : resolvedPostProcessRequests) {
+		const DeviceID& ppID = request.target().device().deviceID();
+		if (std::find(ownedTargets.begin(), ownedTargets.end(), ppID) == ownedTargets.end()) {
+			ownedIDs.erase(ppID);
 		}
 	}
 }
@@ -547,43 +566,32 @@ void LocalEventEngine::collectPostProcessRequests(const std::shared_ptr<RawEvent
 
 bool LocalEventEngine::resolvePostProcessDevice(const RawEventTargetDevice& target, STI::Device::DeviceID& resolvedID) const
 {
-	if (!target.isAbstract()) {
-		//Concrete device ID supplied; canonicalize and confirm reachability.
-		DeviceID canonicalID = findCanonicalDeviceID(target.deviceID());
-		if (canonicalID == localDeviceID) {
-			resolvedID = canonicalID;
-			return true;
-		}
-		if (deviceCollection != 0) {
-			std::shared_ptr<STI::Device::Device> device;
-			if (deviceCollection->get(canonicalID, device) && device != 0) {
-				resolvedID = canonicalID;
-				return true;
-			}
-		}
+	//Abstract (name-only) targets are not concretized yet (binding is WIP), so they
+	//never enter the dependency tree (findPostProcessTargets skips them) and cannot
+	//be routed. Drop them with the non-fatal warning at the call site.
+	if (target.isAbstract()) {
 		return false;
 	}
 
-	//Abstract (name-only): match by device name against the live network.
-	const std::string name = target.name();
-	if (name == localDeviceID.getName()) {
-		resolvedID = localDeviceID;
+	//The dependency tree — built for the event targets and extended during parse with
+	//the post-processing targets' owning-server chains — is the source of truth for
+	//reachability and routing. A target is dispatchable iff it is the tree root (this
+	//device) or reachable from the root along the ownership chain. Using the same
+	//branch lookup the dispatch uses keeps resolve and dispatch consistent.
+	DeviceID canonicalID = findCanonicalDeviceID(target.deviceID());
+
+	if (canonicalID == localDeviceID) {
+		resolvedID = canonicalID;
 		return true;
 	}
-	if (deviceCollection != 0) {
-		std::set<DeviceID> ids;
-		deviceCollection->getIDs(ids);
-		for (auto& id : ids) {
-			if (id.getName() == name) {
-				resolvedID = id;
-				return true;
-			}
-		}
+	if (dependencyTree != 0 && dependencyTree->hasBranchToTarget(localDeviceID, canonicalID)) {
+		resolvedID = canonicalID;
+		return true;
 	}
 	return false;
 }
 
-void LocalEventEngine::resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup, STI::Engine::EventEngineJob& job)
+void LocalEventEngine::resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup)
 {
 	//Only the job owner dispatches post-processing (it owns the play job and the
 	//PlayComplete signal), so only the owner needs to resolve the side-list.
@@ -598,13 +606,11 @@ void LocalEventEngine::resolvePostProcessRequests(const std::shared_ptr<RawEvent
 		return;
 	}
 
-	std::vector<STI::Engine::PostProcessRequest> resolvedRequests;
-
 	for (auto& request : rawRequests) {
 		DeviceID resolvedID;
 		if (resolvePostProcessDevice(request.target().device(), resolvedID)) {
 			STI::Engine::PostProcessTarget resolvedTarget(RawEventTargetDevice(resolvedID), request.target().name());
-			resolvedRequests.emplace_back(resolvedTarget, request.options(), request.trace());
+			resolvedPostProcessRequests.emplace_back(resolvedTarget, request.options(), request.trace());
 		}
 		else {
 			//Non-fatal: record separately and warn. Never touches missingTargets /
@@ -621,8 +627,13 @@ void LocalEventEngine::resolvePostProcessRequests(const std::shared_ptr<RawEvent
 			warning << "\n    " << target.device().name() << " :: " << target.name();
 		}
 	}
+}
 
-	job.setPostProcessRequests(resolvedRequests);
+std::vector<STI::Engine::PostProcessRequest> LocalEventEngine::takeResolvedPostProcessRequests()
+{
+	std::vector<STI::Engine::PostProcessRequest> requests = std::move(resolvedPostProcessRequests);
+	resolvedPostProcessRequests.clear();   //moved-from vector is valid but unspecified
+	return requests;
 }
 
 void LocalEventEngine::appendMissingTargets(EnginePlayingMessage& message) const
@@ -870,8 +881,8 @@ void LocalEventEngine::parse(STI::Engine::EventEngineJob& job)
 	recordAbstractShotState(job);
 
 	//Post-processing requests are a side-list (not hard-timed): resolve them and stash
-	//the resolved list on the job. A missing target warns but never blocks play.
-	resolvePostProcessRequests(eventGroup, job);
+	//the resolved list on this engine. A missing target warns but never blocks play.
+	resolvePostProcessRequests(eventGroup);
 
 	parsingMessages.insert(parsingMessages.end(), parser.getParsingMessages().begin(), parser.getParsingMessages().end());
 	lastParseResult->messages = job.getParsingMessages();
@@ -1416,7 +1427,7 @@ void LocalEventEngine::play(EventEngineJob& job)
 		std::shared_ptr<FullShotResult> cachedShot;
 		if (!resultBuffer.get(jobID.sid, cachedShot) || cachedShot == 0) {
 			std::set<STI::Device::DeviceID> ownedIDs;
-			getOwnedDeviceIDs(ownedIDs);
+			getResultDependencyIDs(ownedIDs);
 
 			auto shotResult = std::make_shared<ShotResult>(localDeviceID, ownedIDs);
 			shotResult->playTime = jobID.runTime;
@@ -1546,6 +1557,14 @@ void LocalEventEngine::play(EventEngineJob& job)
 	playCompleteMessage->engineState = getState();
 	playCompleteMessage->playMessages = localPlayMessages;
 
+	//Carry this engine so the PlayComplete listener (PostProcessingDispatcher) can
+	//pull the resolved post-processing side-list that parse stashed on this engine.
+	{
+		std::shared_ptr<STI::Engine::EventEngine> jobEngine;
+		job.getEngine(jobEngine);
+		playCompleteMessage->setEngine(jobEngine);
+	}
+
 	sendMessage(playCompleteMessage);
 
 	//After play completes (without error or abort), the engine should be in the Parsed state
@@ -1610,7 +1629,7 @@ void LocalEventEngine::play(const EngineJobID& jobID, const std::shared_ptr<Trig
 	}
 
 	std::set<STI::Device::DeviceID> ownedIDs;
-	getOwnedDeviceIDs(ownedIDs);
+	getResultDependencyIDs(ownedIDs);
 	STI::Device::DeviceID resultJobOwner = localDeviceID;
 	if (activePlayJobPtr != nullptr) {
 		resultJobOwner = activePlayJobPtr->getJobOwner();

@@ -22,7 +22,6 @@ class EngineParsingMessage;
 enum class ParsingMessageType;
 class EnginePlayingMessage;
 enum class PlayingMessageType;
-class PostProcessRequest;
 
 
 class EventEngineJob
@@ -53,11 +52,6 @@ public:
 
     virtual void setDependencies(const std::shared_ptr<EventEngineDependencyTree>& tree) = 0;
     virtual void setMissingTargets(const std::set<STI::Device::DeviceID>& missingTargets) = 0;
-
-    //Resolved post-processing requests for this shot, carried from the parse job to
-    //the play job (see docs/notes/postProcess.md). Not hard-timed.
-    virtual std::vector<PostProcessRequest> getPostProcessRequests() const = 0;
-    virtual void setPostProcessRequests(const std::vector<PostProcessRequest>& requests) = 0;
 
     virtual void addMessages(const std::vector<EngineParsingMessage>& messages) = 0;
     virtual EngineParsingMessage& addMessage(const EngineParsingMessage& message) = 0;

@@ -397,6 +397,26 @@ void LocalEventEngineScheduler::findEventTargets(const std::shared_ptr<STI::Engi
 }
 
 
+/// Recursively find all concrete post-processing target devices in the side-list.
+/// Mirrors findEventTargets but reads the post-processing requests instead of the
+/// hard-timed event table. Abstract (name-only) targets are skipped here; they are
+/// reported as non-fatal "Missing post-processing target" warnings during resolve.
+void LocalEventEngineScheduler::findPostProcessTargets(const std::shared_ptr<STI::Engine::RawEventGroup>& eventGroup, std::set<DeviceID>& ppTargets)
+{
+    if (eventGroup == 0) return;
+
+    for (auto& request : eventGroup->postProcessRequests()) {
+        if (!request.target().device().isAbstract()) {
+            ppTargets.insert(request.target().device().deviceID());
+        }
+    }
+
+    for (auto& g : eventGroup->getSubgroups()) {
+        findPostProcessTargets(g, ppTargets);
+    }
+}
+
+
 ParseJobStatus LocalEventEngineScheduler::parse(const std::shared_ptr<Shot>& shot)
 {
     if (shot == 0) {
@@ -443,6 +463,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
 
     //Get list unique device targets
     std::set<DeviceID> eventTargets;
+    std::set<DeviceID> ppTargets;       //post-processing side-list targets (concrete)
     std::shared_ptr<STI::Engine::RawEventGroup> eventGroup;
 
     std::shared_ptr<Shot> shot;
@@ -452,6 +473,7 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
 
     if (eventGroup != 0) {
         findEventTargets(eventGroup, eventTargets);
+        findPostProcessTargets(eventGroup, ppTargets);
 
         auto stackTraceData = eventGroup->getStackTraceData();
         std::shared_ptr<STI::Utils::FileServer> remoteFileServer;
@@ -479,6 +501,17 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     // Begin multi-pass search. Keep calling while new missingTargets are found.
     if (localDependencyParser != 0) {
         localDependencyParser->getDependants(eventTargets, *tree, missingTargets, messages, 5);  //max 5 passes
+
+        //Extend the SAME tree with the post-processing targets' owning-server chains
+        //so the owner can route dispatch to nested analysis devices (getDependants is
+        //additive — it adds vertices/edges and never clears the passed-in tree). The
+        //ppMissing/ppMessages results are intentionally kept separate from the event
+        //path: a missing analysis device must never make the shot abstract or emit a
+        //"Missing Targets" warning. Unreachable post-process targets are reported as a
+        //non-fatal "Missing post-processing target" warning during resolve.
+        std::set<DeviceID> ppMissing;
+        std::vector<EngineParsingMessage> ppMessages;
+        localDependencyParser->getDependants(ppTargets, *tree, ppMissing, ppMessages, 5);
     }
 
     for (auto& m : messages) {
@@ -580,35 +613,15 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     job->setDependencies(tree);
     if (parseJob != 0) {
         job->setMissingTargets(parseJob->getMissingTargetIDs());
-        //Carry resolved post-processing requests from the parse job to the play job,
-        //and stash them keyed by sid so the PlayComplete listener can reach them even
-        //if the play job is evicted from the bounded completedPlayJobs cache.
-        job->setPostProcessRequests(parseJob->getPostProcessRequests());
-
-        auto requests = job->getPostProcessRequests();
-        if (!requests.empty()) {
-            std::unique_lock<std::mutex> ppLock(postProcessMutex);
-            resolvedPostProcessRequests[playJobStatus.sid] = std::move(requests);
-        }
+        //Resolved post-processing requests are owned by the engine that parsed the
+        //shot (see LocalEventEngine::resolvePostProcessRequests). Play is always
+        //assigned to that same engine, so the PlayComplete dispatch reads them
+        //directly off the engine — no scheduler-side stash and no play-job copy.
     }
 
     addJob(job);
 
     return playJobStatus;
-}
-
-bool LocalEventEngineScheduler::takePostProcessRequests(const ShotID& sid, std::vector<PostProcessRequest>& requests)
-{
-    std::unique_lock<std::mutex> ppLock(postProcessMutex);
-
-    auto it = resolvedPostProcessRequests.find(sid);
-    if (it == resolvedPostProcessRequests.end()) {
-        return false;
-    }
-
-    requests = std::move(it->second);
-    resolvedPostProcessRequests.erase(it);
-    return true;
 }
 
 // void LocalEventEngineScheduler::play(const ShotID& shotID, const std::shared_ptr<Shot>& shot)

@@ -133,6 +133,11 @@ public:
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
 	EngineTriggerTarget* getTriggerTarget() { return triggerTarget; }
 
+	//Move the resolved post-processing requests off this engine. Populated during
+	//parse (job owner only); consumed once when the shot's play completes. Clears
+	//the engine-side list so a later parse/reset starts empty.
+	std::vector<STI::Engine::PostProcessRequest> takeResolvedPostProcessRequests();
+
 private:
 
 	void parseDevice(const STI::Device::DeviceID& id, STI::Engine::EventEngineJob& job);
@@ -144,6 +149,11 @@ private:
 	bool isTargetServerForDevice(const STI::Device::DeviceID& id);
 	bool isActingServerForDevice(const STI::Device::DeviceID& id);
 	void getOwnedDeviceIDs(std::set<STI::Device::DeviceID>& ownedIDs);
+
+	//Owned event/measurement devices for ShotResult result collection: getOwnedDeviceIDs
+	//minus any post-process-only target (added to the dependency tree purely for dispatch
+	//routing, see resolvePostProcessRequests) that produces no measurements this shot.
+	void getResultDependencyIDs(std::set<STI::Device::DeviceID>& ownedIDs);
 
 	void divideEvents(const std::shared_ptr<RawEventGroup>& events, std::shared_ptr<RawEventGroup>& unhandledEventGroup);
 	void divideEvents(const std::shared_ptr<RawEventGroup>& events, std::shared_ptr<RawEventGroup>& unhandledEventGroup, std::shared_ptr<RawEventGroup>& handledEventGroup);
@@ -170,9 +180,9 @@ private:
 	void recordAbstractShotState(STI::Engine::EventEngineJob& job);
 
 	//Resolve post-processing requests (side-list, never hard-timed) against the
-	//network and stash the resolved list on the job for the PlayComplete dispatch.
+	//network and stash the resolved list on this engine for the PlayComplete dispatch.
 	//A missing target produces a non-fatal warning, never an abstract-shot error.
-	void resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup, STI::Engine::EventEngineJob& job);
+	void resolvePostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup);
 	void collectPostProcessRequests(const std::shared_ptr<RawEventGroup>& eventGroup,
 									std::vector<STI::Engine::PostProcessRequest>& requests) const;
 	bool resolvePostProcessDevice(const RawEventTargetDevice& target, STI::Device::DeviceID& resolvedID) const;
@@ -278,6 +288,7 @@ private:
 	std::vector<STI::Device::DeviceID> ownedTargets;
 	std::set<STI::Device::DeviceID> missingTargets;
 	std::set<STI::Engine::PostProcessTarget> missingPostProcessingTargets;   //non-fatal; never feeds isAbstractShot()
+	std::vector<STI::Engine::PostProcessRequest> resolvedPostProcessRequests; //owner-only; dispatched at PlayComplete
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> parsedOwnedTargets;
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playReadyOwnedTargets;
 	std::map<STI::Device::DeviceID, STI::Engine::EngineState> playedOwnedTargets;
