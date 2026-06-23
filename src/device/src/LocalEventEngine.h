@@ -45,6 +45,7 @@ namespace Engine
 class EventEngine;
 class EventEngineJob;
 class EventEngineDependencyTree;
+class LocalEventEngineScheduler;
 class DeviceMessageDispatcher;
 class MasterTrigger;
 class TriggerCallback;
@@ -132,6 +133,11 @@ public:
 
 	DeviceEventParser* getDeviceParser() { return deviceParser; }
 	EngineTriggerTarget* getTriggerTarget() { return triggerTarget; }
+
+	//Back-reference to the owning scheduler, used to initiate tree-routed
+	//post-processing dispatch when this engine (the job owner) finishes play.
+	//Non-owning; the scheduler outlives the engine it created.
+	void setScheduler(LocalEventEngineScheduler* sched) { scheduler = sched; }
 
 	//Move the resolved post-processing requests off this engine. Populated during
 	//parse (job owner only); consumed once when the shot's play completes. Clears
@@ -259,6 +265,7 @@ private:
 	EngineTriggerTarget* triggerTarget;
 
 	std::shared_ptr<STI::Device::DeviceCollection> deviceCollection;
+	LocalEventEngineScheduler* scheduler = nullptr;   //non-owning; for post-processing dispatch initiation
 	std::shared_ptr<STI::Device::ChannelManager> localChannels;
 	std::shared_ptr<STI::Device::PersistenceManager> persistenceManager;
 	std::shared_ptr<STI::Device::AttributeManager> attributeManager;

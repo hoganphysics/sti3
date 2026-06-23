@@ -13,9 +13,11 @@
 #include <sti/engine/PlayJobStatus.h>
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/SequenceID.h>
+#include <sti/engine/PostProcessRequest.h>
 
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_EventEngine.h"
+#include "convert/Convert_RawEventGroup.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
 #include "convert/Convert_DeviceMessage.h"
@@ -72,6 +74,11 @@ using STI::Engine::AddSequenceStatus;
 using STI::TNetwork::TAddSequenceStatus;
 using STI::Engine::EngineID;
 using STI::TNetwork::TEngineID;
+using STI::Engine::PostProcessRequest;
+using STI::TNetwork::TPostProcessRequest;
+using STI::TNetwork::TPostProcessRequestSeq;
+using STI::Engine::EventEngineDependencyTree;
+using STI::TNetwork::TEventEngineDependencyTree;
 
 
 RemoteEventEngineScheduler::RemoteEventEngineScheduler(::STI::TNetwork::TEventEngineScheduler_var scheduler)
@@ -434,6 +441,35 @@ void RemoteEventEngineScheduler::addJob(const std::shared_ptr<EventEngineJob>& n
 
 	try {
 		getTRef()->addJob(convert<EventEngineJob, TEventEngineJob>(*newJob));	//remote call
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
+}
+
+void RemoteEventEngineScheduler::distributePostProcessing(const std::vector<PostProcessRequest>& requests,
+														  const std::shared_ptr<EventEngineDependencyTree>& tree,
+														  const ShotID& shotID, const DeviceID& jobOwnerID)
+{
+	std::unique_lock<std::mutex> schedulerLock(schedulerMutex);
+
+	if (isDisabled()) return;
+
+	if (tree == 0) return;
+
+	try {
+		TPostProcessRequestSeq tRequests;
+		convert<PostProcessRequest, TPostProcessRequest>(requests, tRequests);
+
+		TEventEngineDependencyTree tTree;
+		convert<EventEngineDependencyTree, TEventEngineDependencyTree>(*tree, tTree);
+
+		getTRef()->distributePostProcessing(tRequests, tTree,
+			convert<ShotID, TShotID>(shotID), convert<DeviceID, TDeviceID>(jobOwnerID));	//remote call
 	}
 	catch (CORBA::TRANSIENT&) {
 	}

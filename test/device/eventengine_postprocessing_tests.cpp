@@ -291,6 +291,65 @@ TEST_CASE("Resolvable post-processing target plays normally and dispatches the c
     CHECK(ppCalls.load() == 1);
 }
 
+TEST_CASE("Post-processing request routes through a two-level hierarchy to a nested target", "[postprocessing][eventengine]")
+{
+    //Topology: player (job owner) -> subServer -> analysis. The analysis device is
+    //reachable from the owner only via subServer (it names subServer as its server,
+    //and subServer names player). The owner's collection does not contain analysis
+    //directly, so the request must be forwarded one hop (player -> subServer) and then
+    //delivered (subServer -> analysis). This exercises the recursive forwarding path.
+    auto player = std::make_shared<PlayingDevice>("PPHPlayer", 10, "root");
+    auto subServer = std::make_shared<PlayingDevice>("PPHServer", 11, player->getID().getID());
+    auto analysis = std::make_shared<PlayingDevice>("PPHAnalysis", 12, subServer->getID().getID());
+
+    std::atomic<int> ppCalls{0};
+    analysis->addPostProcessingTarget("fit", [&](const ShotID&, const MetaData&) {
+        ++ppCalls;
+        return MetaData();
+    });
+
+    auto distributer = distributeDevices({player, subServer, analysis});
+
+    //The owner owns subServer but not the nested analysis device.
+    std::shared_ptr<DeviceCollection> ownerCollection;
+    player->getCollection(ownerCollection);
+    REQUIRE(ownerCollection != nullptr);
+    REQUIRE(ownerCollection->contains(subServer->getID()));
+    REQUIRE_FALSE(ownerCollection->contains(analysis->getID()));
+
+    //The sub-server owns the analysis device.
+    std::shared_ptr<DeviceCollection> subServerCollection;
+    subServer->getCollection(subServerCollection);
+    REQUIRE(subServerCollection != nullptr);
+    REQUIRE(subServerCollection->contains(analysis->getID()));
+
+    auto scheduler = schedulerFor(*player);
+
+    PostProcessTarget target(STI::Engine::RawEventTargetDevice(analysis->getID()), "fit");
+    auto shot = makeShot(*scheduler, player->getID(), &target);
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+
+    auto messages = parseMessagesFor(*scheduler, parseStatus.pid);
+    CHECK(countParsingMessages(messages, "Missing post-processing target") == 0);
+    CHECK(countParsingMessages(messages, "Abstract Shot") == 0);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    CHECK(player->playCount == 1);
+
+    //The forwarded request reaches the nested analysis device's worker.
+    bool dispatched = false;
+    for (int i = 0; i < 200 && !dispatched; ++i) {
+        dispatched = (ppCalls.load() > 0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    CHECK(dispatched);
+    CHECK(ppCalls.load() == 1);
+}
+
 TEST_CASE("Missing post-processing target warns but the shot still plays", "[postprocessing][eventengine]")
 {
     auto player = std::make_shared<PlayingDevice>("PPWarnPlayer", 3, "root");

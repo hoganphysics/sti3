@@ -72,6 +72,8 @@ class EventEngineFactory;
 class EventEngineJob;
 class EventEngineManager;
 class LocalEventEngine;
+class EventEngineDependencyTree;
+class PostProcessRequest;
 class ParseID;
 class Shot;
 class ShotResult;
@@ -116,6 +118,11 @@ public:
 
     bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const;
     void addJob(const std::shared_ptr<EventEngineJob>& newJob);
+
+    void distributePostProcessing(const std::vector<PostProcessRequest>& requests,
+                                  const std::shared_ptr<EventEngineDependencyTree>& tree,
+                                  const ShotID& shotID, const STI::Device::DeviceID& jobOwnerID) override;
+
     void cancelJob(const EngineJobID& jobID);
     void jobCanceled(const EngineJobID& jobID);
     void jobComplete(const EngineJobID& jobID);
@@ -220,6 +227,7 @@ private:
     void handleMessage(const std::shared_ptr<STI::Device::EngineSchedulerMessage>& mess);
 
     STI::Device::DeviceID localDeviceID;
+    STI::Device::LocalDevice* localDevice;   //non-owning; outlives the scheduler. Used for post-processing routing (collection + local PostProcessingManager).
 
     std::shared_ptr<LocalEventEngineDependencyParser> localDependencyParser;
 	std::shared_ptr<STI::Engine::EventEngineFactory> eventEngineFactory;

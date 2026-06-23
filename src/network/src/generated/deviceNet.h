@@ -1931,6 +1931,7 @@ _CORBA_MODULE_BEG
       ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job);
       void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
       void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
+      void distributePostProcessing(const ::STI::TNetwork::TPostProcessRequestSeq& requests, const ::STI::TNetwork::TEventEngineDependencyTree& tree, const ::STI::TNetwork::TShotID& shotID, const ::STI::TNetwork::TDeviceID& jobOwnerID);
       void cancelAll();
       TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType);
       TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType);
@@ -1992,6 +1993,7 @@ _CORBA_MODULE_BEG
       virtual ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job) = 0;
       virtual void addJob(const ::STI::TNetwork::TEventEngineJob& newJob) = 0;
       virtual void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID) = 0;
+      virtual void distributePostProcessing(const ::STI::TNetwork::TPostProcessRequestSeq& requests, const ::STI::TNetwork::TEventEngineDependencyTree& tree, const ::STI::TNetwork::TShotID& shotID, const ::STI::TNetwork::TDeviceID& jobOwnerID) = 0;
       virtual void cancelAll() = 0;
       virtual TEngineJobIDSeq* getJobIDs(::STI::TNetwork::TEventEngineJobList jobListType) = 0;
       virtual TEventEngineJobSeq* getJobs(::STI::TNetwork::TEventEngineJobList jobListType) = 0;

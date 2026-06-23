@@ -18,6 +18,7 @@ namespace Engine
 
 class RawEventGroup;
 class StackTraceData;
+class PostProcessRequest;
 
 } //Engine
 
@@ -40,6 +41,21 @@ bool Network::convert<std::shared_ptr<Engine::RawEventGroup>, TNetwork::TRawEven
 template<>
 bool Network::convert<TNetwork::TRawEventGroup, std::shared_ptr<Engine::RawEventGroup>>(
         const TNetwork::TRawEventGroup& tRawEventGroup, std::shared_ptr<Engine::RawEventGroup>& rawEventGroup);
+
+
+//PostProcessRequest (single element; the seq<->vector forms are handled by the
+//generic list converters in NetworkConvert.h once these are specialized).
+template<>
+bool Network::convert<Engine::PostProcessRequest, TNetwork::TPostProcessRequest>(
+        const Engine::PostProcessRequest& request, TNetwork::TPostProcessRequest& tRequest);
+template<>
+bool Network::convert<TNetwork::TPostProcessRequest, Engine::PostProcessRequest>(
+        const TNetwork::TPostProcessRequest& tRequest, Engine::PostProcessRequest& request);
+
+//Value-returning form (used by ConvertList for the seq->vector direction).
+template<>
+Engine::PostProcessRequest Network::convert<TNetwork::TPostProcessRequest, Engine::PostProcessRequest>(
+        const TNetwork::TPostProcessRequest& tRequest);
 
 
 

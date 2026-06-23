@@ -189,6 +189,12 @@ module TNetwork
     	void addJob(in TEventEngineJob newJob);
 		void cancelJob(in TEngineJobID jobID);
 
+		// Tree-routed post-processing dispatch: forward the per-branch request sublist
+		// (plus the dependency tree) toward each target along the ownership chain.
+		// Thin: each delivered requestPostProcessing only enqueues and returns.
+		void distributePostProcessing(in TPostProcessRequestSeq requests, in TEventEngineDependencyTree tree,
+									  in TShotID shotID, in TDeviceID jobOwnerID);
+
 		void cancelAll();
 
 		TEngineJobIDSeq getJobIDs(in TEventEngineJobList jobListType);

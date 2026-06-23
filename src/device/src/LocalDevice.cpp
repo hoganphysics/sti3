@@ -34,7 +34,6 @@
 #include "LocalProfileManager.h"
 #include "LocalTaskManager.h"
 #include "LocalShot.h"
-#include "PostProcessingDispatcher.h"
 #include "PseudoSynchronousEvent.h"
 
 #include <filesystem>
@@ -77,7 +76,6 @@ using STI::Device::VersionInfo;
 using STI::Device::VersionManager;
 using STI::Device::PostProcessingManager;
 using STI::Device::LocalPostProcessingManager;
-using STI::Device::PostProcessingDispatcher;
 using STI::Device::PostProcessingFunction;
 
 using STI::Engine::LocalEventEngineFactory;
@@ -265,10 +263,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localPostProcessingManager = std::make_shared<LocalPostProcessingManager>(
 		getID(), deviceMessageDispatcher, localCollection, localPersistenceManager, &log());
 
-	postProcessingDispatcher = std::make_shared<PostProcessingDispatcher>(
-		getID(), eventEngineScheduler, localCollection, localPostProcessingManager, &log());
-
-	deviceMessageReceiver->addListener<EngineSchedulerMessage>(getID(), "PostProcessingDispatcherScheduler", postProcessingDispatcher);
+	//Post-processing dispatch is initiated inline at end of play (the job owner's
+	//engine routes the resolved side-list along the dependency tree); no PlayComplete
+	//listener is needed. See LocalEventEngine::play / LocalEventEngineScheduler::distributePostProcessing.
 }
 
 LocalDevice::~LocalDevice()

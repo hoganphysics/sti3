@@ -15,13 +15,16 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/Shot.h>
+#include <sti/engine/PostProcessRequest.h>
 
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_EventEngine.h"
 #include "convert/Convert_DeviceTrace.h"
 #include "convert/Convert_SequenceResult.h"
 #include "convert/Convert_DeviceMessage.h"
+#include "convert/Convert_RawEventGroup.h"
 
+#include "EventEngineDependencyTree.h"
 #include "LocalEventEngineJob.h"
 #include "NetworkConvert.h"
 #include "RemoteResultsCollector.h"
@@ -45,8 +48,13 @@ using STI::Engine::Shot;
 using ::STI::TNetwork::TEngineJobStatus;
 using ::STI::TNetwork::TParseID;
 using ::STI::TNetwork::TShotID;
+using ::STI::TNetwork::TDeviceID;
+using ::STI::TNetwork::TPostProcessRequest;
+using ::STI::TNetwork::TPostProcessRequestSeq;
 using STI::Engine::ParseID;
 using STI::Engine::ShotID;
+using STI::Engine::PostProcessRequest;
+using STI::Engine::EventEngineDependencyTree;
 using ::STI::TNetwork::TEngineJobIDSeq;
 using ::STI::TNetwork::TEventEngineJobSeq;
 using ::STI::TNetwork::TEngineJobID;
@@ -252,6 +260,22 @@ void TEventEngineScheduler_i::addJob(const ::STI::TNetwork::TEventEngineJob& new
 		convert<TNetwork::TEventEngineJob, std::shared_ptr<EventEngineJob>>(newJob, remoteJob);
 
 		engineScheduler->addJob(remoteJob);
+	}
+}
+
+void TEventEngineScheduler_i::distributePostProcessing(const TPostProcessRequestSeq& requests, const TEventEngineDependencyTree& tree,
+													   const TShotID& shotID, const TDeviceID& jobOwnerID)
+{
+	if (engineScheduler != 0) {
+
+		std::vector<PostProcessRequest> localRequests;
+		convert<TPostProcessRequest, PostProcessRequest>(requests, localRequests);
+
+		auto localTree = std::make_shared<EventEngineDependencyTree>();
+		convert<TEventEngineDependencyTree, EventEngineDependencyTree>(tree, *localTree);
+
+		engineScheduler->distributePostProcessing(localRequests, localTree,
+			convert<TShotID, ShotID>(shotID), convert<TDeviceID, DeviceID>(jobOwnerID));
 	}
 }
 

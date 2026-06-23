@@ -1548,22 +1548,23 @@ void LocalEventEngine::play(EventEngineJob& job)
 			// resultBuffer.remove(jobID.sid);
 		}
 	}
-	
-	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID, 
+
+	//Tree-routed post-processing dispatch. The job owner's engine holds the resolved
+	//side-list (parse stashed it here) and the shot result is now persisted, so deliver
+	//each request along the dependency tree. Thin: each requestPostProcessing enqueues
+	//and returns; the analysis runs asynchronously on the target's worker thread.
+	if (isJobOwner && scheduler != nullptr && !resolvedPostProcessRequests.empty()) {
+		scheduler->distributePostProcessing(takeResolvedPostProcessRequests(), dependencyTree,
+											jobID.sid, job.getJobOwner());
+	}
+
+	auto playCompleteMessage = std::make_shared<EngineSchedulerMessage>(localDeviceID,
 								EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
 	playCompleteMessage->jobID.pid = job.getJobID().pid;
 	playCompleteMessage->jobID.sid = job.getJobID().sid;
 	playCompleteMessage->jobID.type = job.getJobID().type;
 	playCompleteMessage->engineState = getState();
 	playCompleteMessage->playMessages = localPlayMessages;
-
-	//Carry this engine so the PlayComplete listener (PostProcessingDispatcher) can
-	//pull the resolved post-processing side-list that parse stashed on this engine.
-	{
-		std::shared_ptr<STI::Engine::EventEngine> jobEngine;
-		job.getEngine(jobEngine);
-		playCompleteMessage->setEngine(jobEngine);
-	}
 
 	sendMessage(playCompleteMessage);
 

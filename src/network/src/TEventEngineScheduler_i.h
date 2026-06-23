@@ -39,6 +39,8 @@ public:
 
     ::CORBA::Boolean getJob(const ::STI::TNetwork::TEngineJobID& id, ::STI::TNetwork::TEventEngineJob_out job);
     void addJob(const ::STI::TNetwork::TEventEngineJob& newJob);
+    void distributePostProcessing(const ::STI::TNetwork::TPostProcessRequestSeq& requests, const ::STI::TNetwork::TEventEngineDependencyTree& tree,
+                                  const ::STI::TNetwork::TShotID& shotID, const ::STI::TNetwork::TDeviceID& jobOwnerID);
     void cancelJob(const ::STI::TNetwork::TEngineJobID& jobID);
     void cancelAll();
 

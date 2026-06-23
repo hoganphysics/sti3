@@ -4,6 +4,8 @@
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
+#include <sti/device/PostProcessingManager.h>
+#include <sti/engine/PostProcessRequest.h>
 
 #include <sti/engine/AddSequenceStatus.h>
 #include <sti/engine/EventEngineJob.h>
@@ -150,7 +152,8 @@ sequenceSchedulingMode(getConfiguredSequenceSchedulingMode(config))
     completedSequenceJobs.setMaxSize(3);
 
     localDeviceID = localDevice->getID();
-    
+    this->localDevice = localDevice;
+
     localDependencyParser = std::make_shared<LocalEventEngineDependencyParser>(localDevice);
 
     running = true;
@@ -262,6 +265,7 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
  
         std::shared_ptr<LocalEventEngine> engine = eventEngineFactory->createEngine(engineID, deviceParser, triggerTarget);
         engine->setPlaybackTimeouts(ownedDevicePlayReadyTimeout, ownedDeviceTriggerTimeout, ownedDevicePlayCompleteGrace);
+        engine->setScheduler(this);   //so the engine can initiate post-processing dispatch at PlayComplete
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 
         engineManagers.add(engineID, manager);        
@@ -622,6 +626,85 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     addJob(job);
 
     return playJobStatus;
+}
+
+void LocalEventEngineScheduler::distributePostProcessing(const std::vector<PostProcessRequest>& requests,
+                                                         const std::shared_ptr<EventEngineDependencyTree>& tree,
+                                                         const ShotID& shotID, const STI::Device::DeviceID& jobOwnerID)
+{
+    //Tree-routed dispatch: for each request, deliver locally, deliver to a
+    //directly-owned target, or forward the per-branch sublist to the owned branch
+    //that leads to the target. Each hop repeats the same routing with the same tree,
+    //to arbitrary depth (mirrors how parse distributes events). Every delivered
+    //requestPostProcessing only enqueues and returns, so this is thin per hop.
+    if (tree == 0 || localDevice == 0) {
+        return;
+    }
+
+    std::shared_ptr<STI::Device::DeviceCollection> collection;
+    localDevice->getCollection(collection);
+
+    std::shared_ptr<STI::Device::PostProcessingManager> localManager;
+    localDevice->getPostProcessingManager(localManager);
+
+    //Requests bound for deeper devices, grouped by the directly-owned branch to forward to.
+    std::map<DeviceID, std::vector<PostProcessRequest>> branchSublists;
+
+    for (auto& request : requests) {
+        const DeviceID targetID = request.target().device().deviceID();
+        const std::string targetName = request.target().name();
+
+        if (targetID == localDeviceID) {
+            //Target is this device: deliver to the local PostProcessingManager.
+            if (localManager != 0) {
+                localManager->requestPostProcessing(targetName, shotID, jobOwnerID, request.options());
+            }
+            continue;
+        }
+
+        DeviceID branch;
+        if (!tree->getBranchToTarget(localDeviceID, targetID, branch)) {
+            //Unroutable: the tree should always contain a route (resolve used the same
+            //lookup). Best-effort log; never throws or blocks (decision: log-only).
+            localDevice->log() << "PostProcessing: no route from '" << localDeviceID.getID()
+                               << "' to target '" << targetID.getID() << "' for shot " << shotID.print() << "\n";
+            continue;
+        }
+
+        if (branch == targetID) {
+            //Directly owned: deliver straight to the target's PostProcessingManager
+            //(a RemotePostProcessingManager CORBA call when the target is remote).
+            std::shared_ptr<STI::Device::Device> device;
+            std::shared_ptr<STI::Device::PostProcessingManager> ppm;
+            if (collection != 0 && collection->get(targetID, device) && device != 0
+                && device->getPostProcessingManager(ppm) && ppm != 0) {
+                ppm->requestPostProcessing(targetName, shotID, jobOwnerID, request.options());
+            }
+            else {
+                localDevice->log() << "PostProcessing: directly-owned target '" << targetID.getID()
+                                   << "' is unreachable for shot " << shotID.print() << "\n";
+            }
+        }
+        else {
+            //Deeper in the tree: forward to the owned branch that leads to the target.
+            branchSublists[branch].push_back(request);
+        }
+    }
+
+    //Forward each branch sublist to that branch's scheduler (recursive RPC; a
+    //RemoteEventEngineScheduler when the branch is remote).
+    for (auto& entry : branchSublists) {
+        std::shared_ptr<STI::Device::Device> device;
+        std::shared_ptr<EventEngineScheduler> sched;
+        if (collection != 0 && collection->get(entry.first, device) && device != 0
+            && device->getEngineScheduler(sched) && sched != 0) {
+            sched->distributePostProcessing(entry.second, tree, shotID, jobOwnerID);
+        }
+        else {
+            localDevice->log() << "PostProcessing: branch '" << entry.first.getID()
+                               << "' is unreachable for forwarding for shot " << shotID.print() << "\n";
+        }
+    }
 }
 
 // void LocalEventEngineScheduler::play(const ShotID& shotID, const std::shared_ptr<Shot>& shot)

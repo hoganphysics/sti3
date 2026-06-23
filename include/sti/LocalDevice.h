@@ -73,7 +73,6 @@ class LocalLogManager;
 class VersionInfo;
 class VersionManager;
 class LocalPostProcessingManager;
-class PostProcessingDispatcher;
 
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
@@ -271,7 +270,6 @@ private:
 	std::shared_ptr<LocalLogManager> localLogManager;
 	std::shared_ptr<VersionManager> versionManager;
 	std::shared_ptr<LocalPostProcessingManager> localPostProcessingManager;
-	std::shared_ptr<PostProcessingDispatcher> postProcessingDispatcher;
 
 	std::shared_ptr<ServerMessageRelayer> serverMessageRelayer;
 

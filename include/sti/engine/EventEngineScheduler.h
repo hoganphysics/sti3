@@ -12,6 +12,7 @@
 #include <memory>
 #include <set>
 #include <map>
+#include <vector>
 
 namespace STI
 {
@@ -21,6 +22,7 @@ namespace Engine
 class EventEngineJob;
 class EventEngineDependencyParser;
 class EventEngineDependencyTree;
+class PostProcessRequest;
 class Shot;
 class ParseID;
 class EngineJobID;
@@ -64,10 +66,18 @@ public:
 
     virtual bool getDependencyParser(std::shared_ptr<EventEngineDependencyParser>& dependencyParser) = 0;
 
-    virtual bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const = 0;    
+    virtual bool getJob(const EngineJobID& id, std::shared_ptr<EventEngineJob>& job) const = 0;
     virtual void addJob(const std::shared_ptr<EventEngineJob>& newJob) = 0;
     virtual void cancelJob(const EngineJobID& jobID) = 0;
     virtual void cancelAll() = 0;
+
+    //Tree-routed post-processing dispatch: deliver/forward the request sublist toward
+    //each target along the ownership chain described by `tree`. Thin: each delivered
+    //requestPostProcessing only enqueues and returns (the analysis runs async on the
+    //target's worker thread). See docs/notes/postProcess-hierarchical-refactor.md.
+    virtual void distributePostProcessing(const std::vector<PostProcessRequest>& requests,
+                                          const std::shared_ptr<EventEngineDependencyTree>& tree,
+                                          const ShotID& shotID, const STI::Device::DeviceID& jobOwnerID) = 0;
 
     virtual std::set<EngineJobID> getJobIDs(const EventEngineJobList& jobListType) const = 0;
     virtual std::vector<std::shared_ptr<EventEngineJob>> getJobs(const EventEngineJobList& jobListType) const = 0;

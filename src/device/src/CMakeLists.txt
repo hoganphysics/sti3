@@ -122,7 +122,6 @@ add_library(stidevice SHARED
     ParsedDependencyTree.cpp
     ParsedTag.cpp
     ParsedVar.cpp
-    PostProcessingDispatcher.cpp
     PostProcessRequest.cpp
     PostProcessTarget.cpp
     ParseID.cpp

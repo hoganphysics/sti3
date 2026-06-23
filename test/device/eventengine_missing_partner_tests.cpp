@@ -252,6 +252,13 @@ public:
         realScheduler->addJob(newJob);
     }
 
+    void distributePostProcessing(const std::vector<STI::Engine::PostProcessRequest>& requests,
+                                  const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree,
+                                  const ShotID& shotID, const STI::Device::DeviceID& jobOwnerID) override
+    {
+        realScheduler->distributePostProcessing(requests, tree, shotID, jobOwnerID);
+    }
+
     void sendFakePlayReady(const std::shared_ptr<EventEngineJob>& newJob)
     {
         if (device == nullptr || newJob == nullptr) {

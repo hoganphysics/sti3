@@ -47,6 +47,11 @@ public:
 
     bool getJob(const STI::Engine::EngineJobID& id, std::shared_ptr<STI::Engine::EventEngineJob>& job) const;
     void addJob(const std::shared_ptr<STI::Engine::EventEngineJob>& newJob);
+
+    void distributePostProcessing(const std::vector<STI::Engine::PostProcessRequest>& requests,
+                                  const std::shared_ptr<STI::Engine::EventEngineDependencyTree>& tree,
+                                  const STI::Engine::ShotID& shotID, const STI::Device::DeviceID& jobOwnerID) override;
+
     void cancelJob(const STI::Engine::EngineJobID& jobID);
 
     void cancelAll();
