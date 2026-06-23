@@ -165,10 +165,11 @@ Tests:
 * Add STIPy regression coverage for duplicate `setvar(...)` declarations and
   preserved variable override behavior.
 
-### 3.5.3 - Python image helpers
+### 3.5.3 - Python image helpers and Windows build fixes
 
 Patch release for constructing, inspecting, and round-tripping STIPy images from
-Python.
+Python, and for restoring the Windows build after recent scheduler and network
+conversion changes.
 
 Python and examples:
 
@@ -186,6 +187,12 @@ Python and examples:
 
 Fixes:
 
+* Avoid Windows `min`/`max` macro expansion when clamping CORBA sequence
+  lengths in network conversion.
+* Keep event-engine implementation headers out of `LocalEventEngineScheduler.h`
+  so `STIServer` does not require private Boost.Graph include paths.
+* Make `LocalEventEngineFactory.h` include the concrete engine type it
+  constructs instead of relying on scheduler-header transitive includes.
 * Preserve arbitrary Python bytes exactly when creating `BinaryData` from
   `bytes`, including payloads with embedded null bytes.
 * Initialize default image dimensions consistently and preserve the complete

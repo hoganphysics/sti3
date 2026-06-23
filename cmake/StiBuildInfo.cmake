@@ -39,10 +39,8 @@ function(sti3_configure_build_info)
     message(FATAL_ERROR "Conda PKG_BUILDNUM=$ENV{PKG_BUILDNUM} does not match sti3_version.json build_number=${STI3_BUILD_NUMBER}")
   endif()
 
-  set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number")
-  if(NOT "${STI3_PACKAGE_BUILD_NUMBER}" STREQUAL "${STI3_BUILD_NUMBER}")
-    message(FATAL_ERROR "STI3_PACKAGE_BUILD_NUMBER=${STI3_PACKAGE_BUILD_NUMBER} does not match sti3_version.json build_number=${STI3_BUILD_NUMBER}")
-  endif()
+  set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}")
+  set(STI3_PACKAGE_BUILD_NUMBER "${STI3_BUILD_NUMBER}" CACHE STRING "STI3 package build number" FORCE)
 
   set(STI3_BUILD_STRING "" CACHE STRING "STI3 package build string")
   if(DEFINED ENV{PKG_BUILD_STRING} AND "${STI3_BUILD_STRING}" STREQUAL "")

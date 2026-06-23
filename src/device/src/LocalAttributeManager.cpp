@@ -105,6 +105,29 @@ bool LocalAttributeManager::setValue(const std::string& key, const std::string& 
     return false;
 }
 
+bool LocalAttributeManager::refreshValue(const std::string& key)
+{
+    std::shared_ptr<Attribute> attribute;
+
+    if (getAttribute(key, attribute) && attribute != 0) {
+        attribute->refreshValue();
+        return true;
+    }
+    return false;
+}
+
+void LocalAttributeManager::refreshValues()
+{
+    std::vector<std::shared_ptr<Attribute>> attributes;
+    getAttributes(attributes);
+
+    for (auto& attribute : attributes) {
+        if (attribute != 0) {
+            attribute->refreshValue();
+        }
+    }
+}
+
 
 bool LocalAttributeManager::addAttribute(const std::shared_ptr<LocalAttribute>& attribute)
 {

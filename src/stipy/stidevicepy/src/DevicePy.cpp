@@ -347,3 +347,30 @@ bool DevicePy::setAttribute(const std::string& key, const std::string& value)
     }
     return false;
 }
+
+bool DevicePy::refreshAttribute(const std::string& key)
+{
+    std::shared_ptr<AttributeManager> manager;
+
+    if (device_ != 0) {
+        device_->getAttributeManager(manager);
+    }
+
+    if (manager != 0) {
+        return manager->refreshValue(key);
+    }
+    return false;
+}
+
+void DevicePy::refreshAttributes()
+{
+    std::shared_ptr<AttributeManager> manager;
+
+    if (device_ != 0) {
+        device_->getAttributeManager(manager);
+    }
+
+    if (manager != 0) {
+        manager->refreshValues();
+    }
+}

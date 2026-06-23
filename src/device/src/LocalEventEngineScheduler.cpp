@@ -29,8 +29,10 @@
 #include <sti/utils/VirtualFileHolder.h>
 #include <sti/utils/VirtualFileServer.h>
 
+#include "EventEngineDependencyTree.h"
 #include "EventEngineFactory.h"
 #include "EventEngineManager.h"
+#include "LocalEventEngine.h"
 #include "LocalEventEngineDependencyParser.h"
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineJob.h"

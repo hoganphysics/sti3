@@ -22,6 +22,7 @@ class TestDevice(stidevicepy.LocalDevice):
                 self.downsample = ds
                 return True     #success
             return False    #illegal value; set failed
+        self.downsample = 1
         self.addAttribute("Downsample", "1").setSetter(ds_setter).setRefresher(lambda: str(self.downsample))
 
         #String attribute with list of allowed values
@@ -87,9 +88,20 @@ print("success? " + str(success))
 print("Height = " + device.getAttribute("Height"))
 device.setAttribute("Height", str(5.2))     #ok
 print("Height = " + device.getAttribute("Height"))
+device.height = 6.2       #changed outside setAttribute()
+device.refreshAttribute("Height")
+print("Height = " + device.getAttribute("Height"))
 print("*****")
 
 device.setAttribute("Downsample", str(10))
+print("Downsample = " + device.getAttribute("Downsample"))
+device.downsample = 12    #changed outside setAttribute()
+device.getAttributeManager().refreshValue("Downsample")
+print("Downsample = " + device.getAttribute("Downsample"))
+device.height = 7.1
+device.downsample = 13
+device.refreshAttributes()
+print("Height = " + device.getAttribute("Height"))
 print("Downsample = " + device.getAttribute("Downsample"))
 print("*****")
 

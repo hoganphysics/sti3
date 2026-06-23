@@ -43,6 +43,8 @@ public:
    
     std::string getValue(const std::string& key);
     bool setValue(const std::string& key, const std::string& value);
+    bool refreshValue(const std::string& key) override;
+    void refreshValues() override;
 
     bool getAttribute(const std::string& key, std::shared_ptr<Attribute>& attribute);
     void getAttributes(std::vector<std::shared_ptr<Attribute>>& attributes);

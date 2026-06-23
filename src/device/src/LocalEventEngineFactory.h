@@ -2,6 +2,7 @@
 #define STI_ENGINE_LOCALEVENTENGINEFACTORY_H
 
 #include "EventEngineFactory.h"
+#include "LocalEventEngine.h"
 
 #include <memory>
 
