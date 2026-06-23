@@ -18,6 +18,7 @@
 #include "generated/orbTypes.h"
 
 #include <memory>
+#include <optional>
 
 using STI::Network::convert;
 using STI::Network::convertChannelUpdateMap;
@@ -94,6 +95,8 @@ using STI::TNetwork::TTaskUpdateMessage;
 using STI::TNetwork::TTaskUpdateMessageType;
 using STI::Utils::TaskStatus;
 using STI::TNetwork::TTaskStatus;
+using STI::Utils::TimeStamp;
+using STI::TNetwork::TTimeStamp;
 
 
 template<>
@@ -969,7 +972,9 @@ bool STI::Network::convert<TTaskUpdateMessage, std::shared_ptr<TaskUpdateMessage
 	deviceMessage->updateType = convert<TTaskUpdateMessageType, TaskUpdateMessage::TaskUpdateType>(tMessage.updateType);
 	deviceMessage->taskID = convert<CORBA::String_member, std::string>(tMessage.taskID);
 	deviceMessage->taskStatus = convert<TTaskStatus, TaskStatus>(tMessage.taskStatus);
-	deviceMessage->timestamp = convert<CORBA::String_member, std::string>(tMessage.timestamp);
+	deviceMessage->timestamp = tMessage.hasTimestamp
+		? std::optional<TimeStamp>(convert<TTimeStamp, TimeStamp>(tMessage.timestamp))
+		: std::nullopt;
 
 	return true;
 }
@@ -985,7 +990,10 @@ bool STI::Network::convert<std::shared_ptr<TaskUpdateMessage>, TTaskUpdateMessag
 	tMessage.updateType = convert<TaskUpdateMessage::TaskUpdateType, TTaskUpdateMessageType>(deviceMessage->updateType);
 	tMessage.taskID = convert<std::string, CORBA::String_member>(deviceMessage->taskID);
 	tMessage.taskStatus = convert<TaskStatus, TTaskStatus>(deviceMessage->taskStatus);
-	tMessage.timestamp = convert<std::string, CORBA::String_member>(deviceMessage->timestamp);
+	tMessage.hasTimestamp = deviceMessage->timestamp.has_value();
+	tMessage.timestamp = deviceMessage->timestamp.has_value()
+		? convert<TimeStamp, TTimeStamp>(deviceMessage->timestamp.value())
+		: TTimeStamp{};
 
 	return true;
 }

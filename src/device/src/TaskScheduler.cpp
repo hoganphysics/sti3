@@ -246,8 +246,7 @@ void TaskScheduler::run(std::shared_ptr<Task>& task, PendingEvents& events)
 	if (task == 0) return;
 
 	if (task->isReadyToRun()) {
-		const auto timestamp = STI::Utils::TimeStamp().toString();
-		task->run();
+		const auto timestamp = task->runNow();
 		events.emplace_back(TaskSchedulerEventType::Run, task->getID(), timestamp);
 	}
 	else {

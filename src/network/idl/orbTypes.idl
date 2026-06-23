@@ -728,7 +728,8 @@ module TNetwork
 		TTaskUpdateMessageType updateType;
 		string taskID;
 		TTaskStatus taskStatus;
-		string timestamp;
+		boolean hasTimestamp;
+		TTimeStamp timestamp;
 	};
 	
 	enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName };

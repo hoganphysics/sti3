@@ -1879,7 +1879,8 @@ STI::TNetwork::TTaskUpdateMessage::operator>>= (cdrStream &_n) const
   updateType >>= _n;
   _n.marshalString(taskID,0);
   taskStatus >>= _n;
-  _n.marshalString(timestamp,0);
+  _n.marshalBoolean(hasTimestamp);
+  (const TTimeStamp&) timestamp >>= _n;
 
 }
 
@@ -1890,7 +1891,8 @@ STI::TNetwork::TTaskUpdateMessage::operator<<= (cdrStream &_n)
   (TTaskUpdateMessageType&)updateType <<= _n;
   taskID = _n.unmarshalString(0);
   (TTaskStatus&)taskStatus <<= _n;
-  timestamp = _n.unmarshalString(0);
+  hasTimestamp = _n.unmarshalBoolean();
+  (TTimeStamp&)timestamp <<= _n;
 
 }
 

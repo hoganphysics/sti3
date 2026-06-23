@@ -32,6 +32,22 @@ Configuration makeAutoMonitorConfig() {
     return config;
 }
 
+template<typename Predicate>
+bool waitForMonitorValue(
+    const std::shared_ptr<Monitor>& monitor,
+    Predicate&& predicate,
+    std::chrono::milliseconds timeout)
+{
+    auto deadline = std::chrono::steady_clock::now() + timeout;
+    while (std::chrono::steady_clock::now() < deadline) {
+        if (predicate(monitor->getValue())) {
+            return true;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    return predicate(monitor->getValue());
+}
+
 class AutoMonitorTestDevice : public LocalDevice {
 public:
     AutoMonitorTestDevice()
@@ -78,30 +94,37 @@ TEST_CASE("AutoMonitor: reactivation resumes scheduled updates") {
 
     auto taskManager = std::make_shared<LocalTaskManager>();
     std::atomic<int> counter{0};
+    const auto updateInterval = 1s;
 
     auto monitor = AutoMonitor::create(
         "Status/reactivate",
-        0.1,
+        std::chrono::duration<double>(updateInterval).count(),
         [&]() { return MixedValue(counter.fetch_add(1) + 1); },
         taskManager);
 
     const auto taskID = std::string("Monitor:Status/reactivate:AutoUpdate");
 
-    REQUIRE(task_test_support::waitForAtomicCount(counter, 1, 300ms));
-    const auto valueBeforeDeactivate = monitor->getValue();
+    REQUIRE(waitForMonitorValue(monitor, [](const MixedValue& value) { return value.getInt() >= 1; }, 1500ms));
 
     monitor->deactivate();
     CHECK(taskManager->getTaskStatus(taskID) == TaskStatus::Inactive);
 
+    const auto valueBeforeDeactivate = monitor->getValue();
     const auto updatesWhileActive = counter.load();
-    std::this_thread::sleep_for(200ms);
+    REQUIRE(valueBeforeDeactivate.getInt() >= 1);
+
+    std::this_thread::sleep_for(updateInterval + 200ms);
     CHECK(counter.load() == updatesWhileActive);
     CHECK(monitor->getValue() == valueBeforeDeactivate);
 
     monitor->activate();
     CHECK(taskManager->getTaskStatus(taskID) == TaskStatus::Active);
 
-    REQUIRE(task_test_support::waitForAtomicCount(counter, updatesWhileActive + 1, 300ms));
+    REQUIRE(waitForMonitorValue(
+        monitor,
+        [&](const MixedValue& value) { return value.getInt() > valueBeforeDeactivate.getInt(); },
+        1500ms));
+    CHECK(counter.load() > updatesWhileActive);
     CHECK(monitor->getValue() != valueBeforeDeactivate);
 }
 

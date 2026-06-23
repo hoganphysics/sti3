@@ -74,6 +74,10 @@ _CORBA_MODULE_BEG
 
       TMixedValue metaData;
 
+      ::CORBA::Boolean hasLastRunTime;
+
+      TTimeStamp lastRunTime;
+
     
 
       void operator>>= (cdrStream &) const;
@@ -270,6 +274,7 @@ _CORBA_MODULE_BEG
       // IDL operations
       void getTaskIDs(::STI::TNetwork::TStringSeq_out ids);
       TTaskStatus getTaskStatus(const char* taskID);
+      ::CORBA::Boolean getTaskLastRunTime(const char* taskID, ::STI::TNetwork::TTimeStamp& lastRunTime);
       void setStatus(const char* taskID, ::STI::TNetwork::TTaskStatus newStatus);
       ::CORBA::Boolean getTask(const char* taskID, ::STI::TNetwork::TTask_out task);
       void getTasks(::STI::TNetwork::TTaskSeq_out tasks);
@@ -316,6 +321,7 @@ _CORBA_MODULE_BEG
 
       virtual void getTaskIDs(::STI::TNetwork::TStringSeq_out ids) = 0;
       virtual TTaskStatus getTaskStatus(const char* taskID) = 0;
+      virtual ::CORBA::Boolean getTaskLastRunTime(const char* taskID, ::STI::TNetwork::TTimeStamp& lastRunTime) = 0;
       virtual void setStatus(const char* taskID, ::STI::TNetwork::TTaskStatus newStatus) = 0;
       virtual ::CORBA::Boolean getTask(const char* taskID, ::STI::TNetwork::TTask_out task) = 0;
       virtual void getTasks(::STI::TNetwork::TTaskSeq_out tasks) = 0;

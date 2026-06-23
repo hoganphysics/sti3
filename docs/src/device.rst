@@ -710,6 +710,14 @@ Tasks are background work owned by the device.  Use ``IntervalTask`` for fixed
 period work, ``AppointmentTask`` for a time-of-day task, or derive from
 ``Task`` for custom scheduling.
 
+Use ``Task.runNow()`` for direct manual execution of a task object.  ``runNow()``
+records and returns the run ``TimeStamp`` only after the task callback completes
+successfully.  Device clients that access tasks through a ``TaskManager`` should
+use ``TaskManager.runTask(taskID)`` and then read the timestamp with
+``TaskManager.getTaskLastRunTime(taskID)`` or ``Task.getLastRunTime()``.  Python
+custom tasks still override ``run()`` for their callback body; ``runNow()`` is
+the public execution method that adds timestamp tracking.
+
 .. tabs::
 
    .. code-tab:: c++
@@ -731,12 +739,18 @@ period work, ``AppointmentTask`` for a time-of-day task, or derive from
           [this]() { write(0, 0.0); });
       addTask(appointment);
 
+      auto manualRunTime = interval->runNow();
+      log("tasks") << "manual field poll at "
+                   << manualRunTime.toString()
+                   << std::endl;
+
    .. code-tab:: py
 
       def poll_field():
           self.log("tasks").append(f"field = {self.read(11)}")
 
-      self.addTask(stipy.IntervalTask("field poll", "00:00:02", poll_field))
+      interval = stipy.IntervalTask("field poll", "00:00:02", poll_field)
+      self.addTask(interval)
 
       self.addTask(stipy.AppointmentTask(
           "daily reset",
@@ -744,6 +758,9 @@ period work, ``AppointmentTask`` for a time-of-day task, or derive from
           stipy.AppointmentRepeatType.Everyday,
           lambda: self.write(0, 0.0),
       ))
+
+      manual_run_time = interval.runNow()
+      self.log("tasks").append(f"manual field poll at {manual_run_time}")
 
 Logging
 *******

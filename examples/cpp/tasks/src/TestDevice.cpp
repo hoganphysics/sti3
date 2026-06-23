@@ -30,7 +30,7 @@ public:
 
 	// *** Implementing Task interface *** //
 
-	double secondsToNextRun() const
+	double secondsToNextRun() const override
 	{
 		STI::Utils::TimeStamp now;
 		if (now < targetTime) {
@@ -41,7 +41,11 @@ public:
 		}
 	}
 
-	void run()
+	void skipTask() override {}
+	bool repeat() override { return true; }
+
+private:
+	void run() override
 	{
 		std::cout << "***** custom task *****" << std::endl;
 
@@ -50,10 +54,6 @@ public:
 		targetTime.add_sec(3);	//now + 3 seconds
 	}
 
-	void skipTask() {}
-	bool repeat() { return true; }
-
-private:
 	STI::Utils::TimeStamp targetTime;	//time of next task run
 };
 

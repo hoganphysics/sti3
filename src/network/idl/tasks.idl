@@ -14,6 +14,8 @@ module TNetwork
         string taskID;
         TTaskStatus status;
         TMixedValue metaData;
+        boolean hasLastRunTime;
+        TTimeStamp lastRunTime;
     };
     typedef sequence<TTask> TTaskSeq;
 
@@ -23,6 +25,7 @@ module TNetwork
         void getTaskIDs(out TStringSeq ids);
 
         TTaskStatus getTaskStatus(in string taskID);
+        boolean getTaskLastRunTime(in string taskID, out TTimeStamp lastRunTime);
 
         void setStatus(in string taskID, in TTaskStatus newStatus);
 

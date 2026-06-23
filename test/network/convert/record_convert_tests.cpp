@@ -2,6 +2,8 @@
 
 #include "NetworkConvert.h"
 #include "NetworkBinaryDataStream.h"
+#include "RemoteTask.h"
+#include "RemoteTaskManager.h"
 #include "RemoteChannel.h"
 #include "convert/Convert_Channel.h"
 #include "convert/Convert_DeviceMessage.h"
@@ -36,11 +38,13 @@
 #include <sti/utils/Image.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/Task.h>
 #include <sti/utils/TimeStamp.h>
 
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <cstring>
@@ -96,6 +100,39 @@ std::shared_ptr<STI::Utils::BinaryData> makeIntBinaryData(const std::vector<int>
     data->assign(buffer, payload.size());
     return data;
 }
+
+class ConvertTask : public STI::Utils::Task
+{
+public:
+    explicit ConvertTask(const std::string& id)
+        : STI::Utils::Task(id)
+    {
+        addMetaData("kind", STI::Utils::MixedValue("convert"));
+    }
+
+    double secondsToNextRun() const override { return 0; }
+    void skipTask() override {}
+    bool repeat() override { return false; }
+
+private:
+    void run() override {}
+};
+
+class FakeRemoteTaskManager : public STI::Network::RemoteTaskManager
+{
+public:
+    FakeRemoteTaskManager()
+        : STI::Network::RemoteTaskManager(STI::TNetwork::TTaskManager::_nil())
+    {
+    }
+
+    std::optional<STI::Utils::TimeStamp> getTaskLastRunTime(const std::string&) const override
+    {
+        return lastRunTime;
+    }
+
+    std::optional<STI::Utils::TimeStamp> lastRunTime;
+};
 
 std::string binaryBytes(const std::shared_ptr<STI::Utils::BinaryData>& data)
 {
@@ -638,10 +675,11 @@ TEST_CASE("NetworkConvert: TaskUpdateMessage round trips through TAnyMessage", "
     CHECK(statusRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Status);
     CHECK(statusRoundTrip->taskID == "camera-warmup");
     CHECK(statusRoundTrip->taskStatus == TaskStatus::Inactive);
-    CHECK(statusRoundTrip->timestamp.empty());
+    CHECK_FALSE(statusRoundTrip->timestamp.has_value());
 
+    const auto timestamp = makeTimeStamp();
     auto runMessage = std::make_shared<TaskUpdateMessage>(
-        makeDeviceID(), "camera-warmup", "2026/05/09|14:30:12.123.456.789");
+        makeDeviceID(), "camera-warmup", timestamp);
 
     STI::TNetwork::TAnyMessage tRunMessage;
     REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
@@ -654,7 +692,53 @@ TEST_CASE("NetworkConvert: TaskUpdateMessage round trips through TAnyMessage", "
     REQUIRE(runRoundTrip != nullptr);
     CHECK(runRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Run);
     CHECK(runRoundTrip->taskID == "camera-warmup");
-    CHECK(runRoundTrip->timestamp == "2026/05/09|14:30:12.123.456.789");
+    REQUIRE(runRoundTrip->timestamp.has_value());
+    CHECK(runRoundTrip->timestamp.value() == timestamp);
+}
+
+TEST_CASE("NetworkConvert: TTask preserves last run time presence and value", "[network][convert][task]")
+{
+    std::shared_ptr<STI::Utils::Task> neverRun = std::make_shared<ConvertTask>("never-run");
+
+    auto tNeverRun = STI::Network::convert<std::shared_ptr<STI::Utils::Task>, STI::TNetwork::TTask>(neverRun);
+    CHECK_FALSE(tNeverRun.hasLastRunTime);
+
+    std::shared_ptr<STI::Utils::Task> neverRunRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TTask, std::shared_ptr<STI::Utils::Task>>(
+        tNeverRun, neverRunRoundTrip));
+    REQUIRE(neverRunRoundTrip != nullptr);
+    CHECK_FALSE(neverRunRoundTrip->hasLastRunTime());
+
+    std::shared_ptr<STI::Utils::Task> ran = std::make_shared<ConvertTask>("ran");
+    const auto runTime = ran->runNow();
+
+    auto tRan = STI::Network::convert<std::shared_ptr<STI::Utils::Task>, STI::TNetwork::TTask>(ran);
+    REQUIRE(tRan.hasLastRunTime);
+    CHECK(STI::Network::convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tRan.lastRunTime) == runTime);
+
+    std::shared_ptr<STI::Utils::Task> ranRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TTask, std::shared_ptr<STI::Utils::Task>>(
+        tRan, ranRoundTrip));
+    REQUIRE(ranRoundTrip != nullptr);
+    REQUIRE(ranRoundTrip->getLastRunTime().has_value());
+    CHECK(ranRoundTrip->getLastRunTime().value() == runTime);
+}
+
+TEST_CASE("RemoteTask pulls last run time from attached manager instead of stale snapshot", "[network][task]")
+{
+    const auto snapshotTime = makeTimeStamp(11);
+    const auto latestTime = makeTimeStamp(12);
+
+    STI::Network::RemoteTask task("remote-task", STI::Utils::MixedValue(), snapshotTime);
+    REQUIRE(task.getLastRunTime().has_value());
+    CHECK(task.getLastRunTime().value() == snapshotTime);
+
+    FakeRemoteTaskManager manager;
+    manager.lastRunTime = latestTime;
+    task.attachManager(&manager);
+
+    REQUIRE(task.getLastRunTime().has_value());
+    CHECK(task.getLastRunTime().value() == latestTime);
 }
 
 TEST_CASE("NetworkConvert: ChannelUpdateMessage measurement values preserve lazy binary streams", "[network][convert][channel]")

@@ -1,6 +1,9 @@
 
 #include "Convert_Task.h"
+#include "Convert_EventEngine.h"
 #include "RemoteTask.h"
+
+#include <optional>
 
 
 using STI::Network::convert;
@@ -11,6 +14,8 @@ using STI::TNetwork::TTaskStatus;
 using STI::Network::RemoteTask;
 using STI::Utils::MixedValue;
 using STI::TNetwork::TMixedValue;
+using STI::Utils::TimeStamp;
+using STI::TNetwork::TTimeStamp;
 
 
 template<>
@@ -35,8 +40,15 @@ bool STI::Network::convert<TTask, std::shared_ptr<Task>>(const TTask& tTask, std
 {
     MixedValue metaData = convert<TMixedValue, MixedValue>(tTask.metaData);
     auto status = convert<TTaskStatus, TaskStatus>(tTask.status);
+    std::optional<TimeStamp> lastRunTime;
+    if (tTask.hasLastRunTime) {
+        lastRunTime = convert<TTimeStamp, TimeStamp>(tTask.lastRunTime);
+    }
 
-    task = std::make_shared<RemoteTask>(convert<::CORBA::String_member, std::string>(tTask.taskID), metaData);
+    task = std::make_shared<RemoteTask>(
+        convert<::CORBA::String_member, std::string>(tTask.taskID),
+        metaData,
+        lastRunTime);
     // task->setStatus(status);
     return true;
 }
@@ -49,6 +61,11 @@ bool STI::Network::convert<std::shared_ptr<Task>, TTask>(const std::shared_ptr<T
     tTask.taskID = convert<std::string, ::CORBA::String_member>(task->getID());
     tTask.status = convert<TaskStatus, TTaskStatus>(task->getStatus());
     tTask.metaData = convert<MixedValue, TMixedValue>(task->getMetaData());
+    auto lastRunTime = task->getLastRunTime();
+    tTask.hasLastRunTime = lastRunTime.has_value();
+    tTask.lastRunTime = lastRunTime.has_value()
+        ? convert<TimeStamp, TTimeStamp>(lastRunTime.value())
+        : TTimeStamp{};
 
     return true;
 }

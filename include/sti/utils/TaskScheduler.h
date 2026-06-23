@@ -10,6 +10,7 @@
 #include <memory>
 #include <condition_variable>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <utility>
 
@@ -56,13 +57,17 @@ private:
 	struct PendingEvent
 	{
 		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID)
-		: PendingEvent(type, taskID, "") {}
-		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID, const std::string& timestamp)
+		: PendingEvent(type, taskID, std::optional<STI::Utils::TimeStamp>()) {}
+		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+			const STI::Utils::TimeStamp& timestamp)
+		: PendingEvent(type, taskID, std::optional<STI::Utils::TimeStamp>(timestamp)) {}
+		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+			const std::optional<STI::Utils::TimeStamp>& timestamp)
 		: type(type), taskID(taskID), timestamp(timestamp) {}
 
 		TaskSchedulerEventType type;
 		std::string taskID;
-		std::string timestamp;
+		std::optional<STI::Utils::TimeStamp> timestamp;
 	};
 
 	using PendingEvents = std::vector<PendingEvent>;
@@ -98,14 +103,18 @@ class TaskSchedulerEvent
 public:
 
 	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID)
-	: TaskSchedulerEvent(type, taskID, "") {}
-	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID, const std::string& timestamp)
+	: TaskSchedulerEvent(type, taskID, std::optional<STI::Utils::TimeStamp>()) {}
+	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+		const STI::Utils::TimeStamp& timestamp)
+	: TaskSchedulerEvent(type, taskID, std::optional<STI::Utils::TimeStamp>(timestamp)) {}
+	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+		const std::optional<STI::Utils::TimeStamp>& timestamp)
 	: type(type), taskID(taskID), timestamp(timestamp) {}
 	virtual ~TaskSchedulerEvent() {}
 
 	TaskSchedulerEventType type;
 	std::string taskID;
-	std::string timestamp;
+	std::optional<STI::Utils::TimeStamp> timestamp;
 };
 
 class TaskSchedulerListener

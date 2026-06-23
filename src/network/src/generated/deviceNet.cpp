@@ -13137,14 +13137,14 @@ public:
   inline _0RL_cd_d8193061d7f864c6_0f000000(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
     : omniCallDescriptor(lcfn, op_, oplen, 0, _user_exns, 0, upcall)
   {
-
+    
   }
-
-
+  
+  
   void unmarshalReturnedValues(cdrStream&);
   void marshalReturnedValues(cdrStream&);
-
-
+  
+  
   static const char* const _user_exns[];
 
   STI::TNetwork::TMixedValue_var arg_0;
@@ -13958,7 +13958,7 @@ STI::TNetwork::_impl_TDevice::_dispatch(omniCallHandle& _handle)
   if (omni::strMatch(op, "getPartnerDevices")) {
 
     _0RL_cd_d8193061d7f864c6_ee000000 _call_desc(_0RL_lcfn_d8193061d7f864c6_fe000000, "getPartnerDevices", 18, 1);
-
+    
     _handle.upcall(this,_call_desc);
     return 1;
   }

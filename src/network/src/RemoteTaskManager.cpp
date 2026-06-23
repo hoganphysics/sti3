@@ -3,6 +3,9 @@
 
 
 #include "convert/Convert_Task.h"
+#include "convert/Convert_EventEngine.h"
+
+#include <optional>
 
 using STI::Network::RemoteTaskManager;
 
@@ -12,6 +15,8 @@ using STI::TNetwork::TTask;
 using STI::TNetwork::TTaskStatus;
 using STI::Utils::TaskStatus;
 using STI::Network::RemoteTask;
+using STI::Utils::TimeStamp;
+using STI::TNetwork::TTimeStamp;
 
 
 
@@ -71,6 +76,30 @@ TaskStatus RemoteTaskManager::getTaskStatus(const std::string& taskID) const
 	catch (CORBA::Exception&) {
 	}
     return status;
+}
+
+std::optional<TimeStamp> RemoteTaskManager::getTaskLastRunTime(const std::string& taskID) const
+{
+	std::unique_lock<std::mutex> taskLock(taskMutex);
+
+	if (isDisabled()) return std::nullopt;
+
+	try {
+		TTimeStamp tTime;
+		const auto hasLastRunTime = getTRef()->getTaskLastRunTime(
+				convert<std::string, ::CORBA::String_member>(taskID),
+				tTime);	//remote call
+		if (hasLastRunTime) {
+			return convert<TTimeStamp, TimeStamp>(tTime);
+		}
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+	return std::nullopt;
 }
 
 void RemoteTaskManager::setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus)

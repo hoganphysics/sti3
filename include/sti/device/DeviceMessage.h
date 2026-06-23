@@ -22,6 +22,7 @@
 #include <sti/engine/ShotConfig.h>
 #include <sti/utils/Task.h>
 
+#include <optional>
 #include <sstream>
 
 namespace STI
@@ -426,7 +427,7 @@ public:
 	}
 
 	TaskUpdateMessage(const STI::Device::DeviceTrace& trace, const std::string& taskID,
-		const std::string& timestamp)
+		const STI::Utils::TimeStamp& timestamp)
 	: DeviceMessage(trace, DeviceMessageType::TaskUpdate),
 	  updateType(TaskUpdateType::Run),
 	  taskID(taskID),
@@ -440,7 +441,7 @@ public:
 	TaskUpdateType updateType;
 	std::string taskID;
 	STI::Utils::TaskStatus taskStatus;
-	std::string timestamp;
+	std::optional<STI::Utils::TimeStamp> timestamp;
 };
 
 class EngineJobUpdateDeviceMessage : public DeviceMessage

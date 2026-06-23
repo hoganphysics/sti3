@@ -423,8 +423,20 @@ Tasks
 -----
 
 The ``TaskManager`` exposes background tasks registered by a local device.
-Tasks can be activated, deactivated, run manually, or removed.  Common task
-types include interval tasks and appointment tasks.
+Tasks can be activated, deactivated, run manually, inspected, or removed.
+Common task types include interval tasks and appointment tasks.
+
+Task execution is timestamped when it goes through the tracked execution path.
+Use ``TaskManager.runTask(taskID)`` to run a task by ID, or ``Task.runNow()``
+when code already has a task object.  Successful runs store a last-run
+``TimeStamp`` on the task.  Skipped tasks and tasks whose run callback throws do
+not update the last-run time.  Last-run time is runtime state and is not saved
+in local task XML.
+
+The manager-level ``getTaskLastRunTime(taskID)`` call returns the current
+last-run value for local and remote task managers.  In Python it returns
+``None`` until the task has run successfully, then a ``TimeStamp`` object.
+Task run update messages also carry this typed timestamp when a run completes.
 
 .. tabs::
 
@@ -434,16 +446,29 @@ types include interval tasks and appointment tasks.
       if (device->getTaskManager(tasks)) {
           std::set<std::string> ids;
           tasks->getTaskIDs(ids);
+
           tasks->deactivateTask("task#1");
           tasks->runTask("task#2");
+
+          auto lastRun = tasks->getTaskLastRunTime("task#2");
+          if (lastRun.has_value()) {
+              std::cout << "task#2 last ran at "
+                        << lastRun->toString()
+                        << std::endl;
+          }
       }
 
    .. code-tab:: py
 
       tasks = device.getTaskManager()
       print(tasks.getTaskIDs())
+
       tasks.deactivateTask("task#1")
       tasks.runTask("task#2")
+
+      last_run = tasks.getTaskLastRunTime("task#2")
+      if last_run is not None:
+          print("task#2 last ran at", last_run)
 
 Logs
 ----

@@ -5,6 +5,7 @@
 #include <sti/utils/Task.h>
 
 #include "convert/Convert_Task.h"
+#include "convert/Convert_EventEngine.h"
 
 using STI::Network::convert;
 using STI::TNetwork::TTaskManager_i;
@@ -12,6 +13,8 @@ using STI::Utils::Task;
 using STI::TNetwork::TTask;
 using STI::TNetwork::TTaskStatus;
 using STI::Utils::TaskStatus;
+using STI::Utils::TimeStamp;
+using STI::TNetwork::TTimeStamp;
 
 
 TTaskManager_i::TTaskManager_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -55,6 +58,20 @@ TTaskStatus TTaskManager_i::getTaskStatus(const char* taskID)
         tStatus = convert<TaskStatus, TTaskStatus>(status);
     }
     return tStatus;
+}
+
+::CORBA::Boolean TTaskManager_i::getTaskLastRunTime(const char* taskID, ::STI::TNetwork::TTimeStamp& lastRunTime)
+{
+    if (taskManager != 0) {
+        auto localLastRunTime = taskManager->getTaskLastRunTime(taskID);
+        if (localLastRunTime.has_value()) {
+            lastRunTime = convert<TimeStamp, TTimeStamp>(localLastRunTime.value());
+            return true;
+        }
+    }
+
+    lastRunTime = TTimeStamp{};
+    return false;
 }
 
 void TTaskManager_i::setStatus(const char* taskID, ::STI::TNetwork::TTaskStatus newStatus)

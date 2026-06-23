@@ -13,8 +13,10 @@ TEST_CASE("IntervalTask: run executes callback and repeats") {
     std::atomic<int> runs{0};
     IntervalTask task("interval", 1.0, [&] { runs.fetch_add(1); });
 
-    task.run();
+    const auto runTime = task.runNow();
     CHECK(runs.load() == 1);
+    REQUIRE(task.getLastRunTime().has_value());
+    CHECK(task.getLastRunTime().value() == runTime);
     CHECK(task.repeat());
     auto wait = task.secondsToNextRun();
     CHECK(wait >= 0.0);

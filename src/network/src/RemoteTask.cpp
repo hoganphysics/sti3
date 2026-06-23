@@ -4,12 +4,20 @@
 
 #include <sti/utils/Task.h>
 
+#include <optional>
+
 using STI::Network::RemoteTask;
 using STI::Utils::TaskStatus;
 
 
 RemoteTask::RemoteTask(const std::string& id, const STI::Utils::MixedValue& metaData)
-: Task(id, metaData)
+: RemoteTask(id, metaData, std::nullopt)
+{
+}
+
+RemoteTask::RemoteTask(const std::string& id, const STI::Utils::MixedValue& metaData,
+    const std::optional<STI::Utils::TimeStamp>& snapshotLastRunTime)
+: Task(id, metaData), remoteManager(nullptr), snapshotLastRunTime(snapshotLastRunTime)
 {
 }
 
@@ -33,6 +41,17 @@ STI::Utils::TaskStatus RemoteTask::getStatus() const
 {
     if (remoteManager == 0) return TaskStatus::Missing;
     return remoteManager->getTaskStatus(getID());
+}
+
+bool RemoteTask::hasLastRunTime() const
+{
+    return getLastRunTime().has_value();
+}
+
+std::optional<STI::Utils::TimeStamp> RemoteTask::getLastRunTime() const
+{
+    if (remoteManager == 0) return snapshotLastRunTime;
+    return remoteManager->getTaskLastRunTime(getID());
 }
 
 double RemoteTask::secondsToNextRun() const

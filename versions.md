@@ -74,6 +74,14 @@ Features:
   aliases registered through `addPartner(...)`, and whether the partner is an
   event target. The same composite partner metadata is available over the
   network API.
+* Add tracked task execution through C++ and Python `Task.runNow()`, with
+  optional last-run timestamps exposed through `Task.hasLastRunTime()`,
+  `Task.getLastRunTime()`, and `TaskManager.getTaskLastRunTime(...)`.
+  Last-run state is recorded only after successful task runs and is not persisted
+  in local task XML.
+* Carry typed optional `TimeStamp` values in task run updates and network task
+  snapshots, including optional `TaskUpdateMessage.timestamp` support and live
+  remote task last-run lookups.
 
 Documentation and examples:
 

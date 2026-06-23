@@ -178,7 +178,13 @@ void init_DeviceMessage(py::module& m)
         .def_readonly("updateType", &TaskUpdateMessage::updateType)
         .def_readonly("taskID", &TaskUpdateMessage::taskID)
         .def_readonly("taskStatus", &TaskUpdateMessage::taskStatus)
-        .def_readonly("timestamp", &TaskUpdateMessage::timestamp)
+        .def_property_readonly("timestamp",
+            [](const TaskUpdateMessage& message) -> py::object {
+                if (message.timestamp.has_value()) {
+                    return py::cast(message.timestamp.value());
+                }
+                return py::none();
+            })
         ;
 
     py::class_<EngineJobUpdateDeviceMessage, DeviceMessage, std::shared_ptr<EngineJobUpdateDeviceMessage>>(m, "EngineJobUpdateDeviceMessage")

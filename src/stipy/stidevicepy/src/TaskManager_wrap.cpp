@@ -28,6 +28,14 @@ void init_TaskManager(py::module& m)
                 return ids;
             })
         .def("getTaskStatus", &TaskManager::getTaskStatus, py::arg("taskID"))
+        .def("getTaskLastRunTime",
+            [](const TaskManager& self, const std::string& taskID) -> py::object {
+                auto lastRunTime = self.getTaskLastRunTime(taskID);
+                if (lastRunTime.has_value()) {
+                    return py::cast(lastRunTime.value());
+                }
+                return py::none();
+            }, py::arg("taskID"))
         .def("setStatus", &TaskManager::setStatus, py::arg("taskID"), py::arg("newStatus"))
 
         .def("getTask",
@@ -58,4 +66,3 @@ void init_TaskManager(py::module& m)
         ;
 
 }
-

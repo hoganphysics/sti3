@@ -11,7 +11,9 @@
 #include <ctime>
 #include <iomanip>
 #include <mutex>
+#include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <utility>
@@ -32,6 +34,8 @@ public:
           nextRunTime(std::chrono::steady_clock::now() + initialDelay) {}
 
     void setReady(bool value) { ready.store(value); }
+
+    void setThrowOnRun(bool value) { throwOnRun.store(value); }
 
     void setRepeat(bool value, std::chrono::milliseconds delay = std::chrono::milliseconds(0)) {
         repeatFlag = value;
@@ -69,13 +73,6 @@ public:
         return std::chrono::duration<double>(nextRunTime - now).count();
     }
 
-    void run() override {
-        recordRun();
-        if (repeatFlag) {
-            nextRunTime = std::chrono::steady_clock::now() + repeatDelay;
-        }
-    }
-
     void skipTask() override {
         recordSkip();
         if (repeatFlag) {
@@ -86,6 +83,17 @@ public:
     bool repeat() override { return repeatFlag; }
 
 private:
+    void run() override {
+        if (throwOnRun.load()) {
+            throw std::runtime_error("DummyTask run failed");
+        }
+
+        recordRun();
+        if (repeatFlag) {
+            nextRunTime = std::chrono::steady_clock::now() + repeatDelay;
+        }
+    }
+
     void recordRun() {
         std::lock_guard<std::mutex> lock(mutex);
         ++runCounter;
@@ -99,6 +107,7 @@ private:
     }
 
     std::atomic<bool> ready;
+    std::atomic<bool> throwOnRun{false};
     bool repeatFlag;
     std::chrono::milliseconds repeatDelay;
     std::chrono::steady_clock::time_point nextRunTime;
@@ -123,7 +132,7 @@ public:
         return events;
     }
 
-    std::vector<std::string> timestampSnapshot() const {
+    std::vector<std::optional<STI::Utils::TimeStamp>> timestampSnapshot() const {
         std::lock_guard<std::mutex> lock(mutex);
         return timestamps;
     }
@@ -135,7 +144,7 @@ public:
 
 private:
     std::vector<std::pair<STI::Utils::TaskSchedulerEventType, std::string>> events;
-    std::vector<std::string> timestamps;
+    std::vector<std::optional<STI::Utils::TimeStamp>> timestamps;
     mutable std::mutex mutex;
     std::condition_variable cv;
 };

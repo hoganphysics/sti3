@@ -6,6 +6,7 @@
 #include <pybind11/pybind11.h>
 
 #include <memory>
+#include <optional>
 
 
 namespace STI
@@ -130,8 +131,23 @@ public:
     void run() 
     {
         if (task != 0) { 
-            task->run();
+            task->runNow();
         }
+    }
+
+    STI::Utils::TimeStamp runNow()
+    {
+        return (task != 0 ? task->runNow() : STI::Utils::Task::runNow());
+    }
+
+    bool hasLastRunTime() const override
+    {
+        return (task != 0 ? task->hasLastRunTime() : STI::Utils::Task::hasLastRunTime());
+    }
+
+    std::optional<STI::Utils::TimeStamp> getLastRunTime() const override
+    {
+        return (task != 0 ? task->getLastRunTime() : STI::Utils::Task::getLastRunTime());
     }
 
 	void skipTask()
@@ -153,4 +169,3 @@ public:
 } //STI
 
 #endif
-

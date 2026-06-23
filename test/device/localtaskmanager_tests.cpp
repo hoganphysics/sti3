@@ -105,6 +105,10 @@ TEST_CASE("LocalTaskManager dispatches task status and run update messages", "[t
     });
 
     REQUIRE(runIt != messages.end());
-    CHECK_FALSE((*runIt)->timestamp.empty());
+    REQUIRE((*runIt)->timestamp.has_value());
+    REQUIRE(task->getLastRunTime().has_value());
+    CHECK((*runIt)->timestamp.value() == task->getLastRunTime().value());
+    REQUIRE(manager.getTaskLastRunTime(task->getID()).has_value());
+    CHECK(manager.getTaskLastRunTime(task->getID()).value() == task->getLastRunTime().value());
     CHECK((*runIt)->sourceID() == localID);
 }

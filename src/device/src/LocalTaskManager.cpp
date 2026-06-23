@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <filesystem>
+#include <optional>
 namespace fs = std::filesystem;
 
 using STI::Device::LocalTaskManager;
@@ -51,6 +52,15 @@ TaskStatus LocalTaskManager::getTaskStatus(const std::string& taskID) const
         return task->getStatus();
     }
     return TaskStatus::Missing;
+}
+
+std::optional<STI::Utils::TimeStamp> LocalTaskManager::getTaskLastRunTime(const std::string& taskID) const
+{
+    std::shared_ptr<Task> task;
+    if (getTask(taskID, task) && task != 0) {
+        return task->getLastRunTime();
+    }
+    return std::nullopt;
 }
 
 void LocalTaskManager::setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus)
@@ -200,8 +210,9 @@ void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
         sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID, TaskStatus::Inactive));
         break;
     case TaskSchedulerEventType::Run:
-        sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID,
-            evt.timestamp.empty() ? STI::Utils::TimeStamp().toString() : evt.timestamp));
+        if (evt.timestamp.has_value()) {
+            sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID, evt.timestamp.value()));
+        }
         break;
     case TaskSchedulerEventType::Refresh:
         break;

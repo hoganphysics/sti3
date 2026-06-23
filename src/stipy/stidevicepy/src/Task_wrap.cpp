@@ -38,6 +38,16 @@ void init_Task(py::module& m)
         ;
 
     py::class_<Task, std::shared_ptr<Task>>(m, "TaskBase")
+        .def("runNow", &Task::runNow)
+        .def("hasLastRunTime", &Task::hasLastRunTime)
+        .def("getLastRunTime",
+            [](const Task& self) -> py::object {
+                auto lastRunTime = self.getLastRunTime();
+                if (lastRunTime.has_value()) {
+                    return py::cast(lastRunTime.value());
+                }
+                return py::none();
+            })
         ;
 
     py::class_<TaskPy, TaskPyTrampoline, std::shared_ptr<TaskPy>>(m, "Task")
@@ -55,6 +65,23 @@ void init_Task(py::module& m)
                 self->addMetaData(key, v);
                 return self;
             }, py::arg("key"), py::arg("value") )
+        .def("runNow",
+            [](const std::shared_ptr<TaskPy>& self) {
+                auto wrapper = std::dynamic_pointer_cast<STI::Python::TaskWrapperPy>(self);
+                if (wrapper != 0) {
+                    return wrapper->runNow();
+                }
+                return static_cast<Task*>(self.get())->runNow();
+            })
+        .def("hasLastRunTime", &TaskPy::hasLastRunTime)
+        .def("getLastRunTime",
+            [](const TaskPy& self) -> py::object {
+                auto lastRunTime = self.getLastRunTime();
+                if (lastRunTime.has_value()) {
+                    return py::cast(lastRunTime.value());
+                }
+                return py::none();
+            })
 
         .def("isReadyToRun", &TaskPy::isReadyToRun)
         .def("secondsToNextRun", py::overload_cast<>(&TaskPy::secondsToNextRun, py::const_) )

@@ -3046,14 +3046,14 @@ _CORBA_MODULE_BEG
     struct TPartnerDeviceInfo {
       typedef _CORBA_ConstrType_Variable_Var<TPartnerDeviceInfo> _var_type;
 
-
+      
       TDeviceID deviceID;
 
       TStringSeq aliases;
 
       ::CORBA::Boolean eventTarget;
 
-
+    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -3081,7 +3081,7 @@ _CORBA_MODULE_BEG
       inline TPartnerDeviceInfoSeq(_CORBA_ULong _max, _CORBA_ULong _len, TPartnerDeviceInfo* _val, _CORBA_Boolean _rel=0)
         : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_max, _len, _val, _rel) {}
 
-
+    
 
       inline TPartnerDeviceInfoSeq& operator = (const TPartnerDeviceInfoSeq& _s) {
         _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > ::operator=(_s);
@@ -3100,7 +3100,7 @@ _CORBA_MODULE_BEG
         else             _pd_seq = 0;
       }
       inline ~TPartnerDeviceInfoSeq_var() { if (_pd_seq)  delete _pd_seq; }
-
+        
       inline TPartnerDeviceInfoSeq_var& operator = (TPartnerDeviceInfoSeq* _s) {
         if (_pd_seq)  delete _pd_seq;
         _pd_seq = _s;
@@ -3123,7 +3123,7 @@ _CORBA_MODULE_BEG
         return (*_pd_seq)[_s];
       }
 
-
+    
 
       inline TPartnerDeviceInfoSeq* operator -> () { return _pd_seq; }
       inline const TPartnerDeviceInfoSeq* operator -> () const { return _pd_seq; }
@@ -3133,7 +3133,7 @@ _CORBA_MODULE_BEG
       inline operator const TPartnerDeviceInfoSeq& () const { return *_pd_seq; }
       inline operator TPartnerDeviceInfoSeq& () { return *_pd_seq; }
 #endif
-
+        
       inline const TPartnerDeviceInfoSeq& in() const { return *_pd_seq; }
       inline TPartnerDeviceInfoSeq&       inout()    { return *_pd_seq; }
       inline TPartnerDeviceInfoSeq*&      out() {
@@ -3141,9 +3141,9 @@ _CORBA_MODULE_BEG
         return _pd_seq;
       }
       inline TPartnerDeviceInfoSeq* _retn() { TPartnerDeviceInfoSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
-
+        
       friend class TPartnerDeviceInfoSeq_out;
-
+      
     private:
       TPartnerDeviceInfoSeq* _pd_seq;
     };
@@ -3170,7 +3170,7 @@ _CORBA_MODULE_BEG
         return (*_data)[_i];
       }
 
-
+    
 
       TPartnerDeviceInfoSeq*& _data;
 
@@ -5950,10 +5950,10 @@ _CORBA_MODULE_BEG
     struct TRefreshDeviceMessage {
       typedef _CORBA_ConstrType_Variable_Var<TRefreshDeviceMessage> _var_type;
 
-
+      
       TDeviceMessage base;
 
-
+    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -5973,12 +5973,12 @@ _CORBA_MODULE_BEG
     struct TCollectionUpdateMessage {
       typedef _CORBA_ConstrType_Variable_Var<TCollectionUpdateMessage> _var_type;
 
-
+      
       TDeviceMessage base;
 
       TCollectionMessageType collectionUpdateType;
 
-
+    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -6464,6 +6464,7 @@ _CORBA_MODULE_BEG
     struct TEngineSchedulerMessage {
       typedef _CORBA_ConstrType_Variable_Var<TEngineSchedulerMessage> _var_type;
 
+      
       TDeviceMessage base;
 
       TSchedulerMessageType type;
@@ -6483,6 +6484,8 @@ _CORBA_MODULE_BEG
       TEnginePlayingMessageSeq playMessages;
 
       TEngineState engineState;
+
+    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -7044,6 +7047,7 @@ _CORBA_MODULE_BEG
     struct TTaskUpdateMessage {
       typedef _CORBA_ConstrType_Variable_Var<TTaskUpdateMessage> _var_type;
 
+      
       TDeviceMessage base;
 
       TTaskUpdateMessageType updateType;
@@ -7052,7 +7056,11 @@ _CORBA_MODULE_BEG
 
       TTaskStatus taskStatus;
 
-      ::CORBA::String_member timestamp;
+      ::CORBA::Boolean hasTimestamp;
+
+      TTimeStamp timestamp;
+
+    
 
       void operator>>= (cdrStream &) const;
       void operator<<= (cdrStream &);
@@ -9153,3 +9161,4 @@ extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::T
 #endif
 
 #endif  // __orbTypes_hh__
+

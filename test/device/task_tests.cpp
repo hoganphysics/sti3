@@ -6,6 +6,7 @@
 #include "task_tests_support.h"
 
 #include <chrono>
+#include <stdexcept>
 #include <string>
 
 using task_test_support::DummyTask;
@@ -18,6 +19,8 @@ TEST_CASE("Task: defaults to active and stores ID") {
     CHECK(task.getID() == "task-1");
     CHECK(task.isActive());
     CHECK(task.getStatus() == TaskStatus::Active);
+    CHECK_FALSE(task.hasLastRunTime());
+    CHECK_FALSE(task.getLastRunTime().has_value());
 }
 
 TEST_CASE("Task: stores and retrieves metadata entries") {
@@ -45,4 +48,26 @@ TEST_CASE("Task: comparison follows next run time") {
     CHECK(sooner < later);
     CHECK_FALSE(later < sooner);
     CHECK_FALSE(sooner == later);
+}
+
+TEST_CASE("Task: runNow stores returned timestamp after successful run") {
+    DummyTask task("run-now");
+
+    const auto runTime = task.runNow();
+    auto lastRunTime = task.getLastRunTime();
+
+    REQUIRE(lastRunTime.has_value());
+    CHECK(lastRunTime.value() == runTime);
+    CHECK(task.hasLastRunTime());
+    CHECK(task.getRunCount() == 1);
+}
+
+TEST_CASE("Task: runNow does not update last run time when run throws") {
+    DummyTask task("throw-run");
+    task.setThrowOnRun(true);
+
+    CHECK_THROWS_AS(task.runNow(), std::runtime_error);
+    CHECK_FALSE(task.hasLastRunTime());
+    CHECK_FALSE(task.getLastRunTime().has_value());
+    CHECK(task.getRunCount() == 0);
 }
