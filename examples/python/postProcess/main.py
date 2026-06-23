@@ -8,7 +8,7 @@ config = stipy.Configuration(
     {'Device Name': 'AnalysisDevice',
      'IP Address': 'localhost',
      'Module': '0',
-     'Target Server': 'localhost/0/STI Server'})
+     'Target Server': 'sr-magis/2/Frame2'})
 
 device = AnalysisDevice(config)
 
@@ -20,7 +20,7 @@ for target in device.getPostProcessingTargets():
     for option in target.options:
         print("    option:", option.name, "-", option.description)
 
-nameServiceAddr = "192.168.1.4:2809"   # OmniORB NameService
+nameServiceAddr = "192.168.88.252:2809"   # OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device)

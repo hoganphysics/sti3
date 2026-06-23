@@ -72,18 +72,19 @@ private:
 
 	using PendingEvents = std::vector<PendingEvent>;
 	
-	void run(std::shared_ptr<Task>& task, PendingEvents& events);
+	bool run(const std::shared_ptr<Task>& task, PendingEvents& events, bool requireActive);
 	
 	void removeTask_(const std::string& taskID, PendingEvents& events);
 	void deactivateTask_(const std::string& taskID, PendingEvents& events);
 
 	void taskLoop();
 	
-	void sortActiveTasks();
 	std::vector<std::shared_ptr<Task>>::iterator findActiveTask(const std::string& id);
+	bool isActiveTask_(const std::string& id);
 
 	STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Task>> tasks;
 	std::vector<std::shared_ptr<Task>> activeTasks;
+	std::set<std::string> runningTasks;
 
 	void sendEvent(const PendingEvent& event);
 	void sendEvents(const PendingEvents& events);
@@ -91,6 +92,7 @@ private:
 
 	std::thread taskThread;
 	bool running;
+	std::size_t schedulerRevision;
 
 	double minSleep;
 

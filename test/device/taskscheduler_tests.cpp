@@ -8,7 +8,10 @@
 
 #include <chrono>
 #include <atomic>
+#include <condition_variable>
+#include <future>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -183,6 +186,67 @@ TEST_CASE("TaskScheduler: activating an idle task wakes the background loop") {
 
     scheduler.stop();
     CHECK(task->getStatus() == TaskStatus::Inactive);
+}
+
+TEST_CASE("TaskScheduler: task timing callbacks do not block task manager updates") {
+    using namespace std::chrono_literals;
+
+    class BlockingTimingTask : public STI::Utils::Task {
+    public:
+        explicit BlockingTimingTask(const std::string& id)
+            : Task(id) {}
+
+        double secondsToNextRun() const override {
+            std::unique_lock<std::mutex> lock(mutex);
+            entered = true;
+            cv.notify_all();
+            cv.wait(lock, [&] { return released; });
+            return 100.0;
+        }
+
+        void release() {
+            std::lock_guard<std::mutex> lock(mutex);
+            released = true;
+            cv.notify_all();
+        }
+
+        bool waitForTimingCallback(std::chrono::milliseconds timeout) const {
+            std::unique_lock<std::mutex> lock(mutex);
+            return cv.wait_for(lock, timeout, [&] { return entered; });
+        }
+
+        void skipTask() override {}
+        bool repeat() override { return true; }
+
+    private:
+        void run() override {}
+
+        mutable std::mutex mutex;
+        mutable std::condition_variable cv;
+        mutable bool entered{false};
+        bool released{false};
+    };
+
+    TaskScheduler scheduler;
+    scheduler.setMinSleep(0.01);
+    scheduler.start();
+
+    auto blockingTask = std::make_shared<BlockingTimingTask>("blocking-timing");
+    scheduler.addTask(blockingTask);
+
+    REQUIRE(blockingTask->waitForTimingCallback(500ms));
+
+    auto addFuture = std::async(std::launch::async, [&scheduler] {
+        scheduler.addTask(std::make_shared<DummyTask>("added-while-timing-blocked"));
+    });
+
+    const bool addCompletedBeforeRelease = addFuture.wait_for(200ms) == std::future_status::ready;
+
+    blockingTask->release();
+    addFuture.wait();
+    scheduler.stop();
+
+    CHECK(addCompletedBeforeRelease);
 }
 
 TEST_CASE("TaskScheduler: clear removes all tasks and sets them inactive") {

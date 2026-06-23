@@ -1,6 +1,5 @@
 #include <sti/utils/TaskScheduler.h>
 #include <sti/utils/TimeStamp.h>
-#include <sti/utils/utils.h>
 
 #include <algorithm>
 #include <chrono>
@@ -11,9 +10,20 @@ using STI::Utils::TaskStatus;
 using STI::Utils::TaskSchedulerEvent;
 using STI::Utils::TaskSchedulerEventType;
 
+namespace
+{
+
+struct ScheduledTask
+{
+	std::shared_ptr<Task> task;
+	double secondsToNextRun;
+};
+
+} // namespace
+
 
 TaskScheduler::TaskScheduler()
-: running(false)
+: running(false), schedulerRevision(0)
 {
 	setMinSleep(1);		//seconds
 }
@@ -41,6 +51,7 @@ void TaskScheduler::stop()
 		if (!running) return;
 
 		running = false;
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -105,6 +116,7 @@ void TaskScheduler::addTask(const std::shared_ptr<Task>& task)
 		activeTasks.push_back(task);
 		events.emplace_back(TaskSchedulerEventType::Activate, task->getID());
 
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -118,9 +130,9 @@ std::vector<std::shared_ptr<Task>>::iterator TaskScheduler::findActiveTask(const
 	return it;
 }
 
-void TaskScheduler::sortActiveTasks()
+bool TaskScheduler::isActiveTask_(const std::string& id)
 {
-	std::sort(activeTasks.begin(), activeTasks.end(), STI::Utils::compare_shared_ptr<Task>);
+	return findActiveTask(id) != activeTasks.end();
 }
 
 void TaskScheduler::removeTask(const std::string& taskID)
@@ -129,6 +141,7 @@ void TaskScheduler::removeTask(const std::string& taskID)
 	{
 		std::unique_lock<std::mutex> writeLock(schedulerMutex);
 		removeTask_(taskID, events);
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -161,6 +174,7 @@ void TaskScheduler::clear()
 		activeTasks.clear();
 		events.emplace_back(TaskSchedulerEventType::Refresh, "");
 
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -191,6 +205,7 @@ void TaskScheduler::activateTask(const std::string& taskID)
 			}
 		}
 
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -203,6 +218,7 @@ void TaskScheduler::deactivateTask(const std::string& taskID)
 	{
 		std::unique_lock<std::mutex> writeLock(schedulerMutex);
 		deactivateTask_(taskID, events);
+		++schedulerRevision;
 		schedulerCondition.notify_all();
 	}
 
@@ -227,41 +243,97 @@ void TaskScheduler::deactivateTask_(const std::string& taskID, PendingEvents& ev
 void TaskScheduler::runNow(const std::string& taskID)
 {
 	PendingEvents events;
+	std::shared_ptr<Task> task;
 	{
 		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+		tasks.get(taskID, task);
+	}
 
-		std::shared_ptr<Task> task;
-		
-		if (getTask(taskID, task)) {
-			run(task, events);
-			schedulerCondition.notify_all();
-		}
+	if (task != 0) {
+		run(task, events, false);
 	}
 
 	sendEvents(events);
 }
 
-void TaskScheduler::run(std::shared_ptr<Task>& task, PendingEvents& events)
+bool TaskScheduler::run(const std::shared_ptr<Task>& task, PendingEvents& events, bool requireActive)
 {
-	if (task == 0) return;
+	if (task == 0) return false;
 
-	if (task->isReadyToRun()) {
-		const auto timestamp = task->runNow();
-		events.emplace_back(TaskSchedulerEventType::Run, task->getID(), timestamp);
-	}
-	else {
-		task->skipTask();
+	const auto taskID = task->getID();
+
+	{
+		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+
+		std::shared_ptr<Task> currentTask;
+		if (!tasks.get(taskID, currentTask) || currentTask != task) {
+			return false;
+		}
+
+		if (requireActive && !isActiveTask_(taskID)) {
+			return false;
+		}
+
+		if (runningTasks.count(taskID) > 0) {
+			return false;
+		}
+
+		runningTasks.insert(taskID);
+		++schedulerRevision;
+		schedulerCondition.notify_all();
 	}
 
-	if (!task->repeat()) {
-		deactivateTask_(task->getID(), events);
+	std::optional<STI::Utils::TimeStamp> timestamp;
+	bool repeats = true;
+
+	try {
+		// Task virtuals may enter Python and acquire the GIL, so they must run
+		// without schedulerMutex held.
+		if (task->isReadyToRun()) {
+			timestamp = task->runNow();
+		}
+		else {
+			task->skipTask();
+		}
+
+		repeats = task->repeat();
 	}
+	catch (...) {
+		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+		runningTasks.erase(taskID);
+		++schedulerRevision;
+		schedulerCondition.notify_all();
+		throw;
+	}
+
+	{
+		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+		runningTasks.erase(taskID);
+		++schedulerRevision;
+
+		std::shared_ptr<Task> currentTask;
+		if (tasks.get(taskID, currentTask) && currentTask == task) {
+			if (timestamp.has_value()) {
+				events.emplace_back(TaskSchedulerEventType::Run, taskID, timestamp.value());
+			}
+
+			if (!repeats) {
+				deactivateTask_(taskID, events);
+			}
+		}
+
+		schedulerCondition.notify_all();
+	}
+
+	return true;
 }
 
 void TaskScheduler::setMinSleep(double sleep)
 {
 	std::unique_lock<std::mutex> taskLock(schedulerMutex);
 	minSleep = sleep;	//seconds
+	++schedulerRevision;
+	schedulerCondition.notify_all();
 }
 
 void TaskScheduler::taskLoop()
@@ -272,41 +344,57 @@ void TaskScheduler::taskLoop()
 
 	while (true)
 	{
+		std::vector<std::shared_ptr<Task>> tasksSnapshot;
+		std::size_t observedRevision = 0;
+		double observedMinSleep = 0;
+
+		{
+			std::unique_lock<std::mutex> taskLock(schedulerMutex);
+
+			if (!running) {
+				break;
+			}
+
+			tasksSnapshot = activeTasks;
+			observedRevision = schedulerRevision;
+			observedMinSleep = minSleep;
+		}
+
+		// Task timing callbacks can be user/Python code; keep them outside the
+		// scheduler mutex to avoid lock-order deadlocks with addTask/runTask.
+		std::vector<ScheduledTask> scheduledTasks;
+		scheduledTasks.reserve(tasksSnapshot.size());
+
+		for (auto& task : tasksSnapshot) {
+			if (task != 0) {
+				scheduledTasks.push_back(ScheduledTask{task, task->secondsToNextRun()});
+			}
+		}
+
+		std::sort(scheduledTasks.begin(), scheduledTasks.end(),
+			[](const ScheduledTask& lhs, const ScheduledTask& rhs) {
+				return lhs.secondsToNextRun < rhs.secondsToNextRun;
+			});
+
 		PendingEvents events;
-		std::unique_lock<std::mutex> taskLock(schedulerMutex);
-
-		if (!running) {
-			break;
-		}
-
-		sortActiveTasks();
-
-		std::vector<std::shared_ptr<Task>> readyTasks;
-		for (auto& task : activeTasks) {
-			if (task != 0 && task->secondsToNextRun() <= 0) {
-				readyTasks.push_back(task);
+		bool ranTask = false;
+		for (auto& scheduledTask : scheduledTasks) {
+			if (scheduledTask.secondsToNextRun > 0) {
+				break;
 			}
-			else {
-				break;	//the rest of the tasks have positive waits
-			}
+			ranTask = run(scheduledTask.task, events, true) || ranTask;
 		}
-
-		for (auto& task : readyTasks) {
-			if (task != 0 && findActiveTask(task->getID()) != activeTasks.end()) {
-				run(task, events);
-			}
-		}
-
-		sortActiveTasks();	//resort so recently run task are at the back
 
 		if (!events.empty()) {
-			taskLock.unlock();
 			sendEvents(events);
+		}
+
+		if (ranTask) {
 			continue;
 		}
 		
-		if (activeTasks.size() > 0) {
-			nextSleep = activeTasks.at(0)->secondsToNextRun();	//first task is the next to run
+		if (!scheduledTasks.empty()) {
+			nextSleep = scheduledTasks.front().secondsToNextRun;
 		}
 		else {
 			nextSleep = maxSleep;
@@ -315,20 +403,35 @@ void TaskScheduler::taskLoop()
 		if (nextSleep > maxSleep) {
 			nextSleep = maxSleep;
 		}
-		else if (nextSleep < minSleep) {
-			nextSleep = minSleep;
+		else if (nextSleep < observedMinSleep) {
+			nextSleep = observedMinSleep;
 		}
 
 		//wait
 		auto now = std::chrono::system_clock::now();
+		std::unique_lock<std::mutex> taskLock(schedulerMutex);
+
+		if (!running) {
+			break;
+		}
+
+		if (schedulerRevision != observedRevision) {
+			continue;
+		}
 
 		if (nextSleep > coarseSleep) {
 			//coarse sleep
-			schedulerCondition.wait_until(taskLock, now + std::chrono::seconds( static_cast<int>(nextSleep - 0.5 * coarseSleep) ));
+			schedulerCondition.wait_until(
+				taskLock,
+				now + std::chrono::seconds(static_cast<int>(nextSleep - 0.5 * coarseSleep)),
+				[this, observedRevision]() { return !running || schedulerRevision != observedRevision; });
 		}
 		else {
 			//fine sleep
-			schedulerCondition.wait_until(taskLock, now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)));
+			schedulerCondition.wait_until(
+				taskLock,
+				now + std::chrono::milliseconds(static_cast<int>(nextSleep * 1000)),
+				[this, observedRevision]() { return !running || schedulerRevision != observedRevision; });
 		}
 	}
 }
