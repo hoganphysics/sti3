@@ -10,11 +10,13 @@
 
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalAttribute.h>
+#include <sti/device/PostProcessingManager.h>
 #include <sti/device/TaskManager.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/EngineID.h>
 
 #include <memory>
+#include <sstream>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -26,9 +28,40 @@ using STI::Python::DevicePy;
 using STI::Utils::MixedValueType;
 using STI::Device::ChannelType;
 using STI::Python::MixedValuePy;
+using STI::Device::PostProcessingOptionInfo;
+using STI::Device::PostProcessingTargetInfo;
 
 void init_Device(py::module& m)
 {
+    py::class_<PostProcessingOptionInfo>(m, "PostProcessingOptionInfo")
+        .def_readonly("name", &PostProcessingOptionInfo::name)
+        .def_readonly("description", &PostProcessingOptionInfo::description)
+        .def("__repr__",
+            [](const PostProcessingOptionInfo& self) {
+                std::stringstream s;
+                s << "<PostProcessingOptionInfo " << self.name << ">";
+                return s.str();
+            });
+
+    py::class_<PostProcessingTargetInfo>(m, "PostProcessingTargetInfo")
+        .def_readonly("name", &PostProcessingTargetInfo::name)
+        .def_readonly("description", &PostProcessingTargetInfo::description)
+        .def_readonly("options", &PostProcessingTargetInfo::options)
+        .def("__repr__",
+            [](const PostProcessingTargetInfo& self) {
+                std::stringstream s;
+                s << "<PostProcessingTargetInfo " << self.name
+                  << " | " << self.options.size() << " option(s)>";
+                return s.str();
+            });
+
+    //Returned by LocalDevice.addPostProcessingTarget(); addOption() returns the same
+    //builder so option declarations can be chained.
+    py::class_<STI::Device::PostProcessingTargetBuilder>(m, "PostProcessingTargetBuilder")
+        .def("addOption", &STI::Device::PostProcessingTargetBuilder::addOption,
+            py::arg("name"), py::arg("description") = "",
+            py::return_value_policy::reference);
+
     py::class_<DevicePy, std::shared_ptr<DevicePy>>(m, "Device")
         .def(py::init<>())
         .def("getID", &DevicePy::getID)

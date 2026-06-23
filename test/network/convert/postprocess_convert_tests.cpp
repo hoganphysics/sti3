@@ -3,6 +3,9 @@
 #include "NetworkConvert.h"
 #include "convert/Convert_RawEventGroup.h"
 #include "convert/Convert_DeviceMessage.h"
+#include "convert/Convert_PostProcessing.h"
+
+#include <sti/device/PostProcessingManager.h>
 
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/RawEventTarget.h>
@@ -71,6 +74,47 @@ TEST_CASE("NetworkConvert: RawEventGroup post-processing side-list round trips",
     CHECK(requests[1].target().name() == "Red MOT");
     CHECK(requests[1].target().isAbstract());
     CHECK(requests[1].target().device().name() == "OtherAnalysis");
+}
+
+TEST_CASE("NetworkConvert: PostProcessingTargetInfo with option hints round trips", "[postprocessing][convert]")
+{
+    using STI::Device::PostProcessingOptionInfo;
+    using STI::Device::PostProcessingTargetInfo;
+    using STI::TNetwork::TPostProcessingTargetInfo;
+
+    std::vector<PostProcessingTargetInfo> targets;
+
+    PostProcessingTargetInfo fit;
+    fit.name = "atom number";
+    fit.description = "Counts atoms from an absorption image.";
+    fit.options.push_back(PostProcessingOptionInfo{"roi", "region of interest"});
+    fit.options.push_back(PostProcessingOptionInfo{"model", ""});   //description optional
+    targets.push_back(fit);
+
+    PostProcessingTargetInfo echo;   //no options
+    echo.name = "echo";
+    echo.description = "Echoes options.";
+    targets.push_back(echo);
+
+    //vector -> seq -> vector
+    STI::TNetwork::TPostProcessingTargetInfoSeq tSeq;
+    REQUIRE(STI::Network::convert<PostProcessingTargetInfo, TPostProcessingTargetInfo>(targets, tSeq));
+    REQUIRE(tSeq.length() == 2);
+
+    std::vector<PostProcessingTargetInfo> restored;
+    REQUIRE(STI::Network::convert<TPostProcessingTargetInfo, PostProcessingTargetInfo>(tSeq, restored));
+    REQUIRE(restored.size() == 2);
+
+    CHECK(restored[0].name == "atom number");
+    CHECK(restored[0].description == "Counts atoms from an absorption image.");
+    REQUIRE(restored[0].options.size() == 2);
+    CHECK(restored[0].options[0].name == "roi");
+    CHECK(restored[0].options[0].description == "region of interest");
+    CHECK(restored[0].options[1].name == "model");
+    CHECK(restored[0].options[1].description.empty());
+
+    CHECK(restored[1].name == "echo");
+    CHECK(restored[1].options.empty());
 }
 
 TEST_CASE("NetworkConvert: PostProcessingCompleteMessage round trips through TAnyMessage", "[postprocessing][convert]")

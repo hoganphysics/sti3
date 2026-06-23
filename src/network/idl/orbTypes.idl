@@ -432,10 +432,18 @@ module TNetwork
 	};
 	typedef sequence<TPostProcessRequest> TPostProcessRequestSeq;
 
+	struct TPostProcessingOptionInfo
+	{
+		string name;
+		string description;
+	};
+	typedef sequence<TPostProcessingOptionInfo> TPostProcessingOptionInfoSeq;
+
 	struct TPostProcessingTargetInfo
 	{
 		string name;
 		string description;
+		TPostProcessingOptionInfoSeq options;
 	};
 	typedef sequence<TPostProcessingTargetInfo> TPostProcessingTargetInfoSeq;
 

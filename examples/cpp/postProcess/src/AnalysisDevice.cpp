@@ -25,12 +25,19 @@ AnalysisDevice::AnalysisDevice(const STI::Utils::Configuration& config)
 	// callback returns a results MetaData that is broadcast in a
 	// PostProcessingComplete device message.  If it throws, the failure is
 	// reported in that message instead of crashing the worker.
+	//
+	// addPostProcessingTarget() returns a builder whose addOption() calls chain to
+	// declare the options the target understands.  These hints are documentation
+	// only (they are not validated) -- they let a caller discover, via
+	// getPostProcessingTargets(), what to pass in a postProcess() options payload.
 	addPostProcessingTarget(
 		"atom number",
 		[this](const std::shared_ptr<ShotResult>& shotResult, const MetaData& options) {
 			return fitAtomNumber(shotResult, options);
 		},
-		"Reduces a shot's measurement data to an atom number.");
+		"Reduces a shot's measurement data to an atom number.")
+		.addOption("roi", "Region of interest [x, y, w, h] to integrate.")
+		.addOption("model", "Fit model name, e.g. \"gaussian\".");
 
 	// A target can also be a self-contained lambda.
 	addPostProcessingTarget(
@@ -40,7 +47,8 @@ AnalysisDevice::AnalysisDevice(const STI::Utils::Configuration& config)
 			results.addMetaData("model", options.getMetaData("model"));
 			return results;
 		},
-		"Echoes the requested model name back in the results.");
+		"Echoes the requested model name back in the results.")
+		.addOption("model", "Model name echoed back in the results.");
 }
 
 MetaData AnalysisDevice::fitAtomNumber(const std::shared_ptr<ShotResult>& shotResult, const MetaData& options)

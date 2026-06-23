@@ -230,18 +230,14 @@ std::shared_ptr<STI::Device::VersionManager> DevicePy::getVersionManager()
     return manager;
 }
 
-std::vector<std::pair<std::string, std::string>> DevicePy::getPostProcessingTargets()
+std::vector<STI::Device::PostProcessingTargetInfo> DevicePy::getPostProcessingTargets()
 {
-    std::vector<std::pair<std::string, std::string>> result;
-
     std::shared_ptr<STI::Device::PostProcessingManager> manager;
     if (device_ != 0 && device_->getPostProcessingManager(manager) && manager != 0) {
-        for (const auto& info : manager->getPostProcessingTargets()) {
-            result.emplace_back(info.name, info.description);
-        }
+        return manager->getPostProcessingTargets();
     }
 
-    return result;
+    return {};
 }
 
 bool DevicePy::write(short channel, const pybind11::object& value)

@@ -457,12 +457,13 @@ void LocalDevice::addTask(const std::shared_ptr<STI::Utils::Task>& task)
 	}
 }
 
-void LocalDevice::addPostProcessingTarget(const std::string& name, PostProcessingFunction function,
-	const std::string& description)
+STI::Device::PostProcessingTargetBuilder LocalDevice::addPostProcessingTarget(const std::string& name,
+	PostProcessingFunction function, const std::string& description)
 {
 	if (localPostProcessingManager != 0) {
-		localPostProcessingManager->addPostProcessingTarget(name, std::move(function), description);
+		return localPostProcessingManager->addPostProcessingTarget(name, std::move(function), description);
 	}
+	return STI::Device::PostProcessingTargetBuilder();   //inert; manager is always constructed in practice
 }
 
 void LocalDevice::addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener)

@@ -154,6 +154,34 @@ TEST_CASE("LocalPostProcessingManager: getPostProcessingTargets reports register
     REQUIRE(targets.size() == 1);
     CHECK(targets.front().name == "fit");
     CHECK(targets.front().description == "Gaussian fit");
+    CHECK(targets.front().options.empty());
+
+    manager.stop();
+}
+
+TEST_CASE("LocalPostProcessingManager: addOption chaining records option hints", "[postprocessing][localdevice]") {
+    auto dispatcher = std::make_shared<LocalDeviceMessageDispatcher>();
+    LocalPostProcessingManager manager(makeDeviceID(), dispatcher, nullptr, nullptr);
+
+    manager.addPostProcessingTarget("fit", [](const std::shared_ptr<ShotResult>&, const MetaData&) { return MetaData(); }, "Gaussian fit")
+        .addOption("roi", "region of interest")
+        .addOption("model");   //description optional
+
+    auto targets = manager.getPostProcessingTargets();
+    REQUIRE(targets.size() == 1);
+    const auto& info = targets.front();
+    CHECK(info.name == "fit");
+    REQUIRE(info.options.size() == 2);
+    CHECK(info.options[0].name == "roi");
+    CHECK(info.options[0].description == "region of interest");
+    CHECK(info.options[1].name == "model");
+    CHECK(info.options[1].description.empty());   //option order preserved, blank description allowed
+
+    //Re-registering the same name resets its option hints.
+    manager.addPostProcessingTarget("fit", [](const std::shared_ptr<ShotResult>&, const MetaData&) { return MetaData(); });
+    auto targets2 = manager.getPostProcessingTargets();
+    REQUIRE(targets2.size() == 1);
+    CHECK(targets2.front().options.empty());
 
     manager.stop();
 }

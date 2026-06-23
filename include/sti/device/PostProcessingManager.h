@@ -30,26 +30,65 @@ using PostProcessingFunction =
     std::function<STI::Utils::MetaData(const std::shared_ptr<STI::Engine::ShotResult>&, const STI::Utils::MetaData&)>;
 
 
-struct PostProcessingTargetInfo
+//Author-supplied hint describing one option a target accepts in its postProcess()
+//options payload. These are documentation only -- they are not validated against
+//the options actually passed; a device author lists them so callers can discover
+//what a target understands.
+struct PostProcessingOptionInfo
 {
     std::string name;
     std::string description;
 };
 
 
+struct PostProcessingTargetInfo
+{
+    std::string name;
+    std::string description;
+    std::vector<PostProcessingOptionInfo> options;
+};
+
+
+//Chainable builder returned by addPostProcessingTarget(), mirroring the
+//LocalChannel metadata-setter pattern. It is a lightweight cursor over the
+//PostProcessingTargetInfo stored on the device's PostProcessingManager, so option
+//hints declared here appear in getPostProcessingTargets(). Registration (and thus
+//these mutations) is expected during device construction, before the device is
+//served, so no locking is performed here.
+class PostProcessingTargetBuilder
+{
+public:
+
+    //A default-constructed builder is inert (its setters are no-ops); used as the
+    //return value when there is no backing target to describe.
+    PostProcessingTargetBuilder() : info(nullptr) {}
+    explicit PostProcessingTargetBuilder(PostProcessingTargetInfo& targetInfo) : info(&targetInfo) {}
+
+    //Declare a supported option (name and optional human-readable description).
+    PostProcessingTargetBuilder& addOption(const std::string& name, const std::string& description = "")
+    {
+        if (info != nullptr) {
+            info->options.push_back(PostProcessingOptionInfo{name, description});
+        }
+        return *this;
+    }
+
+private:
+
+    PostProcessingTargetInfo* info;   //non-owning; points into the manager's target store
+};
+
+
 //Abstract interface following the ChannelManager/AttributeManager Local/Remote
 //split template. LocalPostProcessingManager backs it in stidevice;
-//RemotePostProcessingManager will back it over CORBA in Phase 2.
+//RemotePostProcessingManager backs it over CORBA. Target registration is a local
+//concern (a callback cannot be registered on a remote device), so it lives on
+//LocalPostProcessingManager / LocalDevice rather than on this cross-device seam.
 class PostProcessingManager
 {
 public:
 
     virtual ~PostProcessingManager() = default;
-
-    //Device-author-facing: register a named target and its callback.
-    virtual void addPostProcessingTarget(const std::string& name,
-                                          PostProcessingFunction function,
-                                          const std::string& description = "") = 0;
 
     //Discovery (interactive sessions, frontend).
     virtual std::vector<PostProcessingTargetInfo> getPostProcessingTargets() const = 0;

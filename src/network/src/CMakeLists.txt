@@ -71,6 +71,7 @@ add_library(stinetwork SHARED
     convert/Convert_DeviceID.cpp
     convert/Convert_DeviceMessage.cpp
     convert/Convert_EventEngine.cpp
+    convert/Convert_PostProcessing.cpp
     convert/Convert_File.cpp
     convert/Convert_HubID.cpp
     convert/Convert_HubNodeWalker.cpp

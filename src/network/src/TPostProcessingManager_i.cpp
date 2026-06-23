@@ -2,6 +2,7 @@
 
 #include "NetworkConvert.h"
 #include "convert/Convert_EventEngine.h"
+#include "convert/Convert_PostProcessing.h"
 
 #include <sti/device/PostProcessingManager.h>
 #include <sti/engine/ShotID.h>
@@ -22,6 +23,7 @@ using STI::Utils::MixedValue;
 using STI::TNetwork::TShotID;
 using STI::TNetwork::TDeviceID;
 using STI::TNetwork::TMixedValue;
+using STI::TNetwork::TPostProcessingTargetInfo;
 using STI::TNetwork::TPostProcessingTargetInfoSeq;
 
 
@@ -61,11 +63,7 @@ void TPostProcessingManager_i::getTargets(TPostProcessingTargetInfoSeq_out targe
     auto localTargets = postProcessingManager->getPostProcessingTargets();
 
     TPostProcessingTargetInfoSeq_var tTargets(new TPostProcessingTargetInfoSeq());
-    tTargets->length(localTargets.size());
-    for (unsigned i = 0; i < localTargets.size(); ++i) {
-        tTargets[i].name = convert<std::string, CORBA::String_member>(localTargets[i].name);
-        tTargets[i].description = convert<std::string, CORBA::String_member>(localTargets[i].description);
-    }
+    convert<STI::Device::PostProcessingTargetInfo, TPostProcessingTargetInfo>(localTargets, tTargets.inout());   //vector -> seq
 
     (*targets) = tTargets;
 }

@@ -9,6 +9,7 @@
 #include <sti/device/ProfileManager.h>
 #include <sti/device/LogManager.h>
 #include <sti/device/VersionManager.h>
+#include <sti/device/PostProcessingManager.h>
 #include "DeviceCollectionPy.h"
 
 #include <memory>
@@ -58,7 +59,7 @@ public:
     std::shared_ptr<STI::Device::LogManager> getLogManager();
     std::shared_ptr<STI::Device::VersionManager> getVersionManager();
 
-    std::vector<std::pair<std::string, std::string>> getPostProcessingTargets();
+    std::vector<STI::Device::PostProcessingTargetInfo> getPostProcessingTargets();
 
     bool write(short channel, const MixedValuePy& value);
     bool write(short channel, const pybind11::object& value);

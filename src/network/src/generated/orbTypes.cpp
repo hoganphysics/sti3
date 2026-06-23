@@ -1243,10 +1243,27 @@ STI::TNetwork::TPostProcessRequest::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TPostProcessingOptionInfo::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(name,0);
+  _n.marshalString(description,0);
+
+}
+
+void
+STI::TNetwork::TPostProcessingOptionInfo::operator<<= (cdrStream &_n)
+{
+  name = _n.unmarshalString(0);
+  description = _n.unmarshalString(0);
+
+}
+
+void
 STI::TNetwork::TPostProcessingTargetInfo::operator>>= (cdrStream &_n) const
 {
   _n.marshalString(name,0);
   _n.marshalString(description,0);
+  (const TPostProcessingOptionInfoSeq&) options >>= _n;
 
 }
 
@@ -1255,6 +1272,7 @@ STI::TNetwork::TPostProcessingTargetInfo::operator<<= (cdrStream &_n)
 {
   name = _n.unmarshalString(0);
   description = _n.unmarshalString(0);
+  (TPostProcessingOptionInfoSeq&)options <<= _n;
 
 }
 

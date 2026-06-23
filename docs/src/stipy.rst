@@ -807,20 +807,27 @@ options)`` — already loaded — rather than a ``ShotID`` it must look up itsel
 Discovering targets
 +++++++++++++++++++
 
-A connected device reports its registered targets:
+A connected device reports its registered targets, each with the options it
+understands:
 
 .. code-block:: py
 
     analysis = connect("localhost/0/Analysis", "192.168.1.4:2809")
 
-    for name, description in analysis.getPostProcessingTargets():
-        print(name, description)
+    for target in analysis.getPostProcessingTargets():
+        print(target.name, "-", target.description)
+        for option in target.options:
+            print("   ", option.name, "-", option.description)
 
-``getPostProcessingTargets()`` returns a list of ``(name, description)`` pairs.
-This is the live, network-resolved companion to writing ``postTarget(name,
-...)`` in a standalone timing file: a script can be authored against named
-targets offline, and an interactive session or frontend can list the targets a
-device actually offers.
+``getPostProcessingTargets()`` returns a list of ``PostProcessingTargetInfo``
+objects, each with ``.name``, ``.description``, and ``.options`` (a list of
+``PostProcessingOptionInfo`` with ``.name`` and ``.description``).  The option
+list is the author-declared set of parameters a target accepts in its
+``postProcess()`` payload; it is documentation only and is not validated.  This is
+the live, network-resolved companion to writing ``postTarget(name, ...)`` in a
+standalone timing file: a script can be authored against named targets offline,
+and an interactive session or frontend can list the targets -- and supported
+options -- a device actually offers.
 
 Inspecting requests
 +++++++++++++++++++

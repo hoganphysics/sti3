@@ -168,8 +168,8 @@ public:
     Logger& log(const std::string& name);
 
 	void addTask(const std::shared_ptr<STI::Utils::Task>& task);
-	void addPostProcessingTarget(const std::string& name, STI::Device::PostProcessingFunction function,
-		const std::string& description = "");
+	STI::Device::PostProcessingTargetBuilder addPostProcessingTarget(const std::string& name,
+		STI::Device::PostProcessingFunction function, const std::string& description = "");
 	bool addVersionInfo(const VersionInfo& version);
 	bool addVersionInfo(const std::string& component, const std::string& version);
 

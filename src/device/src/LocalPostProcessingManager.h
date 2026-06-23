@@ -56,9 +56,12 @@ public:
 
     ~LocalPostProcessingManager() override;
 
-    void addPostProcessingTarget(const std::string& name,
-                                 PostProcessingFunction function,
-                                 const std::string& description = "") override;
+    //Register a named target and its callback, returning a chainable builder for
+    //declaring the target's supported options. Local-only (not part of the abstract
+    //PostProcessingManager interface): a callback cannot be registered remotely.
+    PostProcessingTargetBuilder addPostProcessingTarget(const std::string& name,
+                                                        PostProcessingFunction function,
+                                                        const std::string& description = "");
 
     std::vector<PostProcessingTargetInfo> getPostProcessingTargets() const override;
 
@@ -73,6 +76,15 @@ private:
 
     //EventQueue worker entry point.
     void handleEvent(const PostProcessWorkItem& item) override;
+
+    //One registered target: its callback plus the discovery info (name, description,
+    //option hints). Stored in a node-stable std::map so a returned builder's pointer
+    //into `info` stays valid across later registrations.
+    struct TargetEntry
+    {
+        PostProcessingFunction function;
+        PostProcessingTargetInfo info;
+    };
 
     bool getTarget(const std::string& name, PostProcessingFunction& function) const;
 
@@ -93,8 +105,7 @@ private:
     Logger* logger;
 
     mutable std::mutex registryMutex;
-    std::map<std::string, PostProcessingFunction> targets;
-    std::map<std::string, std::string> descriptions;
+    std::map<std::string, TargetEntry> targets;
     bool workerStarted;
 };
 

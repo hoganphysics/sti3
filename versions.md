@@ -62,6 +62,13 @@ Features:
 * Add `LocalDevice::addPostProcessingTarget()` for registering named targets and
   their callbacks, and `Device::getPostProcessingManager()` so local and remote
   device references can reach a device's targets.
+* Have `addPostProcessingTarget()` return a chainable `PostProcessingTargetBuilder`
+  (LocalChannel-style) whose `addOption(name, description)` calls declare the
+  options a target accepts; the hints are author-supplied documentation surfaced by
+  `getPostProcessingTargets()` (now reported as `PostProcessingTargetInfo` objects
+  carrying a `PostProcessingOptionInfo` list, over the network too). Target
+  registration is local-only and no longer part of the abstract
+  `PostProcessingManager` interface.
 * Add the `PostProcessTarget` and `PostProcessRequest` engine types and a
   non-hard-timed post-processing request side-list on `RawEventGroup`, parallel
   to (not part of) the hard-timed event table.
@@ -111,6 +118,9 @@ Python and examples:
   Python callable, and `Device.getPostProcessingTargets()` for discovering the
   targets a local or connected device offers. The callable now receives the pulled
   `ShotResult` (`def fit(shot_result, options): ...`) instead of a `ShotID`.
+  Registration returns a chainable builder (`.addOption(name, description)`), and
+  discovery returns `PostProcessingTargetInfo` objects exposing `.name`,
+  `.description`, and `.options`.
 * Wrap `PostProcessTarget` and `PostProcessRequest`, and expose
   `RawEventGroup.postProcessRequests()` for inspecting a shot's requests.
 * Update the committed C++ and Python `postProcess` example devices to the pulled
@@ -140,7 +150,9 @@ Tests:
   tree extended with post-process-only nodes, a missing target warning that still
   plays, and a regression that a missing hard-timed device still hard-errors.
 * Add network conversion round-trip coverage for the post-processing request
-  side-list and the completion message.
+  side-list, the completion message, and the target-info option hints.
+* Add C++ coverage for the `addOption` builder (chaining, option order, blank
+  descriptions, and that re-registering a target name resets its hints).
 
 ### 3.5.5 - File-backed makeshot performance
 

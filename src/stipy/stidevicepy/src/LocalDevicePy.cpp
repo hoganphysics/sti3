@@ -272,12 +272,12 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, co
     addTask(task);
 }
 
-void LocalDevicePy::addPostProcessingTarget(const std::string& name,
+STI::Device::PostProcessingTargetBuilder LocalDevicePy::addPostProcessingTarget(const std::string& name,
     const std::function<pybind11::object(std::shared_ptr<STI::Engine::ShotResult>, pybind11::object)>& function,
     const std::string& description)
 {
     if (device == 0) {
-        return;
+        return STI::Device::PostProcessingTargetBuilder();   //inert
     }
     if (!function) {
         throw std::invalid_argument("addPostProcessingTarget requires a valid callable.");
@@ -319,7 +319,7 @@ void LocalDevicePy::addPostProcessingTarget(const std::string& name,
         }
     };
 
-    device->addPostProcessingTarget(name, gil_function, description);
+    return device->addPostProcessingTarget(name, gil_function, description);
 }
 
 void LocalDevicePy::addMetadata(const std::string& key, const pybind11::object& value)

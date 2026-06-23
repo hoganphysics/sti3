@@ -84,8 +84,9 @@ public:
     //Register a named post-processing target backed by a Python callable. The
     //callable receives (shotResult, optionsDict) and returns a dict of results; it
     //is invoked on the post-processing worker thread (which has already pulled the
-    //ShotResult from the owning device), so the wrapper acquires the GIL.
-    void addPostProcessingTarget(const std::string& name,
+    //ShotResult from the owning device), so the wrapper acquires the GIL. Returns a
+    //chainable builder for declaring the target's supported options.
+    STI::Device::PostProcessingTargetBuilder addPostProcessingTarget(const std::string& name,
                                  const std::function<pybind11::object(std::shared_ptr<STI::Engine::ShotResult>, pybind11::object)>& function,
                                  const std::string& description = "");
 

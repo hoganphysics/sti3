@@ -689,7 +689,9 @@ hand.
                       results.addMetaData("N", STI::Utils::MixedValue(countAtoms(shotResult, options)));
                       return results;
                   },
-                  "Counts atoms from an absorption image.");
+                  "Counts atoms from an absorption image.")
+                  .addOption("roi", "Region of interest [x, y, w, h].")
+                  .addOption("model", "Fit model name, e.g. \"gaussian\".");
           }
       };
 
@@ -703,7 +705,9 @@ hand.
                   "atom number",
                   self.count_atoms,
                   "Counts atoms from an absorption image.",
-              )
+              ) \
+                  .addOption("roi", "Region of interest [x, y, w, h].") \
+                  .addOption("model", "Fit model name, e.g. 'gaussian'.")
 
           def count_atoms(self, shot_result, options):
               roi = options.get("roi")
@@ -715,6 +719,13 @@ name, the analysis callback, and an optional human-readable description.  In
 Python, the callback receives the ``ShotResult`` and an ``options`` dict and
 returns a results dict (or ``None`` for no results).  If the callback raises, the
 failure is reported in the completion message instead of crashing the worker.
+
+``addPostProcessingTarget`` returns a ``PostProcessingTargetBuilder`` whose
+``addOption(name, description="")`` calls chain to declare the options the target
+accepts in its ``postProcess()`` payload.  These hints are author-supplied
+documentation only -- they are not validated against the options actually passed
+-- and they surface through ``getPostProcessingTargets()`` so callers can discover
+what a target understands.
 
 When an analysis device processes shots played by *other* devices, declare each
 owner with ``addPartner(ownerID)`` in the analysis device's constructor.  That
@@ -743,13 +754,18 @@ Targets are reached through the abstract ``Device`` interface, so a device's
       if (device->getPostProcessingManager(manager) && manager != nullptr) {
           for (const auto& info : manager->getPostProcessingTargets()) {
               std::cout << info.name << ": " << info.description << std::endl;
+              for (const auto& option : info.options) {
+                  std::cout << "    " << option.name << ": " << option.description << std::endl;
+              }
           }
       }
 
    .. code-tab:: py
 
-      for name, description in device.getPostProcessingTargets():
-          print(name, description)
+      for target in device.getPostProcessingTargets():
+          print(target.name, target.description)
+          for option in target.options:
+              print("   ", option.name, option.description)
 
 Timing files request post-processing against these targets with
 ``postTarget()`` and ``postProcess()``.  See :ref:`stipypostprocessing` for the

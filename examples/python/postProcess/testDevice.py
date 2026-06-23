@@ -39,11 +39,18 @@ class AnalysisDevice(stidevicepy.LocalDevice):
         # broadcast in a PostProcessingComplete device message.  If the callback
         # raises, the failure is reported in that message instead of crashing the
         # worker.
+        #
+        # addPostProcessingTarget() returns a builder whose addOption() calls chain
+        # to declare the options the target understands.  These hints are
+        # documentation only (they are not validated) -- they let a caller discover,
+        # via getPostProcessingTargets(), what to pass in a postProcess() payload.
         self.addPostProcessingTarget(
             "atom number",
             self.fitAtomNumber,
             "Reduces a shot's measurement data to an atom number.",
-        )
+        ) \
+            .addOption("roi", "Region of interest [x, y, w, h] to integrate.") \
+            .addOption("model", "Fit model name, e.g. 'gaussian'.")
 
         # A target can also be a simple lambda.
         self.addPostProcessingTarget(

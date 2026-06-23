@@ -2,6 +2,7 @@
 
 #include "NetworkConvert.h"
 #include "convert/Convert_EventEngine.h"
+#include "convert/Convert_PostProcessing.h"
 
 #include <sti/engine/ShotID.h>
 #include <sti/device/DeviceID.h>
@@ -18,7 +19,6 @@ using STI::TNetwork::TPostProcessingTargetInfoSeq;
 using STI::TNetwork::TShotID;
 using STI::TNetwork::TDeviceID;
 using STI::TNetwork::TMixedValue;
-using STI::Device::PostProcessingFunction;
 using STI::Device::PostProcessingTargetInfo;
 using STI::Engine::ShotID;
 using STI::Device::DeviceID;
@@ -35,14 +35,6 @@ RemotePostProcessingManager::~RemotePostProcessingManager()
 {
 }
 
-void RemotePostProcessingManager::addPostProcessingTarget(const std::string& name,
-                                                          PostProcessingFunction function,
-                                                          const std::string& description)
-{
-    //Targets are registered locally on the device that owns the callback; there is
-    //no way to register a C++/Python callback on a remote device from here.
-}
-
 std::vector<PostProcessingTargetInfo> RemotePostProcessingManager::getPostProcessingTargets() const
 {
     std::unique_lock<std::mutex> lock(postProcessingMutex);
@@ -55,13 +47,7 @@ std::vector<PostProcessingTargetInfo> RemotePostProcessingManager::getPostProces
         STI::TNetwork::TPostProcessingTargetInfoSeq_var tTargets(new TPostProcessingTargetInfoSeq());
         getTRef()->getTargets(tTargets);	//remote call
 
-        result.reserve(tTargets->length());
-        for (unsigned i = 0; i < tTargets->length(); ++i) {
-            PostProcessingTargetInfo info;
-            info.name = convert<CORBA::String_member, std::string>(tTargets[i].name);
-            info.description = convert<CORBA::String_member, std::string>(tTargets[i].description);
-            result.push_back(info);
-        }
+        convert<STI::TNetwork::TPostProcessingTargetInfo, PostProcessingTargetInfo>(tTargets.in(), result);   //seq -> vector
     }
     catch (CORBA::TRANSIENT&) {
     }

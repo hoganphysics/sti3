@@ -14,6 +14,7 @@ using STI::Device::LocalPostProcessingManager;
 using STI::Device::PostProcessWorkItem;
 using STI::Device::PostProcessingFunction;
 using STI::Device::PostProcessingTargetInfo;
+using STI::Device::PostProcessingTargetBuilder;
 using STI::Device::PostProcessingStatus;
 using STI::Device::PostProcessingCompleteMessage;
 using STI::Device::DeviceID;
@@ -43,14 +44,19 @@ LocalPostProcessingManager::~LocalPostProcessingManager()
     stop();
 }
 
-void LocalPostProcessingManager::addPostProcessingTarget(const std::string& name,
-                                                         PostProcessingFunction function,
-                                                         const std::string& description)
+PostProcessingTargetBuilder LocalPostProcessingManager::addPostProcessingTarget(const std::string& name,
+                                                                                PostProcessingFunction function,
+                                                                                const std::string& description)
 {
+    PostProcessingTargetInfo* info = nullptr;
     {
         std::unique_lock<std::mutex> lock(registryMutex);
-        targets[name] = std::move(function);
-        descriptions[name] = description;
+        TargetEntry& entry = targets[name];
+        entry.function = std::move(function);
+        entry.info.name = name;
+        entry.info.description = description;
+        entry.info.options.clear();   //re-registering a name resets its option hints
+        info = &entry.info;
     }
 
     //Lazily start the worker on the first registered target so devices that never
@@ -66,6 +72,10 @@ void LocalPostProcessingManager::addPostProcessingTarget(const std::string& name
     if (startWorker) {
         start();
     }
+
+    //The builder points into the node-stable map entry; option hints declared
+    //through it land directly on the stored discovery info.
+    return PostProcessingTargetBuilder(*info);
 }
 
 std::vector<PostProcessingTargetInfo> LocalPostProcessingManager::getPostProcessingTargets() const
@@ -75,11 +85,7 @@ std::vector<PostProcessingTargetInfo> LocalPostProcessingManager::getPostProcess
     std::vector<PostProcessingTargetInfo> result;
     result.reserve(targets.size());
     for (const auto& entry : targets) {
-        PostProcessingTargetInfo info;
-        info.name = entry.first;
-        auto it = descriptions.find(entry.first);
-        info.description = (it != descriptions.end()) ? it->second : std::string();
-        result.push_back(info);
+        result.push_back(entry.second.info);   //pre-built; no per-call reconstruction
     }
     return result;
 }
@@ -91,7 +97,7 @@ bool LocalPostProcessingManager::getTarget(const std::string& name, PostProcessi
     if (it == targets.end()) {
         return false;
     }
-    function = it->second;   //copy out so the callback runs without holding the registry lock
+    function = it->second.function;   //copy out so the callback runs without holding the registry lock
     return true;
 }
 
