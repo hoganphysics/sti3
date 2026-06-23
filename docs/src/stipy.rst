@@ -779,16 +779,30 @@ non-fatal parse **warning** and is skipped; the shot still parses and plays
 normally.  This is different from a missing hard-timed event target, which makes
 the shot abstract and blocks playback.
 
+.. note::
+
+   An abstract, name-only ``postTarget("Analysis", ...)`` is convenient for
+   authoring a standalone timing file, but post-process targets are only
+   dispatched once they are bound to a concrete device.  Concretizing the
+   post-process side-list from an abstract-to-concrete target dictionary is still
+   in progress, so for now author the target concretely (for example
+   ``postTarget(dev("Analysis", "192.168.1.4", 0), "atom number")``) to have it
+   dispatched.  A target still abstract at parse time takes the warn-and-skip path
+   above.
+
 How results are delivered
 +++++++++++++++++++++++++
 
 When the shot finishes playing, the owning server dispatches each resolved
-request to its target device.  The target pulls the shot's measurement data,
-runs the registered routine on a background worker thread, and broadcasts a
-``PostProcessingComplete`` device message with the results, or with an error
-message if the routine raised an exception.  Because dispatch happens after the
-shot's results are persisted, the routine can reliably read the shot's
-measurements by ``ShotID``.
+request along the shot's dependency tree to its target device, forwarding through
+intermediate servers so a target nested behind a sub-server is still reached.
+The target's background worker pulls the shot's ``ShotResult`` from the owning
+device and passes it to the registered routine, which returns results that are
+broadcast in a ``PostProcessingComplete`` device message (or an error message if
+the routine raised, the owning device was unreachable, or the shot result was not
+found).  On the device side the callback therefore receives ``(shot_result,
+options)`` — already loaded — rather than a ``ShotID`` it must look up itself
+(see :ref:`devicepostprocessing`).
 
 Discovering targets
 +++++++++++++++++++

@@ -660,18 +660,20 @@ but giving an analysis routine its own device is the recommended way to get
 parallelism, because each device runs a single shared post-processing worker.
 
 Register targets during device construction with ``addPostProcessingTarget``.
-The callback receives the completed shot's ``ShotID`` and the per-request
-options, and returns a result that is broadcast to interested clients.  The
-worker thread runs after the shot's results are persisted, so the callback can
-reliably pull the shot's measurement data by ``ShotID``.
+The worker thread resolves the shot's owning device and pulls its ``ShotResult``
+before running the callback, so the callback receives the completed shot's
+``ShotResult`` (already loaded) and the per-request options, and returns a result
+that is broadcast to interested clients.  There is no need to look the shot up by
+hand.
 
 .. tabs::
 
    .. code-tab:: c++
 
-      #include <sti/device/PostProcessingManager.h>
-      #include <sti/engine/ShotID.h>
+      #include <sti/engine/ShotResult.h>
       #include <sti/utils/MetaData.h>
+
+      #include <memory>
 
       class AnalysisDevice : public STI::Device::LocalDevice
       {
@@ -681,10 +683,10 @@ reliably pull the shot's measurement data by ``ShotID``.
           {
               addPostProcessingTarget(
                   "atom number",
-                  [this](const STI::Engine::ShotID& shotID,
+                  [this](const std::shared_ptr<STI::Engine::ShotResult>& shotResult,
                          const STI::Utils::MetaData& options) {
                       STI::Utils::MetaData results;
-                      results.addMetaData("N", STI::Utils::MixedValue(countAtoms(shotID, options)));
+                      results.addMetaData("N", STI::Utils::MixedValue(countAtoms(shotResult, options)));
                       return results;
                   },
                   "Counts atoms from an absorption image.");
@@ -703,16 +705,25 @@ reliably pull the shot's measurement data by ``ShotID``.
                   "Counts atoms from an absorption image.",
               )
 
-          def count_atoms(self, shot_id, options):
+          def count_atoms(self, shot_result, options):
               roi = options.get("roi")
-              # ... pull shot data and analyze ...
+              # shot_result is already loaded; analyze shot_result.getMeasurements()
               return {"N": 1.0e6}
 
 ``addPostProcessingTarget(name, function, description="")`` takes the target
 name, the analysis callback, and an optional human-readable description.  In
-Python, the callback receives the ``ShotID`` and an ``options`` dict and returns
-a results dict (or ``None`` for no results).  If the callback raises, the
+Python, the callback receives the ``ShotResult`` and an ``options`` dict and
+returns a results dict (or ``None`` for no results).  If the callback raises, the
 failure is reported in the completion message instead of crashing the worker.
+
+When an analysis device processes shots played by *other* devices, declare each
+owner with ``addPartner(ownerID)`` in the analysis device's constructor.  That
+puts a direct reference to the owner in the analysis device's collection so the
+worker can pull the owner's ``ShotResult`` regardless of where the owner sits in
+the server hierarchy.  If the owner is unreachable (typically a missing
+``addPartner``) or the shot result cannot be found, no callback runs and the
+device broadcasts a ``Failed`` completion message whose error text distinguishes
+the two cases.
 
 When the analysis finishes, the device broadcasts a ``PostProcessingComplete``
 device message containing the ``ShotID``, target name, a success/failure status,
@@ -754,6 +765,12 @@ Implementation notes for device authors:
   post-processing device is never pulled into a shot's parse/play gating.  A
   request whose target cannot be resolved produces a non-fatal parse warning, not
   a play-time error.
+* Resolved requests are dispatched at the end of the job owner's play, routed
+  along the shot's dependency tree: requests for the owner or its directly-owned
+  devices are delivered immediately, and the rest are forwarded per branch to the
+  owned device that leads to each target, hop by hop.  This reaches analysis
+  devices nested behind sub-servers.  Each delivery only enqueues work and returns,
+  so the heavy analysis still runs asynchronously off the play path.
 * Target registration is expected during device construction, before the device
   is served.  Register all targets up front.
 

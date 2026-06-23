@@ -3,8 +3,11 @@
 
 #include <sti/LocalDevice.h>
 
-#include <sti/engine/ShotID.h>
 #include <sti/utils/MetaData.h>
+
+#include <memory>
+
+namespace STI { namespace Engine { class ShotResult; } }
 
 
 // A device that hosts post-processing targets.
@@ -26,9 +29,11 @@ public:
 	bool writeChannel(short channel, const STI::Utils::MixedValue& value);
 	bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data);
 
-	//post-processing callback: receives the completed shot's ID and the per-request
-	//options, and returns a results MetaData that is broadcast on completion.
-	STI::Utils::MetaData fitAtomNumber(const STI::Engine::ShotID& shotID, const STI::Utils::MetaData& options);
+	//post-processing callback: receives the completed shot's pulled ShotResult (the
+	//worker resolved it from the owning device) and the per-request options, and
+	//returns a results MetaData that is broadcast on completion.
+	STI::Utils::MetaData fitAtomNumber(const std::shared_ptr<STI::Engine::ShotResult>& shotResult,
+									   const STI::Utils::MetaData& options);
 
 };
 

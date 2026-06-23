@@ -2,6 +2,31 @@
 
 Date: 2026-06-20
 
+> **Partially superseded (3.6.0, see `postProcess-hierarchical-refactor.md`).**
+> The core types here — `PostProcessTarget`, `PostProcessRequest`,
+> `PostProcessingManager`/`LocalPostProcessingManager`, the
+> `PostProcessingComplete` message, and the `requestPostProcessing` RPC — are
+> unchanged. Three mechanisms below were replaced before release and the
+> sections describing them are historical:
+>
+> - **Storage.** The resolved request list is stored on the job owner's
+>   `LocalEventEngine` (per shot), not in a `std::map<ShotID, …>` on the
+>   scheduler and not copied onto the play job.
+> - **Dispatch.** Post-processing is *not* dispatched from a `PlayComplete`
+>   message listener (`PostProcessingDispatcher` was removed). The job owner's
+>   engine dispatches inline at the end of `play()` (after the shot is
+>   persisted), routing each request **along the shot's dependency tree**
+>   (`distributePostProcessing`) so targets nested behind sub-servers are
+>   reached at arbitrary depth — the original owner-collection-only resolution
+>   and dispatch could not reach them. Post-process targets are added to the
+>   dependency tree during parse (a second, additive `getDependants` pass).
+> - **Callback contract.** The worker resolves the owning device's
+>   `PersistenceManager` (self, or a partner declared with `addPartner`) and
+>   pulls the `ShotResult` itself, then passes it to the callback. The signature
+>   is `MetaData(const std::shared_ptr<ShotResult>&, const MetaData&)`, not
+>   `(const ShotID&, …)`; an unreachable owner or missing result aborts with a
+>   distinct `Failed` completion message instead of running the callback.
+
 ## Goal
 
 Add a first-class notion of asynchronous post-shot post-processing to the

@@ -27,15 +27,18 @@ class AnalysisDevice(stidevicepy.LocalDevice):
         stidevicepy.LocalDevice.__init__(self, config)
 
         # A measurement (input) channel.  In this single-device example the same
-        # device plays the shot and post-processes it, so its own
-        # PersistenceManager holds the shot data the targets analyze.
+        # device plays the shot and post-processes it, so it is its own shot owner
+        # and no addPartner() is needed.  (A dedicated analysis device that analyzes
+        # shots played by *other* devices declares each owner with addPartner() so
+        # the worker can pull their ShotResult.)
         self.addInputChannel(0, stipy.MixedValueType.Number, "signal")
 
         # Register post-processing targets.  The callback receives the completed
-        # shot's ShotID and the per-request options dict, and returns a results
-        # dict that is broadcast in a PostProcessingComplete device message.  If
-        # the callback raises, the failure is reported in that message instead of
-        # crashing the worker.
+        # shot's pulled ShotResult (the worker resolved it from the owning device)
+        # and the per-request options dict, and returns a results dict that is
+        # broadcast in a PostProcessingComplete device message.  If the callback
+        # raises, the failure is reported in that message instead of crashing the
+        # worker.
         self.addPostProcessingTarget(
             "atom number",
             self.fitAtomNumber,
@@ -45,15 +48,15 @@ class AnalysisDevice(stidevicepy.LocalDevice):
         # A target can also be a simple lambda.
         self.addPostProcessingTarget(
             "echo options",
-            lambda shotID, options: dict(options),
+            lambda shotResult, options: dict(options),
             "Returns the request options unchanged (useful for testing).",
         )
 
-    def fitAtomNumber(self, shotID, options):
-        # Pull this shot's data by ShotID.  The owning device's PersistenceManager
-        # holds the result; dispatch happens after the result is persisted, so the
-        # lookup succeeds.  A real target would fit or reduce the data here.
-        shotResult = self.getPersistenceManager().getShotResult(shotID)
+    def fitAtomNumber(self, shotResult, options):
+        # The worker has already pulled this shot's ShotResult from the owning
+        # device, so a target reduces it directly -- no getPersistenceManager()/
+        # getShotResult() lookup needed.  A real target would fit or reduce
+        # shotResult.getMeasurements() here.
         haveData = shotResult is not None
 
         return {

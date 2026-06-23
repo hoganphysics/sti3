@@ -26,6 +26,7 @@
 #include <sti/utils/MixedValue.h>
 
 #include "LocalEventEngineScheduler.h"
+#include "EventEngineDependencyTree.h"
 #include "StackTrace.h"
 
 #include <atomic>
@@ -296,6 +297,36 @@ TEST_CASE("Resolvable post-processing target plays normally and dispatches the c
     CHECK(dispatched);
     CHECK(ppCalls.load() == 1);
     CHECK(gotShotResult.load());   //worker pulled the owner's ShotResult and handed it to the callback
+}
+
+TEST_CASE("Parse extends the dependency tree with post-process-only target nodes", "[postprocessing][eventengine]")
+{
+    //The post-process target has no events, so it enters the dependency tree only
+    //via the second (additive) getDependants pass over the post-process side-list.
+    //Verifying the tree carries both the event owner and the analysis device proves
+    //the second pass extended the pre-populated tree instead of replacing it.
+    auto player = std::make_shared<PlayingDevice>("PPTreePlayer", 20, "root");
+    auto analysis = std::make_shared<PlayingDevice>("PPTreeAnalysis", 21, player->getID().getID());
+    auto distributer = distributeDevices({player, analysis});
+
+    auto scheduler = schedulerFor(*player);
+
+    PostProcessTarget target(STI::Engine::RawEventTargetDevice(analysis->getID()), "fit");
+    auto shot = makeShot(*scheduler, player->getID(), &target);
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+
+    std::shared_ptr<EventEngineJob> parseJob;
+    REQUIRE(scheduler->getJob(EngineJobID(parseStatus.pid), parseJob));
+    REQUIRE(parseJob != nullptr);
+
+    std::shared_ptr<STI::Engine::EventEngineDependencyTree> tree;
+    REQUIRE(parseJob->getDependencies(tree));
+    REQUIRE(tree != nullptr);
+
+    CHECK(tree->hasVertex(player->getID()));     //event-target pass (also the tree root)
+    CHECK(tree->hasVertex(analysis->getID()));   //post-process pass extended the same tree
 }
 
 TEST_CASE("Post-processing request routes through a two-level hierarchy to a nested target", "[postprocessing][eventengine]")

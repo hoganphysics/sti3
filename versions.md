@@ -65,15 +65,28 @@ Features:
 * Add the `PostProcessTarget` and `PostProcessRequest` engine types and a
   non-hard-timed post-processing request side-list on `RawEventGroup`, parallel
   to (not part of) the hard-timed event table.
-* Resolve post-processing targets during parsing; a target that cannot be found
+* Resolve post-processing targets during parsing and add them to the shot's
+  dependency tree (a second, additive `getDependants` pass over the side-list, on
+  the same tree the hard-timed event targets use). A target that cannot be found
   produces a non-fatal "Missing post-processing target" parse warning and is
   skipped, instead of making the shot abstract and blocking playback.
-* Dispatch resolved requests after a shot's `PlayComplete` notification, off the
-  scheduler's play-critical path, so the analysis routine reads already-persisted
-  shot results.
+* Store the resolved requests on the job owner's `LocalEventEngine` (not on the
+  scheduler) and dispatch them at the end of that engine's play, after the shot
+  result is persisted, off the play-critical handshake.
+* Route dispatch along the dependency tree (`distributePostProcessing`): requests
+  for the owner or its directly-owned devices are delivered immediately; the rest
+  are forwarded, as per-branch sublists, to the owned branch that leads to each
+  target, repeating at each hop to arbitrary depth. This reaches analysis devices
+  nested behind sub-servers, which the original owner-collection-only dispatch
+  could not.
+* Pull the shot's `ShotResult` on the target's worker thread (resolving the owner
+  device's `PersistenceManager`, self or a partner reference) and hand it to the
+  callback, whose signature is now `MetaData(const shared_ptr<ShotResult>&, const
+  MetaData&)`. Two distinct `Failed` completion messages separate "owner not
+  reachable (declare it with `addPartner`)" from "shot result not found on owner".
 * Broadcast a `PostProcessingCompleteMessage` with the results, or an error
-  message when the routine raises, so other devices and clients can subscribe to
-  completed analyses.
+  message when the routine raises or the result is unavailable, so other devices
+  and clients can subscribe to completed analyses.
 
 Network:
 
@@ -82,6 +95,10 @@ Network:
 * Add a `TPostProcessingManager` interface and a
   `TDevice::getPostProcessingManager()` accessor, a `RemotePostProcessingManager`
   proxy, and a `TPostProcessingManager_i` servant.
+* Add a `distributePostProcessing` RPC on `TEventEngineScheduler` (with
+  `RemoteEventEngineScheduler` marshalling and `TEventEngineScheduler_i` servant)
+  so the tree-routed dispatch forwards per-branch request sublists, plus the
+  dependency tree, to a branch device's scheduler at each hop.
 * Add a `TPostProcessingCompleteMessage` structure and device-message conversion
   so completion messages relay over the network.
 
@@ -92,9 +109,14 @@ Python and examples:
   a dictionary of options, and no time argument.
 * Add `LocalDevice.addPostProcessingTarget()` for registering targets backed by a
   Python callable, and `Device.getPostProcessingTargets()` for discovering the
-  targets a local or connected device offers.
+  targets a local or connected device offers. The callable now receives the pulled
+  `ShotResult` (`def fit(shot_result, options): ...`) instead of a `ShotID`.
 * Wrap `PostProcessTarget` and `PostProcessRequest`, and expose
   `RawEventGroup.postProcessRequests()` for inspecting a shot's requests.
+* Update the committed C++ and Python `postProcess` example devices to the pulled
+  `ShotResult` callback, dropping the manual `getPersistenceManager()`/
+  `getShotResult()` lookup (and noting `addPartner(owner)` for cross-device
+  analysis).
 
 Fixes:
 
@@ -110,10 +132,13 @@ Documentation:
 
 Tests:
 
-* Add C++ coverage for `PostProcessTarget`, `LocalPostProcessingManager` success
-  and exception paths, and event-engine integration covering a resolvable target,
-  a missing target warning that still plays, and a regression that a missing
-  hard-timed device still hard-errors.
+* Add C++ coverage for `PostProcessTarget`, `LocalPostProcessingManager` success,
+  exception, and the two abort paths (owner unreachable / shot result not found,
+  each driven through a backing `PersistenceManager` that returns a `ShotResult`),
+  and event-engine integration covering a resolvable target, a two-level hierarchy
+  where the analysis device is reachable only via a sub-server, the dependency
+  tree extended with post-process-only nodes, a missing target warning that still
+  plays, and a regression that a missing hard-timed device still hard-errors.
 * Add network conversion round-trip coverage for the post-processing request
   side-list and the completion message.
 
