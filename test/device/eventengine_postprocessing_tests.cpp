@@ -18,6 +18,7 @@
 #include <sti/engine/RawEventTargetChannel.h>
 #include <sti/engine/Shot.h>
 #include <sti/engine/ShotConfig.h>
+#include <sti/engine/ShotResult.h>
 #include <sti/engine/SynchronousEvent.h>
 #include <sti/utils/Distributer.h>
 #include <sti/utils/Configuration.h>
@@ -251,10 +252,15 @@ TEST_CASE("Resolvable post-processing target plays normally and dispatches the c
     auto analysis = std::make_shared<PlayingDevice>("PPAnalysis", 2, player->getID().getID());
 
     std::atomic<int> ppCalls{0};
-    analysis->addPostProcessingTarget("fit", [&](const ShotID&, const MetaData&) {
+    std::atomic<bool> gotShotResult{false};
+    analysis->addPostProcessingTarget("fit", [&](const std::shared_ptr<STI::Engine::ShotResult>& shotResult, const MetaData&) {
+        gotShotResult = (shotResult != nullptr);
         ++ppCalls;
         return MetaData();
     });
+    //The analysis device pulls the shot result from the owner, so declare the owner
+    //as a partner (puts a direct reference to the owner in the analysis collection).
+    analysis->addPartner(player->getID());
 
     auto distributer = distributeDevices({player, analysis});
 
@@ -289,6 +295,7 @@ TEST_CASE("Resolvable post-processing target plays normally and dispatches the c
     }
     CHECK(dispatched);
     CHECK(ppCalls.load() == 1);
+    CHECK(gotShotResult.load());   //worker pulled the owner's ShotResult and handed it to the callback
 }
 
 TEST_CASE("Post-processing request routes through a two-level hierarchy to a nested target", "[postprocessing][eventengine]")
@@ -303,10 +310,15 @@ TEST_CASE("Post-processing request routes through a two-level hierarchy to a nes
     auto analysis = std::make_shared<PlayingDevice>("PPHAnalysis", 12, subServer->getID().getID());
 
     std::atomic<int> ppCalls{0};
-    analysis->addPostProcessingTarget("fit", [&](const ShotID&, const MetaData&) {
+    std::atomic<bool> gotShotResult{false};
+    analysis->addPostProcessingTarget("fit", [&](const std::shared_ptr<STI::Engine::ShotResult>& shotResult, const MetaData&) {
+        gotShotResult = (shotResult != nullptr);
         ++ppCalls;
         return MetaData();
     });
+    //The nested analysis device pulls the shot result directly from the owner, so
+    //declare the owner as a partner regardless of the server hierarchy depth.
+    analysis->addPartner(player->getID());
 
     auto distributer = distributeDevices({player, subServer, analysis});
 
@@ -348,6 +360,7 @@ TEST_CASE("Post-processing request routes through a two-level hierarchy to a nes
     }
     CHECK(dispatched);
     CHECK(ppCalls.load() == 1);
+    CHECK(gotShotResult.load());   //pulled across the hierarchy from the owner (declared as partner)
 }
 
 TEST_CASE("Missing post-processing target warns but the shot still plays", "[postprocessing][eventengine]")

@@ -5,6 +5,7 @@
 #include <sti/device/VersionInfo.h>
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineScheduler.h>
+#include <sti/engine/ShotResult.h>
 
 #include "AttributeManagerPy.h"
 #include "ChannelManagerPy.h"

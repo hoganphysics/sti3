@@ -76,10 +76,10 @@ private:
 
     bool getTarget(const std::string& name, PostProcessingFunction& function) const;
 
-    //Best-effort: ensure the owning device's results are persisted before running
-    //the callback. Logs (does not throw) if unavailable.
-    void ensureResultsAvailable(const STI::Engine::ShotID& shotID,
-                                const STI::Device::DeviceID& shotOwnerID);
+    //Resolve the owning device's PersistenceManager (self, or a partner reference
+    //in the collection). Returns false if the owner is unreachable.
+    bool resolveOwnerPersistenceManager(const STI::Device::DeviceID& shotOwnerID,
+                                        std::shared_ptr<PersistenceManager>& ownerPM) const;
 
     void dispatchComplete(const PostProcessWorkItem& item,
                           PostProcessingStatus status,

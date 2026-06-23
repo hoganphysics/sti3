@@ -13,15 +13,21 @@
 
 namespace STI
 {
+namespace Engine
+{
+class ShotResult;
+}
+
 namespace Device
 {
 
 
 //User callback run on a background worker thread when a shot is ready for
-//processing. Receives the completed shot's ID and the per-request options;
-//returns a MetaData result that is broadcast in a PostProcessingCompleteMessage.
+//processing. Receives the completed shot's pulled ShotResult (already resolved
+//from the owning device by the worker) and the per-request options; returns a
+//MetaData result that is broadcast in a PostProcessingCompleteMessage.
 using PostProcessingFunction =
-    std::function<STI::Utils::MetaData(const STI::Engine::ShotID&, const STI::Utils::MetaData&)>;
+    std::function<STI::Utils::MetaData(const std::shared_ptr<STI::Engine::ShotResult>&, const STI::Utils::MetaData&)>;
 
 
 struct PostProcessingTargetInfo

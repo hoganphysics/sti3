@@ -10,6 +10,7 @@
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/MetaData.h>
 #include <sti/engine/ShotID.h>
+#include <sti/engine/ShotResult.h>
 
 #include "SynchronousEventPy.h"
 #include "SynchronousEventPyManager.h"
@@ -272,7 +273,7 @@ void LocalDevicePy::addTask(const std::shared_ptr<STI::Python::TaskPy>& task, co
 }
 
 void LocalDevicePy::addPostProcessingTarget(const std::string& name,
-    const std::function<pybind11::object(STI::Engine::ShotID, pybind11::object)>& function,
+    const std::function<pybind11::object(std::shared_ptr<STI::Engine::ShotResult>, pybind11::object)>& function,
     const std::string& description)
 {
     if (device == 0) {
@@ -284,8 +285,9 @@ void LocalDevicePy::addPostProcessingTarget(const std::string& name,
 
     //Bridge the Python callable into the C++ PostProcessingFunction. The worker
     //thread runs without the GIL, so acquire it around the callback and translate
-    //a Python exception into a C++ exception (the manager reports it as Failed).
-    auto gil_function = [function](const STI::Engine::ShotID& shotID,
+    //a Python exception into a C++ exception (the manager reports it as Failed). The
+    //worker has already pulled the ShotResult from the owning device.
+    auto gil_function = [function](const std::shared_ptr<STI::Engine::ShotResult>& shotResult,
                                    const STI::Utils::MetaData& options) -> STI::Utils::MetaData {
         pybind11::gil_scoped_acquire acquire;
 
@@ -296,7 +298,7 @@ void LocalDevicePy::addPostProcessingTarget(const std::string& name,
         }
 
         try {
-            py::object result = function(shotID, optionsDict);
+            py::object result = function(shotResult, optionsDict);
 
             STI::Utils::MetaData resultMetaData;
             if (!result.is_none() && py::isinstance<py::dict>(result)) {

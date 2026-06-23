@@ -125,38 +125,25 @@ void LocalPostProcessingManager::stop()
     STI::Utils::EventQueue<PostProcessWorkItem>::stop();
 }
 
-void LocalPostProcessingManager::ensureResultsAvailable(const ShotID& shotID, const DeviceID& shotOwnerID)
+bool LocalPostProcessingManager::resolveOwnerPersistenceManager(const DeviceID& shotOwnerID,
+                                                               std::shared_ptr<PersistenceManager>& ownerPM) const
 {
     //Resolve the owning device's PersistenceManager (local or remote via the
-    //abstract Device interface) and confirm the shot result is persisted. Because
-    //dispatch is triggered off PlayComplete, this should already be true.
-    std::shared_ptr<PersistenceManager> ownerPM;
-
+    //abstract Device interface). A remote owner is reachable iff it was declared
+    //as a partner on this device (addPartner puts a direct reference in the
+    //collection, independent of server-chain locality).
     if (shotOwnerID == deviceID || shotOwnerID.empty()) {
         ownerPM = persistenceManager;
+        return ownerPM != 0;
     }
-    else if (deviceCollection != 0) {
+
+    if (deviceCollection != 0) {
         std::shared_ptr<Device> dev;
         if (deviceCollection->get(shotOwnerID, dev) && dev != 0) {
             dev->getPersistenceManager(ownerPM);
         }
     }
-
-    if (ownerPM == 0) {
-        if (logger != 0) {
-            (*logger) << "PostProcessing: could not resolve PersistenceManager for shot owner "
-                      << shotOwnerID.getID() << "\n";
-        }
-        return;
-    }
-
-    std::shared_ptr<ShotResult> result;
-    if (!ownerPM->getShotResult(shotID, result) || result == 0) {
-        if (logger != 0) {
-            (*logger) << "PostProcessing: results not yet available for shot "
-                      << shotID.print() << "\n";
-        }
-    }
+    return ownerPM != 0;
 }
 
 void LocalPostProcessingManager::handleEvent(const PostProcessWorkItem& item)
@@ -170,15 +157,31 @@ void LocalPostProcessingManager::handleEvent(const PostProcessWorkItem& item)
         return;
     }
 
-    //Best-effort readiness check; never blocks the callback.
-    ensureResultsAvailable(item.shotID, item.shotOwnerID);
+    //Resolve the owner's PersistenceManager and pull the ShotResult on this worker
+    //thread (off the play path), then hand the result to the user callback. The two
+    //failure modes get distinct messages so the user can tell whether to fix their
+    //addPartner configuration or look at why the shot data is missing.
+    std::shared_ptr<PersistenceManager> ownerPM;
+    if (!resolveOwnerPersistenceManager(item.shotOwnerID, ownerPM)) {
+        dispatchComplete(item, PostProcessingStatus::Failed, MetaData(),
+            "post-processing owner device '" + item.shotOwnerID.getID() +
+            "' is not reachable; declare it as a partner (addPartner) on the post-processing device");
+        return;
+    }
+
+    std::shared_ptr<ShotResult> shotResult;
+    if (!ownerPM->getShotResult(item.shotID, shotResult) || shotResult == 0) {
+        dispatchComplete(item, PostProcessingStatus::Failed, MetaData(),
+            "shot result '" + item.shotID.print() + "' not found on owner device '" + item.shotOwnerID.getID() + "'");
+        return;
+    }
 
     MetaData results;
     PostProcessingStatus status = PostProcessingStatus::Success;
     std::string errorMessage;
 
     try {
-        results = function(item.shotID, item.options);
+        results = function(shotResult, item.options);
     }
     catch (const std::exception& e) {
         status = PostProcessingStatus::Failed;
