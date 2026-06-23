@@ -2,6 +2,8 @@
 
 #include "NetworkConvert.h"
 #include "NetworkBinaryDataStream.h"
+#include "RemoteTask.h"
+#include "RemoteTaskManager.h"
 #include "RemoteChannel.h"
 #include "convert/Convert_Channel.h"
 #include "convert/Convert_DeviceMessage.h"
@@ -11,12 +13,14 @@
 #include "convert/Convert_Profile.h"
 #include "convert/Convert_SequenceResult.h"
 #include "convert/Convert_ShotResult.h"
+#include "convert/Convert_Task.h"
 
 #include <sti/device/DeviceID.h>
 #include <sti/device/DeviceMessage.h>
 #include <sti/device/LocalChannel.h>
 #include <sti/device/LogID.h>
 #include <sti/device/LogRecord.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include <sti/device/Profile.h>
 #include <sti/device/VersionInfo.h>
 #include <sti/engine/EngineJobID.h>
@@ -34,11 +38,13 @@
 #include <sti/utils/Image.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/Task.h>
 #include <sti/utils/TimeStamp.h>
 
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <cstring>
@@ -94,6 +100,39 @@ std::shared_ptr<STI::Utils::BinaryData> makeIntBinaryData(const std::vector<int>
     data->assign(buffer, payload.size());
     return data;
 }
+
+class ConvertTask : public STI::Utils::Task
+{
+public:
+    explicit ConvertTask(const std::string& id)
+        : STI::Utils::Task(id)
+    {
+        addMetaData("kind", STI::Utils::MixedValue("convert"));
+    }
+
+    double secondsToNextRun() const override { return 0; }
+    void skipTask() override {}
+    bool repeat() override { return false; }
+
+private:
+    void run() override {}
+};
+
+class FakeRemoteTaskManager : public STI::Network::RemoteTaskManager
+{
+public:
+    FakeRemoteTaskManager()
+        : STI::Network::RemoteTaskManager(STI::TNetwork::TTaskManager::_nil())
+    {
+    }
+
+    std::optional<STI::Utils::TimeStamp> getTaskLastRunTime(const std::string&) const override
+    {
+        return lastRunTime;
+    }
+
+    std::optional<STI::Utils::TimeStamp> lastRunTime;
+};
 
 std::string binaryBytes(const std::shared_ptr<STI::Utils::BinaryData>& data)
 {
@@ -224,6 +263,24 @@ TEST_CASE("NetworkConvert: DeviceID, VersionInfo, and FileID round trip")
     auto tFileID = STI::Network::convert<STI::Utils::FileID, STI::TNetwork::TFileID>(fileID);
     auto fileIDRoundTrip = STI::Network::convert<STI::TNetwork::TFileID, STI::Utils::FileID>(tFileID);
     checkFileID(fileIDRoundTrip, fileID);
+}
+
+TEST_CASE("NetworkConvert: PartnerDeviceInfo round trips declared partner metadata", "[network][convert][partner]")
+{
+    STI::Device::PartnerDeviceInfo partner;
+    partner.deviceID = makeDeviceID("supply", "192.168.1.20", 3);
+    partner.aliases = {"supply", "laser-supply"};
+    partner.eventTarget = true;
+
+    auto tPartner = STI::Network::convert<STI::Device::PartnerDeviceInfo, STI::TNetwork::TPartnerDeviceInfo>(partner);
+    CHECK(std::string(tPartner.aliases[0]) == "supply");
+    CHECK(std::string(tPartner.aliases[1]) == "laser-supply");
+    CHECK(static_cast<bool>(tPartner.eventTarget));
+
+    auto roundTrip = STI::Network::convert<STI::TNetwork::TPartnerDeviceInfo, STI::Device::PartnerDeviceInfo>(tPartner);
+    checkDeviceID(roundTrip.deviceID, partner.deviceID);
+    CHECK(roundTrip.aliases == partner.aliases);
+    CHECK(roundTrip.eventTarget == partner.eventTarget);
 }
 
 TEST_CASE("NetworkConvert: Profile round trips attributes and channel values")
@@ -368,6 +425,36 @@ TEST_CASE("NetworkConvert: read results can preserve lazy binary streams", "[net
     CHECK(binaryBytes(lazy) == payload);
 }
 
+TEST_CASE("NetworkConvert: re-exporting lazy BinaryData relays the existing stream reference", "[network][convert][binary]")
+{
+    const std::string payload = "relay-binary-stream";
+    auto source = makeBinaryData(payload);
+
+    STI::TNetwork::TBinaryData sourceRef;
+    REQUIRE(STI::Network::convertBinaryData(
+        source, sourceRef, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+    REQUIRE(sourceRef.data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+
+    auto serverSideLazy = std::make_shared<STI::Utils::BinaryData>();
+    REQUIRE(STI::Network::convertBinaryData(
+        sourceRef, serverSideLazy, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+    REQUIRE_FALSE(serverSideLazy->hasLocalData());
+    REQUIRE(serverSideLazy->hasStream());
+
+    STI::TNetwork::TBinaryData relayedRef;
+    REQUIRE(STI::Network::convertBinaryData(
+        serverSideLazy, relayedRef, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+    REQUIRE(relayedRef.data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(relayedRef.data.data_stream()->_is_equivalent(sourceRef.data.data_stream()));
+    CHECK_FALSE(serverSideLazy->hasLocalData());
+
+    auto clientSideLazy = std::make_shared<STI::Utils::BinaryData>();
+    REQUIRE(STI::Network::convertBinaryData(
+        relayedRef, clientSideLazy, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+    CHECK(binaryBytes(clientSideLazy) == payload);
+    CHECK_FALSE(serverSideLazy->hasLocalData());
+}
+
 TEST_CASE("NetworkConvert: read results can preserve lazy binary-backed images", "[network][convert][binary]")
 {
     const std::string payload = "read-result-image";
@@ -472,6 +559,73 @@ TEST_CASE("NetworkConvert: Channel snapshot sends binary-backed images as lazy s
     CHECK(binaryBytes(remoteBinary) == payload);
 }
 
+TEST_CASE("NetworkConvert: Channel snapshot sends heavy last value payloads as lazy streams", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        7, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Binary, STI::Utils::MixedValueType::Binary, "binary-argument");
+    const std::string payload = "snapshot-last-value-binary";
+    auto binary = makeBinaryData(payload);
+    channel->saveLastValue(STI::Utils::MixedValue(binary));
+
+    STI::TNetwork::TChannel tChannel;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, tChannel));
+    REQUIRE(tChannel.lastValue._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    CHECK(tChannel.lastValue.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(tChannel.lastValue.valueBin().bytes == binary->bytes());
+
+    auto remote = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(tChannel);
+    REQUIRE(remote != nullptr);
+    auto value = remote->getLastValue();
+    REQUIRE(value.getType() == STI::Utils::MixedValueType::Binary);
+
+    auto remoteBinary = value.getBinary();
+    REQUIRE(remoteBinary != nullptr);
+    CHECK_FALSE(remoteBinary->isMaterialized());
+    CHECK(remoteBinary->hasStream());
+    CHECK(remoteBinary->bytes() == binary->bytes());
+    CHECK(binaryBytes(remoteBinary) == payload);
+}
+
+TEST_CASE("NetworkConvert: Channel snapshot re-export relays lazy last measurement stream references", "[network][convert][channel]")
+{
+    auto channel = std::make_shared<STI::Device::LocalChannel>(
+        8, STI::Device::ChannelType::Input, STI::Utils::MixedValueType::Binary, STI::Utils::MixedValueType::Empty, "relayed-binary");
+    const std::string payload = "snapshot-relayed-binary";
+    auto binary = makeBinaryData(payload);
+    channel->saveLastMeasurement(STI::Utils::MixedValue(binary));
+
+    STI::TNetwork::TChannel sourceSnapshot;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(channel, sourceSnapshot));
+    REQUIRE(sourceSnapshot.lastMeasurement._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    REQUIRE(sourceSnapshot.lastMeasurement.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+
+    auto serverSideChannel = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(sourceSnapshot);
+    REQUIRE(serverSideChannel != nullptr);
+    auto serverSideMeasurement = serverSideChannel->getLastMeasurement();
+    REQUIRE(serverSideMeasurement.getType() == STI::Utils::MixedValueType::Binary);
+    auto serverSideBinary = serverSideMeasurement.getBinary();
+    REQUIRE(serverSideBinary != nullptr);
+    REQUIRE_FALSE(serverSideBinary->hasLocalData());
+    REQUIRE(serverSideBinary->hasStream());
+
+    STI::TNetwork::TChannel relayedSnapshot;
+    REQUIRE(STI::Network::convert<std::shared_ptr<STI::Device::Channel>, STI::TNetwork::TChannel>(
+        std::static_pointer_cast<STI::Device::Channel>(serverSideChannel), relayedSnapshot));
+    REQUIRE(relayedSnapshot.lastMeasurement._d() == STI::TNetwork::TMixedValueType::MixedValueBinary);
+    REQUIRE(relayedSnapshot.lastMeasurement.valueBin().data._d() == STI::TNetwork::TBinaryType::BinaryStream);
+    CHECK(relayedSnapshot.lastMeasurement.valueBin().data.data_stream()->_is_equivalent(
+        sourceSnapshot.lastMeasurement.valueBin().data.data_stream()));
+    CHECK_FALSE(serverSideBinary->hasLocalData());
+
+    auto clientSideChannel = STI::Network::convert<STI::TNetwork::TChannel, std::shared_ptr<STI::Network::RemoteChannel>>(relayedSnapshot);
+    REQUIRE(clientSideChannel != nullptr);
+    auto clientSideMeasurement = clientSideChannel->getLastMeasurement();
+    auto clientSideBinary = clientSideMeasurement.getBinary();
+    REQUIRE(clientSideBinary != nullptr);
+    CHECK(binaryBytes(clientSideBinary) == payload);
+    CHECK_FALSE(serverSideBinary->hasLocalData());
+}
+
 TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurement maps", "[network][convert][channel]")
 {
     auto message = std::make_shared<STI::Device::ChannelUpdateMessage>(makeDeviceID(), 1, STI::Utils::MixedValue(11));
@@ -497,6 +651,94 @@ TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurem
     REQUIRE(roundTrip->measurementValues.size() == 2);
     CHECK(roundTrip->measurementValues.at(1) == STI::Utils::MixedValue(1.5));
     CHECK(roundTrip->measurementValues.at(3) == STI::Utils::MixedValue("done"));
+}
+
+TEST_CASE("NetworkConvert: TaskUpdateMessage round trips through TAnyMessage", "[network][convert][task]")
+{
+    using STI::Device::DeviceMessage;
+    using STI::Device::TaskUpdateMessage;
+    using STI::Utils::TaskStatus;
+
+    auto statusMessage = std::make_shared<TaskUpdateMessage>(
+        makeDeviceID(), "camera-warmup", TaskStatus::Inactive);
+
+    STI::TNetwork::TAnyMessage tStatusMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
+        std::static_pointer_cast<DeviceMessage>(statusMessage), tStatusMessage));
+    CHECK(tStatusMessage.type == STI::TNetwork::TDeviceMessageType::MessageTaskUpdate);
+
+    std::shared_ptr<DeviceMessage> statusBase;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TAnyMessage, std::shared_ptr<DeviceMessage>>(
+        tStatusMessage, statusBase));
+    auto statusRoundTrip = std::dynamic_pointer_cast<TaskUpdateMessage>(statusBase);
+    REQUIRE(statusRoundTrip != nullptr);
+    CHECK(statusRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Status);
+    CHECK(statusRoundTrip->taskID == "camera-warmup");
+    CHECK(statusRoundTrip->taskStatus == TaskStatus::Inactive);
+    CHECK_FALSE(statusRoundTrip->timestamp.has_value());
+
+    const auto timestamp = makeTimeStamp();
+    auto runMessage = std::make_shared<TaskUpdateMessage>(
+        makeDeviceID(), "camera-warmup", timestamp);
+
+    STI::TNetwork::TAnyMessage tRunMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
+        std::static_pointer_cast<DeviceMessage>(runMessage), tRunMessage));
+
+    std::shared_ptr<DeviceMessage> runBase;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TAnyMessage, std::shared_ptr<DeviceMessage>>(
+        tRunMessage, runBase));
+    auto runRoundTrip = std::dynamic_pointer_cast<TaskUpdateMessage>(runBase);
+    REQUIRE(runRoundTrip != nullptr);
+    CHECK(runRoundTrip->updateType == TaskUpdateMessage::TaskUpdateType::Run);
+    CHECK(runRoundTrip->taskID == "camera-warmup");
+    REQUIRE(runRoundTrip->timestamp.has_value());
+    CHECK(runRoundTrip->timestamp.value() == timestamp);
+}
+
+TEST_CASE("NetworkConvert: TTask preserves last run time presence and value", "[network][convert][task]")
+{
+    std::shared_ptr<STI::Utils::Task> neverRun = std::make_shared<ConvertTask>("never-run");
+
+    auto tNeverRun = STI::Network::convert<std::shared_ptr<STI::Utils::Task>, STI::TNetwork::TTask>(neverRun);
+    CHECK_FALSE(tNeverRun.hasLastRunTime);
+
+    std::shared_ptr<STI::Utils::Task> neverRunRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TTask, std::shared_ptr<STI::Utils::Task>>(
+        tNeverRun, neverRunRoundTrip));
+    REQUIRE(neverRunRoundTrip != nullptr);
+    CHECK_FALSE(neverRunRoundTrip->hasLastRunTime());
+
+    std::shared_ptr<STI::Utils::Task> ran = std::make_shared<ConvertTask>("ran");
+    const auto runTime = ran->runNow();
+
+    auto tRan = STI::Network::convert<std::shared_ptr<STI::Utils::Task>, STI::TNetwork::TTask>(ran);
+    REQUIRE(tRan.hasLastRunTime);
+    CHECK(STI::Network::convert<STI::TNetwork::TTimeStamp, STI::Utils::TimeStamp>(tRan.lastRunTime) == runTime);
+
+    std::shared_ptr<STI::Utils::Task> ranRoundTrip;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TTask, std::shared_ptr<STI::Utils::Task>>(
+        tRan, ranRoundTrip));
+    REQUIRE(ranRoundTrip != nullptr);
+    REQUIRE(ranRoundTrip->getLastRunTime().has_value());
+    CHECK(ranRoundTrip->getLastRunTime().value() == runTime);
+}
+
+TEST_CASE("RemoteTask pulls last run time from attached manager instead of stale snapshot", "[network][task]")
+{
+    const auto snapshotTime = makeTimeStamp(11);
+    const auto latestTime = makeTimeStamp(12);
+
+    STI::Network::RemoteTask task("remote-task", STI::Utils::MixedValue(), snapshotTime);
+    REQUIRE(task.getLastRunTime().has_value());
+    CHECK(task.getLastRunTime().value() == snapshotTime);
+
+    FakeRemoteTaskManager manager;
+    manager.lastRunTime = latestTime;
+    task.attachManager(&manager);
+
+    REQUIRE(task.getLastRunTime().has_value());
+    CHECK(task.getLastRunTime().value() == latestTime);
 }
 
 TEST_CASE("NetworkConvert: ChannelUpdateMessage measurement values preserve lazy binary streams", "[network][convert][channel]")

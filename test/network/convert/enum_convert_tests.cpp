@@ -64,6 +64,7 @@ TEST_CASE("NetworkConvert: utility and device enum mappings round trip")
 
     checkEnumRoundTrip(STI::Utils::TaskStatus::Active, STI::TNetwork::TTaskStatus::TaskActive);
     checkEnumRoundTrip(STI::Utils::TaskStatus::Inactive, STI::TNetwork::TTaskStatus::TaskInactive);
+    checkEnumRoundTrip(STI::Utils::TaskStatus::Missing, STI::TNetwork::TTaskStatus::TaskMissing);
 
     checkEnumRoundTrip(STI::Device::ChannelType::Output, STI::TNetwork::TChannelType::TChannelOutput);
     checkEnumRoundTrip(STI::Device::ChannelType::Input, STI::TNetwork::TChannelType::TChannelInput);
@@ -101,6 +102,9 @@ TEST_CASE("NetworkConvert: device message enum mappings round trip")
     checkEnumRoundTrip(
         STI::Device::DeviceMessageType::MonitorStatusUpdate,
         STI::TNetwork::TDeviceMessageType::MessageMonitorStatusUpdate);
+    checkEnumRoundTrip(
+        STI::Device::DeviceMessageType::TaskUpdate,
+        STI::TNetwork::TDeviceMessageType::MessageTaskUpdate);
     checkEnumRoundTrip(
         STI::Device::DeviceMessageType::EngineScheduler,
         STI::TNetwork::TDeviceMessageType::MessageEngineScheduler);

@@ -73,6 +73,11 @@ public:
     void setFileServer(const std::shared_ptr<STI::Utils::FileServer>&) override {}
     bool getFileServer(std::shared_ptr<STI::Utils::FileServer>&) override { return false; }
     std::shared_ptr<STI::Utils::VirtualFileServer> makeVirtualFileServer() override { return nullptr; }
+    std::shared_ptr<STI::Device::ImportedFile> importFile(
+        const STI::Utils::FileID&,
+        const std::shared_ptr<STI::Utils::FileServer>&,
+        const STI::Device::ImportFileOptions& = STI::Device::ImportFileOptions()) override { return nullptr; }
+    bool releaseImportedFile(const std::string&) override { return false; }
     std::string getBasePath() const override { return ""; }
     std::string getTemporaryPath() const override { return ""; }
     void addSequence(const std::shared_ptr<STI::Engine::SequenceResult>&) override {}

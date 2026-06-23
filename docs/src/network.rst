@@ -127,6 +127,12 @@ reference to another device, the requesting device can declare it a
 ``addPartner(DeviceID)``.  An example of a network with partner devices is shown
 below.
 
+The declared partner list is exposed through ``Device::getPartnerDevices()`` and
+the Python ``device.getPartnerDevices()`` wrapper. Each entry reports the
+partner ``DeviceID``, any aliases declared for that partner, and whether the
+partner is also an event target. This list describes declarations; use the
+device collection to determine which declared partners are currently connected.
+
 .. figure:: ../figs/stinet3.png
     :scale: 100 %
     :alt: Network with two intermediate servers

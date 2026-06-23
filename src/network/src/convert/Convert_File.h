@@ -6,6 +6,7 @@
 #include "generated/deviceNet.h"
 #include "generated/orbTypes.h"
 
+#include <sti/device/ImportedFile.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileServer.h>
 
@@ -37,15 +38,41 @@ bool Network::convert<Utils::FileID, TNetwork::TFileID>(const Utils::FileID& fil
 
 
 
-//FileTransferType
-template<>
-Utils::FileTransferType Network::convert<TNetwork::TFileTransferType, Utils::FileTransferType>(const TNetwork::TFileTransferType& tType);
-template<>
-TNetwork::TFileTransferType Network::convert<Utils::FileTransferType, TNetwork::TFileTransferType>(const Utils::FileTransferType& type);
+	//FileTransferType
+	template<>
+	Utils::FileTransferType Network::convert<TNetwork::TFileTransferType, Utils::FileTransferType>(const TNetwork::TFileTransferType& tType);
+	template<>
+	TNetwork::TFileTransferType Network::convert<Utils::FileTransferType, TNetwork::TFileTransferType>(const Utils::FileTransferType& type);
+
+	//Import options
+	template<>
+	Device::ImportStorage Network::convert<TNetwork::TImportStorage, Device::ImportStorage>(const TNetwork::TImportStorage& tStorage);
+	template<>
+	TNetwork::TImportStorage Network::convert<Device::ImportStorage, TNetwork::TImportStorage>(const Device::ImportStorage& storage);
+
+	template<>
+	Device::ImportCollisionPolicy Network::convert<TNetwork::TImportCollisionPolicy, Device::ImportCollisionPolicy>(const TNetwork::TImportCollisionPolicy& tCollision);
+	template<>
+	TNetwork::TImportCollisionPolicy Network::convert<Device::ImportCollisionPolicy, TNetwork::TImportCollisionPolicy>(const Device::ImportCollisionPolicy& collision);
+
+	template<>
+	Device::ImportLifetime Network::convert<TNetwork::TImportLifetime, Device::ImportLifetime>(const TNetwork::TImportLifetime& tLifetime);
+	template<>
+	TNetwork::TImportLifetime Network::convert<Device::ImportLifetime, TNetwork::TImportLifetime>(const Device::ImportLifetime& lifetime);
+
+	template<>
+	Device::ImportFileOptions Network::convert<TNetwork::TImportFileOptions, Device::ImportFileOptions>(const TNetwork::TImportFileOptions& tOptions);
+	template<>
+	TNetwork::TImportFileOptions Network::convert<Device::ImportFileOptions, TNetwork::TImportFileOptions>(const Device::ImportFileOptions& options);
+
+	template<>
+	bool Network::convert<TNetwork::TImportFileOptions, Device::ImportFileOptions>(const TNetwork::TImportFileOptions& tOptions, Device::ImportFileOptions& options);
+	template<>
+	bool Network::convert<Device::ImportFileOptions, TNetwork::TImportFileOptions>(const Device::ImportFileOptions& options, TNetwork::TImportFileOptions& tOptions);
 
 
 
-//FileServer
+	//FileServer
 template<>
 bool Network::convert<TNetwork::TFileServer_var, std::shared_ptr<Utils::FileServer>>(
         const TNetwork::TFileServer_var& tFileServer, std::shared_ptr<Utils::FileServer>& fileServer);
@@ -58,4 +85,3 @@ bool Network::convert<std::shared_ptr<Utils::FileServer>, TNetwork::TFileServer_
 } //STI
 
 #endif
-

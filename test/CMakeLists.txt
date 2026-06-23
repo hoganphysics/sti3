@@ -53,11 +53,13 @@ add_executable(sti3_test_device
   device/localchannel_tests.cpp
   device/localchannelmanager_tests.cpp
   device/localdevice_metadata_tests.cpp
+  device/localdevice_partner_tests.cpp
   device/localdevice_write_tests.cpp
   device/localdevicehub_tests.cpp
   device/localfileholder_tests.cpp
   device/localbinarydatastream_tests.cpp
   device/localfileserver_tests.cpp
+  device/persistence_import_tests.cpp
   device/localprofilemanager_tests.cpp
   device/binarydata_tests.cpp
   device/image_tests.cpp
@@ -67,6 +69,7 @@ add_executable(sti3_test_device
   device/virtualfileserver_tests.cpp
   device/task_tests.cpp
   device/taskscheduler_tests.cpp
+  device/localtaskmanager_tests.cpp
   device/intervaltask_tests.cpp
   device/appointmenttask_tests.cpp
   device/eventengine_missing_partner_tests.cpp

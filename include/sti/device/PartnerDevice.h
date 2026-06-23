@@ -34,6 +34,7 @@ public:
 	const DeviceID getID() const;
 	void kill();
 	bool refresh();
+	void getPartnerDevices(std::vector<PartnerDeviceInfo>& partners) const override;
 
 	const STI::Utils::MixedValue& getMetaData() const override;
 	STI::Utils::MixedValue getMetaData(const std::string& key) const override;

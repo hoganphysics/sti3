@@ -6,6 +6,7 @@
 #include <sti/engine/Measurement.h>
 
 #include "convert/Convert_EventEngine.h"
+#include "convert/Convert_File.h"
 #include "convert/Convert_ResultsCollector.h"
 #include "convert/Convert_ShotResult.h"
 #include "convert/Convert_SequenceResult.h"
@@ -29,6 +30,15 @@ using STI::Engine::SequenceEntryID;
 using ::STI::TNetwork::TEngineJobStatus;
 using STI::Engine::EngineJobStatus;
 using STI::Network::TFileServerRefInterface;
+using STI::Utils::FileID;
+using STI::Utils::FileServer;
+using STI::Device::ImportedFile;
+using STI::Device::ImportFileOptions;
+using ::STI::TNetwork::TFileID;
+using ::STI::TNetwork::TFileServer;
+using ::STI::TNetwork::TFileServer_var;
+using ::STI::TNetwork::TImportedFile;
+using ::STI::TNetwork::TImportFileOptions;
 
 
 TPersistenceManager_i::TPersistenceManager_i(const std::shared_ptr<STI::Device::Device>& device)
@@ -191,6 +201,70 @@ TShotResultRecord* TPersistenceManager_i::transferResults(::STI::TNetwork::TResu
 		return tFileServer._retn();
 	}
 	return ::STI::TNetwork::TFileServer::_nil();
+}
+
+::CORBA::Boolean TPersistenceManager_i::importFile(
+	const ::STI::TNetwork::TFileID& sourceID,
+	::STI::TNetwork::TFileServer_ptr sourceServer,
+	const ::STI::TNetwork::TImportFileOptions& options,
+	::STI::TNetwork::TImportedFile_out importedFile)
+{
+	bool success = false;
+	importedFile = new TImportedFile();
+
+	if (persistenceManager == 0 || CORBA::is_nil(sourceServer)) {
+		return false;
+	}
+
+	TFileServer_var sourceServerVar = TFileServer::_duplicate(sourceServer);
+	std::shared_ptr<FileServer> remoteSourceServer;
+	if (!convert<TFileServer_var, std::shared_ptr<FileServer>>(sourceServerVar, remoteSourceServer)) {
+		return false;
+	}
+
+	auto imported = persistenceManager->importFile(
+		convert<TFileID, FileID>(sourceID),
+		remoteSourceServer,
+		convert<TImportFileOptions, ImportFileOptions>(options));
+
+	if (imported != nullptr) {
+		convert<FileID, TFileID>(imported->getFileID(), importedFile->fileID);
+		importedFile->importID = CORBA::string_dup(imported->getImportID().c_str());
+
+		std::unique_lock<std::mutex> lock(importedFilesMutex);
+		importedFiles[imported->getImportID()] = imported;
+		success = true;
+	}
+
+	return success;
+}
+
+::CORBA::Boolean TPersistenceManager_i::releaseImportedFile(const char* importID)
+{
+	std::string id = (importID == nullptr) ? "" : importID;
+	if (id.empty()) {
+		return false;
+	}
+
+	std::shared_ptr<ImportedFile> imported;
+	{
+		std::unique_lock<std::mutex> lock(importedFilesMutex);
+		auto it = importedFiles.find(id);
+		if (it != importedFiles.end()) {
+			imported = it->second;
+		}
+	}
+
+	if (imported != nullptr) {
+		bool success = imported->close();
+		if (success) {
+			std::unique_lock<std::mutex> lock(importedFilesMutex);
+			importedFiles.erase(id);
+		}
+		return success;
+	}
+
+	return persistenceManager != 0 && persistenceManager->releaseImportedFile(id);
 }
 
 char* TPersistenceManager_i::getBasePath()

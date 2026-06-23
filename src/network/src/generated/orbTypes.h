@@ -940,6 +940,65 @@ _CORBA_MODULE_BEG
       TFileIDSeq_out& operator=(const TFileIDSeq_var&);
     };
 
+    enum TImportStorage { ImportStorageDiskTemporary, ImportStorageVirtual /*, __max_TImportStorage=0xffffffff */ };
+    typedef TImportStorage& TImportStorage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportStorage;
+
+    enum TImportCollisionPolicy { ImportCollisionUnique, ImportCollisionFailIfExists, ImportCollisionReplace /*, __max_TImportCollisionPolicy=0xffffffff */ };
+    typedef TImportCollisionPolicy& TImportCollisionPolicy_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportCollisionPolicy;
+
+    enum TImportLifetime { ImportLifetimeHandle /*, __max_TImportLifetime=0xffffffff */ };
+    typedef TImportLifetime& TImportLifetime_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportLifetime;
+
+    struct TImportFileOptions {
+      typedef _CORBA_ConstrType_Fix_Var<TImportFileOptions> _var_type;
+
+      
+      TImportStorage storage;
+
+      TImportCollisionPolicy collision;
+
+      TImportLifetime lifetime;
+
+      ::CORBA::ULong ttlSeconds;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TImportFileOptions::_var_type TImportFileOptions_var;
+
+    typedef TImportFileOptions& TImportFileOptions_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportFileOptions;
+
+    struct TImportedFile {
+      typedef _CORBA_ConstrType_Variable_Var<TImportedFile> _var_type;
+
+      
+      ::CORBA::String_member importID;
+
+      TFileID fileID;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TImportedFile::_var_type TImportedFile_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TImportedFile,TImportedFile_var > TImportedFile_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TImportedFile;
+
 #ifndef __STI_mTNetwork_mTFileHolder__
 #define __STI_mTNetwork_mTFileHolder__
     class TFileHolder;
@@ -2984,6 +3043,142 @@ _CORBA_MODULE_BEG
       TStringSeq_out& operator=(const TStringSeq_var&);
     };
 
+    struct TPartnerDeviceInfo {
+      typedef _CORBA_ConstrType_Variable_Var<TPartnerDeviceInfo> _var_type;
+
+      
+      TDeviceID deviceID;
+
+      TStringSeq aliases;
+
+      ::CORBA::Boolean eventTarget;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TPartnerDeviceInfo::_var_type TPartnerDeviceInfo_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TPartnerDeviceInfo,TPartnerDeviceInfo_var > TPartnerDeviceInfo_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPartnerDeviceInfo;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TPartnerDeviceInfoSeq;
+
+    class TPartnerDeviceInfoSeq_var;
+
+    class TPartnerDeviceInfoSeq : public _CORBA_Unbounded_Sequence< TPartnerDeviceInfo >  {
+    public:
+      typedef TPartnerDeviceInfoSeq_var _var_type;
+      inline TPartnerDeviceInfoSeq() {}
+      inline TPartnerDeviceInfoSeq(const TPartnerDeviceInfoSeq& _s)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_s) {}
+
+      inline TPartnerDeviceInfoSeq(_CORBA_ULong _max)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_max) {}
+      inline TPartnerDeviceInfoSeq(_CORBA_ULong _max, _CORBA_ULong _len, TPartnerDeviceInfo* _val, _CORBA_Boolean _rel=0)
+        : _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > (_max, _len, _val, _rel) {}
+
+    
+
+      inline TPartnerDeviceInfoSeq& operator = (const TPartnerDeviceInfoSeq& _s) {
+        _CORBA_Unbounded_Sequence< TPartnerDeviceInfo > ::operator=(_s);
+        return *this;
+      }
+    };
+
+    class TPartnerDeviceInfoSeq_out;
+
+    class TPartnerDeviceInfoSeq_var {
+    public:
+      inline TPartnerDeviceInfoSeq_var() : _pd_seq(0) {}
+      inline TPartnerDeviceInfoSeq_var(TPartnerDeviceInfoSeq* _s) : _pd_seq(_s) {}
+      inline TPartnerDeviceInfoSeq_var(const TPartnerDeviceInfoSeq_var& _s) {
+        if (_s._pd_seq)  _pd_seq = new TPartnerDeviceInfoSeq(*_s._pd_seq);
+        else             _pd_seq = 0;
+      }
+      inline ~TPartnerDeviceInfoSeq_var() { if (_pd_seq)  delete _pd_seq; }
+        
+      inline TPartnerDeviceInfoSeq_var& operator = (TPartnerDeviceInfoSeq* _s) {
+        if (_pd_seq)  delete _pd_seq;
+        _pd_seq = _s;
+        return *this;
+      }
+      inline TPartnerDeviceInfoSeq_var& operator = (const TPartnerDeviceInfoSeq_var& _s) {
+        if (&_s != this) {
+          if (_s._pd_seq) {
+            if (!_pd_seq)  _pd_seq = new TPartnerDeviceInfoSeq;
+            *_pd_seq = *_s._pd_seq;
+          }
+          else if (_pd_seq) {
+            delete _pd_seq;
+            _pd_seq = 0;
+          }
+        }
+        return *this;
+      }
+      inline TPartnerDeviceInfo& operator [] (_CORBA_ULong _s) {
+        return (*_pd_seq)[_s];
+      }
+
+    
+
+      inline TPartnerDeviceInfoSeq* operator -> () { return _pd_seq; }
+      inline const TPartnerDeviceInfoSeq* operator -> () const { return _pd_seq; }
+#if defined(__GNUG__)
+      inline operator TPartnerDeviceInfoSeq& () const { return *_pd_seq; }
+#else
+      inline operator const TPartnerDeviceInfoSeq& () const { return *_pd_seq; }
+      inline operator TPartnerDeviceInfoSeq& () { return *_pd_seq; }
+#endif
+        
+      inline const TPartnerDeviceInfoSeq& in() const { return *_pd_seq; }
+      inline TPartnerDeviceInfoSeq&       inout()    { return *_pd_seq; }
+      inline TPartnerDeviceInfoSeq*&      out() {
+        if (_pd_seq) { delete _pd_seq; _pd_seq = 0; }
+        return _pd_seq;
+      }
+      inline TPartnerDeviceInfoSeq* _retn() { TPartnerDeviceInfoSeq* tmp = _pd_seq; _pd_seq = 0; return tmp; }
+        
+      friend class TPartnerDeviceInfoSeq_out;
+      
+    private:
+      TPartnerDeviceInfoSeq* _pd_seq;
+    };
+
+    class TPartnerDeviceInfoSeq_out {
+    public:
+      inline TPartnerDeviceInfoSeq_out(TPartnerDeviceInfoSeq*& _s) : _data(_s) { _data = 0; }
+      inline TPartnerDeviceInfoSeq_out(TPartnerDeviceInfoSeq_var& _s)
+        : _data(_s._pd_seq) { _s = (TPartnerDeviceInfoSeq*) 0; }
+      inline TPartnerDeviceInfoSeq_out(const TPartnerDeviceInfoSeq_out& _s) : _data(_s._data) {}
+      inline TPartnerDeviceInfoSeq_out& operator = (const TPartnerDeviceInfoSeq_out& _s) {
+        _data = _s._data;
+        return *this;
+      }
+      inline TPartnerDeviceInfoSeq_out& operator = (TPartnerDeviceInfoSeq* _s) {
+        _data = _s;
+        return *this;
+      }
+      inline operator TPartnerDeviceInfoSeq*&()  { return _data; }
+      inline TPartnerDeviceInfoSeq*& ptr()       { return _data; }
+      inline TPartnerDeviceInfoSeq* operator->() { return _data; }
+
+      inline TPartnerDeviceInfo& operator [] (_CORBA_ULong _i) {
+        return (*_data)[_i];
+      }
+
+    
+
+      TPartnerDeviceInfoSeq*& _data;
+
+    private:
+      TPartnerDeviceInfoSeq_out();
+      TPartnerDeviceInfoSeq_out& operator=(const TPartnerDeviceInfoSeq_var&);
+    };
+
     struct TAttribute {
       typedef _CORBA_ConstrType_Variable_Var<TAttribute> _var_type;
 
@@ -3128,6 +3323,11 @@ _CORBA_MODULE_BEG
     typedef TMonitorStatus& TMonitorStatus_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatus;
+
+    enum TTaskStatus { TaskActive, TaskInactive, TaskMissing /*, __max_TTaskStatus=0xffffffff */ };
+    typedef TTaskStatus& TTaskStatus_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskStatus;
 
     struct TMonitor {
       typedef _CORBA_ConstrType_Variable_Var<TMonitor> _var_type;
@@ -6012,7 +6212,7 @@ _CORBA_MODULE_BEG
 
 #endif
 
-    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessagePostProcessingComplete, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
+    enum TDeviceMessageType { MessageRefresh, MessageCollectionUpdate, MessageChannelUpdate, MessageChannelsRefresh, MessageAttributeUpdate, MessageAttributesRefresh, MessageMonitorUpdate, MessageMonitorStatusUpdate, MessageTaskUpdate, MessageEngineScheduler, MessageEngineStatus, MessageEngineParser, MessageEngineJobUpdate, MessagePostProcessingComplete, MessageUnknown /*, __max_TDeviceMessageType=0xffffffff */ };
     typedef TDeviceMessageType& TDeviceMessageType_out;
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TDeviceMessageType;
@@ -7269,6 +7469,39 @@ _CORBA_MODULE_BEG
 
     _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TMonitorStatusUpdateMessage;
 
+    enum TTaskUpdateMessageType { TaskUpdateStatus, TaskUpdateRun /*, __max_TTaskUpdateMessageType=0xffffffff */ };
+    typedef TTaskUpdateMessageType& TTaskUpdateMessageType_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskUpdateMessageType;
+
+    struct TTaskUpdateMessage {
+      typedef _CORBA_ConstrType_Variable_Var<TTaskUpdateMessage> _var_type;
+
+      
+      TDeviceMessage base;
+
+      TTaskUpdateMessageType updateType;
+
+      ::CORBA::String_member taskID;
+
+      TTaskStatus taskStatus;
+
+      ::CORBA::Boolean hasTimestamp;
+
+      TTimeStamp timestamp;
+
+    
+
+      void operator>>= (cdrStream &) const;
+      void operator<<= (cdrStream &);
+    };
+
+    typedef TTaskUpdateMessage::_var_type TTaskUpdateMessage_var;
+
+    typedef _CORBA_ConstrType_Variable_OUT_arg< TTaskUpdateMessage,TTaskUpdateMessage_var > TTaskUpdateMessage_out;
+
+    _CORBA_MODULE_VAR _dyn_attr const ::CORBA::TypeCode_ptr _tc_TTaskUpdateMessage;
+
     enum TChannelUpdateMessageType { ChannelUpdataValue, ChannelUpdateName /*, __max_TChannelUpdateMessageType=0xffffffff */ };
     typedef TChannelUpdateMessageType& TChannelUpdateMessageType_out;
 
@@ -8367,6 +8600,73 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileIDSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileIDSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TFileIDSeq*& _sp);
 
+inline void operator >>=(STI::TNetwork::TImportStorage _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportStorage& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportStorageVirtual) {
+    _e = (STI::TNetwork::TImportStorage) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportStorage _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportStorage& _s);
+
+inline void operator >>=(STI::TNetwork::TImportCollisionPolicy _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportCollisionPolicy& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportCollisionReplace) {
+    _e = (STI::TNetwork::TImportCollisionPolicy) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportCollisionPolicy _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportCollisionPolicy& _s);
+
+inline void operator >>=(STI::TNetwork::TImportLifetime _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TImportLifetime& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::ImportLifetimeHandle) {
+    _e = (STI::TNetwork::TImportLifetime) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportLifetime _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportLifetime& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImportFileOptions& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportFileOptions* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportFileOptions*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TImportFileOptions*& _sp);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TImportedFile& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TImportedFile* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TImportedFile*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TImportedFile*& _sp);
+
 void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TFileHolderSeq& _s);
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TFileHolderSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TFileHolderSeq*& _sp);
@@ -8499,6 +8799,16 @@ void operator<<=(::CORBA::Any& _a, STI::TNetwork::TStringSeq* _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TStringSeq*& _sp);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TStringSeq*& _sp);
 
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfo& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfo* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfo*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfo*& _sp);
+
+void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfoSeq& _s);
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfoSeq* _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TPartnerDeviceInfoSeq*& _sp);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TPartnerDeviceInfoSeq*& _sp);
+
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TAttribute& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TAttribute* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TAttribute*& _sp);
@@ -8527,6 +8837,25 @@ inline void operator <<= (STI::TNetwork::TMonitorStatus& _e, cdrStream& s) {
 
 void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatus _s);
 _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatus& _s);
+
+inline void operator >>=(STI::TNetwork::TTaskStatus _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TTaskStatus& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::TaskMissing) {
+    _e = (STI::TNetwork::TTaskStatus) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskStatus _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskStatus& _s);
 
 extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitor& _s);
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitor* _sp);
@@ -9107,6 +9436,30 @@ extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpd
 extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage* _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
 extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TMonitorStatusUpdateMessage*& _sp);
+
+inline void operator >>=(STI::TNetwork::TTaskUpdateMessageType _e, cdrStream& s) {
+  ::operator>>=((::CORBA::ULong)_e, s);
+}
+
+inline void operator <<= (STI::TNetwork::TTaskUpdateMessageType& _e, cdrStream& s) {
+  ::CORBA::ULong _0RL_e;
+  ::operator<<=(_0RL_e,s);
+  if (_0RL_e <= STI::TNetwork::TaskUpdateRun) {
+    _e = (STI::TNetwork::TTaskUpdateMessageType) _0RL_e;
+  }
+  else {
+    OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
+                  (::CORBA::CompletionStatus)s.completion());
+  }
+}
+
+void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessageType _s);
+_CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessageType& _s);
+
+extern void operator<<=(::CORBA::Any& _a, const STI::TNetwork::TTaskUpdateMessage& _s);
+extern void operator<<=(::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessage* _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, STI::TNetwork::TTaskUpdateMessage*& _sp);
+extern _CORBA_Boolean operator>>=(const ::CORBA::Any& _a, const STI::TNetwork::TTaskUpdateMessage*& _sp);
 
 inline void operator >>=(STI::TNetwork::TChannelUpdateMessageType _e, cdrStream& s) {
   ::operator>>=((::CORBA::ULong)_e, s);

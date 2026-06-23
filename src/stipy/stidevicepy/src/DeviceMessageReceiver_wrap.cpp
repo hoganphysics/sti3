@@ -40,6 +40,8 @@ void init_DeviceMessageReceiver(py::module& m)
                                             py::arg("sourceDeviceID"), py::arg("listenerName"), py::arg("handler") )
         .def("__addMonitorStatusUpdateListener", &DeviceMessageReceiverPy::addMonitorStatusUpdateListener,
                                             py::arg("sourceDeviceID"), py::arg("listenerName"), py::arg("handler") )
+        .def("__addTaskUpdateListener", &DeviceMessageReceiverPy::addTaskUpdateListener,
+                                            py::arg("sourceDeviceID"), py::arg("listenerName"), py::arg("handler") )
         .def("__addEngineJobUpdateDeviceListener", &DeviceMessageReceiverPy::addEngineJobUpdateListener, 
                                             py::arg("sourceDeviceID"), py::arg("listenerName"), py::arg("handler") )
         .def("__addEngineSchedulerMessageListener", &DeviceMessageReceiverPy::addEngineSchedulerMessageListener, 
@@ -51,4 +53,3 @@ void init_DeviceMessageReceiver(py::module& m)
         ;
 
 }
-

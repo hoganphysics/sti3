@@ -1,4 +1,5 @@
 #include <sti/utils/TaskScheduler.h>
+#include <sti/utils/TimeStamp.h>
 #include <sti/utils/utils.h>
 
 #include <algorithm>
@@ -53,11 +54,11 @@ void TaskScheduler::addListener(STI::Utils::TaskSchedulerListener* listener)
 	listeners.push_back(listener);
 }
 
-void TaskScheduler::sendEvent(const TaskSchedulerEventType& type, const std::string& taskID)
+void TaskScheduler::sendEvent(const PendingEvent& event)
 {
 	for (auto& listener : listeners) {
 		if (listener != 0) {
-			listener->handleEvent(TaskSchedulerEvent(type, taskID));
+			listener->handleEvent(TaskSchedulerEvent(event.type, event.taskID, event.timestamp));
 		}
 	}
 }
@@ -65,7 +66,7 @@ void TaskScheduler::sendEvent(const TaskSchedulerEventType& type, const std::str
 void TaskScheduler::sendEvents(const PendingEvents& events)
 {
 	for (auto& event : events) {
-		sendEvent(event.first, event.second);
+		sendEvent(event);
 	}
 }
 
@@ -245,7 +246,8 @@ void TaskScheduler::run(std::shared_ptr<Task>& task, PendingEvents& events)
 	if (task == 0) return;
 
 	if (task->isReadyToRun()) {
-		task->run();
+		const auto timestamp = task->runNow();
+		events.emplace_back(TaskSchedulerEventType::Run, task->getID(), timestamp);
 	}
 	else {
 		task->skipTask();

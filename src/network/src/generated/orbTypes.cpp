@@ -163,6 +163,42 @@ STI::TNetwork::TFileID::operator<<= (cdrStream &_n)
 }
 
 void
+STI::TNetwork::TImportFileOptions::operator>>= (cdrStream &_n) const
+{
+  storage >>= _n;
+  collision >>= _n;
+  lifetime >>= _n;
+  ttlSeconds >>= _n;
+
+}
+
+void
+STI::TNetwork::TImportFileOptions::operator<<= (cdrStream &_n)
+{
+  (TImportStorage&)storage <<= _n;
+  (TImportCollisionPolicy&)collision <<= _n;
+  (TImportLifetime&)lifetime <<= _n;
+  (::CORBA::ULong&)ttlSeconds <<= _n;
+
+}
+
+void
+STI::TNetwork::TImportedFile::operator>>= (cdrStream &_n) const
+{
+  _n.marshalString(importID,0);
+  (const TFileID&) fileID >>= _n;
+
+}
+
+void
+STI::TNetwork::TImportedFile::operator<<= (cdrStream &_n)
+{
+  importID = _n.unmarshalString(0);
+  (TFileID&)fileID <<= _n;
+
+}
+
+void
 STI::TNetwork::TMixedBinaryData::operator>>= (cdrStream& _n) const
 {
   _pd__d >>= _n;
@@ -742,6 +778,24 @@ STI::TNetwork::TMixedValue::operator<<= (cdrStream& _n)
 
   }
   _pd__initialised = 1;
+}
+
+void
+STI::TNetwork::TPartnerDeviceInfo::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceID&) deviceID >>= _n;
+  (const TStringSeq&) aliases >>= _n;
+  _n.marshalBoolean(eventTarget);
+
+}
+
+void
+STI::TNetwork::TPartnerDeviceInfo::operator<<= (cdrStream &_n)
+{
+  (TDeviceID&)deviceID <<= _n;
+  (TStringSeq&)aliases <<= _n;
+  eventTarget = _n.unmarshalBoolean();
+
 }
 
 void
@@ -1887,6 +1941,30 @@ STI::TNetwork::TMonitorStatusUpdateMessage::operator<<= (cdrStream &_n)
 {
   (TDeviceMessage&)base <<= _n;
   (TMonitorStatusUpdateTupleSeq&)updates <<= _n;
+
+}
+
+void
+STI::TNetwork::TTaskUpdateMessage::operator>>= (cdrStream &_n) const
+{
+  (const TDeviceMessage&) base >>= _n;
+  updateType >>= _n;
+  _n.marshalString(taskID,0);
+  taskStatus >>= _n;
+  _n.marshalBoolean(hasTimestamp);
+  (const TTimeStamp&) timestamp >>= _n;
+
+}
+
+void
+STI::TNetwork::TTaskUpdateMessage::operator<<= (cdrStream &_n)
+{
+  (TDeviceMessage&)base <<= _n;
+  (TTaskUpdateMessageType&)updateType <<= _n;
+  taskID = _n.unmarshalString(0);
+  (TTaskStatus&)taskStatus <<= _n;
+  hasTimestamp = _n.unmarshalBoolean();
+  (TTimeStamp&)timestamp <<= _n;
 
 }
 

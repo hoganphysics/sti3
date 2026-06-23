@@ -1,5 +1,6 @@
 #include "TDevice_i.h"
 #include <sti/device/DeviceID.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include <sti/device/VersionManager.h>
 #include "NetworkConvert.h"
 
@@ -17,6 +18,7 @@ using STI::TNetwork::TMonitorManager_ptr;
 using STI::TNetwork::TPostProcessingManager_ptr;
 using STI::TNetwork::TDeviceID;
 using STI::Device::DeviceID;
+using STI::Device::PartnerDeviceInfo;
 using STI::Network::convert;
 
 
@@ -121,6 +123,19 @@ void TDevice_i::getMetaData(::STI::TNetwork::TMixedValue_out metaData)
 	}
 
 	(*metaData) = convert<STI::Utils::MixedValue, STI::TNetwork::TMixedValue>(data);
+}
+
+void TDevice_i::getPartnerDevices(::STI::TNetwork::TPartnerDeviceInfoSeq_out partners)
+{
+	STI::TNetwork::TPartnerDeviceInfoSeq_var tPartners(new STI::TNetwork::TPartnerDeviceInfoSeq);
+
+	if (localDevice != 0) {
+		std::vector<PartnerDeviceInfo> localPartners;
+		localDevice->getPartnerDevices(localPartners);
+		convert<PartnerDeviceInfo, STI::TNetwork::TPartnerDeviceInfo>(localPartners, tPartners);
+	}
+
+	partners = tPartners._retn();
 }
 
 void TDevice_i::getVersions(::STI::TNetwork::TVersionInfoSeq_out versions)

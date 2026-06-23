@@ -10,6 +10,7 @@
 #include <memory>
 #include <condition_variable>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <utility>
 
@@ -22,7 +23,7 @@ namespace Utils
 class TaskSchedulerListener;
 class TaskSchedulerEvent;
 
-enum class TaskSchedulerEventType { Add, Remove, Activate, Deactivate, Refresh };
+enum class TaskSchedulerEventType { Add, Remove, Activate, Deactivate, Refresh, Run };
 
 
 class TaskScheduler
@@ -53,7 +54,22 @@ public:
 	void setMinSleep(double sleep);		//in seconds
 
 private:
-	using PendingEvent = std::pair<TaskSchedulerEventType, std::string>;
+	struct PendingEvent
+	{
+		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID)
+		: PendingEvent(type, taskID, std::optional<STI::Utils::TimeStamp>()) {}
+		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+			const STI::Utils::TimeStamp& timestamp)
+		: PendingEvent(type, taskID, std::optional<STI::Utils::TimeStamp>(timestamp)) {}
+		PendingEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+			const std::optional<STI::Utils::TimeStamp>& timestamp)
+		: type(type), taskID(taskID), timestamp(timestamp) {}
+
+		TaskSchedulerEventType type;
+		std::string taskID;
+		std::optional<STI::Utils::TimeStamp> timestamp;
+	};
+
 	using PendingEvents = std::vector<PendingEvent>;
 	
 	void run(std::shared_ptr<Task>& task, PendingEvents& events);
@@ -69,7 +85,7 @@ private:
 	STI::Utils::SynchronizedMap<std::string, std::shared_ptr<Task>> tasks;
 	std::vector<std::shared_ptr<Task>> activeTasks;
 
-	void sendEvent(const TaskSchedulerEventType& task, const std::string& taskID);
+	void sendEvent(const PendingEvent& event);
 	void sendEvents(const PendingEvents& events);
 	std::vector<TaskSchedulerListener*> listeners;
 
@@ -87,11 +103,18 @@ class TaskSchedulerEvent
 public:
 
 	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID)
-	: type(type), taskID(taskID) {}
+	: TaskSchedulerEvent(type, taskID, std::optional<STI::Utils::TimeStamp>()) {}
+	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+		const STI::Utils::TimeStamp& timestamp)
+	: TaskSchedulerEvent(type, taskID, std::optional<STI::Utils::TimeStamp>(timestamp)) {}
+	TaskSchedulerEvent(const TaskSchedulerEventType& type, const std::string& taskID,
+		const std::optional<STI::Utils::TimeStamp>& timestamp)
+	: type(type), taskID(taskID), timestamp(timestamp) {}
 	virtual ~TaskSchedulerEvent() {}
 
 	TaskSchedulerEventType type;
 	std::string taskID;
+	std::optional<STI::Utils::TimeStamp> timestamp;
 };
 
 class TaskSchedulerListener

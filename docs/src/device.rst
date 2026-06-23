@@ -294,6 +294,111 @@ definition and then call these hooks.
               return self.hardware.read_with_args(value)
           return None
 
+FileID arguments for reads and writes
+*************************************
+
+``MixedValueType::File`` values carry a ``FileID`` only.  They do not carry the
+``FileServer`` that can serve the bytes.  When a caller wants to pass a file to
+``device.write()`` or to a parameterized ``device.read()``, import the source
+file into the target device's ``PersistenceManager`` first, then pass the
+returned target-side ``FileID`` as the channel value.
+
+``PersistenceManager::importFile()`` eagerly copies the file from a source
+``FileServer`` into target persistence storage.  ``DiskTemporary`` is the
+default storage mode and writes under the target persistence manager's temporary
+directory.  ``Virtual`` can be requested when the target should hold the import
+in its virtual file server instead.  The returned ``ImportedFile`` handle owns
+the imported registration; close it, or use the Python context manager, after
+the read or write is complete.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      #include <sti/device/ImportedFile.h>
+      #include <sti/device/PersistenceManager.h>
+      #include <sti/utils/FileHolder.h>
+      #include <sti/utils/FileServer.h>
+      #include <sti/utils/MixedValue.h>
+
+      std::shared_ptr<STI::Device::PersistenceManager> targetPersistence;
+      targetDevice->getPersistenceManager(targetPersistence);
+
+      std::shared_ptr<STI::Utils::FileServer> sourceServer;
+      sourcePersistence->getFileServer(sourceServer);
+
+      STI::Device::ImportFileOptions options;  // DiskTemporary, Unique, Handle
+      auto imported = targetPersistence->importFile(sourceHolder->getID(),
+                                                   sourceServer,
+                                                   options);
+      if (imported != nullptr) {
+          STI::Utils::MixedValue fileArg(imported->getFileID());
+
+          targetDevice->write(6, fileArg);
+
+          STI::Utils::MixedValue result;
+          targetDevice->read(20, fileArg, result);
+
+          imported->close();
+      }
+
+   .. code-tab:: py
+
+      target_persistence = target_device.getPersistenceManager()
+      source_server = source_persistence.getFileServer()
+
+      with target_persistence.importFile(source_holder.getID(), source_server) as imported:
+          target_device.write(6, imported.fileID)
+          size = target_device.read(20, imported.fileID)
+
+For caller-created files in Python, create an explicit source server and
+register the holder before importing.  The source server is what lets the
+target pull the bytes; the ``FileID`` alone is not enough.
+
+.. code-block:: py
+
+   import tempfile
+
+   source_server = target_persistence.makeVirtualFileServer()
+   source_holder = target_persistence.makeFileHolder(tempfile.gettempdir(), "payload.bin")
+
+   assert source_holder.openFile()
+   try:
+       source_holder.writeBytes(payload)
+   finally:
+       source_holder.closeFile()
+
+   source_server.addFile(source_holder)
+
+   with target_persistence.importFile(source_holder.getID(), source_server) as imported:
+       target_device.write(6, imported.fileID)
+
+Use ``ImportFileOptions`` when the default temporary disk import is not the
+right target storage:
+
+.. code-block:: py
+
+   options = stipy.ImportFileOptions(storage=stipy.ImportStorage.Virtual)
+
+   with target_persistence.importFile(source_id, source_server, options) as imported:
+       target_device.read(20, imported.fileID)
+
+Repeated imports default to ``ImportCollisionPolicy.Unique`` so transient files
+with the same source name do not overwrite each other.  ``FailIfExists`` and
+``Replace`` are available for callers that need stricter name handling.
+
+The import size limit is configured on the target persistence manager.  The
+default is 10 MB.
+
+.. code-block:: ini
+
+   [PersistenceManager]
+   importMaxBytes = 10485760
+
+This import path is for file arguments passed into ``read()`` and ``write()``.
+Files returned by reads, measurements, channel updates, or shot results use the
+normal result-transfer and lazy-payload paths described below.
+
 Device attributes
 *****************
 
@@ -567,6 +672,27 @@ partner while parsing local events.
       self.partner("supply").write(0, 1.2)
       self.partner("supply").setAttribute("Mode", "Remote")
 
+The declared partner list can be inspected separately from the live device
+collection:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      std::vector<STI::Device::PartnerDeviceInfo> partners;
+      device->getPartnerDevices(partners);
+
+      for (const auto& info : partners) {
+          std::cout << info.deviceID.getID()
+                    << " event target: " << info.eventTarget
+                    << std::endl;
+      }
+
+   .. code-tab:: py
+
+      for info in device.getPartnerDevices():
+          print(info.deviceID.getID(), info.aliases, info.eventTarget)
+
 Device monitors
 ***************
 
@@ -608,6 +734,14 @@ Tasks are background work owned by the device.  Use ``IntervalTask`` for fixed
 period work, ``AppointmentTask`` for a time-of-day task, or derive from
 ``Task`` for custom scheduling.
 
+Use ``Task.runNow()`` for direct manual execution of a task object.  ``runNow()``
+records and returns the run ``TimeStamp`` only after the task callback completes
+successfully.  Device clients that access tasks through a ``TaskManager`` should
+use ``TaskManager.runTask(taskID)`` and then read the timestamp with
+``TaskManager.getTaskLastRunTime(taskID)`` or ``Task.getLastRunTime()``.  Python
+custom tasks still override ``run()`` for their callback body; ``runNow()`` is
+the public execution method that adds timestamp tracking.
+
 .. tabs::
 
    .. code-tab:: c++
@@ -629,12 +763,18 @@ period work, ``AppointmentTask`` for a time-of-day task, or derive from
           [this]() { write(0, 0.0); });
       addTask(appointment);
 
+      auto manualRunTime = interval->runNow();
+      log("tasks") << "manual field poll at "
+                   << manualRunTime.toString()
+                   << std::endl;
+
    .. code-tab:: py
 
       def poll_field():
           self.log("tasks").append(f"field = {self.read(11)}")
 
-      self.addTask(stipy.IntervalTask("field poll", "00:00:02", poll_field))
+      interval = stipy.IntervalTask("field poll", "00:00:02", poll_field)
+      self.addTask(interval)
 
       self.addTask(stipy.AppointmentTask(
           "daily reset",
@@ -642,6 +782,9 @@ period work, ``AppointmentTask`` for a time-of-day task, or derive from
           stipy.AppointmentRepeatType.Everyday,
           lambda: self.write(0, 0.0),
       ))
+
+      manual_run_time = interval.runNow()
+      self.log("tasks").append(f"manual field poll at {manual_run_time}")
 
 .. _devicepostprocessing:
 
@@ -1239,6 +1382,9 @@ Use these examples as starting points for specific device features:
      - loading device and hub configuration from a file
    * - ``readWrite``
      - channel definitions, metadata, ``writeChannel``, and ``readChannel``
+   * - ``fileTransfer``
+     - file/image channel values, lazy payload reads, and imported ``FileID``
+       read/write arguments
    * - ``attributes``
      - attribute setters, refreshers, allowed values, and metadata
    * - ``parseEvents``

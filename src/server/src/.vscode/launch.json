@@ -27,14 +27,14 @@
             "name": "Debug Linux (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/STIServer",
+            "program": "${workspaceFolder}/build-local/STIServer",
             "args": ["-f", "${workspaceFolder}/default.ini"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [
-                { "name": "CONDA_PREFIX", "value": "/home/hogan/miniconda3/envs/sti3" },
-                // { "name": "STI3_BASE_PATH", "value": "${workspaceFolder}/../../../" },
-                { "name": "STI3_BASE_PATH", "value": "/home/hogan/code/dev/sti3-codex/sti3" }
+                { "name": "CONDA_PREFIX", "value": "/home/hogan/miniconda3/envs/sti3-build" },
+                { "name": "LD_LIBRARY_PATH", "value": "${workspaceFolder}/../../../build-ninja/src/network/src:${workspaceFolder}/../../../build-ninja/src/device/src:/home/hogan/miniconda3/envs/sti3-build/lib:${env:LD_LIBRARY_PATH}" },
+                { "name": "STI3_BASE_PATH", "value": "${workspaceFolder}/../../.." }
             ],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -42,11 +42,11 @@
                 { "description": "Enable pretty-printing for gdb", "text": "-enable-pretty-printing", "ignoreFailures": true },
                 { "description": "Pretty formatting", "text": "-gdb-set print pretty on", "ignoreFailures": true },
                 { "description": "Pretty-print objects", "text": "-gdb-set print object on", "ignoreFailures": true },
-                { "description": "Allow auto-load from conda prefix", "text": "-gdb-set auto-load safe-path /home/hogan/miniconda3/envs/sti3", "ignoreFailures": true },
+                { "description": "Allow auto-load from conda prefix", "text": "-gdb-set auto-load safe-path /home/hogan/miniconda3/envs/sti3-build", "ignoreFailures": true },
                 { "description": "Add conda libstdc++ printers to gdb Python path", "text": "-interpreter-exec console \"python import sys; sys.path.insert(0, '/home/hogan/miniconda3/envs/sti3/share/gcc-14.3.0/python')\"", "ignoreFailures": true },
                 { "description": "Register libstdc++ pretty printers", "text": "-interpreter-exec console \"python from libstdcxx.v6.printers import register_libstdcxx_printers; register_libstdcxx_printers(None)\"", "ignoreFailures": true },
                 // { "text": "-interpreter-exec console \"python from libstdcxx.v6.printers import register_libstdcxx_printers; register_libstdcxx_printers(None)\"" },
-                { "text": "-interpreter-exec console \"set substitute-path /usr/local/src/conda/stipy-3.0.1 ${workspaceFolder}\"" },
+                { "text": "-interpreter-exec console \"set substitute-path /usr/local/src/conda/stipy-3.6.0 ${workspaceFolder}/../../..\"" },
                 // { "text": "-interpreter-exec console \"directory /home/hogan/code/dev/sti3-codex/sti3/src/device/src\"" },
                 // { "text": "-interpreter-exec console \"directory /home/hogan/code/dev/sti3-codex/sti3/src/network/src\"" }
                 // { "text": "-interpreter-exec console \"directory ${env:STI3_BASE_PATH}/src/device/src\"" },
@@ -54,13 +54,33 @@
                 { "text": "-interpreter-exec console \"directory ${workspaceFolder}/../../../src/device/src\"" },
                 { "text": "-interpreter-exec console \"directory ${workspaceFolder}/../../../src/network/src\"" }             
             ],
-            "preLaunchTask": "CMake build",
+            "preLaunchTask": "Build (conda run)",
             "miDebuggerPath": "/home/hogan/miniconda3/envs/sti3/bin/gdb"
             // "miDebuggerPath": "/usr/bin/gdb"
             // "sourceFileMap": {
             //     "${workspaceFolder}/build": "${workspaceFolder}"
             // }
             
+        },
+        {
+            "name": "Attach STIServer (gdb)",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build-local/STIServer",
+            "processId": "${command:pickProcess}",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                { "description": "Enable pretty-printing for gdb", "text": "-enable-pretty-printing", "ignoreFailures": true },
+                { "description": "Pretty formatting", "text": "-gdb-set print pretty on", "ignoreFailures": true },
+                { "description": "Pretty-print objects", "text": "-gdb-set print object on", "ignoreFailures": true },
+                { "description": "Allow auto-load from conda prefix", "text": "-gdb-set auto-load safe-path /home/hogan/miniconda3/envs/sti3-build", "ignoreFailures": true },
+                { "text": "-interpreter-exec console \"set substitute-path /usr/local/src/conda/stipy-3.6.0 ${workspaceFolder}/../../..\"" },
+                { "text": "-interpreter-exec console \"directory ${workspaceFolder}/../../../src/device/src\"" },
+                { "text": "-interpreter-exec console \"directory ${workspaceFolder}/../../../src/network/src\"" }
+            ],
+            "preLaunchTask": "Build (conda run)",
+            "miDebuggerPath": "/home/hogan/miniconda3/envs/sti3/bin/gdb"
         },
         {
             "name": "Debug STIServer (MSVC, conda sti3)",

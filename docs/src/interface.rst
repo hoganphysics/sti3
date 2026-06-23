@@ -125,6 +125,12 @@ The device collection stores references to devices that are connected to this
 device.  Use it to discover available ``DeviceID`` values and to get another
 device reference.
 
+Declared partner relationships are queried separately with
+``Device::getPartnerDevices()`` or Python ``device.getPartnerDevices()``. The
+returned ``PartnerDeviceInfo`` entries include the partner ``DeviceID``, any
+aliases declared for that partner, and whether the partner is an event target.
+This list can include partners that are not currently connected.
+
 .. tabs::
 
    .. code-tab:: c++
@@ -141,14 +147,20 @@ device reference.
           other->write(0, 1.5);
       }
 
+      std::vector<STI::Device::PartnerDeviceInfo> partners;
+      device->getPartnerDevices(partners);
+
    .. code-tab:: py
 
-      collection = device.getCollection()
+      collection = device.getDeviceCollection()
       ids = collection.getIDs()
 
       other = collection.get("localhost/0/TestDevice")
       if other is not None:
           other.write(0, 1.5)
+
+      for partner in device.getPartnerDevices():
+          print(partner.deviceID.getID(), partner.aliases, partner.eventTarget)
 
 Channels
 --------
@@ -214,6 +226,12 @@ For quick access:
       device.write(0, 2.5)
       data = device.read(10)
       data_with_args = device.read(11, [12, "hi"])
+
+When passing a file as a ``MixedValueType.File`` value to ``device.write()`` or
+as the argument to a parameterized ``device.read()``, import the source file into
+the target device's ``PersistenceManager`` first and pass the returned
+target-side ``FileID``.  See :ref:`devicelib` for the full file argument import
+pattern and lifetime rules.
 
 Attributes
 ----------
@@ -417,8 +435,20 @@ Tasks
 -----
 
 The ``TaskManager`` exposes background tasks registered by a local device.
-Tasks can be activated, deactivated, run manually, or removed.  Common task
-types include interval tasks and appointment tasks.
+Tasks can be activated, deactivated, run manually, inspected, or removed.
+Common task types include interval tasks and appointment tasks.
+
+Task execution is timestamped when it goes through the tracked execution path.
+Use ``TaskManager.runTask(taskID)`` to run a task by ID, or ``Task.runNow()``
+when code already has a task object.  Successful runs store a last-run
+``TimeStamp`` on the task.  Skipped tasks and tasks whose run callback throws do
+not update the last-run time.  Last-run time is runtime state and is not saved
+in local task XML.
+
+The manager-level ``getTaskLastRunTime(taskID)`` call returns the current
+last-run value for local and remote task managers.  In Python it returns
+``None`` until the task has run successfully, then a ``TimeStamp`` object.
+Task run update messages also carry this typed timestamp when a run completes.
 
 .. tabs::
 
@@ -428,16 +458,29 @@ types include interval tasks and appointment tasks.
       if (device->getTaskManager(tasks)) {
           std::set<std::string> ids;
           tasks->getTaskIDs(ids);
+
           tasks->deactivateTask("task#1");
           tasks->runTask("task#2");
+
+          auto lastRun = tasks->getTaskLastRunTime("task#2");
+          if (lastRun.has_value()) {
+              std::cout << "task#2 last ran at "
+                        << lastRun->toString()
+                        << std::endl;
+          }
       }
 
    .. code-tab:: py
 
       tasks = device.getTaskManager()
       print(tasks.getTaskIDs())
+
       tasks.deactivateTask("task#1")
       tasks.runTask("task#2")
+
+      last_run = tasks.getTaskLastRunTime("task#2")
+      if last_run is not None:
+          print("task#2 last ran at", last_run)
 
 Logs
 ----

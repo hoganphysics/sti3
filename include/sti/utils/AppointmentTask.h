@@ -26,13 +26,13 @@ public:
 	AppointmentTask(const std::string& id, const std::string& timeOfDay, const AppointmentRepeatType& repeatType, const std::function<void(void)>& runFunc);
 	~AppointmentTask();
 
-	double secondsToNextRun() const;
-	void run();
-	void skipTask();
-	bool repeat();
+	double secondsToNextRun() const override;
+	void skipTask() override;
+	bool repeat() override;
 
 private:
 
+	void run() override;
 	void computeNextRuntime();
 	void computeNextRuntimeAnyday();
 	void computeNextRuntimeWeekdays();

@@ -4,6 +4,7 @@
 
 #include <sti/device/Device.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include "ChannelManagerPy.h"
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/ProfileManager.h>
@@ -14,7 +15,6 @@
 
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <pybind11/pybind11.h>
@@ -43,8 +43,9 @@ public:
     void setDevice(const std::shared_ptr<STI::Device::Device>& device);
     std::shared_ptr<STI::Device::Device> getDevice();
 
-    const STI::Device::DeviceID getID() const;
-    void kill();
+	    const STI::Device::DeviceID getID() const;
+	    std::vector<STI::Device::PartnerDeviceInfo> getPartnerDevices() const;
+	    void kill();
     bool refresh();
 
     std::shared_ptr<STI::Python::DeviceCollectionPy> getDeviceCollection();

@@ -1,7 +1,10 @@
 #include "LocalTaskManager.h"
 
+#include <sti/device/DeviceMessage.h>
+#include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/utils/Task.h>
 #include <sti/utils/IntervalTask.h>
+#include <sti/utils/TimeStamp.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/common.hpp>
@@ -10,14 +13,18 @@
 
 #include <fstream>
 #include <filesystem>
+#include <optional>
 namespace fs = std::filesystem;
 
 using STI::Device::LocalTaskManager;
+using STI::Device::TaskUpdateMessage;
 using STI::Utils::Task;
 using STI::Utils::TaskStatus;
 
 
-LocalTaskManager::LocalTaskManager()
+LocalTaskManager::LocalTaskManager(const STI::Device::DeviceID& localID,
+    const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher)
+: localID(localID), dispatcher(dispatcher)
 {
     persistenceRefresher = [](){};
     
@@ -45,6 +52,15 @@ TaskStatus LocalTaskManager::getTaskStatus(const std::string& taskID) const
         return task->getStatus();
     }
     return TaskStatus::Missing;
+}
+
+std::optional<STI::Utils::TimeStamp> LocalTaskManager::getTaskLastRunTime(const std::string& taskID) const
+{
+    std::shared_ptr<Task> task;
+    if (getTask(taskID, task) && task != 0) {
+        return task->getLastRunTime();
+    }
+    return std::nullopt;
 }
 
 void LocalTaskManager::setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus)
@@ -188,8 +204,15 @@ void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
     case TaskSchedulerEventType::Remove:
         break;
     case TaskSchedulerEventType::Activate:
+        sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID, TaskStatus::Active));
         break;
     case TaskSchedulerEventType::Deactivate:
+        sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID, TaskStatus::Inactive));
+        break;
+    case TaskSchedulerEventType::Run:
+        if (evt.timestamp.has_value()) {
+            sendTaskUpdate(std::make_shared<TaskUpdateMessage>(localID, taskID, evt.timestamp.value()));
+        }
         break;
     case TaskSchedulerEventType::Refresh:
         break;
@@ -199,6 +222,13 @@ void LocalTaskManager::handleEvent(const STI::Utils::TaskSchedulerEvent& evt)
 
     //Catch sequential calls and call once at the end of the wait period
      barrier.wait(std::chrono::milliseconds(1000), persistenceRefresher);
+}
+
+void LocalTaskManager::sendTaskUpdate(const std::shared_ptr<TaskUpdateMessage>& message)
+{
+    if (dispatcher != 0 && message != 0) {
+        dispatcher->addMessage(message);
+    }
 }
 
 //******** Persistence ***********//

@@ -7,6 +7,7 @@
 #include <string>
 #include <set>
 #include <memory>
+#include <optional>
 
 
 namespace STI
@@ -24,6 +25,7 @@ public:
     virtual void getTaskIDs(std::set<std::string>& ids) const = 0;
     
     virtual STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const = 0;
+    virtual std::optional<STI::Utils::TimeStamp> getTaskLastRunTime(const std::string& taskID) const = 0;
     virtual void setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus) = 0;
 
     virtual bool getTask(const std::string& taskID, std::shared_ptr<STI::Utils::Task>& task) const = 0;

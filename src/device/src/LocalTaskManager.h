@@ -2,6 +2,7 @@
 #define STI_DEVICE_LOCALTASKMANAGER_H
 
 #include <sti/device/TaskManager.h>
+#include <sti/device/DeviceID.h>
 #include <sti/utils/TaskScheduler.h>
 #include <sti/utils/EvaluationBarrier.h>
 
@@ -19,6 +20,8 @@ namespace STI
 namespace Device
 {
 
+class DeviceMessageDispatcher;
+class TaskUpdateMessage;
 
 class LocalTaskManager : public TaskManager,
 						 public PersistenceTarget,
@@ -26,12 +29,14 @@ class LocalTaskManager : public TaskManager,
 {
 public:
 
-	LocalTaskManager();
+	LocalTaskManager(const STI::Device::DeviceID& localID = STI::Device::DeviceID(),
+        const std::shared_ptr<STI::Device::DeviceMessageDispatcher>& dispatcher = nullptr);
     ~LocalTaskManager();
 
     void getTaskIDs(std::set<std::string>& ids) const;
 
     STI::Utils::TaskStatus getTaskStatus(const std::string& taskID) const;
+    std::optional<STI::Utils::TimeStamp> getTaskLastRunTime(const std::string& taskID) const;
     void setStatus(const std::string& taskID, const STI::Utils::TaskStatus& newStatus);
 
     bool getTask(const std::string& id, std::shared_ptr<STI::Utils::Task>& task) const;
@@ -49,7 +54,11 @@ public:
 private:
 
     void handleEvent(const STI::Utils::TaskSchedulerEvent& evt);
+    void sendTaskUpdate(const std::shared_ptr<STI::Device::TaskUpdateMessage>& message);
     
+    STI::Device::DeviceID localID;
+    std::shared_ptr<STI::Device::DeviceMessageDispatcher> dispatcher;
+
     STI::Utils::EvaluationBarrier barrier;
     STI::Utils::TaskScheduler taskScheduler;
 

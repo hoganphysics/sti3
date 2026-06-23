@@ -186,6 +186,23 @@ TEST_CASE("BinaryData materializes attached streams lazily and preserves metadat
     CHECK(stream->transferCount == 1);
 }
 
+TEST_CASE("BinaryData retained streams do not replace readable source streams")
+{
+    const std::string payload = "source-payload";
+    auto sourceStream = std::make_shared<PayloadStream>(payload);
+    auto retainedStream = std::make_shared<PayloadStream>("retained-payload");
+
+    BinaryData data;
+    data.attachStream(sourceStream, payload.size(), 1);
+    data.retainStream(retainedStream);
+
+    char* bytes = nullptr;
+    REQUIRE(data.getBytes(bytes));
+    CHECK(std::string(bytes, data.bytes()) == payload);
+    CHECK(sourceStream->transferCount == 1);
+    CHECK(retainedStream->transferCount == 0);
+}
+
 TEST_CASE("BinaryData splits typed buffers into byte chunks")
 {
     BinaryData data;

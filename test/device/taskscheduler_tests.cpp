@@ -10,6 +10,7 @@
 #include <atomic>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <vector>
@@ -87,9 +88,17 @@ TEST_CASE("TaskScheduler: runNow executes ready non-repeating task and deactivat
     CHECK(task->getStatus() == TaskStatus::Inactive);
 
     auto events = listener.snapshot();
-    REQUIRE(events.size() >= 3);
-    CHECK(events[2].first == TaskSchedulerEventType::Deactivate);
+    auto timestamps = listener.timestampSnapshot();
+    REQUIRE(events.size() >= 4);
+    CHECK(events[2].first == TaskSchedulerEventType::Run);
     CHECK(events[2].second == "run-once");
+    REQUIRE(timestamps.size() >= 4);
+    REQUIRE(timestamps[2].has_value());
+    REQUIRE(task->getLastRunTime().has_value());
+    CHECK(timestamps[2].value() == task->getLastRunTime().value());
+    CHECK(events[3].first == TaskSchedulerEventType::Deactivate);
+    CHECK(events[3].second == "run-once");
+    CHECK(task->hasLastRunTime());
 }
 
 TEST_CASE("TaskScheduler: runNow skips when task is not ready") {
@@ -106,11 +115,32 @@ TEST_CASE("TaskScheduler: runNow skips when task is not ready") {
     CHECK(task->getRunCount() == 0);
     CHECK(task->getSkipCount() == 1);
     CHECK(task->getStatus() == TaskStatus::Inactive);
+    CHECK_FALSE(task->hasLastRunTime());
 
     auto events = listener.snapshot();
     REQUIRE(events.size() >= 3);
     CHECK(events[2].first == TaskSchedulerEventType::Deactivate);
     CHECK(events[2].second == "skip-me");
+}
+
+TEST_CASE("TaskScheduler: runNow does not emit run event when task throws") {
+    TaskScheduler scheduler;
+    RecordingListener listener;
+    scheduler.addListener(&listener);
+
+    auto task = std::make_shared<DummyTask>("throw-me");
+    task->setThrowOnRun(true);
+    scheduler.addTask(task);
+
+    CHECK_THROWS_AS(scheduler.runNow(task->getID()), std::runtime_error);
+
+    CHECK_FALSE(task->hasLastRunTime());
+    CHECK(task->getStatus() == TaskStatus::Active);
+
+    auto events = listener.snapshot();
+    REQUIRE(events.size() == 2);
+    CHECK(events[0].first == TaskSchedulerEventType::Add);
+    CHECK(events[1].first == TaskSchedulerEventType::Activate);
 }
 
 TEST_CASE("TaskScheduler: deactivate and activate toggle status") {

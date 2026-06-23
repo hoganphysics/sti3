@@ -11,6 +11,7 @@
 #include <sti/device/DeviceMessageDispatcher.h>
 #include <sti/device/LocalAttribute.h>
 #include <sti/device/PostProcessingManager.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include <sti/device/TaskManager.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/EngineID.h>
@@ -25,6 +26,7 @@
 namespace py = pybind11;
 
 using STI::Python::DevicePy;
+using STI::Device::PartnerDeviceInfo;
 using STI::Utils::MixedValueType;
 using STI::Device::ChannelType;
 using STI::Python::MixedValuePy;
@@ -62,9 +64,20 @@ void init_Device(py::module& m)
             py::arg("name"), py::arg("description") = "",
             py::return_value_policy::reference);
 
+    py::class_<PartnerDeviceInfo>(m, "PartnerDeviceInfo")
+        .def(py::init<>())
+        .def_readwrite("deviceID", &PartnerDeviceInfo::deviceID)
+        .def_readwrite("aliases", &PartnerDeviceInfo::aliases)
+        .def_readwrite("eventTarget", &PartnerDeviceInfo::eventTarget)
+        .def("__repr__", [](const PartnerDeviceInfo& self) {
+                return "<PartnerDeviceInfo " + self.deviceID.getID() + ">";
+            })
+        ;
+
     py::class_<DevicePy, std::shared_ptr<DevicePy>>(m, "Device")
         .def(py::init<>())
         .def("getID", &DevicePy::getID)
+        .def("getPartnerDevices", &DevicePy::getPartnerDevices)
         .def("kill", &DevicePy::kill)
         .def("refresh", &DevicePy::refresh)
         .def("getDeviceCollection", &DevicePy::getDeviceCollection)

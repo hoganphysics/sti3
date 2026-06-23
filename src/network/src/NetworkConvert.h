@@ -230,6 +230,7 @@ namespace Device
 {
 
 class DeviceID;
+struct PartnerDeviceInfo;
 class VersionInfo;
 
 
@@ -245,6 +246,15 @@ bool Network::convert<Device::DeviceID, TNetwork::TDeviceID>(const Device::Devic
 template<>
 bool Network::convert<TNetwork::TDeviceID, Device::DeviceID>(const TNetwork::TDeviceID& tDeviceID, Device::DeviceID& deviceID);
 
+//PartnerDeviceInfo
+template<>
+TNetwork::TPartnerDeviceInfo Network::convert<Device::PartnerDeviceInfo, TNetwork::TPartnerDeviceInfo>(const Device::PartnerDeviceInfo& partner);
+template<>
+Device::PartnerDeviceInfo Network::convert<TNetwork::TPartnerDeviceInfo, Device::PartnerDeviceInfo>(const TNetwork::TPartnerDeviceInfo& tPartner);
+template<>
+bool Network::convert<Device::PartnerDeviceInfo, TNetwork::TPartnerDeviceInfo>(const Device::PartnerDeviceInfo& partner, TNetwork::TPartnerDeviceInfo& tPartner);
+template<>
+bool Network::convert<TNetwork::TPartnerDeviceInfo, Device::PartnerDeviceInfo>(const TNetwork::TPartnerDeviceInfo& tPartner, Device::PartnerDeviceInfo& partner);
 
 //VersionInfo
 template<>

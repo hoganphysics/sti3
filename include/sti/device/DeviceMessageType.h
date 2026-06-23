@@ -13,6 +13,7 @@ enum class DeviceMessageType {
 	ChannelUpdate, ChannelsRefresh, 
 	AttributeUpdate, AttributesRefresh, 
 	MonitorUpdate, MonitorStatusUpdate,
+	TaskUpdate,
 	EngineJobUpdate,
 	EngineScheduler,
 	EngineParser,
@@ -32,4 +33,3 @@ enum class DeviceMessageType {
 
 
 #endif
-

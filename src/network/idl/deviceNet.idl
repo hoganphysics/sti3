@@ -280,11 +280,13 @@ module TNetwork
 		
 		TShotResultRecord transferResults(in TResultsCollector resultsCollector);
 
-		boolean getMeasurements(in TShotID sid, out TDeviceIDMeasurementsTupleSeq measurements);
+			boolean getMeasurements(in TShotID sid, out TDeviceIDMeasurementsTupleSeq measurements);
 
-		TFileServer getFileServer();
-		string getBasePath();
-		string getTemporaryPath();
+			TFileServer getFileServer();
+			boolean importFile(in TFileID sourceID, in TFileServer sourceServer, in TImportFileOptions options, out TImportedFile importedFile);
+			boolean releaseImportedFile(in string importID);
+			string getBasePath();
+			string getTemporaryPath();
 
 		void addSequence(in TSequenceResult sequenceResult);
 		boolean updateSequence(in TSequenceEntryID id, in TShotID shotID, in TEngineJobStatus shotStatus, in boolean isOwner);
@@ -348,11 +350,12 @@ module TNetwork
 		void kill();
 		void disable();
 
-		//Device interface
-		TDeviceID getID();
-		void getMetaData(out TMixedValue metaData);
+			//Device interface
+			TDeviceID getID();
+			void getPartnerDevices(out TPartnerDeviceInfoSeq partners);
+			void getMetaData(out TMixedValue metaData);
 
-		//Device collector interface
+			//Device collector interface
 		TDeviceCollection getDeviceCollection();
 
 		//Device message passing

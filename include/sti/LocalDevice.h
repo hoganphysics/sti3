@@ -44,6 +44,7 @@
 #include <set>
 #include <string>
 #include <functional>
+#include <vector>
 
 
 namespace STI
@@ -160,6 +161,7 @@ public:
 	void addPartner(const DeviceID& id, const std::string& alias);
 	void addEventTarget(const DeviceID& id);
 	void addEventTarget(const DeviceID& id, const std::string& alias);
+	void getPartnerDevices(std::vector<PartnerDeviceInfo>& partners) const override;
 
 	PartnerDevice partner(const DeviceID& id);
 	PartnerDevice partner(const std::string& alias);

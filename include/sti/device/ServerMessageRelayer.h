@@ -16,6 +16,7 @@ typedef DeviceMessageRelayer<ChannelUpdateMessage,
                              AttributeUpdateMessage,
                              MonitorUpdateMessage,
                              MonitorStatusUpdateMessage,
+                             TaskUpdateMessage,
                             //  EngineSchedulerMessage, 
                              RefreshDeviceMessage, 
                              CollectionUpdateMessage,
@@ -27,4 +28,3 @@ typedef DeviceMessageRelayer<ChannelUpdateMessage,
 } //STI
 
 #endif
-

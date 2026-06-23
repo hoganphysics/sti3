@@ -66,6 +66,7 @@ using STI::Device::LocalMonitor;
 using STI::Device::LocalMonitorManager;
 using STI::Device::Monitor;
 using STI::Device::MonitorManager;
+using STI::Device::PartnerDeviceInfo;
 using STI::Device::PartnerDevice;
 using STI::Device::LocalProfileManager;
 using STI::Device::TaskManager;
@@ -200,7 +201,7 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 	localProfileManager->addProfileTarget(localAttributeManager);
 	localProfileManager->addProfileTarget(localChannelManager);
 	
-	localTaskManager = std::make_shared<LocalTaskManager>();
+	localTaskManager = std::make_shared<LocalTaskManager>(getID(), deviceMessageDispatcher);
 	localMonitorManager = std::make_shared<LocalMonitorManager>(id, deviceMessageDispatcher);
 	versionManager = STI::Device::makeVersionManager();
 
@@ -271,6 +272,9 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 LocalDevice::~LocalDevice()
 {
 	// disable();
+	if (localPersistenceManager != 0) {
+		localPersistenceManager->closePersistenceTargets();
+	}
 	localCollection->clear();
 }
 
@@ -395,6 +399,31 @@ void LocalDevice::addPartner(const DeviceID& id, const std::string& alias)
 void LocalDevice::addPartner(const DeviceID& id)
 {
 	partnerDevices.insert(id);
+}
+
+void LocalDevice::getPartnerDevices(std::vector<PartnerDeviceInfo>& partners) const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	partners.clear();
+
+	std::map<DeviceID, std::vector<std::string>> aliasesByPartner;
+	for (const auto& alias : partnerAliases) {
+		aliasesByPartner[alias.second].push_back(alias.first);
+	}
+
+	for (const auto& id : partnerDevices) {
+		PartnerDeviceInfo info;
+		info.deviceID = id;
+
+		auto alias_it = aliasesByPartner.find(id);
+		if (alias_it != aliasesByPartner.end()) {
+			info.aliases = alias_it->second;
+		}
+
+		info.eventTarget = eventTargets.find(id) != eventTargets.end();
+		partners.push_back(info);
+	}
 }
 
 bool LocalDevice::isPartnerDevice(const DeviceID& id)

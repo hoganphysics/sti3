@@ -24,6 +24,9 @@ public:
 
     void transfer(const std::shared_ptr<STI::Utils::BinaryDataStreamTarget>& target);
 
+    static bool getTBinaryDataStreamRef(const std::shared_ptr<STI::Utils::BinaryDataStream>& dataStream,
+        STI::TNetwork::TBinaryDataStream_var& tdataStream);
+
 private:
 
     mutable std::mutex streamMutex;

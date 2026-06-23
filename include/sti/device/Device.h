@@ -3,6 +3,7 @@
 
 #include <sti/network/Node.h>
 #include <sti/device/DeviceID.h>
+#include <sti/device/PartnerDeviceInfo.h>
 #include <sti/fwd/EventEngineScheduler_fwd.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/FileServer.h>
@@ -10,6 +11,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace STI
 {
@@ -39,6 +41,7 @@ public:
 
 	virtual const DeviceID getID() const = 0;
 	virtual void kill() = 0;
+	virtual void getPartnerDevices(std::vector<PartnerDeviceInfo>& partners) const { partners.clear(); }
 
 	//Metadata can be used for GUI layout, tooltips, device hints, etc.
 	virtual const STI::Utils::MixedValue& getMetaData() const = 0;

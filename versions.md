@@ -48,11 +48,13 @@ than only incrementing the conda build number.
 
 ## Release History
 
-### 3.6.0 - Asynchronous post-shot post-processing
+### 3.6.0 - Post-processing, file import, and partner metadata
 
-Feature release.  Adds asynchronous post-shot post-processing so a device can
-run analysis code after a shot plays without blocking the parsing or playback of
-later shots.  Additional 3.6.0 features are recorded alongside this entry.
+Feature release bundling several user-facing additions: asynchronous post-shot
+post-processing (a device can run analysis code after a shot plays without
+blocking the parsing or playback of later shots), caller-owned file import into
+device channels that accept `MixedValueType::File` values, declared
+partner-device metadata, and tracked task execution with last-run timestamps.
 
 Features:
 
@@ -94,6 +96,33 @@ Features:
 * Broadcast a `PostProcessingCompleteMessage` with the results, or an error
   message when the routine raises or the result is unavailable, so other devices
   and clients can subscribe to completed analyses.
+* Add `PersistenceManager::importFile(...)` and `ImportedFile` handles for
+  eagerly copying files from a source `FileServer` into the target device's
+  persistence namespace.
+* Support temporary disk imports by default, using the target persistence
+  manager's temporary directory, and virtual imports backed by the target virtual
+  file server.
+* Add import collision policies for unique names, fail-if-exists, and replace.
+* Add handle-scoped import lifetime cleanup through `ImportedFile::close()`
+  and the STIPy context manager.
+* Add a target-side import size limit, configured as
+  `PersistenceManager.importMaxBytes` and defaulting to 10 MB.
+* Extend CORBA, remote persistence managers, and STIPy bindings so remote
+  callers can import a file and pass the returned target-side `FileID` to
+  `device.read()` or `device.write()`.
+* Add `Device::getPartnerDevices()` and Python `device.getPartnerDevices()` to
+  expose each device's declared partner list, including partner `DeviceID`,
+  aliases registered through `addPartner(...)`, and whether the partner is an
+  event target. The same composite partner metadata is available over the
+  network API.
+* Add tracked task execution through C++ and Python `Task.runNow()`, with
+  optional last-run timestamps exposed through `Task.hasLastRunTime()`,
+  `Task.getLastRunTime()`, and `TaskManager.getTaskLastRunTime(...)`.
+  Last-run state is recorded only after successful task runs and is not persisted
+  in local task XML.
+* Carry typed optional `TimeStamp` values in task run updates and network task
+  snapshots, including optional `TaskUpdateMessage.timestamp` support and live
+  remote task last-run lookups.
 
 Network:
 
@@ -127,6 +156,11 @@ Python and examples:
   `ShotResult` callback, dropping the manual `getPersistenceManager()`/
   `getShotResult()` lookup (and noting `addPartner(owner)` for cross-device
   analysis).
+* Add Python fileTransfer notebooks that demonstrate lazy image reads and
+  importing a caller-owned file before passing the imported `FileID` to example
+  channels.
+* Add C++ and Python fileTransfer example devices with file, binary, image,
+  virtual-file, and imported `FileID` channels.
 
 Fixes:
 
@@ -139,6 +173,8 @@ Documentation:
 * Document the post-processing manager and target registration in the device
   library guide, and the `postTarget()`/`postProcess()` and discovery API in the
   STIPy guide.
+* Document the file argument import workflow for `device.read()` and
+  `device.write()`.
 
 Tests:
 
@@ -153,6 +189,8 @@ Tests:
   side-list, the completion message, and the target-info option hints.
 * Add C++ coverage for the `addOption` builder (chaining, option order, blank
   descriptions, and that re-registering a target name resets its hints).
+* Add C++ coverage for disk temporary imports, repeated imports with the same
+  source ID, import size limits, and virtual import cleanup.
 
 ### 3.5.5 - File-backed makeshot performance
 

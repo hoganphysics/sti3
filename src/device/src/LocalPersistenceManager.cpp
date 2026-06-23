@@ -15,6 +15,8 @@
 
 #include <sti/utils/Image.h>
 #include <sti/utils/FileServer.h>
+#include <sti/utils/VirtualFileHolder.h>
+#include <sti/utils/utils.h>
 
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
@@ -28,6 +30,8 @@
 #include "LocalFileServer.h"
 
 #include <filesystem>
+#include <map>
+#include <sstream>
 #include <system_error>
 #include <vector>
 namespace fs = std::filesystem;
@@ -54,6 +58,93 @@ using STI::Engine::ParseResult;
 using STI::Utils::Configuration;
 using STI::Engine::ShotType;
 
+namespace
+{
+constexpr unsigned defaultImportMaxBytes = 10u * 1024u * 1024u;
+
+struct ImportedFileRecord
+{
+    STI::Utils::FileID fileID;
+    std::shared_ptr<STI::Utils::FileHolder> holder;
+    std::shared_ptr<STI::Utils::FileServer> fileServer;
+    bool deletePhysicalFile = false;
+    bool released = false;
+};
+
+std::string sourceFilenameHint(const STI::Utils::FileID& sourceID)
+{
+    fs::path sourceFilename = sourceID.filename.empty() ? "imported-file" : sourceID.filename;
+    auto filename = sourceFilename.filename().string();
+    return filename.empty() ? "imported-file" : filename;
+}
+
+std::string importFilenameForIndex(const STI::Utils::FileID& sourceID, unsigned long long index)
+{
+    fs::path filename = sourceFilenameHint(sourceID);
+    auto stem = filename.stem().string();
+    if (stem.empty()) {
+        stem = "imported-file";
+    }
+
+    auto extension = filename.extension().string();
+    std::stringstream stream;
+    stream << stem << "_" << index << extension;
+    return stream.str();
+}
+
+std::string makeImportID(const STI::Device::DeviceID& deviceID, unsigned long long index)
+{
+    std::stringstream stream;
+    stream << deviceID.getID() << "/import/" << index;
+    return stream.str();
+}
+
+bool exceedsImportSizeLimit(unsigned fileSize, std::size_t importMaxBytes)
+{
+    return importMaxBytes > 0 && static_cast<std::size_t>(fileSize) > importMaxBytes;
+}
+
+} // namespace
+
+struct LocalPersistenceManager::ImportRegistryState
+{
+    std::mutex mutex;
+    unsigned long long nextImportIndex = 1;
+    std::map<std::string, ImportedFileRecord> imports;
+};
+
+bool LocalPersistenceManager::releaseImportedFileRecord(
+    const std::shared_ptr<ImportRegistryState>& registry,
+    const std::string& importID)
+{
+    if (registry == nullptr) {
+        return false;
+    }
+
+    ImportedFileRecord record;
+    {
+        std::unique_lock<std::mutex> lock(registry->mutex);
+        auto it = registry->imports.find(importID);
+        if (it == registry->imports.end()) {
+            return true;
+        }
+        record = it->second;
+        registry->imports.erase(it);
+    }
+
+    bool success = true;
+    if (record.fileServer != nullptr) {
+        success &= record.fileServer->deleteFile(record.fileID);
+    }
+
+    if (record.deletePhysicalFile && record.holder != nullptr) {
+        std::error_code ec;
+        fs::remove(record.holder->getFilename(), ec);
+        success &= !ec || !fs::exists(record.holder->getFilename());
+    }
+
+    return success;
+}
 
 LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const Configuration& config, const std::string& basePath, 
         const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
@@ -65,8 +156,11 @@ resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ),
 sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ), 
 deviceCollection(collection),
 versionManager(versionManager),
-basePath(basePath)
+basePath(basePath),
+importMaxBytes(config.get<unsigned>("PersistenceManager", "importMaxBytes", defaultImportMaxBytes))
 {
+    importRegistry = std::make_shared<ImportRegistryState>();
+
     auto server = std::make_shared<STI::Utils::LocalFileServer>(deviceID);
     setFileServer(server);
 
@@ -81,14 +175,7 @@ basePath(basePath)
 
 LocalPersistenceManager::~LocalPersistenceManager()
 {
-    //serialize all shots in memory
-
-    //save all persistence targets
-    for (auto& holder : persistenceTargetHolders) {
-        if (holder != 0) {
-            holder->save();
-        }
-    }
+    closePersistenceTargets();
 }
 
 void LocalPersistenceManager::attachEngineScheduler(const std::shared_ptr<STI::Engine::EventEngineScheduler>& scheduler)
@@ -101,6 +188,7 @@ void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<Persist
     if (target != 0) {
         auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
         persistenceTargetHolders.push_back(holder);
+        persistenceTargetsClosed = false;
     }
 }
 
@@ -111,6 +199,22 @@ void LocalPersistenceManager::loadPersistenceTargets()
             holder->load();
         }
     }
+}
+
+void LocalPersistenceManager::closePersistenceTargets()
+{
+    if (persistenceTargetsClosed) {
+        return;
+    }
+
+    for (auto& holder : persistenceTargetHolders) {
+        if (holder != 0) {
+            holder->save();
+        }
+    }
+
+    persistenceTargetHolders.clear();
+    persistenceTargetsClosed = true;
 }
 
 std::string LocalPersistenceManager::makeBasePath(const std::string& rootPath, const std::string& deviceID, bool autocreate)
@@ -230,6 +334,149 @@ std::shared_ptr<STI::Utils::VirtualFileServer> LocalPersistenceManager::makeVirt
         return empty;
     }
     return virtualFileServerFactory->makeVirtualFileServer();
+}
+
+std::shared_ptr<STI::Device::ImportedFile> LocalPersistenceManager::importFile(
+    const STI::Utils::FileID& sourceID,
+    const std::shared_ptr<STI::Utils::FileServer>& sourceServer,
+    const ImportFileOptions& options)
+{
+    if (sourceServer == nullptr || fileHolderFactory == nullptr || fileServer == nullptr || importRegistry == nullptr) {
+        return nullptr;
+    }
+
+    int sourceSize = sourceServer->getFileSize(sourceID);
+    if (sourceSize > 0 && exceedsImportSizeLimit(static_cast<unsigned>(sourceSize), importMaxBytes)) {
+        return nullptr;
+    }
+
+    unsigned long long importIndex = 0;
+    std::string importID;
+    {
+        std::unique_lock<std::mutex> lock(importRegistry->mutex);
+        importIndex = importRegistry->nextImportIndex++;
+        importID = makeImportID(localDeviceID, importIndex);
+    }
+
+    std::shared_ptr<STI::Utils::FileHolder> destination;
+    bool registerWithFileServer = false;
+    bool deletePhysicalFile = false;
+
+    if (options.storage == ImportStorage::DiskTemporary) {
+        auto temporaryPath = getTemporaryPath();
+        if (temporaryPath.empty()) {
+            return nullptr;
+        }
+
+        fs::path importPath = fs::path(temporaryPath) / "imports";
+        std::error_code ec;
+        fs::create_directories(importPath, ec);
+        if (ec) {
+            return nullptr;
+        }
+
+        fs::path destinationPath = importPath / sourceFilenameHint(sourceID);
+        if (options.collision == ImportCollisionPolicy::Unique) {
+            destinationPath = STI::Utils::makeUniquePath(destinationPath.string());
+        }
+        else {
+            bool exists = fs::exists(destinationPath, ec);
+            if (ec) {
+                return nullptr;
+            }
+            if (exists && options.collision == ImportCollisionPolicy::FailIfExists) {
+                return nullptr;
+            }
+            if (exists && options.collision == ImportCollisionPolicy::Replace) {
+                fs::remove(destinationPath, ec);
+                if (ec) {
+                    return nullptr;
+                }
+            }
+        }
+
+        destination = fileHolderFactory->makeFileHolder(
+            destinationPath.parent_path().string(),
+            destinationPath.filename().string());
+        deletePhysicalFile = true;
+    }
+    else {
+        STI::Utils::FileID targetID;
+        targetID.origin = localDeviceID.getID();
+        targetID.persistenceLocation = localDeviceID.getID();
+        targetID.path = "imports";
+        targetID.filename = (options.collision == ImportCollisionPolicy::Unique)
+            ? importFilenameForIndex(sourceID, importIndex)
+            : sourceFilenameHint(sourceID);
+
+        destination = fileHolderFactory->makeVirtualFileHolder(targetID);
+        if (destination == nullptr) {
+            return nullptr;
+        }
+
+        auto destinationID = destination->getID();
+        bool exists = fileServer->findFile(destinationID);
+        if (exists && options.collision == ImportCollisionPolicy::FailIfExists) {
+            return nullptr;
+        }
+        if (exists && options.collision == ImportCollisionPolicy::Replace) {
+            fileServer->deleteFile(destinationID);
+        }
+        registerWithFileServer = true;
+    }
+
+    if (destination == nullptr) {
+        return nullptr;
+    }
+
+    auto cleanupDestination = [&]() {
+        if (registerWithFileServer) {
+            fileServer->deleteFile(destination->getID());
+        }
+        if (deletePhysicalFile) {
+            std::error_code ec;
+            fs::remove(destination->getFilename(), ec);
+        }
+    };
+
+    if (!sourceServer->transferFile(sourceID, destination, STI::Utils::FileTransferType::Binary)) {
+        cleanupDestination();
+        return nullptr;
+    }
+
+    if (exceedsImportSizeLimit(destination->getFileSize(), importMaxBytes)) {
+        cleanupDestination();
+        return nullptr;
+    }
+
+    if (registerWithFileServer && !fileServer->addFile(destination)) {
+        cleanupDestination();
+        return nullptr;
+    }
+
+    ImportedFileRecord record;
+    record.fileID = destination->getID();
+    record.holder = destination;
+    record.fileServer = registerWithFileServer ? fileServer : nullptr;
+    record.deletePhysicalFile = deletePhysicalFile;
+
+    {
+        std::unique_lock<std::mutex> lock(importRegistry->mutex);
+        importRegistry->imports[importID] = record;
+    }
+
+    auto registry = importRegistry;
+    return std::make_shared<ImportedFile>(
+        importID,
+        record.fileID,
+        [registry](const std::string& id) {
+            return LocalPersistenceManager::releaseImportedFileRecord(registry, id);
+        });
+}
+
+bool LocalPersistenceManager::releaseImportedFile(const std::string& importID)
+{
+    return releaseImportedFileRecord(importRegistry, importID);
 }
 
 std::shared_ptr<STI::Utils::FileHolder> LocalPersistenceManager::makeFileHolder(const std::string& path, const std::string& filename)

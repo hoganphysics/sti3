@@ -1,7 +1,5 @@
 #include <sti/utils/Task.h>
 
-#include <chrono>
-
 using STI::Utils::Task;
 using STI::Utils::TaskStatus;
 
@@ -14,7 +12,6 @@ Task::Task(const std::string& id)
 Task::Task(const std::string& id, const STI::Utils::MixedValue& data)
 : taskID(id), status(TaskStatus::Active), metaData(data)
 {
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 }
 
 bool Task::operator<(const Task& rhs) const
@@ -60,6 +57,32 @@ STI::Utils::MixedValue Task::getMetaData(const std::string& key) const
 {
     std::unique_lock<std::mutex> taskLock(taskMutex);
     return metaData.getMetaData(key);
+}
+
+STI::Utils::TimeStamp Task::runNow()
+{
+	STI::Utils::TimeStamp runTime;
+	run();
+	setLastRunTime(runTime);
+	return runTime;
+}
+
+bool Task::hasLastRunTime() const
+{
+	std::unique_lock<std::mutex> taskLock(taskMutex);
+	return lastRunTime.has_value();
+}
+
+std::optional<STI::Utils::TimeStamp> Task::getLastRunTime() const
+{
+	std::unique_lock<std::mutex> taskLock(taskMutex);
+	return lastRunTime;
+}
+
+void Task::setLastRunTime(const STI::Utils::TimeStamp& runTime)
+{
+	std::unique_lock<std::mutex> taskLock(taskMutex);
+	lastRunTime = runTime;
 }
 
 Task& Task::addMetaData(const std::string& key, const STI::Utils::MixedValue& data)

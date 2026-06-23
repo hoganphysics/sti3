@@ -13,6 +13,14 @@ using STI::Utils::FileServer;
 using STI::TNetwork::TFileServer_var;
 using STI::Network::RemoteFileServer;
 using STI::Network::NetworkFileServer;
+using STI::Device::ImportStorage;
+using STI::Device::ImportCollisionPolicy;
+using STI::Device::ImportLifetime;
+using STI::Device::ImportFileOptions;
+using STI::TNetwork::TImportStorage;
+using STI::TNetwork::TImportCollisionPolicy;
+using STI::TNetwork::TImportLifetime;
+using STI::TNetwork::TImportFileOptions;
 
 
 //FileID
@@ -95,6 +103,107 @@ TFileTransferType STI::Network::convert<FileTransferType, TFileTransferType>(con
         break;
     }
     return tType;
+}
+
+//Import options
+template<>
+ImportStorage STI::Network::convert<TImportStorage, ImportStorage>(const TImportStorage& tStorage)
+{
+    switch (tStorage) {
+    case TImportStorage::ImportStorageVirtual:
+        return ImportStorage::Virtual;
+    case TImportStorage::ImportStorageDiskTemporary:
+    default:
+        return ImportStorage::DiskTemporary;
+    }
+}
+
+template<>
+TImportStorage STI::Network::convert<ImportStorage, TImportStorage>(const ImportStorage& storage)
+{
+    switch (storage) {
+    case ImportStorage::Virtual:
+        return TImportStorage::ImportStorageVirtual;
+    case ImportStorage::DiskTemporary:
+    default:
+        return TImportStorage::ImportStorageDiskTemporary;
+    }
+}
+
+template<>
+ImportCollisionPolicy STI::Network::convert<TImportCollisionPolicy, ImportCollisionPolicy>(const TImportCollisionPolicy& tCollision)
+{
+    switch (tCollision) {
+    case TImportCollisionPolicy::ImportCollisionFailIfExists:
+        return ImportCollisionPolicy::FailIfExists;
+    case TImportCollisionPolicy::ImportCollisionReplace:
+        return ImportCollisionPolicy::Replace;
+    case TImportCollisionPolicy::ImportCollisionUnique:
+    default:
+        return ImportCollisionPolicy::Unique;
+    }
+}
+
+template<>
+TImportCollisionPolicy STI::Network::convert<ImportCollisionPolicy, TImportCollisionPolicy>(const ImportCollisionPolicy& collision)
+{
+    switch (collision) {
+    case ImportCollisionPolicy::FailIfExists:
+        return TImportCollisionPolicy::ImportCollisionFailIfExists;
+    case ImportCollisionPolicy::Replace:
+        return TImportCollisionPolicy::ImportCollisionReplace;
+    case ImportCollisionPolicy::Unique:
+    default:
+        return TImportCollisionPolicy::ImportCollisionUnique;
+    }
+}
+
+template<>
+ImportLifetime STI::Network::convert<TImportLifetime, ImportLifetime>(const TImportLifetime&)
+{
+    return ImportLifetime::Handle;
+}
+
+template<>
+TImportLifetime STI::Network::convert<ImportLifetime, TImportLifetime>(const ImportLifetime&)
+{
+    return TImportLifetime::ImportLifetimeHandle;
+}
+
+template<>
+ImportFileOptions STI::Network::convert<TImportFileOptions, ImportFileOptions>(const TImportFileOptions& tOptions)
+{
+    ImportFileOptions options;
+    convert<TImportFileOptions, ImportFileOptions>(tOptions, options);
+    return options;
+}
+
+template<>
+TImportFileOptions STI::Network::convert<ImportFileOptions, TImportFileOptions>(const ImportFileOptions& options)
+{
+    TImportFileOptions tOptions;
+    convert<ImportFileOptions, TImportFileOptions>(options, tOptions);
+    return tOptions;
+}
+
+template<>
+bool STI::Network::convert<TImportFileOptions, ImportFileOptions>(const TImportFileOptions& tOptions, ImportFileOptions& options)
+{
+    options.storage = convert<TImportStorage, ImportStorage>(tOptions.storage);
+    options.collision = convert<TImportCollisionPolicy, ImportCollisionPolicy>(tOptions.collision);
+    options.lifetime = convert<TImportLifetime, ImportLifetime>(tOptions.lifetime);
+    options.ttl = std::chrono::seconds(tOptions.ttlSeconds);
+    return true;
+}
+
+template<>
+bool STI::Network::convert<ImportFileOptions, TImportFileOptions>(const ImportFileOptions& options, TImportFileOptions& tOptions)
+{
+    tOptions.storage = convert<ImportStorage, TImportStorage>(options.storage);
+    tOptions.collision = convert<ImportCollisionPolicy, TImportCollisionPolicy>(options.collision);
+    tOptions.lifetime = convert<ImportLifetime, TImportLifetime>(options.lifetime);
+    tOptions.ttlSeconds = static_cast<CORBA::ULong>(options.ttl.count());
+    return true;
 }
 
 

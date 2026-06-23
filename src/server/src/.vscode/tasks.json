@@ -2,17 +2,30 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Build local sti libs (conda run)",
+			"type": "shell",
+			"command": "conda",
+			"args": [
+				"run", "--no-capture-output", "-n", "sti3-build",
+				"cmake",
+				"--build", "${workspaceFolder}/../../../build-ninja",
+				"--target", "stidevice", "stinetwork",
+				"--parallel", "8"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": ["$gcc"],
+			"group": "build"
+		},
+		{
 			"label": "Configure (conda run)",
 			"type": "shell",
 			"command": "conda",
 			"args": [
-				"run", "-n", "sti3",
+				"run", "--no-capture-output", "-n", "sti3-build",
 				"cmake",
-				"-S", ".", "-B", "build",
+				"-S", ".", "-B", "build-local",
 				"-DCMAKE_BUILD_TYPE=Debug",
-				"-DCMAKE_PREFIX_PATH=$CONDA_PREFIX",
-				"-Dsti3_DIR=$CONDA_PREFIX/lib/cmake/sti3",
-				"--debug-find"
+				"-DSTI3_LOCAL_BUILD_DIR=${workspaceFolder}/../../../build-ninja"
 			],
 			"options": { "cwd": "${workspaceFolder}" },
 			"problemMatcher": ["$gcc"],
@@ -23,14 +36,18 @@
 			"type": "shell",
 			"command": "conda",
 			"args": [
-				"run", "-n", "sti3",
-				"--no-capture-output",
+				"run", "--no-capture-output", "-n", "sti3-build",
 				"cmake",
 				"--build",
-				"build",
+				"build-local",
 				"-j"
 			],
 			"options": { "cwd": "${workspaceFolder}" },
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Build local sti libs (conda run)",
+				"Configure (conda run)"
+			],
 			"problemMatcher": ["$gcc"],
 			"group": "build"
 		},

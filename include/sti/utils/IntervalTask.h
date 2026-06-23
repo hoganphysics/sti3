@@ -22,13 +22,14 @@ public:
 	IntervalTask(const std::string& id, const std::string& wait_time, const std::function<void(void)>& runFunc);	//format: hh:mm:ss
 	~IntervalTask();
 
-	double secondsToNextRun() const;
+	double secondsToNextRun() const override;
 
-	void run();
-	void skipTask();
-	bool repeat();
+	void skipTask() override;
+	bool repeat() override;
 
 private:
+
+	void run() override;
 
 	double waitInterval;
 	const std::function<void(void)> runFunc;

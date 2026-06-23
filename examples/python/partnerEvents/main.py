@@ -20,7 +20,7 @@ device2 = TestDevice2(config2)
 
 
 
-nameServiceAddr = "192.168.1.109:2809"   #OmniORB NameService
+nameServiceAddr = "192.168.88.252:2809"   #OmniORB NameService
 hub = stidevicepy.NetworkDeviceHub(nameServiceAddr)
 
 hub.addDevice(device1)

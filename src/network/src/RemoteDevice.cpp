@@ -2,6 +2,7 @@
 #include "RemoteDevice.h"
 
 #include <sti/device/ChannelManager.h>
+#include <sti/device/PartnerDeviceInfo.h>
 
 #include "RemoteDeviceCollection.h"
 #include "RemoteDeviceMessageDispatcher.h"
@@ -29,6 +30,7 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TProfileManager;
 using STI::Network::RemoteLogManager;
 using STI::Utils::MixedValue;
+using STI::Device::PartnerDeviceInfo;
 
 
 RemoteDevice::RemoteDevice(::STI::TNetwork::TDevice_var device)
@@ -141,6 +143,29 @@ const STI::Device::DeviceID RemoteDevice::getID() const
 	}
 
 	return deviceID;
+}
+
+void RemoteDevice::getPartnerDevices(std::vector<PartnerDeviceInfo>& partners) const
+{
+	std::unique_lock<std::mutex> deviceLock(deviceMutex);
+
+	partners.clear();
+
+	if (isDisabled()) return;
+
+	STI::TNetwork::TPartnerDeviceInfoSeq_var tPartners(new STI::TNetwork::TPartnerDeviceInfoSeq);
+
+	try {
+		getTRef()->getPartnerDevices(tPartners);
+		convert<STI::TNetwork::TPartnerDeviceInfo, PartnerDeviceInfo>(tPartners.in(), partners);
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&)
+	{
+	}
 }
 
 void RemoteDevice::updateMetaData() const

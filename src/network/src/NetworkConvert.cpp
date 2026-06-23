@@ -121,6 +121,22 @@ void setBinaryMetadata(const std::shared_ptr<BinaryData>& bin, const TBinaryData
 	bin->setMetadata(binaryLengthMetadata(tBin), binaryWordsizeMetadata(tBin));
 }
 
+bool getExistingBinaryStreamReference(const std::shared_ptr<BinaryData>& bin,
+	STI::TNetwork::TBinaryDataStream_var& tDataStream)
+{
+	if (bin == 0) {
+		return false;
+	}
+
+	auto stream = bin->getStream();
+	if (stream == 0) {
+		return false;
+	}
+
+	return RemoteBinaryDataStream::getTBinaryDataStreamRef(stream, tDataStream)
+		|| NetworkBinaryDataStream::getTBinaryDataStreamRef(stream, tDataStream);
+}
+
 template<typename T>
 T* copyBuffer(const T* data, size_t length)
 {
@@ -570,9 +586,18 @@ bool STI::Network::convertBinaryData(
 	//size_t maxNetworkMessage = 1000000;
 
 	if (policy == BinaryPayloadPolicy::PreferStreamReference || bin->bytes() > maxNetworkMessage) {
-		auto networkDataStream = std::make_shared<NetworkBinaryDataStream>(bin, maxNetworkMessage);
-		bin->attachStream(networkDataStream);
 		STI::TNetwork::TBinaryDataStream_var tDataStream;
+
+		if (!bin->hasLocalData() && getExistingBinaryStreamReference(bin, tDataStream)) {
+			tBin.data.data_stream(tDataStream);
+			return true;
+		}
+
+		auto sourceStream = bin->hasLocalData() ? nullptr : bin->getStream();
+		auto networkDataStream = sourceStream != 0
+			? std::make_shared<NetworkBinaryDataStream>(sourceStream)
+			: std::make_shared<NetworkBinaryDataStream>(bin, maxNetworkMessage);
+		bin->retainStream(networkDataStream);
 
 		if (!NetworkBinaryDataStream::getTBinaryDataStreamRef(networkDataStream, tDataStream)) {
 			return false;

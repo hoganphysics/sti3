@@ -40,6 +40,14 @@ using ::STI::TNetwork::TSequenceEntryID;
 using STI::Engine::EngineJobStatus;
 using ::STI::TNetwork::TEngineJobStatus;
 using ::STI::TNetwork::TFileServer_var;
+using ::STI::TNetwork::TFileID;
+using ::STI::TNetwork::TImportedFile;
+using ::STI::TNetwork::TImportedFile_var;
+using ::STI::TNetwork::TImportFileOptions;
+using STI::Utils::FileID;
+using STI::Utils::FileServer;
+using STI::Device::ImportedFile;
+using STI::Device::ImportFileOptions;
 
 
 RemotePersistenceManager::RemotePersistenceManager(::STI::TNetwork::TPersistenceManager_var manager, const std::string& originID)
@@ -304,6 +312,84 @@ bool RemotePersistenceManager::getFileServer(std::shared_ptr<STI::Utils::FileSer
 	}
 
     return success;
+}
+
+std::shared_ptr<ImportedFile> RemotePersistenceManager::importFile(
+	const FileID& sourceID,
+	const std::shared_ptr<FileServer>& sourceServer,
+	const ImportFileOptions& options)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled() || sourceServer == nullptr) {
+		return nullptr;
+	}
+
+	TFileServer_var tSourceServer;
+	if (!convert<std::shared_ptr<FileServer>, TFileServer_var>(sourceServer, tSourceServer)) {
+		return nullptr;
+	}
+
+	TImportedFile_var tImportedFile(new TImportedFile);
+	bool success = false;
+
+	try {
+		success = getTRef()->importFile(
+			convert<FileID, TFileID>(sourceID),
+			tSourceServer,
+			convert<ImportFileOptions, TImportFileOptions>(options),
+			tImportedFile.out());
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+	if (!success) {
+		return nullptr;
+	}
+
+	auto importID = convert<CORBA::String_member, std::string>(tImportedFile->importID);
+	auto fileID = convert<TFileID, FileID>(tImportedFile->fileID);
+	STI::TNetwork::TPersistenceManager_var manager = STI::TNetwork::TPersistenceManager::_duplicate(getTRef());
+
+	return std::make_shared<ImportedFile>(
+		importID,
+		fileID,
+		[manager](const std::string& id) mutable {
+			try {
+				return static_cast<bool>(manager->releaseImportedFile(id.c_str()));
+			}
+			catch (CORBA::TRANSIENT&) {
+			}
+			catch (CORBA::SystemException&) {
+			}
+			catch (CORBA::Exception&) {
+			}
+			return false;
+		});
+}
+
+bool RemotePersistenceManager::releaseImportedFile(const std::string& importID)
+{
+	std::unique_lock<std::mutex> persistenceLock(persistenceMutex);
+
+	if (isDisabled()) return false;
+
+	bool success = false;
+	try {
+		success = getTRef()->releaseImportedFile(importID.c_str());
+	}
+	catch (CORBA::TRANSIENT&) {
+	}
+	catch (CORBA::SystemException&) {
+	}
+	catch (CORBA::Exception&) {
+	}
+
+	return success;
 }
 
 std::string RemotePersistenceManager::getBasePath() const

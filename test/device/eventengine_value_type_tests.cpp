@@ -37,6 +37,8 @@ using STI::Device::Channel;
 using STI::Device::ChannelManager;
 using STI::Device::ChannelType;
 using STI::Device::DeviceID;
+using STI::Device::ImportedFile;
+using STI::Device::ImportFileOptions;
 using STI::Device::LocalChannel;
 using STI::Device::PersistenceManager;
 using STI::Engine::DeviceEventParser;
@@ -128,10 +130,16 @@ public:
 		return server != nullptr;
 	}
 
-	std::shared_ptr<VirtualFileServer> makeVirtualFileServer() override
-	{
-		return std::make_shared<VirtualFileServer>();
+		std::shared_ptr<VirtualFileServer> makeVirtualFileServer() override
+		{
+			return std::make_shared<VirtualFileServer>();
 		}
+
+		std::shared_ptr<ImportedFile> importFile(
+			const FileID&,
+			const std::shared_ptr<FileServer>&,
+			const ImportFileOptions& = ImportFileOptions()) override { return nullptr; }
+		bool releaseImportedFile(const std::string&) override { return false; }
 
 		std::string getBasePath() const override { return ""; }
 		std::string getTemporaryPath() const override { return ""; }

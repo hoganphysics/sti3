@@ -31,6 +31,10 @@ Recommended Starting Points
    * - ``readWrite``
      - C++, Python
      - Declaring channels and implementing ``writeChannel`` and ``readChannel``.
+   * - ``fileTransfer``
+     - C++, Python
+     - File and image channel values, lazy payload reads, and ``FileID`` import
+       for ``device.read()`` / ``device.write()`` arguments.
    * - ``attributes``
      - C++, Python
      - Attribute setters, refreshers, allowed values, and metadata.
@@ -79,7 +83,9 @@ Typical files:
 
 For example, ``examples/cpp/readWrite`` shows the common structure for a device
 with output channels, input channels, and input channels that accept read
-arguments.  ``examples/cpp/parseEvents`` is the best starting point for a
+arguments.  ``examples/cpp/fileTransfer`` shows file and image channel values
+and imported ``FileID`` arguments.  ``examples/cpp/parseEvents`` is the best
+starting point for a
 hardware-timed device because it includes custom ``SynchronousEvent`` classes
 and parse-time error handling.
 
@@ -95,6 +101,8 @@ Use these when building with ``stipy.stidevicepy``:
 * ``simpleDevice`` for the smallest network-connected device.
 * ``readWrite`` for channel metadata and Python ``readChannel`` /
   ``writeChannel`` hooks.
+* ``fileTransfer`` for file/image channel values, lazy reads, and imported
+  ``FileID`` read/write arguments.
 * ``parseEvents`` for custom Python ``SynchronousEvent`` classes.
 * ``tasks`` and ``logging`` for recurring background work.
 * ``monitors`` for live status values shown through the monitor manager.

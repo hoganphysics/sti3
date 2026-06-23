@@ -71,6 +71,8 @@ public:
     void attachStream(const std::shared_ptr<BinaryDataStream>& stream,
                       size_t length,
                       size_t wordsize);
+    std::shared_ptr<BinaryDataStream> getStream() const;
+    void retainStream(const std::shared_ptr<BinaryDataStream>& stream);
 
     bool materialize();
     bool transferTo(const std::shared_ptr<BinaryDataStreamTarget>& target);
@@ -89,6 +91,7 @@ private:
     void* data_;
 
     std::vector<std::shared_ptr<BinaryDataStream>> streams;
+    std::vector<std::shared_ptr<BinaryDataStream>> retainedStreams;
 
     std::function<void(void)> clearer;
     std::function<const std::type_info&(void)> getType;

@@ -24,6 +24,7 @@ public:
     
     void getTaskIDs(::STI::TNetwork::TStringSeq_out ids);
     TTaskStatus getTaskStatus(const char* taskID);
+    ::CORBA::Boolean getTaskLastRunTime(const char* taskID, ::STI::TNetwork::TTimeStamp& lastRunTime);
     void setStatus(const char* taskID, ::STI::TNetwork::TTaskStatus newStatus);
     ::CORBA::Boolean getTask(const char* taskID, ::STI::TNetwork::TTask_out task);
     void getTasks(::STI::TNetwork::TTaskSeq_out tasks);
@@ -46,4 +47,3 @@ private:
 } //STI
 
 #endif
-
