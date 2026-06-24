@@ -62,6 +62,57 @@ set(STI_BASE_DIR ../../..)
 
 # include_directories("." ${Boost_INCLUDE_DIR} "${OMNIORB_PATH}/include")
 
+set(STINETWORK_IDL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../idl")
+set(STINETWORK_IDL_GENERATED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
+set(STINETWORK_IDL_FILES
+    "${STINETWORK_IDL_DIR}/deviceNet.idl"
+    "${STINETWORK_IDL_DIR}/logsNet.idl"
+    "${STINETWORK_IDL_DIR}/tasks.idl"
+    "${STINETWORK_IDL_DIR}/orbTypes.idl"
+)
+set(STINETWORK_IDL_GENERATED_SOURCES
+    "${STINETWORK_IDL_GENERATED_DIR}/deviceNet.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/deviceNetDynSK.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/logsNet.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/logsNetDynSK.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/orbTypes.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/orbTypesDynSK.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/tasks.cpp"
+    "${STINETWORK_IDL_GENERATED_DIR}/tasksDynSK.cpp"
+)
+set(STINETWORK_IDL_GENERATED_HEADERS
+    "${STINETWORK_IDL_GENERATED_DIR}/deviceNet.h"
+    "${STINETWORK_IDL_GENERATED_DIR}/logsNet.h"
+    "${STINETWORK_IDL_GENERATED_DIR}/orbTypes.h"
+    "${STINETWORK_IDL_GENERATED_DIR}/tasks.h"
+)
+
+if(WIN32)
+  set(STINETWORK_COMPILE_IDL_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/../compileIDL.bat")
+  set(STINETWORK_COMPILE_IDL_COMMAND cmd /c call "${STINETWORK_COMPILE_IDL_SCRIPT}")
+else()
+  set(STINETWORK_COMPILE_IDL_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/../compileIDL.sh")
+  set(STINETWORK_COMPILE_IDL_COMMAND "${STINETWORK_COMPILE_IDL_SCRIPT}")
+endif()
+
+add_custom_command(
+  OUTPUT
+    ${STINETWORK_IDL_GENERATED_SOURCES}
+    ${STINETWORK_IDL_GENERATED_HEADERS}
+  COMMAND ${STINETWORK_COMPILE_IDL_COMMAND}
+  DEPENDS
+    "${STINETWORK_COMPILE_IDL_SCRIPT}"
+    ${STINETWORK_IDL_FILES}
+  COMMENT "Generating omniORB C++ stubs from STI network IDL"
+  VERBATIM
+)
+
+add_custom_target(stinetwork_idl
+  DEPENDS
+    ${STINETWORK_IDL_GENERATED_SOURCES}
+    ${STINETWORK_IDL_GENERATED_HEADERS}
+)
+
 
 add_library(stinetwork SHARED 
     convert/Convert_Log.cpp
@@ -89,14 +140,7 @@ add_library(stinetwork SHARED
     convert/Convert_Task.cpp
     convert/Convert_VersionInfo.cpp
 
-    generated/deviceNet.cpp
-    generated/deviceNetDynSK.cpp
-    generated/logsNet.cpp
-    generated/logsNetDynSK.cpp
-    generated/orbTypes.cpp
-    generated/orbTypesDynSK.cpp
-    generated/tasks.cpp
-    generated/tasksDynSK.cpp
+    ${STINETWORK_IDL_GENERATED_SOURCES}
 
     COSBindingNode.cpp
     NetworkBinaryDataStream.cpp
@@ -169,6 +213,8 @@ add_library(stinetwork SHARED
     TestNetworkWrapper.cpp
     TTriggerCallback_i.cpp
 )
+
+add_dependencies(stinetwork stinetwork_idl)
 
 if(NOT TARGET sti3::stinetwork)
   add_library(sti3::stinetwork ALIAS stinetwork)
