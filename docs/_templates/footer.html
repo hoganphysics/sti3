@@ -1,0 +1,6 @@
+{% extends "!footer.html" %}
+
+{% block extrafooter %}
+  {{ super() }}
+  <p>Built for STI3 version {{ release|e }}, build {{ sti3_build_number|e }}.</p>
+{% endblock %}
