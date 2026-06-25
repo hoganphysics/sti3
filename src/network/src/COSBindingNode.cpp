@@ -131,6 +131,10 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 		//No need to iterate through the tree; this is a leaf.
 		return;
 	}
+	if (CORBA::is_nil(biIter)) {
+		// Empty contexts may not return a BindingIterator.
+		return;
+	}
 
 	while(biIter->next_one(binding))
 	{

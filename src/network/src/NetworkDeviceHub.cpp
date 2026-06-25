@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 using STI::Network::NetworkDeviceHub;
 using STI::Device::DeviceID;
@@ -101,6 +102,21 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	if (selfRebindIntervalSeconds < 0.1) {
 		selfRebindIntervalSeconds = 0.1;
 	}
+	pruneEnabled = getNetworkHubBool(config, "EnablePrune", false);
+	pruneScope = STI::Utils::normalizeStringForLookup(
+		config.get<std::string>("NetworkHub", "PruneScope", "OwnIncomingSubtree"));
+	pruneIntervalSeconds = config.get<double>("NetworkHub", "PruneIntervalSeconds", 300.0);
+	if (pruneIntervalSeconds < 1.0) {
+		pruneIntervalSeconds = 1.0;
+	}
+	pruneFailureThreshold = config.get<unsigned>("NetworkHub", "PruneFailureThreshold", 3);
+	if (pruneFailureThreshold < 1) {
+		pruneFailureThreshold = 1;
+	}
+	pruneSuspectSeconds = config.get<double>("NetworkHub", "PruneSuspectSeconds", 600.0);
+	if (pruneSuspectSeconds < 0.0) {
+		pruneSuspectSeconds = 0.0;
+	}
 
 	stiContext = "STI";
 	hubObjectName = "TDeviceHub.Object";
@@ -150,6 +166,14 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 				registerHubContext();
 			});
 		refreshScheduler->addTask(selfRebindTask);
+	}
+
+	if (pruneEnabled) {
+		auto pruneTask = std::make_shared<STI::Utils::IntervalTask>("nameservice-prune", pruneIntervalSeconds,
+			[this]() {
+				pruneHubConnections();
+			});
+		refreshScheduler->addTask(pruneTask);
 	}
 }
 
@@ -593,6 +617,125 @@ void NetworkDeviceHub::refreshHubConnections()
 
 		if (LocalDeviceHub::connect(remoteHub, deviceHubWrapper)) {
 			// std::cerr << "Debug: Reconnected to hub " << remoteHub->getID().getID() << std::endl;		
+		}
+	}
+}
+
+bool NetworkDeviceHub::getPeerHubIDFromOwnContext(const std::string& hubObjectContext, HubID& peerHubID) const
+{
+	const std::string prefix = hubContextPath + "/";
+	const std::string suffix = "/" + hubObjectName;
+
+	if (hubObjectContext == thisHubContext) {
+		return false;
+	}
+	if (hubObjectContext.rfind(prefix, 0) != 0) {
+		return false;
+	}
+	if (hubObjectContext.size() <= prefix.size() + suffix.size()) {
+		return false;
+	}
+	if (hubObjectContext.compare(hubObjectContext.size() - suffix.size(), suffix.size(), suffix) != 0) {
+		return false;
+	}
+
+	const std::string peerIDText = hubObjectContext.substr(
+		prefix.size(),
+		hubObjectContext.size() - prefix.size() - suffix.size());
+
+	return HubID::stringToHubID(peerIDText, peerHubID);
+}
+
+bool NetworkDeviceHub::isConnectedHubAlive(const HubID& hubID) const
+{
+	if (localHub == 0 || !hubID.isValid() || !localHub->containsHub(hubID)) {
+		return false;
+	}
+
+	std::shared_ptr<DeviceHub> hub;
+	return localHub->getHub(hubID, hub) && hub != nullptr && hub->ping();
+}
+
+void NetworkDeviceHub::pruneHubConnections()
+{
+	if (!pruneEnabled || pruneScope != "ownincomingsubtree" || orbmanager == nullptr || localHub == 0) {
+		return;
+	}
+
+	std::vector<std::string> hubCandidates;
+	orbmanager->getObjectContexts(hubContextPath, hubObjectName, hubCandidates);
+
+	std::set<std::string> seenCandidates;
+	const auto now = std::chrono::steady_clock::now();
+
+	for (auto& hubContext : hubCandidates) {
+		HubID peerHubID;
+		if (!getPeerHubIDFromOwnContext(hubContext, peerHubID)) {
+			continue;
+		}
+
+		seenCandidates.insert(hubContext);
+
+		if (isConnectedHubAlive(peerHubID)) {
+			pruneSuspects.erase(hubContext);
+			continue;
+		}
+
+		std::shared_ptr<RemoteDeviceHub> remoteHub;
+		std::stringstream errors;
+		if (getRemoteHub(hubContext, remoteHub, errors) && remoteHub->ping()) {
+			contextToHubID[hubContext] = remoteHub->getID();
+			pruneSuspects.erase(hubContext);
+			continue;
+		}
+
+		auto suspectIt = pruneSuspects.find(hubContext);
+		if (suspectIt == pruneSuspects.end()) {
+			suspectIt = pruneSuspects.emplace(
+				hubContext,
+				PruneSuspect{peerHubID, 1, now, now}).first;
+		}
+		else {
+			suspectIt->second.hubID = peerHubID;
+			++suspectIt->second.failureCount;
+			suspectIt->second.lastFailure = now;
+		}
+
+		const double suspectAgeSeconds =
+			std::chrono::duration<double>(now - suspectIt->second.firstFailure).count();
+
+		if (suspectIt->second.failureCount < pruneFailureThreshold
+			|| suspectAgeSeconds < pruneSuspectSeconds) {
+			continue;
+		}
+
+		// One last live check protects against pruning after transient failures.
+		if (isConnectedHubAlive(peerHubID)) {
+			pruneSuspects.erase(hubContext);
+			continue;
+		}
+
+		remoteHub.reset();
+		errors.str("");
+		errors.clear();
+		if (getRemoteHub(hubContext, remoteHub, errors) && remoteHub->ping()) {
+			contextToHubID[hubContext] = remoteHub->getID();
+			pruneSuspects.erase(hubContext);
+			continue;
+		}
+
+		if (orbmanager->unbindObjectReference(hubContext)) {
+			contextToHubID.erase(hubContext);
+			pruneSuspects.erase(hubContext);
+		}
+	}
+
+	for (auto it = pruneSuspects.begin(); it != pruneSuspects.end(); ) {
+		if (seenCandidates.find(it->first) == seenCandidates.end()) {
+			it = pruneSuspects.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
 }

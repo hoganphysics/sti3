@@ -508,8 +508,28 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 
 bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
 {
+	if (objectFullPath.empty() || objectFullPath.find("//") != std::string::npos) {
+		return false;
+	}
 
-	// CosNaming::NamingContext_var base(getNamingContext(baseContext));
+	CosNaming::NamingContext_var rootContext;
+	if (!getRootContext(rootContext)) {
+		return false;
+	}
+
+	try {
+		CosNaming::Name_var objectName = omni::omniURI::stringToName(objectFullPath.c_str());
+		rootContext->unbind(objectName);
+		return true;
+	}
+	catch (CosNaming::NamingContext::NotFound&) {
+	}
+	catch (CosNaming::NamingContext::CannotProceed&) {
+	}
+	catch (CosNaming::NamingContext::InvalidName&) {
+	}
+	catch (CORBA::Exception&) {
+	}
 
 	return false;
 }

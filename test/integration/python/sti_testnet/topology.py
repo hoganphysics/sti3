@@ -186,13 +186,22 @@ class InProcessTopology(object):
 
 
 class ProcessTopology(object):
-    def __init__(self, nameservice_address, server_spec=None, device_specs=None, persistence_root=None, ready_timeout_s=10.0):
+    def __init__(
+        self,
+        nameservice_address,
+        server_spec=None,
+        device_specs=None,
+        persistence_root=None,
+        ready_timeout_s=10.0,
+        hub_config=None,
+    ):
         self.nameservice_address = nameservice_address
         self.server_spec = server_spec or make_server_spec()
         self.device_specs = list(device_specs or [])
         self.persistence_root = persistence_root
         self._owns_persistence_root = persistence_root is None
         self.ready_timeout_s = float(ready_timeout_s)
+        self.hub_config = hub_config
         self.hub = None
         self.server = None
         self.device_processes = []
@@ -215,7 +224,10 @@ class ProcessTopology(object):
             _OWNED_PERSISTENCE_ROOTS.add(self.persistence_root)
         self._apply_persistence_root()
 
-        self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address)
+        if self.hub_config is None:
+            self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address)
+        else:
+            self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address, self.hub_config)
         self.server = SimulatedDevice(self.server_spec)
         self.hub.addDevice(self.server)
         self.hub.run(False)
