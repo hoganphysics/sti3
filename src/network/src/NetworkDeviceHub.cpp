@@ -22,6 +22,27 @@ using STI::Network::ORBManager;
 using STI::Network::DeviceHub;
 using STI::Network::HubTrace;
 
+namespace {
+
+bool getNetworkHubBool(const STI::Utils::Configuration& config, const std::string& key, bool defaultValue)
+{
+	std::string value;
+	if (!config.getParameter<std::string>("NetworkHub", key, value)) {
+		return defaultValue;
+	}
+
+	auto normalized = STI::Utils::normalizeStringForLookup(value);
+	if (normalized == "true" || normalized == "yes" || normalized == "on" || normalized == "1") {
+		return true;
+	}
+	if (normalized == "false" || normalized == "no" || normalized == "off" || normalized == "0") {
+		return false;
+	}
+	return defaultValue;
+}
+
+} // namespace
+
 
 unsigned NetworkDeviceHub::hubNumber = 0;
 
@@ -75,8 +96,12 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 	_nameServiceAddress = config.get<std::string>("NetworkHub", "NameService", "localhost:2809" /*default*/ );
 	_usingDefaultHubID = false;
 	useAutoTargetHubIDs = true;		//attempt to auto connect to hubs with HubIDs derived from attached devices targetServerID
+	selfRebindEnabled = getNetworkHubBool(config, "SelfRebind", true);
+	selfRebindIntervalSeconds = config.get<double>("NetworkHub", "SelfRebindIntervalSeconds", 30.0);
+	if (selfRebindIntervalSeconds < 0.1) {
+		selfRebindIntervalSeconds = 0.1;
+	}
 
-	
 	stiContext = "STI";
 	hubObjectName = "TDeviceHub.Object";
 
@@ -101,7 +126,7 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 
 	refreshHubContext();
 
-	// Refresh local hub periodically to remove dead references
+	// Refresh local hub connections periodically.
 	int refreshTime = 5;	//seconds
 	auto refreshTask = std::make_shared<STI::Utils::IntervalTask>("refresh", refreshTime,
 		[this]() {
@@ -114,10 +139,18 @@ NetworkDeviceHub::NetworkDeviceHub(const HubID& hubID, const STI::Utils::Configu
 				unblock();		// unblock run() if it is blocking
 			}
 		});
-	
+
 	refreshScheduler = std::make_shared<STI::Utils::TaskScheduler>();
 	refreshScheduler->start();
 	refreshScheduler->addTask(refreshTask);
+
+	if (selfRebindEnabled) {
+		auto selfRebindTask = std::make_shared<STI::Utils::IntervalTask>("self-rebind", selfRebindIntervalSeconds,
+			[this]() {
+				registerHubContext();
+			});
+		refreshScheduler->addTask(selfRebindTask);
+	}
 }
 
 NetworkDeviceHub::~NetworkDeviceHub()
@@ -333,20 +366,20 @@ bool NetworkDeviceHub::findHub(const STI::Device::DeviceID& deviceID, HubID& hub
 		return false;
 	}
 
-	std::vector<std::string> liveHubs;
-	orbmanager->getAllLiveObjectContexts(stiContext, hubObjectName, liveHubs);
+	std::vector<std::string> hubCandidates;
+	orbmanager->getObjectContexts(stiContext, hubObjectName, hubCandidates);
 
 	//If found, rotate vector so inputHubID is first.
-	auto pivot = std::find_if(liveHubs.begin(), liveHubs.end(), 
+	auto pivot = std::find_if(hubCandidates.begin(), hubCandidates.end(),
 		[&inputHubID](const std::string& id) -> bool {
 			return id == inputHubID;
 		});
 
-	if (pivot != liveHubs.end()) {
-		std::rotate(liveHubs.begin(), pivot, pivot + 1);
+	if (pivot != hubCandidates.end()) {
+		std::rotate(hubCandidates.begin(), pivot, pivot + 1);
 	}
 
-	for (auto& hubContext : liveHubs) {	
+	for (auto& hubContext : hubCandidates) {
 		if (getRemoteHub(hubContext, remoteHub, errors) && remoteHub->hasNodeID(deviceID)) {
 			hubID = remoteHub->getID();
 			found = true;
@@ -378,9 +411,10 @@ bool NetworkDeviceHub::unregisterHubContext()
 
 bool NetworkDeviceHub::registerHubContext()
 {
-	// Register this TDeviceHub reference in two contexts in the NameService:
+	// Register this TDeviceHub reference in the NameService:
 	// (1)  STI/<Hub ID>/TDeviceHub.Object
-	// (2)  STI/<Target Server ID>/<Hub ID>/TDeviceHub.Object  (for all target hubs, except root)
+	// (2)  STI/<Target Hub ID>/<Hub ID>/TDeviceHub.Object
+	// (3)  STI/<Connected Hub ID>/<Hub ID>/TDeviceHub.Object
 
 	bool success = false;
 	STI::TNetwork::TDeviceHub_var tDeviceHubLocal;
@@ -403,15 +437,23 @@ bool NetworkDeviceHub::registerHubContext()
 		success = true;
 	}
 
-	// (2) Bind reference to this Hub under all target Hub contexts (for reconnect when target Hub restarts)
-	for (auto& targetHub : targetHubs) {
+	std::set<HubID> rebindContextHubs = targetHubs;
+	std::set<HubID> connectedHubs;
+	localHub->getHubIDs(connectedHubs);
+	rebindContextHubs.insert(connectedHubs.begin(), connectedHubs.end());
 
-		std::string targetHubPath = makeHubContextPath(stiContext, targetHub);
+	// (2,3) Bind reference to this Hub under target and connected Hub contexts.
+	for (auto& rebindContextHub : rebindContextHubs) {
+		if (!rebindContextHub.isValid() || rebindContextHub == localHub->getID()) {
+			continue;
+		}
+
+		std::string rebindContextHubPath = makeHubContextPath(stiContext, rebindContextHub);
 
 		//Add reference to this Hub under the target hub context (for rebind if target hub restarts)
 		if (persistence.bindToTargetContexts) {
 			success &= orbmanager->bindObjectReference(
-				makeHubContext(targetHubPath, localHub->getID()),
+				makeHubContext(rebindContextHubPath, localHub->getID()),
 				tDeviceHubLocal.in());
 		}
 		else {
@@ -457,11 +499,11 @@ void NetworkDeviceHub::run(bool block)
 		return;
 	}
 
-	// Find live registered Hubs that attempted to connect to this Hub. Attempt to connect.
-	std::vector<std::string> liveHubs;
-	orbmanager->getAllLiveObjectContexts(hubContextPath, hubObjectName, liveHubs);
+	// Find registered Hubs that attempted to connect to this Hub. Attempt to connect.
+	std::vector<std::string> hubCandidates;
+	orbmanager->getObjectContexts(hubContextPath, hubObjectName, hubCandidates);
 
-	for (auto& hubContext : liveHubs) {
+	for (auto& hubContext : hubCandidates) {
 		if (hubContext.compare(thisHubContext) != 0) {		//don't connect to self
 			connectRemoteHub(hubContext);
 		}
@@ -496,15 +538,15 @@ bool NetworkDeviceHub::refresh()
 
 void NetworkDeviceHub::refreshHubConnections()
 {
-	// Find live registered Hubs that attempted to connect to this Hub. Attempt to reconnect.
-	std::vector<std::string> liveHubs;
+	// Find registered Hubs that attempted to connect to this Hub. Attempt to reconnect.
+	std::vector<std::string> hubCandidates;
 	std::stringstream errors;
-	
-	orbmanager->getAllLiveObjectContexts(hubContextPath, hubObjectName, liveHubs);
-	
+
+	orbmanager->getObjectContexts(hubContextPath, hubObjectName, hubCandidates);
+
 	std::shared_ptr<RemoteDeviceHub> remoteHub;
 
-	for (auto& hubContext : liveHubs) {
+	for (auto& hubContext : hubCandidates) {
 		if (hubContext.compare(thisHubContext) == 0) {
 			continue;	//don't connect to self
 		}
@@ -615,8 +657,11 @@ bool NetworkDeviceHub::getRemoteHub(const std::string& remoteHubContext, std::sh
 		STI::TNetwork::TDeviceHub_var tDeviceHubRemote = STI::TNetwork::TDeviceHub::_narrow(obj);
 
 		if (!CORBA::is_nil(tDeviceHubRemote)) {
-			success = true;
-			remoteHub = std::make_shared<RemoteDeviceHub>(tDeviceHubRemote);
+			auto candidateHub = std::make_shared<RemoteDeviceHub>(tDeviceHubRemote);
+			if (candidateHub->getID().isValid()) {
+				success = true;
+				remoteHub = candidateHub;
+			}
 		}
 	}
 

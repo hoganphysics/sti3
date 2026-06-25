@@ -333,7 +333,7 @@ std::string ORBManager::printNameTree(const std::string& baseContext) const
 	return node.printTree();
 }
 
-void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, 
+void ORBManager::getObjectContexts(const std::string& baseContext, const std::string& objectName,
 											std::vector<std::string>& objContexts)
 {
 	CosNaming::NamingContext_var baseContextVar;
@@ -342,9 +342,13 @@ void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const 
 	CosNaming::NamingContext_var base(baseContextVar);
 
 	COSBindingNode node(baseContext, base);
-	node.prune();
-	
 	node.getLiveLeafs(objectName, objContexts);
+}
+
+void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName,
+											std::vector<std::string>& objContexts)
+{
+	getObjectContexts(baseContext, objectName, objContexts);
 }
 
 

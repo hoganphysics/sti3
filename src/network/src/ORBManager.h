@@ -53,6 +53,7 @@ public:
 
 	std::string printNameTree(const std::string& baseContext) const;
 
+	void getObjectContexts(const std::string& baseContext, const std::string& objectName, std::vector<std::string>& objContexts);
 	void getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, std::vector<std::string>& objContexts);
 
 	bool bindObjectReference(const std::string& objectFullPath, CORBA::Object_ptr objref);
@@ -104,4 +105,3 @@ private:
 
 
 #endif
-

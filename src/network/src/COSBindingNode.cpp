@@ -11,10 +11,15 @@ using STI::Network::COSBindingNode;
 
 
 COSBindingNode::COSBindingNode(const std::string& nodeName)
+: COSBindingNode(nodeName, true)
+{
+}
+
+COSBindingNode::COSBindingNode(const std::string& nodeName, bool isDead)
 {
 	//By assumption, this is a leaf, since it has no context.
 	name = nodeName;
-	_isDead = true;
+	_isDead = isDead;
 	_isLeaf = true;
 }
  
@@ -127,65 +132,46 @@ void COSBindingNode::walkBranches(CosNaming::NamingContext_var& nodeContext)
 		return;
 	}
 
-	bool deadServantFound = false;
-
 	while(biIter->next_one(binding))
 	{
-		deadServantFound = false;
 		i++;
-		//get the context for this branch and add a new node
-		obj = nodeContext->resolve( binding->binding_name );
+		std::string branchName(omni::omniURI::nameToString(binding->binding_name));
+
+		if (binding->binding_type == CosNaming::nobject) {
+			addBranch(branchName, false);
+			continue;
+		}
 
 		try {
-
-			obj->_non_existent();
+			//get the context for this branch and add a new node
+			obj = nodeContext->resolve( binding->binding_name );
+			newNodeContext = CosNaming::NamingContext::_narrow( obj );
+			addBranch(branchName, newNodeContext);
 		}
 		catch(CORBA::TRANSIENT&)
 		{
-			//This is a dead servant. 
-			deadServantFound = true;
-
-			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
+			addBranch(branchName);
 		}
 		catch(CORBA::COMM_FAILURE)
 		{
-			//This is a dead servant. 
-			deadServantFound = true;
-
-			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
+			addBranch(branchName);
 		}
 		catch(CORBA::TIMEOUT&)
 		{
-			//This is a dead servant. 
-			deadServantFound = true;
-
-			addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)));
+			addBranch(branchName);
 			//std::cerr << "COSBindingNode CORBA::TIMEOUT" << std::endl;
 		}
-
-		if( !deadServantFound )
+		catch(CORBA::INV_OBJREF&)
 		{
-			try {
-
-				newNodeContext = CosNaming::NamingContext::_narrow( obj );
-			}
-			catch(...)
-			{
-			//	std::cerr << "Branch list exception: _narrow" << std::endl;
-			}
-
-			try {
-
-				addBranch(std::string(omni::omniURI::nameToString(binding->binding_name)), newNodeContext);
-			}
-			catch(CORBA::INV_OBJREF&)
-			{
-			//	std::cerr << "Branch list exception: push_back" << std::endl;
-			}
-			catch(CORBA::TIMEOUT&)
-			{
-				// std::cerr << "COSBindingNode CORBA::TIMEOUT when calling addBranch" << std::endl;
-			}
+			addBranch(branchName);
+		}
+		catch(CORBA::Exception&)
+		{
+			addBranch(branchName);
+		}
+		catch(...)
+		{
+			addBranch(branchName);
 		}
 	}
 
@@ -204,6 +190,13 @@ void COSBindingNode::addBranch(const std::string& nodeName)
 {
 	//This is a dead leaf
 	std::unique_ptr<COSBindingNode> node = std::make_unique<COSBindingNode>(nodeName);
+
+	_branches.push_back(std::move(node));
+}
+
+void COSBindingNode::addBranch(const std::string& nodeName, bool isDead)
+{
+	std::unique_ptr<COSBindingNode> node = std::make_unique<COSBindingNode>(nodeName, isDead);
 
 	_branches.push_back(std::move(node));
 }

@@ -113,6 +113,8 @@ private:
 	std::shared_ptr<STI::Utils::TaskScheduler> refreshScheduler;
 
 	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
+	bool selfRebindEnabled;
+	double selfRebindIntervalSeconds;
 
 	std::map<std::string, STI::Network::HubID> contextToHubID;
 
