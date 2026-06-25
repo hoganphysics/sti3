@@ -523,6 +523,12 @@ void NetworkDeviceHub::run(bool block)
 		return;
 	}
 
+	// Start ORB before reconnect recovery so peers can answer calls from this hub
+	// while this hub is also able to answer calls from them.
+	if (!orbmanager->running()) {
+		orbmanager->run();	//doesn't block
+	}
+
 	// Find registered Hubs that attempted to connect to this Hub. Attempt to connect.
 	std::vector<std::string> hubCandidates;
 	orbmanager->getObjectContexts(hubContextPath, hubObjectName, hubCandidates);
@@ -535,11 +541,6 @@ void NetworkDeviceHub::run(bool block)
 
 	// Attempt to connect to target Hubs of this Hub
 	connectToTargetHubs();
-
-	//Start ORB (network servants go live)
-	if (!orbmanager->running()) {
-		orbmanager->run();	//doesn't block
-	}
 
 	if (block && orbmanager->running() && !orbmanager->blocking()) {
 		orbmanager->block();
