@@ -10,7 +10,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-OMNI_MAYBE_UNUSED static const char* _0RL_library_version = omniORB_4_3;
+static const char* _0RL_library_version = omniORB_4_3;
 
 
 
