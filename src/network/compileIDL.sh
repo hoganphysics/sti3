@@ -1,6 +1,9 @@
 #!/bin/bash
+set -euo pipefail
 
-cd idl/
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+mkdir -p "${script_dir}/src/generated"
+cd "${script_dir}/idl"
 
 files="deviceNet.idl logsNet.idl tasks.idl orbTypes.idl"
 
@@ -17,5 +20,6 @@ cd ./../src/generated
 
 # Rename all *.cc to *.cpp
 for file in *.cc; do
+    [ -e "$file" ] || break
     mv -- "$file" "${file%.cc}.cpp"
 done

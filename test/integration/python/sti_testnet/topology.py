@@ -186,15 +186,27 @@ class InProcessTopology(object):
 
 
 class ProcessTopology(object):
-    def __init__(self, nameservice_address, server_spec=None, device_specs=None, persistence_root=None, ready_timeout_s=10.0):
+    def __init__(
+        self,
+        nameservice_address,
+        server_spec=None,
+        device_specs=None,
+        persistence_root=None,
+        ready_timeout_s=10.0,
+        hub_config=None,
+        server_in_process=True,
+    ):
         self.nameservice_address = nameservice_address
         self.server_spec = server_spec or make_server_spec()
         self.device_specs = list(device_specs or [])
         self.persistence_root = persistence_root
         self._owns_persistence_root = persistence_root is None
         self.ready_timeout_s = float(ready_timeout_s)
+        self.hub_config = hub_config
+        self.server_in_process = bool(server_in_process)
         self.hub = None
         self.server = None
+        self.server_process = None
         self.device_processes = []
         self.started = False
 
@@ -209,16 +221,16 @@ class ProcessTopology(object):
         return FrontendConnectionInfo(self.nameservice_address, self.server_id)
 
     def start(self):
-        _, stidevicepy = require_stipy()
         if self.persistence_root is None:
             self.persistence_root = tempfile.mkdtemp(prefix="sti3-integration-")
             _OWNED_PERSISTENCE_ROOTS.add(self.persistence_root)
         self._apply_persistence_root()
 
-        self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address)
-        self.server = SimulatedDevice(self.server_spec)
-        self.hub.addDevice(self.server)
-        self.hub.run(False)
+        if self.server_in_process:
+            self._start_server_hub()
+        else:
+            self._start_observer_hub()
+            self.server_process = self._start_device_process("server", self.server_spec)
 
         for index, spec in enumerate(self.device_specs):
             self.device_processes.append(self._start_device_process(index, spec))
@@ -230,6 +242,9 @@ class ProcessTopology(object):
         for handle in list(self.device_processes):
             handle.shutdown()
         self.device_processes = []
+        if self.server_process is not None:
+            self.server_process.shutdown()
+            self.server_process = None
         if self.hub is not None:
             try:
                 self.hub.shutdown()
@@ -268,6 +283,8 @@ class ProcessTopology(object):
         lines.append("Known devices:")
         if self.server is not None:
             lines.append("  {0}".format(self.server.getID().getID()))
+        if self.server_process is not None:
+            lines.append("  {0} pid={1}".format(self.server_process.device_id_text, self.server_process.pid))
         for handle in self.device_processes:
             lines.append("  {0} pid={1}".format(handle.device_id_text, handle.pid))
         return "\n".join(lines)
@@ -287,6 +304,8 @@ class ProcessTopology(object):
                 lines.append("Network:\n{0}".format(self.hub.printNetwork()))
             except Exception as exc:
                 lines.append("Network summary unavailable: {0}".format(exc))
+        if self.server_process is not None:
+            lines.append(self.server_process.diagnostics())
         for handle in self.device_processes:
             lines.append(handle.diagnostics())
         return "\n".join(lines)
@@ -312,11 +331,50 @@ class ProcessTopology(object):
         self.device_processes.append(handle)
         return handle
 
+    def restart_server_hub(self):
+        if self.server_in_process:
+            if self.hub is not None:
+                try:
+                    self.hub.shutdown()
+                except Exception:
+                    pass
+                try:
+                    self.hub.disconnect()
+                except Exception:
+                    pass
+            self.hub = None
+            self.server = None
+            gc.collect()
+            return self._start_server_hub()
+
+        if self.server_process is not None:
+            self.server_process.shutdown()
+        self.server_process = self._start_device_process("server-restart", self.server_spec)
+        return self.server_process
+
     def _apply_persistence_root(self):
         specs = [self.server_spec] + self.device_specs
         for spec in specs:
             if spec.persistence_root is None:
                 spec.persistence_root = self.persistence_root
+
+    def _start_server_hub(self):
+        _, stidevicepy = require_stipy()
+        if self.hub_config is None:
+            self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address)
+        else:
+            self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address, self.hub_config)
+        self.server = SimulatedDevice(self.server_spec)
+        self.hub.addDevice(self.server)
+        self.hub.run(False)
+        return self.hub
+
+    def _start_observer_hub(self):
+        stipy, stidevicepy = require_stipy()
+        config = stipy.Configuration()
+        config.set("NetworkHub", "SelfRebind", "false")
+        self.hub = stidevicepy.NetworkDeviceHub(self.nameservice_address, config)
+        return self.hub
 
     def _start_device_process(self, index, spec):
         spec_dir = os.path.join(self.persistence_root, "process-specs")
@@ -410,7 +468,23 @@ class _DeviceProcessHandle(object):
                     records.append(event_record_from_dict(json.loads(line)))
         return records
 
+    def poll_output(self):
+        if self.process.stdout is not None:
+            while True:
+                readable, _, _ = select.select([self.process.stdout], [], [], 0)
+                if not readable:
+                    break
+                line = self.process.stdout.readline()
+                if not line:
+                    break
+                self.stdout_lines.append(line.rstrip())
+
+    def stdout_contains(self, text):
+        self.poll_output()
+        return any(text in line for line in self.stdout_lines)
+
     def diagnostics(self):
+        self.poll_output()
         parts = [
             "Device process {0} pid={1} returncode={2}".format(
                 self.device_id_text,

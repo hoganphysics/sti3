@@ -48,6 +48,24 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.1 - NameService maintenance and reconnect hardening
+
+Patch release for long-running network stability testing.
+
+Fixes:
+
+* Make NameService discovery read-only; ordinary scans no longer probe object
+  references with `_non_existent()` or prune bindings as a side effect.
+* Add periodic self-rebind for hub references so each hub can restore its root
+  binding and connected-peer child bindings if another node accidentally removes
+  them.
+* Add opt-in conservative NameService pruning, intended for server hubs, scoped
+  to the owning hub's incoming subtree and gated by repeated failed liveness
+  checks over a suspect interval.
+* Start the ORB before hub reconnect recovery in `NetworkDeviceHub::run()` so a
+  restarting hub can answer peer calls while it reconnects previous children and
+  target hubs.
+
 ### 3.6.0 - Post-processing, file import, and partner metadata
 
 Feature release bundling several user-facing additions: asynchronous post-shot

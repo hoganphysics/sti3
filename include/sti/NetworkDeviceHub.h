@@ -11,6 +11,7 @@
 #include <sti/fwd/TaskScheduler_fwd.h>
 
 #include <condition_variable>
+#include <chrono>
 #include <mutex>
 #include <memory>
 #include <set>
@@ -94,7 +95,8 @@ private:
 
 	void connectToTargetHubs();
 	void refreshHubConnections();
-	
+	void pruneHubConnections();
+
 	bool registerHubContext();
 	bool unregisterHubContext();
 	void refreshHubContext();
@@ -104,6 +106,8 @@ private:
 	
 	bool getRemoteHub(const std::string& remoteHubContext, std::shared_ptr<RemoteDeviceHub>& remoteHub, std::ostream& errorBuf);
 	bool connectRemoteHub(const std::string& remoteHubContext);
+	bool getPeerHubIDFromOwnContext(const std::string& hubObjectContext, HubID& peerHubID) const;
+	bool isConnectedHubAlive(const HubID& hubID) const;
 
 	PersistenceOptions persistence;
 
@@ -113,8 +117,25 @@ private:
 	std::shared_ptr<STI::Utils::TaskScheduler> refreshScheduler;
 
 	std::set<HubID> targetHubs;	//std::set so they are unique (only one copy of each)
+	bool selfRebindEnabled;
+	double selfRebindIntervalSeconds;
+
+	bool pruneEnabled;
+	std::string pruneScope;
+	double pruneIntervalSeconds;
+	unsigned pruneFailureThreshold;
+	double pruneSuspectSeconds;
+
+	struct PruneSuspect
+	{
+		HubID hubID;
+		unsigned failureCount;
+		std::chrono::steady_clock::time_point firstFailure;
+		std::chrono::steady_clock::time_point lastFailure;
+	};
 
 	std::map<std::string, STI::Network::HubID> contextToHubID;
+	std::map<std::string, PruneSuspect> pruneSuspects;
 
 	std::string _nameServiceAddress;
 	bool _usingDefaultHubID;

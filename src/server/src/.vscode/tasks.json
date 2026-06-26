@@ -23,7 +23,7 @@
 			"args": [
 				"run", "--no-capture-output", "-n", "sti3-build",
 				"cmake",
-				"-S", ".", "-B", "build-local",
+				"-S", ".", "-B", "build",
 				"-DCMAKE_BUILD_TYPE=Debug",
 				"-DSTI3_LOCAL_BUILD_DIR=${workspaceFolder}/../../../build-ninja"
 			],
@@ -39,7 +39,7 @@
 				"run", "--no-capture-output", "-n", "sti3-build",
 				"cmake",
 				"--build",
-				"build-local",
+				"build",
 				"-j"
 			],
 			"options": { "cwd": "${workspaceFolder}" },
@@ -50,66 +50,68 @@
 			],
 			"problemMatcher": ["$gcc"],
 			"group": "build"
-		},
-		{
-			"type": "shell",
-			"label": "CMake config",
-			"command": "cmake",
-			"args": [
-				"-DCMAKE_BUILD_TYPE=Debug",
-				// "-DCMAKE_PREFIX_PATH=/home/hogan/code/dev/sti3/conda/cmake/",
-				// "-DCMAKE_PREFIX_PATH=${env:CONDA_PREFIX}",
-				"-DCMAKE_PREFIX_PATH=/home/hogan/miniconda3",
-				"-Dsti3_DIR=${workspaceFolder}/../../../conda/cmake/",
-				".."
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/build", 
-				"env": {
-					"CONDA_PREFIX": "/home/hogan/miniconda3",
-					"sti3_DIR": "${workspaceFolder}/../../../conda/cmake/",
-					// "CMAKE_PREFIX_PATH": "/home/hogan/code/dev/sti3/conda/cmake/;${CMAKE_PREFIX_PATH}"
-				}
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-        },
-        {
-			"type": "shell",
-			"label": "CMake build",
-			"command": "cmake",
-			"args": [
-				"--build",
-				"."
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/build"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-        },
-        {
-			"type": "shell",
-			"label": "CMake install",
-			"command": "make",
-			"args": [
-                "DESTDIR=${STI_BASE_DIR}",
-                "install"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/build",
-                "env": {
-					"STI_BASE_DIR": "${workspaceFolder}/../../.."
-				}
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
 		}
+		// Legacy installed-conda STIServer workflow. build/ now hosts the local
+		// debug server build linked against the top-level build-ninja libraries.
+		// {
+		// 	"type": "shell",
+		// 	"label": "CMake config",
+		// 	"command": "cmake",
+		// 	"args": [
+		// 		"-DCMAKE_BUILD_TYPE=Debug",
+		// 		// "-DCMAKE_PREFIX_PATH=/home/hogan/code/dev/sti3/conda/cmake/",
+		// 		// "-DCMAKE_PREFIX_PATH=${env:CONDA_PREFIX}",
+		// 		"-DCMAKE_PREFIX_PATH=/home/hogan/miniconda3",
+		// 		"-Dsti3_DIR=${workspaceFolder}/../../../conda/cmake/",
+		// 		".."
+		// 	],
+		// 	"options": {
+		// 		"cwd": "${workspaceFolder}/build",
+		// 		"env": {
+		// 			"CONDA_PREFIX": "/home/hogan/miniconda3",
+		// 			"sti3_DIR": "${workspaceFolder}/../../../conda/cmake/",
+		// 			// "CMAKE_PREFIX_PATH": "/home/hogan/code/dev/sti3/conda/cmake/;${CMAKE_PREFIX_PATH}"
+		// 		}
+		// 	},
+		// 	"problemMatcher": [
+		// 		"$gcc"
+		// 	],
+		// 	"group": "build"
+        // },
+        // {
+		// 	"type": "shell",
+		// 	"label": "CMake build",
+		// 	"command": "cmake",
+		// 	"args": [
+		// 		"--build",
+		// 		"."
+		// 	],
+		// 	"options": {
+		// 		"cwd": "${workspaceFolder}/build"
+		// 	},
+		// 	"problemMatcher": [
+		// 		"$gcc"
+		// 	],
+		// 	"group": "build"
+        // },
+        // {
+		// 	"type": "shell",
+		// 	"label": "CMake install",
+		// 	"command": "make",
+		// 	"args": [
+        //         "DESTDIR=${STI_BASE_DIR}",
+        //         "install"
+		// 	],
+		// 	"options": {
+		// 		"cwd": "${workspaceFolder}/build",
+        //         "env": {
+		// 			"STI_BASE_DIR": "${workspaceFolder}/../../.."
+		// 		}
+		// 	},
+		// 	"problemMatcher": [
+		// 		"$gcc"
+		// 	],
+		// 	"group": "build"
+		// }
 	]
 }

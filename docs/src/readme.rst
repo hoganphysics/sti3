@@ -33,4 +33,3 @@ software interface to configure a hardware- or firmware-based event table with
 the desired timing sequence, which can then be triggered. For non-timing-critical 
 applications, STI also allows for software control (soft timing) of hardware, which 
 may run in parallel with the hard-timing components.
-

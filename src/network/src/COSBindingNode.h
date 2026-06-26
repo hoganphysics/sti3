@@ -24,6 +24,7 @@ class COSBindingNode
 public:
 
 	COSBindingNode(const std::string& nodeName);
+	COSBindingNode(const std::string& nodeName, bool isDead);
 	COSBindingNode(const std::string& nodeName, CosNaming::NamingContext_var& nodeContext);
 	~COSBindingNode();
 
@@ -61,6 +62,7 @@ private:
 
 	void addBranch(const std::string& nodeName, CosNaming::NamingContext_var& nodeContext);
 	void addBranch(const std::string& nodeName);
+	void addBranch(const std::string& nodeName, bool isDead);
 
 	std::vector<std::unique_ptr<COSBindingNode>> _branches;
 
@@ -78,4 +80,3 @@ private:
 
 
 #endif
-

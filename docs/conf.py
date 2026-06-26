@@ -12,17 +12,33 @@
 #
 import os
 import sys
+import json
+import io
 sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
+def _load_sti3_version_info():
+    version_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.pardir, "sti3_version.json")
+    )
+    with io.open(version_path, encoding="utf-8") as version_file:
+        return json.load(version_file)
+
+
 project = 'STI'
 copyright = '2022, Jason Hogan'
 author = 'Jason Hogan'
 
+_sti3_version_info = _load_sti3_version_info()
+version = _sti3_version_info["version"]
+html_context = {
+        "sti3_build_number": _sti3_version_info["build_number"],
+        }
+
 # The full version, including alpha/beta/rc tags
-release = '3.0.0'
+release = version
 
 
 # -- General configuration ---------------------------------------------------

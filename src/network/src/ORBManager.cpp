@@ -333,7 +333,7 @@ std::string ORBManager::printNameTree(const std::string& baseContext) const
 	return node.printTree();
 }
 
-void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName, 
+void ORBManager::getObjectContexts(const std::string& baseContext, const std::string& objectName,
 											std::vector<std::string>& objContexts)
 {
 	CosNaming::NamingContext_var baseContextVar;
@@ -342,9 +342,13 @@ void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const 
 	CosNaming::NamingContext_var base(baseContextVar);
 
 	COSBindingNode node(baseContext, base);
-	node.prune();
-	
 	node.getLiveLeafs(objectName, objContexts);
+}
+
+void ORBManager::getAllLiveObjectContexts(const std::string& baseContext, const std::string& objectName,
+											std::vector<std::string>& objContexts)
+{
+	getObjectContexts(baseContext, objectName, objContexts);
 }
 
 
@@ -504,8 +508,28 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 
 bool ORBManager::unbindObjectReference(const std::string& objectFullPath)
 {
+	if (objectFullPath.empty() || objectFullPath.find("//") != std::string::npos) {
+		return false;
+	}
 
-	// CosNaming::NamingContext_var base(getNamingContext(baseContext));
+	CosNaming::NamingContext_var rootContext;
+	if (!getRootContext(rootContext)) {
+		return false;
+	}
+
+	try {
+		CosNaming::Name_var objectName = omni::omniURI::stringToName(objectFullPath.c_str());
+		rootContext->unbind(objectName);
+		return true;
+	}
+	catch (CosNaming::NamingContext::NotFound&) {
+	}
+	catch (CosNaming::NamingContext::CannotProceed&) {
+	}
+	catch (CosNaming::NamingContext::InvalidName&) {
+	}
+	catch (CORBA::Exception&) {
+	}
 
 	return false;
 }
