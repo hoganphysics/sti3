@@ -48,6 +48,32 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.2 - Topology-change cleanup for stale device refs
+
+Patch release for clearing stale non-persistent client device references without
+re-enabling periodic device refresh.
+
+Fixes:
+
+* Trigger stale device-reference cleanup after successful hub topology changes,
+  including new hub connections and target-hub reconnections, while keeping the
+  periodic `localHub->refresh()` path disabled for live debugging sessions.
+* Return Python `None` from `DeviceCollection.get(...)` when the collection
+  lookup misses or yields a null device, avoiding placeholder `/0/` `DeviceID`
+  wrappers and noisy invalid-ID logs.
+* Stop the STIPy Python sequence run loop from submitting more parse/play jobs
+  after `cancelSequence(...)` makes the scheduler sequence status terminal; the
+  loop now checks sequence liveness before each parse and again before play.
+
+Tests:
+
+* Add NetworkDeviceHub coverage for topology-change cleanup and a regression
+  that periodic maintenance does not refresh local devices.
+* Add Python wrapper coverage for `DeviceCollection.get(...)` returning `None`
+  for a missing device.
+* Add Python sequence-run regression coverage for cancellation during parse and
+  play, including terminal `Canceled` and `Completed` sequence statuses.
+
 ### 3.6.1 - NameService maintenance and reconnect hardening
 
 Patch release for long-running network stability testing.

@@ -54,8 +54,8 @@ std::shared_ptr<STI::Python::DevicePy> DeviceCollectionPy::get(const STI::Device
 {
     std::shared_ptr<STI::Device::Device> device;
 
-    if (deviceCollection != 0) {
-        deviceCollection->get(id, device);
+    if (deviceCollection == 0 || !deviceCollection->get(id, device) || device == 0) {
+        return nullptr;
     }
 
     auto devicePy = std::make_shared<STI::Python::DevicePy>(device);

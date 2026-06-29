@@ -150,6 +150,7 @@ catch_discover_tests(sti3_test_device
 
 # ---- Network tests ----
 add_executable(sti3_test_network
+  network/networkdevicehub_tests.cpp
   network/convert/basic_convert_tests.cpp
   network/convert/enum_convert_tests.cpp
   network/convert/record_convert_tests.cpp
