@@ -96,6 +96,7 @@ private:
 	void connectToTargetHubs();
 	void refreshHubConnections();
 	void pruneHubConnections();
+	bool cleanupStaleNodeReferencesAfterTopologyChange();
 
 	bool registerHubContext();
 	bool unregisterHubContext();

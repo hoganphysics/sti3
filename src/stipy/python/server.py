@@ -4,15 +4,29 @@ from stipy.stipy import STIPyServer
 from stipy.stipybase.stipybase import SequenceEntryID
 from stipy.stipybase.stipybase import SequenceID
 from stipy.stipybase.stipybase import ShotType
+from stipy.stidevicepy.stidevicepy import EngineJobStatus
 from stipy.stipybase.python.sequence import STIPySequence
 from stipy.python.makeshot import make_shot
 
 
 _makeshot = STIPyServer.makeshot
+_LIVE_SEQUENCE_STATUSES = (
+    EngineJobStatus.New,
+    EngineJobStatus.Running,
+    EngineJobStatus.Deferred,
+)
 
 
 def makeshot(self, source=None, vars=None, shot_type=None, import_roots=None):
     return make_shot(_makeshot, self, source, vars, shot_type, import_roots=import_roots)
+
+
+def sequence_is_live(self, sequenceID: SequenceID):
+    scheduler = self.getEngineScheduler()
+    if scheduler is None:
+        return False
+
+    return scheduler.getStatus(sequenceID) in _LIVE_SEQUENCE_STATUSES
 
 
 def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: Callable[[int, int], None] = None):
@@ -30,6 +44,9 @@ def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: C
     shot_number = 0
 
     for key in keys:
+        if not sequence_is_live(self, sequenceID):
+            break
+
         entry = sequence.sequenceTable.get(key)
 
         if entry is None:
@@ -43,6 +60,9 @@ def run_shots(self, sequence: STIPySequence, sequenceID: SequenceID, progress: C
 
         parseTick = self.parse(shot, seqEntryID)
         parseTick.wait()
+
+        if not sequence_is_live(self, sequenceID):
+            break
 
         resultTick = self.play(parseTick)
         resultTick.wait()

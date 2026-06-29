@@ -425,7 +425,11 @@ bool NetworkDeviceHub::connect(const std::shared_ptr<LocalDeviceHub>& hub)
 {
 	auto localHubWrapper = std::make_shared<NetworkDeviceHubWrapper>(hub);
 
-	return LocalDeviceHub::connect(deviceHubWrapper, localHubWrapper);
+	bool success = LocalDeviceHub::connect(deviceHubWrapper, localHubWrapper);
+	if (success) {
+		cleanupStaleNodeReferencesAfterTopologyChange();
+	}
+	return success;
 }
 
 bool NetworkDeviceHub::unregisterHubContext()
@@ -616,10 +620,23 @@ void NetworkDeviceHub::refreshHubConnections()
 		
 		contextToHubID[hubContext] = remoteHub->getID();
 
+		const bool alreadyConnected = localHub->containsHub(remoteHub->getID());
 		if (LocalDeviceHub::connect(remoteHub, deviceHubWrapper)) {
+			if (!alreadyConnected) {
+				cleanupStaleNodeReferencesAfterTopologyChange();
+			}
 			// std::cerr << "Debug: Reconnected to hub " << remoteHub->getID().getID() << std::endl;		
 		}
 	}
+}
+
+bool NetworkDeviceHub::cleanupStaleNodeReferencesAfterTopologyChange()
+{
+	if (localHub == nullptr) {
+		return false;
+	}
+
+	return localHub->refresh(HubTrace());
 }
 
 bool NetworkDeviceHub::getPeerHubIDFromOwnContext(const std::string& hubObjectContext, HubID& peerHubID) const
@@ -755,7 +772,9 @@ void NetworkDeviceHub::connectToTargetHubs()
 			std::shared_ptr<DeviceHub> remoteHub;
 			if(localHub->getHub(targetHubID, remoteHub) && !remoteHub->isConnectedTo(getID())) {
 				// std::cerr << "Debug: Target hub " << targetHubID.getID() << " is not connected back. Reconnecting..." << std::endl;
-				LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
+				if (LocalDeviceHub::connect(remoteHub, deviceHubWrapper)) {
+					cleanupStaleNodeReferencesAfterTopologyChange();
+				}
 			}
 		}
 	}
@@ -782,7 +801,11 @@ bool NetworkDeviceHub::connectRemoteHub(const std::string& remoteHubContext)
 
 	std::shared_ptr<RemoteDeviceHub> remoteHub;
 	if (getRemoteHub(remoteHubContext, remoteHub, std::cerr)) {
+		const bool alreadyConnected = localHub != nullptr && localHub->containsHub(remoteHub->getID());
 		success = LocalDeviceHub::connect(remoteHub, deviceHubWrapper);
+		if (success && !alreadyConnected) {
+			cleanupStaleNodeReferencesAfterTopologyChange();
+		}
 	}
 
 	return success;
