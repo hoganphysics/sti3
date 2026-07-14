@@ -148,6 +148,41 @@ private:
     std::condition_variable blockCondition;
 };
 
+//Simulates a device whose playback outlives the server's PlayComplete grace
+//(e.g., slow measurement collection) but eventually finishes on its own.
+class DelayedPlayEvent : public SynchronousEvent
+{
+public:
+    DelayedPlayEvent(double time, int& loadCount, int& playCount, std::chrono::milliseconds delay)
+        : SynchronousEvent(time), loadCount(loadCount), playCount(playCount), delay(delay) {}
+
+    void waitBeforePlay() override
+    {
+        std::unique_lock<std::mutex> lock(blockMutex);
+        blockCondition.wait_for(lock, delay, [this]() { return stopRequested; });
+    }
+
+    void loadEvent() override { ++loadCount; }
+    void playEvent() override { ++playCount; }
+    void collectMeasurementData() override {}
+    void stopEvent() override
+    {
+        std::unique_lock<std::mutex> lock(blockMutex);
+        stopRequested = true;
+        blockCondition.notify_all();
+    }
+    void pauseEvent() override {}
+    void unpauseEvent(bool) override {}
+
+private:
+    int& loadCount;
+    int& playCount;
+    std::chrono::milliseconds delay;
+    bool stopRequested = false;
+    std::mutex blockMutex;
+    std::condition_variable blockCondition;
+};
+
 class FakePlayReadyEngine : public STI::Engine::EventEngine
 {
 public:
@@ -365,6 +400,9 @@ public:
             if (blockBeforePlay) {
                 synchedEvents.push_back(std::make_shared<BlockingBeforePlayEvent>(tuple.first, loadCount, playCount));
             }
+            else if (playDelay.count() > 0) {
+                synchedEvents.push_back(std::make_shared<DelayedPlayEvent>(tuple.first, loadCount, playCount, playDelay));
+            }
             else {
                 synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first, loadCount, playCount));
             }
@@ -391,6 +429,7 @@ public:
     DeviceID partnerID;
     bool useDirectRawPartnerEvents = false;
     bool blockBeforePlay = false;
+    std::chrono::milliseconds playDelay{0};
     int loadCount = 0;
     int playCount = 0;
 };
@@ -787,6 +826,7 @@ TEST_CASE("Server cancels play when owned target never reports PlayReady")
 TEST_CASE("Server cancels play when owned target never reports PlayComplete")
 {
     auto serverConfig = makeFastPlaybackTimeoutConfig("PlayCompleteTimeoutServer");
+    serverConfig.set("EngineManager", "Max Measurement Grace ms", 0);   //strict grace: no extension while target is Playing
     auto server = std::make_shared<PartnerGeneratingDevice>("PlayCompleteTimeoutServer", 92, "root", serverConfig);
     auto target = std::make_shared<PartnerGeneratingDevice>("PlayCompleteTimeoutTarget", 93, server->getID().getID());
     target->blockBeforePlay = true;
@@ -810,6 +850,64 @@ TEST_CASE("Server cancels play when owned target never reports PlayComplete")
     CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
     CHECK(target->loadCount == 1);
     CHECK(target->playCount == 0);
+}
+
+TEST_CASE("Server extends PlayComplete wait while owned target is verifiably still Playing")
+{
+    auto serverConfig = makeFastPlaybackTimeoutConfig("MeasurementGraceServer");
+    serverConfig.set("EngineManager", "Max Measurement Grace ms", 10000);
+    serverConfig.set("EngineManager", "Measurement Poll ms", 50);
+    auto server = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceServer", 96, "root", serverConfig);
+    auto target = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceTarget", 97, server->getID().getID());
+    target->playDelay = std::chrono::milliseconds(500);     //outlives the 50 ms grace, then completes
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(!hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
+    CHECK(target->loadCount == 1);
+    CHECK(target->playCount == 1);
+}
+
+TEST_CASE("Server cancels a stuck target at the measurement grace bound")
+{
+    auto serverConfig = makeFastPlaybackTimeoutConfig("MeasurementGraceBoundServer");
+    serverConfig.set("EngineManager", "Max Measurement Grace ms", 300);
+    serverConfig.set("EngineManager", "Measurement Poll ms", 50);
+    auto server = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceBoundServer", 98, "root", serverConfig);
+    auto target = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceBoundTarget", 99, server->getID().getID());
+    target->blockBeforePlay = true;     //stays in Playing until stopped
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto start = std::chrono::steady_clock::now();
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+    auto elapsed = std::chrono::steady_clock::now() - start;
+    CHECK(elapsed >= std::chrono::milliseconds(300));   //waited through the max measurement grace
+    CHECK(elapsed < std::chrono::seconds(5));           //but still cancelled promptly afterwards
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
 }
 
 TEST_CASE("Server cancels play when owned target reports PlayReady but never arms")

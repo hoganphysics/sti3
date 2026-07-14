@@ -109,6 +109,19 @@ std::chrono::milliseconds getPositiveMilliseconds(
     return std::chrono::milliseconds(value);
 }
 
+//Like getPositiveMilliseconds, but zero is a valid (feature-disabling) value.
+std::chrono::milliseconds getNonNegativeMilliseconds(
+    const Configuration& config,
+    const std::string& key,
+    std::chrono::milliseconds defaultValue)
+{
+    auto value = config.get<int>("EngineManager", key, static_cast<int>(defaultValue.count())).get();
+    if (value < 0) {
+        return defaultValue;
+    }
+    return std::chrono::milliseconds(value);
+}
+
 SequenceSchedulingMode getConfiguredSequenceSchedulingMode(const Configuration& config)
 {
     auto configuredMode = config.get<std::string>(
@@ -145,6 +158,8 @@ persistenceManager(persistenceManager),
 ownedDevicePlayReadyTimeout(getPositiveMilliseconds(config, "PlayReady Timeout ms", LocalEventEngine::DefaultOwnedDevicePlayReadyTimeout)),
 ownedDeviceTriggerTimeout(getPositiveMilliseconds(config, "Trigger Timeout ms", LocalEventEngine::DefaultOwnedDeviceTriggerTimeout)),
 ownedDevicePlayCompleteGrace(getPositiveMilliseconds(config, "PlayComplete Grace ms", LocalEventEngine::DefaultOwnedDevicePlayCompleteGrace)),
+ownedDeviceMaxMeasurementGrace(getNonNegativeMilliseconds(config, "Max Measurement Grace ms", LocalEventEngine::DefaultOwnedDeviceMaxMeasurementGrace)),
+ownedDeviceMeasurementPollInterval(getPositiveMilliseconds(config, "Measurement Poll ms", LocalEventEngine::DefaultOwnedDeviceMeasurementPollInterval)),
 sequenceSchedulingMode(getConfiguredSequenceSchedulingMode(config))
 {
     completedParseJobs.setMaxSize(3);
@@ -265,6 +280,7 @@ void LocalEventEngineScheduler::addEngine(const EngineID& engineID, DeviceEventP
  
         std::shared_ptr<LocalEventEngine> engine = eventEngineFactory->createEngine(engineID, deviceParser, triggerTarget);
         engine->setPlaybackTimeouts(ownedDevicePlayReadyTimeout, ownedDeviceTriggerTimeout, ownedDevicePlayCompleteGrace);
+        engine->setMeasurementGrace(ownedDeviceMaxMeasurementGrace, ownedDeviceMeasurementPollInterval);
         engine->setScheduler(this);   //so the engine can initiate post-processing dispatch at PlayComplete
         auto manager = std::make_shared<EventEngineManager>(engineID, engine, this);
 

@@ -237,6 +237,8 @@ private:
     std::chrono::milliseconds ownedDevicePlayReadyTimeout;
     std::chrono::milliseconds ownedDeviceTriggerTimeout;
     std::chrono::milliseconds ownedDevicePlayCompleteGrace;
+    std::chrono::milliseconds ownedDeviceMaxMeasurementGrace;
+    std::chrono::milliseconds ownedDeviceMeasurementPollInterval;
     std::atomic<SequenceSchedulingMode> sequenceSchedulingMode;
 
     STI::Utils::SynchronizedMap<EngineID, std::shared_ptr<EventEngineManager>> engineManagers;  
