@@ -667,7 +667,7 @@ TEST_CASE("Missing partner-generated target makes parse abstract and blocks play
     auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
     REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
 
-    auto playJob = findCompletedPlayJob(*scheduler, playStatus.sid);
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);   //the job lands in the completed list asynchronously after the status turns terminal
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Cannot Play Abstract Shot"));
     CHECK(server.loadCount == 0);
@@ -693,7 +693,7 @@ TEST_CASE("Missing partner remains abstract when its target server differs from 
     auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
     REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
 
-    auto playJob = findCompletedPlayJob(*scheduler, playStatus.sid);
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);   //the job lands in the completed list asynchronously after the status turns terminal
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Cannot Play Abstract Shot"));
     CHECK(server.playCount == 0);
@@ -787,7 +787,7 @@ TEST_CASE("Server cancels play when owned target loses parsed engine before play
     auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
     REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
 
-    auto playJob = findCompletedPlayJob(*scheduler, playStatus.sid);
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);   //the job lands in the completed list asynchronously after the status turns terminal
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Owned device state invalid"));
     CHECK(target->loadCount == 0);
