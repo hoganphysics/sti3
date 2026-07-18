@@ -178,6 +178,17 @@ void LocalEventEngine::setPlaybackTimeouts(std::chrono::milliseconds playReadyTi
 	}
 }
 
+void LocalEventEngine::setMeasurementGrace(std::chrono::milliseconds maxMeasurementGrace,
+	std::chrono::milliseconds pollInterval)
+{
+	if (maxMeasurementGrace.count() >= 0) {	//zero disables the post-grace extension
+		ownedDeviceMaxMeasurementGrace = maxMeasurementGrace;
+	}
+	if (pollInterval.count() > 0) {
+		ownedDeviceMeasurementPollInterval = pollInterval;
+	}
+}
+
 void LocalEventEngine::clear()
 {
 	parser.clear();
@@ -1893,16 +1904,60 @@ std::chrono::nanoseconds LocalEventEngine::ownedTargetsPlayCompleteTimeout() con
 bool LocalEventEngine::waitForPlayAll()
 {
 	std::unique_lock<std::mutex> playLock(playMutex);
-	
+
 	//Wait for all owned target devices to finish play
 	if (ownedTargets.size() > 0) {
 		// This device is a server; wait for owned devices to send ready messages
-		const auto deadline = std::chrono::steady_clock::now() + ownedTargetsPlayCompleteTimeout();
+		auto deadline = std::chrono::steady_clock::now() + ownedTargetsPlayCompleteTimeout();
+
+		//Devices do not send PlayComplete until all measurement data is collected, which can
+		//take much longer than the last event time (e.g., camera image readout and encoding).
+		//After the grace deadline, keep waiting (up to maxDeadline) as long as the pending
+		//devices are verifiably still Playing.
+		const auto maxDeadline = deadline + ownedDeviceMaxMeasurementGrace;
+		bool measurementGraceMessageSent = false;
 
 		while (isState(EngineState::Playing) && playedOwnedTargets.size() < ownedTargets.size()) {
-			if (playCondition.wait_until(playLock, deadline) == std::cv_status::timeout) {
+			if (playCondition.wait_until(playLock, deadline) != std::cv_status::timeout) {
+				continue;	//woken; recheck the predicate
+			}
+
+			//Grace deadline expired. Check whether the stragglers are still actively playing
+			//(i.e., collecting measurement data) before giving up.
+			if (ownedDeviceMaxMeasurementGrace.count() == 0
+				|| std::chrono::steady_clock::now() >= maxDeadline) {
 				break;
 			}
+
+			auto pendingTargets = pendingOwnedTargets(playedOwnedTargets);
+			auto targetEngines = snapshotOwnedTargetEngines(pendingTargets);
+
+			playLock.unlock();
+			auto targetStates = queryOwnedTargetStates(targetEngines);	//synchronous round trip; doubles as a liveness check
+			playLock.lock();
+
+			bool anyStillPlaying = false;
+			for (const auto& targetState : targetStates) {
+				if (targetState.second == EngineState::Playing) {
+					anyStillPlaying = true;
+					break;
+				}
+			}
+
+			if (!anyStillPlaying) {
+				break;	//dead, unresponsive, or errored out; handled by the timeout logic below
+			}
+
+			if (!measurementGraceMessageSent) {
+				measurementGraceMessageSent = true;
+				std::vector<EnginePlayingMessage> messages;
+				addPlayMessage(messages, PlayingMessageType::Information, "Waiting for measurement collection")
+					<< "Owned device(s) are still playing after the PlayComplete grace period;"
+					<< " continuing to wait while measurement data is collected.";
+				appendPlayMessages(messages);
+			}
+
+			deadline = (std::min)(std::chrono::steady_clock::now() + ownedDeviceMeasurementPollInterval, maxDeadline);
 		}
 	}
 

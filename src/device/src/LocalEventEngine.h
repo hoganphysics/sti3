@@ -69,6 +69,13 @@ public:
 	inline static constexpr std::chrono::milliseconds DefaultOwnedDeviceTriggerTimeout{2000};
 	inline static constexpr std::chrono::milliseconds DefaultOwnedDevicePlayCompleteGrace{2000};
 
+	//Devices do not send PlayComplete until all measurement data is collected, which can take
+	//much longer than the last event time (e.g., camera image readout and encoding). After the
+	//PlayComplete grace expires, the engine keeps waiting -- up to this additional bound -- as
+	//long as the pending owned devices are verifiably still Playing. Zero disables the extension.
+	inline static constexpr std::chrono::milliseconds DefaultOwnedDeviceMaxMeasurementGrace{60000};
+	inline static constexpr std::chrono::milliseconds DefaultOwnedDeviceMeasurementPollInterval{1000};
+
 	LocalEventEngine(
 		const EngineID& engineID,
 		const STI::Device::DeviceID& localID, 
@@ -84,6 +91,10 @@ public:
 	void setPlaybackTimeouts(std::chrono::milliseconds playReadyTimeout,
 		std::chrono::milliseconds triggerTimeout,
 		std::chrono::milliseconds playCompleteGrace);
+
+	//maxMeasurementGrace may be zero (disables the post-grace extension while devices are still Playing).
+	void setMeasurementGrace(std::chrono::milliseconds maxMeasurementGrace,
+		std::chrono::milliseconds pollInterval);
 
 	void clear();
 	void unload();
@@ -307,6 +318,8 @@ private:
 	std::chrono::milliseconds ownedDevicePlayReadyTimeout = DefaultOwnedDevicePlayReadyTimeout;
 	std::chrono::milliseconds ownedDeviceTriggerTimeout = DefaultOwnedDeviceTriggerTimeout;
 	std::chrono::milliseconds ownedDevicePlayCompleteGrace = DefaultOwnedDevicePlayCompleteGrace;
+	std::chrono::milliseconds ownedDeviceMaxMeasurementGrace = DefaultOwnedDeviceMaxMeasurementGrace;
+	std::chrono::milliseconds ownedDeviceMeasurementPollInterval = DefaultOwnedDeviceMeasurementPollInterval;
 
 	bool cancelled;
 	bool isJobOwner;
