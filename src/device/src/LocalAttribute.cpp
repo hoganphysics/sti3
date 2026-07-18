@@ -107,7 +107,7 @@ bool LocalAttribute::_isAllowed(const std::string& value)
     return false;
 }
 
-bool LocalAttribute::_refresh(const std::string& oldValue)
+bool LocalAttribute::_refresh(std::string oldValue)
 {
     std::string newValue;
 

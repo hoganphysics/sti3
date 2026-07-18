@@ -52,3 +52,23 @@ TEST_CASE("LocalAttribute: setter and refresher drive value and refresh events")
     CHECK_FALSE(attr.setValue("reject"));
     CHECK(attr.getValue() == recorder.lastValue);
 }
+
+TEST_CASE("LocalAttribute: refreshValue emits an event when the refreshed value changes") {
+    LocalAttribute attr("simple", "start");
+    RefreshRecorder recorder;
+    attr.addRefreshListener(&recorder);
+
+    std::string refreshedValue = "start";
+    attr.setRefresher([&]() { return refreshedValue; });
+
+    refreshedValue = "changed";
+    attr.refreshValue();
+
+    CHECK(attr.getValue() == "changed");
+    CHECK(recorder.count == 1);
+    CHECK(recorder.lastKey == "simple");
+    CHECK(recorder.lastValue == "changed");
+
+    attr.refreshValue();
+    CHECK(recorder.count == 1);
+}

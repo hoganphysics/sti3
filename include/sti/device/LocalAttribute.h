@@ -82,7 +82,7 @@ public:
 
 private:
 
-    bool _refresh(const std::string& oldValue);     //true if value changed
+    bool _refresh(std::string oldValue);     //true if value changed
     void _fireRefreshEvent();
     bool _isAllowed(const std::string& value);
 
