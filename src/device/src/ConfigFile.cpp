@@ -9,6 +9,131 @@
 
 using STI::Utils::ConfigFile;
 
+namespace {
+
+std::string removeInlineComment(const std::string& line)
+{
+	bool inSingleQuote = false;
+	bool inDoubleQuote = false;
+	bool escaped = false;
+
+	for (std::size_t i = 0; i < line.size(); ++i) {
+		const auto c = line[i];
+
+		if (escaped) {
+			escaped = false;
+			continue;
+		}
+
+		if (c == '\\') {
+			escaped = true;
+			continue;
+		}
+
+		if (c == '\'' && !inDoubleQuote) {
+			inSingleQuote = !inSingleQuote;
+			continue;
+		}
+
+		if (c == '"' && !inSingleQuote) {
+			inDoubleQuote = !inDoubleQuote;
+			continue;
+		}
+
+		if (c == '#' && !inSingleQuote && !inDoubleQuote) {
+			return line.substr(0, i);
+		}
+	}
+
+	return line;
+}
+
+bool isSupportedEscape(char c)
+{
+	return c == '#' || c == '"' || c == '\'' || c == '\\';
+}
+
+std::string unescapeValue(const std::string& value)
+{
+	std::string unescaped;
+	bool escaped = false;
+
+	for (const auto c : value) {
+
+		if (escaped) {
+			if (isSupportedEscape(c)) {
+				unescaped.push_back(c);
+			}
+			else {
+				unescaped.push_back('\\');
+				unescaped.push_back(c);
+			}
+			escaped = false;
+			continue;
+		}
+
+		if (c == '\\') {
+			escaped = true;
+			continue;
+		}
+
+		unescaped.push_back(c);
+	}
+
+	if (escaped) {
+		unescaped.push_back('\\');
+	}
+
+	return unescaped;
+}
+
+std::string parseEscapedValue(std::string value)
+{
+	value = STI::Utils::trim(value);
+
+	if (value.size() >= 2) {
+		const auto quote = value.front();
+		if ((quote == '"' || quote == '\'') && value.back() == quote) {
+			return unescapeValue(value.substr(1, value.size() - 2));
+		}
+	}
+
+	return unescapeValue(value);
+}
+
+bool hasMatchingOuterQuotes(const std::string& value)
+{
+	if (value.size() < 2) {
+		return false;
+	}
+
+	const auto quote = value.front();
+	return (quote == '"' || quote == '\'') && value.back() == quote;
+}
+
+std::string quoteForSave(const std::string& value)
+{
+	if (value.find_first_of("#\\\"") == std::string::npos && !hasMatchingOuterQuotes(value)) {
+		return value;
+	}
+
+	std::string quoted;
+	quoted.reserve(value.size() + 2);
+	quoted.push_back('"');
+
+	for (const auto c : value) {
+		if (c == '\\' || c == '"') {
+			quoted.push_back('\\');
+		}
+		quoted.push_back(c);
+	}
+
+	quoted.push_back('"');
+	return quoted;
+}
+
+} // namespace
+
 
 ConfigFile::ConfigFile()
 : ConfigFile("")
@@ -57,18 +182,14 @@ void ConfigFile::load(bool autocreate)
 
 	std::string line;
 	bool success = true;
-	std::size_t commentLoc, sectionHeadStart, sectionHeadEnd, equalsLoc;
+	std::size_t sectionHeadStart, sectionHeadEnd, equalsLoc;
 	std::string section = "";	//default section is blank
 	parsed = true;	//unless there's a problem
 
 	while (success && getline(configFile, line))
 	{
 
-		std::string lineNoComment = line;
-		auto hashPos = lineNoComment.find_first_of("#");
-		if (hashPos != std::string::npos) {
-			lineNoComment = lineNoComment.substr(0, hashPos);
-		}
+		std::string lineNoComment = removeInlineComment(line);
 
 		equalsLoc = lineNoComment.find_first_of("=");
 		sectionHeadStart = lineNoComment.find_first_of("[");
@@ -97,10 +218,8 @@ void ConfigFile::load(bool autocreate)
 			section = nextSection;
 		}
 		else {
-			commentLoc = line.find_first_of("#");
-			success = assignStringValue(section, line.substr(0, commentLoc));
+			success = assignStringValue(section, lineNoComment);
 		}
-
 	}
 
 	if (!success) {
@@ -141,11 +260,13 @@ bool ConfigFile::assignStringValue(const std::string& section, std::string line)
 		valueStart = equalsLoc + 1;
 	}
 
+	auto value = parseEscapedValue(line.substr(valueStart));
+
 	if (equalsLoc == nameStart) {
 		if (includes(section, lastParsedName)) {
 			//Found equals sign (with no key name) below another valid entry
 			//appending new value to previous entry as list
-			addToList(section, lastParsedName, line.substr(valueStart));			
+			addToList(section, lastParsedName, value);
 		}
 		else {
 			//can only addToList to an existing entry
@@ -154,7 +275,7 @@ bool ConfigFile::assignStringValue(const std::string& section, std::string line)
 	}
 	else {
 		lastParsedName = STI::Utils::trim( line.substr(nameStart, nameEnd + 1) );
-		set(section, lastParsedName, line.substr(valueStart));		
+		set(section, lastParsedName, value);
 	}
 
 	return true;
@@ -186,7 +307,7 @@ void ConfigFile::save()
 		}
 
 		for (auto& parameter : section.second.parameters) {
-			configFile << parameter.first << " = " << parameter.second << std::endl;
+			configFile << parameter.first << " = " << quoteForSave(parameter.second) << std::endl;
 		}
 		configFile << std::endl;
 	}
