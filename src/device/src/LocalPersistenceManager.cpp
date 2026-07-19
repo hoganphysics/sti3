@@ -33,6 +33,7 @@
 #include <map>
 #include <sstream>
 #include <system_error>
+#include <utility>
 #include <vector>
 namespace fs = std::filesystem;
 
@@ -70,6 +71,87 @@ struct ImportedFileRecord
     bool deletePhysicalFile = false;
     bool released = false;
 };
+
+class CompositeFileServer : public STI::Utils::FileServer
+{
+public:
+    CompositeFileServer(std::vector<std::shared_ptr<STI::Utils::FileServer>> servers)
+        : servers(std::move(servers))
+    {
+    }
+
+    bool addFile(const std::shared_ptr<STI::Utils::FileHolder>& file) override
+    {
+        return !servers.empty() && servers.front() != nullptr && servers.front()->addFile(file);
+    }
+
+    bool findFile(const STI::Utils::FileID& fileID) override
+    {
+        return findServer(fileID) != nullptr;
+    }
+
+    int getFileSize(const STI::Utils::FileID& fileID) override
+    {
+        auto server = findServer(fileID);
+        return server == nullptr ? 0 : server->getFileSize(fileID);
+    }
+
+    bool transferFile(const STI::Utils::FileID& source,
+        const std::shared_ptr<STI::Utils::FileHolder>& destination,
+        STI::Utils::FileTransferType type) override
+    {
+        auto server = findServer(source);
+        return server != nullptr && server->transferFile(source, destination, type);
+    }
+
+    bool transferFilePartial(const STI::Utils::FileID& source,
+        const std::shared_ptr<STI::Utils::FileHolder>& destination,
+        int offset,
+        int lines) override
+    {
+        auto server = findServer(source);
+        return server != nullptr && server->transferFilePartial(source, destination, offset, lines);
+    }
+
+    bool deleteFile(const STI::Utils::FileID& fileID) override
+    {
+        bool deleted = false;
+        for (auto& server : servers) {
+            if (server != nullptr && server->findFile(fileID)) {
+                deleted = server->deleteFile(fileID) || deleted;
+            }
+        }
+        return deleted;
+    }
+
+private:
+    std::shared_ptr<STI::Utils::FileServer> findServer(const STI::Utils::FileID& fileID)
+    {
+        for (auto& server : servers) {
+            if (server != nullptr && server->findFile(fileID)) {
+                return server;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<std::shared_ptr<STI::Utils::FileServer>> servers;
+};
+
+std::shared_ptr<STI::Utils::FileServer> makeMeasurementSourceFileServer(
+    const std::shared_ptr<STI::Utils::FileServer>& measurementFileServer,
+    const std::shared_ptr<STI::Utils::FileServer>& deviceFileServer)
+{
+    if (measurementFileServer == nullptr) {
+        return deviceFileServer;
+    }
+    if (deviceFileServer == nullptr || measurementFileServer == deviceFileServer) {
+        return measurementFileServer;
+    }
+
+    return std::make_shared<CompositeFileServer>(
+        std::vector<std::shared_ptr<STI::Utils::FileServer>>{ measurementFileServer, deviceFileServer });
+}
 
 std::string sourceFilenameHint(const STI::Utils::FileID& sourceID)
 {
@@ -584,7 +666,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
             if (tuple.second.size() > 0) {
 
                 if (tuple.second.front() != 0 && tuple.second.front()->getFileServer(measurementFileServer)) {
-                    fs = measurementFileServer;
+                    fs = makeMeasurementSourceFileServer(measurementFileServer, fileServer);
                 }
                 else {
                     fs = fileServer;    //default in case Measurement is missing VirtualFileServer

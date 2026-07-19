@@ -186,3 +186,58 @@ def test_sti_image_to_pil_transfers_file_id_when_context_is_provided(stipy_modul
     assert converted.size == (1, 1)
     assert converted.mode
     assert converted_from_file.size == (1, 1)
+
+
+def test_local_device_make_image_result_defaults_to_binarydata(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+    device, _ = local_persistence(stipy, stidevicepy, tmp_path)
+
+    image = device.makeImageResult(
+        ONE_PIXEL_PNG,
+        "helper-image.png",
+        width=1,
+        height=1,
+        encoding="PNG",
+    )
+
+    assert isinstance(image, stipy.Image)
+    assert image.hasData()
+    assert image.getFileID().filename == "helper-image.png"
+    assert image.metadata("storage") == "BinaryData"
+    assert image.to_bytes() == ONE_PIXEL_PNG
+
+
+def test_local_device_make_virtual_file_result_keeps_only_last_read(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+
+    class ReadDevice(stidevicepy.LocalDevice):
+        def __init__(self, config):
+            stidevicepy.LocalDevice.__init__(self, config)
+            self.read_count = 0
+            self.addInputChannel(0, stipy.MixedValueType.File, "virtual file")
+
+        def readChannel(self, channel, value):
+            self.read_count += 1
+            payload = "payload {0}".format(self.read_count).encode("ascii")
+            return self.makeFileResult(
+                payload,
+                "read-{0}.txt".format(self.read_count),
+                path="read",
+            )
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Read Helper Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "64")
+    config.set("Target Server", "STI Image Helper Server")
+    config.set("PersistenceManager", "root path", str(tmp_path))
+    config.set("PersistenceManager", "device subdirectory", "device")
+    device = ReadDevice(config)
+    file_server = device.getPersistenceManager().getFileServer()
+
+    first_file_id = device.read(0)
+    assert file_server.findFile(first_file_id)
+
+    second_file_id = device.read(0)
+    assert not file_server.findFile(first_file_id)
+    assert file_server.findFile(second_file_id)

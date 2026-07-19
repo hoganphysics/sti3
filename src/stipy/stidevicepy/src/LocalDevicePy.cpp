@@ -7,6 +7,7 @@
 #include <sti/device/PersistenceManager.h>
 #include <sti/device/PostProcessingManager.h>
 #include <sti/utils/FileID.h>
+#include <sti/utils/Image.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/MetaData.h>
 #include <sti/engine/ShotID.h>
@@ -16,6 +17,8 @@
 #include "SynchronousEventPyManager.h"
 #include "MixedValuePy.h"
 
+#include <algorithm>
+#include <cctype>
 #include <stdexcept>
 #include <thread>
 
@@ -25,6 +28,7 @@ namespace py = pybind11;
 using STI::Python::LocalDevicePy;
 using STI::Device::AutoMonitor;
 using STI::Device::LocalDevice;
+using STI::Device::ResultStorage;
 using STI::Python::DevicePy;
 using STI::Python::ChannelManagerPy;
 using STI::Device::ChannelManager;
@@ -32,6 +36,42 @@ using STI::Device::LocalMonitor;
 using STI::Device::LocalMonitorManager;
 using STI::Device::Monitor;
 using STI::Utils::MixedValue;
+
+namespace
+{
+ResultStorage parseResultStorage(const std::string& storage)
+{
+    std::string normalized = storage;
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+        [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+    if (normalized == "memory" || normalized == "binary" || normalized == "binarydata") {
+        return ResultStorage::Memory;
+    }
+    if (normalized == "virtual" || normalized == "virtualfile" || normalized == "virtualfileholder") {
+        return ResultStorage::Virtual;
+    }
+    if (normalized == "local" || normalized == "file" || normalized == "disk") {
+        return ResultStorage::Local;
+    }
+
+    throw py::value_error("storage must be 'memory', 'virtual', or 'local'");
+}
+
+bool bytesView(const py::bytes& bytes, const char*& data, std::size_t& size)
+{
+    char* source = nullptr;
+    Py_ssize_t pySize = 0;
+    if (PyBytes_AsStringAndSize(bytes.ptr(), &source, &pySize) != 0) {
+        throw py::error_already_set();
+    }
+
+    data = source;
+    size = static_cast<std::size_t>(pySize);
+    return true;
+}
+
+} // namespace
 
 
 LocalDevicePy::LocalDevicePy(const std::map<std::string, std::string>& config)
@@ -393,18 +433,62 @@ STI::Python::PartnerDevicePy LocalDevicePy::partner(const std::string& alias)
 
 std::shared_ptr<STI::Utils::FileHolder> LocalDevicePy::makeVirtualFileHolder(const std::string& path, const std::string& filename)
 {
-    std::shared_ptr<STI::Device::PersistenceManager> manager;
+    if (device == 0) {
+        return nullptr;
+    }
+    return device->makeVirtualFileHolder(path, filename);
+}
 
-    if (device == 0 || !device->getPersistenceManager(manager) || manager == 0) {
+STI::Utils::FileID LocalDevicePy::makeFileResult(
+    const py::bytes& data,
+    const std::string& filename,
+    const std::string& path,
+    const std::string& storage)
+{
+    if (device == 0) {
+        return STI::Utils::FileID();
+    }
+
+    const char* payload = nullptr;
+    std::size_t size = 0;
+    bytesView(data, payload, size);
+    return device->makeFileResult(payload, size, filename, path, parseResultStorage(storage));
+}
+
+std::shared_ptr<STI::Utils::Image> LocalDevicePy::makeImageResult(
+    const py::bytes& data,
+    const std::string& filename,
+    unsigned width,
+    unsigned height,
+    const std::string& path,
+    const std::string& storage,
+    const std::string& encoding,
+    const std::string& format,
+    const std::string& mode)
+{
+    if (device == 0) {
         return nullptr;
     }
 
-    STI::Utils::FileID fileID;
-    fileID.origin = device->getID().getID();
-    fileID.path = path;
-    fileID.filename = filename;
+    const char* payload = nullptr;
+    std::size_t size = 0;
+    bytesView(data, payload, size);
 
-    return manager->makeVirtualFileHolder(fileID);
+    auto image = device->makeImageResult(payload, size, filename, width, height, path, parseResultStorage(storage));
+    if (image == nullptr) {
+        return nullptr;
+    }
+
+    if (!encoding.empty()) {
+        image->setMetaData("encoding", STI::Utils::MixedValue(encoding));
+    }
+    if (!format.empty()) {
+        image->setMetaData("format", STI::Utils::MixedValue(format));
+    }
+    if (!mode.empty()) {
+        image->setMetaData("mode", STI::Utils::MixedValue(mode));
+    }
+    return image;
 }
 
 STI::Engine::EngineParsingMessage& LocalDevicePy::addInfo(unsigned id, const std::string& name)

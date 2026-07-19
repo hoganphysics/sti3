@@ -63,6 +63,21 @@ Python and examples:
 * Add a minimal `examples/python/readWrite/image_read.ipynb` notebook showing
   the one-line Pillow path and the simple local-file transfer path.
 
+Device file/image results:
+
+* Add `LocalDevice::makeFileResult(...)` and `LocalDevice::makeImageResult(...)`
+  helpers, with STIPy bindings, so device implementations can intentionally
+  return memory-backed, virtual-file-backed, or local-file-backed file/image
+  measurements.
+* Default image-result helper storage to BinaryData in memory, while virtual
+  file results created during `read()` are tracked per channel so the next
+  successful read removes the previous helper-owned virtual payload.
+* Let result collection fall back from a measurement-attached virtual file
+  server to the device persistence file server, so virtual files returned from
+  `readChannel()` can transfer correctly during parse/play collection.
+* Clean up file-backed image sources after result transfer and include images
+  when deleting files for transient `ShotResult` eviction.
+
 ### 3.6.2 - Topology-change cleanup for stale device refs
 
 Patch release for clearing stale non-persistent client device references without

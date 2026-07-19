@@ -154,6 +154,9 @@ bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data,
     else if (data.getType() == STI::Utils::MixedValueType::Image) {
 
         auto imageHandle = data.getImage();
+        if (imageHandle == nullptr) {
+            return false;
+        }
         auto remoteFileID = imageHandle->getFileID();   //images have a unique FileID, even if stored as BinaryData
 
         auto it = cachedFileIDs.find(remoteFileID);
@@ -167,12 +170,14 @@ bool LocalResultsCollector::transferValue(STI::Utils::MixedValue& data,
                 success = true;
                 cachedFileIDs[remoteFileID] = localFileHandle->getID();
                 imageHandle->setImageData(localFileHandle);
+                sourceFileServer->deleteFile(remoteFileID);
             }
         }
         else {
             //already transferred this image
             success = true;
-            data.setValue(it->second);
+            auto localFileHandle = fileHolderFactory->makeFileHolder(it->second.path, it->second.filename);
+            imageHandle->setImageData(localFileHandle);
         }        
     }
     else if (data.getType() == STI::Utils::MixedValueType::Binary) {

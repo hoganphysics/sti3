@@ -48,27 +48,17 @@ class TestDevice(stidevicepy.LocalDevice):
 
         return
 
-    def file_holder_backed_image(self):
+    def memory_backed_image(self):
         self.image_measurement_index += 1
         filename = "readWrite-image-" + str(self.image_measurement_index) + ".png"
-        persistence = self.getPersistenceManager()
-        file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
-
-        if file_holder is None or not file_holder.openFile():
-            return None
-
-        try:
-            if not file_holder.writeBytes(ONE_PIXEL_PNG):
-                return None
-        finally:
-            file_holder.closeFile()
-
-        image = stipy.Image(file_holder, 1, 1)
-        image.setFileID(file_holder.getID())
-        image.setMetaData("storage", "FileHolder")
-        image.setMetaData("format", "PNG")
-        image.setMetaData("encoding", "PNG")
-        return image
+        return self.makeImageResult(
+            ONE_PIXEL_PNG,
+            filename,
+            width=1,
+            height=1,
+            encoding="PNG",
+            format="PNG",
+        )
 
     def writeChannel(self, channel, value):
         success = False
@@ -123,7 +113,7 @@ class TestDevice(stidevicepy.LocalDevice):
             return [3.2 * value, "example string result", True]   #vector measurement (input)
         elif channel == 15:
             print("Read ch 15: example PNG image")
-            return self.file_holder_backed_image()
+            return self.memory_backed_image()
 
         return None
 

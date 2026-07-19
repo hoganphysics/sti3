@@ -6,6 +6,7 @@
 #include <sti/engine/EngineID.h>
 #include <sti/engine/EventEngineScheduler.h>
 #include <sti/engine/ShotResult.h>
+#include <sti/utils/Image.h>
 
 #include "AttributeManagerPy.h"
 #include "ChannelManagerPy.h"
@@ -142,6 +143,12 @@ void init_LocalDevice(py::module& m)
         .def("partner", py::overload_cast<const STI::Device::DeviceID&>(&LocalDevicePy::partner), py::arg("deviceID"))
         .def("partner", py::overload_cast<const std::string&>(&LocalDevicePy::partner), py::arg("alias"))
         .def("makeVirtualFileHolder", &LocalDevicePy::makeVirtualFileHolder, py::arg("path"), py::arg("filename"))
+        .def("makeFileResult", &LocalDevicePy::makeFileResult,
+                py::arg("data"), py::arg("filename"), py::arg("path") = "", py::arg("storage") = "virtual")
+        .def("makeImageResult", &LocalDevicePy::makeImageResult,
+                py::arg("data"), py::arg("filename"), py::arg("width") = 0, py::arg("height") = 0,
+                py::arg("path") = "", py::arg("storage") = "memory", py::arg("encoding") = "",
+                py::arg("format") = "", py::arg("mode") = "")
 
         .def("getMessageReceiver", &LocalDevicePy::getMessageReceiver)
         ;

@@ -104,6 +104,21 @@ public:
 	PartnerDevicePy partner(const std::string& alias);
 
     std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const std::string& path, const std::string& filename);
+    STI::Utils::FileID makeFileResult(
+        const pybind11::bytes& data,
+        const std::string& filename,
+        const std::string& path = "",
+        const std::string& storage = "virtual");
+    std::shared_ptr<STI::Utils::Image> makeImageResult(
+        const pybind11::bytes& data,
+        const std::string& filename,
+        unsigned width = 0,
+        unsigned height = 0,
+        const std::string& path = "",
+        const std::string& storage = "memory",
+        const std::string& encoding = "",
+        const std::string& format = "",
+        const std::string& mode = "");
 
 	STI::Engine::EngineParsingMessage& addInfo(unsigned id, const std::string& name);
 	STI::Engine::EngineParsingMessage& addWarning(unsigned id, const std::string& name);
