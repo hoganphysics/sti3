@@ -48,6 +48,21 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.3 - STIPy image transfer helpers
+
+Patch release for STIPy image access improvements.
+
+Python and examples:
+
+* Add `Image.to_bytes(...)`, `Image.to_file(...)`, and a context-aware
+  `Image.to_pil(...)` path that can transfer FileID-backed images through the
+  device/server persistence manager before decoding with Pillow.
+* Keep `Image.to_pil(...)` memory-backed by default through a Python-owned
+  `VirtualFileHolder`, with an explicit disk-backed path available through
+  `Image.to_file(...)` or `Image.to_pil(..., storage="file")`.
+* Add a minimal `examples/python/readWrite/image_read.ipynb` notebook showing
+  the one-line Pillow path and the simple local-file transfer path.
+
 ### 3.6.2 - Topology-change cleanup for stale device refs
 
 Patch release for clearing stale non-persistent client device references without

@@ -1,10 +1,18 @@
+import base64
+
 import stipy
 import stipy.stidevicepy as stidevicepy
+
+
+ONE_PIXEL_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
+)
 
 
 class TestDevice(stidevicepy.LocalDevice):
     def __init__(self, config):
         stidevicepy.LocalDevice.__init__(self, config)
+        self.image_measurement_index = 0
 
         # *** Define channels *** #
 
@@ -36,8 +44,31 @@ class TestDevice(stidevicepy.LocalDevice):
         ch = self.addInputChannel(11, stipy.MixedValueType.Number, stipy.MixedValueType.Vector, "vector args")           #measures a number (input); accepts a vector argument (output)
         ch.setMeasurementUnits("Hz")
         self.addInputChannel(12, stipy.MixedValueType.Vector, stipy.MixedValueType.Number, "vector measurement")    #measures a vector (input), accepts a number argument (output)
+        self.addInputChannel(15, stipy.MixedValueType.Image, "example PNG image")
 
         return
+
+    def file_holder_backed_image(self):
+        self.image_measurement_index += 1
+        filename = "readWrite-image-" + str(self.image_measurement_index) + ".png"
+        persistence = self.getPersistenceManager()
+        file_holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
+
+        if file_holder is None or not file_holder.openFile():
+            return None
+
+        try:
+            if not file_holder.writeBytes(ONE_PIXEL_PNG):
+                return None
+        finally:
+            file_holder.closeFile()
+
+        image = stipy.Image(file_holder, 1, 1)
+        image.setFileID(file_holder.getID())
+        image.setMetaData("storage", "FileHolder")
+        image.setMetaData("format", "PNG")
+        image.setMetaData("encoding", "PNG")
+        return image
 
     def writeChannel(self, channel, value):
         success = False
@@ -90,6 +121,9 @@ class TestDevice(stidevicepy.LocalDevice):
         elif channel == 12:
             print("Read ch 12: " + str(value))
             return [3.2 * value, "example string result", True]   #vector measurement (input)
+        elif channel == 15:
+            print("Read ch 15: example PNG image")
+            return self.file_holder_backed_image()
 
         return None
 
@@ -131,6 +165,9 @@ print("Measurement 2: " + str(data))
 
 data = device.read(12, 23.4)
 print("Measurement 3: " + str(data))
+
+data = device.read(15)
+print("Measurement 4: " + str(data))
 
 
 # nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
