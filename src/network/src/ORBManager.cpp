@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <signal.h>
-#include <string.h>
+#include <cstring>
 
 using STI::Network::ORBManager;
 using STI::Network::COSBindingNode;
@@ -452,22 +452,28 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 			contextName = omni::omniURI::stringToName(tokens.at(i).c_str());
 
 			try {
-				// Bind the context to the previous context
-				context = context->bind_new_context(contextName);
-			}
-			catch (CosNaming::NamingContext::AlreadyBound&)
-			{
-				// If the context already exists, this exception will be raised.
-				// In this case, just resolve the name and assign context to the object.
-
 				obj = context->resolve(contextName);
 				context = CosNaming::NamingContext::_narrow(obj);
-
-				if (CORBA::is_nil(context))
-				{
-					errorBuf << "Error: ORBManager::bindObjectReference failed to narrow naming context." << std::endl;
-					return false;
+			}
+			catch (CosNaming::NamingContext::NotFound&)
+			{
+				try {
+					// Create the context only when it is absent. omniNames logs
+					// bind_new_context even when the following bind reports
+					// AlreadyBound, so trying to create first grows its redo log.
+					context = context->bind_new_context(contextName);
 				}
+				catch (CosNaming::NamingContext::AlreadyBound&) {
+					// Another client created the context after our resolve.
+					obj = context->resolve(contextName);
+					context = CosNaming::NamingContext::_narrow(obj);
+				}
+			}
+
+			if (CORBA::is_nil(context))
+			{
+				errorBuf << "Error: ORBManager::bindObjectReference failed to narrow naming context." << std::endl;
+				return false;
 			}
 		}
 
@@ -480,9 +486,15 @@ bool ORBManager::bindObjectReference(const std::string& objectFullPath, CORBA::O
 		}
 		catch (CosNaming::NamingContext::AlreadyBound&)
 		{
-			// rebind() will overwrite any Object previously bound to context/objectName
+			CORBA::Object_var existing = context->resolve(objectName);
 
-			context->rebind(objectName, objref);
+			// omniNames persists every rebind as a destroy/bind pair. Avoid
+			// rewriting an unchanged reference during periodic self-rebind.
+			CORBA::String_var existingIor = orb->object_to_string(existing);
+			CORBA::String_var replacementIor = orb->object_to_string(objref);
+			if (std::strcmp(existingIor.in(), replacementIor.in()) != 0) {
+				context->rebind(objectName, objref);
+			}
 		}
 	}
 	catch (CORBA::TRANSIENT& ex)

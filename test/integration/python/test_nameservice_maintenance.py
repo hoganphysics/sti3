@@ -1,5 +1,6 @@
 """NameService maintenance regression tests."""
 
+from pathlib import Path
 import time
 
 import pytest
@@ -46,6 +47,53 @@ def _prune_config(stipy):
     config.set("NetworkHub", "PruneFailureThreshold", "2")
     config.set("NetworkHub", "PruneSuspectSeconds", "1")
     return config
+
+
+def _self_rebind_config(stipy):
+    config = stipy.Configuration()
+    config.set("NetworkHub", "SelfRebind", "true")
+    config.set("NetworkHub", "SelfRebindIntervalSeconds", "0.1")
+    config.set("NetworkHub", "EnablePrune", "false")
+    return config
+
+
+def _nameservice_data_size(service):
+    return sum(path.stat().st_size for path in Path(service.datadir).glob("*.dat"))
+
+
+def test_unchanged_periodic_self_rebind_does_not_grow_nameservice_data(
+    sti_nameservice_address,
+    spawned_sti_nameservice,
+    stipy_modules,
+):
+    if spawned_sti_nameservice is None:
+        pytest.skip("test requires a spawned omniNames data directory")
+
+    stipy, _ = stipy_modules
+    server_spec = make_server_spec(name="Idempotent Rebind Server", address="localhost", module=40)
+
+    with ProcessTopology(
+        sti_nameservice_address,
+        server_spec,
+        [],
+        hub_config=_self_rebind_config(stipy),
+    ) as topology:
+        wait_for(
+            lambda: _hub_object_count(_server_subtree(topology)) == 1,
+            timeout_s=5.0,
+            describe=lambda: "server object binding did not appear",
+            diagnostics=topology.diagnostics,
+        )
+
+        # Allow several self-rebind intervals after the initial registration,
+        # then verify additional unchanged intervals do not append redo records.
+        time.sleep(0.5)
+        size_before = _nameservice_data_size(spawned_sti_nameservice)
+        time.sleep(0.5)
+        size_after = _nameservice_data_size(spawned_sti_nameservice)
+
+        assert size_before > 0, topology.diagnostics()
+        assert size_after <= size_before, topology.diagnostics()
 
 
 def test_stale_process_hub_binding_survives_periodic_discovery(sti_nameservice_address, stipy_modules):

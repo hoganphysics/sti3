@@ -108,7 +108,7 @@ def spawned_sti_nameservice(pytestconfig):
     service = SpawnedNameService()
     service.start()
     try:
-        yield service.address
+        yield service
     finally:
         if bool(pytestconfig.getoption("--keep-network-alive")):
             print("\n" + service.keep_alive_note())
@@ -136,7 +136,7 @@ def sti_nameservice_address(sti_nameservice, resolved_sti_nameservice_mode, spaw
     if resolved_sti_nameservice_mode != "spawn":
         pytest.skip("unsupported STI name-service mode: {0}".format(resolved_sti_nameservice_mode))
 
-    yield spawned_sti_nameservice
+    yield spawned_sti_nameservice.address
 
 
 @pytest.fixture

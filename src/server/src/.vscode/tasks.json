@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"label": "Build local sti libs (conda run)",
-			"type": "shell",
+			"type": "process",
 			"command": "conda",
 			"args": [
 				"run", "--no-capture-output", "-n", "sti3-build",
@@ -18,7 +18,7 @@
 		},
 		{
 			"label": "Configure (conda run)",
-			"type": "shell",
+			"type": "process",
 			"command": "conda",
 			"args": [
 				"run", "--no-capture-output", "-n", "sti3-build",
@@ -33,7 +33,7 @@
 		},
 		{
 			"label": "Build (conda run)",
-			"type": "shell",
+			"type": "process",
 			"command": "conda",
 			"args": [
 				"run", "--no-capture-output", "-n", "sti3-build",

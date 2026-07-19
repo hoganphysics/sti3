@@ -48,6 +48,36 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.6.3 - Event engine playback robustness (in progress)
+
+Patch release collecting playback and measurement-transfer robustness fixes
+driven by camera-device commissioning. Additional changes will be merged into
+this release before it is finalized.
+
+Fixes so far:
+
+* Measurement-aware PlayComplete wait: after the `PlayComplete Grace ms`
+  deadline expires, the job owner keeps waiting -- bounded by the new
+  `Max Measurement Grace ms` key (default 60000; 0 restores strict behavior),
+  polling every `Measurement Poll ms` (default 1000) -- as long as the pending
+  owned devices are verifiably still Playing. Devices that die, error, or hang
+  are still cancelled promptly; devices legitimately collecting measurement
+  data (camera readout/encoding) no longer trip the grace timeout.
+* Device play errors now tear down cleanly: when the play loop exits early on
+  an error or stop, the engine stops its remaining events before joining the
+  measurement thread. Previously an unplayed event left the measurement thread
+  blocked forever in `waitForPlayComplete`, wedging the engine in the Error
+  state and blocking subsequent play RPCs. Regression test added.
+* Flaky test fix: three cancel-path tests used an immediate
+  `findCompletedPlayJob` lookup and raced the asynchronous completed-jobs
+  update; they now use the bounded-retry wait helper.
+* Configuration/documentation: `giopMaxMsgSize` documented and raised to 128 MB
+  in the example server ini and the stipy hub defaults (omniORB's 2 MB default
+  silently breaks large measurement payloads such as full-frame camera images).
+* docs: `docs/notes/test-suite-known-issues.md` records pre-existing
+  intermittent test-suite issues (LocalLogManager teardown hang, rapid-async
+  write race) with reproduction recipes.
+
 ### 3.6.2 - Topology-change cleanup for stale device refs
 
 Patch release for clearing stale non-persistent client device references without

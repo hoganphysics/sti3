@@ -52,6 +52,9 @@ def connect(serverID, nameServerAddress=None, config=None, serverHubID=None):
     hubConfig.set("omniORB", "endPoint", "giop:tcp::")
     hubConfig.set("omniORB", "endPointPublish", "giop:tcp:" + get_local_ip_address() + ":")
     hubConfig.set("omniORB", "clientConnectTimeOutPeriod", "500")
+    # omniORB rejects GIOP messages larger than this (default 2 MB), which silently breaks
+    # large payloads such as full-frame camera images. Overridable via the config argument.
+    hubConfig.set("omniORB", "giopMaxMsgSize", "134217728")    # 128 MB
 
     if config is not None:
         hubConfig.append(config)

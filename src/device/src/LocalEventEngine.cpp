@@ -2086,7 +2086,15 @@ bool LocalEventEngine::playDeviceEvents()
 	if (nextRawEvents != rawEventsByTime.end()) {
 		//only called if the most recent nextRawEvents was not the end() for some reason
 		updateChannelValues(rawEventsByTime.rbegin()->second);	//last entry
-	}	
+	}
+
+	if (!isState(EngineState::Playing)) {
+		//The play loop exited early (error or stop request). Any event that was never
+		//played would leave the measurement thread blocked forever in waitForPlayComplete,
+		//deadlocking the join below and wedging the engine in the Error state.
+		//Stopping the events (idempotent) wakes the measurement thread so it can drain.
+		stopDeviceEvents();
+	}
 
 	measurementThread.join();	//wait for measurement collection to complete
 

@@ -91,14 +91,14 @@
             "cwd": "${workspaceFolder}",
             "args": ["-f", "${workspaceFolder}/default.ini"],
             "environment": [
-                // { "name": "CONDA_PREFIX", "value": "C:\\Users\\Jason\\miniconda3\\envs\\sti3-build" },
-                { "name": "PATH", "value": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3\\Library\\bin;;${env:PATH}" }
+                { "name": "CONDA_PREFIX", "value": "C:\\Users\\Jason\\miniconda3\\envs\\sti3-build" },
+                { "name": "PATH", "value": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3-build\\Library\\bin;${env:PATH}" }
             ],
             // "externalConsole": true,
             "externalConsole": false,
             // Make MSVC debugger load PDBs for DLLs from these folders
             // Include the folder containing stidevice_d.dll and its PDB
-            "symbolSearchPath": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3\\Library\\bin;${env:CONDA_PREFIX}\\Library\\bin;${env:CONDA_PREFIX}\\Library\\lib;${workspaceFolder}\\build\\x64\\Debug",
+            "symbolSearchPath": "C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\device\\src;C:\\Users\\Jason\\Documents\\code\\dev\\sti3\\build-ninja\\src\\network\\src;C:\\Users\\Jason\\miniconda3\\envs\\sti3-build\\Library\\bin;C:\\Users\\Jason\\miniconda3\\envs\\sti3-build\\Library\\lib;${workspaceFolder}\\build\\x64\\Debug",
             // If PDBs reference original source paths, map them to local
             // Update keys below to the actual build-time source roots if needed
             "sourceFileMap": {

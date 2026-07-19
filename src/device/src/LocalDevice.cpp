@@ -733,7 +733,7 @@ bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue
 	usingRWdefault = true;
 	if (usingParseDefault) return false;
 
-	double eventTime = 100;
+	double eventTime = getMinimumEventStartTime();
 	STI::Engine::RawEventTarget eventTarget(getID(), channel);
 	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Measurement);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;

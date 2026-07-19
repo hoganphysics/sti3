@@ -183,6 +183,29 @@ private:
     std::condition_variable blockCondition;
 };
 
+//Simulates a device whose playEvent fails (e.g., hardware error at play time).
+class ErroringPlayEvent : public SynchronousEvent
+{
+public:
+    ErroringPlayEvent(double time, int& loadCount, int& playCount)
+        : SynchronousEvent(time), loadCount(loadCount), playCount(playCount) {}
+
+    void loadEvent() override { ++loadCount; }
+    void playEvent() override
+    {
+        ++playCount;
+        addError("Play error") << "Simulated device play failure.";
+    }
+    void collectMeasurementData() override {}
+    void stopEvent() override {}
+    void pauseEvent() override {}
+    void unpauseEvent(bool) override {}
+
+private:
+    int& loadCount;
+    int& playCount;
+};
+
 class FakePlayReadyEngine : public STI::Engine::EventEngine
 {
 public:
@@ -400,6 +423,13 @@ public:
             if (blockBeforePlay) {
                 synchedEvents.push_back(std::make_shared<BlockingBeforePlayEvent>(tuple.first, loadCount, playCount));
             }
+            else if (errorOnPlay) {
+                synchedEvents.push_back(std::make_shared<ErroringPlayEvent>(tuple.first, loadCount, playCount));
+                //A later event that is never played once the error aborts the play loop.
+                //Without stop-on-error teardown this wedges the measurement thread in
+                //waitForPlayComplete, deadlocking the engine's play thread at the join.
+                synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first + 1000000, loadCount, playCount));
+            }
             else if (playDelay.count() > 0) {
                 synchedEvents.push_back(std::make_shared<DelayedPlayEvent>(tuple.first, loadCount, playCount, playDelay));
             }
@@ -429,6 +459,7 @@ public:
     DeviceID partnerID;
     bool useDirectRawPartnerEvents = false;
     bool blockBeforePlay = false;
+    bool errorOnPlay = false;
     std::chrono::milliseconds playDelay{0};
     int loadCount = 0;
     int playCount = 0;
@@ -878,6 +909,35 @@ TEST_CASE("Server extends PlayComplete wait while owned target is verifiably sti
     CHECK(!hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
     CHECK(target->loadCount == 1);
     CHECK(target->playCount == 1);
+}
+
+TEST_CASE("Device play error cancels the shot promptly instead of wedging the engine")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("PlayErrorServer", 100, "root");
+    auto target = std::make_shared<PartnerGeneratingDevice>("PlayErrorTarget", 101, server->getID().getID());
+    target->errorOnPlay = true;
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto start = std::chrono::steady_clock::now();
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+
+    //The erroring device must stop its own remaining events, drain measurement collection,
+    //and report PlayComplete (with the error) immediately -- the server should not need its
+    //PlayComplete grace timeout (2000 ms default) to notice the failure.
+    CHECK(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(1500));
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(hasPlayError(playJob->getPlayMessages(), "Play error"));
 }
 
 TEST_CASE("Server cancels a stuck target at the measurement grace bound")
