@@ -890,6 +890,11 @@ LocalAttribute& LocalDevice::addAttribute(const std::string& key, const std::str
 	return *attribute;
 }
 
+void LocalDevice::addAttributeRefreshGroup(const std::vector<std::string>& keys)
+{
+	localAttributeManager->addAttributeRefreshGroup(keys);
+}
+
 void LocalDevice::addMonitor(const std::shared_ptr<LocalMonitor>& monitor)
 {
 	if (localMonitorManager != 0 && monitor != 0) {

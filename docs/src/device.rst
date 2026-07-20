@@ -475,6 +475,131 @@ or all attributes explicitly:
       self.downsample = 8
       self.refreshAttributes()
 
+Attribute refresh groups
+************************
+
+Use an attribute refresh group when several attributes represent the same
+hardware state.  For example, changing an image-region width also changes its
+derived pixel count.  Define every attribute with a refresher, then register
+their keys after the attributes have been added:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      addAttribute("Region::Width", regionWidth)
+          .setSetter([this](const std::string& value) {
+              int width = 0;
+              if (!STI::Utils::stringToValue(value, width) || width <= 0) {
+                  return false;
+              }
+              regionWidth = width;
+              return true;
+          })
+          .setRefresher([this]() {
+              return STI::Utils::valueToString(regionWidth);
+          });
+
+      addAttribute("Region::Height", regionHeight)
+          .setSetter([this](const std::string& value) {
+              int height = 0;
+              if (!STI::Utils::stringToValue(value, height) || height <= 0) {
+                  return false;
+              }
+              regionHeight = height;
+              return true;
+          })
+          .setRefresher([this]() {
+              return STI::Utils::valueToString(regionHeight);
+          });
+
+      addAttribute("Region::PixelCount", regionWidth * regionHeight)
+          .setSetter([](const std::string&) { return false; }) // read-only
+          .setRefresher([this]() {
+              return STI::Utils::valueToString(regionWidth * regionHeight);
+          });
+
+      addAttributeRefreshGroup({
+          "Region::Width",
+          "Region::Height",
+          "Region::PixelCount"
+      });
+
+   .. code-tab:: py
+
+      def set_region_width(value):
+          width = int(value)
+          if width <= 0:
+              return False
+          self.region_width = width
+          return True
+
+      def set_region_height(value):
+          height = int(value)
+          if height <= 0:
+              return False
+          self.region_height = height
+          return True
+
+      self.addAttribute("Region::Width", str(self.region_width)) \
+          .setSetter(set_region_width) \
+          .setRefresher(lambda: str(self.region_width))
+
+      self.addAttribute("Region::Height", str(self.region_height)) \
+          .setSetter(set_region_height) \
+          .setRefresher(lambda: str(self.region_height))
+
+      self.addAttribute(
+          "Region::PixelCount",
+          str(self.region_width * self.region_height)
+      ).setSetter(lambda value: False) \
+       .setRefresher(lambda: str(self.region_width * self.region_height))
+
+      self.addAttributeRefreshGroup([
+          "Region::Width",
+          "Region::Height",
+          "Region::PixelCount",
+      ])
+
+Call the device-level ``setAttribute`` or ``refreshAttribute`` methods to start
+a grouped transaction.  On a set, the selected attribute's setter completes
+first.  STI3 then calls each refresher in the group once, including the
+attribute that was set.  An explicit refresh of any member follows the same
+group-wide refresh path:
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      setAttribute("Region::Width", "800");
+
+      // State changed directly while reading the hardware.
+      regionWidth = 1024;
+      regionHeight = 768;
+      refreshAttribute("Region::PixelCount");
+
+   .. code-tab:: py
+
+      self.setAttribute("Region::Width", "800")
+
+      # State changed directly while reading the hardware.
+      self.region_width = 1024
+      self.region_height = 768
+      self.refreshAttribute("Region::PixelCount")
+
+Overlapping groups are transitive.  Each reachable attribute is refreshed at
+most once per transaction, even when groups overlap or contain cycles.  STI3
+continues after an individual refresher failure and reports aggregate success
+from ``setAttribute`` or ``refreshAttribute``.  Attribute update messages are
+emitted only for values that actually changed.  Updates from one transaction
+may be batched into a single ``AttributeUpdateMessage``; consumers should
+process every key/value entry in its ``attributes`` map.
+
+The ``::`` prefix used to arrange attributes in the interface is independent
+of refresh-group membership; only ``addAttributeRefreshGroup`` creates this
+behavior.  Avoid calling ``LocalAttribute.setValue`` directly when group
+refreshing is required, because that bypasses the device's attribute manager.
+
 Parsing timing events
 *********************
 

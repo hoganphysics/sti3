@@ -69,6 +69,7 @@ public:
 
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue);
     std::shared_ptr<STI::Device::LocalAttribute> addAttribute(const std::string& key, const std::string& initialValue, const std::vector<std::string>& allowedValues);
+    void addAttributeRefreshGroup(const std::vector<std::string>& keys);
     std::shared_ptr<STI::Device::LocalMonitor> addMonitor(const std::string& id);
     std::shared_ptr<STI::Device::LocalMonitor> addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);
     std::shared_ptr<STI::Device::AutoMonitor> addAutoMonitor(

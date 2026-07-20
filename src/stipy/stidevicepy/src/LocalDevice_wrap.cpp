@@ -94,6 +94,7 @@ void init_LocalDevice(py::module& m)
         .def("addAttribute", 
                 py::overload_cast<const std::string&, const std::string&, const std::vector<std::string>&>(&LocalDevicePy::addAttribute), 
                 py::return_value_policy::reference, py::arg("key"), py::arg("initialValue"), py::arg("allowedValues"))
+        .def("addAttributeRefreshGroup", &LocalDevicePy::addAttributeRefreshGroup, py::arg("keys"))
         .def("addMonitor",
                 py::overload_cast<const std::string&>(&LocalDevicePy::addMonitor),
                 py::return_value_policy::reference, py::arg("id"))

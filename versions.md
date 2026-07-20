@@ -48,6 +48,44 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.0 - Attribute refresh groups (in progress)
+
+Feature release adding coordinated attribute refresh transactions for device
+drivers whose attributes share or derive from the same hardware state.
+
+Features:
+
+* Add `LocalDevice::addAttributeRefreshGroup(...)` so setting or explicitly
+  refreshing any member refreshes the transitively connected group once after
+  the initiating setter completes.
+* Deduplicate overlapping or cyclic group membership, continue through
+  individual refresher failures or missing keys, and return aggregate success.
+* Preserve changed-only update behavior while batching all changed group members
+  into `AttributeUpdateMessage::attributes`.
+* Expose refresh-group registration through STIPy
+  `LocalDevice.addAttributeRefreshGroup(...)`.
+
+Fixes:
+
+* Preserve the initiating attribute's pre-set cached value during grouped setter
+  transactions so a successful changed setter emits its own attribute update
+  alongside changed peers.
+
+Documentation and examples:
+
+* Document refresh-group driver usage, transaction semantics, update batching,
+  and the distinction from `::` UI grouping.
+* Extend the C++ and Python attribute examples with grouped Width, Height, and
+  derived PixelCount attributes.
+
+Tests:
+
+* Add LocalAttributeManager coverage for normal groups, cycles and
+  deduplication, transitive overlaps, unchanged values, failures, missing keys,
+  setters, explicit refreshes, and complete multi-member update messages.
+* Add network conversion coverage confirming every batched attribute update
+  survives the CORBA round trip.
+
 ### 3.6.3 - Event engine playback robustness (in progress)
 
 Patch release collecting playback and measurement-transfer robustness fixes

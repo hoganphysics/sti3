@@ -67,27 +67,47 @@ std::string LocalAttribute::getGroup() const
 
 void LocalAttribute::refreshValue()
 {
+    refresh();
+}
+
+bool LocalAttribute::refresh()
+{
     std::unique_lock<std::mutex> attributeLock(attMutex);
     
-    _refresh(value_);
+    return _refresh(value_);
+}
+
+bool LocalAttribute::refreshFrom(const std::string& oldValue)
+{
+    std::unique_lock<std::mutex> attributeLock(attMutex);
+
+    return _refresh(oldValue);
 }
 
 
 bool LocalAttribute::setValue(const std::string& value)
 {
     std::unique_lock<std::mutex> attributeLock(attMutex);
-    bool success = false;
+    std::string oldValue = value_;
+    bool success = setValueWithoutRefresh(value);
 
-    if (_isAllowed(value)) {
+    if (!_isAllowed(value)) {
+        return false;
+    }
 
-        std::string oldValue = value_;
+    return _refresh(oldValue) && success;
+}
 
-        success = setValueCallback(value);
-        
-        if (success) {
-            value_ = value;         //store the successful value so default refresh will work
-        } 
-        success &= _refresh(oldValue);   //refresh to get actual _value
+bool LocalAttribute::setValueWithoutRefresh(const std::string& value)
+{
+    if (!_isAllowed(value)) {
+        return false;
+    }
+
+    bool success = setValueCallback(value);
+
+    if (success) {
+        value_ = value;         //store the successful value so default refresh will work
     }
     return success;
 }

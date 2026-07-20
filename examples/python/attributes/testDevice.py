@@ -42,6 +42,41 @@ class TestDevice(stidevicepy.LocalDevice):
         #Another attribute in the same group as the TriggerSource attribute 
         self.addAttribute("Trigger::Enable Trigger", "On", ["On", "Off"])
 
+        # These attributes describe one hardware region. Changing either
+        # dimension also changes the derived pixel count.
+        self.region_width = 640
+        self.region_height = 480
+
+        def set_region_width(value):
+            width = int(value)
+            if width <= 0:
+                return False
+            self.region_width = width
+            return True
+
+        def set_region_height(value):
+            height = int(value)
+            if height <= 0:
+                return False
+            self.region_height = height
+            return True
+
+        self.addAttribute("Region::Width", str(self.region_width)) \
+            .setSetter(set_region_width) \
+            .setRefresher(lambda: str(self.region_width))
+        self.addAttribute("Region::Height", str(self.region_height)) \
+            .setSetter(set_region_height) \
+            .setRefresher(lambda: str(self.region_height))
+        self.addAttribute("Region::PixelCount", str(self.region_width * self.region_height)) \
+            .setSetter(lambda value: False) \
+            .setRefresher(lambda: str(self.region_width * self.region_height))
+
+        self.addAttributeRefreshGroup([
+            "Region::Width",
+            "Region::Height",
+            "Region::PixelCount",
+        ])
+
         return
 
     # Example attribute setter/refresher class functions
@@ -109,6 +144,23 @@ print("*****")
 print("TriggerSource = " + device.getAttribute("Trigger::TriggerSource"))
 device.setAttribute("Trigger::TriggerSource", "Software")
 print("TriggerSource = " + device.getAttribute("Trigger::TriggerSource"))
+print("*****")
+
+# Setting Width refreshes all three group members after the setter completes.
+device.setAttribute("Region::Width", "800")
+print("Region = "
+      + device.getAttribute("Region::Width") + " x "
+      + device.getAttribute("Region::Height"))
+print("PixelCount = " + device.getAttribute("Region::PixelCount"))
+
+# A hardware-side change can be synchronized through any group member.
+device.region_width = 1024
+device.region_height = 768
+device.refreshAttribute("Region::PixelCount")
+print("Refreshed Region = "
+      + device.getAttribute("Region::Width") + " x "
+      + device.getAttribute("Region::Height"))
+print("PixelCount = " + device.getAttribute("Region::PixelCount"))
 print("*****")
 
 at = device.getAttributeManager().getAttribute("Mode")

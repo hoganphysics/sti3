@@ -171,6 +171,11 @@ std::shared_ptr<STI::Device::LocalAttribute> LocalDevicePy::addAttribute(const s
     return attribute;
 }
 
+void LocalDevicePy::addAttributeRefreshGroup(const std::vector<std::string>& keys)
+{
+    device->addAttributeRefreshGroup(keys);
+}
+
 std::shared_ptr<LocalMonitor> LocalDevicePy::addMonitor(const std::string& id)
 {
     std::shared_ptr<LocalMonitorManager> manager;

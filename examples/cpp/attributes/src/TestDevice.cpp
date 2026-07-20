@@ -5,7 +5,8 @@
 
 
 TestDevice::TestDevice(const STI::Utils::Configuration& config)
-: STI::Device::LocalDevice(config), hardwareTrigger(true), downsample(1), height(4.6)
+: STI::Device::LocalDevice(config), hardwareTrigger(true), downsample(1), height(4.6),
+  regionWidth(640), regionHeight(480)
 {
 	// *** Define attributes *** //
 
@@ -51,6 +52,45 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 		.addMetaData("help", "Sets the mode of the device.")	//example meta data
 		.addMetaData("type", "string attribute");				//example meta data
 
+	// These attributes describe one hardware region. Changing either dimension
+	// also changes the derived pixel count, so refresh them as one transaction.
+	addAttribute("Region::Width", regionWidth)
+		.setSetter([this](const std::string& value) -> bool {
+			int width;
+			if (STI::Utils::stringToValue(value, width) && width > 0) {
+				regionWidth = width;
+				return true;
+			}
+			return false;
+		})
+		.setRefresher([this]() {
+			return STI::Utils::valueToString(regionWidth);
+		});
+
+	addAttribute("Region::Height", regionHeight)
+		.setSetter([this](const std::string& value) -> bool {
+			int height;
+			if (STI::Utils::stringToValue(value, height) && height > 0) {
+				regionHeight = height;
+				return true;
+			}
+			return false;
+		})
+		.setRefresher([this]() {
+			return STI::Utils::valueToString(regionHeight);
+		});
+
+	addAttribute("Region::PixelCount", regionWidth * regionHeight)
+		.setSetter([](const std::string&) { return false; }) //derived, read-only
+		.setRefresher([this]() {
+			return STI::Utils::valueToString(regionWidth * regionHeight);
+		});
+
+	addAttributeRefreshGroup({
+		"Region::Width",
+		"Region::Height",
+		"Region::PixelCount"
+	});
 
 
 	// *** Attribute I/O examples *** //
@@ -61,6 +101,14 @@ TestDevice::TestDevice(const STI::Utils::Configuration& config)
 	// attribute cache to publish the new string value.
 	height = 6.2;
 	refreshAttribute("Height");
+
+	// The setter runs first, then Width, Height, and PixelCount each refresh once.
+	setAttribute("Region::Width", "800");
+
+	// A hardware-side change can be synchronized through any group member.
+	regionWidth = 1024;
+	regionHeight = 768;
+	refreshAttribute("Region::PixelCount");
 
 	downsample = 2;
 	hardwareTrigger = false;

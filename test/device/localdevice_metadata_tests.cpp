@@ -127,11 +127,18 @@ TEST_CASE("LocalDevice: refreshAttribute syncs member-backed attributes", "[loca
     CHECK(device.getAttribute("beta") == "10");
     CHECK_FALSE(device.refreshAttribute("missing"));
 
+    device.addAttributeRefreshGroup({"alpha", "beta"});
     alpha = 3;
+    beta = 12;
+    CHECK(device.refreshAttribute("alpha"));
+    CHECK(device.getAttribute("alpha") == "3");
+    CHECK(device.getAttribute("beta") == "12");
+
+    alpha = 4;
     device.refreshAttributes();
 
-    CHECK(device.getAttribute("alpha") == "3");
-    CHECK(device.getAttribute("beta") == "11");
+    CHECK(device.getAttribute("alpha") == "4");
+    CHECK(device.getAttribute("beta") == "12");
 
     device.disable();
 }

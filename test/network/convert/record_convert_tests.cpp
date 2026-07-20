@@ -653,6 +653,28 @@ TEST_CASE("NetworkConvert: ChannelUpdateMessage round trips channel and measurem
     CHECK(roundTrip->measurementValues.at(3) == STI::Utils::MixedValue("done"));
 }
 
+TEST_CASE("NetworkConvert: AttributeUpdateMessage preserves every grouped attribute", "[network][convert][attribute]")
+{
+    using STI::Device::AttributeUpdateMessage;
+    using STI::Device::DeviceMessage;
+
+    auto message = std::make_shared<AttributeUpdateMessage>(makeDeviceID(), "alpha", "a1");
+    message->attributes["beta"] = "b1";
+    message->attributes["gamma"] = "c1";
+
+    STI::TNetwork::TAnyMessage networkMessage;
+    REQUIRE(STI::Network::convert<std::shared_ptr<DeviceMessage>, STI::TNetwork::TAnyMessage>(
+        std::static_pointer_cast<DeviceMessage>(message), networkMessage));
+
+    std::shared_ptr<DeviceMessage> roundTripBase;
+    REQUIRE(STI::Network::convert<STI::TNetwork::TAnyMessage, std::shared_ptr<DeviceMessage>>(
+        networkMessage, roundTripBase));
+
+    auto roundTrip = std::dynamic_pointer_cast<AttributeUpdateMessage>(roundTripBase);
+    REQUIRE(roundTrip != nullptr);
+    CHECK(roundTrip->attributes == message->attributes);
+}
+
 TEST_CASE("NetworkConvert: TaskUpdateMessage round trips through TAnyMessage", "[network][convert][task]")
 {
     using STI::Device::DeviceMessage;

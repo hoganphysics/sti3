@@ -12,11 +12,13 @@
 #include "ProfileTarget.h"
 
 #include <map>
+#include <set>
 #include <vector>
 #include <string>
 #include <memory>
 #include <atomic>
 #include <functional>
+#include <mutex>
 
 
 namespace STI
@@ -52,6 +54,7 @@ public:
     void getAttributes(std::map<std::string, std::string>& attributes);
 
     bool addAttribute(const std::shared_ptr<LocalAttribute>& attribute);
+    void addAttributeRefreshGroup(const std::vector<std::string>& keys);
 
     bool loadProfile(const std::shared_ptr<Profile>& profile);
     bool saveProfile(const std::shared_ptr<Profile>& profile);
@@ -67,10 +70,15 @@ private:
 
     //AttributeRefreshListener
     void handleAttributeRefreshEvent(const std::string& key, const std::string& value);
+    std::vector<std::string> getRefreshTransactionKeys(const std::string& key);
+    bool refreshTransaction(const std::string& key);
+    bool refreshTransaction(const std::string& key, const std::string& initialOldValue);
 
     const DeviceID localID;		//this device's DeviceID
 
     STI::Utils::SynchronizedMap<std::string, std::shared_ptr<LocalAttribute>> attributeMap;
+    std::map<std::string, std::set<std::string>> refreshGroupGraph;
+    std::mutex refreshGroupMutex;
 
     STI::Device::DeviceMessageGrouper<AttributeUpdateMessage> messageGrouper;
 

@@ -137,6 +137,7 @@ public:
 
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue);
 	LocalAttribute& addAttribute(const std::string& key, const std::string& initialValue, std::vector<std::string> allowedValues);
+	void addAttributeRefreshGroup(const std::vector<std::string>& keys);
 
     LocalMonitor& addMonitor(const std::string& id);
 

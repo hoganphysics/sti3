@@ -19,6 +19,8 @@ private:
 	bool hardwareTrigger;
 	int downsample;
 	double height;
+	int regionWidth;
+	int regionHeight;
 
 };
 

@@ -97,23 +97,25 @@ void LocalAttributeManager::getAttributes(std::map<std::string, std::string>& at
 
 bool LocalAttributeManager::setValue(const std::string& key, const std::string& value)
 {
-    std::shared_ptr<Attribute> attribute;
+    std::shared_ptr<LocalAttribute> attribute;
 
-    if (getAttribute(key, attribute) && attribute != 0) {
-        return attribute->setValue(value);
+    if (attributeMap.get(key, attribute) && attribute != 0) {
+        bool setterSuccess;
+        std::string oldValue;
+        {
+            std::unique_lock<std::mutex> attributeLock(attribute->attMutex);
+            oldValue = attribute->value_;
+            setterSuccess = attribute->setValueWithoutRefresh(value);
+        }
+        const bool refreshSuccess = refreshTransaction(key, oldValue);
+        return setterSuccess && refreshSuccess;
     }
     return false;
 }
 
 bool LocalAttributeManager::refreshValue(const std::string& key)
 {
-    std::shared_ptr<Attribute> attribute;
-
-    if (getAttribute(key, attribute) && attribute != 0) {
-        attribute->refreshValue();
-        return true;
-    }
-    return false;
+    return refreshTransaction(key);
 }
 
 void LocalAttributeManager::refreshValues()
@@ -122,8 +124,9 @@ void LocalAttributeManager::refreshValues()
     getAttributes(attributes);
 
     for (auto& attribute : attributes) {
-        if (attribute != 0) {
-            attribute->refreshValue();
+        auto localAttribute = std::dynamic_pointer_cast<LocalAttribute>(attribute);
+        if (localAttribute != 0) {
+            localAttribute->refresh();
         }
     }
 }
@@ -141,6 +144,73 @@ bool LocalAttributeManager::addAttribute(const std::shared_ptr<LocalAttribute>& 
         return true;
     }
     return false;
+}
+
+void LocalAttributeManager::addAttributeRefreshGroup(const std::vector<std::string>& keys)
+{
+    std::set<std::string> uniqueKeys(keys.begin(), keys.end());
+    std::unique_lock<std::mutex> groupLock(refreshGroupMutex);
+
+    for (const auto& key : uniqueKeys) {
+        auto& neighbors = refreshGroupGraph[key];
+        neighbors.insert(uniqueKeys.begin(), uniqueKeys.end());
+    }
+}
+
+std::vector<std::string> LocalAttributeManager::getRefreshTransactionKeys(const std::string& key)
+{
+    std::vector<std::string> keys{key};
+    std::set<std::string> visited{key};
+    std::unique_lock<std::mutex> groupLock(refreshGroupMutex);
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+        auto group = refreshGroupGraph.find(keys[i]);
+        if (group == refreshGroupGraph.end()) {
+            continue;
+        }
+
+        for (const auto& member : group->second) {
+            if (visited.insert(member).second) {
+                keys.push_back(member);
+            }
+        }
+    }
+    return keys;
+}
+
+bool LocalAttributeManager::refreshTransaction(const std::string& key)
+{
+    bool success = true;
+
+    for (const auto& transactionKey : getRefreshTransactionKeys(key)) {
+        std::shared_ptr<LocalAttribute> attribute;
+        if (attributeMap.get(transactionKey, attribute) && attribute != 0) {
+            success = attribute->refresh() && success;
+        }
+        else {
+            success = false;
+        }
+    }
+    return success;
+}
+
+bool LocalAttributeManager::refreshTransaction(const std::string& key, const std::string& initialOldValue)
+{
+    bool success = true;
+
+    for (const auto& transactionKey : getRefreshTransactionKeys(key)) {
+        std::shared_ptr<LocalAttribute> attribute;
+        if (attributeMap.get(transactionKey, attribute) && attribute != 0) {
+            const bool refreshSuccess = transactionKey == key
+                ? attribute->refreshFrom(initialOldValue)
+                : attribute->refresh();
+            success = refreshSuccess && success;
+        }
+        else {
+            success = false;
+        }
+    }
+    return success;
 }
 
 

@@ -20,6 +20,7 @@ namespace Device
 
 class Attribute;
 class AttributeRefreshListener;
+class LocalAttributeManager;
 
 
 class LocalAttribute : public Attribute
@@ -82,6 +83,11 @@ public:
 
 private:
 
+    friend class LocalAttributeManager;
+
+    bool refresh();
+    bool refreshFrom(const std::string& oldValue);
+    bool setValueWithoutRefresh(const std::string& value);
     bool _refresh(std::string oldValue);     //true if value changed
     void _fireRefreshEvent();
     bool _isAllowed(const std::string& value);
