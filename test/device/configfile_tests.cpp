@@ -283,7 +283,7 @@ TEST_CASE("ConfigFile saves values with comment markers as quoted literals", "[c
     CHECK(written.find("Description = \"display # color\"") != std::string::npos);
     CHECK(written.find(R"(Path = "C:\\data#1")") != std::string::npos);
     CHECK(written.find(R"(SlashOnly = "C:\\data")") != std::string::npos);
-    CHECK(written.find(R"(QuoteOnly = "say \"hello\"")") != std::string::npos);
+    CHECK(written.find("QuoteOnly = \"say \\\"hello\\\"\"") != std::string::npos);
     CHECK(written.find("QuotedName = \"\\\"literal\\\"\"") != std::string::npos);
 
     ConfigFile reloaded(configPath.string());
