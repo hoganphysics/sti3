@@ -5,10 +5,15 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/SynchronousEvent.h>
 #include <sti/utils/Configuration.h>
+#include <sti/utils/FileHolder.h>
+#include <sti/utils/FileID.h>
+#include <sti/utils/FileServer.h>
+#include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/MixedValue.h>
 
 #include "LocalFileServer.h"
 #include "TransientRepository.h"
+#include "fileholder_tests_support.h"
 
 #include <atomic>
 #include <chrono>
@@ -30,6 +35,11 @@ using STI::Engine::SynchronousEvent;
 using STI::Engine::SynchronousEventVector;
 using STI::Engine::TransientRepository;
 using STI::Utils::Configuration;
+using STI::Utils::FileHolder;
+using STI::Utils::FileID;
+using STI::Utils::FileServer;
+using STI::Utils::FileTransferType;
+using STI::Utils::LocalFileHolder;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
 
@@ -150,6 +160,41 @@ private:
     MixedValue result;
 };
 
+class VirtualFileReadDevice : public LocalDevice
+{
+public:
+    explicit VirtualFileReadDevice(const std::filesystem::path& root)
+        : LocalDevice("VirtualFileReadDevice", "127.0.0.1", 1, "root", makeDeviceConfig(root))
+    {
+        addInputChannel(0, MixedValueType::File, "virtual file");
+    }
+
+private:
+    bool readChannel(short channel, const MixedValue&, MixedValue& data) override
+    {
+        if (channel != 0) {
+            return false;
+        }
+
+        ++readCount;
+        const auto payload = "virtual read payload " + std::to_string(readCount);
+        const auto fileID = makeFileResult(
+            payload.data(),
+            payload.size(),
+            "read-" + std::to_string(readCount) + ".txt",
+            "read");
+
+        if (fileID.filename.empty()) {
+            return false;
+        }
+
+        data.setValue(fileID);
+        return true;
+    }
+
+    unsigned readCount{0};
+};
+
 ShotID makeSingleUndocumentedShotID()
 {
     ShotConfig config;
@@ -230,4 +275,33 @@ TEST_CASE("LocalEventEngine leaves lastValue empty for measurement channels with
     REQUIRE(manager->getChannel(0, channel));
     CHECK(channel->getLastValue().isEmpty());
     CHECK(channel->getLastMeasurement() == MixedValue(8.5));
+}
+
+TEST_CASE("LocalDevice read helper keeps only the latest virtual file result", "[localdevice][read][file]")
+{
+    auto root = makeTempRoot("read_virtual_file");
+    VirtualFileReadDevice device(root);
+
+    MixedValue firstData;
+    REQUIRE(device.read(0, firstData));
+    REQUIRE(firstData.getType() == MixedValueType::File);
+    auto firstFileID = firstData.getFileID();
+
+    std::shared_ptr<FileServer> fileServer;
+    REQUIRE(device.getFileServer(fileServer));
+    REQUIRE(fileServer != nullptr);
+    CHECK(fileServer->findFile(firstFileID));
+
+    MixedValue secondData;
+    REQUIRE(device.read(0, secondData));
+    REQUIRE(secondData.getType() == MixedValueType::File);
+    auto secondFileID = secondData.getFileID();
+
+    CHECK_FALSE(fileServer->findFile(firstFileID));
+    REQUIRE(fileServer->findFile(secondFileID));
+
+    fileholder_test_support::TempDir tempDir("localdevice-read-transfer-");
+    auto destination = std::make_shared<LocalFileHolder>("test-destination", tempDir.path.string(), "latest.txt");
+    REQUIRE(fileServer->transferFile(secondFileID, destination, FileTransferType::Binary));
+    CHECK(fileholder_test_support::readFileToString(destination->getFilename()) == "virtual read payload 2");
 }

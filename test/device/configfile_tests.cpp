@@ -219,3 +219,79 @@ flag = yes
     REQUIRE(config.getParameter("Device3", "flag", flag));
     CHECK(flag == "yes");
 }
+
+TEST_CASE("ConfigFile keeps comment markers inside quoted values", "[config] [configfile]") {
+    fileholder_test_support::TempDir tempDir("configfile-quoted-comments-");
+    const std::string contents = R"([Metadata]
+color = "#123456" # inline comment
+short = '#abc'
+description = "uses # in the value"
+path = "C:\data#1"
+name = camera # still an inline comment
+empty = ""
+)";
+    auto configPath = writeConfig(tempDir.path, "quoted.ini", contents);
+
+    ConfigFile config(configPath.string());
+    REQUIRE(config.isParsed());
+
+    CHECK(config.get<std::string>("Metadata", "color", "missing").get() == "#123456");
+    CHECK(config.get<std::string>("Metadata", "short", "missing").get() == "#abc");
+    CHECK(config.get<std::string>("Metadata", "description", "missing").get() == "uses # in the value");
+    CHECK(config.get<std::string>("Metadata", "path", "missing").get() == R"(C:\data#1)");
+    CHECK(config.get<std::string>("Metadata", "name", "missing").get() == "camera");
+    CHECK(config.get<std::string>("Metadata", "empty", "missing").get() == "");
+}
+
+TEST_CASE("ConfigFile supports escaped characters in unquoted values", "[config] [configfile]") {
+    fileholder_test_support::TempDir tempDir("configfile-escaped-values-");
+    const std::string contents = R"([Metadata]
+color = \#123456 # inline comment
+quote = \"quoted\"
+slash = C:\\data
+mixed = prefix\#mid\"quote\"\\tail # inline comment
+unknown = C:\data
+)";
+    auto configPath = writeConfig(tempDir.path, "escaped.ini", contents);
+
+    ConfigFile config(configPath.string());
+    REQUIRE(config.isParsed());
+
+    CHECK(config.get<std::string>("Metadata", "color", "missing").get() == "#123456");
+    CHECK(config.get<std::string>("Metadata", "quote", "missing").get() == "\"quoted\"");
+    CHECK(config.get<std::string>("Metadata", "slash", "missing").get() == R"(C:\data)");
+    CHECK(config.get<std::string>("Metadata", "mixed", "missing").get() == R"(prefix#mid"quote"\tail)");
+    CHECK(config.get<std::string>("Metadata", "unknown", "missing").get() == R"(C:\data)");
+}
+
+TEST_CASE("ConfigFile saves values with comment markers as quoted literals", "[config] [configfile]") {
+    fileholder_test_support::TempDir tempDir("configfile-save-quoted-");
+    auto configPath = tempDir.path / "output.ini";
+
+    ConfigFile config(configPath.string());
+    config.set("Metadata", "Color", "#123456");
+    config.set("Metadata", "Description", "display # color");
+    config.set("Metadata", "Path", R"(C:\data#1)");
+    config.set("Metadata", "SlashOnly", R"(C:\data)");
+    config.set("Metadata", "QuoteOnly", R"(say "hello")");
+    config.set("Metadata", "QuotedName", "\"literal\"");
+
+    config.save();
+
+    const auto written = readFileToString(configPath);
+    CHECK(written.find("Color = \"#123456\"") != std::string::npos);
+    CHECK(written.find("Description = \"display # color\"") != std::string::npos);
+    CHECK(written.find(R"(Path = "C:\\data#1")") != std::string::npos);
+    CHECK(written.find(R"(SlashOnly = "C:\\data")") != std::string::npos);
+    CHECK(written.find(R"(QuoteOnly = "say \"hello\"")") != std::string::npos);
+    CHECK(written.find("QuotedName = \"\\\"literal\\\"\"") != std::string::npos);
+
+    ConfigFile reloaded(configPath.string());
+    REQUIRE(reloaded.isParsed());
+    CHECK(reloaded.get<std::string>("Metadata", "Color", "missing").get() == "#123456");
+    CHECK(reloaded.get<std::string>("Metadata", "Description", "missing").get() == "display # color");
+    CHECK(reloaded.get<std::string>("Metadata", "Path", "missing").get() == R"(C:\data#1)");
+    CHECK(reloaded.get<std::string>("Metadata", "SlashOnly", "missing").get() == R"(C:\data)");
+    CHECK(reloaded.get<std::string>("Metadata", "QuoteOnly", "missing").get() == R"(say "hello")");
+    CHECK(reloaded.get<std::string>("Metadata", "QuotedName", "missing").get() == "\"literal\"");
+}

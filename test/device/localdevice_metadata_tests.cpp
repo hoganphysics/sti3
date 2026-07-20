@@ -3,13 +3,18 @@
 #include <sti/LocalDevice.h>
 #include <sti/device/Device.h>
 #include <sti/device/LocalAttribute.h>
+#include <sti/utils/ConfigFile.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/MixedValue.h>
 
+#include "fileholder_tests_support.h"
+
+#include <fstream>
 #include <string>
 
 using STI::Device::Device;
 using STI::Device::LocalDevice;
+using STI::Utils::ConfigFile;
 using STI::Utils::Configuration;
 using STI::Utils::MixedValue;
 using STI::Utils::MixedValueType;
@@ -89,6 +94,70 @@ TEST_CASE("LocalDevice: constructor applies Metadata configuration section", "[l
     CHECK(base.getMetaData("description").getString() == "Configured device description.");
     CHECK(base.getMetaData("help").getString() == "Configured device help.");
     CHECK(base.getMetaData("Owner").getString() == "Timing Lab");
+
+    device.disable();
+}
+
+TEST_CASE("LocalDevice: ConfigFile Metadata color accepts quoted hex values", "[localdevice][metadata]")
+{
+    fileholder_test_support::TempDir tempDir("localdevice-metadata-config-");
+    auto configPath = tempDir.path / "metadata.ini";
+
+    std::ofstream configFile(configPath);
+    REQUIRE(configFile.is_open());
+    configFile << R"(Device Name = HexColorDevice
+IP Address = 127.0.0.1
+Module = 4
+Target Server = target
+
+[EngineManager]
+Engine Count = 0
+
+[Metadata]
+Color = "#123456" # display color
+Description = "Device with # metadata."
+)";
+    configFile.close();
+
+    ConfigFile config(configPath.string());
+    REQUIRE(config.isParsed());
+
+    LocalDevice device(config);
+    const Device& base = device;
+
+    CHECK(base.getMetaData("color").getString() == "#123456");
+    CHECK(base.getMetaData("description").getString() == "Device with # metadata.");
+
+    device.disable();
+}
+
+TEST_CASE("LocalDevice: ConfigFile Metadata color accepts escaped hex values", "[localdevice][metadata]")
+{
+    fileholder_test_support::TempDir tempDir("localdevice-metadata-escaped-config-");
+    auto configPath = tempDir.path / "metadata.ini";
+
+    std::ofstream configFile(configPath);
+    REQUIRE(configFile.is_open());
+    configFile << R"(Device Name = EscapedHexColorDevice
+IP Address = 127.0.0.1
+Module = 5
+Target Server = target
+
+[EngineManager]
+Engine Count = 0
+
+[Metadata]
+Color = \#654321 # display color
+)";
+    configFile.close();
+
+    ConfigFile config(configPath.string());
+    REQUIRE(config.isParsed());
+
+    LocalDevice device(config);
+    const Device& base = device;
+
+    CHECK(base.getMetaData("color").getString() == "#654321");
 
     device.disable();
 }

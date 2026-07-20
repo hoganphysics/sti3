@@ -215,6 +215,28 @@ TEST_CASE("Image: write delegates to FileServer when FileHolder is cached") {
     CHECK(fileServer->lastType == FileTransferType::Binary);
 }
 
+TEST_CASE("Image: write delegates to FileServer when only FileID is available", "[image]") {
+    TempDir td;
+    auto destinationPath = td.path / "destination";
+
+    STI::Utils::FileID sourceID;
+    sourceID.origin = "source-origin";
+    sourceID.persistenceLocation = "source-origin";
+    sourceID.path = "/remote/images";
+    sourceID.filename = "persisted-image.tif";
+
+    Image image(sourceID);
+
+    auto destination = std::make_shared<LocalFileHolder>("dest-origin", destinationPath.string(), "copy.tif");
+    auto fileServer = std::make_shared<RecordingFileServer>();
+
+    REQUIRE(image.write(fileServer, destination));
+    CHECK(fileServer->transferCount == 1);
+    CHECK(fileServer->lastDestination == destination);
+    CHECK(fileServer->lastSource == sourceID);
+    CHECK(fileServer->lastType == FileTransferType::Binary);
+}
+
 TEST_CASE("Image: copy constructor preserves cached data and metadata") {
     TempDir td;
     auto holder = std::make_shared<LocalFileHolder>("holder-origin", td.path.string(), "image.raw");

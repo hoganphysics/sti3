@@ -48,10 +48,13 @@ than only incrementing the conda build number.
 
 ## Release History
 
-### 3.7.0 - Attribute refresh groups (in progress)
+### 3.7.0 - Attribute refresh groups, image transfer, and playback robustness (in progress)
 
-Feature release adding coordinated attribute refresh transactions for device
-drivers whose attributes share or derive from the same hardware state.
+Feature release combining coordinated attribute refresh transactions, STIPy
+image-transfer helpers, and event-engine playback and measurement-transfer
+robustness improvements.
+
+#### Attribute refresh groups
 
 Features:
 
@@ -86,13 +89,10 @@ Tests:
 * Add network conversion coverage confirming every batched attribute update
   survives the CORBA round trip.
 
-### 3.6.3 - Event engine playback robustness (in progress)
+#### Event engine playback robustness
 
-Patch release collecting playback and measurement-transfer robustness fixes
-driven by camera-device commissioning. Additional changes will be merged into
-this release before it is finalized.
-
-Fixes so far:
+Playback and measurement-transfer robustness fixes driven by camera-device
+commissioning:
 
 * Measurement-aware PlayComplete wait: after the `PlayComplete Grace ms`
   deadline expires, the job owner keeps waiting -- bounded by the new
@@ -115,6 +115,34 @@ Fixes so far:
 * docs: `docs/notes/test-suite-known-issues.md` records pre-existing
   intermittent test-suite issues (LocalLogManager teardown hang, rapid-async
   write race) with reproduction recipes.
+
+#### STIPy image transfer helpers
+
+Python and examples:
+
+* Add `Image.to_bytes(...)`, `Image.to_file(...)`, and a context-aware
+  `Image.to_pil(...)` path that can transfer FileID-backed images through the
+  device/server persistence manager before decoding with Pillow.
+* Keep `Image.to_pil(...)` memory-backed by default through a Python-owned
+  `VirtualFileHolder`, with an explicit disk-backed path available through
+  `Image.to_file(...)` or `Image.to_pil(..., storage="file")`.
+* Add a minimal `examples/python/readWrite/image_read.ipynb` notebook showing
+  the one-line Pillow path and the simple local-file transfer path.
+
+Device file/image results:
+
+* Add `LocalDevice::makeFileResult(...)` and `LocalDevice::makeImageResult(...)`
+  helpers, with STIPy bindings, so device implementations can intentionally
+  return memory-backed, virtual-file-backed, or local-file-backed file/image
+  measurements.
+* Default image-result helper storage to BinaryData in memory, while virtual
+  file results created during `read()` are tracked per channel so the next
+  successful read removes the previous helper-owned virtual payload.
+* Let result collection fall back from a measurement-attached virtual file
+  server to the device persistence file server, so virtual files returned from
+  `readChannel()` can transfer correctly during parse/play collection.
+* Clean up file-backed image sources after result transfer and include images
+  when deleting files for transient `ShotResult` eviction.
 
 ### 3.6.2 - Topology-change cleanup for stale device refs
 

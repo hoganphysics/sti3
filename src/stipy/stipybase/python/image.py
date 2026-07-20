@@ -1,6 +1,7 @@
 from pathlib import Path
 import io
 import tempfile
+import uuid
 
 from ..stipybase import Image as _Image
 
@@ -210,7 +211,287 @@ def _image_from_pil(cls, image, *, format=None, **save_kwargs):
     )
 
 
-def _image_to_pil(self):
+def _looks_like_persistence_manager(value):
+    return (
+        hasattr(value, "getFileServer")
+        and hasattr(value, "makeVirtualFileHolder")
+        and hasattr(value, "makeFileHolder")
+    )
+
+
+def _resolve_persistence(context=None, persistence=None):
+    if persistence is not None:
+        return persistence
+
+    if context is None:
+        return None
+
+    if _looks_like_persistence_manager(context):
+        return context
+
+    if hasattr(context, "getPersistenceManager"):
+        return context.getPersistenceManager()
+
+    return None
+
+
+def _resolve_transfer_context(
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+):
+    resolved_persistence = _resolve_persistence(context, persistence)
+    resolved_file_server = file_server
+    resolved_destination_factory = destination_factory
+
+    if resolved_file_server is None and resolved_persistence is not None:
+        resolved_file_server = resolved_persistence.getFileServer()
+
+    if resolved_destination_factory is None:
+        resolved_destination_factory = resolved_persistence
+
+    if resolved_file_server is None:
+        raise ValueError(
+            "STI_Image transfer needs a FileServer. Pass a Device/STIPyServer, "
+            "PersistenceManager, or file_server=..."
+        )
+
+    if resolved_destination_factory is None:
+        raise ValueError(
+            "STI_Image transfer needs a FileHolder factory. Pass a "
+            "Device/STIPyServer, PersistenceManager, or destination_factory=..."
+        )
+
+    return resolved_file_server, resolved_destination_factory
+
+
+def _image_encoding(self):
+    return _metadata_value(self, "encoding") or _metadata_value(self, "format")
+
+
+def _image_suffix(self):
+    image_format = _image_encoding(self)
+    return "." + str(image_format).lower() if image_format else ""
+
+
+def _image_data_payload(self):
+    data = self.getData() if self.hasData() else None
+    if data is None:
+        return None
+
+    data.pull()
+    payload = data.getBytes()
+    if payload is None:
+        raise ValueError("STI_Image BinaryData has no readable bytes")
+
+    return payload
+
+
+def _decode_payload_to_pil(self, payload, pil_image_module):
+    encoding = _image_encoding(self)
+    if _is_raw_encoding(encoding):
+        return _raw_payload_to_pil(
+            payload,
+            self.getWidth(),
+            self.getHeight(),
+            _metadata_value(self, "mode"),
+        )
+
+    try:
+        image = pil_image_module.open(io.BytesIO(payload))
+        image.load()
+        return image
+    except Exception:
+        if encoding:
+            raise
+        return _raw_payload_to_pil(
+            payload,
+            self.getWidth(),
+            self.getHeight(),
+            _metadata_value(self, "mode"),
+        )
+
+
+def _decode_file_to_pil(self, path, pil_image_module):
+    image_format = _image_encoding(self)
+    if _is_raw_encoding(image_format):
+        return _raw_payload_to_pil(
+            Path(path).read_bytes(),
+            self.getWidth(),
+            self.getHeight(),
+            _metadata_value(self, "mode"),
+        )
+
+    try:
+        image = pil_image_module.open(path)
+        image.load()
+        return image
+    except Exception:
+        if image_format:
+            raise
+        return _raw_payload_to_pil(
+            Path(path).read_bytes(),
+            self.getWidth(),
+            self.getHeight(),
+            _metadata_value(self, "mode"),
+        )
+
+
+def _local_image_payload(self):
+    payload = _image_data_payload(self)
+    if payload is not None:
+        return payload
+
+    with tempfile.NamedTemporaryFile(suffix=_image_suffix(self)) as preview_file:
+        if not self.save(preview_file.name):
+            return None
+
+        return Path(preview_file.name).read_bytes()
+
+
+def _transfer_image_to_virtual_bytes(
+    self,
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+):
+    from ..stipybase import FileTransferType, VirtualFileHolder
+
+    source_file_server, factory = _resolve_transfer_context(
+        context,
+        persistence=persistence,
+        file_server=file_server,
+        destination_factory=destination_factory,
+    )
+
+    source_file_id = self.getFileID()
+    backing_holder = VirtualFileHolder(
+        "stipy-image-download-" + uuid.uuid4().hex,
+        source_file_id,
+    )
+    destination_holder = factory.makeVirtualFileHolder(backing_holder)
+
+    if destination_holder is None:
+        raise ValueError("STI_Image transfer could not create a virtual destination")
+
+    success = source_file_server.transferFile(
+        source_file_id,
+        destination_holder,
+        FileTransferType.Binary,
+    )
+    if not success:
+        raise RuntimeError("Failed to transfer STI_Image file " + source_file_id.filename)
+
+    payload = backing_holder.getBytes()
+    if payload is None:
+        raise RuntimeError("STI_Image transfer completed without readable bytes")
+
+    return payload
+
+
+def _transfer_image_to_file(
+    self,
+    path,
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+):
+    from ..stipybase import FileTransferType
+
+    target_path = Path(path)
+    source_file_server, factory = _resolve_transfer_context(
+        context,
+        persistence=persistence,
+        file_server=file_server,
+        destination_factory=destination_factory,
+    )
+
+    destination_holder = factory.makeFileHolder(
+        str(target_path.parent),
+        target_path.name,
+    )
+    if destination_holder is None:
+        raise ValueError("STI_Image transfer could not create a file destination")
+
+    source_file_id = self.getFileID()
+    success = source_file_server.transferFile(
+        source_file_id,
+        destination_holder,
+        FileTransferType.Binary,
+    )
+    if not success:
+        raise RuntimeError("Failed to transfer STI_Image file " + source_file_id.filename)
+
+    return target_path
+
+
+def _image_to_bytes(
+    self,
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+):
+    """Return image payload bytes, transferring FileID-backed images when needed."""
+
+    payload = _local_image_payload(self)
+    if payload is not None:
+        return payload
+
+    return _transfer_image_to_virtual_bytes(
+        self,
+        context,
+        persistence=persistence,
+        file_server=file_server,
+        destination_factory=destination_factory,
+    )
+
+
+def _image_to_file(
+    self,
+    path,
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+):
+    """Save or transfer this image to path and return the written Path."""
+
+    target_path = Path(path)
+
+    if self.save(str(target_path)):
+        return target_path
+
+    return _transfer_image_to_file(
+        self,
+        target_path,
+        context,
+        persistence=persistence,
+        file_server=file_server,
+        destination_factory=destination_factory,
+    )
+
+
+def _image_to_pil(
+    self,
+    context=None,
+    *,
+    persistence=None,
+    file_server=None,
+    destination_factory=None,
+    storage="virtual",
+    path=None,
+):
+    """Convert to PIL.Image, using a Python-owned virtual transfer by default."""
+
     try:
         from PIL import Image as PILImage
     except ImportError as exc:
@@ -218,74 +499,52 @@ def _image_to_pil(self):
             "Pillow is optional. Install Pillow to convert STI_Image to PIL.Image."
         ) from exc
 
-    data = self.getData() if self.hasData() else None
-    if data is not None:
-        data.pull()
-        payload = data.getBytes()
-        if payload is None:
-            raise ValueError("STI_Image BinaryData has no readable bytes")
+    storage = str(storage).lower()
+    if storage not in {"virtual", "memory", "file", "disk"}:
+        raise ValueError("storage must be 'virtual' or 'file'")
 
-        encoding = _metadata_value(self, "encoding") or _metadata_value(self, "format")
-        if _is_raw_encoding(encoding):
-            return _raw_payload_to_pil(
-                payload,
-                self.getWidth(),
-                self.getHeight(),
-                _metadata_value(self, "mode"),
-            )
+    if storage in {"virtual", "memory"} and path is None:
+        payload = _image_to_bytes(
+            self,
+            context,
+            persistence=persistence,
+            file_server=file_server,
+            destination_factory=destination_factory,
+        )
+        return _decode_payload_to_pil(self, payload, PILImage)
 
-        try:
-            image = PILImage.open(io.BytesIO(payload))
-            image.load()
-            return image
-        except Exception:
-            if encoding:
-                raise
-            return _raw_payload_to_pil(
-                payload,
-                self.getWidth(),
-                self.getHeight(),
-                _metadata_value(self, "mode"),
-            )
+    if path is not None:
+        image_path = _image_to_file(
+            self,
+            path,
+            context,
+            persistence=persistence,
+            file_server=file_server,
+            destination_factory=destination_factory,
+        )
+        return _decode_file_to_pil(self, image_path, PILImage)
 
-    suffix = ""
-    image_format = _metadata_value(self, "format") or _metadata_value(self, "encoding")
-    if image_format:
-        suffix = "." + str(image_format).lower()
-
-    with tempfile.NamedTemporaryFile(suffix=suffix) as preview_file:
-        if not self.save(preview_file.name):
-            raise ValueError(
-                "STI_Image has neither readable BinaryData nor a saveable file payload"
-            )
-
-        if _is_raw_encoding(image_format):
-            return _raw_payload_to_pil(
-                Path(preview_file.name).read_bytes(),
-                self.getWidth(),
-                self.getHeight(),
-                _metadata_value(self, "mode"),
-            )
-
-        try:
-            image = PILImage.open(preview_file.name)
-            image.load()
-            return image
-        except Exception:
-            if image_format:
-                raise
-            return _raw_payload_to_pil(
-                Path(preview_file.name).read_bytes(),
-                self.getWidth(),
-                self.getHeight(),
-                _metadata_value(self, "mode"),
-            )
+    with tempfile.TemporaryDirectory() as preview_dir:
+        preview_file = Path(preview_dir) / (
+            self.getFileID().filename or ("sti-image-preview" + _image_suffix(self))
+        )
+        _image_to_file(
+            self,
+            preview_file,
+            context,
+            persistence=persistence,
+            file_server=file_server,
+            destination_factory=destination_factory,
+        )
+        return _decode_file_to_pil(self, preview_file, PILImage)
 
 
 def _install_image_helpers():
     setattr(STI_Image, "from_file", classmethod(_image_from_file))
     setattr(STI_Image, "from_path", classmethod(_image_from_file))
     setattr(STI_Image, "from_pil", classmethod(_image_from_pil))
+    setattr(STI_Image, "to_bytes", _image_to_bytes)
+    setattr(STI_Image, "to_file", _image_to_file)
     setattr(STI_Image, "to_pil", _image_to_pil)
 
 

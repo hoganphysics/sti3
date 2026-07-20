@@ -63,6 +63,7 @@ add_library(stidevice SHARED
     AppointmentTask.cpp
     AutoMonitor.cpp
     BinaryData.cpp
+    CompositeFileServer.cpp
     CompressedStackTrace.cpp
     ConfigFile.cpp
     Configuration.cpp
@@ -96,6 +97,7 @@ add_library(stidevice SHARED
     LocalMonitor.cpp
     LocalMonitorManager.cpp
     LocalDevice.cpp
+    LocalDeviceHelpers.cpp
     LocalDeviceMessageDispatcher.cpp
     LocalDeviceMessageHandler.cpp
     LocalEventEngine.cpp
@@ -123,6 +125,7 @@ add_library(stidevice SHARED
     ParsedDependencyTree.cpp
     ParsedTag.cpp
     ParsedVar.cpp
+    PayloadUtils.cpp
     PostProcessRequest.cpp
     PostProcessTarget.cpp
     ParseID.cpp
@@ -138,6 +141,7 @@ add_library(stidevice SHARED
     RawEventTarget.cpp
     RawEventTargetChannel.cpp
     RawEventTargetDevice.cpp
+    ReadResultFileTracker.cpp
     ResultTicket.cpp
     SerializedRepository.cpp
     Sequence.cpp

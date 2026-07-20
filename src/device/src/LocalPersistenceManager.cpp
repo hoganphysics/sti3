@@ -18,6 +18,7 @@
 #include <sti/utils/VirtualFileHolder.h>
 #include <sti/utils/utils.h>
 
+#include "CompositeFileServer.h"
 #include "EventEngine.h"
 #include "EventEngineDependencyTree.h"
 #include "LocalResultsCollector.h"
@@ -113,6 +114,33 @@ struct LocalPersistenceManager::ImportRegistryState
     std::map<std::string, ImportedFileRecord> imports;
 };
 
+LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const Configuration& config, const std::string& basePath,
+        const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
+        const std::shared_ptr<STI::Device::DeviceCollection>& collection,
+        const std::shared_ptr<STI::Device::VersionManager>& versionManager)
+: localDeviceID(deviceID),
+fileHolderFactory(fileHolderFactory),
+resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ),
+sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ),
+deviceCollection(collection),
+versionManager(versionManager),
+basePath(basePath),
+importMaxBytes(config.get<unsigned>("PersistenceManager", "importMaxBytes", defaultImportMaxBytes))
+{
+    importRegistry = std::make_shared<ImportRegistryState>();
+
+    auto server = std::make_shared<STI::Utils::LocalFileServer>(deviceID);
+    setFileServer(server);
+
+    defaultRepository = std::make_shared<SerializedRepository>(basePath);
+    transientRepository = std::make_shared<TransientRepository>(basePath, server);
+
+    auto resultsCollectionFactory = std::make_shared<STI::Engine::LocalResultsCollectorFactory>();
+    setResultsCollectorFactory(resultsCollectionFactory);
+
+    virtualFileServerFactory = std::make_shared<STI::Utils::LocalVirtualFileServerFactory>();
+}
+
 bool LocalPersistenceManager::releaseImportedFileRecord(
     const std::shared_ptr<ImportRegistryState>& registry,
     const std::string& importID)
@@ -144,33 +172,6 @@ bool LocalPersistenceManager::releaseImportedFileRecord(
     }
 
     return success;
-}
-
-LocalPersistenceManager::LocalPersistenceManager(const DeviceID& deviceID, const Configuration& config, const std::string& basePath, 
-        const std::shared_ptr<STI::Utils::FileHolderFactory>& fileHolderFactory,
-        const std::shared_ptr<STI::Device::DeviceCollection>& collection,
-        const std::shared_ptr<STI::Device::VersionManager>& versionManager)
-: localDeviceID(deviceID), 
-fileHolderFactory(fileHolderFactory), 
-resultBuffer( config.get<int>("PersistenceManager", "resultBufferSize", 5) ), 
-sequenceBuffer( config.get<int>("PersistenceManager", "sequenceBufferSize", 5) ), 
-deviceCollection(collection),
-versionManager(versionManager),
-basePath(basePath),
-importMaxBytes(config.get<unsigned>("PersistenceManager", "importMaxBytes", defaultImportMaxBytes))
-{
-    importRegistry = std::make_shared<ImportRegistryState>();
-
-    auto server = std::make_shared<STI::Utils::LocalFileServer>(deviceID);
-    setFileServer(server);
-
-    defaultRepository = std::make_shared<SerializedRepository>(basePath);
-    transientRepository = std::make_shared<TransientRepository>(basePath, server);
-
-    auto resultsCollectionFactory = std::make_shared<STI::Engine::LocalResultsCollectorFactory>();
-    setResultsCollectorFactory(resultsCollectionFactory);
-
-    virtualFileServerFactory = std::make_shared<STI::Utils::LocalVirtualFileServerFactory>();
 }
 
 LocalPersistenceManager::~LocalPersistenceManager()
@@ -584,7 +585,7 @@ ShotResultRecord LocalPersistenceManager::transferResults(const std::shared_ptr<
             if (tuple.second.size() > 0) {
 
                 if (tuple.second.front() != 0 && tuple.second.front()->getFileServer(measurementFileServer)) {
-                    fs = measurementFileServer;
+                    fs = makeMeasurementSourceFileServer(measurementFileServer, fileServer);
                 }
                 else {
                     fs = fileServer;    //default in case Measurement is missing VirtualFileServer

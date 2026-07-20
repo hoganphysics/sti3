@@ -100,7 +100,8 @@ Use these when building with ``stipy.stidevicepy``:
 
 * ``simpleDevice`` for the smallest network-connected device.
 * ``readWrite`` for channel metadata and Python ``readChannel`` /
-  ``writeChannel`` hooks.
+  ``writeChannel`` hooks.  ``readWrite/image_read.ipynb`` is the shortest
+  notebook example for reading an image channel and converting it with Pillow.
 * ``fileTransfer`` for file/image channel values, lazy reads, and imported
   ``FileID`` read/write arguments.
 * ``parseEvents`` for custom Python ``SynchronousEvent`` classes.

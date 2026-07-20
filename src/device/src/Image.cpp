@@ -165,6 +165,9 @@ bool Image::write(const std::shared_ptr<FileServer>& sourceFileServer, const std
             imageData.reset();
         }
     }
+    else if (!fileID.filename.empty()) {
+        success = sourceFileServer->transferFile(fileID, destination, STI::Utils::FileTransferType::Binary);
+    }
     return success;
 }
 

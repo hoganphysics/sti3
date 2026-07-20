@@ -1198,7 +1198,7 @@ def test_stidevicepy_can_save_file_backed_image_last_measurements(
         assert raw_image.getFileID().filename.endswith(".raw")
 
         raw_output_path = tmp_path / "readWrite-image.raw"
-        save_image_file_to_path(stipy, remote_device, raw_image, raw_output_path)
+        raw_image.to_file(raw_output_path, remote_device)
         assert raw_output_path.read_bytes() == bytes((index % 256 for index in range(100)))
 
         assert isinstance(remote_device.read(15), stipy.Image)
@@ -1208,8 +1208,13 @@ def test_stidevicepy_can_save_file_backed_image_last_measurements(
         assert tif_image.getFileID().filename.endswith(".tif")
 
         tif_output_path = tmp_path / "readWrite-image.tif"
-        save_image_file_to_path(stipy, remote_device, tif_image, tif_output_path)
+        tif_image.to_file(tif_output_path, remote_device)
         assert tif_output_path.read_bytes().startswith((b"II*\x00", b"MM\x00*"))
+        assert tif_image.to_bytes(remote_device).startswith((b"II*\x00", b"MM\x00*"))
+
+        pytest.importorskip("PIL.Image")
+        pil_image = tif_image.to_pil(remote_device)
+        assert pil_image.size == (10, 10)
 
 
 def test_stidevicepy_can_receive_tif_image_into_virtual_file_server(

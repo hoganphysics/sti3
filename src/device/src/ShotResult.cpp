@@ -4,6 +4,8 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/ShotID.h>
 #include <sti/utils/FileHolder.h>
+#include <sti/utils/FileServer.h>
+#include <sti/utils/Image.h>
 
 #include "CerealArchives.h"
 #include <cereal/types/map.hpp>
@@ -13,6 +15,35 @@
 
 using STI::Engine::ShotResult;
 using STI::Engine::ShotResultStatus;
+
+namespace
+{
+void deleteValueFiles(const STI::Utils::MixedValue& value,
+    const std::shared_ptr<STI::Utils::FileServer>& fileServer)
+{
+    if (fileServer == nullptr) {
+        return;
+    }
+
+    if (value.isType(STI::Utils::MixedValueType::Vector)) {
+        for (const auto& item : value.getVector()) {
+            deleteValueFiles(item, fileServer);
+        }
+    }
+    else if (value.isType(STI::Utils::MixedValueType::File)) {
+        fileServer->deleteFile(value.getFileID());
+    }
+    else if (value.isType(STI::Utils::MixedValueType::Image)) {
+        auto image = value.getImage();
+        if (image != nullptr) {
+            auto fileID = image->getFileID();
+            if (!fileID.filename.empty()) {
+                fileServer->deleteFile(fileID);
+            }
+        }
+    }
+}
+} // namespace
 
 
 ShotResult::ShotResult()
@@ -40,8 +71,8 @@ void ShotResult::deleteFiles(ShotResult& shot, const std::shared_ptr<STI::Utils:
 
     for (auto& tuple : *shot.measurements) {            
         for (auto& meas : tuple.second) {
-            if (meas != 0 && meas->data().isType(STI::Utils::MixedValueType::File)) {
-                fileServer->deleteFile(meas->data().getFileID());
+            if (meas != 0) {
+                deleteValueFiles(meas->data(), fileServer);
             }
         }
     }

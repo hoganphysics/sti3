@@ -2,14 +2,20 @@
 
 #include <sti/engine/EngineJobSourceID.h>
 #include <sti/engine/FullShotResult.h>
+#include <sti/engine/Measurement.h>
 #include <sti/engine/ParseID.h>
 #include <sti/engine/ParseResult.h>
 #include <sti/engine/ShotID.h>
 #include <sti/engine/ShotResult.h>
 #include <sti/device/DeviceID.h>
 #include <sti/device/VersionInfo.h>
+#include <sti/utils/Image.h>
+#include <sti/utils/MixedValue.h>
+#include <sti/utils/VirtualFileHolder.h>
+#include <sti/utils/VirtualFileServer.h>
 
 #include "SerializedRepository.h"
+#include "fileholder_tests_support.h"
 
 #include <atomic>
 #include <filesystem>
@@ -19,6 +25,7 @@
 
 using STI::Engine::EngineJobSourceID;
 using STI::Engine::FullShotResult;
+using STI::Engine::Measurement;
 using STI::Engine::ParseID;
 using STI::Engine::ParseResult;
 using STI::Engine::SerializedRepository;
@@ -29,6 +36,10 @@ using STI::Engine::ShotResultStatusFromString;
 using STI::Engine::ShotResultStatusToString;
 using STI::Device::DeviceID;
 using STI::Device::VersionInfo;
+using STI::Utils::Image;
+using STI::Utils::MixedValue;
+using STI::Utils::VirtualFileHolder;
+using STI::Utils::VirtualFileServer;
 
 namespace {
 
@@ -103,6 +114,48 @@ TEST_CASE("ShotResult status converts to and from stable strings", "[shotresult]
     CHECK(ShotResultStatusFromString("AbortedByError") == ShotResultStatus::AbortedByError);
     CHECK(ShotResultStatusFromString("AbortedByTimeout") == ShotResultStatus::AbortedByTimeout);
     CHECK(ShotResultStatusFromString("not-a-status") == ShotResultStatus::Unknown);
+}
+
+TEST_CASE("ShotResult deleteFiles removes File and Image measurement payloads recursively", "[shotresult][file]")
+{
+    DeviceID deviceID("ShotResultFileDevice", "127.0.0.1", 1);
+    auto fileID = fileholder_test_support::makeFileID(deviceID, "transient", "payload.txt");
+    auto imageID = fileholder_test_support::makeFileID(deviceID, "transient", "frame.raw");
+
+    auto fileHolder = std::make_shared<VirtualFileHolder>(deviceID.getID(), fileID);
+    REQUIRE(fileHolder->openFile());
+    REQUIRE(fileHolder->write("payload", 7));
+    fileHolder->closeFile();
+
+    auto imageHolder = std::make_shared<VirtualFileHolder>(deviceID.getID(), imageID);
+    REQUIRE(imageHolder->openFile());
+    REQUIRE(imageHolder->write("image", 5));
+    imageHolder->closeFile();
+
+    auto fileServer = std::make_shared<VirtualFileServer>();
+    REQUIRE(fileServer->addFile(fileHolder));
+    REQUIRE(fileServer->addFile(imageHolder));
+
+    auto image = std::make_shared<Image>(imageID);
+    image->setWidth(1).setHeight(5);
+
+    MixedValue result;
+    result.addValue(fileID);
+    result.addValue(image);
+
+    auto measurement = std::make_shared<Measurement>(1.0, 7, deviceID, STI::Utils::GraphPathLabel{}, "root");
+    measurement->setMeasurementResult(result);
+
+    ShotResult shot;
+    (*shot.measurements)[deviceID].push_back(measurement);
+
+    REQUIRE(fileServer->findFile(fileID));
+    REQUIRE(fileServer->findFile(imageID));
+
+    ShotResult::deleteFiles(shot, fileServer);
+
+    CHECK_FALSE(fileServer->findFile(fileID));
+    CHECK_FALSE(fileServer->findFile(imageID));
 }
 
 TEST_CASE("SerializedRepository round trips ShotResult status", "[shotresult][repository]")

@@ -528,3 +528,63 @@ TEST_CASE("Measurement lazy binary-backed Image results are pulled into server-l
     CHECK(std::filesystem::path(cachedFile->getID().path) == dataPath);
     CHECK(readFileToString(cachedFile->getFilename()) == payload);
 }
+
+TEST_CASE("Measurement file-backed Image results delete source and preserve image type when cached", "[measurement][image][file]")
+{
+    const DeviceID deviceID("MeasurementDevice", "127.0.0.1", 1);
+
+    auto originalFileID = makeFileID(deviceID, "virtual/path", "camera-frame.raw");
+    auto virtualFile = std::make_shared<VirtualFileHolder>(deviceID.getID(), originalFileID);
+    const std::string payload = "file-backed-image-payload";
+    REQUIRE(virtualFile->openFile());
+    REQUIRE(virtualFile->write(payload.data(), static_cast<unsigned>(payload.size())));
+    virtualFile->closeFile();
+
+    auto sourceFileServer = std::make_shared<VirtualFileServer>();
+    REQUIRE(sourceFileServer->addFile(virtualFile));
+
+    auto firstImage = std::make_shared<Image>(originalFileID);
+    firstImage->setWidth(5).setHeight(6);
+    auto secondImage = std::make_shared<Image>(originalFileID);
+    secondImage->setWidth(5).setHeight(6);
+
+    auto firstMeasurement = std::make_shared<Measurement>(10.0, 7, deviceID, STI::Utils::GraphPathLabel{}, "root");
+    firstMeasurement->setMeasurementResult(firstImage);
+    auto secondMeasurement = std::make_shared<Measurement>(11.0, 7, deviceID, STI::Utils::GraphPathLabel{}, "root");
+    secondMeasurement->setMeasurementResult(secondImage);
+
+    MeasurementVector measurements{firstMeasurement, secondMeasurement};
+
+    TempDir tempDir("measurement-file-image-transfer-");
+    auto dataPath = tempDir.path / "shot" / "data";
+
+    ResultsPaths paths;
+    paths.dataPath = dataPath.string();
+
+    auto collectorFactory = std::make_shared<LocalFileHolderFactory>("collector");
+    LocalResultsCollector collector(makeShotID(), paths, collectorFactory);
+
+    REQUIRE(collector.addMeasurements(deviceID, measurements, sourceFileServer));
+    CHECK_FALSE(sourceFileServer->findFile(originalFileID));
+
+    auto collectedMeasurements = collector.getMeasurements();
+    REQUIRE(collectedMeasurements != nullptr);
+    auto deviceMeasurements = collectedMeasurements->find(deviceID);
+    REQUIRE(deviceMeasurements != collectedMeasurements->end());
+    REQUIRE(deviceMeasurements->second.size() == 2);
+
+    for (const auto& measurement : deviceMeasurements->second) {
+        REQUIRE(measurement != nullptr);
+        const auto& collectedData = measurement->data();
+        REQUIRE(collectedData.getType() == MixedValueType::Image);
+
+        auto collectedImage = collectedData.getImage();
+        REQUIRE(collectedImage != nullptr);
+        CHECK(collectedImage->getFileID().filename == "camera-frame.raw");
+        CHECK(std::filesystem::path(collectedImage->getFileID().path) == dataPath);
+
+        std::shared_ptr<FileHolder> cachedFile;
+        REQUIRE(collectedImage->getFile(cachedFile));
+        CHECK(readFileToString(cachedFile->getFilename()) == payload);
+    }
+}

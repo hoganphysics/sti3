@@ -1,4 +1,41 @@
+import base64
+
 import pytest
+
+
+ONE_PIXEL_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
+)
+
+
+def local_persistence(stipy, stidevicepy, tmp_path):
+    config = stipy.Configuration()
+    config.set("Device Name", "STI Image Helper Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "63")
+    config.set("Target Server", "STI Image Helper Server")
+    config.set("PersistenceManager", "root path", str(tmp_path))
+    config.set("PersistenceManager", "device subdirectory", "device")
+
+    device = stidevicepy.LocalDevice(config)
+    return device, device.getPersistenceManager()
+
+
+def registered_image_file(stipy, persistence, payload, filename):
+    holder = persistence.makeFileHolder(persistence.getTemporaryPath(), filename)
+    assert holder is not None
+    assert holder.openFile()
+    try:
+        assert holder.writeBytes(payload)
+    finally:
+        holder.closeFile()
+
+    assert persistence.getFileServer().addFile(holder)
+
+    image = stipy.STI_Image(holder.getID(), width=1, height=1)
+    image.setMetaData("format", "PNG")
+    image.setMetaData("encoding", "PNG")
+    return image
 
 
 def test_stipy_star_import_exports_sti_image_alias_without_image(stipy_modules):
@@ -110,3 +147,97 @@ def test_sti_image_to_pil_uses_raw_mode_metadata(stipy_modules):
     assert converted.size == (2, 1)
     assert converted.getpixel((0, 0)) == (1, 2, 3)
     assert converted.getpixel((1, 0)) == (4, 5, 6)
+
+
+def test_sti_image_to_bytes_transfers_file_id_to_virtual_holder(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+    device, persistence = local_persistence(stipy, stidevicepy, tmp_path)
+    image = registered_image_file(stipy, persistence, ONE_PIXEL_PNG, "context-image.png")
+
+    assert not image.hasData()
+    assert not image.hasFile()
+
+    assert image.to_bytes(persistence) == ONE_PIXEL_PNG
+    assert image.to_bytes(device) == ONE_PIXEL_PNG
+
+
+def test_sti_image_to_file_transfers_file_id_to_local_file_holder(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+    _, persistence = local_persistence(stipy, stidevicepy, tmp_path)
+    image = registered_image_file(stipy, persistence, ONE_PIXEL_PNG, "file-image.png")
+
+    output_path = tmp_path / "downloaded.png"
+
+    returned_path = image.to_file(output_path, persistence)
+
+    assert returned_path == output_path
+    assert output_path.read_bytes() == ONE_PIXEL_PNG
+
+
+def test_sti_image_to_pil_transfers_file_id_when_context_is_provided(stipy_modules, tmp_path):
+    pytest.importorskip("PIL.Image")
+    stipy, stidevicepy = stipy_modules
+    device, persistence = local_persistence(stipy, stidevicepy, tmp_path)
+    image = registered_image_file(stipy, persistence, ONE_PIXEL_PNG, "pil-image.png")
+
+    converted = image.to_pil(device)
+    converted_from_file = image.to_pil(device, storage="file")
+
+    assert converted.size == (1, 1)
+    assert converted.mode
+    assert converted_from_file.size == (1, 1)
+
+
+def test_local_device_make_image_result_defaults_to_binarydata(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+    device, _ = local_persistence(stipy, stidevicepy, tmp_path)
+
+    image = device.makeImageResult(
+        ONE_PIXEL_PNG,
+        "helper-image.png",
+        width=1,
+        height=1,
+        encoding="PNG",
+    )
+
+    assert isinstance(image, stipy.Image)
+    assert image.hasData()
+    assert image.getFileID().filename == "helper-image.png"
+    assert image.metadata("storage") == "BinaryData"
+    assert image.to_bytes() == ONE_PIXEL_PNG
+
+
+def test_local_device_make_virtual_file_result_keeps_only_last_read(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+
+    class ReadDevice(stidevicepy.LocalDevice):
+        def __init__(self, config):
+            stidevicepy.LocalDevice.__init__(self, config)
+            self.read_count = 0
+            self.addInputChannel(0, stipy.MixedValueType.File, "virtual file")
+
+        def readChannel(self, channel, value):
+            self.read_count += 1
+            payload = "payload {0}".format(self.read_count).encode("ascii")
+            return self.makeFileResult(
+                payload,
+                "read-{0}.txt".format(self.read_count),
+                path="read",
+            )
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Read Helper Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "64")
+    config.set("Target Server", "STI Image Helper Server")
+    config.set("PersistenceManager", "root path", str(tmp_path))
+    config.set("PersistenceManager", "device subdirectory", "device")
+    device = ReadDevice(config)
+    file_server = device.getPersistenceManager().getFileServer()
+
+    first_file_id = device.read(0)
+    assert file_server.findFile(first_file_id)
+
+    second_file_id = device.read(0)
+    assert not file_server.findFile(first_file_id)
+    assert file_server.findFile(second_file_id)

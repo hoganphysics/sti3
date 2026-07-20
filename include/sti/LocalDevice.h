@@ -16,6 +16,7 @@
 #include <sti/device/PartnerDevice.h>
 #include <sti/device/PostProcessingManager.h>
 #include <sti/device/ProfileManager.h>
+#include <sti/device/ResultStorage.h>
 #include <sti/device/ServerMessageRelayer.h>
 #include <sti/device/TaskManager.h>
 #include <sti/device/LogManager.h>
@@ -39,6 +40,7 @@
 #include <sti/utils/MetaData.h>
 #include <sti/utils/MixedValue.h>
 
+#include <cstddef>
 #include <map>
 #include <mutex>
 #include <set>
@@ -74,7 +76,7 @@ class LocalLogManager;
 class VersionInfo;
 class VersionManager;
 class LocalPostProcessingManager;
-
+class ReadResultFileTracker;
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
 {
@@ -203,6 +205,19 @@ public:
 	void addCollectionListener(const std::shared_ptr<STI::Utils::LocalCollectionListenerAdapter<DeviceID>>& listener);
 
 	std::shared_ptr<STI::Utils::FileHolder> makeFileHolder(const std::string& path, const std::string& filename);
+	std::shared_ptr<STI::Utils::FileHolder> makeVirtualFileHolder(const std::string& path, const std::string& filename);
+	STI::Utils::FileID makeFileResult(const char* data, std::size_t size,
+		const std::string& filename, const std::string& path = "",
+		ResultStorage storage = ResultStorage::Virtual);
+	STI::Utils::FileID makeFileResult(const std::string& data,
+		const std::string& filename, const std::string& path = "",
+		ResultStorage storage = ResultStorage::Virtual);
+	std::shared_ptr<STI::Utils::Image> makeImageResult(const char* data, std::size_t size,
+		const std::string& filename, unsigned width = 0, unsigned height = 0,
+		const std::string& path = "", ResultStorage storage = ResultStorage::Memory);
+	std::shared_ptr<STI::Utils::Image> makeImageResult(const std::string& data,
+		const std::string& filename, unsigned width = 0, unsigned height = 0,
+		const std::string& path = "", ResultStorage storage = ResultStorage::Memory);
 
 	void setShotRepository(const std::shared_ptr<STI::Engine::ShotRepository>& repo);
 	void setEngineConflictPolicy(const std::shared_ptr<STI::Engine::EngineConflictPolicy>& policy);
@@ -256,6 +271,7 @@ private:
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 	bool usingParseDefault;
 	bool usingRWdefault;
+	std::shared_ptr<ReadResultFileTracker> readResultFileTracker;
 	
 	virtual void setRemoveCB(const std::function<void(void)>& remover) override;
 	std::function<void(void)> removerCallback;
