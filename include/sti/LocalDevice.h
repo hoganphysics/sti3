@@ -16,6 +16,7 @@
 #include <sti/device/PartnerDevice.h>
 #include <sti/device/PostProcessingManager.h>
 #include <sti/device/ProfileManager.h>
+#include <sti/device/ResultStorage.h>
 #include <sti/device/ServerMessageRelayer.h>
 #include <sti/device/TaskManager.h>
 #include <sti/device/LogManager.h>
@@ -75,8 +76,7 @@ class LocalLogManager;
 class VersionInfo;
 class VersionManager;
 class LocalPostProcessingManager;
-
-enum class ResultStorage { Memory, Virtual, Local };
+class ReadResultFileTracker;
 
 class LocalDevice : public Device, public STI::Engine::DeviceEventParser, public STI::Engine::EngineTriggerTarget
 {
@@ -236,9 +236,6 @@ private:
 
     void addMonitor(const std::shared_ptr<STI::Device::LocalMonitor>& monitor);
     void addMonitor(const std::string& id, std::shared_ptr<STI::Device::LocalMonitor>& monitor);
-	void trackReadOwnedFile(const STI::Utils::FileID& fileID);
-	void replaceReadOwnedFiles(short channel, const std::vector<STI::Utils::FileID>& fileIDs);
-	void deleteReadOwnedFiles(const std::vector<STI::Utils::FileID>& fileIDs);
 
 	virtual bool writeChannel(short channel, const STI::Utils::MixedValue& value) { return writeChannelDefault(channel, value); }
 	virtual bool readChannel(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data) { return readChannelDefault(channel, value, data); }
@@ -273,8 +270,7 @@ private:
 	std::set<DeviceID> eventTargets;	//this LocalDevice can generate events for these (partner) devices
 	bool usingParseDefault;
 	bool usingRWdefault;
-	std::mutex readOwnedFilesMutex;
-	std::map<short, std::vector<STI::Utils::FileID>> readOwnedFiles;
+	std::shared_ptr<ReadResultFileTracker> readResultFileTracker;
 	
 	virtual void setRemoveCB(const std::function<void(void)>& remover) override;
 	std::function<void(void)> removerCallback;

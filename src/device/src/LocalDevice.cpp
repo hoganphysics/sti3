@@ -17,17 +17,18 @@
 #include <sti/engine/RawEventGroup.h>
 #include <sti/engine/ShotRepository.h>
 
-#include <sti/utils/BinaryData.h>
 #include <sti/utils/Configuration.h>
 #include <sti/utils/FileServer.h>
 #include <sti/utils/Image.h>
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/MixedValue.h>
+#include <sti/utils/PayloadUtils.h>
 
 #include "DeviceMessageListenerForwarder.h"
 #include "LocalAttributeManager.h"
 #include "LocalChannelManager.h"
 #include "LocalDeviceMessageDispatcher.h"
+#include "LocalDeviceHelpers.h"
 #include "LocalEventEngineFactory.h"
 #include "LocalEventEngineScheduler.h"
 #include "LocalLogManager.h"
@@ -38,17 +39,12 @@
 #include "LocalTaskManager.h"
 #include "LocalShot.h"
 #include "PseudoSynchronousEvent.h"
+#include "ReadResultFileTracker.h"
 
 #include <filesystem>
 #include <algorithm>
-#include <cctype>
-#include <cstring>
 #include <memory>
 #include <iostream>
-#include <limits>
-#include <sstream>
-#include <stdexcept>
-#include <cstdint>
 
 using STI::Device::AttributeManager;
 using STI::Device::AutoMonitor;
@@ -83,6 +79,9 @@ using STI::Device::VersionManager;
 using STI::Device::PostProcessingManager;
 using STI::Device::LocalPostProcessingManager;
 using STI::Device::PostProcessingFunction;
+using STI::Device::ReadResultFileScope;
+using STI::Device::ReadResultFileTracker;
+using STI::Device::ReadResultFileTrackingSuspension;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -90,161 +89,6 @@ using STI::Engine::ParseID;
 using STI::Engine::ShotID;
 
 using STI::Utils::Configuration;
-
-static auto constructorConfigError = [](const std::string& key) {
-	std::stringstream message;
-	message << "LocalDevice constructor error: ";
-	message << "Required parameter '" << key << "' was not found in the Configuration.";
-	throw std::runtime_error(message.str());
-};
-
-namespace {
-
-std::uintmax_t getLogMaxFileSizeBytes(const Configuration& config)
-{
-    auto maxFileSizeBytes = config.get<std::uintmax_t>(
-        "Logs",
-        "Max File Size Bytes",
-        config.get<std::uintmax_t>("Logs", "Max File Size", LocalLogManager::DefaultMaxLogFileSizeBytes).get()).get();
-
-    if (maxFileSizeBytes == 0) {
-        return LocalLogManager::DefaultMaxLogFileSizeBytes;
-    }
-
-    return maxFileSizeBytes;
-}
-
-Configuration makeDeviceScopedConfig(const Configuration& config, const std::string& section)
-{
-	if (section.empty()) {
-		return config;
-	}
-
-	auto deviceConfig = config.extract(section);
-	deviceConfig.append(config);
-	return deviceConfig;
-}
-
-std::string toLowerAscii(std::string value)
-{
-	std::transform(value.begin(), value.end(), value.begin(),
-		[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-	return value;
-}
-
-void applyConfiguredMetaData(LocalDevice& device, const Configuration& config)
-{
-	for (const auto& [key, value] : config.getParameters("Metadata")) {
-		const auto normalizedKey = toLowerAscii(key);
-
-		if (normalizedKey == "color") {
-			device.setColor(value);
-		}
-		else if (normalizedKey == "description") {
-			device.setDescription(value);
-		}
-		else if (normalizedKey == "help") {
-			device.setHelp(value);
-		}
-		else {
-			device.addMetaData(key, STI::Utils::MixedValue(value));
-		}
-	}
-}
-
-bool mixedValueMatchesType(const STI::Utils::MixedValue& value, STI::Utils::MixedValueType expectedType)
-{
-	return expectedType == STI::Utils::MixedValueType::Any || value.isType(expectedType);
-}
-
-bool writePayload(const std::shared_ptr<STI::Utils::FileHolder>& file, const char* data, std::size_t size)
-{
-	if (file == nullptr || (data == nullptr && size > 0) || size > std::numeric_limits<unsigned>::max()) {
-		return false;
-	}
-
-	if (!file->openFile()) {
-		return false;
-	}
-
-	bool success = true;
-	if (size > 0) {
-		success = file->write(data, static_cast<unsigned>(size));
-	}
-	file->closeFile();
-	return success;
-}
-
-std::shared_ptr<STI::Utils::BinaryData> makeBinaryData(const char* data, std::size_t size)
-{
-	if (data == nullptr && size > 0) {
-		return nullptr;
-	}
-
-	auto binaryData = std::make_shared<STI::Utils::BinaryData>();
-	char* rawData = nullptr;
-
-	if (size > 0) {
-		rawData = new char[size];
-		std::memcpy(rawData, data, size);
-	}
-
-	binaryData->assign(rawData, size, true);
-	return binaryData;
-}
-
-struct ReadResultFileContext
-{
-	LocalDevice* device;
-	short channel;
-	std::vector<STI::Utils::FileID> fileIDs;
-};
-
-thread_local std::vector<ReadResultFileContext*> activeReadResultFileContexts;
-thread_local unsigned readResultFileTrackingSuspended = 0;
-
-class ScopedReadResultFiles
-{
-public:
-	ScopedReadResultFiles(LocalDevice* device, short channel)
-		: context{ device, channel, {} }
-	{
-		activeReadResultFileContexts.push_back(&context);
-	}
-
-	~ScopedReadResultFiles()
-	{
-		if (!activeReadResultFileContexts.empty() && activeReadResultFileContexts.back() == &context) {
-			activeReadResultFileContexts.pop_back();
-		}
-	}
-
-	const std::vector<STI::Utils::FileID>& files() const
-	{
-		return context.fileIDs;
-	}
-
-private:
-	ReadResultFileContext context;
-};
-
-class ReadResultFileTrackingSuspension
-{
-public:
-	ReadResultFileTrackingSuspension()
-	{
-		readResultFileTrackingSuspended++;
-	}
-
-	~ReadResultFileTrackingSuspension()
-	{
-		if (readResultFileTrackingSuspended > 0) {
-			readResultFileTrackingSuspended--;
-		}
-	}
-};
-
-} // namespace
 
 
 LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
@@ -254,10 +98,10 @@ LocalDevice::LocalDevice(const std::map<std::string, std::string>& config)
 
 LocalDevice::LocalDevice(const Configuration& config, const std::string& section)
 : LocalDevice(
-	config.getOrThrow<std::string>(section, "Device Name", constructorConfigError), 
-	config.getOrThrow<std::string>(section, "IP Address", constructorConfigError), 
-	config.getOrThrow<unsigned short>(section, "Module", constructorConfigError),
-	config.getOrThrow<std::string>(section, "Target Server", constructorConfigError),
+	config.getOrThrow<std::string>(section, "Device Name", throwLocalDeviceConstructorConfigError),
+	config.getOrThrow<std::string>(section, "IP Address", throwLocalDeviceConstructorConfigError),
+	config.getOrThrow<unsigned short>(section, "Module", throwLocalDeviceConstructorConfigError),
+	config.getOrThrow<std::string>(section, "Target Server", throwLocalDeviceConstructorConfigError),
 	makeDeviceScopedConfig(config, section))
 {
 }
@@ -299,6 +143,14 @@ LocalDevice::LocalDevice(const std::string& name, const std::string& address, un
 
 	auto localFileHolderFactory = std::make_shared<STI::Utils::LocalFileHolderFactory>(getID().getID());
 	localPersistenceManager = std::make_shared<LocalPersistenceManager>(getID(), config, basePath, localFileHolderFactory, localCollection, versionManager);
+	readResultFileTracker = std::make_shared<ReadResultFileTracker>(
+		[this]() {
+			std::shared_ptr<STI::Utils::FileServer> fileServer;
+			if (getFileServer(fileServer)) {
+				return fileServer;
+			}
+			return std::shared_ptr<STI::Utils::FileServer>();
+		});
 
 	localPersistenceManager->addPersistenceTarget(localAttributeManager);
 	localPersistenceManager->addPersistenceTarget(localChannelManager);
@@ -580,7 +432,7 @@ STI::Utils::FileID LocalDevice::makeFileResult(const char* data, std::size_t siz
 		? makeFileHolder(resultPath, filename)
 		: makeVirtualFileHolder(resultPath, filename);
 
-	if (!writePayload(file, data, size)) {
+	if (!STI::Utils::writePayload(file, data, size)) {
 		return fileID;
 	}
 
@@ -591,7 +443,9 @@ STI::Utils::FileID LocalDevice::makeFileResult(const char* data, std::size_t siz
 		if (!getFileServer(fileServer) || fileServer == nullptr || !fileServer->addFile(file)) {
 			return STI::Utils::FileID();
 		}
-		trackReadOwnedFile(fileID);
+		if (readResultFileTracker != nullptr) {
+			readResultFileTracker->recordFile(fileID);
+		}
 	}
 
 	return fileID;
@@ -617,7 +471,7 @@ std::shared_ptr<STI::Utils::Image> LocalDevice::makeImageResult(const char* data
 	image->setFileID(fileID);
 
 	if (storage == ResultStorage::Memory) {
-		auto binaryData = makeBinaryData(data, size);
+		auto binaryData = STI::Utils::makeBinaryData(data, size);
 		if (binaryData == nullptr) {
 			return nullptr;
 		}
@@ -636,7 +490,7 @@ std::shared_ptr<STI::Utils::Image> LocalDevice::makeImageResult(const char* data
 		? makeFileHolder(resultPath, filename)
 		: makeVirtualFileHolder(resultPath, filename);
 
-	if (!writePayload(file, data, size)) {
+	if (!STI::Utils::writePayload(file, data, size)) {
 		return nullptr;
 	}
 
@@ -645,7 +499,9 @@ std::shared_ptr<STI::Utils::Image> LocalDevice::makeImageResult(const char* data
 		if (!getFileServer(fileServer) || fileServer == nullptr || !fileServer->addFile(file)) {
 			return nullptr;
 		}
-		trackReadOwnedFile(file->getID());
+		if (readResultFileTracker != nullptr) {
+			readResultFileTracker->recordFile(file->getID());
+		}
 		image->setMetaData("storage", STI::Utils::MixedValue("VirtualFileHolder"));
 	}
 	else {
@@ -832,7 +688,7 @@ bool LocalDevice::read(short channel, STI::Utils::MixedValue& data)
 
 bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::Utils::MixedValue& data)
 {
-	ScopedReadResultFiles readResultFiles(this, channel);
+	ReadResultFileScope readResultFiles(*readResultFileTracker, channel);
 	std::shared_ptr<STI::Device::Channel> ch;
 
 	//type check
@@ -841,7 +697,7 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 		&& mixedValueMatchesType(value, ch->getOutputType())) {
 		
 		if (readChannel(channel, value, data) && mixedValueMatchesType(data, ch->getInputType())) {
-			replaceReadOwnedFiles(channel, readResultFiles.files());
+			readResultFiles.commit();
 			if (ch->getOutputType() != STI::Utils::MixedValueType::Empty) {
 				ch->saveLastValue(value);
 			}
@@ -849,66 +705,8 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 			return true;
 		}
 	}
-	deleteReadOwnedFiles(readResultFiles.files());
+	readResultFiles.discard();
 	return false;	//value has wrong type	
-}
-
-void LocalDevice::trackReadOwnedFile(const STI::Utils::FileID& fileID)
-{
-	if (readResultFileTrackingSuspended > 0 || activeReadResultFileContexts.empty()) {
-		return;
-	}
-
-	auto* context = activeReadResultFileContexts.back();
-	if (context != nullptr && context->device == this && !fileID.filename.empty()) {
-		context->fileIDs.push_back(fileID);
-	}
-}
-
-void LocalDevice::replaceReadOwnedFiles(short channel, const std::vector<STI::Utils::FileID>& fileIDs)
-{
-	std::vector<STI::Utils::FileID> previousFileIDs;
-	{
-		std::unique_lock<std::mutex> lock(readOwnedFilesMutex);
-		auto it = readOwnedFiles.find(channel);
-		if (it != readOwnedFiles.end()) {
-			previousFileIDs = it->second;
-		}
-
-		if (fileIDs.empty()) {
-			readOwnedFiles.erase(channel);
-		}
-		else {
-			readOwnedFiles[channel] = fileIDs;
-		}
-	}
-
-	std::set<STI::Utils::FileID> currentFileIDs(fileIDs.begin(), fileIDs.end());
-	std::vector<STI::Utils::FileID> filesToDelete;
-	for (const auto& previousFileID : previousFileIDs) {
-		if (currentFileIDs.find(previousFileID) == currentFileIDs.end()) {
-			filesToDelete.push_back(previousFileID);
-		}
-	}
-	deleteReadOwnedFiles(filesToDelete);
-}
-
-void LocalDevice::deleteReadOwnedFiles(const std::vector<STI::Utils::FileID>& fileIDs)
-{
-	if (fileIDs.empty()) {
-		return;
-	}
-
-	std::shared_ptr<STI::Utils::FileServer> fileServer;
-	if (!getFileServer(fileServer) || fileServer == nullptr) {
-		return;
-	}
-
-	for (const auto& fileID : fileIDs) {
-		if (!fileID.filename.empty()) {
-			fileServer->deleteFile(fileID);
-		}
-	}
 }
 
 void LocalDevice::stopRW()

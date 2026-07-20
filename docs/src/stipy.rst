@@ -468,6 +468,67 @@ explicitly pull bytes, or save the payload.  Use ``MixedValue.getBinary()`` or
 implicit conversion through ``MixedValue.getValue()``.  See
 :ref:`lazy_payloads` for the full C++ and Python API.
 
+Images generated during a shot may be backed by inline ``BinaryData`` or by a
+``FileID`` stored in persistence.  For notebook analysis, use the high-level
+``Image`` helpers.  These snippets assume ``import stipy``.
+
+.. code-block:: py
+
+    result = server.play(parse_ticket)
+    result.wait()
+
+    measurements = result.measurements()
+    measurement = measurements[stipy.DeviceID("sr-gradiometer/0/Lattice Camera")][0]
+    image = measurement.data().getImage()
+
+    pil_image = image.to_pil(server)
+    payload = image.to_bytes(server)
+    image_path = image.to_file("results/lattice-camera.png", server)
+
+If the image already contains local ``BinaryData``, no transfer context is
+needed.  If the image is ``FileID``-backed, pass the object that owns the source
+file server: usually the connected ``server`` for played shot results, or the
+``device`` for a direct ``device.read()`` result.  A ``PersistenceManager`` can
+also be passed directly.
+
+``image.to_pil(context)`` transfers FileID-backed images into a Python-owned
+``VirtualFileHolder`` by default and decodes the bytes with Pillow.  This keeps
+the default analysis path in memory.  To force a local file destination, pass
+``storage="file"`` or a path:
+
+.. code-block:: py
+
+    pil_image = image.to_pil(server, storage="file")
+    pil_image = image.to_pil(server, path="results/lattice-camera.png")
+
+Plain ``File`` measurements return a ``FileID``.  Use the persistence manager
+that owns the ``FileID`` and transfer to either a Python-owned virtual holder or
+a local file holder:
+
+.. code-block:: py
+
+    file_id = device.read(20)
+    persistence = device.getPersistenceManager()
+    source = persistence.getFileServer()
+
+    backing = stipy.VirtualFileHolder("python-download", file_id)
+    destination = persistence.makeVirtualFileHolder(backing)
+
+    if not source.transferFile(file_id, destination, stipy.FileTransferType.Binary):
+        raise RuntimeError("file transfer failed")
+
+    payload = backing.getBytes()
+
+.. code-block:: py
+
+    from pathlib import Path
+
+    target = Path("results/metadata.json")
+    destination = persistence.makeFileHolder(str(target.parent), target.name)
+
+    if not source.transferFile(file_id, destination, stipy.FileTransferType.Binary):
+        raise RuntimeError("file transfer failed")
+
 Complete example
 ++++++++++++++++
 

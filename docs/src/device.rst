@@ -294,6 +294,93 @@ definition and then call these hooks.
               return self.hardware.read_with_args(value)
           return None
 
+File and image results from reads
+*********************************
+
+When a read channel produces file or image bytes, prefer the
+``makeFileResult`` and ``makeImageResult`` helpers on ``LocalDevice``.  These
+helpers write the payload to the requested storage, return the correct STI
+value object, and register virtual file results with the device's file server
+so remote callers can transfer them later.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      #include <sti/LocalDevice.h>
+      #include <sti/utils/MixedValue.h>
+
+      bool CameraDevice::readChannel(short channel,
+                                     const STI::Utils::MixedValue& value,
+                                     STI::Utils::MixedValue& data)
+      {
+          if (channel == 20) {
+              std::string payload = camera.readMetadataJson();
+              data.setValue(makeFileResult(payload, "metadata.json"));
+              return true;
+          }
+
+          if (channel == 21) {
+              std::string frame = camera.readPng();
+              auto image = makeImageResult(
+                  frame,
+                  "frame.png",
+                  camera.width(),
+                  camera.height());
+              image->setMetaData("encoding", STI::Utils::MixedValue("PNG"));
+              image->setMetaData("format", STI::Utils::MixedValue("PNG"));
+              data.setValue(image);
+              return true;
+          }
+
+          return false;
+      }
+
+   .. code-tab:: py
+
+      def readChannel(self, channel, value):
+          if channel == 20:
+              payload = self.camera.read_metadata_json()
+              return self.makeFileResult(payload, "metadata.json")
+
+          if channel == 21:
+              frame = self.camera.read_png()
+              return self.makeImageResult(
+                  frame,
+                  "frame.png",
+                  width=self.camera.width,
+                  height=self.camera.height,
+                  encoding="PNG",
+                  format="PNG",
+              )
+
+          return None
+
+``makeFileResult`` returns a ``FileID`` for ``MixedValueType::File`` channels.
+Its default storage is virtual: the bytes are held in a device-owned
+``VirtualFileHolder`` and served through the device persistence file server.
+Use ``ResultStorage::Local`` in C++ or ``storage="local"`` in Python to write
+the result to a device-local file instead.  If the path is omitted for local
+storage, the persistence manager's temporary path is used.  File mixed values
+carry only a ``FileID``, so memory storage maps to the same virtual-holder path
+for file results.
+
+``makeImageResult`` returns an ``Image`` for ``MixedValueType::Image``
+channels.  Its default storage is memory: the image payload is stored as
+``BinaryData`` inside the ``Image`` and no device-side file is created.  Use
+``ResultStorage::Virtual`` / ``storage="virtual"`` when the image should be a
+FileID-backed in-memory virtual file, or ``ResultStorage::Local`` /
+``storage="local"`` when the device should write a local disk file.  The Python
+helper also accepts ``encoding``, ``format``, and ``mode`` metadata, which is
+used by STIPy/Pillow helpers when decoding the image.
+
+Virtual file results created during an overridden ``readChannel`` call are
+tracked per input channel.  A successful read replaces the previous helper-owned
+virtual files for that channel; a failed read discards helper-owned virtual
+files created during the failed call.  This keeps repeated ``device.read()``
+loops from growing the device virtual file server.  Local disk files remain
+caller-managed, and memory-backed images do not create virtual file entries.
+
 FileID arguments for reads and writes
 *************************************
 
@@ -1045,13 +1132,87 @@ on ``DeviceMessageType``.
           on_channel_update,
       )
 
-File measurements
-*****************
+File and image measurements
+***************************
 
-Measurement events can attach scalar data through ``setMeasurementResult``.
-For file-producing hardware, use the device persistence/file APIs to make a
-file holder and attach file-backed data to the result.  See
-``examples/cpp/fileMeasurement`` for the current C++ pattern.
+Measurement events attach scalar data through ``setMeasurementResult``.  For
+file- or image-producing hardware, the same ``makeFileResult`` and
+``makeImageResult`` helpers can be used from ``collectMeasurementData()`` by
+calling them on the owning ``LocalDevice``.  The event then stores the returned
+``FileID`` or ``Image`` as the measurement result.
+
+.. tabs::
+
+   .. code-tab:: c++
+
+      void CameraEvent::collectMeasurementData()
+      {
+          if (getMeasurements().empty()) {
+              return;
+          }
+
+          auto measurement = getMeasurements().front();
+          if (measurement->channel() == 20) {
+              std::string payload = camera.readMetadataJson();
+              auto fileID = localDevice->makeFileResult(
+                  payload,
+                  "metadata.json",
+                  "camera",
+                  STI::Device::ResultStorage::Virtual);
+
+              measurement->setMeasurementResult(STI::Utils::MixedValue(fileID));
+              return;
+          }
+
+          if (measurement->channel() == 21) {
+              std::string frame = camera.readPng();
+              auto image = localDevice->makeImageResult(
+                  frame,
+                  "frame.png",
+                  camera.width(),
+                  camera.height());
+              image->setMetaData("encoding", STI::Utils::MixedValue("PNG"));
+              image->setMetaData("format", STI::Utils::MixedValue("PNG"));
+
+              measurement->setMeasurementResult(STI::Utils::MixedValue(image));
+          }
+      }
+
+   .. code-tab:: py
+
+      def collectMeasurementData(self):
+          for measurement in self.getMeasurements():
+              if measurement.channel() == 20:
+                  file_id = self.device.makeFileResult(
+                      self.camera.read_metadata_json(),
+                      "metadata.json",
+                      path="camera",
+                  )
+                  measurement.setMeasurementResult(file_id)
+
+              if measurement.channel() == 21:
+                  image = self.device.makeImageResult(
+                      self.camera.read_png(),
+                      "frame.png",
+                      width=self.camera.width,
+                      height=self.camera.height,
+                      encoding="PNG",
+                      format="PNG",
+                  )
+                  measurement.setMeasurementResult(image)
+
+For helper-created virtual file results, do not also call ``attachFile()``.
+The helper registers the virtual holder with the device persistence file
+server, and result collection can resolve it through the device source file
+server.  Continue to use ``attachFile()`` when you create a custom holder
+manually or when you intentionally want to attach a holder to the measurement's
+own virtual file server.
+
+During parse/play result collection, file, image, and binary measurement
+payloads are copied into the shot owner's persistence store.  The collected
+``ShotResult`` is rewritten to server-local file references where appropriate,
+and successfully transferred helper-owned source virtual files are removed from
+the source file server.
 
 .. _lazy_payloads:
 
@@ -1196,7 +1357,9 @@ C++ device output
 
 Device authors publish binary and image measurements by setting a
 ``MixedValue`` to the public utility objects.  No special lazy API is required
-on the producing side.
+on the producing side.  When the device already has a complete file or image
+payload in memory, ``makeFileResult`` and ``makeImageResult`` are the preferred
+shortcuts because they also select the result storage policy.
 
 .. code-block:: c++
 
@@ -1226,13 +1389,17 @@ on the producing side.
        if (channel == 1) {
            std::vector<char> frame = camera.readRawFrame();
 
-           auto binary = std::make_shared<STI::Utils::BinaryData>();
-           char* bytes = binary->allocate<char>(frame.size());
-           std::copy(frame.begin(), frame.end(), bytes);
-
-           auto image = std::make_shared<STI::Utils::Image>();
-           image->setWidth(camera.width()).setHeight(camera.height());
-           image->setImageData(binary);
+           auto image = makeImageResult(
+               frame.data(),
+               frame.size(),
+               "frame.raw",
+               camera.width(),
+               camera.height());
+           if (image == nullptr) {
+               return false;
+           }
+           image->setMetaData("encoding", STI::Utils::MixedValue("raw"));
+           image->setMetaData("mode", STI::Utils::MixedValue("L"));
 
            data.setValue(image);
            return true;
@@ -1323,8 +1490,9 @@ inspect metadata or control when the transfer occurs.
 Python device output
 ++++++++++++++++++++
 
-Python device code can publish binary measurements with ``stipy.BinaryData``
-and image measurements with ``stipy.Image``.
+Python device code can publish binary measurements with ``stipy.BinaryData``,
+file measurements with ``makeFileResult``, and image measurements with
+``makeImageResult``.
 
 .. code-block:: py
 
@@ -1334,23 +1502,36 @@ and image measurements with ``stipy.Image``.
            return stipy.BinaryData(payload)
        if channel == 1:
            payload = self.camera.read_raw_frame()
-           return stipy.Image(stipy.BinaryData(payload), width=10, height=10)
+           return self.makeImageResult(
+               payload,
+               "frame.raw",
+               width=10,
+               height=10,
+               encoding="raw",
+               mode="L",
+           )
        if channel == 2:
            payload = self.camera.read_raw_frame()
-           file_holder = self.makeVirtualFileHolder("", "frame.raw")
-           if file_holder is None or not file_holder.openFile():
-               return None
-           try:
-               if not file_holder.writeBytes(payload):
-                   return None
-           finally:
-               file_holder.closeFile()
-           return stipy.Image(file_holder, width=10, height=10)
+           return self.makeImageResult(
+               payload,
+               "frame.raw",
+               width=10,
+               height=10,
+               storage="virtual",
+               encoding="raw",
+               mode="L",
+           )
+       if channel == 3:
+           payload = self.camera.read_metadata()
+           return self.makeFileResult(payload, "metadata.json")
        return None
 
 ``stipy.BinaryData`` expects a Python ``bytes`` object and stores it with
-``wordsize() == 1``.  ``stipy.Image`` can be constructed from Python ``bytes``,
-``BinaryData``, ``FileHolder``, or ``FileID`` objects.
+``wordsize() == 1``.  ``makeImageResult`` is the preferred shortcut for device
+image channels because it records image metadata and chooses memory, virtual,
+or local storage in one call.  ``stipy.Image`` can still be constructed from
+Python ``bytes``, ``BinaryData``, ``FileHolder``, or ``FileID`` objects when
+lower-level control is needed.
 
 Shot results and persistence
 ++++++++++++++++++++++++++++
