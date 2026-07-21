@@ -48,6 +48,22 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.1 - Remote measurement result collection (in progress)
+
+Fixes:
+
+* Restore collection of measurements from owned and dependent network devices
+  when their measurement source uses a `CompositeFileServer`.
+* Add a generic, owning network adapter that exposes any device-library
+  `FileServer` through the existing CORBA file-server servant without adding
+  CORBA dependencies to `stidevice` or introducing an intermediate payload
+  copy.
+
+Tests:
+
+* Add network regression coverage that transfers a composite measurement source
+  through `RemoteResultsCollector` and resolves a file from its fallback server.
+
 ### 3.7.0 - Attribute refresh groups, image transfer, and playback robustness (in progress)
 
 Feature release combining coordinated attribute refresh transactions, STIPy
