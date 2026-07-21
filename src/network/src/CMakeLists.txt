@@ -143,6 +143,7 @@ add_library(stinetwork SHARED
     ${STINETWORK_IDL_GENERATED_SOURCES}
 
     COSBindingNode.cpp
+    ExportedFileServer.cpp
     NetworkBinaryDataStream.cpp
     NetworkBinaryDataStreamTarget.cpp
     NetworkConvert.cpp

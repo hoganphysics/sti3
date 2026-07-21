@@ -7,7 +7,7 @@
 #include <sti/engine/EnginePlayingMessage.h>
 
 #include "EventEngineDependencyTree.h"
-#include "TFileServerRefInterface.h"
+#include "ExportedFileServer.h"
 
 #include "NetworkConvert.h"
 #include "convert/Convert_Attribute.h"
@@ -22,7 +22,6 @@ using STI::TNetwork::TReferenceHolder;
 using STI::TNetwork::TResultsCollector;
 using STI::Engine::ParsedDependencyTree;
 using STI::TNetwork::TEventEngineDependencyTree;
-using STI::Network::TFileServerRefInterface;
 using STI::Engine::EnginePlayingMessage;
 
 
@@ -73,15 +72,19 @@ bool RemoteResultsCollector::addMeasurements(const STI::Device::DeviceID& device
     
     bool success = false;
 
-    STI::TNetwork::TFileServer_var tFileServer;
-
-    if (!TFileServerRefInterface::getTFileServerReference(sourceFileServer, tFileServer)) {
+    if (sourceFileServer == nullptr) {
         return false;
     }
 
     STI::TNetwork::TMeasurementSeq_var tMeasurements(new STI::TNetwork::TMeasurementSeq);
 
 	try {
+		STI::Network::ExportedFileServer exportedFileServer(sourceFileServer);
+		auto tFileServer = exportedFileServer.getTFileServerRef();
+		if (CORBA::is_nil(tFileServer)) {
+			return false;
+		}
+
 		convert<std::shared_ptr<STI::Engine::Measurement>, STI::TNetwork::TMeasurement>(measurements, tMeasurements);
 
 		success = getTRef()->addMeasurements(
