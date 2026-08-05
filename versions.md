@@ -48,6 +48,21 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.2 - Sequence XML preservation hot fix (in progress)
+
+Fixes:
+
+* Prevent repeated legacy sequence saves from rebuilding and truncating an
+  existing sequence XML file after its live XML builder is evicted.
+* Retain five live legacy sequence XML builders to match the persistence
+  manager's default five-entry sequence buffer.
+
+Tests:
+
+* Add regression coverage that fills the live builder cache, evicts the first
+  sequence with a sixth sequence, and verifies that re-saving the first sequence
+  leaves its completed-shot XML unchanged.
+
 ### 3.7.1 - Remote measurement result collection (in progress)
 
 Fixes:
