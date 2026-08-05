@@ -30,7 +30,7 @@ using STI::Utils::TimeStamp;
 
 
 LegacyShotRepository::LegacyShotRepository(const std::string& baseDevicePath)
-: cachedPaths(5), cachedSequences(3), baseDevicePath(baseDevicePath)
+: cachedPaths(5), cachedSequences(5), baseDevicePath(baseDevicePath)
 {
 }
 
@@ -270,7 +270,7 @@ bool LegacyShotRepository::saveSequence(const SequenceID& seqID, const std::shar
     if (sequenceResult == 0) return false;
 
     if (cachedSequences.contains(seqID)) {
-        return false;
+        return true;
     }
 
     auto seqPaths = preparePaths(seqID);
@@ -278,6 +278,13 @@ bool LegacyShotRepository::saveSequence(const SequenceID& seqID, const std::shar
     std::filesystem::path targetSeqPath = seqPaths.sequencePath;
 
     targetSeqPath /= makeSequenceFilename(seqID);
+
+    // Sequence XML files are updated incrementally as shots complete. A repeated
+    // save must not rebuild and truncate an existing file after its builder has
+    // been evicted from the cache.
+    if (std::filesystem::exists(targetSeqPath)) {
+        return true;
+    }
 
     auto builder = std::make_shared<LegacySequenceXMLBuilder>(targetSeqPath.string(), sequenceResult);
     cachedSequences.add(seqID, builder);

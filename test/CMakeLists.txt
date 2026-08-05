@@ -82,6 +82,7 @@ add_executable(sti3_test_device
   device/logger_tests.cpp
   device/logid_tests.cpp
   device/logrecordfile_tests.cpp
+  device/legacyshotrepository_tests.cpp
   device/versionmanager_tests.cpp
   device/postprocesstarget_tests.cpp
   device/postprocessingmanager_tests.cpp
@@ -89,6 +90,10 @@ add_executable(sti3_test_device
   device/stidevicepy_parseevents_tests.cpp
   device/stidevicepy_parseevents_tests_support.cpp
   ${CMAKE_SOURCE_DIR}/src/server/src/LegacyExperimentXMLBuilder.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/LegacyExperimentXMLReader.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/LegacyParseXMLBuilder.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/LegacySequenceXMLBuilder.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/src/LegacyShotRepository.cpp
   ${CMAKE_SOURCE_DIR}/src/server/src/tinyxml/tinyxml2.cpp
   # add more device test .cpp files here
 )
