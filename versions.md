@@ -48,6 +48,22 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.3 - Consistent legacy sequence XML entries (in progress)
+
+Fixes:
+
+* Keep one legacy sequence `<experiment>` entry per sequence index and count
+  unique entries so completed closed sequences report matching `current` and
+  `expected` values.
+* Include both parse and experiment XML links for completed shots. Record failed
+  parses as `Canceled` with their parse XML link and without an experiment XML
+  link.
+
+Tests:
+
+* Add regression coverage for completed and canceled sequence entries, their XML
+  links, unique-entry updates, and matching closed-sequence counters.
+
 ### 3.7.2 - Sequence XML preservation hot fix (in progress)
 
 Fixes:

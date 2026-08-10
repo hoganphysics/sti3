@@ -3,6 +3,7 @@
 #include <sti/engine/EngineJobSourceID.h>
 #include <sti/engine/EngineJobStatus.h>
 #include <sti/engine/ParseID.h>
+#include <sti/engine/ParseResult.h>
 #include <sti/engine/ParsedVar.h>
 #include <sti/engine/Sequence.h>
 #include <sti/engine/SequenceID.h>
@@ -10,6 +11,8 @@
 #include <sti/engine/ShotID.h>
 
 #include "LegacyShotRepository.h"
+
+#include <tinyxml2.h>
 
 #include <atomic>
 #include <filesystem>
@@ -23,6 +26,7 @@ using STI::Engine::EngineJobSourceID;
 using STI::Engine::EngineJobStatus;
 using STI::Engine::LegacyShotRepository;
 using STI::Engine::ParseID;
+using STI::Engine::ParseResult;
 using STI::Engine::Sequence;
 using STI::Engine::SequenceEntryID;
 using STI::Engine::SequenceID;
@@ -52,10 +56,12 @@ public:
     std::filesystem::path path;
 };
 
-std::shared_ptr<SequenceResult> makeSequenceResult(const EngineJobSourceID& source)
+std::shared_ptr<SequenceResult> makeSequenceResult(const EngineJobSourceID& source, unsigned entryCount = 1)
 {
     auto sequence = std::make_shared<Sequence>(SequenceType::Closed);
-    sequence->addEntry(SequenceIndex(0, 0), {});
+    for (unsigned index = 0; index < entryCount; ++index) {
+        sequence->addEntry(SequenceIndex(index, 0), {});
+    }
     return std::make_shared<SequenceResult>(SequenceID::generateUniqueID(source), sequence);
 }
 
@@ -79,7 +85,93 @@ std::string readFile(const std::filesystem::path& filename)
     return contents.str();
 }
 
+tinyxml2::XMLElement* findExperiment(tinyxml2::XMLElement* experiments, int index)
+{
+    if (experiments == nullptr) return nullptr;
+
+    for (auto experiment = experiments->FirstChildElement("experiment");
+         experiment != nullptr;
+         experiment = experiment->NextSiblingElement("experiment")) {
+        auto sequenceIndex = experiment->FirstChildElement("sequenceindex");
+        auto indexElement = sequenceIndex == nullptr ? nullptr : sequenceIndex->FirstChildElement("index");
+        if (indexElement != nullptr && indexElement->IntText(-1) == index) {
+            return experiment;
+        }
+    }
+
+    return nullptr;
+}
+
+unsigned experimentCount(tinyxml2::XMLElement* experiments)
+{
+    unsigned count = 0;
+    if (experiments == nullptr) return count;
+
+    for (auto experiment = experiments->FirstChildElement("experiment");
+         experiment != nullptr;
+         experiment = experiment->NextSiblingElement("experiment")) {
+        ++count;
+    }
+    return count;
+}
+
 } // namespace
+
+TEST_CASE("LegacyShotRepository sequence entries link parse and experiment XML",
+          "[legacyshotrepository][sequence]")
+{
+    ScopedRepositoryPath repositoryPath("sequence_entry_files");
+    LegacyShotRepository repository(repositoryPath.path.string());
+    EngineJobSourceID source("legacy-repository-test", "localhost");
+
+    auto sequenceResult = makeSequenceResult(source, 2);
+    auto sequenceID = sequenceResult->seqid;
+    SequenceEntryID completedEntry(sequenceID, SequenceIndex(0, 0));
+    SequenceEntryID canceledEntry(sequenceID, SequenceIndex(1, 0));
+
+    REQUIRE(repository.saveSequence(sequenceID, sequenceResult));
+
+    auto completedShot = makeShotID(source, completedEntry);
+    REQUIRE(repository.updateSequence(completedEntry, completedShot, EngineJobStatus::Completed));
+
+    auto canceledParse = std::make_shared<ParseResult>();
+    canceledParse->pid = ParseID::generateUniqueID(source, canceledEntry);
+    REQUIRE(repository.saveSequenceParseResult(canceledEntry, canceledParse, EngineJobStatus::Canceled));
+
+    auto sequencePath = sequenceFilename(repository.preparePaths(sequenceID).sequencePath, sequenceID);
+    tinyxml2::XMLDocument document;
+    REQUIRE(document.LoadFile(sequencePath.string().c_str()) == tinyxml2::XML_SUCCESS);
+
+    auto series = document.FirstChildElement("series");
+    REQUIRE(series != nullptr);
+
+    auto sequence = series->FirstChildElement("sequence");
+    REQUIRE(sequence != nullptr);
+    REQUIRE(sequence->FirstChildElement("current") != nullptr);
+    CHECK(sequence->FirstChildElement("current")->UnsignedText() == 2);
+    REQUIRE(sequence->FirstChildElement("expected") != nullptr);
+    CHECK(sequence->FirstChildElement("expected")->UnsignedText() == 2);
+
+    auto experiments = series->FirstChildElement("experiments");
+    REQUIRE(experiments != nullptr);
+    CHECK(experimentCount(experiments) == 2);
+
+    auto completedExperiment = findExperiment(experiments, 0);
+    REQUIRE(completedExperiment != nullptr);
+    REQUIRE(completedExperiment->FirstChildElement("status") != nullptr);
+    CHECK(std::string(completedExperiment->FirstChildElement("status")->GetText()) == "Completed");
+    REQUIRE(completedExperiment->FirstChildElement("parse") != nullptr);
+    CHECK(completedExperiment->FirstChildElement("parse")->FirstChildElement("file") != nullptr);
+    CHECK(completedExperiment->FirstChildElement("file") != nullptr);
+
+    auto canceledExperiment = findExperiment(experiments, 1);
+    REQUIRE(canceledExperiment != nullptr);
+    REQUIRE(canceledExperiment->FirstChildElement("status") != nullptr);
+    CHECK(std::string(canceledExperiment->FirstChildElement("status")->GetText()) == "Canceled");
+    REQUIRE(canceledExperiment->FirstChildElement("parse") != nullptr);
+    CHECK(canceledExperiment->FirstChildElement("parse")->FirstChildElement("file") != nullptr);
+    CHECK(canceledExperiment->FirstChildElement("file") == nullptr);
+}
 
 TEST_CASE("LegacyShotRepository sequence saves are idempotent across cache eviction",
           "[legacyshotrepository][sequence]")
@@ -112,7 +204,13 @@ TEST_CASE("LegacyShotRepository sequence saves are idempotent across cache evict
     }
     REQUIRE(repository.updateSequence(
         firstEntry, makeShotID(source, firstEntry), EngineJobStatus::Completed));
-    REQUIRE(readFile(firstPath).find("<current>2</current>") != std::string::npos);
+    REQUIRE(readFile(firstPath).find("<current>1</current>") != std::string::npos);
+
+    tinyxml2::XMLDocument document;
+    REQUIRE(document.LoadFile(firstPath.string().c_str()) == tinyxml2::XML_SUCCESS);
+    auto series = document.FirstChildElement("series");
+    REQUIRE(series != nullptr);
+    CHECK(experimentCount(series->FirstChildElement("experiments")) == 1);
 
     // Adding a sixth sequence evicts the first builder. Re-saving the first
     // sequence must preserve its completed-shot XML rather than rebuilding it.
@@ -122,5 +220,5 @@ TEST_CASE("LegacyShotRepository sequence saves are idempotent across cache evict
     auto completedContents = readFile(firstPath);
     REQUIRE(repository.saveSequence(firstID, firstResult));
     CHECK(readFile(firstPath) == completedContents);
-    CHECK(readFile(firstPath).find("<current>2</current>") != std::string::npos);
+    CHECK(readFile(firstPath).find("<current>1</current>") != std::string::npos);
 }

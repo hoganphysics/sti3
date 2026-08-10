@@ -254,11 +254,14 @@ bool LegacyShotRepository::updateSequence(const SequenceEntryID& id, const ShotI
 
     if (cachedSequences.get(id.seqID, builder) && builder != 0) {
         auto paths = preparePaths(shotID);
+        auto parsePaths = preparePaths(shotID.parseID);
 
         std::filesystem::path targetShotPath = paths.experimentPath;
+        std::filesystem::path targetParsePath = parsePaths.parsePath;
         targetShotPath /= makeShotFilename(shotID);
+        targetParsePath /= makeParseFilename(shotID.parseID);
 
-        builder->addShot(targetShotPath.string(), id, shotStatus);
+        builder->addShot(targetShotPath.string(), targetParsePath.string(), id, shotStatus);
         builder->write();
     }
 

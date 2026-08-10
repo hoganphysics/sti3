@@ -124,6 +124,7 @@ void LegacySequenceXMLBuilder::build(const std::string& filename, const std::sha
 
     sequence = sequenceResult->sequence;
     currentEntryCount = 0;
+    experimentEntries.clear();
 
     sequenceInfo = e->InsertNewChildElement("sequence");
     updateSequenceInfo();
@@ -146,19 +147,20 @@ void addVars(tinyxml2::XMLElement* experiment, const std::set<ParsedVar>& vars, 
     }
 }
 
-void LegacySequenceXMLBuilder::addShot(const std::string& shotFilename, const SequenceEntryID& id, const EngineJobStatus& shotStatus)
+void LegacySequenceXMLBuilder::addShot(const std::string& shotFilename, const std::string& parseFilename,
+                                       const SequenceEntryID& id, const EngineJobStatus& shotStatus)
 {
-    addEntry(shotFilename, id, shotStatus, "file");
+    addEntry(shotFilename, parseFilename, id, shotStatus);
 }
 
 void LegacySequenceXMLBuilder::addParseResult(const std::string& parseFilename, const SequenceEntryID& id, const EngineJobStatus& parseStatus)
 {
-    addEntry(parseFilename, id, parseStatus, "parse");
+    addEntry("", parseFilename, id, parseStatus);
 }
 
-void LegacySequenceXMLBuilder::addEntry(const std::string& entryFilename, const SequenceEntryID& id, const EngineJobStatus& status, const std::string& fileElementName)
+void LegacySequenceXMLBuilder::addEntry(const std::string& shotFilename, const std::string& parseFilename,
+                                        const SequenceEntryID& id, const EngineJobStatus& status)
 {
-    //Append shot filename to XML
     if (experiments == 0) return;
     if (sequence == 0) return;
 
@@ -172,32 +174,51 @@ void LegacySequenceXMLBuilder::addEntry(const std::string& entryFilename, const 
         if (it == sequence->sequenceTable.end()) return;
     }
 
-    auto experiment = experiments->InsertNewChildElement("experiment");
+    tinyxml2::XMLElement* experiment = 0;
+    auto existingEntry = experimentEntries.find(id.seqIndex);
+    if (existingEntry == experimentEntries.end()) {
+        experiment = experiments->InsertNewChildElement("experiment");
+        experimentEntries[id.seqIndex] = experiment;
 
-    addSequenceIndex(experiment, id.seqIndex);
+        addSequenceIndex(experiment, id.seqIndex);
 
-    auto statusElement = experiment->InsertNewChildElement("status");
-    statusElement->SetText(EngineJobStatusToString(status).c_str());
+        if (closedSeq) {
+            const auto& valueFilename = shotFilename.empty() ? parseFilename : shotFilename;
+            addVars(experiment, it->second.overwritten, valueFilename);
+        }
 
-    if (closedSeq) {
-        addVars(experiment, it->second.overwritten, entryFilename);
-    }
-
-    std::filesystem::path sequencePath = filename;
-    std::filesystem::path entryPath = entryFilename;
-    auto relativeEntryPath = safeRelativePath(entryPath, sequencePath.parent_path());
-
-    if (fileElementName == "parse") {
-        auto parse = experiment->InsertNewChildElement("parse");
-        auto file = parse->InsertNewChildElement("file");
-        file->SetText(relativeEntryPath.string().c_str());
+        currentEntryCount = static_cast<unsigned>(experimentEntries.size());
     }
     else {
-        auto file = experiment->InsertNewChildElement("file");
-        file->SetText(relativeEntryPath.string().c_str());
+        experiment = existingEntry->second;
     }
 
-    ++currentEntryCount;
+    setChildText(doc, experiment, "status", EngineJobStatusToString(status));
+
+    std::filesystem::path sequencePath = filename;
+    if (!parseFilename.empty()) {
+        std::filesystem::path parsePath = parseFilename;
+        auto relativeParsePath = safeRelativePath(parsePath, sequencePath.parent_path());
+
+        auto parse = experiment->FirstChildElement("parse");
+        if (parse == 0) {
+            parse = experiment->InsertNewChildElement("parse");
+        }
+        setChildText(doc, parse, "file", relativeParsePath.string());
+    }
+
+    if (!shotFilename.empty()) {
+        std::filesystem::path shotPath = shotFilename;
+        auto relativeShotPath = safeRelativePath(shotPath, sequencePath.parent_path());
+        setChildText(doc, experiment, "file", relativeShotPath.string());
+    }
+    else {
+        auto shotFile = experiment->FirstChildElement("file");
+        if (shotFile != 0) {
+            experiment->DeleteChild(shotFile);
+        }
+    }
+
     updateSequenceInfo();
 
     // Message grouper is used to buffer addShot commands.
