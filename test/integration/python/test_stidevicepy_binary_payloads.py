@@ -5,7 +5,6 @@ from pathlib import Path
 import subprocess
 import struct
 import time
-import uuid
 
 import pytest
 
@@ -619,32 +618,6 @@ def receive_image_file_to_virtual_server(stipy, remote_device, image):
     return received_bytes, roundtrip_destination.getBytes()
 
 
-def make_import_source_for_test(persistence, tmp_path):
-    payload = (
-        b"fileTransfer FileID import example\n"
-        b"The target device should receive this through PersistenceManager.importFile().\n"
-    )
-    source_server = persistence.makeVirtualFileServer()
-    source_holder = persistence.makeFileHolder(
-        str(tmp_path),
-        "fileTransfer-import-source-" + uuid.uuid4().hex + ".txt",
-    )
-
-    if source_server is None or source_holder is None or not source_holder.openFile():
-        return None, None, payload
-
-    try:
-        if not source_holder.writeBytes(payload):
-            return None, None, payload
-    finally:
-        source_holder.closeFile()
-
-    if not source_server.addFile(source_holder):
-        return None, None, payload
-
-    return source_holder, source_server, payload
-
-
 def test_stidevicepy_can_explicitly_pull_lazy_binary_channel_measurement(
     sti_nameservice_address,
     stipy_modules,
@@ -1091,14 +1064,15 @@ def test_stiserver_proxy_collects_file_transfer_pre_registration_binary_measurem
         assert isinstance(device.read(19, input_image), stipy.Image)
         assert device.read(21) is not None
 
-        persistence = device.getPersistenceManager()
-        if hasattr(persistence, "importFile"):
-            source_holder, source_server, import_payload = make_import_source_for_test(persistence, tmp_path)
-            assert source_holder is not None
-            assert source_server is not None
-            with persistence.importFile(source_holder.getID(), source_server) as imported:
-                assert device.write(6, imported.fileID)
-                assert device.read(20, imported.fileID) == len(import_payload)
+        import_payload = (
+            b"fileTransfer Device.upload_file example\n"
+            b"The target device should receive a caller-local file.\n"
+        )
+        import_path = tmp_path / "fileTransfer-upload-source.txt"
+        import_path.write_bytes(import_payload)
+        with device.upload_file(import_path) as imported:
+            assert device.write(6, imported.fileID)
+            assert device.read(20, imported.fileID) == len(import_payload)
 
         device_hub = stidevicepy.NetworkDeviceHub(sti_nameservice_address)
         device_hub.addDevice(device)
@@ -1127,6 +1101,18 @@ def test_stiserver_proxy_collects_file_transfer_pre_registration_binary_measurem
         stiserver.assert_running()
 
         remote_device = server.getDeviceCollection().get(device_spec.device_id())
+        with remote_device.upload_file(import_path) as imported:
+            assert remote_device.write(6, imported.fileID)
+            assert remote_device.read(20, imported.fileID) == len(import_payload)
+
+        memory_payload = bytearray(b"fileTransfer Device.upload_data remote example\n")
+        with remote_device.upload_data(
+            memoryview(memory_payload),
+            "memory-payload.txt",
+        ) as imported:
+            assert remote_device.write(6, imported.fileID)
+            assert remote_device.read(20, imported.fileID) == len(memory_payload)
+
         channel = remote_device.getChannelManager().getChannel(17)
         measurement = channel.getLastMeasurement()
         stiserver.assert_running()

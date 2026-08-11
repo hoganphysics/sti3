@@ -438,27 +438,25 @@ the read or write is complete.
           target_device.write(6, imported.fileID)
           size = target_device.read(20, imported.fileID)
 
-For caller-created files in Python, create an explicit source server and
-register the holder before importing.  The source server is what lets the
-target pull the bytes; the ``FileID`` alone is not enough.
+For an existing file on the Python client's local filesystem, ``Device``
+provides a convenience method that creates the source holder and server, then
+imports the file into the target device:
 
 .. code-block:: py
 
-   import tempfile
+   with target_device.upload_file("payload.bin") as uploaded:
+       target_device.write(6, uploaded.fileID)
 
-   source_server = target_persistence.makeVirtualFileServer()
-   source_holder = target_persistence.makeFileHolder(tempfile.gettempdir(), "payload.bin")
+The returned ``ImportedFile`` owns the target-side file registration, so keep
+the context open while the device uses its ``FileID``.
 
-   assert source_holder.openFile()
-   try:
-       source_holder.writeBytes(payload)
-   finally:
-       source_holder.closeFile()
+For caller-created bytes-like payloads, ``upload_data()`` creates an in-memory
+source holder and performs the same import without writing a source file:
 
-   source_server.addFile(source_holder)
+.. code-block:: py
 
-   with target_persistence.importFile(source_holder.getID(), source_server) as imported:
-       target_device.write(6, imported.fileID)
+   with target_device.upload_data(payload, "payload.bin") as uploaded:
+       target_device.write(6, uploaded.fileID)
 
 Use ``ImportFileOptions`` when the default temporary disk import is not the
 right target storage:
@@ -467,8 +465,8 @@ right target storage:
 
    options = stipy.ImportFileOptions(storage=stipy.ImportStorage.Virtual)
 
-   with target_persistence.importFile(source_id, source_server, options) as imported:
-       target_device.read(20, imported.fileID)
+   with target_device.upload_data(payload, "payload.bin", options=options) as uploaded:
+       target_device.read(20, uploaded.fileID)
 
 Repeated imports default to ``ImportCollisionPolicy.Unique`` so transient files
 with the same source name do not overwrite each other.  ``FailIfExists`` and

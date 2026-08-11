@@ -32,6 +32,132 @@ def test_stidevicepy_persistence_manager_exposes_file_server(stipy_modules, tmp_
     assert isinstance(file_server, stipy.FileServer)
 
 
+def test_stidevicepy_device_upload_file_imports_local_path(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+
+    source_path = tmp_path / "source" / "payload.bin"
+    source_path.parent.mkdir()
+    payload = b"upload_file local payload\x00with-nul"
+    source_path.write_bytes(payload)
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Device Upload File Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "64")
+    config.set("Target Server", "Device Upload File Server")
+    config.set("PersistenceManager", "root path", str(tmp_path / "persistence"))
+    config.set("PersistenceManager", "device subdirectory", "device")
+
+    device = stidevicepy.LocalDevice(config)
+    persistence = device.getPersistenceManager()
+    file_server = persistence.getFileServer()
+
+    with device.upload_file(source_path) as uploaded:
+        imported_id = uploaded.fileID
+        imported_path = Path(imported_id.path) / imported_id.filename
+
+        assert file_server.findFile(imported_id)
+        assert file_server.getFileSize(imported_id) == len(payload)
+        assert imported_path.read_bytes() == payload
+
+    assert uploaded.closed
+    assert not file_server.findFile(imported_id)
+    assert not imported_path.exists()
+
+    options = stipy.ImportFileOptions(storage=stipy.ImportStorage.Virtual)
+    with device.upload_file(source_path, options=options) as uploaded:
+        virtual_id = uploaded.fileID
+        assert file_server.findFile(virtual_id)
+        assert file_server.getFileSize(virtual_id) == len(payload)
+
+    assert uploaded.closed
+    assert not file_server.findFile(virtual_id)
+
+
+def test_stidevicepy_device_upload_file_rejects_missing_path(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Device Upload Missing File Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "65")
+    config.set("Target Server", "Device Upload Missing File Server")
+    config.set("PersistenceManager", "root path", str(tmp_path / "persistence"))
+
+    device = stidevicepy.LocalDevice(config)
+
+    with pytest.raises(FileNotFoundError):
+        device.upload_file(tmp_path / "missing.bin")
+
+
+def test_stidevicepy_device_upload_data_imports_bytes_like_payload(
+    stipy_modules,
+    tmp_path,
+    monkeypatch,
+):
+    stipy, stidevicepy = stipy_modules
+
+    client_path = tmp_path / "client"
+    client_path.mkdir()
+    monkeypatch.chdir(client_path)
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Device Upload Data Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "66")
+    config.set("Target Server", "Device Upload Data Server")
+    config.set("PersistenceManager", "root path", str(tmp_path / "persistence"))
+    config.set("PersistenceManager", "device subdirectory", "device")
+
+    device = stidevicepy.LocalDevice(config)
+    persistence = device.getPersistenceManager()
+    file_server = persistence.getFileServer()
+    payload = bytearray(b"upload_data in-memory payload\x00with-nul")
+
+    with device.upload_data(memoryview(payload), "payload.bin") as uploaded:
+        imported_id = uploaded.fileID
+        imported_path = Path(imported_id.path) / imported_id.filename
+
+        assert imported_id.filename == "payload.bin"
+        assert file_server.findFile(imported_id)
+        assert file_server.getFileSize(imported_id) == len(payload)
+        assert imported_path.read_bytes() == payload
+        assert not (client_path / "payload.bin").exists()
+
+    assert uploaded.closed
+    assert not file_server.findFile(imported_id)
+    assert not imported_path.exists()
+
+    options = stipy.ImportFileOptions(storage=stipy.ImportStorage.Virtual)
+    with device.upload_data(payload, "virtual-payload.bin", options=options) as uploaded:
+        virtual_id = uploaded.fileID
+        assert virtual_id.filename.startswith("virtual-payload_")
+        assert virtual_id.filename.endswith(".bin")
+        assert file_server.findFile(virtual_id)
+        assert file_server.getFileSize(virtual_id) == len(payload)
+
+    assert uploaded.closed
+    assert not file_server.findFile(virtual_id)
+
+
+def test_stidevicepy_device_upload_data_validates_arguments(stipy_modules, tmp_path):
+    stipy, stidevicepy = stipy_modules
+
+    config = stipy.Configuration()
+    config.set("Device Name", "Device Upload Data Validation Device")
+    config.set("IP Address", "localhost")
+    config.set("Module", "67")
+    config.set("Target Server", "Device Upload Data Validation Server")
+    config.set("PersistenceManager", "root path", str(tmp_path / "persistence"))
+
+    device = stidevicepy.LocalDevice(config)
+
+    with pytest.raises(TypeError, match="bytes-like"):
+        device.upload_data("not binary", "payload.bin")
+    with pytest.raises(ValueError, match="file name"):
+        device.upload_data(b"payload", "")
+
+
 def test_stidevicepy_persistence_manager_exposes_base_path(stipy_modules, tmp_path):
     stipy, stidevicepy = stipy_modules
 

@@ -1,6 +1,8 @@
 from stipy.stidevicepy import *
 from stipy.stidevicepy.stidevicepy import *
 
+from stipy.stidevicepy.python import file as _file
+
 from stipy.stidevicepy.python.collection import DeviceCollection
 
 from stipy.stidevicepy.python.localdevice import LocalDevice

@@ -1,9 +1,8 @@
 import itertools
 import io
+from pathlib import Path
 import random
 import struct
-import tempfile
-import uuid
 
 import stipy
 import stipy.stidevicepy as stidevicepy
@@ -387,33 +386,6 @@ class FileTransferDevice(stidevicepy.LocalDevice):
 
         return None
 
-
-def make_import_source(persistence):
-    payload = (
-        b"fileTransfer FileID import example\n"
-        b"The target device should receive this through PersistenceManager.importFile().\n"
-    )
-    source_server = persistence.makeVirtualFileServer()
-    source_holder = persistence.makeFileHolder(
-        tempfile.gettempdir(),
-        "fileTransfer-import-source-" + uuid.uuid4().hex + ".txt",
-    )
-
-    if source_server is None or source_holder is None or not source_holder.openFile():
-        return None, None, payload
-
-    try:
-        if not source_holder.writeBytes(payload):
-            return None, None, payload
-    finally:
-        source_holder.closeFile()
-
-    if not source_server.addFile(source_holder):
-        return None, None, payload
-
-    return source_holder, source_server, payload
-
-
 config = stipy.Configuration(
     {'Device Name': 'FileTransferDevice',
      'IP Address': 'localhost',
@@ -441,12 +413,10 @@ input_image = stipy.Image(device.random_image_bytes(), device.IMAGE_WIDTH, devic
 print("Measurement 19: " + str(device.read(19, input_image)))
 print("Measurement 21: " + str(device.read(21)))
 
-persistence = device.getPersistenceManager()
-source_holder, source_server, payload = make_import_source(persistence)
-if source_holder is not None and source_server is not None:
-    with persistence.importFile(source_holder.getID(), source_server) as imported:
-        device.write(6, imported.fileID)
-        print("Measurement 20: " + str(device.read(20, imported.fileID)))
+upload_path = Path(__file__).resolve(strict=True)
+with device.upload_file(upload_path) as uploaded:
+    device.write(6, uploaded.fileID)
+    print("Measurement 20: " + str(device.read(20, uploaded.fileID)))
 
 
 # nameServiceAddr = "192.168.1.242:2809"   #OmniORB NameService
