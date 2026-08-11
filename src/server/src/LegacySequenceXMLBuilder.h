@@ -8,6 +8,7 @@
 
 #include <tinyxml2.h>
 
+#include <map>
 #include <string>
 #include <memory>
 
@@ -45,7 +46,8 @@ public:
     ~LegacySequenceXMLBuilder();
 
     void build(const std::string& filename, const std::shared_ptr<SequenceResult>& sequenceResult);
-    void addShot(const std::string& shotFilename, const SequenceEntryID& id, const EngineJobStatus& shotStatus);
+    void addShot(const std::string& shotFilename, const std::string& parseFilename,
+        const SequenceEntryID& id, const EngineJobStatus& shotStatus);
     void addParseResult(const std::string& parseFilename, const SequenceEntryID& id, const EngineJobStatus& parseStatus);
     void write();
 
@@ -61,10 +63,12 @@ private:
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLElement* sequenceInfo;
     tinyxml2::XMLElement* experiments;
+    std::map<SequenceIndex, tinyxml2::XMLElement*> experimentEntries;
 
     unsigned currentEntryCount;
 
-    void addEntry(const std::string& entryFilename, const SequenceEntryID& id, const EngineJobStatus& status, const std::string& fileElementName);
+    void addEntry(const std::string& shotFilename, const std::string& parseFilename,
+        const SequenceEntryID& id, const EngineJobStatus& status);
     void updateSequenceInfo();
 };
 
