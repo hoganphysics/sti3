@@ -2029,6 +2029,9 @@ void LocalEventEngineScheduler::definePlayMessageIDs()
     playMessageIDs["Owned device trigger timeout"]          = 84;
     playMessageIDs["Owned device PlayComplete timeout"]     = 85;
     playMessageIDs["Incorrect Measurement Type"]            = 86;
+    playMessageIDs["Device read failed"]                    = 87;
+    playMessageIDs["Device write failed"]                   = 88;
+    playMessageIDs["Missing Measurement Result"]            = 89;
 }
 
 const std::map<std::string, unsigned>& LocalEventEngineScheduler::getPlayMessageIDs()

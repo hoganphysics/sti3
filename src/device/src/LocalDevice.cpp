@@ -11,6 +11,7 @@
 #include <sti/device/VersionManager.h>
 
 #include <sti/engine/Measurement.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/ParseJobStatus.h>
 #include <sti/engine/ParseTicket.h>
 #include <sti/engine/PlayJobStatus.h>
@@ -79,9 +80,11 @@ using STI::Device::VersionManager;
 using STI::Device::PostProcessingManager;
 using STI::Device::LocalPostProcessingManager;
 using STI::Device::PostProcessingFunction;
+using STI::Device::ReadFailureReportScope;
 using STI::Device::ReadResultFileScope;
 using STI::Device::ReadResultFileTracker;
 using STI::Device::ReadResultFileTrackingSuspension;
+using STI::Device::logReadFailure;
 
 using STI::Engine::LocalEventEngineFactory;
 using STI::Engine::LocalEventEngineScheduler;
@@ -691,22 +694,49 @@ bool LocalDevice::read(short channel, const STI::Utils::MixedValue& value, STI::
 	ReadResultFileScope readResultFiles(*readResultFileTracker, channel);
 	std::shared_ptr<STI::Device::Channel> ch;
 
-	//type check
-	if (localChannelManager->getChannel(channel, ch)
-		&& ch->getType() == STI::Device::ChannelType::Input
-		&& mixedValueMatchesType(value, ch->getOutputType())) {
-		
-		if (readChannel(channel, value, data) && mixedValueMatchesType(data, ch->getInputType())) {
-			readResultFiles.commit();
-			if (ch->getOutputType() != STI::Utils::MixedValueType::Empty) {
-				ch->saveLastValue(value);
-			}
-			ch->saveLastMeasurement(data);
-			return true;
-		}
+	if (!localChannelManager->getChannel(channel, ch) || ch == nullptr) {
+		logReadFailure(*this, channel, "channel does not exist");
+		readResultFiles.discard();
+		return false;
 	}
-	readResultFiles.discard();
-	return false;	//value has wrong type	
+
+	if (ch->getType() != STI::Device::ChannelType::Input) {
+		logReadFailure(*this, channel, "channel is not an input channel");
+		readResultFiles.discard();
+		return false;
+	}
+
+	if (!mixedValueMatchesType(value, ch->getOutputType())) {
+		logReadFailure(*this, channel,
+			"argument type is '" + STI::Utils::MixedValue::TypeToString(value.getType())
+			+ "'; expected '" + STI::Utils::MixedValue::TypeToString(ch->getOutputType()) + "'");
+		readResultFiles.discard();
+		return false;
+	}
+
+	ReadFailureReportScope failureReport;
+	if (!readChannel(channel, value, data)) {
+		if (!failureReport.wasReported()) {
+			logReadFailure(*this, channel, "device readChannel implementation returned false");
+		}
+		readResultFiles.discard();
+		return false;
+	}
+
+	if (!mixedValueMatchesType(data, ch->getInputType())) {
+		logReadFailure(*this, channel,
+			"result type is '" + STI::Utils::MixedValue::TypeToString(data.getType())
+			+ "'; expected '" + STI::Utils::MixedValue::TypeToString(ch->getInputType()) + "'");
+		readResultFiles.discard();
+		return false;
+	}
+
+	readResultFiles.commit();
+	if (ch->getOutputType() != STI::Utils::MixedValueType::Empty) {
+		ch->saveLastValue(value);
+	}
+	ch->saveLastMeasurement(data);
+	return true;
 }
 
 void LocalDevice::stopRW()
@@ -752,10 +782,19 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	auto parseTicket = parseTicketManager->makeTicket(parseJobStatus.pid);
 
-	auto tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
-	parseTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
+	// A read/write operation is synchronous. Individual devices are responsible for
+	// bounding their hardware waits and stopRW() can cancel an active operation.
+	// A fixed one-second limit is too short for legitimate camera exposures and
+	// result encoding.
+	parseTicket->wait();
 
 	if (parseTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		if (parseTicket->getMessages().empty()) {
+			log("read-write") << "Single-event parse failed for channel " << event.channel()
+				<< ": ticket status "
+				<< STI::Engine::Ticket::statusToString(parseTicket->getStatus()) << std::endl;
+		}
+		ReadFailureReportScope::markReported();
 		parseTicket->cancel();
 		return false;
 	}
@@ -764,11 +803,26 @@ bool LocalDevice::playSingleEvent(const STI::Engine::RawEvent& event, std::share
 
 	resultTicket = resultTicketManager->makeTicket(playJobStatus.sid);
 
-	tF = std::chrono::system_clock::now() + std::chrono::seconds(1);
-	resultTicket->wait( [&tF](){ return (tF > std::chrono::system_clock::now()); } );	//wait 1s max
+	resultTicket->wait();
 
 	if (resultTicket->getStatus() != STI::Engine::Ticket::TicketStatus::Complete) {
+		if (resultTicket->getMessages().empty()) {
+			log("read-write") << "Single-event play failed for channel " << event.channel()
+				<< ": ticket status "
+				<< STI::Engine::Ticket::statusToString(resultTicket->getStatus()) << std::endl;
+		}
+		ReadFailureReportScope::markReported();
 		resultTicket->cancel();
+		return false;
+	}
+
+	const auto playMessages = resultTicket->getMessages();
+	const bool hasPlayError = std::any_of(playMessages.begin(), playMessages.end(),
+		[](const STI::Engine::EnginePlayingMessage& message) {
+			return message.getType() == STI::Engine::PlayingMessageType::Error;
+		});
+	if (hasPlayError) {
+		ReadFailureReportScope::markReported();
 		return false;
 	}
 
@@ -795,24 +849,35 @@ bool LocalDevice::readChannelDefault(short channel, const STI::Utils::MixedValue
 {
 	ReadResultFileTrackingSuspension suspendReadResultFileTracking;
 	usingRWdefault = true;
-	if (usingParseDefault) return false;
+	if (usingParseDefault) {
+		logReadFailure(*this, channel,
+			"recursive default pipeline detected; override readChannel() or parseEvents()");
+		return false;
+	}
 
 	double eventTime = getMinimumEventStartTime();
 	STI::Engine::RawEventTarget eventTarget(getID(), channel);
 	STI::Engine::RawEvent evt0(eventTarget, eventTime, value, 0, STI::Engine::RawEventType::Measurement);
 	std::shared_ptr<STI::Engine::ResultTicket> resultTicket;
 
-	if (!playSingleEvent(evt0, resultTicket))
+	if (!playSingleEvent(evt0, resultTicket)) {
 		return false;
+	}
 
 	auto measurements = resultTicket->measurements(getID());
 	
-	if (measurements.size() > 0) {
-		measurements.at(0)->extractMeasurementResult(data);
-		return true;
+	if (measurements.empty()) {
+		logReadFailure(*this, channel, "single-event shot completed without a measurement");
+		return false;
 	}
 
-	return false;
+	if (measurements.at(0) == nullptr) {
+		logReadFailure(*this, channel, "single-event shot returned a null measurement");
+		return false;
+	}
+
+	measurements.at(0)->extractMeasurementResult(data);
+	return true;
 }
 
 void LocalDevice::parseEventsDefault(const STI::Engine::RawEventMap& events, STI::Engine::SynchronousEventVector& synchedEvents)

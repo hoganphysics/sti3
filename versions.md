@@ -48,6 +48,38 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.4 - In progress
+
+Features:
+
+* Add context-managed `Device.upload_file()` and `Device.upload_data()` helpers
+  that import local files or bytes-like in-memory payloads into a target
+  device's persistence storage while hiding the source holder, file server,
+  transfer, and `FileID` setup.
+
+Fixes:
+
+* Preserve `Image` results returned by `Device::read()`, including Images nested
+  in vectors, by retaining local payloads and transporting file-backed Images
+  through lazy binary streams.
+* Allow synchronous reads and writes to wait for the engine ticket instead of
+  failing after one second, so long camera exposures and image encoding can
+  complete normally.
+* Report failed device reads and writes, missing measurement results, and
+  incorrect measurement types as EventEngine play errors retained in the shot
+  result. Keep device logging as a fallback when no engine message is available.
+
+Documentation, examples, and tests:
+
+* Demonstrate file and in-memory uploads in the `fileTransfer` example, including
+  converting a NumPy array through `PILImage.fromarray()` into an `STI_Image`
+  that is transferred directly as an Image channel argument.
+* Add local and remote-device coverage for upload lifecycle, target storage,
+  cleanup, argument validation, and bytes-like payload handling.
+* Add regression coverage for local and remote Image read results, lazy binary
+  transfer, long-running measurements, device read/write failures, and missing
+  measurement results.
+
 ### 3.7.3 - Consistent legacy sequence XML entries (in progress)
 
 Fixes:

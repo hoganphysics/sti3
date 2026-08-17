@@ -37,6 +37,7 @@
 #include <sti/utils/BinaryData.h>
 #include <sti/utils/Image.h>
 #include <sti/utils/FileID.h>
+#include <sti/utils/VirtualFileHolder.h>
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Task.h>
 #include <sti/utils/TimeStamp.h>
@@ -491,6 +492,52 @@ TEST_CASE("NetworkConvert: read results can preserve lazy binary-backed images",
     CHECK(lazy->hasStream());
     CHECK_FALSE(lazy->hasLocalData());
     CHECK(lazy->bytes() == binary->bytes());
+    CHECK(binaryBytes(lazy) == payload);
+}
+
+TEST_CASE("NetworkConvert: vector read results stream file-backed images lazily", "[network][convert][image][file]")
+{
+    const std::string payload = "file-backed-read-result-image";
+    auto fileID = makeFileID("frame.tif", "transient");
+    auto file = std::make_shared<STI::Utils::VirtualFileHolder>("device-a", fileID);
+    REQUIRE(file->openFile());
+    REQUIRE(file->write(payload.data(), static_cast<unsigned>(payload.size())));
+    file->closeFile();
+
+    auto image = std::make_shared<STI::Utils::Image>();
+    image->setWidth(20).setHeight(30);
+    image->setImageData(file);
+
+    STI::Utils::MixedValue source;
+    source.addValue(image); // Blackfly channel 0 returns its Image inside a vector.
+
+    STI::TNetwork::TMixedValue tValue;
+    REQUIRE(STI::Network::convertMixedValue(
+        source, tValue, STI::Network::BinaryPayloadPolicy::PreferStreamReference));
+
+    REQUIRE(tValue._d() == STI::TNetwork::TMixedValueType::MixedValueVector);
+    REQUIRE(tValue.values().length() == 1);
+    REQUIRE(tValue.values()[0]._d() == STI::TNetwork::TMixedValueType::MixedValueImage);
+    REQUIRE(tValue.values()[0].value_image().imageData._d()
+        == STI::TNetwork::TImageDataType::ImageDataBinary);
+    CHECK(tValue.values()[0].value_image().imageData.binary().data._d()
+        == STI::TNetwork::TBinaryType::BinaryStream);
+
+    STI::Utils::MixedValue remote;
+    REQUIRE(STI::Network::convertMixedValue(
+        tValue, remote, STI::Network::BinaryPayloadPolicy::PreserveStreamReference));
+
+    REQUIRE(remote.getType() == STI::Utils::MixedValueType::Vector);
+    REQUIRE(remote.getVector().size() == 1);
+    auto remoteImage = remote.getVector().at(0).getImage();
+    REQUIRE(remoteImage != nullptr);
+
+    std::shared_ptr<STI::Utils::BinaryData> lazy;
+    REQUIRE(remoteImage->getData(lazy));
+    REQUIRE(lazy != nullptr);
+    CHECK_FALSE(lazy->hasLocalData());
+    CHECK(lazy->hasStream());
+    CHECK(lazy->bytes() == payload.size());
     CHECK(binaryBytes(lazy) == payload);
 }
 

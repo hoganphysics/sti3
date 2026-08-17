@@ -2223,7 +2223,17 @@ void LocalEventEngine::measureData()
 		evt->collectData();
 
 		for (const auto& measurement : evt->getMeasurements()) {
-			if (measurement == nullptr || !measurement->dataReady()) {
+			if (measurement == nullptr) {
+				evt->addError("Missing Measurement Result")
+					<< "A synchronous event at time " << STI::Utils::printTimeFormated(evt->getTime())
+					<< " contains a null Measurement.";
+				continue;
+			}
+
+			if (!measurement->dataReady()) {
+				evt->addError("Missing Measurement Result")
+					<< "No measurement result was produced for channel #" << measurement->channel()
+					<< " at time " << STI::Utils::printTimeFormated(measurement->time()) << ".";
 				continue;
 			}
 
@@ -2251,7 +2261,9 @@ void LocalEventEngine::measureData()
 		if (appendPlayMessages(evt->getMeasureMessages())) {
 			// error message found
 			setState(EngineState::Error);
-			cancelPlayJob();
+			// playDeviceEvents() owns playMutex while it joins this measurement
+			// thread.  Setting Error is enough to make that thread stop the shot;
+			// attempting to lock playMutex here would deadlock the engine.
 		}
 
 		if (!isState(EngineState::Playing))

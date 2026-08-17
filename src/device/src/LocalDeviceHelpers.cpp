@@ -27,6 +27,31 @@ namespace STI
 namespace Device
 {
 
+thread_local bool* ReadFailureReportScope::activeReport = nullptr;
+
+ReadFailureReportScope::ReadFailureReportScope()
+    : previous(activeReport)
+{
+    activeReport = &reported;
+}
+
+ReadFailureReportScope::~ReadFailureReportScope()
+{
+    activeReport = previous;
+}
+
+bool ReadFailureReportScope::wasReported() const
+{
+    return reported;
+}
+
+void ReadFailureReportScope::markReported()
+{
+    if (activeReport != nullptr) {
+        *activeReport = true;
+    }
+}
+
 void throwLocalDeviceConstructorConfigError(const std::string& key)
 {
     std::stringstream message;
@@ -83,6 +108,12 @@ void applyConfiguredMetaData(LocalDevice& device, const STI::Utils::Configuratio
 bool mixedValueMatchesType(const STI::Utils::MixedValue& value, STI::Utils::MixedValueType expectedType)
 {
     return expectedType == STI::Utils::MixedValueType::Any || value.isType(expectedType);
+}
+
+void logReadFailure(LocalDevice& device, short channel, const std::string& reason)
+{
+    ReadFailureReportScope::markReported();
+    device.log("read") << "Device::read(channel " << channel << ") failed: " << reason << std::endl;
 }
 
 } //Device

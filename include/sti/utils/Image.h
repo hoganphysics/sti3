@@ -43,6 +43,10 @@ public:
     void setImageData(const std::shared_ptr<FileHolder>& file);
     void setImageData(const std::shared_ptr<BinaryData>& data);
 
+    // Keep lazily exported transport data alive for as long as this image can
+    // be referenced by a remote caller.
+    void retainDataForTransfer(const std::shared_ptr<BinaryData>& data) const;
+
     template<typename T>
     void setImageData(T*& data, size_t length, bool takeOwnership=true)
     {
@@ -78,6 +82,7 @@ private:
 
     CachedValue<std::shared_ptr<BinaryData>> imageData;
     CachedValue<std::shared_ptr<FileHolder>> fileHolder;
+    mutable std::vector<std::shared_ptr<BinaryData>> retainedTransferData;
 
     FileID fileID;
 

@@ -125,6 +125,13 @@ void Image::setImageData(const std::shared_ptr<BinaryData>& data)
     imageData.set(data);
 }
 
+void Image::retainDataForTransfer(const std::shared_ptr<BinaryData>& data) const
+{
+    if (data != nullptr) {
+        retainedTransferData.push_back(data);
+    }
+}
+
 
 bool Image::write(const std::shared_ptr<FileServer>& sourceFileServer, const std::shared_ptr<FileHolder>& destination)
 {

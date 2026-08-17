@@ -84,6 +84,7 @@ add_library(stidevice SHARED
     EventEngineManager.cpp
     EventEngineParser.cpp
     EventEngineStateMachine.cpp
+    FileBinaryDataStream.cpp
     FileID.cpp
     FullShotResult.cpp
     Image.cpp

@@ -7,6 +7,8 @@
 #include "generated/deviceNet.h"
 #include "NetworkConvert.h"
 
+#include <iostream>
+
 using STI::Network::RemoteChannelManager;
 using STI::Network::convert;
 using STI::Network::BinaryPayloadPolicy;
@@ -167,17 +169,32 @@ bool RemoteChannelManager::readChannel(short channel, const STI::Utils::MixedVal
                                                 convert<MixedValue, TMixedValue>(value),
                                                 tData);	//remote call
 	}
-	catch (CORBA::TRANSIENT&) {
+	catch (CORBA::TRANSIENT& ex) {
+		std::cerr << "RemoteChannelManager::readChannel(" << channel
+			<< ") failed with CORBA::" << ex._name() << std::endl;
 	}
-	catch (CORBA::SystemException&) {
+	catch (CORBA::SystemException& ex) {
+		std::cerr << "RemoteChannelManager::readChannel(" << channel
+			<< ") failed with CORBA::" << ex._name() << std::endl;
 	}
-	catch (CORBA::Exception&)
+	catch (CORBA::Exception& ex)
 	{
+		std::cerr << "RemoteChannelManager::readChannel(" << channel
+			<< ") failed with CORBA::" << ex._name() << std::endl;
 	}
 
     if (success) {
-        return STI::Network::convertMixedValue(tData, data, BinaryPayloadPolicy::PreserveStreamReference);
+		success = STI::Network::convertMixedValue(tData, data, BinaryPayloadPolicy::PreserveStreamReference);
+		if (!success) {
+			std::cerr << "RemoteChannelManager::readChannel(" << channel
+				<< ") could not convert the returned MixedValue payload." << std::endl;
+		}
+		return success;
     }
+
+	std::cerr << "RemoteChannelManager::readChannel(" << channel
+		<< ") was rejected by the remote device; inspect its 'read' log for the failure stage."
+		<< std::endl;
 
     return success;
 }

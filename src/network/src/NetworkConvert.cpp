@@ -3,6 +3,7 @@
 
 #include <sti/utils/MixedValue.h>
 #include <sti/utils/Image.h>
+#include <sti/utils/FileBinaryDataStream.h>
 
 #include "convert/Convert_File.h"
 
@@ -307,6 +308,7 @@ bool STI::Network::convertMixedValue(
 	BinaryPayloadPolicy policy)
 {
 	// tValue.type = convert<MixedValueType, TMixedValueType>(value.getType());
+	bool success = true;
 
 	switch (value.getType())
 	{
@@ -333,7 +335,7 @@ bool STI::Network::convertMixedValue(
 			tValues.length(static_cast<CORBA::ULong>(values.size()));
 
 			for (CORBA::ULong i = 0; i < tValues.length() && i < values.size(); ++i) {
-				convertMixedValue(values.at(i), tValues[i], policy);
+				success &= convertMixedValue(values.at(i), tValues[i], policy);
 			}
 		}
 
@@ -365,10 +367,15 @@ bool STI::Network::convertMixedValue(
 		{
 			auto bin = value.getBinary();
 
-			if (bin != 0 ) {
-				TBinaryData tBin;
-				convertBinaryData(bin, tBin, policy);
-				tValue.valueBin(tBin);
+			if (bin == 0) {
+				return false;
+			}
+
+			TBinaryData tBin;
+			if (!convertBinaryData(bin, tBin, policy)) {
+				return false;
+			}
+			tValue.valueBin(tBin);
 
 				// valueBinRef.wordsize = static_cast<CORBA::Short>(bin->wordsize());
 
@@ -382,7 +389,6 @@ bool STI::Network::convertMixedValue(
 				// 	// data = reinterpret_cast<unsigned char*>(dataInt);
 				// 	valueBinRef.data.data_long().replace(bin->bytes(), bin->bytes(), dataInt, false );	//no release
 				// }
-			}
 		}
 		break;
 	case MixedValueType::File:
@@ -396,8 +402,8 @@ bool STI::Network::convertMixedValue(
 		{
 			STI::TNetwork::TImage tImage;
 
-			if (value.getImage() != 0) {
-				convertImage(*(value.getImage()), tImage, policy);
+			if (value.getImage() == 0 || !convertImage(*(value.getImage()), tImage, policy)) {
+				return false;
 			}
 			
 			tValue.value_image(tImage);
@@ -411,7 +417,7 @@ bool STI::Network::convertMixedValue(
 		break;
 	}
 
-	return true;
+	return success;
 }
 
 template<>
@@ -444,6 +450,7 @@ bool STI::Network::convertMixedValue(
 	BinaryPayloadPolicy policy)
 {
 	// value = convert<TMixedValue, MixedValue>(tValue);
+	bool success = true;
 
 	switch (tValue._d())
 	{
@@ -466,7 +473,7 @@ bool STI::Network::convertMixedValue(
 
 		for (unsigned i = 0; i < tValue.values().length(); ++i) {
 			MixedValue child;
-			convertMixedValue(tValue.values()[i], child, policy);
+			success &= convertMixedValue(tValue.values()[i], child, policy);
 			value.addValue(child);
 		}
 
@@ -502,8 +509,8 @@ bool STI::Network::convertMixedValue(
 			auto bin = std::make_shared<BinaryData>();
 			value.setValue(bin);
 
-			if (bin != 0 ) {
-				convertBinaryData(tValue.valueBin(), bin, policy);
+			if (bin == 0 || !convertBinaryData(tValue.valueBin(), bin, policy)) {
+				return false;
 			}
 		}
 		break;
@@ -517,7 +524,9 @@ bool STI::Network::convertMixedValue(
 	case TMixedValueType::MixedValueImage:
 		{
 			auto image = std::make_shared<Image>();
-			convertImage(tValue.value_image(), *image, policy);
+			if (!convertImage(tValue.value_image(), *image, policy)) {
+				return false;
+			}
 			value.setValue(image);
 		}
 		break;
@@ -527,7 +536,7 @@ bool STI::Network::convertMixedValue(
 		break;
 	}
 
-	return true;
+	return success;
 }
 
 bool STI::Network::convertChannelUpdateMap(
@@ -900,18 +909,37 @@ bool STI::Network::convertImage(const Image& image, TImage& tImage, BinaryPayloa
 	std::shared_ptr<BinaryData> bin;
 
 	if (image.getFile(fileHolder)) {
-		tImage.imageData.file(convert<FileID, TFileID>(fileHolder->getID()));
+		if (policy == BinaryPayloadPolicy::PreferStreamReference) {
+			auto bin = std::make_shared<BinaryData>();
+			const auto chunkSize = static_cast<std::size_t>(omni::orbParameters::giopMaxMsgSize);
+			auto stream = std::make_shared<STI::Utils::FileBinaryDataStream>(fileHolder, chunkSize);
+			bin->attachStream(stream, fileHolder->getFileSize(), sizeof(char));
+
+			TBinaryData tBin;
+			if (!convertBinaryData(bin, tBin, policy)) {
+				return false;
+			}
+			image.retainDataForTransfer(bin);
+			tImage.imageData.binary(tBin);
+		}
+		else {
+			tImage.imageData.file(convert<FileID, TFileID>(fileHolder->getID()));
+		}
 	}
 	else if (image.getData(bin)) {
 		TBinaryData tBin;
-		convertBinaryData(bin, tBin, policy);	//no deep copy unless policy requires eager materialization
+		if (!convertBinaryData(bin, tBin, policy)) {
+			return false;
+		}
 		tImage.imageData.binary(tBin);
 	}
 	else {
 		//bin is null
 		bin = std::make_shared<BinaryData>();
 		TBinaryData tBin;
-		convertBinaryData(bin, tBin, policy);
+		if (!convertBinaryData(bin, tBin, policy)) {
+			return false;
+		}
 
 		tImage.imageData.binary(tBin);
 	}
@@ -965,7 +993,9 @@ bool STI::Network::convertImage(const TImage& tImage, Image& image, BinaryPayloa
 			image.setImageData(bin);
 
 			if (bin != 0) {
-				convertBinaryData(tImage.imageData.binary(), bin, policy);
+				if (!convertBinaryData(tImage.imageData.binary(), bin, policy)) {
+					return false;
+				}
 			}
 		}
 		break;

@@ -5,6 +5,8 @@
 #include <sti/engine/RawEvent.h>
 #include <sti/engine/SynchronousEvent.h>
 
+#include <atomic>
+
 
 namespace STI
 {
@@ -29,6 +31,7 @@ private:
 
 	STI::Engine::RawEventVector events;
 	STI::Device::Device* device;
+	std::atomic<bool> operationsComplete{true};
 };
 
 } //Engine

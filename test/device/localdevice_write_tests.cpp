@@ -2,12 +2,17 @@
 
 #include <sti/LocalDevice.h>
 #include <sti/device/DeviceID.h>
+#include <sti/engine/EnginePlayingMessage.h>
 #include <sti/engine/RawEvent.h>
+#include <sti/engine/RawEventTarget.h>
+#include <sti/engine/ResultTicket.h>
 #include <sti/engine/SynchronousEvent.h>
 #include <sti/utils/Configuration.h>
+#include <sti/utils/BinaryData.h>
 #include <sti/utils/FileHolder.h>
 #include <sti/utils/FileID.h>
 #include <sti/utils/FileServer.h>
+#include <sti/utils/Image.h>
 #include <sti/utils/LocalFileHolder.h>
 #include <sti/utils/MixedValue.h>
 
@@ -15,19 +20,25 @@
 #include "TransientRepository.h"
 #include "fileholder_tests_support.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <system_error>
+#include <thread>
 
 using STI::Device::ChannelType;
 using STI::Device::DeviceID;
 using STI::Device::LocalDevice;
 using STI::Engine::ParseID;
+using STI::Engine::PlayingMessageType;
 using STI::Engine::RawEvent;
 using STI::Engine::RawEventMap;
+using STI::Engine::RawEventTarget;
+using STI::Engine::RawEventType;
+using STI::Engine::ResultTicket;
 using STI::Engine::ShotConfig;
 using STI::Engine::ShotID;
 using STI::Engine::ShotType;
@@ -110,8 +121,12 @@ public:
 class FixedMeasurementEvent : public SynchronousEvent
 {
 public:
-    FixedMeasurementEvent(double time, const std::vector<RawEvent>& events, MixedValue result)
-        : SynchronousEvent(time), result(result)
+    FixedMeasurementEvent(
+        double time,
+        const std::vector<RawEvent>& events,
+        MixedValue result,
+        std::chrono::milliseconds collectionDelay)
+        : SynchronousEvent(time), result(result), collectionDelay(collectionDelay)
     {
         for (const auto& event : events) {
             addMeasurement(event);
@@ -122,6 +137,7 @@ public:
     void playEvent() override {}
     void collectMeasurementData() override
     {
+        std::this_thread::sleep_for(collectionDelay);
         for (unsigned i = 0; i < getMeasurements().size(); ++i) {
             setMeasurementResult(i, result);
         }
@@ -132,6 +148,7 @@ public:
 
 private:
     MixedValue result;
+    std::chrono::milliseconds collectionDelay;
 };
 
 class MeasurementStateDevice : public LocalDevice
@@ -140,9 +157,10 @@ public:
     MeasurementStateDevice(const std::filesystem::path& root,
                            MixedValueType inputType,
                            MixedValueType outputType,
-                           MixedValue result)
+                           MixedValue result,
+                           std::chrono::milliseconds collectionDelay = std::chrono::milliseconds(0))
         : LocalDevice("MeasurementStateDevice", "127.0.0.1", 1, "root", makeDeviceConfig(root)),
-          result(result)
+          result(result), collectionDelay(collectionDelay)
     {
         addInputChannel(0, inputType, outputType, "in");
     }
@@ -152,12 +170,69 @@ public:
     void parseEvents(const RawEventMap& events, SynchronousEventVector& synchedEvents) override
     {
         for (const auto& tuple : events) {
-            synchedEvents.push_back(std::make_shared<FixedMeasurementEvent>(tuple.first, tuple.second, result));
+            synchedEvents.push_back(std::make_shared<FixedMeasurementEvent>(
+                tuple.first, tuple.second, result, collectionDelay));
         }
     }
 
 private:
     MixedValue result;
+    std::chrono::milliseconds collectionDelay;
+};
+
+class MissingMeasurementEvent : public SynchronousEvent
+{
+public:
+    MissingMeasurementEvent(double time, const std::vector<RawEvent>& events)
+        : SynchronousEvent(time)
+    {
+        for (const auto& event : events) {
+            addMeasurement(event);
+        }
+    }
+
+    void loadEvent() override {}
+    void playEvent() override {}
+    void collectMeasurementData() override {}
+    void stopEvent() override {}
+    void pauseEvent() override {}
+    void unpauseEvent(bool) override {}
+};
+
+class MissingMeasurementDevice : public LocalDevice
+{
+public:
+    explicit MissingMeasurementDevice(const std::filesystem::path& root)
+        : LocalDevice("MissingMeasurementDevice", "127.0.0.1", 1, "root", makeDeviceConfig(root))
+    {
+        addInputChannel(0, MixedValueType::Double, "in");
+    }
+
+    double getMinimumEventStartTime() override { return 0.0; }
+
+    void parseEvents(const RawEventMap& events, SynchronousEventVector& synchedEvents) override
+    {
+        for (const auto& tuple : events) {
+            synchedEvents.push_back(std::make_shared<MissingMeasurementEvent>(tuple.first, tuple.second));
+        }
+    }
+};
+
+class FailingPseudoDevice : public LocalDevice
+{
+public:
+    explicit FailingPseudoDevice(const std::filesystem::path& root)
+        : LocalDevice("FailingPseudoDevice", "127.0.0.1", 1, "root", makeDeviceConfig(root))
+    {
+        addInputChannel(0, MixedValueType::Double, "in");
+        addOutputChannel(1, MixedValueType::Double, "out");
+    }
+
+    double getMinimumEventStartTime() override { return 0.0; }
+
+private:
+    bool readChannel(short, const MixedValue&, MixedValue&) override { return false; }
+    bool writeChannel(short, const MixedValue&) override { return false; }
 };
 
 class VirtualFileReadDevice : public LocalDevice
@@ -205,6 +280,20 @@ ShotID makeSingleUndocumentedShotID()
     auto pid = ParseID::generateUniqueID(config.jobSourceID);
     pid.shotType = config.shotType;
     return ShotID::generateUniqueID(pid, config.jobSourceID);
+}
+
+bool hasPlayError(const std::shared_ptr<ResultTicket>& ticket, const std::string& name)
+{
+    if (ticket == nullptr) {
+        return false;
+    }
+
+    for (const auto& message : ticket->getMessages()) {
+        if (message.getType() == PlayingMessageType::Error && message.getName() == name) {
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace
@@ -275,6 +364,102 @@ TEST_CASE("LocalEventEngine leaves lastValue empty for measurement channels with
     REQUIRE(manager->getChannel(0, channel));
     CHECK(channel->getLastValue().isEmpty());
     CHECK(channel->getLastMeasurement() == MixedValue(8.5));
+}
+
+TEST_CASE("LocalDevice read waits for measurements longer than one second", "[localdevice][read][timeout]")
+{
+    auto root = makeTempRoot("slow_measurement");
+    MeasurementStateDevice device(
+        root,
+        MixedValueType::Double,
+        MixedValueType::Empty,
+        MixedValue(12.5),
+        std::chrono::milliseconds(1200));
+
+    MixedValue data;
+    REQUIRE(device.read(0, data));
+    CHECK(data == MixedValue(12.5));
+}
+
+TEST_CASE("LocalEventEngine reports a missing measurement result", "[localdevice][read][messages]")
+{
+    auto root = makeTempRoot("missing_measurement_result");
+    MissingMeasurementDevice device(root);
+
+    RawEventTarget target(device.getID(), 0);
+    RawEvent event(target, 0.0, MixedValue(), 0, RawEventType::Measurement);
+    std::shared_ptr<ResultTicket> ticket;
+
+    CHECK_FALSE(device.playSingleEvent(event, ticket));
+    REQUIRE(ticket != nullptr);
+    CHECK(hasPlayError(ticket, "Missing Measurement Result"));
+}
+
+TEST_CASE("PseudoSynchronousEvent reports Device read failure", "[localdevice][read][messages]")
+{
+    auto root = makeTempRoot("pseudo_read_failure");
+    FailingPseudoDevice device(root);
+
+    RawEventTarget target(device.getID(), 0);
+    RawEvent event(target, 0.0, MixedValue(), 0, RawEventType::Measurement);
+    std::shared_ptr<ResultTicket> ticket;
+
+    CHECK_FALSE(device.playSingleEvent(event, ticket));
+    REQUIRE(ticket != nullptr);
+    CHECK(hasPlayError(ticket, "Device read failed"));
+}
+
+TEST_CASE("PseudoSynchronousEvent reports Device write failure", "[localdevice][write][messages]")
+{
+    auto root = makeTempRoot("pseudo_write_failure");
+    FailingPseudoDevice device(root);
+
+    RawEventTarget target(device.getID(), 1);
+    RawEvent event(target, 0.0, MixedValue(3.5), 0, RawEventType::Play);
+    std::shared_ptr<ResultTicket> ticket;
+
+    CHECK_FALSE(device.playSingleEvent(event, ticket));
+    REQUIRE(ticket != nullptr);
+    CHECK(hasPlayError(ticket, "Device write failed"));
+}
+
+TEST_CASE("LocalDevice default read persists vector Image results in the transient file server", "[localdevice][read][image]")
+{
+    auto root = makeTempRoot("read_image");
+    const std::string payload = "encoded-image-payload";
+
+    auto binary = std::make_shared<STI::Utils::BinaryData>();
+    auto* bytes = new char[payload.size()];
+    std::copy(payload.begin(), payload.end(), bytes);
+    binary->assign(bytes, payload.size());
+
+    auto image = std::make_shared<STI::Utils::Image>("camera", "frame.tif");
+    image->setWidth(20).setHeight(10);
+    image->setImageData(binary);
+
+    MixedValue result;
+    result.addValue(image);
+    result.addValue("Filename", "frame.tif");
+
+    MeasurementStateDevice device(root, MixedValueType::Vector, MixedValueType::Vector, result);
+
+    MixedValue arguments;
+    arguments.addValue(1000.0);
+    arguments.addValue("frame");
+
+    MixedValue data;
+    REQUIRE(device.read(0, arguments, data));
+    REQUIRE(data.getType() == MixedValueType::Vector);
+    REQUIRE_FALSE(data.getVector().empty());
+
+    auto returnedImage = data.getVector().at(0).getImage();
+    REQUIRE(returnedImage != nullptr);
+
+    std::shared_ptr<FileHolder> returnedFile;
+    REQUIRE(returnedImage->getFile(returnedFile));
+    REQUIRE(returnedFile != nullptr);
+    REQUIRE(returnedFile->exists());
+    CHECK(fileholder_test_support::readFileToString(returnedFile->getFilename()) == payload);
 }
 
 TEST_CASE("LocalDevice read helper keeps only the latest virtual file result", "[localdevice][read][file]")
