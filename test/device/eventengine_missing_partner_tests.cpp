@@ -437,7 +437,7 @@ public:
                 synchedEvents.push_back(std::make_shared<CountingEvent>(tuple.first, loadCount, playCount));
             }
 
-            if (!partnerID.empty()) {
+            if (generatePartnerEvents && !partnerID.empty()) {
                 for (auto& rawEvent : tuple.second) {
                     if (useDirectRawPartnerEvents) {
                         RawEvent partnerEvent(
@@ -457,6 +457,7 @@ public:
     }
 
     DeviceID partnerID;
+    bool generatePartnerEvents = true;
     bool useDirectRawPartnerEvents = false;
     bool blockBeforePlay = false;
     bool errorOnPlay = false;
@@ -728,6 +729,63 @@ TEST_CASE("Missing partner remains abstract when its target server differs from 
     REQUIRE(playJob != nullptr);
     CHECK(hasPlayError(playJob->getPlayMessages(), "Cannot Play Abstract Shot"));
     CHECK(server.playCount == 0);
+}
+
+TEST_CASE("Missing declared partner without generated events warns but remains playable")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("OptionalPartnerServer", 110, "root");
+    auto generator = std::make_shared<PartnerGeneratingDevice>("OptionalPartnerGenerator", 111, server->getID().getID());
+    DeviceID missingOwner("MissingPartnerOwner", "127.0.0.1", 112, "root");
+    DeviceID missingPartner("OptionalMissingPartner", "127.0.0.1", 113, missingOwner.getID());
+
+    generator->setPartnerTarget(missingPartner);
+    generator->generatePartnerEvents = false;
+
+    auto distributer = distributeDevices({server, generator});
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, generator->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+
+    std::shared_ptr<ParseResult> parseResult;
+    REQUIRE(scheduler->getParseResult(parseStatus.pid, parseResult));
+    REQUIRE(parseResult != nullptr);
+    CHECK(countParsingMessages(parseResult->messages, "Event Target Device Missing") > 0);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+    CHECK(generator->loadCount == 1);
+    CHECK(generator->playCount == 1);
+}
+
+TEST_CASE("Missing downstream partner with generated events remains abstract")
+{
+    auto server = std::make_shared<PartnerGeneratingDevice>("RequiredPartnerServer", 114, "root");
+    auto generator = std::make_shared<PartnerGeneratingDevice>("RequiredPartnerGenerator", 115, server->getID().getID());
+    DeviceID missingOwner("MissingRequiredPartnerOwner", "127.0.0.1", 116, "root");
+    DeviceID missingPartner("RequiredMissingPartner", "127.0.0.1", 117, missingOwner.getID());
+
+    generator->setPartnerTarget(missingPartner);
+
+    auto distributer = distributeDevices({server, generator});
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, generator->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+
+    std::shared_ptr<ParseResult> parseResult;
+    REQUIRE(scheduler->getParseResult(parseStatus.pid, parseResult));
+    REQUIRE(parseResult != nullptr);
+    CHECK(countParsingMessages(parseResult->messages, "Event Target Device Missing") > 0);
+    requireAbstractParse(*scheduler, parseStatus.pid, missingPartner);
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Canceled);
+    CHECK(generator->loadCount == 0);
+    CHECK(generator->playCount == 0);
 }
 
 TEST_CASE("Connected partner-generated target resolves when target server differs from parsing device")

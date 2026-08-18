@@ -541,20 +541,32 @@ bool LocalEventEngine::isAbstractShot() const
 
 void LocalEventEngine::recordAbstractShotState(STI::Engine::EventEngineJob& job)
 {
-	bool hasUpstreamPartnerEvents = false;
-	if (isJobOwner && upstreamPartnerEvents != 0 && !upstreamPartnerEvents->eventsEmpty()) {
-		hasUpstreamPartnerEvents = true;
+	if (isJobOwner) {
+		//At the owner these groups contain events that no concrete engine could
+		//parse. They are the shot-specific evidence that a missing declaration is
+		//actually required, including unresolved partner events returned by a child.
 		addMissingTargetsFromEvents(upstreamPartnerEvents);
+		addMissingTargetsFromEvents(unhandledEvents);
 	}
 
-	if (eventsByAbstractTarget.size() > 0 || hasUpstreamPartnerEvents || missingTargets.size() > 0) {
-		auto& warning = parser.addParsingWarning("Abstract Shot")
-			<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
+	if (eventsByAbstractTarget.size() > 0 || missingTargets.size() > 0) {
+		bool warningAlreadyReported = false;
+		for (auto& message : parsingMessages) {
+			if (message.getName() == "Abstract Shot") {
+				warningAlreadyReported = true;
+				break;
+			}
+		}
 
-		if (missingTargets.size() > 0) {
-			warning << " Missing targets: \n";
-			for (auto& id : missingTargets) {
-				warning << "    " << id.getID() << "\n";
+		if (!warningAlreadyReported) {
+			auto& warning = parser.addParsingWarning("Abstract Shot")
+				<< "Some event targets were not found. Parsing is abstract only; cannot be played.";
+
+			if (missingTargets.size() > 0) {
+				warning << " Missing targets: \n";
+				for (auto& id : missingTargets) {
+					warning << "    " << id.getID() << "\n";
+				}
 			}
 		}
 	}
@@ -1015,6 +1027,12 @@ void LocalEventEngine::parseDevice(const STI::Device::DeviceID& id, STI::Engine:
 			parser.addParsingWarning("Missing device")
 			<< "Could not contact device '" << id.getID()
 			<< "'. Parsing is abstract only and cannot be played.";
+			//Preserve the concrete events that made this missing target required.
+			//A non-owner returns them to the owning server in its ParseComplete
+			//message, allowing the owner to record the final abstract-shot state.
+			if (unhandledEvents != 0) {
+				unhandledEvents->merge(*(it->second));
+			}
 			missingTargets.insert(id);
 			localSubtree->removeNode(id);
 			parseCondition.notify_all();

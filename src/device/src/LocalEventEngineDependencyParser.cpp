@@ -105,7 +105,8 @@ void LocalEventEngineDependencyParser::addDeviceEventTargets(EventEngineDependen
             messages.back() 
                 << "Device '" << localDeviceID.getID() << "' may generate events for target device '"
                 << targetID.getID() << "', but the target device's EventEngineScheduler could not be found " 
-                << "(device is likely missing from the network). Parsed shot may be forced to be abstract.";
+                << "(device is likely missing from the network). If this shot generates events for that target "
+                << "and it remains unavailable, the parsed shot will be abstract.";
         }
     }
 }

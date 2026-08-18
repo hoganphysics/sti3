@@ -43,9 +43,11 @@
 
 
 
+#include <algorithm>
+#include <iterator>
+#include <memory>
 #include <set>
 #include <vector>
-#include <memory>
 
 
 using STI::Device::DeviceID;
@@ -515,12 +517,15 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     auto tree = std::make_shared<EventEngineDependencyTree>();
     tree->addVertex(localDeviceID);     //begin tree with parse job owner
     
-    std::set<DeviceID> missingTargets;
+    //Dependency discovery follows declared event-target edges so generated partner
+    //events can be routed later. A target missing during this phase is only a
+    //potential requirement until an event in this shot actually targets it.
+    std::set<DeviceID> discoveryMissingTargets;
     std::vector<EngineParsingMessage> messages;
 
-    // Begin multi-pass search. Keep calling while new missingTargets are found.
+    // Begin multi-pass search. Keep calling while new missing targets are found.
     if (localDependencyParser != 0) {
-        localDependencyParser->getDependants(eventTargets, *tree, missingTargets, messages, 5);  //max 5 passes
+        localDependencyParser->getDependants(eventTargets, *tree, discoveryMissingTargets, messages, 5);  //max 5 passes
 
         //Extend the SAME tree with the post-processing targets' owning-server chains
         //so the owner can route dispatch to nested analysis devices (getDependants is
@@ -537,6 +542,14 @@ void LocalEventEngineScheduler::parseJob(const std::shared_ptr<EventEngineJob>& 
     for (auto& m : messages) {
         job->addMessage(m);
     }
+
+    //Only discovery misses that are concrete targets in the submitted shot are
+    //required now. Missing targets reached solely through a device's declaration
+    //remain warning-only unless parsing actually generates events for them.
+    std::set<DeviceID> missingTargets;
+    std::set_intersection(eventTargets.begin(), eventTargets.end(),
+                          discoveryMissingTargets.begin(), discoveryMissingTargets.end(),
+                          std::inserter(missingTargets, missingTargets.end()));
 
     //Check for targets missing from original event target list
     std::set<DeviceID> resolvedTargets;

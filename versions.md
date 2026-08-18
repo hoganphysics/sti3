@@ -48,6 +48,22 @@ than only incrementing the conda build number.
 
 ## Release History
 
+### 3.7.5 - Partner event target availability (in progress)
+
+Fixes:
+
+* Keep shots playable when an event-generating partner is missing but no events
+  are generated for that partner during the shot. Continue warning about the
+  missing declaration, and mark the shot abstract only when concrete partner
+  events cannot be parsed by an available target.
+* Propagate unresolved downstream partner events to the owning engine so its
+  parse job records the concrete missing target and reliably blocks playback.
+
+Tests:
+
+* Add regression coverage for missing partner declarations both with and
+  without generated partner events.
+
 ### 3.7.4 - In progress
 
 Features:
