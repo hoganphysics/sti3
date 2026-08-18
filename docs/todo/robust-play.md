@@ -7,7 +7,7 @@ Completed in investigation:
 - Traced the parse-to-play path through `LocalEventEngineScheduler`, `EventEngineManager`, `LocalEventEngine`, `MasterTrigger`, and the remote event-engine wrappers.
 - Identified the play path waits that can block indefinitely when an owned device disappears or stops responding.
 - Confirmed existing targeted tests still pass:
-  - `ctest --test-dir build-ninja --output-on-failure -R "Missing partner|stopEngine"`
+  - `ctest --test-dir build --output-on-failure -R "Missing partner|stopEngine"`
 
 Completed in first implementation pass:
 
@@ -17,8 +17,8 @@ Completed in first implementation pass:
 - Fixed the local parsed-state guard to reject play when either the state is not `Parsed` or the parse ID differs.
 - Added the play message name `Owned device state invalid`.
 - Verified:
-  - `ctest --test-dir build-ninja --output-on-failure -R "Server cancels play when owned target loses parsed engine before play|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
-  - `ctest --test-dir build-ninja --output-on-failure`
+  - `ctest --test-dir build --output-on-failure -R "Server cancels play when owned target loses parsed engine before play|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
+  - `ctest --test-dir build --output-on-failure`
 
 Completed in second implementation pass:
 
@@ -36,7 +36,7 @@ Completed in second implementation pass:
   - an owned target accepting a play job but never reporting `PlayReady`;
   - an owned target entering play but never reporting `PlayComplete`.
 - Verified:
-  - `ctest --test-dir build-ninja --output-on-failure -R "MasterTrigger bounded arm wait|Server cancels play when owned target|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
+  - `ctest --test-dir build --output-on-failure -R "MasterTrigger bounded arm wait|Server cancels play when owned target|Missing partner|Server-owned partner-generated target resolves|Connected partner-generated target resolves|stopEngine"`
 
 Completed in third implementation pass:
 
@@ -48,7 +48,7 @@ Completed in third implementation pass:
 - Added an integration regression for a target that reports `PlayReady` but never arms for trigger.
 - Updated timeout regressions to use short configured values and assert they cancel quickly.
 - Verified:
-  - `ctest --test-dir build-ninja --output-on-failure -R "Server cancels play when owned target never reports PlayReady|Server cancels play when owned target never reports PlayComplete|Server cancels play when owned target reports PlayReady but never arms|MasterTrigger bounded arm wait"`
+  - `ctest --test-dir build --output-on-failure -R "Server cancels play when owned target never reports PlayReady|Server cancels play when owned target never reports PlayComplete|Server cancels play when owned target reports PlayReady but never arms|MasterTrigger bounded arm wait"`
 
 Not started:
 
@@ -178,13 +178,13 @@ Keep messages concise and include the device ID, expected state, observed state,
 Targeted tests:
 
 ```bash
-ctest --test-dir build-ninja --output-on-failure -R "Missing partner|stopEngine|robust play|device loss"
+ctest --test-dir build --output-on-failure -R "Missing partner|stopEngine|robust play|device loss"
 ```
 
 Full validation:
 
 ```bash
-ctest --test-dir build-ninja --output-on-failure
+ctest --test-dir build --output-on-failure
 ```
 
 If IDL or network interfaces change, regenerate CORBA stubs with:

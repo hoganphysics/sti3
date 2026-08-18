@@ -11,7 +11,7 @@ project(STIServer VERSION ${STI3_VERSION} DESCRIPTION "STI Server" LANGUAGES CXX
 include(GNUInstallDirs)
 
 get_filename_component(STI3_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../.." ABSOLUTE)
-set(STI3_LOCAL_BUILD_DIR "${STI3_SOURCE_ROOT}/build-ninja" CACHE PATH
+set(STI3_LOCAL_BUILD_DIR "${STI3_SOURCE_ROOT}/build" CACHE PATH
   "Path to the local sti3 build tree used by standalone STIServer builds"
 )
 
@@ -48,16 +48,50 @@ function(sti3_import_local_build_targets)
     set(_sti3_local_build_dir "${STI3_LOCAL_BUILD_DIR}")
   endif()
 
-  sti3_find_first_existing_file(_stidevice_library
-    "${_sti3_local_build_dir}/src/device/src/libstidevice.so"
-    "${_sti3_local_build_dir}/lib/libstidevice.so"
-  )
-  sti3_find_first_existing_file(_stinetwork_library
-    "${_sti3_local_build_dir}/src/network/src/libstinetwork.so"
-    "${_sti3_local_build_dir}/lib/libstinetwork.so"
-  )
+  if(WIN32)
+    sti3_find_first_existing_file(_stidevice_library
+      "${_sti3_local_build_dir}/src/device/src/stidevice_d.dll"
+      "${_sti3_local_build_dir}/src/device/src/stidevice.dll"
+      "${_sti3_local_build_dir}/bin/stidevice_d.dll"
+      "${_sti3_local_build_dir}/bin/stidevice.dll"
+    )
+    sti3_find_first_existing_file(_stidevice_implib
+      "${_sti3_local_build_dir}/src/device/src/stidevice_d.lib"
+      "${_sti3_local_build_dir}/src/device/src/stidevice.lib"
+      "${_sti3_local_build_dir}/lib/stidevice_d.lib"
+      "${_sti3_local_build_dir}/lib/stidevice.lib"
+    )
+    sti3_find_first_existing_file(_stinetwork_library
+      "${_sti3_local_build_dir}/src/network/src/stinetwork_d.dll"
+      "${_sti3_local_build_dir}/src/network/src/stinetwork.dll"
+      "${_sti3_local_build_dir}/bin/stinetwork_d.dll"
+      "${_sti3_local_build_dir}/bin/stinetwork.dll"
+    )
+    sti3_find_first_existing_file(_stinetwork_implib
+      "${_sti3_local_build_dir}/src/network/src/stinetwork_d.lib"
+      "${_sti3_local_build_dir}/src/network/src/stinetwork.lib"
+      "${_sti3_local_build_dir}/lib/stinetwork_d.lib"
+      "${_sti3_local_build_dir}/lib/stinetwork.lib"
+    )
+    if(_stidevice_library AND _stidevice_implib AND
+       _stinetwork_library AND _stinetwork_implib)
+      set(_sti3_local_libraries_found TRUE)
+    endif()
+  else()
+    sti3_find_first_existing_file(_stidevice_library
+      "${_sti3_local_build_dir}/src/device/src/libstidevice.so"
+      "${_sti3_local_build_dir}/lib/libstidevice.so"
+    )
+    sti3_find_first_existing_file(_stinetwork_library
+      "${_sti3_local_build_dir}/src/network/src/libstinetwork.so"
+      "${_sti3_local_build_dir}/lib/libstinetwork.so"
+    )
+    if(_stidevice_library AND _stinetwork_library)
+      set(_sti3_local_libraries_found TRUE)
+    endif()
+  endif()
 
-  if(NOT (_stidevice_library AND _stinetwork_library))
+  if(NOT _sti3_local_libraries_found)
     message(STATUS "Local sti3 libraries not found in ${_sti3_local_build_dir}")
     return()
   endif()
@@ -73,6 +107,11 @@ function(sti3_import_local_build_targets)
       IMPORTED_LOCATION "${_stidevice_library}"
       INTERFACE_INCLUDE_DIRECTORIES "${_sti3_include_dirs}"
     )
+    if(WIN32)
+      set_target_properties(sti3::stidevice PROPERTIES
+        IMPORTED_IMPLIB "${_stidevice_implib}"
+      )
+    endif()
   endif()
 
   if(NOT TARGET sti3::stinetwork)
@@ -82,6 +121,11 @@ function(sti3_import_local_build_targets)
       INTERFACE_INCLUDE_DIRECTORIES "${_sti3_include_dirs}"
       INTERFACE_LINK_LIBRARIES sti3::stidevice
     )
+    if(WIN32)
+      set_target_properties(sti3::stinetwork PROPERTIES
+        IMPORTED_IMPLIB "${_stinetwork_implib}"
+      )
+    endif()
   endif()
 
   get_filename_component(_stidevice_library_dir "${_stidevice_library}" DIRECTORY)

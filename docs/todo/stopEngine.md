@@ -16,9 +16,9 @@ Completed in this pass:
 
 Verified:
 
-- `ctest --test-dir build-ninja --output-on-failure -R "stopEngine|Missing partner|Declared missing partner|ShotResult"`
-- `ctest --test-dir build-ninja --output-on-failure -R stopEngine --repeat until-fail:10`
-- `ctest --test-dir build-ninja --output-on-failure`
+- `ctest --test-dir build --output-on-failure -R "stopEngine|Missing partner|Declared missing partner|ShotResult"`
+- `ctest --test-dir build --output-on-failure -R stopEngine --repeat until-fail:10`
+- `ctest --test-dir build --output-on-failure`
 
 Still deferred:
 
@@ -171,14 +171,14 @@ After the scheduler cancellation bug is fixed, add tests that verify:
 Run focused tests first:
 
 ```sh
-cd build-ninja && conda run --no-capture-output -n sti3-build cmake --build . --parallel 8
-ctest --test-dir build-ninja --output-on-failure -R eventengine
+conda run --no-capture-output -n sti3-build cmake --build build --parallel 8
+ctest --test-dir build --output-on-failure -R eventengine
 ```
 
 Then run the full test suite before considering the work complete:
 
 ```sh
-ctest --test-dir build-ninja --output-on-failure
+ctest --test-dir build --output-on-failure
 ```
 
 ## Later timeout work

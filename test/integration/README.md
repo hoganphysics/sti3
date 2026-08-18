@@ -37,9 +37,9 @@ Observe-mode tests still require an external name service so the frontend can co
 test/integration/run-python-tests.sh -m observe --observe --sti-nameservice 192.168.88.252:2809 -s
 ```
 
-The runner defaults to `build-ninja` and the `sti3-build` conda environment. It prepends:
+The runner defaults to `build` and the `sti3-build` conda environment. It prepends:
 
-- `build-ninja/Lib/site-packages` and `test/integration/python` to `PYTHONPATH`;
+- `build/Lib/site-packages` and `test/integration/python` to `PYTHONPATH`;
 - the selected Python environment's `lib` directory, then the build-tree STI library directories, to `LD_LIBRARY_PATH`.
 
 Useful runner checks:

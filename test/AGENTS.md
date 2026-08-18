@@ -3,7 +3,7 @@
 ## Building and running tests
 
 - Use Catch2 for C++ tests; register tests via catch_discover_tests in test/CMakeLists.txt.
-- Build tests in the build-ninja out-of-source dir and run with ctest --test-dir build-ninja --output-on-failure after conda run ... cmake --build ..
+- Build tests in the top-level `build/` out-of-source directory and run with `ctest --test-dir build --output-on-failure` after `conda run --no-capture-output -n sti3-build cmake --build build --parallel 8`.
 
 ## Fast test loop
 

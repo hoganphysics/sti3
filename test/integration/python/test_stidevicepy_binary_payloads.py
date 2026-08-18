@@ -25,7 +25,7 @@ def _repo_root():
 
 
 def _build_dir():
-    return Path(os.environ.get("STI3_BUILD_DIR", _repo_root() / "build-ninja")).resolve()
+    return Path(os.environ.get("STI3_BUILD_DIR", _repo_root() / "build")).resolve()
 
 
 def _stiserver_binary():

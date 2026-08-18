@@ -48,6 +48,5 @@ build_env/
 env1/
 _conda_build/
 dev/
-build-ninja/
 build-tsan/
 src/network/src/generated/

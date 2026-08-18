@@ -249,8 +249,8 @@ If it causes ambiguity, defer it to a separate API cleanup commit after the core
 Because stale artifacts caused misleading feedback, always configure before validating this issue:
 
 ```powershell
-conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages -S . -B build-ninja
-conda run --no-capture-output -n sti3-build cmake --build build-ninja --parallel 8
+conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DCMAKE_INSTALL_PYTHONDIR=build/Lib/site-packages -S . -B build
+conda run --no-capture-output -n sti3-build cmake --build build --parallel 8
 ```
 
 ### Targeted tests
@@ -258,13 +258,13 @@ conda run --no-capture-output -n sti3-build cmake --build build-ninja --parallel
 Run the partner dependency test block after adding the usual-path regression:
 
 ```powershell
-conda run --no-capture-output -n sti3-build ctest --test-dir build-ninja -R "partner|target|dependency" --output-on-failure
+conda run --no-capture-output -n sti3-build ctest --test-dir build -R "partner|target|dependency" --output-on-failure
 ```
 
 If the test names do not match a useful regex, list tests first:
 
 ```powershell
-conda run --no-capture-output -n sti3-build ctest --test-dir build-ninja -N
+conda run --no-capture-output -n sti3-build ctest --test-dir build -N
 ```
 
 Then run the exact test range or names.
@@ -274,10 +274,10 @@ Then run the exact test range or names.
 Run the full suite before accepting the fix:
 
 ```powershell
-conda run --no-capture-output -n sti3-build ctest --test-dir build-ninja --output-on-failure
+conda run --no-capture-output -n sti3-build ctest --test-dir build --output-on-failure
 ```
 
-For manual device validation, confirm that the launched process is loading artifacts from the freshly configured `build-ninja` tree or from a freshly installed/deployed copy.
+For manual device validation, confirm that the launched process is loading artifacts from the freshly configured `build` tree or from a freshly installed/deployed copy.
 
 ## Resolution
 
@@ -295,9 +295,9 @@ Final behavior:
 Validation completed:
 
 ```powershell
-conda run --no-capture-output -n sti3-build cmake --build build-ninja --parallel 8
-conda run --no-capture-output -n sti3-build ctest --test-dir build-ninja -I 161,169 --output-on-failure
-conda run --no-capture-output -n sti3-build ctest --test-dir build-ninja --output-on-failure
+conda run --no-capture-output -n sti3-build cmake --build build --parallel 8
+conda run --no-capture-output -n sti3-build ctest --test-dir build -I 161,169 --output-on-failure
+conda run --no-capture-output -n sti3-build ctest --test-dir build --output-on-failure
 ```
 
 Results:

@@ -8,7 +8,7 @@
 			"args": [
 				"run", "--no-capture-output", "-n", "sti3-build",
 				"cmake",
-				"--build", "${workspaceFolder}/../../../build-ninja",
+				"--build", "../../../build",
 				"--target", "stidevice", "stinetwork",
 				"--parallel", "8"
 			],
@@ -25,7 +25,7 @@
 				"cmake",
 				"-S", ".", "-B", "build",
 				"-DCMAKE_BUILD_TYPE=Debug",
-				"-DSTI3_LOCAL_BUILD_DIR=${workspaceFolder}/../../../build-ninja"
+				"-DSTI3_LOCAL_BUILD_DIR:STRING=build"
 			],
 			"options": { "cwd": "${workspaceFolder}" },
 			"problemMatcher": ["$gcc"],
@@ -52,7 +52,7 @@
 			"group": "build"
 		}
 		// Legacy installed-conda STIServer workflow. build/ now hosts the local
-		// debug server build linked against the top-level build-ninja libraries.
+		// debug server build linked against the top-level build libraries.
 		// {
 		// 	"type": "shell",
 		// 	"label": "CMake config",

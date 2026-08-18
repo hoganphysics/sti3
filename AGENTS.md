@@ -20,13 +20,13 @@
 ## Build & test for C++ libraries
 
 - Use CMake with out-of-source builds.
-- Default build directory for conda package deployment: `build/`.
-- Default build directory for development and testing: `build-ninja/`.
-- Configure: `cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages ..`
+- Conda package builds use an isolated `_conda_build/` directory inside the staged source tree.
+- Default build directory for development and testing: `build/`.
+- Configure: `conda run --no-capture-output -n sti3-build cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DCMAKE_INSTALL_PYTHONDIR=build/Lib/site-packages`
 - If the linker cannot find the conda libstdc++/curl (omniORB pulls a newer CXXABI), add the conda lib path and curl explicitly:  
-  `cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" ..`
-- Build: `cd build-ninja && conda run --no-capture-output -n sti3-build cmake --build . --parallel 8`
-- Run tests: `ctest --test-dir build-ninja --output-on-failure`
+  `conda run --no-capture-output -n sti3-build cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DCMAKE_INSTALL_PYTHONDIR=build/Lib/site-packages -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl" -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-as-needed -L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib -lcurl"`
+- Build: `conda run --no-capture-output -n sti3-build cmake --build build --parallel 8`
+- Run tests: `ctest --test-dir build --output-on-failure`
 - The stinetwork library uses CORBA for rpc. The rpc interface is defined by the idl files in `src/network/idl/`. After changes are made to any idl file, the CORBA stubs need to be regenerated. This is done using a script `src/network/compileIDL.sh`, which should give no errors.
 
 ## C++ conventions

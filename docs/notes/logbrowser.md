@@ -168,19 +168,19 @@ This makes it logically valid for `RemotePersistenceManager` to create destinati
 1. Configure:
 
    ```sh
-   cd build-ninja && conda run --no-capture-output -n sti3-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PYTHONDIR=Lib/site-packages ..
+   conda run --no-capture-output -n sti3-build cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DCMAKE_INSTALL_PYTHONDIR=build/Lib/site-packages
    ```
 
 2. Build:
 
    ```sh
-   cd build-ninja && conda run --no-capture-output -n sti3-build cmake --build . --parallel 8
+   conda run --no-capture-output -n sti3-build cmake --build build --parallel 8
    ```
 
 3. Run tests:
 
    ```sh
-   ctest --test-dir build-ninja --output-on-failure
+   ctest --test-dir build --output-on-failure
    ```
 
 4. Confirm compile boundaries:

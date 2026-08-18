@@ -717,7 +717,7 @@ Catch2, tagged for filtering:
 
 Per AGENTS.md: do not modify production code while adding tests; compile and
 run with the narrowest Catch2 filter while iterating
-(`build-ninja/test/sti3_test_device "[postprocessing]"`), full suite only at
+(`build/test/sti3_test_device "[postprocessing]"`), full suite only at
 the end.
 
 ## Resolved during review (was previously under-specified)

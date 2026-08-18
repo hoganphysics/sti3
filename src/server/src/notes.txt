@@ -11,13 +11,13 @@ conda create -n sti3 -c conda-forge compilers cmake ninja sti3
 It's important to include compilers, etc, so that this env has an up to date version of gcc. Otherwise there will be linker errors.
 
 -------------------------------
-Local builds in build-ninja:
+Local builds in build:
 
 conda activate sti3-build
 
-export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3-codex/sti3/build-ninja/src/device/src:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3-codex/sti3/build-ninja/src/network/src:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3-codex/sti3/build/src/device/src:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/home/hogan/code/dev/sti3-codex/sti3/build/src/network/src:$LD_LIBRARY_PATH
 
-cd /home/hogan/code/dev/sti3-codex/sti3/build-ninja/src/server/src
+cd /home/hogan/code/dev/sti3-codex/sti3/build/src/server/src
 ./STIServer -f default.ini
 -------------------------------

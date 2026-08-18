@@ -20,7 +20,7 @@ Completed in the initial harness pass:
 - Added reusable Python harness modules for simulated devices, in-process topology setup, shot builders, and bounded waits.
 - Added an opt-in smoke test that builds one server and one generated device against an external name service, then parses and plays one generated event.
 - Added an opt-in observe test that keeps a small generated in-process topology alive and prints frontend connection parameters.
-- Verified the smoke path against the external name service at `192.168.88.252:2809` using the local `build-ninja` Python package.
+- Verified the smoke path against the external name service at `192.168.88.252:2809` using the local `build` Python package.
 - Added temporary persistence-root isolation and cleanup for in-process topologies.
 - Added timeout diagnostics hooks that can report connection info, known devices, network summary, and simulated event records.
 - Added `test/integration/run-python-tests.sh` to run the Python harness against build-tree `stipy` with the required `PYTHONPATH` and `LD_LIBRARY_PATH`.

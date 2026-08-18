@@ -4,7 +4,7 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "${script_dir}/../.." && pwd)"
 
-build_dir="${STI3_BUILD_DIR:-${repo_root}/build-ninja}"
+build_dir="${STI3_BUILD_DIR:-${repo_root}/build}"
 if [[ "${build_dir}" != /* ]]; then
   build_dir="${repo_root}/${build_dir}"
 fi

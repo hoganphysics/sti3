@@ -4,14 +4,14 @@ Status as of 2026-07-13. All three issues below were verified to exist on **unmo
 (git stash A/B comparison against the working tree that added the measurement-grace changes),
 so they are not regressions from the `waitForPlayAll` measurement-grace work.
 
-Build/run recipe used for all reproductions (Windows, MSVC 14.36, ninja tree at `build-ninja`):
+Build/run recipe used for all reproductions (Windows, MSVC 14.36, Ninja tree at `build`):
 
 ```
-cmd /c "\"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat\" && cmake --build build-ninja --target sti3_test_device"
+cmd /c "\"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat\" && cmake --build build --target sti3_test_device"
 ```
 
 The test exe needs these on PATH or it dies at startup with 0xc0000135:
-`build-ninja\src\device\src` (stidevice.dll), `build-ninja\src\network\src`,
+`build\src\device\src` (stidevice.dll), `build\src\network\src`,
 the conda env root containing `python313.dll`, and its `Library\bin`.
 
 ---
@@ -42,7 +42,7 @@ lines above as its last output is almost certainly this issue.
 
 ```powershell
 for ($i=0; $i -lt 30; $i++) {
-  $p = Start-Process build-ninja\test\sti3_test_device.exe `
+  $p = Start-Process build\test\sti3_test_device.exe `
     -ArgumentList '"LocalLogManager network methods aggregate connected device logs"' `
     -PassThru -NoNewWindow
   if (-not $p.WaitForExit(60000)) { $p | Stop-Process -Force; Write-Output "run $i HUNG" }

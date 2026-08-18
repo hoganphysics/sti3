@@ -19,22 +19,22 @@ and lets devices on a network discover and trigger each other.
 
 ## Build notes beyond AGENTS.md
 
-- `build-tsan/` is a third out-of-source build tree (alongside `build/` and
-  `build-ninja/`) configured for ThreadSanitizer.
+- `build-tsan/` is a separate out-of-source build tree configured for
+  ThreadSanitizer; normal local development uses `build/`.
 
 ## Test notes beyond AGENTS.md
 
 ```bash
 # Filter to one module while iterating instead of running the full suite
-build-ninja/test/sti3_test_device "[channel]"
-build-ninja/test/sti3_test_network "[convert]"
+build/test/sti3_test_device "[channel]"
+build/test/sti3_test_network "[convert]"
 ```
 
 Python integration tests are a separate, opt-in suite (not part of the
 CTest/Catch2 flow): multi-process/network scenario tests under
 `test/integration/python/` (smoke, stress, persistence, partner
 distribution, etc.), run via `test/integration/run-python-tests.sh`. The
-runner defaults to `build-ninja` + the `sti3-build` conda env and spins up a
+runner defaults to `build` + the `sti3-build` conda env and spins up a
 temporary `omniNames` (CORBA name service) unless `--sti-nameservice` is
 given.
 
