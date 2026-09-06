@@ -4,8 +4,11 @@
 **/*.so
 **/*.pyd
 **/*.whl
+*.py[cod]
 
 test/
+build/
+dev/
 
 src/device/vcproject/x64/
 src/device/test/testdevice/testdevice
@@ -69,6 +72,7 @@ examples/python/testDevice/.sti/
 docs/build/
 
 __pycache__/
+.pytest_cache/
 _skbuild/
 .vs/
 .sti/
@@ -76,4 +80,3 @@ stipy.egg-info/
 env/
 dist/
 build_env/
-

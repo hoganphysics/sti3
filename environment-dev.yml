@@ -1,0 +1,30 @@
+name: sti3-build
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python=3.13
+
+  # Native build
+  - c-compiler
+  - cxx-compiler
+  - cmake>=3.20
+  - ninja
+  - boost-cpp>=1.70
+  - openssl
+  - curl
+  - omniorb
+  - omniorb-libs
+  - pybind11>=2.13,<3
+  - catch2>=3,<4
+
+  # Python and integration tests
+  - pytest
+  - pip
+  - setuptools
+
+  # Package creation and publication
+  - conda-build
+  - anaconda-client

@@ -142,8 +142,9 @@ device into the network layer.
   wrapper layer also needs updating (e.g. `localdevice.py` wraps event-parsing
   error handling around the C++ call).
 - All three extension modules install under
-  `${CMAKE_INSTALL_PYTHONDIR}/stipy/...` (see `sti3-build-env.yml`'s
-  `CMAKE_INSTALL_PYTHONDIR=Lib/site-packages`).
+  `${CMAKE_INSTALL_PYTHONDIR}/stipy/...`; set `CMAKE_INSTALL_PYTHONDIR` when
+  configuring a local build, while conda-build supplies its staging
+  site-packages directory through the recipe.
 
 ### stijava (`src/stijava`) — Java bindings
 

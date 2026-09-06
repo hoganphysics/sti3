@@ -7,18 +7,17 @@ Adjust the version metadata in `sti3_version.json` as needed.
 - Keep `Release` as the normal user package.
 - Use `RelWithDebInfo` for the developer package with native symbols.
 
-Create or update the build environment:
+Create the build environment from the repository root:
 
 ```bash
-conda create -n sti3-build python=3.13
+conda env create -f environment-dev.yml
 conda activate sti3-build
-conda install -c conda-forge conda-build anaconda-client setuptools pip catch2 cmake ninja
 ```
 
-The Python integration test runner also needs `pytest` in this environment:
+Synchronize an existing environment after the file changes with:
 
 ```bash
-conda install -n sti3-build -c conda-forge pytest
+conda env update --name sti3-build --file environment-dev.yml --prune
 ```
 
 The recipe is controlled by `STI3_CONDA_BUILD_TYPE`. Valid values are `Release` and `RelWithDebInfo`. If it is unset, the recipe builds `Release`.

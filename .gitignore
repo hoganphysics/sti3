@@ -1,6 +1,10 @@
 *.db
 *.opendb
 *.tmp
+*.log
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
 *.so
 *.pyd
 src/device/vcproject/x64/

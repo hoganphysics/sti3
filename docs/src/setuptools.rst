@@ -128,9 +128,14 @@ Create the build environment:
 
 .. code-block:: bash
 
-   conda create -n sti3-build python=3.13
+   conda env create -f environment-dev.yml
    conda activate sti3-build
-   conda install -c conda-forge conda-build anaconda-client setuptools pip catch2 cmake ninja
+
+Update an existing environment after ``environment-dev.yml`` changes:
+
+.. code-block:: bash
+
+   conda env update --name sti3-build --file environment-dev.yml --prune
 
 Build from the repository root:
 

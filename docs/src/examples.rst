@@ -105,6 +105,8 @@ Use these when building with ``stipy.stidevicepy``:
 * ``fileTransfer`` for file/image channel values, lazy reads, and imported
   ``FileID`` read/write arguments.
 * ``parseEvents`` for custom Python ``SynchronousEvent`` classes.
+* ``uiTestDevices`` for a small multi-device network used during manual UI
+  integration testing.
 * ``tasks`` and ``logging`` for recurring background work.
 * ``monitors`` for live status values shown through the monitor manager.
 * ``postProcess`` for registering analysis targets that run after a shot plays.
