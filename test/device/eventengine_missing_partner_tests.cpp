@@ -239,11 +239,149 @@ private:
     bool stopped = false;
 };
 
+//Simulates the successful end of remote playback while holding PlayComplete until
+//the server has observed Parsed. This makes the state/message handoff race deterministic.
+class ParsedBeforePlayCompleteEngine : public STI::Engine::EventEngine
+{
+public:
+    ParsedBeforePlayCompleteEngine(const DeviceID& deviceID, LocalDevice* device)
+        : deviceID(deviceID), device(device) {}
+
+    ~ParsedBeforePlayCompleteEngine() override
+    {
+        stop();
+        if (completionThread.joinable()) {
+            completionThread.join();
+        }
+    }
+
+    void play(EventEngineJob&) override {}
+
+    void play(const EngineJobID& jobID,
+              const std::shared_ptr<STI::Engine::TriggerCallback>& callback,
+              bool) override
+    {
+        {
+            std::lock_guard<std::mutex> lock(stateMutex);
+            activeJobID = jobID;
+            triggerCallback = callback;
+            state = STI::Engine::EngineState::WaitingForTrigger;
+        }
+
+        if (callback != nullptr) {
+            callback->ready(deviceID);
+        }
+    }
+
+    void trigger() override
+    {
+        std::shared_ptr<STI::Engine::TriggerCallback> callback;
+        {
+            std::lock_guard<std::mutex> lock(stateMutex);
+            if (state != STI::Engine::EngineState::WaitingForTrigger || stopped) {
+                return;
+            }
+            state = STI::Engine::EngineState::Playing;
+            callback = triggerCallback;
+        }
+
+        if (callback != nullptr) {
+            callback->triggerFired(deviceID);
+        }
+
+        completionThread = std::thread([this]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+            {
+                std::lock_guard<std::mutex> lock(stateMutex);
+                if (stopped) {
+                    return;
+                }
+                state = STI::Engine::EngineState::Parsed;
+            }
+
+            {
+                std::unique_lock<std::mutex> lock(stateMutex);
+                parsedObservedCondition.wait_for(lock, std::chrono::seconds(1), [this]() {
+                    return parsedObserved || stopped;
+                });
+                if (stopped) {
+                    return;
+                }
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+            {
+                std::lock_guard<std::mutex> lock(stateMutex);
+                if (stopped) {
+                    return;
+                }
+            }
+
+            auto message = std::make_shared<STI::Device::EngineSchedulerMessage>(
+                deviceID,
+                STI::Device::EngineSchedulerMessage::SchedulerMessageType::PlayComplete);
+            message->jobID = activeJobID;
+            message->engineState = STI::Engine::EngineState::Parsed;
+            device->sendMessage(message);
+        });
+    }
+
+    void trigger(const DeviceID&) override { trigger(); }
+
+    void stop() override
+    {
+        {
+            std::lock_guard<std::mutex> lock(stateMutex);
+            stopped = true;
+            state = STI::Engine::EngineState::Parsed;
+        }
+        parsedObservedCondition.notify_all();
+    }
+
+    void pause() override {}
+    void unpause(bool) override {}
+    void clear() override { stop(); }
+
+    DeviceID getDeviceID() const override { return deviceID; }
+
+    STI::Engine::EngineState getState() const override
+    {
+        std::lock_guard<std::mutex> lock(stateMutex);
+        if (state == STI::Engine::EngineState::Parsed) {
+            parsedObserved = true;
+            parsedObservedCondition.notify_all();
+        }
+        return state;
+    }
+
+    std::shared_ptr<STI::Engine::ParsedDependencyTree> getParsedTree() const override { return {}; }
+    bool getParseResult(const ParseID&, std::shared_ptr<ParseResult>& parseResult) const override
+    {
+        parseResult.reset();
+        return false;
+    }
+
+private:
+    DeviceID deviceID;
+    LocalDevice* device;
+    EngineJobID activeJobID;
+    std::shared_ptr<STI::Engine::TriggerCallback> triggerCallback;
+    mutable std::mutex stateMutex;
+    mutable std::condition_variable parsedObservedCondition;
+    mutable bool parsedObserved = false;
+    STI::Engine::EngineState state = STI::Engine::EngineState::PlayReady;
+    bool stopped = false;
+    std::thread completionThread;
+};
+
 enum class PlayJobInterception
 {
     None,
     Drop,
-    FakePlayReadyNoArm
+    FakePlayReadyNoArm,
+    ParsedBeforePlayComplete
 };
 
 class StallingScheduler : public EventEngineScheduler
@@ -301,7 +439,8 @@ public:
                 stalledJobs.push_back(newJob);
                 return;
             }
-            if (playJobInterception == PlayJobInterception::FakePlayReadyNoArm) {
+            if (playJobInterception == PlayJobInterception::FakePlayReadyNoArm
+                || playJobInterception == PlayJobInterception::ParsedBeforePlayComplete) {
                 sendFakePlayReady(newJob);
                 return;
             }
@@ -323,8 +462,18 @@ public:
             return;
         }
 
-        if (fakeEngine == nullptr) {
-            fakeEngine = std::make_shared<FakePlayReadyEngine>(device->getID());
+        std::shared_ptr<STI::Engine::EventEngine> engine;
+        if (playJobInterception == PlayJobInterception::ParsedBeforePlayComplete) {
+            if (parsedBeforeCompleteEngine == nullptr) {
+                parsedBeforeCompleteEngine = std::make_shared<ParsedBeforePlayCompleteEngine>(device->getID(), device);
+            }
+            engine = parsedBeforeCompleteEngine;
+        }
+        else {
+            if (fakeEngine == nullptr) {
+                fakeEngine = std::make_shared<FakePlayReadyEngine>(device->getID());
+            }
+            engine = fakeEngine;
         }
 
         auto playReadyMessage = std::make_shared<STI::Device::EngineSchedulerMessage>(
@@ -332,7 +481,7 @@ public:
             STI::Device::EngineSchedulerMessage::SchedulerMessageType::PlayReady);
         playReadyMessage->jobID = newJob->getJobID();
         playReadyMessage->engineState = STI::Engine::EngineState::PlayReady;
-        playReadyMessage->setEngine(fakeEngine);
+        playReadyMessage->setEngine(engine);
 
         device->sendMessage(playReadyMessage);
     }
@@ -393,6 +542,7 @@ private:
     std::shared_ptr<LocalEventEngineScheduler> realScheduler;
     LocalDevice* device;
     std::shared_ptr<FakePlayReadyEngine> fakeEngine;
+    std::shared_ptr<ParsedBeforePlayCompleteEngine> parsedBeforeCompleteEngine;
 };
 
 class PartnerGeneratingDevice : public LocalDevice
@@ -967,6 +1117,34 @@ TEST_CASE("Server extends PlayComplete wait while owned target is verifiably sti
     CHECK(!hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
     CHECK(target->loadCount == 1);
     CHECK(target->playCount == 1);
+}
+
+TEST_CASE("Server allows PlayComplete delivery after owned target reports Parsed")
+{
+    auto serverConfig = makeFastPlaybackTimeoutConfig("ParsedBeforePlayCompleteServer");
+    serverConfig.set("EngineManager", "PlayComplete Grace ms", 100);
+    serverConfig.set("EngineManager", "Max Measurement Grace ms", 2000);
+    serverConfig.set("EngineManager", "Measurement Poll ms", 20);
+    auto server = std::make_shared<PartnerGeneratingDevice>("ParsedBeforePlayCompleteServer", 118, "root", serverConfig);
+    auto target = std::make_shared<PlayReadyStallDevice>("ParsedBeforePlayCompleteTarget", 119, server->getID().getID());
+
+    auto distributer = distributeDevices({server, target});
+
+    auto scheduler = schedulerFor(*server);
+    auto shot = makeShot(*scheduler, target->getID());
+
+    auto parseStatus = scheduler->parse(shot);
+    REQUIRE(waitForParseTerminal(*scheduler, parseStatus.pid) == EngineJobStatus::Completed);
+    requireConcreteParse(*scheduler, parseStatus.pid);
+
+    target->playJobInterception = PlayJobInterception::ParsedBeforePlayComplete;
+
+    auto playStatus = scheduler->play(parseStatus.pid, shot->getShotConfig().jobSourceID);
+    REQUIRE(waitForShotTerminal(*scheduler, playStatus.sid) == EngineJobStatus::Completed);
+
+    auto playJob = waitForCompletedPlayJob(*scheduler, playStatus.sid);
+    REQUIRE(playJob != nullptr);
+    CHECK(!hasPlayError(playJob->getPlayMessages(), "Owned device PlayComplete timeout"));
 }
 
 TEST_CASE("Device play error cancels the shot promptly instead of wedging the engine")

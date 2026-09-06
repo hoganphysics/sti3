@@ -1930,20 +1930,27 @@ bool LocalEventEngine::waitForPlayAll()
 
 		//Devices do not send PlayComplete until all measurement data is collected, which can
 		//take much longer than the last event time (e.g., camera image readout and encoding).
-		//After the grace deadline, keep waiting (up to maxDeadline) as long as the pending
-		//devices are verifiably still Playing.
-		const auto maxDeadline = deadline + ownedDeviceMaxMeasurementGrace;
+		//After the grace deadline, keep waiting (up to measurementDeadline) as long as the
+		//pending devices are verifiably still Playing.
+		const auto measurementDeadline = deadline + ownedDeviceMaxMeasurementGrace;
 		bool measurementGraceMessageSent = false;
+		bool waitingForPlayCompleteDelivery = false;
 
 		while (isState(EngineState::Playing) && playedOwnedTargets.size() < ownedTargets.size()) {
 			if (playCondition.wait_until(playLock, deadline) != std::cv_status::timeout) {
 				continue;	//woken; recheck the predicate
 			}
 
+			//A target changes to Parsed before its asynchronous PlayComplete message reaches
+			//this engine. Once that transition has been observed, allow one fresh delivery
+			//grace instead of mistaking successful completion for a timeout.
+			if (waitingForPlayCompleteDelivery) {
+				break;
+			}
+
 			//Grace deadline expired. Check whether the stragglers are still actively playing
 			//(i.e., collecting measurement data) before giving up.
-			if (ownedDeviceMaxMeasurementGrace.count() == 0
-				|| std::chrono::steady_clock::now() >= maxDeadline) {
+			if (ownedDeviceMaxMeasurementGrace.count() == 0) {
 				break;
 			}
 
@@ -1955,15 +1962,29 @@ bool LocalEventEngine::waitForPlayAll()
 			playLock.lock();
 
 			bool anyStillPlaying = false;
+			bool allPendingTargetsFinishedOrPlaying = !targetStates.empty();
 			for (const auto& targetState : targetStates) {
 				if (targetState.second == EngineState::Playing) {
 					anyStillPlaying = true;
+				}
+				else if (targetState.second != EngineState::Parsed) {
+					allPendingTargetsFinishedOrPlaying = false;
 					break;
 				}
 			}
 
-			if (!anyStillPlaying) {
+			if (!allPendingTargetsFinishedOrPlaying) {
 				break;	//dead, unresponsive, or errored out; handled by the timeout logic below
+			}
+
+			if (!anyStillPlaying) {
+				waitingForPlayCompleteDelivery = true;
+				deadline = std::chrono::steady_clock::now() + ownedDevicePlayCompleteGrace;
+				continue;
+			}
+
+			if (std::chrono::steady_clock::now() >= measurementDeadline) {
+				break;
 			}
 
 			if (!measurementGraceMessageSent) {
@@ -1975,7 +1996,7 @@ bool LocalEventEngine::waitForPlayAll()
 				appendPlayMessages(messages);
 			}
 
-			deadline = (std::min)(std::chrono::steady_clock::now() + ownedDeviceMeasurementPollInterval, maxDeadline);
+			deadline = (std::min)(std::chrono::steady_clock::now() + ownedDeviceMeasurementPollInterval, measurementDeadline);
 		}
 	}
 
