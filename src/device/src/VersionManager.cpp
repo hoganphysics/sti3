@@ -148,11 +148,11 @@ private:
 } // namespace
 
 VersionInfo::VersionInfo()
-    : major(0),
-      minor(0),
-      patch(0),
-      buildNumber(-1),
-      gitDirty(false)
+    : major{0},
+      minor{0},
+      patch{0},
+      buildNumber{-1},
+      gitDirty{false}
 {
 }
 
