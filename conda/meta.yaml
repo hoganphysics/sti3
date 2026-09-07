@@ -23,14 +23,13 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ stdlib('c') }}
+    - {{ stdlib('c') }}  # [linux]
     - cmake
     - ninja
     - python
     - pip
     - pybind11           # for headers/cmake config
     - omniorb            # for omniidl during IDL stub generation
-    - vs2022_win-64      # [win]
     # - openssl
   host:
     - python
