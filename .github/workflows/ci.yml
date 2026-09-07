@@ -1,0 +1,69 @@
+name: CMake and CTest
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cmake-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            runner: ubuntu-24.04
+          - name: Windows
+            runner: windows-2025
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Add Miniconda to PATH on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: echo "${CONDA}/bin" >> "${GITHUB_PATH}"
+
+      - name: Add Miniconda to PATH on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "$env:CONDA\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "$env:CONDA\Library\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Create build environment
+        run: conda env create --file environment-dev.yml
+
+      - name: Configure
+        run: >-
+          conda run --no-capture-output -n sti3-build
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
+          -DCMAKE_INSTALL_PYTHONDIR=build/Lib/site-packages
+
+      - name: Build
+        run: >-
+          conda run --no-capture-output -n sti3-build
+          cmake --build build --parallel 4
+
+      - name: Test
+        run: >-
+          conda run --no-capture-output -n sti3-build
+          ctest --test-dir build --output-on-failure
