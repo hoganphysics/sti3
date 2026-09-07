@@ -1,11 +1,12 @@
 @PACKAGE_INIT@
 
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+
 # Make the exported targets available
 include("${CMAKE_CURRENT_LIST_DIR}/sti3Targets.cmake")
 
 # Optional: surface any required components
 check_required_components(sti3)
 
-# include(CMakeFindDependencyMacro)
 # find_dependency(omniORB CONFIG REQUIRED)  # provides OmniORB::omnithread/omniORB4/omniDynamic4
-# find_dependency(Threads)

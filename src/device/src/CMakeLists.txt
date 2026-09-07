@@ -54,6 +54,9 @@ find_package(OpenSSL REQUIRED)  #sudo apt-get install libssl-dev
 
 find_package(Boost 1.70 REQUIRED)
 
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 
 set(STI_BASE_DIR ../../..)
 
@@ -196,6 +199,8 @@ else()
 endif()
 
 target_link_libraries(stidevice
+  PUBLIC
+    Threads::Threads
   PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
