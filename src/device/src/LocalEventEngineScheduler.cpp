@@ -635,9 +635,12 @@ PlayJobStatus LocalEventEngineScheduler::play(const ParseID& parseID, const Engi
     if (parseID.shotType == ShotType::Single 
         || parseID.shotType == ShotType::SequenceEntry 
         || parseID.shotType == ShotType::SingleUndocumented) {
-        
-            if (!findJob(parseID, parseJob)) {
-            //Error: ParseID not found
+
+        // Keep the lookup atomic with respect to the scheduler moving the parse
+        // job between its queued, running, and completed registries.
+        std::unique_lock<std::mutex> jobLock(jobMutex);
+        if (!findJob(parseID, parseJob)) {
+            // Error: ParseID not found
             playJobStatus.status = EngineJobStatus::NotFound;
             return playJobStatus;
         }
@@ -1467,8 +1470,27 @@ void LocalEventEngineScheduler::assignPlayJobs(const std::set<EngineJobID>& queu
                 continue; //defer play while parse is queued or running
             }
 
-            _cancelJob(jobID);  //cancel play if no parsed engine available and no pending parse
-            continue;
+            // EventEngineManager records scheduler completion just before it clears
+            // its running flag. Refresh the manager directly so a play submitted in
+            // that small window is deferred or assigned instead of being canceled.
+            std::shared_ptr<EventEngineJob> completedParseJob;
+            std::shared_ptr<EventEngineManager> completedParseManager;
+            const bool hasCompletedParseEngine = completedParseJobs.get(parseJobID, completedParseJob)
+                && completedParseJob != nullptr
+                && engineManagers.get(completedParseJob->getEngineID(), completedParseManager)
+                && completedParseManager != nullptr;
+
+            if (hasCompletedParseEngine && completedParseManager->jobRunning()) {
+                continue;
+            }
+
+            if (hasCompletedParseEngine && completedParseManager->isParsed(jobID.pid)) {
+                engineID = completedParseJob->getEngineID();
+            }
+            else {
+                _cancelJob(jobID);  //no parsed engine and no parse capable of producing one
+                continue;
+            }
         }
     
         if (assignJob(jobID, engineID)) {

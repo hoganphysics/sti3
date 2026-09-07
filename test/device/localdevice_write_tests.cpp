@@ -320,6 +320,7 @@ TEST_CASE("LocalDevice write handles rapid async SingleUndocumented shots withou
 
     constexpr int WriteCount = 50;
     for (int i = 0; i < WriteCount; ++i) {
+        CAPTURE(i);
         REQUIRE(device.write(0, MixedValue(static_cast<double>(i))));
     }
 
