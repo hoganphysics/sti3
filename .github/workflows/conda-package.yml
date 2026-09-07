@@ -54,7 +54,7 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ runner.temp }}/conda-pkgs
-          key: conda-packages-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('environment-dev.yml', 'conda/conda_build_config.yaml') }}
+          key: conda-packages-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('environment-package.yml', 'conda/meta.yaml', 'conda/conda_build_config.yaml') }}
           restore-keys: |
             conda-packages-v1-${{ runner.os }}-${{ runner.arch }}-
 
@@ -70,22 +70,23 @@ jobs:
           "$env:CONDA\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           "$env:CONDA\Library\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Create build environment
+      # Keep the conda-build driver separate from the recipe's native build
+      # environment. In particular, this avoids activating MSVC once through
+      # environment-dev.yml and then again inside conda-build on Windows.
+      - name: Create package environment
         env:
           CONDA_PKGS_DIRS: ${{ runner.temp }}/conda-pkgs
-        run: conda env create --file environment-dev.yml
+        run: conda env create --file environment-package.yml
 
       - name: Create package output directory
-        run: >-
-          conda run --no-capture-output -n sti3-build
-          cmake -E make_directory "${{ runner.temp }}/sti3-conda-output"
+        run: cmake -E make_directory "${{ runner.temp }}/sti3-conda-output"
 
       - name: Build Conda package
         env:
           CONDA_BLD_PATH: ${{ runner.temp }}/sti3-conda-build
           CONDA_PKGS_DIRS: ${{ runner.temp }}/conda-pkgs
         run: >-
-          conda run --no-capture-output -n sti3-build
+          conda run --no-capture-output -n sti3-package
           conda-build --no-anaconda-upload --package-format .conda
           --output-folder "${{ runner.temp }}/sti3-conda-output"
           -c conda-forge conda

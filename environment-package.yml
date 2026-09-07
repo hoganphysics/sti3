@@ -1,0 +1,10 @@
+name: sti3-package
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python=3.13
+  - conda-build
+  - anaconda-client
