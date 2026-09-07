@@ -352,6 +352,11 @@ void LocalEventEngineScheduler::setEngineConflictPolicy(const std::shared_ptr<En
 
 EngineJobStatus LocalEventEngineScheduler::getStatus(const ParseID& pid)
 {
+    // Keep status lookup atomic with respect to queued/running/completed map
+    // transitions. Ticket creation calls this immediately after submission and
+    // must not observe the brief gap while assignJob moves a job between maps.
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
     std::shared_ptr<EventEngineJob> job;
 
     EngineJobStatus status;
@@ -368,6 +373,9 @@ EngineJobStatus LocalEventEngineScheduler::getStatus(const ParseID& pid)
 
 EngineJobStatus LocalEventEngineScheduler::getStatus(const ShotID& sid)
 {
+    // See the ParseID overload: all three job maps form one logical registry.
+    std::unique_lock<std::mutex> jobLock(jobMutex);
+
     std::shared_ptr<EventEngineJob> job;
 
     EngineJobStatus status;

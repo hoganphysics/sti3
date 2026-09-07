@@ -1094,11 +1094,14 @@ TEST_CASE("Server cancels play when owned target never reports PlayComplete")
 TEST_CASE("Server extends PlayComplete wait while owned target is verifiably still Playing")
 {
     auto serverConfig = makeFastPlaybackTimeoutConfig("MeasurementGraceServer");
+    // Leave enough time for the target's Playing state to become observable on
+    // slower CI runners while keeping the simulated play longer than the grace.
+    serverConfig.set("EngineManager", "PlayComplete Grace ms", 200);
     serverConfig.set("EngineManager", "Max Measurement Grace ms", 10000);
     serverConfig.set("EngineManager", "Measurement Poll ms", 50);
     auto server = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceServer", 96, "root", serverConfig);
     auto target = std::make_shared<PartnerGeneratingDevice>("MeasurementGraceTarget", 97, server->getID().getID());
-    target->playDelay = std::chrono::milliseconds(500);     //outlives the 50 ms grace, then completes
+    target->playDelay = std::chrono::milliseconds(500);     //outlives the 200 ms grace, then completes
 
     auto distributer = distributeDevices({server, target});
 

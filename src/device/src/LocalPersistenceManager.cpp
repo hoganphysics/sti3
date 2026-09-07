@@ -188,6 +188,7 @@ void LocalPersistenceManager::addPersistenceTarget(const std::shared_ptr<Persist
 {
     if (target != 0) {
         auto holder = std::make_shared<PersistenceTargetHolder>(target, getBasePath());
+        holder->attachPersistenceCallback();
         persistenceTargetHolders.push_back(holder);
         persistenceTargetsClosed = false;
     }

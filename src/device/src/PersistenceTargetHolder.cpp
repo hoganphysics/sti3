@@ -14,22 +14,34 @@ PersistenceTargetHolder::PersistenceTargetHolder(const std::shared_ptr<Persisten
     saveMessager.setWarmup(500);    //ms
     saveMessager.setCooldown(500);    //ms
     saveMessager.start();
+}
 
+void PersistenceTargetHolder::attachPersistenceCallback()
+{
     if (target != 0) {
-        auto refresher = 
-            [this](void) -> void 
-            {
-                //Add a save message to the messager (groups and delays incoming requests to limit save rate)
-                auto saveMessage = std::make_shared<PersistenceTargetHolder::SaveMessage>(this);
-                return saveMessager.addMessage(saveMessage);
-            };
+        std::weak_ptr<PersistenceTargetHolder> weakSelf = weak_from_this();
+        auto refresher = [weakSelf](void) -> void {
+            if (auto self = weakSelf.lock()) {
+                self->requestSave();
+            }
+        };
 
         target->setPersistenceCallback(refresher);
     }
 }
 
+void PersistenceTargetHolder::requestSave()
+{
+    //Group and delay incoming requests to limit the persistence write rate.
+    auto saveMessage = std::make_shared<PersistenceTargetHolder::SaveMessage>(this);
+    saveMessager.addMessage(saveMessage);
+}
+
 PersistenceTargetHolder::~PersistenceTargetHolder()
 {
+    if (target != 0) {
+        target->setPersistenceCallback([](){});
+    }
     saveMessager.stop();
 }
 

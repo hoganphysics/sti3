@@ -16,7 +16,9 @@ namespace Device
 
 class PersistenceTarget;
 
-class PersistenceTargetHolder
+class LocalPersistenceManager;
+
+class PersistenceTargetHolder : public std::enable_shared_from_this<PersistenceTargetHolder>
 {
 public:
 
@@ -27,6 +29,10 @@ public:
     void save();
 
 private:
+	friend class LocalPersistenceManager;
+
+	void attachPersistenceCallback();
+	void requestSave();
 
     std::shared_ptr<PersistenceTarget> target;
     const std::string basepath;
