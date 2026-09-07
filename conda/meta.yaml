@@ -16,6 +16,8 @@ build:
   string: "{{ build_flavor }}_py{{ py }}h{{ PKG_HASH }}_{{ build_number }}"
   script_env:
     - STI3_CONDA_BUILD_TYPE
+    - STI3_GIT_COMMIT
+    - STI3_GIT_DIRTY
 
 requirements:
   build:

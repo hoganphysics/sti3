@@ -33,6 +33,15 @@ rdbg_py313h..._<build_number>
 
 At runtime, this same conda build string is compiled into `STI3_BUILD_STRING`. It is exposed through `STI::Device::getSTILibraryVersion().buildString`, appears in `getSTILibraryVersionSummary()`, and is also stored in version metadata as `conda_build_string`.
 
+## Build Packages with GitHub Actions
+
+Open the repository's **Actions** page, select **Conda package**, and choose **Run workflow**. Select the branch or tag to package and one of these build types:
+
+- `Release` (default) creates the normal `release` packages.
+- `RelWithDebInfo` creates the larger `rdbg` packages containing native debug information.
+
+Each run builds Linux and Windows packages and attaches the resulting `.conda` files to the workflow run for 14 days. The workflow records the source commit in the package, but it does not upload to Anaconda Cloud or create a GitHub release. The packages can therefore be inspected and tested without publishing them. When automated publishing is added, use the Anaconda `main` label for `release` packages and `dev` for `rdbg` packages.
+
 ## Build Packages
 
 Run these commands from the project root. `conda build .` works because conda-build searches the tree and finds the single recipe at `conda/meta.yaml`. Passing `conda` instead of `.` is equivalent and more explicit.
