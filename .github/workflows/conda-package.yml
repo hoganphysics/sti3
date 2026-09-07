@@ -35,7 +35,8 @@ jobs:
             runner: ubuntu-24.04
             subdir: linux-64
           - name: Windows
-            runner: windows-2025
+            # The Conda recipe targets the VS2022/v143 compiler toolchain.
+            runner: windows-2022
             subdir: win-64
 
     env:
