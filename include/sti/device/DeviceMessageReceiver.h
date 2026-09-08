@@ -249,6 +249,7 @@ private:
 	STI::Utils::SynchronizedMap<DeviceID, std::shared_ptr<DeviceMessageHandler>> handlers;	//DeviceID refers to a remote device
 
 	std::shared_ptr<STI::Utils::LocalCollection<DeviceID, Device>> deviceCollection;
+	std::shared_ptr<CollectionListener> collectionListener;
 	std::shared_ptr<DeviceMessageDispatcher> localDispatcher;	//this device's dispatcher (for intra device messages)
 	const DeviceID localID;		//this device's DeviceID
 

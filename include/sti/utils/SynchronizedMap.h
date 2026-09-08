@@ -16,6 +16,7 @@ pushs events.
 
 #include <sti/utils/EventQueue.h>
 
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <mutex>
@@ -72,6 +73,11 @@ public:
 
 		STI::Utils::EventQueue<SynchronizedMapEvent<Key>>::start();	//start event handler loop (does nothing if already running)
 		listeners.push_back(listener);
+	}
+	void removeListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
+	{
+		std::unique_lock<std::mutex> writeLock(listenersMutex);
+		listeners.erase(std::remove(listeners.begin(), listeners.end(), listener), listeners.end());
 	}
 	void clearListeners()
 	{
@@ -139,6 +145,7 @@ public:
 
 	void setPolicy(const KeyPolicy_ptr& Policy);
 	void addListener(const typename SynchronizedMapListener<Key>::_ptr& listener);
+	void removeListener(const typename SynchronizedMapListener<Key>::_ptr& listener);
 	void clearListeners();
 
 	bool contains(const Key& key) const;
@@ -215,6 +222,12 @@ void STI::Utils::SynchronizedMap<Key, T>::addListener(const typename Synchronize
 {
 	eventHandler.addListener(listener);
 	eventHandler.start();
+}
+
+template<class Key, class T>
+void STI::Utils::SynchronizedMap<Key, T>::removeListener(const typename SynchronizedMapListener<Key>::_ptr& listener)
+{
+	eventHandler.removeListener(listener);
 }
 
 
@@ -417,4 +430,3 @@ void STI::Utils::SynchronizedMap<Key, T>::clear()
 
 
 #endif
-

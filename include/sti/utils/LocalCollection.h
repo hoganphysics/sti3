@@ -71,6 +71,7 @@ public:
 	}
 	
 	void addListener(const typename LocalCollectionListener<ID>::_ptr& listener) { nodes.addListener(listener); }
+	void removeListener(const typename LocalCollectionListener<ID>::_ptr& listener) { nodes.removeListener(listener); }
 	void clearListeners() { nodes.clearListeners(); }
 	void setPolicy(const LocalCollectionPolicy_ptr& policy) { nodes->setPolicy(policy); }
 
@@ -119,4 +120,3 @@ private:
 } //STI
 
 #endif
-
